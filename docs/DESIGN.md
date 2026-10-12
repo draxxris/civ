@@ -56,7 +56,7 @@ mods/mymod/
 
 ## Rendering: Prowl
 
-Prowl is a Unity-like .NET 10 engine; `Prowl.Runtime` works standalone without the editor, so `Civ.Client` is a plain console-style executable that references the runtime project and subclasses `Game` (the same shape as Prowl's `Samples/`). The renderer reads `Simulation.State` and builds hex prisms (`Mesh.CreateCylinder(r, h, 6)`) colored from `TerrainDef.Color`. Client-side mod API (custom meshes/UI per content def) comes later via a separate `Civ.ClientApi` so headless servers never load rendering code.
+Prowl is a Unity-like .NET 8 engine; `Prowl.Runtime` works standalone without the editor, so `Civ.Client` is a plain console-style executable that references the runtime project and subclasses `Game` (the same shape as Prowl's `Samples/`). The renderer reads `Simulation.State` and builds hex prisms (`Mesh.CreateCylinder(r, h, 6)`) colored from `TerrainDef.Color`. Client-side mod API (custom meshes/UI per content def) comes later via a separate `Civ.ClientApi` so headless servers never load rendering code.
 
 ## City management and specialists
 
