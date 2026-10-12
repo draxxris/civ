@@ -1,0 +1,6 @@
+[
+  { "id": "base:settler",  "name": "Settler",  "cost": 30, "strength": 0,  "moves": 1, "canFoundCity": true, "classes": [] },
+  { "id": "base:warrior",  "name": "Warrior",  "cost": 15, "strength": 10, "moves": 1, "classes": ["melee"] },
+  { "id": "base:archer",   "name": "Archer",   "cost": 20, "requiresTech": "base:archery", "strength": 12, "moves": 1, "classes": ["ranged"] },
+  { "id": "base:horseman", "name": "Horseman", "cost": 25, "requiresTech": "base:the_wheel", "strength": 12, "moves": 2, "classes": ["mounted"] }
+]

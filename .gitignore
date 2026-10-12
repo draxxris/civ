@@ -1,0 +1,8 @@
+bin/
+obj/
+.vs/
+*.user
+external/
+TestResults/
+src/Civ.Godot/.godot/
+*.import

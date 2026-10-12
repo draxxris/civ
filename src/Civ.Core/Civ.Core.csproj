@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Civ.Core</AssemblyName>
+    <RootNamespace>Civ</RootNamespace>
+  </PropertyGroup>
+</Project>
