@@ -15,7 +15,8 @@ A Civilization 4-style game on a hex grid where **everything is a mod**, includi
 | `Civ.Core` | Hex math, deterministic RNG, content definitions + registries, the mod API (`IMod`, `IModContext`), mod loader, `Simulation`, command codec, state hash. Mods reference only this. |
 | `Civ.Net` | Lockstep session, transport abstraction, in-process transport. |
 | `Civ.BaseGame` | The base game as a mod: `mod.json`, DLL, `data/*.json` sidecars. |
-| `Civ.Client` | Prowl front end (outside `Civ.slnx`; needs a Prowl checkout). |
+| `Civ.Client.Core` | Engine-free front-end logic (`GameSession`: selection, clicks, city/unit actions) and mod discovery; unit-tested. |
+| `Civ.Godot` | Godot 4 .NET front end (outside `Civ.slnx`; build with `dotnet build src/Civ.Godot`). |
 | `Civ.Tests` | xunit tests incl. loading the base mod from its folder and two-peer lockstep. |
 
 ## Mods
@@ -54,9 +55,9 @@ mods/mymod/
 - `LockstepSession`: each peer submits a batch (possibly empty) for tick `t + inputDelay`; a tick runs when all batches are present, applied in peer order. After each tick peers exchange `StateHasher` hashes; mismatch raises `Desync`.
 - Transport is `ITransport` (reliable, ordered broadcast). `InProcessHub` exists; TCP/relay transport is next.
 
-## Rendering: Prowl
+## Rendering: Godot 4 (C#)
 
-Prowl is a Unity-like .NET 8 engine; `Prowl.Runtime` works standalone without the editor, so `Civ.Client` is a plain console-style executable that references the runtime project and subclasses `Game` (the same shape as Prowl's `Samples/`). The renderer reads `Simulation.State` and builds hex prisms (`Mesh.CreateCylinder(r, h, 6)`) colored from `TerrainDef.Color`. Client-side mod API (custom meshes/UI per content def) comes later via a separate `Civ.ClientApi` so headless servers never load rendering code.
+The client is a Godot 4.4 .NET project. Logic and AI mods stay plain .NET DLLs loaded by `ModLoader`; the base game and every mod reference only `Civ.Core`, so no Godot types appear in mod DLLs. Visual content from mods is data: `.pck` resource packs and plain assets, loaded at start from the `mods/` folders. A client-side UI plugin interface (a separate `Civ.ClientApi`) is a possible later addition; it is not built yet. `WorldView` builds hex prisms colored from `TerrainDef.Color`; `GameUi` is a Control-based panel driven by `GameSession`.
 
 ## City management and specialists
 
@@ -65,9 +66,9 @@ Prowl is a Unity-like .NET 8 engine; `Prowl.Runtime` works standalone without th
 - `CivicDef` (government, labor, ...): one civic per category per player, gated by tech, with percent research/production/culture bonuses and specialist slots. `set_civic` swaps one; cities that lose slots turn surplus specialists back into citizens at once.
 - `set_city_work` replaces a city's whole assignment (tiles + specialist counts) and is validated server-side like every command (distinct tiles in range, not used by another city, slot limits, every citizen assigned).
 
-## Prowl client
+## Godot client
 
-`Civ.Client` is a playable hot-seat-vs-AI front end: hex prisms colored from `TerrainDef.Color`, cities and units tinted by civilization, and a Paper UI with Selection / Research / Civics tabs. Selecting a city shows food, yields and specialist +/- rows with slot counts, highlights its workable tiles (click one to put a citizen to work or unassign it), and lets you pick buildings or units to produce. Selecting a unit shows health, experience level and available promotions, and offers "Found city". Controls: WASD pan, wheel zoom, left click select (click again to cycle a stack), right click move/attack, Enter ends the turn. The client only reads state and submits commands, so the same code can route through `LockstepSession`.
+`Civ.Godot` is a playable hot-seat-vs-AI front end: hex prisms colored from `TerrainDef.Color`, cities and units tinted by civilization, and a Control-based UI with Selection / Research / Civics tabs. Selecting a city shows food, yields and specialist +/- rows with slot counts, highlights its workable tiles (click one to put a citizen to work or unassign it), and lets you pick buildings or units to produce. Selecting a unit shows health, experience level and available promotions, and offers "Found city". Controls: WASD pan, wheel zoom, left click select (click again to cycle a stack), right click move/attack, Enter ends the turn. The client only reads state and submits commands, so the same code can route through `LockstepSession`.
 
 ## Not yet done
 
