@@ -1,0 +1,4 @@
+[
+  { "id": "religion:mysticism", "name": "Mysticism", "cost": 12, "prerequisites": ["base:agriculture"] },
+  { "id": "religion:theology",  "name": "Theology",  "cost": 28, "prerequisites": ["religion:mysticism", "base:writing"] }
+]

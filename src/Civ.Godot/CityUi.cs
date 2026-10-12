@@ -7,7 +7,8 @@ namespace Civ.Client;
 /// <summary>
 /// The full-screen city view: header, resource bar, citizens panel on the left, production panel on the right, with the
 /// map (yield badges on tiles) showing through the middle. Everything shown comes from <see cref="CityScreen"/>.
-/// What the simulation does not have yet (faith, gold, purchasing, forced labor, projects, wonders) is shown disabled or left out.
+/// Mod resources (faith, renown, capital, ...) join the resource bar and institutions get their own list with found buttons.
+/// What the simulation does not have yet (gold, purchasing, forced labor, projects, wonders) is shown disabled or left out.
 /// </summary>
 public partial class CityUi : Control
 {
@@ -102,7 +103,8 @@ public partial class CityUi : Control
         Stat(row, s.Production, "Production", Orange);
         Stat(row, s.Commerce, "Commerce", Gold, "to research");
         Stat(row, s.Culture, "Culture", Purple);
-        // Faith and gold are not simulated yet, so they are left out rather than shown as zeros.
+        foreach (var r in s.Resources)
+            Stat(row, (int)r.PerTurn, r.Name, Color.FromHtml(r.Color), r.Stored is long stored ? $"{stored} stored" : r.CityScoped ? null : "civ-wide");
     }
 
     private static void Stat(Container row, int value, string name, Color color, string? sub = null)
@@ -153,6 +155,17 @@ public partial class CityUi : Control
         }
         col.AddChild(Label("Click highlighted tiles on the map to move a citizen onto or off a tile.", 11, InkDim));
         if (_session.Message.Length > 0) col.AddChild(Label(_session.Message, 12, GameUi.Bad));
+
+        if (s.Institutions.Count > 0 || s.Foundable.Count > 0) col.AddChild(Label("Institutions", 22, Ink));
+        foreach (var i in s.Institutions)
+            col.AddChild(Label($"{i.Name} ({i.Category}){(i.IsHome ? ", founded here" : "")}", 14, Color.FromHtml(i.Color)));
+        foreach (var f in s.Foundable)
+        {
+            var id = f.Id;
+            var b = GameUi.Btn($"Found {f.Name}" + (f.Cost.Length > 0 ? $" ({f.Cost})" : ""), () => _session.FoundInstitution(city, id), f.Blocked == null);
+            b.TooltipText = f.Blocked ?? "";
+            col.AddChild(b);
+        }
     }
 
     private static Control Row(string name, string count, string detail, Action? minus, bool minusOn, Action? plus, bool plusOn, bool indent = false)

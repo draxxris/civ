@@ -13,6 +13,8 @@ public sealed class Player
     public long Culture { get; set; }
     /// <summary>Held civic per category.</summary>
     public SortedDictionary<string, string> Civics { get; } = new(StringComparer.Ordinal);
+    /// <summary>Stockpiles of player-scoped mod resources, by resource id.</summary>
+    public SortedDictionary<string, long> Resources { get; } = new(StringComparer.Ordinal);
     public bool EndedTurn { get; set; }
 }
 
@@ -35,6 +37,18 @@ public sealed class City
     /// <summary>Citizens not working a tile, by specialist id.</summary>
     public SortedDictionary<string, int> Specialists { get; } = new(StringComparer.Ordinal);
     public long Culture { get; set; }
+    /// <summary>Stockpiles of city-scoped mod resources, by resource id.</summary>
+    public SortedDictionary<string, long> Resources { get; } = new(StringComparer.Ordinal);
+    /// <summary>Institutions (religions, guilds, corporations, ...) present here.</summary>
+    public SortedSet<string> Institutions { get; } = new(StringComparer.Ordinal);
+}
+
+/// <summary>Where and by whom an institution was founded. Its first city is its holy city / headquarters.</summary>
+public sealed class FoundedInstitution
+{
+    public int Founder { get; init; }
+    public int HomeCity { get; init; }
+    public int FoundedTurn { get; init; }
 }
 
 public sealed class Unit
@@ -59,6 +73,8 @@ public sealed class GameState
     public int NextCityId { get; set; } = 1;
     public List<Unit> Units { get; } = new();
     public int NextUnitId { get; set; } = 1;
+    /// <summary>Institutions founded so far, by id. Each can be founded once per game.</summary>
+    public SortedDictionary<string, FoundedInstitution> Institutions { get; } = new(StringComparer.Ordinal);
 
     public Player PlayerById(int id) => Players.FirstOrDefault(p => p.Id == id) ?? throw new KeyNotFoundException($"player {id}");
     public Unit UnitById(int id) => Units.FirstOrDefault(u => u.Id == id) ?? throw new KeyNotFoundException($"unit {id}");

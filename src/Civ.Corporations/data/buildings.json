@@ -1,0 +1,10 @@
+[
+  {
+    "id": "corporations:exchange",
+    "name": "Exchange",
+    "cost": 35,
+    "requiresTech": "corporations:joint_stock",
+    "commerce": 1,
+    "specialistSlots": { "base:merchant": 2 }
+  }
+]

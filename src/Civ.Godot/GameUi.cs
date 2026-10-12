@@ -106,6 +106,8 @@ public partial class GameUi : CanvasLayer
         row.AddChild(me.Researching == null
             ? Text("Research: none (pick one in the Research tab)", 13, Bad)
             : Text($"Research: {Sim.Content.Techs.Get(me.Researching).Name} {me.ResearchProgress}/{Sim.Content.Techs.Get(me.Researching).Cost}", 13));
+        foreach (var r in ResourceView.Player(Sim, me.Id))
+            row.AddChild(Text($"{r.Name} {ResourceView.Amount(r)}", 13, Color.FromHtml(r.Color)));
         if (_session.Message.Length > 0) row.AddChild(Text(_session.Message, 13, Bad));
         var end = Btn("End turn", _session.EndTurn, minWidth: 90);
         end.SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd;
@@ -207,6 +209,14 @@ public partial class GameUi : CanvasLayer
             var pos = unit.Position;
             var id = unit.Id;
             col.AddChild(Btn("Found city here", () => _session.Submit(new FoundCityCommand { Player = GameSession.Human, Position = pos, UnitId = id })));
+        }
+
+        foreach (var action in ResourceView.Spreadable(Sim, GameSession.Human, unit))
+        {
+            var a = action;
+            var b = Btn($"Spread {a.Name}" + (a.Cost.Length > 0 ? $" ({a.Cost})" : ""), () => _session.SpreadInstitution(unit, a.Id), a.Blocked == null);
+            b.TooltipText = a.Blocked ?? "";
+            col.AddChild(b);
         }
 
         int unspent = UnitRules.UnspentPromotions(Sim, unit);

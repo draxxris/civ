@@ -1,0 +1,7 @@
+{
+  "id": "religion",
+  "name": "Religion",
+  "version": "0.1.0",
+  "assembly": "Civ.Religion.dll",
+  "dependencies": ["base"]
+}

@@ -15,7 +15,8 @@ public sealed record CityScreen(
     int Food, int Production, int Commerce, int Culture,
     int Workers, int SpecialistTotal, IReadOnlyList<SpecialistRow> Specialists,
     string? CurrentName, long CurrentProgress, int CurrentCost, int? CurrentTurns,
-    IReadOnlyList<ProductionItem> Buildings, IReadOnlyList<ProductionItem> Units)
+    IReadOnlyList<ProductionItem> Buildings, IReadOnlyList<ProductionItem> Units,
+    IReadOnlyList<ResourceRow> Resources, IReadOnlyList<InstitutionRow> Institutions, IReadOnlyList<InstitutionAction> Foundable)
 {
     public static CityScreen Of(Simulation sim, City city)
     {
@@ -37,12 +38,14 @@ public sealed record CityScreen(
 
         var me = sim.State.PlayerById(city.Owner);
         var buildings = sim.Content.Buildings.All
-            .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || me.Techs.Contains(b.RequiresTech)))
+            .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || me.Techs.Contains(b.RequiresTech))
+                        && Game.Institutions.CheckRequirement(sim, city, b.RequiresInstitution, b.RequiresInstitutionCategory) == null)
             .Select(b => new ProductionItem(false, b.Id, b.Name, b.Cost, Turns(b.Cost - (city.Building == b.Id ? city.BuildProgress : 0), production), BuildingEffects(sim, b), city.Building == b.Id))
             .ToList();
         var units = sim.Content.Units.All
-            .Where(u => u.RequiresTech == null || me.Techs.Contains(u.RequiresTech))
-            .Select(u => new ProductionItem(true, u.Id, u.Name, u.Cost, Turns(u.Cost - (city.Training == u.Id ? city.TrainProgress : 0), production), UnitEffects(u), city.Training == u.Id))
+            .Where(u => (u.RequiresTech == null || me.Techs.Contains(u.RequiresTech))
+                        && Game.Institutions.CheckRequirement(sim, city, u.RequiresInstitution, u.RequiresInstitutionCategory) == null)
+            .Select(u => new ProductionItem(true, u.Id, u.Name, u.Cost, Turns(u.Cost - (city.Training == u.Id ? city.TrainProgress : 0), production), UnitEffects(sim, u), city.Training == u.Id))
             .ToList();
 
         string? currentName = null; long progress = 0; int cost = 0;
@@ -53,7 +56,8 @@ public sealed record CityScreen(
             y.Food, production, y.Commerce, culture,
             city.Worked.Count, CityRules.SpecialistCount(city), specialists,
             currentName, progress, cost, currentName == null ? null : Turns(cost - progress, production),
-            buildings, units);
+            buildings, units,
+            ResourceView.City(sim, city), ResourceView.Institutions(sim, city), ResourceView.Foundable(sim, city.Owner, city));
     }
 
     /// <summary>Whole turns to cover <paramref name="remaining"/> at <paramref name="perTurn"/> (at least 1); null when nothing is produced.</summary>
@@ -82,8 +86,12 @@ public sealed record CityScreen(
             parts.Add(n < 0 ? $"unlimited {name} slots" : $"{n} {name} slot{(n == 1 ? "" : "s")}");
         }
         if (b.UnitExperience != 0) parts.Add($"{b.UnitExperience:+#;-#} XP for new units");
+        if (b.ResourceCost.Count > 0) parts.Add("costs " + Game.Resources.CostText(sim.Content, b.ResourceCost));
         return string.Join(", ", parts);
     }
 
     public static string UnitEffects(UnitDef u) => u.CanFoundCity ? "Founds a city" : $"Strength {u.Strength}, moves {u.Moves}";
+
+    public static string UnitEffects(Simulation sim, UnitDef u) =>
+        UnitEffects(u) + (u.ResourceCost.Count > 0 ? ", costs " + Game.Resources.CostText(sim.Content, u.ResourceCost) : "");
 }

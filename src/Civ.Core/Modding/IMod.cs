@@ -34,6 +34,14 @@ public interface IModContext
     ModRegistry<IMapGenerator> MapGenerators { get; }
     ModRegistry<ITurnSystem> TurnSystems { get; }
     ModRegistry<CommandTypeDef> CommandTypes { get; }
+    /// <summary>Mod resources (faith, renown, ...), their data-driven rates, and the pools they accumulate in.</summary>
+    ModRegistry<ResourceDef> Resources { get; }
+    /// <summary>Code-driven per-city resource rates.</summary>
+    ModRegistry<IResourceSource> ResourceSources { get; }
+    /// <summary>Code-driven extra food/production/commerce/culture for a city.</summary>
+    ModRegistry<ICityYieldSource> YieldSources { get; }
+    /// <summary>Religions, guilds, corporations: founded in one city, spread by units or on their own.</summary>
+    ModRegistry<InstitutionDef> Institutions { get; }
     /// <summary>Register a command class under "modid:name".</summary>
     void RegisterCommand<TCommand>(string name) where TCommand : Game.GameCommand;
 }

@@ -19,6 +19,7 @@ public static class StateHasher
         {
             h.Int(p.Id); h.Str(p.Civilization); h.Str(p.Ai); h.Str(p.Researching); h.Long(p.ResearchProgress); h.Long(p.Culture); h.Int(p.EndedTurn ? 1 : 0);
             foreach (var cv in p.Civics) { h.Str(cv.Key); h.Str(cv.Value); }
+            foreach (var r in p.Resources) { h.Str(r.Key); h.Long(r.Value); }
             foreach (var t in p.Techs) h.Str(t); // SortedSet: stable
         }
         foreach (var c in s.Cities.OrderBy(c => c.Id))
@@ -29,7 +30,10 @@ public static class StateHasher
             foreach (var w in c.Worked) { h.Int(w.Q); h.Int(w.R); }
             foreach (var sp in c.Specialists) { h.Str(sp.Key); h.Int(sp.Value); } h.Long(c.Culture);
             foreach (var b in c.Buildings) h.Str(b);
+            foreach (var r in c.Resources) { h.Str(r.Key); h.Long(r.Value); }
+            foreach (var i in c.Institutions) h.Str(i);
         }
+        foreach (var (id, inst) in s.Institutions) { h.Str(id); h.Int(inst.Founder); h.Int(inst.HomeCity); h.Int(inst.FoundedTurn); }
         h.Int(s.NextUnitId);
         foreach (var u in s.Units.OrderBy(u => u.Id))
         {

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "guilds:masons",
+    "name": "Masons' Guild",
+    "category": "guild",
+    "description": "Stonework and building.",
+    "color": "#9e9e9e",
+    "requiresTech": "guilds:craftsmanship",
+    "requiresBuilding": "guilds:guildhall",
+    "foundCost": { "guilds:renown": 50 },
+    "spreaders": ["guilds:journeyman"],
+    "passiveSpreadPercent": 5,
+    "spreadRange": 2
+  },
+  {
+    "id": "guilds:smiths",
+    "name": "Smiths' Guild",
+    "category": "guild",
+    "description": "Arms and tools. Trains Huscarls.",
+    "color": "#6d4c41",
+    "requiresTech": "guilds:craftsmanship",
+    "requiresBuilding": "guilds:guildhall",
+    "foundCost": { "guilds:renown": 50 },
+    "spreaders": ["guilds:journeyman"],
+    "passiveSpreadPercent": 5,
+    "spreadRange": 2
+  },
+  {
+    "id": "guilds:artisans",
+    "name": "Artisans' Guild",
+    "category": "guild",
+    "description": "Fine goods and art.",
+    "color": "#ad5ac2",
+    "requiresTech": "guilds:craftsmanship",
+    "requiresBuilding": "guilds:guildhall",
+    "foundCost": { "guilds:renown": 50 },
+    "spreaders": ["guilds:journeyman"],
+    "passiveSpreadPercent": 5,
+    "spreadRange": 2
+  }
+]

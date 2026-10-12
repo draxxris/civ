@@ -1,0 +1,20 @@
+[
+  {
+    "id": "religion:shrine",
+    "name": "Shrine",
+    "cost": 20,
+    "requiresTech": "religion:mysticism",
+    "culture": 1,
+    "specialistSlots": { "base:priest": 1 }
+  },
+  {
+    "id": "religion:cathedral",
+    "name": "Cathedral",
+    "cost": 40,
+    "requiresTech": "religion:theology",
+    "requiresInstitutionCategory": "religion",
+    "resourceCost": { "religion:faith": 30 },
+    "culture": 3,
+    "specialistSlots": { "base:priest": 2 }
+  }
+]

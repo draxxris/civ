@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- A mod built only on the public mod API (Civ.Core). The build output's mods/religion folder is a ready-to-drop mod folder. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Civ.Core\Civ.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mod.json" Link="mods\religion\mod.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="data\**\*" Link="mods\religion\data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="CopyModAssembly" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(OutDir)mods\religion" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

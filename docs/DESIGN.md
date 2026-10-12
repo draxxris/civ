@@ -15,6 +15,7 @@ A Civilization 4-style game on a hex grid where **everything is a mod**, includi
 | `Civ.Core` | Hex math, deterministic RNG, content definitions + registries, the mod API (`IMod`, `IModContext`), mod loader, `Simulation`, command codec, state hash. Mods reference only this. |
 | `Civ.Net` | Lockstep session, transport abstraction, in-process transport. |
 | `Civ.BaseGame` | The base game as a mod: `mod.json`, DLL, `data/*.json` sidecars. |
+| `Civ.Religion`, `Civ.Guilds`, `Civ.Corporations` | Optional mods built only on the public API (Faith, Renown, Capital). Each build output has a ready-to-drop `mods/<id>/` folder. |
 | `Civ.Client.Core` | Engine-free front-end logic (`GameSession`: selection, clicks, city/unit actions) and mod discovery; unit-tested. |
 | `Civ.Godot` | Godot 4 .NET front end (outside `Civ.slnx`; build with `dotnet build src/Civ.Godot`). |
 | `Civ.Tests` | xunit tests incl. loading the base mod from its folder and two-peer lockstep. |
@@ -33,7 +34,28 @@ mods/mymod/
 - Ids are namespaced `modid:name`; a mod can only *register* inside its own namespace, but can `Override` anything registered earlier (load order follows `dependencies`, ties broken by id).
 - Each mod loads in its own `AssemblyLoadContext`; `Civ.Core` always resolves to the host's copy so types are shared.
 - Registries are frozen after load.
-- Extension points today: terrain, tech, building, culture level, civilization, unit, promotion, experience level, player AI, map generator, turn system (ordered rule steps), command type. Next: units, improvements/resources, civics, promotions, events, AI, UI panels (client side API).
+- Extension points today: terrain, tech, building, culture level, civilization, unit, promotion, experience level, player AI, map generator, turn system (ordered rule steps), command type, resource, resource source, yield source, institution. Next: units, improvements/resources, civics, promotions, events, AI, UI panels (client side API).
+
+## Resources and institutions
+
+Resource-based systems (religion, guilds, corporations, and whatever else a mod invents) share two core mechanics, so a mod only declares data and the code that is truly its own.
+
+- **`ResourceDef`** declares a resource: `scope` `player` (one pool per civ, e.g. Faith) or `city` (each city earns and keeps its own, e.g. Renown), an optional `cap`, and data `rates`. A rate is counted per city `from` a `building`, `specialist`, `civic`, `terrain` (worked tile), `institution`, `population` or flat `city`; negative amounts consume. `stockpile: false` makes a flow: nothing is stored and only the current net per turn counts (the goods corporations use).
+- **`IResourceSource`** adds code-driven per-city rates (a holy city's tithe, corporate upkeep). **`ICityYieldSource`** adds food/production/commerce/culture to a city; the base game's yield rules sum them, so a mod changes yields without touching the base game.
+- The core turn system `core:resources` (order 400) adds every city's rates to the right pools. Player pools take the net over all cities at once, then clamp to `[0, cap]`.
+- Techs, buildings and units have a `resourceCost`, paid when research, construction or training starts (switching away does not refund it). City-scoped costs come from the city doing the work; a tech's city-scoped cost is drawn from all your cities, lowest id first. `Resources.CheckAfford`/`Spend`/`Add` are the same calls mod commands use.
+- **`InstitutionDef`** is anything founded once in a city and then spread: a `category` (religion, guild, corporation), the tech and building needed to found it, `foundCost`, `spreaders` (units used up to carry it, with an optional `spreadCost`), `passiveSpreadPercent` within `spreadRange` (rolled on the simulation RNG by `core:institutions`, order 450), and `conflicts`. Commands `core:found_institution` and `core:spread_institution` validate and apply this for every mod. Buildings and units can require an institution (`requiresInstitution`) or any of a category (`requiresInstitutionCategory`) in the city.
+- References are checked when loading finishes (unknown ids in rates, costs, spreaders and conflicts, bad scopes, spending a flow), so a typo fails at load rather than mid-game.
+
+The three bundled mods are the dogfood test; none reference the base game's code, only its ids:
+
+| Mod | Resource | From | Spent on | Its own code |
+|---|---|---|---|---|
+| `religion` | Faith (civ) | priests, temples, shrines, cathedrals, Organized Religion civic | founding the three religions, missionaries, cathedrals | +1 culture per religion in a city (+2 in the holy city); the holy city collects 1 Faith per other follower city |
+| `guilds` | Renown (per city, cap 500) | engineers, artists, workshops, guildhalls, each guild present | founding guilds (masons, smiths, artisans), journeymen, Masterwork Forge, Huscarls (need the Smiths), the Trade Secrets tech | per-guild yields read from its own `guild_effects.json` |
+| `corporations` | Capital (civ); Grain, Stone, Fish (flows from worked terrain) | merchants, markets, exchanges; headquarters earn 2 per branch | founding corporations, executives, 1 upkeep per branch | each branch consumes 1 of each of its goods and yields a percentage of the owner's remaining supply; corporations sharing a good conflict; branches stall when a good runs short or Capital runs out |
+
+Map resources (bonus resources on tiles) do not exist yet, so the corporations' goods come from worked terrain for now. There is no trade between civs, and the basic AI does not found or spread institutions.
 
 ## Civilizations and AI
 
@@ -72,4 +94,4 @@ The client is a Godot 4.4 .NET project. Logic and AI mods stay plain .NET DLLs l
 
 ## Not yet done
 
-City capture, ranged/sea/air combat, unit stacking rules, fog of war, a real AI strategy (the basic AI only trains, promotes and attacks adjacent targets, and never changes civics or citizen assignments), happiness/health, anarchy on civic change, unit pathfinding in the client (right-click walks greedily), floating city/unit labels, unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).
+Map resources and trade between civs (corporations use terrain goods meanwhile), AI use of institutions, city capture, ranged/sea/air combat, unit stacking rules, fog of war, a real AI strategy (the basic AI only trains, promotes and attacks adjacent targets, and never changes civics or citizen assignments), happiness/health, anarchy on civic change, unit pathfinding in the client (right-click walks greedily), floating city/unit labels, unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).

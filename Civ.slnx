@@ -4,6 +4,9 @@
     <Project Path="src/Civ.Net/Civ.Net.csproj" />
     <Project Path="src/Civ.BaseGame/Civ.BaseGame.csproj" />
     <Project Path="src/Civ.Client.Core/Civ.Client.Core.csproj" />
+    <Project Path="src/Civ.Religion/Civ.Religion.csproj" />
+    <Project Path="src/Civ.Guilds/Civ.Guilds.csproj" />
+    <Project Path="src/Civ.Corporations/Civ.Corporations.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />

@@ -1,0 +1,5 @@
+[
+  { "guild": "guilds:masons",   "production": 2, "homeProduction": 1 },
+  { "guild": "guilds:smiths",   "production": 1, "commerce": 1, "homeProduction": 1 },
+  { "guild": "guilds:artisans", "commerce": 1, "culture": 2, "homeCulture": 2 }
+]

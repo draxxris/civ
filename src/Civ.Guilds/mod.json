@@ -1,0 +1,7 @@
+{
+  "id": "guilds",
+  "name": "Guilds",
+  "version": "0.1.0",
+  "assembly": "Civ.Guilds.dll",
+  "dependencies": ["base"]
+}

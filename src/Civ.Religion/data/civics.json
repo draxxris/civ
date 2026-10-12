@@ -1,0 +1,5 @@
+[
+  { "id": "religion:paganism", "name": "Paganism", "category": "religion", "isDefault": true },
+  { "id": "religion:organized_religion", "name": "Organized Religion", "category": "religion", "requiresTech": "religion:theology",
+    "cultureBonus": 10, "specialistSlots": { "base:priest": 1 } }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "corporations:capital",
+    "name": "Capital",
+    "description": "Pays for founding corporations, executives and branch upkeep. Headquarters earn it back from their branches.",
+    "scope": "player",
+    "color": "#4caf50",
+    "rates": [
+      { "from": "specialist", "id": "base:merchant", "amount": 2 },
+      { "from": "building", "id": "base:market", "amount": 1 },
+      { "from": "building", "id": "corporations:exchange", "amount": 3 }
+    ]
+  },
+  {
+    "id": "corporations:grain",
+    "name": "Grain",
+    "description": "A good from worked grassland and plains. Not stored: corporations use what you produce each turn.",
+    "scope": "player",
+    "stockpile": false,
+    "color": "#d4b84a",
+    "rates": [
+      { "from": "terrain", "id": "base:grassland", "amount": 1 },
+      { "from": "terrain", "id": "base:plains", "amount": 1 }
+    ]
+  },
+  {
+    "id": "corporations:stone",
+    "name": "Stone",
+    "description": "A good from worked hills.",
+    "scope": "player",
+    "stockpile": false,
+    "color": "#8a7a52",
+    "rates": [ { "from": "terrain", "id": "base:hills", "amount": 1 } ]
+  },
+  {
+    "id": "corporations:fish",
+    "name": "Fish",
+    "description": "A good from worked ocean.",
+    "scope": "player",
+    "stockpile": false,
+    "color": "#2a7fc0",
+    "rates": [ { "from": "terrain", "id": "base:ocean", "amount": 1 } ]
+  }
+]

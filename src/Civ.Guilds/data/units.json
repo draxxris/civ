@@ -1,0 +1,24 @@
+[
+  {
+    "id": "guilds:journeyman",
+    "name": "Journeyman",
+    "cost": 15,
+    "requiresTech": "guilds:craftsmanship",
+    "requiresInstitutionCategory": "guild",
+    "resourceCost": { "guilds:renown": 10 },
+    "strength": 0,
+    "moves": 2,
+    "classes": []
+  },
+  {
+    "id": "guilds:huscarl",
+    "name": "Huscarl",
+    "cost": 30,
+    "requiresTech": "guilds:trade_secrets",
+    "requiresInstitution": "guilds:smiths",
+    "resourceCost": { "guilds:renown": 25 },
+    "strength": 16,
+    "moves": 1,
+    "classes": ["melee"]
+  }
+]

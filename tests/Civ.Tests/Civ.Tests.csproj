@@ -12,5 +12,14 @@
     <ProjectReference Include="..\..\src\Civ.Net\Civ.Net.csproj" />
     <ProjectReference Include="..\..\src\Civ.BaseGame\Civ.BaseGame.csproj" />
     <ProjectReference Include="..\..\src\Civ.Client.Core\Civ.Client.Core.csproj" />
+    <!-- Built so their mods/<id> folders (mod.json + data) land in the test output; the tests load them like a player would. -->
+    <ProjectReference Include="..\..\src\Civ.Religion\Civ.Religion.csproj" />
+    <ProjectReference Include="..\..\src\Civ.Guilds\Civ.Guilds.csproj" />
+    <ProjectReference Include="..\..\src\Civ.Corporations\Civ.Corporations.csproj" />
   </ItemGroup>
+  <Target Name="CopyModAssemblies" AfterTargets="Build">
+    <Copy SourceFiles="$(OutDir)Civ.Religion.dll" DestinationFolder="$(OutDir)mods/religion" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutDir)Civ.Guilds.dll" DestinationFolder="$(OutDir)mods/guilds" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutDir)Civ.Corporations.dll" DestinationFolder="$(OutDir)mods/corporations" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

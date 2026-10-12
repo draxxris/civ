@@ -1,0 +1,35 @@
+[
+  {
+    "id": "corporations:granary_trust",
+    "name": "Granary Trust",
+    "description": "Turns grain and fish into food in every branch.",
+    "color": "#e0a030",
+    "consumes": ["corporations:grain", "corporations:fish"],
+    "foodPercent": 25,
+    "upkeep": 1,
+    "headquartersCapital": 2,
+    "foundCost": 60
+  },
+  {
+    "id": "corporations:quarry_combine",
+    "name": "Quarry Combine",
+    "description": "Turns stone into production in every branch.",
+    "color": "#9a9a9a",
+    "consumes": ["corporations:stone"],
+    "productionPercent": 50,
+    "upkeep": 1,
+    "headquartersCapital": 2,
+    "foundCost": 60
+  },
+  {
+    "id": "corporations:merchant_fleet",
+    "name": "Merchant Fleet",
+    "description": "Turns fish into commerce in every branch.",
+    "color": "#2a7fc0",
+    "consumes": ["corporations:fish"],
+    "commercePercent": 50,
+    "upkeep": 1,
+    "headquartersCapital": 2,
+    "foundCost": 60
+  }
+]

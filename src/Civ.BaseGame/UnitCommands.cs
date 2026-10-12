@@ -13,13 +13,20 @@ public sealed class StartTrainingCommand : GameCommand
         if (city == null || city.Owner != Player) return "not your city";
         if (!sim.Content.Units.TryGet(Unit, out var def)) return "unknown unit";
         if (def.RequiresTech != null && !sim.State.PlayerById(Player).Techs.Contains(def.RequiresTech)) return "tech not known";
-        return null;
+        if (Institutions.CheckRequirement(sim, city, def.RequiresInstitution, def.RequiresInstitutionCategory) is { } why) return why;
+        if (city.Training == Unit) return null; // already paid for
+        return Resources.CheckAfford(sim, Player, city, def.ResourceCost);
     }
 
+    /// <summary>Starting a unit pays its resource cost up front; switching away does not refund it.</summary>
     public override void Apply(Simulation sim)
     {
         var city = sim.State.Cities.First(c => c.Id == CityId);
-        if (city.Training != Unit) { city.Training = Unit; city.TrainProgress = 0; }
+        if (city.Training != Unit)
+        {
+            Resources.Spend(sim, Player, city, sim.Content.Units.Get(Unit).ResourceCost);
+            city.Training = Unit; city.TrainProgress = 0;
+        }
         city.Building = null; city.BuildProgress = 0;
     }
 }

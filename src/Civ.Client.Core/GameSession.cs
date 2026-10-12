@@ -55,6 +55,12 @@ public sealed class GameSession
 
     public void EndTurn() => Submit(new EndTurnCommand { Player = Human });
 
+    public void FoundInstitution(City city, string institution) =>
+        Submit(new FoundInstitutionCommand { Player = Human, CityId = city.Id, Institution = institution });
+
+    public void SpreadInstitution(Unit unit, string institution) =>
+        Submit(new SpreadInstitutionCommand { Player = Human, UnitId = unit.Id, Institution = institution });
+
     // --- selection --------------------------------------------------------------------------
 
     /// <summary>Select my unit or city on this tile; clicking again cycles through the stack (units, then the city). Empty tile clears.</summary>

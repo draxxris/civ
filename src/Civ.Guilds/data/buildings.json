@@ -1,0 +1,21 @@
+[
+  {
+    "id": "guilds:guildhall",
+    "name": "Guildhall",
+    "cost": 30,
+    "requiresTech": "guilds:craftsmanship",
+    "production": 1,
+    "specialistSlots": { "base:engineer": 1, "base:artist": 1 }
+  },
+  {
+    "id": "guilds:masterwork_forge",
+    "name": "Masterwork Forge",
+    "cost": 30,
+    "requiresTech": "guilds:trade_secrets",
+    "requiresInstitutionCategory": "guild",
+    "resourceCost": { "guilds:renown": 40 },
+    "production": 3,
+    "culture": 1,
+    "unitExperience": 2
+  }
+]

@@ -27,6 +27,8 @@ public sealed class TechDef : ContentDef
 {
     public int Cost { get; init; } = 10;
     public string[] Prerequisites { get; init; } = [];
+    /// <summary>Mod resources paid when research starts, by resource id (see <see cref="ResourceDef"/>).</summary>
+    public Dictionary<string, long> ResourceCost { get; init; } = new();
 }
 
 public sealed class BuildingDef : ContentDef
@@ -41,6 +43,12 @@ public sealed class BuildingDef : ContentDef
     public int UnitExperience { get; init; }
     /// <summary>Specialist slots this building provides, by specialist id. -1 = unlimited.</summary>
     public Dictionary<string, int> SpecialistSlots { get; init; } = new();
+    /// <summary>Mod resources paid when construction starts, by resource id.</summary>
+    public Dictionary<string, long> ResourceCost { get; init; } = new();
+    /// <summary>The city must host this institution (e.g. a particular guild).</summary>
+    public string? RequiresInstitution { get; init; }
+    /// <summary>The city must host some institution of this category (e.g. any religion).</summary>
+    public string? RequiresInstitutionCategory { get; init; }
 }
 
 /// <summary>
@@ -79,6 +87,12 @@ public sealed class UnitDef : ContentDef
     public bool CanFoundCity { get; init; }
     /// <summary>Tags such as "melee", "ranged", "mounted". Promotions are restricted by class.</summary>
     public string[] Classes { get; init; } = [];
+    /// <summary>Mod resources paid when training starts, by resource id.</summary>
+    public Dictionary<string, long> ResourceCost { get; init; } = new();
+    /// <summary>The training city must host this institution.</summary>
+    public string? RequiresInstitution { get; init; }
+    /// <summary>The training city must host some institution of this category.</summary>
+    public string? RequiresInstitutionCategory { get; init; }
 }
 
 /// <summary>

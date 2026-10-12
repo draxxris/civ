@@ -1,0 +1,16 @@
+[
+  {
+    "id": "religion:faith",
+    "name": "Faith",
+    "description": "Spent on founding religions, missionaries and cathedrals.",
+    "scope": "player",
+    "color": "#e8d27a",
+    "rates": [
+      { "from": "specialist", "id": "base:priest", "amount": 2 },
+      { "from": "building", "id": "base:temple", "amount": 1 },
+      { "from": "building", "id": "religion:shrine", "amount": 2 },
+      { "from": "building", "id": "religion:cathedral", "amount": 3 },
+      { "from": "civic", "id": "religion:organized_religion", "amount": 1 }
+    ]
+  }
+]

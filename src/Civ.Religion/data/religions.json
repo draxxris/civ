@@ -1,0 +1,41 @@
+[
+  {
+    "id": "religion:sun_cult",
+    "name": "Sun Cult",
+    "category": "religion",
+    "description": "Worship of the sun. Founded with Mysticism.",
+    "color": "#f2b134",
+    "requiresTech": "religion:mysticism",
+    "requiresBuilding": "religion:shrine",
+    "foundCost": { "religion:faith": 40 },
+    "spreaders": ["religion:missionary"],
+    "passiveSpreadPercent": 10,
+    "spreadRange": 4
+  },
+  {
+    "id": "religion:earth_mother",
+    "name": "Earth Mother",
+    "category": "religion",
+    "description": "Worship of the land and harvest. Founded with Mysticism.",
+    "color": "#6aa84f",
+    "requiresTech": "religion:mysticism",
+    "requiresBuilding": "religion:shrine",
+    "foundCost": { "religion:faith": 40 },
+    "spreaders": ["religion:missionary"],
+    "passiveSpreadPercent": 10,
+    "spreadRange": 4
+  },
+  {
+    "id": "religion:the_way",
+    "name": "The Way",
+    "category": "religion",
+    "description": "A philosophy of balance. Founded with Theology.",
+    "color": "#8e7cc3",
+    "requiresTech": "religion:theology",
+    "requiresBuilding": "religion:shrine",
+    "foundCost": { "religion:faith": 60 },
+    "spreaders": ["religion:missionary"],
+    "passiveSpreadPercent": 10,
+    "spreadRange": 4
+  }
+]

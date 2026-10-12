@@ -41,12 +41,18 @@ public static class ModLoader
         var ordered = Sort(mods.ToList());
         var db = new ContentDb();
         db.CommandTypes.Register(new CommandTypeDef("core:end_turn", typeof(Game.EndTurnCommand)), "core");
+        // Shared mechanics every mod builds on: resource income and institution founding/spreading.
+        db.CommandTypes.Register(new CommandTypeDef("core:found_institution", typeof(Game.FoundInstitutionCommand)), "core");
+        db.CommandTypes.Register(new CommandTypeDef("core:spread_institution", typeof(Game.SpreadInstitutionCommand)), "core");
+        db.TurnSystems.Register(new Game.ResourceSystem(), "core");
+        db.TurnSystems.Register(new Game.InstitutionSpreadSystem(), "core");
         foreach (var mod in ordered)
         {
             var ctx = new ModContext(mod.Manifest.Id, new DirectoryModData(mod.Root), db);
             mod.Instance.Register(ctx);
         }
         db.LoadedMods = ordered.Select(m => m.Manifest.Id).ToList();
+        ContentValidator.Validate(db);
         db.Freeze();
         return db;
     }
@@ -121,6 +127,10 @@ internal sealed class ModContext : IModContext
     public ModRegistry<IMapGenerator> MapGenerators { get; }
     public ModRegistry<ITurnSystem> TurnSystems { get; }
     public ModRegistry<CommandTypeDef> CommandTypes { get; }
+    public ModRegistry<ResourceDef> Resources { get; }
+    public ModRegistry<IResourceSource> ResourceSources { get; }
+    public ModRegistry<ICityYieldSource> YieldSources { get; }
+    public ModRegistry<InstitutionDef> Institutions { get; }
 
     public ModContext(string modId, IModData data, ContentDb db)
     {
@@ -139,6 +149,10 @@ internal sealed class ModContext : IModContext
         MapGenerators = new(db.MapGenerators, modId);
         TurnSystems = new(db.TurnSystems, modId);
         CommandTypes = new(db.CommandTypes, modId);
+        Resources = new(db.Resources, modId);
+        ResourceSources = new(db.ResourceSources, modId);
+        YieldSources = new(db.YieldSources, modId);
+        Institutions = new(db.Institutions, modId);
     }
 
     public void RegisterCommand<TCommand>(string name) where TCommand : Game.GameCommand =>

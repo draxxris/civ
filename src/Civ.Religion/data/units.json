@@ -1,0 +1,13 @@
+[
+  {
+    "id": "religion:missionary",
+    "name": "Missionary",
+    "cost": 20,
+    "requiresTech": "religion:mysticism",
+    "requiresInstitutionCategory": "religion",
+    "resourceCost": { "religion:faith": 15 },
+    "strength": 0,
+    "moves": 2,
+    "classes": ["religious"]
+  }
+]

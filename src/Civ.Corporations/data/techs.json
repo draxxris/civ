@@ -1,0 +1,3 @@
+[
+  { "id": "corporations:joint_stock", "name": "Joint Stock Company", "cost": 30, "prerequisites": ["base:the_wheel", "base:writing"] }
+]

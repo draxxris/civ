@@ -1,0 +1,19 @@
+[
+  {
+    "id": "guilds:renown",
+    "name": "Renown",
+    "description": "Craft mastery, earned and kept by each city. Spent on guilds, journeymen, masterwork buildings, elite units and guild techs.",
+    "scope": "city",
+    "cap": 500,
+    "color": "#c27c4e",
+    "rates": [
+      { "from": "specialist", "id": "base:engineer", "amount": 2 },
+      { "from": "specialist", "id": "base:artist", "amount": 2 },
+      { "from": "building", "id": "base:workshop", "amount": 1 },
+      { "from": "building", "id": "guilds:guildhall", "amount": 2 },
+      { "from": "institution", "id": "guilds:masons", "amount": 1 },
+      { "from": "institution", "id": "guilds:smiths", "amount": 1 },
+      { "from": "institution", "id": "guilds:artisans", "amount": 1 }
+    ]
+  }
+]

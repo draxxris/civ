@@ -17,6 +17,10 @@ public sealed class ContentDb
     public Registry<IMapGenerator> MapGenerators { get; } = new("map generator");
     public Registry<ITurnSystem> TurnSystems { get; } = new("turn system");
     public Registry<CommandTypeDef> CommandTypes { get; } = new("command type");
+    public Registry<ResourceDef> Resources { get; } = new("resource");
+    public Registry<IResourceSource> ResourceSources { get; } = new("resource source");
+    public Registry<ICityYieldSource> YieldSources { get; } = new("yield source");
+    public Registry<InstitutionDef> Institutions { get; } = new("institution");
 
     public IReadOnlyList<string> LoadedMods { get; internal set; } = [];
 
@@ -24,6 +28,7 @@ public sealed class ContentDb
     {
         Specialists.Freeze(); Civics.Freeze(); Units.Freeze(); Promotions.Freeze(); ExperienceLevels.Freeze(); Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
         MapGenerators.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze();
+        Resources.Freeze(); ResourceSources.Freeze(); YieldSources.Freeze(); Institutions.Freeze();
     }
 
     /// <summary>Highest culture level reached for a culture total, or null if below the first threshold.</summary>

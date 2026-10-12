@@ -46,13 +46,17 @@ public sealed class SetResearchCommand : GameCommand
         var p = sim.State.PlayerById(Player);
         if (p.Techs.Contains(Tech)) return "already known";
         if (def.Prerequisites.Any(r => !p.Techs.Contains(r))) return "missing prerequisites";
-        return null;
+        if (p.Researching == Tech) return null; // already paid for
+        return Resources.CheckAfford(sim, Player, null, def.ResourceCost);
     }
 
+    /// <summary>Switching to a tech pays its resource cost up front; switching away does not refund it.</summary>
     public override void Apply(Simulation sim)
     {
         var p = sim.State.PlayerById(Player);
-        if (p.Researching != Tech) { p.Researching = Tech; p.ResearchProgress = 0; }
+        if (p.Researching == Tech) return;
+        Resources.Spend(sim, Player, null, sim.Content.Techs.Get(Tech).ResourceCost);
+        p.Researching = Tech; p.ResearchProgress = 0;
     }
 }
 
@@ -68,13 +72,20 @@ public sealed class StartBuildingCommand : GameCommand
         if (!sim.Content.Buildings.TryGet(Building, out var def)) return "unknown building";
         if (city.Buildings.Contains(Building)) return "already built";
         if (def.RequiresTech != null && !sim.State.PlayerById(Player).Techs.Contains(def.RequiresTech)) return "tech not known";
-        return null;
+        if (Institutions.CheckRequirement(sim, city, def.RequiresInstitution, def.RequiresInstitutionCategory) is { } why) return why;
+        if (city.Building == Building) return null; // already paid for
+        return Resources.CheckAfford(sim, Player, city, def.ResourceCost);
     }
 
+    /// <summary>Starting a building pays its resource cost up front; switching away does not refund it.</summary>
     public override void Apply(Simulation sim)
     {
         var city = sim.State.Cities.First(c => c.Id == CityId);
-        if (city.Building != Building) { city.Building = Building; city.BuildProgress = 0; }
+        if (city.Building != Building)
+        {
+            Resources.Spend(sim, Player, city, sim.Content.Buildings.Get(Building).ResourceCost);
+            city.Building = Building; city.BuildProgress = 0;
+        }
         city.Training = null; city.TrainProgress = 0;
     }
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "corporations:executive",
+    "name": "Executive",
+    "cost": 20,
+    "requiresTech": "corporations:joint_stock",
+    "requiresInstitutionCategory": "corporation",
+    "resourceCost": { "corporations:capital": 20 },
+    "strength": 0,
+    "moves": 2,
+    "classes": []
+  }
+]

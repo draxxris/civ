@@ -19,7 +19,7 @@ public static class Yields
         return new Yield(t.Food, t.Production, t.Commerce);
     }
 
-    /// <summary>Flat +1 production/commerce floor, the free city centre, worked tiles, specialists and buildings.</summary>
+    /// <summary>Flat +1 production/commerce floor, the free city centre, worked tiles, specialists, buildings and mod yield sources.</summary>
     public static Yield OfCity(Simulation sim, City city)
     {
         var total = new Yield(0, 1, 1) + OfTile(sim, city.Position);
@@ -33,6 +33,11 @@ public static class Yields
         {
             var b = sim.Content.Buildings.Get(id);
             total += new Yield(b.Food, b.Production, b.Commerce, b.Culture);
+        }
+        foreach (var source in sim.Content.YieldSources.All)
+        {
+            var y = source.YieldFor(sim, city);
+            total += new Yield(y.Food, y.Production, y.Commerce, y.Culture);
         }
         return total;
     }

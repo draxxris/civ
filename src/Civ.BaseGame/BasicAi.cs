@@ -25,7 +25,7 @@ public sealed class BasicAi : IPlayerAI
         if (player.Researching == null)
         {
             var tech = sim.Content.Techs.All
-                .Where(t => !player.Techs.Contains(t.Id) && t.Prerequisites.All(player.Techs.Contains))
+                .Where(t => new SetResearchCommand { Player = playerId, Tech = t.Id }.Validate(sim) == null)
                 .OrderBy(t => t.Cost).ThenBy(t => t.Id, StringComparer.Ordinal)
                 .FirstOrDefault();
             if (tech != null) yield return new SetResearchCommand { Player = playerId, Tech = tech.Id };
@@ -34,7 +34,7 @@ public sealed class BasicAi : IPlayerAI
         foreach (var city in sim.State.Cities.Where(c => c.Owner == playerId && c.Building == null))
         {
             var building = sim.Content.Buildings.All
-                .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || player.Techs.Contains(b.RequiresTech)))
+                .Where(b => new StartBuildingCommand { Player = playerId, CityId = city.Id, Building = b.Id }.Validate(sim) == null)
                 .OrderBy(b => b.Cost).ThenBy(b => b.Id, StringComparer.Ordinal)
                 .FirstOrDefault();
             if (building != null) { yield return new StartBuildingCommand { Player = playerId, CityId = city.Id, Building = building.Id }; continue; }
@@ -44,7 +44,7 @@ public sealed class BasicAi : IPlayerAI
                     < sim.State.Cities.Count(c => c.Owner == playerId))
             {
                 var unit = sim.Content.Units.All
-                    .Where(u => u.Strength > 0 && (u.RequiresTech == null || player.Techs.Contains(u.RequiresTech)))
+                    .Where(u => u.Strength > 0 && new StartTrainingCommand { Player = playerId, CityId = city.Id, Unit = u.Id }.Validate(sim) == null)
                     .OrderByDescending(u => u.Strength).ThenBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
                 if (unit != null) yield return new StartTrainingCommand { Player = playerId, CityId = city.Id, Unit = unit.Id };
             }

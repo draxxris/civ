@@ -1,0 +1,5 @@
+[
+  { "id": "guilds:craftsmanship", "name": "Craftsmanship", "cost": 12, "prerequisites": ["base:mining"] },
+  { "id": "guilds:trade_secrets", "name": "Trade Secrets", "cost": 20, "prerequisites": ["guilds:craftsmanship"],
+    "resourceCost": { "guilds:renown": 30 } }
+]
