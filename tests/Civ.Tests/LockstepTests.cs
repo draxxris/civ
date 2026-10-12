@@ -16,10 +16,10 @@ public class LockstepTests
         return (a, b, simA, simB);
     }
 
-    private static void PumpAll(LockstepSession a, LockstepSession b)
+    // Lockstep never goes idle on its own (empty batches keep ticks flowing), so pump a bounded number of rounds.
+    private static void PumpAll(LockstepSession a, LockstepSession b, int rounds = 8)
     {
-        int ran;
-        do { ran = a.Pump() + b.Pump(); } while (ran > 0);
+        for (int i = 0; i < rounds; i++) { a.Pump(); b.Pump(); }
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class LockstepTests
         PumpAll(a, b);
         a.Enqueue(new EndTurnCommand { Player = 0 });
         b.Enqueue(new EndTurnCommand { Player = 1 });
-        for (int i = 0; i < 6; i++) PumpAll(a, b);
+        PumpAll(a, b, 20);
 
         Assert.False(desync);
         Assert.Single(simA.State.Cities);
@@ -52,7 +52,7 @@ public class LockstepTests
         bool desync = false;
         a.Desync += _ => desync = true;
         simA.State.Turn = 99; // simulate a nondeterminism bug
-        for (int i = 0; i < 4; i++) PumpAll(a, b);
+        PumpAll(a, b, 10);
         Assert.True(desync);
     }
 }
