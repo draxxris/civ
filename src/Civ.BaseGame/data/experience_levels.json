@@ -1,0 +1,7 @@
+[
+  { "id": "base:level1", "name": "Level 1", "threshold": 2 },
+  { "id": "base:level2", "name": "Level 2", "threshold": 5 },
+  { "id": "base:level3", "name": "Level 3", "threshold": 10 },
+  { "id": "base:level4", "name": "Level 4", "threshold": 17 },
+  { "id": "base:level5", "name": "Level 5", "threshold": 26 }
+]

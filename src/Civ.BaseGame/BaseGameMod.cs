@@ -1,0 +1,54 @@
+using Civ.Content;
+using Civ.Modding;
+
+namespace Civ.BaseGame;
+
+/// <summary>
+/// The base game is an ordinary mod: it has no privileges over any other. Terrain is code, techs/buildings/culture
+/// levels are sidecar JSON, rules are turn systems and commands.
+/// </summary>
+public sealed class BaseGameMod : IMod
+{
+    public void Register(IModContext ctx)
+    {
+        // Terrain, registered in code.
+        ctx.Terrains.Register(new TerrainDef { Id = "base:ocean",     Name = "Ocean",     IsWater = true, Passable = false, Food = 1, Commerce = 2, Color = "#2a5d9f" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:grassland", Name = "Grassland", Food = 2, Color = "#5fa84a" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:plains",    Name = "Plains",    Food = 1, Production = 1, Color = "#c4b45a" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:desert",    Name = "Desert",    Color = "#e0cf8a" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:hills",     Name = "Hills",     MoveCost = 2, Production = 2, DefenseBonus = 25, Color = "#8a7a52" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:mountains", Name = "Mountains", Passable = false, DefenseBonus = 50, Color = "#9a9a9a" });
+
+        // Sidecar data.
+        foreach (var t in ctx.Data.ReadJson<TechDef[]>("data/techs.json")) ctx.Techs.Register(t);
+        foreach (var b in ctx.Data.ReadJson<BuildingDef[]>("data/buildings.json")) ctx.Buildings.Register(b);
+        foreach (var c in ctx.Data.ReadJson<CultureLevelDef[]>("data/culture.json")) ctx.CultureLevels.Register(c);
+
+        foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Civilizations.Register(c);
+        ctx.PlayerAIs.Register(new BasicAi());
+
+        foreach (var s in ctx.Data.ReadJson<SpecialistDef[]>("data/specialists.json")) ctx.Specialists.Register(s);
+        foreach (var c in ctx.Data.ReadJson<CivicDef[]>("data/civics.json")) ctx.Civics.Register(c);
+        foreach (var u in ctx.Data.ReadJson<UnitDef[]>("data/units.json")) ctx.Units.Register(u);
+        foreach (var p in ctx.Data.ReadJson<PromotionDef[]>("data/promotions.json")) ctx.Promotions.Register(p);
+        foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.ExperienceLevels.Register(l);
+
+        ctx.MapGenerators.Register(new ContinentsGenerator());
+
+        ctx.RegisterCommand<FoundCityCommand>("found_city");
+        ctx.RegisterCommand<SetResearchCommand>("set_research");
+        ctx.RegisterCommand<StartBuildingCommand>("start_building");
+        ctx.RegisterCommand<StartTrainingCommand>("start_training");
+        ctx.RegisterCommand<MoveUnitCommand>("move_unit");
+        ctx.RegisterCommand<AttackCommand>("attack");
+        ctx.RegisterCommand<PromoteUnitCommand>("promote_unit");
+        ctx.RegisterCommand<SetCityWorkCommand>("set_city_work");
+        ctx.RegisterCommand<SetCivicCommand>("set_civic");
+
+        ctx.TurnSystems.Register(new UnitSystem());
+        ctx.TurnSystems.Register(new GrowthSystem());
+        ctx.TurnSystems.Register(new ResearchSystem());
+        ctx.TurnSystems.Register(new ProductionSystem());
+        ctx.TurnSystems.Register(new CultureSystem());
+    }
+}

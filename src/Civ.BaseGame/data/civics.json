@@ -1,0 +1,10 @@
+[
+  { "id": "base:despotism",    "name": "Despotism",    "category": "government", "isDefault": true },
+  { "id": "base:monarchy",     "name": "Monarchy",     "category": "government", "requiresTech": "base:monarchy",
+    "cultureBonus": 10, "specialistSlots": { "base:priest": 1 } },
+  { "id": "base:tribalism",    "name": "Tribalism",    "category": "labor", "isDefault": true },
+  { "id": "base:slavery",      "name": "Slavery",      "category": "labor", "requiresTech": "base:masonry",
+    "productionBonus": 25 },
+  { "id": "base:caste_system", "name": "Caste System", "category": "labor", "requiresTech": "base:writing",
+    "specialistSlots": { "base:scientist": -1, "base:merchant": -1, "base:artist": -1 } }
+]

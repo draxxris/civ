@@ -1,0 +1,96 @@
+using Civ.BaseGame;
+using Civ.Content;
+using Civ.Game;
+using Civ.Modding;
+using Xunit;
+
+namespace Civ.Tests;
+
+public class CivAndAiTests
+{
+    [Fact]
+    public void BaseCivilizationsLoadAndGrantStartingTechs()
+    {
+        var sim = new Simulation(TestGame.Content(), new SimulationSettings
+        {
+            Seed = 3, MapRadius = 8, PlayerCount = 2, Civilizations = ["base:scholars", "base:builders"],
+        });
+        Assert.Equal("Scholars", sim.State.Players[0].Name);
+        Assert.Contains("base:agriculture", sim.State.Players[0].Techs);
+        Assert.Contains("base:mining", sim.State.Players[1].Techs);
+    }
+
+    [Fact]
+    public void CivilizationBonusSpeedsUpCulture()
+    {
+        long Culture(string civ)
+        {
+            var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 3, MapRadius = 8, PlayerCount = 1, Civilizations = [civ] });
+            sim.TryApply(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) }, out _);
+            sim.State.Cities[0].Buildings.Add("base:library"); // 1 base + 1 building culture per turn
+            for (int i = 0; i < 10; i++) sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
+            return sim.State.Players[0].Culture;
+        }
+        Assert.Equal(20, Culture("base:builders"));
+        Assert.Equal(30, Culture("base:artisans")); // +50%
+    }
+
+    [Fact]
+    public void BasicAiPlaysAWholeGameDeterministically()
+    {
+        ulong Run()
+        {
+            var sim = new Simulation(TestGame.Content(), new SimulationSettings
+            {
+                Seed = 11, MapRadius = 8, PlayerCount = 2, PlayerAis = ["base:basic", "base:basic"],
+            });
+            for (int i = 0; i < 60; i++) sim.AdvanceTurn();
+            Assert.Equal(2, sim.State.Cities.Count);
+            Assert.All(sim.State.Players, p => Assert.NotEmpty(p.Techs));
+            Assert.All(sim.State.Cities, c => Assert.NotEmpty(c.Buildings));
+            return sim.ComputeHash();
+        }
+        Assert.Equal(Run(), Run());
+    }
+
+    [Fact]
+    public void HumanAndAiShareATurn()
+    {
+        var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 5, MapRadius = 8, PlayerCount = 2, PlayerAis = [null, "base:basic"] });
+        Assert.True(sim.State.Players[1].EndedTurn);
+        Assert.False(sim.State.Players[0].EndedTurn);
+        sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
+        Assert.Equal(2, sim.State.Turn);
+        Assert.True(sim.State.Players[1].EndedTurn); // AI already acted for the new turn
+    }
+
+    private sealed class SilentAi : IPlayerAI
+    {
+        public string Id => "mymod:silent";
+        public IEnumerable<GameCommand> Decide(Simulation sim, int playerId) => [];
+    }
+
+    [Fact]
+    public void ModsCanRegisterTheirOwnCivilizationAndAi()
+    {
+        var baseSrc = ModLoader.FromAssembly(new ModManifest { Id = "base" }, typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var extra = new ModSource
+        {
+            Manifest = new ModManifest { Id = "mymod", Dependencies = ["base"] },
+            Instance = new Extra(), Root = AppContext.BaseDirectory,
+        };
+        var db = ModLoader.Build([baseSrc, extra]);
+        var sim = new Simulation(db, new SimulationSettings { Seed = 1, MapRadius = 6, PlayerCount = 1, Civilizations = ["mymod:nomads"], PlayerAis = ["mymod:silent"] });
+        Assert.Contains("base:the_wheel", sim.State.Players[0].Techs);
+        Assert.Empty(sim.State.Cities); // the silent AI does nothing
+    }
+
+    private sealed class Extra : IMod
+    {
+        public void Register(IModContext ctx)
+        {
+            ctx.Civilizations.Register(new CivilizationDef { Id = "mymod:nomads", Name = "Nomads", StartingTechs = ["base:the_wheel"] });
+            ctx.PlayerAIs.Register(new SilentAi());
+        }
+    }
+}

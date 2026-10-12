@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Civ.Core\Civ.Core.csproj" />
+  </ItemGroup>
+</Project>

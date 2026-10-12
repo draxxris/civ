@@ -1,0 +1,8 @@
+[
+  { "id": "base:builders", "name": "Builders", "leader": "The Architect", "color": "#d9822b",
+    "startingTechs": ["base:mining"], "productionBonus": 25 },
+  { "id": "base:scholars", "name": "Scholars", "leader": "The Sage", "color": "#3b82c4",
+    "startingTechs": ["base:agriculture"], "researchBonus": 25 },
+  { "id": "base:artisans", "name": "Artisans", "leader": "The Patron", "color": "#a24bb0",
+    "startingTechs": ["base:agriculture"], "cultureBonus": 50 }
+]

@@ -1,0 +1,7 @@
+[
+  { "id": "base:poor",       "name": "Poor",       "threshold": 0 },
+  { "id": "base:fledgling",  "name": "Fledgling",  "threshold": 10 },
+  { "id": "base:developing", "name": "Developing", "threshold": 100 },
+  { "id": "base:refined",    "name": "Refined",    "threshold": 500 },
+  { "id": "base:influential","name": "Influential","threshold": 5000 }
+]
