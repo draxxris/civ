@@ -17,7 +17,7 @@ public static class StateHasher
         }
         foreach (var p in s.Players.OrderBy(p => p.Id))
         {
-            h.Int(p.Id); h.Str(p.Researching); h.Long(p.ResearchProgress); h.Long(p.Culture); h.Int(p.EndedTurn ? 1 : 0);
+            h.Int(p.Id); h.Str(p.Civilization); h.Str(p.Ai); h.Str(p.Researching); h.Long(p.ResearchProgress); h.Long(p.Culture); h.Int(p.EndedTurn ? 1 : 0);
             foreach (var t in p.Techs) h.Str(t); // SortedSet: stable
         }
         foreach (var c in s.Cities.OrderBy(c => c.Id))

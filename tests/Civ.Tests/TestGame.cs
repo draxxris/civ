@@ -16,7 +16,11 @@ internal static class TestGame
     }
 
     public static Simulation Sim(ulong seed = 7, int players = 2) =>
-        new(Content(), new SimulationSettings { Seed = seed, PlayerCount = players, MapRadius = 8 });
+        new(Content(), new SimulationSettings
+        {
+            Seed = seed, PlayerCount = players, MapRadius = 8,
+            Civilizations = Enumerable.Repeat("base:builders", players).ToArray(),
+        });
 
     public static Hex FindLand(Simulation sim, int skip = 0) =>
         sim.State.Terrain.OrderBy(k => k.Key.Q).ThenBy(k => k.Key.R)

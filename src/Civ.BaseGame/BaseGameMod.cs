@@ -24,6 +24,9 @@ public sealed class BaseGameMod : IMod
         foreach (var b in ctx.Data.ReadJson<BuildingDef[]>("data/buildings.json")) ctx.Buildings.Register(b);
         foreach (var c in ctx.Data.ReadJson<CultureLevelDef[]>("data/culture.json")) ctx.CultureLevels.Register(c);
 
+        foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Civilizations.Register(c);
+        ctx.PlayerAIs.Register(new BasicAi());
+
         ctx.MapGenerators.Register(new ContinentsGenerator());
 
         ctx.RegisterCommand<FoundCityCommand>("found_city");

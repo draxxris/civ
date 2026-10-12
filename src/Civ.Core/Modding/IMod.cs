@@ -21,6 +21,8 @@ public interface IModContext
     string ModId { get; }
     IModData Data { get; }
     ModRegistry<TerrainDef> Terrains { get; }
+    ModRegistry<CivilizationDef> Civilizations { get; }
+    ModRegistry<IPlayerAI> PlayerAIs { get; }
     ModRegistry<TechDef> Techs { get; }
     ModRegistry<BuildingDef> Buildings { get; }
     ModRegistry<CultureLevelDef> CultureLevels { get; }

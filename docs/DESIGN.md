@@ -32,7 +32,13 @@ mods/mymod/
 - Ids are namespaced `modid:name`; a mod can only *register* inside its own namespace, but can `Override` anything registered earlier (load order follows `dependencies`, ties broken by id).
 - Each mod loads in its own `AssemblyLoadContext`; `Civ.Core` always resolves to the host's copy so types are shared.
 - Registries are frozen after load.
-- Extension points today: terrain, tech, building, culture level, map generator, turn system (ordered rule steps), command type. Next: units, improvements/resources, civics, promotions, events, AI, UI panels (client side API).
+- Extension points today: terrain, tech, building, culture level, civilization, player AI, map generator, turn system (ordered rule steps), command type. Next: units, improvements/resources, civics, promotions, events, AI, UI panels (client side API).
+
+## Civilizations and AI
+
+- `CivilizationDef` (sidecar JSON or code): name, leader, color, starting techs and percentage research/production/culture bonuses that the base turn systems apply. Players pick one via `SimulationSettings.Civilizations` (default: cycle through the registry).
+- `IPlayerAI` is a registry like any other. `SimulationSettings.PlayerAis[i]` makes player `i` AI-controlled. The simulation itself calls the AI at game start and after every turn advance, on every peer, and applies the commands it returns through the normal validate/apply path. AI therefore never goes over the network and lockstep stays intact; it must be deterministic (state and `sim.Rng` only, no floats or unordered iteration).
+- The base game ships `base:basic` (found a city, research the cheapest tech, build the cheapest building), registered through the same API a mod would use.
 
 ## Simulation and multiplayer
 
@@ -47,4 +53,4 @@ Prowl is a Unity-like .NET 10 engine; `Prowl.Runtime` works standalone without t
 
 ## Not yet done
 
-Units/movement/combat, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).
+Units/movement/combat (and with them any real AI strategy), unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).

@@ -4,6 +4,9 @@ public sealed class Player
 {
     public int Id { get; init; }
     public string Name { get; init; } = "";
+    public string Civilization { get; init; } = "";
+    /// <summary>Id of the <see cref="Content.IPlayerAI"/> controlling this player, or null for a human.</summary>
+    public string? Ai { get; init; }
     public SortedSet<string> Techs { get; } = new(StringComparer.Ordinal);
     public string? Researching { get; set; }
     public long ResearchProgress { get; set; }

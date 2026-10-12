@@ -43,5 +43,17 @@ public sealed class CultureLevelDef : ContentDef
     public long Threshold { get; init; }
 }
 
+/// <summary>A playable civilization: starting techs plus percentage modifiers the rule systems apply. Mods add or override these.</summary>
+public sealed class CivilizationDef : ContentDef
+{
+    public string Leader { get; init; } = "";
+    public string Color { get; init; } = "#cccccc";
+    public string[] StartingTechs { get; init; } = [];
+    /// <summary>Percent bonuses; 25 means +25%.</summary>
+    public int ResearchBonus { get; init; }
+    public int ProductionBonus { get; init; }
+    public int CultureBonus { get; init; }
+}
+
 /// <summary>Registers a command class under an id so it can be serialized for the network.</summary>
 public sealed record CommandTypeDef(string Id, Type Type) : IHasId;

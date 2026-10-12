@@ -108,6 +108,8 @@ internal sealed class ModContext : IModContext
     public string ModId { get; }
     public IModData Data { get; }
     public ModRegistry<TerrainDef> Terrains { get; }
+    public ModRegistry<CivilizationDef> Civilizations { get; }
+    public ModRegistry<IPlayerAI> PlayerAIs { get; }
     public ModRegistry<TechDef> Techs { get; }
     public ModRegistry<BuildingDef> Buildings { get; }
     public ModRegistry<CultureLevelDef> CultureLevels { get; }
@@ -119,6 +121,8 @@ internal sealed class ModContext : IModContext
     {
         ModId = modId; Data = data;
         Terrains = new(db.Terrains, modId);
+        Civilizations = new(db.Civilizations, modId);
+        PlayerAIs = new(db.PlayerAIs, modId);
         Techs = new(db.Techs, modId);
         Buildings = new(db.Buildings, modId);
         CultureLevels = new(db.CultureLevels, modId);
