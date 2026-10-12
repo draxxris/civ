@@ -58,6 +58,17 @@ mods/mymod/
 
 Prowl is a Unity-like .NET 10 engine; `Prowl.Runtime` works standalone without the editor, so `Civ.Client` is a plain console-style executable that references the runtime project and subclasses `Game` (the same shape as Prowl's `Samples/`). The renderer reads `Simulation.State` and builds hex prisms (`Mesh.CreateCylinder(r, h, 6)`) colored from `TerrainDef.Color`. Client-side mod API (custom meshes/UI per content def) comes later via a separate `Civ.ClientApi` so headless servers never load rendering code.
 
+## City management and specialists
+
+- Cities have population, a food box (`FoodToGrow`), and work tiles within radius 2 (the centre is free). Every citizen either works a tile or is a specialist. Growth adds a citizen on the best free tile; starvation removes one.
+- `SpecialistDef` (sidecar JSON): food/production/commerce/culture per specialist (priest, scientist, merchant, engineer, artist, plus the unlimited plain citizen). Slots come from `BuildingDef.specialistSlots` and `CivicDef.specialistSlots` (-1 = unlimited): temple = priests, library = scientists, workshop = engineers, market = merchants, Caste System = unlimited scientists/merchants/artists.
+- `CivicDef` (government, labor, ...): one civic per category per player, gated by tech, with percent research/production/culture bonuses and specialist slots. `set_civic` swaps one; cities that lose slots turn surplus specialists back into citizens at once.
+- `set_city_work` replaces a city's whole assignment (tiles + specialist counts) and is validated server-side like every command (distinct tiles in range, not used by another city, slot limits, every citizen assigned).
+
+## Prowl client
+
+`Civ.Client` is a playable hot-seat-vs-AI front end: hex prisms colored from `TerrainDef.Color`, cities and units tinted by civilization, and a Paper UI with Selection / Research / Civics tabs. Selecting a city shows food, yields and specialist +/- rows with slot counts, highlights its workable tiles (click one to put a citizen to work or unassign it), and lets you pick buildings or units to produce. Selecting a unit shows health, experience level and available promotions, and offers "Found city". Controls: WASD pan, wheel zoom, left click select (click again to cycle a stack), right click move/attack, Enter ends the turn. The client only reads state and submits commands, so the same code can route through `LockstepSession`.
+
 ## Not yet done
 
-City capture, ranged/sea/air combat, unit stacking rules, fog of war, a real AI strategy (the basic AI only trains, promotes and attacks adjacent targets), unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).
+City capture, ranged/sea/air combat, unit stacking rules, fog of war, a real AI strategy (the basic AI only trains, promotes and attacks adjacent targets, and never changes civics or citizen assignments), happiness/health, anarchy on civic change, unit pathfinding in the client (right-click walks greedily), floating city/unit labels, unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).

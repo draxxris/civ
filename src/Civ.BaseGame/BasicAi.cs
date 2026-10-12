@@ -17,13 +17,9 @@ public sealed class BasicAi : IPlayerAI
 
         if (!sim.State.Cities.Any(c => c.Owner == playerId))
         {
-            var site = sim.State.Terrain.Keys
-                .Select(h => (hex: h, score: Score(sim, h)))
-                .OrderByDescending(x => x.score).ThenBy(x => x.hex.Q).ThenBy(x => x.hex.R)
-                .Select(x => x.hex)
-                .FirstOrDefault(h => new FoundCityCommand { Player = playerId, Position = h }.Validate(sim) == null);
-            if (site != default || sim.State.Terrain.ContainsKey(site))
-                yield return new FoundCityCommand { Player = playerId, Position = site };
+            var site = Sites.Best(sim, playerId);
+            if (site != null)
+                yield return new FoundCityCommand { Player = playerId, Position = site.Value };
         }
 
         if (player.Researching == null)
@@ -78,16 +74,27 @@ public sealed class BasicAi : IPlayerAI
             }
         }
     }
+}
 
-    private static int Score(Simulation sim, Hex hex)
+public static class Sites
+{
+    /// <summary>The legal city site with the best surrounding yields (ties by coordinates), or null if none.</summary>
+    public static Hex? Best(Simulation sim, int playerId) =>
+        sim.State.Terrain.Keys
+            .Select(h => (hex: h, score: Score(sim, h)))
+            .OrderByDescending(x => x.score).ThenBy(x => x.hex.Q).ThenBy(x => x.hex.R)
+            .Select(x => (Hex?)x.hex)
+            .FirstOrDefault(h => new FoundCityCommand { Player = playerId, Position = h!.Value }.Validate(sim) == null);
+
+    private static int Score(Simulation sim, Hex hex) =>
+        Hex.Range(hex, CityRules.Radius).Where(sim.State.Terrain.ContainsKey).Sum(h => CityRules.TileScore(sim, h));
+
+    /// <summary>A settler and a warrior at the best site, the way a normal game starts.</summary>
+    public static void PlaceStartingUnits(Simulation sim, int playerId)
     {
-        int total = 0;
-        foreach (var h in Hex.Range(hex, 1))
-        {
-            if (!sim.State.Terrain.ContainsKey(h)) continue;
-            var t = sim.TerrainAt(h);
-            total += t.Food + t.Production + t.Commerce;
-        }
-        return total;
+        var site = Best(sim, playerId);
+        if (site == null) return;
+        UnitRules.Spawn(sim, playerId, "base:settler", site.Value);
+        UnitRules.Spawn(sim, playerId, "base:warrior", site.Value);
     }
 }
