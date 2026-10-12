@@ -1,0 +1,8 @@
+[
+  { "id": "base:agriculture", "name": "Agriculture", "cost": 8,  "prerequisites": [] },
+  { "id": "base:mining",      "name": "Mining",      "cost": 8,  "prerequisites": [] },
+  { "id": "base:the_wheel",   "name": "The Wheel",   "cost": 12, "prerequisites": ["base:agriculture"] },
+  { "id": "base:masonry",     "name": "Masonry",     "cost": 14, "prerequisites": ["base:mining"] },
+  { "id": "base:writing",     "name": "Writing",     "cost": 16, "prerequisites": ["base:agriculture"] },
+  { "id": "base:monarchy",    "name": "Monarchy",    "cost": 24, "prerequisites": ["base:masonry", "base:writing"] }
+]

@@ -1,0 +1,6 @@
+[
+  { "id": "base:granary", "name": "Granary", "cost": 20, "requiresTech": "base:agriculture", "food": 1 },
+  { "id": "base:workshop", "name": "Workshop", "cost": 24, "requiresTech": "base:mining", "production": 2 },
+  { "id": "base:library", "name": "Library", "cost": 30, "requiresTech": "base:writing", "commerce": 2, "culture": 1 },
+  { "id": "base:temple", "name": "Temple", "cost": 30, "requiresTech": "base:monarchy", "culture": 2 }
+]

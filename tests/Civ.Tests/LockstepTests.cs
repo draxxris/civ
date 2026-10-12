@@ -1,0 +1,58 @@
+using Civ.BaseGame;
+using Civ.Game;
+using Civ.Net;
+using Xunit;
+
+namespace Civ.Tests;
+
+public class LockstepTests
+{
+    private static (LockstepSession a, LockstepSession b, Simulation simA, Simulation simB) Pair()
+    {
+        var hub = new InProcessHub();
+        var simA = TestGame.Sim(); var simB = TestGame.Sim();
+        var a = new LockstepSession(simA, new CommandCodec(simA.Content), hub.CreateEndpoint(), [0, 1], 0);
+        var b = new LockstepSession(simB, new CommandCodec(simB.Content), hub.CreateEndpoint(), [0, 1], 1);
+        return (a, b, simA, simB);
+    }
+
+    private static void PumpAll(LockstepSession a, LockstepSession b)
+    {
+        int ran;
+        do { ran = a.Pump() + b.Pump(); } while (ran > 0);
+    }
+
+    [Fact]
+    public void TwoPeersStayInSyncAndConverge()
+    {
+        var (a, b, simA, simB) = Pair();
+        bool desync = false;
+        a.Desync += _ => desync = true;
+        b.Desync += _ => desync = true;
+
+        var land = TestGame.FindLand(simA);
+        a.Enqueue(new FoundCityCommand { Player = 0, Position = land });
+        b.Enqueue(new SetResearchCommand { Player = 1, Tech = "base:mining" });
+        PumpAll(a, b);
+        a.Enqueue(new EndTurnCommand { Player = 0 });
+        b.Enqueue(new EndTurnCommand { Player = 1 });
+        for (int i = 0; i < 6; i++) PumpAll(a, b);
+
+        Assert.False(desync);
+        Assert.Single(simA.State.Cities);
+        Assert.Equal(2, simA.State.Turn);
+        Assert.Equal(simA.ComputeHash(), simB.ComputeHash());
+        Assert.True(a.Tick > 2);
+    }
+
+    [Fact]
+    public void DivergentStateRaisesDesync()
+    {
+        var (a, b, simA, _) = Pair();
+        bool desync = false;
+        a.Desync += _ => desync = true;
+        simA.State.Turn = 99; // simulate a nondeterminism bug
+        for (int i = 0; i < 4; i++) PumpAll(a, b);
+        Assert.True(desync);
+    }
+}
