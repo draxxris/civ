@@ -13,15 +13,16 @@ public partial class GameUi : CanvasLayer
     private const float PanelWidth = 340f;
     private const float TopBarHeight = 36f;
 
-    private static readonly Color Dim = new(0.65f, 0.68f, 0.74f);
-    private static readonly Color Bad = new(0.95f, 0.45f, 0.40f);
-    private static readonly Color Accent = new(1f, 0.82f, 0.30f);
+    internal static readonly Color Dim = new(0.65f, 0.68f, 0.74f);
+    internal static readonly Color Bad = new(0.95f, 0.45f, 0.40f);
+    internal static readonly Color Accent = new(1f, 0.82f, 0.30f);
 
     private readonly GameSession _session;
     private readonly PanelContainer _top = new();
     private readonly PanelContainer _left = new();
+    private readonly CityUi _city;
     private Tab _tab = Tab.Selection;
-    private (ulong, Tab) _shown;
+    private (ulong, Tab, CityUi.ProdTab, bool) _shown;
     private bool _built;
 
     private Simulation Sim => _session.Sim;
@@ -40,33 +41,39 @@ public partial class GameUi : CanvasLayer
         _left.OffsetRight = PanelWidth;
         AddChild(_top);
         AddChild(_left);
+        _city = new CityUi(session);
+        AddChild(_city);
     }
 
     public void Refresh()
     {
-        var key = (_session.Version, _tab);
+        var city = _session.City;
+        var key = (_session.Version, _tab, _city.Tab, city != null);
         if (_built && key == _shown) return;
         _shown = key;
         _built = true;
+        _top.Visible = _left.Visible = city == null;
+        _city.Visible = city != null;
+        if (city != null) { _city.Build(city); return; }
         BuildTop();
         BuildLeft();
     }
 
     // --- widgets --------------------------------------------------------------------------
 
-    private static StyleBoxFlat Box(Color fill, int margin = 4)
+    internal static StyleBoxFlat Box(Color fill, int margin = 4)
     {
         var s = new StyleBoxFlat { BgColor = fill, CornerRadiusTopLeft = 4, CornerRadiusTopRight = 4, CornerRadiusBottomLeft = 4, CornerRadiusBottomRight = 4 };
         s.SetContentMarginAll(margin);
         return s;
     }
 
-    private static void Clear(Node n)
+    internal static void Clear(Node n)
     {
         foreach (var child in n.GetChildren()) { n.RemoveChild(child); child.QueueFree(); }
     }
 
-    private static Label Text(string text, int size = 13, Color? color = null)
+    internal static Label Text(string text, int size = 13, Color? color = null)
     {
         var l = new Label { Text = text, AutowrapMode = TextServer.AutowrapMode.WordSmart, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         l.AddThemeFontSizeOverride("font_size", size);
@@ -74,7 +81,7 @@ public partial class GameUi : CanvasLayer
         return l;
     }
 
-    private static Button Btn(string text, Action onClick, bool enabled = true, bool active = false, float minWidth = 0)
+    internal static Button Btn(string text, Action onClick, bool enabled = true, bool active = false, float minWidth = 0)
     {
         var b = new Button { Text = text, Disabled = !enabled, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(minWidth, 26) };
         b.AddThemeFontSizeOverride("font_size", 12);

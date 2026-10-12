@@ -112,6 +112,7 @@ public sealed class GameSession
             if (city.Worked.Contains(hex)) return TileMark.Worked;
             if (CityRules.WorkableTiles(Sim, city).Contains(hex)) return TileMark.Workable;
             if (hex == city.Position) return TileMark.Selected;
+            if (hex.DistanceTo(city.Position) <= CityRules.Radius) return TileMark.Locked;
         }
         if (Unit is { } unit && unit.Position == hex) return TileMark.Selected;
         return TileMark.None;
@@ -148,6 +149,21 @@ public sealed class GameSession
         Submit(new SetCityWorkCommand { Player = Human, CityId = city.Id, Tiles = tiles.ToArray(), Specialists = spec });
     }
 
+    /// <summary>Put one more citizen to work (+1: the best free tile) or take one off the least valuable worked tile (-1).</summary>
+    public void ChangeWorkers(City city, int delta)
+    {
+        if (delta < 0)
+        {
+            if (city.Worked.Count == 0) return;
+            ToggleTile(city, city.Worked.OrderBy(t => CityRules.TileScore(Sim, t)).ThenBy(t => t.Q).ThenBy(t => t.R).First());
+            return;
+        }
+        var free = CityRules.WorkableTiles(Sim, city).Where(h => !city.Worked.Contains(h))
+            .OrderByDescending(h => CityRules.TileScore(Sim, h)).ThenBy(h => h.Q).ThenBy(h => h.R).Cast<Hex?>().FirstOrDefault();
+        if (free == null) { Message = "Can't do that: no free tile"; return; }
+        ToggleTile(city, free.Value);
+    }
+
     /// <summary>Move one citizen into (+1) or out of (-1) a specialist role; out goes back to the plain citizen pool.</summary>
     public void ChangeSpecialist(City city, string id, int delta)
     {
@@ -174,4 +190,5 @@ public sealed class GameSession
     }
 }
 
-public enum TileMark { None, Worked, Workable, Selected }
+/// <summary>Locked: inside the selected city's radius but taken by another city.</summary>
+public enum TileMark { None, Worked, Workable, Selected, Locked }
