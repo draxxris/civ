@@ -27,6 +27,8 @@ public sealed class BaseGameMod : IMod
         foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Civilizations.Register(c);
         ctx.PlayerAIs.Register(new BasicAi());
 
+        foreach (var s in ctx.Data.ReadJson<SpecialistDef[]>("data/specialists.json")) ctx.Specialists.Register(s);
+        foreach (var c in ctx.Data.ReadJson<CivicDef[]>("data/civics.json")) ctx.Civics.Register(c);
         foreach (var u in ctx.Data.ReadJson<UnitDef[]>("data/units.json")) ctx.Units.Register(u);
         foreach (var p in ctx.Data.ReadJson<PromotionDef[]>("data/promotions.json")) ctx.Promotions.Register(p);
         foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.ExperienceLevels.Register(l);
@@ -40,8 +42,11 @@ public sealed class BaseGameMod : IMod
         ctx.RegisterCommand<MoveUnitCommand>("move_unit");
         ctx.RegisterCommand<AttackCommand>("attack");
         ctx.RegisterCommand<PromoteUnitCommand>("promote_unit");
+        ctx.RegisterCommand<SetCityWorkCommand>("set_city_work");
+        ctx.RegisterCommand<SetCivicCommand>("set_civic");
 
         ctx.TurnSystems.Register(new UnitSystem());
+        ctx.TurnSystems.Register(new GrowthSystem());
         ctx.TurnSystems.Register(new ResearchSystem());
         ctx.TurnSystems.Register(new ProductionSystem());
         ctx.TurnSystems.Register(new CultureSystem());

@@ -39,6 +39,34 @@ public sealed class BuildingDef : ContentDef
     public int Culture { get; init; }
     /// <summary>Experience given to every unit trained in a city with this building (Civ4 barracks).</summary>
     public int UnitExperience { get; init; }
+    /// <summary>Specialist slots this building provides, by specialist id. -1 = unlimited.</summary>
+    public Dictionary<string, int> SpecialistSlots { get; init; } = new();
+}
+
+/// <summary>
+/// What a citizen yields when it works no tile. Slots come from buildings and civics; an <see cref="Unlimited"/>
+/// specialist (the plain citizen) needs none.
+/// </summary>
+public sealed class SpecialistDef : ContentDef
+{
+    public bool Unlimited { get; init; }
+    public int Food { get; init; }
+    public int Production { get; init; }
+    public int Commerce { get; init; }
+    public int Culture { get; init; }
+}
+
+/// <summary>A government/economy/labor/... option. A player holds one civic per <see cref="Category"/>.</summary>
+public sealed class CivicDef : ContentDef
+{
+    public string Category { get; init; } = "";
+    /// <summary>Held from the start of the game when its category has nothing else.</summary>
+    public bool IsDefault { get; init; }
+    public string? RequiresTech { get; init; }
+    public int ResearchBonus { get; init; }
+    public int ProductionBonus { get; init; }
+    public int CultureBonus { get; init; }
+    public Dictionary<string, int> SpecialistSlots { get; init; } = new();
 }
 
 public sealed class UnitDef : ContentDef

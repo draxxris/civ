@@ -11,6 +11,8 @@ public sealed class Player
     public string? Researching { get; set; }
     public long ResearchProgress { get; set; }
     public long Culture { get; set; }
+    /// <summary>Held civic per category.</summary>
+    public SortedDictionary<string, string> Civics { get; } = new(StringComparer.Ordinal);
     public bool EndedTurn { get; set; }
 }
 
@@ -26,6 +28,12 @@ public sealed class City
     /// <summary>Unit currently being trained (exclusive with <see cref="Building"/>).</summary>
     public string? Training { get; set; }
     public long TrainProgress { get; set; }
+    public int Population { get; set; } = 1;
+    public long FoodStored { get; set; }
+    /// <summary>Tiles worked by citizens (the city centre is always worked for free), kept sorted by (Q, R).</summary>
+    public List<Hex> Worked { get; } = new();
+    /// <summary>Citizens not working a tile, by specialist id.</summary>
+    public SortedDictionary<string, int> Specialists { get; } = new(StringComparer.Ordinal);
     public long Culture { get; set; }
 }
 

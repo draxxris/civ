@@ -29,7 +29,9 @@ public sealed class FoundCityCommand : GameCommand
     {
         if (UnitId != 0) sim.State.Units.RemoveAll(x => x.Id == UnitId);
         int id = sim.State.NextCityId++;
-        sim.State.Cities.Add(new City { Id = id, Owner = Player, Name = $"City {id}", Position = Position });
+        var city = new City { Id = id, Owner = Player, Name = $"City {id}", Position = Position };
+        sim.State.Cities.Add(city);
+        CityRules.AddCitizen(sim, city);
     }
 }
 
@@ -74,5 +76,43 @@ public sealed class StartBuildingCommand : GameCommand
         var city = sim.State.Cities.First(c => c.Id == CityId);
         if (city.Building != Building) { city.Building = Building; city.BuildProgress = 0; }
         city.Training = null; city.TrainProgress = 0;
+    }
+}
+
+/// <summary>Replaces a city's whole citizen assignment: which tiles are worked and how many of each specialist.</summary>
+public sealed class SetCityWorkCommand : GameCommand
+{
+    public int CityId { get; init; }
+    public Hex[] Tiles { get; init; } = [];
+    public Dictionary<string, int> Specialists { get; init; } = new();
+
+    public override string? Validate(Simulation sim)
+    {
+        var city = sim.State.Cities.FirstOrDefault(c => c.Id == CityId);
+        if (city == null || city.Owner != Player) return "not your city";
+        return CityRules.ValidateAssignment(sim, city, Tiles, Specialists);
+    }
+
+    public override void Apply(Simulation sim) =>
+        CityRules.Assign(sim.State.Cities.First(c => c.Id == CityId), Tiles, Specialists);
+}
+
+public sealed class SetCivicCommand : GameCommand
+{
+    public string Civic { get; init; } = "";
+
+    public override string? Validate(Simulation sim)
+    {
+        if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
+        if (!sim.Content.Civics.TryGet(Civic, out var def)) return "unknown civic";
+        if (def.RequiresTech != null && !sim.State.PlayerById(Player).Techs.Contains(def.RequiresTech)) return "tech not known";
+        return null;
+    }
+
+    public override void Apply(Simulation sim)
+    {
+        var def = sim.Content.Civics.Get(Civic);
+        sim.State.PlayerById(Player).Civics[def.Category] = def.Id;
+        foreach (var city in sim.State.Cities.Where(c => c.Owner == Player)) CityRules.EnforceSlots(sim, city);
     }
 }

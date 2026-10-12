@@ -7,6 +7,8 @@ public sealed class ContentDb
     public Registry<UnitDef> Units { get; } = new("unit");
     public Registry<PromotionDef> Promotions { get; } = new("promotion");
     public Registry<ExperienceLevelDef> ExperienceLevels { get; } = new("experience level");
+    public Registry<SpecialistDef> Specialists { get; } = new("specialist");
+    public Registry<CivicDef> Civics { get; } = new("civic");
     public Registry<TechDef> Techs { get; } = new("tech");
     public Registry<BuildingDef> Buildings { get; } = new("building");
     public Registry<CultureLevelDef> CultureLevels { get; } = new("culture level");
@@ -20,7 +22,7 @@ public sealed class ContentDb
 
     internal void Freeze()
     {
-        Units.Freeze(); Promotions.Freeze(); ExperienceLevels.Freeze(); Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
+        Specialists.Freeze(); Civics.Freeze(); Units.Freeze(); Promotions.Freeze(); ExperienceLevels.Freeze(); Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
         MapGenerators.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze();
     }
 

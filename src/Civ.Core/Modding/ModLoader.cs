@@ -113,6 +113,8 @@ internal sealed class ModContext : IModContext
     public ModRegistry<UnitDef> Units { get; }
     public ModRegistry<PromotionDef> Promotions { get; }
     public ModRegistry<ExperienceLevelDef> ExperienceLevels { get; }
+    public ModRegistry<SpecialistDef> Specialists { get; }
+    public ModRegistry<CivicDef> Civics { get; }
     public ModRegistry<TechDef> Techs { get; }
     public ModRegistry<BuildingDef> Buildings { get; }
     public ModRegistry<CultureLevelDef> CultureLevels { get; }
@@ -129,6 +131,8 @@ internal sealed class ModContext : IModContext
         Units = new(db.Units, modId);
         Promotions = new(db.Promotions, modId);
         ExperienceLevels = new(db.ExperienceLevels, modId);
+        Specialists = new(db.Specialists, modId);
+        Civics = new(db.Civics, modId);
         Techs = new(db.Techs, modId);
         Buildings = new(db.Buildings, modId);
         CultureLevels = new(db.CultureLevels, modId);

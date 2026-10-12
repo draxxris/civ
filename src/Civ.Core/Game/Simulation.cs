@@ -42,6 +42,8 @@ public sealed class Simulation
             if (ai != null) content.PlayerAIs.Get(ai); // fail early on unknown AI
             var player = new Player { Id = i, Name = civ?.Name ?? $"Player {i + 1}", Civilization = civ?.Id ?? "", Ai = ai };
             foreach (var tech in civ?.StartingTechs ?? []) player.Techs.Add(tech);
+            foreach (var civic in content.Civics.All.Where(c => c.IsDefault))
+                player.Civics.TryAdd(civic.Category, civic.Id);
             State.Players.Add(player);
         }
 

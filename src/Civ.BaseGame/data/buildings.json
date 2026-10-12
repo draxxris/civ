@@ -1,7 +1,57 @@
 [
-  { "id": "base:granary", "name": "Granary", "cost": 20, "requiresTech": "base:agriculture", "food": 1 },
-  { "id": "base:workshop", "name": "Workshop", "cost": 24, "requiresTech": "base:mining", "production": 2 },
-  { "id": "base:barracks", "name": "Barracks", "cost": 30, "requiresTech": "base:mining", "unitExperience": 3 },
-  { "id": "base:library", "name": "Library", "cost": 30, "requiresTech": "base:writing", "commerce": 2, "culture": 1 },
-  { "id": "base:temple", "name": "Temple", "cost": 30, "requiresTech": "base:monarchy", "culture": 2 }
+  {
+    "id": "base:granary",
+    "name": "Granary",
+    "cost": 20,
+    "requiresTech": "base:agriculture",
+    "food": 1
+  },
+  {
+    "id": "base:workshop",
+    "name": "Workshop",
+    "cost": 24,
+    "requiresTech": "base:mining",
+    "production": 2,
+    "specialistSlots": {
+      "base:engineer": 2
+    }
+  },
+  {
+    "id": "base:barracks",
+    "name": "Barracks",
+    "cost": 30,
+    "requiresTech": "base:mining",
+    "unitExperience": 3
+  },
+  {
+    "id": "base:library",
+    "name": "Library",
+    "cost": 30,
+    "requiresTech": "base:writing",
+    "commerce": 2,
+    "culture": 1,
+    "specialistSlots": {
+      "base:scientist": 2
+    }
+  },
+  {
+    "id": "base:temple",
+    "name": "Temple",
+    "cost": 30,
+    "requiresTech": "base:monarchy",
+    "culture": 2,
+    "specialistSlots": {
+      "base:priest": 2
+    }
+  },
+  {
+    "id": "base:market",
+    "name": "Market",
+    "cost": 30,
+    "requiresTech": "base:the_wheel",
+    "commerce": 1,
+    "specialistSlots": {
+      "base:merchant": 2
+    }
+  }
 ]

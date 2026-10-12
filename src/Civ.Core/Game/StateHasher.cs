@@ -18,12 +18,16 @@ public static class StateHasher
         foreach (var p in s.Players.OrderBy(p => p.Id))
         {
             h.Int(p.Id); h.Str(p.Civilization); h.Str(p.Ai); h.Str(p.Researching); h.Long(p.ResearchProgress); h.Long(p.Culture); h.Int(p.EndedTurn ? 1 : 0);
+            foreach (var cv in p.Civics) { h.Str(cv.Key); h.Str(cv.Value); }
             foreach (var t in p.Techs) h.Str(t); // SortedSet: stable
         }
         foreach (var c in s.Cities.OrderBy(c => c.Id))
         {
             h.Int(c.Id); h.Int(c.Owner); h.Int(c.Position.Q); h.Int(c.Position.R);
-            h.Str(c.Building); h.Long(c.BuildProgress); h.Str(c.Training); h.Long(c.TrainProgress); h.Long(c.Culture);
+            h.Str(c.Building); h.Long(c.BuildProgress); h.Str(c.Training); h.Long(c.TrainProgress);
+            h.Int(c.Population); h.Long(c.FoodStored);
+            foreach (var w in c.Worked) { h.Int(w.Q); h.Int(w.R); }
+            foreach (var sp in c.Specialists) { h.Str(sp.Key); h.Int(sp.Value); } h.Long(c.Culture);
             foreach (var b in c.Buildings) h.Str(b);
         }
         h.Int(s.NextUnitId);

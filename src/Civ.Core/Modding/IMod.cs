@@ -26,6 +26,8 @@ public interface IModContext
     ModRegistry<UnitDef> Units { get; }
     ModRegistry<PromotionDef> Promotions { get; }
     ModRegistry<ExperienceLevelDef> ExperienceLevels { get; }
+    ModRegistry<SpecialistDef> Specialists { get; }
+    ModRegistry<CivicDef> Civics { get; }
     ModRegistry<TechDef> Techs { get; }
     ModRegistry<BuildingDef> Buildings { get; }
     ModRegistry<CultureLevelDef> CultureLevels { get; }

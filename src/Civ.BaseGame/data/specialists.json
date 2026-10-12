@@ -1,0 +1,8 @@
+[
+  { "id": "base:citizen",   "name": "Citizen",   "unlimited": true },
+  { "id": "base:priest",    "name": "Priest",    "production": 1, "culture": 1 },
+  { "id": "base:scientist", "name": "Scientist", "commerce": 3 },
+  { "id": "base:merchant",  "name": "Merchant",  "commerce": 2, "production": 1 },
+  { "id": "base:engineer",  "name": "Engineer",  "production": 2 },
+  { "id": "base:artist",    "name": "Artist",    "culture": 3 }
+]

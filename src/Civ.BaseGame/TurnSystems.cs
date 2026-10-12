@@ -14,7 +14,7 @@ public sealed class ResearchSystem : ITurnSystem
         {
             if (player.Researching == null) continue;
             long commerce = sim.State.Cities.Where(c => c.Owner == player.Id).Sum(c => (long)Yields.OfCity(sim, c).Commerce);
-            commerce = commerce * (100 + (sim.CivilizationOf(player.Id)?.ResearchBonus ?? 0)) / 100;
+            commerce = commerce * (100 + Bonuses.Research(sim, player.Id)) / 100;
             player.ResearchProgress += commerce;
             var tech = sim.Content.Techs.Get(player.Researching);
             if (player.ResearchProgress >= tech.Cost)
@@ -37,7 +37,7 @@ public sealed class ProductionSystem : ITurnSystem
         foreach (var city in sim.State.Cities)
         {
             if (city.Building == null && city.Training == null) continue;
-            int bonus = sim.CivilizationOf(city.Owner)?.ProductionBonus ?? 0;
+            int bonus = Bonuses.Production(sim, city.Owner);
             int production = Yields.OfCity(sim, city).Production * (100 + bonus) / 100;
 
             if (city.Building != null)
@@ -76,8 +76,8 @@ public sealed class CultureSystem : ITurnSystem
     {
         foreach (var city in sim.State.Cities)
         {
-            int bonus = sim.CivilizationOf(city.Owner)?.CultureBonus ?? 0;
-            city.Culture += (1 + city.Buildings.Sum(b => sim.Content.Buildings.Get(b).Culture)) * (100 + bonus) / 100;
+            int bonus = Bonuses.Culture(sim, city.Owner);
+            city.Culture += (1 + Yields.OfCity(sim, city).Culture) * (100 + bonus) / 100;
         }
         foreach (var player in sim.State.Players)
             player.Culture = sim.State.Cities.Where(c => c.Owner == player.Id).Sum(c => c.Culture);
@@ -100,6 +100,33 @@ public sealed class UnitSystem : ITurnSystem
             if (unit.MovesLeft >= max)
                 unit.Health = Math.Min(100, unit.Health + RestHeal + UnitRules.PromotionsOf(sim, unit).Sum(p => p.HealBonus));
             unit.MovesLeft = max;
+        }
+    }
+}
+
+/// <summary>Food box: surplus grows the city, a deficit starves it. Also drops specialists a city no longer has slots for.</summary>
+public sealed class GrowthSystem : ITurnSystem
+{
+    public string Id => "base:growth";
+    public int Order => 250;
+
+    public void Run(Simulation sim)
+    {
+        foreach (var city in sim.State.Cities)
+        {
+            CityRules.EnforceSlots(sim, city);
+            city.FoodStored += Yields.OfCity(sim, city).Food - CityRules.FoodPerCitizen * city.Population;
+            if (city.FoodStored >= CityRules.FoodToGrow(city.Population))
+            {
+                city.Population++;
+                city.FoodStored = 0;
+                CityRules.AddCitizen(sim, city);
+            }
+            else if (city.FoodStored < 0)
+            {
+                if (city.Population > 1) { city.Population--; CityRules.RemoveCitizen(sim, city); }
+                city.FoodStored = 0;
+            }
         }
     }
 }
