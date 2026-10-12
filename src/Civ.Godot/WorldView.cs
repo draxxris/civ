@@ -21,6 +21,7 @@ public sealed class WorldView
         public required StandardMaterial3D Material;
         public Color Base;
         public TileMark Mark;
+        public Label3D? Badge;
     }
 
     private readonly Dictionary<Hex, TileView> _tiles = new();
@@ -66,6 +67,7 @@ public sealed class WorldView
         foreach (var (hex, view) in _tiles)
         {
             var mark = session.MarkOf(hex);
+            UpdateBadge(hex, view, mark, session.City != null);
             if (mark == view.Mark) continue;
             view.Mark = mark;
             view.Material.AlbedoColor = mark switch
@@ -73,6 +75,7 @@ public sealed class WorldView
                 TileMark.Worked => view.Base.Lerp(new Color(1f, 0.55f, 0.1f), 0.65f),
                 TileMark.Workable => view.Base.Lerp(Colors.White, 0.35f),
                 TileMark.Selected => view.Base.Lerp(Colors.White, 0.7f),
+                TileMark.Locked => view.Base.Lerp(new Color(0.25f, 0.25f, 0.28f), 0.7f),
                 _ => view.Base,
             };
         }
@@ -98,6 +101,35 @@ public sealed class WorldView
                 i++;
             }
         }
+    }
+
+    /// <summary>City screen: yields on worked and workable tiles, a lock on tiles another city holds.</summary>
+    private void UpdateBadge(Hex hex, TileView view, TileMark mark, bool cityOpen)
+    {
+        string? text = null;
+        if (cityOpen && mark is TileMark.Worked or TileMark.Workable)
+        {
+            var y = Yields.OfTile(_sim, hex);
+            text = string.Join(" ", new[] { (y.Food, "F"), (y.Production, "P"), (y.Commerce, "C") }.Where(p => p.Item1 != 0).Select(p => $"{p.Item2}{p.Item1}"));
+            if (text.Length == 0) text = "-";
+        }
+        else if (cityOpen && mark == TileMark.Locked) text = "locked";
+        if (text == null) { if (view.Badge != null) view.Badge.Visible = false; return; }
+
+        if (view.Badge == null)
+        {
+            view.Badge = new Label3D { Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, NoDepthTest = true, PixelSize = 0.006f, FontSize = 40, OutlineSize = 12 };
+            view.Badge.Position = WorldOf(hex, 0.6f);
+            _root.AddChild(view.Badge);
+        }
+        view.Badge.Visible = true;
+        view.Badge.Text = text;
+        view.Badge.Modulate = mark switch
+        {
+            TileMark.Worked => new Color(1f, 0.95f, 0.6f),
+            TileMark.Locked => new Color(0.7f, 0.7f, 0.75f),
+            _ => new Color(0.9f, 0.95f, 1f),
+        };
     }
 
     private MeshInstance3D MakeNode(string name, Mesh mesh, Color color)
