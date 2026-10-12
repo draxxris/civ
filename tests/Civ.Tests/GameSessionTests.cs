@@ -108,4 +108,35 @@ public class GameSessionTests
         s.Message = "x";
         Assert.NotEqual(before, s.Version);
     }
+
+    [Fact]
+    public void CityScreenReportsGrowthProductionAndWorkers()
+    {
+        var s = NewSession();
+        var city = FoundCity(s);
+        var screen = CityScreen.Of(s.Sim, city);
+        Assert.Equal(city.Name, screen.Name);
+        Assert.Equal(city.Worked.Count, screen.Workers);
+        Assert.Equal(city.Population, screen.Workers + screen.SpecialistTotal);
+        Assert.Equal(screen.Food - CityRules.FoodPerCitizen * city.Population, screen.FoodSurplus);
+        Assert.Contains(screen.Units, u => u.Id == "base:warrior" && u.Turns == CityScreen.Turns(15, screen.Production));
+        Assert.All(screen.Buildings, b => Assert.False(b.Current));
+        Assert.Null(screen.CurrentName);
+    }
+
+    [Fact]
+    public void WorkerButtonsMoveCitizensBetweenTilesAndTheCitizenPool()
+    {
+        var s = NewSession();
+        var city = FoundCity(s);
+        city.FoodStored = 1000; // grow instantly next turn is irrelevant; just need population >= 2
+        city.Population = 2;
+        CityRules.AddCitizen(s.Sim, city);
+        Assert.Equal(2, city.Worked.Count + CityRules.SpecialistCount(city));
+        int before = city.Worked.Count;
+        s.ChangeWorkers(city, -1);
+        Assert.Equal(before - 1, city.Worked.Count);
+        s.ChangeWorkers(city, +1);
+        Assert.Equal(before, city.Worked.Count);
+    }
 }

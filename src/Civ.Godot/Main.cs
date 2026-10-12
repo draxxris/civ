@@ -15,6 +15,8 @@ public partial class Main : Node3D
 
     private Vector3 _focus;
     private float _distance = 22f;
+    private float _savedDistance = 22f;
+    private int? _focusedCity;
 
     public override void _Ready()
     {
@@ -65,10 +67,22 @@ public partial class Main : Node3D
         if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) _focus += new Vector3(0, 0, speed);
         if (Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left)) _focus += new Vector3(-speed, 0, 0);
         if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right)) _focus += new Vector3(speed, 0, 0);
+        FocusSelectedCity();
         UpdateCamera();
 
         _world.Sync(_session);
         _ui.Refresh();
+    }
+
+    /// <summary>Opening a city centres and zooms the camera on it; closing restores the previous zoom.</summary>
+    private void FocusSelectedCity()
+    {
+        int? id = _session.SelectedCityId;
+        if (id == _focusedCity) return;
+        if (id is int && _focusedCity == null) _savedDistance = _distance;
+        if (id is int && _session.City is { } city) { _focus = WorldView.WorldOf(city.Position); _distance = 16f; }
+        else _distance = _savedDistance;
+        _focusedCity = id;
     }
 
     private void UpdateCamera()
