@@ -23,8 +23,15 @@ public static class StateHasher
         foreach (var c in s.Cities.OrderBy(c => c.Id))
         {
             h.Int(c.Id); h.Int(c.Owner); h.Int(c.Position.Q); h.Int(c.Position.R);
-            h.Str(c.Building); h.Long(c.BuildProgress); h.Long(c.Culture);
+            h.Str(c.Building); h.Long(c.BuildProgress); h.Str(c.Training); h.Long(c.TrainProgress); h.Long(c.Culture);
             foreach (var b in c.Buildings) h.Str(b);
+        }
+        h.Int(s.NextUnitId);
+        foreach (var u in s.Units.OrderBy(u => u.Id))
+        {
+            h.Int(u.Id); h.Int(u.Owner); h.Str(u.Type); h.Int(u.Position.Q); h.Int(u.Position.R);
+            h.Int(u.Experience); h.Int(u.Health); h.Int(u.MovesLeft);
+            foreach (var p in u.Promotions) h.Str(p);
         }
         var (a, b2, c2, d) = rng.State;
         h.Long((long)a); h.Long((long)b2); h.Long((long)c2); h.Long((long)d);

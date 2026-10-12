@@ -5,10 +5,19 @@ namespace Civ.BaseGame;
 public sealed class FoundCityCommand : GameCommand
 {
     public Hex Position { get; init; }
+    /// <summary>Optional: a settler standing on <see cref="Position"/> that is consumed. 0 = found for free (setup, AI bootstrap).</summary>
+    public int UnitId { get; init; }
 
     public override string? Validate(Simulation sim)
     {
         if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
+        if (UnitId != 0)
+        {
+            var u = sim.State.Units.FirstOrDefault(x => x.Id == UnitId);
+            if (u == null || u.Owner != Player) return "not your unit";
+            if (!sim.Content.Units.Get(u.Type).CanFoundCity) return "unit cannot found cities";
+            if (u.Position != Position) return "settler must be on the city site";
+        }
         if (!sim.State.Terrain.ContainsKey(Position)) return "off map";
         var t = sim.TerrainAt(Position);
         if (t.IsWater || !t.Passable) return "cannot found a city on " + t.Name;
@@ -18,6 +27,7 @@ public sealed class FoundCityCommand : GameCommand
 
     public override void Apply(Simulation sim)
     {
+        if (UnitId != 0) sim.State.Units.RemoveAll(x => x.Id == UnitId);
         int id = sim.State.NextCityId++;
         sim.State.Cities.Add(new City { Id = id, Owner = Player, Name = $"City {id}", Position = Position });
     }
@@ -63,5 +73,6 @@ public sealed class StartBuildingCommand : GameCommand
     {
         var city = sim.State.Cities.First(c => c.Id == CityId);
         if (city.Building != Building) { city.Building = Building; city.BuildProgress = 0; }
+        city.Training = null; city.TrainProgress = 0;
     }
 }

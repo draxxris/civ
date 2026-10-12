@@ -1,0 +1,18 @@
+[
+  { "id": "base:combat1", "name": "Combat I",   "description": "+10% strength",
+    "strengthBonus": 10 },
+  { "id": "base:combat2", "name": "Combat II",  "description": "+10% strength",
+    "strengthBonus": 10, "requiresAny": ["base:combat1"] },
+  { "id": "base:combat3", "name": "Combat III", "description": "+10% strength",
+    "strengthBonus": 10, "requiresAny": ["base:combat2"] },
+  { "id": "base:shock",   "name": "Shock",      "description": "Melee: +25% strength when attacking",
+    "classes": ["melee"], "attackBonus": 25, "requiresAny": ["base:combat1"] },
+  { "id": "base:cover",   "name": "Cover",      "description": "Ranged: +25% strength when defending",
+    "classes": ["ranged"], "defenseBonus": 25, "requiresAny": ["base:combat1"] },
+  { "id": "base:flanking","name": "Flanking",   "description": "Mounted: +1 move",
+    "classes": ["mounted"], "movesBonus": 1, "requiresAny": ["base:combat1"] },
+  { "id": "base:medic1",  "name": "Medic I",    "description": "Heals 10 more per turn when resting",
+    "healBonus": 10 },
+  { "id": "base:medic2",  "name": "Medic II",   "description": "Heals 10 more per turn when resting",
+    "healBonus": 10, "requiresAny": ["base:medic1"] }
+]

@@ -23,6 +23,9 @@ public interface IModContext
     ModRegistry<TerrainDef> Terrains { get; }
     ModRegistry<CivilizationDef> Civilizations { get; }
     ModRegistry<IPlayerAI> PlayerAIs { get; }
+    ModRegistry<UnitDef> Units { get; }
+    ModRegistry<PromotionDef> Promotions { get; }
+    ModRegistry<ExperienceLevelDef> ExperienceLevels { get; }
     ModRegistry<TechDef> Techs { get; }
     ModRegistry<BuildingDef> Buildings { get; }
     ModRegistry<CultureLevelDef> CultureLevels { get; }

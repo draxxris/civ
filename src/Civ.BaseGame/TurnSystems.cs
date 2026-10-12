@@ -36,15 +36,32 @@ public sealed class ProductionSystem : ITurnSystem
     {
         foreach (var city in sim.State.Cities)
         {
-            if (city.Building == null) continue;
+            if (city.Building == null && city.Training == null) continue;
             int bonus = sim.CivilizationOf(city.Owner)?.ProductionBonus ?? 0;
-            city.BuildProgress += Yields.OfCity(sim, city).Production * (100 + bonus) / 100;
-            var def = sim.Content.Buildings.Get(city.Building);
-            if (city.BuildProgress >= def.Cost)
+            int production = Yields.OfCity(sim, city).Production * (100 + bonus) / 100;
+
+            if (city.Building != null)
             {
-                city.Buildings.Add(def.Id);
-                city.Building = null;
-                city.BuildProgress = 0;
+                city.BuildProgress += production;
+                var def = sim.Content.Buildings.Get(city.Building);
+                if (city.BuildProgress >= def.Cost)
+                {
+                    city.Buildings.Add(def.Id);
+                    city.Building = null;
+                    city.BuildProgress = 0;
+                }
+            }
+            else
+            {
+                city.TrainProgress += production;
+                var def = sim.Content.Units.Get(city.Training!);
+                if (city.TrainProgress >= def.Cost)
+                {
+                    int xp = city.Buildings.Sum(b => sim.Content.Buildings.Get(b).UnitExperience);
+                    UnitRules.Spawn(sim, city.Owner, def.Id, city.Position, xp);
+                    city.Training = null;
+                    city.TrainProgress = 0;
+                }
             }
         }
     }
@@ -64,5 +81,25 @@ public sealed class CultureSystem : ITurnSystem
         }
         foreach (var player in sim.State.Players)
             player.Culture = sim.State.Cities.Where(c => c.Owner == player.Id).Sum(c => c.Culture);
+    }
+}
+
+/// <summary>Heals units that rested all turn, then refills everyone's movement.</summary>
+public sealed class UnitSystem : ITurnSystem
+{
+    public string Id => "base:units";
+    public int Order => 50;
+
+    public const int RestHeal = 10;
+
+    public void Run(Simulation sim)
+    {
+        foreach (var unit in sim.State.Units)
+        {
+            int max = UnitRules.MaxMoves(sim, unit);
+            if (unit.MovesLeft >= max)
+                unit.Health = Math.Min(100, unit.Health + RestHeal + UnitRules.PromotionsOf(sim, unit).Sum(p => p.HealBonus));
+            unit.MovesLeft = max;
+        }
     }
 }

@@ -4,6 +4,9 @@ namespace Civ.Content;
 public sealed class ContentDb
 {
     public Registry<TerrainDef> Terrains { get; } = new("terrain");
+    public Registry<UnitDef> Units { get; } = new("unit");
+    public Registry<PromotionDef> Promotions { get; } = new("promotion");
+    public Registry<ExperienceLevelDef> ExperienceLevels { get; } = new("experience level");
     public Registry<TechDef> Techs { get; } = new("tech");
     public Registry<BuildingDef> Buildings { get; } = new("building");
     public Registry<CultureLevelDef> CultureLevels { get; } = new("culture level");
@@ -17,7 +20,7 @@ public sealed class ContentDb
 
     internal void Freeze()
     {
-        Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
+        Units.Freeze(); Promotions.Freeze(); ExperienceLevels.Freeze(); Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
         MapGenerators.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze();
     }
 

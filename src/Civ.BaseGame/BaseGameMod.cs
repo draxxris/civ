@@ -16,8 +16,8 @@ public sealed class BaseGameMod : IMod
         ctx.Terrains.Register(new TerrainDef { Id = "base:grassland", Name = "Grassland", Food = 2, Color = "#5fa84a" });
         ctx.Terrains.Register(new TerrainDef { Id = "base:plains",    Name = "Plains",    Food = 1, Production = 1, Color = "#c4b45a" });
         ctx.Terrains.Register(new TerrainDef { Id = "base:desert",    Name = "Desert",    Color = "#e0cf8a" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:hills",     Name = "Hills",     MoveCost = 2, Production = 2, Color = "#8a7a52" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:mountains", Name = "Mountains", Passable = false, Color = "#9a9a9a" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:hills",     Name = "Hills",     MoveCost = 2, Production = 2, DefenseBonus = 25, Color = "#8a7a52" });
+        ctx.Terrains.Register(new TerrainDef { Id = "base:mountains", Name = "Mountains", Passable = false, DefenseBonus = 50, Color = "#9a9a9a" });
 
         // Sidecar data.
         foreach (var t in ctx.Data.ReadJson<TechDef[]>("data/techs.json")) ctx.Techs.Register(t);
@@ -27,12 +27,21 @@ public sealed class BaseGameMod : IMod
         foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Civilizations.Register(c);
         ctx.PlayerAIs.Register(new BasicAi());
 
+        foreach (var u in ctx.Data.ReadJson<UnitDef[]>("data/units.json")) ctx.Units.Register(u);
+        foreach (var p in ctx.Data.ReadJson<PromotionDef[]>("data/promotions.json")) ctx.Promotions.Register(p);
+        foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.ExperienceLevels.Register(l);
+
         ctx.MapGenerators.Register(new ContinentsGenerator());
 
         ctx.RegisterCommand<FoundCityCommand>("found_city");
         ctx.RegisterCommand<SetResearchCommand>("set_research");
         ctx.RegisterCommand<StartBuildingCommand>("start_building");
+        ctx.RegisterCommand<StartTrainingCommand>("start_training");
+        ctx.RegisterCommand<MoveUnitCommand>("move_unit");
+        ctx.RegisterCommand<AttackCommand>("attack");
+        ctx.RegisterCommand<PromoteUnitCommand>("promote_unit");
 
+        ctx.TurnSystems.Register(new UnitSystem());
         ctx.TurnSystems.Register(new ResearchSystem());
         ctx.TurnSystems.Register(new ProductionSystem());
         ctx.TurnSystems.Register(new CultureSystem());

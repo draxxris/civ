@@ -12,7 +12,7 @@ public class ModTests
         var db = TestGame.Content();
         Assert.True(db.Terrains.Contains("base:grassland"));
         Assert.Equal("base", db.Terrains.OwnerOf("base:ocean"));
-        Assert.Equal(6, db.Techs.Count);
+        Assert.Equal(7, db.Techs.Count);
         Assert.True(db.Buildings.Contains("base:library"));
         Assert.Equal("base:fledgling", db.CultureLevelFor(15)!.Id);
     }

@@ -41,7 +41,41 @@ public sealed class BasicAi : IPlayerAI
                 .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || player.Techs.Contains(b.RequiresTech)))
                 .OrderBy(b => b.Cost).ThenBy(b => b.Id, StringComparer.Ordinal)
                 .FirstOrDefault();
-            if (building != null) yield return new StartBuildingCommand { Player = playerId, CityId = city.Id, Building = building.Id };
+            if (building != null) { yield return new StartBuildingCommand { Player = playerId, CityId = city.Id, Building = building.Id }; continue; }
+
+            // Nothing left to build: keep one military unit per city.
+            if (city.Training == null && sim.State.Units.Count(u => u.Owner == playerId && sim.Content.Units.Get(u.Type).Strength > 0)
+                    < sim.State.Cities.Count(c => c.Owner == playerId))
+            {
+                var unit = sim.Content.Units.All
+                    .Where(u => u.Strength > 0 && (u.RequiresTech == null || player.Techs.Contains(u.RequiresTech)))
+                    .OrderByDescending(u => u.Strength).ThenBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
+                if (unit != null) yield return new StartTrainingCommand { Player = playerId, CityId = city.Id, Unit = unit.Id };
+            }
+        }
+
+        foreach (var unit in sim.State.Units.Where(u => u.Owner == playerId).OrderBy(u => u.Id).ToList())
+        {
+            // Spend promotions on the first option by id, so combat lines come before the specialties.
+            for (int i = UnitRules.UnspentPromotions(sim, unit); i > 0; i--)
+            {
+                var promo = UnitRules.AvailablePromotions(sim, unit).FirstOrDefault();
+                if (promo == null) break;
+                yield return new PromoteUnitCommand { Player = playerId, UnitId = unit.Id, Promotion = promo.Id };
+                break; // the sim applies each command before asking again next turn
+            }
+
+            // Attack an adjacent enemy when it looks winnable.
+            if (sim.Content.Units.Get(unit.Type).Strength <= 0 || unit.MovesLeft <= 0) continue;
+            foreach (var n in unit.Position.Neighbors())
+            {
+                var target = UnitRules.BestDefender(sim, n, playerId);
+                if (target != null && UnitRules.Strength(sim, unit, true) >= UnitRules.Strength(sim, target, false))
+                {
+                    yield return new AttackCommand { Player = playerId, UnitId = unit.Id, Target = n };
+                    break;
+                }
+            }
         }
     }
 

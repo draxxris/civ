@@ -23,7 +23,22 @@ public sealed class City
     public List<string> Buildings { get; } = new();
     public string? Building { get; set; }
     public long BuildProgress { get; set; }
+    /// <summary>Unit currently being trained (exclusive with <see cref="Building"/>).</summary>
+    public string? Training { get; set; }
+    public long TrainProgress { get; set; }
     public long Culture { get; set; }
+}
+
+public sealed class Unit
+{
+    public int Id { get; init; }
+    public int Owner { get; init; }
+    public string Type { get; init; } = "";
+    public Hex Position { get; set; }
+    public int Experience { get; set; }
+    public int Health { get; set; } = 100;
+    public int MovesLeft { get; set; }
+    public SortedSet<string> Promotions { get; } = new(StringComparer.Ordinal);
 }
 
 /// <summary>Plain data. Everything that must stay in sync across peers lives here and is covered by the state hash.</summary>
@@ -34,7 +49,10 @@ public sealed class GameState
     public List<Player> Players { get; } = new();
     public List<City> Cities { get; } = new();
     public int NextCityId { get; set; } = 1;
+    public List<Unit> Units { get; } = new();
+    public int NextUnitId { get; set; } = 1;
 
     public Player PlayerById(int id) => Players.FirstOrDefault(p => p.Id == id) ?? throw new KeyNotFoundException($"player {id}");
+    public Unit UnitById(int id) => Units.FirstOrDefault(u => u.Id == id) ?? throw new KeyNotFoundException($"unit {id}");
     public City? CityAt(Hex pos) => Cities.FirstOrDefault(c => c.Position == pos);
 }
