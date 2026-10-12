@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
     Prowl front end. Not part of Civ.slnx, so the headless game builds and tests without the engine.
-    Clone Prowl next to this repo (or set -p:ProwlRuntimeProject=...) and build:
+    Clone Prowl next to this repo (or set the ProwlRuntimeProject property) and build:
       git clone https://github.com/ProwlEngine/Prowl external/Prowl
-      dotnet run --project src/Civ.Client
+      dotnet run (project src/Civ.Client)
   -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>

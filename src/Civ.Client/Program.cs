@@ -18,7 +18,7 @@ internal static class Program
 /// Thin view over the headless simulation: reads state and draws it, never mutates it except by sending commands.
 /// Today it renders the terrain as a field of hex prisms colored by the terrain def.
 /// </summary>
-public sealed class CivGame : Game
+public sealed class CivGame : Prowl.Runtime.Game
 {
     private Simulation _sim = null!;
 
@@ -56,8 +56,9 @@ public sealed class CivGame : Game
             go.Transform.Position = new Float3((float)x, terrain.IsWater ? -0.2f : 0f, (float)z);
             var mr = go.AddComponent<MeshRenderer>();
             mr.Mesh = mesh;
-            mr.Material = new Material(Shader.LoadDefault(DefaultShader.Standard));
-            mr.Material.SetColor("_MainColor", ParseColor(terrain.Color));
+            var mat = new Material(Shader.LoadDefault(DefaultShader.Standard));
+            mat.SetColor("_MainColor", ParseColor(terrain.Color));
+            mr.Material = mat;
             scene.Add(go);
         }
 
