@@ -1,12 +1,12 @@
-<Project Sdk="Godot.NET.Sdk/4.4.1">
+<Project Sdk="Godot.NET.Sdk/4.7.2">
   <!--
     Godot 4 .NET front end. Not part of Civ.slnx so the headless game builds and tests without the engine.
     Build:  dotnet build src/Civ.Godot
-    Run:    godot with the project path set to src/Civ.Godot (Godot 4.4 .NET)
+    Run:    godot with the project path set to src/Civ.Godot (Godot 4.7 .NET)
     Mods are plain DLLs loaded by Civ.Core; they never contain Godot types.
   -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <AssemblyName>Civ.Godot</AssemblyName>
     <RootNamespace>Civ.Client</RootNamespace>
