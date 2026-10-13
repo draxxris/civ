@@ -6,4 +6,8 @@ namespace Civ.Content.Schema;
 public sealed class CivicOptionDef : GameContentDef
 {
 
+
+    /// <summary>Initial choice when the civilization does not declare this option.</summary>
+    [ContentReference(typeof(CivicDef))]
+    public string? DefaultCivic { get; init; }
 }

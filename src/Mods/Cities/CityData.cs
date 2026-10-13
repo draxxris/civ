@@ -21,7 +21,13 @@ internal static class CityData
     internal static S.RuleConstants Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Values;
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value) && int.TryParse(value, out var n) ? n : fallback;
     internal static IEnumerable<City> Owned(Simulation sim, int player) => sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id);
-    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech));
+    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
+        .Select(sim.Content.Get<S.BuildingDef>).Where(b => IsActive(sim, city, b));
+    private static bool IsActive(Simulation sim, City city, S.BuildingDef b)
+    {
+        if (b.ObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) return false;
+        return !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, Tile(sim, city)), "civic").Success;
+    }
     internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(city.Owner)));
     internal static TileId Tile(Simulation sim, City city) => sim.State.Grid.TileAt(city.Position);
     internal static bool Coastal(Simulation sim, City city, int minimum = 0) => Coastal(sim, Tile(sim, city), minimum);

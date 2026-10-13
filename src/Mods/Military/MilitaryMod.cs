@@ -26,7 +26,7 @@ public sealed class MilitaryMod : IMod
         context.RegisterService<IUnitService>("units", units);
         context.RegisterService<IUnitSupportService>("support", units);
         context.RegisterService<Civ.Content.IModifierSource>("promotions", new PromotionEffects());
-        context.RegisterService<Civ.Content.IModifierSource>("training", new TrainingEffects());
+
         context.RegisterStateComponent<MilitaryUnitState>("unit_state");
         context.RegisterStateComponent<MilitaryPlayerState>("player_state");
         context.RegisterStateComponent<MilitaryGameState>("combat_history");

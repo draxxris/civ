@@ -13,7 +13,7 @@ internal sealed class CityGreatPeople : ICityGreatPeopleService
         var rates = Rates(sim, city, sink);
         long rate = rates.Values.Sum() * Math.Max(0, 100 + CityData.Effect(sink, "great_people_percent")) / 100;
         if (CityData.PlayerState(sim, city.Owner).GoldenAge) rate = rate * (100 + CityData.Constants(sim).GoldenAgeGreatPeoplePercent) / 100;
-        if (CityData.Read(sim, city).Disorder) rate = 0;
+        if (GovernmentStatus.IsDisorder(sim, city)) rate = 0;
         long threshold = CityData.Raw(sim, "GREAT_PEOPLE_THRESHOLD", 100) * Math.Max(0, 100 + CityData.PlayerState(sim, city.Owner).GreatPeopleThresholdModifier) / 100;
         threshold = threshold * CityData.Speed(sim).GreatPeoplePercent / 100;
         threshold = Math.Max(1, threshold * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).GreatPeoplePercent / 100);
@@ -34,7 +34,7 @@ internal sealed class CityGreatPeople : ICityGreatPeopleService
     }
     internal void Run(Simulation sim, City city)
     {
-        if (CityData.Read(sim, city).Disorder) return;
+        if (GovernmentStatus.IsDisorder(sim, city)) return;
         var state = CityData.Edit(sim, city);
         var result = Calculate(sim, city.Id);
         state.GreatPeopleProgress += result.Rate;

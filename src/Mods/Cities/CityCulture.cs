@@ -17,7 +17,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     }
     private long Rate(Simulation sim, City city)
     {
-        if (CityData.Read(sim, city).Disorder) return 0;
+        if (GovernmentStatus.IsDisorder(sim, city)) return 0;
         var source = sim.Content.Services.Get<ICityCultureSource>().SingleOrDefault();
         if (source is not null) return Math.Max(0, source.CultureHundredths(sim, city.Id));
         var result = yields.Calculate(sim, city.Id);
@@ -25,7 +25,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     }
     internal void Spread(Simulation sim, City city)
     {
-        if (city.Culture <= 0) return;
+        if (city.Culture <= 0 || GovernmentStatus.IsDisorder(sim, city)) return;
         int level = CityData.LevelIndex(sim, city);
         long rate = CityData.Read(sim, city).LastCultureRateHundredths / 100;
         foreach (var tile in sim.State.Grid.Range(CityData.Tile(sim, city), level))

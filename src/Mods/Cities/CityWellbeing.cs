@@ -13,7 +13,7 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         var lines = new List<LedgerLine>();
         Add(lines, "cities:handicap", "happiness", CityData.Handicap(sim).HappyBonus);
         Add(lines, "cities:handicap", "health", CityData.Handicap(sim).HealthBonus);
-        Add(lines, "cities:population", "happiness", -city.Population);
+        Add(lines, "cities:population", "happiness", -city.Population * Math.Max(0, 100 + CityData.Effect(effects, "population_anger_percent")) / 100);
         Add(lines, "cities:city_count", "happiness", -CityData.Owned(sim, city.Owner).Count() / Math.Max(1, CityData.World(sim).NumCitiesUnhappinessDivisor));
         bool noPopulation = CityData.Effect(effects, "no_unhealthy_population") > 0;
         if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
@@ -39,7 +39,8 @@ internal sealed class CityWellbeingService : ICityWellbeingService
             if (line.Key == "cities:happiness") Add(lines, line.Source, "happiness", line.Amount);
             if (line.Key == "cities:health") Add(lines, line.Source, "health", line.Amount);
             if (line.Key == "cities:unhappiness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
-            if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
+            if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness",
+                -Math.Max(0, line.Amount) * Math.Max(0, 100 + CityData.Effect(effects, "war_weariness_percent")) / 100);
         }
     }
     private static void AddEnvironment(Simulation sim, City city, List<LedgerLine> lines)

@@ -16,6 +16,16 @@ public static class GameFactory
             StartingEra = "foundation:era_ancient", PlayerCount = leaders.Length, Leaders = leaders,
         });
     }
+    /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
+    public static void NeutralPolitics(Simulation sim)
+    {
+        sim.State.Players = sim.State.Players.Select(p => new Player
+        {
+            Id = p.Id, TeamId = p.TeamId, Civilization = p.Civilization, Name = p.Name,
+            Treasury = p.Treasury, Ai = p.Ai, StartingPlot = p.StartingPlot,
+        }).ToList();
+        sim.State.RebuildIndexes();
+    }
     public static Simulation Scenario(ContentDb content)
     {
         var sim = Create(content);

@@ -79,12 +79,21 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         FoldClass(record, values, mapped);
+        if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
         values["unsupported"] = FieldCensus.Flatten(record.Node).Where(f => !mapped.Contains(f.Path) && RecordMerger.IsNonDefault(f.Node))
             .Select(f => f.Path).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         if (!MappedPaths.TryGetValue(record.Class, out var paths)) MappedPaths[record.Class] = paths = new(StringComparer.Ordinal);
         paths.UnionWith(mapped);
         var json = JsonSerializer.Serialize(values, Json);
         return (GameContentDef)JsonSerializer.Deserialize(json, mapping.DefinitionType, Json)!;
+    }
+
+    private string? CivicDefault(EffectiveRecord option)
+    {
+        // This profile has one ungated civic per option. Do not invent defaults for ambiguous mod data.
+        var candidates = records.Values.Where(r => r.Class == "CivicInfo" && r.Node.Value("CivicOptionType") == option.Type)
+            .Where(r => !Present(r.Node.Value("TechPrereq"))).ToArray();
+        return candidates.Length == 1 ? ids[("CivicInfo", candidates[0].Type)] : null;
     }
 
     internal object? MapField(EffectiveRecord record, DataNode node, FieldMapping field) => field.Kind switch

@@ -20,7 +20,7 @@ internal sealed class CityCommerce : ICityCultureSource, ICityProcessService
         var split = slider.Select(p => raw * p / 100).ToArray();
         split[0] += raw - split.Sum(); // Gold receives every unallocated hundredth.
         var process = Parts(ProcessCommerce(sim, city, yields.Yields.Production));
-        bool disorder = city.Extensions.Get<CityRuleState>(sim.Content)?.Disorder ?? false;
+        bool disorder = GovernmentStatus.IsDisorder(sim, city);
         for (int i = 0; i < 4; i++)
         {
             long baseRate = split[i] + direct[i];

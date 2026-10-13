@@ -21,7 +21,8 @@ public abstract record Requirement
 }
 
 /// <summary>Simulation and subject against which a requirement is evaluated.</summary>
-public sealed record RequirementContext(Simulation Sim, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null);
+public sealed record RequirementContext(Simulation Sim, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null,
+    IReadOnlyDictionary<string, string>? ProposedCivics = null);
 /// <summary>A mod owns one leaf kind; false results supply a human-readable reason.</summary>
 public interface IRequirementEvaluator
 {
@@ -74,6 +75,23 @@ public sealed class RequirementService
                 return new(false, forbidden.Length > 0 ? forbidden : [new(null, "Forbidden requirement is satisfied")]);
             default: throw new InvalidDataException("Unknown requirement expression");
         }
+    }
+    /// <summary>Evaluate only one requirement kind, for persistent effects with scoped activation gates.</summary>
+    public RequirementResult EvaluateKind(Requirement? requirement, RequirementContext context, string kind) =>
+        Evaluate(Filter(requirement, kind), context);
+    private static Requirement? Filter(Requirement? requirement, string kind) => requirement switch
+    {
+        Requirement.Leaf leaf => leaf.Kind == kind ? leaf : null,
+        Requirement.All all => FilterGroup(all.Items, kind, false),
+        Requirement.Any any => FilterGroup(any.Items, kind, true),
+        Requirement.Not not => Filter(not.Item, kind) is { } item ? new Requirement.Not(item) : null,
+        _ => null,
+    };
+    private static Requirement? FilterGroup(IReadOnlyList<Requirement> items, string kind, bool alternative)
+    {
+        var selected = items.Select(item => Filter(item, kind)).OfType<Requirement>().ToArray();
+        if (selected.Length == 0) return null;
+        return alternative ? new Requirement.Any(selected) : new Requirement.All(selected);
     }
     private RequirementResult Combine(IReadOnlyList<Requirement> items, RequirementContext context, bool alternative)
     {
