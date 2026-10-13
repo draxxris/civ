@@ -45,6 +45,17 @@ public class ModTests
     }
 
     [Fact]
+    public void IndependentDependenciesRegisterInOrdinalOrderRegardlessOfDeclarationOrder()
+    {
+        var calls = new List<string>();
+        var a = Src("a", _ => calls.Add("a"), "c", "b");
+        var b = Src("b", _ => calls.Add("b"));
+        var c = Src("c", _ => calls.Add("c"));
+        ModLoader.Build([a, c, b]);
+        Assert.Equal(["b", "c", "a"], calls);
+    }
+
+    [Fact]
     public void RegisteringOutsideYourNamespaceIsRejected()
     {
         var bad = Src("bad", ctx => ctx.Terrains.Register(new TerrainDef { Id = "base:oops" }));
@@ -62,5 +73,6 @@ public class ModTests
         var src = ModLoader.FromDirectory(AppContext.BaseDirectory);
         var db = ModLoader.Build([src]);
         Assert.True(db.Techs.Contains("base:monarchy"));
+        Assert.Equal(TestGame.Content().ContentHash, db.ContentHash);
     }
 }

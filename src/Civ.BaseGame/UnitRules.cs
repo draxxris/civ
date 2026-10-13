@@ -45,8 +45,12 @@ public static class UnitRules
         return def.Strength * 100 * (100 + bonus) / 100 * u.Health / 100;
     }
 
+    /// <summary>The test ruleset permits combat between different teams, without diplomacy gating.</summary>
+    public static bool IsOpponent(Simulation sim, int player, int other) =>
+        sim.State.PlayerById(player).TeamId != sim.State.PlayerById(other).TeamId;
+
     public static Unit? BestDefender(Simulation sim, Hex hex, int attackerOwner) =>
-        sim.State.Units.Where(u => u.Position == hex && u.Owner != attackerOwner)
+        sim.State.UnitsAt(hex).Where(u => IsOpponent(sim, attackerOwner, u.Owner))
             .OrderByDescending(u => Strength(sim, u, false)).ThenBy(u => u.Id).FirstOrDefault();
 
     /// <summary>Fight to the death in 20-damage rounds, odds proportional to strength. Winner earns experience.</summary>
@@ -59,15 +63,17 @@ public static class UnitRules
             if (sim.Rng.Next(a + d) < a) defender.Health -= DamagePerRound;
             else attacker.Health -= DamagePerRound;
         }
-        if (defender.Health <= 0) { sim.State.Units.Remove(defender); attacker.Experience += 2; }
-        else { sim.State.Units.Remove(attacker); defender.Experience += 1; }
+        if (defender.Health <= 0) { sim.State.RemoveUnit(defender.Id); attacker.Experience += 2; }
+        else { sim.State.RemoveUnit(attacker.Id); defender.Experience += 1; }
+        sim.Events.Publish(new CombatResolved(attacker.Id, defender.Id, defender.Health <= 0 ? attacker.Id : defender.Id));
     }
 
     public static Unit Spawn(Simulation sim, int owner, string type, Hex position, int experience = 0)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position, Experience = experience };
         unit.MovesLeft = MaxMoves(sim, unit);
-        sim.State.Units.Add(unit);
+        sim.State.AddUnit(unit);
+        sim.Events.Publish(new UnitCreated(unit.Id, owner, type, unit.Position));
         return unit;
     }
 }

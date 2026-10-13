@@ -9,16 +9,16 @@ public sealed class StartTrainingCommand : GameCommand
 
     public override string? Validate(Simulation sim)
     {
-        var city = sim.State.Cities.FirstOrDefault(c => c.Id == CityId);
+        var city = sim.State.FindCity(CityId);
         if (city == null || city.Owner != Player) return "not your city";
         if (!sim.Content.Units.TryGet(Unit, out var def)) return "unknown unit";
-        if (def.RequiresTech != null && !sim.State.PlayerById(Player).Techs.Contains(def.RequiresTech)) return "tech not known";
+        if (def.RequiresTech != null && !sim.KnowsTech(Player, def.RequiresTech)) return "tech not known";
         return null;
     }
 
     public override void Apply(Simulation sim)
     {
-        var city = sim.State.Cities.First(c => c.Id == CityId);
+        var city = sim.State.CityById(CityId);
         if (city.Training != Unit) { city.Training = Unit; city.TrainProgress = 0; }
         city.Building = null; city.BuildProgress = 0;
     }
@@ -31,14 +31,14 @@ public sealed class MoveUnitCommand : GameCommand
 
     public override string? Validate(Simulation sim)
     {
-        var u = sim.State.Units.FirstOrDefault(x => x.Id == UnitId);
+        var u = sim.State.FindUnit(UnitId);
         if (u == null || u.Owner != Player) return "not your unit";
         if (u.MovesLeft <= 0) return "no moves left";
-        if (u.Position.DistanceTo(To) != 1) return "destination not adjacent";
-        if (!sim.State.Terrain.ContainsKey(To)) return "off map";
+        if (!sim.State.Grid.Contains(To)) return "off map";
+        if (sim.State.Grid.Distance(u.Position, To) != 1) return "destination not adjacent";
         var t = sim.TerrainAt(To);
         if (t.IsWater || !t.Passable) return "impassable";
-        if (sim.State.Units.Any(x => x.Position == To && x.Owner != Player)) return "enemy unit there (attack instead)";
+        if (sim.State.UnitsAt(To).Any(x => UnitRules.IsOpponent(sim, Player, x.Owner))) return "enemy unit there (attack instead)";
         return null;
     }
 
@@ -46,7 +46,7 @@ public sealed class MoveUnitCommand : GameCommand
     {
         var u = sim.State.UnitById(UnitId);
         u.MovesLeft = Math.Max(0, u.MovesLeft - sim.TerrainAt(To).MoveCost);
-        u.Position = To;
+        sim.State.MoveUnit(UnitId, To);
     }
 }
 
@@ -57,11 +57,12 @@ public sealed class AttackCommand : GameCommand
 
     public override string? Validate(Simulation sim)
     {
-        var u = sim.State.Units.FirstOrDefault(x => x.Id == UnitId);
+        var u = sim.State.FindUnit(UnitId);
         if (u == null || u.Owner != Player) return "not your unit";
         if (sim.Content.Units.Get(u.Type).Strength <= 0) return "unit cannot attack";
         if (u.MovesLeft <= 0) return "no moves left";
-        if (u.Position.DistanceTo(Target) != 1) return "target not adjacent";
+        if (!sim.State.Grid.Contains(Target)) return "off map";
+        if (sim.State.Grid.Distance(u.Position, Target) != 1) return "target not adjacent";
         if (UnitRules.BestDefender(sim, Target, Player) == null) return "nothing to attack";
         return null;
     }
@@ -82,7 +83,7 @@ public sealed class PromoteUnitCommand : GameCommand
 
     public override string? Validate(Simulation sim)
     {
-        var u = sim.State.Units.FirstOrDefault(x => x.Id == UnitId);
+        var u = sim.State.FindUnit(UnitId);
         if (u == null || u.Owner != Player) return "not your unit";
         if (!sim.Content.Promotions.TryGet(Promotion, out var promo)) return "unknown promotion";
         return UnitRules.CanPromote(sim, u, promo);

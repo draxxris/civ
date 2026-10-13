@@ -1,75 +1,154 @@
 # Design
 
-A Civilization 4-style game on a hex grid where **everything is a mod**, including the base game.
+A deterministic Civilization-4-style game on a hex grid. Core defines the contract. Mods implement the rules.
 
-## Principles
+## Projects
 
-1. **Dogfood.** The base game (`Civ.BaseGame`) is an ordinary mod DLL. It has no private hooks: if the base game needs something, the Mod API grows to offer it to everyone. Base terrain, techs, buildings, culture levels, the map generator, commands and rules (research, production, culture) are all registered through `IModContext`.
-2. **Headless deterministic core.** `Civ.Core` has no engine dependency, no floats in game state, no wall clock, no unordered iteration affecting state. The renderer is a view.
-3. **Commands over the wire.** Multiplayer is lockstep: only player commands are exchanged, every peer runs the same simulation.
+- `Civ.Core`: geometry, shared data, content registries, extension contracts, simulation, commands, saves and hashes.
+- `Civ.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects local peers.
+- `Civ.BaseGame`: small test ruleset loaded through the same mod API as other rulesets.
+- `Civ.Client.Core`: engine-free selection, picking, commands and city screen data.
+- `Civ.Godot`: Godot view. Build separately with `dotnet build src/Civ.Godot`.
+- `Civ.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-## Layout
+The current client still references BaseGame rules. Future feature mods need Core query contracts before that dependency can disappear.
 
-| Project | Role |
-|---|---|
-| `Civ.Core` | Hex math, deterministic RNG, content definitions + registries, the mod API (`IMod`, `IModContext`), mod loader, `Simulation`, command codec, state hash. Mods reference only this. |
-| `Civ.Net` | Lockstep session, transport abstraction, in-process transport. |
-| `Civ.BaseGame` | The base game as a mod: `mod.json`, DLL, `data/*.json` sidecars. |
-| `Civ.Client.Core` | Engine-free front-end logic (`GameSession`: selection, clicks, city/unit actions) and mod discovery; unit-tested. |
-| `Civ.Godot` | Godot 4 .NET front end (outside `Civ.slnx`; build with `dotnet build src/Civ.Godot`). |
-| `Civ.Tests` | xunit tests incl. loading the base mod from its folder and two-peer lockstep. |
+## Determinism
 
-## Mods
+Authoritative state uses integer math. Rule code uses only simulation state and `Simulation.Rng`, not clocks or engine APIs.
+String identities use ordinal comparisons. Content follows ordinal id order. Ordered sequences retain their order in saves and hashes.
 
-A mod folder is `mod.json` + a DLL + optional sidecar data:
+Mods increase their manifest version whenever rule semantics change. Content hashes do not hash DLL bytes.
 
+## Map and plots
+
+`MapSpec(int Width, int Height, bool Wrap)` describes a rectangular, pointy-top odd-row map.
+`HexGrid` converts axial coordinates, offset coordinates and row-major `TileId` values.
+Columns normalize across east–west wrap. Rows never wrap.
+
+- `HexGrid.Neighbors` returns distinct neighbors in direction order, without self-neighbors.
+- Directions are east, northeast, northwest, west, southwest and southeast.
+- `HexGrid.Distance` measures the shortest distance across wrap images.
+- `HexGrid.Range` and `Ring` clip to the map and enumerate distinct tiles in ascending tile-index order.
+- `Hex.DistanceTo`, `Hex.Range` and `Hex.Ring` describe the unbounded plane, not map topology.
+
+`GameState.Plots[tile.Value]` stores terrain, feature, bonus, improvement, route, owner, culture, visibility and area id.
+Culture uses sorted player ids. Revealed and visible teams use compact `TeamMask` bitsets, without a fixed team-count limit.
+Bitsets enumerate team ids in ascending order. Dense team ids minimize their storage.
+
+River bits follow the six directions. `GameState.SetRiver` mirrors each shared edge on both plots.
+At a bounded edge, the single plot owns the edge. Map generators must preserve this convention.
+
+`IMapGenerator.Generate(MapSpec, Plot[], DeterministicRng, ContentDb)` fills every plot.
+Cities and units retain canonical axial positions. The client renders one map image, without duplicate wrap plots.
+
+## Teams and entity data
+
+Players have `TeamId`, civics, culture and treasury. Each player defaults to a separate team.
+Teams hold members, known techs, a research target, progress per tech and war relations.
+`Simulation.TeamOf(player)` and `KnowsTech(player, tech)` provide rule access.
+Changing a research target retains its progress. `GameState.SetWar` keeps the war matrix symmetric.
+
+Cities include a generic `ProductionQueue` of `ProductionOrder(Kind, ContentId, Progress)` entries.
+BaseGame still uses its existing building/training fields. The future cities mod will own queue processing and overflow rules.
+
+`GameState` contains plain data and rebuildable lookup caches. Caches do not enter saves or hashes.
+`UnitById`, `UnitsAt`, `CityById` and `CityAt` use indexes.
+Runtime edits use `AddCity`, `RemoveCity`, `AddUnit`, `RemoveUnit` and `MoveUnit`.
+After bulk data edits, `RebuildIndexes` restores the caches.
+
+## Mod registration
+
+Each mod folder contains `mod.json`, one DLL and optional JSON sidecars.
+Dependencies determine load order. Ordinal mod ids break ties.
+Ids use `modid:name`. Registration requires the owning namespace. Overrides can replace earlier content.
+
+- `ctx.Content<T>()` returns `ModRegistry<T>` for any `ContentDef` subtype.
+- `ContentDb.Get<T>()`, `Get<T>(id)` and `TryGet<T>(id, out item)` resolve generic content.
+- Existing typed registries remain convenience accessors.
+- `ctx.RegisterService<T>(name, service)` registers a non-content implementation under its shared interface.
+- `ContentDb.Services.Get<T>()` returns implementations in mod-load and registration order.
+- `ITurnSystem` retains explicit `(Order, Id)` execution order.
+
+Registries freeze after load. Definitions and their nested collections must not change after that point.
+The content hash includes canonical definitions, loaded mod ids/versions, command identities, service order and state-component identities.
+
+## Requirements
+
+`Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
+A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.
+
+```json
+{
+  "all": ["research:bronze_working"],
+  "any": [
+    { "kind": "bonus", "id": "world:copper", "count": 1 },
+    { "kind": "bonus", "id": "world:iron", "count": 1 }
+  ],
+  "not": { "kind": "civic", "id": "government:pacifism" }
+}
 ```
-mods/mymod/
-  mod.json            { "id": "mymod", "assembly": "MyMod.dll", "dependencies": ["base"] }
-  MyMod.dll           exactly one public IMod
-  data/*.json         read by the DLL through ctx.Data
-```
 
-- Ids are namespaced `modid:name`; a mod can only *register* inside its own namespace, but can `Override` anything registered earlier (load order follows `dependencies`, ties broken by id).
-- Each mod loads in its own `AssemblyLoadContext`; `Civ.Core` always resolves to the host's copy so types are shared.
-- Registries are frozen after load.
-- Extension points today: terrain, tech, building, culture level, civilization, unit, promotion, experience level, player AI, map generator, turn system (ordered rule steps), command type. Next: units, improvements/resources, civics, promotions, events, AI, UI panels (client side API).
+Each owning mod registers one `IRequirementEvaluator` per leaf kind.
+Loading rejects unknown kinds and duplicate evaluators, including requirements nested in custom definitions.
+`RequirementContext` supplies the simulation, player and optional city, plot or unit.
+Evaluation returns success and failure explanations. Successful alternatives discard failed branches.
+Empty `All` succeeds. Empty `Any` fails. Evaluators must not change state.
 
-## Civilizations and AI
+## Modifiers and ledgers
 
-- `CivilizationDef` (sidecar JSON or code): name, leader, color, starting techs and percentage research/production/culture bonuses that the base turn systems apply. Players pick one via `SimulationSettings.Civilizations` (default: cycle through the registry).
-- `IPlayerAI` is a registry like any other. `SimulationSettings.PlayerAis[i]` makes player `i` AI-controlled. The simulation itself calls the AI at game start and after every turn advance, on every peer, and applies the commands it returns through the normal validate/apply path. AI therefore never goes over the network and lockstep stays intact; it must be deterministic (state and `sim.Rng` only, no floats or unordered iteration).
-- The base game ships `base:basic` (found a city, research the cheapest tech, build the cheapest building), registered through the same API a mod would use.
+`IModifierSource.Contribute(ModifierContext, ModifierSink)` contributes to a plot, city, player, team or unit calculation.
+The calculating mod calls `ModifierSink.Collect`, then applies its own formula.
 
-## Units, experience and promotions
+`YieldVector` holds food, production and commerce. `CommerceVector` holds gold, research, culture and espionage.
+Sources contribute flat vectors, percent vectors and namespaced integer effects such as `military:combat_percent`.
+Percentages add before integer multiplication and division. Division truncates toward zero.
 
-- `UnitDef` (sidecar JSON): cost, required tech, strength, moves, `canFoundCity`, and class tags (`melee`, `ranged`, `mounted`, ...). Cities train units (`start_training`), and `FoundCity` can consume a settler.
-- Experience works like Civ4: `ExperienceLevelDef` thresholds (2, 5, 10, 17, 26 in the base game) each earn one promotion. Winning a fight gives XP (2 attacking, 1 defending), and buildings can give new units starting XP (`unitExperience`, e.g. Barracks +3).
-- `PromotionDef` is the selectable specialization. It can be limited to unit classes, can require any of a list of earlier promotions (so Combat I -> II -> III, Shock/Cover/Flanking branches), and grants percent bonuses to strength, attack or defense, extra moves, or extra resting heal. Players choose with `promote_unit`; the AI picks the first legal one by id.
-- Combat is in the base mod, not the core: rounds of 20 damage with odds proportional to strength (promotions, terrain defense bonus and health all feed in), drawn from the simulation RNG so every peer agrees.
+The sink produces a `Ledger` with ordered `(Source, Key, Amount)` lines and totals by key.
+Typed keys separate flat and percent units. Each calculating mod owns effect-key meanings, final formulas and rounding boundaries.
+BaseGame civilization and civic bonuses are modifier sources, not special cases in the turn systems.
 
-## Simulation and multiplayer
+## Events and extension state
 
-- `GameState` is plain data. `Simulation.TryApply(command)` validates then applies; invalid commands are rejected identically everywhere. Turns are simultaneous (Civ4 MP style): `core:end_turn` from all players runs the registered `ITurnSystem`s in `(Order, Id)` order.
-- Commands are JSON envelopes `{type, data}` where `type` is a registered command id, so mod commands travel like built-in ones. Every peer must load the same mods, in the same order, with the same versions (to be enforced in a handshake).
-- `LockstepSession`: each peer submits a batch (possibly empty) for tick `t + inputDelay`; a tick runs when all batches are present, applied in peer order. After each tick peers exchange `StateHasher` hashes; mismatch raises `Desync`.
-- Transport is `ITransport` (reliable, ordered broadcast). `InProcessHub` exists; TCP/relay transport is next.
+`ctx.Subscribe<TEvent>(name, handler)` registers deterministic event handlers.
+`Simulation.Events.Publish(record)` dispatches handlers synchronously in registration order.
+Nested publications enter a FIFO queue after the current dispatch.
 
-## Rendering: Godot 4 (C#)
+Core event records cover tech discovery, founding, growth, building completion, unit creation, combat and turn boundaries.
+Mods can define additional `DomainEvent` records.
+`Published` holds current-turn presentation events. `PreviousTurn` retains the last completed turn.
+These lists are neither saved nor hashed. Loading does not republish events or rerun AI.
 
-The client is a Godot 4.4 .NET project. Logic and AI mods stay plain .NET DLLs loaded by `ModLoader`; the base game and every mod reference only `Civ.Core`, so no Godot types appear in mod DLLs. Visual content from mods is data: `.pck` resource packs and plain assets, loaded at start from the `mods/` folders. A client-side UI plugin interface (a separate `Civ.ClientApi`) is a possible later addition; it is not built yet. `WorldView` builds hex prisms colored from `TerrainDef.Color`; `GameUi` is a Control-based panel driven by `GameSession`.
+`ctx.RegisterStateComponent<T>(name)` registers a concrete state type under a stable id.
+Game, player, team, city and unit objects each expose `Extensions.Set<T>(content, instance)` and `Get<T>(content)`.
+Attached instances remain mutable. Saves and hashes include their canonical JSON data.
 
-## City management and specialists
+State components use exact registered types, integer numbers and JSON-serializable properties.
+Fields require `JsonInclude`. Runtime state belongs in components, not shared service instances.
+Floating-point schemas fail during registration. Sorted string sets and dictionaries retain ordinal comparers after loading.
+Unordered arrays, custom converters, opaque objects and computed properties need care: the mod owns their deterministic serialization contract.
 
-- Cities have population, a food box (`FoodToGrow`), and work tiles within radius 2 (the centre is free). Every citizen either works a tile or is a specialist. Growth adds a citizen on the best free tile; starvation removes one.
-- `SpecialistDef` (sidecar JSON): food/production/commerce/culture per specialist (priest, scientist, merchant, engineer, artist, plus the unlimited plain citizen). Slots come from `BuildingDef.specialistSlots` and `CivicDef.specialistSlots` (-1 = unlimited): temple = priests, library = scientists, workshop = engineers, market = merchants, Caste System = unlimited scientists/merchants/artists.
-- `CivicDef` (government, labor, ...): one civic per category per player, gated by tech, with percent research/production/culture bonuses and specialist slots. `set_civic` swaps one; cities that lose slots turn surplus specialists back into citizens at once.
-- `set_city_work` replaces a city's whole assignment (tiles + specialist counts) and is validated server-side like every command (distinct tiles in range, not used by another city, slot limits, every citizen assigned).
+## Saves and multiplayer
 
-## Godot client
+`SaveGame.Save(Simulation)` returns versioned JSON with content identity, settings, full state and four RNG words.
+`SaveGame.Load(ContentDb, json, force: false)` checks the schema and content identity, restores state, and rebuilds indexes.
+Forced loading bypasses content mismatch only. It cannot restore unknown component types or unsupported schemas.
+Schema changes need explicit migrations. Component authors must version and migrate their own data contracts.
 
-`Civ.Godot` is a playable hot-seat-vs-AI front end: hex prisms colored from `TerrainDef.Color`, cities and units tinted by civilization, and a Control-based UI with Selection / Research / Civics tabs. Selecting a city shows food, yields and specialist +/- rows with slot counts, highlights its workable tiles (click one to put a citizen to work or unassign it), and lets you pick buildings or units to produce. Selecting a unit shows health, experience level and available promotions, and offers "Found city". Controls: WASD pan, wheel zoom, left click select (click again to cycle a stack), right click move/attack, Enter ends the turn. The client only reads state and submits commands, so the same code can route through `LockstepSession`.
+`StateHasher` hashes canonical state JSON and RNG words with FNV-1a.
+Canonical JSON sorts object properties ordinally, preserves array order and rejects non-integer numbers.
+Content identity uses SHA-256 over canonical content data.
 
-## Not yet done
+Commands travel as registered JSON type/data envelopes. Every player ends a simultaneous turn before the simulation advances.
+AI runs on every peer and submits ordinary validated commands locally.
 
-City capture, ranged/sea/air combat, unit stacking rules, fog of war, a real AI strategy (the basic AI only trains, promotes and attacks adjacent targets, and never changes civics or citizen assignments), happiness/health, anarchy on civic change, unit pathfinding in the client (right-click walks greedily), floating city/unit labels, unique buildings/units per civilization, improvements, borders driven by culture, AI, save/load, real network transport, handshake, mod folder discovery in the client, client input (picking, commands).
+Lockstep peers exchange content hashes before any tick runs. A mismatch raises an explicit content error.
+Peers then submit command batches and exchange state hashes after each tick. A state mismatch raises `Desync`.
+The handshake identifies content, not initial setup. State hashes detect setup divergence.
+
+## Remaining feature work
+
+The richer building, unit and tech schemas follow separately.
+Feature mods must define effect keys, query interfaces, turn priorities, queue rules, diplomacy enforcement and save migrations.
+BaseGame remains a test scaffold: combat does not enforce war relations, and its economy sends all commerce to research.
+Fog rules, advanced AI, border rules, city capture, art conversion and network transports remain separate tasks.

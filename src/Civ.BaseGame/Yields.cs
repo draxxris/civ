@@ -14,7 +14,7 @@ public static class Yields
 {
     public static Yield OfTile(Simulation sim, Hex hex)
     {
-        if (!sim.State.Terrain.ContainsKey(hex)) return default;
+        if (!sim.State.Grid.Contains(hex)) return default;
         var t = sim.TerrainAt(hex);
         return new Yield(t.Food, t.Production, t.Commerce);
     }
@@ -41,13 +41,9 @@ public static class Yields
 /// <summary>Percent bonuses a player gets from its civilization and held civics.</summary>
 public static class Bonuses
 {
-    private static IEnumerable<Content.CivicDef> Civics(Simulation sim, int playerId) =>
-        sim.State.PlayerById(playerId).Civics.Values.Select(id => sim.Content.Civics.Get(id));
-
-    public static int Research(Simulation sim, int playerId) =>
-        (sim.CivilizationOf(playerId)?.ResearchBonus ?? 0) + Civics(sim, playerId).Sum(c => c.ResearchBonus);
-    public static int Production(Simulation sim, int playerId) =>
-        (sim.CivilizationOf(playerId)?.ProductionBonus ?? 0) + Civics(sim, playerId).Sum(c => c.ProductionBonus);
-    public static int Culture(Simulation sim, int playerId) =>
-        (sim.CivilizationOf(playerId)?.CultureBonus ?? 0) + Civics(sim, playerId).Sum(c => c.CultureBonus);
+    public static Content.ModifierSink Collect(Simulation sim, int playerId) =>
+        Content.ModifierSink.Collect(new(sim, Content.ModifierScope.Player, playerId));
+    public static int Research(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce.Research);
+    public static int Production(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentYield.Production);
+    public static int Culture(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce.Culture);
 }

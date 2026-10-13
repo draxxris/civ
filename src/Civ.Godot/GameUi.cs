@@ -27,6 +27,7 @@ public partial class GameUi : CanvasLayer
 
     private Simulation Sim => _session.Sim;
     private Player Me => _session.Me;
+    private Team MyTeam => _session.MyTeam;
 
     public GameUi(GameSession session)
     {
@@ -103,9 +104,9 @@ public partial class GameUi : CanvasLayer
         var civ = Sim.CivilizationOf(me.Id);
         row.AddChild(Text($"Turn {Sim.State.Turn}", 14));
         row.AddChild(Text($"{civ?.Name ?? me.Name}  culture {me.Culture}" + (Sim.Content.CultureLevelFor(me.Culture) is { } lvl ? $" ({lvl.Name})" : ""), 13));
-        row.AddChild(me.Researching == null
+        row.AddChild(MyTeam.Researching == null
             ? Text("Research: none (pick one in the Research tab)", 13, Bad)
-            : Text($"Research: {Sim.Content.Techs.Get(me.Researching).Name} {me.ResearchProgress}/{Sim.Content.Techs.Get(me.Researching).Cost}", 13));
+            : Text($"Research: {Sim.Content.Techs.Get(MyTeam.Researching).Name} {MyTeam.ResearchProgress}/{Sim.Content.Techs.Get(MyTeam.Researching).Cost}", 13));
         if (_session.Message.Length > 0) row.AddChild(Text(_session.Message, 13, Bad));
         var end = Btn("End turn", _session.EndTurn, minWidth: 90);
         end.SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd;
@@ -150,15 +151,17 @@ public partial class GameUi : CanvasLayer
     {
         var me = Me;
         col.AddChild(Text("Available technologies", 14));
-        var available = Sim.Content.Techs.All.Where(t => !me.Techs.Contains(t.Id) && t.Prerequisites.All(me.Techs.Contains)).ToList();
+        var available = Sim.Content.Techs.All.Where(t => !MyTeam.Techs.Contains(t.Id)
+            && t.Prerequisites.All(MyTeam.Techs.Contains)
+            && Sim.Content.Requirements.Evaluate(t.Requirements, new(Sim, Me.Id)).Success).ToList();
         if (available.Count == 0) col.AddChild(Text("Nothing left to research.", 13, Dim));
         foreach (var t in available)
         {
             var tech = t;
-            col.AddChild(Btn($"{tech.Name}  ({tech.Cost})", () => _session.Submit(new SetResearchCommand { Player = GameSession.Human, Tech = tech.Id }), true, me.Researching == tech.Id));
+            col.AddChild(Btn($"{tech.Name}  ({tech.Cost})", () => _session.Submit(new SetResearchCommand { Player = GameSession.Human, Tech = tech.Id }), true, MyTeam.Researching == tech.Id));
         }
         col.AddChild(Text("Known", 14));
-        col.AddChild(Text(me.Techs.Count == 0 ? "none" : string.Join(", ", me.Techs.Select(id => Sim.Content.Techs.Get(id).Name)), 12, Dim));
+        col.AddChild(Text(MyTeam.Techs.Count == 0 ? "none" : string.Join(", ", MyTeam.Techs.Select(id => Sim.Content.Techs.Get(id).Name)), 12, Dim));
     }
 
     private void CivicsTab(Container col)
@@ -170,7 +173,7 @@ public partial class GameUi : CanvasLayer
             foreach (var civic in group)
             {
                 var c = civic;
-                bool known = c.RequiresTech == null || me.Techs.Contains(c.RequiresTech);
+                bool known = c.RequiresTech == null || MyTeam.Techs.Contains(c.RequiresTech);
                 col.AddChild(Btn(c.Name + (known ? "" : $"  (needs {Sim.Content.Techs.Get(c.RequiresTech!).Name})"),
                     () => _session.Submit(new SetCivicCommand { Player = GameSession.Human, Civic = c.Id }), known, me.Civics.GetValueOrDefault(c.Category) == c.Id));
                 var effects = CivicEffects(c);
@@ -262,12 +265,12 @@ public partial class GameUi : CanvasLayer
         if (city.Buildings.Count > 0)
             col.AddChild(Text("Has: " + string.Join(", ", city.Buildings.Select(b => Sim.Content.Buildings.Get(b).Name)), 12, Dim));
 
-        foreach (var building in Sim.Content.Buildings.All.Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || me.Techs.Contains(b.RequiresTech))))
+        foreach (var building in Sim.Content.Buildings.All.Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || MyTeam.Techs.Contains(b.RequiresTech))))
         {
             var b = building;
             col.AddChild(Btn($"{b.Name} ({b.Cost})", () => _session.Submit(new StartBuildingCommand { Player = GameSession.Human, CityId = city.Id, Building = b.Id }), true, city.Building == b.Id));
         }
-        foreach (var unit in Sim.Content.Units.All.Where(u => u.RequiresTech == null || me.Techs.Contains(u.RequiresTech)))
+        foreach (var unit in Sim.Content.Units.All.Where(u => u.RequiresTech == null || MyTeam.Techs.Contains(u.RequiresTech)))
         {
             var u = unit;
             col.AddChild(Btn($"Train {u.Name} ({u.Cost})", () => _session.Submit(new StartTrainingCommand { Player = GameSession.Human, CityId = city.Id, Unit = u.Id }), true, city.Training == u.Id));

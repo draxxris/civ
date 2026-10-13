@@ -19,9 +19,10 @@ public static class CityRules
 
     /// <summary>Tiles in the city radius (centre excluded) that no other city is working or sits on.</summary>
     public static IEnumerable<Hex> WorkableTiles(Simulation sim, City city) =>
-        Hex.Range(city.Position, Radius)
-            .Where(h => h != city.Position && sim.State.Terrain.ContainsKey(h))
-            .Where(h => !sim.State.Cities.Any(o => o.Id != city.Id && (o.Position == h || o.Worked.Contains(h))));
+        sim.State.Grid.Range(city.Position, Radius)
+            .Where(h => h != city.Position)
+            .Where(h => sim.State.CityAt(h) is not { } occupying || occupying.Id == city.Id)
+            .Where(h => !sim.State.Cities.Any(o => o.Id != city.Id && o.Worked.Contains(h)));
 
     public static SpecialistDef? DefaultSpecialist(Simulation sim) => sim.Content.Specialists.All.FirstOrDefault(s => s.Unlimited);
 

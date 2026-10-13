@@ -1,59 +1,142 @@
+using System.Collections;
+using System.Reflection;
+using System.Text.Json;
+using Civ.Game;
+
 namespace Civ.Content;
 
-/// <summary>Everything mods registered. Built by <see cref="Modding.ModLoader"/>, immutable once frozen.</summary>
+/// <summary>Frozen mod content and services. Generic content registries are shared across feature mods.</summary>
 public sealed class ContentDb
 {
-    public Registry<TerrainDef> Terrains { get; } = new("terrain");
-    public Registry<UnitDef> Units { get; } = new("unit");
-    public Registry<PromotionDef> Promotions { get; } = new("promotion");
-    public Registry<ExperienceLevelDef> ExperienceLevels { get; } = new("experience level");
-    public Registry<SpecialistDef> Specialists { get; } = new("specialist");
-    public Registry<CivicDef> Civics { get; } = new("civic");
-    public Registry<TechDef> Techs { get; } = new("tech");
-    public Registry<BuildingDef> Buildings { get; } = new("building");
-    public Registry<CultureLevelDef> CultureLevels { get; } = new("culture level");
-    public Registry<CivilizationDef> Civilizations { get; } = new("civilization");
+    private sealed record Entry(object Registry, Action Freeze, Func<IEnumerable<ContentDef>> Items);
+    private readonly Dictionary<Type, Entry> _registries = new();
+    private bool _frozen;
+    /// <summary>Create a registration database with empty shared-schema registries.</summary>
+    public ContentDb()
+    {
+        _ = Terrains; _ = Units; _ = Promotions; _ = ExperienceLevels; _ = Specialists;
+        _ = Civics; _ = Techs; _ = Buildings; _ = CultureLevels; _ = Civilizations;
+    }
+    /// <summary>Get a registry by content subtype; an unknown type after freezing is an error.</summary>
+    public Registry<T> Get<T>() where T : ContentDef
+    {
+        if (_registries.TryGetValue(typeof(T), out var entry)) return (Registry<T>)entry.Registry;
+        if (_frozen) throw new KeyNotFoundException($"Content type '{typeof(T).FullName}' is not registered");
+        var registry = new Registry<T>(typeof(T).Name);
+        _registries.Add(typeof(T), new(registry, registry.Freeze, () => registry.All));
+        return registry;
+    }
+    /// <summary>Get a definition directly by its subtype and id.</summary>
+    public T Get<T>(string id) where T : ContentDef => Get<T>().Get(id);
+    /// <summary>Try a subtype/id lookup without creating a new registry.</summary>
+    public bool TryGet<T>(string id, out T item) where T : ContentDef
+    {
+        item = null!;
+        return _registries.TryGetValue(typeof(T), out var entry) && ((Registry<T>)entry.Registry).TryGet(id, out item);
+    }
+    /// <summary>Terrain convenience registry.</summary>
+    public Registry<TerrainDef> Terrains => Get<TerrainDef>();
+    /// <summary>Unit convenience registry.</summary>
+    public Registry<UnitDef> Units => Get<UnitDef>();
+    /// <summary>Promotion convenience registry.</summary>
+    public Registry<PromotionDef> Promotions => Get<PromotionDef>();
+    /// <summary>Experience level convenience registry.</summary>
+    public Registry<ExperienceLevelDef> ExperienceLevels => Get<ExperienceLevelDef>();
+    /// <summary>Specialist convenience registry.</summary>
+    public Registry<SpecialistDef> Specialists => Get<SpecialistDef>();
+    /// <summary>Civic convenience registry.</summary>
+    public Registry<CivicDef> Civics => Get<CivicDef>();
+    /// <summary>Technology convenience registry.</summary>
+    public Registry<TechDef> Techs => Get<TechDef>();
+    /// <summary>Building convenience registry.</summary>
+    public Registry<BuildingDef> Buildings => Get<BuildingDef>();
+    /// <summary>Culture level convenience registry.</summary>
+    public Registry<CultureLevelDef> CultureLevels => Get<CultureLevelDef>();
+    /// <summary>Civilization convenience registry.</summary>
+    public Registry<CivilizationDef> Civilizations => Get<CivilizationDef>();
+    /// <summary>Player AI implementations.</summary>
     public Registry<IPlayerAI> PlayerAIs { get; } = new("player AI");
+    /// <summary>Map generator implementations.</summary>
     public Registry<IMapGenerator> MapGenerators { get; } = new("map generator");
+    /// <summary>Turn systems (execution order is Order, then ordinal Id).</summary>
     public Registry<ITurnSystem> TurnSystems { get; } = new("turn system");
+    /// <summary>Command serialization contracts.</summary>
     public Registry<CommandTypeDef> CommandTypes { get; } = new("command type");
-
+    /// <summary>Ordered non-content extension implementations.</summary>
+    public ServiceRegistry Services { get; } = new();
+    /// <summary>Typed extension state identities.</summary>
+    public StateComponentRegistry StateComponents { get; } = new();
+    /// <summary>Requirement dispatch after content loading.</summary>
+    public RequirementService Requirements { get; private set; } = new([]);
+    /// <summary>Loaded mod ids in dependency order.</summary>
     public IReadOnlyList<string> LoadedMods { get; internal set; } = [];
+    /// <summary>Loaded mod versions in dependency order.</summary>
+    public IReadOnlyList<LoadedMod> Mods { get; internal set; } = [];
+    /// <summary>SHA-256 of frozen definitions, mod versions and serialized contract identities.</summary>
+    public string ContentHash { get; private set; } = "";
 
     internal void Freeze()
     {
-        Specialists.Freeze(); Civics.Freeze(); Units.Freeze(); Promotions.Freeze(); ExperienceLevels.Freeze(); Terrains.Freeze(); Civilizations.Freeze(); PlayerAIs.Freeze(); Techs.Freeze(); Buildings.Freeze(); CultureLevels.Freeze();
-        MapGenerators.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze();
+        Requirements = new(Services.Get<IRequirementEvaluator>());
+        foreach (var entry in _registries.Values)
+            foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        var definitions = _registries.OrderBy(kv => kv.Key.FullName, StringComparer.Ordinal)
+            .SelectMany(kv => kv.Value.Items().Select(item => new
+            {
+                Type = kv.Key.FullName, Definition = JsonSerializer.SerializeToElement(item, item.GetType(), CanonicalJson.Options),
+            })).ToArray();
+        ContentHash = CanonicalJson.Digest(new
+        {
+            Mods, Definitions = definitions,
+            Commands = CommandTypes.All.Select(c => new { c.Id, Type = c.Type.FullName }).ToArray(),
+            Components = StateComponents.Ids.Select(id => new { Id = id, Type = StateComponents.TypeOf(id).FullName }).ToArray(),
+            Services = Services.Identities.ToArray(),
+            MapGenerators = MapGenerators.All.Select(g => new { g.Id, Type = g.GetType().FullName }).ToArray(),
+            PlayerAIs = PlayerAIs.All.Select(ai => new { ai.Id, Type = ai.GetType().FullName }).ToArray(),
+            TurnSystems = TurnSystems.All.Select(s => new { s.Id, s.Order, Type = s.GetType().FullName }).ToArray(),
+        });
+        foreach (var entry in _registries.Values) entry.Freeze();
+        MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
+        _frozen = true;
     }
-
-    /// <summary>Highest culture level reached for a culture total, or null if below the first threshold.</summary>
+    private void ValidateRequirements(object? value, HashSet<object> seen)
+    {
+        if (value == null) return;
+        if (IsScalar(value) || !seen.Add(value)) return;
+        if (value is Requirement requirement) { Requirements.Validate(requirement); return; }
+        if (value is IEnumerable sequence) { foreach (var item in sequence) ValidateRequirements(item, seen); return; }
+        foreach (var property in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            if (property.CanRead && property.GetIndexParameters().Length == 0) ValidateRequirements(property.GetValue(value), seen);
+    }
+    private static bool IsScalar(object value) => value is string || value is decimal
+        || value.GetType().IsPrimitive || value.GetType().IsEnum;
+    /// <summary>Highest culture level reached, or null below the first threshold.</summary>
     public CultureLevelDef? CultureLevelFor(long culture)
     {
         CultureLevelDef? best = null;
-        foreach (var lvl in CultureLevels.All)
-            if (culture >= lvl.Threshold && (best == null || lvl.Threshold >= best.Threshold)) best = lvl;
+        foreach (var level in CultureLevels.All)
+            if (culture >= level.Threshold && (best == null || level.Threshold >= best.Threshold)) best = level;
         return best;
     }
 }
 
+/// <summary>Mod-owned deterministic map generation.</summary>
 public interface IMapGenerator : IHasId
 {
-    /// <summary>Returns the terrain id for every tile of a hex map with the given radius. Must be deterministic in (radius, rng).</summary>
-    IReadOnlyDictionary<Hex, string> Generate(int radius, DeterministicRng rng, ContentDb content);
+    /// <summary>Fill every plot, in tile order, for the given map specification. Array length must equal Width * Height.</summary>
+    void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content);
 }
-
-/// <summary>
-/// Controls a player. Called by the simulation itself at the start of each turn, on every peer, so it must be deterministic
-/// and may use only the simulation state and <c>sim.Rng</c>. It returns ordinary commands, which are validated like a human's.
-/// </summary>
+/// <summary>Deterministic player AI; called on every peer, returning ordinary validated commands.</summary>
 public interface IPlayerAI : IHasId
 {
-    IEnumerable<Game.GameCommand> Decide(Game.Simulation sim, int playerId);
+    /// <summary>Decide using only simulation state and RNG.</summary>
+    IEnumerable<GameCommand> Decide(Simulation sim, int playerId);
 }
-
-/// <summary>A step run once per game turn, in ascending <see cref="Order"/> (then id). This is how rules like research or production are plugged in.</summary>
+/// <summary>A rule step executed once per turn in (Order, Id) order.</summary>
 public interface ITurnSystem : IHasId
 {
+    /// <summary>Ascending execution priority.</summary>
     int Order { get; }
-    void Run(Game.Simulation sim);
+    /// <summary>Run the rule step.</summary>
+    void Run(Simulation sim);
 }

@@ -11,6 +11,10 @@ public sealed class BaseGameMod : IMod
 {
     public void Register(IModContext ctx)
     {
+        ctx.RegisterService<IRequirementEvaluator>("tech_requirements", new TechRequirementEvaluator());
+        ctx.RegisterService<IModifierSource>("civilization_modifiers", new CivilizationModifiers());
+        ctx.RegisterService<IModifierSource>("civic_modifiers", new CivicModifiers());
+
         // Terrain, registered in code.
         ctx.Terrains.Register(new TerrainDef { Id = "base:ocean",     Name = "Ocean",     IsWater = true, Passable = false, Food = 1, Commerce = 2, Color = "#2a5d9f" });
         ctx.Terrains.Register(new TerrainDef { Id = "base:grassland", Name = "Grassland", Food = 2, Color = "#5fa84a" });

@@ -5,6 +5,7 @@ public sealed class DeterministicRng
 {
     private ulong _s0, _s1, _s2, _s3;
 
+    /// <summary>Initialize a random stream from an integer seed.</summary>
     public DeterministicRng(ulong seed)
     {
         _s0 = SplitMix(ref seed);
@@ -23,6 +24,7 @@ public sealed class DeterministicRng
 
     private static ulong Rotl(ulong x, int k) => (x << k) | (x >> (64 - k));
 
+    /// <summary>Advance the stream and return its next 64-bit value.</summary>
     public ulong NextUInt64()
     {
         ulong result = Rotl(_s1 * 5, 7) * 9;
@@ -40,5 +42,13 @@ public sealed class DeterministicRng
         return (int)(NextUInt64() % (ulong)maxExclusive);
     }
 
+    /// <summary>Four words needed to resume the exact random stream.</summary>
     public (ulong, ulong, ulong, ulong) State => (_s0, _s1, _s2, _s3);
+
+    /// <summary>Restore a saved random stream. The all-zero state is invalid.</summary>
+    public static DeterministicRng Restore(ulong s0, ulong s1, ulong s2, ulong s3)
+    {
+        if ((s0 | s1 | s2 | s3) == 0) throw new InvalidDataException("RNG state cannot be all zero");
+        return new DeterministicRng(0) { _s0 = s0, _s1 = s1, _s2 = s2, _s3 = s3 };
+    }
 }

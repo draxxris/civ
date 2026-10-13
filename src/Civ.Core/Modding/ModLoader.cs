@@ -5,26 +5,38 @@ using Civ.Content;
 
 namespace Civ.Modding;
 
+/// <summary>A mod instance, manifest and sidecar root ready for registration.</summary>
 public sealed class ModSource
 {
+    /// <summary>Mod identity, version and dependencies.</summary>
     public required ModManifest Manifest { get; init; }
+    /// <summary>Registration entry point.</summary>
     public required IMod Instance { get; init; }
+    /// <summary>Sidecar root directory.</summary>
     public required string Root { get; init; }
 }
 
+/// <summary>Deterministic dependency ordering, isolated assembly loading and registry freezing.</summary>
 public static class ModLoader
 {
+    /// <summary>Shared sidecar/command JSON conventions; requirement converters are attached to their types.</summary>
     public static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip };
 
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
     public static ModSource FromDirectory(string dir)
     {
-        var manifest = JsonSerializer.Deserialize<ModManifest>(File.ReadAllText(Path.Combine(dir, "mod.json")), Json)
-            ?? throw new InvalidDataException($"{dir}/mod.json is empty");
+        var manifest = ReadManifest(dir);
         var alc = new ModLoadContext(Path.Combine(dir, manifest.Assembly));
         var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(Path.Combine(dir, manifest.Assembly)));
         return FromAssembly(manifest, asm, dir);
     }
+
+    private static ModManifest ReadManifest(string root) =>
+        JsonSerializer.Deserialize<ModManifest>(File.ReadAllText(Path.Combine(root, "mod.json")), Json)
+        ?? throw new InvalidDataException($"{root}/mod.json is empty");
+
+    /// <summary>Use a host-loaded mod assembly with its actual sidecar manifest, including its version.</summary>
+    public static ModSource FromAssembly(Assembly assembly, string root) => FromAssembly(ReadManifest(root), assembly, root);
 
     /// <summary>Use an already-loaded assembly (tests, or a mod compiled into the host).</summary>
     public static ModSource FromAssembly(ModManifest manifest, Assembly assembly, string root)
@@ -47,34 +59,32 @@ public static class ModLoader
             mod.Instance.Register(ctx);
         }
         db.LoadedMods = ordered.Select(m => m.Manifest.Id).ToList();
+        db.Mods = ordered.Select(m => new LoadedMod(m.Manifest.Id, m.Manifest.Version)).ToList();
         db.Freeze();
         return db;
     }
 
     private static List<ModSource> Sort(List<ModSource> mods)
     {
-        var byId = new Dictionary<string, ModSource>(StringComparer.Ordinal);
-        foreach (var m in mods)
-            if (!byId.TryAdd(m.Manifest.Id, m)) throw new InvalidOperationException($"Duplicate mod id '{m.Manifest.Id}'");
+        var pending = new SortedDictionary<string, ModSource>(StringComparer.Ordinal);
+        foreach (var mod in mods)
+            if (!pending.TryAdd(mod.Manifest.Id, mod)) throw new InvalidOperationException($"Duplicate mod id '{mod.Manifest.Id}'");
+        foreach (var mod in pending.Values)
+            foreach (var dependency in mod.Manifest.Dependencies)
+                if (!pending.ContainsKey(dependency))
+                    throw new InvalidOperationException($"Mod '{mod.Manifest.Id}' requires missing mod '{dependency}'");
 
         var result = new List<ModSource>();
-        var state = new Dictionary<string, int>(StringComparer.Ordinal); // 1 = visiting, 2 = done
-        void Visit(ModSource m)
+        var loaded = new HashSet<string>(StringComparer.Ordinal);
+        while (pending.Count > 0)
         {
-            state.TryGetValue(m.Manifest.Id, out var s);
-            if (s == 2) return;
-            if (s == 1) throw new InvalidOperationException($"Mod dependency cycle at '{m.Manifest.Id}'");
-            state[m.Manifest.Id] = 1;
-            foreach (var dep in m.Manifest.Dependencies)
-            {
-                if (!byId.TryGetValue(dep, out var d))
-                    throw new InvalidOperationException($"Mod '{m.Manifest.Id}' requires missing mod '{dep}'");
-                Visit(d);
-            }
-            state[m.Manifest.Id] = 2;
-            result.Add(m);
+            // Choose the smallest eligible id, independent of input and dependency declaration order.
+            var next = pending.Values.FirstOrDefault(m => m.Manifest.Dependencies.All(loaded.Contains));
+            if (next == null) throw new InvalidOperationException($"Mod dependency cycle among: {string.Join(", ", pending.Keys)}");
+            pending.Remove(next.Manifest.Id);
+            loaded.Add(next.Manifest.Id);
+            result.Add(next);
         }
-        foreach (var m in mods.OrderBy(m => m.Manifest.Id, StringComparer.Ordinal)) Visit(m);
         return result;
     }
 
@@ -105,6 +115,16 @@ internal sealed class DirectoryModData(string root) : IModData
 
 internal sealed class ModContext : IModContext
 {
+    private readonly ContentDb _db;
+    public ModRegistry<T> Content<T>() where T : ContentDef => new(_db.Get<T>(), ModId);
+    public void RegisterService<T>(string name, T service) where T : class => _db.Services.Register($"{ModId}:{name}", service, ModId);
+    public void RegisterStateComponent<T>(string name) where T : class => _db.StateComponents.Register<T>($"{ModId}:{name}", ModId);
+    public void Subscribe<TEvent>(string name, Action<Game.Simulation, TEvent> handler) where TEvent : Game.DomainEvent =>
+        RegisterService<Game.IDomainEventSubscriber>(name, new EventHandler<TEvent>(handler));
+    private sealed class EventHandler<TEvent>(Action<Game.Simulation, TEvent> handler) : Game.IDomainEventSubscriber where TEvent : Game.DomainEvent
+    {
+        public void Handle(Game.Simulation sim, Game.DomainEvent message) { if (message is TEvent typed) handler(sim, typed); }
+    }
     public string ModId { get; }
     public IModData Data { get; }
     public ModRegistry<TerrainDef> Terrains { get; }
@@ -124,7 +144,7 @@ internal sealed class ModContext : IModContext
 
     public ModContext(string modId, IModData data, ContentDb db)
     {
-        ModId = modId; Data = data;
+        _db = db; ModId = modId; Data = data;
         Terrains = new(db.Terrains, modId);
         Civilizations = new(db.Civilizations, modId);
         PlayerAIs = new(db.PlayerAIs, modId);

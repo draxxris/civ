@@ -54,7 +54,7 @@ public class CityTests
         Grow(sim, city, 3);
         // Put everyone on specialists that produce no food so the city starves.
         CityRules.Assign(city, [], new Dictionary<string, int> { ["base:citizen"] = 3 });
-        sim.State.Terrain[city.Position] = "base:desert";
+        sim.State.PlotAt(city.Position).Terrain = "base:desert";
         new GrowthSystem().Run(sim);
         Assert.Equal(2, city.Population);
         Assert.Equal(2, CityRules.SpecialistCount(city));
@@ -90,7 +90,7 @@ public class CityTests
         Assert.Equal(2, CityRules.Slots(sim, city, "base:scientist"));
 
         Assert.False(sim.TryApply(new SetCivicCommand { Player = 0, Civic = "base:caste_system" }, out _)); // needs writing
-        sim.State.Players[0].Techs.Add("base:writing");
+        sim.TeamOf(0).Techs.Add("base:writing");
         Assert.True(sim.TryApply(new SetCivicCommand { Player = 0, Civic = "base:caste_system" }, out _));
         Assert.Equal(int.MaxValue, CityRules.Slots(sim, city, "base:scientist"));
         Assert.Equal("base:caste_system", sim.State.Players[0].Civics["labor"]);
@@ -109,7 +109,7 @@ public class CityTests
     {
         var (sim, city) = NewCity();
         Grow(sim, city, 2);
-        sim.State.Players[0].Techs.Add("base:writing");
+        sim.TeamOf(0).Techs.Add("base:writing");
         sim.TryApply(new SetCivicCommand { Player = 0, Civic = "base:caste_system" }, out _);
         Assert.True(sim.TryApply(new SetCityWorkCommand { Player = 0, CityId = city.Id, Tiles = [], Specialists = new() { ["base:artist"] = 2 } }, out _));
 
@@ -123,7 +123,7 @@ public class CityTests
     {
         var (sim, city) = NewCity();
         Grow(sim, city, 2);
-        sim.State.Players[0].Techs.Add("base:writing");
+        sim.TeamOf(0).Techs.Add("base:writing");
         sim.TryApply(new SetCivicCommand { Player = 0, Civic = "base:caste_system" }, out _);
         sim.TryApply(new SetCityWorkCommand { Player = 0, CityId = city.Id, Tiles = [], Specialists = new() { ["base:artist"] = 2 } }, out _);
         new CultureSystem().Run(sim);
@@ -135,9 +135,9 @@ public class CityTests
     {
         var sim = TestGame.Sim();
         var a = TestGame.FindLand(sim);
-        var b = sim.State.Terrain.Keys.Where(h => h.DistanceTo(a) == 3 && !sim.TerrainAt(h).IsWater && sim.TerrainAt(h).Passable)
+        var b = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).Where(h => h.DistanceTo(a) == 3 && !sim.TerrainAt(h).IsWater && sim.TerrainAt(h).Passable)
             .OrderBy(h => h.Q).ThenBy(h => h.R).FirstOrDefault();
-        if (b == default && !sim.State.Terrain.ContainsKey(b)) return; // map happens to have no land 3 tiles away
+        if (b == default && !sim.State.Grid.Contains(b)) return; // map happens to have no land 3 tiles away
         sim.TryApply(new FoundCityCommand { Player = 0, Position = a }, out _);
         sim.TryApply(new FoundCityCommand { Player = 0, Position = b }, out _);
         var worked = sim.State.Cities[0].Worked.Concat(sim.State.Cities[1].Worked).ToList();

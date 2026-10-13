@@ -2,5 +2,6 @@
   <PropertyGroup>
     <AssemblyName>Civ.Core</AssemblyName>
     <RootNamespace>Civ</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>

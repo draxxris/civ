@@ -23,13 +23,11 @@ public sealed class GameSession
     /// <summary>The standard hot-seat-vs-AI game: the base mod plus any extra mods, one human and two AI civilizations.</summary>
     public static GameSession Start(IEnumerable<ModSource> extraMods, int mapRadius = 12, ulong seed = 1)
     {
-        var baseMod = ModLoader.FromAssembly(
-            new ModManifest { Id = "base", Assembly = "Civ.BaseGame.dll" },
-            typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var baseMod = ModLoader.FromAssembly(typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
         var content = ModLoader.Build(extraMods.Prepend(baseMod));
         var sim = new Simulation(content, new SimulationSettings
         {
-            Seed = seed, MapRadius = mapRadius, PlayerCount = 3,
+            Seed = seed, Map = new(2 * mapRadius + 1, 2 * mapRadius + 1), PlayerCount = 3,
             PlayerAis = [null, "base:basic", "base:basic"],
         });
         Sites.PlaceStartingUnits(sim, Human);
@@ -39,8 +37,16 @@ public sealed class GameSession
     }
 
     public Player Me => Sim.State.PlayerById(Human);
-    public City? City => SelectedCityId is int id ? Sim.State.Cities.FirstOrDefault(c => c.Id == id) : null;
-    public Unit? Unit => SelectedUnitId is int id ? Sim.State.Units.FirstOrDefault(u => u.Id == id) : null;
+    public Team MyTeam => Sim.TeamOf(Human);
+
+    /// <summary>Pick a canonical rendered plot from pixel coordinates; wrap images are not rendered.</summary>
+    public Hex? Pick(double x, double y, double hexSize)
+    {
+        var hex = Hex.FromPixel(x, y, hexSize);
+        return Sim.State.Grid.Contains(hex) ? hex : null;
+    }
+    public City? City => SelectedCityId is int id ? Sim.State.FindCity(id) : null;
+    public Unit? Unit => SelectedUnitId is int id ? Sim.State.FindUnit(id) : null;
 
     /// <summary>Changes whenever anything a UI shows could have changed, so front ends can rebuild only when needed.</summary>
     public ulong Version => Sim.ComputeHash() ^ ((ulong)(SelectedUnitId ?? -1) * 0x9E3779B97F4A7C15UL) ^ ((ulong)(SelectedCityId ?? -1) * 0xC2B2AE3D27D4EB4FUL)
@@ -61,8 +67,8 @@ public sealed class GameSession
     public void SelectAt(Hex hex)
     {
         var stack = new List<(bool IsCity, int Id)>();
-        stack.AddRange(Sim.State.Units.Where(u => u.Owner == Human && u.Position == hex).OrderBy(u => u.Id).Select(u => (false, u.Id)));
-        if (Sim.State.Cities.FirstOrDefault(c => c.Position == hex && c.Owner == Human) is { } here) stack.Add((true, here.Id));
+        stack.AddRange(Sim.State.UnitsAt(hex).Where(u => u.Owner == Human).OrderBy(u => u.Id).Select(u => (false, u.Id)));
+        if (Sim.State.CityAt(hex) is { Owner: Human } here) stack.Add((true, here.Id));
         if (stack.Count == 0) { SelectedCityId = null; SelectedUnitId = null; return; }
 
         int current = stack.FindIndex(e => e.IsCity ? e.Id == SelectedCityId : e.Id == SelectedUnitId);
@@ -89,30 +95,36 @@ public sealed class GameSession
     public void RightClick(Hex hex)
     {
         var unit = Unit;
-        if (unit == null) return;
-        if (unit.Position.DistanceTo(hex) == 1 && Sim.State.Units.Any(u => u.Owner != Human && u.Position == hex))
+        if (unit == null || !Sim.State.Grid.Contains(hex)) return;
+        if (Sim.State.Grid.Distance(unit.Position, hex) == 1 && UnitRules.BestDefender(Sim, hex, Human) != null)
         {
             Submit(new AttackCommand { Player = Human, UnitId = unit.Id, Target = hex });
             return;
         }
+        WalkTowards(unit, hex);
+    }
+
+    private void WalkTowards(Unit unit, Hex hex)
+    {
         for (int step = 0; step < 12 && unit.Position != hex && unit.MovesLeft > 0; step++)
         {
-            Hex? best = unit.Position.Neighbors()
+            Hex? best = Sim.State.Grid.Neighbors(unit.Position)
                 .Where(n => new MoveUnitCommand { Player = Human, UnitId = unit.Id, To = n }.Validate(Sim) == null)
-                .OrderBy(n => n.DistanceTo(hex)).Cast<Hex?>().FirstOrDefault();
-            if (best == null || best.Value.DistanceTo(hex) >= unit.Position.DistanceTo(hex)) break;
+                .OrderBy(n => Sim.State.Grid.Distance(n, hex)).Cast<Hex?>().FirstOrDefault();
+            if (best == null || Sim.State.Grid.Distance(best.Value, hex) >= Sim.State.Grid.Distance(unit.Position, hex)) break;
             Submit(new MoveUnitCommand { Player = Human, UnitId = unit.Id, To = best.Value });
         }
     }
 
     public TileMark MarkOf(Hex hex)
     {
+        if (!Sim.State.Grid.Contains(hex)) return TileMark.None;
         if (City is { } city)
         {
             if (city.Worked.Contains(hex)) return TileMark.Worked;
             if (CityRules.WorkableTiles(Sim, city).Contains(hex)) return TileMark.Workable;
             if (hex == city.Position) return TileMark.Selected;
-            if (hex.DistanceTo(city.Position) <= CityRules.Radius) return TileMark.Locked;
+            if (Sim.State.Grid.Distance(hex, city.Position) <= CityRules.Radius) return TileMark.Locked;
         }
         if (Unit is { } unit && unit.Position == hex) return TileMark.Selected;
         return TileMark.None;

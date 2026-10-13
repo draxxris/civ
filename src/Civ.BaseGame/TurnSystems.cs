@@ -10,18 +10,21 @@ public sealed class ResearchSystem : ITurnSystem
 
     public void Run(Simulation sim)
     {
-        foreach (var player in sim.State.Players)
+        foreach (var team in sim.State.Teams)
         {
-            if (player.Researching == null) continue;
-            long commerce = sim.State.Cities.Where(c => c.Owner == player.Id).Sum(c => (long)Yields.OfCity(sim, c).Commerce);
-            commerce = commerce * (100 + Bonuses.Research(sim, player.Id)) / 100;
-            player.ResearchProgress += commerce;
-            var tech = sim.Content.Techs.Get(player.Researching);
-            if (player.ResearchProgress >= tech.Cost)
+            if (team.Researching == null) continue;
+            foreach (int player in team.Members)
             {
-                player.Techs.Add(tech.Id);
-                player.Researching = null;
-                player.ResearchProgress = 0;
+                long commerce = sim.State.Cities.Where(c => c.Owner == player).Sum(c => (long)Yields.OfCity(sim, c).Commerce);
+                team.ResearchProgress += commerce * (100 + Bonuses.Research(sim, player)) / 100;
+            }
+            var tech = sim.Content.Techs.Get(team.Researching);
+            if (team.ResearchProgress >= tech.Cost)
+            {
+                team.Techs.Add(tech.Id);
+                team.Research.Remove(tech.Id);
+                team.Researching = null;
+                sim.Events.Publish(new TechDiscovered(team.Id, tech.Id));
             }
         }
     }
@@ -49,6 +52,7 @@ public sealed class ProductionSystem : ITurnSystem
                     city.Buildings.Add(def.Id);
                     city.Building = null;
                     city.BuildProgress = 0;
+                    sim.Events.Publish(new BuildingCompleted(city.Id, def.Id));
                 }
             }
             else
@@ -121,6 +125,7 @@ public sealed class GrowthSystem : ITurnSystem
                 city.Population++;
                 city.FoodStored = 0;
                 CityRules.AddCitizen(sim, city);
+                sim.Events.Publish(new CityGrew(city.Id, city.Population));
             }
             else if (city.FoodStored < 0)
             {

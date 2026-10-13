@@ -7,14 +7,22 @@ public sealed class Registry<T> where T : class, IHasId
     private readonly Dictionary<string, string> _owners = new(StringComparer.Ordinal);
     private bool _frozen;
 
+    /// <summary>Human-readable registry kind for error messages.</summary>
     public string Kind { get; }
+    /// <summary>Create an empty registry.</summary>
     public Registry(string kind) { Kind = kind; }
 
+    /// <summary>Number of registered entries.</summary>
     public int Count => _items.Count;
+    /// <summary>Entries in ordinal id order.</summary>
     public IEnumerable<T> All => _items.Values;
+    /// <summary>Whether an id exists.</summary>
     public bool Contains(string id) => _items.ContainsKey(id);
+    /// <summary>Resolve an id or throw with a registry-specific error.</summary>
     public T Get(string id) => _items.TryGetValue(id, out var v) ? v : throw new KeyNotFoundException($"{Kind} '{id}' is not registered");
+    /// <summary>Resolve an id without throwing.</summary>
     public bool TryGet(string id, out T item) => _items.TryGetValue(id, out item!);
+    /// <summary>Mod that last registered or overrode an entry.</summary>
     public string OwnerOf(string id) => _owners[id];
 
     internal void Register(T item, string modId)
@@ -57,9 +65,14 @@ public sealed class ModRegistry<T> where T : class, IHasId
     private readonly string _modId;
     internal ModRegistry(Registry<T> inner, string modId) { _inner = inner; _modId = modId; }
 
+    /// <summary>Add an entry in this mod's namespace. Duplicates are rejected.</summary>
     public void Register(T item) => _inner.Register(item, _modId);
+    /// <summary>Replace a previously registered entry, including another mod's content.</summary>
     public void Override(T item) => _inner.Override(item, _modId);
+    /// <summary>Whether an id exists.</summary>
     public bool Contains(string id) => _inner.Contains(id);
+    /// <summary>Resolve a previously registered entry.</summary>
     public T Get(string id) => _inner.Get(id);
+    /// <summary>Entries in ordinal id order.</summary>
     public IEnumerable<T> All => _inner.All;
 }

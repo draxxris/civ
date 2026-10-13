@@ -32,9 +32,10 @@ public sealed class WorldView
     {
         _sim = sim;
         _root = root;
-        foreach (var (hex, terrainId) in sim.State.Terrain)
+foreach (var tile in sim.State.Grid.Tiles)
         {
-            var terrain = sim.Content.Terrains.Get(terrainId);
+            var hex = sim.State.Grid.HexOf(tile);
+            var terrain = sim.Content.Terrains.Get(sim.State.Plots[tile.Value].Terrain);
             var color = Color.FromHtml(terrain.Color);
             var material = new StandardMaterial3D { AlbedoColor = color };
             var node = new MeshInstance3D { Mesh = _hexMesh, MaterialOverride = material, Name = $"tile {hex.Q},{hex.R}" };
@@ -80,7 +81,7 @@ public sealed class WorldView
             };
         }
 
-        Reconcile(_cities, _sim.State.Cities.Select(c => c.Id), id => MakeNode($"city {id}", _cityMesh, OwnerColor(_sim.State.Cities.First(c => c.Id == id).Owner)));
+        Reconcile(_cities, _sim.State.Cities.Select(c => c.Id), id => MakeNode($"city {id}", _cityMesh, OwnerColor(_sim.State.CityById(id).Owner)));
         foreach (var city in _sim.State.Cities)
         {
             var node = _cities[city.Id];
@@ -88,7 +89,7 @@ public sealed class WorldView
             node.Scale = new Vector3(1f, 1f + 0.25f * (city.Population - 1), 1f);
         }
 
-        Reconcile(_units, _sim.State.Units.Select(u => u.Id), id => MakeNode($"unit {id}", _unitMesh, OwnerColor(_sim.State.Units.First(u => u.Id == id).Owner)));
+        Reconcile(_units, _sim.State.Units.Select(u => u.Id), id => MakeNode($"unit {id}", _unitMesh, OwnerColor(_sim.State.UnitById(id).Owner)));
         foreach (var group in _sim.State.Units.GroupBy(u => u.Position))
         {
             int i = 0, count = group.Count();

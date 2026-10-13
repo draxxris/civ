@@ -26,34 +26,56 @@ public sealed record CityScreen(
         int? growIn = surplus > 0 ? Turns(CityRules.FoodToGrow(city.Population) - city.FoodStored, surplus) : null;
         bool starving = surplus < 0 && city.FoodStored + surplus < 0 && city.Population > 1;
 
-        var specialists = new List<SpecialistRow>();
-        foreach (var s in sim.Content.Specialists.All)
-        {
-            int count = city.Specialists.GetValueOrDefault(s.Id);
-            int slots = CityRules.Slots(sim, city, s.Id);
-            if (!s.Unlimited && slots == 0 && count == 0) continue;
-            specialists.Add(new SpecialistRow(s.Id, s.Name, count, slots, s.Unlimited, SpecialistEffects(s)));
-        }
+        var specialists = SpecialistRows(sim, city);
 
-        var me = sim.State.PlayerById(city.Owner);
-        var buildings = sim.Content.Buildings.All
-            .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || me.Techs.Contains(b.RequiresTech)))
-            .Select(b => new ProductionItem(false, b.Id, b.Name, b.Cost, Turns(b.Cost - (city.Building == b.Id ? city.BuildProgress : 0), production), BuildingEffects(sim, b), city.Building == b.Id))
-            .ToList();
+        var me = sim.TeamOf(city.Owner);
+        var buildings = AvailableBuildings(sim, city, production);
         var units = sim.Content.Units.All
             .Where(u => u.RequiresTech == null || me.Techs.Contains(u.RequiresTech))
             .Select(u => new ProductionItem(true, u.Id, u.Name, u.Cost, Turns(u.Cost - (city.Training == u.Id ? city.TrainProgress : 0), production), UnitEffects(u), city.Training == u.Id))
             .ToList();
 
-        string? currentName = null; long progress = 0; int cost = 0;
-        if (city.Building != null) { var b = sim.Content.Buildings.Get(city.Building); (currentName, progress, cost) = (b.Name, city.BuildProgress, b.Cost); }
-        else if (city.Training != null) { var u = sim.Content.Units.Get(city.Training); (currentName, progress, cost) = (u.Name, city.TrainProgress, u.Cost); }
+        var (currentName, progress, cost) = CurrentProduction(sim, city);
 
         return new CityScreen(city.Name, city.Population, surplus, growIn, starving,
             y.Food, production, y.Commerce, culture,
             city.Worked.Count, CityRules.SpecialistCount(city), specialists,
             currentName, progress, cost, currentName == null ? null : Turns(cost - progress, production),
             buildings, units);
+    }
+
+    private static IReadOnlyList<ProductionItem> AvailableBuildings(Simulation sim, City city, int production) =>
+        sim.Content.Buildings.All
+            .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || sim.KnowsTech(city.Owner, b.RequiresTech)))
+            .Select(b => new ProductionItem(false, b.Id, b.Name, b.Cost,
+                Turns(b.Cost - (city.Building == b.Id ? city.BuildProgress : 0), production),
+                BuildingEffects(sim, b), city.Building == b.Id)).ToList();
+
+    private static IReadOnlyList<SpecialistRow> SpecialistRows(Simulation sim, City city)
+    {
+        var rows = new List<SpecialistRow>();
+        foreach (var specialist in sim.Content.Specialists.All)
+        {
+            int count = city.Specialists.GetValueOrDefault(specialist.Id);
+            int slots = CityRules.Slots(sim, city, specialist.Id);
+            if (!specialist.Unlimited && slots == 0 && count == 0) continue;
+            rows.Add(new(specialist.Id, specialist.Name, count, slots, specialist.Unlimited, SpecialistEffects(specialist)));
+        }
+        return rows;
+    }
+    private static (string? Name, long Progress, int Cost) CurrentProduction(Simulation sim, City city)
+    {
+        if (city.Building is { } building)
+        {
+            var def = sim.Content.Buildings.Get(building);
+            return (def.Name, city.BuildProgress, def.Cost);
+        }
+        if (city.Training is { } training)
+        {
+            var def = sim.Content.Units.Get(training);
+            return (def.Name, city.TrainProgress, def.Cost);
+        }
+        return (null, 0, 0);
     }
 
     /// <summary>Whole turns to cover <paramref name="remaining"/> at <paramref name="perTurn"/> (at least 1); null when nothing is produced.</summary>

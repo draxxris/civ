@@ -3,24 +3,32 @@ namespace Civ;
 /// <summary>Axial hex coordinate (pointy-top layout). Cube S is derived.</summary>
 public readonly record struct Hex(int Q, int R)
 {
+    /// <summary>Derived cube coordinate.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
     public int S => -Q - R;
 
-    public static readonly Hex[] Directions =
-    {
+    /// <summary>East, northeast, northwest, west, southwest and southeast deltas.</summary>
+    public static IReadOnlyList<Hex> Directions { get; } = Array.AsReadOnly<Hex>([
         new(1, 0), new(1, -1), new(0, -1), new(-1, 0), new(-1, 1), new(0, 1),
-    };
+    ]);
 
+    /// <summary>Coordinate addition.</summary>
     public static Hex operator +(Hex a, Hex b) => new(a.Q + b.Q, a.R + b.R);
+    /// <summary>Coordinate displacement.</summary>
     public static Hex operator -(Hex a, Hex b) => new(a.Q - b.Q, a.R - b.R);
+    /// <summary>Scale a displacement.</summary>
     public static Hex operator *(Hex a, int k) => new(a.Q * k, a.R * k);
 
+    /// <summary>Unbounded neighbor; direction indices normalize modulo six.</summary>
     public Hex Neighbor(int direction) => this + Directions[((direction % 6) + 6) % 6];
 
+    /// <summary>Unbounded neighbors in direction order; map rules should use HexGrid.Neighbors.</summary>
     public IEnumerable<Hex> Neighbors()
     {
         for (int i = 0; i < 6; i++) yield return Neighbor(i);
     }
 
+    /// <summary>Unwrapped cube distance; map rules should use HexGrid.Distance.</summary>
     public int DistanceTo(Hex other)
     {
         var d = this - other;
@@ -38,6 +46,7 @@ public readonly record struct Hex(int Q, int R)
         }
     }
 
+    /// <summary>Unbounded ring in clockwise traversal order.</summary>
     public static IEnumerable<Hex> Ring(Hex center, int radius)
     {
         if (radius == 0) { yield return center; yield break; }
@@ -54,6 +63,7 @@ public readonly record struct Hex(int Q, int R)
     public (double X, double Y) ToPixel(double size) =>
         (size * Math.Sqrt(3) * (Q + R / 2.0), size * 1.5 * R);
 
+    /// <summary>Round a pointy-top pixel position to its axial plot; presentation only.</summary>
     public static Hex FromPixel(double x, double y, double size)
     {
         double q = (Math.Sqrt(3) / 3 * x - 1.0 / 3 * y) / size;
