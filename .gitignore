@@ -6,3 +6,6 @@ external/
 TestResults/
 src/Civ.Godot/.godot/
 *.import
+AND-extraction/
+and-extraction/
+assets/converted/
