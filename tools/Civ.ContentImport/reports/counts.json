@@ -1,0 +1,579 @@
+{
+  "total": 8033,
+  "classes": 95,
+  "localizationKeys": 22557,
+  "duplicateLocalizationKeys": 9812,
+  "globalDefines": 768,
+  "counts": [
+    {
+      "class": "AdvisorInfo",
+      "effective": 6,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "AttachableInfo",
+      "effective": 71,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "AttitudeInfo",
+      "effective": 5,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "BonusArtInfo",
+      "effective": 75,
+      "mainTable": 75,
+      "delta": 0
+    },
+    {
+      "class": "BonusClassInfo",
+      "effective": 11,
+      "mainTable": 11,
+      "delta": 0
+    },
+    {
+      "class": "BonusInfo",
+      "effective": 71,
+      "mainTable": 71,
+      "delta": 0
+    },
+    {
+      "class": "BuildInfo",
+      "effective": 63,
+      "mainTable": 63,
+      "delta": 0
+    },
+    {
+      "class": "BuildingArtInfo",
+      "effective": 651,
+      "mainTable": 631,
+      "delta": 20
+    },
+    {
+      "class": "BuildingClassInfo",
+      "effective": 587,
+      "mainTable": 587,
+      "delta": 0
+    },
+    {
+      "class": "BuildingInfo",
+      "effective": 645,
+      "mainTable": 625,
+      "delta": 20
+    },
+    {
+      "class": "CalendarInfo",
+      "effective": 7,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "CameraInfo",
+      "effective": 1,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "CityTabInfo",
+      "effective": 3,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "CivicInfo",
+      "effective": 81,
+      "mainTable": 81,
+      "delta": 0
+    },
+    {
+      "class": "CivicOptionInfo",
+      "effective": 8,
+      "mainTable": 8,
+      "delta": 0
+    },
+    {
+      "class": "CivilizationArtInfo",
+      "effective": 60,
+      "mainTable": 40,
+      "delta": 20
+    },
+    {
+      "class": "CivilizationInfo",
+      "effective": 60,
+      "mainTable": 40,
+      "delta": 20
+    },
+    {
+      "class": "ClimateInfo",
+      "effective": 5,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "CommandInfo",
+      "effective": 17,
+      "mainTable": 17,
+      "delta": 0
+    },
+    {
+      "class": "CommerceInfo",
+      "effective": 4,
+      "mainTable": 4,
+      "delta": 0
+    },
+    {
+      "class": "ConceptInfo",
+      "effective": 50,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "ControlInfo",
+      "effective": 64,
+      "mainTable": 64,
+      "delta": 0
+    },
+    {
+      "class": "CorporationInfo",
+      "effective": 36,
+      "mainTable": 36,
+      "delta": 0
+    },
+    {
+      "class": "CultureLevelInfo",
+      "effective": 10,
+      "mainTable": 10,
+      "delta": 0
+    },
+    {
+      "class": "CursorInfo",
+      "effective": 23,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "DenialInfo",
+      "effective": 34,
+      "mainTable": 34,
+      "delta": 0
+    },
+    {
+      "class": "DiplomacyInfo",
+      "effective": 110,
+      "mainTable": 110,
+      "delta": 0
+    },
+    {
+      "class": "DomainInfo",
+      "effective": 4,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "EffectInfo",
+      "effective": 324,
+      "mainTable": 324,
+      "delta": 0
+    },
+    {
+      "class": "EmphasizeInfo",
+      "effective": 8,
+      "mainTable": 8,
+      "delta": 0
+    },
+    {
+      "class": "EntityEventInfo",
+      "effective": 34,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "EraInfo",
+      "effective": 8,
+      "mainTable": 8,
+      "delta": 0
+    },
+    {
+      "class": "EspionageMissionInfo",
+      "effective": 29,
+      "mainTable": 29,
+      "delta": 0
+    },
+    {
+      "class": "EventInfo",
+      "effective": 554,
+      "mainTable": 554,
+      "delta": 0
+    },
+    {
+      "class": "EventTriggerInfo",
+      "effective": 327,
+      "mainTable": 327,
+      "delta": 0
+    },
+    {
+      "class": "FeatureArtInfo",
+      "effective": 10,
+      "mainTable": 10,
+      "delta": 0
+    },
+    {
+      "class": "FeatureInfo",
+      "effective": 10,
+      "mainTable": 10,
+      "delta": 0
+    },
+    {
+      "class": "ForceControlInfo",
+      "effective": 7,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "GameOptionInfo",
+      "effective": 64,
+      "mainTable": 64,
+      "delta": 0
+    },
+    {
+      "class": "GameSpeedInfo",
+      "effective": 7,
+      "mainTable": 7,
+      "delta": 0
+    },
+    {
+      "class": "GoodyInfo",
+      "effective": 12,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "GraphicOptionInfo",
+      "effective": 12,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "HandicapInfo",
+      "effective": 9,
+      "mainTable": 9,
+      "delta": 0
+    },
+    {
+      "class": "HurryInfo",
+      "effective": 2,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "ImprovementArtInfo",
+      "effective": 60,
+      "mainTable": 60,
+      "delta": 0
+    },
+    {
+      "class": "ImprovementInfo",
+      "effective": 53,
+      "mainTable": 53,
+      "delta": 0
+    },
+    {
+      "class": "InterfaceArtInfo",
+      "effective": 419,
+      "mainTable": 419,
+      "delta": 0
+    },
+    {
+      "class": "InterfaceModeInfo",
+      "effective": 30,
+      "mainTable": 30,
+      "delta": 0
+    },
+    {
+      "class": "InvisibleInfo",
+      "effective": 3,
+      "mainTable": 3,
+      "delta": 0
+    },
+    {
+      "class": "LandscapeInfo",
+      "effective": 1,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "LeaderHeadInfo",
+      "effective": 135,
+      "mainTable": 86,
+      "delta": 49
+    },
+    {
+      "class": "LeaderheadArtInfo",
+      "effective": 135,
+      "mainTable": 86,
+      "delta": 49
+    },
+    {
+      "class": "MPOptionInfo",
+      "effective": 5,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "MapInfo",
+      "effective": 2,
+      "mainTable": 2,
+      "delta": 0
+    },
+    {
+      "class": "MapSwitchInfo",
+      "effective": 2,
+      "mainTable": 2,
+      "delta": 0
+    },
+    {
+      "class": "MemoryInfo",
+      "effective": 42,
+      "mainTable": 42,
+      "delta": 0
+    },
+    {
+      "class": "MiscArtInfo",
+      "effective": 48,
+      "mainTable": 48,
+      "delta": 0
+    },
+    {
+      "class": "MissionInfo",
+      "effective": 72,
+      "mainTable": 72,
+      "delta": 0
+    },
+    {
+      "class": "MonthInfo",
+      "effective": 12,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "MovieArtInfo",
+      "effective": 174,
+      "mainTable": 174,
+      "delta": 0
+    },
+    {
+      "class": "NewConceptInfo",
+      "effective": 93,
+      "mainTable": 93,
+      "delta": 0
+    },
+    {
+      "class": "OutcomeInfo",
+      "effective": 6,
+      "mainTable": 6,
+      "delta": 0
+    },
+    {
+      "class": "PlayerColorInfo",
+      "effective": 69,
+      "mainTable": 49,
+      "delta": 20
+    },
+    {
+      "class": "PlayerOptionInfo",
+      "effective": 23,
+      "mainTable": 22,
+      "delta": 1
+    },
+    {
+      "class": "ProcessInfo",
+      "effective": 5,
+      "mainTable": 5,
+      "delta": 0
+    },
+    {
+      "class": "ProjectInfo",
+      "effective": 32,
+      "mainTable": 32,
+      "delta": 0
+    },
+    {
+      "class": "PromotionInfo",
+      "effective": 266,
+      "mainTable": 266,
+      "delta": 0
+    },
+    {
+      "class": "QuestInfo",
+      "effective": 1,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "ReligionInfo",
+      "effective": 13,
+      "mainTable": 13,
+      "delta": 0
+    },
+    {
+      "class": "RiverInfo",
+      "effective": 1,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "RouteInfo",
+      "effective": 9,
+      "mainTable": 9,
+      "delta": 0
+    },
+    {
+      "class": "SeaLevelInfo",
+      "effective": 3,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "SeasonInfo",
+      "effective": 4,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "SourceConceptInfo",
+      "effective": 72,
+      "mainTable": 72,
+      "delta": 0
+    },
+    {
+      "class": "SpecialBuildingInfo",
+      "effective": 18,
+      "mainTable": 18,
+      "delta": 0
+    },
+    {
+      "class": "SpecialUnitInfo",
+      "effective": 9,
+      "mainTable": 9,
+      "delta": 0
+    },
+    {
+      "class": "SpecialistInfo",
+      "effective": 20,
+      "mainTable": 20,
+      "delta": 0
+    },
+    {
+      "class": "TechInfo",
+      "effective": 252,
+      "mainTable": 252,
+      "delta": 0
+    },
+    {
+      "class": "TerrainArtInfo",
+      "effective": 13,
+      "mainTable": 13,
+      "delta": 0
+    },
+    {
+      "class": "TerrainInfo",
+      "effective": 13,
+      "mainTable": 13,
+      "delta": 0
+    },
+    {
+      "class": "TraitInfo",
+      "effective": 17,
+      "mainTable": 17,
+      "delta": 0
+    },
+    {
+      "class": "TurnTimerInfo",
+      "effective": 6,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "TutorialInfo",
+      "effective": 1,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "UnitAIInfo",
+      "effective": 41,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "UnitArtInfo",
+      "effective": 913,
+      "mainTable": 843,
+      "delta": 70
+    },
+    {
+      "class": "UnitArtStyleTypeInfo",
+      "effective": 25,
+      "mainTable": 23,
+      "delta": 2
+    },
+    {
+      "class": "UnitClassInfo",
+      "effective": 301,
+      "mainTable": 301,
+      "delta": 0
+    },
+    {
+      "class": "UnitCombatInfo",
+      "effective": 27,
+      "mainTable": 27,
+      "delta": 0
+    },
+    {
+      "class": "UnitInfo",
+      "effective": 359,
+      "mainTable": 339,
+      "delta": 20
+    },
+    {
+      "class": "UpkeepInfo",
+      "effective": 3,
+      "mainTable": 3,
+      "delta": 0
+    },
+    {
+      "class": "VictoryInfo",
+      "effective": 10,
+      "mainTable": 10,
+      "delta": 0
+    },
+    {
+      "class": "VoteInfo",
+      "effective": 23,
+      "mainTable": 23,
+      "delta": 0
+    },
+    {
+      "class": "VoteSourceInfo",
+      "effective": 2,
+      "mainTable": null,
+      "delta": null
+    },
+    {
+      "class": "WorldInfo",
+      "effective": 8,
+      "mainTable": 8,
+      "delta": 0
+    },
+    {
+      "class": "YieldInfo",
+      "effective": 3,
+      "mainTable": 3,
+      "delta": 0
+    }
+  ]
+}

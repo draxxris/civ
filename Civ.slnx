@@ -7,5 +7,9 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />
+    <Project Path="tests/Civ.ContentImport.Tests/Civ.ContentImport.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Civ.ContentImport/Civ.ContentImport.csproj" />
   </Folder>
 </Solution>

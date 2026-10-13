@@ -1,0 +1,1033 @@
+[
+  {
+    "key": "TXT_KEY_ACTION_AUTOMOVES_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_AUTOMOVES/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_CYCLE_UNITS_ALT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_CYCLEUNIT_ALT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_CYCLE_UNITS_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_CYCLEUNIT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_CYCLE_WORKERS_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_CYCLEWORKER/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_ENDTURN_ALT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_ENDTURN_ALT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_ENDTURN_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_ENDTURN/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_FORCE_ENDTURN_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_FORCEENDTURN/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_LASTUNIT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_LASTUNIT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_LOAD_GAME_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_LOAD_GAME/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_NEXT_CITY_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_NEXTCITY/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_NEXT_UNIT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_NEXTUNIT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_OPTIONS_SCREEN_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_OPTIONS_SCREEN/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_PREVIOUS_CITY_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_PREVCITY/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_PREVIOUS_PLOT_UNIT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_NEXTUNIT/Description",
+      "ControlInfo/CONTROL_PREVUNIT/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_PREVIOUS_UNIT_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_PREVUNIT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_RETIRE_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_RETIRE/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_SAVE_GAME_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_SAVE_NORMAL/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ACTION_SAVE_GROUP_HELP",
+    "uses": [
+      "ControlInfo/CONTROL_SAVE_GROUP/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_BUILDING_STOCK_EXCHANGE",
+    "uses": [
+      "BuildingClassInfo/BUILDINGCLASS_STOCK_EXCHANGE/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_BI_YEARLY",
+    "uses": [
+      "CalendarInfo/CALENDAR_BI_YEARLY/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_DEFAULT",
+    "uses": [
+      "CalendarInfo/CALENDAR_DEFAULT/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_MONTHS",
+    "uses": [
+      "CalendarInfo/CALENDAR_MONTHS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_SEASONS",
+    "uses": [
+      "CalendarInfo/CALENDAR_SEASONS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_TURNS",
+    "uses": [
+      "CalendarInfo/CALENDAR_TURNS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_WEEKS",
+    "uses": [
+      "CalendarInfo/CALENDAR_WEEKS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CALENDAR_YEARS",
+    "uses": [
+      "CalendarInfo/CALENDAR_YEARS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_COMMAND_HOTKEY",
+    "uses": [
+      "CommandInfo/COMMAND_HOTKEY/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_CORPORATION_MILEHIGH_FRANCHISE_PEDIA",
+    "uses": [
+      "BuildingInfo/BUILDING_CORPORATION_MILEHIGH_FRANCHISE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_AVOID_GROWTH_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_AVOID_GROWTH/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_COMMERCE_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_COMMERCE/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_FOOD_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_FOOD/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_GREAT_PEOPLE_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_GREAT_PEOPLE/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_PRODUCTION_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_PRODUCTION/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EMPHASIZE_RESEARCH_STRATEGY",
+    "uses": [
+      "EmphasizeInfo/EMPHASIZE_RESEARCH/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_ANCIENT_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_ANCIENT/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_CLASSICAL_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_CLASSICAL/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_FUTURE_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_FUTURE/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_INDUSTRIAL_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_INDUSTRIAL/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_MEDIEVAL_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_MEDIEVAL/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_MODERN_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_MODERN/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_ERA_RENAISSANCE_STRATEGY",
+    "uses": [
+      "EraInfo/ERA_RENAISSANCE/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_ALTERNATIVE_ENERGY_DONE_5",
+    "uses": [
+      "EventInfo/EVENT_ALTERNATIVE_ENERGY_DONE_5/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_BLARNEYVISIT_2",
+    "uses": [
+      "EventInfo/EVENT_BLARNEYVISIT_2/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_BLARNEYVISIT_OTHER_2",
+    "uses": [
+      "EventInfo/EVENT_BLARNEYVISIT_2/OtherPlayerPopup"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_DARK_AGE_METEOR_BEGINS_ART",
+    "uses": [
+      "InterfaceArtInfo/TXT_KEY_EVENT_DARK_AGE_METEOR_BEGINS_ART/Type"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_DARK_AGE_METEOR_ENDS_ART",
+    "uses": [
+      "InterfaceArtInfo/TXT_KEY_EVENT_DARK_AGE_METEOR_ENDS_ART/Type"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_DARK_AGE_VOLCANO_BEGINS_ART",
+    "uses": [
+      "InterfaceArtInfo/TXT_KEY_EVENT_DARK_AGE_VOLCANO_BEGINS_ART/Type"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_DARK_AGE_VOLCANO_ENDS_ART",
+    "uses": [
+      "InterfaceArtInfo/TXT_KEY_EVENT_DARK_AGE_VOLCANO_ENDS_ART/Type"
+    ]
+  },
+  {
+    "key": "TXT_KEY_EVENT_LOCUST_1",
+    "uses": [
+      "EventInfo/EVENT_LOCUST_1/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_HANDICAP_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_HANDICAP/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_MAX_CITY_ELIMINATION_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_MAX_CITY_ELIMINATION/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_MAX_TURNS_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_MAX_TURNS/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_OPTIONS_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_OPTIONS/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_SPEED_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_SPEED/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_FORCE_CONTROL_VICTORIES_HELP",
+    "uses": [
+      "ForceControlInfo/FORCECONTROL_VICTORIES/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_GAMESPEED_NORMAL_BLITZ",
+    "uses": [
+      "GameSpeedInfo/GAMESPEED_BLITZ/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_GREAT_PERSON_DR",
+    "uses": [
+      "UnitInfo/UNIT_GREAT_DIPLOMAT/UniqueName"
+    ]
+  },
+  {
+    "key": "TXT_KEY_GREAT_PERSON_JOHN_F",
+    "uses": [
+      "UnitInfo/UNIT_GREAT_DIPLOMAT/UniqueName"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_APPLE_FARM_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_APPLE_FARM/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_BUNKER_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_BUNKER/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_EXTRACTION_FACILITY_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_EXTRACTION_FACILITY/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_FUTURE_BUNKER_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_FUTURE_BUNKER/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_GEOTHERMAL_BOREHOLE_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_GEOTHERMAL_BOREHOLE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_GROUNDWATER_WELL_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_GROUNDWATER_WELL/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_HYBRID_FOREST_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_HYBRID_FOREST/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_MODERN_MINE_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_MODERN_MINE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_IMPROVEMENT_WINDTRAP_PEDIA",
+    "uses": [
+      "ImprovementInfo/IMPROVEMENT_WINDTRAP/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ALARIC_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ALARIC/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ALBOIN_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ALBOIN/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ANDREA_GRITTI_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ANDREA_GRITTI/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ARPAD_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ARPAD/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ATTILA_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ATTILA/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_BORU_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_BORU/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_BRIDEI_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_BRIDEI/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_CAKSTE_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_CAKSTE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_CALGACUS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_CALGACUS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_CANUTE_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_CANUTE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_CASIMIR_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_CASIMIR/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_CHRISTIAN_IV_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_CHRISTIAN_IV/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_COLLINS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_COLLINS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_DUFOUR_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_DUFOUR/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ENRICO_DANDOLO_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ENRICO_DANDOLO/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_FSFORZA_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_FSFORZA/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_HAAKONSON_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_HAAKONSON/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_HAAKON_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_HAAKON/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_HUS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_HUS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_JOGAILA_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_JOGAILA/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_KOSSUTH_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_KOSSUTH/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_LLYWELYN_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_LLYWELYN/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MAGNUS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MAGNUS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MARGRETE_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MARGRETE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MARY_STUART_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MARY_STUART/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MASARYK_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MASARYK/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MATTHIAS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MATTHIAS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_MINDAUGAS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_MINDAUGAS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_NIALL_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_NIALL/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_OWAIN_GLYNDWR_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_OWAIN_GLYNDWR/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_ROBERT_I_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_ROBERT_I/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_RUGA_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_RUGA/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_SOBIESKI_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_SOBIESKI/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_STEPHEN_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_STEPHEN/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_THEODORIC_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_THEODORIC/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_WENCESLAUS_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_WENCESLAUS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_LEADER_WETTSTEIN_PEDIA",
+    "uses": [
+      "LeaderHeadInfo/LEADER_WETTSTEIN/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MAD",
+    "uses": [
+      "ControlInfo/CONTROL_MAD/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MAPSWITCH_EXAMPLE",
+    "uses": [
+      "MapSwitchInfo/MAPSWITCH_EXAMPLE/Description",
+      "MapSwitchInfo/MAPSWITCH_EXAMPLE2/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MAPSWITCH_EXAMPLE_HELP",
+    "uses": [
+      "MapSwitchInfo/MAPSWITCH_EXAMPLE/Help",
+      "MapSwitchInfo/MAPSWITCH_EXAMPLE2/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MAP_EXAMPLE",
+    "uses": [
+      "MapInfo/MAP_EXAMPLE/Description",
+      "MapInfo/MAP_EXAMPLE2/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MAP_EXAMPLE_HELP",
+    "uses": [
+      "MapInfo/MAP_EXAMPLE/Help",
+      "MapInfo/MAP_EXAMPLE2/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MISSION_RANGE_ATTACK",
+    "uses": [
+      "MissionInfo/MISSION_RANGE_ATTACK/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_MISSION_RANGE_ATTACK_HELP",
+    "uses": [
+      "MissionInfo/MISSION_RANGE_ATTACK/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_PROJECT_APOLLO_STRATEGY",
+    "uses": [
+      "ProjectInfo/PROJECT_APOLLO_NEW/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SHIP_OF_THE_LINE",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_SHIP_OF_THE_LINE/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_ARTIST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_ARTIST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_CITIZEN_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_CITIZEN/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_ENGINEER_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_ENGINEER/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_ARTIST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_ARTIST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_DIPLOMAT_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_DIPLOMAT/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_ENGINEER_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_ENGINEER/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_GENERAL_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_GENERAL/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_MERCHANT_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_MERCHANT/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_PRIEST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_PRIEST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_SCIENTIST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_SCIENTIST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_GREAT_SPY_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_GREAT_SPY/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_LAWYER_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_LAWYER/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_MERCHANT_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_MERCHANT/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_PRIEST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_PRIEST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_SCIENTIST_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_SCIENTIST/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALIST_SPY_STRATEGY",
+    "uses": [
+      "SpecialistInfo/SPECIALIST_SPY/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_SPECIALUNIT_UNITED_NATIONS",
+    "uses": [
+      "SpecialUnitInfo/SPECIALUNIT_UNITED_NATIONS/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_TERRAIN_MARSH_PEDIA",
+    "uses": [
+      "TerrainInfo/TERRAIN_MARSH/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_TERRAIN_NONE",
+    "uses": [
+      "TerrainInfo/TERRAIN_NONE/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_TERRAIN_NONE_PEDIA",
+    "uses": [
+      "TerrainInfo/TERRAIN_NONE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_TUTORIAL_MOVE_UNIT_BODYTEXT",
+    "uses": [
+      "QuestInfo/TUTORIAL_MOVE_UNIT/QuestBodyText"
+    ]
+  },
+  {
+    "key": "TXT_KEY_TUTORIAL_MOVE_UNIT_OBJECTIVE",
+    "uses": [
+      "QuestInfo/TUTORIAL_MOVE_UNIT/QuestObjective"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_AUTOMATONS_STRATEGY",
+    "uses": [
+      "UnitInfo/UNIT_AUTOMATONS/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_CAVALRY_LIGHT_PEDIA",
+    "uses": [
+      "UnitInfo/UNIT_CAVALRY_LIGHT/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_CAVALRY_LIGHT_STRATEGY",
+    "uses": [
+      "UnitInfo/UNIT_CAVALRY_LIGHT/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_CSS",
+    "uses": [
+      "UnitInfo/UNIT_HYDROGEN/CivilizationUniqueName"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_EARLY_FIGHTER",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_EARLY_FIGHTER/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_FIGHTER_BOMBER",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_FIGHTER_BOMBER/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_GREAT_DIPLOMAT",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_GREAT_DIPLOMAT/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_GREAT_TYCOON",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_MERCHANT/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_HEAVY_ARMOR",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_HEAVY_ARMOR/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MAN_AT_ARMS_PEDIA",
+    "uses": [
+      "UnitInfo/UNIT_MAN_AT_ARMS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MAN_AT_ARMS_STRATEGY",
+    "uses": [
+      "UnitInfo/UNIT_MAN_AT_ARMS/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MED_CARAVAN",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_MED_CARAVAN/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MOUNTED_RIFLEMAN_PEDIA",
+    "uses": [
+      "UnitInfo/UNIT_MOUNTED_RIFLEMAN/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MOUNTED_RIFLEMAN_STRATEGY",
+    "uses": [
+      "UnitInfo/UNIT_MOUNTED_RIFLEMAN/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_MRBM_PEDIA",
+    "uses": [
+      "UnitInfo/UNIT_MRBM/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_POISON_NOVA_STRATEGY",
+    "uses": [
+      "UnitInfo/UNIT_POISON_NOVA/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_SS",
+    "uses": [
+      "UnitInfo/UNIT_HYDROGEN/CivilizationUniqueName"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UNIT_STEALTH_FIGHTER",
+    "uses": [
+      "UnitClassInfo/UNITCLASS_STEALTH_FIGHTER/Description"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UPKEEP_HIGH_HELP",
+    "uses": [
+      "UpkeepInfo/UPKEEP_HIGH/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UPKEEP_LOW_HELP",
+    "uses": [
+      "UpkeepInfo/UPKEEP_LOW/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_UPKEEP_MEDIUM_HELP",
+    "uses": [
+      "UpkeepInfo/UPKEEP_MEDIUM/Strategy"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_CONQUEST_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_CONQUEST/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_CULTURAL_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_CULTURAL/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_DIPLOMATIC_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_DIPLOMATIC/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_DOMINATION_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_DOMINATION/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_RELIGIOS_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_RELIGIOUS/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_SCORE_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_SCORE/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_VICTORY_TIME_PEDIA",
+    "uses": [
+      "VictoryInfo/VICTORY_TIME/Civilopedia"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_DUEL_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_DUEL/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_GIANT_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_GIANT/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_GIGANTIC_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_GIGANTIC/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_HUGE_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_HUGE/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_LARGE_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_LARGE/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_SMALL_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_SMALL/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_STANDARD_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_STANDARD/Help"
+    ]
+  },
+  {
+    "key": "TXT_KEY_WORLD_TINY_HELP",
+    "uses": [
+      "WorldInfo/WORLDSIZE_TINY/Help"
+    ]
+  }
+]
