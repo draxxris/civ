@@ -1,9 +1,10 @@
 using Civ.Content.Schema;
 using Civ.Modding;
+using Civ.Game;
 
 namespace Civ.Mods.Military;
 
-/// <summary>Military definitions and requirement identities. Gameplay systems follow separately.</summary>
+/// <summary>Deterministic movement, melee combat, unit lifecycle and barbarian rules.</summary>
 public sealed class MilitaryMod : IMod
 {
     public void Register(IModContext context)
@@ -17,6 +18,36 @@ public sealed class MilitaryMod : IMod
         ContentRegistration.Load<UnitCategoryDef>(context, "unit-category.json");
         ContentRegistration.Load<UnitCombatDef>(context, "unit-combat.json");
         ContentRegistration.Load<UnitDef>(context, "unit.json");
+        var movement = new MovementService();
+        var units = new UnitService();
+        context.RegisterService<IMovementService>("movement", movement);
+        context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
+        context.RegisterService<ICombatService>("combat", new CombatService());
+        context.RegisterService<IUnitService>("units", units);
+        context.RegisterService<IUnitSupportService>("support", units);
+        context.RegisterService<Civ.Content.IModifierSource>("promotions", new PromotionEffects());
+        context.RegisterService<Civ.Content.IModifierSource>("training", new TrainingEffects());
+        context.RegisterStateComponent<MilitaryUnitState>("unit_state");
+        context.RegisterStateComponent<MilitaryPlayerState>("player_state");
+        context.RegisterStateComponent<MilitaryGameState>("combat_history");
+        context.RegisterCommand<MoveUnitPathCommand>("move_unit");
+        context.RegisterCommand<PromoteMilitaryUnitCommand>("promote_unit");
+        context.RegisterCommand<SetUnitActivityCommand>("set_unit_activity");
+        context.RegisterCommand<PillageCommand>("pillage");
+        context.RegisterCommand<UpgradeUnitCommand>("upgrade_unit");
+        context.RegisterCommand<DisbandUnitCommand>("disband_unit");
+        context.RegisterCommand<RazeCityCommand>("raze_city");
+        context.TurnSystems.Register(new UnitTurnSystem(units));
+        context.TurnSystems.Register(new BarbarianSpawns());
+        context.TurnSystems.Register(new BarbarianBehavior());
+        context.Subscribe<UnitCreated>("initialize", (sim, created) => units.Initialize(sim, created.Unit));
+        context.Subscribe<TurnStarted>("begin", (sim, _) =>
+        {
+            foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);
+            foreach (var player in sim.State.Players.Where(p => MilitaryData.Player(sim, p.Id).Barbarian)) player.EndedTurn = true;
+            CombatService.HistoryState(sim).Combats.Clear();
+            MilitaryData.Sight(sim);
+        });
         ContentRegistration.Evaluator<UnitDef>(context, "unit", (leaf, subject) => subject.Unit?.Type == leaf.Id);
         ContentRegistration.Evaluator<UnitDef>(context, "unit-class");
         ContentRegistration.Evaluator<UnitCombatDef>(context, "unit-combat");

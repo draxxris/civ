@@ -18,6 +18,8 @@ public sealed class CitiesMod : IMod
         context.RegisterStateComponent<CityRuleState>("city_state");
         context.RegisterStateComponent<CityPlayerState>("player_state");
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
+        context.RegisterService<IModifierSource>("military_building_grants", new BuildingMilitaryEffects());
+        context.RegisterService<ICityCaptureService>("capture", new CityCapture());
         var yields = new CityYields();
         var wellbeing = new CityWellbeingService();
         var work = new CityWork(wellbeing);
@@ -44,6 +46,7 @@ public sealed class CitiesMod : IMod
         context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
         context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
         context.TurnSystems.Register(new CityPhase("great_people", TurnPhase.CityPostProduction, greatPeople.Run));
+        context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
         context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
         {
             if (grant.City is { } id && sim.State.FindCity(id) is { } city && city.Owner == grant.Player)
