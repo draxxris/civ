@@ -46,6 +46,24 @@ public class LockstepTests
     }
 
     [Fact]
+    public void ContentMismatchFailsHandshakeBeforeAnyTickExecutes()
+    {
+        var hub = new InProcessHub();
+        var simA = TestGame.Sim();
+        var changed = Civ.Modding.ModLoader.FromAssembly(
+            new Civ.Modding.ModManifest { Id = "base", Version = "different" },
+            typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var simB = new Simulation(Civ.Modding.ModLoader.Build([changed]), new SimulationSettings());
+        var a = new LockstepSession(simA, new CommandCodec(simA.Content), hub.CreateEndpoint(), [0, 1], 0);
+        var b = new LockstepSession(simB, new CommandCodec(simB.Content), hub.CreateEndpoint(), [0, 1], 1);
+        a.Pump();
+        Assert.Contains("content mismatch", Assert.Throws<InvalidDataException>(() => b.Pump()).Message);
+        Assert.Throws<InvalidDataException>(() => a.Pump());
+        Assert.Equal(0, a.Tick);
+        Assert.Equal(0, b.Tick);
+    }
+
+    [Fact]
     public void DivergentStateRaisesDesync()
     {
         var (a, b, simA, _) = Pair();

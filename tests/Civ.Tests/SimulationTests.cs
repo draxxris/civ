@@ -17,7 +17,7 @@ public class SimulationTests
     public void CannotFoundCityOnWaterOrNearAnotherCity()
     {
         var sim = TestGame.Sim();
-        var water = sim.State.Terrain.First(k => k.Value == "base:ocean").Key;
+        var water = sim.State.Grid.HexOf(sim.State.Grid.Tiles.First(t => sim.State.Plots[t.Value].Terrain == "base:ocean"));
         Assert.False(sim.TryApply(new FoundCityCommand { Player = 0, Position = water }, out var err));
         Assert.NotNull(err);
 
@@ -40,7 +40,7 @@ public class SimulationTests
             sim.TryApply(new EndTurnCommand { Player = 1 }, out _);
         }
         Assert.Equal(31, sim.State.Turn);
-        Assert.Contains("base:agriculture", sim.State.PlayerById(0).Techs);
+        Assert.Contains("base:agriculture", sim.TeamOf(0).Techs);
 
         Assert.True(sim.TryApply(new StartBuildingCommand { Player = 0, CityId = 1, Building = "base:granary" }, out _));
         for (int i = 0; i < 30; i++)

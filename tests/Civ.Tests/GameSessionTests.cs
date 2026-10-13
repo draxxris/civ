@@ -69,7 +69,7 @@ public class GameSessionTests
     {
         var s = NewSession();
         var city = FoundCity(s);
-        s.Me.Techs.Add("base:monarchy");
+        s.MyTeam.Techs.Add("base:monarchy");
         s.SelectedCityId = city.Id;
 
         s.ChangeSpecialist(city, "base:priest", +1);

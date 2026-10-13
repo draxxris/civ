@@ -13,11 +13,11 @@ public class CivAndAiTests
     {
         var sim = new Simulation(TestGame.Content(), new SimulationSettings
         {
-            Seed = 3, MapRadius = 8, PlayerCount = 2, Civilizations = ["base:scholars", "base:builders"],
+            Seed = 3, Map = new(17, 17), PlayerCount = 2, Civilizations = ["base:scholars", "base:builders"],
         });
         Assert.Equal("Scholars", sim.State.Players[0].Name);
-        Assert.Contains("base:agriculture", sim.State.Players[0].Techs);
-        Assert.Contains("base:mining", sim.State.Players[1].Techs);
+        Assert.Contains("base:agriculture", sim.TeamOf(0).Techs);
+        Assert.Contains("base:mining", sim.TeamOf(1).Techs);
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class CivAndAiTests
     {
         long Culture(string civ)
         {
-            var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 3, MapRadius = 8, PlayerCount = 1, Civilizations = [civ] });
+            var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 3, Map = new(17, 17), PlayerCount = 1, Civilizations = [civ] });
             sim.TryApply(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) }, out _);
             sim.State.Cities[0].Buildings.Add("base:library"); // 1 base + 1 building culture per turn
             for (int i = 0; i < 10; i++) sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
@@ -42,11 +42,11 @@ public class CivAndAiTests
         {
             var sim = new Simulation(TestGame.Content(), new SimulationSettings
             {
-                Seed = 11, MapRadius = 8, PlayerCount = 2, PlayerAis = ["base:basic", "base:basic"],
+                Seed = 11, Map = new(17, 17), PlayerCount = 2, PlayerAis = ["base:basic", "base:basic"],
             });
             for (int i = 0; i < 60; i++) sim.AdvanceTurn();
             Assert.Equal(2, sim.State.Cities.Count);
-            Assert.All(sim.State.Players, p => Assert.NotEmpty(p.Techs));
+            Assert.All(sim.State.Teams, t => Assert.NotEmpty(t.Techs));
             Assert.All(sim.State.Cities, c => Assert.NotEmpty(c.Buildings));
             return sim.ComputeHash();
         }
@@ -56,7 +56,7 @@ public class CivAndAiTests
     [Fact]
     public void HumanAndAiShareATurn()
     {
-        var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 5, MapRadius = 8, PlayerCount = 2, PlayerAis = [null, "base:basic"] });
+        var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 5, Map = new(17, 17), PlayerCount = 2, PlayerAis = [null, "base:basic"] });
         Assert.True(sim.State.Players[1].EndedTurn);
         Assert.False(sim.State.Players[0].EndedTurn);
         sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
@@ -80,8 +80,8 @@ public class CivAndAiTests
             Instance = new Extra(), Root = AppContext.BaseDirectory,
         };
         var db = ModLoader.Build([baseSrc, extra]);
-        var sim = new Simulation(db, new SimulationSettings { Seed = 1, MapRadius = 6, PlayerCount = 1, Civilizations = ["mymod:nomads"], PlayerAis = ["mymod:silent"] });
-        Assert.Contains("base:the_wheel", sim.State.Players[0].Techs);
+        var sim = new Simulation(db, new SimulationSettings { Seed = 1, Map = new(13, 13), PlayerCount = 1, Civilizations = ["mymod:nomads"], PlayerAis = ["mymod:silent"] });
+        Assert.Contains("base:the_wheel", sim.TeamOf(0).Techs);
         Assert.Empty(sim.State.Cities); // the silent AI does nothing
     }
 

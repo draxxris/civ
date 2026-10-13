@@ -20,6 +20,9 @@ public sealed class LockstepSession
     private readonly Dictionary<int, Dictionary<int, ulong>> _hashes = new();       // tick -> peer -> hash
     private readonly List<string> _pending = new();
     private int _nextSubmit;
+    private readonly HashSet<int> _handshakes = new();
+    private string? _handshakeError;
+    private bool _announced;
 
     public int Tick { get; private set; }
     public event Action<int>? Desync;
@@ -28,6 +31,9 @@ public sealed class LockstepSession
     {
         _sim = sim; _codec = codec; _transport = transport; _local = localPeer; _delay = inputDelay;
         _peers = peers.OrderBy(p => p).ToArray();
+        if (_delay < 0 || !_peers.Contains(_local) || _peers.Distinct().Count() != _peers.Length)
+            throw new ArgumentException("Lockstep requires distinct peers, a local peer and a nonnegative input delay");
+        _handshakes.Add(_local);
         // Ticks [0, delay) have no input by agreement, so the pipeline can start.
         for (; _nextSubmit < _delay; _nextSubmit++)
             foreach (var p in _peers) Store(_nextSubmit, p, []);
@@ -40,6 +46,14 @@ public sealed class LockstepSession
     /// <summary>Submit local input and run every tick that is complete. Call as often as you like; returns how many ticks ran.</summary>
     public int Pump()
     {
+        // Repeat while waiting: endpoints may not have subscribed when a peer first announced itself.
+        if (!_announced || _handshakes.Count < _peers.Length)
+        {
+            _transport.Broadcast(new NetMessage(NetMessageKind.Handshake, 0, _local, [], 0, _sim.Content.ContentHash));
+            _announced = true;
+        }
+        if (_handshakeError != null) throw new InvalidDataException(_handshakeError);
+        if (_handshakes.Count < _peers.Length) return 0;
         int ran = 0;
         while (true)
         {
@@ -70,7 +84,14 @@ public sealed class LockstepSession
 
     private void OnReceived(NetMessage m)
     {
-        if (m.Kind == NetMessageKind.Commands) Store(m.Tick, m.Peer, m.Commands);
+        if (!_peers.Contains(m.Peer)) throw new InvalidDataException($"Unknown lockstep peer {m.Peer}");
+        if (m.Kind == NetMessageKind.Handshake)
+        {
+            if (!string.Equals(m.ContentHash, _sim.Content.ContentHash, StringComparison.Ordinal))
+                _handshakeError = $"Lockstep content mismatch with peer {m.Peer}: expected {_sim.Content.ContentHash}, got {m.ContentHash}";
+            else _handshakes.Add(m.Peer);
+        }
+        else if (m.Kind == NetMessageKind.Commands) Store(m.Tick, m.Peer, m.Commands);
         else StoreHash(m.Tick, m.Peer, m.Hash);
     }
 

@@ -9,9 +9,9 @@ public class UnitTests
     private static (Simulation sim, Hex a, Hex b) TwoAdjacentLandHexes()
     {
         var sim = TestGame.Sim(7);
-        var a = sim.State.Terrain.Keys.OrderBy(h => h.Q).ThenBy(h => h.R)
-            .First(h => { var t = sim.TerrainAt(h); return !t.IsWater && t.Passable && h.Neighbors().Any(n => sim.State.Terrain.TryGetValue(n, out var id) && sim.Content.Terrains.Get(id) is { IsWater: false, Passable: true }); });
-        var b = a.Neighbors().First(n => sim.State.Terrain.TryGetValue(n, out var id) && sim.Content.Terrains.Get(id) is { IsWater: false, Passable: true });
+        var a = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).OrderBy(h => h.Q).ThenBy(h => h.R)
+            .First(h => { var t = sim.TerrainAt(h); return !t.IsWater && t.Passable && h.Neighbors().Any(n => sim.State.Grid.Contains(n) && sim.TerrainAt(n) is { IsWater: false, Passable: true }); });
+        var b = a.Neighbors().First(n => sim.State.Grid.Contains(n) && sim.TerrainAt(n) is { IsWater: false, Passable: true });
         return (sim, a, b);
     }
 
@@ -150,7 +150,7 @@ public class UnitTests
     {
         var sim = new Simulation(TestGame.Content(), new SimulationSettings
         {
-            Seed = 11, MapRadius = 8, PlayerCount = 1, Civilizations = ["base:builders"], PlayerAis = ["base:basic"],
+            Seed = 11, Map = new(17, 17), PlayerCount = 1, Civilizations = ["base:builders"], PlayerAis = ["base:basic"],
         });
         for (int i = 0; i < 80; i++)
         {
