@@ -87,6 +87,20 @@ public sealed class HexGrid
         }
         return checked((int)best);
     }
+    private int? _maximumDistance;
+    /// <summary>Largest shortest hex distance on this rectangle. Derived geometry is cached, never saved.</summary>
+    public int MaximumDistance => _maximumDistance ??= CalculateMaximumDistance();
+    private int CalculateMaximumDistance()
+    {
+        int maximum = 0;
+        for (int a = 0; a < Spec.Width; a++)
+            for (int b = 0; b < Spec.Width; b++)
+            {
+                maximum = Math.Max(maximum, Distance(TileAt(a, 0), TileAt(b, Spec.Height - 1)));
+                maximum = Math.Max(maximum, Distance(TileAt(a, 0), TileAt(b, 0)));
+            }
+        return maximum;
+    }
     /// <summary>Wrapped distance for valid axial coordinates.</summary>
     public int Distance(Hex a, Hex b) => Distance(TileAt(a), TileAt(b));
     /// <summary>Clipped range, deduplicated at wrap seams, in tile order.</summary>

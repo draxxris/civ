@@ -28,6 +28,9 @@
     "startQualityPercent": 85,
     "unitSight": 1,
     "citySight": 2,
+    "governorFoodWeight": 10,
+    "governorProductionWeight": 6,
+    "governorCommerceWeight": 4,
     "featureClimate": {
       "world:forest": { "minLatitude": 20, "maxLatitude": 75, "appearance": 4500 },
       "world:jungle": { "minLatitude": 0, "maxLatitude": 25, "appearance": 6500 },

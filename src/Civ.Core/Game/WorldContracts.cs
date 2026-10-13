@@ -35,6 +35,8 @@ public interface IResourceNetwork
 {
     /// <summary>Physical connected copies, after reveal, trade and obsolescence gates; excludes traded allocations.</summary>
     int ConnectedCount(Simulation sim, int player, int city, string bonus);
+    /// <summary>All physical copies in one network traversal.</summary>
+    IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city);
 }
 /// <summary>Authoritative team sight updates, owned by World.</summary>
 public interface IVisibilityService

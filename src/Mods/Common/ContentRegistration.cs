@@ -22,7 +22,15 @@ internal static class ContentRegistration
         public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
         {
             // TODO: owning feature rules must implement missing state and scope semantics. Never grant an unavailable mechanic.
-            if (predicate is null) return $"Requirement '{kind}' is unavailable until its owning rules implement runtime state";
+            if (predicate is null)
+            {
+                if (kind is "condition" or "culture-level" or "era")
+                {
+                    var service = context.Sim.Content.Services.Get<Civ.Game.ICityRequirementService>().SingleOrDefault();
+                    if (service is not null) return service.Evaluate(leaf, context);
+                }
+                return $"Requirement '{kind}' is unavailable until its owning rules implement runtime state";
+            }
             return predicate(leaf, context) ? null : $"Required {kind}: {leaf.Id}";
         }
     }
