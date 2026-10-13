@@ -1,0 +1,37 @@
+[
+  {
+    "id": "foundation:hex_overrides",
+    "name": "Hex adaptation",
+    "sourceGridScale": 4,
+    "waterPercent": 75,
+    "noiseScale": 16,
+    "noiseOctaves": 4,
+    "polarPenalty": 350,
+    "hillsPercent": 24,
+    "peaksPercent": 7,
+    "snowLatitude": 75,
+    "tundraLatitude": 60,
+    "desertMinLatitude": 15,
+    "desertMaxLatitude": 40,
+    "desertMoisture": 440,
+    "plainsMoisture": 530,
+    "marshMoisture": 750,
+    "riverSourceOneIn": 12,
+    "lakeMaxSize": 12,
+    "startRadius": 2,
+    "startOuterRadius": 3,
+    "startSpacing": 10,
+    "startFoodWeight": 4,
+    "startProductionWeight": 3,
+    "startCoastWeight": 6,
+    "startFreshWaterWeight": 8,
+    "startQualityPercent": 85,
+    "unitSight": 1,
+    "citySight": 2,
+    "featureClimate": {
+      "world:forest": { "minLatitude": 20, "maxLatitude": 75, "appearance": 4500 },
+      "world:jungle": { "minLatitude": 0, "maxLatitude": 25, "appearance": 6500 },
+      "world:ice": { "minLatitude": 75, "maxLatitude": 90, "appearance": 8000 }
+    }
+  }
+]

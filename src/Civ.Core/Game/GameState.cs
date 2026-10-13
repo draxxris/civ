@@ -11,6 +11,10 @@ public sealed class Player
     public string Name { get; init; } = "";
     /// <summary>Civilization definition id.</summary>
     public string Civilization { get; init; } = "";
+    /// <summary>Selected leader id, empty for legacy rulesets.</summary>
+    public string Leader { get; init; } = "";
+    /// <summary>Initial location selected by the ruleset setup, or null for legacy games.</summary>
+    public TileId? StartingPlot { get; set; }
     /// <summary>Controlling AI service id, or null for a human.</summary>
     public string? Ai { get; init; }
     /// <summary>Owning team id.</summary>
@@ -197,6 +201,7 @@ public sealed class GameState
         _grid = new HexGrid(Map);
         if (Plots.Length != Grid.Count) throw new InvalidDataException("Plot count does not match map dimensions");
         _players.Clear(); _teams.Clear(); _units.Clear(); _cities.Clear(); _cityPlots.Clear(); _unitPlots.Clear();
+        foreach (var plot in Plots) plot.BuildProgress = new(plot.BuildProgress, StringComparer.Ordinal);
         foreach (var p in Players) { p.Civics = new(p.Civics, StringComparer.Ordinal); _players.Add(p.Id, p); }
         foreach (var t in Teams) { t.Techs = new(t.Techs, StringComparer.Ordinal); t.Research = new(t.Research, StringComparer.Ordinal); _teams.Add(t.Id, t); }
         foreach (var c in Cities) { c.Specialists = new(c.Specialists, StringComparer.Ordinal); IndexCity(c); }

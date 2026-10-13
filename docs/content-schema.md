@@ -1,7 +1,8 @@
 # Content schema
 
 The v1 definitions are in `Civ.Content.Schema`. The older `Civ.Content` definitions remain for BaseGame and the current client.
-Each feature mod loads immutable definitions from its `data/` directory. No feature mod registers turn systems or gameplay commands yet.
+Each feature mod loads immutable definitions from its `data/` directory. Foundation registers setup, and World registers the first gameplay services and systems.
+The mechanics status is in [mechanics-status.md](mechanics-status.md).
 
 ## Definitions
 
@@ -13,6 +14,10 @@ Each feature mod loads immutable definitions from its `data/` directory. No feat
 - Military: `UnitDef`, `UnitCombatDef`, `UnitAiDef`, `UnitCategoryDef`, `DomainDef`, `InvisibilityDef`, `PromotionDef`, `MissionDef`, and `OutcomeDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
+
+Foundation loads hand-authored `HexOverridesDef` separately from imported definition families.
+Its noise, climate, sight, lake, source-grid scale and start-balance integers enter the content hash.
+The importer never writes `hex-overrides.json`.
 
 Foundation also reserves `GameOptionDef`, `ConditionDef`, `ReligionIdentityDef`, `CorporationIdentityDef`, and `VictoryIdentityDef`.
 The last three types contain identities and text, not effects. Their `Deferred` flag is always true.
@@ -70,7 +75,7 @@ In this profile, 38 civilizations declare six initial civics. Another 22 declare
 
 ## Registration and reference checks
 
-All eight data-only mods currently have empty load-order `dependencies`. They have no overrides or registration-order requirements.
+All eight mods currently have empty load-order `dependencies`. They have no overrides or registration-order requirements.
 Each manifest declares its direct cross-mod content providers in `references`. These presence requirements can be cyclic.
 The importer reports the complete provider graph in `emitted-counts.json`.
 
@@ -80,8 +85,9 @@ An unresolved reference or undeclared provider fails load before freeze and cont
 
 Each mod owns evaluators for its leaf kinds. Research checks known technologies. Government checks active civics.
 Cities checks exact local building ids. Military checks exact unit ids and held promotions.
+World checks connected resource counts through `IResourceNetwork`. Vicinity resources remain unavailable.
 Other evaluators fail closed with an unavailable-state explanation.
-TODO: feature rules must implement connectivity, class overrides, scoped counts, era, culture, location, and deferred mechanics.
+TODO: feature rules must implement scoped class counts, era, culture, location, diplomacy permissions, and deferred mechanics.
 The conservative evaluators must not grant content whose needed runtime state does not exist.
 
 ## Import decisions and limits

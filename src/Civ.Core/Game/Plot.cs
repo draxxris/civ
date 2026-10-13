@@ -6,6 +6,14 @@ public sealed class Plot
 {
     /// <summary>Terrain content id.</summary>
     public string Terrain { get; set; } = "";
+    /// <summary>Flatland, hills or peak, independent of terrain.</summary>
+    public PlotKind Kind { get; set; }
+    /// <summary>Small inland water area, assigned by the world rules.</summary>
+    public bool IsLake { get; set; }
+    /// <summary>Worked turns toward the next improvement upgrade.</summary>
+    public int ImprovementTurns { get; set; }
+    /// <summary>Shared worker progress by build id.</summary>
+    public SortedDictionary<string, long> BuildProgress { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Optional feature content id.</summary>
     public string? Feature { get; set; }
     /// <summary>Optional resource content id.</summary>

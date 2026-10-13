@@ -15,6 +15,16 @@ public sealed class SimulationSettings
     public int PlayerCount { get; init; } = 2;
     /// <summary>Civilization per player. Missing entries cycle through content in ordinal id order.</summary>
     public string[] Civilizations { get; init; } = [];
+    /// <summary>Feature ruleset world size. Null retains legacy setup.</summary>
+    public string? WorldSize { get; init; }
+    /// <summary>Speed definition for feature rules.</summary>
+    public string GameSpeed { get; init; } = "foundation:gamespeed_normal";
+    /// <summary>Difficulty definition for feature rules.</summary>
+    public string Handicap { get; init; } = "foundation:handicap_noble";
+    /// <summary>Initial era, used for starting grants and build-time scaling.</summary>
+    public string StartingEra { get; init; } = "foundation:era_ancient";
+    /// <summary>One leader per player in feature rulesets.</summary>
+    public string[] Leaders { get; init; } = [];
     /// <summary>AI per player; missing or null means human.</summary>
     public string?[] PlayerAis { get; init; } = [];
     /// <summary>Team id per player; missing entries default to player id.</summary>
@@ -38,16 +48,26 @@ public sealed class Simulation
 
     /// <summary>Create a new game, generate plots, initialize teams, then let AI players act.</summary>
     public Simulation(ContentDb content, SimulationSettings settings)
-        : this(content, settings, new GameState { Map = settings.Map }, new DeterministicRng(settings.Seed))
+        : this(content, settings, new GameState { Map = ResolveMap(content, settings) }, new DeterministicRng(settings.Seed))
     {
         if (settings.PlayerCount <= 0) throw new ArgumentOutOfRangeException(nameof(settings.PlayerCount));
-        var civs = content.Civilizations.All.ToList();
-        for (int i = 0; i < settings.PlayerCount; i++) AddPlayer(i, ChooseCivilization(i, civs));
+        var setup = settings.WorldSize is null ? null : content.Services.Get<INewGameSetup>().Single();
+        if (setup is not null) setup.CreatePlayers(this);
+        else
+        {
+            var civs = content.Civilizations.All.ToList();
+            for (int i = 0; i < settings.PlayerCount; i++) AddPlayer(i, ChooseCivilization(i, civs));
+        }
         State.Teams.Sort((a, b) => a.Id.CompareTo(b.Id));
         State.Plots = Enumerable.Range(0, State.Grid.Count).Select(_ => new Plot()).ToArray();
-        content.MapGenerators.Get(settings.MapGenerator).Generate(settings.Map, State.Plots, Rng, content);
-        foreach (var plot in State.Plots) _ = content.Terrains.Get(plot.Terrain);
+        content.MapGenerators.Get(settings.MapGenerator).Generate(State.Map, State.Plots, Rng, content, settings.PlayerCount);
+        foreach (var plot in State.Plots)
+        {
+            if (setup is null) _ = content.Terrains.Get(plot.Terrain);
+            else _ = content.Get<Civ.Content.Schema.TerrainDef>(plot.Terrain);
+        }
         State.RebuildIndexes();
+        setup?.Complete(this);
         Events.Publish(new TurnStarted(State.Turn));
         RunAi();
     }
@@ -55,8 +75,12 @@ public sealed class Simulation
     {
         Content = content; Settings = settings; State = state; Rng = rng;
         _systems = content.TurnSystems.All.OrderBy(s => s.Order).ThenBy(s => s.Id, StringComparer.Ordinal).ToList();
+        if (_systems.Any(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map && s is not IPlayerTurnSystem))
+            throw new InvalidDataException("Player phase systems must implement IPlayerTurnSystem");
         Events = new(this);
     }
+    private static MapSpec ResolveMap(ContentDb content, SimulationSettings settings) => settings.WorldSize is null
+        ? settings.Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, settings);
     private CivilizationDef? ChooseCivilization(int player, IReadOnlyList<CivilizationDef> civs)
     {
         if (player < Settings.Civilizations.Length) return Content.Civilizations.Get(Settings.Civilizations[player]);
@@ -120,7 +144,11 @@ public sealed class Simulation
     /// <summary>Run ordered rules, end the old turn, clear presentation events, start the new turn, and run AI.</summary>
     public void AdvanceTurn()
     {
-        foreach (var system in _systems) system.Run(this);
+        foreach (var system in _systems.Where(s => s.Order < TurnPhase.PlayerBegin)) system.Run(this);
+        var playerSystems = _systems.Where(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map).ToArray();
+        foreach (var player in State.Players.OrderBy(p => p.Id))
+            foreach (var system in playerSystems.Cast<IPlayerTurnSystem>()) system.Run(this, player.Id);
+        foreach (var system in _systems.Where(s => s.Order >= TurnPhase.Map)) system.Run(this);
         Events.Publish(new TurnEnded(State.Turn));
         State.Turn++;
         foreach (var player in State.Players) player.EndedTurn = false;

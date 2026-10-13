@@ -37,6 +37,8 @@ public static class ContentEmission
             .Select(f => (f.Mod, File: FileName(f.Definition), Json: Serialize(result.Definitions
                 .Where(d => d.Mapping.Mod == f.Mod && d.Mapping.Definition == f.Definition)
                 .OrderBy(d => d.Definition.Id, StringComparer.Ordinal).Select(d => d.Definition).ToArray()))).ToArray();
+        // Hand-authored geometry tuning is never part of the generated family list.
+        if (files.Any(f => f.File == "hex-overrides.json")) throw new InvalidOperationException("Reserved hand-authored sidecar");
         foreach (var file in files) AssertNeutral(file.Json);
         foreach (var file in files)
         {
