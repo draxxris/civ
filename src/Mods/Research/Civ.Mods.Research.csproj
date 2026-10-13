@@ -4,5 +4,6 @@
     <Compile Include="../Common/ContentRegistration.cs" Link="ContentRegistration.cs" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="art/**/*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
