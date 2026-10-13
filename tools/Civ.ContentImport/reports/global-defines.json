@@ -1,0 +1,3842 @@
+{
+  "ACO_DEBUG": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_FORCE_ORIGINAL_ODDS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_IGNORE_BARB_FREE_WINS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_MERGE_SHORT_BARS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_ATTACKER_HEALTH_BARS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_ATTACKER_INFO": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_AVERAGE_HEALTH": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_BASIC_INFO": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_DEFENDER_HEALTH_BARS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_DEFENDER_INFO": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_DEFENSE_MODIFIERS": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_EXPERIENCE_RANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_MODIFIER_LABELS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_SHIFT_INSTRUCTIONS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_SURVIVAL_ODDS": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_TOTAL_DEFENSE_MODIFIER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_UNHARMED_ODDS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SHOW_UNROUNDED_EXPERIENCE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ACO_SWAP_VIEWS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ADVANCED_START_ALLOW_UNITS_OUTSIDE_CITIES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_CITY_COST": {
+    "value": "67",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_CITY_COST_INCREASE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_CITY_PLACEMENT_MAX_RANGE": {
+    "value": "9",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_CULTURE_COST": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_CULTURE_COST_INCREASE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_MAX_UNITS_PER_CITY": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_POPULATION_COST": {
+    "value": "150",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_POPULATION_COST_INCREASE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_SIGHT_RANGE": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_VISIBILITY_COST": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ADVANCED_START_VISIBILITY_COST_INCREASE": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_BOMB_HEIGHT": {
+    "value": "200.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_COMBAT_DAMAGE": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_DEFEND_DISTANCE": {
+    "value": "450.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_DEFEND_FINISH": {
+    "value": "300.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_EXECUTE_DISTANCE": {
+    "value": "650.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_EXECUTE_FINISH": {
+    "value": "400.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_IDLE_HEIGHT": {
+    "value": "100.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_PATROL_HEIGHT": {
+    "value": "200.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_PATROL_RADIUS": {
+    "value": "1.5",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AIR_PATROL_SPEED": {
+    "value": "30.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AI_BUILD_WONDERS_RAND": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "AI_CAN_DISBAND_UNITS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AI_HANDICAP": {
+    "value": "HANDICAP_NOBLE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AI_LONG_WAR_TURNS_COUNT": {
+    "value": "60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "AI_SETTLE_ON_RIVERS_VALUE_BOOST": {
+    "value": "250",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "AI_SHOULDNT_MANAGE_PLOT_ASSIGNMENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ALLOW_UNIT_SCALE_ADJUST_ON_ZOOM": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ALWAYS_USE_MAX_COMPAT_SAVES": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "AMPHIB_ATTACK_MODIFIER": {
+    "value": "-50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ANIMAL_MAX_XP_VALUE": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "AT_WAR_CULTURE_ANGER_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARBARIAN_CIVILIZATION": {
+    "value": "CIVILIZATION_BARBARIAN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARBARIAN_FREE_TECH_PERCENT": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARBARIAN_HANDICAP": {
+    "value": "HANDICAP_CHIEFTAIN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARBARIAN_LEADER": {
+    "value": "LEADER_BARBARIAN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARBARIAN_MAX_XP_VALUE": {
+    "value": "40",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BARREN_TERRAIN": {
+    "value": "TERRAIN_DESERT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BASE_CAPTURE_GOLD": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_CITY_GROWTH_THRESHOLD": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_CIVIC_ANARCHY_LENGTH": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_EXPLORATION_RADIUS": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "BASE_FEATURE_PRODUCTION_PERCENT": {
+    "value": "67",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_GOLDEN_AGE_UNITS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_OCCUPATION_TURNS": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_RELIGION_ANARCHY_LENGTH": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_RESEARCH_RATE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_REVOLT_FREE_UNITS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_REVOLT_OCCUPATION_TURNS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_SPY_DESTROY_COST": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_SPY_SABOTAGE_COST": {
+    "value": "200",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_SPY_STEAL_PLANS_COST": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_UNIT_UPGRADE_COST": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BASE_WAR_WEARINESS_MULTIPLIER": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BATTLEFIELD_PROMOTIONS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "BATTLE_EFFECTS_MINIMUM_TURN_INCREMENTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BATTLE_EFFECT_LESS_COMMERCE": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BATTLE_EFFECT_LESS_FOOD": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BATTLE_EFFECT_LESS_PRODUCTION": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BBAI_AIR_COMBAT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_AI_VALUE_TECH_TRADING": {
+    "value": "5000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_ATTACK_CITY_STACK_RATIO": {
+    "value": "110",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_BOMBARD_ATTACK_CITY_MAX_STACK_FRACTION": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_BOMBARD_ATTACK_STACK_FRACTION": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_DEFENSIVE_PACT_BEHAVIOR": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_HUMAN_AS_VASSAL_OPTION": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_HUMAN_VASSAL_WAR_BUILD": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_SKIP_BOMBARD_BASE_STACK_RATIO": {
+    "value": "250",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_SKIP_BOMBARD_BEST_ATTACK_ODDS": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_SKIP_BOMBARD_MIN_STACK_RATIO": {
+    "value": "150",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_TURTLE_ENEMY_POWER_RATIO": {
+    "value": "250",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "BBAI_UNIT_CAPTURE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_VICTORY_STRATEGY_CONQUEST": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_VICTORY_STRATEGY_CULTURE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_VICTORY_STRATEGY_DIPLOMACY": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_VICTORY_STRATEGY_DOMINATION": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BBAI_VICTORY_STRATEGY_SPACE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_Game_Options_GlobalDefines.xml"
+  },
+  "BETTER_AIR_INTERCEPTION": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "BONUS_OBSOLETE_VALUE_MODIFIER": {
+    "value": "150",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BONUS_SCALE": {
+    "value": "0.9",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BOOST_NEW_RELIGION_SPREAD_PERCENT": {
+    "value": "250",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "BUG_ASK_DECLARE_WAR_UNITS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BONUS_TRADE_DENIAL_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_COMMERCE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_DEFENSE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_FOOD_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_GREAT_PEOPLE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_HAPPINESS_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_HEALTH_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_ADDITIONAL_PRODUCTION_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_HOVER_ACTUAL_EFFECTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_BUILDING_SAVED_MAINTENANCE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CDA_ZOOM_CITY_DETAILS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_AIRPORT_ICONS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_BASE_PRODUCTION": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_BASE_VALUES": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_BUILDING_ACTUAL_EFFECTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_BUILDING_ICONS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_COMMERCE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_CULTURE_TURNS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_DRAFT_ANGER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_FOOD_ASSIST": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_GREAT_PERSON_TURNS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HAPPINESS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HEALTH": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HIDE_INSTRUCTIONS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HURRY_ANGER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HURRY_ASSIST": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_HURRY_ASSIST_INCLUDE_CURRENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_REVOLT_CHANCE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_SPECIALISTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_STARVATION_TURNS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITYBAR_TRADE_DETAIL": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITY_CONTROLLED_PLOTS_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_CONTROLLED_PLOTS_COLOR": {
+    "value": "COLOR_HIGHLIGHT_TEXT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVABLE_BONUS_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVABLE_BONUS_PLOT_COLOR": {
+    "value": "COLOR_CYAN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVABLE_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVABLE_PLOT_COLOR": {
+    "value": "COLOR_PLAYER_DARK_CYAN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVED_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_IMPROVED_PLOT_COLOR": {
+    "value": "COLOR_GREEN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_UNIMPROVABLE_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_NOT_WORKING_UNIMPROVABLE_PLOT_COLOR": {
+    "value": "COLOR_BLACK",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_SCREEN_BASE_COMMERCE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITY_SCREEN_REMOVE_SPECIALIST_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVABLE_BONUS_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVABLE_BONUS_PLOT_COLOR": {
+    "value": "COLOR_RED",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVABLE_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVABLE_PLOT_COLOR": {
+    "value": "COLOR_RED",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVED_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_IMPROVED_PLOT_COLOR": {
+    "value": "COLOR_WHITE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_UNIMPROVABLE_PLOT_ALPHA": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CITY_WORKING_UNIMPROVABLE_PLOT_COLOR": {
+    "value": "COLOR_YELLOW",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/BUG_GlobalDefines.xml"
+  },
+  "BUG_CONSCRIPT_LIMIT_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_CONSCRIPT_UNIT_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_GREAT_PEOPLE_RATE_BREAKDOWN_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_HURRY_OVERFLOW_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_HURRY_OVERFLOW_HOVER_INCLUDE_CURRENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_IGNORE_HARMLESS_BARBARIANS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_LEADERHEAD_HOVER_DEFENSIVE_PACTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_LEADERHEAD_HOVER_HIDDEN_ATTITUDE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_LEADERHEAD_HOVER_WORST_ENEMY": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PLOT_HOVER_LAT_LONG": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PLOT_HOVER_PARTIAL_BUILDS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRECHOP_FORESTS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRECHOP_IMPROVEMENTS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRODUCTION_DECAY_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRODUCTION_DECAY_HOVER_BUILDING_THRESHOLD": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRODUCTION_DECAY_HOVER_UNIT_THRESHOLD": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRODUCTION_POPUP_TRAIN_CIVILIAN_UNITS_FOREVER": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_PRODUCTION_POPUP_TRAIN_MILITARY_UNITS_FOREVER": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_SENTRY_HEALING": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_SENTRY_HEALING_ONLY_NEUTRAL": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_SPECIALIST_HOVER_ACTUAL_EFFECTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_SPED_UP_TECHS_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_TECH_TRADE_DENIAL_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_UNIT_EXPERIENCE_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_UNIT_EXPERIENCE_MODIFIERS_HOVER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUG_UPDATE_UNIT_NAME_ON_UPGRADE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "BUILDING_PRODUCTION_DECAY_PERCENT": {
+    "value": "99",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BUILDING_PRODUCTION_DECAY_TIME": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "BUILDING_PRODUCTION_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_BATTLE_ZOOM_IN_DISTANCE": {
+    "value": "900",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_CITY_NO_PITCH": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_CITY_TURN": {
+    "value": "0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_CITY_ZOOM_IN_DISTANCE": {
+    "value": "4300",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_FAR_CLIP_Z_HEIGHT": {
+    "value": "0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_FORCE_TO_SMALLEST_MAX_DISTANCE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_LOWER_PITCH": {
+    "value": "-28.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MAX_SCROLL_SPEED": {
+    "value": "1800",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MAX_TRAVEL_DISTANCE": {
+    "value": "3000",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MAX_TURN_OFFSET": {
+    "value": "0.1",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MAX_YAW": {
+    "value": "45.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MIN_DISTANCE": {
+    "value": "700",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MIN_SCROLL_SPEED": {
+    "value": "300",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_MIN_YAW": {
+    "value": "-45.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_NEAR_FAR_PLANE_RATIO": {
+    "value": "100",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_SHRINE_ZOOM_IN_DISTANCE": {
+    "value": "900",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_SMALLEST_MAX_DISTANCE": {
+    "value": "7000",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_SPECIAL_PITCH": {
+    "value": "-90.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_START_DISTANCE": {
+    "value": "2200",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAMERA_UPPER_PITCH": {
+    "value": "-90.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CANNOT_CLAIM_OCEAN": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CAPITAL_BUILDINGCLASS": {
+    "value": "BUILDINGCLASS_PALACE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAPITAL_TRADE_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAPTURE_GOLD_MAX_TURNS": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAPTURE_GOLD_PER_POPULATION": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAPTURE_GOLD_RAND1": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CAPTURE_GOLD_RAND2": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CHOOSE_RELIGION": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "CIRCUMNAVIGATE_FREE_MOVES": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_AIR_UNIT_CAPACITY": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_BARBARIAN_DEFENSE_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_DEFENSE_DAMAGE_HEAL_RATE": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_FREE_CULTURE_GROWTH_FACTOR": {
+    "value": "22",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_GROWTH_MULTIPLIER": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_HEAL_RATE": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_MAX_NUM_BUILDINGS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_SCREEN_CLICK_WILL_EXIT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_SCREEN_FOG_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CITY_THIRD_RING_EXTRA_GROWTH_THRESHOLD_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CIV4_VERSION": {
+    "value": "319",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CIVILOPEDIA_SHOW_ACTIVE_CIVS_ONLY": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CLASSIC_BARBARIAN_PRODUCTION_BONUS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "COLD_FEATURE": {
+    "value": "FEATURE_ICE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "COLD_TERRAIN": {
+    "value": "TERRAIN_TUNDRA",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "COLLATERAL_COMBAT_DAMAGE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "COLONY_NUM_FREE_DEFENDERS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "COMBAT_DAMAGE": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "COMBAT_DIE_SIDES": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "COMBAT_EXPERIENCE_IN_BORDERS_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "COMMERCE_ATTACKS_FADE_RATE": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "COMMERCE_PERCENT_CHANGE_INCREMENTS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONSCRIPT_ANGER_DIVISOR": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONSCRIPT_MIN_CITY_POPULATION": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONSCRIPT_MIN_CULTURE_PERCENT": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONSCRIPT_POPULATION_PER_COST": {
+    "value": "60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONSCRIPT_POP_ANGER": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CONTACT_DECAY_NUM_OF_FAILED_CHECKS_BEFORE_CONTACT_LOST": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CONTACT_DECAY_SAMPLING_RATE": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CORPORATION_FOREIGN_SPREAD_COST_PERCENT": {
+    "value": "200",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CORPORATION_FOUND_CHECK_TURNS": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CORPORATION_RESOURCE_BASE_INFLUENCE": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CORPORATION_SPREAD_DISTANCE_DIVISOR": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CORPORATION_SPREAD_RAND": {
+    "value": "2500",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CULTURE_DECAY_TURNS": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "CULTURE_PERCENT_ANGER": {
+    "value": "400",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "CUT_LOSERS_TURN_INCREMENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DCM_ACTIVE_DEFENSE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_AIR_BOMBING": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_ARCHER_BOMBARD": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_ATTACK_SUPPORT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_BATTLE_EFFECTS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_FIGHTER_ENGAGE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_OPP_FIRE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_RANGE_BOMBARD": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_RB_CITYBOMBARD_CHANCE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_RB_CITY_INACCURACY": {
+    "value": "200",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DCM_STACK_ATTACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DEEP_WATER_TERRAIN": {
+    "value": "TERRAIN_OCEAN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DEFAULT_ANIM_PAGE_MAX": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DEFAULT_FLEXIBLE_DIFFICULTY_AI_MAX_DIFFICULTY": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DEFAULT_FLEXIBLE_DIFFICULTY_AI_MIN_DIFFICULTY": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DEFAULT_FLEXIBLE_DIFFICULTY_TURN_INCREMENTS": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DEFAULT_SPECIALIST": {
+    "value": "SPECIALIST_CITIZEN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DEFY_RESOLUTION_ANGER_DIVISOR": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DEFY_RESOLUTION_POP_ANGER": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DEPLETION_MOD_ENABLED": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DIFFERENT_TEAM_FEATURE_PRODUCTION_PERCENT": {
+    "value": "67",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DIPLOMACY_VALUE_REMAINDER": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DIPLO_VOTE_SECRETARY_GENERAL_INTERVAL": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DIRTY_POWER_HEALTH_CHANGE": {
+    "value": "-4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DISABLE_CLOSE_ZOOM_MODE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DISABLE_INFLATION": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DISBANDING_EARNS_GOLD": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DO_CACHING": {
+    "value": "0",
+    "valueKind": "bDefineBoolVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "DRY_TERRAIN": {
+    "value": "TERRAIN_PLAINS",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DYING_PAUSE": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "DYNAMIC_CIV_NAMES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "DYNAMIC_GREAT_WALL": {
+    "value": "0",
+    "valueKind": "bDefineBoolVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "EFFECT_DEFAULT_SIZE": {
+    "value": "50.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ELECTION_DELAY_ANGER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ELECTION_DELAY_LENGTH": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ELECTION_FRAUD_DETECTION": {
+    "value": "75",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ELECTION_INTERVAL": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "EMBASSY_ESPIONAGE_MISSION_COST_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ENABLE_BACKGROUND_PROFILING": {
+    "value": "1",
+    "valueKind": "bDefineBoolVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ENABLE_DYNAMIC_UNIT_ENTITIES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ENABLE_RESYNC_CODE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ENABLE_VIEWPORTS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/ParallelMaps_GlobalDefines.xml"
+  },
+  "ENEMY_HEAL_RATE": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_CITY_HOLY_CITY_MOD": {
+    "value": "-25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_CITY_POP_EACH_MOD": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_CITY_RELIGION_STATE_MOD": {
+    "value": "-15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_CITY_TRADE_ROUTE_MOD": {
+    "value": "-20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_CULTURE_MULTIPLIER_MOD": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_DISTANCE_MULTIPLIER_MOD": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_EACH_TURN_UNIT_COST_DECREASE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_INTERCEPT_COUNTERESPIONAGE_MISSION": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_INTERCEPT_COUNTERSPY": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_INTERCEPT_RECENT_MISSION": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_INTERCEPT_SPENDING_MAX": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_SPENDING_MULTIPLIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_SPY_INTERCEPT_MOD": {
+    "value": "-75",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_SPY_MISSION_ESCAPE_MOD": {
+    "value": "-50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_SPY_NO_INTRUDE_INTERCEPT_MOD": {
+    "value": "-90",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ESPIONAGE_SPY_REVEAL_IDENTITY_PERCENT": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EVENT_MESSAGE_STAGGER_TIME": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EVENT_MESSAGE_TIME": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EVENT_MESSAGE_TIME_LONG": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EVENT_PROBABILITY_ROLL_SIDES": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EXPERIENCE_FROM_WITHDRAWL": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "EXPERIMENTAL_AI_TWEAK": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "EXTRA_YIELD": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FEATURE_GROWTH_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FEATURE_PRODUCTION_PERCENT_MULTIPLIER": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FIELD_OF_VIEW": {
+    "value": "42.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FIRST_EVENT_DELAY_TURNS": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FLAG_OFFSET2_X": {
+    "value": "-0.8",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FLAG_OFFSET2_Y": {
+    "value": "-0.03",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FLAG_OFFSET_X": {
+    "value": "-0.667",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FLAG_OFFSET_Y": {
+    "value": "0.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FLEXIBLE_DIFFICULTY_MAXIMUM_DIFFICULTY": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FLEXIBLE_DIFFICULTY_MAXIMUM_PLAYER_RANK": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FLEXIBLE_DIFFICULTY_MINIMUM_DIFFICULTY": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FLEXIBLE_DIFFICULTY_MINIMUM_PLAYER_RANK": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FLEXIBLE_DIFFICULTY_TURN_CHECK_INCREMENTS": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FOOD_CONSUMPTION_PER_POPULATION": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FORCED_WAR_WAR_WEARINESS_MODIFIER": {
+    "value": "-50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FORCE_UNOWNED_CITY_TIMER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOREIGN_TRADE_FULL_CREDIT_PEACE_TURNS": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOREIGN_TRADE_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FORTIFY_MODIFIER_PER_TURN": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOUND_CORPORATION_CITY_RAND": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOUND_RELIGION_CITY_RAND": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOW_MINIMAP_WAS_VISIBLE_COLOR": {
+    "value": "0.43",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FOW_WAS_VISIBLE_COLOR": {
+    "value": "0.43",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FREE_CITY_ADJACENT_CULTURE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FREE_CITY_CULTURE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FREE_TRADE_AGREEMENT_ESPIONAGE_MISSION_COST_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FREE_TRADE_CORPORATION_SPREAD_MOD": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "FREE_VASSAL_LAND_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FREE_VASSAL_MILITARY_PERCENT": {
+    "value": "80",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FREE_VASSAL_POPULATION_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FRESH_WATER_HEALTH_CHANGE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FRIENDLY_HEAL_RATE": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "FROZEN_TERRAIN": {
+    "value": "TERRAIN_SNOW",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GAMEFONT_TGA_CORPORATIONS": {
+    "value": "138",
+    "valueKind": "iDefineIntVal",
+    "source": "source/res/Fonts/GameFont_GlobalDefines.xml"
+  },
+  "GAMEFONT_TGA_RELIGIONS": {
+    "value": "138",
+    "valueKind": "iDefineIntVal",
+    "source": "source/res/Fonts/GameFont_GlobalDefines.xml"
+  },
+  "GAME_CITY_SIZE_EXP_MODIFIER": {
+    "value": "1.05",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GAME_CITY_SIZE_LINMAP_AT_0": {
+    "value": "8",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GAME_CITY_SIZE_LINMAP_AT_50": {
+    "value": "240",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GAME_CITY_SIZE_MAX_PERCENT_UNIQUE": {
+    "value": "0.7",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GAME_CITY_SIZE_METHOD": {
+    "value": "METHOD_EXPONENTIAL",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GLOBAL_WARMING_BONUS_WEIGHT": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GLOBAL_WARMING_FOREST": {
+    "value": "60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GLOBAL_WARMING_NUKE_WEIGHT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GLOBAL_WARMING_POWER_WEIGHT": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GLOBAL_WARMING_PROB": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GLOBAL_WARMING_TERRAIN": {
+    "value": "TERRAIN_DESERT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GLOBAL_WARMING_UNHEALTH_WEIGHT": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "GOLDEN_AGE_GREAT_PEOPLE_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GOLDEN_AGE_LENGTH": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GOLDEN_AGE_UNITS_MULTIPLIER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GOODWILL_ATTITUDE": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GOlDEN_AGE_PERCENT_LESS_FOOD_FOR_GROWTH": {
+    "value": "-25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "GREAT_GENERALS_THRESHOLD": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_GENERALS_THRESHOLD_INCREASE": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_GENERALS_THRESHOLD_INCREASE_TEAM": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_PEOPLE_THRESHOLD": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_PEOPLE_THRESHOLD_INCREASE": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_PEOPLE_THRESHOLD_INCREASE_TEAM": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GREAT_WORKS_CULTURE_TURNS": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "GW_MOD_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "HEALTH_BAR_WIDTH": {
+    "value": "100.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HIGH_TO_LOW_FIRST_TURN_CHECK": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "HIGH_TO_LOW_NUM_REASSIGNMENTS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "HILLS_EXTRA_DEFENSE": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HILLS_EXTRA_MOVEMENT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HILLS_SEE_FROM_CHANGE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HILLS_SEE_THROUGH_CHANGE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HOLYCITY_REMOVAL_GOLD": {
+    "value": "500",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "HOLY_CITY_INFLUENCE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HURRY_ANGER_DIVISOR": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "HURRY_INFLATION_DECAY_RATE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "HURRY_POP_ANGER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "IDW_BASE_COMBAT_INFLUENCE": {
+    "value": "4.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_BASE_PILLAGE_INFLUENCE": {
+    "value": "2.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_CITY_TILE_MULTIPLIER": {
+    "value": "0.2",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_EMERGENCY_DRAFT_ANGER_MULTIPLIER": {
+    "value": "0.5",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_EMERGENCY_DRAFT_ENABLED": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_EMERGENCY_DRAFT_MIN_POPULATION": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_EMERGENCY_DRAFT_STRENGTH": {
+    "value": "0.25",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_EXPERIENCE_FACTOR": {
+    "value": "0.03",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_FORT_CAPTURE_MULTIPLIER": {
+    "value": "2.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_INFLUENCE_RADIUS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_LOSER_PLOT_MULTIPLIER": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_NO_BARBARIAN_INFLUENCE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_NO_CITY_DEFENDER_MULTIPLIER": {
+    "value": "2.5",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_NO_NAVAL_INFLUENCE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_PILLAGE_INFLUENCE_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_PLOT_DISTANCE_FACTOR": {
+    "value": "0.2",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_WARLORD_MULTIPLIER": {
+    "value": "1.3",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IDW_WINNER_PLOT_MULTIPLIER": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "IGNORE_PLOT_GROUP_FOR_TRADE_ROUTES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "IMPROVEMENT_SCALE": {
+    "value": "0.9",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INCREASING_DIFFICULTY_TURN_CHECK_INCREMENTS": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "INITIAL_AI_CITY_PRODUCTION": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_BASE_FREE_MILITARY_UNITS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_BASE_FREE_UNITS": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_CITY_MAINTENANCE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_CITY_POPULATION": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_CITY_ROUTE_TYPE": {
+    "value": "ROUTE_TRACK",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_FREE_MILITARY_UNITS_POPULATION_PERCENT": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_FREE_OUTSIDE_UNITS": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_FREE_UNITS_POPULATION_PERCENT": {
+    "value": "24",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_GOLD_PER_UNIT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_NON_STATE_RELIGION_HAPPINESS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_OUTSIDE_UNIT_GOLD_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_STATE_RELIGION_HAPPINESS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_STATE_RELIGION_HEALTH": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INITIAL_TRADE_ROUTES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "INQUISITION_BUILDING_GOLD_DIVISOR": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "INTERCEPTION_MAX_ROUNDS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LAKE_MAX_AREA_SIZE": {
+    "value": "9",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LAKE_PLOT_RAND": {
+    "value": "160",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LANDMARK_ANGER_DIVISOR": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "LAND_IMPROVEMENT": {
+    "value": "IMPROVEMENT_LAND_WORKED",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LAND_TERRAIN": {
+    "value": "TERRAIN_GRASS",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LAND_UNITS_CAN_ATTACK_WATER_CITIES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LANGUAGE": {
+    "value": "Default",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LEADERHEAD_RANDOM": {
+    "value": "Art/LeaderHeads/RandomLeader.dds",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "LFB_ADJUSTDENOMINATOR": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_ADJUSTNUMERATOR": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_BASEDONEXPERIENCE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_BASEDONGENERAL": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_BASEDONHEALER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_BASEDONLIMITED": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_ENABLE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_USECOMBATODDS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LFB_USESLIDINGSCALE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/LeadFromBehind_GlobalDefines.xml"
+  },
+  "LIMITED_RELIGIONS_EXCEPTIONS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "MARSH_TERRAIN": {
+    "value": "TERRAIN_MARSH",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "MASTERY_VICTORY_MERCY_RULE_ENABLED": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MAXED_BUILDING_GOLD_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAXED_PROJECT_GOLD_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAXED_UNIT_GOLD_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAXIMUM_ISLAND_SIZE": {
+    "value": "48",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MAX_AIRLIFT_RANGE": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MAX_ANARCHY_TURNS": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_BATTLE_TURNS": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "MAX_BOMBARD_DEFENSE": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MAX_BUILDINGS_PER_CITY": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_CITY_DEFENSE_DAMAGE": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_CIVIC_OPTIONS": {
+    "value": "14",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_DISTANCE_CITY_MAINTENANCE": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_EVASION_PROBABILITY": {
+    "value": "90",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_EXPERIENCE_AFTER_UPGRADE": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_EXPERIENCE_PER_COMBAT": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_FORTIFY_TURNS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_HIT_POINTS": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_INTERCEPTION_DAMAGE": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_INTERCEPTION_PROBABILITY": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_NATIONAL_WONDERS_PER_CITY": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_NATIONAL_WONDERS_PER_CITY_FOR_OCC": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_NUM_LANGUAGES": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_PLOT_LIST_ROWS": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_PLOT_LIST_SIZE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_TEAM_WONDERS_PER_CITY": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_TRADE_ROUTES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_UNITS_ON_A_TILE": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MAX_WITHDRAWAL_PROBABILITY": {
+    "value": "90",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_WORLD_WONDERS_PER_CITY": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MAX_YIELD_STACK": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MINIMAP_RENDER_SIZE": {
+    "value": "512",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MINIMUM_CITY_SIZE_FOR_ENSLAVEMENT": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_CITY_SIZE_FOR_SACK": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_CULTURE_PERCENT_FOR_ENSLAVE_ANGER": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_DESERT_SIZE": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_FOREST_SIZE": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_JUNGLE_SIZE": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_MOUNTAIN_RANGE_SIZE": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MINIMUM_PLAYERS_WITH_TECH_FOR_AUTO_CORPORATION_FOUNDING": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "MIN_ANIMAL_STARTING_DISTANCE": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_BARBARIAN_CITY_STARTING_DISTANCE": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_BARBARIAN_STARTING_DISTANCE": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_CITY_ATTACK_MODIFIER_FOR_SIEGE_TOWER": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_CITY_RANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_CIV_STARTING_DISTANCE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_CONVERSION_TURNS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_EXPERIENCE_PER_COMBAT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_INTERCEPTION_DAMAGE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_POP_CONSIDER_INQUISITORS": {
+    "value": "7",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "MIN_REVOLUTION_TURNS": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_TIMER_UNIT_DOUBLE_MOVES": {
+    "value": "32",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_VERSION": {
+    "value": "000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MIN_WATER_SIZE_FOR_OCEAN": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MOVE_DENOMINATOR": {
+    "value": "120",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "MULTIPLAYER_WAR_WEARINESS_MODIFIER": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NEUTRAL_HEAL_RATE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NEW_CITY_BUILDING_VALUE_MODIFIER": {
+    "value": "-60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NEW_HURRY_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NO_ESPIONAGE_CULTURE_LEVEL_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NO_MILITARY_PERCENT_ANGER": {
+    "value": "334",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NO_MILITARY_UNIT_TRADING": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUCLEAR_WINTER_PROB": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "NUKE_BUILDING_DESTRUCTION_PROB": {
+    "value": "40",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_FALLOUT_PROB": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_FEATURE": {
+    "value": "FEATURE_FALLOUT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_NON_COMBAT_DEATH_THRESHOLD": {
+    "value": "60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_POPULATION_DEATH_BASE": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_POPULATION_DEATH_RAND_1": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_POPULATION_DEATH_RAND_2": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_UNIT_DAMAGE_BASE": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_UNIT_DAMAGE_RAND_1": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUKE_UNIT_DAMAGE_RAND_2": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_Source_TECH_PREREQS": {
+    "value": "9",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_BAY_NAMES": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_BUILDING_Source_TECH_PREREQS": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_BUILDING_PREREQ_OR_BONUSES": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_CITY_PIPELINE_THREADS": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_CORPORATION_PREREQ_BONUSES": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_DESERT_NAMES": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_DO_GOODY_ATTEMPTS": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_FOREST_NAMES": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_JUNGLE_NAMES": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_LAKE_NAMES": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_MOUNTAINS_NAMES": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_OR_TECH_PREREQS": {
+    "value": "9",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_PEAK_NAMES": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "NUM_ROUTE_PREREQ_OR_BONUSES": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_UNIT_Source_TECH_PREREQS": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_UNIT_PREREQ_OR_BONUSES": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "NUM_WARNING_REVOLTS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OCCUPATION_CULTURE_PERCENT_THRESHOLD": {
+    "value": "75",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OCCUPATION_TURNS_POPULATION_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OC_MIN_REV_INDEX": {
+    "value": "600",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "OC_MIN_REV_TREND": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "OC_RESPAWN_HOLY_CITIES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "OC_THRESHOLD_BIG_INQUISITION_STATE": {
+    "value": "67",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "OC_THRESHOLD_SMALL_INQUISITION_STATE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "OUR_POPULATION_TRADE_MODIFIER": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OUR_POPULATION_TRADE_MODIFIER_OFFSET": {
+    "value": "-10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OVERSEAS_TRADE_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OWNERSHIP_SCORE_DURATION_THRESHOLD": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "OWN_TEAM_STARTING_MODIFIER": {
+    "value": "80",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PATH_DAMAGE_WEIGHT": {
+    "value": "500",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PEACE_TREATY_LENGTH": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PEAK_BUILD_TIME_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "PEAK_CAN_FOUND_CITY": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "PEAK_EXTRA_DEFENSE": {
+    "value": "75",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "PEAK_EXTRA_MOVEMENT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "PEAK_SEE_FROM_CHANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PEAK_SEE_THROUGH_CHANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PERCENT_ANGER_DIVISOR": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PLAYER_ALWAYS_RAZES_CITIES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PLOTS_PER_RIVER_EDGE": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PLOT_SIZE": {
+    "value": "180.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "PLOT_VISIBILITY_RANGE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "POWER_HEALTH_CHANGE": {
+    "value": "-2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "PROFILER_ALTERNATE_SAMPLE_SET_SOURCE": {
+    "value": "",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "PROJECT_PRODUCTION_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "QUICKSAVE": {
+    "value": "QuickSave",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RAGING_BARBARIAN_PRODUCTION_BONUS": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RAGING_BARBARIAN_SPAWN_RATE": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RAGING_BARBARIAN_SPAWN_UNIT_DENSITY": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RAND_CORPORATION_BEST_SPREAD": {
+    "value": "500",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RAND_YIELD_PRESENCE_DIE_ROLLS": {
+    "value": "16",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RANGED_ATTACKS_USE_MOVES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RANGE_COMBAT_DAMAGE": {
+    "value": "30",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RAZING_CULTURAL_PERCENT_THRESHOLD": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RECON_VISIBILITY_RANGE": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RELIGION_PERCENT_ANGER": {
+    "value": "800",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RELIGION_REMOVAL_GOLD": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RELIGION_SPREAD_DISTANCE_DIVISOR": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RELIGION_SPREAD_RAND": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REMEMBER_WAR_ALLY_TURNS": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RENDER_AREABORDER_UNDER_FEATURES": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RENDER_GLOBEVIEW_CLOUDS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RENDER_WATER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_DEFENSE_STATE_RELIGION_MODIFIER": {
+    "value": "-50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_FREE_UNITS_PERCENT": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_OCCUPATION_TURNS_PERCENT": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_OFFENSE_STATE_RELIGION_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_TEST_PROB": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLT_TOTAL_CULTURE_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "REVOLUTION_TECH_COST_RATIO": {
+    "value": "82",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "RIVAL_TEAM_STARTING_MODIFIER": {
+    "value": "125",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RIVER_ATTACK_MODIFIER": {
+    "value": "-25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RIVER_SOURCE_MIN_RIVER_RANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RIVER_SOURCE_MIN_SEAWATER_RANGE": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RIVER_Z_BIAS": {
+    "value": "3",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ROM_MULTIPLAYER_FIX": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "ROUTES_UPGRADE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "ROUTE_FEATURE_GROWTH_MODIFIER": {
+    "value": "-25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "ROUTE_Z_BIAS": {
+    "value": "3",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "RUINS_IMPROVEMENT": {
+    "value": "IMPROVEMENT_CITY_RUINS",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SAD_FACTOR_1": {
+    "value": "6.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SAD_FACTOR_2": {
+    "value": "10.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SAD_FACTOR_3": {
+    "value": "15.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SAD_FACTOR_4": {
+    "value": "20.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SAD_MAX_MODIFIER": {
+    "value": "60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SAVE_VERSION": {
+    "value": "302",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_FREE_PERCENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_HANDICAP_PERCENT_OFFSET": {
+    "value": "-60",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_HANDICAP_PERCENT_PER": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_LAND_FACTOR": {
+    "value": "2000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_POPULATION_FACTOR": {
+    "value": "5000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_TECH_FACTOR": {
+    "value": "2000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_VICTORY_PERCENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SCORE_WONDER_FACTOR": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SEAWATER_SEE_FROM_CHANGE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SEAWATER_SEE_THROUGH_CHANGE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SHADOW_SCALE": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SHALLOW_WATER_TERRAIN": {
+    "value": "TERRAIN_COAST",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SHARED_CURRENCY_TRADE_MODIFIER": {
+    "value": "25",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SHIP_BLOCKADE_RANGE": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SHOW_BUILDINGS_LEVEL": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SHOW_CIVILIZATION_TRAITS_ON_FLAG": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SHOW_HIDDEN_ATTITUDE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SINGLE_UNIT_GFX_EXTRA_SCALE": {
+    "value": "1.25",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SLAVE_UNIT": {
+    "value": "37",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "SOCIAL_REFORM_POPULATION_MODIFIER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SPY_DESTROY_COST_MULTIPLIER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SPY_DESTROY_COST_MULTIPLIER_LIMITED": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SPY_STEAL_PLANS_COST_MULTIPLIER": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "SS_ASSASSINATE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "SS_BRIBE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "SS_ENABLED": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "STANDARD_CALENDAR": {
+    "value": "CALENDAR_DEFAULT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_CLIMATE": {
+    "value": "CLIMATE_TEMPERATE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_ERA": {
+    "value": "ERA_ANCIENT",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_GAMESPEED": {
+    "value": "GAMESPEED_MARATHON",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_HANDICAP": {
+    "value": "HANDICAP_NOBLE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_HANDICAP_QUICK": {
+    "value": "HANDICAP_CHIEFTAIN",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_SEALEVEL": {
+    "value": "SEALEVEL_MEDIUM",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STANDARD_TURNTIMER": {
+    "value": "TURNTIMER_MEDIUM",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "STARTING_DISTANCE_PERCENT": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "START_YEAR": {
+    "value": "-6000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TAXATION_ANGER_ROUND_DOWN": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "TEAM_VOTE_MIN_CANDIDATES": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TECH_ALLOWS_PERMENANT_CONTACT": {
+    "value": "NO_TECH",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "TECH_COST_EXTRA_TEAM_MEMBER_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TECH_COST_FIRST_KNOWN_PREREQ_MODIFIER": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_COST_KNOWN_PREREQ_MODIFIER": {
+    "value": "15",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_COST_MODIFIER": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_COST_TOTAL_KNOWN_TEAM_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TECH_DIFFUSION_ENABLE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_DIFFUSION_KNOWN_TEAM_MODIFIER": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_DIFFUSION_WELFARE_MODIFIER": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TECH_DIFFUSION_WELFARE_THRESHOLD": {
+    "value": "75",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/TechDiffusion_GlobalDefines.xml"
+  },
+  "TEMPERATE_FEATURE": {
+    "value": "FEATURE_FOREST",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "TEMPERATE_TERRAIN": {
+    "value": "TERRAIN_GRASS",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "TEMP_HAPPY": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TERRAIN_POINTS": {
+    "value": "5",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TEST_GAMEFONTS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "THEIR_POPULATION_TRADE_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TRADE_PROFIT_PERCENT": {
+    "value": "20",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TREAT_NEGATIVE_GOLD_AS_MAINTENANCE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "TREEHUGGER_DEFENSE_BONUS": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "TURN_LOG_MAX_HEIGHT": {
+    "value": "300",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TURN_LOG_MAX_WIDTH": {
+    "value": "400",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "TURN_LOG_MIN_HEIGHT": {
+    "value": "80",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNITS_PER_TILES_CITY_FACTOR": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "UNITS_PER_TILES_NON_COMBAT_FACTOR": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "UNIT_ANIM_PAGE_MAX": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_GOLD_DISBAND_DIVISOR": {
+    "value": "7",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "UNIT_MULTISELECT_DISTANCE": {
+    "value": "0.175",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_MULTISELECT_MAX": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_MULTISELECT_SCALE": {
+    "value": "1.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_PRODUCTION_DECAY_PERCENT": {
+    "value": "98",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_PRODUCTION_DECAY_TIME": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_PRODUCTION_PERCENT": {
+    "value": "100",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_TRAIL_RESOLUTION": {
+    "value": "5.0",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_UPGRADE_COST_PER_PRODUCTION": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UNIT_VISIBILITY_RANGE": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UPKEEP_CITY_OFFSET": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "UPKEEP_POPULATION_OFFSET": {
+    "value": "-8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "USE_AI_BESTTECH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_AI_CAN_DO_WARPLANS_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_AI_CHOOSE_PRODUCTION_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_AI_DO_DIPLO_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_AI_UPDATE_UNIT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_CONSTRUCT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_DO_CIVIC_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_FOUND_CITY_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_HANDLE_ACTION_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_MAINTAIN_PROCESS_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_RESEARCH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_SPREAD_RELIGION_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CANNOT_TRAIN_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_BUILD_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_CONSTRUCT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_CREATE_PROJECT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DECLARE_WAR_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_CIVIC_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_COMBAT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_CULTURE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_GOLD_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_GREATPEOPLE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_GROWTH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_MELTDOWN_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_PLOT_CULTURE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_PRODUCTION_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_RELIGION_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_DO_RESEARCH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_FOUND_CITIES_ON_WATER_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_MAINTAIN_PROCESS_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_RAZE_CITY_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_RESEARCH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_CAN_TRAIN_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_EXTRA_PLAYER_COSTS_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_FINISH_TEXT_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_GET_BUILDING_COST_MOD_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_GET_CITY_FOUND_VALUE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_GET_UNIT_COST_MOD_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_IS_PLAYER_RESEARCH_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_IS_VICTORY_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_MODDERS_PLAYEROPTION_1": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "USE_MODDERS_PLAYEROPTION_2": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "USE_MODDERS_PLAYEROPTION_3": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "USE_MULTIPLE_THREADS_PROPERTY_SOLVER": {
+    "value": "1",
+    "valueKind": "bDefineBoolVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "USE_MULTIPLE_THREADS_SPAWNING": {
+    "value": "1",
+    "valueKind": "bDefineBoolVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "USE_ON_UNIT_CREATED_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_ON_UNIT_LOST_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_ON_UNIT_SELECTED_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_ON_UNIT_SET_XY_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_ON_UPDATE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_SPIES_NO_ENTER_BORDERS": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "USE_UNIT_CANNOT_MOVE_INTO_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "USE_UPGRADE_UNIT_PRICE_CALLBACK": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/PythonCallbackDefines.xml"
+  },
+  "VASSAL_HAPPINESS": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "VASSAL_REVOLT_MASTER_LOSSES_FACTOR": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "VASSAL_REVOLT_OWN_LOSSES_FACTOR": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "VICTORY_SOUNDTRACK_AVAILABLE": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "VIEWPORT_FOCUS_BORDER": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/ParallelMaps_GlobalDefines.xml"
+  },
+  "VIEWPORT_SIZE_X": {
+    "value": "40",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/ParallelMaps_GlobalDefines.xml"
+  },
+  "VIEWPORT_SIZE_Y": {
+    "value": "40",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/ParallelMaps_GlobalDefines.xml"
+  },
+  "WARLORD_EXTRA_EXPERIENCE_PER_UNIT_PERCENT": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WARM_FEATURE": {
+    "value": "FEATURE_JUNGLE",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefinesAlt.xml"
+  },
+  "WAR_SUCCESS_ATTACKING": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WAR_SUCCESS_CITY_CAPTURING": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/BBAI_AI_Variables_GlobalDefines.xml"
+  },
+  "WAR_SUCCESS_DEFENDING": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WAR_SUCCESS_NUKE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WAR_SUCCESS_UNIT_CAPTURING": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WASTAGE_GROWTH_FACTOR": {
+    "value": "0.05",
+    "valueKind": "fDefineFloatVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "WASTAGE_START_CONSUMPTION_PERCENT": {
+    "value": "50",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "WATER_IMPROVEMENT": {
+    "value": "IMPROVEMENT_WATER_WORKED",
+    "valueKind": "DefineTextVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WATER_POTENTIAL_CITY_WORK_FOR_AREA": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WEEKS_PER_MONTHS": {
+    "value": "4",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WE_LOVE_THE_KING_POPULATION_MIN_POPULATION": {
+    "value": "8",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WE_LOVE_THE_KING_RAND": {
+    "value": "1000",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WITHDRAW_FROM_DEFENDING": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "WOC_GAMEFONT_RESOURCE_FIX": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  },
+  "WW_ATTACKED_WITH_NUKE": {
+    "value": "12",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_CAPTURED_CITY": {
+    "value": "6",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_CAPTURED_UNIT": {
+    "value": "1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_DECAY_PEACE_PERCENT": {
+    "value": "99",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_DECAY_RATE": {
+    "value": "-1",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_HIT_BY_NUKE": {
+    "value": "10",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_KILLED_UNIT_ATTACKING": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_KILLED_UNIT_DEFENDING": {
+    "value": "3",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_UNIT_CAPTURED": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_UNIT_KILLED_ATTACKING": {
+    "value": "5",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "WW_UNIT_KILLED_DEFENDING": {
+    "value": "2",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/GlobalDefines.xml"
+  },
+  "XML_LOGGING_ENABLED": {
+    "value": "0",
+    "valueKind": "iDefineIntVal",
+    "source": "source/XML/source_GlobalDefines.xml"
+  }
+}

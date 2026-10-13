@@ -1,0 +1,4136 @@
+[
+  {
+    "context": "BonusArtInfo/ART_DEF_BONUS_ANCIENTTEMPLE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ", ,Art/Interface/Buttons/Atlases/Source_Atlas.dds,2,2"
+  },
+  {
+    "context": "BonusArtInfo/ART_DEF_BONUS_COTTON2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ", ,Art/Interface/Buttons/Atlases/Source_Atlas.dds,8,1"
+  },
+  {
+    "context": "BonusArtInfo/ART_DEF_BONUS_SALT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Music.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,2,1"
+  },
+  {
+    "context": "BuildInfo/BUILD_3FACTORY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_5FACTORY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_APPLE_FARM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_BUNKER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_DESERTWINDMILL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_DOME_FARM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_EXPLORETEMPLE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_EXTRACTION_FACILITY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_FUTURE_BUNKER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_GEOTHERMAL_BOREHOLE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_GRAVTUBE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_GROUNDWATER_WELL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_HYBRID_FOREST/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_JUMPLANE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_JUNGLE_CAMP/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_MODERN_MINE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_MODERN_ROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_PAVED/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_RAILROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_RAILROAD_ELECTRIC/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_ROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_SANITIZE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,1"
+  },
+  {
+    "context": "BuildInfo/BUILD_SEA_AIR_DEFENSE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_SEA_FORT/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_SHAFT_MINE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,10"
+  },
+  {
+    "context": "BuildInfo/BUILD_SUBMERGED_TOWN/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,9"
+  },
+  {
+    "context": "BuildInfo/BUILD_TRACK/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_TUNNEL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,12"
+  },
+  {
+    "context": "BuildInfo/BUILD_WINDTRAP/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,11"
+  },
+  {
+    "context": "BuildInfo/BUILD_WOODCUTTER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ACCELERATOR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rator.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,11"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_AIRBASE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rbase.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,1"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ALHAMBRA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ambra.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ALUMINUM_CO_R_Source_D/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "ART_DEF_BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_AMUSEMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tPark.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,1"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ANTI_MISSILE_BATTERIES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eries.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_APADANA_PALACE/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/darius.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ARCHERY_RANGE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "range.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,1"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_AREA51/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "utton.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,1"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ARMOURER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "\\none.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,8,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ASSYRIA_EKAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "_Ekal.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,1"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BACH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "/Bach.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BATH_HOUSE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "nship.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BAZAAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "azaar.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BIOENHCENTER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "enter.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BOLSHOI/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/Bolshoi.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BRANDENBURG_GATE/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/brandenburg_gate.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_BROTHEL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Harem.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CASINO/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "on_05.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CENTERS_FOR_DISEASE_CONTROL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "earch.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,5"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CENTRAL_BANK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "_Bank.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CEREMONIAL_ALTAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ifice.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CHEOMSEONGDAE/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/observ_ancient.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CIRCUS_MAXIMUS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ximus.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CLOCK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "_hall.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_COMPUTER_CENTER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "enter.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,11"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CONVENTION_CENTER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "enter.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,11"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_CRUSADE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "usade.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,3"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_DISTRICT_COURTHOUSE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "court.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_EGYPTIAN_MYTH_CATHEDRAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "edral.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,14"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_EGYPTIAN_MYTH_MONASTERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "stery.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,14"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_EGYPTIAN_MYTH_TEMPLE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "emple.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,14"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_EGYPT_MYTH_SHRINE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hrine.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,14"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_E_BANK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_FIREPIT/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,3"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_FOOD_PROCESSING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Purex.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_FUSION_PLANT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "actor.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_GUILD_HALL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "dhall.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,12"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_HITTITE_IRON_FORGE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Forge.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_INFO_NET/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "o_net.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,11"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_IROQUOIS_LONGHOUSE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "house.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,14"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_IRRIGATION_CANALS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_JEWELLERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "llery.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_JOUST/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ament.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,12"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_KOTOKU/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/buddha.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_LAB/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "s/lab.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_LEONARDO/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "nardo.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_MEETING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "avern.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_MODERN_GRANARY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "anary.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_MOVIE_THEATRE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cture.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,5"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_NAVAL_ACADEMY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ademy.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_NEUSCHWANSTEIN/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/neuschwanstein.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_NEWTON/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ewton.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,5"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_OLYMPIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Games.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,5"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_OPERA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "utton.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_ORBITAL_OBSERVATORY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,5,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PARADISE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "\\none.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,6,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PERSONAL_RAPID_TRAIN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "train.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,11"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PISA/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/pisa.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PONT_DU_GARD/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "uGard.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PORCELAIN_TOWER/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/nanjing.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PORT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "/Port.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_POTALA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "otala.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,6,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PRESS_AGENCY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "paper.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_PUBLIC_SCHOOL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_QUANTUM_LAB/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_RADAR_STATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,9"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_REFINERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "inery.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_RUBBER_FACTORY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ctory.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SAN_MARCO/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/sanmarco.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SCHOOL_OF_SCRIBES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "iform.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,3"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SETI_PROGRAM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "/SETI.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SEWER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,7,6"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SHIPYARD/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lding.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SIAM_HO_TRAI/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "_Trai.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SILKROAD/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "kroad.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SKYSCRAPER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lding.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,2"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SLAVE_MARKET/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "arket.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SPHINX/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "phinx.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,7"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SUFFRAGE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "frage.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_SUPERCOLLIDER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lider.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,12"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_TANNERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "nnery.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_TEMPLE_OF_HEAVEN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eaven.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,2,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_TERRACOTTA/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/xian.nif"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_TREASURY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "asury.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,4"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_VACATION_RESORT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "esort.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,3,10"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_WATER_TREATMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "treat.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,8"
+  },
+  {
+    "context": "BuildingArtInfo/ART_DEF_BUILDING_WORLD_TRADE_CENTER/NIF",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Art/Structures/Buildings/SourceModularWonders/wtc.nif"
+  },
+  {
+    "context": "BuildingClassInfo/BUILDINGCLASS_ALUMINUM_CO_R_Source_D/DefaultBuilding",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingClassInfo/BUILDINGCLASS_ALUMINUM_CO_R_Source_D/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingClassInfo/BUILDINGCLASS_ALUMINUM_CO_R_Source_D/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "BUILDINGCLASS_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ALUMINUM_CO_R_Source_D/ArtDefineTag",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "ART_DEF_BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ALUMINUM_CO_R_Source_D/BuildingClass",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "BUILDINGCLASS_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ALUMINUM_CO_R_Source_D/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ALUMINUM_CO_R_Source_D/Strategy",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_BUILDING_ALUMINUM_CO_R_Source_D_STRATEGY"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ALUMINUM_CO_R_Source_D/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "BUILDING_ALUMINUM_CO_R_Source_D"
+  },
+  {
+    "context": "BuildingInfo/BUILDING_ROCKNROLL/MovieDefineTag",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "ART_DEF_MOVIE_ROCK_Source_ROLL"
+  },
+  {
+    "context": "CivicInfo/CIVIC_APPEASEMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_ARISTOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cracy.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_ATHEIST/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eist2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_AUTOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "enate.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_BARTER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rter2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_BOURGEOIS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "geois.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_BUREAUCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cracy.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_CASTE_SYSTEM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Caste.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_CHARITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "arity.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_CHIEFDOM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "efdom.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,1"
+  },
+  {
+    "context": "CivicInfo/CIVIC_CHURCH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hurch.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_COINAGE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "very2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,11"
+  },
+  {
+    "context": "CivicInfo/CIVIC_CORPORATIST/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "atist.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_COSMOPOLITAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_DEMOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "racy2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_DESPOTISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "otism.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_DIGITAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,14"
+  },
+  {
+    "context": "CivicInfo/CIVIC_DIVINE_RULE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eRule.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_ENVIRONMENTALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "green.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_FEDERAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "deral.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_FEUDAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eudal.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_FOLKLORE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "klore.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_FREE_CHURCH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "urch2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,2"
+  },
+  {
+    "context": "CivicInfo/CIVIC_GUILDS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "very2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_HEREDITARY_RULE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rchy2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_HIVE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "efdom.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_IMPERIUM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_INTERVENTIONISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_INTOLERANT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "erant.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_ISOLATIONISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_JUNTA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "archy.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_KEYNESIAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "esian.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_LAISSEZ_FAIRE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Faire.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_LIBERAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "beral.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_MARXIST/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rxist.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_MERCANTILISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lism2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_MERCENARIES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "adise.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_MOBILIZATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "adise.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_NATIONALIST/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alist.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,4"
+  },
+  {
+    "context": "CivicInfo/CIVIC_NAVAL_SUPREMACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "d_war.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,8"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PARADISE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "adise.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PARLIAMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ament.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PERSONALITY_CULT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eist2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,12"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PLANNED/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "anned.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_POST_SCARCITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rcity.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PRESIDENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ident.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PRIVATE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ivate.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,5"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PROLETARIAT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ariat.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PROPHETS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ophet.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PROTECTIONISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_PUBLIC_WORKS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Works.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_RAIDERS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,14"
+  },
+  {
+    "context": "CivicInfo/CIVIC_REDEVELOPMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_REPUBLIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ublic.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SECULAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cular.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SENATE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "enate.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SHADOW_WAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "adise.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,13"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SINGLE_PARTY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "scism.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,3"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SLAVERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "very2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SOCIALIZED/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lised.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,6"
+  },
+  {
+    "context": "CivicInfo/CIVIC_STATE_CHURCH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hurch.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SUBSIDIZED/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "dised.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SUPERHUMAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "erman.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_SURVIVAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "vival.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_TECHNOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "racy2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_THEOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "archy.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,10"
+  },
+  {
+    "context": "CivicInfo/CIVIC_TRIBAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_TRIBUTE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,6,14"
+  },
+  {
+    "context": "CivicInfo/CIVIC_UNMANNED_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,11"
+  },
+  {
+    "context": "CivicInfo/CIVIC_VIRTUAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "archy.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,8"
+  },
+  {
+    "context": "CivicInfo/CIVIC_WARLORDS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "otism.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,7"
+  },
+  {
+    "context": "CivicInfo/CIVIC_WARRIOR_CASTE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "adise.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,3,12"
+  },
+  {
+    "context": "CivilizationArtInfo/ART_DEF_CIVILIZATION_ASSYRIA/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,4"
+  },
+  {
+    "context": "CivilizationArtInfo/ART_DEF_CIVILIZATION_HITTITES/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,4"
+  },
+  {
+    "context": "CivilizationArtInfo/ART_DEF_CIVILIZATION_IROQUOIS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,4"
+  },
+  {
+    "context": "CivilizationArtInfo/ART_DEF_CIVILIZATION_SIAM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,4"
+  },
+  {
+    "context": "CommandInfo/COMMAND_COLONIZE_BARBARIANS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,1"
+  },
+  {
+    "context": "CommandInfo/COMMAND_FORCE_PEACE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,2"
+  },
+  {
+    "context": "CommandInfo/COMMAND_UPGRADE_IMPROVEMENTS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,3"
+  },
+  {
+    "context": "EraInfo/ERA_FUTURE/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_LOOPS_Source_VERSES"
+  },
+  {
+    "context": "EraInfo/ERA_FUTURE/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_SHAKING_Source_TREMBLING"
+  },
+  {
+    "context": "EraInfo/ERA_MODERN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_LOOPS_Source_VERSES"
+  },
+  {
+    "context": "EraInfo/ERA_MODERN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_SHAKING_Source_TREMBLING"
+  },
+  {
+    "context": "EraInfo/ERA_MODERN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_LOOPS_Source_VERSES"
+  },
+  {
+    "context": "EraInfo/ERA_MODERN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_SHAKING_Source_TREMBLING"
+  },
+  {
+    "context": "EraInfo/ERA_TRANSHUMAN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_LOOPS_Source_VERSES"
+  },
+  {
+    "context": "EraInfo/ERA_TRANSHUMAN/EraInfoSoundtrack",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "AS2D_SHAKING_Source_TREMBLING"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_1/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_BILLIONS_Source_BILLIONS_1"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_1/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_BILLIONS_Source_BILLIONS_1"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_1/WorldNewsTexts",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_WORLD_BILLIONS_Source_BILLIONS_1"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_2/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_BILLIONS_Source_BILLIONS_2"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_2/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_BILLIONS_Source_BILLIONS_2"
+  },
+  {
+    "context": "EventInfo/EVENT_BILLIONS_Source_BILLIONS_2/WorldNewsTexts",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_WORLD_BILLIONS_Source_BILLIONS_2"
+  },
+  {
+    "context": "EventInfo/EVENT_HYMNS_Source_SCULPTURES_1/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_HYMNS_Source_SCULPTURES_1"
+  },
+  {
+    "context": "EventInfo/EVENT_HYMNS_Source_SCULPTURES_1/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_HYMNS_Source_SCULPTURES_1"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_BILLIONS_Source_BILLIONS/Event",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_BILLIONS_Source_BILLIONS_1"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_BILLIONS_Source_BILLIONS/Event",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_BILLIONS_Source_BILLIONS_2"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_BILLIONS_Source_BILLIONS/Text",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_TRIGGER_BILLIONS_Source_BILLIONS"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_BILLIONS_Source_BILLIONS/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENTTRIGGER_BILLIONS_Source_BILLIONS"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_HYMNS_Source_SCULPTURES/Event",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENT_HYMNS_Source_SCULPTURES_1"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_HYMNS_Source_SCULPTURES/Text",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENTTRIGGER_HYMNS_Source_SCULPTURES"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_HYMNS_Source_SCULPTURES/Text",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_TRIGGER_HYMNS_Source_SCULPTURES_1"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_HYMNS_Source_SCULPTURES/Text",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_EVENT_TRIGGER_HYMNS_Source_SCULPTURES_2"
+  },
+  {
+    "context": "EventTriggerInfo/EVENTTRIGGER_HYMNS_Source_SCULPTURES/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "EVENTTRIGGER_HYMNS_Source_SCULPTURES"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_BIOGAS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,8"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_BIOGAS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,8"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_PLAGUEGAS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,8"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_PLAGUEGAS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,8"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_STORM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,3"
+  },
+  {
+    "context": "FeatureArtInfo/ART_DEF_FEATURE_STORM/VarietyButton",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,3"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_3FACTORY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,11"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_5FACTORY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,11"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_ARCHEOLOGICAL_SITE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_BUNKER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_DEPLETED_MINE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_DESERTWINDMILL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_DOME_FARM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_EXTRACTION_FACILITY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_FUTURE_BUNKER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_GEOTHERMAL_BOREHOLE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_GROUNDWATER_WELL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,11"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_JUNGLE_CAMP/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,11"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_MODERN_MINE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_ORCHARD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_SANITIZE_WATER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,2"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_SEA_AIR_DEFENSE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_SEA_FORT/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_SHAFT_MINE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,10"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_SUBMERGED_TOWN/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_TREEFARM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,9"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_WINDTRAP/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,11"
+  },
+  {
+    "context": "ImprovementArtInfo/ART_DEF_IMPROVEMENT_WOODCUTTER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,9"
+  },
+  {
+    "context": "InterfaceArtInfo/INTERFACE_TECH_VASSAL/Path",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,3"
+  },
+  {
+    "context": "InterfaceArtInfo/MAINMENU_SCENE_Source/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "MAINMENU_SCENE_Source"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_ABOMBARD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,2"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_AIRBOMB2/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,1"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_AIRBOMB3/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,1"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_AIRBOMB4/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,1"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_AIRBOMB5/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,1"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_BOMBARD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_FENGAGE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,3"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_PRETARGET_NUKE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,2"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_RANGE_ATTACK/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13"
+  },
+  {
+    "context": "InterfaceModeInfo/INTERFACEMODE_SHADOW_UNIT/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,1"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_ABUBAKR/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_AFONSO/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_ASHUR/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_ATOTOZTLI/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_BASIL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_CETSHWAYO/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_CHARLES_V/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,5"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_CLEOPATRA/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,6"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_DEGANAWIDA/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,4"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_DIDO/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,6"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_HENRY_VIII/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,6"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_HIROHITO/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,6"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_IVAN/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,6"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_KANGXI/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_LENIN/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_LEONIDAS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_MARCUS/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_NEBUCHADREZZAR/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_NEFERTITI/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_RAMKHAM/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,8"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_RICHELIEU/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,7"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_SEJONG/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,8"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_SUPPI/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,4"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_THEODORA/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,8"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_WILHELMINA/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,8"
+  },
+  {
+    "context": "LeaderheadArtInfo/ART_DEF_LEADER_WU/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,8"
+  },
+  {
+    "context": "MissionInfo/MISSION_ABOMBARD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,2"
+  },
+  {
+    "context": "MissionInfo/MISSION_AIRBOMB2/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,1"
+  },
+  {
+    "context": "MissionInfo/MISSION_AIRBOMB3/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,1"
+  },
+  {
+    "context": "MissionInfo/MISSION_AIRBOMB4/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,1"
+  },
+  {
+    "context": "MissionInfo/MISSION_AIRBOMB5/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,1"
+  },
+  {
+    "context": "MissionInfo/MISSION_BRIBE_BARBARIAN/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,2"
+  },
+  {
+    "context": "MissionInfo/MISSION_BUTCHER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,13"
+  },
+  {
+    "context": "MissionInfo/MISSION_CLAIM_TERRITORY/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,2"
+  },
+  {
+    "context": "MissionInfo/MISSION_ESPIONAGE_SLEEP/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,3"
+  },
+  {
+    "context": "MissionInfo/MISSION_FENGAGE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,3"
+  },
+  {
+    "context": "MissionInfo/MISSION_GOODWILL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,2"
+  },
+  {
+    "context": "MissionInfo/MISSION_GOTO/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,14"
+  },
+  {
+    "context": "MissionInfo/MISSION_GREAT_COMMANDER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,1,15"
+  },
+  {
+    "context": "MissionInfo/MISSION_HERD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,15"
+  },
+  {
+    "context": "MissionInfo/MISSION_HURRY_FOOD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,14"
+  },
+  {
+    "context": "MissionInfo/MISSION_PRETARGET_NUKE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,2"
+  },
+  {
+    "context": "MissionInfo/MISSION_RANGE_ATTACK/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13"
+  },
+  {
+    "context": "MissionInfo/MISSION_RBOMBARD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13"
+  },
+  {
+    "context": "MissionInfo/MISSION_SHADOW/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,1"
+  },
+  {
+    "context": "MovieArtInfo/ART_DEF_MOVIE_ROCK_Source_ROLL/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "ART_DEF_MOVIE_ROCK_Source_ROLL"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_BLACK_Source_GREEN/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_BLACK_Source_GREEN"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_CYAN_Source_GRAY/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_CYAN_Source_GRAY"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_DARK_CYAN_Source_LEMON/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_DARK_CYAN_Source_LEMON"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_DARK_INDIGO_Source_WHITE/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_DARK_INDIGO_Source_WHITE"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_GOLD_Source_BLACK/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_GOLD_Source_BLACK"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_GREEN_Source_BLACK/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_GREEN_Source_BLACK"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_GREEN_Source_WHITE/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_GREEN_Source_WHITE"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_ORANGE_Source_GREEN/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_ORANGE_Source_GREEN"
+  },
+  {
+    "context": "PlayerColorInfo/PLAYERCOLOR_RED_Source_GOLD/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "PLAYERCOLOR_RED_Source_GOLD"
+  },
+  {
+    "context": "ProcessInfo/PROCESS_IDLE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,15"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_APOLLO_PROGRAM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ketry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas2.dds,8,3"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_CURE_FOR_CANCER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ancer.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,2"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_HUMAN_GENOME/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aping.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,4"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_LONGEVITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "evity.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,1,5"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_THEORY_OF_EVERYTHING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "thing.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,2"
+  },
+  {
+    "context": "ProjectInfo/PROJECT_THEORY_OF_EVOLUTION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ution.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_ACCURACY2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "racy2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,1"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_ACCURACY3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "racy3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,1"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_ACE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "pilot.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,14"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_AIR_DEFENSE1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ence1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,4"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_AIR_DEFENSE2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ence2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,4"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_AIR_DEFENSE3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ence3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,4"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_AMBUSH2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "bush2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,1"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_AMBUSH3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "bush3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,1"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_BERZERKER1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rker1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,2"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_BERZERKER2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rker2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,2"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_BERZERKER3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rker3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,8,2"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_CHAIN_SHOT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eAid1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,11"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_CHARGE2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "arge2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_CHARGE3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "arge3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_CITY_RAIDER4/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ider4.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COLD1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Cold1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COLD2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Cold1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COMBAT6/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "mbat6.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,3"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COPPER_PLATING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lwart.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,12"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COVER2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "over2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,4"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_COVER3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "over3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,4"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_CRUCIBLE_STEEL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tack1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,2"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FANATIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "natic.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FIELD1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ield1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FIELD2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ield2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FIELD3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "pair3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FLANKING3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "king3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FORMATION2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tion2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_FORMATION3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tion3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,5"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_GRAPE_SHOT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eAid2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,11"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_HEAL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "/Heal.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,6"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_HEROIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Hero3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,7"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_LOYALTY_NORM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Hero2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,7"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_MEDIC3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "edic3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,8"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_NAPALM_BOMBS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "apalm.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,10"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_PATROL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "trol1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,14"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_PATROL2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "trol2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,14"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_PATROL3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "trol3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,8,14"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_PINCH2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "inch2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,10"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_PINCH3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "inch3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,10"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_POISON_ARROWS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rAid1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,6,1"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_SENTRY2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ntry2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,4,11"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_SENTRY3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ntry3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,11"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_SHOCK2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hock2.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,12"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_SHOCK3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hock3.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,12"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_SONAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "uracy.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,13"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_TOPGUN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "opgun.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,14"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_TRANSPORT1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "sport.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,3,13"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_TRANSPORT2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "sport.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,13"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_TRANSPORT3/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "sport.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,13"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_WALL_BREAKER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,2"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_WARMTH1/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rmth1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,7,12"
+  },
+  {
+    "context": "PromotionInfo/PROMOTION_WARMTH2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rmth1.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,8,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_ASATRU/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,13"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_CONFUCIANISM/GenericTechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "irrup.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,13"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_EGYPT_MYTHOLOGY/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_HELLENISM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_HINDUISM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_ISLAM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_JUDAISM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,14"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_MESOAMERICANISM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,12"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_SHINTO/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,13"
+  },
+  {
+    "context": "ReligionInfo/RELIGION_ZOROASTRIANISM/TechButton",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_GRAVTUBE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_JUMPLANE/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_MODERN_ROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_PAVED/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,11"
+  },
+  {
+    "context": "RouteInfo/ROUTE_RAILROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_RAILROAD_ELECTRIC/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,12"
+  },
+  {
+    "context": "RouteInfo/ROUTE_ROAD/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,11"
+  },
+  {
+    "context": "RouteInfo/ROUTE_TRACK/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,11"
+  },
+  {
+    "context": "RouteInfo/ROUTE_TUNNEL/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,12"
+  },
+  {
+    "context": "SourceConceptInfo/CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS/Civilopedia",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS_PEDIA"
+  },
+  {
+    "context": "SourceConceptInfo/CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS/Description",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "TXT_KEY_CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS_TEXT"
+  },
+  {
+    "context": "SourceConceptInfo/CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS/Type",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "CONCEPT_BUG_CULTURAL_Source_GREAT_PERSON_TURNS"
+  },
+  {
+    "context": "SpecialBuildingInfo/SPECIALBUILDING_FUSION_PLANT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "actor.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,10"
+  },
+  {
+    "context": "SpecialBuildingInfo/SPECIALBUILDING_ORBITAL_OBSERVATORY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,5,10"
+  },
+  {
+    "context": "SpecialistInfo/SPECIALIST_GREAT_DIPLOMAT/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,14"
+  },
+  {
+    "context": "SpecialistInfo/SPECIALIST_GREAT_DIPLOMAT/Texture",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,14"
+  },
+  {
+    "context": "SpecialistInfo/SPECIALIST_LAWYER/Button",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,14"
+  },
+  {
+    "context": "SpecialistInfo/SPECIALIST_LAWYER/Texture",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,14"
+  },
+  {
+    "context": "TechInfo/TECH_ABSOLUTISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,6"
+  },
+  {
+    "context": "TechInfo/TECH_ACOUSTICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,6"
+  },
+  {
+    "context": "TechInfo/TECH_ADVANCED_COMPUTERS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "e/ai2.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,1"
+  },
+  {
+    "context": "TechInfo/TECH_ADVANCED_WARMACHINES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,11"
+  },
+  {
+    "context": "TechInfo/TECH_AESTHETICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rving.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,1"
+  },
+  {
+    "context": "TechInfo/TECH_ALCHEMY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "chemy.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,1"
+  },
+  {
+    "context": "TechInfo/TECH_ALGEBRA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,6"
+  },
+  {
+    "context": "TechInfo/TECH_AMPHIBIOUS_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "s_war.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,1"
+  },
+  {
+    "context": "TechInfo/TECH_ANATOMY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,6"
+  },
+  {
+    "context": "TechInfo/TECH_ANCIENT_MEDICINE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,5"
+  },
+  {
+    "context": "TechInfo/TECH_ANDROIDS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "droid.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,2"
+  },
+  {
+    "context": "TechInfo/TECH_APPLIED_ECONOMICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,7"
+  },
+  {
+    "context": "TechInfo/TECH_ARCHEOLOGY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,6"
+  },
+  {
+    "context": "TechInfo/TECH_ARCHITECTURE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cture.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,2"
+  },
+  {
+    "context": "TechInfo/TECH_ARMOR_CRAFTING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,5"
+  },
+  {
+    "context": "TechInfo/TECH_ARTIFICIAL_EVOLUTION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,10"
+  },
+  {
+    "context": "TechInfo/TECH_ARTIFICIAL_INTELLIGENCE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "l9000.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,8"
+  },
+  {
+    "context": "TechInfo/TECH_ARTIFICIAL_LIFE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,11"
+  },
+  {
+    "context": "TechInfo/TECH_ATHLETICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "etics.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,2"
+  },
+  {
+    "context": "TechInfo/TECH_AUTOMATED_TRAFFIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "affic.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,2"
+  },
+  {
+    "context": "TechInfo/TECH_AUTOMATIC_WEAPONS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "apons.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,2"
+  },
+  {
+    "context": "TechInfo/TECH_AVIATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,3"
+  },
+  {
+    "context": "TechInfo/TECH_BIOMIMETICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,9"
+  },
+  {
+    "context": "TechInfo/TECH_BRAIN_SCAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,10"
+  },
+  {
+    "context": "TechInfo/TECH_CHARTERS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas2.dds,4,14"
+  },
+  {
+    "context": "TechInfo/TECH_CHIVALRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "valry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,4"
+  },
+  {
+    "context": "TechInfo/TECH_CITY_PLANNING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "nning.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,4"
+  },
+  {
+    "context": "TechInfo/TECH_CIVIL_ENGINEERING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "crete.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,4"
+  },
+  {
+    "context": "TechInfo/TECH_CLOCKWORKS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "works.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,4"
+  },
+  {
+    "context": "TechInfo/TECH_COGNITIVE_ROBOTICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,8"
+  },
+  {
+    "context": "TechInfo/TECH_COLONIALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,9"
+  },
+  {
+    "context": "TechInfo/TECH_COMMUNICATION_NETWORKS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "twork.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,8"
+  },
+  {
+    "context": "TechInfo/TECH_CONGLOMERATES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,7"
+  },
+  {
+    "context": "TechInfo/TECH_CONSUMERISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,7"
+  },
+  {
+    "context": "TechInfo/TECH_CONTROLLED_PLASMA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,8"
+  },
+  {
+    "context": "TechInfo/TECH_COUNTERCULTURE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,8"
+  },
+  {
+    "context": "TechInfo/TECH_CROP_ROTATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,4"
+  },
+  {
+    "context": "TechInfo/TECH_CRYOGENICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ering.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,7"
+  },
+  {
+    "context": "TechInfo/TECH_CYBERWARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas2.dds,5,14"
+  },
+  {
+    "context": "TechInfo/TECH_DEMOCRACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "cracy.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,14"
+  },
+  {
+    "context": "TechInfo/TECH_DUALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,5"
+  },
+  {
+    "context": "TechInfo/TECH_ECOLOGICAL_ENGINEERING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "estry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,6"
+  },
+  {
+    "context": "TechInfo/TECH_ECOLOGY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "logy2.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,6"
+  },
+  {
+    "context": "TechInfo/TECH_ELECTRONICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "onics.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,6"
+  },
+  {
+    "context": "TechInfo/TECH_ENVIRONMENTAL_ECONOMICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,10"
+  },
+  {
+    "context": "TechInfo/TECH_EXPLOSIVES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "sives.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,6"
+  },
+  {
+    "context": "TechInfo/TECH_FERMENTATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,5"
+  },
+  {
+    "context": "TechInfo/TECH_FLINTLOCK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tlock.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,6"
+  },
+  {
+    "context": "TechInfo/TECH_FREE_ARTISTRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,6"
+  },
+  {
+    "context": "TechInfo/TECH_FUNDAMENTALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,3,8"
+  },
+  {
+    "context": "TechInfo/TECH_GENEMANIPULATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "on_04.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,5"
+  },
+  {
+    "context": "TechInfo/TECH_GLASS_BLOWING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "owing.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,7"
+  },
+  {
+    "context": "TechInfo/TECH_GLOBALIZATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,7"
+  },
+  {
+    "context": "TechInfo/TECH_GRAND_WAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "d_war.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,3"
+  },
+  {
+    "context": "TechInfo/TECH_GUIDED_WEAPONS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "apons.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,16"
+  },
+  {
+    "context": "TechInfo/TECH_HERALDRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aldry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,8"
+  },
+  {
+    "context": "TechInfo/TECH_HOLOGRAPHICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,10"
+  },
+  {
+    "context": "TechInfo/TECH_HORSE_BREEDING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eding.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,8"
+  },
+  {
+    "context": "TechInfo/TECH_HUMANISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ntism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,14"
+  },
+  {
+    "context": "TechInfo/TECH_HUMAN_MACHINE_INTERFACE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "chine.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,8"
+  },
+  {
+    "context": "TechInfo/TECH_IMPERIALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,7"
+  },
+  {
+    "context": "TechInfo/TECH_INTERSTELLAR_TRAVEL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ravel.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,9"
+  },
+  {
+    "context": "TechInfo/TECH_INVENTION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,5"
+  },
+  {
+    "context": "TechInfo/TECH_INVISIBILITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,11"
+  },
+  {
+    "context": "TechInfo/TECH_JET_PROPULSION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "gines.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,9"
+  },
+  {
+    "context": "TechInfo/TECH_JURIS_PRUDENCE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "stice.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,9"
+  },
+  {
+    "context": "TechInfo/TECH_KNOWLEDGE_MANAGEMENT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ement.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,9"
+  },
+  {
+    "context": "TechInfo/TECH_LEADERSHIP/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rship.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,11"
+  },
+  {
+    "context": "TechInfo/TECH_LOGISTICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istic.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,10"
+  },
+  {
+    "context": "TechInfo/TECH_MAP_MAKING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,6"
+  },
+  {
+    "context": "TechInfo/TECH_MARXISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rxism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,10"
+  },
+  {
+    "context": "TechInfo/TECH_MATCHLOCK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hlock.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,10"
+  },
+  {
+    "context": "TechInfo/TECH_MECHANIZED_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rfare.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,8"
+  },
+  {
+    "context": "TechInfo/TECH_MEGACORPORATIONS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,9"
+  },
+  {
+    "context": "TechInfo/TECH_MEGASTRUCTURE_ENGINEERING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rcity.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,5"
+  },
+  {
+    "context": "TechInfo/TECH_MERCANTILISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ilism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,11"
+  },
+  {
+    "context": "TechInfo/TECH_MESH_NETWORKS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "twork.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,4"
+  },
+  {
+    "context": "TechInfo/TECH_METALLURGY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lurgy.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,11"
+  },
+  {
+    "context": "TechInfo/TECH_METAMATERIALS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,8"
+  },
+  {
+    "context": "TechInfo/TECH_MICROCHIP/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "stors.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,3"
+  },
+  {
+    "context": "TechInfo/TECH_MICROMECHANICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,8"
+  },
+  {
+    "context": "TechInfo/TECH_MICROPROCESSOR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,8"
+  },
+  {
+    "context": "TechInfo/TECH_MILITARY_TRAINING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ombat.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,11"
+  },
+  {
+    "context": "TechInfo/TECH_MIND_UPLOADING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,10"
+  },
+  {
+    "context": "TechInfo/TECH_MINIATURIZATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,2"
+  },
+  {
+    "context": "TechInfo/TECH_MODERN_HEALTH_CARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "hnics.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,3"
+  },
+  {
+    "context": "TechInfo/TECH_MODERN_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rfare.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,12"
+  },
+  {
+    "context": "TechInfo/TECH_MOTION_PICTURES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tures.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,12"
+  },
+  {
+    "context": "TechInfo/TECH_MOTORIZED_TRANSPORTATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,12"
+  },
+  {
+    "context": "TechInfo/TECH_NANOBOTICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,11"
+  },
+  {
+    "context": "TechInfo/TECH_NANOMINING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ology.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,12"
+  },
+  {
+    "context": "TechInfo/TECH_NATUROPATHY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,4"
+  },
+  {
+    "context": "TechInfo/TECH_NAVAL_TACTICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ctics.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,13"
+  },
+  {
+    "context": "TechInfo/TECH_NAVAL_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rfare.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,13"
+  },
+  {
+    "context": "TechInfo/TECH_NAVIGATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,13"
+  },
+  {
+    "context": "TechInfo/TECH_NUCLEAR_POWER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Power.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,13"
+  },
+  {
+    "context": "TechInfo/TECH_ORBITAL_FLIGHT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "onies.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,1"
+  },
+  {
+    "context": "TechInfo/TECH_ORGANIC_CHEMISTRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,14"
+  },
+  {
+    "context": "TechInfo/TECH_ORGANIC_CITIES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,11"
+  },
+  {
+    "context": "TechInfo/TECH_PAPACY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,6"
+  },
+  {
+    "context": "TechInfo/TECH_PARTICLE_PHYSICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tring.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,2"
+  },
+  {
+    "context": "TechInfo/TECH_PATRONAGE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istry.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,14"
+  },
+  {
+    "context": "TechInfo/TECH_PERSPECTIVE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ctive.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,14"
+  },
+  {
+    "context": "TechInfo/TECH_PHOTOGRAPHY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "raphy.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,14"
+  },
+  {
+    "context": "TechInfo/TECH_PLANETARY_ECONOMICS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,11"
+  },
+  {
+    "context": "TechInfo/TECH_PROPAGANDA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,7"
+  },
+  {
+    "context": "TechInfo/TECH_PSYCHOLOGY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ology.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,14"
+  },
+  {
+    "context": "TechInfo/TECH_QUANTUM_COMPUTING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,10"
+  },
+  {
+    "context": "TechInfo/TECH_RADAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Radar.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,15"
+  },
+  {
+    "context": "TechInfo/TECH_RAILGUN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,9"
+  },
+  {
+    "context": "TechInfo/TECH_RHETORIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "irrup.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,13"
+  },
+  {
+    "context": "TechInfo/TECH_RITUALISM/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,15"
+  },
+  {
+    "context": "TechInfo/TECH_RUDDER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,5"
+  },
+  {
+    "context": "TechInfo/TECH_SANITATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ation.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,5,15"
+  },
+  {
+    "context": "TechInfo/TECH_SCREW_PROPELLER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eller.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,6,15"
+  },
+  {
+    "context": "TechInfo/TECH_SCRIPTURES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,5"
+  },
+  {
+    "context": "TechInfo/TECH_SCULPTURE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rking.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,1"
+  },
+  {
+    "context": "TechInfo/TECH_SEAFARING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aring.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,15"
+  },
+  {
+    "context": "TechInfo/TECH_SEISMOLOGY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,7"
+  },
+  {
+    "context": "TechInfo/TECH_SENTIENT_EARTH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "earth.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,16"
+  },
+  {
+    "context": "TechInfo/TECH_SHIP_BUILDING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lding.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,16"
+  },
+  {
+    "context": "TechInfo/TECH_SIEGECRAFT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rfare.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,4"
+  },
+  {
+    "context": "TechInfo/TECH_SIEGE_WARFARE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,14"
+  },
+  {
+    "context": "TechInfo/TECH_SKYROADS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,9"
+  },
+  {
+    "context": "TechInfo/TECH_SLAVERY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "slave.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,3,16"
+  },
+  {
+    "context": "TechInfo/TECH_SMART_DRUGS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "alism.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,4,5"
+  },
+  {
+    "context": "TechInfo/TECH_SMITHING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,5"
+  },
+  {
+    "context": "TechInfo/TECH_SOCIAL_CONTRACT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ights.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,1,9"
+  },
+  {
+    "context": "TechInfo/TECH_SPACE_COLONIES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,11"
+  },
+  {
+    "context": "TechInfo/TECH_SPACE_FLIGHT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "light.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,7,16"
+  },
+  {
+    "context": "TechInfo/TECH_SPACE_STATIONS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tions.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,16"
+  },
+  {
+    "context": "TechInfo/TECH_SPECIAL_PROMOTION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istic.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,9"
+  },
+  {
+    "context": "TechInfo/TECH_STARGAZING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,14"
+  },
+  {
+    "context": "TechInfo/TECH_STIRRUP/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "irrup.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,1"
+  },
+  {
+    "context": "TechInfo/TECH_STONE_TOOLS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tools.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,1"
+  },
+  {
+    "context": "TechInfo/TECH_STORYTELLING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,4"
+  },
+  {
+    "context": "TechInfo/TECH_SUPERSONIC_FLIGHT/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "light.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,1"
+  },
+  {
+    "context": "TechInfo/TECH_SUPERSTRONG_ALLOYS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "lloys.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,2"
+  },
+  {
+    "context": "TechInfo/TECH_SYNTHETIC_FIBERS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,13"
+  },
+  {
+    "context": "TechInfo/TECH_TELEGRAPH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,7"
+  },
+  {
+    "context": "TechInfo/TECH_TELEPORTATION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,12"
+  },
+  {
+    "context": "TechInfo/TECH_TERRA_COMPUTER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,12"
+  },
+  {
+    "context": "TechInfo/TECH_THEORY_OF_RELATIVITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ivity.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,2"
+  },
+  {
+    "context": "TechInfo/TECH_USURY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Usury.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,3"
+  },
+  {
+    "context": "TechInfo/TECH_VERTICAL_FARMING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,9"
+  },
+  {
+    "context": "TechInfo/TECH_VIRTUAL_REALITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "rfare.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,2,5"
+  },
+  {
+    "context": "TechInfo/TECH_WARMACHINES/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,4,11"
+  },
+  {
+    "context": "TechInfo/TECH_WATERWORKS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "anals.dds,Art/Interface/Buttons/Atlases/Source_Techtree_Atlas.dds,8,3"
+  },
+  {
+    "context": "TechInfo/TECH_WEATHER_CONTROL/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ntrol.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,5,3"
+  },
+  {
+    "context": "TechInfo/TECH_WEAVING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "aving.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,6,3"
+  },
+  {
+    "context": "TechInfo/TECH_WIRELESS_ELECTRICITY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,8,9"
+  },
+  {
+    "context": "TechInfo/TECH_WOODWORKING/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,7,4"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_A7V/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "s/A7V.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas2.dds,5,1"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_AH64_GUNSHIP/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "/AH64.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,2,1"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_ARABIA_ANSAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,2,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_AZTEC_JAGUAR2/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,3,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BAZOOKA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "zooka.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,2,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BAZOOKA_AFRICA/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "zooka.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,2,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BAZOOKA_INDIAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "zooka.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,2,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BENGALTIGER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Tiger.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,1,4"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BOMBER_B17/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "s/B17.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,3,1"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_BROOKLYN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "oklyn.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,8,8"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_CAVEBEAR/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eBear.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,2,4"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_CAVELION/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eLion.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,3,4"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_CHEETAH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "eetah.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,4,4"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_CHINA_JUNK/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ravel.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,4,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_ENGLISH_LONGBOWMAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "owman.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,6,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_GERMAN_TEUTONIC/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,8,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_JAPAN_ZERO/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,4,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_MALI_CAVALRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,5,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_MINUTEMAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "etman.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,1,5"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_ROME_CAVALRY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": ",_,Art/Interface/Buttons/Atlases/Source_Atlas.dds,8,6"
+  },
+  {
+    "context": "UnitArtInfo/ART_DEF_UNIT_WARRIOR_AFRICAN/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "s/2A5.dds,Art/Interface/Buttons/Atlases/Source_Unit_Atlas.dds,1,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_COMMANDER/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,1,15"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_DIESEL_SHIPS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,2,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_EXECUTIVE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,5,15"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_FIGHTERS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "plane.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,1,8"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_HITECH/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "istic.dds,Art/Interface/Buttons/Atlases/Source_Promotion_Atlas2.dds,2,9"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_MISSIONARY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,4,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_NANITE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,2,15"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_NUCLEAR_SHIPS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,5,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_SPY/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,3,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_SUBMARINE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,6,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_TRADE/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,7,16"
+  },
+  {
+    "context": "UnitCombatInfo/UNITCOMBAT_WOODEN_SHIPS/Button",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,8,16"
+  },
+  {
+    "context": "text/TXT_KEY_BUG_OPT_ROMSETTINGS__ROMRESET_HOVER",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "Reset All the source mod Settings to their Default Values."
+  },
+  {
+    "context": "text/TXT_KEY_BUG_OPT_ROMSETTINGS__TECHTREEERACOLORS_HOVER",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "setting changes tech tree screen to use the source mod era coloring method which is different from BUG mod's method. Requires restart before the change to this"
+  },
+  {
+    "context": "text/TXT_KEY_BUG_OPT_ROMSETTINGS__TECHTREEERACOLORS_TEXT",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Source Tech tree era colors"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ABOMBARD_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "rcher Bombard is disabled by default in the source mod mod but if you want to use this feature, you can enable it from RevDCM page in BUG options (CTRL-ALT-O)."
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_CHANGECIV_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "RAPH:2]This feature can be activated in the source mod mod only when using cheat mode.[PARAGRAPH:2]Civ Changer allows you to change the Civ you are playing in-"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ENHANCED_TECH_CONQUEST_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "RAGRAPH:2]Several configurable options (the source mod config.ini) allow tuning of how technology will get transfered from the conquered city to the conquering"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_BUILDING_UPGRADE_LINES_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "Building Upgrade Lines[\\H1][PARAGRAPH:2]the source mod introduces building upgrade lines which lets you upgrade your old buildings to newer and better once you"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_CIVICS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 3,
+    "neutralExcerpt": "[H1]Civics[\\H1][PARAGRAPH:2]the source mod mod overhauls the civic system from Beyond the Sword completely. Starting from version 2.5 the system is based on di"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_IMPROVEMENTS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "[H1]Improvements[\\H1][PARAGRAPH:2]In the source mod all the imrovements have been gone through drastic changes. First of all there's plenty of new improvement "
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_LIMITED_RELIGION_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "h player to found only one religion. In the source mod this setting is off by default but if you want to use this feature you can enable it from [COLOR_HIGHLIG"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MAPSCRIPTS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 3,
+    "neutralExcerpt": "[H1]Mapscripts[\\H1][PARAGRAPH:2]the source mod mod adds new terrain type [LINK=TERRAIN_MARSH]Marsh[\\LINK] and new terrain feature [LINK=FEATURE_SWAMP]Peat Bog["
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MAPSCRIPTS_PEDIA",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "changed mapscripts start with the text \"Source_\", if the mapscript you are trying to use does not have this prefix, you might encounter problems when game is gener"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MAPS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 5,
+    "neutralExcerpt": "\\H1][PARAGRAPH:2]All these maps require the source mod 2.5 or later. Maps are previously released for Beyond the Sword by other modders, I've just modified the"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MAPS_PEDIA",
+    "rule": "source-short-name",
+    "occurrences": 2,
+    "neutralExcerpt": "en't in original map)[PARAGRAPH:2][BOLD]Source2.5Earth18civs(1.0)[\\BOLD][NEWLINE][TAB][ICON_BULLET]18 preset civs[NEWLINE][TAB][ICON_BULLET]Huge Earth map (124x68)"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MODULES_CIV_SPECIFIC_UNITARTSTYLES_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 3,
+    "neutralExcerpt": "UnitArtStyles -modules[\\H1][PARAGRAPH:2]the source mod comes with several Civ Specific Unitarstyles modules. These modules are entirely optional and all of the"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MODULE_HOLY_WARS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 2,
+    "neutralExcerpt": "nabled by moving Holy Wars folder from 'the source mod\\Assets\\Unloaded Modules' folder to 'the source mod\\Assets\\Modules'"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MODULE_STATIC_LH_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 3,
+    "neutralExcerpt": "ic Leaderheads -module[\\H1][PARAGRAPH:2]the source mod comes with Static Leaderheads module. This module is entirely optional and is off by default. What it do"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_MODULE_UN_FORCES_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 2,
+    "neutralExcerpt": "oving UN Mission and all UN units from 'the source mod\\Assets\\Modules' folders to 'the source mod\\Assets\\Unloaded Modules'"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_NO_BUILDING_GRAPHICS_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 2,
+    "neutralExcerpt": "folder (with its contents) from folder 'the source mod\\Assets\\Unloaded Modules\\Custom Buildings' to folder 'the source mod\\Assets\\Modules\\Custom Buildings'. I"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_RELIGION_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "[H1]Religions[\\H1][PARAGRAPH:2]the source mod mod adds 4 new ancient religions: Amun-Ra, Hellenism, Nagualism and Zoroastrianism. The mod also makes all the re"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_ROM_UNIT_NAMING_PEDIA",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the unit type ones.[PARAGRAPH:2]See '...the source mod\\Docs from combined mods\\BUG Mod Help-ENG.chm' for more info about Unit Naming. The help file describes i"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_TECHNOLOGY_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "[LINK=TECH_POLYTHEISM]Polytheism[\\LINK] Source [LINK=TECH_MASONRY]Masonry[\\LINK]. [LINK=TECH_ANIMAL_HUSBANDRY]Animal Husbandry[\\LINK] is an example of the second g"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_TECHNOLOGY_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "[LINK=TECH_POLYTHEISM]Polytheism[\\LINK] Source [LINK=TECH_MASONRY]Masonry[\\LINK]. [LINK=TECH_ANIMAL_HUSBANDRY]Animal Husbandry[\\LINK] is an example of the second g"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_VICTORY_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "n controls 75%% of the world population Source 75%% of the world's land area.[PARAGRAPH:2][BOLD]Cultural Victory[\\BOLD][PARAGRAPH:2]The game ends when a civilizati"
+  },
+  {
+    "context": "text/TXT_KEY_CONCEPT_VICTORY_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "n controls 75%% of the world population Source 75%% of the world's land area.[PARAGRAPH:2][BOLD]Cultural Victory[\\BOLD][PARAGRAPH:2]The game ends when a civilizati"
+  },
+  {
+    "context": "text/TXT_KEY_GAME_OPTION_COMPLETE_KILLS_HELP",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Must kill all cities Source units to wipe out an enemy civilization."
+  },
+  {
+    "context": "text/TXT_KEY_GAME_OPTION_COMPLETE_KILLS_HELP",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "Must kill all cities Source units to wipe out an enemy civilization."
+  },
+  {
+    "context": "text/TXT_KEY_MISC_Source_POPUP_CONTENT",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: the source mod is a totally customizable mod, that allows each user to make the game what they want it to be. [NEWLINE]It is recommended that first"
+  },
+  {
+    "context": "text/TXT_KEY_MISC_Source_POPUP_CONTENT",
+    "rule": "source-title",
+    "occurrences": 2,
+    "neutralExcerpt": "the source mod: the source mod is a totally customizable mod, that allows each user to make the game what they want it to be. [NEWLINE]It is recommended that first"
+  },
+  {
+    "context": "text/TXT_KEY_MISC_Source_POPUP_TITLE",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "Welcome to the source mod: the source mod."
+  },
+  {
+    "context": "text/TXT_KEY_MISC_Source_POPUP_TITLE",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "Welcome to the source mod: the source mod."
+  },
+  {
+    "context": "text/TXT_KEY_PEDIA_CATEGORY_CONCEPT_DCM",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Source Concepts"
+  },
+  {
+    "context": "text/TXT_KEY_PEDIA_CATEGORY_DCM",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "Source Concepts"
+  },
+  {
+    "context": "text/TXT_KEY_REV_MOD_INITIALIZING_Source_OPTIONS",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "[NEWLINE]the source mod Options:"
+  },
+  {
+    "context": "text/TXT_KEY_REV_MOD_RUNNING_INFO",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "ise of Mankind:[NEWLINE]the source mod running with the following components:"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_1",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Unit categories have been changed completely in this mod. Now modern units are superior to ancient units."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_10",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There are several new Promotion lines and there has been made changes to almost all BtS promotions."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_13",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Naval units from Industrial era start to require Steel resource. Build Steel Mills to produce Steel from Coal and Iron. If you don't have acces"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_14",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Mod has been designed for big maps and for Marathon game speed."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_15",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Movement costs have been changed for certain terrain types. See terrain and feature civilopedia pages."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_16",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Game start year has been set to 6000BC. All game speeds have more turns than in normal BtS game."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_17",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Citizens consume now 3 food instead of 2. There are new building types that give bonus to city's food production."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_18",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There are new resources and new improvement types. New techs give bonuses to some improvements."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_2",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Religions have been changed to be more unique. This means that effects of each religion are slightly different and religious buildings have new"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_20",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Specialize your cities."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_21",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Colonist builds city of size 3 with several buildings and Pioneer builds city of size 4 with many buildings."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_22",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Most improvements no longer cut down forest or jungle. You can now have access to resources in jungle plots earlier."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_23",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Religious Shrines are no longer marked as great wonders. You can built them to Holy City even if it has max amount of Great Wonders already."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_24",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: All religious buildings spread religion."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_25",
+    "rule": "source-parent-title",
+    "occurrences": 2,
+    "neutralExcerpt": "the source mod: You can change some mod settings in the the source mod Config.ini file."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_26",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: This modpack includes many other mods that improve the gameplay with numerous new features. You can read all about them from Source Concepts pedia"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_26",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "tures. You can read all about them from Source Concepts pedia pages."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_27",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Most terrain improvements do not remove forests and there's now several late game improvements which can be placed only on forest and on jungle"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_28",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Scientific victory requires you to learn most Transhuman era technologies and then to build enough Paradise Gardens and Ascention Gate Great Wo"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_29",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Mounted Infantry is the only mounted unit which does gain defensive bonuses. It's good unit for defense in conquered cities during war time if "
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_3",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Civics have new categories and new options have been added to original categories. All civics have been changed with new effects."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_30",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Always keep healthy pool of gold in your treasury. It might help you to survive better from certain random events."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_31",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: If you think there's still not enough content in this modpack, you could visit Source Modmods subforum at Civfanatics.com site and install some ex"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_31",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "ontent in this modpack, you could visit Source Modmods subforum at Civfanatics.com site and install some extra modules from the several hundred modules that are av"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_32",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Pressing [ALT+X] turns on the strategy overlay feature that allows you to plan where to put your cities. Pressing same button combination turns"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_33",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: New era has been added to this mod. Transhuman era allows you to research over 60 near future techs and gives you access to powerful robot and "
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_34",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There is over 100 new random events in this mod."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_35",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: AI has been improved so be prepared for their new tactics. For more information see Better BtS AI pedia pages in Source Concepts pedia section."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_35",
+    "rule": "source-short-name",
+    "occurrences": 1,
+    "neutralExcerpt": "mation see Better BtS AI pedia pages in Source Concepts pedia section."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_36",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Enhanced Tech Conquest allows you to gain information about new technologies when you conquer enemy cities. If the conquered city is large enou"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_37",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There are plenty of Earth maps included with this modpack. You can access them through Custom Scenarios option."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_38",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Pressing [CTRL+A] in city screen allows you to demolish buildings and even abandon the whole city. Abandoning the city gives workers and settle"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_39",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Route system has been completely redesigned and during the game you gain access to 8 different route types. Each route type has different movem"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_4",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There are now building upgrade paths. Once you upgrade building to newer, the older will be removed from city. New building will have the effec"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_40",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: With Barbarian World game option the barbarians start with a free city for every civilization in the game. Combined with Barbarian Civ game opt"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_5",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Guard your coastal cities. Harbors, Ports, Commercial Ports and International Port have 100% conquer success rate. Don't let your enemy to get "
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_6",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: You may build maximum of 4 Great Wonders per city and 4 National Wonders per city. Plan ahead where you build your wonders."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_7",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: There are many new unit categories in this mod. See civilopedia to learn more about these units."
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_8",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Mines work differently now. They automatically upgrade to Shaft Mine just like Cottage upgrades to Town. Mines also give +1 hammer when you bui"
+  },
+  {
+    "context": "text/TXT_KEY_ROM_HINT_9",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": "the source mod: Tech tree has been completely redone. Many buildings from normal Beyond the Sword game has been moved to new techs."
+  },
+  {
+    "context": "text/TXT_KEY_STRATEGY_BEGINNER_CIVICS_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "de a city, if you have a state religion Source if this state religion is present in this city. Free Religion abandons the state religion concept and depends instea"
+  },
+  {
+    "context": "text/TXT_KEY_STRATEGY_RESEARCH_MECHS_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 2,
+    "neutralExcerpt": "ns rounding DOWN to the nearest integer Source it has higher precedence than all other operators EXCEPT FOR parentheses. You will see it used a lot in the article."
+  },
+  {
+    "context": "text/TXT_KEY_STRATEGY_SYNERGY_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 1,
+    "neutralExcerpt": "re, your borders will be popping faster Source sooner than even someone who builds Stonehenge. Especially against the AI's huge handicaps at the higher levels, thi"
+  },
+  {
+    "context": "text/TXT_KEY_STRATEGY_VASSALAGE_MECHS_PEDIA",
+    "rule": "source-acronym",
+    "occurrences": 4,
+    "neutralExcerpt": "than [BOLD]50% of the Master Civ's size Source population[\\BOLD].It's important to reiterate that this is a two part condition.[BOLD]BOTH[\\BOLD] have to be met in "
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_FUSION_NOVA_STRATEGY",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": " is a leftover from an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml."
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_FUSION_NOVA_STRATEGY",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "m an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml. It's not meant to"
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_FUSION_NUKE_STRATEGY",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": " is a leftover from an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml."
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_FUSION_NUKE_STRATEGY",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "m an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml. It's not meant to"
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_MRBM_STRATEGY",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": " is a leftover from an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml."
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_MRBM_STRATEGY",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "m an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml. It's not meant to"
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_TURN_STRATEGY",
+    "rule": "source-parent-title",
+    "occurrences": 1,
+    "neutralExcerpt": " is a leftover from an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml."
+  },
+  {
+    "context": "text/TXT_KEY_UNIT_TURN_STRATEGY",
+    "rule": "source-title",
+    "occurrences": 1,
+    "neutralExcerpt": "m an older version of the source mod - the source mod. It can be activated by changing GAMEOPTION_ADVANCED_NUKES to 1 in Civ4GameOptionInfos.xml. It's not meant to"
+  }
+]

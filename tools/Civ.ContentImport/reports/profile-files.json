@@ -1,0 +1,3045 @@
+{
+  "moduleDirectories": [
+    "Modules/Interface",
+    "Modules/Modern_flags/art",
+    "Modules/Source_MP_00_main",
+    "Modules/Source_MP_02_alternate_LH_graphics",
+    "Modules/Source_MP_11_Europe",
+    "Modules/MoreMusic"
+  ],
+  "files": [
+    {
+      "order": 0,
+      "isModule": false,
+      "path": "layers/source/XML/the source mod_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 1,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Bonus.xml.yaml"
+    },
+    {
+      "order": 2,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 3,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 4,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Feature.xml.yaml"
+    },
+    {
+      "order": 5,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Improvement.xml.yaml"
+    },
+    {
+      "order": 6,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Interface.xml.yaml"
+    },
+    {
+      "order": 7,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 8,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Misc.xml.yaml"
+    },
+    {
+      "order": 9,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Movie.xml.yaml"
+    },
+    {
+      "order": 10,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Terrain.xml.yaml"
+    },
+    {
+      "order": 11,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 12,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4MainMenus.xml.yaml"
+    },
+    {
+      "order": 13,
+      "isModule": false,
+      "path": "layers/base/XML/Art/CIV4RiverModelInfos.xml.yaml"
+    },
+    {
+      "order": 14,
+      "isModule": false,
+      "path": "layers/source/XML/Art/CIV4RouteModelInfos.xml.yaml"
+    },
+    {
+      "order": 15,
+      "isModule": false,
+      "path": "layers/source/XML/Audio/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 16,
+      "isModule": false,
+      "path": "layers/source/XML/Audio/Audio3DScripts.xml.yaml"
+    },
+    {
+      "order": 17,
+      "isModule": false,
+      "path": "layers/source/XML/Audio/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 18,
+      "isModule": false,
+      "path": "layers/source/XML/Audio/AudioSoundscapeScripts.xml.yaml"
+    },
+    {
+      "order": 19,
+      "isModule": false,
+      "path": "layers/source/XML/BBAI_AI_Variables_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 20,
+      "isModule": false,
+      "path": "layers/source/XML/BBAI_Game_Options_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 21,
+      "isModule": false,
+      "path": "layers/source/XML/BUG_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 22,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4ANDConceptInfos.xml.yaml"
+    },
+    {
+      "order": 23,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4AttitudeInfos.xml.yaml"
+    },
+    {
+      "order": 24,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4BasicInfos.xml.yaml"
+    },
+    {
+      "order": 25,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4CalendarInfos.xml.yaml"
+    },
+    {
+      "order": 26,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4CityTabInfos.xml.yaml"
+    },
+    {
+      "order": 27,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4DenialInfos.xml.yaml"
+    },
+    {
+      "order": 28,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4DomainInfos.xml.yaml"
+    },
+    {
+      "order": 29,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4InvisibleInfos.xml.yaml"
+    },
+    {
+      "order": 30,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4MemoryInfos.xml.yaml"
+    },
+    {
+      "order": 31,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4MonthInfos.xml.yaml"
+    },
+    {
+      "order": 32,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4NewConceptInfos.xml.yaml"
+    },
+    {
+      "order": 33,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4SeasonInfos.xml.yaml"
+    },
+    {
+      "order": 34,
+      "isModule": false,
+      "path": "layers/bts/XML/BasicInfos/CIV4UnitAIInfos.xml.yaml"
+    },
+    {
+      "order": 35,
+      "isModule": false,
+      "path": "layers/source/XML/BasicInfos/CIV4UnitCombatInfos.xml.yaml"
+    },
+    {
+      "order": 36,
+      "isModule": false,
+      "path": "layers/source/XML/Buildings/CIV4BuildingClassInfos.xml.yaml"
+    },
+    {
+      "order": 37,
+      "isModule": false,
+      "path": "layers/source/XML/Buildings/CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 38,
+      "isModule": false,
+      "path": "layers/bts/XML/Buildings/CIV4CityLSystem.xml.yaml"
+    },
+    {
+      "order": 39,
+      "isModule": false,
+      "path": "layers/source/XML/Buildings/CIV4PlotLSystem.xml.yaml"
+    },
+    {
+      "order": 40,
+      "isModule": false,
+      "path": "layers/source/XML/Buildings/CIV4SpecialBuildingInfos.xml.yaml"
+    },
+    {
+      "order": 41,
+      "isModule": false,
+      "path": "layers/source/XML/Buildings/Civ4CityLSystem.xml.yaml"
+    },
+    {
+      "order": 42,
+      "isModule": false,
+      "path": "layers/source/XML/Civilizations/CIV4CivNameInfos.xml.yaml"
+    },
+    {
+      "order": 43,
+      "isModule": false,
+      "path": "layers/source/XML/Civilizations/CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 44,
+      "isModule": false,
+      "path": "layers/source/XML/Civilizations/CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 45,
+      "isModule": false,
+      "path": "layers/source/XML/Civilizations/CIV4TraitInfos.xml.yaml"
+    },
+    {
+      "order": 46,
+      "isModule": false,
+      "path": "layers/source/XML/Civilizations/CIV4UnitArtStyleTypeInfos.xml.yaml"
+    },
+    {
+      "order": 47,
+      "isModule": false,
+      "path": "layers/source/XML/Events/CIV4EventInfos.xml.yaml"
+    },
+    {
+      "order": 48,
+      "isModule": false,
+      "path": "layers/source/XML/Events/CIV4EventTriggerInfos.xml.yaml"
+    },
+    {
+      "order": 49,
+      "isModule": false,
+      "path": "recovered/source/XML/GameInfo/CIV4CivicInfos.xml.yaml"
+    },
+    {
+      "order": 50,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4CivicOptionInfos.xml.yaml"
+    },
+    {
+      "order": 51,
+      "isModule": false,
+      "path": "layers/base/XML/GameInfo/CIV4ClimateInfo.xml.yaml"
+    },
+    {
+      "order": 52,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4CommerceInfo.xml.yaml"
+    },
+    {
+      "order": 53,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4CorporationInfo.xml.yaml"
+    },
+    {
+      "order": 54,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4CulturalAgeInfos.xml.yaml"
+    },
+    {
+      "order": 55,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4CultureLevelInfo.xml.yaml"
+    },
+    {
+      "order": 56,
+      "isModule": false,
+      "path": "layers/bts/XML/GameInfo/CIV4CursorInfo.xml.yaml"
+    },
+    {
+      "order": 57,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 58,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4EmphasizeInfo.xml.yaml"
+    },
+    {
+      "order": 59,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4EraInfos.xml.yaml"
+    },
+    {
+      "order": 60,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4EspionageMissionInfo.xml.yaml"
+    },
+    {
+      "order": 61,
+      "isModule": false,
+      "path": "layers/bts/XML/GameInfo/CIV4ForceControlInfos.xml.yaml"
+    },
+    {
+      "order": 62,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4GameOptionInfos.xml.yaml"
+    },
+    {
+      "order": 63,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4GameSpeedInfo.xml.yaml"
+    },
+    {
+      "order": 64,
+      "isModule": false,
+      "path": "layers/base/XML/GameInfo/CIV4GoodyInfo.xml.yaml"
+    },
+    {
+      "order": 65,
+      "isModule": false,
+      "path": "layers/bts/XML/GameInfo/CIV4GraphicOptionInfos.xml.yaml"
+    },
+    {
+      "order": 66,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4HandicapInfo.xml.yaml"
+    },
+    {
+      "order": 67,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4Hints.xml.yaml"
+    },
+    {
+      "order": 68,
+      "isModule": false,
+      "path": "layers/base/XML/GameInfo/CIV4HurryInfo.xml.yaml"
+    },
+    {
+      "order": 69,
+      "isModule": false,
+      "path": "layers/bts/XML/GameInfo/CIV4MPOptionInfos.xml.yaml"
+    },
+    {
+      "order": 70,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4MapInfo.xml.yaml"
+    },
+    {
+      "order": 71,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4MapSwitchInfo.xml.yaml"
+    },
+    {
+      "order": 72,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4OutcomeInfos.xml.yaml"
+    },
+    {
+      "order": 73,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4PlayerOptionInfos.xml.yaml"
+    },
+    {
+      "order": 74,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4ProcessInfo.xml.yaml"
+    },
+    {
+      "order": 75,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4ProjectInfo.xml.yaml"
+    },
+    {
+      "order": 76,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4PropertyInfos.xml.yaml"
+    },
+    {
+      "order": 77,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4ReligionInfo.xml.yaml"
+    },
+    {
+      "order": 78,
+      "isModule": false,
+      "path": "layers/base/XML/GameInfo/CIV4SeaLevelInfo.xml.yaml"
+    },
+    {
+      "order": 79,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4SpecialistInfos.xml.yaml"
+    },
+    {
+      "order": 80,
+      "isModule": false,
+      "path": "layers/base/XML/GameInfo/CIV4TurnTimerInfo.xml.yaml"
+    },
+    {
+      "order": 81,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4UpKeepInfo.xml.yaml"
+    },
+    {
+      "order": 82,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4VictoryInfo.xml.yaml"
+    },
+    {
+      "order": 83,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4VoteInfo.xml.yaml"
+    },
+    {
+      "order": 84,
+      "isModule": false,
+      "path": "layers/bts/XML/GameInfo/CIV4VoteSourceInfos.xml.yaml"
+    },
+    {
+      "order": 85,
+      "isModule": false,
+      "path": "layers/source/XML/GameInfo/CIV4WorldInfo.xml.yaml"
+    },
+    {
+      "order": 86,
+      "isModule": false,
+      "path": "layers/source/XML/GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 87,
+      "isModule": false,
+      "path": "layers/source/XML/GlobalDefinesAlt.xml.yaml"
+    },
+    {
+      "order": 88,
+      "isModule": false,
+      "path": "layers/source/XML/GlobalTypes.xml.yaml"
+    },
+    {
+      "order": 89,
+      "isModule": false,
+      "path": "layers/base/XML/Interface/CIV4AdvisorInfos.xml.yaml"
+    },
+    {
+      "order": 90,
+      "isModule": false,
+      "path": "layers/base/XML/Interface/CIV4CameraInfos.xml.yaml"
+    },
+    {
+      "order": 91,
+      "isModule": false,
+      "path": "layers/source/XML/Interface/CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 92,
+      "isModule": false,
+      "path": "layers/source/XML/Interface/CIV4InterfaceModeInfos.xml.yaml"
+    },
+    {
+      "order": 93,
+      "isModule": false,
+      "path": "layers/source/XML/Interface/CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 94,
+      "isModule": false,
+      "path": "layers/bts/XML/Interface/CIV4SlideShowInfos.xml.yaml"
+    },
+    {
+      "order": 95,
+      "isModule": false,
+      "path": "layers/bts/XML/Interface/CIV4SlideShowRandomInfos.xml.yaml"
+    },
+    {
+      "order": 96,
+      "isModule": false,
+      "path": "layers/bts/XML/Interface/CIV4SpaceShipInfos.xml.yaml"
+    },
+    {
+      "order": 97,
+      "isModule": false,
+      "path": "layers/bts/XML/Interface/CIV4ThroneRoomCameraInfos.xml.yaml"
+    },
+    {
+      "order": 98,
+      "isModule": false,
+      "path": "layers/bts/XML/Interface/CIV4ThroneRoomInfos.xml.yaml"
+    },
+    {
+      "order": 99,
+      "isModule": false,
+      "path": "layers/base/XML/Interface/CIV4ThroneRoomStyleInfos.xml.yaml"
+    },
+    {
+      "order": 100,
+      "isModule": false,
+      "path": "layers/source/XML/Interface/CIV4WorldPickerInfos.xml.yaml"
+    },
+    {
+      "order": 101,
+      "isModule": false,
+      "path": "layers/source/XML/LeadFromBehind_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 102,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4AttachableInfos.xml.yaml"
+    },
+    {
+      "order": 103,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4CameraOverlayInfos.xml.yaml"
+    },
+    {
+      "order": 104,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4DetailManager.xml.yaml"
+    },
+    {
+      "order": 105,
+      "isModule": false,
+      "path": "layers/source/XML/Misc/CIV4EffectInfos.xml.yaml"
+    },
+    {
+      "order": 106,
+      "isModule": false,
+      "path": "layers/base/XML/Misc/CIV4QuestInfos.xml.yaml"
+    },
+    {
+      "order": 107,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4RiverInfos.xml.yaml"
+    },
+    {
+      "order": 108,
+      "isModule": false,
+      "path": "layers/source/XML/Misc/CIV4RouteInfos.xml.yaml"
+    },
+    {
+      "order": 109,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4TerrainPlaneInfos.xml.yaml"
+    },
+    {
+      "order": 110,
+      "isModule": false,
+      "path": "layers/base/XML/Misc/CIV4TutorialInfos.xml.yaml"
+    },
+    {
+      "order": 111,
+      "isModule": false,
+      "path": "layers/bts/XML/Misc/CIV4WaterPlaneInfos.xml.yaml"
+    },
+    {
+      "order": 112,
+      "isModule": false,
+      "path": "layers/source/XML/ParallelMaps_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 113,
+      "isModule": false,
+      "path": "layers/source/XML/PythonCallbackDefines.xml.yaml"
+    },
+    {
+      "order": 114,
+      "isModule": false,
+      "path": "layers/source/XML/TechDiffusion_GlobalDefines.xml.yaml"
+    },
+    {
+      "order": 115,
+      "isModule": false,
+      "path": "layers/source/XML/Technologies/CIV4TechInfos.xml.yaml"
+    },
+    {
+      "order": 116,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4BonusClassInfos.xml.yaml"
+    },
+    {
+      "order": 117,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4BonusInfos.xml.yaml"
+    },
+    {
+      "order": 118,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4FeatureInfos.xml.yaml"
+    },
+    {
+      "order": 119,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4ImprovementInfos.xml.yaml"
+    },
+    {
+      "order": 120,
+      "isModule": false,
+      "path": "layers/base/XML/Terrain/CIV4SymbolMeshPaths.xml.yaml"
+    },
+    {
+      "order": 121,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4TerrainInfos.xml.yaml"
+    },
+    {
+      "order": 122,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4TerrainSettings.xml.yaml"
+    },
+    {
+      "order": 123,
+      "isModule": false,
+      "path": "layers/source/XML/Terrain/CIV4YieldInfos.xml.yaml"
+    },
+    {
+      "order": 124,
+      "isModule": false,
+      "path": "layers/source/XML/Text/ACTIONS.xml.yaml"
+    },
+    {
+      "order": 125,
+      "isModule": false,
+      "path": "layers/source/XML/Text/BUILDINGS.xml.yaml"
+    },
+    {
+      "order": 126,
+      "isModule": false,
+      "path": "layers/source/XML/Text/BUILDINGS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 127,
+      "isModule": false,
+      "path": "layers/source/XML/Text/BUILDINGS_STRATEGY.xml.yaml"
+    },
+    {
+      "order": 128,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CITIES.xml.yaml"
+    },
+    {
+      "order": 129,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4DiplomacyText.xml.yaml"
+    },
+    {
+      "order": 130,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameTextChanged_BTS.xml.yaml"
+    },
+    {
+      "order": 131,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameTextInfos.xml.yaml"
+    },
+    {
+      "order": 132,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameTextInfos_Cities.xml.yaml"
+    },
+    {
+      "order": 133,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameTextInfos_GreatPeople.xml.yaml"
+    },
+    {
+      "order": 134,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameTextInfos_Objects.xml.yaml"
+    },
+    {
+      "order": 135,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_BTS.xml.yaml"
+    },
+    {
+      "order": 136,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_BTS_Fixed.xml.yaml"
+    },
+    {
+      "order": 137,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_BTS_FourthRoundTranslation.xml.yaml"
+    },
+    {
+      "order": 138,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_BTS_PatchText.xml.yaml"
+    },
+    {
+      "order": 139,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_Cities_BTS.xml.yaml"
+    },
+    {
+      "order": 140,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_Civilopedia_BTS.xml.yaml"
+    },
+    {
+      "order": 141,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_Bonuses.xml.yaml"
+    },
+    {
+      "order": 142,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_BuildingsProjects.xml.yaml"
+    },
+    {
+      "order": 143,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_CivLeaders.xml.yaml"
+    },
+    {
+      "order": 144,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_CivicsReligion.xml.yaml"
+    },
+    {
+      "order": 145,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_Concepts.xml.yaml"
+    },
+    {
+      "order": 146,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_Techs.xml.yaml"
+    },
+    {
+      "order": 147,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Civilopedia_Units.xml.yaml"
+    },
+    {
+      "order": 148,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_DiplomacyText_BTS.xml.yaml"
+    },
+    {
+      "order": 149,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_Events_BTS.xml.yaml"
+    },
+    {
+      "order": 150,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIV4GameText_Franks.xml.yaml"
+    },
+    {
+      "order": 151,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Help.xml.yaml"
+    },
+    {
+      "order": 152,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Misc1.xml.yaml"
+    },
+    {
+      "order": 153,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIV4GameText_Mississippi.xml.yaml"
+    },
+    {
+      "order": 154,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_New.xml.yaml"
+    },
+    {
+      "order": 155,
+      "isModule": false,
+      "path": "layers/bts/XML/Text/CIV4GameText_Objects_BTS.xml.yaml"
+    },
+    {
+      "order": 156,
+      "isModule": false,
+      "path": "layers/base/XML/Text/CIV4GameText_Strategy.xml.yaml"
+    },
+    {
+      "order": 157,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIV4GameText_Vandals.xml.yaml"
+    },
+    {
+      "order": 158,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords.xml.yaml"
+    },
+    {
+      "order": 159,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Changed.xml.yaml"
+    },
+    {
+      "order": 160,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Civ4Changed.xml.yaml"
+    },
+    {
+      "order": 161,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Civilopedia.xml.yaml"
+    },
+    {
+      "order": 162,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Diplomacy.xml.yaml"
+    },
+    {
+      "order": 163,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Objects.xml.yaml"
+    },
+    {
+      "order": 164,
+      "isModule": false,
+      "path": "layers/warlords/XML/Text/CIV4GameText_Warlords_Strategy.xml.yaml"
+    },
+    {
+      "order": 165,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIVICS.xml.yaml"
+    },
+    {
+      "order": 166,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIVICS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 167,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIVILIZATIONS.xml.yaml"
+    },
+    {
+      "order": 168,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CIVILIZATIONS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 169,
+      "isModule": false,
+      "path": "layers/source/XML/Text/COMBAT.xml.yaml"
+    },
+    {
+      "order": 170,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CONCEPTS.xml.yaml"
+    },
+    {
+      "order": 171,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CONCEPTS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 172,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CORPORATIONS.xml.yaml"
+    },
+    {
+      "order": 173,
+      "isModule": false,
+      "path": "layers/source/XML/Text/CORPORATIONS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 174,
+      "isModule": false,
+      "path": "layers/source/XML/Text/DIPLOMACY.xml.yaml"
+    },
+    {
+      "order": 175,
+      "isModule": false,
+      "path": "layers/source/XML/Text/ESPIONAGE.xml.yaml"
+    },
+    {
+      "order": 176,
+      "isModule": false,
+      "path": "layers/source/XML/Text/EVENTS.xml.yaml"
+    },
+    {
+      "order": 177,
+      "isModule": false,
+      "path": "layers/source/XML/Text/GREAT_PERSONS.xml.yaml"
+    },
+    {
+      "order": 178,
+      "isModule": false,
+      "path": "layers/source/XML/Text/IMPROVEMENTS.xml.yaml"
+    },
+    {
+      "order": 179,
+      "isModule": false,
+      "path": "layers/source/XML/Text/IMPROVEMENTS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 180,
+      "isModule": false,
+      "path": "layers/source/XML/Text/INTERFACE.xml.yaml"
+    },
+    {
+      "order": 181,
+      "isModule": false,
+      "path": "layers/source/XML/Text/LEADERS.xml.yaml"
+    },
+    {
+      "order": 182,
+      "isModule": false,
+      "path": "layers/source/XML/Text/LEADERS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 183,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MAP_SCRIPTS.xml.yaml"
+    },
+    {
+      "order": 184,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_BUILDINGS.xml.yaml"
+    },
+    {
+      "order": 185,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_BUILDINGS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 186,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_CITIES.xml.yaml"
+    },
+    {
+      "order": 187,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_CIVILIZATIONS.xml.yaml"
+    },
+    {
+      "order": 188,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_CIVILIZATIONS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 189,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_DIPLOMACY.xml.yaml"
+    },
+    {
+      "order": 190,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_LEADERS.xml.yaml"
+    },
+    {
+      "order": 191,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_UNITS.xml.yaml"
+    },
+    {
+      "order": 192,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MCP_UNITS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 193,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MISC.xml.yaml"
+    },
+    {
+      "order": 194,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MISC_PEDIA.xml.yaml"
+    },
+    {
+      "order": 195,
+      "isModule": false,
+      "path": "layers/source/XML/Text/MISSIONS.xml.yaml"
+    },
+    {
+      "order": 196,
+      "isModule": false,
+      "path": "layers/source/XML/Text/PROJECTS.xml.yaml"
+    },
+    {
+      "order": 197,
+      "isModule": false,
+      "path": "layers/source/XML/Text/PROJECTS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 198,
+      "isModule": false,
+      "path": "layers/source/XML/Text/PROJECTS_STRATEGY.xml.yaml"
+    },
+    {
+      "order": 199,
+      "isModule": false,
+      "path": "layers/source/XML/Text/PROMOTIONS.xml.yaml"
+    },
+    {
+      "order": 200,
+      "isModule": false,
+      "path": "layers/source/XML/Text/RELIGIONS.xml.yaml"
+    },
+    {
+      "order": 201,
+      "isModule": false,
+      "path": "layers/source/XML/Text/RELIGIONS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 202,
+      "isModule": false,
+      "path": "layers/source/XML/Text/RESSOURCES.xml.yaml"
+    },
+    {
+      "order": 203,
+      "isModule": false,
+      "path": "layers/source/XML/Text/RESSOURCES_PEDIA.xml.yaml"
+    },
+    {
+      "order": 204,
+      "isModule": false,
+      "path": "layers/source/XML/Text/REVOLUTIONS.xml.yaml"
+    },
+    {
+      "order": 205,
+      "isModule": false,
+      "path": "layers/source/XML/Text/STRATEGIES.xml.yaml"
+    },
+    {
+      "order": 206,
+      "isModule": false,
+      "path": "layers/source/XML/Text/STRATEGIES_PEDIA.xml.yaml"
+    },
+    {
+      "order": 207,
+      "isModule": false,
+      "path": "layers/source/XML/Text/TECHNOLOGIES.xml.yaml"
+    },
+    {
+      "order": 208,
+      "isModule": false,
+      "path": "layers/source/XML/Text/TECHNOLOGIES_PEDIA.xml.yaml"
+    },
+    {
+      "order": 209,
+      "isModule": false,
+      "path": "layers/source/XML/Text/TECHNOLOGIES_STRATEGY.xml.yaml"
+    },
+    {
+      "order": 210,
+      "isModule": false,
+      "path": "layers/source/XML/Text/UNITS.xml.yaml"
+    },
+    {
+      "order": 211,
+      "isModule": false,
+      "path": "layers/source/XML/Text/UNITS_PEDIA.xml.yaml"
+    },
+    {
+      "order": 212,
+      "isModule": false,
+      "path": "layers/source/XML/Text/UNITS_STRATEGY.xml.yaml"
+    },
+    {
+      "order": 213,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4AutomateInfos.xml.yaml"
+    },
+    {
+      "order": 214,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4BuildInfos.xml.yaml"
+    },
+    {
+      "order": 215,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4CommandInfos.xml.yaml"
+    },
+    {
+      "order": 216,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4ControlInfos.xml.yaml"
+    },
+    {
+      "order": 217,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4FormationInfos.xml.yaml"
+    },
+    {
+      "order": 218,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4MissionInfos.xml.yaml"
+    },
+    {
+      "order": 219,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4PromotionInfos.xml.yaml"
+    },
+    {
+      "order": 220,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4SpawnInfos.xml.yaml"
+    },
+    {
+      "order": 221,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4SpecialUnitInfos.xml.yaml"
+    },
+    {
+      "order": 222,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4UnitClassInfos.xml.yaml"
+    },
+    {
+      "order": 223,
+      "isModule": false,
+      "path": "layers/source/XML/Units/CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 224,
+      "isModule": false,
+      "path": "layers/bts/XML/Units/Civ4AnimationInfos.xml.yaml"
+    },
+    {
+      "order": 225,
+      "isModule": false,
+      "path": "layers/bts/XML/Units/Civ4AnimationPathInfos.xml.yaml"
+    },
+    {
+      "order": 226,
+      "isModule": false,
+      "path": "layers/bts/XML/Units/Civ4EntityEventInfos.xml.yaml"
+    },
+    {
+      "order": 227,
+      "isModule": true,
+      "path": "layers/source/Modules/Interface/Default_UI_CIV4ArtDefines_Misc.xml.yaml"
+    },
+    {
+      "order": 228,
+      "isModule": true,
+      "path": "layers/source/Modules/Interface/colorSets.xml.yaml"
+    },
+    {
+      "order": 229,
+      "isModule": true,
+      "path": "layers/source/Modules/Modern_flags/art/CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 230,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Barbarian_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 231,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Art/CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 232,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/Barbarossa/Barbarossa_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 233,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/Barbarossa/Barbarossa_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 234,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/Barbarossa/Barbarossa_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 235,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/Barbarossa/Barbarossa_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 236,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/Barbarossa/Barbarossa_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 237,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 238,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/Frankish/Civilizations/CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 239,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_00_main/modInfo.xml.yaml"
+    },
+    {
+      "order": 240,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Alexander_the _Great/Alexander_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 241,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Francisco_Franco/Franco_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 242,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Isabellla/Isabella_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 243,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Jayavarman/Jayavarman_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 244,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/JoanofArc/JoanofArc_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 245,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Masinissa/Masinissa_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 246,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/MasinissaAlt/Masinissa_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 247,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Menelik_II/Menelik_II_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 248,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Mongkut/Mongkut_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 249,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Selassie/Hselassie_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 250,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/Yekaterina/Yekaterina_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 251,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_02_alternate_LH_graphics/modInfo.xml.yaml"
+    },
+    {
+      "order": 252,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Albania_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 253,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Albania_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 254,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Albania_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 255,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Albania_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 256,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Albania_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 257,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Gjergj/Gjergj_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 258,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Gjergj/Gjergj_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 259,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Gjergj/Gjergj_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 260,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Gjergj/Gjergj_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 261,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Illogor/Illogor_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 262,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Illogor/Illogor_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 263,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Kalorse/Kalorse_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 264,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Kalorse/Kalorse_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 265,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Kalorse/Kalorse_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 266,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Soundpack/Albania_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 267,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Soundpack/Albania_Audio3DScripts.xml.yaml"
+    },
+    {
+      "order": 268,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Soundpack/Albania_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 269,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Teuta/Teuta_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 270,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Teuta/Teuta_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 271,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Teuta/Teuta_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 272,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Albania/Teuta/Teuta_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 273,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Alfred/Alfred_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 274,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Alfred/Alfred_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 275,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Alfred/Alfred_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 276,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Alfred/Alfred_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 277,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/AngloSaxons_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 278,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/AngloSaxons_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 279,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/AngloSaxons_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 280,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/AngloSaxons_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 281,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/AngloSaxons_Civ4GameText.xml.yaml"
+    },
+    {
+      "order": 282,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Harold/Godwinson_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 283,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Harold/Godwinson_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 284,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Harold/Godwinson_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 285,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Harold/Godwinson_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 286,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Huskarl/Huskarl_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 287,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Huskarl/Huskarl_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 288,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Huskarl/Huskarl_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 289,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/MootHill/MootHill_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 290,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/MootHill/MootHill_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 291,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/MootHill/MootHill_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 292,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Soundpack/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 293,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/AngloSaxons/Soundpack/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 294,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Bulgaria_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 295,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Bulgaria_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 296,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Bulgaria_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 297,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Bulgaria_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 298,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Bulgaria_Civ4GameText.xml.yaml"
+    },
+    {
+      "order": 299,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Chitalishte/Chitalishte_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 300,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Chitalishte/Chitalishte_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 301,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Chitalishte/Chitalishte_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 302,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Konnik/Konnik_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 303,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Konnik/Konnik_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 304,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Konnik/Konnik_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 305,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Simeon I/Simeon_I_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 306,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Simeon I/Simeon_I_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 307,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Simeon I/Simeon_I_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 308,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Simeon I/Simeon_I_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 309,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Soundpack/Bulgaria_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 310,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Soundpack/Bulgaria_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 311,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Stambolov/Stambolov_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 312,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Stambolov/Stambolov_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 313,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Stambolov/Stambolov_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 314,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Bulgaria/Stambolov/Stambolov_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 315,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Czech_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 316,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Czech_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 317,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Czech_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 318,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Czech_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 319,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Hus/Hus_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 320,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Hus/Hus_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 321,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Hus/Hus_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 322,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Hussite/Hussite_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 323,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Hussite/Hussite_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 324,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Masaryk/Masaryk_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 325,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Masaryk/Masaryk_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 326,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Masaryk/Masaryk_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 327,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Vysilac/Vysilac_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 328,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Vysilac/Vysilac_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 329,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Wenceslaus/Wenceslaus_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 330,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Wenceslaus/Wenceslaus_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 331,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Czech/Wenceslaus/Wenceslaus_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 332,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Canute/Canute_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 333,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Canute/Canute_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 334,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Canute/Canute_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 335,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Christian IV/Christian IV_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 336,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Christian IV/Christian IV_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 337,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Christian IV/Christian IV_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 338,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 339,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 340,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 341,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 342,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 343,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Denmark_CIV4UnitArtStyleTypeInfos.xml.yaml"
+    },
+    {
+      "order": 344,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Fiskerfartoj/Fiskerfartoj_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 345,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Fiskerfartoj/Fiskerfartoj_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 346,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Hof/Hof_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 347,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Hof/Hof_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 348,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Margrete/Margrete_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 349,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Margrete/Margrete_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 350,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Denmark/Margrete/Margrete_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 351,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Alaric/Alaric_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 352,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Alaric/Alaric_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 353,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Alaric/Alaric_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 354,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/GothicCavalry/GothicCavalry_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 355,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/GothicCavalry/GothicCavalry_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 356,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Goths_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 357,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Goths_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 358,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Goths_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 359,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Goths_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 360,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Plunder/Plunder_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 361,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Plunder/Plunder_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 362,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Theodoric/Theodoric_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 363,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Theodoric/Theodoric_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 364,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Goths/Theodoric/Theodoric_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 365,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Arpad/Arpad_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 366,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Arpad/Arpad_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 367,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Arpad/Arpad_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 368,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Hungary_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 369,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Hungary_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 370,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Hungary_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 371,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Hungary_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 372,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Huszar Cavalry/Huszar_Cavalry_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 373,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Huszar Cavalry/Huszar_Cavalry_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 374,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Kossuth/Kossuth_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 375,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Kossuth/Kossuth_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 376,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Kossuth/Kossuth_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 377,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Matthias/Matthias_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 378,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Matthias/Matthias_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 379,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Matthias/Matthias_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 380,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Soundpack/Hungary_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 381,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Soundpack/Hungary_Audio3DScripts.xml.yaml"
+    },
+    {
+      "order": 382,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Soundpack/Hungary_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 383,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Stephen/Stephen_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 384,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Stephen/Stephen_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 385,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Stephen/Stephen_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 386,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Vegvar/vegvar_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 387,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Vegvar/vegvar_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 388,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Hungary/Vegvar/vegvar_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 389,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Attila/Attila_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 390,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Attila/Attila_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 391,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Attila/Attila_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 392,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/CattleHerd/CattleHerd_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 393,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/CattleHerd/CattleHerd_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 394,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Huns_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 395,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Huns_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 396,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Huns_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 397,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Huns_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 398,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Ruga/Ruga_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 399,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Ruga/Ruga_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 400,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Ruga/Ruga_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 401,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Soundpack/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 402,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Soundpack/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 403,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Tarkan/Tarkan_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 404,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Huns/Tarkan/Tarkan_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 405,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Boru/Boru_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 406,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Boru/Boru_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 407,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Boru/Boru_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 408,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Collins/Collins_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 409,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Collins/Collins_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 410,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Collins/Collins_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 411,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Fianna/Fianna_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 412,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Fianna/Fianna_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 413,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ireland_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 414,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ireland_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 415,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ireland_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 416,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ireland_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 417,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Niall/Niall_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 418,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Niall/Niall_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 419,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Niall/Niall_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 420,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ringfort/Ringfort_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 421,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Ringfort/Ringfort_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 422,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Soundpack/Ireland_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 423,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Soundpack/Ireland_Audio3DScripts.xml.yaml"
+    },
+    {
+      "order": 424,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Ireland/Soundpack/Ireland_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 425,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/AxemanLatvia/AxemanLatvia_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 426,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/AxemanLatvia/AxemanLatvia_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 427,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/BoulevardCircle/BoulevardCircle_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 428,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/BoulevardCircle/BoulevardCircle_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 429,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Cakste/Cakste_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 430,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Cakste/Cakste_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 431,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Cakste/Cakste_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 432,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 433,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 434,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 435,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 436,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 437,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Latvia_CIV4UnitArtStyleTypeInfos.xml.yaml"
+    },
+    {
+      "order": 438,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Magnus/Magnus_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 439,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Magnus/Magnus_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 440,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Latvia/Magnus/Magnus_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 441,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Jogaila/Jogaila_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 442,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Jogaila/Jogaila_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 443,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Jogaila/Jogaila_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 444,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Lithuania_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 445,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Lithuania_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 446,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Lithuania_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 447,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Lithuania_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 448,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Mindaugas/Mindaugas_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 449,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Mindaugas/Mindaugas_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 450,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Mindaugas/Mindaugas_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 451,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Piliakalnis/Piliakalnis_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 452,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Piliakalnis/Piliakalnis_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 453,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Soundpack/Lithuania_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 454,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Soundpack/Lithuania_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 455,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Vytis/Vytis_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 456,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lithuania/Vytis/Vytis_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 457,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Alboin/Alboin_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 458,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Alboin/Alboin_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 459,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Alboin/Alboin_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 460,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Cloister/Cloister_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 461,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Cloister/Cloister_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 462,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/FSforza/FSforza_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 463,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/FSforza/FSforza_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 464,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/FSforza/FSforza_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 465,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Gasindii/Gasindii_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 466,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Gasindii/Gasindii_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 467,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Lombards_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 468,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Lombards_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 469,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Lombards_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 470,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Lombards_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 471,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Soundpack/Lombards_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 472,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Lombards/Soundpack/Lombards_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 473,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Drekar/Drekar_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 474,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Drekar/Drekar_Civ4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 475,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/FishMarket/FishMarket_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 476,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/FishMarket/FishMarket_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 477,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakon/Haakon_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 478,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakon/Haakon_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 479,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakon/Haakon_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 480,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakonson/Haakonson_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 481,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakonson/Haakonson_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 482,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Haakonson/Haakonson_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 483,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Harald Hardrada/HaraldHardrada_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 484,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Harald Hardrada/HaraldHardrada_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 485,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Harald Hardrada/HaraldHardrada_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 486,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Harald Hardrada/HaraldHardrada_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 487,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Norway_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 488,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Norway_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 489,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Norway_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 490,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Norway/Norway_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 491,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Bridei/Bridei_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 492,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Bridei/Bridei_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 493,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Bridei/Bridei_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 494,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Calgacus/Calgacus_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 495,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Calgacus/Calgacus_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 496,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Calgacus/Calgacus_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 497,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Crannog/Crannog_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 498,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Crannog/Crannog_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 499,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Cruithni/Cruithni_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 500,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Cruithni/Cruithni_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 501,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Picts_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 502,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Picts_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 503,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Picts_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 504,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Picts_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 505,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Soundpack/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 506,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Picts/Soundpack/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 507,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Casimir/Casimir_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 508,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Casimir/Casimir_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 509,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Casimir/Casimir_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 510,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Folwark/Folwark_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 511,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Folwark/Folwark_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 512,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Heavy Hussar/Heavy_Hussar_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 513,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Heavy Hussar/Heavy_Hussar_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 514,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Poland_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 515,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Poland_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 516,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Poland_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 517,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Poland_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 518,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Sobieski/Sobieski_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 519,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Sobieski/Sobieski_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 520,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Sobieski/Sobieski_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 521,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Soundpack/Poland_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 522,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Soundpack/Poland_Audio3DScripts.xml.yaml"
+    },
+    {
+      "order": 523,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Poland/Soundpack/Poland_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 524,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Broch/Broch_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 525,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Broch/Broch_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 526,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Highlander/Highlander_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 527,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Highlander/Highlander_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 528,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Mary_Stuart/Mary_Stuart_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 529,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Mary_Stuart/Mary_Stuart_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 530,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Mary_Stuart/Mary_Stuart_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 531,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Robert I/Robert_I_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 532,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Robert I/Robert_I_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 533,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Robert I/Robert_I_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 534,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Scotland_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 535,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Scotland_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 536,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Scotland_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 537,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Scotland_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 538,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Soundpack/Scotland_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 539,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Scotland/Soundpack/Scotland_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 540,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Dufour/Dufour_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 541,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Dufour/Dufour_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 542,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Dufour/Dufour_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 543,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Soundpack/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 544,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Soundpack/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 545,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/SwissPikeman/Swiss_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 546,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/SwissPikeman/Swiss_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 547,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Switzerland_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 548,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Switzerland_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 549,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Switzerland_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 550,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Switzerland_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 551,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Wettstein/Wettstein_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 552,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Wettstein/Wettstein_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 553,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Wettstein/Wettstein_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 554,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Zoll/Zoll_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 555,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Switzerland/Zoll/Zoll_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 556,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Art/CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 557,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Art/CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 558,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Art/CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 559,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Art/CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 560,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Audio/Vandals_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 561,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Audio/Vandals_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 562,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 563,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 564,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 565,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4GameText.xml.yaml"
+    },
+    {
+      "order": 566,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 567,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 568,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Vandals/Vandals_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 569,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/CortegianeOneste/CortegianeOneste_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 570,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/CortegianeOneste/CortegianeOneste_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 571,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Dandolo/Dandolo_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 572,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Dandolo/Dandolo_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 573,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Dandolo/Dandolo_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 574,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Galleas/Gallaes_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 575,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Galleas/Gallaes_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 576,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Gritti/Gritti_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 577,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Gritti/Gritti_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 578,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Gritti/Gritti_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 579,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Venezia_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 580,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Venezia_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 581,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Venezia_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 582,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Venice/Venezia_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 583,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Caer/Caer_CIV4ArtDefines_Building.xml.yaml"
+    },
+    {
+      "order": 584,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Caer/Caer_CIV4BuildingInfos.xml.yaml"
+    },
+    {
+      "order": 585,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Llywelyn/Llywelyn_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 586,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Llywelyn/Llywelyn_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 587,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Llywelyn/Llywelyn_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 588,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/OwainGlyndwr/OwainGlyndwr_CIV4ArtDefines_Leaderhead.xml.yaml"
+    },
+    {
+      "order": 589,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/OwainGlyndwr/OwainGlyndwr_CIV4DiplomacyInfos.xml.yaml"
+    },
+    {
+      "order": 590,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/OwainGlyndwr/OwainGlyndwr_CIV4LeaderHeadInfos.xml.yaml"
+    },
+    {
+      "order": 591,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Soundpack/Wales_Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 592,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Soundpack/Wales_AudioDefines.xml.yaml"
+    },
+    {
+      "order": 593,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Wales_CIV4ArtDefines_Civilization.xml.yaml"
+    },
+    {
+      "order": 594,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Wales_CIV4CivilizationInfos.xml.yaml"
+    },
+    {
+      "order": 595,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Wales_CIV4ColorVals.xml.yaml"
+    },
+    {
+      "order": 596,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Wales_CIV4PlayerColorInfos.xml.yaml"
+    },
+    {
+      "order": 597,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Welsh Longbowman/Welsh_Longbowman_CIV4ArtDefines_Unit.xml.yaml"
+    },
+    {
+      "order": 598,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/Wales/Welsh Longbowman/Welsh_Longbowman_CIV4UnitInfos.xml.yaml"
+    },
+    {
+      "order": 599,
+      "isModule": true,
+      "path": "layers/source/Modules/Source_MP_11_Europe/modInfo.xml.yaml"
+    },
+    {
+      "order": 600,
+      "isModule": true,
+      "path": "layers/source/Modules/MoreMusic/XML/Audio/Audio2DScripts.xml.yaml"
+    },
+    {
+      "order": 601,
+      "isModule": true,
+      "path": "layers/source/Modules/MoreMusic/XML/Audio/AudioDefines.xml.yaml"
+    },
+    {
+      "order": 602,
+      "isModule": true,
+      "path": "layers/source/Modules/MoreMusic/XML/CIV4EraInfos.xml.yaml"
+    },
+    {
+      "order": 603,
+      "isModule": true,
+      "path": "layers/source/Modules/MoreMusic/modInfo.xml.yaml"
+    }
+  ],
+  "defineFiles": [
+    "source/XML/GlobalDefines.xml",
+    "source/XML/GlobalDefinesAlt.xml",
+    "source/XML/ParallelMaps_GlobalDefines.xml",
+    "source/XML/source_GlobalDefines.xml",
+    "source/XML/BBAI_Game_Options_GlobalDefines.xml",
+    "source/XML/BBAI_AI_Variables_GlobalDefines.xml",
+    "source/XML/TechDiffusion_GlobalDefines.xml",
+    "source/XML/LeadFromBehind_GlobalDefines.xml",
+    "source/res/Fonts/GameFont_GlobalDefines.xml",
+    "source/XML/BUG_GlobalDefines.xml",
+    "source/XML/PythonCallbackDefines.xml"
+  ]
+}
