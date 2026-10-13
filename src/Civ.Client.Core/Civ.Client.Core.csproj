@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Civ.Core\Civ.Core.csproj" />
-    <ProjectReference Include="..\Civ.BaseGame\Civ.BaseGame.csproj" />
   </ItemGroup>
 </Project>
