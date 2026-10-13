@@ -57,9 +57,31 @@ Status describes executable rules, not imported data. All eight mods load their 
 
 ## Cities
 
-- **Implemented:** the existing exact-building requirement predicate. Field: city `Buildings`.
-- **Not started:** founding, food, growth, culture, borders, work assignments, queues, buildings, happiness and health.
-  Cities must consume `IPlotYieldService` and apply `FeatureProduction` grants to saved overflow state.
+- **Implemented:** settler founding, hex spacing, terrain checks, civilization names, first-city buildings and palace, and initial plot culture.
+- **Implemented:** radius-two work, culture-based third-ring access, deterministic governor weights, manual assignments, specialist slots and free specialists.
+  Building and technology slot changes use modifier keys. Generic free specialists currently use the citizen type.
+- **Implemented:** city-center minima, worked plot yields, specialist output, local/global/area building effects, and direct commerce in hundredths.
+  Common fields include yield/commerce changes and modifiers, technology changes, connected bonus changes, and specialist changes.
+  Cities exposes raw commerce, direct commerce, and commerce percentages separately. It does not operate sliders or the treasury.
+- **Implemented:** food consumption, health penalties, fixed-point food waste, sequential growth thresholds, retained food history, starvation, and avoid-growth.
+  Growth occurs once per turn, before culture and production. Third-ring access applies the imported growth surcharge.
+- **Partial:** happiness and health ledgers cover population, handicap, city count, buildings, connected bonuses, specialists, terrain, and features.
+  War weariness is an external modifier hook. Military presence, distance anger, occupation, religion, taxation, and temporary anger remain absent.
+- **Implemented:** set/append/remove production commands, paused item progress, item modifiers, normalized capped overflow, feature grants, buildings, and Core unit creation.
+  Completion rechecks world/team/player class limits in city-id order. Unit creation supplies experience and a domain event.
+- **Partial:** eligibility covers requirements, civilization replacements, class limits, culture wonder capacity, obsolescence, latitude, population, coast, and river.
+  Religion and power predicates fail closed. Automatic buildings, active-civic disabling, decay, hurry, draft, projects, and processes remain absent.
+  One queue item completes per city per turn. Excess above the overflow cap does not convert to gold yet.
+- **Partial:** city culture keeps hundredths. Plot culture uses hex distance and the source level/rate equation.
+  Ownership preserves incumbent ties, then uses player-id order. Capture, terrain-obstructed spread, and isolated-coast eligibility remain absent.
+- **Partial:** maintenance provides distance/government-center and exponential city-count costs in hundredths, including early-turn reduction.
+  Hex map diameter normalizes distance. A fixed-point root replaces floating-point exponentiation.
+  Colony, vassal, corporation, and connectedness costs remain absent. Economy must charge the returned total.
+- **Implemented:** specialist/building great-person rates, historical type pools, weighted births, speed/era thresholds, and saved player/team threshold progression.
+  Combat great people and specialist settlement remain separate future mechanics.
+- **Partial:** current-era growth uses `CityPlayerState.CurrentEra`, with starting-era fallback.
+  Research must update that state. AI per-era growth/cost factors and flexible difficulty remain absent.
+- **Not started:** building power, free-building propagation, replacement effects, original-owner commerce, calendar doubling, and scripted rewards.
 
 ## Military
 
@@ -78,7 +100,8 @@ Status describes executable rules, not imported data. All eight mods load their 
   Fields: civilization `Playable/Leaders/StartingTechs/StartingUnits/UnitOverrides/StartingCivics`,
   leader identity, unit `DefaultUnit/Requirements/Domain/Cost/UnitAiTypes/WorkRate/Strength/Moves/NoBadGoodies/CityDefense`.
   Initial units share one tile. Role valuation approximates the source military AI.
-- **Not started:** trait modifiers, naming services, assimilation and civilization-specific building selection.
+- **Implemented in Cities:** civilization city names and construction class replacements.
+- **Not started:** trait modifier sources, assimilation, and starting civic defaults.
 
 ## Validation
 

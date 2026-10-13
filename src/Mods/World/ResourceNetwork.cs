@@ -7,20 +7,23 @@ namespace Civ.Mods.World;
 /// <summary>CvPlotGroup connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
 internal sealed class ResourceNetwork : IResourceNetwork
 {
-    public int ConnectedCount(Simulation sim, int player, int city, string bonus)
+    public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
+    public IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city)
     {
+        var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
-        if (target is null || target.Owner != player) return 0;
+        if (target is null || target.Owner != player) return counts;
         var modes = Modes(sim, player);
         var start = sim.State.Grid.TileAt(target.Position);
         var seen = new bool[modes.Length];
         var queue = new Queue<TileId>();
         queue.Enqueue(start);
         seen[start.Value] = true;
-        int count = 0;
+
         while (queue.TryDequeue(out var tile))
         {
-            if (ConnectedBonus(sim, player, tile, bonus)) count++;
+            if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
+                counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
             foreach (var neighbor in sim.State.Grid.Neighbors(tile))
             {
                 if (seen[neighbor.Value] || !Edge(sim, tile, neighbor, modes)) continue;
@@ -28,7 +31,7 @@ internal sealed class ResourceNetwork : IResourceNetwork
                 queue.Enqueue(neighbor);
             }
         }
-        return count;
+        return counts;
     }
     [Flags] private enum NetworkMode { None = 0, Route = 1, River = 2, Water = 4, City = 8 }
     private static NetworkMode[] Modes(Simulation sim, int player)
@@ -92,7 +95,11 @@ internal sealed class BonusEvaluator(IResourceNetwork network) : IContentRequire
     public Type DefinitionType => typeof(S.BonusDef);
     public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
     {
-        if (leaf.Param == 2) return "Vicinity resources require Cities scope rules";
+        if (leaf.Param == 2)
+        {
+            var service = context.Sim.Content.Services.Get<ICityRequirementService>().SingleOrDefault();
+            return service is null ? "Vicinity resources require Cities scope rules" : service.Evaluate(leaf, context);
+        }
         var cities = context.City is { } city ? new[] { city } : context.Sim.State.Cities.Where(c => c.Owner == context.Player);
         int count = cities.Select(c => network.ConnectedCount(context.Sim, context.Player, c.Id, leaf.Id)).DefaultIfEmpty().Max();
         return count >= (leaf.Count ?? 1) ? null : $"Required connected bonus: {leaf.Id}";

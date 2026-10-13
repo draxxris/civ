@@ -50,7 +50,7 @@ Teams hold members, known techs, a research target, progress per tech and war re
 Changing a research target retains its progress. `GameState.SetWar` keeps the war matrix symmetric.
 
 Cities include a generic `ProductionQueue` of `ProductionOrder(Kind, ContentId, Progress)` entries.
-BaseGame still uses its existing building/training fields. The future cities mod will own queue processing and overflow rules.
+BaseGame still uses its existing building/training fields. Cities owns feature queues, paused item progress, completion snapshots, and normalized overflow.
 
 `GameState` contains plain data and rebuildable lookup caches. Caches do not enter saves or hashes.
 `UnitById`, `UnitsAt`, `CityById` and `CityAt` use indexes.
@@ -203,6 +203,40 @@ The importer writes only its declared definition families and rejects that reser
 
 See [mechanics-status.md](mechanics-status.md) for consumed fields and remaining mechanics.
 
+## City services
+
+Cities registers Core query contracts. All queries are RNG-free and do not change authoritative state.
+`Calculate(Simulation, int city)` returns ledgers through `ICityYieldService`, `ICityWellbeingService`, `ICityGrowthService`,
+`ICityProductionService`, `ICityMaintenanceService`, and `ICityGreatPeopleService`.
+Production calculation additionally takes `(string kind, string content)`.
+`ICityProductionService.Validate` returns structured requirement failures with the same arguments.
+`ICityWorkService` supplies `Radius`, `WorkArea`, assignment validation, and authoritative `Assign`.
+
+`CityYieldResult.Yields.Commerce` is raw whole commerce. `DirectCommerceHundredths` bypasses sliders.
+`CommercePercent` contains additive percentage bonuses, not final rates.
+Economy allocates raw commerce, adds direct contributions, and applies each commerce modifier.
+Economy can register one `ICityCultureSource.CultureHundredths(Simulation, int city)` provider for the final culture rate.
+Without that provider, Cities applies culture modifiers to direct culture only.
+
+Commands use `cities:found_city`, `cities:set_city_work`, and `cities:set_city_production` identities.
+The Core types are `FoundCityWithSettlerCommand`, `SetCityAssignmentsCommand`, and `SetCityProductionCommand`.
+Queue kinds are `cities:building` and `cities:unit`. Cities completes at most one item per city per turn.
+Growth and culture precede production. Completion effects follow production work in city-id order.
+
+`CityRuleState` and `CityPlayerState` contain saved feature-rule state.
+Modifier sources use City scope for local effects and Player scope for player growth/maintenance percentages.
+City keys include `cities:happiness`, `cities:health`, `cities:war_weariness`, `cities:food_kept_percent`, and `cities:growth_percent`.
+Specialist keys use `cities:slots:<specialist-id>`, `cities:free:<specialist-id>`, and `cities:free_specialists`.
+Other keys cover maintenance percentages, production percentages, experience, and great-person percentages.
+See the Cities implementation and [mechanics-status.md](mechanics-status.md) for supported effects and deferred rules.
+
+Food waste uses fixed-point recurrence with scale one billion. City-count maintenance uses a fixed-point root with scale one trillion.
+These deterministic adaptations can differ from native floating-point results near integer boundaries.
+Maintenance uses the maximum wrapped hex distance as the map normalization.
+Plot culture uses hex distance without terrain obstacles. Ownership keeps an incumbent on ties, then selects the lowest player id.
+Governor weights live in the hand-authored hex sidecar. The governor orders equal plot scores by tile id.
+No feature mod references the BaseGame assembly. The client still uses the legacy ruleset.
+
 ## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
 A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.
@@ -278,7 +312,7 @@ The handshake identifies content, not initial setup. State hashes detect setup d
 ## V1 content mods
 
 `src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, and Peoples.
-These mods have no load-order dependencies yet. Foundation and World now register setup and gameplay services. Each manifest declares its cross-mod content providers in `references`.
+These mods have no load-order dependencies yet. Foundation, World, and Cities now register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
 References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
 

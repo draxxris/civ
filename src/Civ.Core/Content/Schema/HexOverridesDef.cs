@@ -31,6 +31,9 @@ public sealed class HexOverridesDef : ContentDef
     public int StartQualityPercent { get; init; }
     public int UnitSight { get; init; }
     public int CitySight { get; init; }
+    public int GovernorFoodWeight { get; init; } = 10;
+    public int GovernorProductionWeight { get; init; } = 6;
+    public int GovernorCommerceWeight { get; init; } = 4;
     [ContentReference(typeof(FeatureDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, FeatureClimate> FeatureClimate { get; init; } = ImmutableDictionary<string, FeatureClimate>.Empty;
 }

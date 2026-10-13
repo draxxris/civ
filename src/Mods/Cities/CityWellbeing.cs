@@ -1,0 +1,78 @@
+using Civ.Content;
+using Civ.Game;
+using S = Civ.Content.Schema;
+
+namespace Civ.Mods.Cities;
+
+internal sealed class CityWellbeingService : ICityWellbeingService
+{
+    public CityWellbeing Calculate(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var effects = CityData.Effects(sim, city);
+        var lines = new List<LedgerLine>();
+        Add(lines, "cities:handicap", "happiness", CityData.Handicap(sim).HappyBonus);
+        Add(lines, "cities:handicap", "health", CityData.Handicap(sim).HealthBonus);
+        Add(lines, "cities:population", "happiness", -city.Population);
+        Add(lines, "cities:city_count", "happiness", -CityData.Owned(sim, city.Owner).Count() / Math.Max(1, CityData.World(sim).NumCitiesUnhappinessDivisor));
+        bool noPopulation = CityData.Effect(effects, "no_unhealthy_population") > 0;
+        if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
+        if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
+            Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
+        AddModifiers(effects, lines);
+        AddEnvironment(sim, city, lines);
+        AddSpecialists(sim, city, effects, lines);
+        var ledger = new Ledger(lines);
+        int happy = (int)ledger.Total("cities:happiness_good"), unhappy = (int)ledger.Total("cities:happiness_bad");
+        int healthy = (int)ledger.Total("cities:health_good"), unhealthy = (int)ledger.Total("cities:health_bad");
+        if (CityData.Effect(effects, "no_unhappiness") > 0) unhappy = 0;
+        return new(happy, unhappy, Math.Clamp(unhappy - happy, 0, city.Population), healthy, unhealthy, Math.Max(0, unhealthy - healthy), ledger);
+    }
+    private static void Add(List<LedgerLine> lines, string source, string kind, long value)
+    {
+        if (value != 0) lines.Add(new(source, "cities:" + kind + (value > 0 ? "_good" : "_bad"), Math.Abs(value)));
+    }
+    private static void AddModifiers(ModifierSink effects, List<LedgerLine> lines)
+    {
+        foreach (var line in effects.Ledger.Lines)
+        {
+            if (line.Key == "cities:happiness") Add(lines, line.Source, "happiness", line.Amount);
+            if (line.Key == "cities:health") Add(lines, line.Source, "health", line.Amount);
+            if (line.Key == "cities:unhappiness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
+            if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
+        }
+    }
+    private static void AddEnvironment(Simulation sim, City city, List<LedgerLine> lines)
+    {
+        long featureGood = 0, featureBad = 0, terrainGood = 0, terrainBad = 0;
+        foreach (var tile in sim.State.Grid.Range(CityData.Tile(sim, city), 3))
+        {
+            var plot = sim.State.Plots[tile.Value];
+            int terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain).HealthPercent;
+            terrainGood += Math.Max(0, terrain); terrainBad += Math.Min(0, terrain);
+            if (plot.Feature is not { } id) continue;
+            int feature = sim.Content.Get<S.FeatureDef>(id).HealthPercent;
+            featureGood += Math.Max(0, feature); featureBad += Math.Min(0, feature);
+        }
+        Add(lines, "cities:features", "health", featureGood / 100);
+        Add(lines, "cities:features", "health", featureBad * Math.Clamp(city.Population - 2, 0, 5) / 500);
+        Add(lines, "cities:terrain", "health", terrainGood / 100);
+        Add(lines, "cities:terrain", "health", terrainBad / 100);
+    }
+    private static void AddSpecialists(Simulation sim, City city, ModifierSink effects, List<LedgerLine> lines)
+    {
+        long health = 0, happy = 0;
+        foreach (var pair in Specialists.All(sim, city, effects))
+        {
+            var def = sim.Content.Get<S.SpecialistDef>(pair.Key);
+            health += def.HealthPercent * pair.Value; happy += def.HappinessPercent * pair.Value;
+        }
+        foreach (var building in CityData.Active(sim, city))
+        {
+            health += building.HealthPercentPerPopulation * city.Population;
+            happy += building.HappinessPercentPerPopulation * city.Population;
+        }
+        Add(lines, "cities:population_effects", "health", health / 100);
+        Add(lines, "cities:population_effects", "happiness", happy / 100);
+    }
+}

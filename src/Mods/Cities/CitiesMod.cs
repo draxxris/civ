@@ -1,17 +1,53 @@
+using Civ.Content;
 using Civ.Content.Schema;
+using Civ.Game;
 using Civ.Modding;
 
 namespace Civ.Mods.Cities;
 
-/// <summary>Cities definitions and requirement identities. Gameplay systems follow separately.</summary>
+/// <summary>City rules communicate only through Core services, modifiers, queues and events.</summary>
 public sealed class CitiesMod : IMod
 {
     public void Register(IModContext context)
     {
         ContentRegistration.Load<BuildingCategoryDef>(context, "building-category.json");
-        ContentRegistration.Load<BuildingDef>(context, "building.json");
+        ContentRegistration.Load<Civ.Content.Schema.BuildingDef>(context, "building.json");
         ContentRegistration.Load<HurryDef>(context, "hurry.json");
-        ContentRegistration.Evaluator<BuildingDef>(context, "building", (leaf, subject) => subject.City?.Buildings.Count(id => id == leaf.Id) >= (leaf.Count ?? 1));
-        ContentRegistration.Evaluator<BuildingDef>(context, "building-class");
+        context.RegisterService<IRequirementEvaluator>("building_requirements", new BuildingRequirement("building"));
+        context.RegisterService<IRequirementEvaluator>("class_requirements", new BuildingRequirement("building-class"));
+        context.RegisterStateComponent<CityRuleState>("city_state");
+        context.RegisterStateComponent<CityPlayerState>("player_state");
+        context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
+        var yields = new CityYields();
+        var wellbeing = new CityWellbeingService();
+        var work = new CityWork(wellbeing);
+        var growth = new CityGrowth(yields, wellbeing, work);
+        var culture = new CityCulture(yields, work);
+        var production = new CityProduction(yields, growth);
+        var greatPeople = new CityGreatPeople();
+        context.RegisterService<ICityYieldService>("yields", yields);
+        context.RegisterService<ICityWellbeingService>("wellbeing", wellbeing);
+        context.RegisterService<ICityWorkService>("work", work);
+        context.RegisterService<ICityGrowthService>("growth", growth);
+        context.RegisterService<ICityProductionService>("production", production);
+        context.RegisterService<ICityMaintenanceService>("maintenance", new CityMaintenance());
+        context.RegisterService<ICityGreatPeopleService>("great_people", greatPeople);
+        context.RegisterService<ICityRequirementService>("requirements", new CityRequirements(work));
+        context.RegisterService<ICityCommandService>("commands", new CityCommands(production, work));
+        context.RegisterCommand<FoundCityWithSettlerCommand>("found_city");
+        context.RegisterCommand<SetCityAssignmentsCommand>("set_city_work");
+        context.RegisterCommand<SetCityProductionCommand>("set_city_production");
+        context.TurnSystems.Register(new AssignWorkPhase(work));
+        context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run));
+        context.TurnSystems.Register(new CityPhase("culture", TurnPhase.CityCulture, culture.Accumulate));
+        context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread));
+        context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
+        context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
+        context.TurnSystems.Register(new CityPhase("great_people", TurnPhase.CityPostProduction, greatPeople.Run));
+        context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
+        {
+            if (grant.City is { } id && sim.State.FindCity(id) is { } city && city.Owner == grant.Player)
+                CityData.Edit(sim, city).FeatureProduction += grant.Production;
+        });
     }
 }
