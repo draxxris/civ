@@ -1,0 +1,14 @@
+{
+  "id": "government",
+  "name": "Government",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Government.dll",
+  "dependencies": [],
+  "references": [
+    "cities",
+    "foundation",
+    "military",
+    "research",
+    "world"
+  ]
+}

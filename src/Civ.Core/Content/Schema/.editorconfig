@@ -1,0 +1,4 @@
+# Field units and shared conventions are documented in docs/content-schema.md.
+# Do not generate a repetitive XML comment for each declarative property.
+[*.cs]
+dotnet_diagnostic.CS1591.severity = none

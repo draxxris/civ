@@ -1,0 +1,46 @@
+[
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:domain_air",
+    "name": "Air Units",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:domain_immobile",
+    "name": "Immobile Units",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:domain_land",
+    "name": "Land Units",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:domain_sea",
+    "name": "Water Units",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

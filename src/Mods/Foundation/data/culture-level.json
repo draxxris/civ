@@ -1,0 +1,295 @@
+[
+  {
+    "cityDefenseModifier": 20,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_developing",
+    "maxNationalWonders": 2,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 2,
+    "maxWorldWonders": 2,
+    "name": "Developing",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 240,
+      "foundation:gamespeed_epic": 720,
+      "foundation:gamespeed_eternity": 1440,
+      "foundation:gamespeed_marathon": 960,
+      "foundation:gamespeed_normal": 480,
+      "foundation:gamespeed_quick": 360,
+      "foundation:gamespeed_snail": 1200
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 35,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_elegant",
+    "maxNationalWonders": 4,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 3,
+    "maxWorldWonders": 3,
+    "name": "Elegant",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:gameoption_realistic_culture_spread",
+              "kind": "game-option"
+            }
+          ]
+        }
+      ]
+    },
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 6000,
+      "foundation:gamespeed_epic": 18000,
+      "foundation:gamespeed_eternity": 36000,
+      "foundation:gamespeed_marathon": 24000,
+      "foundation:gamespeed_normal": 12000,
+      "foundation:gamespeed_quick": 9000,
+      "foundation:gamespeed_snail": 30000
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 10,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_fledgling",
+    "maxNationalWonders": 1,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 1,
+    "maxWorldWonders": 1,
+    "name": "Fledgling",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 20,
+      "foundation:gamespeed_epic": 60,
+      "foundation:gamespeed_eternity": 120,
+      "foundation:gamespeed_marathon": 80,
+      "foundation:gamespeed_normal": 40,
+      "foundation:gamespeed_quick": 30,
+      "foundation:gamespeed_snail": 100
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 45,
+    "cityRadius": 3,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_impressive",
+    "maxNationalWonders": 5,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 4,
+    "maxWorldWonders": 4,
+    "name": "Impressive",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:gameoption_realistic_culture_spread",
+              "kind": "game-option"
+            }
+          ]
+        }
+      ]
+    },
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 60000,
+      "foundation:gamespeed_epic": 180000,
+      "foundation:gamespeed_eternity": 360000,
+      "foundation:gamespeed_marathon": 240000,
+      "foundation:gamespeed_normal": 120000,
+      "foundation:gamespeed_quick": 90000,
+      "foundation:gamespeed_snail": 300000
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 40,
+    "cityRadius": 3,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_influential",
+    "maxNationalWonders": 4,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 3,
+    "maxWorldWonders": 3,
+    "name": "Influential",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 12000,
+      "foundation:gamespeed_epic": 36000,
+      "foundation:gamespeed_eternity": 72000,
+      "foundation:gamespeed_marathon": 48000,
+      "foundation:gamespeed_normal": 24000,
+      "foundation:gamespeed_quick": 18000,
+      "foundation:gamespeed_snail": 60000
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 50,
+    "cityRadius": 3,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_legendary",
+    "maxNationalWonders": 5,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 4,
+    "maxWorldWonders": 4,
+    "name": "Legendary",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 120000,
+      "foundation:gamespeed_epic": 360000,
+      "foundation:gamespeed_eternity": 720000,
+      "foundation:gamespeed_marathon": 480000,
+      "foundation:gamespeed_normal": 240000,
+      "foundation:gamespeed_quick": 180000,
+      "foundation:gamespeed_snail": 600000
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 0,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_none",
+    "maxNationalWonders": 0,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 0,
+    "maxWorldWonders": 0,
+    "name": "None",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 0,
+      "foundation:gamespeed_epic": 0,
+      "foundation:gamespeed_eternity": 0,
+      "foundation:gamespeed_marathon": 0,
+      "foundation:gamespeed_normal": 0,
+      "foundation:gamespeed_quick": 0,
+      "foundation:gamespeed_snail": 0
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 0,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_poor",
+    "maxNationalWonders": 1,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 1,
+    "maxWorldWonders": 1,
+    "name": "Poor",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 0,
+      "foundation:gamespeed_epic": 0,
+      "foundation:gamespeed_eternity": 0,
+      "foundation:gamespeed_marathon": 0,
+      "foundation:gamespeed_normal": 0,
+      "foundation:gamespeed_quick": 0,
+      "foundation:gamespeed_snail": 0
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 25,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_prominent",
+    "maxNationalWonders": 2,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 2,
+    "maxWorldWonders": 2,
+    "name": "Prominent",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:gameoption_realistic_culture_spread",
+              "kind": "game-option"
+            }
+          ]
+        }
+      ]
+    },
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 600,
+      "foundation:gamespeed_epic": 1800,
+      "foundation:gamespeed_eternity": 3600,
+      "foundation:gamespeed_marathon": 2400,
+      "foundation:gamespeed_normal": 1200,
+      "foundation:gamespeed_quick": 900,
+      "foundation:gamespeed_snail": 3000
+    },
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "cityDefenseModifier": 30,
+    "cityRadius": 2,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:culturelevel_refined",
+    "maxNationalWonders": 3,
+    "maxNationalWondersOCC": 8,
+    "maxTeamWonders": 3,
+    "maxWorldWonders": 2,
+    "name": "Refined",
+    "pedia": "",
+    "requirements": null,
+    "speedThresholds": {
+      "foundation:gamespeed_blitz": 1200,
+      "foundation:gamespeed_epic": 3600,
+      "foundation:gamespeed_eternity": 7200,
+      "foundation:gamespeed_marathon": 4800,
+      "foundation:gamespeed_normal": 2400,
+      "foundation:gamespeed_quick": 1800,
+      "foundation:gamespeed_snail": 6000
+    },
+    "strategy": "",
+    "unsupported": []
+  }
+]

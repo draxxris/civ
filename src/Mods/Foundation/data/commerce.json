@@ -1,0 +1,62 @@
+[
+  {
+    "aiWeightPercent": 25,
+    "era": null,
+    "flexiblePercent": false,
+    "help": "",
+    "icon": "Art/Interface/Buttons/Process/ProcessCulture.dds",
+    "id": "foundation:commerce_culture",
+    "initialHappiness": 10,
+    "initialPercent": 0,
+    "name": "Culture",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "aiWeightPercent": 25,
+    "era": null,
+    "flexiblePercent": false,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Process/ProcessCulture.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16",
+    "id": "foundation:commerce_espionage",
+    "initialHappiness": 0,
+    "initialPercent": 0,
+    "name": "Espionage",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "aiWeightPercent": 100,
+    "era": null,
+    "flexiblePercent": false,
+    "help": "",
+    "icon": "Art/Interface/Buttons/Process/ProcessWealth.dds",
+    "id": "foundation:commerce_gold",
+    "initialHappiness": 0,
+    "initialPercent": 50,
+    "name": "Gold",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "aiWeightPercent": 125,
+    "era": null,
+    "flexiblePercent": false,
+    "help": "",
+    "icon": "Art/Interface/Buttons/Process/ProcessResearch.dds",
+    "id": "foundation:commerce_research",
+    "initialHappiness": 0,
+    "initialPercent": 50,
+    "name": "Research",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

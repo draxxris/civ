@@ -1,0 +1,35 @@
+[
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:invisible_camouflage",
+    "name": "Special Hi-Tech units",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:invisible_stealth",
+    "name": "Stealth Ships",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:invisible_submarine",
+    "name": "Submarines",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

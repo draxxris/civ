@@ -1,0 +1,526 @@
+[
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 1,
+    "defensePercent": 10,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Coast.dds",
+    "id": "world:coast",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 1,
+    "name": "Coast",
+    "pedia": "\tThe coastline is where the land meets the sea or ocean. A precise line that can be called a coastline cannot be determined due to the dynamic nature of tides. The term \u0022coastal zone\u0022 can be used instead, which is a spatial zone where interaction of the sea and land processes occurs. Both the terms coast and coastal are often used to describe a geographic location or region; for example, New Zealand\u0027s West Coast, or the East and West Coasts of the United States. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 1,
+      "food": 3,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 25,
+    "canFoundCity": false,
+    "cultureDistance": 2,
+    "defensePercent": -25,
+    "era": null,
+    "foundCoast": true,
+    "foundFreshWater": true,
+    "graphicalOnly": false,
+    "healthPercent": -15,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Desert.dds",
+    "id": "world:desert",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 3,
+    "name": "Desert",
+    "pedia": "\tA desert is a landscape or region that receives an extremely low amount of precipitation, less than enough to support growth of most plants. Deserts are defined as areas with an average annual precipitation of less than 250 millimetres (10 in) per year, or as areas where more water is lost by evapotranspiration than falls as precipitation. In the K0ppen climate classification system, deserts are classed as BWh (hot desert) or BWk (temperate desert). In the Thornthwaite climate classification system, deserts would be classified as arid megathermal climates. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": true,
+    "cultureDistance": 0,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Grass.dds",
+    "id": "world:grass",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 1,
+    "name": "Grassland",
+    "pedia": "\tGrasslands are areas where the vegetation is dominated by grasses (Poaceae) and other herbaceous (non-woody) plants (forbs). However, sedge (Cyperaceae) and rush (Juncaceae) families can also be found. Grasslands occur naturally on all continents except Antarctica. In temperate latitudes, such as northwest Europe and the Great Plains and California in North America, native grasslands are dominated by perennial bunch grass species, whereas in warmer climates annual species form a greater component of the vegetation. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 2,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 1,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": true,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Hill.dds",
+    "id": "world:hill",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 1,
+    "name": "Hill",
+    "pedia": "\tA hill is a landform that extends above the surrounding terrain. Hills often have a distinct summit, although in areas with scarp/dip topography a hill may refer to a particular section of flat terrain without a massive summit (e.g. Box Hill). Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioType"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 1,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": true,
+    "foundFreshWater": true,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/BaseTerrain/marsh.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,2,2",
+    "id": "world:marsh",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 3,
+    "name": "Marsh",
+    "pedia": "Terrain Marsh Pedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": true,
+    "cultureDistance": 0,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": true,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\space.dds",
+    "id": "world:none",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 1,
+    "name": "Terrain None",
+    "pedia": "Terrain None Pedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 2,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ocean.dds",
+    "id": "world:ocean",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 2,
+    "name": "Ocean",
+    "pedia": "\tAn ocean is a major body of saline water, and a principal component of the hydrosphere. Approximately 71% of the Earth\u0027s surface (~3.6 x 10 8 km 2) is covered by ocean, a continuous body of water that is customarily divided into several principal oceans and smaller seas. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 1,
+      "food": 2,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 2,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": true,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\feature_peak.dds",
+    "id": "world:peak",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 1,
+    "name": "Peak",
+    "pedia": "\tPeak may refer to:A mountain peak, In topography, a summit is a point on a surface that is higher in elevation than all points immediately adjacent to it. Mathematically, a summit is a local maximum in elevation. The topographic terms \u0022acme\u0022, \u0022apex\u0022, \u0022peak\u0022, and \u0022zenith\u0022 are synonyms. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioType"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": true,
+    "cultureDistance": 0,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Plains.dds",
+    "id": "world:plains",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 1,
+    "name": "Plains",
+    "pedia": "\tPlains is the plural of plain, a geographical feature. It is a big flat area of a land.  Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 1,
+    "defensePercent": 10,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Coast.dds",
+    "id": "world:slimy_coast",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 1,
+    "name": "Coast",
+    "pedia": "\tThe coastline is where the land meets the sea or ocean. A precise line that can be called a coastline cannot be determined due to the dynamic nature of tides. The term \u0022coastal zone\u0022 can be used instead, which is a spatial zone where interaction of the sea and land processes occurs. Both the terms coast and coastal are often used to describe a geographic location or region; for example, New Zealand\u0027s West Coast, or the East and West Coasts of the United States. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 1,
+      "food": 3,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 0,
+    "canFoundCity": false,
+    "cultureDistance": 2,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": true,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ocean.dds",
+    "id": "world:slimy_ocean",
+    "impassable": false,
+    "isWater": true,
+    "movementCost": 2,
+    "name": "Ocean",
+    "pedia": "\tAn ocean is a major body of saline water, and a principal component of the hydrosphere. Approximately 71% of the Earth\u0027s surface (~3.6 x 10 8 km 2) is covered by ocean, a continuous body of water that is customarily divided into several principal oceans and smaller seas. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 0,
+    "seeThrough": 0,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 1,
+      "food": 2,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 50,
+    "canFoundCity": false,
+    "cultureDistance": 3,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": true,
+    "foundFreshWater": true,
+    "graphicalOnly": false,
+    "healthPercent": -15,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ice.dds",
+    "id": "world:snow",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 2,
+    "name": "Ice",
+    "pedia": "\tIce is water frozen into the solid state. Usually ice is the phase known as ice Ih, which is the most abundant of the varying solid phases on the Earth\u0027s surface. It can appear transparent or opaque bluish-white color, depending on the presence of impurities or air inclusions. The addition of other materials such as soil may further alter the appearance. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "buildModifier": 25,
+    "canFoundCity": true,
+    "cultureDistance": 2,
+    "defensePercent": 0,
+    "era": null,
+    "foundCoast": false,
+    "foundFreshWater": false,
+    "graphicalOnly": false,
+    "healthPercent": -15,
+    "help": "",
+    "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Tundra.dds",
+    "id": "world:tundra",
+    "impassable": false,
+    "isWater": false,
+    "movementCost": 2,
+    "name": "Tundra",
+    "pedia": "\tIn physical geography, tundra is a biome where the tree growth is hindered by low temperatures and short growing seasons. The term tundra comes through Russian from the Kildin Sami word tund\u00E2r \u0022uplands,\u0022 \u0022treeless mountain tract.\u0022 There are three types of tundra: Arctic tundra, alpine tundra, and Antarctic tundra. In tundra, the vegetation is composed of dwarf shrubs, sedges and grasses, mosses, and lichens. Scattered trees grow in some tundra. The ecotone (or ecological boundary region) between the tundra and the forest is known as the tree line or timberline. Wikipedia",
+    "requirements": null,
+    "riverYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "seeFrom": 1,
+    "seeThrough": 1,
+    "strategy": "",
+    "unsupported": [
+      "ArtDefineTag",
+      "FootstepSounds",
+      "FootstepSounds/FootstepSound",
+      "FootstepSounds/FootstepSound/FootstepAudioScript",
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "WorldSoundscapeAudioScript"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    }
+  }
+]

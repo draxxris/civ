@@ -1,0 +1,90 @@
+[
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_economy",
+    "name": "Economy",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_foreign_policy",
+    "name": "Foreign Policy",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_government",
+    "name": "Government",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_military",
+    "name": "Military",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_power",
+    "name": "Rule",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_religion",
+    "name": "Religion",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_society",
+    "name": "Society",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:civicoption_welfare",
+    "name": "Welfare",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

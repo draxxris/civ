@@ -1,0 +1,1001 @@
+[
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {
+      "military:combat1": [
+        "military:unitcombat_melee",
+        "military:unitcombat_gun",
+        "military:unitcombat_hitech",
+        "military:unitcombat_assault_mech"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_aggressive",
+    "maximumAnarchyTurns": -1,
+    "name": "Aggressive",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Agg",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 5,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_agricultural",
+    "maximumAnarchyTurns": -1,
+    "name": "Agricultural",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Agr",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": -25,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 1,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_charismatic",
+    "maximumAnarchyTurns": -1,
+    "name": "Charismatic",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Chm",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 2,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_creative",
+    "maximumAnarchyTurns": -1,
+    "name": "Creative",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Cre",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {
+      "military:improvise1": [
+        "military:unitcombat_spy"
+      ],
+      "military:loyalty": [
+        "military:unitcombat_spy"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 4,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_deceiver",
+    "maximumAnarchyTurns": -1,
+    "name": "Deceiver",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Dec",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 2,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_expansive",
+    "maximumAnarchyTurns": -1,
+    "name": "Expansive",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Exp",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 4,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_financial",
+    "maximumAnarchyTurns": -1,
+    "name": "Financial",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Fin",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {
+      "military:medic1": [
+        "military:unitcombat_recon"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 1,
+    "health": 1,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_humanitarian",
+    "maximumAnarchyTurns": -1,
+    "name": "Humanitarian",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Hum",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": -20,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": true,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 100,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_imperialist",
+    "maximumAnarchyTurns": -1,
+    "name": "Imperialistic",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Imp",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_industrious",
+    "maximumAnarchyTurns": -1,
+    "name": "Industrious",
+    "nationalWonderProductionPercent": 50,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Ind",
+    "strategy": "",
+    "teamWonderProductionPercent": 50,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 50,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {
+      "world:fur": 1,
+      "world:horse": 1
+    },
+    "combatTypePromotions": {
+      "military:flanking1": [
+        "military:unitcombat_mounted",
+        "military:unitcombat_recon"
+      ],
+      "military:guerilla1": [
+        "military:unitcombat_mounted",
+        "military:unitcombat_recon"
+      ],
+      "military:speed": [
+        "military:unitcombat_recon"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_nomad",
+    "maximumAnarchyTurns": -1,
+    "name": "Nomad",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Nom",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_organized",
+    "maximumAnarchyTurns": -1,
+    "name": "Organized",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Org",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": -50,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 100,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_philosophical",
+    "maximumAnarchyTurns": -1,
+    "name": "Philosophical",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Phi",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [
+      "fRevIdxBadReligionMod",
+      "fRevIdxGoodReligionMod",
+      "fRevIdxNationalityMod"
+    ],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {
+      "military:city_garrison1": [
+        "military:unitcombat_archer",
+        "military:unitcombat_gun",
+        "military:unitcombat_hitech"
+      ],
+      "military:drill1": [
+        "military:unitcombat_archer",
+        "military:unitcombat_siege",
+        "military:unitcombat_gun",
+        "military:unitcombat_hitech"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 50,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_protective",
+    "maximumAnarchyTurns": -1,
+    "name": "Protective",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Pro",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 1
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 10
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_scientific",
+    "maximumAnarchyTurns": -1,
+    "name": "Scientific",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Sci",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {
+      "military:amphibious": [
+        "military:unitcombat_melee",
+        "military:unitcombat_gun",
+        "military:unitcombat_hitech",
+        "military:unitcombat_assault_mech"
+      ],
+      "military:naval_tactics": [
+        "military:unitcombat_wooden_ships",
+        "military:unitcombat_steam_ships",
+        "military:unitcombat_diesel_ships",
+        "military:unitcombat_nuclear_ships"
+      ]
+    },
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_seafaring",
+    "maximumAnarchyTurns": -1,
+    "name": "Seafaring",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Sea",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "bonusHappinessChanges": {},
+    "combatTypePromotions": {},
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "domesticGreatGeneralRateModifier": 0,
+    "era": null,
+    "experienceThresholdPercent": 0,
+    "extraCultureLevel": false,
+    "extraYieldThresholds": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "greatGeneralRateModifier": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "health": 0,
+    "help": "",
+    "icon": "",
+    "id": "peoples:trait_spiritual",
+    "maximumAnarchyTurns": 1,
+    "name": "Spiritual",
+    "nationalWonderProductionPercent": 0,
+    "nonStateReligionCommerce": false,
+    "pedia": "",
+    "requirements": null,
+    "shortDescription": "Spi",
+    "strategy": "",
+    "teamWonderProductionPercent": 0,
+    "tradeYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "unsupported": [
+      "fRevIdxGoodReligionMod"
+    ],
+    "upgradeAnywhere": false,
+    "upkeepModifier": 0,
+    "worldWonderProductionPercent": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  }
+]

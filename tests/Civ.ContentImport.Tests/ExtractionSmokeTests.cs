@@ -68,8 +68,15 @@ public sealed class ExtractionSmokeTests
         using var second = new TemporaryDirectory();
         var source = ExtractionLocation.Find()!;
         var registry = Registry.Value;
-        Reports.Write(registry, source, first.Path, System.IO.Path.Combine(first.Path, "dump"));
-        Reports.Write(new ImportRegistry(source), source, second.Path, null);
+        var firstEmission = ContentEmission.Compile(registry);
+        var secondRegistry = new ImportRegistry(source);
+        var secondEmission = ContentEmission.Compile(secondRegistry);
+        Reports.Write(registry, source, first.Path, System.IO.Path.Combine(first.Path, "dump"), firstEmission.MappedPaths);
+        Reports.Write(secondRegistry, source, second.Path, null, secondEmission.MappedPaths);
+        ContentEmission.Write(firstEmission, System.IO.Path.Combine(first.Path, "mods"), first.Path);
+        ContentEmission.Write(secondEmission, System.IO.Path.Combine(second.Path, "mods"), second.Path);
+        foreach (var payload in Directory.GetFiles(System.IO.Path.Combine(first.Path, "mods"), "*.json", SearchOption.AllDirectories))
+            Assert.Equal(File.ReadAllBytes(payload), File.ReadAllBytes(System.IO.Path.Combine(second.Path, System.IO.Path.GetRelativePath(first.Path, payload))));
         var reports = Directory.GetFiles(first.Path).Order(StringComparer.Ordinal).ToArray();
         Assert.NotEmpty(reports);
         foreach (var report in reports)
@@ -87,6 +94,21 @@ public sealed class ExtractionSmokeTests
         Assert.Equal(625, buildings.GetProperty("mainTable").GetInt32());
         Assert.Equal(20, buildings.GetProperty("delta").GetInt32());
         Assert.Equal(registry.Records.Count, registry.Ids.Select(x => x.Id).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [SourceFact]
+    public void Era_filter_drops_later_content_and_transitive_dependents_and_overwrites_empty_families()
+    {
+        var result = ContentEmission.Compile(Registry.Value, "foundation:era_ancient");
+        Assert.Contains(result.Dropped, d => d.Id == "research:absolutism" && d.Reason.Contains("exceeds", StringComparison.Ordinal));
+        Assert.Contains(result.Dropped, d => d.Reason.StartsWith("References dropped content", StringComparison.Ordinal));
+        var ids = result.Definitions.Select(d => d.Definition.Id).ToHashSet(StringComparer.Ordinal);
+        Assert.All(result.Definitions.SelectMany(d => ContentEmission.References(d.Definition)), r => Assert.Contains(r.Id, ids));
+        Assert.DoesNotContain(result.Definitions, d => d.Definition.Era is not null && d.Definition.Era != "foundation:era_ancient");
+        using var directory = new TemporaryDirectory();
+        ContentEmission.Write(result, directory.Path, directory.Path);
+        Assert.Equal(SchemaCatalog.Definitions.Count + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
+        Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "Foundation/data/handicap.json")).Trim());
     }
 
     private static EffectiveRecord Record(ImportRegistry registry, string family, string type) =>

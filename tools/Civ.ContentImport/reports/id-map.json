@@ -22,7 +22,7 @@
     "CommerceInfo": "foundation",
     "ConceptInfo": "foundation",
     "ControlInfo": "foundation",
-    "CorporationInfo": "corporations",
+    "CorporationInfo": "foundation",
     "CultureLevelInfo": "foundation",
     "CursorInfo": "foundation",
     "DenialInfo": "diplomacy",
@@ -68,7 +68,7 @@
     "ProjectInfo": "projects-victory",
     "PromotionInfo": "military",
     "QuestInfo": "foundation",
-    "ReligionInfo": "religion",
+    "ReligionInfo": "foundation",
     "RiverInfo": "world",
     "RouteInfo": "world",
     "SeaLevelInfo": "world",
@@ -90,7 +90,7 @@
     "UnitCombatInfo": "military",
     "UnitInfo": "military",
     "UpkeepInfo": "government",
-    "VictoryInfo": "projects-victory",
+    "VictoryInfo": "foundation",
     "VoteInfo": "diplomacy",
     "VoteSourceInfo": "diplomacy",
     "WorldInfo": "foundation",
@@ -17915,253 +17915,253 @@
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_1",
-      "mod": "corporations",
-      "id": "corporations:1",
+      "mod": "foundation",
+      "id": "foundation:1",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_2",
-      "mod": "corporations",
-      "id": "corporations:2",
+      "mod": "foundation",
+      "id": "foundation:2",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_3",
-      "mod": "corporations",
-      "id": "corporations:3",
+      "mod": "foundation",
+      "id": "foundation:3",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_4",
-      "mod": "corporations",
-      "id": "corporations:4",
+      "mod": "foundation",
+      "id": "foundation:4",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_5",
-      "mod": "corporations",
-      "id": "corporations:5",
+      "mod": "foundation",
+      "id": "foundation:5",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_6",
-      "mod": "corporations",
-      "id": "corporations:6",
+      "mod": "foundation",
+      "id": "foundation:6",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_7",
-      "mod": "corporations",
-      "id": "corporations:7",
+      "mod": "foundation",
+      "id": "foundation:7",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ADVENTURE",
-      "mod": "corporations",
-      "id": "corporations:adventure",
+      "mod": "foundation",
+      "id": "foundation:adventure",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_APOTHEGUILD",
-      "mod": "corporations",
-      "id": "corporations:apotheguild",
+      "mod": "foundation",
+      "id": "foundation:apotheguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ARTISTGUILD",
-      "mod": "corporations",
-      "id": "corporations:artistguild",
+      "mod": "foundation",
+      "id": "foundation:artistguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BAKERGUILD",
-      "mod": "corporations",
-      "id": "corporations:bakerguild",
+      "mod": "foundation",
+      "id": "foundation:bakerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BLACKSMGUILD",
-      "mod": "corporations",
-      "id": "corporations:blacksmguild",
+      "mod": "foundation",
+      "id": "foundation:blacksmguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BURGERWORLD",
-      "mod": "corporations",
-      "id": "corporations:burgerworld",
+      "mod": "foundation",
+      "id": "foundation:burgerworld",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BUTCHERGUILD",
-      "mod": "corporations",
-      "id": "corporations:butcherguild",
+      "mod": "foundation",
+      "id": "foundation:butcherguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_CARPENTERGUILD",
-      "mod": "corporations",
-      "id": "corporations:carpenterguild",
+      "mod": "foundation",
+      "id": "foundation:carpenterguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_CLERKSGUILD",
-      "mod": "corporations",
-      "id": "corporations:clerksguild",
+      "mod": "foundation",
+      "id": "foundation:clerksguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_DRAPERSGUILD",
-      "mod": "corporations",
-      "id": "corporations:drapersguild",
+      "mod": "foundation",
+      "id": "foundation:drapersguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EMPCLOTH",
-      "mod": "corporations",
-      "id": "corporations:empcloth",
+      "mod": "foundation",
+      "id": "foundation:empcloth",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EQUESTGUILD",
-      "mod": "corporations",
-      "id": "corporations:equestguild",
+      "mod": "foundation",
+      "id": "foundation:equestguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EWTRADE",
-      "mod": "corporations",
-      "id": "corporations:ewtrade",
+      "mod": "foundation",
+      "id": "foundation:ewtrade",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_FASHION",
-      "mod": "corporations",
-      "id": "corporations:fashion",
+      "mod": "foundation",
+      "id": "foundation:fashion",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_FISHMONGUILD",
-      "mod": "corporations",
-      "id": "corporations:fishmonguild",
+      "mod": "foundation",
+      "id": "foundation:fishmonguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GLASSGUILD",
-      "mod": "corporations",
-      "id": "corporations:glassguild",
+      "mod": "foundation",
+      "id": "foundation:glassguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GOLDSMGUILD",
-      "mod": "corporations",
-      "id": "corporations:goldsmguild",
+      "mod": "foundation",
+      "id": "foundation:goldsmguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GROCERGUILD",
-      "mod": "corporations",
-      "id": "corporations:grocerguild",
+      "mod": "foundation",
+      "id": "foundation:grocerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MALLWART",
-      "mod": "corporations",
-      "id": "corporations:mallwart",
+      "mod": "foundation",
+      "id": "foundation:mallwart",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MAPSTER",
-      "mod": "corporations",
-      "id": "corporations:mapster",
+      "mod": "foundation",
+      "id": "foundation:mapster",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MASONGUILD",
-      "mod": "corporations",
-      "id": "corporations:masonguild",
+      "mod": "foundation",
+      "id": "foundation:masonguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MERCERGUILD",
-      "mod": "corporations",
-      "id": "corporations:mercerguild",
+      "mod": "foundation",
+      "id": "foundation:mercerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MILEHIGH",
-      "mod": "corporations",
-      "id": "corporations:milehigh",
+      "mod": "foundation",
+      "id": "foundation:milehigh",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MOBBY",
-      "mod": "corporations",
-      "id": "corporations:mobby",
+      "mod": "foundation",
+      "id": "foundation:mobby",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MOONBEAN",
-      "mod": "corporations",
-      "id": "corporations:moonbean",
+      "mod": "foundation",
+      "id": "foundation:moonbean",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_RED",
-      "mod": "corporations",
-      "id": "corporations:red",
+      "mod": "foundation",
+      "id": "foundation:red",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_SAFARI",
-      "mod": "corporations",
-      "id": "corporations:safari",
+      "mod": "foundation",
+      "id": "foundation:safari",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ULTSOLDIER",
-      "mod": "corporations",
-      "id": "corporations:ultsoldier",
+      "mod": "foundation",
+      "id": "foundation:ultsoldier",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_WONKA",
-      "mod": "corporations",
-      "id": "corporations:wonka",
+      "mod": "foundation",
+      "id": "foundation:wonka",
       "era": null
     },
     {
@@ -41169,92 +41169,92 @@
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ASATRU",
-      "mod": "religion",
-      "id": "religion:asatru",
+      "mod": "foundation",
+      "id": "foundation:asatru",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_BUDDHISM",
-      "mod": "religion",
-      "id": "religion:buddhism",
+      "mod": "foundation",
+      "id": "foundation:buddhism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_CHRISTIANITY",
-      "mod": "religion",
-      "id": "religion:christianity",
+      "mod": "foundation",
+      "id": "foundation:christianity",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_CONFUCIANISM",
-      "mod": "religion",
-      "id": "religion:confucianism",
+      "mod": "foundation",
+      "id": "foundation:confucianism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_EGYPT_MYTHOLOGY",
-      "mod": "religion",
-      "id": "religion:egypt_mythology",
+      "mod": "foundation",
+      "id": "foundation:egypt_mythology",
       "era": "ERA_ANCIENT"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_HELLENISM",
-      "mod": "religion",
-      "id": "religion:hellenism",
+      "mod": "foundation",
+      "id": "foundation:hellenism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_HINDUISM",
-      "mod": "religion",
-      "id": "religion:hinduism",
+      "mod": "foundation",
+      "id": "foundation:hinduism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ISLAM",
-      "mod": "religion",
-      "id": "religion:islam",
+      "mod": "foundation",
+      "id": "foundation:islam",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_JUDAISM",
-      "mod": "religion",
-      "id": "religion:judaism",
+      "mod": "foundation",
+      "id": "foundation:judaism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_MESOAMERICANISM",
-      "mod": "religion",
-      "id": "religion:mesoamericanism",
+      "mod": "foundation",
+      "id": "foundation:mesoamericanism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_SHINTO",
-      "mod": "religion",
-      "id": "religion:shinto",
+      "mod": "foundation",
+      "id": "foundation:shinto",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_TAOISM",
-      "mod": "religion",
-      "id": "religion:taoism",
+      "mod": "foundation",
+      "id": "foundation:taoism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ZOROASTRIANISM",
-      "mod": "religion",
-      "id": "religion:zoroastrianism",
+      "mod": "foundation",
+      "id": "foundation:zoroastrianism",
       "era": "ERA_ANCIENT"
     },
     {
@@ -56009,71 +56009,71 @@
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_CONQUEST",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_conquest",
+      "mod": "foundation",
+      "id": "foundation:victory_conquest",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_CULTURAL",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_cultural",
+      "mod": "foundation",
+      "id": "foundation:victory_cultural",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_DIPLOMATIC",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_diplomatic",
+      "mod": "foundation",
+      "id": "foundation:victory_diplomatic",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_DOMINATION",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_domination",
+      "mod": "foundation",
+      "id": "foundation:victory_domination",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_RELIGIOUS",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_religious",
+      "mod": "foundation",
+      "id": "foundation:victory_religious",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_SCIENTIFIC",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_scientific",
+      "mod": "foundation",
+      "id": "foundation:victory_scientific",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_SCORE",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_score",
+      "mod": "foundation",
+      "id": "foundation:victory_score",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_SPACE_RACE",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_space_race",
+      "mod": "foundation",
+      "id": "foundation:victory_space_race",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_TIME",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_time",
+      "mod": "foundation",
+      "id": "foundation:victory_time",
       "era": null
     },
     {
       "class": "VictoryInfo",
       "sourceType": "VICTORY_TOTAL",
-      "mod": "projects-victory",
-      "id": "projects-victory:victory_total",
+      "mod": "foundation",
+      "id": "foundation:victory_total",
       "era": null
     },
     {

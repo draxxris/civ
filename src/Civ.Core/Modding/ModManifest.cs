@@ -13,4 +13,6 @@ public sealed class ModManifest
     public string Assembly { get; init; } = "";
     /// <summary>Required mod ids loaded before this mod.</summary>
     public string[] Dependencies { get; init; } = [];
+    /// <summary>Required content providers. May be cyclic; does not affect registration order.</summary>
+    public string[] References { get; init; } = [];
 }

@@ -1,0 +1,151 @@
+[
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_conquest",
+    "name": "Conquest",
+    "pedia": "Victory Conquest Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "VictoryMovie",
+      "bConquest"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_cultural",
+    "name": "Cultural",
+    "pedia": "Victory Cultural Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "CityCulture",
+      "VictoryMovie",
+      "iNumCultureCities"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_diplomatic",
+    "name": "Diplomatic",
+    "pedia": "Victory Diplomatic Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "bDiploVote"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_domination",
+    "name": "Domination",
+    "pedia": "Victory Domination Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "VictoryMovie",
+      "iLandPercent",
+      "iMinLandPercent",
+      "iPopulationPercentLead"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_religious",
+    "name": "Religious",
+    "pedia": "Victory Religios Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "iReligionPercent"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_scientific",
+    "name": "Scientific",
+    "pedia": " ",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_score",
+    "name": "Score",
+    "pedia": "Victory Score Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "bPermanent",
+      "bTargetScore"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_space_race",
+    "name": "Space Race",
+    "pedia": "Are you ready to launch your spaceship?",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "VictoryMovie",
+      "iVictoryDelayTurns"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_time",
+    "name": "Time",
+    "pedia": "Victory Time Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "bEndScore"
+    ]
+  },
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:victory_total",
+    "name": "Mastery",
+    "pedia": "Mastery -- A combined victory requiring control of the majority of land, population, culture, and relgion on the planet.",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "VictoryMovie",
+      "bConquest",
+      "bTotalVictory",
+      "iLandPercent"
+    ]
+  }
+]

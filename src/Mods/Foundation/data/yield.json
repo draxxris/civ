@@ -1,0 +1,80 @@
+[
+  {
+    "aiWeightPercent": 80,
+    "cityChange": 0,
+    "era": null,
+    "goldenAgeYield": 1,
+    "goldenAgeYieldThreshold": 1,
+    "help": "",
+    "hillsChange": 0,
+    "icon": "",
+    "id": "foundation:yield_commerce",
+    "lakeChange": 0,
+    "minCity": 1,
+    "name": "Commerce",
+    "peakChange": 0,
+    "pedia": "",
+    "populationChangeDivisor": 0,
+    "populationChangeOffset": 0,
+    "requirements": null,
+    "strategy": "",
+    "tradeModifier": 100,
+    "unsupported": [
+      "ColorType",
+      "SymbolPaths",
+      "SymbolPaths/SymbolPath"
+    ]
+  },
+  {
+    "aiWeightPercent": 100,
+    "cityChange": 0,
+    "era": null,
+    "goldenAgeYield": 0,
+    "goldenAgeYieldThreshold": 0,
+    "help": "",
+    "hillsChange": -1,
+    "icon": "",
+    "id": "foundation:yield_food",
+    "lakeChange": 1,
+    "minCity": 3,
+    "name": "Food",
+    "peakChange": -2,
+    "pedia": "",
+    "populationChangeDivisor": 0,
+    "populationChangeOffset": 0,
+    "requirements": null,
+    "strategy": "",
+    "tradeModifier": 0,
+    "unsupported": [
+      "ColorType",
+      "SymbolPaths",
+      "SymbolPaths/SymbolPath"
+    ]
+  },
+  {
+    "aiWeightPercent": 110,
+    "cityChange": 0,
+    "era": null,
+    "goldenAgeYield": 1,
+    "goldenAgeYieldThreshold": 1,
+    "help": "",
+    "hillsChange": 1,
+    "icon": "",
+    "id": "foundation:yield_production",
+    "lakeChange": 0,
+    "minCity": 2,
+    "name": "Production",
+    "peakChange": 3,
+    "pedia": "",
+    "populationChangeDivisor": 0,
+    "populationChangeOffset": 0,
+    "requirements": null,
+    "strategy": "",
+    "tradeModifier": 0,
+    "unsupported": [
+      "ColorType",
+      "SymbolPaths",
+      "SymbolPaths/SymbolPath"
+    ]
+  }
+]

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Civ.Game;
@@ -111,11 +112,11 @@ public sealed class RequirementConverter : JsonConverter<Requirement>
         CheckKeys(e, ["all", "any", "not"]);
         var clauses = new List<Requirement>();
         // Fixed clause order makes combined forms independent of JSON property order.
-        if (e.TryGetProperty("all", out var all)) clauses.Add(new Requirement.All(all.EnumerateArray().Select(Parse).ToArray()));
-        if (e.TryGetProperty("any", out var any)) clauses.Add(new Requirement.Any(any.EnumerateArray().Select(Parse).ToArray()));
+        if (e.TryGetProperty("all", out var all)) clauses.Add(new Requirement.All(all.EnumerateArray().Select(Parse).ToImmutableArray()));
+        if (e.TryGetProperty("any", out var any)) clauses.Add(new Requirement.Any(any.EnumerateArray().Select(Parse).ToImmutableArray()));
         if (e.TryGetProperty("not", out var not)) clauses.Add(new Requirement.Not(Parse(not)));
         if (clauses.Count == 0) throw new JsonException("Empty requirement object");
-        return clauses.Count == 1 ? clauses[0] : new Requirement.All(clauses);
+        return clauses.Count == 1 ? clauses[0] : new Requirement.All(clauses.ToImmutableArray());
     }
     private static int? Number(JsonElement e, string key) => e.TryGetProperty(key, out var v) && v.ValueKind != JsonValueKind.Null ? v.GetInt32() : null;
     private static void CheckKeys(JsonElement e, string[] keys)

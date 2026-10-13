@@ -1,0 +1,302 @@
+{
+  "total": 2462,
+  "mods": [
+    {
+      "id": "cities",
+      "count": 665,
+      "references": [
+        "foundation",
+        "government",
+        "military",
+        "peoples",
+        "research",
+        "world"
+      ]
+    },
+    {
+      "id": "economy",
+      "count": 5,
+      "references": [
+        "foundation",
+        "research"
+      ]
+    },
+    {
+      "id": "foundation",
+      "count": 203,
+      "references": [
+        "cities",
+        "government",
+        "military",
+        "research",
+        "world"
+      ]
+    },
+    {
+      "id": "government",
+      "count": 92,
+      "references": [
+        "cities",
+        "foundation",
+        "military",
+        "research",
+        "world"
+      ]
+    },
+    {
+      "id": "military",
+      "count": 791,
+      "references": [
+        "cities",
+        "foundation",
+        "government",
+        "peoples",
+        "research",
+        "world"
+      ]
+    },
+    {
+      "id": "peoples",
+      "count": 212,
+      "references": [
+        "cities",
+        "foundation",
+        "government",
+        "military",
+        "research",
+        "world"
+      ]
+    },
+    {
+      "id": "research",
+      "count": 252,
+      "references": [
+        "foundation",
+        "military",
+        "world"
+      ]
+    },
+    {
+      "id": "world",
+      "count": 242,
+      "references": [
+        "foundation",
+        "military",
+        "peoples",
+        "research"
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "mod": "cities",
+      "definition": "BuildingCategoryDef",
+      "count": 18
+    },
+    {
+      "mod": "cities",
+      "definition": "BuildingDef",
+      "count": 645
+    },
+    {
+      "mod": "cities",
+      "definition": "HurryDef",
+      "count": 2
+    },
+    {
+      "mod": "economy",
+      "definition": "ProcessDef",
+      "count": 5
+    },
+    {
+      "mod": "foundation",
+      "definition": "CommerceDef",
+      "count": 4
+    },
+    {
+      "mod": "foundation",
+      "definition": "ConditionDef",
+      "count": 10
+    },
+    {
+      "mod": "foundation",
+      "definition": "CorporationIdentityDef",
+      "count": 36
+    },
+    {
+      "mod": "foundation",
+      "definition": "CultureLevelDef",
+      "count": 10
+    },
+    {
+      "mod": "foundation",
+      "definition": "EraDef",
+      "count": 8
+    },
+    {
+      "mod": "foundation",
+      "definition": "GameOptionDef",
+      "count": 64
+    },
+    {
+      "mod": "foundation",
+      "definition": "GameSpeedDef",
+      "count": 7
+    },
+    {
+      "mod": "foundation",
+      "definition": "HandicapDef",
+      "count": 9
+    },
+    {
+      "mod": "foundation",
+      "definition": "ReligionIdentityDef",
+      "count": 13
+    },
+    {
+      "mod": "foundation",
+      "definition": "RuleConstantsDef",
+      "count": 1
+    },
+    {
+      "mod": "foundation",
+      "definition": "SpecialistDef",
+      "count": 20
+    },
+    {
+      "mod": "foundation",
+      "definition": "VictoryIdentityDef",
+      "count": 10
+    },
+    {
+      "mod": "foundation",
+      "definition": "WorldSizeDef",
+      "count": 8
+    },
+    {
+      "mod": "foundation",
+      "definition": "YieldDef",
+      "count": 3
+    },
+    {
+      "mod": "government",
+      "definition": "CivicDef",
+      "count": 81
+    },
+    {
+      "mod": "government",
+      "definition": "CivicOptionDef",
+      "count": 8
+    },
+    {
+      "mod": "government",
+      "definition": "UpkeepDef",
+      "count": 3
+    },
+    {
+      "mod": "military",
+      "definition": "DomainDef",
+      "count": 4
+    },
+    {
+      "mod": "military",
+      "definition": "InvisibilityDef",
+      "count": 3
+    },
+    {
+      "mod": "military",
+      "definition": "MissionDef",
+      "count": 72
+    },
+    {
+      "mod": "military",
+      "definition": "OutcomeDef",
+      "count": 6
+    },
+    {
+      "mod": "military",
+      "definition": "PromotionDef",
+      "count": 266
+    },
+    {
+      "mod": "military",
+      "definition": "UnitAiDef",
+      "count": 45
+    },
+    {
+      "mod": "military",
+      "definition": "UnitCategoryDef",
+      "count": 9
+    },
+    {
+      "mod": "military",
+      "definition": "UnitCombatDef",
+      "count": 27
+    },
+    {
+      "mod": "military",
+      "definition": "UnitDef",
+      "count": 359
+    },
+    {
+      "mod": "peoples",
+      "definition": "CivilizationDef",
+      "count": 60
+    },
+    {
+      "mod": "peoples",
+      "definition": "LeaderDef",
+      "count": 135
+    },
+    {
+      "mod": "peoples",
+      "definition": "TraitDef",
+      "count": 17
+    },
+    {
+      "mod": "research",
+      "definition": "TechDef",
+      "count": 252
+    },
+    {
+      "mod": "world",
+      "definition": "BonusClassDef",
+      "count": 11
+    },
+    {
+      "mod": "world",
+      "definition": "BonusDef",
+      "count": 71
+    },
+    {
+      "mod": "world",
+      "definition": "BuildDef",
+      "count": 63
+    },
+    {
+      "mod": "world",
+      "definition": "FeatureDef",
+      "count": 10
+    },
+    {
+      "mod": "world",
+      "definition": "GoodyDef",
+      "count": 12
+    },
+    {
+      "mod": "world",
+      "definition": "ImprovementDef",
+      "count": 53
+    },
+    {
+      "mod": "world",
+      "definition": "RouteDef",
+      "count": 9
+    },
+    {
+      "mod": "world",
+      "definition": "TerrainDef",
+      "count": 13
+    }
+  ]
+}

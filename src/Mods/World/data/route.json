@@ -1,0 +1,321 @@
+[
+  {
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 6,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,12",
+    "id": "world:route_route_gravtube",
+    "movementCost": 15,
+    "name": "Maglev",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "any": [
+            {
+              "id": "world:copper",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:aluminum",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:durasteel",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 7,
+    "yields": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 3,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,12",
+    "id": "world:route_route_jumplane",
+    "movementCost": 15,
+    "name": "Jumplane",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "world:semiconductors",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 8,
+    "yields": {
+      "commerce": 1,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "advancedStartCost": 12,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 15,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,12",
+    "id": "world:route_route_modern_road",
+    "movementCost": 15,
+    "name": "Highway",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "any": [
+            {
+              "id": "world:cement",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:diesel",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 4,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 8,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 40,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,11",
+    "id": "world:route_route_paved",
+    "movementCost": 40,
+    "name": "Paved Road",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "any": [
+            {
+              "id": "world:stone",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:cement",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 3,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 18,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 15,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,12",
+    "id": "world:route_route_railroad",
+    "movementCost": 30,
+    "name": "Railroad",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "world:iron",
+              "kind": "bonus"
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "world:coal",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:oil",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:diesel",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 5,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 18,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 10,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,12",
+    "id": "world:route_route_railroad_electric",
+    "movementCost": 20,
+    "name": "Electric Railroad",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "world:steel",
+              "kind": "bonus"
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "world:copper",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 6,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 12,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 60,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,11",
+    "id": "world:route_route_road",
+    "movementCost": 60,
+    "name": "Road",
+    "pedia": "",
+    "requirements": null,
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 2,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 5,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 120,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,11",
+    "id": "world:route_route_track",
+    "movementCost": 120,
+    "name": "Cart Path",
+    "pedia": "",
+    "requirements": null,
+    "seaTunnel": false,
+    "strategy": "",
+    "unsupported": [],
+    "value": 1,
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 20,
+    "advancedStartCostIncrease": 0,
+    "era": null,
+    "flatMovement": 60,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,12",
+    "id": "world:route_route_tunnel",
+    "movementCost": 60,
+    "name": "Tunnel",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "any": [
+            {
+              "id": "world:steel",
+              "kind": "bonus"
+            },
+            {
+              "id": "world:durasteel",
+              "kind": "bonus"
+            }
+          ]
+        }
+      ]
+    },
+    "seaTunnel": true,
+    "strategy": "",
+    "unsupported": [],
+    "value": 1,
+    "yields": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    }
+  }
+]

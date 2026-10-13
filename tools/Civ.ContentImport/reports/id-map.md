@@ -32,7 +32,7 @@ Cross-class name conflicts add the class stem and complete source symbol. Neutra
 | CommerceInfo | foundation | 4 |
 | ConceptInfo | foundation | 50 |
 | ControlInfo | foundation | 64 |
-| CorporationInfo | corporations | 36 |
+| CorporationInfo | foundation | 36 |
 | CultureLevelInfo | foundation | 10 |
 | CursorInfo | foundation | 23 |
 | DenialInfo | diplomacy | 34 |
@@ -78,7 +78,7 @@ Cross-class name conflicts add the class stem and complete source symbol. Neutra
 | ProjectInfo | projects-victory | 32 |
 | PromotionInfo | military | 266 |
 | QuestInfo | foundation | 1 |
-| ReligionInfo | religion | 13 |
+| ReligionInfo | foundation | 13 |
 | RiverInfo | world | 1 |
 | RouteInfo | world | 9 |
 | SeaLevelInfo | world | 3 |
@@ -100,7 +100,7 @@ Cross-class name conflicts add the class stem and complete source symbol. Neutra
 | UnitCombatInfo | military | 27 |
 | UnitInfo | military | 359 |
 | UpkeepInfo | government | 3 |
-| VictoryInfo | projects-victory | 10 |
+| VictoryInfo | foundation | 10 |
 | VoteInfo | diplomacy | 23 |
 | VoteSourceInfo | diplomacy | 2 |
 | WorldInfo | foundation | 8 |

@@ -21,6 +21,7 @@ public sealed class ImportRegistry
     public RecoveryEvidence Recovery { get; }
     public EnglishText Text { get; }
     public IReadOnlyList<IdEntry> Ids { get; }
+    public IReadOnlyList<string> EraOrder { get; }
     public IReadOnlyList<UnresolvedText> UnresolvedText { get; }
     public IReadOnlyList<BrandingHit> BrandingHits { get; }
 
@@ -33,6 +34,7 @@ public sealed class ImportRegistry
         Recovery = CivicRecovery.Check(data, documents.Single(x => x.Tree.Format == "and-recovered-xml-tree-v1").Tree);
         LoadDefines(data, reader, documents);
         var contributions = documents.SelectMany(x => ReadRecords(x.File, x.Tree)).ToArray();
+        EraOrder = contributions.Where(c => c.Class == "EraInfo").Select(c => c.Type).Distinct(StringComparer.Ordinal).ToArray();
         var groups = contributions.GroupBy(x => (x.Class, x.Type)).OrderBy(x => x.Key.Class, StringComparer.Ordinal)
             .ThenBy(x => x.Key.Type, StringComparer.Ordinal).ToArray();
         // Measure the raw active definitions before applying force flags or any merges.

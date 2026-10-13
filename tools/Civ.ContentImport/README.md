@@ -1,18 +1,21 @@
 # Content importer
 
-This dependency-free .NET 8 tool builds a generic registry from the local source extraction. It does not reference Core.
-Typed emission and the closed prerequisite-era filter remain later tasks.
+This .NET 8 tool builds a generic registry from the local source extraction, then compiles typed Core definitions.
+It uses no external parsing packages. Generated sidecars are the runtime content. The extraction is not needed to build the game.
 
 ## Run
 
 Supply the extraction directory as a CLI argument:
 
 ```sh
-dotnet run --project tools/Civ.ContentImport -- --source <source-directory> --reports tools/Civ.ContentImport/reports --dump tools/Civ.ContentImport/out
+mise exec -- dotnet run --project tools/Civ.ContentImport -- --source <source-directory> --reports tools/Civ.ContentImport/reports --out-mods src/Mods
 dotnet test Civ.slnx
 ```
 
-The dump is optional and git-ignored. Reports contain no timestamps or absolute machine paths.
+Use `--dump tools/Civ.ContentImport/out` for the optional, git-ignored generic dump.
+The default mod destination is `src/Mods`. Use `--out-mods` to select another directory.
+Use `--max-era foundation:era_ancient` for a closed ancient subset. Without this filter, the importer emits all eras.
+Reports contain no timestamps or absolute machine paths.
 The tool rejects output directories inside the source directory.
 Extraction-backed tests skip when the source is absent. `CIV_CONTENT_SOURCE` can specify its location for tests.
 
@@ -56,7 +59,8 @@ Implemented policies:
 - Civilization keyed arrays: retain previous entries and inherit default slots. Leaders and free flags retain previous true values.
 - Civilization unit/building overrides: a class-default value inherits a previous override. Explicit NONE disables that class.
 - Civilization cities: incoming names precede previous names, without duplicate additions from the previous list.
-- Initial civics: positional default inheritance.
+- Initial civics: positional inheritance in the generic merge model. The measured profile only changes this field through force overwrite.
+  The typed schema retains explicit declarations. A civic's category, not its list position, determines its option.
 - Era scalars: default inheritance. Soundtracks append previous tracks after incoming tracks, including duplicates.
 - Era soundscapes: positional default inheritance.
 - Diplomacy: match response masks by intersecting active leader, attitude, and power sets. Merge matching text lists and flags.
@@ -87,7 +91,7 @@ Neutral markup:
 - `[ICON_GOLD]` becomes `{icon:gold}`.
 - `[COLOR_WARNING_TEXT]text[COLOR_REVERT]` becomes `{color:warning_text}text{/color}`.
 - `[LINK=TECH_EXAMPLE]text[\LINK]` becomes `{link:tech_example}text{/link}`.
-- Link targets remain opaque lowercase source targets. Typed emission must resolve them through the ID map.
+- Typed emission resolves known record links through the ID map. Other links become `{topic:target}text{/topic}`.
 - NEWLINE becomes one newline. PARAGRAPH becomes two newlines. SPACE and TAB become their corresponding characters.
 - BULLET and BULLETS become `● `. Literal bullet characters become `●`.
 - `%s1_city` becomes `{arg:1:text:city}`. `%d2` becomes `{arg:2:number}`. Double percent signs become one percent sign.
@@ -117,7 +121,8 @@ Great-people and trade have no dedicated Info classes in this profile. Later rul
 The census contains direct fields and nested field paths. Presence and non-default counts are per record, not per occurrence.
 Repeated paths count once. Non-default means non-empty and not 0, NONE, -1, or false.
 A branch counts as non-default if any descendant does. These census sentinels are not native getter defaults.
-Every status starts as preserved. Examples contain up to three distinct values, truncated at 160 characters.
+Every field status is `mapped` or `unsupported`. Mapped means that typed content retains the field, not that gameplay rules implement it.
+Without typed emission, all statuses are unsupported. Examples contain up to three distinct values, truncated at 160 characters.
 
 Tech eras come from their Era field. Other records use their prerequisite tech fields and TechTypes lists.
 Multiple required techs use the latest era in source era order. Records without derivable prerequisites have an unknown era.
@@ -131,5 +136,40 @@ The importer never reads sparse records as content. Enabled modules add 20 build
 
 Synthetic tests cover tree fidelity, reference errors, nested controls, merge defaults, art replacement, text precedence,
 markup, branding, census counts, and ID conflicts.
-Source-backed tests check profile counts, selected merged values, recovery evidence, deterministic reports, and brand-free output.
-A full import with reports and dumps takes approximately 11 seconds on the development machine.
+Source-backed tests check profile counts, selected merged values, recovery evidence, deterministic typed output, and closed era filtering.
+`Civ.Mods.Tests` loads all eight mod DLLs from build output. It checks counts, typed closure, golden records, and branding without the extraction.
+
+## Typed emission
+
+The declarative `SchemaMapping.json` maps source fields to clean Core properties. `RuleConstantMapping.json` selects typed rule constants.
+The mapper preserves native positional pairs, partial vectors, explicit zeroes, negative costs and slots, and prerequisite scopes.
+Building and unit classes resolve to their default definitions. Civilization overrides apply to starting grants too.
+Every definition includes inline English text, an era, an icon, and sorted unsupported source paths.
+
+Output arrays use ordinal id order. Object properties use ordinal order. Ordered source arrays retain their order.
+Output uses indented camelCase JSON. The importer scans decoded keys and values and fails if forbidden branding remains.
+It writes one file for each schema family, including empty arrays after an era filter.
+It only replaces its own sidecars, not future manual hex overrides or unrelated data files.
+
+The filter removes later-era records first. It then removes transitive dependents across all typed references and text links.
+This conservative policy can remove early records with later obsolescence, upgrade, or effect references.
+`dropped-content.json` records every removed id and the edge or era that caused removal.
+
+`emitted-counts.json` separates shipped schema counts from the larger generic inventory in `counts.json`.
+It also lists every direct content provider for each manifest's cyclic `references` declaration.
+All v1 load-order `dependencies` are empty because these data-only mods have no overrides or ordering constraints.
+The game checks provider presence first, then checks reference types after all mods register.
+
+Foundation reserves religion, corporation, and victory identities for future rules. Their definitions have `Deferred = true` and no gameplay effects.
+Their evaluators fail closed. Prerequisites retain these identities instead of silently disappearing.
+Four native unit-AI roles absent from the XML inventory receive explicit military identities.
+The native enum and `registerUnitAIs` in the reference DLL define these roles.
+Four stale optional source references become null. Required unresolved references fail import.
+Native unit outcomes retain chances, yields, grants, and mission actions. One missing delivery-policy define affects 34 units.
+The native boolean getter returns false for each missing define. The emitted effects retain the policy keys too.
+`data-issues.json` identifies these source errors.
+
+No authoritative JSON number uses floating point. The food-wastage growth factor converts exactly to integer permille.
+The raw define dictionary retains other values as strings. See [the schema contract](../../docs/content-schema.md) for units and scope parameters.
+
+The runtime mods do not implement gameplay systems yet. Partial requirement evaluators only use existing state and otherwise fail closed.

@@ -1,0 +1,15 @@
+{
+  "id": "peoples",
+  "name": "Peoples",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Peoples.dll",
+  "dependencies": [],
+  "references": [
+    "cities",
+    "foundation",
+    "government",
+    "military",
+    "research",
+    "world"
+  ]
+}

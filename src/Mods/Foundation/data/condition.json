@@ -1,0 +1,112 @@
+[
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:city_count",
+    "name": "city count",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:coastal",
+    "name": "coastal",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:fresh_water",
+    "name": "fresh water",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:population",
+    "name": "population",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:power",
+    "name": "power",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:resource_area",
+    "name": "resource area",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:river",
+    "name": "river",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:state_religion",
+    "name": "state religion",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:team_count",
+    "name": "team count",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "foundation:unit_level",
+    "name": "unit level",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

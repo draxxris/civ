@@ -1,0 +1,30 @@
+[
+  {
+    "anger": false,
+    "era": null,
+    "goldPerProduction": 3,
+    "help": "",
+    "icon": "Art/Interface/MainScreen/CityScreen/hurry_commerce.dds",
+    "id": "cities:hurry_gold",
+    "name": "Can Spend Gold to Finish Production in a City",
+    "pedia": "",
+    "productionPerPopulation": 0,
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  },
+  {
+    "anger": true,
+    "era": null,
+    "goldPerProduction": 0,
+    "help": "",
+    "icon": "Art/Interface/MainScreen/CityScreen/hurry_slavery.dds",
+    "id": "cities:hurry_population",
+    "name": "Can Sacrifice Population to Finish Production in a City",
+    "pedia": "",
+    "productionPerPopulation": 30,
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

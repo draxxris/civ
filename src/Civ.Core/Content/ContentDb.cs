@@ -75,6 +75,28 @@ public sealed class ContentDb
     /// <summary>SHA-256 of frozen definitions, mod versions and serialized contract identities.</summary>
     public string ContentHash { get; private set; } = "";
 
+    /// <summary>Validate typed identities after all providers register, before freezing or hashing.</summary>
+    public void ValidateReferences(IEnumerable<Modding.ModManifest> manifests)
+    {
+        var declared = manifests.ToDictionary(m => m.Id, m => m.Dependencies.Concat(m.References).ToHashSet(StringComparer.Ordinal), StringComparer.Ordinal);
+        var targets = _registries.ToDictionary(e => e.Key, e => e.Value.Items().Select(d => d.Id).ToHashSet(StringComparer.Ordinal));
+        targets[typeof(ContentDef)] = _registries.Values.SelectMany(e => e.Items()).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
+        var errors = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
+        {
+            var owner = definition.Id.Split(':')[0];
+            foreach (var reference in ContentReferences.Enumerate(definition, Services.Get<IRequirementEvaluator>()))
+            {
+                if (!targets.TryGetValue(reference.DefinitionType, out var ids) || !ids.Contains(reference.Id))
+                    errors.Add($"{reference.Path}: '{reference.Id}' does not resolve to {reference.DefinitionType.FullName}");
+                var provider = reference.Id.Split(':')[0];
+                if (provider != owner && (!declared.TryGetValue(owner, out var providers) || !providers.Contains(provider)))
+                    errors.Add($"{reference.Path}: mod '{owner}' must declare content provider '{provider}' in references or dependencies");
+            }
+        }
+        if (errors.Count > 0) throw new InvalidDataException("Content reference validation failed:\n" + string.Join("\n", errors));
+    }
+
     internal void Freeze()
     {
         Requirements = new(Services.Get<IRequirementEvaluator>());
