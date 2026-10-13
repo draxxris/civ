@@ -1,289 +1,177 @@
-using Civ.BaseGame;
-using Civ.Content;
 using Civ.Game;
 using Godot;
 
 namespace Civ.Client;
 
-/// <summary>Top bar plus a left panel with Selection / Research / Civics tabs. Rebuilt only when game or selection state changes.</summary>
-public partial class GameUi : CanvasLayer
+/// <summary>Top bar, unit and city lists, end-turn button, research dialog and the city screen. Rebuilt only when the session changes.</summary>
+internal sealed partial class GameUi : CanvasLayer
 {
-    private enum Tab { Selection, Research, Civics }
-
-    private const float PanelWidth = 340f;
-    private const float TopBarHeight = 36f;
-
-    internal static readonly Color Dim = new(0.65f, 0.68f, 0.74f);
-    internal static readonly Color Bad = new(0.95f, 0.45f, 0.40f);
-    internal static readonly Color Accent = new(1f, 0.82f, 0.30f);
+    private const float TopBarHeight = 44f, LeftWidth = 320f;
 
     private readonly GameSession _session;
-    private readonly PanelContainer _top = new();
-    private readonly PanelContainer _left = new();
+    private readonly IconCache _icons;
+    private readonly PanelContainer _top = Ui.Panel(margin: 6);
+    private readonly PanelContainer _left = Ui.Panel();
+    private readonly PanelContainer _hoverTip = Ui.Panel(new Color(0.05f, 0.06f, 0.08f, 0.92f), 6);
+    private readonly Label _hoverText = Ui.Text("", 13, wrap: false);
+    private readonly Label _message = Ui.Text("", 16, Ui.Accent);
+    private readonly Button _endTurn;
+    private readonly PanelContainer _researchDialog = Ui.Panel(margin: 12);
     private readonly CityUi _city;
-    private Tab _tab = Tab.Selection;
-    private (ulong, Tab, CityUi.ProdTab, bool) _shown;
-    private bool _built;
+    private int _shownRevision = -1;
+    private bool _researchOpen;
+    private bool _shownResearchOpen;
+    private int _shownCityState;
 
-    private Simulation Sim => _session.Sim;
-    private Player Me => _session.Me;
-    private Team MyTeam => _session.MyTeam;
+    public bool PointerOverUi => GetViewport().GuiGetHoveredControl() != null;
+    public bool TextInputFocused => GetViewport().GuiGetFocusOwner() is LineEdit;
 
-    public GameUi(GameSession session)
+    public GameUi(GameSession session, IconCache icons)
     {
-        _session = session;
-        var panel = Box(new Color(0.09f, 0.10f, 0.13f, 0.95f), 8);
-        _top.AddThemeStyleboxOverride("panel", panel);
-        _left.AddThemeStyleboxOverride("panel", panel);
+        _session = session; _icons = icons;
         _top.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopWide);
         _top.OffsetBottom = TopBarHeight;
-        _left.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.LeftWide);
-        _left.OffsetTop = TopBarHeight;
-        _left.OffsetRight = PanelWidth;
-        AddChild(_top);
-        AddChild(_left);
-        _city = new CityUi(session);
-        AddChild(_city);
+        _left.SetAnchorsPreset(Control.LayoutPreset.LeftWide);
+        _left.OffsetTop = TopBarHeight + 4; _left.OffsetRight = LeftWidth; _left.OffsetBottom = -4;
+        _left.GrowVertical = Control.GrowDirection.Both;
+        _hoverTip.MouseFilter = Control.MouseFilterEnum.Ignore;
+        _hoverTip.Visible = false;
+        _hoverTip.AddChild(_hoverText);
+        _message.HorizontalAlignment = HorizontalAlignment.Center;
+        _message.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomWide);
+        _message.OffsetTop = -96; _message.OffsetBottom = -66;
+        _message.MouseFilter = Control.MouseFilterEnum.Ignore;
+        _endTurn = Ui.Button("End turn", session.EndTurn, size: 18);
+        _endTurn.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomRight);
+        _endTurn.OffsetLeft = -220; _endTurn.OffsetTop = -64; _endTurn.OffsetRight = -12; _endTurn.OffsetBottom = -12;
+        _researchDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
+        _researchDialog.Visible = false;
+        _governmentDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
+        _governmentDialog.Visible = false;
+        _city = new CityUi(session, icons);
+        foreach (var node in new Node[] { _top, _left, _message, _endTurn, _researchDialog, _city, _governmentDialog, _hoverTip }) AddChild(node);
     }
 
     public void Refresh()
     {
-        var city = _session.City;
-        var key = (_session.Version, _tab, _city.Tab, city != null);
-        if (_built && key == _shown) return;
-        _shown = key;
-        _built = true;
-        _top.Visible = _left.Visible = city == null;
-        _city.Visible = city != null;
-        if (city != null) { _city.Build(city); return; }
+        bool cityOpen = _session.City != null;
+        _left.Visible = !cityOpen;
+        _endTurn.Visible = !cityOpen;
+        _city.Visible = cityOpen;
+        if (!NeedsRefresh()) return;
+        _shownRevision = _session.Revision; _shownResearchOpen = _researchOpen; _shownCityState = _city.State;
+        var clock = System.Diagnostics.Stopwatch.StartNew();
         BuildTop();
-        BuildLeft();
+        if (cityOpen) _city.Build(_session.City!);
+        else BuildLeft();
+        BuildResearchDialog();
+        BuildGovernmentDialog();
+        _shownGovernmentRevision = _governmentRevision;
+        _message.Text = _session.Message;
+        int idle = _session.UnitsNeedingOrders;
+        _endTurn.Text = idle > 0 ? $"End turn ({idle} waiting)" : "End turn";
+        if (MapRenderer.LogTimings) GD.Print($"ui rebuild: {clock.ElapsedMilliseconds} ms (city open: {cityOpen})");
     }
 
-    // --- widgets --------------------------------------------------------------------------
+    private bool NeedsRefresh() => _shownRevision != _session.Revision || _shownResearchOpen != _researchOpen
+        || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision;
 
-    internal static StyleBoxFlat Box(Color fill, int margin = 4)
+    // --- hover -------------------------------------------------------------------------------------
+
+    public void SetHover(TileInfo? tile, string? preview)
     {
-        var s = new StyleBoxFlat { BgColor = fill, CornerRadiusTopLeft = 4, CornerRadiusTopRight = 4, CornerRadiusBottomLeft = 4, CornerRadiusBottomRight = 4 };
-        s.SetContentMarginAll(margin);
-        return s;
+        var lines = new List<string>();
+        if (preview != null) lines.Add(preview);
+        if (tile != null) { lines.Add(tile.Title); lines.AddRange(tile.Lines); }
+        _hoverTip.Visible = lines.Count > 0;
+        _hoverText.Text = string.Join("\n", lines);
+        _hoverTip.Size = Vector2.Zero;
     }
 
-    internal static void Clear(Node n)
+    public void MoveHoverTip(Vector2 mouse)
     {
-        foreach (var child in n.GetChildren()) { n.RemoveChild(child); child.QueueFree(); }
+        var size = _hoverTip.GetCombinedMinimumSize();
+        var view = GetViewport().GetVisibleRect().Size;
+        _hoverTip.Position = new Vector2(Mathf.Min(mouse.X + 18, view.X - size.X - 4), Mathf.Min(mouse.Y + 18, view.Y - size.Y - 4));
     }
 
-    internal static Label Text(string text, int size = 13, Color? color = null)
-    {
-        var l = new Label { Text = text, AutowrapMode = TextServer.AutowrapMode.WordSmart, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        l.AddThemeFontSizeOverride("font_size", size);
-        if (color is { } c) l.AddThemeColorOverride("font_color", c);
-        return l;
-    }
-
-    internal static Button Btn(string text, Action onClick, bool enabled = true, bool active = false, float minWidth = 0)
-    {
-        var b = new Button { Text = text, Disabled = !enabled, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(minWidth, 26) };
-        b.AddThemeFontSizeOverride("font_size", 12);
-        var fill = active ? new Color(0.78f, 0.62f, 0.18f) : new Color(0.20f, 0.23f, 0.30f);
-        b.AddThemeStyleboxOverride("normal", Box(fill));
-        b.AddThemeStyleboxOverride("hover", Box(fill.Lightened(0.18f)));
-        b.AddThemeStyleboxOverride("pressed", Box(fill.Lightened(0.3f)));
-        b.AddThemeStyleboxOverride("disabled", Box(fill.Darkened(0.35f)));
-        b.Pressed += onClick;
-        return b;
-    }
+    // --- top bar -----------------------------------------------------------------------------------
 
     private void BuildTop()
     {
-        Clear(_top);
-        var row = new HBoxContainer();
+        Ui.Clear(_top);
+        var s = _session.Summary();
+        var row = Ui.HBox(10);
+        row.AddChild(Ui.Text($"Turn {s.Turn}  ·  {s.Era}", 15, Colors.White, wrap: false));
+        row.AddChild(Ui.Text($"Gold {_session.Me.Treasury} ({Labels.Signed(s.Net)})", 15, s.Net < 0 ? Ui.Bad : Ui.Accent, wrap: false));
+        row.AddChild(ResearchButton(s));
+        row.AddChild(RateBox("Science", RateKind.Research, s.Rates.Research));
+        row.AddChild(RateBox("Culture", RateKind.Culture, s.Rates.Culture));
+        row.AddChild(RateBox("Espionage", RateKind.Espionage, s.Rates.Espionage));
+        var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
+        row.AddChild(Ui.Button(anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics", ToggleGovernment));
+        row.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+        row.AddChild(Ui.Text($"{s.Cities} cities  ·  {s.Units} units", 14, Ui.Dim, wrap: false));
         _top.AddChild(row);
-        var me = Me;
-        var civ = Sim.CivilizationOf(me.Id);
-        row.AddChild(Text($"Turn {Sim.State.Turn}", 14));
-        row.AddChild(Text($"{civ?.Name ?? me.Name}  culture {me.Culture}" + (Sim.Content.CultureLevelFor(me.Culture) is { } lvl ? $" ({lvl.Name})" : ""), 13));
-        row.AddChild(MyTeam.Researching == null
-            ? Text("Research: none (pick one in the Research tab)", 13, Bad)
-            : Text($"Research: {Sim.Content.Techs.Get(MyTeam.Researching).Name} {MyTeam.ResearchProgress}/{Sim.Content.Techs.Get(MyTeam.Researching).Cost}", 13));
-        if (_session.Message.Length > 0) row.AddChild(Text(_session.Message, 13, Bad));
-        var end = Btn("End turn", _session.EndTurn, minWidth: 90);
-        end.SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd;
-        row.AddChild(end);
     }
 
-    private void BuildLeft()
+    private Control ResearchButton(PlayerSummary s)
     {
-        Clear(_left);
-        var scroll = new ScrollContainer { HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
-        _left.AddChild(scroll);
-        var col = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        scroll.AddChild(col);
-
-        var tabs = new HBoxContainer();
-        foreach (var t in Enum.GetValues<Tab>())
-        {
-            var tab = t;
-            tabs.AddChild(Btn(tab.ToString(), () => _tab = tab, true, _tab == tab));
-        }
-        col.AddChild(tabs);
-
-        switch (_tab)
-        {
-            case Tab.Selection: SelectionTab(col); break;
-            case Tab.Research: ResearchTab(col); break;
-            case Tab.Civics: CivicsTab(col); break;
-        }
-        col.AddChild(Text("WASD pan, wheel zoom, LMB select, RMB move/attack, Enter end turn", 11, Dim));
+        var r = s.Research;
+        string text = r == null ? "Choose research!" : $"{r.Name} {r.Progress}/{r.Cost}" + (r.Turns is int t ? $" ({t}t)" : "");
+        var button = Ui.Button(text, ToggleResearch, "Open the research list (R)");
+        button.ClipText = true;
+        button.CustomMinimumSize = new Vector2(170, 0);
+        if (r == null) button.AddThemeColorOverride("font_color", Ui.Bad);
+        return button;
     }
 
-    // --- tabs -----------------------------------------------------------------------------
-
-    private void SelectionTab(Container col)
+    private Control RateBox(string name, RateKind kind, long percent)
     {
-        if (_session.City is { } city) CityPanel(col, city);
-        else if (_session.Unit is { } unit) UnitPanel(col, unit);
-        else col.AddChild(Text("Select a unit or city.", 13, Dim));
+        var box = Ui.HBox(2);
+        box.AddChild(Ui.Text($"{name} {percent}%", 14, Colors.White, wrap: false));
+        box.AddChild(Ui.Button("−", () => _session.ShiftRate(kind, -10), $"10% less {name}"));
+        box.AddChild(Ui.Button("+", () => _session.ShiftRate(kind, 10), $"10% more {name}"));
+        return box;
     }
 
-    private void ResearchTab(Container col)
+    // --- research dialog ------------------------------------------------------------------------
+
+    public void ToggleResearch()
     {
-        var me = Me;
-        col.AddChild(Text("Available technologies", 14));
-        var available = Sim.Content.Techs.All.Where(t => !MyTeam.Techs.Contains(t.Id)
-            && t.Prerequisites.All(MyTeam.Techs.Contains)
-            && Sim.Content.Requirements.Evaluate(t.Requirements, new(Sim, Me.Id)).Success).ToList();
-        if (available.Count == 0) col.AddChild(Text("Nothing left to research.", 13, Dim));
-        foreach (var t in available)
-        {
-            var tech = t;
-            col.AddChild(Btn($"{tech.Name}  ({tech.Cost})", () => _session.Submit(new SetResearchCommand { Player = GameSession.Human, Tech = tech.Id }), true, MyTeam.Researching == tech.Id));
-        }
-        col.AddChild(Text("Known", 14));
-        col.AddChild(Text(MyTeam.Techs.Count == 0 ? "none" : string.Join(", ", MyTeam.Techs.Select(id => Sim.Content.Techs.Get(id).Name)), 12, Dim));
+        if (_governmentOpen) ToggleGovernment();
+        _researchOpen = !_researchOpen;
     }
 
-    private void CivicsTab(Container col)
+    public bool CloseDialogs()
     {
-        var me = Me;
-        foreach (var group in Sim.Content.Civics.All.GroupBy(c => c.Category).OrderBy(g => g.Key, StringComparer.Ordinal))
-        {
-            col.AddChild(Text(char.ToUpper(group.Key[0]) + group.Key[1..], 14));
-            foreach (var civic in group)
-            {
-                var c = civic;
-                bool known = c.RequiresTech == null || MyTeam.Techs.Contains(c.RequiresTech);
-                col.AddChild(Btn(c.Name + (known ? "" : $"  (needs {Sim.Content.Techs.Get(c.RequiresTech!).Name})"),
-                    () => _session.Submit(new SetCivicCommand { Player = GameSession.Human, Civic = c.Id }), known, me.Civics.GetValueOrDefault(c.Category) == c.Id));
-                var effects = CivicEffects(c);
-                if (effects.Length > 0) col.AddChild(Text(effects, 11, Dim));
-            }
-        }
+        bool wasOpen = _researchOpen || _governmentOpen;
+        if (_governmentOpen) ToggleGovernment();
+        _researchOpen = false;
+        return wasOpen;
     }
 
-    private static string CivicEffects(CivicDef c)
+    private void BuildResearchDialog()
     {
-        var parts = new List<string>();
-        if (c.ResearchBonus != 0) parts.Add($"{c.ResearchBonus:+#;-#}% research");
-        if (c.ProductionBonus != 0) parts.Add($"{c.ProductionBonus:+#;-#}% production");
-        if (c.CultureBonus != 0) parts.Add($"{c.CultureBonus:+#;-#}% culture");
-        foreach (var (id, n) in c.SpecialistSlots) parts.Add(n < 0 ? $"unlimited {Short(id)}s" : $"{n} {Short(id)} slot{(n == 1 ? "" : "s")}");
-        return string.Join(", ", parts);
+        _researchDialog.Visible = _researchOpen && _session.City == null;
+        Ui.Clear(_researchDialog);
+        if (!_researchDialog.Visible) return;
+        var box = Ui.VBox(6);
+        var head = Ui.HBox();
+        head.AddChild(Ui.Heading("Choose research"));
+        head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+        head.AddChild(Ui.Button("Close", () => _researchOpen = false));
+        box.AddChild(head);
+        var list = Ui.VBox(3);
+        foreach (var tech in _session.ResearchChoices())
+            list.AddChild(Ui.Button($"{tech.Name}   —   {tech.Cost} beakers" + (tech.Turns is int t ? $", {t} turns" : "") + $"   [{tech.Era}]",
+                () => { if (_session.Research(tech.Id)) _researchOpen = false; }, tech.Help.Length > 0 ? StripMarkup(tech.Help) : tech.Name));
+        box.AddChild(Ui.Scroll(list, 420));
+        _researchDialog.CustomMinimumSize = new Vector2(620, 0);
+        _researchDialog.AddChild(box);
+        _researchDialog.Position = (GetViewport().GetVisibleRect().Size - new Vector2(620, 520)) / 2;
     }
 
-    private static string Short(string id) => id[(id.IndexOf(':') + 1)..].Replace('_', ' ');
-
-    // --- unit -----------------------------------------------------------------------------
-
-    private void UnitPanel(Container col, Unit unit)
-    {
-        var def = Sim.Content.Units.Get(unit.Type);
-        col.AddChild(Text(def.Name, 16));
-        col.AddChild(Text($"HP {unit.Health}  Strength {def.Strength}  Moves {unit.MovesLeft}/{UnitRules.MaxMoves(Sim, unit)}"));
-        col.AddChild(Text($"Experience {unit.Experience}  Level {UnitRules.Level(Sim, unit)}"));
-        if (unit.Promotions.Count > 0)
-            col.AddChild(Text("Promotions: " + string.Join(", ", UnitRules.PromotionsOf(Sim, unit).Select(p => p.Name)), 12, Dim));
-
-        if (def.CanFoundCity)
-        {
-            var pos = unit.Position;
-            var id = unit.Id;
-            col.AddChild(Btn("Found city here", () => _session.Submit(new FoundCityCommand { Player = GameSession.Human, Position = pos, UnitId = id })));
-        }
-
-        int unspent = UnitRules.UnspentPromotions(Sim, unit);
-        if (unspent > 0)
-        {
-            col.AddChild(Text($"Choose a promotion ({unspent} available)", 14, Accent));
-            foreach (var promo in UnitRules.AvailablePromotions(Sim, unit))
-            {
-                var p = promo;
-                var uid = unit.Id;
-                col.AddChild(Btn(p.Name, () => _session.Submit(new PromoteUnitCommand { Player = GameSession.Human, UnitId = uid, Promotion = p.Id })));
-                if (p.Description.Length > 0) col.AddChild(Text(p.Description, 11, Dim));
-            }
-        }
-        col.AddChild(Text("Right-click a tile to move or attack.", 11, Dim));
-    }
-
-    // --- city -----------------------------------------------------------------------------
-
-    private void CityPanel(Container col, City city)
-    {
-        var y = Yields.OfCity(Sim, city);
-        col.AddChild(Text($"{city.Name}  (population {city.Population})", 16));
-        int surplus = y.Food - CityRules.FoodPerCitizen * city.Population;
-        col.AddChild(Text($"Food {y.Food} ({surplus:+#;-#;0}/turn)  box {city.FoodStored}/{CityRules.FoodToGrow(city.Population)}"));
-        col.AddChild(Text($"Production {y.Production}   Commerce {y.Commerce}   Culture {y.Culture}"));
-        col.AddChild(Text("Click highlighted tiles on the map to put citizens to work or unassign them.", 11, Dim));
-
-        col.AddChild(Text("Specialists", 14));
-        foreach (var spec in Sim.Content.Specialists.All)
-        {
-            var s = spec;
-            int count = city.Specialists.GetValueOrDefault(s.Id);
-            int slots = CityRules.Slots(Sim, city, s.Id);
-            if (!s.Unlimited && slots == 0 && count == 0) continue;
-            string slotText = s.Unlimited ? "" : slots == int.MaxValue ? "  (unlimited)" : $"  (slots {slots})";
-            var row = new HBoxContainer();
-            row.AddChild(Text($"{s.Name}  x{count}{slotText}  {SpecialistYield(s)}", 12));
-            if (!s.Unlimited)
-            {
-                row.AddChild(Btn("-", () => _session.ChangeSpecialist(city, s.Id, -1), count > 0, false, 28));
-                row.AddChild(Btn("+", () => _session.ChangeSpecialist(city, s.Id, +1), slots > count, false, 28));
-            }
-            col.AddChild(row);
-        }
-
-        var me = Me;
-        col.AddChild(Text("Production", 14));
-        string current = city.Building != null ? $"{Sim.Content.Buildings.Get(city.Building).Name} {city.BuildProgress}/{Sim.Content.Buildings.Get(city.Building).Cost}"
-            : city.Training != null ? $"{Sim.Content.Units.Get(city.Training).Name} {city.TrainProgress}/{Sim.Content.Units.Get(city.Training).Cost}"
-            : "nothing";
-        col.AddChild(Text("Building: " + current));
-        if (city.Buildings.Count > 0)
-            col.AddChild(Text("Has: " + string.Join(", ", city.Buildings.Select(b => Sim.Content.Buildings.Get(b).Name)), 12, Dim));
-
-        foreach (var building in Sim.Content.Buildings.All.Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || MyTeam.Techs.Contains(b.RequiresTech))))
-        {
-            var b = building;
-            col.AddChild(Btn($"{b.Name} ({b.Cost})", () => _session.Submit(new StartBuildingCommand { Player = GameSession.Human, CityId = city.Id, Building = b.Id }), true, city.Building == b.Id));
-        }
-        foreach (var unit in Sim.Content.Units.All.Where(u => u.RequiresTech == null || MyTeam.Techs.Contains(u.RequiresTech)))
-        {
-            var u = unit;
-            col.AddChild(Btn($"Train {u.Name} ({u.Cost})", () => _session.Submit(new StartTrainingCommand { Player = GameSession.Human, CityId = city.Id, Unit = u.Id }), true, city.Training == u.Id));
-        }
-    }
-
-    private static string SpecialistYield(SpecialistDef s)
-    {
-        var parts = new List<string>();
-        if (s.Food != 0) parts.Add($"+{s.Food} food");
-        if (s.Production != 0) parts.Add($"+{s.Production} prod");
-        if (s.Commerce != 0) parts.Add($"+{s.Commerce} commerce");
-        if (s.Culture != 0) parts.Add($"+{s.Culture} culture");
-        return parts.Count == 0 ? "" : "[" + string.Join(" ", parts) + "]";
-    }
+    internal static string StripMarkup(string text) =>
+        System.Text.RegularExpressions.Regex.Replace(text, @"\{[^}]*\}|\[[^\]]*\]", "");
 }

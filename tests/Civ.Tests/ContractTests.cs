@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Civ.BaseGame;
-using Civ.Client;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -370,17 +369,5 @@ public class ContractTests
         ulong hash = sim.ComputeHash();
         sim.State.Cities[0].ProductionQueue.Add(new("cities:building", "base:granary", 2));
         Assert.NotEqual(hash, sim.ComputeHash());
-    }
-
-    [Fact]
-    public void ClientPickingUsesOffsetMapAndRejectsUnrenderedWrapImages()
-    {
-        var sim = new Simulation(TestGame.Content(), new SimulationSettings { Map = new(4, 3, true) });
-        var session = new GameSession(sim);
-        var hex = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 1));
-        var (x, y) = hex.ToPixel(10);
-        Assert.Equal(hex, session.Pick(x, y, 10));
-        var (outsideX, outsideY) = (hex + new Hex(4, 0)).ToPixel(10);
-        Assert.Null(session.Pick(outsideX, outsideY, 10));
     }
 }

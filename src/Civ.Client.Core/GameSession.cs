@@ -1,6 +1,5 @@
-using Civ.BaseGame;
 using Civ.Game;
-using Civ.Modding;
+using Schema = Civ.Content.Schema;
 
 namespace Civ.Client;
 
@@ -9,57 +8,80 @@ namespace Civ.Client;
 /// player's actions expressed as commands. It has no engine types, so it is shared by any renderer and unit tested.
 /// For multiplayer, <see cref="Submit"/> is the one place to route commands into a LockstepSession instead.
 /// </summary>
-public sealed class GameSession
+public sealed partial class GameSession
 {
     public const int Human = 0;
 
+    private readonly Dictionary<int, Hex> _gotos = new();
+
     public Simulation Sim { get; }
-    public string Message { get; set; } = "";
-    public int? SelectedUnitId { get; set; }
-    public int? SelectedCityId { get; set; }
+    public string Message { get; private set; } = "";
+    public int? SelectedUnitId { get; private set; }
+    public int? SelectedCityId { get; private set; }
+    /// <summary>Counts every command and selection change so front ends rebuild only when something changed.</summary>
+    public int Revision { get; private set; }
+    /// <summary>Counts only changes to the simulation, for the map to rebuild its meshes.</summary>
+    public int WorldRevision { get; private set; }
 
-    public GameSession(Simulation sim) { Sim = sim; }
-
-    /// <summary>The standard hot-seat-vs-AI game: the base mod plus any extra mods, one human and two AI civilizations.</summary>
-    public static GameSession Start(IEnumerable<ModSource> extraMods, int mapRadius = 12, ulong seed = 1)
+    public GameSession(Simulation sim)
     {
-        var baseMod = ModLoader.FromAssembly(typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
-        var content = ModLoader.Build(extraMods.Prepend(baseMod));
-        var sim = new Simulation(content, new SimulationSettings
-        {
-            Seed = seed, Map = new(2 * mapRadius + 1, 2 * mapRadius + 1), PlayerCount = 3,
-            PlayerAis = [null, "base:basic", "base:basic"],
-        });
-        Sites.PlaceStartingUnits(sim, Human);
-        var session = new GameSession(sim);
-        session.SelectedUnitId = sim.State.Units.FirstOrDefault(u => u.Owner == Human)?.Id;
-        return session;
+        Sim = sim;
+        SelectNextUnit();
     }
+
+    /// <summary>Create a new game from the setup screen's choices.</summary>
+    public static GameSession Start(GameCatalog catalog, NewGameOptions options) =>
+        new(new Simulation(catalog.Content, options.ToSettings(catalog)));
 
     public Player Me => Sim.State.PlayerById(Human);
     public Team MyTeam => Sim.TeamOf(Human);
-
-    /// <summary>Pick a canonical rendered plot from pixel coordinates; wrap images are not rendered.</summary>
-    public Hex? Pick(double x, double y, double hexSize)
-    {
-        var hex = Hex.FromPixel(x, y, hexSize);
-        return Sim.State.Grid.Contains(hex) ? hex : null;
-    }
     public City? City => SelectedCityId is int id ? Sim.State.FindCity(id) : null;
     public Unit? Unit => SelectedUnitId is int id ? Sim.State.FindUnit(id) : null;
 
-    /// <summary>Changes whenever anything a UI shows could have changed, so front ends can rebuild only when needed.</summary>
-    public ulong Version => Sim.ComputeHash() ^ ((ulong)(SelectedUnitId ?? -1) * 0x9E3779B97F4A7C15UL) ^ ((ulong)(SelectedCityId ?? -1) * 0xC2B2AE3D27D4EB4FUL)
-        ^ (ulong)Message.GetHashCode();
+    internal T Service<T>() where T : class => Sim.Content.Services.Get<T>().Single();
+    internal T? OptionalService<T>() where T : class => Sim.Content.Services.Get<T>().SingleOrDefault();
+    internal int MoveDenominator => Math.Max(1, Sim.Content.Get<Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator);
 
-    public void Submit(GameCommand command)
+    public void SetMessage(string message) { Message = message; Revision++; }
+
+    /// <summary>Apply a command for the local player; a rejection becomes <see cref="Message"/>.</summary>
+    public bool Submit(GameCommand command)
     {
-        Message = Sim.TryApply(command, out var error) ? "" : $"Can't do that: {error}";
+        bool ok = Sim.TryApply(command, out var error);
+        Message = ok ? "" : $"Can't do that: {error}";
+        Revision++;
+        if (ok) WorldRevision++;
         if (City == null) SelectedCityId = null;
         if (Unit == null) SelectedUnitId = null;
+        return ok;
     }
 
-    public void EndTurn() => Submit(new EndTurnCommand { Player = Human });
+    // --- turns ------------------------------------------------------------------------------
+
+    /// <summary>End the turn. Opponents without an AI service have nothing to do, so they end theirs first; the human ends last.</summary>
+    public void EndTurn()
+    {
+        foreach (var player in Sim.State.Players.Where(p => p.Id != Human && p.Ai == null && !p.EndedTurn).ToList())
+            Sim.TryApply(new EndTurnCommand { Player = player.Id }, out _);
+        int turn = Sim.State.Turn;
+        Submit(new EndTurnCommand { Player = Human });
+        if (Sim.State.Turn == turn) return;
+        ContinueOrders();
+        SelectNextUnit();
+    }
+
+    /// <summary>Re-issue standing go-to orders at the start of a turn.</summary>
+    private void ContinueOrders()
+    {
+        foreach (var (id, destination) in _gotos.OrderBy(g => g.Key).ToList())
+        {
+            var unit = Sim.State.FindUnit(id);
+            if (unit == null || unit.Position == destination) { _gotos.Remove(id); continue; }
+            if (!TryWalk(unit, destination)) _gotos.Remove(id);
+        }
+        Revision++;
+        WorldRevision++;
+    }
 
     // --- selection --------------------------------------------------------------------------
 
@@ -69,138 +91,82 @@ public sealed class GameSession
         var stack = new List<(bool IsCity, int Id)>();
         stack.AddRange(Sim.State.UnitsAt(hex).Where(u => u.Owner == Human).OrderBy(u => u.Id).Select(u => (false, u.Id)));
         if (Sim.State.CityAt(hex) is { Owner: Human } here) stack.Add((true, here.Id));
-        if (stack.Count == 0) { SelectedCityId = null; SelectedUnitId = null; return; }
+        if (stack.Count == 0) { ClearSelection(); return; }
 
         int current = stack.FindIndex(e => e.IsCity ? e.Id == SelectedCityId : e.Id == SelectedUnitId);
         var pick = stack[(current + 1) % stack.Count];
         SelectedCityId = pick.IsCity ? pick.Id : null;
         SelectedUnitId = pick.IsCity ? null : pick.Id;
+        Revision++;
     }
 
-    public void ClearSelection() { SelectedCityId = null; SelectedUnitId = null; }
+    public void SelectUnit(int id)
+    {
+        if (Sim.State.FindUnit(id)?.Owner != Human) return;
+        SelectedUnitId = id; SelectedCityId = null; Revision++;
+    }
 
-    // --- map clicks ----------------------------------------------------------------------
+    public void SelectCity(int id)
+    {
+        if (Sim.State.FindCity(id)?.Owner != Human) return;
+        SelectedCityId = id; SelectedUnitId = null; Revision++;
+    }
+
+    public void ClearSelection() { SelectedCityId = null; SelectedUnitId = null; Revision++; }
+
+    /// <summary>Select the next of my units that still has moves and is awake; clears the selection when none is left.</summary>
+    public void SelectNextUnit()
+    {
+        var waiting = Sim.State.Units.Where(u => u.Owner == Human && NeedsOrders(u)).OrderBy(u => u.Id).ToList();
+        var next = waiting.FirstOrDefault(u => u.Id > (SelectedUnitId ?? 0)) ?? waiting.FirstOrDefault();
+        SelectedCityId = null;
+        SelectedUnitId = next?.Id;
+        Revision++;
+    }
+
+    private bool NeedsOrders(Unit unit) =>
+        unit.MovesLeft > 0 && !_gotos.ContainsKey(unit.Id) && ActivityOf(unit) == UnitActivity.Awake;
+
+    public UnitActivity ActivityOf(Unit unit) => unit.Extensions.Get<MilitaryUnitState>(Sim.Content)?.Activity ?? UnitActivity.Awake;
+
+    /// <summary>Units whose turn is not finished; the end-turn button warns when this is not zero.</summary>
+    public int UnitsNeedingOrders => Sim.State.Units.Count(u => u.Owner == Human && NeedsOrders(u));
+
+    // --- map clicks ---------------------------------------------------------------------
 
     /// <summary>Left click: with a city selected, a workable tile toggles its citizen; otherwise select.</summary>
     public void LeftClick(Hex hex)
     {
+        if (!Sim.State.Grid.TryTile(hex, out _)) return;
+        hex = Sim.State.Grid.Normalize(hex);
         var city = City;
-        if (city != null && hex != city.Position && CityRules.WorkableTiles(Sim, city).Contains(hex))
+        if (city != null && hex != city.Position && WorkableTiles(city).Contains(Sim.State.Grid.Normalize(hex)))
             ToggleTile(city, hex);
         else
             SelectAt(hex);
     }
 
-    /// <summary>Right click: attack an adjacent enemy, otherwise walk the selected unit toward the tile (greedy, no pathfinding yet).</summary>
+    /// <summary>Right click: attack an enemy, otherwise walk the selected unit there and keep going on later turns.</summary>
     public void RightClick(Hex hex)
     {
         var unit = Unit;
-        if (unit == null || !Sim.State.Grid.Contains(hex)) return;
-        if (Sim.State.Grid.Distance(unit.Position, hex) == 1 && UnitRules.BestDefender(Sim, hex, Human) != null)
-        {
-            Submit(new AttackCommand { Player = Human, UnitId = unit.Id, Target = hex });
-            return;
-        }
-        WalkTowards(unit, hex);
+        if (unit == null || !Sim.State.Grid.TryTile(hex, out _)) return;
+        hex = Sim.State.Grid.Normalize(hex);
+        if (hex == unit.Position) return;
+        var preview = PreviewAt(hex);
+        if (preview == null) { SetMessage("No path there"); return; }
+        if (preview.Attack != null) _gotos.Remove(unit.Id);
+        else _gotos[unit.Id] = hex;
+        if (!Submit(new MoveUnitPathCommand { Player = Human, Unit = unit.Id, Path = preview.Path.ToArray() }) || unit.Position == hex) _gotos.Remove(unit.Id);
     }
 
-    private void WalkTowards(Unit unit, Hex hex)
+    private bool TryWalk(Unit unit, Hex destination)
     {
-        for (int step = 0; step < 12 && unit.Position != hex && unit.MovesLeft > 0; step++)
-        {
-            Hex? best = Sim.State.Grid.Neighbors(unit.Position)
-                .Where(n => new MoveUnitCommand { Player = Human, UnitId = unit.Id, To = n }.Validate(Sim) == null)
-                .OrderBy(n => Sim.State.Grid.Distance(n, hex)).Cast<Hex?>().FirstOrDefault();
-            if (best == null || Sim.State.Grid.Distance(best.Value, hex) >= Sim.State.Grid.Distance(unit.Position, hex)) break;
-            Submit(new MoveUnitCommand { Player = Human, UnitId = unit.Id, To = best.Value });
-        }
+        var path = Service<IPathfindingService>().FindPath(Sim, unit.Id, destination);
+        if (path == null || path.Steps.Count == 0) return false;
+        return Sim.TryApply(new MoveUnitPathCommand { Player = Human, Unit = unit.Id, Path = path.Steps.ToArray() }, out _);
     }
 
-    public TileMark MarkOf(Hex hex)
-    {
-        if (!Sim.State.Grid.Contains(hex)) return TileMark.None;
-        if (City is { } city)
-        {
-            if (city.Worked.Contains(hex)) return TileMark.Worked;
-            if (CityRules.WorkableTiles(Sim, city).Contains(hex)) return TileMark.Workable;
-            if (hex == city.Position) return TileMark.Selected;
-            if (Sim.State.Grid.Distance(hex, city.Position) <= CityRules.Radius) return TileMark.Locked;
-        }
-        if (Unit is { } unit && unit.Position == hex) return TileMark.Selected;
-        return TileMark.None;
-    }
-
-    // --- city management -------------------------------------------------------------------
-
-    /// <summary>Unassign a worked tile (the citizen becomes a plain specialist) or put a citizen on a free tile, taking one from the plain pool, then any specialist, then the least valuable worked tile.</summary>
-    public void ToggleTile(City city, Hex hex)
-    {
-        var tiles = city.Worked.ToList();
-        var spec = new Dictionary<string, int>(city.Specialists);
-        var citizen = CityRules.DefaultSpecialist(Sim);
-        if (tiles.Remove(hex))
-        {
-            if (citizen == null) { Message = "Can't do that: no default citizen specialist is registered"; return; }
-            spec[citizen.Id] = spec.GetValueOrDefault(citizen.Id) + 1;
-        }
-        else
-        {
-            var from = citizen != null && spec.GetValueOrDefault(citizen.Id) > 0 ? citizen.Id
-                : spec.Where(kv => kv.Value > 0).Select(kv => kv.Key).FirstOrDefault();
-            if (from != null)
-            {
-                if (--spec[from] <= 0) spec.Remove(from);
-            }
-            else if (tiles.Count > 0)
-            {
-                tiles.Remove(tiles.OrderBy(t => CityRules.TileScore(Sim, t)).ThenBy(t => t.Q).ThenBy(t => t.R).First());
-            }
-            else { Message = "No citizen to assign"; return; }
-            tiles.Add(hex);
-        }
-        Submit(new SetCityWorkCommand { Player = Human, CityId = city.Id, Tiles = tiles.ToArray(), Specialists = spec });
-    }
-
-    /// <summary>Put one more citizen to work (+1: the best free tile) or take one off the least valuable worked tile (-1).</summary>
-    public void ChangeWorkers(City city, int delta)
-    {
-        if (delta < 0)
-        {
-            if (city.Worked.Count == 0) return;
-            ToggleTile(city, city.Worked.OrderBy(t => CityRules.TileScore(Sim, t)).ThenBy(t => t.Q).ThenBy(t => t.R).First());
-            return;
-        }
-        var free = CityRules.WorkableTiles(Sim, city).Where(h => !city.Worked.Contains(h))
-            .OrderByDescending(h => CityRules.TileScore(Sim, h)).ThenBy(h => h.Q).ThenBy(h => h.R).Cast<Hex?>().FirstOrDefault();
-        if (free == null) { Message = "Can't do that: no free tile"; return; }
-        ToggleTile(city, free.Value);
-    }
-
-    /// <summary>Move one citizen into (+1) or out of (-1) a specialist role; out goes back to the plain citizen pool.</summary>
-    public void ChangeSpecialist(City city, string id, int delta)
-    {
-        var tiles = city.Worked.ToList();
-        var spec = new Dictionary<string, int>(city.Specialists);
-        var citizen = CityRules.DefaultSpecialist(Sim);
-        if (citizen == null) return;
-
-        if (delta > 0)
-        {
-            if (spec.GetValueOrDefault(citizen.Id) > 0 && id != citizen.Id) { if (--spec[citizen.Id] <= 0) spec.Remove(citizen.Id); }
-            else if (tiles.Count > 0)
-                tiles.Remove(tiles.OrderBy(t => CityRules.TileScore(Sim, t)).ThenBy(t => t.Q).ThenBy(t => t.R).First());
-            else { Message = "No citizen available to reassign"; return; }
-            spec[id] = spec.GetValueOrDefault(id) + 1;
-        }
-        else
-        {
-            if (spec.GetValueOrDefault(id) <= 0 || id == citizen.Id) return;
-            if (--spec[id] <= 0) spec.Remove(id);
-            spec[citizen.Id] = spec.GetValueOrDefault(citizen.Id) + 1;
-        }
-        Submit(new SetCityWorkCommand { Player = Human, CityId = city.Id, Tiles = tiles.ToArray(), Specialists = spec });
-    }
+    /// <summary>Whether a unit has a standing go-to order.</summary>
+    public bool HasGoto(int unitId) => _gotos.ContainsKey(unitId);
 }
-
-/// <summary>Locked: inside the selected city's radius but taken by another city.</summary>
-public enum TileMark { None, Worked, Workable, Selected, Locked }

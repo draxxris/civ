@@ -2,8 +2,10 @@
   <!--
     Godot 4 .NET front end. Not part of Civ.slnx so the headless game builds and tests without the engine.
     Build:  dotnet build src/Civ.Godot
-    Run:    godot with the project path set to src/Civ.Godot (Godot 4.7 .NET)
-    Mods are plain DLLs loaded by Civ.Core; they never contain Godot types.
+    Run: godot-mono, with the project path set to src/Civ.Godot
+    Mods are plain DLLs loaded by Civ.Core; they never contain Godot types. The build copies every feature mod
+    (assembly, mod.json, data and art) to <output>/mods/<Name>, where the client finds them at startup.
+    Set CIV_MODS to use another folder.
   -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,7 +15,29 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Civ.Core\Civ.Core.csproj" />
-    <ProjectReference Include="..\Civ.BaseGame\Civ.BaseGame.csproj" />
     <ProjectReference Include="..\Civ.Client.Core\Civ.Client.Core.csproj" />
+    <ProjectReference Include="..\Mods\Foundation\Civ.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\World\Civ.Mods.World.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Research\Civ.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Economy\Civ.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Cities\Civ.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Military\Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Government\Civ.Mods.Government.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Peoples\Civ.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Ai\Civ.Mods.Ai.csproj" ReferenceOutputAssembly="false" Condition="Exists('..\Mods\Ai\Civ.Mods.Ai.csproj')" />
   </ItemGroup>
+  <Target Name="CopyModPayloads" AfterTargets="Build">
+    <ItemGroup>
+      <ModPayload Include="..\Mods\Foundation\bin\$(Configuration)\net10.0\**\*" ModDir="Foundation" />
+      <ModPayload Include="..\Mods\World\bin\$(Configuration)\net10.0\**\*" ModDir="World" />
+      <ModPayload Include="..\Mods\Research\bin\$(Configuration)\net10.0\**\*" ModDir="Research" />
+      <ModPayload Include="..\Mods\Economy\bin\$(Configuration)\net10.0\**\*" ModDir="Economy" />
+      <ModPayload Include="..\Mods\Cities\bin\$(Configuration)\net10.0\**\*" ModDir="Cities" />
+      <ModPayload Include="..\Mods\Military\bin\$(Configuration)\net10.0\**\*" ModDir="Military" />
+      <ModPayload Include="..\Mods\Government\bin\$(Configuration)\net10.0\**\*" ModDir="Government" />
+      <ModPayload Include="..\Mods\Peoples\bin\$(Configuration)\net10.0\**\*" ModDir="Peoples" />
+      <ModPayload Include="..\Mods\Ai\bin\$(Configuration)\net10.0\**\*" ModDir="Ai" Condition="Exists('..\Mods\Ai\Civ.Mods.Ai.csproj')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModPayload)" DestinationFiles="@(ModPayload->'$(OutDir)mods/%(ModDir)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

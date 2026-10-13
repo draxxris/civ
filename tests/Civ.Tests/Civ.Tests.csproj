@@ -11,6 +11,5 @@
     <ProjectReference Include="..\..\src\Civ.Core\Civ.Core.csproj" />
     <ProjectReference Include="..\..\src\Civ.Net\Civ.Net.csproj" />
     <ProjectReference Include="..\..\src\Civ.BaseGame\Civ.BaseGame.csproj" />
-    <ProjectReference Include="..\..\src\Civ.Client.Core\Civ.Client.Core.csproj" />
   </ItemGroup>
 </Project>

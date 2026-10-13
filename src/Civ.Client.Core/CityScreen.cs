@@ -1,111 +1,212 @@
-using Civ.BaseGame;
 using Civ.Content;
 using Civ.Game;
+using Schema = Civ.Content.Schema;
 
 namespace Civ.Client;
 
-public sealed record SpecialistRow(string Id, string Name, int Count, int Slots, bool Unlimited, string Effects);
-
-/// <summary>One thing a city can build or train. <see cref="Turns"/> counts from the city's current progress when it is the current item.</summary>
-public sealed record ProductionItem(bool IsUnit, string Id, string Name, int Cost, int? Turns, string Effects, bool Current);
-
-/// <summary>What the city screen shows, computed from the simulation so every renderer (and the tests) agree on the numbers.</summary>
-public sealed record CityScreen(
-    string Name, int Population, int FoodSurplus, int? TurnsToGrow, bool Starving,
-    int Food, int Production, int Commerce, int Culture,
-    int Workers, int SpecialistTotal, IReadOnlyList<SpecialistRow> Specialists,
-    string? CurrentName, long CurrentProgress, int CurrentCost, int? CurrentTurns,
-    IReadOnlyList<ProductionItem> Buildings, IReadOnlyList<ProductionItem> Units)
+public sealed record LedgerRow(string Label, long Amount, bool Percent = false)
 {
-    public static CityScreen Of(Simulation sim, City city)
+    public string Text => $"{Labels.Signed(Amount)}{(Percent ? "%" : "")}  {Label}";
+}
+
+public sealed record SpecialistRow(string Id, string Name, int Count, int Slots, string Effects);
+
+public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns);
+
+/// <summary>Something the city could produce. <see cref="Blockers"/> are the requirement failures, empty when it can be queued.</summary>
+public sealed record ProductionChoice(string Kind, string Id, string Name, long Cost, int? Turns, IReadOnlyList<string> Blockers)
+{
+    public bool Available => Blockers.Count == 0;
+    public string Tooltip => Available ? $"{Name}: {Cost} production" : string.Join("\n", Blockers);
+}
+
+public sealed record TileRow(Hex Hex, string Name, long Food, long Production, long Commerce);
+
+public sealed record HurryOption(string Id, string Name, long Gold, int Population, string? Blocked);
+
+/// <summary>What the city screen shows, computed from the services so every renderer (and the tests) agree on the numbers.</summary>
+public sealed record CityScreen(
+    int Id, string Name, int Population, long FoodStored, long FoodThreshold, long FoodSurplus, int? TurnsToGrow,
+    long Food, long Production, CommerceVector CommercePerTurn, long Maintenance,
+    int Happy, int Unhappy, int Angry, int Healthy, int Unhealthy,
+    long CultureHundredths, string? CultureLevel, long GreatPeopleProgress, long GreatPeopleThreshold,
+    bool Manual, bool AvoidGrowth, bool Disorder,
+    IReadOnlyList<LedgerRow> FoodLedger, IReadOnlyList<LedgerRow> ProductionLedger, IReadOnlyList<LedgerRow> CommerceLedger,
+    IReadOnlyList<LedgerRow> HappinessLedger, IReadOnlyList<LedgerRow> HealthLedger,
+    IReadOnlyList<TileRow> WorkedTiles, int IdleCitizens, IReadOnlyList<SpecialistRow> Specialists,
+    IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry)
+{
+    public int Citizens => Population;
+}
+
+public sealed partial class GameSession
+{
+    public CityScreen? DescribeCity(City? city)
     {
-        var y = Yields.OfCity(sim, city);
-        int production = (int)(y.Production * (100L + Bonuses.Production(sim, city.Owner)) / 100);
-        int culture = (int)((1 + y.Culture) * (100L + Bonuses.Culture(sim, city.Owner)) / 100);
-        int surplus = y.Food - CityRules.FoodPerCitizen * city.Population;
-        int? growIn = surplus > 0 ? Turns(CityRules.FoodToGrow(city.Population) - city.FoodStored, surplus) : null;
-        bool starving = surplus < 0 && city.FoodStored + surplus < 0 && city.Population > 1;
-
-        var specialists = SpecialistRows(sim, city);
-
-        var me = sim.TeamOf(city.Owner);
-        var buildings = AvailableBuildings(sim, city, production);
-        var units = sim.Content.Units.All
-            .Where(u => u.RequiresTech == null || me.Techs.Contains(u.RequiresTech))
-            .Select(u => new ProductionItem(true, u.Id, u.Name, u.Cost, Turns(u.Cost - (city.Training == u.Id ? city.TrainProgress : 0), production), UnitEffects(u), city.Training == u.Id))
-            .ToList();
-
-        var (currentName, progress, cost) = CurrentProduction(sim, city);
-
-        return new CityScreen(city.Name, city.Population, surplus, growIn, starving,
-            y.Food, production, y.Commerce, culture,
-            city.Worked.Count, CityRules.SpecialistCount(city), specialists,
-            currentName, progress, cost, currentName == null ? null : Turns(cost - progress, production),
-            buildings, units);
+        if (city == null) return null;
+        var yield = Service<ICityYieldService>().Calculate(Sim, city.Id);
+        var wellbeing = Service<ICityWellbeingService>().Calculate(Sim, city.Id);
+        var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
+        var commerce = Service<IPlayerEconomyService>().CalculateCity(Sim, city.Id);
+        var rules = city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();
+        var greatPeople = Service<ICityGreatPeopleService>().Calculate(Sim, city.Id);
+        long perTurn = yield.Yields.Production;
+        int? grow = growth.Difference > 0 ? (int?)Math.Max(1, (growth.Threshold - city.FoodStored + growth.Difference - 1) / growth.Difference) : null;
+        int idle = Math.Max(0, city.Population - wellbeing.Angry - city.Worked.Count - city.Specialists.Values.Sum());
+        return new(city.Id, city.Name, city.Population, city.FoodStored, growth.Threshold, growth.Difference, grow,
+            yield.Yields.Food, perTurn, PerTurn(commerce.Hundredths),
+            Service<ICityMaintenanceService>().Calculate(Sim, city.Id).TotalHundredths / 100,
+            wellbeing.Happy, wellbeing.Unhappy, wellbeing.Angry, wellbeing.Healthy, wellbeing.Unhealthy,
+            CultureOf(city), CultureLevelName(city), rules.GreatPeopleProgress, greatPeople.Threshold,
+            rules.ManualWork, rules.AvoidGrowth, GovernmentStatus.IsDisorder(Sim, city),
+            Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
+            Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
+            city.Worked.Select(h => TileRowOf(h)).ToList(), idle, SpecialistRows(city),
+            QueueRows(city), city.Buildings.Select(b => Sim.Content.Get<Schema.BuildingDef>(b).Name).Order(StringComparer.Ordinal).ToList(),
+            HurryOptions(city));
     }
 
-    private static IReadOnlyList<ProductionItem> AvailableBuildings(Simulation sim, City city, int production) =>
-        sim.Content.Buildings.All
-            .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || sim.KnowsTech(city.Owner, b.RequiresTech)))
-            .Select(b => new ProductionItem(false, b.Id, b.Name, b.Cost,
-                Turns(b.Cost - (city.Building == b.Id ? city.BuildProgress : 0), production),
-                BuildingEffects(sim, b), city.Building == b.Id)).ToList();
+    private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
 
-    private static IReadOnlyList<SpecialistRow> SpecialistRows(Simulation sim, City city)
+    private string? CultureLevelName(City city) => Sim.Content.Get<Schema.CultureLevelDef>().All
+        .Where(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed) <= city.Culture)
+        .Where(l => Sim.Content.Requirements.Evaluate(l.Requirements, new(Sim, city.Owner)).Success)
+        .OrderByDescending(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed)).FirstOrDefault()?.Name;
+
+    private long CultureOf(City city) => OptionalService<ICityCultureSource>()?.CultureHundredths(Sim, city.Id) ?? 0;
+
+    private IReadOnlyList<LedgerRow> Rows(Ledger ledger, string axis) => ledger.Lines
+        .Where(l => l.Key.EndsWith(axis, StringComparison.Ordinal) && l.Key.StartsWith("yield.", StringComparison.Ordinal) && l.Amount != 0)
+        .Select(l => new LedgerRow(Labels.Source(Sim, l.Source), l.Amount, l.Key.Contains(".percent."))).ToList();
+
+    private IReadOnlyList<LedgerRow> CommerceRows(Ledger ledger) => ledger.Lines
+        .Where(l => (l.Key.StartsWith("commerce.", StringComparison.Ordinal) || l.Key == "yield.flat.commerce") && l.Amount != 0)
+        .Select(l => new LedgerRow($"{Labels.Source(Sim, l.Source)} ({l.Key[(l.Key.LastIndexOf('.') + 1)..]})", l.Amount, l.Key.Contains(".percent."))).ToList();
+
+    private IReadOnlyList<LedgerRow> Wellbeing(Ledger ledger, string kind) => ledger.Lines
+        .Where(l => l.Key.Contains(kind) && l.Amount != 0 && (l.Key.EndsWith("_good", StringComparison.Ordinal) || l.Key.EndsWith("_bad", StringComparison.Ordinal)))
+        .Select(l => new LedgerRow(Labels.Source(Sim, l.Source), l.Key.EndsWith("_bad", StringComparison.Ordinal) ? -l.Amount : l.Amount)).ToList();
+
+    private TileRow TileRowOf(Hex hex)
+    {
+        var plot = Sim.State.PlotAt(hex);
+        var y = Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields;
+        var name = plot.Feature is { } f ? Sim.Content.Get<Schema.FeatureDef>(f).Name : Sim.Content.Get<Schema.TerrainDef>(plot.Terrain).Name;
+        return new(hex, name, y.Food, y.Production, y.Commerce);
+    }
+
+    private IReadOnlyList<SpecialistRow> SpecialistRows(City city)
     {
         var rows = new List<SpecialistRow>();
-        foreach (var specialist in sim.Content.Specialists.All)
+        foreach (var def in Sim.Content.Get<Schema.SpecialistDef>().All.OrderBy(s => s.Id == CitizenSpecialist ? "" : s.Id, StringComparer.Ordinal))
         {
-            int count = city.Specialists.GetValueOrDefault(specialist.Id);
-            int slots = CityRules.Slots(sim, city, specialist.Id);
-            if (!specialist.Unlimited && slots == 0 && count == 0) continue;
-            rows.Add(new(specialist.Id, specialist.Name, count, slots, specialist.Unlimited, SpecialistEffects(specialist)));
+            int count = city.Specialists.GetValueOrDefault(def.Id);
+            int slots = SlotsOf(city, def.Id);
+            if (slots > 0 || count > 0) rows.Add(new(def.Id, def.Name, count, slots, SpecialistEffects(def)));
         }
         return rows;
     }
-    private static (string? Name, long Progress, int Cost) CurrentProduction(Simulation sim, City city)
+
+    /// <summary>Open slots for a specialist, probed through the work service's own validation.</summary>
+    private int SlotsOf(City city, string id)
     {
-        if (city.Building is { } building)
-        {
-            var def = sim.Content.Buildings.Get(building);
-            return (def.Name, city.BuildProgress, def.Cost);
-        }
-        if (city.Training is { } training)
-        {
-            var def = sim.Content.Units.Get(training);
-            return (def.Name, city.TrainProgress, def.Cost);
-        }
-        return (null, 0, 0);
+        if (id == CitizenSpecialist) return city.Population;
+        var work = Service<ICityWorkService>();
+        int slots = 0;
+        while (slots < city.Population && work.Validate(Sim, city.Id, [], new Dictionary<string, int> { [id] = slots + 1 }) == null) slots++;
+        return slots;
     }
 
-    /// <summary>Whole turns to cover <paramref name="remaining"/> at <paramref name="perTurn"/> (at least 1); null when nothing is produced.</summary>
-    public static int? Turns(long remaining, int perTurn) => perTurn <= 0 ? null : (int)Math.Max(1, (remaining + perTurn - 1) / perTurn);
+    public static string SpecialistEffects(Schema.SpecialistDef s) =>
+        string.Join(", ", new[] { Labels.YieldText(s.Yields.Food, s.Yields.Production, s.Yields.Commerce, s.Commerces.Culture),
+            s.Commerces.Gold != 0 ? $"{Labels.Signed(s.Commerces.Gold)} gold" : "", s.Commerces.Research != 0 ? $"{Labels.Signed(s.Commerces.Research)} research" : "" }
+            .Where(t => t.Length > 0));
 
-    public static string YieldText(int food, int production, int commerce, int culture)
+    private IReadOnlyList<QueueRow> QueueRows(City city)
     {
-        var parts = new List<string>();
-        if (food != 0) parts.Add($"{food:+#;-#} food");
-        if (production != 0) parts.Add($"{production:+#;-#} production");
-        if (commerce != 0) parts.Add($"{commerce:+#;-#} commerce");
-        if (culture != 0) parts.Add($"{culture:+#;-#} culture");
-        return string.Join(", ", parts);
-    }
-
-    public static string SpecialistEffects(SpecialistDef s) => YieldText(s.Food, s.Production, s.Commerce, s.Culture);
-
-    public static string BuildingEffects(Simulation sim, BuildingDef b)
-    {
-        var parts = new List<string>();
-        var y = YieldText(b.Food, b.Production, b.Commerce, b.Culture);
-        if (y.Length > 0) parts.Add(y);
-        foreach (var (id, n) in b.SpecialistSlots.OrderBy(kv => kv.Key, StringComparer.Ordinal))
+        var production = Service<ICityProductionService>();
+        var rows = new List<QueueRow>();
+        for (int i = 0; i < city.ProductionQueue.Count; i++)
         {
-            var name = sim.Content.Specialists.TryGet(id, out var s) ? s.Name : id;
-            parts.Add(n < 0 ? $"unlimited {name} slots" : $"{n} {name} slot{(n == 1 ? "" : "s")}");
+            var order = city.ProductionQueue[i];
+            var calc = production.Calculate(Sim, city.Id, order.Kind, order.ContentId);
+            rows.Add(new(i, order.Kind, order.ContentId, NameOf(order.Kind, order.ContentId), order.Progress, calc.Cost,
+                order.Kind == "economy:process" ? null : TurnsToFinish(calc.Cost - order.Progress, calc.Production)));
         }
-        if (b.UnitExperience != 0) parts.Add($"{b.UnitExperience:+#;-#} XP for new units");
-        return string.Join(", ", parts);
+        return rows;
     }
 
-    public static string UnitEffects(UnitDef u) => u.CanFoundCity ? "Founds a city" : $"Strength {u.Strength}, moves {u.Moves}";
+    private string NameOf(string kind, string id) => kind switch
+    {
+        "cities:building" => Sim.Content.Get<Schema.BuildingDef>(id).Name,
+        "cities:unit" => Sim.Content.Get<Schema.UnitDef>(id).Name,
+        _ => Sim.Content.TryGet<Schema.ProcessDef>(id, out var p) ? p.Name : id,
+    };
+
+    private IReadOnlyList<HurryOption> HurryOptions(City city)
+    {
+        var service = OptionalService<ICityHurryService>();
+        if (service == null || city.ProductionQueue.Count == 0) return [];
+        return Sim.Content.Get<Schema.HurryDef>().All.OrderBy(h => h.Id, StringComparer.Ordinal).Select(h =>
+        {
+            var cost = service.Calculate(Sim, city.Id, h.Id);
+            return new HurryOption(h.Id, h.Name, cost.Gold, cost.Population, service.Validate(Sim, Human, city.Id, h.Id));
+        }).ToList();
+    }
+
+    private static readonly string[] HiddenBlockers =
+        ["Civilization class replacement required", "Building cannot be constructed", "Unit cannot be trained", "Unknown building", "Unknown unit"];
+
+    private readonly Dictionary<string, IReadOnlyList<(Content.ContentDef Def, IReadOnlyList<string> Blockers)>> _eligibility = new();
+    private (int Revision, int City) _eligibilityKey = (-1, -1);
+
+    /// <summary>Every building, unit or process (by <paramref name="kind"/>) the city could ever queue, with the reasons it cannot be queued now;
+    /// structural impossibilities are left out. Requirement checks are reused until the simulation changes; costs and turns are always current.</summary>
+    public IReadOnlyList<ProductionChoice> ProductionChoices(City city, string kind)
+    {
+        var key = (WorldRevision, city.Id);
+        if (key != _eligibilityKey) { _eligibility.Clear(); _eligibilityKey = key; }
+        if (!_eligibility.TryGetValue(kind, out var eligible)) _eligibility[kind] = eligible = CheckEligibility(city, kind);
+        var production = Service<ICityProductionService>();
+        return eligible.Select(e => e.Blockers.Count > 0
+            ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, BaseCost(e.Def), null, e.Blockers)
+            : Priced(city, production, kind, e.Def)).ToList();
+    }
+
+    /// <summary>All three kinds together.</summary>
+    public IReadOnlyList<ProductionChoice> ProductionChoices(City city) =>
+        new[] { "cities:building", "cities:unit", "economy:process" }.SelectMany(k => ProductionChoices(city, k)).ToList();
+
+    private IReadOnlyList<(Content.ContentDef, IReadOnlyList<string>)> CheckEligibility(City city, string kind)
+    {
+        IEnumerable<Content.ContentDef> defs = kind switch
+        {
+            "cities:building" => Sim.Content.Get<Schema.BuildingDef>().All.Where(b => b.Cost >= 0),
+            "cities:unit" => Sim.Content.Get<Schema.UnitDef>().All.Where(u => u.Cost >= 0),
+            _ => OptionalService<ICityProcessService>() == null ? [] : Sim.Content.Get<Schema.ProcessDef>().All,
+        };
+        var production = Service<ICityProductionService>();
+        var result = new List<(Content.ContentDef, IReadOnlyList<string>)>();
+        foreach (var def in defs.OrderBy(d => d.Name, StringComparer.Ordinal))
+        {
+            var blockers = production.Validate(Sim, city.Id, kind, def.Id).Failures.Select(f => f.Explanation).Distinct().ToList();
+            if (!blockers.Any(HiddenBlockers.Contains)) result.Add((def, blockers));
+        }
+        return result;
+    }
+
+    private ProductionChoice Priced(City city, ICityProductionService production, string kind, Content.ContentDef def)
+    {
+        var calc = production.Calculate(Sim, city.Id, kind, def.Id);
+        int? turns = kind == "economy:process" ? null : TurnsToFinish(calc.Cost - ProgressOf(city, kind, def.Id), calc.Production);
+        return new(kind, def.Id, def.Name, calc.Cost, turns, []);
+    }
+
+    private static long BaseCost(Content.ContentDef def) => def switch { Schema.BuildingDef b => b.Cost, Schema.UnitDef u => u.Cost, _ => 0 };
+
+    private long ProgressOf(City city, string kind, string id)
+    {
+        var state = city.Extensions.Get<CityRuleState>(Sim.Content);
+        return state?.PausedProduction.GetValueOrDefault(kind + "/" + id) ?? 0;
+    }
 }
