@@ -47,13 +47,32 @@ Status describes executable rules, not imported data. All eight mods load their 
 
 ## Research
 
-- **Implemented:** known-tech requirement evaluator. Field: team `Techs`.
-- **Not started:** costs, research commands, progress, overflow, discovery effects and repeatable technology counts.
+- **Implemented:** known-tech requirements, all/any prerequisites, disabled/known gates, team targets, queues, progress, and normalized overflow.
+  Commands: `research:set_research`, including a single free-tech selection. Repeatable technologies retain completion counts.
+- **Implemented:** sequential cost scaling by handicap, world, speed, starting era, and team size, including the large-cost guard.
+  Known contacted teams increase the research rate, not the cost. The contact set is empty until another rule supplies contacts.
+- **Implemented:** `TechDiscovered`, first-discovery free-tech credits and unit grants, and current-era updates through the Cities event handler.
+  Other mods use the discovery event for obsolescence. Starting technologies remain setup grants.
+- **Partial:** queues belong to teams, not individual players. Overflow carries to the next contribution instead of completing multiple technologies immediately.
+  Era order uses `EraDef.StartPercent`. Flexible difficulty, timeline scaling, diffusion welfare, traded-tech permissions, and religion rewards remain absent.
 
 ## Economy
 
-- **Not started:** commerce rates, treasury settlement, maintenance, inflation, taxes and process conversion.
-  Setup grants starting treasury, but no economy turn system changes it.
+- **Implemented:** `IPlayerEconomyService`, city commerce ledgers, and `economy:set_commerce_rates` with imported step size and percentage limits.
+  Gold receives allocation residuals. Direct commerce bypasses sliders. Positive and negative commerce use the source modifier order.
+  Research and culture cannot become negative. Disorder suppresses all city commerce.
+- **Implemented:** final culture through `ICityCultureSource`, research through `IPlayerResearchSource`, and saved aggregate espionage output.
+  Gold settlement stores a commerce snapshot before research discoveries and city production.
+- **Implemented:** city maintenance, civic upkeep, unit upkeep, outside-unit supply, and separate inflation ledger lines.
+  Costs retain sequential handicap and speed scaling. Civic upkeep includes its own inflation multiplication, as in the source.
+- **Implemented:** second-order inflation with a saved momentum accumulator, turn offset, effect window, handicap, speed, and civic modifiers.
+  The imported profile disables inflation through `DISABLE_INFLATION`. Formula tests use a mod override to enable it.
+- **Implemented:** infinite `economy:process` city queue items convert current production after commerce modifiers without consuming stored overflow.
+  `economy:hurry` supports civic-gated gold and population payments, new-item surcharge, scaled population production, and temporary anger.
+- **Partial:** bankruptcy lowers science, then culture and espionage, before settlement. Treasury clamps to zero and records unpaid costs.
+  Forced disbanding remains absent. Commerce maxima use modifier keys. Civic slider permissions and technology flexibility unlocks remain deferred.
+  Espionage lacks target allocation. Hurry anger uses fixed unhappy citizens per active timer interval.
+- **Not started:** taxes, advanced economy, trade/deal income, corporate costs, anarchy exemptions, optional inflation sources, and flexible difficulty.
 
 ## Cities
 
@@ -70,7 +89,8 @@ Status describes executable rules, not imported data. All eight mods load their 
 - **Implemented:** set/append/remove production commands, paused item progress, item modifiers, normalized capped overflow, feature grants, buildings, and Core unit creation.
   Completion rechecks world/team/player class limits in city-id order. Unit creation supplies experience and a domain event.
 - **Partial:** eligibility covers requirements, civilization replacements, class limits, culture wonder capacity, obsolescence, latitude, population, coast, and river.
-  Religion and power predicates fail closed. Automatic buildings, active-civic disabling, decay, hurry, draft, projects, and processes remain absent.
+  Religion and power predicates fail closed. Economy supplies process eligibility and hurry commands.
+  Automatic buildings, active-civic disabling, decay, draft, and projects remain absent.
   One queue item completes per city per turn. Excess above the overflow cap does not convert to gold yet.
 - **Partial:** city culture keeps hundredths. Plot culture uses hex distance and the source level/rate equation.
   Ownership preserves incumbent ties, then uses player-id order. Capture, terrain-obstructed spread, and isolated-coast eligibility remain absent.
@@ -80,14 +100,29 @@ Status describes executable rules, not imported data. All eight mods load their 
 - **Implemented:** specialist/building great-person rates, historical type pools, weighted births, speed/era thresholds, and saved player/team threshold progression.
   Combat great people and specialist settlement remain separate future mechanics.
 - **Partial:** current-era growth uses `CityPlayerState.CurrentEra`, with starting-era fallback.
-  Research must update that state. AI per-era growth/cost factors and flexible difficulty remain absent.
+  Technology discovery events update that state. AI per-era growth/cost factors and flexible difficulty remain absent.
 - **Not started:** building power, free-building propagation, replacement effects, original-owner commerce, calendar doubling, and scripted rewards.
 
 ## Military
 
-- **Implemented:** the existing exact-unit and held-promotion predicates. Fields: unit `Type/Promotions`.
-- **Not started:** movement, combat, healing, experience, upgrades, capture and military AI.
-  Setup creates Core units. World uses unit build/work fields without implementing movement.
+- **Implemented:** path movement, deterministic A*, integer sub-moves, terrain/feature costs, hills, routes, river bridge gates, visibility refresh, and unlimited stacking.
+  Land and sea domains enforce impassability, peak capabilities, ocean technology gates, and closed borders at peace.
+  River crossings disable routes without bridges. They do not add a separate movement penalty.
+- **Implemented:** melee strength ledgers, firepower damage, first strikes and immunity, attacker withdrawal, limited damage, collateral caps/immunity, defender selection, and combat events.
+  Preview odds use integer dynamic probability calculations without RNG. Combat reports survive saves between commands.
+  Experience uses strength ratios, promotion percentages, hundredths, barbarian caps, and a great-general point counter.
+- **Implemented:** earned promotion levels, prerequisite evaluation, half-damage promotion healing, free unit/building/trait grants, and civic training experience.
+  Location healing includes city buildings and the best same-plot or adjacent medic. Fortify, sleep, sentry, pillage, upgrades, disband, and support counts have commands or services.
+- **Partial:** city capture transfers ownership, preserves historical culture, removes the palace, reduces population, and clears queues and work assignments.
+  Razing removes the city. Occupation, capture gold, building survival rolls, conquest decisions, and capital relocation remain absent.
+- **Partial:** goody outcomes include gold, experience, healing, maps, technologies, units, and hostile villagers.
+  Eligibility and map selection omit some multiplayer, civilization, and source-specific restrictions.
+- **Partial:** barbarians create a player/team at the first spawn, enforce war, and spawn on unowned fogged land after handicap and city-count gates.
+  Area density follows the source deficit formula. Technology adoption uses majority knowledge instead of gradual research.
+  Behavior attacks adjacent favorable targets or follows paths toward the nearest city. Animals, naval spawns, and full military AI remain absent.
+- **Deferred:** cargo, air missions/rebasing, defender withdrawal, flanking, fort/city zones of control, bombardment, ranged attacks, invisibility, and optional combat variants.
+  Promotion zones of control work. Upgrade city search uses a nearby same-area training city, not the full native search policy.
+  Conditional free effects remain permanent grants. Worker orders still cancel at the worker phase, not immediately on each move.
 
 ## Government
 

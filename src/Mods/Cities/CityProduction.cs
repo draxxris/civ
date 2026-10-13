@@ -11,6 +11,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     {
         var city = sim.State.CityById(cityId);
         var result = yields.Calculate(sim, cityId);
+        if (kind == "economy:process") return ProcessProduction(result);
         var sink = CityData.Effects(sim, city);
         int modifier = (int)result.Ledger.Total("yield.percent.production");
         modifier += ItemModifiers(sim, city, kind, content, sink);
@@ -34,6 +35,14 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         long cost = Cost(sim, city, kind, content);
         sink.Add(content, "cities:production_cost", cost);
         return new(cost, production, percent, sink.Ledger);
+    }
+    private static CityProductionResult ProcessProduction(CityYieldResult yields)
+    {
+        var lines = yields.Ledger.Lines.ToList();
+        int percent = (int)Math.Max(0, 100 + yields.Ledger.Total("yield.percent.production"));
+        lines.Add(new("cities:process", "cities:production", yields.Yields.Production));
+        lines.Add(new("cities:process", "cities:production_factor_percent", percent));
+        return new(0, yields.Yields.Production, percent, new(lines));
     }
     private static long Cost(Simulation sim, City city, string kind, string id)
     {
@@ -78,6 +87,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         state.PendingCompletion = null;
         if (state.Disorder || city.ProductionQueue.Count == 0) return;
         var order = city.ProductionQueue[0];
+        if (order.Kind == "economy:process") return; // Conversion is settled as commerce; do not consume overflow.
         if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success) return;
         var result = Calculate(sim, city.Id, order.Kind, order.ContentId);
         order = order with { Progress = order.Progress + result.Production };

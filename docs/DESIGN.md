@@ -237,6 +237,55 @@ Plot culture uses hex distance without terrain obstacles. Ownership keeps an inc
 Governor weights live in the hand-authored hex sidecar. The governor orders equal plot scores by tile id.
 No feature mod references the BaseGame assembly. The client still uses the legacy ruleset.
 
+## Research and economy services
+
+Research registers `IResearchService` for cost ledgers, rate modifiers, eligibility, queues, and team contributions.
+`research:set_research` uses `SetTeamResearchCommand`. It accepts a target and optional queue, or one free-tech selection.
+`ResearchTeamState` saves normalized overflow, repeat counts, free-tech credits, queues, and explicit contacts.
+Discoveries publish `TechDiscovered`. Cities updates the current era through this event.
+Overflow applies on the next contribution. Optional diffusion and timeline policies remain deferred.
+
+Economy registers `IPlayerEconomyService` for player ledgers, city commerce ledgers, rates, and rate validation.
+`economy:set_commerce_rates` uses `SetCommerceRatesCommand`.
+City commerce keeps hundredths through allocation, direct contributions, percentage modifiers, and process conversion.
+Gold settlement saves a commerce snapshot. `IPlayerResearchSource` supplies that snapshot to Research.
+`ICityCultureSource` supplies final culture to Cities. Queries never mutate state or consume RNG.
+
+`ICityProcessService` supplies eligibility and conversion for infinite `economy:process` queue items.
+Processes use current production. Stored overflow remains available for later finite production.
+`ICityHurryService` supplies payment previews and mutations through `economy:hurry` and `HurryCityCommand`.
+Cities completes hurried items during its normal completion phase.
+
+Player modifier keys include `economy:max_rate:<type>`, `economy:upkeep_percent`, `economy:inflation_percent`, and `economy:hurry_percent`.
+Team key `research:cost_percent` changes research costs after the normal scaling steps.
+`EconomyPlayerState` saves sliders, settlement snapshots, unpaid gold, aggregate espionage, and the inflation accumulator.
+`EconomyCityState` saves hurry anger. Bankruptcy adjusts sliders before research, but does not disband units.
+The imported profile disables inflation. Enabled profiles use the source binomial formula and momentum update after research.
+
+## Military services
+
+Military registers `IMovementService`, `IPathfindingService`, `ICombatService`, `IUnitService`, and `IUnitSupportService` through Core.
+Movement paths exclude the starting plot. Commands traverse until movement expires or combat interrupts the path.
+A costly destination can consume the remaining sub-moves. A* minimizes total edge cost, not the number of turns.
+Route movement and combat share the hex river-edge policy. Military recomputes World visibility after movement and unit removal.
+
+Command identities are `military:move_unit`, `promote_unit`, `set_unit_activity`, `pillage`, `upgrade_unit`, `disband_unit`, and `raze_city`.
+The promotion command type is `PromoteMilitaryUnitCommand`, distinct from the legacy command.
+Cities supplies the additive `ICityCaptureService`. Other mods need no dependency on the Military assembly.
+
+Combat preview returns strengths, ledgers, firepower, round damage, first strikes, withdrawal, and success odds in millionths.
+The defender strength includes relative attack modifiers, including the reciprocal formula for negative totals.
+Combat is atomic. Saves between commands retain health, moves, experience fractions, activity, RNG, and current-turn combat reports.
+General points are a counter only. No general births occur yet.
+
+`UnitCreated` initializes training and granted units. `TurnStarted` initializes setup units without rerunning initialization after saves.
+The unit phase follows worker work, then applies healing and refreshes moves. Newly created units do not heal or fortify that boundary.
+Barbarian behavior runs at `GameBegin`. Land spawns run at `Spawns`. The barbarian player automatically ends each simultaneous turn.
+Training modifiers use `military:initial_experience` and `military:free_promotion:<id>`.
+Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate military contributions when they supply full modifier sources.
+
+See [mechanics-status.md](mechanics-status.md) for partial rules and deferred combat options.
+
 ## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
 A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.
@@ -312,7 +361,7 @@ The handshake identifies content, not initial setup. State hashes detect setup d
 ## V1 content mods
 
 `src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, and Peoples.
-These mods have no load-order dependencies yet. Foundation, World, and Cities now register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
+These mods have no load-order dependencies yet. Foundation, World, Cities, Research, and Economy register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
 References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
 

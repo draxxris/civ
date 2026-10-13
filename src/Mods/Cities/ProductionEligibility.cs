@@ -11,6 +11,12 @@ internal static class ProductionEligibility
         var failures = new List<RequirementFailure>();
         if (kind == "cities:building") Building(sim, city, id, failures);
         else if (kind == "cities:unit") Unit(sim, city, id, failures);
+        else if (kind == "economy:process")
+        {
+            var processes = sim.Content.Services.Get<ICityProcessService>().SingleOrDefault();
+            if (processes is null) Fail(failures, "Process service is unavailable");
+            else failures.AddRange(processes.Validate(sim, city.Id, id).Failures);
+        }
         else Fail(failures, "Unsupported production kind: " + kind);
         return new(failures.Count == 0, failures);
     }
