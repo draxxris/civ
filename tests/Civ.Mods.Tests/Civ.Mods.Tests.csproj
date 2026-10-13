@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <ProjectReference Include="../../src/Civ.Core/Civ.Core.csproj" />
+    <ProjectReference Include="../../src/Mods/Foundation/Civ.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/World/Civ.Mods.World.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Research/Civ.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Economy/Civ.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Cities/Civ.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Military/Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Government/Civ.Mods.Government.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Peoples/Civ.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
+    <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="CopyModPayloads" AfterTargets="Build">
+    <ItemGroup><FoundationPayload Include="../../src/Mods/Foundation/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(FoundationPayload)" DestinationFiles="@(FoundationPayload -> '$(OutDir)mods/Foundation/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><WorldPayload Include="../../src/Mods/World/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(WorldPayload)" DestinationFiles="@(WorldPayload -> '$(OutDir)mods/World/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><ResearchPayload Include="../../src/Mods/Research/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(ResearchPayload)" DestinationFiles="@(ResearchPayload -> '$(OutDir)mods/Research/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><EconomyPayload Include="../../src/Mods/Economy/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(EconomyPayload)" DestinationFiles="@(EconomyPayload -> '$(OutDir)mods/Economy/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><CitiesPayload Include="../../src/Mods/Cities/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(CitiesPayload)" DestinationFiles="@(CitiesPayload -> '$(OutDir)mods/Cities/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><MilitaryPayload Include="../../src/Mods/Military/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(MilitaryPayload)" DestinationFiles="@(MilitaryPayload -> '$(OutDir)mods/Military/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><GovernmentPayload Include="../../src/Mods/Government/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(GovernmentPayload)" DestinationFiles="@(GovernmentPayload -> '$(OutDir)mods/Government/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><PeoplesPayload Include="../../src/Mods/Peoples/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(PeoplesPayload)" DestinationFiles="@(PeoplesPayload -> '$(OutDir)mods/Peoples/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

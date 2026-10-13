@@ -1,0 +1,15 @@
+{
+  "id": "military",
+  "name": "Military",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Military.dll",
+  "dependencies": [],
+  "references": [
+    "cities",
+    "foundation",
+    "government",
+    "peoples",
+    "research",
+    "world"
+  ]
+}

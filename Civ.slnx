@@ -5,8 +5,19 @@
     <Project Path="src/Civ.BaseGame/Civ.BaseGame.csproj" />
     <Project Path="src/Civ.Client.Core/Civ.Client.Core.csproj" />
   </Folder>
+  <Folder Name="/src/Mods/">
+    <Project Path="src/Mods/Foundation/Civ.Mods.Foundation.csproj" />
+    <Project Path="src/Mods/World/Civ.Mods.World.csproj" />
+    <Project Path="src/Mods/Research/Civ.Mods.Research.csproj" />
+    <Project Path="src/Mods/Economy/Civ.Mods.Economy.csproj" />
+    <Project Path="src/Mods/Cities/Civ.Mods.Cities.csproj" />
+    <Project Path="src/Mods/Military/Civ.Mods.Military.csproj" />
+    <Project Path="src/Mods/Government/Civ.Mods.Government.csproj" />
+    <Project Path="src/Mods/Peoples/Civ.Mods.Peoples.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />
+    <Project Path="tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj" />
     <Project Path="tests/Civ.ContentImport.Tests/Civ.ContentImport.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">

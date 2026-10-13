@@ -4,34 +4,34 @@ Counts are per record. Repeated paths count once per record. Examples are limite
 
 Non-default means non-empty and not 0, NONE, -1, or false. A branch is non-default when any descendant is non-default.
 
-These are census sentinels, not DLL getter defaults. Status is preserved, not parsed or implemented.
+These are census sentinels, not DLL getter defaults. Status indicates typed mapping, not implemented gameplay rules.
 
 ## AdvisorInfo: 6 records
 
 Era counts: unknown=6
 
 - `Description`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: TXT_KEY_ADVISOR_CULTURE
   - Example: TXT_KEY_ADVISOR_ECONOMY
   - Example: TXT_KEY_ADVISOR_GROWTH
 - `EventCodes`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: [\n  "EventCodes",\n  [\n    [\n      "iEnableCode",\n      "20"\n    ],\n    [\n      "iDisableCode",\n      "21"\n    ]\n  ]\n]
   - Example: [\n  "EventCodes",\n  [\n    [\n      "iEnableCode",\n      "30"\n    ],\n    [\n      "iDisableCode",\n      "31"\n    ]\n  ]\n]
   - Example: [\n  "EventCodes",\n  [\n    [\n      "iEnableCode",\n      "40"\n    ],\n    [\n      "iDisableCode",\n      "41"\n    ]\n  ]\n]
 - `EventCodes/iDisableCode`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 21
   - Example: 31
   - Example: 41
 - `EventCodes/iEnableCode`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 20
   - Example: 30
   - Example: 40
 - `Type`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: ADVISOR_CULTURE
   - Example: ADVISOR_ECONOMY
   - Example: ADVISOR_GROWTH
@@ -41,22 +41,22 @@ Era counts: unknown=6
 Era counts: unknown=71
 
 - `Description`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: unsupported.
   - Example: ATTACHABLE_SMOKE
   - Example: BlackSmoke on Omen 4 Horsemen
   - Example: Bow Froth for the Battleship
 - `Path`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: unsupported.
   - Example: Art/Effects/Attachables/PrototypeEffects/FlyingAttachable/AirNoise.nif
   - Example: Art/Effects/FF_Engine_Glow/FF_Engine_Glow.nif
   - Example: Art/Effects/FF_Engine_Thrust/FF_Engine_Thrust.nif
 - `Type`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: unsupported.
   - Example: ATTACHABLE_AIRDEBRIS
   - Example: ATTACHABLE_ARTILLERY_DAMAGE_SMOKE
   - Example: ATTACHABLE_BATTLESHIP_BOW_FROTH
 - `fScale`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: unsupported.
   - Example: 0.037
   - Example: 0.058
   - Example: 0.059
@@ -66,12 +66,12 @@ Era counts: unknown=71
 Era counts: unknown=5
 
 - `Description`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: TXT_KEY_ATTITUDE_ANNOYED
   - Example: TXT_KEY_ATTITUDE_CAUTIOUS
   - Example: TXT_KEY_ATTITUDE_FRIENDLY
 - `Type`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
@@ -81,42 +81,42 @@ Era counts: unknown=5
 Era counts: unknown=75
 
 - `Button`
-  - Present: 75. Non-default: 75. Status: preserved.
+  - Present: 75. Non-default: 75. Status: unsupported.
   - Example: , ,Art/Interface/Buttons/Atlases/Source_Atlas.dds,2,2
   - Example: , ,Art/Interface/Buttons/Atlases/Source_Atlas.dds,8,1
   - Example: ,Art/Interface/Buttons/WorldBuilder/Aluminum.dds,Art/Interface/Buttons/Unit_Resource_Atlas.dds,1,12
 - `FontButtonIndex`
-  - Present: 75. Non-default: 74. Status: preserved.
+  - Present: 75. Non-default: 74. Status: unsupported.
   - Example: 1
   - Example: 10
   - Example: 100
 - `KFM`
-  - Present: 75. Non-default: 57. Status: preserved.
+  - Present: 75. Non-default: 57. Status: unsupported.
   - Example: Art/Terrain/Resources/Aluminum/Aluminum.kfm
   - Example: Art/Terrain/Resources/Apple/Banana.kfm
   - Example: Art/Terrain/Resources/Banana/Banana.kfm
 - `NIF`
-  - Present: 75. Non-default: 75. Status: preserved.
+  - Present: 75. Non-default: 75. Status: unsupported.
   - Example: Art/Empty.nif
   - Example: Art/Structures/Improvements/LostCiv1/oldtemple.nif
   - Example: Art/Terrain/Resources/Aluminum/Aluminum.nif
 - `SHADERNIF`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: Art/Terrain/Resources/Apple/Banana.nif
   - Example: Art/Terrain/Resources/Cow/Cow_FX.nif
   - Example: Art/Terrain/Resources/Crab/Crab_FX.nif
 - `Type`
-  - Present: 75. Non-default: 75. Status: preserved.
+  - Present: 75. Non-default: 75. Status: unsupported.
   - Example: ART_DEF_BONUS_ALUMINUM
   - Example: ART_DEF_BONUS_AMMO
   - Example: ART_DEF_BONUS_ANCIENTTEMPLE
 - `fInterfaceScale`
-  - Present: 75. Non-default: 75. Status: preserved.
+  - Present: 75. Non-default: 75. Status: unsupported.
   - Example: .8
   - Example: 0.7
   - Example: 0.8
 - `fScale`
-  - Present: 75. Non-default: 75. Status: preserved.
+  - Present: 75. Non-default: 75. Status: unsupported.
   - Example: .7
   - Example: 0.03
   - Example: 0.08
@@ -126,12 +126,12 @@ Era counts: unknown=75
 Era counts: unknown=11
 
 - `Type`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: BONUSCLASS_FUEL
   - Example: BONUSCLASS_FUTURE
   - Example: BONUSCLASS_GENERAL
 - `iUnique`
-  - Present: 11. Non-default: 8. Status: preserved.
+  - Present: 11. Non-default: 8. Status: mapped.
   - Example: 4
   - Example: 5
   - Example: 6
@@ -141,234 +141,234 @@ Era counts: unknown=11
 Era counts: unknown=71
 
 - `ArtDefineTag`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: unsupported.
   - Example: ART_DEF_BONUS_ALUMINUM
   - Example: ART_DEF_BONUS_ANCIENTTEMPLE
   - Example: ART_DEF_BONUS_APPLE
 - `BonusClassType`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: mapped.
   - Example: BONUSCLASS_FUEL
   - Example: BONUSCLASS_FUTURE
   - Example: BONUSCLASS_GENERAL
 - `Civilopedia`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: mapped.
   - Example: TXT_KEY_BONUS_ALCOHOL_PEDIA
   - Example: TXT_KEY_BONUS_ALUMINUM_PEDIA
   - Example: TXT_KEY_BONUS_ANCIENTTEMPLE_PEDIA
 - `Description`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: mapped.
   - Example: TXT_KEY_BONUS_ALCOHOL
   - Example: TXT_KEY_BONUS_ALUMINUM
   - Example: TXT_KEY_BONUS_ANCIENTTEMPLE
 - `FeatureBooleans`
-  - Present: 71. Non-default: 39. Status: preserved.
+  - Present: 71. Non-default: 39. Status: mapped.
   - Example: [\n  "FeatureBooleans",\n  [\n    [\n      "FeatureBoolean",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FLOOD_PLAINS"\n        ],\n        [\n   ...
   - Example: [\n  "FeatureBooleans",\n  [\n    [\n      "FeatureBoolean",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n         ...
   - Example: [\n  "FeatureBooleans",\n  [\n    [\n      "FeatureBoolean",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n         ...
 - `FeatureBooleans/FeatureBoolean`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: [\n  "FeatureBoolean",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FLOOD_PLAINS"\n    ],\n    [\n      "bFeature",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureBoolean",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "bFeature",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureBoolean",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "bFeature",\n      "1"\n    ]\n  ]\n]
 - `FeatureBooleans/FeatureBoolean/FeatureType`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: FEATURE_FLOOD_PLAINS
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureBooleans/FeatureBoolean/bFeature`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: 1
 - `FeatureTerrainBooleans`
-  - Present: 71. Non-default: 39. Status: preserved.
+  - Present: 71. Non-default: 39. Status: mapped.
   - Example: [\n  "FeatureTerrainBooleans",\n  [\n    [\n      "FeatureTerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n     ...
   - Example: [\n  "FeatureTerrainBooleans",\n  [\n    [\n      "FeatureTerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n      ...
   - Example: [\n  "FeatureTerrainBooleans",\n  [\n    [\n      "FeatureTerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_MARSH"\n        ],\n      ...
 - `FeatureTerrainBooleans/FeatureTerrainBoolean`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: [\n  "FeatureTerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bFeatureTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureTerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "bFeatureTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureTerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_MARSH"\n    ],\n    [\n      "bFeatureTerrain",\n      "1"\n    ]\n  ]\n]
 - `FeatureTerrainBooleans/FeatureTerrainBoolean/TerrainType`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
   - Example: TERRAIN_MARSH
 - `FeatureTerrainBooleans/FeatureTerrainBoolean/bFeatureTerrain`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: 1
 - `FeatureTerrainBooleans/TerrainBoolean`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_PLAINS"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
 - `FeatureTerrainBooleans/TerrainBoolean/TerrainType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TERRAIN_PLAINS
 - `FeatureTerrainBooleans/TerrainBoolean/bTerrain`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `Help`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TXT_KEY_BONUS_PERSONAL_REPLICATORS_HELP
 - `Rands`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: [\n  "Rands",\n  [\n    [\n      "iRandApp1",\n      "10"\n    ],\n    [\n      "iRandApp2",\n      "10"\n    ],\n    [\n      "iRandApp3",\n      "0"\n    ],\n    [\n      ...
   - Example: [\n  "Rands",\n  [\n    [\n      "iRandApp1",\n      "15"\n    ],\n    [\n      "iRandApp2",\n      "10"\n    ],\n    [\n      "iRandApp3",\n      "5"\n    ],\n    [\n      ...
   - Example: [\n  "Rands",\n  [\n    [\n      "iRandApp1",\n      "25"\n    ],\n    [\n      "iRandApp2",\n      "25"\n    ],\n    [\n      "iRandApp3",\n      "0"\n    ],\n    [\n      ...
 - `Rands/iRandApp1`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 25
 - `Rands/iRandApp2`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: 10
   - Example: 25
 - `Rands/iRandApp3`
-  - Present: 71. Non-default: 1. Status: preserved.
+  - Present: 71. Non-default: 1. Status: mapped.
   - Example: 5
 - `Rands/iRandApp4`
-  - Present: 71. Non-default: 0. Status: preserved.
+  - Present: 71. Non-default: 0. Status: mapped.
 - `TechCityTrade`
-  - Present: 71. Non-default: 63. Status: preserved.
+  - Present: 71. Non-default: 63. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_ANIMAL_HUSBANDRY
   - Example: TECH_ARCHEOLOGY
 - `TechObsolete`
-  - Present: 71. Non-default: 6. Status: preserved.
+  - Present: 71. Non-default: 6. Status: mapped.
   - Example: TECH_ASSEMBLY_LINE
   - Example: TECH_COMMUNICATION_NETWORKS
   - Example: TECH_ECOLOGY
 - `TechReveal`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_ALCHEMY
   - Example: TECH_ANIMAL_HUSBANDRY
 - `TerrainBooleans`
-  - Present: 71. Non-default: 42. Status: preserved.
+  - Present: 71. Non-default: 42. Status: mapped.
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n          ...
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n         ...
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          ...
 - `TerrainBooleans/TerrainBoolean`
-  - Present: 42. Non-default: 42. Status: preserved.
+  - Present: 42. Non-default: 42. Status: mapped.
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
 - `TerrainBooleans/TerrainBoolean/TerrainType`
-  - Present: 42. Non-default: 42. Status: preserved.
+  - Present: 42. Non-default: 42. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TerrainBooleans/TerrainBoolean/bTerrain`
-  - Present: 42. Non-default: 42. Status: preserved.
+  - Present: 42. Non-default: 42. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: mapped.
   - Example: BONUS_ALCOHOL
   - Example: BONUS_ALUMINUM
   - Example: BONUS_ANCIENTTEMPLE
 - `YieldChanges`
-  - Present: 71. Non-default: 50. Status: preserved.
+  - Present: 71. Non-default: 50. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "1"\n    ...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "1"\n    ]...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ]...
 - `YieldChanges/iYieldChange`
-  - Present: 51. Non-default: 50. Status: preserved.
+  - Present: 51. Non-default: 50. Status: mapped.
   - Example: 1
 - `bArea`
-  - Present: 71. Non-default: 20. Status: preserved.
+  - Present: 71. Non-default: 20. Status: mapped.
   - Example: 1
 - `bCurrency`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: 1
 - `bFlatlands`
-  - Present: 71. Non-default: 41. Status: preserved.
+  - Present: 71. Non-default: 41. Status: mapped.
   - Example: 1
 - `bHills`
-  - Present: 71. Non-default: 37. Status: preserved.
+  - Present: 71. Non-default: 37. Status: mapped.
   - Example: 1
 - `bNoRiverSide`
-  - Present: 71. Non-default: 6. Status: preserved.
+  - Present: 71. Non-default: 6. Status: mapped.
   - Example: 1
 - `bNormalize`
-  - Present: 71. Non-default: 4. Status: preserved.
+  - Present: 71. Non-default: 4. Status: mapped.
   - Example: 1
 - `bPeaks`
-  - Present: 13. Non-default: 8. Status: preserved.
+  - Present: 13. Non-default: 8. Status: mapped.
   - Example: 1
 - `bUseLSystem`
-  - Present: 5. Non-default: 2. Status: preserved.
+  - Present: 5. Non-default: 2. Status: mapped.
   - Example: 1
 - `iAIObjective`
-  - Present: 71. Non-default: 7. Status: preserved.
+  - Present: 71. Non-default: 7. Status: mapped.
   - Example: 10
 - `iAITradeModifier`
-  - Present: 71. Non-default: 49. Status: preserved.
+  - Present: 71. Non-default: 49. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 15
 - `iConstAppearance`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 162
 - `iGroupRand`
-  - Present: 71. Non-default: 28. Status: preserved.
+  - Present: 71. Non-default: 28. Status: mapped.
   - Example: 25
   - Example: 50
 - `iGroupRange`
-  - Present: 71. Non-default: 19. Status: preserved.
+  - Present: 71. Non-default: 19. Status: mapped.
   - Example: 1
 - `iHappiness`
-  - Present: 71. Non-default: 18. Status: preserved.
+  - Present: 71. Non-default: 18. Status: mapped.
   - Example: 1
 - `iHealth`
-  - Present: 71. Non-default: 23. Status: preserved.
+  - Present: 71. Non-default: 23. Status: mapped.
   - Example: 1
   - Example: 2
 - `iMaxLatitude`
-  - Present: 71. Non-default: 71. Status: preserved.
+  - Present: 71. Non-default: 71. Status: mapped.
   - Example: 10
   - Example: 30
   - Example: 40
 - `iMaximumPerWorld`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 15
 - `iMinAreaSize`
-  - Present: 71. Non-default: 51. Status: preserved.
+  - Present: 71. Non-default: 51. Status: mapped.
   - Example: 10
   - Example: 3
   - Example: 5
 - `iMinLandPercent`
-  - Present: 71. Non-default: 1. Status: preserved.
+  - Present: 71. Non-default: 1. Status: mapped.
   - Example: 62
 - `iMinLatitude`
-  - Present: 71. Non-default: 13. Status: preserved.
+  - Present: 71. Non-default: 13. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 30
 - `iMinimumPerWorld`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `iPlacementOrder`
-  - Present: 71. Non-default: 47. Status: preserved.
+  - Present: 71. Non-default: 47. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iPlayer`
-  - Present: 71. Non-default: 37. Status: preserved.
+  - Present: 71. Non-default: 37. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 25
 - `iTilesPer`
-  - Present: 71. Non-default: 15. Status: preserved.
+  - Present: 71. Non-default: 15. Status: mapped.
   - Example: 128
   - Example: 16
   - Example: 32
 - `iUnique`
-  - Present: 71. Non-default: 30. Status: preserved.
+  - Present: 71. Non-default: 30. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -378,127 +378,127 @@ Era counts: unknown=71
 Era counts: ERA_ANCIENT=14, ERA_CLASSICAL=4, ERA_INDUSTRIAL=7, ERA_MEDIEVAL=5, ERA_MODERN=9, ERA_RENAISSANCE=4, ERA_TRANSHUMAN=13, unknown=7
 
 - `Button`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: ,Art/Interface/Buttons/Builds/BuildCamp.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,7
   - Example: ,Art/Interface/Buttons/Builds/BuildChopDown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,8
   - Example: ,Art/Interface/Buttons/Builds/BuildChopDown.dds,Art/interface/buttons/mainmenu_techscreen_worldbuilder_popups_atlas.dds,4,2
 - `Description`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: TXT_KEY_BUILD_APPLE_FARM
   - Example: TXT_KEY_BUILD_BREAK_ICE
   - Example: TXT_KEY_BUILD_BUNKER
 - `EntityEvent`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: unsupported.
   - Example: ENTITY_EVENT_BUILD
   - Example: ENTITY_EVENT_CHOP
   - Example: ENTITY_EVENT_IRRIGATE
 - `FeatureChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureStructs`
-  - Present: 63. Non-default: 37. Status: preserved.
+  - Present: 63. Non-default: 37. Status: mapped.
   - Example: [\n  "FeatureStructs",\n  [\n    [\n      "FeatureStruct",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FALLOUT"\n        ],\n        [\n          ...
   - Example: [\n  "FeatureStructs",\n  [\n    [\n      "FeatureStruct",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n          "...
   - Example: [\n  "FeatureStructs",\n  [\n    [\n      "FeatureStruct",\n      [\n        [\n          "FeatureType",\n          "FEATURE_ICE"\n        ],\n        [\n          "Pre...
 - `FeatureStructs/FeatureStruct`
-  - Present: 37. Non-default: 37. Status: preserved.
+  - Present: 37. Non-default: 37. Status: mapped.
   - Example: [\n  "FeatureStruct",\n  [\n    [\n      "FeatureType",\n      "FEATURE_BIOGAS"\n    ],\n    [\n      "PrereqTech",\n      "TECH_GENEMANIPULATION"\n    ],\n    [\n      ...
   - Example: [\n  "FeatureStruct",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FALLOUT"\n    ],\n    [\n      "PrereqTech",\n      "TECH_ECOLOGY"\n    ],\n    [\n      "iTime",...
   - Example: [\n  "FeatureStruct",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FLOOD_PLAINS"\n    ],\n    [\n      "PrereqTech",\n      ""\n    ],\n    [\n      "iTime",\n      ...
 - `FeatureStructs/FeatureStruct/FeatureType`
-  - Present: 37. Non-default: 37. Status: preserved.
+  - Present: 37. Non-default: 37. Status: mapped.
   - Example: FEATURE_BIOGAS
   - Example: FEATURE_FALLOUT
   - Example: FEATURE_FLOOD_PLAINS
 - `FeatureStructs/FeatureStruct/PrereqTech`
-  - Present: 37. Non-default: 29. Status: preserved.
+  - Present: 37. Non-default: 29. Status: mapped.
   - Example: TECH_ARTIFICIAL_LIFE
   - Example: TECH_BRONZE_WORKING
   - Example: TECH_COMBUSTION
 - `FeatureStructs/FeatureStruct/bCanRemoveWithNoProductionGain`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: 1
 - `FeatureStructs/FeatureStruct/bRemove`
-  - Present: 37. Non-default: 35. Status: preserved.
+  - Present: 37. Non-default: 35. Status: mapped.
   - Example: 1
 - `FeatureStructs/FeatureStruct/iProduction`
-  - Present: 37. Non-default: 26. Status: preserved.
+  - Present: 37. Non-default: 26. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 30
 - `FeatureStructs/FeatureStruct/iTime`
-  - Present: 37. Non-default: 37. Status: preserved.
+  - Present: 37. Non-default: 37. Status: mapped.
   - Example: 100
   - Example: 200
   - Example: 250
 - `Help`
-  - Present: 62. Non-default: 1. Status: preserved.
+  - Present: 62. Non-default: 1. Status: mapped.
   - Example: TXT_KEY_BUILD_SEA_AIR_DEFENSE_HELP
 - `HotKey`
-  - Present: 63. Non-default: 61. Status: preserved.
+  - Present: 63. Non-default: 61. Status: unsupported.
   - Example: KB_C
   - Example: KB_E
   - Example: KB_F
 - `ImprovementType`
-  - Present: 62. Non-default: 46. Status: preserved.
+  - Present: 62. Non-default: 46. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_5FACTORY
   - Example: IMPROVEMENT_APPLE_FARM
 - `ObsoleteTech`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TECH_BRONZE_WORKING
   - Example: TECH_IRON_WORKING
 - `PrereqTech`
-  - Present: 62. Non-default: 56. Status: preserved.
+  - Present: 62. Non-default: 56. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_ANIMAL_HUSBANDRY
   - Example: TECH_ARCHEOLOGY
 - `RouteType`
-  - Present: 62. Non-default: 9. Status: preserved.
+  - Present: 62. Non-default: 9. Status: mapped.
   - Example: ROUTE_GRAVTUBE
   - Example: ROUTE_JUMPLANE
   - Example: ROUTE_MODERN_ROAD
 - `TerrainChange`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TERRAIN_GRASS
   - Example: TERRAIN_PLAINS
   - Example: TERRAIN_TUNDRA
 - `Type`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: BUILD_3FACTORY
   - Example: BUILD_5FACTORY
   - Example: BUILD_APPLE_FARM
 - `bAltDown`
-  - Present: 62. Non-default: 5. Status: preserved.
+  - Present: 62. Non-default: 5. Status: unsupported.
   - Example: 1
 - `bCtrlDown`
-  - Present: 62. Non-default: 6. Status: preserved.
+  - Present: 62. Non-default: 6. Status: unsupported.
   - Example: 1
 - `bForceOverwrite`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bKill`
-  - Present: 62. Non-default: 4. Status: preserved.
+  - Present: 62. Non-default: 4. Status: mapped.
   - Example: 1
 - `bMine`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `bShiftDown`
-  - Present: 62. Non-default: 14. Status: preserved.
+  - Present: 62. Non-default: 14. Status: unsupported.
   - Example: 1
 - `iCost`
-  - Present: 62. Non-default: 30. Status: preserved.
+  - Present: 62. Non-default: 30. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 12
 - `iHotKeyPriority`
-  - Present: 63. Non-default: 32. Status: preserved.
+  - Present: 63. Non-default: 32. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iTime`
-  - Present: 62. Non-default: 51. Status: preserved.
+  - Present: 62. Non-default: 51. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 1200
@@ -508,38 +508,38 @@ Era counts: ERA_ANCIENT=14, ERA_CLASSICAL=4, ERA_INDUSTRIAL=7, ERA_MEDIEVAL=5, E
 Era counts: unknown=651
 
 - `Button`
-  - Present: 651. Non-default: 651. Status: preserved.
+  - Present: 651. Non-default: 651. Status: unsupported.
   - Example: ,Art/Afforess/Ice_Hotel/Ice_Hotel.dds,Art/Interface/Buttons/Atlases/Afforess_Atlas.dds,4,9
   - Example: ,Art/Interface/Buttons/Buildings/Academy.dds,Art/Interface/Buttons/Buildings_Atlas.dds,7,11
   - Example: ,Art/Interface/Buttons/Buildings/Academy.dds,Art/Interface/Buttons/Warlords_Atlas_1.dds,5,5
 - `KFM`
-  - Present: 651. Non-default: 1. Status: preserved.
+  - Present: 651. Non-default: 1. Status: unsupported.
   - Example: Art/Structures/Improvements/Mine/Mine_Modern.kfm
 - `LSystem`
-  - Present: 651. Non-default: 651. Status: preserved.
+  - Present: 651. Non-default: 651. Status: unsupported.
   - Example: LSYSTEM_1x1
   - Example: LSYSTEM_1x2
   - Example: LSYSTEM_2x1
 - `NIF`
-  - Present: 651. Non-default: 651. Status: preserved.
+  - Present: 651. Non-default: 651. Status: unsupported.
   - Example: Art/Empty.nif
   - Example: Art/Hungary/Vegvar/vegvar.nif
   - Example: Art/Picts/Crannog/Viking_Post.nif
 - `Type`
-  - Present: 651. Non-default: 651. Status: preserved.
+  - Present: 651. Non-default: 651. Status: unsupported.
   - Example: ART_DEF_BUILDING_ABU_SIMBEL
   - Example: ART_DEF_BUILDING_ACADEMY
   - Example: ART_DEF_BUILDING_ACCELERATOR
 - `bAnimated`
-  - Present: 651. Non-default: 97. Status: preserved.
+  - Present: 651. Non-default: 97. Status: unsupported.
   - Example: 1
 - `fInterfaceScale`
-  - Present: 651. Non-default: 637. Status: preserved.
+  - Present: 651. Non-default: 637. Status: unsupported.
   - Example: .75
   - Example: .8
   - Example: 0.00
 - `fScale`
-  - Present: 651. Non-default: 638. Status: preserved.
+  - Present: 651. Non-default: 638. Status: unsupported.
   - Example: .9
   - Example: .95
   - Example: 0.00
@@ -549,51 +549,51 @@ Era counts: unknown=651
 Era counts: unknown=587
 
 - `DefaultBuilding`
-  - Present: 587. Non-default: 587. Status: preserved.
+  - Present: 587. Non-default: 587. Status: mapped.
   - Example: BUILDING_ABU_SIMBEL
   - Example: BUILDING_ACADEMY
   - Example: BUILDING_ACCELERATOR
 - `Description`
-  - Present: 587. Non-default: 587. Status: preserved.
+  - Present: 587. Non-default: 587. Status: unsupported.
   - Example: CHANGED_TXT_KEY_CORPORATION_2
   - Example: TXT_KEY_BUILDING_ABU_SIMBEL
   - Example: TXT_KEY_BUILDING_ACADEMY
 - `Type`
-  - Present: 587. Non-default: 587. Status: preserved.
+  - Present: 587. Non-default: 587. Status: mapped.
   - Example: BUILDINGCLASS_ABU_SIMBEL
   - Example: BUILDINGCLASS_ACADEMY
   - Example: BUILDINGCLASS_ACCELERATOR
 - `VictoryThresholds`
-  - Present: 587. Non-default: 1. Status: preserved.
+  - Present: 587. Non-default: 1. Status: unsupported.
   - Example: [\n  "VictoryThresholds",\n  [\n    [\n      "VictoryThreshold",\n      [\n        [\n          "VictoryType",\n          "VICTORY_SCIENTIFIC"\n        ],\n        [\n ...
 - `VictoryThresholds/VictoryThreshold`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: [\n  "VictoryThreshold",\n  [\n    [\n      "VictoryType",\n      "VICTORY_SCIENTIFIC"\n    ],\n    [\n      "iThreshold",\n      "1"\n    ]\n  ]\n]
 - `VictoryThresholds/VictoryThreshold/VictoryType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: VICTORY_SCIENTIFIC
 - `VictoryThresholds/VictoryThreshold/iThreshold`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bMonument`
-  - Present: 587. Non-default: 40. Status: preserved.
+  - Present: 587. Non-default: 40. Status: mapped.
   - Example: 1
 - `bNoLimit`
-  - Present: 587. Non-default: 32. Status: preserved.
+  - Present: 587. Non-default: 32. Status: mapped.
   - Example: 1
 - `iExtraPlayerInstances`
-  - Present: 587. Non-default: 1. Status: preserved.
+  - Present: 587. Non-default: 1. Status: mapped.
   - Example: 1
 - `iMaxGlobalInstances`
-  - Present: 587. Non-default: 170. Status: preserved.
+  - Present: 587. Non-default: 170. Status: mapped.
   - Example: 1
   - Example: 3
 - `iMaxPlayerInstances`
-  - Present: 587. Non-default: 74. Status: preserved.
+  - Present: 587. Non-default: 74. Status: mapped.
   - Example: 1
   - Example: 3
 - `iMaxTeamInstances`
-  - Present: 587. Non-default: 1. Status: preserved.
+  - Present: 587. Non-default: 1. Status: mapped.
   - Example: 1
 
 ## BuildingInfo: 645 records
@@ -601,1638 +601,1638 @@ Era counts: unknown=587
 Era counts: ERA_ANCIENT=75, ERA_CLASSICAL=90, ERA_INDUSTRIAL=103, ERA_MEDIEVAL=82, ERA_MODERN=73, ERA_RENAISSANCE=67, ERA_TRANSHUMAN=73, unknown=82
 
 - `Advisor`
-  - Present: 645. Non-default: 645. Status: preserved.
+  - Present: 645. Non-default: 645. Status: unsupported.
   - Example: ADVISOR_CULTURE
   - Example: ADVISOR_ECONOMY
   - Example: ADVISOR_GROWTH
 - `ArtDefineTag`
-  - Present: 645. Non-default: 645. Status: preserved.
+  - Present: 645. Non-default: 645. Status: unsupported.
   - Example: ART_DEF_BUILDING_ABU_SIMBEL
   - Example: ART_DEF_BUILDING_ACADEMY
   - Example: ART_DEF_BUILDING_ACCELERATOR
 - `Bonus`
-  - Present: 611. Non-default: 47. Status: preserved.
+  - Present: 611. Non-default: 47. Status: mapped.
   - Example: BONUS_BAUXITE
   - Example: BONUS_CEMENT
   - Example: BONUS_CHEMICALS
 - `BonusHappinessChanges`
-  - Present: 612. Non-default: 47. Status: preserved.
+  - Present: 612. Non-default: 47. Status: mapped.
   - Example: [\n  "BonusHappinessChanges",\n  [\n    [\n      "BonusHappinessChange",\n      [\n        [\n          "BonusType",\n          "BONUS_ALCOHOL"\n        ],\n        [\n...
   - Example: [\n  "BonusHappinessChanges",\n  [\n    [\n      "BonusHappinessChange",\n      [\n        [\n          "BonusType",\n          "BONUS_ANCIENTTEMPLE"\n        ],\n    ...
   - Example: [\n  "BonusHappinessChanges",\n  [\n    [\n      "BonusHappinessChange",\n      [\n        [\n          "BonusType",\n          "BONUS_CANNABIS"\n        ],\n        [...
 - `BonusHappinessChanges/BonusHappinessChange`
-  - Present: 47. Non-default: 47. Status: preserved.
+  - Present: 47. Non-default: 47. Status: mapped.
   - Example: [\n  "BonusHappinessChange",\n  [\n    [\n      "BonusType",\n      "BONUS_ALCOHOL"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BonusHappinessChange",\n  [\n    [\n      "BonusType",\n      "BONUS_ANCIENTTEMPLE"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BonusHappinessChange",\n  [\n    [\n      "BonusType",\n      "BONUS_CANNABIS"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
 - `BonusHappinessChanges/BonusHappinessChange/BonusType`
-  - Present: 47. Non-default: 47. Status: preserved.
+  - Present: 47. Non-default: 47. Status: mapped.
   - Example: BONUS_ALCOHOL
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_CANNABIS
 - `BonusHappinessChanges/BonusHappinessChange/iHappinessChange`
-  - Present: 47. Non-default: 47. Status: preserved.
+  - Present: 47. Non-default: 47. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `BonusHealthChanges`
-  - Present: 622. Non-default: 18. Status: preserved.
+  - Present: 622. Non-default: 18. Status: mapped.
   - Example: [\n  "BonusHealthChanges",\n  [\n    [\n      "BonusHealthChange",\n      [\n        [\n          "BonusType",\n          "BONUS_CHEMICALS"\n        ],\n        [\n    ...
   - Example: [\n  "BonusHealthChanges",\n  [\n    [\n      "BonusHealthChange",\n      [\n        [\n          "BonusType",\n          "BONUS_CORN"\n        ],\n        [\n         ...
   - Example: [\n  "BonusHealthChanges",\n  [\n    [\n      "BonusHealthChange",\n      [\n        [\n          "BonusType",\n          "BONUS_COW"\n        ],\n        [\n          ...
 - `BonusHealthChanges/BonusHealthChange`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: [\n  "BonusHealthChange",\n  [\n    [\n      "BonusType",\n      "BONUS_CHEMICALS"\n    ],\n    [\n      "iHealthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BonusHealthChange",\n  [\n    [\n      "BonusType",\n      "BONUS_CLAM"\n    ],\n    [\n      "iHealthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BonusHealthChange",\n  [\n    [\n      "BonusType",\n      "BONUS_COAL"\n    ],\n    [\n      "iHealthChange",\n      "-2"\n    ]\n  ]\n]
 - `BonusHealthChanges/BonusHealthChange/BonusType`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: BONUS_CHEMICALS
   - Example: BONUS_CLAM
   - Example: BONUS_COAL
 - `BonusHealthChanges/BonusHealthChange/iHealthChange`
-  - Present: 18. Non-default: 16. Status: preserved.
+  - Present: 18. Non-default: 16. Status: mapped.
   - Example: -2
   - Example: 1
 - `BonusProductionModifiers`
-  - Present: 624. Non-default: 111. Status: preserved.
+  - Present: 624. Non-default: 111. Status: mapped.
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_ALCOHOL"\n        ],\n    ...
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_ALUMINUM"\n        ],\n   ...
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_CHEMICALS"\n        ],\n  ...
 - `BonusProductionModifiers/BonusProductionModifier`
-  - Present: 111. Non-default: 111. Status: preserved.
+  - Present: 111. Non-default: 111. Status: mapped.
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_ALCOHOL"\n    ],\n    [\n      "iProductonModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_ALCOHOL"\n    ],\n    [\n      "iProductonModifier",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "iProductonModifier",\n      "100"\n    ]\n  ]\n]
 - `BonusProductionModifiers/BonusProductionModifier/BonusType`
-  - Present: 111. Non-default: 111. Status: preserved.
+  - Present: 111. Non-default: 111. Status: mapped.
   - Example: BONUS_ALCOHOL
   - Example: BONUS_ALUMINUM
   - Example: BONUS_CHEMICALS
 - `BonusProductionModifiers/BonusProductionModifier/iProductionModifier`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 50
 - `BonusProductionModifiers/BonusProductionModifier/iProductonModifier`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 25
 - `BonusType`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: BONUS_DURASTEEL
 - `BonusYieldChanges`
-  - Present: 43. Non-default: 24. Status: preserved.
+  - Present: 43. Non-default: 24. Status: mapped.
   - Example: [\n  "BonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_ALUMINUM"\n        ],\n        [\n       ...
   - Example: [\n  "BonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_ANCIENTTEMPLE"\n        ],\n        [\n  ...
   - Example: [\n  "BonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_APPLE"\n        ],\n        [\n          ...
 - `BonusYieldChanges/BonusYieldChange`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n        ...
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_ANCIENTTEMPLE"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n   ...
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_APPLE"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n          "...
 - `BonusYieldChanges/BonusYieldChange/BonusType`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_APPLE
 - `BonusYieldChanges/BonusYieldChange/YieldChanges`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "3"\n    ]\n  ]\n]
 - `BonusYieldChanges/BonusYieldChange/YieldChanges/iYield`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `BonusYieldModifiers`
-  - Present: 609. Non-default: 27. Status: preserved.
+  - Present: 609. Non-default: 27. Status: mapped.
   - Example: [\n  "BonusYieldModifiers",\n  [\n    [\n      "BonusYieldModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_ANCIENTTEMPLE"\n        ],\n        ...
   - Example: [\n  "BonusYieldModifiers",\n  [\n    [\n      "BonusYieldModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_APPLE"\n        ],\n        [\n      ...
   - Example: [\n  "BonusYieldModifiers",\n  [\n    [\n      "BonusYieldModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_COAL"\n        ],\n        [\n       ...
 - `BonusYieldModifiers/BonusYieldModifier`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: [\n  "BonusYieldModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_ANCIENTTEMPLE"\n    ],\n    [\n      "YieldModifiers",\n      [\n        [\n          "iYield",...
   - Example: [\n  "BonusYieldModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_APPLE"\n    ],\n    [\n      "YieldModifiers",\n      [\n        [\n          "iYield",\n       ...
   - Example: [\n  "BonusYieldModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_BANANA"\n    ],\n    [\n      "YieldModifiers",\n      [\n        [\n          "iYield",\n      ...
 - `BonusYieldModifiers/BonusYieldModifier/BonusType`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_APPLE
   - Example: BONUS_BANANA
 - `BonusYieldModifiers/BonusYieldModifier/YieldModifiers`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
 - `BonusYieldModifiers/BonusYieldModifier/YieldModifiers/iYield`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 15
 - `BuildingClass`
-  - Present: 645. Non-default: 645. Status: preserved.
+  - Present: 645. Non-default: 645. Status: mapped.
   - Example: BUILDINGCLASS_ABU_SIMBEL
   - Example: BUILDINGCLASS_ACADEMY
   - Example: BUILDINGCLASS_ACCELERATOR
 - `BuildingClassNeededs`
-  - Present: 628. Non-default: 109. Status: preserved.
+  - Present: 628. Non-default: 109. Status: mapped.
   - Example: [\n  "BuildingClassNeededs",\n  [\n    [\n      "BuildingClassNeeded",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_AD_AGENCY"\n     ...
   - Example: [\n  "BuildingClassNeededs",\n  [\n    [\n      "BuildingClassNeeded",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ARCOLOGY"\n      ...
   - Example: [\n  "BuildingClassNeededs",\n  [\n    [\n      "BuildingClassNeeded",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ARENA"\n        ]...
 - `BuildingClassNeededs/BuildingClassNeeded`
-  - Present: 109. Non-default: 109. Status: preserved.
+  - Present: 109. Non-default: 109. Status: mapped.
   - Example: [\n  "BuildingClassNeeded",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AD_AGENCY"\n    ],\n    [\n      "bNeededInCity",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingClassNeeded",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ARCOLOGY"\n    ],\n    [\n      "bNeededInCity",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingClassNeeded",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ARENA"\n    ],\n    [\n      "bNeededInCity",\n      "1"\n    ]\n  ]\n]
 - `BuildingClassNeededs/BuildingClassNeeded/BuildingClassType`
-  - Present: 109. Non-default: 109. Status: preserved.
+  - Present: 109. Non-default: 109. Status: mapped.
   - Example: BUILDINGCLASS_AD_AGENCY
   - Example: BUILDINGCLASS_ARCOLOGY
   - Example: BUILDINGCLASS_ARENA
 - `BuildingClassNeededs/BuildingClassNeeded/bNeededInCity`
-  - Present: 109. Non-default: 109. Status: preserved.
+  - Present: 109. Non-default: 109. Status: mapped.
   - Example: 1
 - `BuildingClassProductionModifiers`
-  - Present: 11. Non-default: 10. Status: preserved.
+  - Present: 11. Non-default: 10. Status: mapped.
   - Example: [\n  "BuildingClassProductionModifiers",\n  [\n    [\n      "BuildingClassProductionModifier",\n      [\n        [\n          "BuildingClassType",\n          "BUILDI...
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_CASTLE"\n    ],\n    [\n      "iProductionModifier",\n      "50"...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_CASTLE_GARDEN"\n    ],\n    [\n      "iProductionModifier",\n   ...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_CITY_COUNCIL"\n    ],\n    [\n      "iProductionModifier",\n    ...
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier/BuildingClassType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: BUILDINGCLASS_CASTLE
   - Example: BUILDINGCLASS_CASTLE_GARDEN
   - Example: BUILDINGCLASS_CITY_COUNCIL
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier/iProductionModifier`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 30
 - `BuildingHappinessChanges`
-  - Present: 622. Non-default: 5. Status: preserved.
+  - Present: 622. Non-default: 5. Status: mapped.
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_CASINO"\n     ...
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_MUSEUM"\n     ...
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_SHINTO_TEMPLE...
 - `BuildingHappinessChanges/BuildingHappinessChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_CASINO"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_MUSEUM"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_SHINTO_CATHEDRAL"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n...
 - `BuildingHappinessChanges/BuildingHappinessChange/BuildingType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: BUILDINGCLASS_CASINO
   - Example: BUILDINGCLASS_MUSEUM
   - Example: BUILDINGCLASS_SHINTO_CATHEDRAL
 - `BuildingHappinessChanges/BuildingHappinessChange/iHappinessChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
 - `CivicOption`
-  - Present: 623. Non-default: 2. Status: preserved.
+  - Present: 623. Non-default: 2. Status: mapped.
   - Example: CIVICOPTION_POWER
   - Example: CIVICOPTION_RELIGION
 - `Civilopedia`
-  - Present: 645. Non-default: 643. Status: preserved.
+  - Present: 645. Non-default: 643. Status: mapped.
   - Example: None
   - Example: TXT_KEY_BUILDING_ABU_SIMBEL_PEDIA
   - Example: TXT_KEY_BUILDING_ACADEMY_PEDIA
 - `CommerceChangeDoubleTimes`
-  - Present: 627. Non-default: 174. Status: preserved.
+  - Present: 627. Non-default: 174. Status: mapped.
   - Example: [\n  "CommerceChangeDoubleTimes",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "100"...
   - Example: [\n  "CommerceChangeDoubleTimes",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1000...
   - Example: [\n  "CommerceChangeDoubleTimes",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "20"\n...
 - `CommerceChangeDoubleTimes/iCommerce`
-  - Present: 179. Non-default: 174. Status: preserved.
+  - Present: 179. Non-default: 174. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 20
 - `CommerceChangeOriginalOwners`
-  - Present: 623. Non-default: 115. Status: preserved.
+  - Present: 623. Non-default: 115. Status: mapped.
   - Example: [\n  "CommerceChangeOriginalOwners",\n  [\n    [\n      "bCommerceChangeOriginalOwner",\n      "0"\n    ],\n    [\n      "bCommerceChangeOriginalOwner",\n      "0"\n  ...
   - Example: [\n  "CommerceChangeOriginalOwners",\n  [\n    [\n      "bCommerceChangeOriginalOwner",\n      "0"\n    ],\n    [\n      "bCommerceChangeOriginalOwner",\n      "1"\n  ...
 - `CommerceChangeOriginalOwners/bCommerceChangeOriginalOwner`
-  - Present: 125. Non-default: 115. Status: preserved.
+  - Present: 125. Non-default: 115. Status: mapped.
   - Example: 1
 - `CommerceChanges`
-  - Present: 632. Non-default: 132. Status: preserved.
+  - Present: 632. Non-default: 132. Status: mapped.
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    ...
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "2"\n    ]\n  ]\n]
 - `CommerceChanges/iCommerce`
-  - Present: 136. Non-default: 131. Status: preserved.
+  - Present: 136. Non-default: 131. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `CommerceChanges/iCommmerce`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 10
 - `CommerceFlexibles`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: unsupported.
 - `CommerceHappinesses`
-  - Present: 623. Non-default: 24. Status: preserved.
+  - Present: 623. Non-default: 24. Status: mapped.
   - Example: [\n  "CommerceHappinesses",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n...
   - Example: [\n  "CommerceHappinesses",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "10"\n    ]\n...
   - Example: [\n  "CommerceHappinesses",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "20"\n    ]\n...
 - `CommerceHappinesses/iCommerce`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 20
 - `CommerceModifiers`
-  - Present: 623. Non-default: 111. Status: preserved.
+  - Present: 623. Non-default: 111. Status: mapped.
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "-10"\n    ]\n  ]\n]
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "-10"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ]\n ...
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "-15"\n    ],\n    [\n      "iCommerce",\n      "10"\n    ]\n...
 - `CommerceModifiers/iCommerce`
-  - Present: 145. Non-default: 111. Status: preserved.
+  - Present: 145. Non-default: 111. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -25
 - `ConstructSound`
-  - Present: 645. Non-default: 527. Status: preserved.
+  - Present: 645. Non-default: 527. Status: unsupported.
   - Example: AS2D_BUILD_ACCELERATOR
   - Example: AS2D_BUILD_ADVANCED_SHIELDING
   - Example: AS2D_BUILD_AGORA
 - `Description`
-  - Present: 645. Non-default: 645. Status: preserved.
+  - Present: 645. Non-default: 645. Status: mapped.
   - Example: CHANGED_TXT_KEY_CORPORATION_2
   - Example: TXT_KEY_BUILDING_ABU_SIMBEL
   - Example: TXT_KEY_BUILDING_ACADEMY
 - `DiploVoteType`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: unsupported.
   - Example: DIPLOVOTE_POPE
   - Example: DIPLOVOTE_UN
 - `DomainFreeExperiences`
-  - Present: 624. Non-default: 12. Status: preserved.
+  - Present: 624. Non-default: 12. Status: mapped.
   - Example: [\n  "DomainFreeExperiences",\n  [\n    [\n      "DomainFreeExperience",\n      [\n        [\n          "DomainType",\n          "DOMAIN_AIR"\n        ],\n        [\n  ...
   - Example: [\n  "DomainFreeExperiences",\n  [\n    [\n      "DomainFreeExperience",\n      [\n        [\n          "DomainType",\n          "DOMAIN_LAND"\n        ],\n        [\n ...
   - Example: [\n  "DomainFreeExperiences",\n  [\n    [\n      "DomainFreeExperience",\n      [\n        [\n          "DomainType",\n          "DOMAIN_SEA"\n        ],\n        [\n  ...
 - `DomainFreeExperiences/DomainFreeExperience`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: [\n  "DomainFreeExperience",\n  [\n    [\n      "DomainType",\n      "DOMAIN_AIR"\n    ],\n    [\n      "iExperience",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "DomainFreeExperience",\n  [\n    [\n      "DomainType",\n      "DOMAIN_AIR"\n    ],\n    [\n      "iExperience",\n      "4"\n    ]\n  ]\n]
   - Example: [\n  "DomainFreeExperience",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iExperience",\n      "2"\n    ]\n  ]\n]
 - `DomainFreeExperiences/DomainFreeExperience/DomainType`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: DOMAIN_AIR
   - Example: DOMAIN_LAND
   - Example: DOMAIN_SEA
 - `DomainFreeExperiences/DomainFreeExperience/iExperience`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: 2
   - Example: 3
   - Example: 4
 - `DomainProductionModifiers`
-  - Present: 623. Non-default: 12. Status: preserved.
+  - Present: 623. Non-default: 12. Status: mapped.
   - Example: [\n  "DomainProductionModifiers",\n  [\n    [\n      "DomainProductionModifier",\n      [\n        [\n          "DomainType",\n          "DOMAIN_AIR"\n        ],\n    ...
   - Example: [\n  "DomainProductionModifiers",\n  [\n    [\n      "DomainProductionModifier",\n      [\n        [\n          "DomainType",\n          "DOMAIN_LAND"\n        ],\n   ...
   - Example: [\n  "DomainProductionModifiers",\n  [\n    [\n      "DomainProductionModifier",\n      [\n        [\n          "DomainType",\n          "DOMAIN_SEA"\n        ],\n    ...
 - `DomainProductionModifiers/DomainProductionModifier`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: [\n  "DomainProductionModifier",\n  [\n    [\n      "DomainType",\n      "DOMAIN_AIR"\n    ],\n    [\n      "iProductionModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "DomainProductionModifier",\n  [\n    [\n      "DomainType",\n      "DOMAIN_AIR"\n    ],\n    [\n      "iProductionModifier",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "DomainProductionModifier",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iProductionModifier",\n      "15"\n    ]\n  ]\n]
 - `DomainProductionModifiers/DomainProductionModifier/DomainType`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: DOMAIN_AIR
   - Example: DOMAIN_LAND
   - Example: DOMAIN_SEA
 - `DomainProductionModifiers/DomainProductionModifier/iProductionModifier`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 20
 - `ExtendsBuildingClass`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: BUILDINGCLASS_CASTLE
 - `ExtraFreeBonuses`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "ExtraFreeBonuses",\n  [\n    [\n      "ExtraFreeBonus",\n      [\n        [\n          "FreeBonus",\n          "BONUS_CEMENT"\n        ],\n        [\n          "i...
   - Example: [\n  "ExtraFreeBonuses",\n  [\n    [\n      "ExtraFreeBonus",\n      [\n        [\n          "FreeBonus",\n          "BONUS_DYE"\n        ],\n        [\n          "iNum...
 - `ExtraFreeBonuses/ExtraFreeBonus`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "ExtraFreeBonus",\n  [\n    [\n      "FreeBonus",\n      "BONUS_CEMENT"\n    ],\n    [\n      "iNumFreeBonuses",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ExtraFreeBonus",\n  [\n    [\n      "FreeBonus",\n      "BONUS_CHEMICALS"\n    ],\n    [\n      "iNumFreeBonuses",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ExtraFreeBonus",\n  [\n    [\n      "FreeBonus",\n      "BONUS_DIESEL"\n    ],\n    [\n      "iNumFreeBonuses",\n      "1"\n    ]\n  ]\n]
 - `ExtraFreeBonuses/ExtraFreeBonus/FreeBonus`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: BONUS_CEMENT
   - Example: BONUS_CHEMICALS
   - Example: BONUS_DIESEL
 - `ExtraFreeBonuses/ExtraFreeBonus/iNumFreeBonuses`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 - `Flavors`
-  - Present: 645. Non-default: 618. Status: preserved.
+  - Present: 645. Non-default: 618. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_CULTURE"\n        ],\n        [\n          "iFlavor",\n     ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_ESPIONAGE"\n        ],\n        [\n          "iFlavor",\n   ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
 - `Flavors/Flavor`
-  - Present: 618. Non-default: 618. Status: preserved.
+  - Present: 618. Non-default: 618. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "3"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 618. Non-default: 618. Status: preserved.
+  - Present: 618. Non-default: 618. Status: mapped.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_ESPIONAGE
   - Example: FLAVOR_GOLD
 - `Flavors/Flavor/iFlavor`
-  - Present: 618. Non-default: 618. Status: preserved.
+  - Present: 618. Non-default: 618. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `FoundsCorporation`
-  - Present: 623. Non-default: 36. Status: preserved.
+  - Present: 623. Non-default: 36. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `FreeBonus`
-  - Present: 620. Non-default: 25. Status: preserved.
+  - Present: 620. Non-default: 25. Status: mapped.
   - Example: BONUS_ALCOHOL
   - Example: BONUS_ALUMINUM
   - Example: BONUS_ANCIENTTEMPLE
 - `FreeBuilding`
-  - Present: 623. Non-default: 12. Status: preserved.
+  - Present: 623. Non-default: 12. Status: mapped.
   - Example: BUILDINGCLASS_ADVANCED_SHIELDING
   - Example: BUILDINGCLASS_AD_AGENCY
   - Example: BUILDINGCLASS_ARENA
 - `FreePromotion`
-  - Present: 624. Non-default: 21. Status: preserved.
+  - Present: 624. Non-default: 21. Status: mapped.
   - Example: PROMOTION_COASTAL_ASSAULT1
   - Example: PROMOTION_COMBAT1
   - Example: PROMOTION_COMBAT_AI1
 - `FreeSpecialistCounts`
-  - Present: 624. Non-default: 24. Status: preserved.
+  - Present: 624. Non-default: 24. Status: mapped.
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ANDROID"\n        ],\n  ...
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ARTIST"\n        ],\n   ...
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_CELEBRITY"\n        ],\n...
 - `FreeSpecialistCounts/FreeSpecialistCount`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ANDROID"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "iSpecialistCount",\n      "1"\n    ]\n  ]\n]
 - `FreeSpecialistCounts/FreeSpecialistCount/SpecialistType`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: mapped.
   - Example: SPECIALIST_ANDROID
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_CELEBRITY
 - `FreeSpecialistCounts/FreeSpecialistCount/iFreeSpecialistCount`
-  - Present: 22. Non-default: 22. Status: preserved.
+  - Present: 22. Non-default: 22. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `FreeSpecialistCounts/FreeSpecialistCount/iSpecialistCount`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 - `FreeStartEra`
-  - Present: 623. Non-default: 37. Status: preserved.
+  - Present: 623. Non-default: 37. Status: mapped.
   - Example: ERA_FUTURE
   - Example: ERA_INDUSTRIAL
   - Example: ERA_MEDIEVAL
 - `GlobalBuildingClassProductionModifiers`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: [\n  "GlobalBuildingClassProductionModifiers",\n  [\n    [\n      "BuildingClassProductionModifier",\n      [\n        [\n          "BuildingClassType",\n          "...
 - `GlobalBuildingClassProductionModifiers/BuildingClassProductionModifier`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ACCELERATOR"\n    ],\n    [\n      "iProductionModifier",\n     ...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AQUEDUCT"\n    ],\n    [\n      "iProductionModifier",\n      "5...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ASATRU_CATHEDRAL"\n    ],\n    [\n      "iProductionModifier",\n...
 - `GlobalBuildingClassProductionModifiers/BuildingClassProductionModifier/BuildingClassType`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: BUILDINGCLASS_ACCELERATOR
   - Example: BUILDINGCLASS_AQUEDUCT
   - Example: BUILDINGCLASS_ASATRU_CATHEDRAL
 - `GlobalBuildingClassProductionModifiers/BuildingClassProductionModifier/iProductionModifier`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 50
 - `GlobalBuildingExtraCommerces`
-  - Present: 17. Non-default: 16. Status: preserved.
+  - Present: 17. Non-default: 16. Status: mapped.
   - Example: [\n  "GlobalBuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_ASATRU_MON...
   - Example: [\n  "GlobalBuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_BANK"\n    ...
   - Example: [\n  "GlobalBuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_BUDDHIST_M...
 - `GlobalBuildingExtraCommerces/BuildingExtraCommerce`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ARENA"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_CULTURE"\n    ],\n...
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ASATRU_CATHEDRAL"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_CULTU...
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ASATRU_MONASTERY"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_CULTU...
 - `GlobalBuildingExtraCommerces/BuildingExtraCommerce/BuildingClass`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: BUILDINGCLASS_ARENA
   - Example: BUILDINGCLASS_ASATRU_CATHEDRAL
   - Example: BUILDINGCLASS_ASATRU_MONASTERY
 - `GlobalBuildingExtraCommerces/BuildingExtraCommerce/CommerceType`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: COMMERCE_CULTURE
   - Example: COMMERCE_ESPIONAGE
   - Example: COMMERCE_GOLD
 - `GlobalBuildingExtraCommerces/BuildingExtraCommerce/iExtraCommerce`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `GlobalCommerceModifiers`
-  - Present: 623. Non-default: 10. Status: preserved.
+  - Present: 623. Non-default: 10. Status: mapped.
   - Example: [\n  "GlobalCommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "-10"\n ...
   - Example: [\n  "GlobalCommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "-20"\n ...
   - Example: [\n  "GlobalCommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "10"\n  ...
 - `GlobalCommerceModifiers/iCommerce`
-  - Present: 15. Non-default: 10. Status: preserved.
+  - Present: 15. Non-default: 10. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: 10
 - `GlobalCorporationCommerce`
-  - Present: 623. Non-default: 36. Status: preserved.
+  - Present: 623. Non-default: 36. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `GlobalReligionCommerce`
-  - Present: 623. Non-default: 13. Status: preserved.
+  - Present: 623. Non-default: 13. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `GlobalSeaPlotYieldChanges`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: [\n  "GlobalSeaPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "GlobalSeaPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `GlobalSeaPlotYieldChanges/iYield`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `GlobalYieldModifiers`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "GlobalYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "10"\n    ]\n  ]\n]
 - `GlobalYieldModifiers/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 10
 - `GreatPeopleUnitClass`
-  - Present: 628. Non-default: 224. Status: preserved.
+  - Present: 628. Non-default: 224. Status: mapped.
   - Example: UNITCLASS_ARTIST
   - Example: UNITCLASS_ENGINEER
   - Example: UNITCLASS_GREAT_DIPLOMAT
 - `HappinessTraits`
-  - Present: 623. Non-default: 26. Status: preserved.
+  - Present: 623. Non-default: 26. Status: mapped.
   - Example: [\n  "HappinessTraits",\n  [\n    [\n      "HappinessTrait",\n      [\n        [\n          "HappinessTraitType",\n          "TRAIT_CHARISMATIC"\n        ],\n        [...
   - Example: [\n  "HappinessTraits",\n  [\n    [\n      "HappinessTrait",\n      [\n        [\n          "HappinessTraitType",\n          "TRAIT_CREATIVE"\n        ],\n        [\n  ...
   - Example: [\n  "HappinessTraits",\n  [\n    [\n      "HappinessTrait",\n      [\n        [\n          "HappinessTraitType",\n          "TRAIT_HUMANITARIAN"\n        ],\n        ...
 - `HappinessTraits/HappinessTrait`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: [\n  "HappinessTrait",\n  [\n    [\n      "HappinessTraitType",\n      "TRAIT_CHARISMATIC"\n    ],\n    [\n      "iHappinessTrait",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "HappinessTrait",\n  [\n    [\n      "HappinessTraitType",\n      "TRAIT_CREATIVE"\n    ],\n    [\n      "iHappinessTrait",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "HappinessTrait",\n  [\n    [\n      "HappinessTraitType",\n      "TRAIT_HUMANITARIAN"\n    ],\n    [\n      "iHappinessTrait",\n      "1"\n    ]\n  ]\n]
 - `HappinessTraits/HappinessTrait/HappinessTraitType`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: TRAIT_CHARISMATIC
   - Example: TRAIT_CREATIVE
   - Example: TRAIT_HUMANITARIAN
 - `HappinessTraits/HappinessTrait/iHappinessTrait`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: 1
 - `Help`
-  - Present: 71. Non-default: 21. Status: preserved.
+  - Present: 71. Non-default: 21. Status: mapped.
   - Example: TXT_KEY_BUILDING_ABU_SIMBEL_HELP
   - Example: TXT_KEY_BUILDING_ASCENSION_GATE_HELP
   - Example: TXT_KEY_BUILDING_CARHENGE_HELP
 - `HolyCity`
-  - Present: 623. Non-default: 13. Status: preserved.
+  - Present: 623. Non-default: 13. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `HotKey`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: unsupported.
 - `ImprovementFreeSpecialists`
-  - Present: 623. Non-default: 7. Status: preserved.
+  - Present: 623. Non-default: 7. Status: mapped.
   - Example: [\n  "ImprovementFreeSpecialists",\n  [\n    [\n      "ImprovementFreeSpecialist",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_CAMP"\n  ...
   - Example: [\n  "ImprovementFreeSpecialists",\n  [\n    [\n      "ImprovementFreeSpecialist",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_EXPLORET...
   - Example: [\n  "ImprovementFreeSpecialists",\n  [\n    [\n      "ImprovementFreeSpecialist",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_FOREST_P...
 - `ImprovementFreeSpecialists/ImprovementFreeSpecialist`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "ImprovementFreeSpecialist",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_CAMP"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementFreeSpecialist",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_CITY_RUINS"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "2"\n    ]...
   - Example: [\n  "ImprovementFreeSpecialist",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_EXPLORETEMPLE"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "2"\n  ...
 - `ImprovementFreeSpecialists/ImprovementFreeSpecialist/ImprovementType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: IMPROVEMENT_CAMP
   - Example: IMPROVEMENT_CITY_RUINS
   - Example: IMPROVEMENT_EXPLORETEMPLE
 - `ImprovementFreeSpecialists/ImprovementFreeSpecialist/iFreeSpecialistCount`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 2
 - `MaxStartEra`
-  - Present: 623. Non-default: 79. Status: preserved.
+  - Present: 623. Non-default: 79. Status: mapped.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_INDUSTRIAL
 - `MovieDefineTag`
-  - Present: 613. Non-default: 150. Status: preserved.
+  - Present: 613. Non-default: 150. Status: unsupported.
   - Example: ART_DEF_MOVIE_ABU_SIMBEL
   - Example: ART_DEF_MOVIE_ADAM_SMITH
   - Example: ART_DEF_MOVIE_ALHAMBRA
 - `NoBonus`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: BONUS_COAL
 - `NotGameOption`
-  - Present: 79. Non-default: 4. Status: preserved.
+  - Present: 79. Non-default: 4. Status: mapped.
   - Example: GAMEOPTION_NO_REVOLUTION
   - Example: GAMEOPTION_REALISTIC_CORPORATIONS
 - `ObsoleteSafeCommerceChanges`
-  - Present: 627. Non-default: 177. Status: preserved.
+  - Present: 627. Non-default: 177. Status: mapped.
   - Example: [\n  "ObsoleteSafeCommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"...
   - Example: [\n  "ObsoleteSafeCommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"...
   - Example: [\n  "ObsoleteSafeCommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "10...
 - `ObsoleteSafeCommerceChanges/iCommerce`
-  - Present: 180. Non-default: 177. Status: preserved.
+  - Present: 180. Non-default: 177. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 15
 - `ObsoleteTech`
-  - Present: 638. Non-default: 94. Status: preserved.
+  - Present: 638. Non-default: 94. Status: mapped.
   - Example: TECH_ANDROIDS
   - Example: TECH_ARCHITECTURE
   - Example: TECH_ARTIFICIAL_INTELLIGENCE
 - `PowerBonus`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: BONUS_COAL
   - Example: BONUS_OIL
   - Example: BONUS_URANIUM
 - `PowerYieldModifiers`
-  - Present: 44. Non-default: 13. Status: preserved.
+  - Present: 44. Non-default: 13. Status: mapped.
   - Example: [\n  "PowerYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "PowerYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "10"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "PowerYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "10"\n    ],\n    [\n      "iYield",\n      "10"\n    ]\n  ]\n]
 - `PowerYieldModifiers/iYield`
-  - Present: 38. Non-default: 13. Status: preserved.
+  - Present: 38. Non-default: 13. Status: mapped.
   - Example: 10
   - Example: 135
   - Example: 15
 - `PrereqAndCivics`
-  - Present: 46. Non-default: 46. Status: preserved.
+  - Present: 46. Non-default: 46. Status: mapped.
   - Example: [\n  "PrereqAndCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_AUTOCRACY"\n        ],\n        [\n          "...
   - Example: [\n  "PrereqAndCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_BUREAUCRACY"\n        ],\n        [\n         ...
   - Example: [\n  "PrereqAndCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_CASTE_SYSTEM"\n        ],\n        [\n        ...
 - `PrereqAndCivics/PrereqCivic`
-  - Present: 46. Non-default: 46. Status: preserved.
+  - Present: 46. Non-default: 46. Status: mapped.
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_AUTOCRACY"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_BUREAUCRACY"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_CASTE_SYSTEM"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
 - `PrereqAndCivics/PrereqCivic/CivicOption`
-  - Present: 46. Non-default: 46. Status: preserved.
+  - Present: 46. Non-default: 46. Status: mapped.
   - Example: CIVIC_AUTOCRACY
   - Example: CIVIC_BUREAUCRACY
   - Example: CIVIC_CASTE_SYSTEM
 - `PrereqAndCivics/PrereqCivic/bPrereqCivic`
-  - Present: 46. Non-default: 46. Status: preserved.
+  - Present: 46. Non-default: 46. Status: mapped.
   - Example: 1
 - `PrereqAndTerrain`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "PrereqAndTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n         ...
   - Example: [\n  "PrereqAndTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_HILL"\n        ],\n        [\n          "...
   - Example: [\n  "PrereqAndTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_PEAK"\n        ],\n        [\n          "...
 - `PrereqAndTerrain/PrereqTerrain`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_HILL"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_PEAK"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
 - `PrereqAndTerrain/PrereqTerrain/TerrainType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_HILL
   - Example: TERRAIN_PEAK
 - `PrereqAndTerrain/PrereqTerrain/bPrereqTerrain`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 1
 - `PrereqBonuses`
-  - Present: 618. Non-default: 50. Status: preserved.
+  - Present: 618. Non-default: 50. Status: mapped.
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "Bonus",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "Bonus",\n      "BONUS_DURASTEEL"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "Bonus",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "Bonus",\n      "BONUS_NANOTUBES"\n    ],\n    [\n      "Bonus",\n      "B...
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "Bonus",\n      "BONUS_CEMENT"\n    ],\n    [\n      "Bonus",\n      "BONUS_STEEL"\n    ]\n  ]\n]
 - `PrereqBonuses/Bonus`
-  - Present: 48. Non-default: 48. Status: preserved.
+  - Present: 48. Non-default: 48. Status: mapped.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_CANNABIS
   - Example: BONUS_CEMENT
 - `PrereqBonuses/BonusType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_DURASTEEL
   - Example: BONUS_IRON
 - `PrereqBuildingClasses`
-  - Present: 625. Non-default: 79. Status: preserved.
+  - Present: 625. Non-default: 79. Status: mapped.
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ACCELERATOR"\n  ...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_AD_AGENCY"\n    ...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_APOTHECARY"\n   ...
 - `PrereqBuildingClasses/PrereqBuildingClass`
-  - Present: 79. Non-default: 79. Status: preserved.
+  - Present: 79. Non-default: 79. Status: mapped.
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ACCELERATOR"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "3"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AD_AGENCY"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "3"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AD_AGENCY"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "4"\n    ]\n  ]\n]
 - `PrereqBuildingClasses/PrereqBuildingClass/BuildingClassType`
-  - Present: 79. Non-default: 79. Status: preserved.
+  - Present: 79. Non-default: 79. Status: mapped.
   - Example: BUILDINGCLASS_ACCELERATOR
   - Example: BUILDINGCLASS_AD_AGENCY
   - Example: BUILDINGCLASS_APOTHECARY
 - `PrereqBuildingClasses/PrereqBuildingClass/iNumBuildingNeeded`
-  - Present: 79. Non-default: 79. Status: preserved.
+  - Present: 79. Non-default: 79. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `PrereqCorporation`
-  - Present: 623. Non-default: 20. Status: preserved.
+  - Present: 623. Non-default: 20. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `PrereqCultureLevel`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: CULTURELEVEL_DEVELOPING
   - Example: CULTURELEVEL_FLEDGLING
   - Example: CULTURELEVEL_INFLUENTIAL
 - `PrereqGameOption`
-  - Present: 76. Non-default: 0. Status: preserved.
+  - Present: 76. Non-default: 0. Status: mapped.
 - `PrereqNotBuildingClasses`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: [\n  "PrereqNotBuildingClasses",\n  [\n    [\n      "PrereqNotBuildingClass",\n      [\n        [\n          "BuildingClassMustNotHave",\n          "BUILDINGCLASS_AU...
   - Example: [\n  "PrereqNotBuildingClasses",\n  [\n    [\n      "PrereqNotBuildingClass",\n      [\n        [\n          "BuildingClassMustNotHave",\n          "BUILDINGCLASS_CO...
   - Example: [\n  "PrereqNotBuildingClasses",\n  [\n    [\n      "PrereqNotBuildingClass",\n      [\n        [\n          "BuildingClassMustNotHave",\n          "BUILDINGCLASS_IN...
 - `PrereqNotBuildingClasses/PrereqNotBuildingClass`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: [\n  "PrereqNotBuildingClass",\n  [\n    [\n      "BuildingClassMustNotHave",\n      "BUILDINGCLASS_AUGMENTATION_CENTER"\n    ],\n    [\n      "bPrereqNot",\n      "1...
   - Example: [\n  "PrereqNotBuildingClass",\n  [\n    [\n      "BuildingClassMustNotHave",\n      "BUILDINGCLASS_COPERNICUS_OBSERVATORY"\n    ],\n    [\n      "bPrereqNot",\n     ...
   - Example: [\n  "PrereqNotBuildingClass",\n  [\n    [\n      "BuildingClassMustNotHave",\n      "BUILDINGCLASS_INCUBATION_CENTER"\n    ],\n    [\n      "bPrereqNot",\n      "1"\n...
 - `PrereqNotBuildingClasses/PrereqNotBuildingClass/BuildingClassMustNotHave`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: BUILDINGCLASS_AUGMENTATION_CENTER
   - Example: BUILDINGCLASS_COPERNICUS_OBSERVATORY
   - Example: BUILDINGCLASS_INCUBATION_CENTER
 - `PrereqNotBuildingClasses/PrereqNotBuildingClass/bPrereqNot`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: 1
 - `PrereqOrBuildingClasses`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: [\n  "PrereqOrBuildingClasses",\n  [\n    [\n      "PrereqOrBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_APIARY"\n   ...
   - Example: [\n  "PrereqOrBuildingClasses",\n  [\n    [\n      "PrereqOrBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ARSENAL"\n  ...
   - Example: [\n  "PrereqOrBuildingClasses",\n  [\n    [\n      "PrereqOrBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_BAZAAR"\n   ...
 - `PrereqOrBuildingClasses/PrereqOrBuildingClass`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: [\n  "PrereqOrBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AEROSPACE_COMPLEX"\n    ],\n    [\n      "bPrereqBuildingClass",\n      "1...
   - Example: [\n  "PrereqOrBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ALHAMBRA"\n    ],\n    [\n      "bPrereqBuildingClass",\n      "1"\n    ]\n ...
   - Example: [\n  "PrereqOrBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_APADANA_PALACE"\n    ],\n    [\n      "bPrereqBuildingClass",\n      "1"\n ...
 - `PrereqOrBuildingClasses/PrereqOrBuildingClass/BuildingClassType`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: BUILDINGCLASS_AEROSPACE_COMPLEX
   - Example: BUILDINGCLASS_ALHAMBRA
   - Example: BUILDINGCLASS_APADANA_PALACE
 - `PrereqOrBuildingClasses/PrereqOrBuildingClass/bPrereqBuildingClass`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: mapped.
   - Example: 1
 - `PrereqOrCivics`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_ATHEIST"\n        ],\n        [\n          "bPr...
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_COINAGE"\n        ],\n        [\n          "bPr...
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_CONSCRIPTION1"\n        ],\n        [\n        ...
 - `PrereqOrCivics/PrereqCivic`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_ARISTOCRACY"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_ATHEIST"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_BOURGEOIS"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
 - `PrereqOrCivics/PrereqCivic/CivicOption`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: CIVIC_ARISTOCRACY
   - Example: CIVIC_ATHEIST
   - Example: CIVIC_BOURGEOIS
 - `PrereqOrCivics/PrereqCivic/bPrereqCivic`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: 1
 - `PrereqOrFeature`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "PrereqOrFeature",\n  [\n    [\n      "PrereqFeature",\n      [\n        [\n          "TerrainType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n          ...
 - `PrereqOrFeature/PrereqFeature`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "PrereqFeature",\n  [\n    [\n      "TerrainType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
 - `PrereqOrFeature/PrereqFeature/TerrainType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: FEATURE_JUNGLE
 - `PrereqOrFeature/PrereqFeature/bPrereqTerrain`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `PrereqOrTerrain`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "PrereqOrTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n          ...
   - Example: [\n  "PrereqOrTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_HILL"\n        ],\n        [\n          "b...
   - Example: [\n  "PrereqOrTerrain",\n  [\n    [\n      "PrereqTerrain",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_PEAK"\n        ],\n        [\n          "b...
 - `PrereqOrTerrain/PrereqTerrain`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_HILL"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqTerrain",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_PEAK"\n    ],\n    [\n      "bPrereqTerrain",\n      "1"\n    ]\n  ]\n]
 - `PrereqOrTerrain/PrereqTerrain/TerrainType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_HILL
   - Example: TERRAIN_PEAK
 - `PrereqOrTerrain/PrereqTerrain/bPrereqTerrain`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 1
 - `PrereqReligion`
-  - Present: 623. Non-default: 55. Status: preserved.
+  - Present: 623. Non-default: 55. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `PrereqTech`
-  - Present: 645. Non-default: 563. Status: preserved.
+  - Present: 645. Non-default: 563. Status: mapped.
   - Example: TECH_ABSOLUTISM
   - Example: TECH_ACOUSTICS
   - Example: TECH_ADVANCED_COMPUTERS
 - `PrereqVicinityBonuses`
-  - Present: 12. Non-default: 11. Status: preserved.
+  - Present: 12. Non-default: 11. Status: mapped.
   - Example: [\n  "PrereqVicinityBonuses",\n  [\n    [\n      "Bonus",\n      "BONUS_APPLE"\n    ],\n    [\n      "Bonus",\n      "BONUS_WHEAT"\n    ],\n    [\n      "Bonus",\n      "...
   - Example: [\n  "PrereqVicinityBonuses",\n  [\n    [\n      "Bonus",\n      "BONUS_SALT"\n    ],\n    [\n      "Bonus",\n      "BONUS_STONE"\n    ]\n  ]\n]
   - Example: [\n  "PrereqVicinityBonuses",\n  [\n    [\n      "VicinityBonus",\n      "BONUS_ANCIENTTEMPLE"\n    ]\n  ]\n]
 - `PrereqVicinityBonuses/Bonus`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: BONUS_APPLE
   - Example: BONUS_CORN
   - Example: BONUS_RICE
 - `PrereqVicinityBonuses/VicinityBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_CLAM
   - Example: BONUS_COTTON
 - `ProductionTraits`
-  - Present: 635. Non-default: 176. Status: preserved.
+  - Present: 635. Non-default: 176. Status: mapped.
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_AGGRESSIVE"\n        ],\n       ...
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_AGRICULTURAL"\n        ],\n     ...
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_CHARISMATIC"\n        ],\n      ...
 - `ProductionTraits/ProductionTrait`
-  - Present: 176. Non-default: 176. Status: preserved.
+  - Present: 176. Non-default: 176. Status: mapped.
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_AGGRESSIVE"\n    ],\n    [\n      "iProductionTrait",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_AGRICULTURAL"\n    ],\n    [\n      "iProductionTrait",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_CHARISMATIC"\n    ],\n    [\n      "iProductionTrait",\n      "100"\n    ]\n  ]\n]
 - `ProductionTraits/ProductionTrait/ProductionTraitType`
-  - Present: 176. Non-default: 176. Status: preserved.
+  - Present: 176. Non-default: 176. Status: mapped.
   - Example: TRAIT_AGGRESSIVE
   - Example: TRAIT_AGRICULTURAL
   - Example: TRAIT_CHARISMATIC
 - `ProductionTraits/ProductionTrait/iProductionTrait`
-  - Present: 176. Non-default: 176. Status: preserved.
+  - Present: 176. Non-default: 176. Status: mapped.
   - Example: 100
   - Example: 50
 - `Properties`
-  - Present: 3. Non-default: 0. Status: preserved.
+  - Present: 3. Non-default: 0. Status: unsupported.
 - `ReligionChanges`
-  - Present: 623. Non-default: 66. Status: preserved.
+  - Present: 623. Non-default: 66. Status: mapped.
   - Example: [\n  "ReligionChanges",\n  [\n    [\n      "ReligionChange",\n      [\n        [\n          "ReligionType",\n          "RELIGION_ASATRU"\n        ],\n        [\n       ...
   - Example: [\n  "ReligionChanges",\n  [\n    [\n      "ReligionChange",\n      [\n        [\n          "ReligionType",\n          "RELIGION_BUDDHISM"\n        ],\n        [\n     ...
   - Example: [\n  "ReligionChanges",\n  [\n    [\n      "ReligionChange",\n      [\n        [\n          "ReligionType",\n          "RELIGION_CHRISTIANITY"\n        ],\n        [\n ...
 - `ReligionChanges/ReligionChange`
-  - Present: 66. Non-default: 66. Status: preserved.
+  - Present: 66. Non-default: 66. Status: mapped.
   - Example: [\n  "ReligionChange",\n  [\n    [\n      "ReligionType",\n      "RELIGION_ASATRU"\n    ],\n    [\n      "iReligionChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ReligionChange",\n  [\n    [\n      "ReligionType",\n      "RELIGION_ASATRU"\n    ],\n    [\n      "iReligionChange",\n      "3"\n    ]\n  ]\n]
   - Example: [\n  "ReligionChange",\n  [\n    [\n      "ReligionType",\n      "RELIGION_ASATRU"\n    ],\n    [\n      "iReligionChange",\n      "4"\n    ]\n  ]\n]
 - `ReligionChanges/ReligionChange/ReligionType`
-  - Present: 66. Non-default: 66. Status: preserved.
+  - Present: 66. Non-default: 66. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `ReligionChanges/ReligionChange/iReligionChange`
-  - Present: 66. Non-default: 65. Status: preserved.
+  - Present: 66. Non-default: 65. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `ReligionType`
-  - Present: 623. Non-default: 68. Status: preserved.
+  - Present: 623. Non-default: 68. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `ReplaceBuildings`
-  - Present: 212. Non-default: 211. Status: preserved.
+  - Present: 212. Non-default: 211. Status: mapped.
   - Example: [\n  "ReplaceBuildings",\n  [\n    [\n      "ReplaceBuilding",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ADVANCED_SHIELDING"\n    ...
   - Example: [\n  "ReplaceBuildings",\n  [\n    [\n      "ReplaceBuilding",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_AD_AGENCY"\n        ],\n  ...
   - Example: [\n  "ReplaceBuildings",\n  [\n    [\n      "ReplaceBuilding",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_AEROSPACE_COMPLEX"\n     ...
 - `ReplaceBuildings/ReplaceBuilding`
-  - Present: 211. Non-default: 211. Status: preserved.
+  - Present: 211. Non-default: 211. Status: mapped.
   - Example: [\n  "ReplaceBuilding",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ADVANCED_SHIELDING"\n    ],\n    [\n      "bReplace",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ReplaceBuilding",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AD_AGENCY"\n    ],\n    [\n      "bReplace",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ReplaceBuilding",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_AEROSPACE_COMPLEX"\n    ],\n    [\n      "bReplace",\n      "1"\n    ]\n  ]\n]
 - `ReplaceBuildings/ReplaceBuilding/BuildingClassType`
-  - Present: 211. Non-default: 211. Status: preserved.
+  - Present: 211. Non-default: 211. Status: mapped.
   - Example: BUILDINGCLASS_ADVANCED_SHIELDING
   - Example: BUILDINGCLASS_AD_AGENCY
   - Example: BUILDINGCLASS_AEROSPACE_COMPLEX
 - `ReplaceBuildings/ReplaceBuilding/bReplace`
-  - Present: 211. Non-default: 211. Status: preserved.
+  - Present: 211. Non-default: 211. Status: mapped.
   - Example: 1
 - `RiverPlotYieldChanges`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: [\n  "RiverPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "RiverPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "RiverPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `RiverPlotYieldChanges/iYield`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: 1
 - `SeaPlotYieldChanges`
-  - Present: 623. Non-default: 9. Status: preserved.
+  - Present: 623. Non-default: 9. Status: mapped.
   - Example: [\n  "SeaPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "SeaPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "SeaPlotYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `SeaPlotYieldChanges/iYield`
-  - Present: 12. Non-default: 9. Status: preserved.
+  - Present: 12. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
 - `SpecialBuildingType`
-  - Present: 625. Non-default: 121. Status: preserved.
+  - Present: 625. Non-default: 121. Status: mapped.
   - Example: SPECIALBUILDING_CATHEDRAL
   - Example: SPECIALBUILDING_CLONING_FACTORY
   - Example: SPECIALBUILDING_CORPORATE_STORE
 - `SpecialistCommercePercentChanges`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "SpecialistCommercePercentChanges",\n  [\n    [\n      "SpecialistCommercePercentChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIS...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ENGINEER"\n    ],\n    [\n      "SpecialistCommercePercents",\n      [...
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_GREAT_GENERAL"\n    ],\n    [\n      "SpecialistCommercePercents",\n  ...
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_PRIEST"\n    ],\n    [\n      "SpecialistCommercePercents",\n      [\n ...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistCommercePercents`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommerc...
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommercePercent",\n      "100"\n    ],\n    [\n      "iComme...
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommercePercent",\n      "200"\n    ],\n    [\n      "iComme...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistCommercePercents/iCommercePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 200
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: SPECIALIST_ENGINEER
   - Example: SPECIALIST_GREAT_GENERAL
   - Example: SPECIALIST_PRIEST
 - `SpecialistCounts`
-  - Present: 629. Non-default: 208. Status: preserved.
+  - Present: 629. Non-default: 208. Status: mapped.
   - Example: [\n  "SpecialistCounts",\n  [\n    [\n      "SpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ARTIST"\n        ],\n        [\n ...
   - Example: [\n  "SpecialistCounts",\n  [\n    [\n      "SpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ENGINEER"\n        ],\n        [...
   - Example: [\n  "SpecialistCounts",\n  [\n    [\n      "SpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_LAWYER"\n        ],\n        [\n ...
 - `SpecialistCounts/SpecialistCount`
-  - Present: 208. Non-default: 208. Status: preserved.
+  - Present: 208. Non-default: 208. Status: mapped.
   - Example: [\n  "SpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "iSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "iSpecialistCount",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "iSpecialistCount",\n      "3"\n    ]\n  ]\n]
 - `SpecialistCounts/SpecialistCount/SpecialistType`
-  - Present: 208. Non-default: 208. Status: preserved.
+  - Present: 208. Non-default: 208. Status: mapped.
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_ENGINEER
   - Example: SPECIALIST_LAWYER
 - `SpecialistCounts/SpecialistCount/iSpecialistCount`
-  - Present: 208. Non-default: 208. Status: preserved.
+  - Present: 208. Non-default: 208. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `SpecialistExtraCommerces`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: [\n  "SpecialistExtraCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n  ...
   - Example: [\n  "SpecialistExtraCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "2"\n  ...
   - Example: [\n  "SpecialistExtraCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "4"\n  ...
 - `SpecialistExtraCommerces/iCommerce`
-  - Present: 15. Non-default: 4. Status: preserved.
+  - Present: 15. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 4
 - `SpecialistYieldChanges`
-  - Present: 624. Non-default: 4. Status: preserved.
+  - Present: 624. Non-default: 4. Status: mapped.
   - Example: [\n  "SpecialistYieldChanges",\n  [\n    [\n      "SpecialistYieldChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ARTIST"\n        ],...
   - Example: [\n  "SpecialistYieldChanges",\n  [\n    [\n      "SpecialistYieldChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_MERCHANT"\n        ...
   - Example: [\n  "SpecialistYieldChanges",\n  [\n    [\n      "SpecialistYieldChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_PRIEST"\n        ],...
 - `SpecialistYieldChanges/SpecialistYieldChange`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "SpecialistYieldChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYie...
   - Example: [\n  "SpecialistYieldChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_MERCHANT"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iY...
   - Example: [\n  "SpecialistYieldChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_PRIEST"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYie...
 - `SpecialistYieldChanges/SpecialistYieldChange/SpecialistType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_MERCHANT
   - Example: SPECIALIST_PRIEST
 - `SpecialistYieldChanges/SpecialistYieldChange/YieldChanges`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `SpecialistYieldChanges/SpecialistYieldChange/YieldChanges/iYield`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `StateReligion`
-  - Present: 623. Non-default: 16. Status: preserved.
+  - Present: 623. Non-default: 16. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `StateReligionCommerces`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "5"\n    ...
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ...
 - `StateReligionCommerces/iCommerce`
-  - Present: 14. Non-default: 4. Status: preserved.
+  - Present: 14. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 5
 - `Strategy`
-  - Present: 645. Non-default: 642. Status: preserved.
+  - Present: 645. Non-default: 642. Status: mapped.
   - Example: .
   - Example: TXT_KEY_ADVENTURE_STRATEGY
   - Example: TXT_KEY_BUILDING_ABU_SIMBEL_STRATEGY
 - `TechCommerceChanges`
-  - Present: 16. Non-default: 15. Status: preserved.
+  - Present: 16. Non-default: 15. Status: mapped.
   - Example: [\n  "TechCommerceChanges",\n  [\n    [\n      "TechCommerceChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_AESTHETICS"\n        ],\n        [\n ...
   - Example: [\n  "TechCommerceChanges",\n  [\n    [\n      "TechCommerceChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_DIVINE_RIGHT"\n        ],\n        [...
   - Example: [\n  "TechCommerceChanges",\n  [\n    [\n      "TechCommerceChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_HUMANISM"\n        ],\n        [\n   ...
 - `TechCommerceChanges/TechCommerceChange`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: [\n  "TechCommerceChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_AESTHETICS"\n    ],\n    [\n      "TechCommerce",\n      [\n        [\n          "iCommerce",\n ...
   - Example: [\n  "TechCommerceChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_DIVINE_RIGHT"\n    ],\n    [\n      "TechCommerce",\n      [\n        [\n          "iCommerce",...
   - Example: [\n  "TechCommerceChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_FREE_ARTISTRY"\n    ],\n    [\n      "TechCommerce",\n      [\n        [\n          "iCommerce"...
 - `TechCommerceChanges/TechCommerceChange/PrereqTech`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: TECH_AESTHETICS
   - Example: TECH_DIVINE_RIGHT
   - Example: TECH_FREE_ARTISTRY
 - `TechCommerceChanges/TechCommerceChange/TechCommerce`
-  - Present: 15. Non-default: 3. Status: preserved.
+  - Present: 15. Non-default: 3. Status: mapped.
   - Example: [\n  "TechCommerce",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n ...
   - Example: [\n  "TechCommerce",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n ...
   - Example: [\n  "TechCommerce",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n ...
 - `TechCommerceChanges/TechCommerceChange/TechCommerce/iCommerce`
-  - Present: 15. Non-default: 3. Status: preserved.
+  - Present: 15. Non-default: 3. Status: mapped.
   - Example: 1
 - `TechSpecialistChanges`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TechSpecialistChanges",\n  [\n    [\n      "TechSpecialistChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_CHEMISTRY"\n        ],\n        ...
 - `TechSpecialistChanges/TechSpecialistChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TechSpecialistChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_CHEMISTRY"\n    ],\n    [\n      "SpecialistCounts",\n      [\n        [\n          "Speciali...
 - `TechSpecialistChanges/TechSpecialistChange/PrereqTech`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TECH_CHEMISTRY
 - `TechSpecialistChanges/TechSpecialistChange/SpecialistCounts`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "SpecialistCounts",\n  [\n    [\n      "SpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ENGINEER"\n        ],\n        [...
 - `TechSpecialistChanges/TechSpecialistChange/SpecialistCounts/SpecialistCount`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "SpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ENGINEER"\n    ],\n    [\n      "iSpecialistCount",\n      "-1"\n    ]\n  ]\n]
 - `TechSpecialistChanges/TechSpecialistChange/SpecialistCounts/SpecialistCount/SpecialistType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: SPECIALIST_ENGINEER
 - `TechSpecialistChanges/TechSpecialistChange/SpecialistCounts/SpecialistCount/iSpecialistCount`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: mapped.
 - `TechTypes`
-  - Present: 623. Non-default: 35. Status: preserved.
+  - Present: 623. Non-default: 35. Status: mapped.
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_ARCHITECTURE"\n    ]\n  ]\n]
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_ATHLETICS"\n    ]\n  ]\n]
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_AUTOMATIC_WEAPONS"\n    ],\n    [\n      "PrereqTech",\n      "TECH_RADIO"\n    ]\n  ]\n]
 - `TechTypes/PrereqTech`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: mapped.
   - Example: TECH_ARCHITECTURE
   - Example: TECH_ATHLETICS
   - Example: TECH_AUTOMATIC_WEAPONS
 - `TechYieldChanges`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "TechYieldChanges",\n  [\n    [\n      "TechYieldChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_TRADE"\n        ],\n        [\n          "T...
 - `TechYieldChanges/TechYieldChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "TechYieldChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_TRADE"\n    ],\n    [\n      "TechYield",\n      [\n        [\n          "iYield",\n          "0"\n ...
 - `TechYieldChanges/TechYieldChange/PrereqTech`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TECH_TRADE
 - `TechYieldChanges/TechYieldChange/TechYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "TechYield",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `TechYieldChanges/TechYieldChange/TechYield/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `TechYieldModifiers`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TechYieldModifiers",\n  [\n    [\n      "TechYieldModifier",\n      [\n        [\n          "PrereqTech",\n          "TECH_CHEMISTRY"\n        ],\n        [\n    ...
 - `TechYieldModifiers/TechYieldModifier`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TechYieldModifier",\n  [\n    [\n      "PrereqTech",\n      "TECH_CHEMISTRY"\n    ],\n    [\n      "TechYield",\n      [\n        [\n          "iYield",\n         ...
 - `TechYieldModifiers/TechYieldModifier/PrereqTech`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TECH_CHEMISTRY
 - `TechYieldModifiers/TechYieldModifier/TechYield`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TechYield",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "-15"\n    ]\n  ]\n]
 - `TechYieldModifiers/TechYieldModifier/TechYield/iYield`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: -15
 - `Type`
-  - Present: 645. Non-default: 645. Status: preserved.
+  - Present: 645. Non-default: 645. Status: mapped.
   - Example: BUILDING_ABU_SIMBEL
   - Example: BUILDING_ACADEMY
   - Example: BUILDING_ACCELERATOR
 - `UnitClassProductionModifiers`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "UnitClassProductionModifiers",\n  [\n    [\n      "UnitClassProductionModifier",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_BOMBARD"...
   - Example: [\n  "UnitClassProductionModifiers",\n  [\n    [\n      "UnitClassProductionModifier",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_CANNON"\n...
   - Example: [\n  "UnitClassProductionModifiers",\n  [\n    [\n      "UnitClassProductionModifier",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_CHARIOT"...
 - `UnitClassProductionModifiers/UnitClassProductionModifier`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "UnitClassProductionModifier",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_ARTILLERY"\n    ],\n    [\n      "iProductionModifier",\n      "100"\n    ]\n ...
   - Example: [\n  "UnitClassProductionModifier",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_BIOLOGICAL_WARFARE_MISSILE"\n    ],\n    [\n      "iProductionModifier",\n  ...
   - Example: [\n  "UnitClassProductionModifier",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_BOMBARD"\n    ],\n    [\n      "iProductionModifier",\n      "100"\n    ]\n  ]\n]
 - `UnitClassProductionModifiers/UnitClassProductionModifier/UnitClassType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: UNITCLASS_ARTILLERY
   - Example: UNITCLASS_BIOLOGICAL_WARFARE_MISSILE
   - Example: UNITCLASS_BOMBARD
 - `UnitClassProductionModifiers/UnitClassProductionModifier/iProductionModifier`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 100
   - Example: 50
 - `UnitCombatExtraStrengths`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "UnitCombatExtraStrengths",\n  [\n    [\n      "UnitCombatExtraStrength",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_GUN"\n        ]...
 - `UnitCombatExtraStrengths/UnitCombatExtraStrength`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "UnitCombatExtraStrength",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_GUN"\n    ],\n    [\n      "iStrength",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatExtraStrength",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_HITECH"\n    ],\n    [\n      "iStrength",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatExtraStrength",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_SIEGE"\n    ],\n    [\n      "iStrength",\n      "25"\n    ]\n  ]\n]
 - `UnitCombatExtraStrengths/UnitCombatExtraStrength/UnitCombatType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: UNITCOMBAT_GUN
   - Example: UNITCOMBAT_HITECH
   - Example: UNITCOMBAT_SIEGE
 - `UnitCombatExtraStrengths/UnitCombatExtraStrength/iStrength`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 25
 - `UnitCombatFreeExperiences`
-  - Present: 624. Non-default: 27. Status: preserved.
+  - Present: 624. Non-default: 27. Status: mapped.
   - Example: [\n  "UnitCombatFreeExperiences",\n  [\n    [\n      "UnitCombatFreeExperience",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ARCHER"\n    ...
   - Example: [\n  "UnitCombatFreeExperiences",\n  [\n    [\n      "UnitCombatFreeExperience",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ASSAULT_MECH...
   - Example: [\n  "UnitCombatFreeExperiences",\n  [\n    [\n      "UnitCombatFreeExperience",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_GUN"\n       ...
 - `UnitCombatFreeExperiences/UnitCombatFreeExperience`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: [\n  "UnitCombatFreeExperience",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "iExperience",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatFreeExperience",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "iExperience",\n      "3"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatFreeExperience",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ASSAULT_MECH"\n    ],\n    [\n      "iExperience",\n      "2"\n    ]\n  ]\n]
 - `UnitCombatFreeExperiences/UnitCombatFreeExperience/UnitCombatType`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
   - Example: UNITCOMBAT_GUN
 - `UnitCombatFreeExperiences/UnitCombatFreeExperience/iExperience`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `VicinityBonusYieldChanges`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "VicinityBonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_FISH"\n        ],\n        [\n   ...
   - Example: [\n  "VicinityBonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_FUR"\n        ],\n        [\n    ...
   - Example: [\n  "VicinityBonusYieldChanges",\n  [\n    [\n      "BonusYieldChange",\n      [\n        [\n          "BonusType",\n          "BONUS_IVORY"\n        ],\n        [\n  ...
 - `VicinityBonusYieldChanges/BonusYieldChange`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_CLAM"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n          "0...
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_CRAB"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n          "1...
   - Example: [\n  "BonusYieldChange",\n  [\n    [\n      "BonusType",\n      "BONUS_DEER"\n    ],\n    [\n      "YieldChanges",\n      [\n        [\n          "iYield",\n          "0...
 - `VicinityBonusYieldChanges/BonusYieldChange/BonusType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: BONUS_CLAM
   - Example: BONUS_CRAB
   - Example: BONUS_DEER
 - `VicinityBonusYieldChanges/BonusYieldChange/YieldChanges`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `VicinityBonusYieldChanges/BonusYieldChange/YieldChanges/iYield`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
 - `VictoryPrereq`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: VICTORY_DIPLOMATIC
   - Example: VICTORY_SCIENTIFIC
   - Example: VICTORY_SPACE_RACE
 - `YieldChanges`
-  - Present: 623. Non-default: 50. Status: preserved.
+  - Present: 623. Non-default: 50. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "12"\n    ]\n  ]\n]
 - `YieldChanges/iYield`
-  - Present: 57. Non-default: 50. Status: preserved.
+  - Present: 57. Non-default: 50. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `YieldModifiers`
-  - Present: 125. Non-default: 36. Status: preserved.
+  - Present: 125. Non-default: 36. Status: mapped.
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "-10"\n    ],\n    [\n      "iYield",\n      "-10"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "-5"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "25"\n    ]\n  ]\n]
 - `YieldModifiers/iYield`
-  - Present: 61. Non-default: 36. Status: preserved.
+  - Present: 61. Non-default: 36. Status: mapped.
   - Example: -10
   - Example: -5
   - Example: 10
 - `bAllowsNukes`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `bAltDown`
-  - Present: 622. Non-default: 0. Status: preserved.
+  - Present: 622. Non-default: 0. Status: unsupported.
 - `bApplyFreePromotionOnMove`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bAreaCleanPower`
-  - Present: 623. Non-default: 2. Status: preserved.
+  - Present: 623. Non-default: 2. Status: mapped.
   - Example: 1
 - `bBorderObstacle`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `bBuildingOnlyHealthy`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCapital`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCenterInCity`
-  - Present: 628. Non-default: 37. Status: preserved.
+  - Present: 628. Non-default: 37. Status: unsupported.
   - Example: 1
 - `bCtrlDown`
-  - Present: 622. Non-default: 0. Status: preserved.
+  - Present: 622. Non-default: 0. Status: unsupported.
 - `bDCMNukesOkay`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bDirtyPower`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 1
 - `bForceAllTradeRoutes`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bForceNoPrereqScaling`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bForceOverwrite`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bForceTeamVoteEligible`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 1
 - `bFreeFromStateReligion`
-  - Present: 605. Non-default: 13. Status: preserved.
+  - Present: 605. Non-default: 13. Status: mapped.
   - Example: 1
 - `bFreshWater`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `bGoldenAge`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 1
 - `bGovernmentCenter`
-  - Present: 623. Non-default: 8. Status: preserved.
+  - Present: 623. Non-default: 8. Status: mapped.
   - Example: 1
 - `bMapCentering`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNeverCapture`
-  - Present: 628. Non-default: 82. Status: preserved.
+  - Present: 628. Non-default: 82. Status: mapped.
   - Example: 1
 - `bNoPower`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
 - `bNoUnhappiness`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 1
 - `bNoUnhealthyPopulation`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 1
 - `bNukeImmune`
-  - Present: 623. Non-default: 207. Status: preserved.
+  - Present: 623. Non-default: 207. Status: mapped.
   - Example: 1
 - `bPower`
-  - Present: 623. Non-default: 7. Status: preserved.
+  - Present: 623. Non-default: 7. Status: mapped.
   - Example: 1
 - `bPrereqPower`
-  - Present: 39. Non-default: 38. Status: preserved.
+  - Present: 39. Non-default: 38. Status: mapped.
   - Example: 1
 - `bPrereqReligion`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `bProtectedCulture`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `bProvidesFreshWater`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 1
 - `bRequiresActiveCivics`
-  - Present: 65. Non-default: 65. Status: preserved.
+  - Present: 65. Non-default: 65. Status: mapped.
   - Example: 1
 - `bRiver`
-  - Present: 623. Non-default: 11. Status: preserved.
+  - Present: 623. Non-default: 11. Status: mapped.
   - Example: 1
 - `bShiftDown`
-  - Present: 622. Non-default: 0. Status: preserved.
+  - Present: 622. Non-default: 0. Status: unsupported.
 - `bStateReligion`
-  - Present: 623. Non-default: 25. Status: preserved.
+  - Present: 623. Non-default: 25. Status: mapped.
   - Example: 1
 - `bTeamShare`
-  - Present: 623. Non-default: 80. Status: preserved.
+  - Present: 623. Non-default: 80. Status: mapped.
   - Example: 1
 - `bWater`
-  - Present: 623. Non-default: 34. Status: preserved.
+  - Present: 623. Non-default: 34. Status: mapped.
   - Example: 1
 - `bZoneOfControl`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
 - `fVisibilityPriority`
-  - Present: 641. Non-default: 640. Status: preserved.
+  - Present: 641. Non-default: 640. Status: unsupported.
   - Example: 0.0
   - Example: 1.0
   - Example: 100.0
 - `iAIWeight`
-  - Present: 623. Non-default: 31. Status: preserved.
+  - Present: 623. Non-default: 31. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 10000
 - `iAdjacentDamagePercent`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iAdvancedStartCost`
-  - Present: 628. Non-default: 393. Status: preserved.
+  - Present: 628. Non-default: 393. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iAdvancedStartCostIncrease`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 3
 - `iAirModifier`
-  - Present: 623. Non-default: 10. Status: preserved.
+  - Present: 623. Non-default: 10. Status: mapped.
   - Example: -10
   - Example: -100
   - Example: -20
 - `iAirUnitCapacity`
-  - Present: 623. Non-default: 6. Status: preserved.
+  - Present: 623. Non-default: 6. Status: mapped.
   - Example: 4
   - Example: 5
   - Example: 6
 - `iAirlift`
-  - Present: 623. Non-default: 7. Status: preserved.
+  - Present: 623. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 2
 - `iAllCityDefense`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 10
   - Example: 25
   - Example: 35
 - `iAnarchyModifier`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: -100
   - Example: -25
   - Example: -50
 - `iAreaFreeSpecialist`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 1
 - `iAreaHappiness`
-  - Present: 623. Non-default: 10. Status: preserved.
+  - Present: 623. Non-default: 10. Status: mapped.
   - Example: 1
   - Example: 2
 - `iAreaHealth`
-  - Present: 623. Non-default: 2. Status: preserved.
+  - Present: 623. Non-default: 2. Status: mapped.
   - Example: 1
 - `iAreaMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iAsset`
-  - Present: 645. Non-default: 595. Status: preserved.
+  - Present: 645. Non-default: 595. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iBombardDefense`
-  - Present: 623. Non-default: 19. Status: preserved.
+  - Present: 623. Non-default: 19. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iCapitalExtraCommerce`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: 1
   - Example: 3
   - Example: 4
 - `iCitiesPrereq`
-  - Present: 623. Non-default: 8. Status: preserved.
+  - Present: 623. Non-default: 8. Status: mapped.
   - Example: 4
   - Example: 5
   - Example: 6
 - `iCitiesRequiredPerDomesticConnectedCity`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iCitiesRequiredPerForeignConnectedCity`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iCoastalDistanceMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iCoastalTradeRoutes`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iConnectedCityMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iConquestProb`
-  - Present: 633. Non-default: 410. Status: preserved.
+  - Present: 633. Non-default: 410. Status: mapped.
   - Example: 100
   - Example: 20
   - Example: 25
 - `iCost`
-  - Present: 645. Non-default: 605. Status: preserved.
+  - Present: 645. Non-default: 605. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 1000
 - `iDCMAirbombMission`
-  - Present: 302. Non-default: 236. Status: preserved.
+  - Present: 302. Non-default: 236. Status: mapped.
   - Example: 2
   - Example: 3
 - `iDefense`
-  - Present: 625. Non-default: 29. Status: preserved.
+  - Present: 625. Non-default: 29. Status: mapped.
   - Example: -25
   - Example: 10
   - Example: 100
 - `iDistanceMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iDomesticConnectedCommerce`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: 1
 - `iDomesticGreatGeneralRateModifier`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 100
 - `iEnemyWarWearinessModifier`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 5
 - `iEspionageDefense`
-  - Present: 623. Non-default: 16. Status: preserved.
+  - Present: 623. Non-default: 16. Status: mapped.
   - Example: -20
   - Example: 10
   - Example: 20
 - `iExperience`
-  - Present: 624. Non-default: 4. Status: preserved.
+  - Present: 624. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 4
 - `iFoodKept`
-  - Present: 623. Non-default: 6. Status: preserved.
+  - Present: 623. Non-default: 6. Status: mapped.
   - Example: 20
   - Example: 30
   - Example: 50
 - `iForeignCapitalExtraCommerce`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `iForeignConnectedCommerce`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: 1
 - `iForeignTradeRouteModifier`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iFreeSpecialist`
-  - Present: 628. Non-default: 13. Status: preserved.
+  - Present: 628. Non-default: 13. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iFreeTechs`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 1
 - `iGlobalExperience`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
 - `iGlobalFreeSpecialist`
-  - Present: 623. Non-default: 2. Status: preserved.
+  - Present: 623. Non-default: 2. Status: mapped.
   - Example: 1
 - `iGlobalGreatPeopleRateModifier`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iGlobalHappiness`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 4
 - `iGlobalHealth`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 2
 - `iGlobalHurryModifier`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: -33
 - `iGlobalMaintenanceModifier`
-  - Present: 81. Non-default: 3. Status: preserved.
+  - Present: 81. Non-default: 3. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: 10
 - `iGlobalPopulationChange`
-  - Present: 623. Non-default: 6. Status: preserved.
+  - Present: 623. Non-default: 6. Status: mapped.
   - Example: -30
   - Example: 1
 - `iGlobalSpaceProductionModifier`
-  - Present: 623. Non-default: 1. Status: preserved.
+  - Present: 623. Non-default: 1. Status: mapped.
   - Example: 25
 - `iGlobalTradeRoutes`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iGlobalWarWearinessModifier`
-  - Present: 623. Non-default: 6. Status: preserved.
+  - Present: 623. Non-default: 6. Status: mapped.
   - Example: -20
   - Example: -25
   - Example: 5
 - `iGoldenAgeModifier`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 100
   - Example: 20
   - Example: 25
 - `iGreatGeneralRateModifier`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 10
   - Example: 25
   - Example: 50
 - `iGreatPeopleRateChange`
-  - Present: 628. Non-default: 225. Status: preserved.
+  - Present: 628. Non-default: 225. Status: mapped.
   - Example: 1
   - Example: 2
 - `iGreatPeopleRateModifier`
-  - Present: 623. Non-default: 11. Status: preserved.
+  - Present: 623. Non-default: 11. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 20
 - `iHappiness`
-  - Present: 628. Non-default: 80. Status: preserved.
+  - Present: 628. Non-default: 80. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iHappinessPercentPerPopulation`
-  - Present: 4. Non-default: 2. Status: preserved.
+  - Present: 4. Non-default: 2. Status: mapped.
   - Example: 10
   - Example: 20
 - `iHealRateChange`
-  - Present: 623. Non-default: 11. Status: preserved.
+  - Present: 623. Non-default: 11. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iHealth`
-  - Present: 628. Non-default: 79. Status: preserved.
+  - Present: 628. Non-default: 79. Status: mapped.
   - Example: -2
   - Example: -3
   - Example: -4
 - `iHealthPercentPerPopulation`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: 15
   - Example: 20
 - `iHotKeyPriority`
-  - Present: 622. Non-default: 0. Status: preserved.
+  - Present: 622. Non-default: 0. Status: unsupported.
 - `iHurryAngerModifier`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iHurryCostModifier`
-  - Present: 623. Non-default: 146. Status: preserved.
+  - Present: 623. Non-default: 146. Status: mapped.
   - Example: 100
   - Example: 200
   - Example: 300
 - `iInterestMax`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 100
   - Example: 250
 - `iInterestPercent`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 2
   - Example: 5
 - `iLevelPrereq`
-  - Present: 623. Non-default: 5. Status: preserved.
+  - Present: 623. Non-default: 5. Status: mapped.
   - Example: 3
   - Example: 4
   - Example: 5
 - `iMaintenanceModifier`
-  - Present: 628. Non-default: 51. Status: preserved.
+  - Present: 628. Non-default: 51. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -20
 - `iMaxDomesticConnectedCommerce`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 25
 - `iMaxForeignConnectedCommerce`
-  - Present: 16. Non-default: 16. Status: preserved.
+  - Present: 16. Non-default: 16. Status: mapped.
   - Example: 15
   - Example: 150
   - Example: 20
 - `iMaxLatitude`
-  - Present: 626. Non-default: 626. Status: preserved.
+  - Present: 626. Non-default: 626. Status: mapped.
   - Example: 30
   - Example: 90
 - `iMilitaryProductionModifier`
-  - Present: 627. Non-default: 23. Status: preserved.
+  - Present: 627. Non-default: 23. Status: mapped.
   - Example: -20
   - Example: -25
   - Example: -30
 - `iMinAreaSize`
-  - Present: 628. Non-default: 27. Status: preserved.
+  - Present: 628. Non-default: 27. Status: mapped.
   - Example: 10
   - Example: 20
 - `iMinLatitude`
-  - Present: 623. Non-default: 4. Status: preserved.
+  - Present: 623. Non-default: 4. Status: mapped.
   - Example: 50
   - Example: 55
 - `iNoEntryDefenseLevel`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 25
   - Example: 5
 - `iNukeExplosionRand`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 1000
   - Example: 2000
   - Example: 4000
 - `iNukeModifier`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: -25
   - Example: -50
 - `iNumCitiesMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iNumFreeBonuses`
-  - Present: 620. Non-default: 19. Status: preserved.
+  - Present: 620. Non-default: 19. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iNumPopulationEmployed`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: 1
 - `iNumUnitFullHeal`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 3
 - `iOccupationTimeModifier`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 200
 - `iOtherAreaMaintenanceModifier`
-  - Present: 78. Non-default: 0. Status: preserved.
+  - Present: 78. Non-default: 0. Status: mapped.
 - `iPopulationgrowthratepercentage`
-  - Present: 6. Non-default: 5. Status: preserved.
+  - Present: 6. Non-default: 5. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -25
 - `iPower`
-  - Present: 645. Non-default: 166. Status: preserved.
+  - Present: 645. Non-default: 166. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iPrereqPopulation`
-  - Present: 14. Non-default: 13. Status: preserved.
+  - Present: 14. Non-default: 13. Status: mapped.
   - Example: 13
   - Example: 25
   - Example: 30
 - `iRevIdxDistanceModifier`
-  - Present: 75. Non-default: 0. Status: preserved.
+  - Present: 75. Non-default: 0. Status: unsupported.
 - `iRevIdxLocal`
-  - Present: 75. Non-default: 0. Status: preserved.
+  - Present: 75. Non-default: 0. Status: unsupported.
 - `iRevIdxNational`
-  - Present: 76. Non-default: 1. Status: preserved.
+  - Present: 76. Non-default: 1. Status: unsupported.
   - Example: -5
 - `iRevolutionIndexModifier`
-  - Present: 8. Non-default: 6. Status: preserved.
+  - Present: 8. Non-default: 6. Status: unsupported.
   - Example: -3
   - Example: 1
 - `iSpaceProductionModifier`
-  - Present: 623. Non-default: 8. Status: preserved.
+  - Present: 623. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iStateReligionHappiness`
-  - Present: 623. Non-default: 35. Status: preserved.
+  - Present: 623. Non-default: 35. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iTeamsPrereq`
-  - Present: 623. Non-default: 3. Status: preserved.
+  - Present: 623. Non-default: 3. Status: mapped.
   - Example: 3
 - `iTradeRouteModifier`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iTradeRoutes`
-  - Present: 623. Non-default: 0. Status: preserved.
+  - Present: 623. Non-default: 0. Status: mapped.
 - `iUnitUpgradePriceModifier`
-  - Present: 76. Non-default: 2. Status: preserved.
+  - Present: 76. Non-default: 2. Status: mapped.
   - Example: -50
 - `iWarWearinessModifier`
-  - Present: 623. Non-default: 17. Status: preserved.
+  - Present: 623. Non-default: 17. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: -25
 - `iWonderCapacityIncrement`
-  - Present: 14. Non-default: 3. Status: preserved.
+  - Present: 14. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iWorkableRadius`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 3
 - `iWorkerSpeedModifier`
-  - Present: 623. Non-default: 2. Status: preserved.
+  - Present: 623. Non-default: 2. Status: mapped.
   - Example: 25
   - Example: 50
 
@@ -2241,12 +2241,12 @@ Era counts: ERA_ANCIENT=75, ERA_CLASSICAL=90, ERA_INDUSTRIAL=103, ERA_MEDIEVAL=8
 Era counts: unknown=7
 
 - `Description`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: TXT_KEY_CALENDAR_BI_YEARLY
   - Example: TXT_KEY_CALENDAR_DEFAULT
   - Example: TXT_KEY_CALENDAR_MONTHS
 - `Type`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: CALENDAR_BI_YEARLY
   - Example: CALENDAR_DEFAULT
   - Example: CALENDAR_MONTHS
@@ -2256,13 +2256,13 @@ Era counts: unknown=7
 Era counts: unknown=1
 
 - `Description`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: none
 - `Path`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: art/Cameras/ZoomOut360.nif
 - `Type`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: CAMERA_ZOOM_OUT_360
 
 ## CityTabInfo: 3 records
@@ -2270,17 +2270,17 @@ Era counts: unknown=1
 Era counts: unknown=3
 
 - `Button`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: ,Art/Interface/Buttons/CityTabs/Buildings.dds,Art/Interface/Buttons/CityTab_CityScreen_MiniMap_AdvisorTab_Atlas.dds,1,1
   - Example: ,Art/Interface/Buttons/CityTabs/Units.dds,Art/Interface/Buttons/CityTab_CityScreen_MiniMap_AdvisorTab_Atlas.dds,2,1
   - Example: ,Art/Interface/Buttons/CityTabs/Wonders.dds,Art/Interface/Buttons/CityTab_CityScreen_MiniMap_AdvisorTab_Atlas.dds,3,1
 - `Description`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: TXT_KEY_CONCEPT_BUILDINGS
   - Example: TXT_KEY_CONCEPT_UNITS
   - Example: TXT_KEY_CONCEPT_WONDERS
 - `Type`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: CITYTAB_BUILDINGS
   - Example: CITYTAB_UNITS
   - Example: CITYTAB_WONDERS
@@ -2290,770 +2290,770 @@ Era counts: unknown=3
 Era counts: ERA_ANCIENT=9, ERA_CLASSICAL=14, ERA_INDUSTRIAL=12, ERA_MEDIEVAL=9, ERA_MODERN=7, ERA_RENAISSANCE=16, ERA_TRANSHUMAN=6, unknown=8
 
 - `BuildingClassCommerceChanges`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: [\n  "BuildingClassCommerceChanges",\n  [\n    [\n      "BuildingClassCommerceChange",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_...
 - `BuildingClassCommerceChanges/BuildingClassCommerceChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "BuildingClassCommerceChange",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_BAZAAR"\n    ],\n    [\n      "CommerceChanges",\n      [\n        [\n...
   - Example: [\n  "BuildingClassCommerceChange",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_MARKET"\n    ],\n    [\n      "CommerceChanges",\n      [\n        [\n...
 - `BuildingClassCommerceChanges/BuildingClassCommerceChange/BuildingClassType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: BUILDINGCLASS_BAZAAR
   - Example: BUILDINGCLASS_MARKET
 - `BuildingClassCommerceChanges/BuildingClassCommerceChange/CommerceChanges`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerceProduced",\n      "1"\n    ],\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced...
 - `BuildingClassCommerceChanges/BuildingClassCommerceChange/CommerceChanges/iCommerceProduced`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `BuildingClassProductionModifiers`
-  - Present: 12. Non-default: 6. Status: preserved.
+  - Present: 12. Non-default: 6. Status: mapped.
   - Example: [\n  "BuildingClassProductionModifiers",\n  [\n    [\n      "BuildingClassProductionModifier",\n      [\n        [\n          "BuildingClassType",\n          "BUILDI...
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ARSENAL"\n    ],\n    [\n      "iProductionModifier",\n      "15...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_BANK"\n    ],\n    [\n      "iProductionModifier",\n      "50"\n ...
   - Example: [\n  "BuildingClassProductionModifier",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_CANNON_FORGE"\n    ],\n    [\n      "iProductionModifier",\n    ...
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier/BuildingClassType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: BUILDINGCLASS_ARSENAL
   - Example: BUILDINGCLASS_BANK
   - Example: BUILDINGCLASS_CANNON_FORGE
 - `BuildingClassProductionModifiers/BuildingClassProductionModifier/iProductionModifier`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 150
   - Example: 50
 - `BuildingCommerceModifiers`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `BuildingHappinessChanges`
-  - Present: 70. Non-default: 6. Status: preserved.
+  - Present: 70. Non-default: 6. Status: mapped.
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_AGORA"\n      ...
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_ARENA"\n      ...
   - Example: [\n  "BuildingHappinessChanges",\n  [\n    [\n      "BuildingHappinessChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_GRANARY"\n    ...
 - `BuildingHappinessChanges/BuildingHappinessChange`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_AGORA"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_ARENA"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHappinessChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_GRANARY"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
 - `BuildingHappinessChanges/BuildingHappinessChange/BuildingType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: BUILDINGCLASS_AGORA
   - Example: BUILDINGCLASS_ARENA
   - Example: BUILDINGCLASS_GRANARY
 - `BuildingHappinessChanges/BuildingHappinessChange/iHappinessChange`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 1
   - Example: 2
 - `BuildingHealthChanges`
-  - Present: 73. Non-default: 2. Status: preserved.
+  - Present: 73. Non-default: 2. Status: mapped.
   - Example: [\n  "BuildingHealthChanges",\n  [\n    [\n      "BuildingHealthChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_BAZAAR"\n        ],\n...
   - Example: [\n  "BuildingHealthChanges",\n  [\n    [\n      "BuildingHealthChange",\n      [\n        [\n          "BuildingType",\n          "BUILDINGCLASS_DOCTOR"\n        ],\n...
 - `BuildingHealthChanges/BuildingHealthChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "BuildingHealthChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_BAZAAR"\n    ],\n    [\n      "iHealthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHealthChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_DOCTOR"\n    ],\n    [\n      "iHealthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingHealthChange",\n  [\n    [\n      "BuildingType",\n      "BUILDINGCLASS_HOSPITAL"\n    ],\n    [\n      "iHealthChange",\n      "2"\n    ]\n  ]\n]
 - `BuildingHealthChanges/BuildingHealthChange/BuildingType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: BUILDINGCLASS_BAZAAR
   - Example: BUILDINGCLASS_DOCTOR
   - Example: BUILDINGCLASS_HOSPITAL
 - `BuildingHealthChanges/BuildingHealthChange/iHealthChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 - `Button`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: ,Art/Afforess/Military_Civics/Banditry.dds,Art/Interface/Buttons/Atlases/Afforess_Atlas.dds,6,1
   - Example: ,Art/Afforess/Military_Civics/Conscription.dds,Art/Interface/Buttons/Atlases/Afforess_Atlas.dds,8,3
   - Example: ,Art/Afforess/Military_Civics/Fuedalism.dds,Art/Interface/Buttons/Atlases/Afforess_Atlas.dds,1,6
 - `CapitalCommerceModifiers`
-  - Present: 72. Non-default: 2. Status: preserved.
+  - Present: 72. Non-default: 2. Status: mapped.
   - Example: [\n  "CapitalCommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "20"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n ...
   - Example: [\n  "CapitalCommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "50"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n ...
 - `CapitalCommerceModifiers/iCommerce`
-  - Present: 4. Non-default: 2. Status: preserved.
+  - Present: 4. Non-default: 2. Status: mapped.
   - Example: 20
   - Example: 50
 - `CapitalYieldModifiers`
-  - Present: 72. Non-default: 3. Status: preserved.
+  - Present: 72. Non-default: 3. Status: mapped.
   - Example: [\n  "CapitalYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "20"\n    ]\n  ]\n]
   - Example: [\n  "CapitalYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "CapitalYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "50"\n    ],\n    [\n      "iYield",\n      "50"\n    ]\n  ]\n]
 - `CapitalYieldModifiers/iYield`
-  - Present: 12. Non-default: 3. Status: preserved.
+  - Present: 12. Non-default: 3. Status: mapped.
   - Example: 20
   - Example: 25
   - Example: 50
 - `CivicAttitudeChanges`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "CivicAttitudeChanges",\n  [\n    [\n      "CivicAttitudeChange",\n      [\n        [\n          "CivicType",\n          "CIVIC_BANDITS"\n        ],\n        [\n  ...
   - Example: [\n  "CivicAttitudeChanges",\n  [\n    [\n      "CivicAttitudeChange",\n      [\n        [\n          "CivicType",\n          "CIVIC_INTERVENTIONISM"\n        ],\n    ...
 - `CivicAttitudeChanges/CivicAttitudeChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "CivicAttitudeChange",\n  [\n    [\n      "CivicType",\n      "CIVIC_BANDITS"\n    ],\n    [\n      "iAttitudeChange",\n      "-2"\n    ],\n    [\n      "Descriptio...
   - Example: [\n  "CivicAttitudeChange",\n  [\n    [\n      "CivicType",\n      "CIVIC_CONSCRIPTION1"\n    ],\n    [\n      "iAttitudeChange",\n      "-2"\n    ],\n    [\n      "Desc...
   - Example: [\n  "CivicAttitudeChange",\n  [\n    [\n      "CivicType",\n      "CIVIC_FUEDALISM"\n    ],\n    [\n      "iAttitudeChange",\n      "-2"\n    ],\n    [\n      "Descript...
 - `CivicAttitudeChanges/CivicAttitudeChange/CivicType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: CIVIC_BANDITS
   - Example: CIVIC_CONSCRIPTION1
   - Example: CIVIC_FUEDALISM
 - `CivicAttitudeChanges/CivicAttitudeChange/Description`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TXT_KEY_CIVIC_ATTITUDE_DOOM
   - Example: TXT_KEY_CIVIC_ATTITUDE_INTERVENTIONISM_TO_INTERVENTIONISM
   - Example: TXT_KEY_CIVIC_ATTITUDE_INTERVENTIONISM_TO_PROTECTIONISM_OR_ISOLATIONISM
 - `CivicAttitudeChanges/CivicAttitudeChange/iAttitudeChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: -2
   - Example: -4
   - Example: 1
 - `CivicOptionType`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: CIVICOPTION_ECONOMY
   - Example: CIVICOPTION_FOREIGN_POLICY
   - Example: CIVICOPTION_GOVERNMENT
 - `Civilopedia`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: TXT_KEY_CIVIC_APPEASEMENT_PEDIA
   - Example: TXT_KEY_CIVIC_ARISTOCRACY_PEDIA
   - Example: TXT_KEY_CIVIC_ATHEIST_PEDIA
 - `CommerceModifiers`
-  - Present: 75. Non-default: 24. Status: preserved.
+  - Present: 75. Non-default: 24. Status: mapped.
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "-10"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "-10"\n    ]...
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "-15"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ]\n ...
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "-33"\n    ],\n    [\n      "iCommerce",\n      "-33"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ]...
 - `CommerceModifiers/iCommerce`
-  - Present: 34. Non-default: 24. Status: preserved.
+  - Present: 34. Non-default: 24. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -20
 - `Description`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: TXT_KEY_CIVIC_APPEASEMENT
   - Example: TXT_KEY_CIVIC_ARISTOCRACY
   - Example: TXT_KEY_CIVIC_ATHEIST
 - `FeatureHappinessChanges`
-  - Present: 73. Non-default: 2. Status: preserved.
+  - Present: 73. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureHappinessChanges",\n  [\n    [\n      "FeatureHappinessChange",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n   ...
 - `FeatureHappinessChanges/FeatureHappinessChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureHappinessChange",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureHappinessChange",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
 - `FeatureHappinessChanges/FeatureHappinessChange/FeatureType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureHappinessChanges/FeatureHappinessChange/iHappinessChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `Flavors`
-  - Present: 71. Non-default: 9. Status: preserved.
+  - Present: 71. Non-default: 9. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_MILITARY"\n        ],\n        [\n          "iFlavor",\n    ...
 - `Flavors/Flavor`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "10"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_GOLD
   - Example: FLAVOR_GROWTH
 - `Flavors/Flavor/iFlavor`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: 1
 - `ForbiddenCivics`
-  - Present: 71. Non-default: 14. Status: preserved.
+  - Present: 71. Non-default: 14. Status: mapped.
   - Example: [\n  "ForbiddenCivics",\n  [\n    [\n      "ForbiddenCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_AUTOCRACY"\n        ],\n        [\n          ...
   - Example: [\n  "ForbiddenCivics",\n  [\n    [\n      "ForbiddenCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_DEMOCRACY"\n        ],\n        [\n          ...
   - Example: [\n  "ForbiddenCivics",\n  [\n    [\n      "ForbiddenCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_DESPOTISM"\n        ],\n        [\n          ...
 - `ForbiddenCivics/ForbiddenCivic`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: [\n  "ForbiddenCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_ATHEIST"\n    ],\n    [\n      "bForbidden",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ForbiddenCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_AUTOCRACY"\n    ],\n    [\n      "bForbidden",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ForbiddenCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_DEMOCRACY"\n    ],\n    [\n      "bForbidden",\n      "1"\n    ]\n  ]\n]
 - `ForbiddenCivics/ForbiddenCivic/CivicType`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: CIVIC_ATHEIST
   - Example: CIVIC_AUTOCRACY
   - Example: CIVIC_DEMOCRACY
 - `ForbiddenCivics/ForbiddenCivic/bForbidden`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: 1
 - `FreeSpecialistCounts`
-  - Present: 7. Non-default: 0. Status: preserved.
+  - Present: 7. Non-default: 0. Status: unsupported.
 - `Help`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: mapped.
 - `Hurrys`
-  - Present: 72. Non-default: 5. Status: preserved.
+  - Present: 72. Non-default: 5. Status: mapped.
   - Example: [\n  "Hurrys",\n  [\n    [\n      "Hurry",\n      [\n        [\n          "HurryType",\n          "HURRY_GOLD"\n        ],\n        [\n          "bHurry",\n          "1"...
 - `Hurrys/Hurry`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "Hurry",\n  [\n    [\n      "HurryType",\n      "HURRY_GOLD"\n    ],\n    [\n      "bHurry",\n      "1"\n    ]\n  ]\n]
 - `Hurrys/Hurry/HurryType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: HURRY_GOLD
 - `Hurrys/Hurry/bHurry`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
 - `ImprovementHealthPercentChanges`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "ImprovementHealthPercentChanges",\n  [\n    [\n      "ImprovementHealthPercentChange",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMEN...
 - `ImprovementHealthPercentChanges/ImprovementHealthPercentChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "ImprovementHealthPercentChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_3FACTORY"\n    ],\n    [\n      "iHealthPercent",\n      "100"\n    ]\n...
   - Example: [\n  "ImprovementHealthPercentChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_5FACTORY"\n    ],\n    [\n      "iHealthPercent",\n      "200"\n    ]\n...
   - Example: [\n  "ImprovementHealthPercentChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_TOWN"\n    ],\n    [\n      "iHealthPercent",\n      "100"\n    ]\n  ]\n]
 - `ImprovementHealthPercentChanges/ImprovementHealthPercentChange/ImprovementType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_5FACTORY
   - Example: IMPROVEMENT_TOWN
 - `ImprovementHealthPercentChanges/ImprovementHealthPercentChange/iHealthPercent`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 100
   - Example: 200
   - Example: 50
 - `ImprovementYieldChanges`
-  - Present: 72. Non-default: 6. Status: preserved.
+  - Present: 72. Non-default: 6. Status: mapped.
   - Example: [\n  "ImprovementYieldChanges",\n  [\n    [\n      "ImprovementYieldChange",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_COTTAGE"\n     ...
   - Example: [\n  "ImprovementYieldChanges",\n  [\n    [\n      "ImprovementYieldChange",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_FARM"\n        ...
   - Example: [\n  "ImprovementYieldChanges",\n  [\n    [\n      "ImprovementYieldChange",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_FOREST_PRESERV...
 - `ImprovementYieldChanges/ImprovementYieldChange`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "ImprovementYieldChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_3FACTORY"\n    ],\n    [\n      "ImprovementYields",\n      [\n        [\n     ...
   - Example: [\n  "ImprovementYieldChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_5FACTORY"\n    ],\n    [\n      "ImprovementYields",\n      [\n        [\n     ...
   - Example: [\n  "ImprovementYieldChange",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_APPLE_FARM"\n    ],\n    [\n      "ImprovementYields",\n      [\n        [\n   ...
 - `ImprovementYieldChanges/ImprovementYieldChange/ImprovementType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_5FACTORY
   - Example: IMPROVEMENT_APPLE_FARM
 - `ImprovementYieldChanges/ImprovementYieldChange/ImprovementYields`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "ImprovementYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "3"\n    ]\n  ]\n]
 - `ImprovementYieldChanges/ImprovementYieldChange/ImprovementYields/iYield`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `LandmarkYieldChanges`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: [\n  "LandmarkYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "LandmarkYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "LandmarkYieldChanges",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `LandmarkYieldChanges/iYield`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
 - `SpecialBuildingNotRequireds`
-  - Present: 72. Non-default: 4. Status: preserved.
+  - Present: 72. Non-default: 4. Status: mapped.
   - Example: [\n  "SpecialBuildingNotRequireds",\n  [\n    [\n      "SpecialBuildingNotRequired",\n      [\n        [\n          "SpecialBuildingType",\n          "SPECIALBUILDIN...
 - `SpecialBuildingNotRequireds/SpecialBuildingNotRequired`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "SpecialBuildingNotRequired",\n  [\n    [\n      "SpecialBuildingType",\n      "SPECIALBUILDING_CORPORATION_HQ"\n    ],\n    [\n      "bNotRequired",\n      "1"\n...
   - Example: [\n  "SpecialBuildingNotRequired",\n  [\n    [\n      "SpecialBuildingType",\n      "SPECIALBUILDING_MONASTERY"\n    ],\n    [\n      "bNotRequired",\n      "1"\n    ]...
 - `SpecialBuildingNotRequireds/SpecialBuildingNotRequired/SpecialBuildingType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: SPECIALBUILDING_CORPORATION_HQ
   - Example: SPECIALBUILDING_MONASTERY
 - `SpecialBuildingNotRequireds/SpecialBuildingNotRequired/bNotRequired`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `SpecialistCommercePercentChanges`
-  - Present: 7. Non-default: 6. Status: preserved.
+  - Present: 7. Non-default: 6. Status: mapped.
   - Example: [\n  "SpecialistCommercePercentChanges",\n  [\n    [\n      "SpecialistCommercePercentChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIS...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_MERCHANT"\n    ],\n    [\n      "SpecialistCommercePercents",\n      [...
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_PRIEST"\n    ],\n    [\n      "SpecialistCommercePercents",\n      [\n ...
   - Example: [\n  "SpecialistCommercePercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_SCIENTIST"\n    ],\n    [\n      "SpecialistCommercePercents",\n      ...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistCommercePercents`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommercePercent",\n      "200"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iCommercePercent",\n      "50"\n    ],\n    [\n      "iCommer...
   - Example: [\n  "SpecialistCommercePercents",\n  [\n    [\n      "iCommercePercent",\n      "100"\n    ],\n    [\n      "iCommercePercent",\n      "0"\n    ],\n    [\n      "iComme...
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistCommercePercents/iCommercePercent`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: 100
   - Example: 200
   - Example: 50
 - `SpecialistCommercePercentChanges/SpecialistCommercePercentChange/SpecialistType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: SPECIALIST_MERCHANT
   - Example: SPECIALIST_PRIEST
   - Example: SPECIALIST_SCIENTIST
 - `SpecialistExtraCommerces`
-  - Present: 72. Non-default: 1. Status: preserved.
+  - Present: 72. Non-default: 1. Status: mapped.
   - Example: [\n  "SpecialistExtraCommerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "2"\n  ...
 - `SpecialistExtraCommerces/iCommerce`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 2
 - `SpecialistValids`
-  - Present: 73. Non-default: 7. Status: preserved.
+  - Present: 73. Non-default: 7. Status: mapped.
   - Example: [\n  "SpecialistValids",\n  [\n    [\n      "SpecialistValid",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ARTIST"\n        ],\n        [\n ...
   - Example: [\n  "SpecialistValids",\n  [\n    [\n      "SpecialistValid",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_NOBLE"\n        ],\n        [\n  ...
   - Example: [\n  "SpecialistValids",\n  [\n    [\n      "SpecialistValid",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_SLAVES"\n        ],\n        [\n ...
 - `SpecialistValids/SpecialistValid`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "SpecialistValid",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "bValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistValid",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ENGINEER"\n    ],\n    [\n      "bValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistValid",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_MERCHANT"\n    ],\n    [\n      "bValid",\n      "1"\n    ]\n  ]\n]
 - `SpecialistValids/SpecialistValid/SpecialistType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_ENGINEER
   - Example: SPECIALIST_MERCHANT
 - `SpecialistValids/SpecialistValid/bValid`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
 - `SpecialistYieldPercentChanges`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "SpecialistYieldPercentChanges",\n  [\n    [\n      "SpecialistYieldPercentChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ARTI...
   - Example: [\n  "SpecialistYieldPercentChanges",\n  [\n    [\n      "SpecialistYieldPercentChange",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ENGI...
 - `SpecialistYieldPercentChanges/SpecialistYieldPercentChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "SpecialistYieldPercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ARTIST"\n    ],\n    [\n      "SpecialistYieldPercents",\n      [\n       ...
   - Example: [\n  "SpecialistYieldPercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ENGINEER"\n    ],\n    [\n      "SpecialistYieldPercents",\n      [\n     ...
   - Example: [\n  "SpecialistYieldPercentChange",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_LAWYER"\n    ],\n    [\n      "SpecialistYieldPercents",\n      [\n       ...
 - `SpecialistYieldPercentChanges/SpecialistYieldPercentChange/SpecialistType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_ENGINEER
   - Example: SPECIALIST_LAWYER
 - `SpecialistYieldPercentChanges/SpecialistYieldPercentChange/SpecialistYieldPercents`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "SpecialistYieldPercents",\n  [\n    [\n      "iYieldPercent",\n      "0"\n    ],\n    [\n      "iYieldPercent",\n      "200"\n    ]\n  ]\n]
   - Example: [\n  "SpecialistYieldPercents",\n  [\n    [\n      "iYieldPercent",\n      "100"\n    ]\n  ]\n]
 - `SpecialistYieldPercentChanges/SpecialistYieldPercentChange/SpecialistYieldPercents/iYieldPercent`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 100
   - Example: 200
 - `Strategy`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: TXT_KEY_CIVIC_APPEASEMENT_STRATEGY
   - Example: TXT_KEY_CIVIC_ARISTOCRACY_STRATEGY
   - Example: TXT_KEY_CIVIC_ATHEIST_STRATEGY
 - `TechPrereq`
-  - Present: 81. Non-default: 73. Status: preserved.
+  - Present: 81. Non-default: 73. Status: mapped.
   - Example: TECH_ABSOLUTISM
   - Example: TECH_ANDROIDS
   - Example: TECH_APPLIED_ECONOMICS
 - `TradeYieldModifiers`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `TradeYieldModifiers/iYield`
-  - Present: 7. Non-default: 0. Status: preserved.
+  - Present: 7. Non-default: 0. Status: mapped.
 - `Type`
-  - Present: 81. Non-default: 81. Status: preserved.
+  - Present: 81. Non-default: 81. Status: mapped.
   - Example: CIVIC_APPEASEMENT
   - Example: CIVIC_ARISTOCRACY
   - Example: CIVIC_ATHEIST
 - `UnitClassProductionModifiers`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `UnitCombatProductionModifiers`
-  - Present: 6. Non-default: 5. Status: preserved.
+  - Present: 6. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitCombatProductionModifiers",\n  [\n    [\n      "UnitCombatProductionModifier",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_EXEC...
   - Example: [\n  "UnitCombatProductionModifiers",\n  [\n    [\n      "UnitCombatProductionModifier",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_MISS...
   - Example: [\n  "UnitCombatProductionModifiers",\n  [\n    [\n      "UnitCombatProductionModifier",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_SPY"...
 - `UnitCombatProductionModifiers/UnitCombatProductionModifier`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitCombatProductionModifier",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_DIESEL_SHIPS"\n    ],\n    [\n      "iProductionModifier",\n      "50"\n  ...
   - Example: [\n  "UnitCombatProductionModifier",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_EXECUTIVE"\n    ],\n    [\n      "iProductionModifier",\n      "100"\n    ...
   - Example: [\n  "UnitCombatProductionModifier",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_MISSILE"\n    ],\n    [\n      "iProductionModifier",\n      "100"\n    ]\n...
 - `UnitCombatProductionModifiers/UnitCombatProductionModifier/UnitCombatType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: UNITCOMBAT_DIESEL_SHIPS
   - Example: UNITCOMBAT_EXECUTIVE
   - Example: UNITCOMBAT_MISSILE
 - `UnitCombatProductionModifiers/UnitCombatProductionModifier/iProductionModifier`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 100
   - Example: 50
 - `Upkeep`
-  - Present: 81. Non-default: 71. Status: preserved.
+  - Present: 81. Non-default: 71. Status: mapped.
   - Example: UPKEEP_HIGH
   - Example: UPKEEP_LOW
   - Example: UPKEEP_MEDIUM
 - `WeLoveTheKing`
-  - Present: 73. Non-default: 6. Status: preserved.
+  - Present: 73. Non-default: 6. Status: unsupported.
   - Example: TXT_KEY_CIVIC_WE_LOVE_DESPOT
   - Example: TXT_KEY_CIVIC_WE_LOVE_MONARCH
   - Example: TXT_KEY_CIVIC_WE_LOVE_PRESIDENT
 - `YieldModifiers`
-  - Present: 74. Non-default: 21. Status: preserved.
+  - Present: 74. Non-default: 21. Status: mapped.
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "-10"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "-15"\n    ],\n    [\n      "iYield",\n      "-15"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "-20"\n    ]\n  ]\n]
 - `YieldModifiers/iYield`
-  - Present: 25. Non-default: 21. Status: preserved.
+  - Present: 25. Non-default: 21. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -20
 - `bAllowInquisitions`
-  - Present: 11. Non-default: 2. Status: preserved.
+  - Present: 11. Non-default: 2. Status: mapped.
   - Example: 1
 - `bBuildingOnlyHealthy`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCanDoElection`
-  - Present: 71. Non-default: 6. Status: preserved.
+  - Present: 71. Non-default: 6. Status: mapped.
   - Example: 1
 - `bCanNotCeaseRelations`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCommunism`
-  - Present: 71. Non-default: 2. Status: preserved.
+  - Present: 71. Non-default: 2. Status: mapped.
   - Example: 1
 - `bDisallowInquisitions`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: mapped.
   - Example: 1
 - `bEnablesMADNukes`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFixedBorders`
-  - Present: 67. Non-default: 5. Status: preserved.
+  - Present: 67. Non-default: 5. Status: mapped.
   - Example: 1
 - `bForcesOpenTradeRoutesWithWeakerPlayers`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFreeReligion`
-  - Present: 81. Non-default: 2. Status: preserved.
+  - Present: 81. Non-default: 2. Status: mapped.
   - Example: 1
 - `bFreeSpeech`
-  - Present: 71. Non-default: 2. Status: preserved.
+  - Present: 71. Non-default: 2. Status: mapped.
   - Example: 1
 - `bMilitaryFoodProduction`
-  - Present: 73. Non-default: 2. Status: preserved.
+  - Present: 73. Non-default: 2. Status: mapped.
   - Example: 1
 - `bNoCapitalUnhappiness`
-  - Present: 6. Non-default: 2. Status: preserved.
+  - Present: 6. Non-default: 2. Status: mapped.
   - Example: 1
 - `bNoCorporations`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 1
 - `bNoForeignCorporations`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 1
 - `bNoForeignTrade`
-  - Present: 74. Non-default: 2. Status: preserved.
+  - Present: 74. Non-default: 2. Status: mapped.
   - Example: 1
 - `bNoLandmarkAnger`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNoNonStateReligionSpread`
-  - Present: 73. Non-default: 4. Status: preserved.
+  - Present: 73. Non-default: 4. Status: mapped.
   - Example: 1
 - `bNoUnhealthyPopulation`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 1
 - `bStateReligion`
-  - Present: 73. Non-default: 5. Status: preserved.
+  - Present: 73. Non-default: 5. Status: mapped.
   - Example: 1
 - `bUpgradeAnywhere`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `fRevIdxBadReligionMod`
-  - Present: 73. Non-default: 5. Status: preserved.
+  - Present: 73. Non-default: 5. Status: unsupported.
   - Example: .5
   - Example: 0.2
   - Example: 1.0
 - `fRevIdxGoodReligionMod`
-  - Present: 73. Non-default: 6. Status: preserved.
+  - Present: 73. Non-default: 6. Status: unsupported.
   - Example: .3
   - Example: .5
   - Example: .7
 - `fRevIdxNationalityMod`
-  - Present: 73. Non-default: 9. Status: preserved.
+  - Present: 73. Non-default: 9. Status: unsupported.
   - Example: -.2
   - Example: -.3
   - Example: -0.1
 - `fRevViolentMod`
-  - Present: 73. Non-default: 11. Status: preserved.
+  - Present: 73. Non-default: 11. Status: unsupported.
   - Example: -0.3
   - Example: -0.5
   - Example: .1
 - `iAIWeight`
-  - Present: 73. Non-default: 41. Status: preserved.
+  - Present: 73. Non-default: 41. Status: mapped.
   - Example: -10
   - Example: -100
   - Example: -15
 - `iAnarchyLength`
-  - Present: 81. Non-default: 79. Status: preserved.
+  - Present: 81. Non-default: 79. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 4
 - `iAttitudeShareMod`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: mapped.
 - `iBaseFreeMilitaryUnits`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iBaseFreeUnits`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iCityLimit`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 3
 - `iCivicHappiness`
-  - Present: 57. Non-default: 7. Status: preserved.
+  - Present: 57. Non-default: 7. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iCivicPercentAnger`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 100
 - `iCorporationMaintenanceModifier`
-  - Present: 73. Non-default: 9. Status: preserved.
+  - Present: 73. Non-default: 9. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -20
 - `iDistanceMaintenanceModifier`
-  - Present: 72. Non-default: 8. Status: preserved.
+  - Present: 72. Non-default: 8. Status: mapped.
   - Example: -10
   - Example: -25
   - Example: -50
 - `iDistantUnitSupportCostModifier`
-  - Present: 8. Non-default: 5. Status: preserved.
+  - Present: 8. Non-default: 5. Status: mapped.
   - Example: -25
   - Example: -50
   - Example: 200
 - `iDomesticConnectednessModifier`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: -10
   - Example: 15
   - Example: 20
 - `iDomesticGreatGeneralRateModifier`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iEnslavementChance`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 3
   - Example: 5
 - `iExpInBorderModifier`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 100
 - `iExtraCityDefense`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 15
   - Example: 25
 - `iExtraHealth`
-  - Present: 73. Non-default: 7. Status: preserved.
+  - Present: 73. Non-default: 7. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iForeignConnectednessModifier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: -20
   - Example: -50
   - Example: 10
 - `iForeignTradeRouteModifier`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: mapped.
 - `iForeignerUnhappyPercent`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 10
 - `iFractionalXPEarnedInCity`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 5
 - `iFreeExperience`
-  - Present: 74. Non-default: 3. Status: preserved.
+  - Present: 74. Non-default: 3. Status: mapped.
   - Example: 2
   - Example: 3
 - `iFreeMilitaryUnitsPopulationPercent`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iFreeSpecialist`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 1
 - `iFreeUnitsPopulationPercent`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iGlobalRelationsChange`
-  - Present: 6. Non-default: 4. Status: preserved.
+  - Present: 6. Non-default: 4. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 3
 - `iGoldPerMilitaryUnit`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 1
 - `iGoldPerUnit`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iGreatGeneralRateModifier`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: -100
   - Example: 25
 - `iGreatPeopleRateModifier`
-  - Present: 73. Non-default: 11. Status: preserved.
+  - Present: 73. Non-default: 11. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: -33
 - `iHappyPerMilitaryUnit`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 1
 - `iHomeAreaMaintenanceModifier`
-  - Present: 72. Non-default: 0. Status: preserved.
+  - Present: 72. Non-default: 0. Status: mapped.
 - `iHurryCostModifier`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: -50
   - Example: 25
 - `iHurryInflationModifier`
-  - Present: 3. Non-default: 0. Status: preserved.
+  - Present: 3. Non-default: 0. Status: mapped.
 - `iImprovementUpgradeRateModifier`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 10
   - Example: 25
   - Example: 50
 - `iInflation`
-  - Present: 11. Non-default: 0. Status: preserved.
+  - Present: 11. Non-default: 0. Status: mapped.
 - `iLandmarkHappiness`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `iLargestCityHappiness`
-  - Present: 73. Non-default: 5. Status: preserved.
+  - Present: 73. Non-default: 5. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 3
 - `iLessPowerfulRelationsChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: -3
 - `iMaxConscript`
-  - Present: 73. Non-default: 5. Status: preserved.
+  - Present: 73. Non-default: 5. Status: mapped.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iMilitaryProductionModifier`
-  - Present: 74. Non-default: 10. Status: preserved.
+  - Present: 74. Non-default: 10. Status: mapped.
   - Example: -15
   - Example: -25
   - Example: -75
 - `iNonStateReligionHappiness`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 1
 - `iNumCitiesMaintenanceModifier`
-  - Present: 72. Non-default: 10. Status: preserved.
+  - Present: 72. Non-default: 10. Status: mapped.
   - Example: -25
   - Example: -50
   - Example: 100
 - `iOtherAreaMaintenanceModifier`
-  - Present: 72. Non-default: 1. Status: preserved.
+  - Present: 72. Non-default: 1. Status: mapped.
   - Example: -25
 - `iPopulationAngerModifier`
-  - Present: 8. Non-default: 5. Status: preserved.
+  - Present: 8. Non-default: 5. Status: mapped.
   - Example: -25
   - Example: -33
   - Example: -50
 - `iPopulationgrowthratepercentage`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: -20
   - Example: 25
   - Example: 33
 - `iPowerfulRelationsChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 3
 - `iRealCorporationMaintenanceModifier`
-  - Present: 20. Non-default: 15. Status: preserved.
+  - Present: 20. Non-default: 15. Status: mapped.
   - Example: -100
   - Example: -105
   - Example: -110
 - `iReligionSpreadRate`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 50
 - `iRevDemocracyLevel`
-  - Present: 73. Non-default: 7. Status: preserved.
+  - Present: 73. Non-default: 7. Status: unsupported.
   - Example: -10
   - Example: -6
   - Example: 10
 - `iRevEnvironmentalProtection`
-  - Present: 73. Non-default: 6. Status: preserved.
+  - Present: 73. Non-default: 6. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: 10
 - `iRevIdxDistanceModifier`
-  - Present: 73. Non-default: 17. Status: preserved.
+  - Present: 73. Non-default: 17. Status: unsupported.
   - Example: -10
   - Example: -20
   - Example: -25
 - `iRevIdxHolyCityBad`
-  - Present: 73. Non-default: 4. Status: preserved.
+  - Present: 73. Non-default: 4. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iRevIdxHolyCityGood`
-  - Present: 73. Non-default: 5. Status: preserved.
+  - Present: 73. Non-default: 5. Status: unsupported.
   - Example: 2
   - Example: 3
 - `iRevIdxLocal`
-  - Present: 74. Non-default: 28. Status: preserved.
+  - Present: 74. Non-default: 28. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: -4
 - `iRevIdxNational`
-  - Present: 74. Non-default: 28. Status: preserved.
+  - Present: 74. Non-default: 28. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: -5
 - `iRevIdxSwitchTo`
-  - Present: 73. Non-default: 43. Status: preserved.
+  - Present: 73. Non-default: 43. Status: unsupported.
   - Example: -10
   - Example: -100
   - Example: -20
 - `iRevLaborFreedom`
-  - Present: 73. Non-default: 7. Status: preserved.
+  - Present: 73. Non-default: 7. Status: unsupported.
   - Example: -10
   - Example: -3
   - Example: -5
 - `iRevReligiousFreedom`
-  - Present: 73. Non-default: 6. Status: preserved.
+  - Present: 73. Non-default: 6. Status: unsupported.
   - Example: -10
   - Example: -3
   - Example: -5
 - `iSeizedForeignConnectednessPercent`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 25
 - `iSharedCivicTradeRouteModifier`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: mapped.
 - `iStateReligionBuildingProductionModifier`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 25
 - `iStateReligionFreeExperience`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iStateReligionGreatPeopleRateModifier`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 20
   - Example: 30
 - `iStateReligionHappiness`
-  - Present: 73. Non-default: 3. Status: preserved.
+  - Present: 73. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iStateReligionHealth`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 2
 - `iStateReligionUnitProductionModifier`
-  - Present: 73. Non-default: 1. Status: preserved.
+  - Present: 73. Non-default: 1. Status: mapped.
   - Example: 20
 - `iTaxRateUnhappiness`
-  - Present: 9. Non-default: 4. Status: preserved.
+  - Present: 9. Non-default: 4. Status: mapped.
   - Example: 3
   - Example: 5
 - `iTradeRoutes`
-  - Present: 73. Non-default: 0. Status: preserved.
+  - Present: 73. Non-default: 0. Status: mapped.
 - `iTributePercent`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: -5
   - Example: 5
 - `iWarWearinessModifier`
-  - Present: 75. Non-default: 14. Status: preserved.
+  - Present: 75. Non-default: 14. Status: mapped.
   - Example: -25
   - Example: -50
   - Example: 100
 - `iWeakestRelationsChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 2
 - `iWorkerSpeedModifier`
-  - Present: 73. Non-default: 4. Status: preserved.
+  - Present: 73. Non-default: 4. Status: mapped.
   - Example: 25
   - Example: 33
   - Example: 50
@@ -3063,14 +3063,14 @@ Era counts: ERA_ANCIENT=9, ERA_CLASSICAL=14, ERA_INDUSTRIAL=12, ERA_MEDIEVAL=9, 
 Era counts: unknown=8
 
 - `Description`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_CIVICOPTION_ECONOMY
   - Example: TXT_KEY_CIVICOPTION_FOREIGN_POLICY
   - Example: TXT_KEY_CIVICOPTION_GOVERNMENT
 - `TraitNoUpkeeps`
-  - Present: 8. Non-default: 0. Status: preserved.
+  - Present: 8. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: CIVICOPTION_ECONOMY
   - Example: CIVICOPTION_FOREIGN_POLICY
   - Example: CIVICOPTION_GOVERNMENT
@@ -3080,22 +3080,22 @@ Era counts: unknown=8
 Era counts: unknown=60
 
 - `Button`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Civilizations/America.dds,Art/Interface/Buttons/Civics_Civilizations_Religions_Atlas.dds,1,5
   - Example: ,Art/Interface/Buttons/Civilizations/Arabia.dds,Art/Interface/Buttons/Civics_Civilizations_Religions_Atlas.dds,2,5
   - Example: ,Art/Interface/Buttons/Civilizations/Aztec.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,4
 - `Path`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: Art/Interface/TeamColor/FlagDECAL_Maya.dds
   - Example: Art/Interface/TeamColor/FlagDECAL_StGeorgeCross.dds
   - Example: Art/Interface/TeamColor/FlagDECAL_funkycross.dds
 - `Type`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ART_DEF_CIVILIZATION_ALBANIA
   - Example: ART_DEF_CIVILIZATION_AMERICA
   - Example: ART_DEF_CIVILIZATION_ANGLO_SAXON
 - `bWhiteFlag`
-  - Present: 60. Non-default: 44. Status: preserved.
+  - Present: 60. Non-default: 44. Status: unsupported.
   - Example: 1
 
 ## CivilizationInfo: 60 records
@@ -3103,193 +3103,193 @@ Era counts: unknown=60
 Era counts: unknown=60
 
 - `Adjective`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: TXT_KEY_CIV_ALBANIA_ADJECTIVE
   - Example: TXT_KEY_CIV_AMERICA_ADJECTIVE
   - Example: TXT_KEY_CIV_ANGLO_SAXON_ADJECTIVE
 - `ArtDefineTag`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ART_DEF_CIVILIZATION_ALBANIA
   - Example: ART_DEF_CIVILIZATION_AMERICA
   - Example: ART_DEF_CIVILIZATION_ANGLO_SAXON
 - `ArtStyleType`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ARTSTYLE_AFRICA
   - Example: ARTSTYLE_ANGLO_AMERICA
   - Example: ARTSTYLE_ARABIA
 - `Buildings`
-  - Present: 60. Non-default: 59. Status: preserved.
+  - Present: 60. Non-default: 59. Status: mapped.
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_AQUEDUCT"\n        ],\n        [\n       ...
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ARENA"\n        ],\n        [\n          ...
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_ART_GALLERY"\n        ],\n        [\n    ...
 - `Buildings/Building`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ABU_SIMBEL"\n    ],\n    [\n      "BuildingType",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ACADEMY"\n    ],\n    [\n      "BuildingType",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_ACCELERATOR"\n    ],\n    [\n      "BuildingType",\n      "NONE"\n    ]\n  ]\n]
 - `Buildings/Building/BuildingClassType`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: BUILDINGCLASS_ABU_SIMBEL
   - Example: BUILDINGCLASS_ACADEMY
   - Example: BUILDINGCLASS_ACCELERATOR
 - `Buildings/Building/BuildingType`
-  - Present: 59. Non-default: 58. Status: preserved.
+  - Present: 59. Non-default: 58. Status: mapped.
   - Example: BUILDING_ALBANIA_ILLOGOR
   - Example: BUILDING_AMERICAN_MALL
   - Example: BUILDING_ANGLO_SAXON_MOOT_HILL
 - `Cities`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: [\n  "Cities",\n  [\n    [\n      "City",\n      "Bern"\n    ],\n    [\n      "City",\n      "Zurich"\n    ],\n    [\n      "City",\n      "Geneva"\n    ],\n    [\n      "Ci...
   - Example: [\n  "Cities",\n  [\n    [\n      "City",\n      "Budapest"\n    ],\n    [\n      "City",\n      "Debrecen"\n    ],\n    [\n      "City",\n      "Miskolc"\n    ],\n    [\n  ...
   - Example: [\n  "Cities",\n  [\n    [\n      "City",\n      "Caerdydd"\n    ],\n    [\n      "City",\n      "Bangor"\n    ],\n    [\n      "City",\n      "Abertawe"\n    ],\n    [\n   ...
 - `Cities/City`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: Aberafan
   - Example: Aberdeen
   - Example: Aberhonddu
 - `CivilizationActionSound`
-  - Present: 60. Non-default: 58. Status: preserved.
+  - Present: 60. Non-default: 58. Status: unsupported.
   - Example: AS3D_ALBANIA_ORDER
   - Example: AS3D_AMERICA_ORDER
   - Example: AS3D_ARABIA_ORDER
 - `CivilizationSelectionSound`
-  - Present: 60. Non-default: 58. Status: preserved.
+  - Present: 60. Non-default: 58. Status: unsupported.
   - Example: AS3D_ALBANIA_SELECT
   - Example: AS3D_AMERICA_SELECT
   - Example: AS3D_ARABIA_SELECT
 - `Civilopedia`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: TXT_KEY_CHANGED_CIV_OTTOMAN_PEDIA
   - Example: TXT_KEY_CHANGED_CIV_VIKING_PEDIA
   - Example: TXT_KEY_CIV_ALBANIA_PEDIA
 - `DefaultPlayerColor`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: PLAYERCOLOR_ALBANIA
   - Example: PLAYERCOLOR_ASSYRIA
   - Example: PLAYERCOLOR_BLACK
 - `DerivativeCiv`
-  - Present: 60. Non-default: 35. Status: preserved.
+  - Present: 60. Non-default: 35. Status: mapped.
   - Example: CIVILIZATION_AMERICA
   - Example: CIVILIZATION_ARABIA
   - Example: CIVILIZATION_BABYLON
 - `Description`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: TXT_KEY_CIV_ALBANIA_DESC
   - Example: TXT_KEY_CIV_AMERICA_DESC
   - Example: TXT_KEY_CIV_ANGLO_SAXON_DESC
 - `DisableTechs`
-  - Present: 60. Non-default: 0. Status: preserved.
+  - Present: 60. Non-default: 0. Status: unsupported.
 - `FreeBuildingClasses`
-  - Present: 60. Non-default: 59. Status: preserved.
+  - Present: 60. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeBuildingClasses",\n  [\n    [\n      "FreeBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_PALACE"\n        ],\n...
 - `FreeBuildingClasses/FreeBuildingClass`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_PALACE"\n    ],\n    [\n      "bFreeBuildingClass",\n      "1"\n    ]\n  ]\n]
 - `FreeBuildingClasses/FreeBuildingClass/BuildingClassType`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: BUILDINGCLASS_PALACE
 - `FreeBuildingClasses/FreeBuildingClass/bFreeBuildingClass`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: 1
 - `FreeTechs`
-  - Present: 60. Non-default: 59. Status: preserved.
+  - Present: 60. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_AGRICULTURE"\n        ],\n        [\n          "bFreeTech",...
   - Example: [\n  "FreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_FISHING"\n        ],\n        [\n          "bFreeTech",\n   ...
   - Example: [\n  "FreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_HUNTING"\n        ],\n        [\n          "bFreeTech",\n   ...
 - `FreeTechs/FreeTech`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_AGRICULTURE"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_FISHING"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_HUNTING"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
 - `FreeTechs/FreeTech/TechType`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_FISHING
   - Example: TECH_HUNTING
 - `FreeTechs/FreeTech/bFreeTech`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: 1
 - `FreeUnitClasses`
-  - Present: 60. Non-default: 59. Status: preserved.
+  - Present: 60. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeUnitClasses",\n  [\n    [\n      "FreeUnitClass",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_SETTLER"\n        ],\n        [\n     ...
 - `FreeUnitClasses/FreeUnitClass`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: [\n  "FreeUnitClass",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_SETTLER"\n    ],\n    [\n      "iFreeUnits",\n      "1"\n    ]\n  ]\n]
 - `FreeUnitClasses/FreeUnitClass/UnitClassType`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: UNITCLASS_SETTLER
 - `FreeUnitClasses/FreeUnitClass/iFreeUnits`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: 1
 - `InitialCivics`
-  - Present: 38. Non-default: 38. Status: preserved.
+  - Present: 38. Non-default: 38. Status: mapped.
   - Example: [\n  "InitialCivics",\n  [\n    [\n      "CivicType",\n      "CIVIC_CHIEFDOM"\n    ],\n    [\n      "CivicType",\n      "CIVIC_OLIGARCHY"\n    ],\n    [\n      "CivicTyp...
 - `InitialCivics/CivicType`
-  - Present: 38. Non-default: 38. Status: preserved.
+  - Present: 38. Non-default: 38. Status: mapped.
   - Example: CIVIC_BARTER
   - Example: CIVIC_CHIEFDOM
   - Example: CIVIC_FOLKLORE
 - `Leaders`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderName",\n          "LEADER_ALARIC"\n        ],\n        [\n          "bLeaderAvailabil...
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderName",\n          "LEADER_ALBOIN"\n        ],\n        [\n          "bLeaderAvailabil...
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderName",\n          "LEADER_ALEXANDER"\n        ],\n        [\n          "bLeaderAvaila...
 - `Leaders/Leader`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderName",\n      "LEADER_ABUBAKR"\n    ],\n    [\n      "bLeaderAvailability",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderName",\n      "LEADER_AFONSO"\n    ],\n    [\n      "bLeaderAvailability",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderName",\n      "LEADER_ALARIC"\n    ],\n    [\n      "bLeaderAvailability",\n      "1"\n    ]\n  ]\n]
 - `Leaders/Leader/LeaderName`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: LEADER_ABUBAKR
   - Example: LEADER_AFONSO
   - Example: LEADER_ALARIC
 - `Leaders/Leader/bLeaderAvailability`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: 1
 - `ShortDescription`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: TXT_KEY_CIV_ALBANIA_SHORT_DESC
   - Example: TXT_KEY_CIV_AMERICA_SHORT_DESC
   - Example: TXT_KEY_CIV_ANGLO_SAXON_SHORT_DESC
 - `Type`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: mapped.
   - Example: CIVILIZATION_ALBANIA
   - Example: CIVILIZATION_AMERICA
   - Example: CIVILIZATION_ANGLO_SAXON
 - `UnitArtStyleType`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: UNIT_ARTSTYLE_AFRICAN
   - Example: UNIT_ARTSTYLE_AMERICAN
   - Example: UNIT_ARTSTYLE_ARABIA
 - `Units`
-  - Present: 60. Non-default: 59. Status: preserved.
+  - Present: 60. Non-default: 59. Status: mapped.
   - Example: [\n  "Units",\n  [\n    [\n      "Unit",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_ARCHER"\n        ],\n        [\n          "UnitType",\n   ...
   - Example: [\n  "Units",\n  [\n    [\n      "Unit",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_ARQUEBUSIER"\n        ],\n        [\n          "UnitType"...
   - Example: [\n  "Units",\n  [\n    [\n      "Unit",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_AXEMAN"\n        ],\n        [\n          "UnitType",\n   ...
 - `Units/Unit`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: [\n  "Unit",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_ACV"\n    ],\n    [\n      "UnitType",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "Unit",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_ACVSAM"\n    ],\n    [\n      "UnitType",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "Unit",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_AH64_GUNSHIP"\n    ],\n    [\n      "UnitType",\n      "NONE"\n    ]\n  ]\n]
 - `Units/Unit/UnitClassType`
-  - Present: 59. Non-default: 59. Status: preserved.
+  - Present: 59. Non-default: 59. Status: mapped.
   - Example: UNITCLASS_ACV
   - Example: UNITCLASS_ACVSAM
   - Example: UNITCLASS_AH64_GUNSHIP
 - `Units/Unit/UnitType`
-  - Present: 59. Non-default: 58. Status: preserved.
+  - Present: 59. Non-default: 58. Status: mapped.
   - Example: UNIT_ALBANIAN_LIGHT_GUERILLA_CAVALRY
   - Example: UNIT_AMERICAN_NAVY_SEAL
   - Example: UNIT_ANGLO_SAXON_HUSCARL
 - `bAIPlayable`
-  - Present: 60. Non-default: 58. Status: preserved.
+  - Present: 60. Non-default: 58. Status: mapped.
   - Example: 1
 - `bForceOverwrite`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bPlayable`
-  - Present: 60. Non-default: 58. Status: preserved.
+  - Present: 60. Non-default: 58. Status: mapped.
   - Example: 1
 
 ## ClimateInfo: 5 records
@@ -3297,61 +3297,61 @@ Era counts: unknown=60
 Era counts: unknown=5
 
 - `Description`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: TXT_KEY_CLIMATE_ARID
   - Example: TXT_KEY_CLIMATE_COLD
   - Example: TXT_KEY_CLIMATE_ROCKY
 - `Type`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: CLIMATE_ARID
   - Example: CLIMATE_COLD
   - Example: CLIMATE_ROCKY
 - `fDesertBottomLatitudeChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: -0.1
   - Example: 0.0
 - `fDesertTopLatitudeChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: -0.05
   - Example: -0.1
   - Example: 0.0
 - `fGrassLatitudeChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 0.0
 - `fIceLatitude`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 0.9
   - Example: 0.95
 - `fRandIceLatitude`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 0.20
   - Example: 0.25
   - Example: 0.5
 - `fSnowLatitudeChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: -0.025
   - Example: -0.1
   - Example: 0.0
 - `fTundraLatitudeChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: -0.05
   - Example: -0.15
   - Example: 0.0
 - `iDesertPercentChange`
-  - Present: 5. Non-default: 3. Status: preserved.
+  - Present: 5. Non-default: 3. Status: unsupported.
   - Example: -10
   - Example: 20
 - `iHillRange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 5
   - Example: 7
 - `iJungleLatitude`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 2
   - Example: 5
   - Example: 6
 - `iPeakPercent`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 25
   - Example: 35
 
@@ -3360,81 +3360,81 @@ Era counts: unknown=5
 Era counts: unknown=17
 
 - `Button`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,3
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,1
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,2
 - `Description`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: TXT_KEY_COMMAND_AUTOMATE
   - Example: TXT_KEY_COMMAND_CANCEL
   - Example: TXT_KEY_COMMAND_CANCEL_ALL
 - `Help`
-  - Present: 17. Non-default: 14. Status: preserved.
+  - Present: 17. Non-default: 14. Status: unsupported.
   - Example: TXT_KEY_COMMAND_CANCEL_ALL_HELP
   - Example: TXT_KEY_COMMAND_CANCEL_HELP
   - Example: TXT_KEY_COMMAND_COLONIZE_BARBARIANS_HELP
 - `HotKey`
-  - Present: 12. Non-default: 10. Status: preserved.
+  - Present: 12. Non-default: 10. Status: unsupported.
   - Example: KB_BACKSPACE
   - Example: KB_DELETE
   - Example: KB_F
 - `HotKeyAlt`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: COMMAND_AUTOMATE
   - Example: COMMAND_CANCEL
   - Example: COMMAND_CANCEL_ALL
 - `UpgradeImprovementRates`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: unsupported.
   - Example: [\n  "UpgradeImprovementRates",\n  [\n    [\n      "UpgradeImprovementRate",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_COTTAGE"\n     ...
 - `UpgradeImprovementRates/UpgradeImprovementRate`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: [\n  "UpgradeImprovementRate",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_COTTAGE"\n    ],\n    [\n      "iRate",\n      "3"\n    ]\n  ]\n]
   - Example: [\n  "UpgradeImprovementRate",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_HAMLET"\n    ],\n    [\n      "iRate",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "UpgradeImprovementRate",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_VILLAGE"\n    ],\n    [\n      "iRate",\n      "1"\n    ]\n  ]\n]
 - `UpgradeImprovementRates/UpgradeImprovementRate/ImprovementType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: IMPROVEMENT_COTTAGE
   - Example: IMPROVEMENT_HAMLET
   - Example: IMPROVEMENT_VILLAGE
 - `UpgradeImprovementRates/UpgradeImprovementRate/iRate`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `bAll`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 1
 - `bAltDown`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bAltDownAlt`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: unsupported.
 - `bConfirmCommand`
-  - Present: 4. Non-default: 1. Status: preserved.
+  - Present: 4. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bCtrlDown`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bCtrlDownAlt`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: unsupported.
 - `bShiftDown`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bShiftDownAlt`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: unsupported.
 - `bVisible`
-  - Present: 12. Non-default: 11. Status: preserved.
+  - Present: 12. Non-default: 11. Status: unsupported.
   - Example: 1
 - `iHotKeyPriority`
-  - Present: 12. Non-default: 5. Status: preserved.
+  - Present: 12. Non-default: 5. Status: unsupported.
   - Example: 1
 - `iHotKeyPriorityAlt`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: unsupported.
 - `iOrderPriority`
-  - Present: 5. Non-default: 2. Status: preserved.
+  - Present: 5. Non-default: 2. Status: unsupported.
   - Example: 15
   - Example: 16
 
@@ -3443,32 +3443,32 @@ Era counts: unknown=17
 Era counts: unknown=4
 
 - `Button`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: ,Art/Interface/Buttons/Process/ProcessCulture.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16
   - Example: Art/Interface/Buttons/Process/ProcessCulture.dds
   - Example: Art/Interface/Buttons/Process/ProcessResearch.dds
 - `Description`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: TXT_KEY_COMMERCE_CULTURE
   - Example: TXT_KEY_COMMERCE_GOLD
   - Example: TXT_KEY_COMMERCE_RESEARCH
 - `Type`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: COMMERCE_CULTURE
   - Example: COMMERCE_ESPIONAGE
   - Example: COMMERCE_GOLD
 - `bFlexiblePercent`
-  - Present: 4. Non-default: 0. Status: preserved.
+  - Present: 4. Non-default: 0. Status: mapped.
 - `iAIWeightPercent`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 100
   - Example: 125
   - Example: 25
 - `iInitialHappiness`
-  - Present: 4. Non-default: 1. Status: preserved.
+  - Present: 4. Non-default: 1. Status: mapped.
   - Example: 10
 - `iInitialPercent`
-  - Present: 4. Non-default: 2. Status: preserved.
+  - Present: 4. Non-default: 2. Status: mapped.
   - Example: 50
 
 ## ConceptInfo: 50 records
@@ -3476,17 +3476,17 @@ Era counts: unknown=4
 Era counts: unknown=50
 
 - `Civilopedia`
-  - Present: 50. Non-default: 50. Status: preserved.
+  - Present: 50. Non-default: 50. Status: unsupported.
   - Example: TXT_KEY_CONCEPT_AIR_UNITS_PEDIA
   - Example: TXT_KEY_CONCEPT_ANIMALS_PEDIA
   - Example: TXT_KEY_CONCEPT_BARBARIANS_PEDIA
 - `Description`
-  - Present: 50. Non-default: 50. Status: preserved.
+  - Present: 50. Non-default: 50. Status: unsupported.
   - Example: TXT_KEY_CONCEPT_AIR_UNITS
   - Example: TXT_KEY_CONCEPT_ANIMALS
   - Example: TXT_KEY_CONCEPT_BARBARIANS
 - `Type`
-  - Present: 50. Non-default: 50. Status: preserved.
+  - Present: 50. Non-default: 50. Status: unsupported.
   - Example: CONCEPT_AIR_UNITS
   - Example: CONCEPT_ANIMALS
   - Example: CONCEPT_BARBARIANS
@@ -3496,53 +3496,53 @@ Era counts: unknown=50
 Era counts: unknown=64
 
 - `Description`
-  - Present: 64. Non-default: 64. Status: preserved.
+  - Present: 64. Non-default: 64. Status: unsupported.
   - Example: TXT_KEY_ACTION_AUTOMOVES
   - Example: TXT_KEY_ACTION_BARE_MAP
   - Example: TXT_KEY_ACTION_CENTER_SELECTION
 - `Help`
-  - Present: 64. Non-default: 26. Status: preserved.
+  - Present: 64. Non-default: 26. Status: unsupported.
   - Example: TXT_KEY_ACTION_AUTOMOVES_HELP
   - Example: TXT_KEY_ACTION_BARE_MAP_HELP
   - Example: TXT_KEY_ACTION_CYCLE_UNITS_ALT_HELP
 - `HotKey`
-  - Present: 64. Non-default: 62. Status: preserved.
+  - Present: 64. Non-default: 62. Status: unsupported.
   - Example: KB_A
   - Example: KB_B
   - Example: KB_BACKSLASH
 - `HotKeyAlt`
-  - Present: 64. Non-default: 11. Status: preserved.
+  - Present: 64. Non-default: 11. Status: unsupported.
   - Example: KB_NUMPAD5
   - Example: KB_NUMPADENTER
   - Example: KB_NUMPADMINUS
 - `Type`
-  - Present: 64. Non-default: 64. Status: preserved.
+  - Present: 64. Non-default: 64. Status: unsupported.
   - Example: CONTROL_ADMIN_DETAILS
   - Example: CONTROL_AUTOMOVES
   - Example: CONTROL_BARE_MAP
 - `bAltDown`
-  - Present: 64. Non-default: 13. Status: preserved.
+  - Present: 64. Non-default: 13. Status: unsupported.
   - Example: 1
 - `bAltDownAlt`
-  - Present: 64. Non-default: 1. Status: preserved.
+  - Present: 64. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bCtrlDown`
-  - Present: 64. Non-default: 19. Status: preserved.
+  - Present: 64. Non-default: 19. Status: unsupported.
   - Example: 1
 - `bCtrlDownAlt`
-  - Present: 64. Non-default: 1. Status: preserved.
+  - Present: 64. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bShiftDown`
-  - Present: 64. Non-default: 9. Status: preserved.
+  - Present: 64. Non-default: 9. Status: unsupported.
   - Example: 1
 - `bShiftDownAlt`
-  - Present: 64. Non-default: 1. Status: preserved.
+  - Present: 64. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iHotKeyPriority`
-  - Present: 64. Non-default: 1. Status: preserved.
+  - Present: 64. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iHotKeyPriorityAlt`
-  - Present: 64. Non-default: 1. Status: preserved.
+  - Present: 64. Non-default: 1. Status: unsupported.
   - Example: 1
 
 ## CorporationInfo: 36 records
@@ -3550,170 +3550,170 @@ Era counts: unknown=64
 Era counts: unknown=36
 
 - `BonusProduced`
-  - Present: 30. Non-default: 6. Status: preserved.
+  - Present: 30. Non-default: 6. Status: unsupported.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_CANNABIS
   - Example: BONUS_DIESEL
 - `Button`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,1
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,11
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,12
 - `Civilopedia`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: mapped.
   - Example: TXT_KEY_CORPORATION_1_PEDIA
   - Example: TXT_KEY_CORPORATION_2_PEDIA
   - Example: TXT_KEY_CORPORATION_3_PEDIA
 - `CommerceChanges`
-  - Present: 24. Non-default: 7. Status: preserved.
+  - Present: 24. Non-default: 7. Status: unsupported.
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced...
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "2"\n    ],\n    [\n      "iCommerceProduced...
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "3"\n    ],\n    [\n      "iCommerceProduced...
 - `CommerceChanges/iCommerceProduced`
-  - Present: 23. Non-default: 7. Status: preserved.
+  - Present: 23. Non-default: 7. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `CommercesProduced`
-  - Present: 36. Non-default: 20. Status: preserved.
+  - Present: 36. Non-default: 20. Status: unsupported.
   - Example: [\n  "CommercesProduced",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduc...
   - Example: [\n  "CommercesProduced",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "200"\n    ]\n  ]\n]
   - Example: [\n  "CommercesProduced",\n  [\n    [\n      "iCommerceProduced",\n      "0"\n    ],\n    [\n      "iCommerceProduced",\n      "200"\n    ],\n    [\n      "iCommerceProd...
 - `CommercesProduced/iCommerceProduced`
-  - Present: 36. Non-default: 20. Status: preserved.
+  - Present: 36. Non-default: 20. Status: unsupported.
   - Example: 100
   - Example: 125
   - Example: 200
 - `CompetingCorporations`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: [\n  "CompetingCorporations",\n  [\n    [\n      "CompetingCorporation",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_1"\n        ],\n    ...
   - Example: [\n  "CompetingCorporations",\n  [\n    [\n      "CompetingCorporation",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_APOTHEGUILD"\n     ...
   - Example: [\n  "CompetingCorporations",\n  [\n    [\n      "CompetingCorporation",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_BAKERGUILD"\n      ...
 - `CompetingCorporations/CompetingCorporation`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: [\n  "CompetingCorporation",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_1"\n    ],\n    [\n      "bCompeting",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "CompetingCorporation",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_APOTHEGUILD"\n    ],\n    [\n      "bCompeting",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "CompetingCorporation",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_ARTISTGUILD"\n    ],\n    [\n      "bCompeting",\n      "1"\n    ]\n  ]\n]
 - `CompetingCorporations/CompetingCorporation/CorporationType`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: CORPORATION_1
   - Example: CORPORATION_APOTHEGUILD
   - Example: CORPORATION_ARTISTGUILD
 - `CompetingCorporations/CompetingCorporation/bCompeting`
-  - Present: 21. Non-default: 15. Status: preserved.
+  - Present: 21. Non-default: 15. Status: unsupported.
   - Example: 1
 - `Description`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: mapped.
   - Example: CHANGED_TXT_KEY_CORPORATION_2
   - Example: TXT_KEY_CORPORATION_1
   - Example: TXT_KEY_CORPORATION_3
 - `FreeUnitClass`
-  - Present: 36. Non-default: 0. Status: preserved.
+  - Present: 36. Non-default: 0. Status: unsupported.
 - `HeadquarterCommerces`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: unsupported.
   - Example: [\n  "HeadquarterCommerces",\n  [\n    [\n      "iHeadquarterCommerce",\n      "0"\n    ],\n    [\n      "iHeadquarterCommerce",\n      "0"\n    ],\n    [\n      "iHeadq...
   - Example: [\n  "HeadquarterCommerces",\n  [\n    [\n      "iHeadquarterCommerce",\n      "0"\n    ],\n    [\n      "iHeadquarterCommerce",\n      "1"\n    ],\n    [\n      "iHeadq...
   - Example: [\n  "HeadquarterCommerces",\n  [\n    [\n      "iHeadquarterCommerce",\n      "1"\n    ],\n    [\n      "iHeadquarterCommerce",\n      "0"\n    ],\n    [\n      "iHeadq...
 - `HeadquarterCommerces/iHeadquarterCommerce`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: unsupported.
   - Example: 1
   - Example: 4
 - `MovieFile`
-  - Present: 36. Non-default: 0. Status: preserved.
+  - Present: 36. Non-default: 0. Status: unsupported.
 - `MovieSound`
-  - Present: 36. Non-default: 0. Status: preserved.
+  - Present: 36. Non-default: 0. Status: unsupported.
 - `ObsoleteTech`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: TECH_CORPORATION
 - `PrereqBonuses`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_APPLE"\n    ],\n    [\n      "BonusType",\n      "BONUS_BANANA"\n    ],\n    [\n      "BonusType",\n  ...
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_COAL"\n    ],\n    [\n      "BonusType",\n      "BONUS_BAUXITE"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_COAL"\n    ],\n    [\n      "BonusType",\n      "BONUS_IRON"\n    ],\n    [\n      "BonusType",\n     ...
 - `PrereqBonuses/BonusType`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_APPLE
   - Example: BONUS_BANANA
 - `PrereqBuildingClasses`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_CGUILDHALL"\n   ...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_SGUILDHALL"\n   ...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_VGUILDHALL"\n   ...
 - `PrereqBuildingClasses/PrereqBuildingClass`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_CGUILDHALL"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_SGUILDHALL"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_VGUILDHALL"\n    ],\n    [\n      "iNumBuildingNeeded",\n      "1"\n    ]\n  ]\n]
 - `PrereqBuildingClasses/PrereqBuildingClass/BuildingClassType`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: BUILDINGCLASS_CGUILDHALL
   - Example: BUILDINGCLASS_SGUILDHALL
   - Example: BUILDINGCLASS_VGUILDHALL
 - `PrereqBuildingClasses/PrereqBuildingClass/iNumBuildingNeeded`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: 1
 - `Sound`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: unsupported.
   - Example: AS2D_BUILD_BANK
 - `TechPrereq`
-  - Present: 36. Non-default: 0. Status: preserved.
+  - Present: 36. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `YieldChanges`
-  - Present: 21. Non-default: 10. Status: preserved.
+  - Present: 21. Non-default: 10. Status: unsupported.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldProduced",\n      "0"\n    ],\n    [\n      "iYieldProduced",\n      "1"\n    ],\n    [\n      "iYieldProduced",\n      "0"...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldProduced",\n      "0"\n    ],\n    [\n      "iYieldProduced",\n      "2"\n    ],\n    [\n      "iYieldProduced",\n      "0"...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldProduced",\n      "1"\n    ],\n    [\n      "iYieldProduced",\n      "0"\n    ],\n    [\n      "iYieldProduced",\n      "0"...
 - `YieldChanges/iYieldProduced`
-  - Present: 20. Non-default: 10. Status: preserved.
+  - Present: 20. Non-default: 10. Status: unsupported.
   - Example: 1
   - Example: 2
 - `YieldsProduced`
-  - Present: 36. Non-default: 15. Status: preserved.
+  - Present: 36. Non-default: 15. Status: unsupported.
   - Example: [\n  "YieldsProduced",\n  [\n    [\n      "iYieldProduced",\n      "0"\n    ],\n    [\n      "iYieldProduced",\n      "100"\n    ],\n    [\n      "iYieldProduced",\n     ...
   - Example: [\n  "YieldsProduced",\n  [\n    [\n      "iYieldProduced",\n      "0"\n    ],\n    [\n      "iYieldProduced",\n      "50"\n    ],\n    [\n      "iYieldProduced",\n      ...
   - Example: [\n  "YieldsProduced",\n  [\n    [\n      "iYieldProduced",\n      "50"\n    ]\n  ]\n]
 - `YieldsProduced/iYieldProduced`
-  - Present: 35. Non-default: 15. Status: preserved.
+  - Present: 35. Non-default: 15. Status: unsupported.
   - Example: 100
   - Example: 50
   - Example: 75
 - `iFreeXP`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: unsupported.
 - `iHappiness`
-  - Present: 23. Non-default: 9. Status: preserved.
+  - Present: 23. Non-default: 9. Status: unsupported.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iHealth`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iMaintenance`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: unsupported.
   - Example: 100
   - Example: 35
   - Example: 45
 - `iMilitaryProductionModifier`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: unsupported.
   - Example: 15
 - `iSpread`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: unsupported.
   - Example: 100
   - Example: 30
   - Example: 35
 - `iSpreadCost`
-  - Present: 36. Non-default: 21. Status: preserved.
+  - Present: 36. Non-default: 21. Status: unsupported.
   - Example: 50
 - `iSpreadFactor`
-  - Present: 36. Non-default: 36. Status: preserved.
+  - Present: 36. Non-default: 36. Status: unsupported.
   - Example: 200
 - `iTGAIndex`
-  - Present: 36. Non-default: 35. Status: preserved.
+  - Present: 36. Non-default: 35. Status: unsupported.
   - Example: 1
   - Example: 12
   - Example: 13
@@ -3723,60 +3723,60 @@ Era counts: unknown=36
 Era counts: unknown=10
 
 - `Description`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TXT_KEY_CULTURELEVEL_DEVELOPING
   - Example: TXT_KEY_CULTURELEVEL_ELEGANT
   - Example: TXT_KEY_CULTURELEVEL_FLEDGLING
 - `PrereqGameOption`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: GAMEOPTION_REALISTIC_CULTURE_SPREAD
 - `SpeedThresholds`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "SpeedThresholds",\n  [\n    [\n      "SpeedThreshold",\n      [\n        [\n          "GameSpeedType",\n          "GAMESPEED_ETERNITY"\n        ],\n        [\n   ...
 - `SpeedThresholds/SpeedThreshold`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "SpeedThreshold",\n  [\n    [\n      "GameSpeedType",\n      "GAMESPEED_BLITZ"\n    ],\n    [\n      "iThreshold",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "SpeedThreshold",\n  [\n    [\n      "GameSpeedType",\n      "GAMESPEED_BLITZ"\n    ],\n    [\n      "iThreshold",\n      "1200"\n    ]\n  ]\n]
   - Example: [\n  "SpeedThreshold",\n  [\n    [\n      "GameSpeedType",\n      "GAMESPEED_BLITZ"\n    ],\n    [\n      "iThreshold",\n      "12000"\n    ]\n  ]\n]
 - `SpeedThresholds/SpeedThreshold/GameSpeedType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: GAMESPEED_BLITZ
   - Example: GAMESPEED_EPIC
   - Example: GAMESPEED_ETERNITY
 - `SpeedThresholds/SpeedThreshold/iThreshold`
-  - Present: 10. Non-default: 8. Status: preserved.
+  - Present: 10. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 120
   - Example: 1200
 - `Type`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: CULTURELEVEL_DEVELOPING
   - Example: CULTURELEVEL_ELEGANT
   - Example: CULTURELEVEL_FLEDGLING
 - `iCityDefenseModifier`
-  - Present: 10. Non-default: 8. Status: preserved.
+  - Present: 10. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iCityRadius`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 2
   - Example: 3
 - `iMaxNationalWonders`
-  - Present: 10. Non-default: 9. Status: preserved.
+  - Present: 10. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iMaxNationalWondersOCC`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 8
 - `iMaxTeamWonders`
-  - Present: 10. Non-default: 9. Status: preserved.
+  - Present: 10. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iMaxWorldWonders`
-  - Present: 10. Non-default: 9. Status: preserved.
+  - Present: 10. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -3786,12 +3786,12 @@ Era counts: unknown=10
 Era counts: unknown=23
 
 - `CursorPath`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: res/Cursors/Airbomb.ani
   - Example: res/Cursors/Airlift.ani
   - Example: res/Cursors/Airstrike.ani
 - `Type`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: CURSOR_AIRBOMB
   - Example: CURSOR_AIRLIFT
   - Example: CURSOR_AIRSTRIKE
@@ -3801,12 +3801,12 @@ Era counts: unknown=23
 Era counts: unknown=34
 
 - `Description`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: unsupported.
   - Example: TXT_KEY_DENIAL_ANGER_CIVIC
   - Example: TXT_KEY_DENIAL_ATTITUDE
   - Example: TXT_KEY_DENIAL_ATTITUDE_THEM
 - `Type`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: unsupported.
   - Example: DENIAL_ANGER_CIVIC
   - Example: DENIAL_ATTITUDE
   - Example: DENIAL_ATTITUDE_THEM
@@ -3816,81 +3816,81 @@ Era counts: unknown=34
 Era counts: unknown=110
 
 - `Responses`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: unsupported.
   - Example: [\n  "Responses",\n  [\n    [\n      "Response",\n      [\n        [\n          "Civilizations",\n          ""\n        ],\n        [\n          "Leaders",\n          ""...
   - Example: [\n  "Responses",\n  [\n    [\n      "Response",\n      [\n        [\n          "Civilizations",\n          ""\n        ],\n        [\n          "Leaders",\n          [\n...
 - `Responses/Response`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: unsupported.
   - Example: [\n  "Response",\n  [\n    [\n      "Civilizations",\n      ""\n    ],\n    [\n      "Leaders",\n      ""\n    ],\n    [\n      "Attitudes",\n      ""\n    ],\n    [\n      ...
   - Example: [\n  "Response",\n  [\n    [\n      "Civilizations",\n      ""\n    ],\n    [\n      "Leaders",\n      ""\n    ],\n    [\n      "Attitudes",\n      [\n        [\n          ...
   - Example: [\n  "Response",\n  [\n    [\n      "Civilizations",\n      ""\n    ],\n    [\n      "Leaders",\n      [\n        [\n          "Leader",\n          [\n            [\n     ...
 - `Responses/Response/Attitudes`
-  - Present: 110. Non-default: 8. Status: preserved.
+  - Present: 110. Non-default: 8. Status: unsupported.
   - Example: [\n  "Attitudes",\n  [\n    [\n      "Attitude",\n      [\n        [\n          "AttitudeType",\n          "ATTITUDE_ANNOYED"\n        ],\n        [\n          "bAttitu...
   - Example: [\n  "Attitudes",\n  [\n    [\n      "Attitude",\n      [\n        [\n          "AttitudeType",\n          "ATTITUDE_FRIENDLY"\n        ],\n        [\n          "bAttit...
 - `Responses/Response/Attitudes/Attitude`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: [\n  "Attitude",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_ANNOYED"\n    ],\n    [\n      "bAttitudeType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Attitude",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_CAUTIOUS"\n    ],\n    [\n      "bAttitudeType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Attitude",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_FRIENDLY"\n    ],\n    [\n      "bAttitudeType",\n      "1"\n    ]\n  ]\n]
 - `Responses/Response/Attitudes/Attitude/AttitudeType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `Responses/Response/Attitudes/Attitude/bAttitudeType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: 1
 - `Responses/Response/Civilizations`
-  - Present: 110. Non-default: 0. Status: preserved.
+  - Present: 110. Non-default: 0. Status: unsupported.
 - `Responses/Response/DiplomacyPowers`
-  - Present: 110. Non-default: 5. Status: preserved.
+  - Present: 110. Non-default: 5. Status: unsupported.
   - Example: [\n  "DiplomacyPowers",\n  [\n    [\n      "DiplomacyPower",\n      [\n        [\n          "DiplomacyPowerType",\n          "DIPLOMACYPOWER_EQUAL"\n        ],\n      ...
   - Example: [\n  "DiplomacyPowers",\n  [\n    [\n      "DiplomacyPower",\n      [\n        [\n          "DiplomacyPowerType",\n          "DIPLOMACYPOWER_STRONGER"\n        ],\n   ...
   - Example: [\n  "DiplomacyPowers",\n  [\n    [\n      "DiplomacyPower",\n      [\n        [\n          "DiplomacyPowerType",\n          "DIPLOMACYPOWER_WEAKER"\n        ],\n     ...
 - `Responses/Response/DiplomacyPowers/DiplomacyPower`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: [\n  "DiplomacyPower",\n  [\n    [\n      "DiplomacyPowerType",\n      "DIPLOMACYPOWER_EQUAL"\n    ],\n    [\n      "bDiplomacyPowerType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "DiplomacyPower",\n  [\n    [\n      "DiplomacyPowerType",\n      "DIPLOMACYPOWER_STRONGER"\n    ],\n    [\n      "bDiplomacyPowerType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "DiplomacyPower",\n  [\n    [\n      "DiplomacyPowerType",\n      "DIPLOMACYPOWER_WEAKER"\n    ],\n    [\n      "bDiplomacyPowerType",\n      "1"\n    ]\n  ]\n]
 - `Responses/Response/DiplomacyPowers/DiplomacyPower/DiplomacyPowerType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: DIPLOMACYPOWER_EQUAL
   - Example: DIPLOMACYPOWER_STRONGER
   - Example: DIPLOMACYPOWER_WEAKER
 - `Responses/Response/DiplomacyPowers/DiplomacyPower/bDiplomacyPowerType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 1
 - `Responses/Response/DiplomacyText`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: unsupported.
   - Example: [\n  "DiplomacyText",\n  [\n    [\n      "Text",\n      "AI_DIPLO_ACCEPT_1"\n    ],\n    [\n      "Text",\n      "AI_DIPLO_ACCEPT_2"\n    ],\n    [\n      "Text",\n      ...
   - Example: [\n  "DiplomacyText",\n  [\n    [\n      "Text",\n      "AI_DIPLO_ACCEPT_ASK_1"\n    ]\n  ]\n]
   - Example: [\n  "DiplomacyText",\n  [\n    [\n      "Text",\n      "AI_DIPLO_ACCEPT_DEMAND_1"\n    ],\n    [\n      "Text",\n      "AI_DIPLO_ACCEPT_DEMAND_2"\n    ],\n    [\n      ...
 - `Responses/Response/DiplomacyText/Text`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: unsupported.
   - Example: AI_DIPLO_ACCEPT_1
   - Example: AI_DIPLO_ACCEPT_10
   - Example: AI_DIPLO_ACCEPT_11
 - `Responses/Response/Leaders`
-  - Present: 110. Non-default: 5. Status: preserved.
+  - Present: 110. Non-default: 5. Status: unsupported.
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderType",\n          "LEADER_ABUBAKR"\n        ],\n        [\n          "bLeaderType",\n ...
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderType",\n          "LEADER_AFONSO"\n        ],\n        [\n          "bLeaderType",\n  ...
   - Example: [\n  "Leaders",\n  [\n    [\n      "Leader",\n      [\n        [\n          "LeaderType",\n          "LEADER_ALARIC"\n        ],\n        [\n          "bLeaderType",\n  ...
 - `Responses/Response/Leaders/Leader`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderType",\n      "LEADER_ABUBAKR"\n    ],\n    [\n      "bLeaderType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderType",\n      "LEADER_AFONSO"\n    ],\n    [\n      "bLeaderType",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Leader",\n  [\n    [\n      "LeaderType",\n      "LEADER_ALARIC"\n    ],\n    [\n      "bLeaderType",\n      "1"\n    ]\n  ]\n]
 - `Responses/Response/Leaders/Leader/LeaderType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: LEADER_ABUBAKR
   - Example: LEADER_AFONSO
   - Example: LEADER_ALARIC
 - `Responses/Response/Leaders/Leader/bLeaderType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: 1
 - `Type`
-  - Present: 110. Non-default: 110. Status: preserved.
+  - Present: 110. Non-default: 110. Status: unsupported.
   - Example: AI_ASSUME_NOT_SNUFFED
   - Example: AI_ASSUME_REALLY_SNUFFED
   - Example: AI_ASSUME_SNUFFED
@@ -3900,12 +3900,12 @@ Era counts: unknown=110
 Era counts: unknown=4
 
 - `Description`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: TXT_KEY_DOMAIN_AIR
   - Example: TXT_KEY_DOMAIN_IMMOBILE
   - Example: TXT_KEY_DOMAIN_LAND
 - `Type`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: DOMAIN_AIR
   - Example: DOMAIN_IMMOBILE
   - Example: DOMAIN_LAND
@@ -3915,46 +3915,46 @@ Era counts: unknown=4
 Era counts: unknown=324
 
 - `Description`
-  - Present: 324. Non-default: 324. Status: preserved.
+  - Present: 324. Non-default: 324. Status: unsupported.
   - Example: Activation effect for Buddhist missionary
   - Example: Activation effect for Christian missionary
   - Example: Activation effect for Confuscian missionary
 - `Path`
-  - Present: 324. Non-default: 324. Status: preserved.
+  - Present: 324. Non-default: 324. Status: unsupported.
   - Example: Art/Effects/BOLTER_FIRE/BOLTER_FIRE.nif
   - Example: Art/Effects/FF_Flak_Fire/fx_weapon_flak.nif
   - Example: Art/Effects/FF_Laser_Fire/fx_laser_fire.nif
 - `Type`
-  - Present: 324. Non-default: 324. Status: preserved.
+  - Present: 324. Non-default: 324. Status: unsupported.
   - Example: EFFECT_AIRCRAFT_MACHINE_GUN
   - Example: EFFECT_AIRCRAFT_MACHINE_GUN_IMPACT
   - Example: EFFECT_AIRPLANE_FIREBALL_LARGE
 - `bBattleEffect`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bIsProjectile`
-  - Present: 324. Non-default: 29. Status: preserved.
+  - Present: 324. Non-default: 29. Status: unsupported.
   - Example: 1
 - `bSticky`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: unsupported.
   - Example: 1
 - `fArcValue`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: unsupported.
   - Example: 0.0
   - Example: 2.0
   - Example: 3.0
 - `fScale`
-  - Present: 324. Non-default: 324. Status: preserved.
+  - Present: 324. Non-default: 324. Status: unsupported.
   - Example: .04
   - Example: .05
   - Example: .2
 - `fSpeed`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: unsupported.
   - Example: 300.00
   - Example: 350.0
   - Example: 400
 - `fUpdateRate`
-  - Present: 324. Non-default: 324. Status: preserved.
+  - Present: 324. Non-default: 324. Status: unsupported.
   - Example: .6
   - Example: .8
   - Example: 0.4
@@ -3964,50 +3964,50 @@ Era counts: unknown=324
 Era counts: unknown=8
 
 - `Button`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: Art/Interface/Buttons/Governor/Commerce.dds
   - Example: Art/Interface/Buttons/Governor/Food.dds
   - Example: Art/Interface/Buttons/Governor/Governor.dds
 - `CommerceModifiers`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ]\n  ]\n]
 - `CommerceModifiers/iCommerce`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: 1
 - `Description`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: TXT_KEY_EMPHASIZE_AVOID_ANGRY_CITIZENS
   - Example: TXT_KEY_EMPHASIZE_AVOID_GROWTH
   - Example: TXT_KEY_EMPHASIZE_AVOID_UNHEALTHY_CITIZENS
 - `Strategy`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: TXT_KEY_EMPHASIZE_AVOID_ANGRY_CITIZENS_STRATEGY
   - Example: TXT_KEY_EMPHASIZE_AVOID_GROWTH_STRATEGY
   - Example: TXT_KEY_EMPHASIZE_AVOID_UNHEALTHY_CITIZENS_STRATEGY
 - `Type`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: EMPHASIZE_AVOID_ANGRY_CITIZENS
   - Example: EMPHASIZE_AVOID_GROWTH
   - Example: EMPHASIZE_AVOID_UNHEALTHY_CITIZENS
 - `YieldModifiers`
-  - Present: 8. Non-default: 3. Status: preserved.
+  - Present: 8. Non-default: 3. Status: unsupported.
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "YieldModifiers",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `YieldModifiers/iYield`
-  - Present: 8. Non-default: 3. Status: preserved.
+  - Present: 8. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bAvoidAngryCitizens`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bAvoidGrowth`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bAvoidUnhealthyCitizens`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bGreatPeople`
-  - Present: 8. Non-default: 1. Status: preserved.
+  - Present: 8. Non-default: 1. Status: unsupported.
   - Example: 1
 
 ## EntityEventInfo: 34 records
@@ -4015,28 +4015,28 @@ Era counts: unknown=8
 Era counts: unknown=34
 
 - `AnimationPathTypes`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: unsupported.
   - Example: [\n  "AnimationPathTypes",\n  [\n    [\n      "AnimationPathType",\n      "ANIMATIONPATH_AIRBOMB"\n    ]\n  ]\n]
   - Example: [\n  "AnimationPathTypes",\n  [\n    [\n      "AnimationPathType",\n      "ANIMATIONPATH_AIRPATROL"\n    ]\n  ]\n]
   - Example: [\n  "AnimationPathTypes",\n  [\n    [\n      "AnimationPathType",\n      "ANIMATIONPATH_AIRSTRIKE"\n    ]\n  ]\n]
 - `AnimationPathTypes/AnimationPathType`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: unsupported.
   - Example: ANIMATIONPATH_AIRBOMB
   - Example: ANIMATIONPATH_AIRPATROL
   - Example: ANIMATIONPATH_AIRSTRIKE
 - `EffectTypes`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: [\n  "EffectTypes",\n  [\n    [\n      "EffectType",\n      "EFFECT_EXPLOSION_DIRT"\n    ]\n  ]\n]
 - `EffectTypes/EffectType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: EFFECT_EXPLOSION_DIRT
 - `Type`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: unsupported.
   - Example: ENTITY_EVENT_AIRBOMB
   - Example: ENTITY_EVENT_AIRINTERCEPTION
   - Example: ENTITY_EVENT_AIRPATROL
 - `bUpdateFormation`
-  - Present: 34. Non-default: 31. Status: preserved.
+  - Present: 34. Non-default: 31. Status: unsupported.
   - Example: 1
 
 ## EraInfo: 8 records
@@ -4044,188 +4044,188 @@ Era counts: unknown=34
 Era counts: ERA_ANCIENT=1, ERA_CLASSICAL=1, ERA_FUTURE=1, ERA_INDUSTRIAL=1, ERA_MEDIEVAL=1, ERA_MODERN=1, ERA_RENAISSANCE=1, ERA_TRANSHUMAN=1
 
 - `AudioUnitDefeatScript`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: AS2D_LOSS_EARLY
   - Example: AS2D_LOSS_LATE
   - Example: AS2D_LOSS_MIDDLE
 - `AudioUnitVictoryScript`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: AS2D_VICTORY_EARLY
   - Example: AS2D_VICTORY_LATE
   - Example: AS2D_VICTORY_MIDDLE
 - `CitySoundscapes`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: [\n  "CitySoundscapes",\n  [\n    [\n      "CitySoundscape",\n      [\n        [\n          "CitySizeType",\n          "CITYSIZE_SMALL"\n        ],\n        [\n        ...
 - `CitySoundscapes/CitySoundscape`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: [\n  "CitySoundscape",\n  [\n    [\n      "CitySizeType",\n      "CITYSIZE_LARGE"\n    ],\n    [\n      "SoundscapeScript",\n      "ASSS_CITY_ANCIENT_LARGE_SELECT_AMB...
   - Example: [\n  "CitySoundscape",\n  [\n    [\n      "CitySizeType",\n      "CITYSIZE_LARGE"\n    ],\n    [\n      "SoundscapeScript",\n      "ASSS_CITY_LATE_LARGE_SELECT_AMB"\n ...
   - Example: [\n  "CitySoundscape",\n  [\n    [\n      "CitySizeType",\n      "CITYSIZE_LARGE"\n    ],\n    [\n      "SoundscapeScript",\n      "ASSS_CITY_MIDDLE_LARGE_SELECT_AMB"...
 - `CitySoundscapes/CitySoundscape/CitySizeType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: CITYSIZE_LARGE
   - Example: CITYSIZE_MEDIUM
   - Example: CITYSIZE_SMALL
 - `CitySoundscapes/CitySoundscape/SoundscapeScript`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: ASSS_CITY_ANCIENT_LARGE_SELECT_AMB
   - Example: ASSS_CITY_ANCIENT_SMALL_SELECT_AMB
   - Example: ASSS_CITY_LATE_LARGE_SELECT_AMB
 - `Description`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_ERA_ANCIENT
   - Example: TXT_KEY_ERA_CLASSICAL
   - Example: TXT_KEY_ERA_FUTURE
 - `EraInfoSoundtracks`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: [\n  "EraInfoSoundtracks",\n  [\n    [\n      "EraInfoSoundtrack",\n      "AS2D_ALLEGRI_MISERERE"\n    ],\n    [\n      "EraInfoSoundtrack",\n      "AS2D_ANONYMOUS_AY...
   - Example: [\n  "EraInfoSoundtracks",\n  [\n    [\n      "EraInfoSoundtrack",\n      "AS2D_ANCIENT_SOUNDTRACK_1"\n    ],\n    [\n      "EraInfoSoundtrack",\n      "AS2D_ANCIENT_...
   - Example: [\n  "EraInfoSoundtracks",\n  [\n    [\n      "EraInfoSoundtrack",\n      "AS2D_BACH_ALLEGRO"\n    ],\n    [\n      "EraInfoSoundtrack",\n      "AS2D_BACH_ALLEGRO_ASS...
 - `EraInfoSoundtracks/EraInfoSoundtrack`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: AS2D_ALLEGRI_MISERERE
   - Example: AS2D_ANCIENT_SOUNDTRACK_1
   - Example: AS2D_ANCIENT_SOUNDTRACK_2
 - `Strategy`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_ERA_ANCIENT_STRATEGY
   - Example: TXT_KEY_ERA_CLASSICAL_STRATEGY
   - Example: TXT_KEY_ERA_FUTURE_STRATEGY
 - `Type`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `bFirstSoundtrackFirst`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: unsupported.
   - Example: 1
 - `bNoAnimals`
-  - Present: 8. Non-default: 6. Status: preserved.
+  - Present: 8. Non-default: 6. Status: mapped.
   - Example: 1
 - `bNoBarbCities`
-  - Present: 8. Non-default: 0. Status: preserved.
+  - Present: 8. Non-default: 0. Status: mapped.
 - `bNoBarbUnits`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: mapped.
   - Example: 1
 - `bNoGoodies`
-  - Present: 8. Non-default: 6. Status: preserved.
+  - Present: 8. Non-default: 6. Status: mapped.
   - Example: 1
 - `iAdvancedStartPoints`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1200
   - Example: 1800
   - Example: 2700
 - `iAnarchyPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 34
   - Example: 40
   - Example: 50
 - `iBuildPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iConstructCostModifier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
 - `iConstructPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 80
   - Example: 90
 - `iCreateCostModifier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
 - `iCreatePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iCulturePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iEventChancePerTurn`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 12
   - Example: 16
   - Example: 2
 - `iFreePopulation`
-  - Present: 8. Non-default: 5. Status: preserved.
+  - Present: 8. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iGreatPeoplePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iGrowthPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 55
   - Example: 65
   - Example: 75
 - `iImprovementPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iInitialCityMaintenancePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 200
 - `iResearchPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iSoundtrackSpace`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: unsupported.
   - Example: 120
   - Example: 160
   - Example: 200
 - `iStartPercent`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: mapped.
   - Example: 14
   - Example: 28
   - Example: 42
 - `iStartingDefenseUnits`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iStartingExploreUnits`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iStartingGold`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 200
 - `iStartingUnitMultiplier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iStartingWorkerUnits`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iTechCostModifier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 150
   - Example: 160
   - Example: 180
 - `iTrainCostModifier`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
 - `iTrainPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 35
   - Example: 45
   - Example: 50
@@ -4235,135 +4235,135 @@ Era counts: ERA_ANCIENT=1, ERA_CLASSICAL=1, ERA_FUTURE=1, ERA_INDUSTRIAL=1, ERA_
 Era counts: ERA_CLASSICAL=1, unknown=28
 
 - `Description`
-  - Present: 29. Non-default: 29. Status: preserved.
+  - Present: 29. Non-default: 29. Status: unsupported.
   - Example: TXT_KEY_ESPIONAGE_BUY_CITY
   - Example: TXT_KEY_ESPIONAGE_BUY_TECH
   - Example: TXT_KEY_ESPIONAGE_CAN_SEE_DEMOGRAPHICS
 - `PrereqGameOption`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: unsupported.
   - Example: GAMEOPTION_ADVANCED_ESPIONAGE
 - `TechPrereq`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: TECH_RHETORIC
 - `Type`
-  - Present: 29. Non-default: 29. Status: preserved.
+  - Present: 29. Non-default: 29. Status: unsupported.
   - Example: ESPIONAGEMISSION_ANARCHY
   - Example: ESPIONAGEMISSION_ASSASSINATE
   - Example: ESPIONAGEMISSION_BRIBE
 - `bDestroyImprovement`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bDisablePower`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bInvestigateCity`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bIsPassive`
-  - Present: 29. Non-default: 5. Status: preserved.
+  - Present: 29. Non-default: 5. Status: unsupported.
   - Example: 1
 - `bIsTwoPhases`
-  - Present: 29. Non-default: 8. Status: preserved.
+  - Present: 29. Non-default: 8. Status: unsupported.
   - Example: 1
 - `bNoActiveMissions`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bNuke`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bRevolt`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bSeeDemographics`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bSeeResearch`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bSelectPlot`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bTargetsCity`
-  - Present: 29. Non-default: 24. Status: preserved.
+  - Present: 29. Non-default: 24. Status: unsupported.
   - Example: 1
 - `iBuyCityCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 250
 - `iBuyTechCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 2
 - `iBuyUnitCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iCityInsertCultureAmountFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 2
 - `iCityInsertCultureCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 600
 - `iCityPoisonWaterCounter`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 5
 - `iCityRevoltCounter`
-  - Present: 29. Non-default: 2. Status: preserved.
+  - Present: 29. Non-default: 2. Status: unsupported.
   - Example: 1
 - `iCityUnhappinessCounter`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 8
 - `iCost`
-  - Present: 29. Non-default: 21. Status: preserved.
+  - Present: 29. Non-default: 21. Status: unsupported.
   - Example: 100
   - Example: 120
   - Example: 1450
 - `iCounterespionageMod`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 200
 - `iCounterespionageNumTurns`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 10
 - `iDestroyBuildingCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 500
 - `iDestroyProductionCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 500
 - `iDestroyProjectCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 500
 - `iDestroyUnitCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iDifficultyMod`
-  - Present: 29. Non-default: 20. Status: preserved.
+  - Present: 29. Non-default: 20. Status: unsupported.
   - Example: -100
   - Example: -50
   - Example: 10
 - `iPlayerAnarchyCounter`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 4
 - `iRemoveCorporationsCostFactor`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 250
 - `iRemoveReligionsCostFactor`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 250
 - `iSabatogeResearchCostFactor`
-  - Present: 3. Non-default: 1. Status: preserved.
+  - Present: 3. Non-default: 1. Status: unsupported.
   - Example: 85
 - `iStealTreasuryTypes`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 100
 - `iSwitchCivicCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 22000
 - `iSwitchReligionCostFactor`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 22000
 - `iVisibilityLevel`
-  - Present: 29. Non-default: 1. Status: preserved.
+  - Present: 29. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iWarWearinessCounter`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: unsupported.
   - Example: 150
 
 ## EventInfo: 554 records
@@ -4371,516 +4371,516 @@ Era counts: ERA_CLASSICAL=1, unknown=28
 Era counts: ERA_ANCIENT=1, ERA_INDUSTRIAL=1, ERA_TRANSHUMAN=1, unknown=551
 
 - `AdditionalEvents`
-  - Present: 554. Non-default: 14. Status: preserved.
+  - Present: 554. Non-default: 14. Status: unsupported.
   - Example: [\n  "AdditionalEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_AIRLINER_CRASH_4"\n        ],\n        [\n         ...
   - Example: [\n  "AdditionalEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_BLARNEYVISIT_2"\n        ],\n        [\n          "...
   - Example: [\n  "AdditionalEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_CITY_RUINS_3"\n        ],\n        [\n          "iE...
 - `AdditionalEvents/EventChance`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_AIRLINER_CRASH_4"\n    ],\n    [\n      "iEventChance",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_BLARNEYVISIT_2"\n    ],\n    [\n      "iEventChance",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_CITY_RUINS_3"\n    ],\n    [\n      "iEventChance",\n      "50"\n    ]\n  ]\n]
 - `AdditionalEvents/EventChance/Event`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: EVENT_AIRLINER_CRASH_4
   - Example: EVENT_BLARNEYVISIT_2
   - Example: EVENT_CITY_RUINS_3
 - `AdditionalEvents/EventChance/iEventChance`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: 20
   - Example: 25
   - Example: 35
 - `BonusGift`
-  - Present: 554. Non-default: 6. Status: preserved.
+  - Present: 554. Non-default: 6. Status: unsupported.
   - Example: BONUS_COPPER
   - Example: BONUS_HORSE
   - Example: BONUS_IRON
 - `BonusRevealed`
-  - Present: 554. Non-default: 1. Status: preserved.
+  - Present: 554. Non-default: 1. Status: unsupported.
   - Example: BONUS_OIL
 - `BonusType`
-  - Present: 554. Non-default: 15. Status: preserved.
+  - Present: 554. Non-default: 15. Status: unsupported.
   - Example: BONUS_APPLE
   - Example: BONUS_COW
   - Example: BONUS_DEER
 - `BuildingClass`
-  - Present: 554. Non-default: 19. Status: preserved.
+  - Present: 554. Non-default: 19. Status: unsupported.
   - Example: BUILDINGCLASS_ACADEMY
   - Example: BUILDINGCLASS_BROADCAST_TOWER
   - Example: BUILDINGCLASS_FACTORY
 - `BuildingExtraCommerces`
-  - Present: 554. Non-default: 49. Status: preserved.
+  - Present: 554. Non-default: 49. Status: unsupported.
   - Example: [\n  "BuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_ACCELERATOR"\n   ...
   - Example: [\n  "BuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_AIRPORT"\n       ...
   - Example: [\n  "BuildingExtraCommerces",\n  [\n    [\n      "BuildingExtraCommerce",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_ARENA"\n        ]...
 - `BuildingExtraCommerces/BuildingExtraCommerce`
-  - Present: 49. Non-default: 49. Status: preserved.
+  - Present: 49. Non-default: 49. Status: unsupported.
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ACCELERATOR"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_RESEARCH"\n...
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_AIRPORT"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_GOLD"\n    ],\n ...
   - Example: [\n  "BuildingExtraCommerce",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ARENA"\n    ],\n    [\n      "CommerceType",\n      "COMMERCE_CULTURE"\n    ],\n...
 - `BuildingExtraCommerces/BuildingExtraCommerce/BuildingClass`
-  - Present: 49. Non-default: 49. Status: preserved.
+  - Present: 49. Non-default: 49. Status: unsupported.
   - Example: BUILDINGCLASS_ACCELERATOR
   - Example: BUILDINGCLASS_AIRPORT
   - Example: BUILDINGCLASS_ARENA
 - `BuildingExtraCommerces/BuildingExtraCommerce/CommerceType`
-  - Present: 49. Non-default: 49. Status: preserved.
+  - Present: 49. Non-default: 49. Status: unsupported.
   - Example: COMMERCE_CULTURE
   - Example: COMMERCE_ESPIONAGE
   - Example: COMMERCE_GOLD
 - `BuildingExtraCommerces/BuildingExtraCommerce/iExtraCommerce`
-  - Present: 49. Non-default: 49. Status: preserved.
+  - Present: 49. Non-default: 49. Status: unsupported.
   - Example: -4
   - Example: 1
   - Example: 10
 - `BuildingExtraHappies`
-  - Present: 554. Non-default: 8. Status: preserved.
+  - Present: 554. Non-default: 8. Status: unsupported.
   - Example: [\n  "BuildingExtraHappies",\n  [\n    [\n      "BuildingExtraHappy",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_AIRPORT"\n        ],\n ...
   - Example: [\n  "BuildingExtraHappies",\n  [\n    [\n      "BuildingExtraHappy",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_ARENA"\n        ],\n   ...
   - Example: [\n  "BuildingExtraHappies",\n  [\n    [\n      "BuildingExtraHappy",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_FACTORY"\n        ],\n ...
 - `BuildingExtraHappies/BuildingExtraHappy`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: [\n  "BuildingExtraHappy",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_AIRPORT"\n    ],\n    [\n      "iHappy",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingExtraHappy",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ARENA"\n    ],\n    [\n      "iHappy",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingExtraHappy",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_COAL_PLANT"\n    ],\n    [\n      "iHappy",\n      "-1"\n    ]\n  ]\n]
 - `BuildingExtraHappies/BuildingExtraHappy/BuildingClass`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: BUILDINGCLASS_AIRPORT
   - Example: BUILDINGCLASS_ARENA
   - Example: BUILDINGCLASS_COAL_PLANT
 - `BuildingExtraHappies/BuildingExtraHappy/iHappy`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: unsupported.
   - Example: -2
   - Example: 1
   - Example: 2
 - `BuildingExtraHealths`
-  - Present: 554. Non-default: 7. Status: preserved.
+  - Present: 554. Non-default: 7. Status: unsupported.
   - Example: [\n  "BuildingExtraHealths",\n  [\n    [\n      "BuildingExtraHealth",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_DRYDOCK"\n        ],\n...
   - Example: [\n  "BuildingExtraHealths",\n  [\n    [\n      "BuildingExtraHealth",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_FACTORY"\n        ],\n...
   - Example: [\n  "BuildingExtraHealths",\n  [\n    [\n      "BuildingExtraHealth",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_HOSPITAL"\n        ],...
 - `BuildingExtraHealths/BuildingExtraHealth`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: [\n  "BuildingExtraHealth",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_COAL_PLANT"\n    ],\n    [\n      "iHealth",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingExtraHealth",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_DRYDOCK"\n    ],\n    [\n      "iHealth",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BuildingExtraHealth",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_FACTORY"\n    ],\n    [\n      "iHealth",\n      "1"\n    ]\n  ]\n]
 - `BuildingExtraHealths/BuildingExtraHealth/BuildingClass`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: BUILDINGCLASS_COAL_PLANT
   - Example: BUILDINGCLASS_DRYDOCK
   - Example: BUILDINGCLASS_FACTORY
 - `BuildingExtraHealths/BuildingExtraHealth/iHealth`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: 1
   - Example: 2
 - `BuildingExtraYields`
-  - Present: 554. Non-default: 15. Status: preserved.
+  - Present: 554. Non-default: 15. Status: unsupported.
   - Example: [\n  "BuildingExtraYields",\n  [\n    [\n      "BuildingExtraYield",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_COAL_PLANT"\n        ],...
   - Example: [\n  "BuildingExtraYields",\n  [\n    [\n      "BuildingExtraYield",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_COURTHOUSE"\n        ],...
   - Example: [\n  "BuildingExtraYields",\n  [\n    [\n      "BuildingExtraYield",\n      [\n        [\n          "BuildingClass",\n          "BUILDINGCLASS_DRYDOCK"\n        ],\n  ...
 - `BuildingExtraYields/BuildingExtraYield`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: [\n  "BuildingExtraYield",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_COAL_PLANT"\n    ],\n    [\n      "YieldType",\n      "YIELD_PRODUCTION"\n    ],\n ...
   - Example: [\n  "BuildingExtraYield",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_COMMERCIAL_PORT"\n    ],\n    [\n      "YieldType",\n      "YIELD_COMMERCE"\n    ]...
   - Example: [\n  "BuildingExtraYield",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_COMMERCIAL_PORT"\n    ],\n    [\n      "YieldType",\n      "YIELD_PRODUCTION"\n   ...
 - `BuildingExtraYields/BuildingExtraYield/BuildingClass`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: BUILDINGCLASS_COAL_PLANT
   - Example: BUILDINGCLASS_COMMERCIAL_PORT
   - Example: BUILDINGCLASS_COURTHOUSE
 - `BuildingExtraYields/BuildingExtraYield/YieldType`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: YIELD_COMMERCE
   - Example: YIELD_FOOD
   - Example: YIELD_PRODUCTION
 - `BuildingExtraYields/BuildingExtraYield/iExtraYield`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `Button`
-  - Present: 554. Non-default: 554. Status: preserved.
+  - Present: 554. Non-default: 554. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Process/Blank.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,5
 - `ClearEvents`
-  - Present: 553. Non-default: 55. Status: preserved.
+  - Present: 553. Non-default: 55. Status: unsupported.
   - Example: [\n  "ClearEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_BEST_DEFENSE_1"\n        ],\n        [\n          "iEven...
   - Example: [\n  "ClearEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_BLESSED_SEA_1"\n        ],\n        [\n          "iEvent...
   - Example: [\n  "ClearEvents",\n  [\n    [\n      "EventChance",\n      [\n        [\n          "Event",\n          "EVENT_CLASSIC_LITERATURE_1"\n        ],\n        [\n          ...
 - `ClearEvents/EventChance`
-  - Present: 55. Non-default: 55. Status: preserved.
+  - Present: 55. Non-default: 55. Status: unsupported.
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_BEST_DEFENSE_1"\n    ],\n    [\n      "iEventChance",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_BLESSED_SEA_1"\n    ],\n    [\n      "iEventChance",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "EventChance",\n  [\n    [\n      "Event",\n      "EVENT_CLASSIC_LITERATURE_1"\n    ],\n    [\n      "iEventChance",\n      "100"\n    ]\n  ]\n]
 - `ClearEvents/EventChance/Event`
-  - Present: 55. Non-default: 55. Status: preserved.
+  - Present: 55. Non-default: 55. Status: unsupported.
   - Example: EVENT_BEST_DEFENSE_1
   - Example: EVENT_BLESSED_SEA_1
   - Example: EVENT_CLASSIC_LITERATURE_1
 - `ClearEvents/EventChance/iEventChance`
-  - Present: 55. Non-default: 55. Status: preserved.
+  - Present: 55. Non-default: 55. Status: unsupported.
   - Example: 100
   - Example: 25
   - Example: 40
 - `Description`
-  - Present: 554. Non-default: 542. Status: preserved.
+  - Present: 554. Non-default: 542. Status: unsupported.
   - Example: TXT_KEY_EVENT_ACADEMIC_FUNDING_1
   - Example: TXT_KEY_EVENT_AIRLINER_CRASH_1
   - Example: TXT_KEY_EVENT_AIRLINER_CRASH_2
 - `EventTimes`
-  - Present: 554. Non-default: 0. Status: preserved.
+  - Present: 554. Non-default: 0. Status: unsupported.
 - `FeatureType`
-  - Present: 554. Non-default: 11. Status: preserved.
+  - Present: 554. Non-default: 11. Status: unsupported.
   - Example: FEATURE_FOREST
   - Example: FEATURE_STORM
 - `FreeSpecialistCounts`
-  - Present: 554. Non-default: 14. Status: preserved.
+  - Present: 554. Non-default: 14. Status: unsupported.
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_ENGINEER"\n        ],\n ...
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_GREAT_ARTIST"\n        ...
   - Example: [\n  "FreeSpecialistCounts",\n  [\n    [\n      "FreeSpecialistCount",\n      [\n        [\n          "SpecialistType",\n          "SPECIALIST_GREAT_GENERAL"\n       ...
 - `FreeSpecialistCounts/FreeSpecialistCount`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_ENGINEER"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_GREAT_ARTIST"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeSpecialistCount",\n  [\n    [\n      "SpecialistType",\n      "SPECIALIST_GREAT_GENERAL"\n    ],\n    [\n      "iFreeSpecialistCount",\n      "1"\n    ]\n  ]\n]
 - `FreeSpecialistCounts/FreeSpecialistCount/SpecialistType`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: SPECIALIST_ENGINEER
   - Example: SPECIALIST_GREAT_ARTIST
   - Example: SPECIALIST_GREAT_GENERAL
 - `FreeSpecialistCounts/FreeSpecialistCount/iFreeSpecialistCount`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: 1
 - `ImprovementType`
-  - Present: 554. Non-default: 11. Status: preserved.
+  - Present: 554. Non-default: 11. Status: unsupported.
   - Example: IMPROVEMENT_FISHING_BOATS
   - Example: IMPROVEMENT_FORT
   - Example: IMPROVEMENT_MINE
 - `LocalInfoText`
-  - Present: 554. Non-default: 9. Status: preserved.
+  - Present: 554. Non-default: 9. Status: unsupported.
   - Example: TXT_KEY_EVENT_HEALING_PLANT_4
   - Example: TXT_KEY_EVENT_HEALING_PLANT_5
   - Example: TXT_KEY_EVENT_HEALING_PLANT_6
 - `OtherPlayerPopup`
-  - Present: 554. Non-default: 33. Status: preserved.
+  - Present: 554. Non-default: 33. Status: unsupported.
   - Example: TXT_KEY_EVENTOTHER_FUTBOL_WAR_1
   - Example: TXT_KEY_EVENTOTHER_FUTBOL_WAR_2
   - Example: TXT_KEY_EVENTOTHER_FUTBOL_WAR_3
 - `PlotExtraYields`
-  - Present: 554. Non-default: 23. Status: preserved.
+  - Present: 554. Non-default: 23. Status: unsupported.
   - Example: [\n  "PlotExtraYields",\n  [\n    [\n      "PlotExtraYield",\n      [\n        [\n          "YieldType",\n          "YIELD_COMMERCE"\n        ],\n        [\n          "...
   - Example: [\n  "PlotExtraYields",\n  [\n    [\n      "PlotExtraYield",\n      [\n        [\n          "YieldType",\n          "YIELD_FOOD"\n        ],\n        [\n          "iExt...
   - Example: [\n  "PlotExtraYields",\n  [\n    [\n      "PlotExtraYield",\n      [\n        [\n          "YieldType",\n          "YIELD_PRODUCTION"\n        ],\n        [\n         ...
 - `PlotExtraYields/PlotExtraYield`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: [\n  "PlotExtraYield",\n  [\n    [\n      "YieldType",\n      "YIELD_COMMERCE"\n    ],\n    [\n      "iExtraYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PlotExtraYield",\n  [\n    [\n      "YieldType",\n      "YIELD_COMMERCE"\n    ],\n    [\n      "iExtraYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "PlotExtraYield",\n  [\n    [\n      "YieldType",\n      "YIELD_FOOD"\n    ],\n    [\n      "iExtraYield",\n      "-1"\n    ]\n  ]\n]
 - `PlotExtraYields/PlotExtraYield/YieldType`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: YIELD_COMMERCE
   - Example: YIELD_FOOD
   - Example: YIELD_PRODUCTION
 - `PlotExtraYields/PlotExtraYield/iExtraYield`
-  - Present: 23. Non-default: 19. Status: preserved.
+  - Present: 23. Non-default: 19. Status: unsupported.
   - Example: 1
   - Example: 2
 - `PrereqTech`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: TECH_POTTERY
   - Example: TECH_RADIO
   - Example: TECH_WEATHER_CONTROL
 - `PythonCallback`
-  - Present: 554. Non-default: 129. Status: preserved.
+  - Present: 554. Non-default: 129. Status: unsupported.
   - Example: TriggerCompulsoryDem2
   - Example: TriggerCompulsoryDem3
   - Example: TriggerHarryPotter2
 - `PythonCanDo`
-  - Present: 554. Non-default: 54. Status: preserved.
+  - Present: 554. Non-default: 54. Status: unsupported.
   - Example: canApplyBardTale3
   - Example: canApplyBestDefenseDone3
   - Example: canApplyBillionsandBillions2
 - `PythonExpireCheck`
-  - Present: 554. Non-default: 7. Status: preserved.
+  - Present: 554. Non-default: 7. Status: unsupported.
   - Example: expireAlternativeEnergy1
   - Example: expireCorporateExpansion1
   - Example: expireCrusade1
 - `PythonHelp`
-  - Present: 554. Non-default: 122. Status: preserved.
+  - Present: 554. Non-default: 122. Status: unsupported.
   - Example: getHelpAlternativeEnergy1
   - Example: getHelpAlternativeEnergy4
   - Example: getHelpAncientTexts2
 - `QuestFailText`
-  - Present: 554. Non-default: 20. Status: preserved.
+  - Present: 554. Non-default: 20. Status: unsupported.
   - Example: TXT_KEY_EVENT_FAIL_ALTERNATIVE_ENERGY_1
   - Example: TXT_KEY_EVENT_FAIL_BEST_DEFENSE
   - Example: TXT_KEY_EVENT_FAIL_BLESSED_SEA
 - `RouteType`
-  - Present: 554. Non-default: 1. Status: preserved.
+  - Present: 554. Non-default: 1. Status: unsupported.
   - Example: ROUTE_ROAD
 - `Tech`
-  - Present: 554. Non-default: 2. Status: preserved.
+  - Present: 554. Non-default: 2. Status: unsupported.
   - Example: TECH_FLIGHT
 - `TechFlavors`
-  - Present: 554. Non-default: 6. Status: preserved.
+  - Present: 554. Non-default: 6. Status: unsupported.
   - Example: [\n  "TechFlavors",\n  [\n    [\n      "TechFlavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_MILITARY"\n        ],\n        [\n          "iFlavo...
   - Example: [\n  "TechFlavors",\n  [\n    [\n      "TechFlavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_RELIGION"\n        ],\n        [\n          "iFlavo...
   - Example: [\n  "TechFlavors",\n  [\n    [\n      "TechFlavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_SCIENCE"\n        ],\n        [\n          "iFlavor...
 - `TechFlavors/TechFlavor`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: [\n  "TechFlavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TechFlavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_ESPIONAGE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TechFlavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_GOLD"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
 - `TechFlavors/TechFlavor/FlavorType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_ESPIONAGE
   - Example: FLAVOR_GOLD
 - `TechFlavors/TechFlavor/iFlavor`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 1
 - `Type`
-  - Present: 554. Non-default: 554. Status: preserved.
+  - Present: 554. Non-default: 554. Status: unsupported.
   - Example: EVENT_ACADEMIC_FUNDING_1
   - Example: EVENT_AIRLINER_CRASH_1
   - Example: EVENT_AIRLINER_CRASH_2
 - `UnitClass`
-  - Present: 554. Non-default: 20. Status: preserved.
+  - Present: 554. Non-default: 20. Status: unsupported.
   - Example: UNITCLASS_ARCHER
   - Example: UNITCLASS_ARTIST
   - Example: UNITCLASS_AXEMAN
 - `UnitClassPromotions`
-  - Present: 554. Non-default: 21. Status: preserved.
+  - Present: 554. Non-default: 21. Status: unsupported.
   - Example: [\n  "UnitClassPromotions",\n  [\n    [\n      "UnitClassPromotion",\n      [\n        [\n          "UnitClass",\n          "UNITCLASS_AH64_GUNSHIP"\n        ],\n     ...
   - Example: [\n  "UnitClassPromotions",\n  [\n    [\n      "UnitClassPromotion",\n      [\n        [\n          "UnitClass",\n          "UNITCLASS_ARMOR"\n        ],\n        [\n  ...
   - Example: [\n  "UnitClassPromotions",\n  [\n    [\n      "UnitClassPromotion",\n      [\n        [\n          "UnitClass",\n          "UNITCLASS_ARQUEBUSIER"\n        ],\n      ...
 - `UnitClassPromotions/UnitClassPromotion`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: [\n  "UnitClassPromotion",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_AH64_GUNSHIP"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_DRILL1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassPromotion",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_ARMOR"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_DRILL2"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassPromotion",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_ARQUEBUSIER"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_PINCH"\n    ]\n  ]\n]
 - `UnitClassPromotions/UnitClassPromotion/UnitClass`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: UNITCLASS_AH64_GUNSHIP
   - Example: UNITCLASS_ARMOR
   - Example: UNITCLASS_ARQUEBUSIER
 - `UnitClassPromotions/UnitClassPromotion/UnitPromotion`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: unsupported.
   - Example: PROMOTION_BLITZ
   - Example: PROMOTION_CITY_RAIDER1
   - Example: PROMOTION_COMBAT1
 - `UnitCombatPromotions`
-  - Present: 554. Non-default: 17. Status: preserved.
+  - Present: 554. Non-default: 17. Status: unsupported.
   - Example: [\n  "UnitCombatPromotions",\n  [\n    [\n      "UnitCombatPromotion",\n      [\n        [\n          "UnitCombat",\n          "UNITCOMBAT_ARCHER"\n        ],\n       ...
   - Example: [\n  "UnitCombatPromotions",\n  [\n    [\n      "UnitCombatPromotion",\n      [\n        [\n          "UnitCombat",\n          "UNITCOMBAT_BOMBERS"\n        ],\n      ...
   - Example: [\n  "UnitCombatPromotions",\n  [\n    [\n      "UnitCombatPromotion",\n      [\n        [\n          "UnitCombat",\n          "UNITCOMBAT_GUN"\n        ],\n        [\n...
 - `UnitCombatPromotions/UnitCombatPromotion`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: [\n  "UnitCombatPromotion",\n  [\n    [\n      "UnitCombat",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_COMBAT1"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatPromotion",\n  [\n    [\n      "UnitCombat",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_POISON_ARROWS"\n    ]\n...
   - Example: [\n  "UnitCombatPromotion",\n  [\n    [\n      "UnitCombat",\n      "UNITCOMBAT_BOMBERS"\n    ],\n    [\n      "UnitPromotion",\n      "PROMOTION_NAPALM_BOMBS"\n    ]\n...
 - `UnitCombatPromotions/UnitCombatPromotion/UnitCombat`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_BOMBERS
   - Example: UNITCOMBAT_GUN
 - `UnitCombatPromotions/UnitCombatPromotion/UnitPromotion`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: unsupported.
   - Example: PROMOTION_CHAIN_SHOT
   - Example: PROMOTION_CITY_GARRISON1
   - Example: PROMOTION_COMBAT1
 - `UnitName`
-  - Present: 554. Non-default: 1. Status: preserved.
+  - Present: 554. Non-default: 1. Status: unsupported.
   - Example: TXT_KEY_EVENT_UNIT_AT_THE_SWORD
 - `UnitPromotion`
-  - Present: 554. Non-default: 0. Status: preserved.
+  - Present: 554. Non-default: 0. Status: unsupported.
 - `WorldNewsTexts`
-  - Present: 554. Non-default: 48. Status: preserved.
+  - Present: 554. Non-default: 48. Status: unsupported.
   - Example: TXT_KEY_EVENTWORLD_FUTBOL_WAR_1
   - Example: TXT_KEY_EVENTWORLD_FUTBOL_WAR_2
   - Example: TXT_KEY_EVENTWORLD_FUTBOL_WAR_3
 - `WorldNewsTexts/Text`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: unsupported.
   - Example: TXT_KEY_EVENTTRIGGER_DOCK_WORKERS_STRIKE_BADLY
   - Example: TXT_KEY_EVENT_HEROIC_GESTURE_WORLD_2
   - Example: TXT_KEY_EVENT_MEDIATOR_WORLD_2
 - `bDeclareWar`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bDisbandUnit`
-  - Present: 554. Non-default: 10. Status: preserved.
+  - Present: 554. Non-default: 10. Status: unsupported.
   - Example: 1
 - `bGlobal`
-  - Present: 554. Non-default: 44. Status: preserved.
+  - Present: 554. Non-default: 44. Status: unsupported.
   - Example: 1
 - `bGoldToPlayer`
-  - Present: 554. Non-default: 2. Status: preserved.
+  - Present: 554. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bGoldenAge`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bPickCity`
-  - Present: 554. Non-default: 168. Status: preserved.
+  - Present: 554. Non-default: 168. Status: unsupported.
   - Example: 1
 - `bPickOtherPlayerCity`
-  - Present: 554. Non-default: 5. Status: preserved.
+  - Present: 554. Non-default: 5. Status: unsupported.
   - Example: 1
 - `bQuest`
-  - Present: 554. Non-default: 20. Status: preserved.
+  - Present: 554. Non-default: 20. Status: unsupported.
   - Example: 1
 - `bTeam`
-  - Present: 554. Non-default: 0. Status: preserved.
+  - Present: 554. Non-default: 0. Status: unsupported.
 - `iAIValue`
-  - Present: 554. Non-default: 551. Status: preserved.
+  - Present: 554. Non-default: 551. Status: unsupported.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iAttitudeModifier`
-  - Present: 554. Non-default: 25. Status: preserved.
+  - Present: 554. Non-default: 25. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: 1
 - `iBonusChange`
-  - Present: 554. Non-default: 14. Status: preserved.
+  - Present: 554. Non-default: 14. Status: unsupported.
   - Example: 1
 - `iBuildingChange`
-  - Present: 554. Non-default: 6. Status: preserved.
+  - Present: 554. Non-default: 6. Status: unsupported.
   - Example: 1
 - `iConvertOtherCities`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
   - Example: 3
   - Example: 4
 - `iConvertOwnCities`
-  - Present: 554. Non-default: 9. Status: preserved.
+  - Present: 554. Non-default: 9. Status: unsupported.
   - Example: 2
   - Example: 20
   - Example: 4
 - `iCulture`
-  - Present: 554. Non-default: 8. Status: preserved.
+  - Present: 554. Non-default: 8. Status: unsupported.
   - Example: 100
   - Example: 250
   - Example: 300
 - `iEspionagePoints`
-  - Present: 554. Non-default: 9. Status: preserved.
+  - Present: 554. Non-default: 9. Status: unsupported.
   - Example: -150
   - Example: -300
   - Example: -50
 - `iFeatureChange`
-  - Present: 554. Non-default: 7. Status: preserved.
+  - Present: 554. Non-default: 7. Status: unsupported.
   - Example: 1
 - `iFood`
-  - Present: 554. Non-default: 4. Status: preserved.
+  - Present: 554. Non-default: 4. Status: unsupported.
   - Example: -5
   - Example: 10
   - Example: 8
 - `iFoodPercent`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: -100
   - Example: -50
 - `iFreeUnitSupport`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iGold`
-  - Present: 554. Non-default: 149. Status: preserved.
+  - Present: 554. Non-default: 149. Status: unsupported.
   - Example: -10
   - Example: -100
   - Example: -1000
 - `iHappy`
-  - Present: 554. Non-default: 15. Status: preserved.
+  - Present: 554. Non-default: 15. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: 1
 - `iHappyTurns`
-  - Present: 554. Non-default: 18. Status: preserved.
+  - Present: 554. Non-default: 18. Status: unsupported.
   - Example: 10
   - Example: 15
   - Example: 2
 - `iHealth`
-  - Present: 554. Non-default: 4. Status: preserved.
+  - Present: 554. Non-default: 4. Status: unsupported.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iHurryAnger`
-  - Present: 554. Non-default: 35. Status: preserved.
+  - Present: 554. Non-default: 35. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iImprovementChange`
-  - Present: 554. Non-default: 5. Status: preserved.
+  - Present: 554. Non-default: 5. Status: unsupported.
   - Example: 1
 - `iInflationMod`
-  - Present: 554. Non-default: 8. Status: preserved.
+  - Present: 554. Non-default: 8. Status: unsupported.
   - Example: -10
   - Example: -11
   - Example: -25
 - `iMaxNumReligions`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
 - `iMaxPillage`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
   - Example: 4
   - Example: 5
 - `iMinPillage`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iNumFreeUnits`
-  - Present: 554. Non-default: 20. Status: preserved.
+  - Present: 554. Non-default: 20. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iOurAttitudeModifier`
-  - Present: 554. Non-default: 18. Status: preserved.
+  - Present: 554. Non-default: 18. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: 1
 - `iPopulationChange`
-  - Present: 554. Non-default: 12. Status: preserved.
+  - Present: 554. Non-default: 12. Status: unsupported.
   - Example: -2
   - Example: -3
   - Example: -4
 - `iRandomGold`
-  - Present: 554. Non-default: 29. Status: preserved.
+  - Present: 554. Non-default: 29. Status: unsupported.
   - Example: -1500
   - Example: -200
   - Example: -400
 - `iRevoltTurns`
-  - Present: 554. Non-default: 13. Status: preserved.
+  - Present: 554. Non-default: 13. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iRouteChange`
-  - Present: 554. Non-default: 1. Status: preserved.
+  - Present: 554. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iSpaceProductionMod`
-  - Present: 554. Non-default: 4. Status: preserved.
+  - Present: 554. Non-default: 4. Status: unsupported.
   - Example: -4
   - Example: 1
   - Example: 5
 - `iTechCostPercent`
-  - Present: 554. Non-default: 3. Status: preserved.
+  - Present: 554. Non-default: 3. Status: unsupported.
   - Example: 10
   - Example: 5
 - `iTechMinTurnsLeft`
-  - Present: 554. Non-default: 10. Status: preserved.
+  - Present: 554. Non-default: 10. Status: unsupported.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iTechPercent`
-  - Present: 554. Non-default: 16. Status: preserved.
+  - Present: 554. Non-default: 16. Status: unsupported.
   - Example: -15
   - Example: -30
   - Example: -8
 - `iTheirEnemyAttitudeModifier`
-  - Present: 554. Non-default: 0. Status: preserved.
+  - Present: 554. Non-default: 0. Status: unsupported.
 - `iUnitExperience`
-  - Present: 554. Non-default: 2. Status: preserved.
+  - Present: 554. Non-default: 2. Status: unsupported.
   - Example: 1
   - Example: 3
 - `iUnitImmobileTurns`
-  - Present: 554. Non-default: 4. Status: preserved.
+  - Present: 554. Non-default: 4. Status: unsupported.
   - Example: 2
   - Example: 3
 
@@ -4889,353 +4889,353 @@ Era counts: ERA_ANCIENT=1, ERA_INDUSTRIAL=1, ERA_TRANSHUMAN=1, unknown=551
 Era counts: unknown=327
 
 - `AndPreReqs`
-  - Present: 327. Non-default: 63. Status: preserved.
+  - Present: 327. Non-default: 63. Status: unsupported.
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ADVANCED_FLIGHT"\n    ]\n  ]\n]
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_AESTHETICS"\n    ]\n  ]\n]
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_AMPHIBIOUS_WARFARE"\n    ]\n  ]\n]
 - `AndPreReqs/PrereqTech`
-  - Present: 63. Non-default: 63. Status: preserved.
+  - Present: 63. Non-default: 63. Status: unsupported.
   - Example: TECH_ADVANCED_FLIGHT
   - Example: TECH_AESTHETICS
   - Example: TECH_AMPHIBIOUS_WARFARE
 - `BonusesRequired`
-  - Present: 327. Non-default: 35. Status: preserved.
+  - Present: 327. Non-default: 35. Status: unsupported.
   - Example: [\n  "BonusesRequired",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ]\n  ]\n]
   - Example: [\n  "BonusesRequired",\n  [\n    [\n      "BonusType",\n      "BONUS_BANANA"\n    ]\n  ]\n]
   - Example: [\n  "BonusesRequired",\n  [\n    [\n      "BonusType",\n      "BONUS_CLAM"\n    ],\n    [\n      "BonusType",\n      "BONUS_CRAB"\n    ],\n    [\n      "BonusType",\n   ...
 - `BonusesRequired/BonusType`
-  - Present: 45. Non-default: 35. Status: preserved.
+  - Present: 45. Non-default: 35. Status: unsupported.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_BANANA
   - Example: BONUS_CLAM
 - `BuildingsRequired`
-  - Present: 327. Non-default: 82. Status: preserved.
+  - Present: 327. Non-default: 82. Status: unsupported.
   - Example: BUILDINGCLASS_LABORATORY
   - Example: BUILDINGCLASS_STADIUM
   - Example: [\n  "BuildingsRequired",\n  [\n    [\n      "BuildingClass",\n      "BUILDINGCLASS_ACADEMY"\n    ]\n  ]\n]
 - `BuildingsRequired/BuildingClass`
-  - Present: 80. Non-default: 80. Status: preserved.
+  - Present: 80. Non-default: 80. Status: unsupported.
   - Example: BUILDINGCLASS_ACADEMY
   - Example: BUILDINGCLASS_ACCELERATOR
   - Example: BUILDINGCLASS_AIRPORT
 - `Civic`
-  - Present: 327. Non-default: 42. Status: preserved.
+  - Present: 327. Non-default: 42. Status: unsupported.
   - Example: CIVIC_BUREAUCRACY
   - Example: CIVIC_CASTE_SYSTEM
   - Example: CIVIC_DESPOTISM
 - `CorporationsRequired`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `EventArt`
-  - Present: 299. Non-default: 258. Status: preserved.
+  - Present: 299. Non-default: 258. Status: unsupported.
   - Example: Art/EventImages/BlarneyVisit.dds
   - Example: Art/EventImages/DinoAttack.dds
   - Example: Art/EventImages/MegaAttack.dds
 - `Events`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: [\n  "Events",\n  [\n    [\n      "Event",\n      "EVENT_ACADEMIC_FUNDING_1"\n    ]\n  ]\n]
   - Example: [\n  "Events",\n  [\n    [\n      "Event",\n      "EVENT_AIRLINER_CRASH_1"\n    ],\n    [\n      "Event",\n      "EVENT_AIRLINER_CRASH_2"\n    ],\n    [\n      "Event",\n...
   - Example: [\n  "Events",\n  [\n    [\n      "Event",\n      "EVENT_ALTERNATIVE_ENERGY_1"\n    ]\n  ]\n]
 - `Events/Event`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: EVENT_ACADEMIC_FUNDING_1
   - Example: EVENT_AIRLINER_CRASH_1
   - Example: EVENT_AIRLINER_CRASH_2
 - `FeaturesRequired`
-  - Present: 327. Non-default: 11. Status: preserved.
+  - Present: 327. Non-default: 11. Status: unsupported.
   - Example: [\n  "FeaturesRequired",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ]\n  ]\n]
   - Example: [\n  "FeaturesRequired",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ]\n  ]\n]
   - Example: [\n  "FeaturesRequired",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ]\n  ]\n]
 - `FeaturesRequired/FeatureType`
-  - Present: 21. Non-default: 11. Status: preserved.
+  - Present: 21. Non-default: 11. Status: unsupported.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
   - Example: FEATURE_OASIS
 - `ImprovementsRequired`
-  - Present: 327. Non-default: 51. Status: preserved.
+  - Present: 327. Non-default: 51. Status: unsupported.
   - Example: [\n  "ImprovementsRequired",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_CAMP"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementsRequired",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_CITY_RUINS"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementsRequired",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_COTTAGE"\n    ],\n    [\n      "ImprovementType",\n      "IMPROVEMENT_HAMLET"\n ...
 - `ImprovementsRequired/ImprovementType`
-  - Present: 63. Non-default: 51. Status: preserved.
+  - Present: 63. Non-default: 51. Status: unsupported.
   - Example: IMPROVEMENT_APPLE_FARM
   - Example: IMPROVEMENT_CAMP
   - Example: IMPROVEMENT_CITY_RUINS
 - `MinDifficulty`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `ObsoleteTechs`
-  - Present: 327. Non-default: 119. Status: preserved.
+  - Present: 327. Non-default: 119. Status: unsupported.
   - Example: [\n  "ObsoleteTechs",\n  [\n    [\n      "ObsoleteTech",\n      "TECH_ADVANCED_FLIGHT"\n    ],\n    [\n      "ObsoleteTech",\n      "TECH_ELECTRONICS"\n    ],\n    [\n  ...
   - Example: [\n  "ObsoleteTechs",\n  [\n    [\n      "ObsoleteTech",\n      "TECH_ALPHABET"\n    ],\n    [\n      "ObsoleteTech",\n      "TECH_ATHLETICS"\n    ],\n    [\n      "Obso...
   - Example: [\n  "ObsoleteTechs",\n  [\n    [\n      "ObsoleteTech",\n      "TECH_ARTILLERY"\n    ]\n  ]\n]
 - `ObsoleteTechs/ObsoleteTech`
-  - Present: 115. Non-default: 115. Status: preserved.
+  - Present: 115. Non-default: 115. Status: unsupported.
   - Example: TECH_ADVANCED_FLIGHT
   - Example: TECH_ALPHABET
   - Example: TECH_ARTIFICIAL_INTELLIGENCE
 - `ObsoleteTechs/PrereqTech`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: unsupported.
   - Example: TECH_APPLIED_ECONOMICS
   - Example: TECH_CONTROLLED_PLASMA
   - Example: TECH_HUMANISM
 - `OrPreReqs`
-  - Present: 326. Non-default: 107. Status: preserved.
+  - Present: 326. Non-default: 107. Status: unsupported.
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_AESTHETICS"\n    ]\n  ]\n]
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ALPHABET"\n    ],\n    [\n      "PrereqTech",\n      "TECH_ATHLETICS"\n    ],\n    [\n      "PrereqTech",...
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ANIMAL_HUSBANDRY"\n    ]\n  ]\n]
 - `OrPreReqs/PrereqTech`
-  - Present: 107. Non-default: 107. Status: preserved.
+  - Present: 107. Non-default: 107. Status: unsupported.
   - Example: TECH_AESTHETICS
   - Example: TECH_ALPHABET
   - Example: TECH_ANIMAL_HUSBANDRY
 - `OtherPlayerHasTech`
-  - Present: 327. Non-default: 2. Status: preserved.
+  - Present: 327. Non-default: 2. Status: unsupported.
   - Example: TECH_FLIGHT
   - Example: TECH_NATIONALISM
 - `PrereqEvents`
-  - Present: 327. Non-default: 25. Status: preserved.
+  - Present: 327. Non-default: 25. Status: unsupported.
   - Example: [\n  "PrereqEvents",\n  [\n    [\n      "Event",\n      "EVENT_ALTERNATIVE_ENERGY_1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqEvents",\n  [\n    [\n      "Event",\n      "EVENT_ANCIENTOLYMPICS_2"\n    ]\n  ]\n]
   - Example: [\n  "PrereqEvents",\n  [\n    [\n      "Event",\n      "EVENT_BEST_DEFENSE_1"\n    ]\n  ]\n]
 - `PrereqEvents/Event`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: EVENT_ALTERNATIVE_ENERGY_1
   - Example: EVENT_ANCIENTOLYMPICS_2
   - Example: EVENT_BEST_DEFENSE_1
 - `PythonCallback`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `PythonCanDo`
-  - Present: 327. Non-default: 124. Status: preserved.
+  - Present: 327. Non-default: 124. Status: unsupported.
   - Example: canApplyMeteorStrike
   - Example: canDoNewWorldTrigger
   - Example: canEventTriggerCompulsoryDem
 - `PythonCanDoCity`
-  - Present: 327. Non-default: 15. Status: preserved.
+  - Present: 327. Non-default: 15. Status: unsupported.
   - Example: canDoTriggerCityIndustrialAction
   - Example: canTriggerChariotryFounded
   - Example: canTriggerCitySyntheticFuels
 - `PythonCanDoUnit`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: canTriggerCarnationUnit
   - Example: canTriggerChampionUnit
   - Example: canTriggerRubiconUnit
 - `ReligionsRequired`
-  - Present: 327. Non-default: 7. Status: preserved.
+  - Present: 327. Non-default: 7. Status: unsupported.
   - Example: [\n  "ReligionsRequired",\n  [\n    [\n      "ReligionType",\n      "RELIGION_BUDDHISM"\n    ]\n  ]\n]
   - Example: [\n  "ReligionsRequired",\n  [\n    [\n      "ReligionType",\n      "RELIGION_BUDDHISM"\n    ],\n    [\n      "ReligionType",\n      "RELIGION_CONFUCIANISM"\n    ],\n  ...
   - Example: [\n  "ReligionsRequired",\n  [\n    [\n      "ReligionType",\n      "RELIGION_CHRISTIANITY"\n    ]\n  ]\n]
 - `ReligionsRequired/ReligionType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
   - Example: RELIGION_CONFUCIANISM
 - `RoutesRequired`
-  - Present: 327. Non-default: 20. Status: preserved.
+  - Present: 327. Non-default: 20. Status: unsupported.
   - Example: [\n  "RoutesRequired",\n  [\n    [\n      "RouteType",\n      "ROUTE_RAILROAD"\n    ]\n  ]\n]
   - Example: [\n  "RoutesRequired",\n  [\n    [\n      "RouteType",\n      "ROUTE_ROAD"\n    ],\n    [\n      "RouteType",\n      "ROUTE_PAVED"\n    ],\n    [\n      "RouteType",\n   ...
   - Example: [\n  "RoutesRequired",\n  [\n    [\n      "RouteType",\n      "ROUTE_TRACK"\n    ],\n    [\n      "RouteType",\n      "ROUTE_ROAD"\n    ],\n    [\n      "RouteType",\n   ...
 - `RoutesRequired/RouteType`
-  - Present: 28. Non-default: 20. Status: preserved.
+  - Present: 28. Non-default: 20. Status: unsupported.
   - Example: ROUTE_GRAVTUBE
   - Example: ROUTE_JUMPLANE
   - Example: ROUTE_MODERN_ROAD
 - `TerrainsRequired`
-  - Present: 327. Non-default: 28. Status: preserved.
+  - Present: 327. Non-default: 28. Status: unsupported.
   - Example: [\n  "TerrainsRequired",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ]\n  ]\n]
   - Example: [\n  "TerrainsRequired",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ]\n  ]\n]
   - Example: [\n  "TerrainsRequired",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ]\n  ]\n]
 - `TerrainsRequired/TerrainType`
-  - Present: 28. Non-default: 28. Status: preserved.
+  - Present: 28. Non-default: 28. Status: unsupported.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TriggerTexts`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: [\n  "TriggerTexts",\n  [\n    [\n      "TriggerText",\n      [\n        [\n          "Text",\n          "TXT_KEY_EVENTTRIGGER_LOCAL_MILLS"\n        ],\n        [\n    ...
   - Example: [\n  "TriggerTexts",\n  [\n    [\n      "TriggerText",\n      [\n        [\n          "Text",\n          "TXT_KEY_EVENTTRIGGER_MAHDI_ARMY"\n        ],\n        [\n     ...
   - Example: [\n  "TriggerTexts",\n  [\n    [\n      "TriggerText",\n      [\n        [\n          "Text",\n          "TXT_KEY_EVENTTRIGGER_METEOR_STRIKE"\n        ],\n        [\n  ...
 - `TriggerTexts/TriggerText`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: [\n  "TriggerText",\n  [\n    [\n      "Text",\n      "TXT_KEY_EVENTTRIGGER_LOCAL_MILLS"\n    ],\n    [\n      "Era",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "TriggerText",\n  [\n    [\n      "Text",\n      "TXT_KEY_EVENTTRIGGER_MAHDI_ARMY"\n    ],\n    [\n      "Era",\n      "NONE"\n    ]\n  ]\n]
   - Example: [\n  "TriggerText",\n  [\n    [\n      "Text",\n      "TXT_KEY_EVENTTRIGGER_METEOR_STRIKE"\n    ],\n    [\n      "Era",\n      "NONE"\n    ]\n  ]\n]
 - `TriggerTexts/TriggerText/Era`
-  - Present: 327. Non-default: 9. Status: preserved.
+  - Present: 327. Non-default: 9. Status: unsupported.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `TriggerTexts/TriggerText/Text`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: TXT_KEY_EVENTTRIGGER_LOCAL_MILLS
   - Example: TXT_KEY_EVENTTRIGGER_MAHDI_ARMY
   - Example: TXT_KEY_EVENTTRIGGER_METEOR_STRIKE
 - `Type`
-  - Present: 327. Non-default: 327. Status: preserved.
+  - Present: 327. Non-default: 327. Status: unsupported.
   - Example: EVENTTRIGGER_ACADEMIC_FUNDING
   - Example: EVENTTRIGGER_AIRLINER_CRASH
   - Example: EVENTTRIGGER_ALTERNATIVE_ENERGY
 - `UnitsRequired`
-  - Present: 327. Non-default: 35. Status: preserved.
+  - Present: 327. Non-default: 35. Status: unsupported.
   - Example: [\n  "UnitsRequired",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_AH64_GUNSHIP"\n    ],\n    [\n      "UnitClass",\n      "UNITCLASS_HYBRID_GUNSHIP"\n    ]\n  ]\n]
   - Example: [\n  "UnitsRequired",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_AIRSHIP"\n    ]\n  ]\n]
   - Example: [\n  "UnitsRequired",\n  [\n    [\n      "UnitClass",\n      "UNITCLASS_ARCHER"\n    ]\n  ]\n]
 - `UnitsRequired/UnitClass`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: unsupported.
   - Example: UNITCLASS_ADVENTURER
   - Example: UNITCLASS_AH64_GUNSHIP
   - Example: UNITCLASS_AIRSHIP
 - `WorldNewsTexts`
-  - Present: 327. Non-default: 278. Status: preserved.
+  - Present: 327. Non-default: 278. Status: unsupported.
   - Example: TXT_KEY_EVENT_TRIGGER_WORLD_INDUSTRIAL_ACTION
   - Example: [\n  "WorldNewsTexts",\n  [\n    [\n      "Text",\n      "TXT_KEY_EVENTTRIGGER_ACADEMIC_FUNDING"\n    ]\n  ]\n]
   - Example: [\n  "WorldNewsTexts",\n  [\n    [\n      "Text",\n      "TXT_KEY_EVENTTRIGGER_AIRLINER_CRASH"\n    ]\n  ]\n]
 - `WorldNewsTexts/Text`
-  - Present: 277. Non-default: 277. Status: preserved.
+  - Present: 277. Non-default: 277. Status: unsupported.
   - Example: TXT_KEY_EVENTTRIGGER_ACADEMIC_FUNDING
   - Example: TXT_KEY_EVENTTRIGGER_AIRLINER_CRASH
   - Example: TXT_KEY_EVENTTRIGGER_ANCIENTOLYMPICS
 - `bGlobal`
-  - Present: 327. Non-default: 180. Status: preserved.
+  - Present: 327. Non-default: 180. Status: unsupported.
   - Example: 1
 - `bHeadquarters`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bHolyCity`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `bOtherPlayerAI`
-  - Present: 327. Non-default: 2. Status: preserved.
+  - Present: 327. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bOtherPlayerHasOtherReligion`
-  - Present: 327. Non-default: 1. Status: preserved.
+  - Present: 327. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bOtherPlayerHasReligion`
-  - Present: 327. Non-default: 2. Status: preserved.
+  - Present: 327. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bOtherPlayerWar`
-  - Present: 327. Non-default: 6. Status: preserved.
+  - Present: 327. Non-default: 6. Status: unsupported.
   - Example: 1
 - `bOwnPlot`
-  - Present: 327. Non-default: 145. Status: preserved.
+  - Present: 327. Non-default: 145. Status: unsupported.
   - Example: 1
 - `bPickCity`
-  - Present: 327. Non-default: 125. Status: preserved.
+  - Present: 327. Non-default: 125. Status: unsupported.
   - Example: 1
 - `bPickCorporation`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bPickOtherPlayerCity`
-  - Present: 327. Non-default: 4. Status: preserved.
+  - Present: 327. Non-default: 4. Status: unsupported.
   - Example: 1
 - `bPickPlayer`
-  - Present: 327. Non-default: 27. Status: preserved.
+  - Present: 327. Non-default: 27. Status: unsupported.
   - Example: 1
 - `bPickReligion`
-  - Present: 327. Non-default: 17. Status: preserved.
+  - Present: 327. Non-default: 17. Status: unsupported.
   - Example: 1
 - `bPrereqEventPlot`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bProbabilityBuildingMultiply`
-  - Present: 327. Non-default: 2. Status: preserved.
+  - Present: 327. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bProbabilityUnitMultiply`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
 - `bRecurring`
-  - Present: 327. Non-default: 54. Status: preserved.
+  - Present: 327. Non-default: 54. Status: unsupported.
   - Example: 1
 - `bShowPlot`
-  - Present: 327. Non-default: 209. Status: preserved.
+  - Present: 327. Non-default: 209. Status: unsupported.
   - Example: 1
 - `bSinglePlayer`
-  - Present: 327. Non-default: 15. Status: preserved.
+  - Present: 327. Non-default: 15. Status: unsupported.
   - Example: 1
 - `bStateReligion`
-  - Present: 327. Non-default: 17. Status: preserved.
+  - Present: 327. Non-default: 17. Status: unsupported.
   - Example: 1
 - `bTeam`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `bUnitsOnPlot`
-  - Present: 327. Non-default: 9. Status: preserved.
+  - Present: 327. Non-default: 9. Status: unsupported.
   - Example: 1
 - `iAngry`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
   - Example: 3
 - `iCityFoodWeight`
-  - Present: 327. Non-default: 1. Status: preserved.
+  - Present: 327. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iMaxOurLandmass`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `iMaxPopulation`
-  - Present: 327. Non-default: 1. Status: preserved.
+  - Present: 327. Non-default: 1. Status: unsupported.
   - Example: 5
 - `iMinMapLandmass`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `iMinOurLandmass`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `iMinPopulation`
-  - Present: 327. Non-default: 11. Status: preserved.
+  - Present: 327. Non-default: 11. Status: unsupported.
   - Example: 10
   - Example: 25
   - Example: 4
 - `iMinTreasury`
-  - Present: 327. Non-default: 28. Status: preserved.
+  - Present: 327. Non-default: 28. Status: unsupported.
   - Example: 1
   - Example: 100
   - Example: 1000
 - `iNumBuildings`
-  - Present: 327. Non-default: 74. Status: preserved.
+  - Present: 327. Non-default: 74. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iNumBuildingsGlobal`
-  - Present: 327. Non-default: 11. Status: preserved.
+  - Present: 327. Non-default: 11. Status: unsupported.
   - Example: 1
   - Example: 10
   - Example: 5
 - `iNumCorporations`
-  - Present: 327. Non-default: 3. Status: preserved.
+  - Present: 327. Non-default: 3. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iNumPlotsRequired`
-  - Present: 327. Non-default: 88. Status: preserved.
+  - Present: 327. Non-default: 88. Status: unsupported.
   - Example: 1
   - Example: 4
 - `iNumReligions`
-  - Present: 327. Non-default: 9. Status: preserved.
+  - Present: 327. Non-default: 9. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iNumUnits`
-  - Present: 327. Non-default: 22. Status: preserved.
+  - Present: 327. Non-default: 22. Status: unsupported.
   - Example: 1
   - Example: 3
 - `iNumUnitsGlobal`
-  - Present: 327. Non-default: 18. Status: preserved.
+  - Present: 327. Non-default: 18. Status: unsupported.
   - Example: 1
 - `iOtherPlayerShareBorders`
-  - Present: 327. Non-default: 9. Status: preserved.
+  - Present: 327. Non-default: 9. Status: unsupported.
   - Example: 1
 - `iPercentGamesActive`
-  - Present: 327. Non-default: 313. Status: preserved.
+  - Present: 327. Non-default: 313. Status: unsupported.
   - Example: 100
   - Example: 15
   - Example: 20
 - `iPlotType`
-  - Present: 327. Non-default: 13. Status: preserved.
+  - Present: 327. Non-default: 13. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iUnhealthy`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `iUnitDamagedWeight`
-  - Present: 327. Non-default: 2. Status: preserved.
+  - Present: 327. Non-default: 2. Status: unsupported.
   - Example: 1
 - `iUnitDistanceWeight`
-  - Present: 327. Non-default: 0. Status: preserved.
+  - Present: 327. Non-default: 0. Status: unsupported.
 - `iUnitExperienceWeight`
-  - Present: 327. Non-default: 4. Status: preserved.
+  - Present: 327. Non-default: 4. Status: unsupported.
   - Example: 1
 - `iWeight`
-  - Present: 327. Non-default: 283. Status: preserved.
+  - Present: 327. Non-default: 283. Status: unsupported.
   - Example: -2
   - Example: 100
   - Example: 1000
@@ -5245,70 +5245,70 @@ Era counts: unknown=327
 Era counts: unknown=10
 
 - `Button`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,3
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,8
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,8
 - `FeatureVariety`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: [\n  "FeatureVariety",\n  [\n    [\n      "FeatureArtPieces",\n      [\n        [\n          "FeatureArtPiece",\n          [\n            [\n              "ModelFile",...
 - `FeatureVariety/Button`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,8
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,8
 - `FeatureVariety/FeatureArtPieces`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: [\n  "FeatureArtPieces",\n  [\n    [\n      "FeatureArtPiece",\n      [\n        [\n          "ModelFile",\n          "Art/Effects/cities_irradiated/fx_cities_iradia...
   - Example: [\n  "FeatureArtPieces",\n  [\n    [\n      "FeatureArtPiece",\n      [\n        [\n          "ModelFile",\n          "Art/Effects/sunami/Sunami.nif"\n        ],\n    ...
   - Example: [\n  "FeatureArtPieces",\n  [\n    [\n      "FeatureArtPiece",\n      [\n        [\n          "ModelFile",\n          "Art/Terrain/Features/Biogas/Radiation.nif"\n   ...
 - `FeatureVariety/FeatureArtPieces/FeatureArtPiece`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: [\n  "FeatureArtPiece",\n  [\n    [\n      "ModelFile",\n      "Art/Effects/cities_irradiated/fx_cities_iradiated.nif"\n    ],\n    [\n      "Connections",\n      ""\n...
   - Example: [\n  "FeatureArtPiece",\n  [\n    [\n      "ModelFile",\n      "Art/Effects/sunami/Sunami.nif"\n    ],\n    [\n      "Connections",\n      ""\n    ]\n  ]\n]
   - Example: [\n  "FeatureArtPiece",\n  [\n    [\n      "ModelFile",\n      "Art/Terrain/Features/Biogas/Radiation.nif"\n    ],\n    [\n      "Connections",\n      ""\n    ]\n  ]\n]
 - `FeatureVariety/FeatureArtPieces/FeatureArtPiece/Connections`
-  - Present: 10. Non-default: 3. Status: preserved.
+  - Present: 10. Non-default: 3. Status: unsupported.
   - Example: NE
   - Example: NE SE
   - Example: NE SE SW
 - `FeatureVariety/FeatureArtPieces/FeatureArtPiece/ModelFile`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: Art/Effects/cities_irradiated/fx_cities_iradiated.nif
   - Example: Art/Effects/sunami/Sunami.nif
   - Example: Art/Terrain/Features/Biogas/Radiation.nif
 - `FeatureVariety/FeatureDummyNodes`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: unsupported.
 - `FeatureVariety/VarietyButton`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,3
   - Example: Art/Interface/Buttons/TerrainFeatures/Fallout.dds
   - Example: Art/Interface/Buttons/TerrainFeatures/FloodPlains.dds
 - `FeatureVariety/bGenerateRotations`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: unsupported.
 - `LightType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: LIGHT_TYPE_SUN
 - `TileArtType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: TILE_ART_TYPE_HALF_TILING
   - Example: TILE_ART_TYPE_NONE
   - Example: TILE_ART_TYPE_TREES
 - `Type`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: ART_DEF_FEATURE_BIOGAS
   - Example: ART_DEF_FEATURE_FALLOUT
   - Example: ART_DEF_FEATURE_FLOOD_PLAINS
 - `bAnimated`
-  - Present: 10. Non-default: 6. Status: preserved.
+  - Present: 10. Non-default: 6. Status: unsupported.
   - Example: 1
 - `bRiverArt`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 1
 - `fInterfaceScale`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: 1.0
 - `fScale`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: 1.0
 
 ## FeatureInfo: 10 records
@@ -5316,184 +5316,184 @@ Era counts: unknown=10
 Era counts: unknown=10
 
 - `ArtDefineTag`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: ART_DEF_FEATURE_BIOGAS
   - Example: ART_DEF_FEATURE_FALLOUT
   - Example: ART_DEF_FEATURE_FLOOD_PLAINS
 - `Civilopedia`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TXT_KEY_FEATURE_BIOGAS_PEDIA
   - Example: TXT_KEY_FEATURE_FALLOUT_PEDIA
   - Example: TXT_KEY_FEATURE_FLOOD_PLAINS_PEDIA
 - `Description`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TXT_KEY_FEATURE_BIOGAS
   - Example: TXT_KEY_FEATURE_FALLOUT
   - Example: TXT_KEY_FEATURE_FLOOD_PLAINS
 - `EffectType`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: unsupported.
   - Example: EFFECT_BIRDSCATTER
 - `FootstepSounds`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: [\n  "FootstepSounds",\n  [\n    [\n      "FootstepSound",\n      [\n        [\n          "FootstepAudioType",\n          "FOOTSTEP_AUDIO_HUMAN"\n        ],\n        [...
 - `FootstepSounds/FootstepSound`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_ARTILLERY"\n    ],\n    [\n      "FootstepAudioScript",\n      ""\n    ]\n  ]\n]
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_ARTILLERY"\n    ],\n    [\n      "FootstepAudioScript",\n      "AS3D_UN_ARTILLERY_RUN_EN...
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_ARTILLERY"\n    ],\n    [\n      "FootstepAudioScript",\n      "AS3D_UN_ARTILL_RUN_END_F...
 - `FootstepSounds/FootstepSound/FootstepAudioScript`
-  - Present: 10. Non-default: 7. Status: preserved.
+  - Present: 10. Non-default: 7. Status: unsupported.
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE_FOREST
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE_LOW_FOREST
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE_LOW_MUD
 - `FootstepSounds/FootstepSound/FootstepAudioType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: ENDSTEP_ARTILLERY
   - Example: ENDSTEP_DESTROYER
   - Example: ENDSTEP_GUNSHIP
 - `GrowthSound`
-  - Present: 4. Non-default: 3. Status: preserved.
+  - Present: 4. Non-default: 3. Status: unsupported.
   - Example: AS2D_FEATUREGROWTH
   - Example: AS2D_STORM_GROWTH
 - `HillsYieldChange`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: unsupported.
 - `OnUnitChangeTo`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: unsupported.
 - `RiverYieldChange`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: mapped.
   - Example: [\n  "RiverYieldChange",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "RiverYieldChange",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `RiverYieldChange/iYield`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `TerrainBooleans`
-  - Present: 10. Non-default: 9. Status: preserved.
+  - Present: 10. Non-default: 9. Status: mapped.
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n          ...
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n         ...
   - Example: [\n  "TerrainBooleans",\n  [\n    [\n      "TerrainBoolean",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          ...
 - `TerrainBooleans/TerrainBoolean`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainBoolean",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "bTerrain",\n      "1"\n    ]\n  ]\n]
 - `TerrainBooleans/TerrainBoolean/TerrainType`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TerrainBooleans/TerrainBoolean/bTerrain`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: FEATURE_BIOGAS
   - Example: FEATURE_FALLOUT
   - Example: FEATURE_FLOOD_PLAINS
 - `WorldSoundscapeAudioScript`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: unsupported.
   - Example: ASSS_COAST_SELECT_AMB
   - Example: ASSS_FOREST_SELECT_AMB
   - Example: ASSS_JUNGLE_SELECT_AMB
 - `YieldChanges`
-  - Present: 10. Non-default: 6. Status: preserved.
+  - Present: 10. Non-default: 6. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-10"\n    ],\n    [\n      "iYieldChange",\n      "-10"\n    ],\n    [\n      "iYieldChange",\n      "-10"...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-25"\n    ],\n    [\n      "iYieldChange",\n      "-25"\n    ],\n    [\n      "iYieldChange",\n      "-25"...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-5"\n    ],\n    [\n      "iYieldChange",\n      "-5"\n    ],\n    [\n      "iYieldChange",\n      "-5"\n  ...
 - `YieldChanges/iYieldChange`
-  - Present: 9. Non-default: 6. Status: preserved.
+  - Present: 9. Non-default: 6. Status: mapped.
   - Example: -10
   - Example: -25
   - Example: -5
 - `bAddsFreshWater`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: mapped.
   - Example: 1
 - `bCanGrowAnywhere`
-  - Present: 3. Non-default: 1. Status: preserved.
+  - Present: 3. Non-default: 1. Status: mapped.
   - Example: 1
 - `bIgnoreTerrainCulture`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bImpassable`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNoAdjacent`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNoCity`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: mapped.
   - Example: 1
 - `bNoCoast`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNoImprovement`
-  - Present: 10. Non-default: 3. Status: preserved.
+  - Present: 10. Non-default: 3. Status: mapped.
   - Example: 1
 - `bNoRiver`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNukeImmune`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: mapped.
 - `bRequiresFlatlands`
-  - Present: 10. Non-default: 3. Status: preserved.
+  - Present: 10. Non-default: 3. Status: mapped.
   - Example: 1
 - `bRequiresRiver`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 1
 - `bVisibleAlways`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: mapped.
 - `iAdvancedStartRemoveCost`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: mapped.
   - Example: 40
 - `iAppearance`
-  - Present: 10. Non-default: 3. Status: preserved.
+  - Present: 10. Non-default: 3. Status: mapped.
   - Example: 1000
   - Example: 10000
   - Example: 2000
 - `iCultureDistance`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
 - `iDefense`
-  - Present: 10. Non-default: 4. Status: preserved.
+  - Present: 10. Non-default: 4. Status: mapped.
   - Example: -25
   - Example: 25
 - `iDisappearance`
-  - Present: 10. Non-default: 4. Status: preserved.
+  - Present: 10. Non-default: 4. Status: mapped.
   - Example: 1000
   - Example: 150
   - Example: 500
 - `iEffectProbability`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: mapped.
   - Example: 15
 - `iGrowth`
-  - Present: 10. Non-default: 4. Status: preserved.
+  - Present: 10. Non-default: 4. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `iHealthPercent`
-  - Present: 10. Non-default: 7. Status: preserved.
+  - Present: 10. Non-default: 7. Status: mapped.
   - Example: -100
   - Example: -200
   - Example: -25
 - `iMovement`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iSeeThrough`
-  - Present: 10. Non-default: 4. Status: preserved.
+  - Present: 10. Non-default: 4. Status: mapped.
   - Example: 1
 - `iSpread`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1000
   - Example: 500
 - `iTurnDamage`
-  - Present: 10. Non-default: 4. Status: preserved.
+  - Present: 10. Non-default: 4. Status: mapped.
   - Example: 20
   - Example: 25
   - Example: 50
 - `iWarmingDefense`
-  - Present: 7. Non-default: 4. Status: preserved.
+  - Present: 7. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -5503,47 +5503,47 @@ Era counts: unknown=10
 Era counts: unknown=7
 
 - `Description`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: TXT_KEY_FORCE_ADVANCED_START
   - Example: TXT_KEY_FORCE_CONTROL_HANDICAP
   - Example: TXT_KEY_FORCE_CONTROL_MAX_CITY_ELIMINATION
 - `Help`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: TXT_KEY_FORCE_ADVANCED_START
   - Example: TXT_KEY_FORCE_CONTROL_HANDICAP_HELP
   - Example: TXT_KEY_FORCE_CONTROL_MAX_CITY_ELIMINATION_HELP
 - `Type`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: FORCECONTROL_ADVANCED_START
   - Example: FORCECONTROL_HANDICAP
   - Example: FORCECONTROL_MAX_CITY_ELIMINATION
 - `bDefault`
-  - Present: 7. Non-default: 0. Status: preserved.
+  - Present: 7. Non-default: 0. Status: unsupported.
 
 ## GameOptionInfo: 64 records
 
 Era counts: unknown=64
 
 - `Description`
-  - Present: 64. Non-default: 64. Status: preserved.
+  - Present: 64. Non-default: 64. Status: mapped.
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_DIPLOMACY
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_ESPIONAGE
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_NUKES
 - `Help`
-  - Present: 64. Non-default: 64. Status: preserved.
+  - Present: 64. Non-default: 64. Status: mapped.
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_DIPLOMACY_HELP
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_ESPIONAGE_HELP
   - Example: TXT_KEY_GAMEOPTION_ADVANCED_NUKES_HELP
 - `Type`
-  - Present: 64. Non-default: 64. Status: preserved.
+  - Present: 64. Non-default: 64. Status: mapped.
   - Example: GAMEOPTION_ADVANCED_DIPLOMACY
   - Example: GAMEOPTION_ADVANCED_ESPIONAGE
   - Example: GAMEOPTION_ADVANCED_NUKES
 - `bDefault`
-  - Present: 64. Non-default: 18. Status: preserved.
+  - Present: 64. Non-default: 18. Status: mapped.
   - Example: 1
 - `bVisible`
-  - Present: 64. Non-default: 56. Status: preserved.
+  - Present: 64. Non-default: 56. Status: mapped.
   - Example: 1
 
 ## GameSpeedInfo: 7 records
@@ -5551,170 +5551,170 @@ Era counts: unknown=64
 Era counts: unknown=7
 
 - `Description`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: TXT_KEY_GAMESPEED_BLITZ
   - Example: TXT_KEY_GAMESPEED_EPIC
   - Example: TXT_KEY_GAMESPEED_ETERNITY
 - `GameTurnInfos`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "GameTurnInfos",\n  [\n    [\n      "GameTurnInfo",\n      [\n        [\n          "iMonthIncrement",\n          "1200"\n        ],\n        [\n          "iTurnsPe...
   - Example: [\n  "GameTurnInfos",\n  [\n    [\n      "GameTurnInfo",\n      [\n        [\n          "iMonthIncrement",\n          "1800"\n        ],\n        [\n          "iTurnsPe...
   - Example: [\n  "GameTurnInfos",\n  [\n    [\n      "GameTurnInfo",\n      [\n        [\n          "iMonthIncrement",\n          "240"\n        ],\n        [\n          "iTurnsPer...
 - `GameTurnInfos/GameTurnInfo`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "GameTurnInfo",\n  [\n    [\n      "iMonthIncrement",\n      "1"\n    ],\n    [\n      "iTurnsPerIncrement",\n      "1260"\n    ]\n  ]\n]
   - Example: [\n  "GameTurnInfo",\n  [\n    [\n      "iMonthIncrement",\n      "12"\n    ],\n    [\n      "iTurnsPerIncrement",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "GameTurnInfo",\n  [\n    [\n      "iMonthIncrement",\n      "12"\n    ],\n    [\n      "iTurnsPerIncrement",\n      "118"\n    ]\n  ]\n]
 - `GameTurnInfos/GameTurnInfo/iMonthIncrement`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 12
   - Example: 120
 - `GameTurnInfos/GameTurnInfo/iTurnsPerIncrement`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
   - Example: 105
   - Example: 1056
 - `Help`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: TXT_KEY_GAMESPEED_EPIC_HELP
   - Example: TXT_KEY_GAMESPEED_ETERNITY_HELP
   - Example: TXT_KEY_GAMESPEED_MARATHON_HELP
 - `Percents`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "Percents",\n  [\n    [\n      "Percent",\n      [\n        [\n          "ID",\n          "ADAPT_DEFAULT"\n        ],\n        [\n          "iValue",\n          "17...
   - Example: [\n  "Percents",\n  [\n    [\n      "Percent",\n      [\n        [\n          "ID",\n          "ADAPT_DEFAULT"\n        ],\n        [\n          "iValue",\n          "25...
   - Example: [\n  "Percents",\n  [\n    [\n      "Percent",\n      [\n        [\n          "ID",\n          "ADAPT_DEFAULT"\n        ],\n        [\n          "iValue",\n          "40...
 - `Percents/Percent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_DEFAULT"\n    ],\n    [\n      "iValue",\n      "170"\n    ]\n  ]\n]
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_DEFAULT"\n    ],\n    [\n      "iValue",\n      "250"\n    ]\n  ]\n]
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_DEFAULT"\n    ],\n    [\n      "iValue",\n      "40"\n    ]\n  ]\n]
 - `Percents/Percent/ID`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: ADAPT_DEFAULT
 - `Percents/Percent/iValue`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 170
   - Example: 250
   - Example: 40
 - `Type`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: GAMESPEED_BLITZ
   - Example: GAMESPEED_EPIC
   - Example: GAMESPEED_ETERNITY
 - `iAnarchyPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iBarbPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iBuildPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 120
   - Example: 160
   - Example: 240
 - `iConstructPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iCreatePercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iCulturePercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 130
   - Example: 195
   - Example: 260
 - `iFeatureProductionPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iGoldModifier`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 110
   - Example: 115
   - Example: 120
 - `iGoldenAgePercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iGreatPeoplePercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1280
   - Example: 160
   - Example: 240
 - `iGrowthPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 110
   - Example: 165
   - Example: 220
 - `iHurryConscriptAngerPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iHurryPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 10
   - Example: 13
   - Example: 19
 - `iImprovementPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 120
   - Example: 160
   - Example: 240
 - `iInflationOffset`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: -110
   - Example: -165
   - Example: -220
 - `iInflationPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 12
   - Example: 17
   - Example: 25
 - `iResearchPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 126
   - Example: 168
   - Example: 252
 - `iTrainPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1320
   - Example: 165
   - Example: 247
 - `iUnitDiscoverPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iUnitGreatWorkPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iUnitHurryPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iUnitTradePercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 132
   - Example: 176
   - Example: 264
 - `iVictoryDelayPercent`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 200
@@ -5724,69 +5724,69 @@ Era counts: unknown=7
 Era counts: unknown=12
 
 - `BarbarianClass`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: UNITCLASS_WARRIOR
 - `Description`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: TXT_KEY_GOODY_BARBARIANS
   - Example: TXT_KEY_GOODY_EXPERIENCE
   - Example: TXT_KEY_GOODY_GOLD
 - `Sound`
-  - Present: 12. Non-default: 11. Status: preserved.
+  - Present: 12. Non-default: 11. Status: unsupported.
   - Example: AS2D_GOODY_GOLD
   - Example: AS2D_GOODY_HEAL
   - Example: AS2D_GOODY_HOSTILE
 - `Type`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: GOODY_BARBARIANS_STRONG
   - Example: GOODY_BARBARIANS_WEAK
   - Example: GOODY_EXPERIENCE
 - `UnitClass`
-  - Present: 12. Non-default: 4. Status: preserved.
+  - Present: 12. Non-default: 4. Status: mapped.
   - Example: UNITCLASS_SCOUT
   - Example: UNITCLASS_SETTLER
   - Example: UNITCLASS_WARRIOR
 - `bBad`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 1
 - `bTech`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 1
 - `iBarbarianUnitProb`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 20
   - Example: 40
 - `iDamagePrereq`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 60
 - `iExperience`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 5
 - `iGold`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 20
 - `iGoldRand1`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 21
   - Example: 51
 - `iGoldRand2`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 21
   - Example: 51
 - `iHealing`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 100
 - `iMapOffset`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 4
 - `iMapProb`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 80
 - `iMapRange`
-  - Present: 12. Non-default: 1. Status: preserved.
+  - Present: 12. Non-default: 1. Status: mapped.
   - Example: 4
 - `iMinBarbarians`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 
@@ -5795,22 +5795,22 @@ Era counts: unknown=12
 Era counts: unknown=12
 
 - `Description`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: TXT_KEY_GRAPHICOPTION_CITY_RADIUS
   - Example: TXT_KEY_GRAPHICOPTION_EFFECTS_DISABLED
   - Example: TXT_KEY_GRAPHICOPTION_FULLSCREEN
 - `Help`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: TXT_KEY_GRAPHICOPTION_CITY_RADIUS_HELP
   - Example: TXT_KEY_GRAPHICOPTION_EFFECTS_DISABLED_HELP
   - Example: TXT_KEY_GRAPHICOPTION_FULLSCREEN_HELP
 - `Type`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: GRAPHICOPTION_CITY_RADIUS
   - Example: GRAPHICOPTION_EFFECTS_DISABLED
   - Example: GRAPHICOPTION_FROZEN_ANIMATIONS
 - `bDefault`
-  - Present: 12. Non-default: 2. Status: preserved.
+  - Present: 12. Non-default: 2. Status: unsupported.
   - Example: 1
 
 ## HandicapInfo: 9 records
@@ -5818,323 +5818,323 @@ Era counts: unknown=12
 Era counts: unknown=9
 
 - `AIFreeTechs`
-  - Present: 9. Non-default: 4. Status: preserved.
+  - Present: 9. Non-default: 4. Status: mapped.
   - Example: [\n  "AIFreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_AGRICULTURE"\n        ],\n        [\n          "bFreeTech...
   - Example: [\n  "AIFreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_ARCHERY"\n        ],\n        [\n          "bFreeTech",\n ...
   - Example: [\n  "AIFreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_HUNTING"\n        ],\n        [\n          "bFreeTech",\n ...
 - `AIFreeTechs/FreeTech`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_AGRICULTURE"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_ARCHERY"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_HUNTING"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
 - `AIFreeTechs/FreeTech/TechType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_ARCHERY
   - Example: TECH_HUNTING
 - `AIFreeTechs/FreeTech/bFreeTech`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `Description`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: TXT_KEY_HANDICAP_CHIEFTAIN
   - Example: TXT_KEY_HANDICAP_DEITY
   - Example: TXT_KEY_HANDICAP_EMPEROR
 - `FreeTechs`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: [\n  "FreeTechs",\n  [\n    [\n      "FreeTech",\n      [\n        [\n          "TechType",\n          "TECH_THE_WHEEL"\n        ],\n        [\n          "bFreeTech",\n ...
 - `FreeTechs/FreeTech`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_AGRICULTURE"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_MINING"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreeTech",\n  [\n    [\n      "TechType",\n      "TECH_THE_WHEEL"\n    ],\n    [\n      "bFreeTech",\n      "1"\n    ]\n  ]\n]
 - `FreeTechs/FreeTech/TechType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_MINING
   - Example: TECH_THE_WHEEL
 - `FreeTechs/FreeTech/bFreeTech`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `Goodies`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: [\n  "Goodies",\n  [\n    [\n      "GoodyType",\n      "GOODY_HIGH_GOLD"\n    ],\n    [\n      "GoodyType",\n      "GOODY_HIGH_GOLD"\n    ],\n    [\n      "GoodyType",\n ...
   - Example: [\n  "Goodies",\n  [\n    [\n      "GoodyType",\n      "GOODY_HIGH_GOLD"\n    ],\n    [\n      "GoodyType",\n      "GOODY_LOW_GOLD"\n    ],\n    [\n      "GoodyType",\n  ...
   - Example: [\n  "Goodies",\n  [\n    [\n      "GoodyType",\n      "GOODY_LOW_GOLD"\n    ],\n    [\n      "GoodyType",\n      "GOODY_LOW_GOLD"\n    ],\n    [\n      "GoodyType",\n   ...
 - `Goodies/GoodyType`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: GOODY_BARBARIANS_STRONG
   - Example: GOODY_BARBARIANS_WEAK
   - Example: GOODY_EXPERIENCE
 - `Help`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: TXT_KEY_HANDICAP_CHIEFTAIN_HELP
   - Example: TXT_KEY_HANDICAP_DEITY_HELP
   - Example: TXT_KEY_HANDICAP_EMPEROR_HELP
 - `Type`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: HANDICAP_CHIEFTAIN
   - Example: HANDICAP_DEITY
   - Example: HANDICAP_EMPEROR
 - `iAIAdvancedStartPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iAIAnimalBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: -40
 - `iAIBarbarianBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: -15
   - Example: -20
   - Example: -25
 - `iAICivicUpkeepPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 60
   - Example: 80
 - `iAIConstructPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAICreatePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAIDeclareWarProb`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 50
 - `iAIGrowthPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 40
   - Example: 45
 - `iAIInflationPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 37
   - Example: 42
   - Example: 47
 - `iAIPerEraModifier`
-  - Present: 9. Non-default: 4. Status: preserved.
+  - Present: 9. Non-default: 4. Status: mapped.
   - Example: -2
   - Example: -3
   - Example: -4
 - `iAIResearchPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 80
 - `iAIStartingDefenseUnits`
-  - Present: 9. Non-default: 4. Status: preserved.
+  - Present: 9. Non-default: 4. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iAIStartingExploreUnits`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: 1
 - `iAIStartingUnitMultiplier`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: mapped.
   - Example: 1
 - `iAIStartingWorkerUnits`
-  - Present: 9. Non-default: 2. Status: preserved.
+  - Present: 9. Non-default: 2. Status: mapped.
   - Example: 1
 - `iAITrainPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 55
 - `iAIUnitCostPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 60
   - Example: 80
 - `iAIUnitSupplyPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 50
 - `iAIUnitUpgradePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 50
 - `iAIWarWearinessPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 40
   - Example: 50
 - `iAIWorkRateModifier`
-  - Present: 9. Non-default: 5. Status: preserved.
+  - Present: 9. Non-default: 5. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 20
 - `iAIWorldConstructPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAIWorldCreatePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAIWorldTrainPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAdvancedStartPointsMod`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 130
 - `iAnimalAttackProb`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 25
   - Example: 50
   - Example: 75
 - `iAnimalBonus`
-  - Present: 9. Non-default: 8. Status: preserved.
+  - Present: 9. Non-default: 8. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: -30
 - `iAttitudeChange`
-  - Present: 9. Non-default: 2. Status: preserved.
+  - Present: 9. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 - `iBarbarianBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: -10
   - Example: -15
   - Example: -20
 - `iBarbarianCityCreationProb`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 50
 - `iBarbarianCityCreationTurnsElapsed`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
 - `iBarbarianCreationTurnsElapsed`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iBarbarianDefenders`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iCivicUpkeepPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 50
   - Example: 60
 - `iColonyMaintenancePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iCorporationMaintenancePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iDistanceMaintenancePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iFreeUnits`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `iFreeWinsVsBarbs`
-  - Present: 9. Non-default: 5. Status: preserved.
+  - Present: 9. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iGold`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: mapped.
 - `iHappyBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 3
   - Example: 4
   - Example: 5
 - `iHealthBonus`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iInflationPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 60
   - Example: 70
 - `iMaxColonyMaintenance`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 200
 - `iMaxNumCitiesMaintenance`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `iNoTechTradeModifier`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 20
   - Example: 30
 - `iNumCitiesMaintenancePercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iResearchPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 125
   - Example: 155
 - `iRevolutionIndexPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: unsupported.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iStartingDefenseUnits`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: mapped.
 - `iStartingExploreUnits`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: mapped.
 - `iStartingLocPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 30
 - `iStartingWorkerUnits`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: mapped.
 - `iTechTradeKnownModifier`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: -100
   - Example: -25
   - Example: -50
 - `iUnitCostPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 20
   - Example: 30
 - `iUnownedTilesPerBarbarianCity`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 130
   - Example: 140
   - Example: 150
 - `iUnownedTilesPerBarbarianUnit`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 3
 - `iUnownedTilesPerGameAnimal`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 30
   - Example: 35
   - Example: 40
 - `iUnownedWaterTilesPerBarbarianUnit`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 100
   - Example: 90
 
@@ -6143,25 +6143,25 @@ Era counts: unknown=9
 Era counts: unknown=2
 
 - `Button`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: Art/Interface/MainScreen/CityScreen/hurry_commerce.dds
   - Example: Art/Interface/MainScreen/CityScreen/hurry_slavery.dds
 - `Description`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TXT_KEY_HURRY_GOLD
   - Example: TXT_KEY_HURRY_POPULATION
 - `Type`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: HURRY_GOLD
   - Example: HURRY_POPULATION
 - `bAnger`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: 1
 - `iGoldPerProduction`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: 3
 - `iProductionPerPopulation`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: 30
 
 ## ImprovementArtInfo: 60 records
@@ -6169,38 +6169,38 @@ Era counts: unknown=2
 Era counts: unknown=60
 
 - `Button`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Brown_empty.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,-1,-1
   - Example: ,Art/Interface/Buttons/Buildings/HagiaSophia.dds,Art/Interface/Buttons/Buildings_Atlas.dds,4,3
   - Example: ,Art/Interface/Buttons/Buildings/IronWorks.dds,Art/Interface/Buttons/Buildings_Atlas.dds,2,4
 - `KFM`
-  - Present: 60. Non-default: 40. Status: preserved.
+  - Present: 60. Non-default: 40. Status: unsupported.
   - Example: Art/Structures/Improvements/Camp/Camp.kfm
   - Example: Art/Structures/Improvements/Cottage/Cottage.kfm
   - Example: Art/Structures/Improvements/DepletedMines/mine_depleted/mine.kfm
 - `NIF`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: Art/Empty.nif
   - Example: Art/Structures/Buildings/Arcology/Arcology.nif
   - Example: Art/Structures/Buildings/Arcology/Arcology_Destroyed.nif
 - `SHADERNIF`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: Art/Structures/Improvements/ExtractionFacility/ExtractionFacility_FX.nif
 - `Type`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: ART_DEF_IMPROVEMENT_3FACTORY
   - Example: ART_DEF_IMPROVEMENT_5FACTORY
   - Example: ART_DEF_IMPROVEMENT_ARCHEOLOGICAL_SITE
 - `bExtraAnimations`
-  - Present: 60. Non-default: 3. Status: preserved.
+  - Present: 60. Non-default: 3. Status: unsupported.
   - Example: 1
 - `fInterfaceScale`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: 0.0
   - Example: 0.30
   - Example: 0.4
 - `fScale`
-  - Present: 60. Non-default: 60. Status: preserved.
+  - Present: 60. Non-default: 60. Status: unsupported.
   - Example: .66
   - Example: 0.0
   - Example: 0.14
@@ -6210,314 +6210,314 @@ Era counts: unknown=60
 Era counts: ERA_ANCIENT=1, ERA_CLASSICAL=1, ERA_INDUSTRIAL=1, ERA_MEDIEVAL=2, ERA_MODERN=3, ERA_RENAISSANCE=3, ERA_TRANSHUMAN=4, unknown=38
 
 - `ArtDefineTag`
-  - Present: 53. Non-default: 53. Status: preserved.
+  - Present: 53. Non-default: 53. Status: unsupported.
   - Example: ART_DEF_IMPROVEMENT_3FACTORY
   - Example: ART_DEF_IMPROVEMENT_5FACTORY
   - Example: ART_DEF_IMPROVEMENT_ARCHEOLOGICAL_SITE
 - `BonusTypeStructs`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: [\n  "BonusTypeStructs",\n  [\n    [\n      "BonusTypeStruct",\n      [\n        [\n          "BonusType",\n          "BONUS_ANCIENTTEMPLE"\n        ],\n        [\n    ...
   - Example: [\n  "BonusTypeStructs",\n  [\n    [\n      "BonusTypeStruct",\n      [\n        [\n          "BonusType",\n          "BONUS_APPLE"\n        ],\n        [\n          "b...
   - Example: [\n  "BonusTypeStructs",\n  [\n    [\n      "BonusTypeStruct",\n      [\n        [\n          "BonusType",\n          "BONUS_BANANA"\n        ],\n        [\n          "...
 - `BonusTypeStructs/BonusTypeStruct`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: [\n  "BonusTypeStruct",\n  [\n    [\n      "BonusType",\n      "BONUS_ANCIENTTEMPLE"\n    ],\n    [\n      "bBonusMakesValid",\n      "1"\n    ],\n    [\n      "bBonusTr...
   - Example: [\n  "BonusTypeStruct",\n  [\n    [\n      "BonusType",\n      "BONUS_APPLE"\n    ],\n    [\n      "bBonusMakesValid",\n      "1"\n    ],\n    [\n      "bBonusTrade",\n  ...
   - Example: [\n  "BonusTypeStruct",\n  [\n    [\n      "BonusType",\n      "BONUS_BANANA"\n    ],\n    [\n      "bBonusMakesValid",\n      "0"\n    ],\n    [\n      "bBonusTrade",\n ...
 - `BonusTypeStructs/BonusTypeStruct/BonusType`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: BONUS_ANCIENTTEMPLE
   - Example: BONUS_APPLE
   - Example: BONUS_BANANA
 - `BonusTypeStructs/BonusTypeStruct/YieldChanges`
-  - Present: 21. Non-default: 20. Status: preserved.
+  - Present: 21. Non-default: 20. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "5"\n    ...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "6"\n    ...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ],\n    [\n      "iYieldChange",\n      "7"\n    ...
 - `BonusTypeStructs/BonusTypeStruct/YieldChanges/iYieldChange`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `BonusTypeStructs/BonusTypeStruct/bBonusMakesValid`
-  - Present: 21. Non-default: 19. Status: preserved.
+  - Present: 21. Non-default: 19. Status: mapped.
   - Example: 1
 - `BonusTypeStructs/BonusTypeStruct/bBonusTrade`
-  - Present: 21. Non-default: 19. Status: preserved.
+  - Present: 21. Non-default: 19. Status: mapped.
   - Example: 1
 - `BonusTypeStructs/BonusTypeStruct/iDepletionRand`
-  - Present: 21. Non-default: 6. Status: preserved.
+  - Present: 21. Non-default: 6. Status: mapped.
   - Example: 100
   - Example: 200
 - `BonusTypeStructs/BonusTypeStruct/iDiscoverRand`
-  - Present: 21. Non-default: 7. Status: preserved.
+  - Present: 21. Non-default: 7. Status: mapped.
   - Example: 10000
   - Example: 15000
 - `Civilopedia`
-  - Present: 53. Non-default: 53. Status: preserved.
+  - Present: 53. Non-default: 53. Status: mapped.
   - Example: TXT_KEY_BUILDING_FACTORY_PEDIA
   - Example: TXT_KEY_BUILDING_MACHU_PICCHU_PEDIA
   - Example: TXT_KEY_IMPROVEMENT_APPLE_FARM_PEDIA
 - `Description`
-  - Present: 53. Non-default: 53. Status: preserved.
+  - Present: 53. Non-default: 53. Status: mapped.
   - Example: TXT_KEY_BUILDING_MACHU_PICCHU
   - Example: TXT_KEY_BUILD_MAKE_JUNGLE
   - Example: TXT_KEY_BUILD_PLANT_FOREST
 - `FeatureMakesValids`
-  - Present: 52. Non-default: 7. Status: preserved.
+  - Present: 52. Non-default: 7. Status: mapped.
   - Example: [\n  "FeatureMakesValids",\n  [\n    [\n      "FeatureMakesValid",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n   ...
   - Example: [\n  "FeatureMakesValids",\n  [\n    [\n      "FeatureMakesValid",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n   ...
 - `FeatureMakesValids/FeatureMakesValid`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "FeatureMakesValid",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureMakesValid",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureMakesValid",\n  [\n    [\n      "FeatureType",\n      "FEATURE_SWAMP"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
 - `FeatureMakesValids/FeatureMakesValid/FeatureType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
   - Example: FEATURE_SWAMP
 - `FeatureMakesValids/FeatureMakesValid/bMakesValid`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
 - `Help`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TXT_KEY_IMPROVEMENT_SEA_AIR_DEFENSE_HELP
 - `ImprovementPillage`
-  - Present: 52. Non-default: 8. Status: preserved.
+  - Present: 52. Non-default: 8. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_COTTAGE
   - Example: IMPROVEMENT_DESERTWINDMILL
 - `ImprovementUpgrade`
-  - Present: 52. Non-default: 19. Status: preserved.
+  - Present: 52. Non-default: 19. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_5FACTORY
   - Example: IMPROVEMENT_DESERTWINDMILL
 - `IrrigatedYieldChange`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: [\n  "IrrigatedYieldChange",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `IrrigatedYieldChange/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `PrereqNatureYields`
-  - Present: 10. Non-default: 8. Status: preserved.
+  - Present: 10. Non-default: 8. Status: mapped.
   - Example: [\n  "PrereqNatureYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "PrereqNatureYields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `PrereqNatureYields/iYield`
-  - Present: 10. Non-default: 8. Status: preserved.
+  - Present: 10. Non-default: 8. Status: mapped.
   - Example: 1
 - `PrereqTech`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: TECH_ASSEMBLY_LINE
   - Example: TECH_CHARTERS
   - Example: TECH_CITY_PLANNING
 - `RiverSideYieldChange`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: [\n  "RiverSideYieldChange",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "RiverSideYieldChange",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `RiverSideYieldChange/iYield`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 1
 - `RouteYieldChanges`
-  - Present: 51. Non-default: 14. Status: preserved.
+  - Present: 51. Non-default: 14. Status: mapped.
   - Example: [\n  "RouteYieldChanges",\n  [\n    [\n      "RouteYieldChange",\n      [\n        [\n          "RouteType",\n          "ROUTE_MODERN_ROAD"\n        ],\n        [\n    ...
   - Example: [\n  "RouteYieldChanges",\n  [\n    [\n      "RouteYieldChange",\n      [\n        [\n          "RouteType",\n          "ROUTE_RAILROAD"\n        ],\n        [\n       ...
   - Example: [\n  "RouteYieldChanges",\n  [\n    [\n      "RouteYieldChange",\n      [\n        [\n          "RouteType",\n          "ROUTE_ROAD"\n        ],\n        [\n          "...
 - `RouteYieldChanges/RouteYieldChange`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: [\n  "RouteYieldChange",\n  [\n    [\n      "RouteType",\n      "ROUTE_GRAVTUBE"\n    ],\n    [\n      "RouteYields",\n      [\n        [\n          "iYield",\n         ...
   - Example: [\n  "RouteYieldChange",\n  [\n    [\n      "RouteType",\n      "ROUTE_JUMPLANE"\n    ],\n    [\n      "RouteYields",\n      [\n        [\n          "iYield",\n         ...
   - Example: [\n  "RouteYieldChange",\n  [\n    [\n      "RouteType",\n      "ROUTE_MODERN_ROAD"\n    ],\n    [\n      "RouteYields",\n      [\n        [\n          "iYield",\n      ...
 - `RouteYieldChanges/RouteYieldChange/RouteType`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: ROUTE_GRAVTUBE
   - Example: ROUTE_JUMPLANE
   - Example: ROUTE_MODERN_ROAD
 - `RouteYieldChanges/RouteYieldChange/RouteYields`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: [\n  "RouteYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "RouteYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "RouteYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `RouteYieldChanges/RouteYieldChange/RouteYields/iYield`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: 1
 - `TechYieldChanges`
-  - Present: 52. Non-default: 31. Status: preserved.
+  - Present: 52. Non-default: 31. Status: mapped.
   - Example: [\n  "TechYieldChanges",\n  [\n    [\n      "TechYieldChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_ARCHITECTURE"\n        ],\n        [\n     ...
   - Example: [\n  "TechYieldChanges",\n  [\n    [\n      "TechYieldChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_ARTIFICIAL_EVOLUTION"\n        ],\n       ...
   - Example: [\n  "TechYieldChanges",\n  [\n    [\n      "TechYieldChange",\n      [\n        [\n          "PrereqTech",\n          "TECH_COMPASS"\n        ],\n        [\n          ...
 - `TechYieldChanges/TechYieldChange`
-  - Present: 31. Non-default: 31. Status: preserved.
+  - Present: 31. Non-default: 31. Status: mapped.
   - Example: [\n  "TechYieldChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_ANDROIDS"\n    ],\n    [\n      "TechYields",\n      [\n        [\n          "iYield",\n          "...
   - Example: [\n  "TechYieldChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_ARCHITECTURE"\n    ],\n    [\n      "TechYields",\n      [\n        [\n          "iYield",\n       ...
   - Example: [\n  "TechYieldChange",\n  [\n    [\n      "PrereqTech",\n      "TECH_ARTIFICIAL_EVOLUTION"\n    ],\n    [\n      "TechYields",\n      [\n        [\n          "iYield",...
 - `TechYieldChanges/TechYieldChange/PrereqTech`
-  - Present: 31. Non-default: 31. Status: preserved.
+  - Present: 31. Non-default: 31. Status: mapped.
   - Example: TECH_ANDROIDS
   - Example: TECH_ARCHITECTURE
   - Example: TECH_ARTIFICIAL_EVOLUTION
 - `TechYieldChanges/TechYieldChange/TechYields`
-  - Present: 31. Non-default: 31. Status: preserved.
+  - Present: 31. Non-default: 31. Status: mapped.
   - Example: [\n  "TechYields",\n  [\n    [\n      "iYield",\n      "-1"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "TechYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TechYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
 - `TechYieldChanges/TechYieldChange/TechYields/iYield`
-  - Present: 31. Non-default: 31. Status: preserved.
+  - Present: 31. Non-default: 31. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `TerrainMakesValids`
-  - Present: 52. Non-default: 26. Status: preserved.
+  - Present: 52. Non-default: 26. Status: mapped.
   - Example: [\n  "TerrainMakesValids",\n  [\n    [\n      "TerrainMakesValid",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n    ...
   - Example: [\n  "TerrainMakesValids",\n  [\n    [\n      "TerrainMakesValid",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n   ...
   - Example: [\n  "TerrainMakesValids",\n  [\n    [\n      "TerrainMakesValid",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n    ...
 - `TerrainMakesValids/TerrainMakesValid`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: [\n  "TerrainMakesValid",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainMakesValid",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainMakesValid",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "bMakesValid",\n      "1"\n    ]\n  ]\n]
 - `TerrainMakesValids/TerrainMakesValid/TerrainType`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TerrainMakesValids/TerrainMakesValid/bMakesValid`
-  - Present: 26. Non-default: 26. Status: preserved.
+  - Present: 26. Non-default: 26. Status: mapped.
   - Example: 1
 - `TraitYieldChanges`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TraitYieldChanges",\n  [\n    [\n      "TraitYieldChange",\n      [\n        [\n          "TraitType",\n          "TRAIT_NOMAD"\n        ],\n        [\n          ...
 - `TraitYieldChanges/TraitYieldChange`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TraitYieldChange",\n  [\n    [\n      "TraitType",\n      "TRAIT_NOMAD"\n    ],\n    [\n      "TraitYields",\n      [\n        [\n          "iYield",\n          "1...
 - `TraitYieldChanges/TraitYieldChange/TraitType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TRAIT_NOMAD
 - `TraitYieldChanges/TraitYieldChange/TraitYields`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TraitYields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "TraitYields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `TraitYieldChanges/TraitYieldChange/TraitYields/iYield`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 53. Non-default: 53. Status: preserved.
+  - Present: 53. Non-default: 53. Status: mapped.
   - Example: IMPROVEMENT_3FACTORY
   - Example: IMPROVEMENT_5FACTORY
   - Example: IMPROVEMENT_APPLE_FARM
 - `WorldSoundscapeAudioScript`
-  - Present: 11. Non-default: 1. Status: preserved.
+  - Present: 11. Non-default: 1. Status: unsupported.
   - Example: ASSS_FOREST_SELECT_AMB
 - `YieldChanges`
-  - Present: 39. Non-default: 31. Status: preserved.
+  - Present: 39. Non-default: 31. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "1"\n    ],\n    [\n      "iYieldChange",\n      "0"\n    ...
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYieldChange",\n      "-1"\n    ],\n    [\n      "iYieldChange",\n      "4"\n    ],\n    [\n      "iYieldChange",\n      "1"\n    ...
 - `YieldChanges/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `YieldChanges/iYieldChange`
-  - Present: 33. Non-default: 30. Status: preserved.
+  - Present: 33. Non-default: 30. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `bActsAsCity`
-  - Present: 52. Non-default: 3. Status: preserved.
+  - Present: 52. Non-default: 3. Status: mapped.
   - Example: 1
 - `bCarriesIrrigation`
-  - Present: 52. Non-default: 3. Status: preserved.
+  - Present: 52. Non-default: 3. Status: mapped.
   - Example: 1
 - `bDepletedMine`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFreshWaterMakesValid`
-  - Present: 52. Non-default: 9. Status: preserved.
+  - Present: 52. Non-default: 9. Status: mapped.
   - Example: 1
 - `bGoody`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 1
 - `bGraphicalOnly`
-  - Present: 52. Non-default: 7. Status: preserved.
+  - Present: 52. Non-default: 7. Status: mapped.
   - Example: 1
 - `bHillsMakesValid`
-  - Present: 52. Non-default: 7. Status: preserved.
+  - Present: 52. Non-default: 7. Status: mapped.
   - Example: 1
 - `bNoFreshWater`
-  - Present: 52. Non-default: 0. Status: preserved.
+  - Present: 52. Non-default: 0. Status: mapped.
 - `bOutsideBorders`
-  - Present: 52. Non-default: 15. Status: preserved.
+  - Present: 52. Non-default: 15. Status: mapped.
   - Example: 1
 - `bPeakMakesValid`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
 - `bPermanent`
-  - Present: 52. Non-default: 2. Status: preserved.
+  - Present: 52. Non-default: 2. Status: mapped.
   - Example: 1
 - `bRequiresFeature`
-  - Present: 52. Non-default: 5. Status: preserved.
+  - Present: 52. Non-default: 5. Status: mapped.
   - Example: 1
 - `bRequiresFlatlands`
-  - Present: 52. Non-default: 6. Status: preserved.
+  - Present: 52. Non-default: 6. Status: mapped.
   - Example: 1
 - `bRequiresIrrigation`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRequiresRiverSide`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRiverSideMakesValid`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 1
 - `bUseLSystem`
-  - Present: 18. Non-default: 14. Status: preserved.
+  - Present: 18. Non-default: 14. Status: mapped.
   - Example: 1
 - `bWater`
-  - Present: 52. Non-default: 7. Status: preserved.
+  - Present: 52. Non-default: 7. Status: mapped.
   - Example: 1
 - `iAdvancedStartCost`
-  - Present: 52. Non-default: 35. Status: preserved.
+  - Present: 52. Non-default: 35. Status: mapped.
   - Example: 120
   - Example: 24
   - Example: 30
 - `iAdvancedStartCostIncrease`
-  - Present: 52. Non-default: 0. Status: preserved.
+  - Present: 52. Non-default: 0. Status: mapped.
 - `iAirBombDefense`
-  - Present: 52. Non-default: 40. Status: preserved.
+  - Present: 52. Non-default: 40. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 40
 - `iDefenseModifier`
-  - Present: 52. Non-default: 6. Status: preserved.
+  - Present: 52. Non-default: 6. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 50
 - `iDepletionRand`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1000
 - `iFeatureGrowth`
-  - Present: 52. Non-default: 2. Status: preserved.
+  - Present: 52. Non-default: 2. Status: mapped.
   - Example: 64
 - `iGoodyRange`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 3
 - `iHappiness`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 1
 - `iHealthPercent`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: -100
   - Example: -200
   - Example: -50
 - `iPillageGold`
-  - Present: 52. Non-default: 34. Status: preserved.
+  - Present: 52. Non-default: 34. Status: mapped.
   - Example: 100
   - Example: 120
   - Example: 20
 - `iTilesPerGoody`
-  - Present: 52. Non-default: 1. Status: preserved.
+  - Present: 52. Non-default: 1. Status: mapped.
   - Example: 40
 - `iUpgradeTime`
-  - Present: 52. Non-default: 19. Status: preserved.
+  - Present: 52. Non-default: 19. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 40
@@ -6527,12 +6527,12 @@ Era counts: ERA_ANCIENT=1, ERA_CLASSICAL=1, ERA_INDUSTRIAL=1, ERA_MEDIEVAL=2, ER
 Era counts: unknown=419
 
 - `Path`
-  - Present: 419. Non-default: 419. Status: preserved.
+  - Present: 419. Non-default: 419. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Buildings/Temple_Jewish.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,15
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,3
   - Example: ,Art/Interface/Buttons/Process/Blank.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,5
 - `Type`
-  - Present: 419. Non-default: 419. Status: preserved.
+  - Present: 419. Non-default: 419. Status: unsupported.
   - Example: ARROW_HEAD
   - Example: ARROW_MXMY
   - Example: ARROW_MXY
@@ -6542,89 +6542,89 @@ Era counts: unknown=419
 Era counts: unknown=30
 
 - `Button`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Actions/Airbomb.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,6
   - Example: ,Art/Interface/Buttons/Actions/Airlift.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,5
   - Example: ,Art/Interface/Buttons/Actions/Airstrike.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,6
 - `CursorType`
-  - Present: 30. Non-default: 30. Status: preserved.
+  - Present: 30. Non-default: 30. Status: unsupported.
   - Example: CURSOR_AIRBOMB
   - Example: CURSOR_AIRLIFT
   - Example: CURSOR_AIRSTRIKE
 - `Description`
-  - Present: 30. Non-default: 28. Status: preserved.
+  - Present: 30. Non-default: 28. Status: unsupported.
   - Example: TXT_KEY_ACTION_AUTOMATE_PROTECT
   - Example: TXT_KEY_CONCEPT_ABOMBARD_TEXT
   - Example: TXT_KEY_CONCEPT_RBOMBARD_TEXT
 - `Help`
-  - Present: 30. Non-default: 23. Status: preserved.
+  - Present: 30. Non-default: 23. Status: unsupported.
   - Example: TXT_KEY_ACTION_AUTOMATE_PROTECT_HELP
   - Example: TXT_KEY_INTERFACEMODE_ABOMBARD_HELP
   - Example: TXT_KEY_INTERFACEMODE_AIRBOMB1_HELP
 - `HotKey`
-  - Present: 24. Non-default: 24. Status: preserved.
+  - Present: 24. Non-default: 24. Status: unsupported.
   - Example: KB_A
   - Example: KB_B
   - Example: KB_E
 - `HotKeyAlt`
-  - Present: 24. Non-default: 0. Status: preserved.
+  - Present: 24. Non-default: 0. Status: unsupported.
 - `Mission`
-  - Present: 30. Non-default: 23. Status: preserved.
+  - Present: 30. Non-default: 23. Status: unsupported.
   - Example: MISSION_ABOMBARD
   - Example: MISSION_AIRBOMB
   - Example: MISSION_AIRBOMB1
 - `Type`
-  - Present: 30. Non-default: 30. Status: preserved.
+  - Present: 30. Non-default: 30. Status: unsupported.
   - Example: INTERFACEMODE_ABOMBARD
   - Example: INTERFACEMODE_AIRBOMB
   - Example: INTERFACEMODE_AIRBOMB1
 - `bAltDown`
-  - Present: 24. Non-default: 4. Status: preserved.
+  - Present: 24. Non-default: 4. Status: unsupported.
   - Example: 1
 - `bAltDownAlt`
-  - Present: 24. Non-default: 0. Status: preserved.
+  - Present: 24. Non-default: 0. Status: unsupported.
 - `bCtrlDown`
-  - Present: 24. Non-default: 1. Status: preserved.
+  - Present: 24. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bCtrlDownAlt`
-  - Present: 24. Non-default: 0. Status: preserved.
+  - Present: 24. Non-default: 0. Status: unsupported.
 - `bGotoPlot`
-  - Present: 30. Non-default: 5. Status: preserved.
+  - Present: 30. Non-default: 5. Status: unsupported.
   - Example: 1
 - `bHighlightPlot`
-  - Present: 30. Non-default: 22. Status: preserved.
+  - Present: 30. Non-default: 22. Status: unsupported.
   - Example: 1
 - `bSelectAll`
-  - Present: 30. Non-default: 1. Status: preserved.
+  - Present: 30. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bSelectType`
-  - Present: 30. Non-default: 1. Status: preserved.
+  - Present: 30. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bShiftDown`
-  - Present: 24. Non-default: 6. Status: preserved.
+  - Present: 24. Non-default: 6. Status: unsupported.
   - Example: 1
 - `bShiftDownAlt`
-  - Present: 24. Non-default: 0. Status: preserved.
+  - Present: 24. Non-default: 0. Status: unsupported.
 - `bVisible`
-  - Present: 30. Non-default: 23. Status: preserved.
+  - Present: 30. Non-default: 23. Status: unsupported.
   - Example: 1
 - `iHotKeyPriority`
-  - Present: 24. Non-default: 2. Status: preserved.
+  - Present: 24. Non-default: 2. Status: unsupported.
   - Example: 1
 - `iHotKeyPriorityAlt`
-  - Present: 24. Non-default: 0. Status: preserved.
+  - Present: 24. Non-default: 0. Status: unsupported.
 
 ## InvisibleInfo: 3 records
 
 Era counts: unknown=3
 
 - `Description`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TXT_KEY_INVISIBLE_CAMOUFLAGE
   - Example: TXT_KEY_INVISIBLE_STEALTH_NAVY
   - Example: TXT_KEY_INVISIBLE_SUBMARINE
 - `Type`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: INVISIBLE_CAMOUFLAGE
   - Example: INVISIBLE_STEALTH
   - Example: INVISIBLE_SUBMARINE
@@ -6634,62 +6634,62 @@ Era counts: unknown=3
 Era counts: unknown=1
 
 - `BlendMap`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `HeightMap`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `NormalMap`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `SkyArt`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: Art/Terrain/Sky/Sky.NIF
 - `TerrainMap`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: LANDSCAPE_DEFAULT
 - `bRandomMap`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bTerrainShader`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bUseLightmap`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `fHillScale`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 0.13
 - `fPeakScale`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 0.33
 - `fTextureScaleX`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 2.0
 - `fTextureScaleY`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 2.0
 - `fZScale`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1.0
 - `iFogB`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `iFogG`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `iFogR`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `iGameCellSizeX`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 17
 - `iGameCellSizeY`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 17
 - `iPlotsPerCellX`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 4
 - `iPlotsPerCellY`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 4
 - `iWaterHeight`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 49
 
 ## LeaderHeadInfo: 135 records
@@ -6697,607 +6697,607 @@ Era counts: unknown=1
 Era counts: unknown=135
 
 - `AdoptCivicRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_PLEASED
 - `ArtDefineTag`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ART_DEF_LEADER_ABUBAKR
   - Example: ART_DEF_LEADER_AFONSO
   - Example: ART_DEF_LEADER_ALARIC
 - `Civilopedia`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: mapped.
   - Example: TXT_KEY_LEADER_ABUBAKR_PEDIA
   - Example: TXT_KEY_LEADER_AFONSO_PEDIA
   - Example: TXT_KEY_LEADER_ALARIC_PEDIA
 - `ContactDelays`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "ContactDelays",\n  [\n    [\n      "ContactDelay",\n      [\n        [\n          "ContactType",\n          "CONTACT_RELIGION_PRESSURE"\n        ],\n        [\n  ...
 - `ContactDelays/ContactDelay`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "ContactDelay",\n  [\n    [\n      "ContactType",\n      "CONTACT_ASK_FOR_HELP"\n    ],\n    [\n      "iContactDelay",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "ContactDelay",\n  [\n    [\n      "ContactType",\n      "CONTACT_CIVIC_PRESSURE"\n    ],\n    [\n      "iContactDelay",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "ContactDelay",\n  [\n    [\n      "ContactType",\n      "CONTACT_DEFENSIVE_PACT"\n    ],\n    [\n      "iContactDelay",\n      "20"\n    ]\n  ]\n]
 - `ContactDelays/ContactDelay/ContactType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: CONTACT_ASK_FOR_HELP
   - Example: CONTACT_CIVIC_PRESSURE
   - Example: CONTACT_DEFENSIVE_PACT
 - `ContactDelays/ContactDelay/iContactDelay`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 30
 - `ContactRands`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "ContactRands",\n  [\n    [\n      "ContactRand",\n      [\n        [\n          "ContactType",\n          "CONTACT_RELIGION_PRESSURE"\n        ],\n        [\n    ...
 - `ContactRands/ContactRand`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "ContactRand",\n  [\n    [\n      "ContactType",\n      "CONTACT_ASK_FOR_HELP"\n    ],\n    [\n      "iContactRand",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "ContactRand",\n  [\n    [\n      "ContactType",\n      "CONTACT_ASK_FOR_HELP"\n    ],\n    [\n      "iContactRand",\n      "1000"\n    ]\n  ]\n]
   - Example: [\n  "ContactRand",\n  [\n    [\n      "ContactType",\n      "CONTACT_ASK_FOR_HELP"\n    ],\n    [\n      "iContactRand",\n      "25"\n    ]\n  ]\n]
 - `ContactRands/ContactRand/ContactType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: CONTACT_ASK_FOR_HELP
   - Example: CONTACT_CIVIC_PRESSURE
   - Example: CONTACT_DEFENSIVE_PACT
 - `ContactRands/ContactRand/iContactRand`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `ConvertReligionRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `DeclareWarRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_PLEASED
 - `DeclareWarThemRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `DefensivePactRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `DemandTributeAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_CAUTIOUS
 - `Description`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: mapped.
   - Example: Charles Martel
   - Example: Clovis I
   - Example: TXT_KEY_LEADER_ABUBAKR
 - `DiplomacyIntroMusicPeace`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiplomacyIntroMusicPeace",\n  [\n    [\n      "DiploMusicPeaceEra",\n      [\n        [\n          "EraType",\n          "ERA_ANCIENT"\n        ]\n      ]\n    ],...
   - Example: [\n  "DiplomacyIntroMusicPeace",\n  [\n    [\n      "DiploMusicPeaceEra",\n      [\n        [\n          "EraType",\n          "ERA_ANCIENT"\n        ],\n        [\n   ...
 - `DiplomacyIntroMusicPeace/DiploMusicPeaceEra`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_ASOKA_EARLY_INTRO"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_DEGANAWIDA_EARLY"\n    ]\n  ]\n]
 - `DiplomacyIntroMusicPeace/DiploMusicPeaceEra/DiploScriptId`
-  - Present: 46. Non-default: 34. Status: preserved.
+  - Present: 46. Non-default: 34. Status: unsupported.
   - Example: AS2D_DIPLO_ASOKA_EARLY_INTRO
   - Example: AS2D_DIPLO_ASOKA_LATE_INTRO
   - Example: AS2D_DIPLO_ASOKA_MIDDLE_INTRO
 - `DiplomacyIntroMusicPeace/DiploMusicPeaceEra/EraType`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `DiplomacyIntroMusicWar`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiplomacyIntroMusicWar",\n  [\n    [\n      "DiploMusicWarEra",\n      [\n        [\n          "EraType",\n          "ERA_ANCIENT"\n        ]\n      ]\n    ],\n   ...
 - `DiplomacyIntroMusicWar/DiploMusicWarEra`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_CLASSICAL"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_FUTURE"\n    ]\n  ]\n]
 - `DiplomacyIntroMusicWar/DiploMusicWarEra/EraType`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `DiplomacyMusicPeace`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiplomacyMusicPeace",\n  [\n    [\n      "DiploMusicPeaceEra",\n      [\n        [\n          "EraType",\n          "ERA_ANCIENT"\n        ],\n        [\n        ...
 - `DiplomacyMusicPeace/DiploMusicPeaceEra`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_ALBOIN_EARLY"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_ALEXANDER_EARLY"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicPeaceEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_ALEXANDER_MIDDLE"\n    ]\n  ]\n]
 - `DiplomacyMusicPeace/DiploMusicPeaceEra/DiploScriptId`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: AS2D_DIPLO_ALBOIN_EARLY
   - Example: AS2D_DIPLO_ALBOIN_LATE
   - Example: AS2D_DIPLO_ALBOIN_MIDDLE
 - `DiplomacyMusicPeace/DiploMusicPeaceEra/EraType`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `DiplomacyMusicWar`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiplomacyMusicWar",\n  [\n    [\n      "DiploMusicWarEra",\n      [\n        [\n          "EraType",\n          "ERA_ANCIENT"\n        ],\n        [\n          "D...
 - `DiplomacyMusicWar/DiploMusicWarEra`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_BRENNUS_EARLY"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_ANCIENT"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_WARDRUMS_EARLY"\n    ]\n  ]\n]
   - Example: [\n  "DiploMusicWarEra",\n  [\n    [\n      "EraType",\n      "ERA_CLASSICAL"\n    ],\n    [\n      "DiploScriptId",\n      "AS2D_DIPLO_BRENNUS_EARLY"\n    ]\n  ]\n]
 - `DiplomacyMusicWar/DiploMusicWarEra/DiploScriptId`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: AS2D_DIPLO_BRENNUS_EARLY
   - Example: AS2D_DIPLO_WARDRUMS_EARLY
   - Example: AS2D_DIPLO_WARDRUMS_LATE
 - `DiplomacyMusicWar/DiploMusicWarEra/EraType`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `FavoriteCivic`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: CIVIC_ARISTOCRACY
   - Example: CIVIC_BOURGEOIS
   - Example: CIVIC_BUREAUCRACY
 - `FavoriteReligion`
-  - Present: 135. Non-default: 95. Status: preserved.
+  - Present: 135. Non-default: 95. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `Flavors`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_CULTURE"\n        ],\n        [\n          "iFlavor",\n     ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GROWTH"\n        ],\n        [\n          "iFlavor",\n      ...
 - `Flavors/Flavor`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "3"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_GOLD
   - Example: FLAVOR_GROWTH
 - `Flavors/Flavor/iFlavor`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 3
 - `HappinessBonusRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 130. Status: preserved.
+  - Present: 135. Non-default: 130. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `HealthBonusRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 130. Status: preserved.
+  - Present: 135. Non-default: 130. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `ImprovementWeightModifiers`
-  - Present: 135. Non-default: 77. Status: preserved.
+  - Present: 135. Non-default: 77. Status: mapped.
   - Example: [\n  "ImprovementWeightModifiers",\n  [\n    [\n      "ImprovementWeightModifier",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_FARM"\n  ...
   - Example: [\n  "ImprovementWeightModifiers",\n  [\n    [\n      "ImprovementWeightModifier",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_TOWN"\n  ...
   - Example: [\n  "ImprovementWeightModifiers",\n  [\n    [\n      "ImprovementWeightModifier",\n      [\n        [\n          "ImprovementType",\n          "IMPROVEMENT_WORKSHOP...
 - `ImprovementWeightModifiers/ImprovementWeightModifier`
-  - Present: 77. Non-default: 77. Status: preserved.
+  - Present: 77. Non-default: 77. Status: mapped.
   - Example: [\n  "ImprovementWeightModifier",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_FARM"\n    ],\n    [\n      "iWeightModifier",\n      "20"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementWeightModifier",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_TOWN"\n    ],\n    [\n      "iWeightModifier",\n      "20"\n    ]\n  ]\n]
   - Example: [\n  "ImprovementWeightModifier",\n  [\n    [\n      "ImprovementType",\n      "IMPROVEMENT_WATERMILL"\n    ],\n    [\n      "iWeightModifier",\n      "20"\n    ]\n  ]\n]
 - `ImprovementWeightModifiers/ImprovementWeightModifier/ImprovementType`
-  - Present: 77. Non-default: 77. Status: preserved.
+  - Present: 77. Non-default: 77. Status: mapped.
   - Example: IMPROVEMENT_FARM
   - Example: IMPROVEMENT_TOWN
   - Example: IMPROVEMENT_WATERMILL
 - `ImprovementWeightModifiers/ImprovementWeightModifier/iWeightModifier`
-  - Present: 77. Non-default: 77. Status: preserved.
+  - Present: 77. Non-default: 77. Status: mapped.
   - Example: 20
   - Example: 30
 - `MapRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 132. Status: preserved.
+  - Present: 135. Non-default: 132. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `MemoryAttitudePercents`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "MemoryAttitudePercents",\n  [\n    [\n      "MemoryAttitudePercent",\n      [\n        [\n          "MemoryType",\n          "MEMORY_DECLARED_WAR"\n        ],\n ...
 - `MemoryAttitudePercents/MemoryAttitudePercent`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "MemoryAttitudePercent",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_CIVIC"\n    ],\n    [\n      "iMemoryAttitudePercent",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "MemoryAttitudePercent",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_CIVIC"\n    ],\n    [\n      "iMemoryAttitudePercent",\n      "200"\n    ]\n  ]\n]
   - Example: [\n  "MemoryAttitudePercent",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_RELIGION"\n    ],\n    [\n      "iMemoryAttitudePercent",\n      "100"\n    ]\n  ]\n]
 - `MemoryAttitudePercents/MemoryAttitudePercent/MemoryType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: MEMORY_ACCEPTED_CIVIC
   - Example: MEMORY_ACCEPTED_RELIGION
   - Example: MEMORY_ACCEPTED_STOP_TRADING
 - `MemoryAttitudePercents/MemoryAttitudePercent/iMemoryAttitudePercent`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: -100
   - Example: -110
   - Example: -120
 - `MemoryDecays`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "MemoryDecays",\n  [\n    [\n      "MemoryDecay",\n      [\n        [\n          "MemoryType",\n          "MEMORY_GIVE_HELP"\n        ],\n        [\n          "iMe...
 - `MemoryDecays/MemoryDecay`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "MemoryDecay",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_CIVIC"\n    ],\n    [\n      "iMemoryRand",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "MemoryDecay",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_CIVIC"\n    ],\n    [\n      "iMemoryRand",\n      "200"\n    ]\n  ]\n]
   - Example: [\n  "MemoryDecay",\n  [\n    [\n      "MemoryType",\n      "MEMORY_ACCEPTED_JOIN_WAR"\n    ],\n    [\n      "iMemoryRand",\n      "150"\n    ]\n  ]\n]
 - `MemoryDecays/MemoryDecay/MemoryType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: MEMORY_ACCEPTED_CIVIC
   - Example: MEMORY_ACCEPTED_JOIN_WAR
   - Example: MEMORY_ACCEPTED_RELIGION
 - `MemoryDecays/MemoryDecay/iMemoryRand`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 150
 - `NoGiveHelpAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_CAUTIOUS
 - `NoWarAttitudeProbs`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "NoWarAttitudeProbs",\n  [\n    [\n      "NoWarAttitudeProb",\n      [\n        [\n          "AttitudeType",\n          "ATTITUDE_ANNOYED"\n        ],\n        [\n...
   - Example: [\n  "NoWarAttitudeProbs",\n  [\n    [\n      "NoWarAttitudeProb",\n      [\n        [\n          "AttitudeType",\n          "ATTITUDE_CAUTIOUS"\n        ],\n        [...
 - `NoWarAttitudeProbs/NoWarAttitudeProb`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "NoWarAttitudeProb",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_ANNOYED"\n    ],\n    [\n      "iNoWarProb",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "NoWarAttitudeProb",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_ANNOYED"\n    ],\n    [\n      "iNoWarProb",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "NoWarAttitudeProb",\n  [\n    [\n      "AttitudeType",\n      "ATTITUDE_ANNOYED"\n    ],\n    [\n      "iNoWarProb",\n      "20"\n    ]\n  ]\n]
 - `NoWarAttitudeProbs/NoWarAttitudeProb/AttitudeType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `NoWarAttitudeProbs/NoWarAttitudeProb/iNoWarProb`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `OpenBordersRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 130. Status: preserved.
+  - Present: 135. Non-default: 130. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `PermanentAllianceRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
   - Example: ATTITUDE_PLEASED
 - `StopTradingRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_PLEASED
 - `StopTradingThemRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `StrategicBonusRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_PLEASED
 - `TechRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 126. Status: preserved.
+  - Present: 135. Non-default: 126. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FURIOUS
 - `Traits`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: [\n  "Traits",\n  [\n    [\n      "Trait",\n      [\n        [\n          "TraitType",\n          "TRAIT_AGGRESSIVE"\n        ],\n        [\n          "bTrait",\n       ...
   - Example: [\n  "Traits",\n  [\n    [\n      "Trait",\n      [\n        [\n          "TraitType",\n          "TRAIT_AGRICULTURAL"\n        ],\n        [\n          "bTrait",\n     ...
   - Example: [\n  "Traits",\n  [\n    [\n      "Trait",\n      [\n        [\n          "TraitType",\n          "TRAIT_CHARISMATIC"\n        ],\n        [\n          "bTrait",\n      ...
 - `Traits/Trait`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: [\n  "Trait",\n  [\n    [\n      "TraitType",\n      "TRAIT_AGGRESSIVE"\n    ],\n    [\n      "bTrait",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Trait",\n  [\n    [\n      "TraitType",\n      "TRAIT_AGRICULTURAL"\n    ],\n    [\n      "bTrait",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Trait",\n  [\n    [\n      "TraitType",\n      "TRAIT_CHARISMATIC"\n    ],\n    [\n      "bTrait",\n      "1"\n    ]\n  ]\n]
 - `Traits/Trait/TraitType`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: TRAIT_AGGRESSIVE
   - Example: TRAIT_AGRICULTURAL
   - Example: TRAIT_CHARISMATIC
 - `Traits/Trait/bTrait`
-  - Present: 134. Non-default: 134. Status: preserved.
+  - Present: 134. Non-default: 134. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: mapped.
   - Example: LEADER_ABUBAKR
   - Example: LEADER_AFONSO
   - Example: LEADER_ALARIC
 - `UnitAIWeightModifiers`
-  - Present: 135. Non-default: 128. Status: preserved.
+  - Present: 135. Non-default: 128. Status: mapped.
   - Example: [\n  "UnitAIWeightModifiers",\n  [\n    [\n      "UnitAIWeightModifier",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ASSAULT_SEA"\n        ],\n    ...
   - Example: [\n  "UnitAIWeightModifiers",\n  [\n    [\n      "UnitAIWeightModifier",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ATTACK"\n        ],\n        [...
   - Example: [\n  "UnitAIWeightModifiers",\n  [\n    [\n      "UnitAIWeightModifier",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ATTACK_CITY"\n        ],\n    ...
 - `UnitAIWeightModifiers/UnitAIWeightModifier`
-  - Present: 128. Non-default: 128. Status: preserved.
+  - Present: 128. Non-default: 128. Status: mapped.
   - Example: [\n  "UnitAIWeightModifier",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ASSAULT_SEA"\n    ],\n    [\n      "iWeightModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "UnitAIWeightModifier",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ATTACK"\n    ],\n    [\n      "iWeightModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "UnitAIWeightModifier",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ATTACK_CITY"\n    ],\n    [\n      "iWeightModifier",\n      "100"\n    ]\n  ]\n]
 - `UnitAIWeightModifiers/UnitAIWeightModifier/UnitAIType`
-  - Present: 128. Non-default: 128. Status: preserved.
+  - Present: 128. Non-default: 128. Status: mapped.
   - Example: UNITAI_ASSAULT_SEA
   - Example: UNITAI_ATTACK
   - Example: UNITAI_ATTACK_CITY
 - `UnitAIWeightModifiers/UnitAIWeightModifier/iWeightModifier`
-  - Present: 128. Non-default: 128. Status: preserved.
+  - Present: 128. Non-default: 128. Status: mapped.
   - Example: 100
 - `VassalRefuseAttitudeThreshold`
-  - Present: 135. Non-default: 122. Status: preserved.
+  - Present: 135. Non-default: 122. Status: mapped.
   - Example: ATTITUDE_ANNOYED
   - Example: ATTITUDE_CAUTIOUS
   - Example: ATTITUDE_FRIENDLY
 - `bForceOverwrite`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iAtPeaceAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
 - `iAtPeaceAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 40
   - Example: 50
   - Example: 60
 - `iAtWarAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 5
 - `iAtWarAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: -5
 - `iAttackOddsChangeRand`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: mapped.
   - Example: 10
   - Example: 16
   - Example: 6
 - `iBaseAttackOddsChange`
-  - Present: 135. Non-default: 77. Status: preserved.
+  - Present: 135. Non-default: 77. Status: mapped.
   - Example: 2
   - Example: 4
   - Example: 6
 - `iBaseAttitude`
-  - Present: 135. Non-default: 45. Status: preserved.
+  - Present: 135. Non-default: 45. Status: mapped.
   - Example: -2
   - Example: 1
   - Example: 2
 - `iBasePeaceWeight`
-  - Present: 135. Non-default: 113. Status: preserved.
+  - Present: 135. Non-default: 113. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `iBetterRankDifferenceAttitudeChange`
-  - Present: 135. Non-default: 72. Status: preserved.
+  - Present: 135. Non-default: 72. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iBonusTradeAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 2
 - `iBonusTradeAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 50
   - Example: 60
 - `iBuildUnitProb`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: mapped.
   - Example: 15
   - Example: 20
   - Example: 25
 - `iCloseBordersAttitudeChange`
-  - Present: 135. Non-default: 131. Status: preserved.
+  - Present: 135. Non-default: 131. Status: mapped.
   - Example: -2
   - Example: -3
   - Example: -4
 - `iConquestVictoryWeight`
-  - Present: 131. Non-default: 125. Status: preserved.
+  - Present: 131. Non-default: 125. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iCultureVictoryWeight`
-  - Present: 131. Non-default: 126. Status: preserved.
+  - Present: 131. Non-default: 126. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iDeclareWarTradeRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 40
   - Example: 48
   - Example: 50
 - `iDefensivePactAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 2
 - `iDefensivePactAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 12
 - `iDemandRebukedSneakProb`
-  - Present: 135. Non-default: 108. Status: preserved.
+  - Present: 135. Non-default: 108. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 20
 - `iDemandRebukedWarProb`
-  - Present: 135. Non-default: 105. Status: preserved.
+  - Present: 135. Non-default: 105. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iDifferentReligionAttitudeChange`
-  - Present: 135. Non-default: 48. Status: preserved.
+  - Present: 135. Non-default: 48. Status: mapped.
   - Example: -2
   - Example: -3
 - `iDifferentReligionAttitudeChangeLimit`
-  - Present: 135. Non-default: 0. Status: preserved.
+  - Present: 135. Non-default: 0. Status: mapped.
 - `iDifferentReligionAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: -5
 - `iDiplomacyVictoryWeight`
-  - Present: 131. Non-default: 119. Status: preserved.
+  - Present: 131. Non-default: 119. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iDogpileWarRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 20
 - `iDominationVictoryWeight`
-  - Present: 131. Non-default: 126. Status: preserved.
+  - Present: 131. Non-default: 126. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iEspionageWeight`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iFavoriteCivicAttitudeChange`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 2
 - `iFavoriteCivicAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iFavoriteCivicAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
 - `iFreedomAppreciation`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
 - `iLimitedWarPowerRatio`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iLimitedWarRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 120
   - Example: 140
 - `iLostWarAttitudeChange`
-  - Present: 135. Non-default: 0. Status: preserved.
+  - Present: 135. Non-default: 0. Status: mapped.
 - `iMakePeaceRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 120
   - Example: 20
 - `iMaxGoldPerTurnTradePercent`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 15
 - `iMaxGoldTradePercent`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iMaxWarDistantPowerRatio`
-  - Present: 135. Non-default: 132. Status: preserved.
+  - Present: 135. Non-default: 132. Status: mapped.
   - Example: 100
   - Example: 30
   - Example: 40
 - `iMaxWarMinAdjacentLandPercent`
-  - Present: 135. Non-default: 94. Status: preserved.
+  - Present: 135. Non-default: 94. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iMaxWarNearbyPowerRatio`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iMaxWarRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 100
   - Example: 120
   - Example: 150
 - `iNoTechTradeThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 15
 - `iOpenBordersAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 2
 - `iOpenBordersAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 25
 - `iPeaceWeightRand`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iRazeCityProb`
-  - Present: 135. Non-default: 53. Status: preserved.
+  - Present: 135. Non-default: 53. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iRefuseToTalkWarThreshold`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 5
 - `iSameReligionAttitudeChange`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 3
 - `iSameReligionAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iSameReligionAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 10
 - `iShareWarAttitudeChange`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 1
   - Example: 2
 - `iShareWarAttitudeChangeLimit`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iShareWarAttitudeDivisor`
-  - Present: 135. Non-default: 134. Status: preserved.
+  - Present: 135. Non-default: 134. Status: mapped.
   - Example: 6
   - Example: 8
 - `iSpaceVictoryWeight`
-  - Present: 131. Non-default: 112. Status: preserved.
+  - Present: 131. Non-default: 112. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iTechTradeKnownPercent`
-  - Present: 135. Non-default: 132. Status: preserved.
+  - Present: 135. Non-default: 132. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `iVassalPowerModifier`
-  - Present: 135. Non-default: 44. Status: preserved.
+  - Present: 135. Non-default: 44. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: 10
 - `iWarmongerRespect`
-  - Present: 135. Non-default: 92. Status: preserved.
+  - Present: 135. Non-default: 92. Status: mapped.
   - Example: 1
   - Example: 2
 - `iWonderConstructRand`
-  - Present: 135. Non-default: 130. Status: preserved.
+  - Present: 135. Non-default: 130. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iWorseRankDifferenceAttitudeChange`
-  - Present: 135. Non-default: 42. Status: preserved.
+  - Present: 135. Non-default: 42. Status: mapped.
   - Example: -2
   - Example: -3
   - Example: 1
@@ -7307,32 +7307,32 @@ Era counts: unknown=135
 Era counts: unknown=135
 
 - `BackgroundKFM`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: Art/LeaderHeads/Charles_V/peter_bg.kfm
   - Example: Art/LeaderHeads/Ivan_IV/alexander_bg.kfm
   - Example: Art/LeaderHeads/Leonidas/shaka_bg.kfm
 - `Button`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,5
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,6
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,7
 - `KFM`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: Art/LeaderHeads/Charles_V/peter.kfm
   - Example: Art/LeaderHeads/Hannibal/hannibal.kfm
   - Example: Art/LeaderHeads/Isabella/isabella.kfm
 - `NIF`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: Art/LeaderHeads/Charles_V/charles.nif
   - Example: Art/LeaderHeads/Ivan_IV/Grozniy.nif
   - Example: Art/LeaderHeads/Leonidas/Leonidas.nif
 - `NoShaderNIF`
-  - Present: 135. Non-default: 133. Status: preserved.
+  - Present: 135. Non-default: 133. Status: unsupported.
   - Example: Art/LeaderHeads/Charles_V/charles_noshader.nif
   - Example: Art/LeaderHeads/Ivan_IV/Grozniy.nif
   - Example: Art/LeaderHeads/Leonidas/Leonidas_noshader.nif
 - `Type`
-  - Present: 135. Non-default: 135. Status: preserved.
+  - Present: 135. Non-default: 135. Status: unsupported.
   - Example: ART_DEF_LEADER_ABUBAKR
   - Example: ART_DEF_LEADER_AFONSO
   - Example: ART_DEF_LEADER_ALARIC
@@ -7342,22 +7342,22 @@ Era counts: unknown=135
 Era counts: unknown=5
 
 - `Description`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: TXT_KEY_MP_OPTION_ANONYMOUS
   - Example: TXT_KEY_MP_OPTION_SHUFFLE_TEAMS
   - Example: TXT_KEY_MP_OPTION_SIMULTANEOUS_TURNS
 - `Help`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: TXT_KEY_MP_OPTION_ANONYMOUS_HELP
   - Example: TXT_KEY_MP_OPTION_SHUFFLE_TEAMS_HELP
   - Example: TXT_KEY_MP_OPTION_SIMULTANEOUS_TURNS_HELP
 - `Type`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: unsupported.
   - Example: MPOPTION_ANONYMOUS
   - Example: MPOPTION_SHUFFLE_TEAMS
   - Example: MPOPTION_SIMULTANEOUS_TURNS
 - `bDefault`
-  - Present: 5. Non-default: 1. Status: preserved.
+  - Present: 5. Non-default: 1. Status: unsupported.
   - Example: 1
 
 ## MapInfo: 2 records
@@ -7365,50 +7365,50 @@ Era counts: unknown=5
 Era counts: unknown=2
 
 - `Description`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_MAP_EXAMPLE
 - `Help`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_MAP_EXAMPLE_HELP
 - `InitialWBMap`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `MapInteraction`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: [\n  "MapInteraction",\n  [\n    [\n      "Map",\n      "MAP_EXAMPLE"\n    ],\n    [\n      "bContactable",\n      "1"\n    ],\n    [\n      "iDistance",\n      "5"\n    ]...
   - Example: [\n  "MapInteraction",\n  [\n    [\n      "Map",\n      "MAP_EXAMPLE2"\n    ],\n    [\n      "bContactable",\n      "1"\n    ],\n    [\n      "iDistance",\n      "5"\n    ...
 - `MapInteraction/Map`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: MAP_EXAMPLE
   - Example: MAP_EXAMPLE2
 - `MapInteraction/bContactable`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 1
 - `MapInteraction/iDistance`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 5
 - `MapScript`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `StartingEvent`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: GameStart
 - `SwitchType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: MAPSWITCH_EXAMPLE
   - Example: MAPSWITCH_EXAMPLE2
 - `Type`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: MAP_EXAMPLE
   - Example: MAP_EXAMPLE2
 - `bWrapX`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bWrapY`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `iGridHeight`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 100
 - `iGridWidth`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 100
 
 ## MapSwitchInfo: 2 records
@@ -7416,36 +7416,36 @@ Era counts: unknown=2
 Era counts: unknown=2
 
 - `Description`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_MAPSWITCH_EXAMPLE
 - `Help`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_MAPSWITCH_EXAMPLE_HELP
 - `Map`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: MAP_EXAMPLE
   - Example: MAP_EXAMPLE2
 - `SwitchEvent`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: EndGameTurn
 - `Type`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: MAPSWITCH_EXAMPLE
   - Example: MAPSWITCH_EXAMPLE2
 - `bManual`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 
 ## MemoryInfo: 42 records
 
 Era counts: unknown=42
 
 - `Description`
-  - Present: 42. Non-default: 42. Status: preserved.
+  - Present: 42. Non-default: 42. Status: unsupported.
   - Example: TXT_KEY_MEMORY_ACCEPTED_CIVIC
   - Example: TXT_KEY_MEMORY_ACCEPTED_JOIN_WAR
   - Example: TXT_KEY_MEMORY_ACCEPTED_RELIGION
 - `Type`
-  - Present: 42. Non-default: 42. Status: preserved.
+  - Present: 42. Non-default: 42. Status: unsupported.
   - Example: MEMORY_ACCEPTED_CIVIC
   - Example: MEMORY_ACCEPTED_JOIN_WAR
   - Example: MEMORY_ACCEPTED_RELIGION
@@ -7455,27 +7455,27 @@ Era counts: unknown=42
 Era counts: unknown=48
 
 - `KFM`
-  - Present: 48. Non-default: 37. Status: preserved.
+  - Present: 48. Non-default: 37. Status: unsupported.
   - Example: Art/Units/Flag/Medallions.kfm
   - Example: Art/Units/Flags/Ancient_Flag.kfm
   - Example: Art/Units/Flags/Medieval_Flag.kfm
 - `NIF`
-  - Present: 48. Non-default: 37. Status: preserved.
+  - Present: 48. Non-default: 37. Status: unsupported.
   - Example: Art/Terrain/Water/Water.nif
   - Example: Art/Units/Flag/BehindFlagGlow.nif
   - Example: Art/Units/Flag/medallions.nif
 - `Path`
-  - Present: 48. Non-default: 46. Status: preserved.
+  - Present: 48. Non-default: 46. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Buildings/ApolloProgram.dds,Art/Interface/Buttons/Buildings_Atlas.dds,3,1
   - Example: Art/Interface/Main Menu/MM_MissingMapThumbnail.dds
   - Example: Art/Interface/Screens/Options/X-Fi_Logo_Sound Best_trans On.dds
 - `Type`
-  - Present: 48. Non-default: 48. Status: preserved.
+  - Present: 48. Non-default: 48. Status: unsupported.
   - Example: AREA_BORDER_TEXTURE
   - Example: ART_AQUEDUCT_ENDPIECE
   - Example: ART_AQUEDUCT_SEGMENT
 - `fScale`
-  - Present: 48. Non-default: 48. Status: preserved.
+  - Present: 48. Non-default: 48. Status: unsupported.
   - Example: 0.0
   - Example: 0.6
   - Example: 0.8
@@ -7485,80 +7485,80 @@ Era counts: unknown=48
 Era counts: unknown=72
 
 - `Button`
-  - Present: 53. Non-default: 53. Status: preserved.
+  - Present: 53. Non-default: 53. Status: mapped.
   - Example: ,Art/Interface/Buttons/Actions/Airbomb.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,6
   - Example: ,Art/Interface/Buttons/Actions/Airlift.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,5
   - Example: ,Art/Interface/Buttons/Actions/Bombard.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,1
 - `Description`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: TXT_KEY_ACTION_AUTOMATE_PROTECT
   - Example: TXT_KEY_MISSION_ABOMBARD
   - Example: TXT_KEY_MISSION_AIRBOMB
 - `EntityEventType`
-  - Present: 58. Non-default: 58. Status: preserved.
+  - Present: 58. Non-default: 58. Status: unsupported.
   - Example: ENTITY_EVENT_AIRBOMB
   - Example: ENTITY_EVENT_AIRPATROL
   - Example: ENTITY_EVENT_AIRRECON
 - `Help`
-  - Present: 71. Non-default: 68. Status: preserved.
+  - Present: 71. Non-default: 68. Status: mapped.
   - Example: TXT_KEY_ACTION_AUTOMATE_PROTECT_HELP
   - Example: TXT_KEY_MISSION_ABOMBARD_HELP
   - Example: TXT_KEY_MISSION_AIRBOMB1_HELP
 - `HotKey`
-  - Present: 35. Non-default: 20. Status: preserved.
+  - Present: 35. Non-default: 20. Status: unsupported.
   - Example: KB_A
   - Example: KB_B
   - Example: KB_D
 - `HotKeyAlt`
-  - Present: 30. Non-default: 3. Status: preserved.
+  - Present: 30. Non-default: 3. Status: unsupported.
   - Example: KB_NUMPAD0
   - Example: KB_NUMPADPERIOD
 - `Type`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: MISSION_ABOMBARD
   - Example: MISSION_AIRBOMB
   - Example: MISSION_AIRBOMB1
 - `Waypoint`
-  - Present: 72. Non-default: 4. Status: preserved.
+  - Present: 72. Non-default: 4. Status: unsupported.
   - Example: EFFECT_FOOTSTEP_ON
 - `bAltDown`
-  - Present: 35. Non-default: 0. Status: preserved.
+  - Present: 35. Non-default: 0. Status: unsupported.
 - `bAltDownAlt`
-  - Present: 31. Non-default: 0. Status: preserved.
+  - Present: 31. Non-default: 0. Status: unsupported.
 - `bBuild`
-  - Present: 72. Non-default: 1. Status: preserved.
+  - Present: 72. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCtrlDown`
-  - Present: 35. Non-default: 0. Status: preserved.
+  - Present: 35. Non-default: 0. Status: unsupported.
 - `bCtrlDownAlt`
-  - Present: 31. Non-default: 1. Status: preserved.
+  - Present: 31. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bShiftDown`
-  - Present: 35. Non-default: 9. Status: preserved.
+  - Present: 35. Non-default: 9. Status: unsupported.
   - Example: 1
 - `bShiftDownAlt`
-  - Present: 31. Non-default: 0. Status: preserved.
+  - Present: 31. Non-default: 0. Status: unsupported.
 - `bSound`
-  - Present: 72. Non-default: 43. Status: preserved.
+  - Present: 72. Non-default: 43. Status: unsupported.
   - Example: 1
 - `bTarget`
-  - Present: 72. Non-default: 3. Status: preserved.
+  - Present: 72. Non-default: 3. Status: mapped.
   - Example: 1
 - `bVisible`
-  - Present: 38. Non-default: 38. Status: preserved.
+  - Present: 38. Non-default: 38. Status: mapped.
   - Example: 1
 - `iHotKeyPriority`
-  - Present: 35. Non-default: 4. Status: preserved.
+  - Present: 35. Non-default: 4. Status: unsupported.
   - Example: 1
 - `iHotKeyPriorityAlt`
-  - Present: 31. Non-default: 0. Status: preserved.
+  - Present: 31. Non-default: 0. Status: unsupported.
 - `iOrderPriority`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: unsupported.
   - Example: 11
   - Example: 12
   - Example: 13
 - `iTime`
-  - Present: 72. Non-default: 42. Status: preserved.
+  - Present: 72. Non-default: 42. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 14
@@ -7568,12 +7568,12 @@ Era counts: unknown=72
 Era counts: unknown=12
 
 - `Description`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: TXT_KEY_MONTH_APRIL
   - Example: TXT_KEY_MONTH_AUGUST
   - Example: TXT_KEY_MONTH_DECEMBER
 - `Type`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: MONTH_APRIL
   - Example: MONTH_AUGUST
   - Example: MONTH_DECEMBER
@@ -7583,15 +7583,15 @@ Era counts: unknown=12
 Era counts: unknown=174
 
 - `KFM`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: unsupported.
   - Example: None
 - `Path`
-  - Present: 174. Non-default: 174. Status: preserved.
+  - Present: 174. Non-default: 174. Status: unsupported.
   - Example: Art/Movies/Apothecaries.dds
   - Example: Art/Movies/Artists.dds
   - Example: Art/Movies/Bakers.dds
 - `Type`
-  - Present: 174. Non-default: 174. Status: preserved.
+  - Present: 174. Non-default: 174. Status: unsupported.
   - Example: ART_DEF_MOVIE_2K_INTRO
   - Example: ART_DEF_MOVIE_ABU_SIMBEL
   - Example: ART_DEF_MOVIE_ADAM_SMITH
@@ -7601,17 +7601,17 @@ Era counts: unknown=174
 Era counts: unknown=93
 
 - `Civilopedia`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: unsupported.
   - Example: TXT_KEY_BTS_BUILDINGS_PEDIA
   - Example: TXT_KEY_BTS_CIVS_PEDIA
   - Example: TXT_KEY_BTS_FOREST_PRESERVE_PEDIA
 - `Description`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: unsupported.
   - Example: TXT_KEY_BTS_BUILDINGS
   - Example: TXT_KEY_BTS_CIVS
   - Example: TXT_KEY_BTS_FOREST_PRESERVE
 - `Type`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: unsupported.
   - Example: CONCEPT_ADVANCED_CARGO
   - Example: CONCEPT_AIR_COMBAT
   - Example: CONCEPT_AIR_PROMOTIONS
@@ -7621,53 +7621,53 @@ Era counts: unknown=93
 Era counts: ERA_ANCIENT=1, unknown=5
 
 - `Description`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_CITY
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_FRIENDLY
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_NEUTRAL
 - `ExtraChancePromotions`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "ExtraChancePromotions",\n  [\n    [\n      "ExtraChancePromotion",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_WOODSMAN1"\n        ],\n...
 - `ExtraChancePromotions/ExtraChancePromotion`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "ExtraChancePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_GUERILLA1"\n    ],\n    [\n      "iExtraChance",\n      "5"\n    ]\n  ]\n]
   - Example: [\n  "ExtraChancePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_GUERILLA2"\n    ],\n    [\n      "iExtraChance",\n      "5"\n    ]\n  ]\n]
   - Example: [\n  "ExtraChancePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_GUERILLA3"\n    ],\n    [\n      "iExtraChance",\n      "5"\n    ]\n  ]\n]
 - `ExtraChancePromotions/ExtraChancePromotion/PromotionType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: PROMOTION_GUERILLA1
   - Example: PROMOTION_GUERILLA2
   - Example: PROMOTION_GUERILLA3
 - `ExtraChancePromotions/ExtraChancePromotion/iExtraChance`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 10
   - Example: 5
 - `Message`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_CITY_MESSAGE
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_FRIENDLY_MESSAGE
   - Example: TXT_KEY_OUTCOME_ANIMAL_BUTCHERED_NEUTRAL_MESSAGE
 - `PrereqTech`
-  - Present: 6. Non-default: 1. Status: preserved.
+  - Present: 6. Non-default: 1. Status: mapped.
   - Example: TECH_ANIMAL_HUSBANDRY
 - `Type`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: OUTCOME_ANIMAL_BUTCHERED_CITY
   - Example: OUTCOME_ANIMAL_BUTCHERED_FRIENDLY
   - Example: OUTCOME_ANIMAL_BUTCHERED_NEUTRAL
 - `bCity`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFriendlyTerritory`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: mapped.
 - `bHostileTerritory`
-  - Present: 4. Non-default: 1. Status: preserved.
+  - Present: 4. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNeutralTerritory`
-  - Present: 4. Non-default: 1. Status: preserved.
+  - Present: 4. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNotCity`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 
 ## PlayerColorInfo: 69 records
@@ -7675,22 +7675,22 @@ Era counts: ERA_ANCIENT=1, unknown=5
 Era counts: unknown=69
 
 - `ColorTypePrimary`
-  - Present: 69. Non-default: 69. Status: preserved.
+  - Present: 69. Non-default: 69. Status: unsupported.
   - Example: COLOR_PLAYER_ALZARIN
   - Example: COLOR_PLAYER_AZURE
   - Example: COLOR_PLAYER_BLACK
 - `ColorTypeSecondary`
-  - Present: 69. Non-default: 69. Status: preserved.
+  - Present: 69. Non-default: 69. Status: unsupported.
   - Example: COLOR_PLAYER_ALICE_BLUE
   - Example: COLOR_PLAYER_AMBER
   - Example: COLOR_PLAYER_BLACK
 - `TextColorType`
-  - Present: 69. Non-default: 69. Status: preserved.
+  - Present: 69. Non-default: 69. Status: unsupported.
   - Example: COLOR_PLAYER_ALZARIN_TEXT
   - Example: COLOR_PLAYER_AZURE_TEXT
   - Example: COLOR_PLAYER_BLACK_TEXT
 - `Type`
-  - Present: 69. Non-default: 69. Status: preserved.
+  - Present: 69. Non-default: 69. Status: unsupported.
   - Example: PLAYERCOLOR_ABYSSINIANS
   - Example: PLAYERCOLOR_ALBANIA
   - Example: PLAYERCOLOR_ASSYRIA
@@ -7700,22 +7700,22 @@ Era counts: unknown=69
 Era counts: unknown=23
 
 - `Description`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: TXT_KEY_PLAYEROPTION_LEAVE_FORESTS
   - Example: TXT_KEY_PLAYER_OPTION_ADVISOR_HELP
   - Example: TXT_KEY_PLAYER_OPTION_ADVISOR_POPUPS
 - `Help`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: TXT_KEY_PLAYEROPTION_LEAVE_FORESTS_HELP
   - Example: TXT_KEY_PLAYER_OPTION_ADVISOR_HELP_HELP
   - Example: TXT_KEY_PLAYER_OPTION_ADVISOR_POPUPS_HELP
 - `Type`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: GRAPHICOPTION_CITY_DETAIL
   - Example: PLAYEROPTION_ADVISOR_HELP
   - Example: PLAYEROPTION_ADVISOR_POPUPS
 - `bDefault`
-  - Present: 23. Non-default: 3. Status: preserved.
+  - Present: 23. Non-default: 3. Status: unsupported.
   - Example: 1
 
 ## ProcessInfo: 5 records
@@ -7723,35 +7723,35 @@ Era counts: unknown=23
 Era counts: ERA_CLASSICAL=3, ERA_MEDIEVAL=1, unknown=1
 
 - `Button`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,15
   - Example: ,Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16
   - Example: Art/Interface/Buttons/Process/ProcessCulture.dds
 - `Description`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: TXT_KEY_PROCESS_CULTURE
   - Example: TXT_KEY_PROCESS_ESPIONAGE
   - Example: TXT_KEY_PROCESS_IDLE
 - `ProductionToCommerceModifiers`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: [\n  "ProductionToCommerceModifiers",\n  [\n    [\n      "iProductionToCommerceModifier",\n      "0"\n    ],\n    [\n      "iProductionToCommerceModifier",\n      "0"...
   - Example: [\n  "ProductionToCommerceModifiers",\n  [\n    [\n      "iProductionToCommerceModifier",\n      "0"\n    ],\n    [\n      "iProductionToCommerceModifier",\n      "50...
   - Example: [\n  "ProductionToCommerceModifiers",\n  [\n    [\n      "iProductionToCommerceModifier",\n      "50"\n    ],\n    [\n      "iProductionToCommerceModifier",\n      "0...
 - `ProductionToCommerceModifiers/iProductionToCommerceModifier`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: 50
 - `Strategy`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: TXT_KEY_PROCESS_CULTURE_STRATEGY
   - Example: TXT_KEY_PROCESS_ESPIONAGE_STRATEGY
   - Example: TXT_KEY_PROCESS_IDLE_STRATEGY
 - `TechPrereq`
-  - Present: 5. Non-default: 4. Status: preserved.
+  - Present: 5. Non-default: 4. Status: mapped.
   - Example: TECH_ALPHABET
   - Example: TECH_CURRENCY
   - Example: TECH_MUSIC
 - `Type`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: PROCESS_CULTURE
   - Example: PROCESS_ESPIONAGE
   - Example: PROCESS_IDLE
@@ -7761,626 +7761,626 @@ Era counts: ERA_CLASSICAL=3, ERA_MEDIEVAL=1, unknown=1
 Era counts: ERA_INDUSTRIAL=2, ERA_MODERN=13, ERA_RENAISSANCE=1, ERA_TRANSHUMAN=16
 
 - `AnyonePrereqProject`
-  - Present: 32. Non-default: 2. Status: preserved.
+  - Present: 32. Non-default: 2. Status: unsupported.
   - Example: PROJECT_IST
   - Example: PROJECT_MANHATTAN_PROJECT
 - `BonusProductionModifiers`
-  - Present: 32. Non-default: 15. Status: preserved.
+  - Present: 32. Non-default: 15. Status: unsupported.
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_ALUMINUM"\n        ],\n   ...
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_COPPER"\n        ],\n     ...
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_DURASTEEL"\n        ],\n  ...
 - `BonusProductionModifiers/BonusProductionModifier`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "iProductonModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_COPPER"\n    ],\n    [\n      "iProductonModifier",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_DURASTEEL"\n    ],\n    [\n      "iProductonModifier",\n      "100"\n    ]\n  ]\n]
 - `BonusProductionModifiers/BonusProductionModifier/BonusType`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_COPPER
   - Example: BONUS_DURASTEEL
 - `BonusProductionModifiers/BonusProductionModifier/iProductonModifier`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: unsupported.
   - Example: 100
 - `Button`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Buildings/ApolloProgram.dds,Art/Interface/Buttons/Buildings_Atlas.dds,3,1
   - Example: ,Art/Interface/Buttons/Buildings/Cancer.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,5,2
   - Example: ,Art/Interface/Buttons/Buildings/Evolution.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,8,3
 - `Civilopedia`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: TXT_KEY_BUILDING_CANCER_PEDIA
   - Example: TXT_KEY_BUILDING_COMMERCIAL_SATELLITES_PEDIA
   - Example: TXT_KEY_BUILDING_HUMAN_GENOME_PROJECT_PEDIA
 - `CommerceModifiers`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n  ...
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "5"\n    ],\n  ...
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "10"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n ...
 - `CommerceModifiers/iCommerce`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: unsupported.
   - Example: 10
   - Example: 25
   - Example: 5
 - `CreateSound`
-  - Present: 32. Non-default: 0. Status: preserved.
+  - Present: 32. Non-default: 0. Status: unsupported.
 - `Description`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: TXT_KEY_BUILDING_CANCER
   - Example: TXT_KEY_BUILDING_COMMERCIAL_SATELLITES
   - Example: TXT_KEY_BUILDING_HUMAN_GENOME_PROJECT
 - `EveryoneSpecialBuilding`
-  - Present: 32. Non-default: 8. Status: preserved.
+  - Present: 32. Non-default: 8. Status: unsupported.
   - Example: SPECIALBUILDING_CLONING_FACTORY
   - Example: SPECIALBUILDING_DEEP_SPACE_RESEARCH
   - Example: SPECIALBUILDING_FIRST_NUCLEAR_TEST
 - `EveryoneSpecialUnit`
-  - Present: 32. Non-default: 0. Status: preserved.
+  - Present: 32. Non-default: 0. Status: unsupported.
 - `MovieDefineTag`
-  - Present: 32. Non-default: 10. Status: preserved.
+  - Present: 32. Non-default: 10. Status: unsupported.
   - Example: ART_DEF_MOVIE_APOLLO_PROGRAM
   - Example: ART_DEF_MOVIE_EDEN
   - Example: ART_DEF_MOVIE_ENCYCLOPEDIA
 - `PrereqProjects`
-  - Present: 32. Non-default: 13. Status: preserved.
+  - Present: 32. Non-default: 13. Status: unsupported.
   - Example: [\n  "PrereqProjects",\n  [\n    [\n      "PrereqProject",\n      [\n        [\n          "ProjectType",\n          "PROJECT_APOLLO_PROGRAM"\n        ],\n        [\n   ...
   - Example: [\n  "PrereqProjects",\n  [\n    [\n      "PrereqProject",\n      [\n        [\n          "ProjectType",\n          "PROJECT_MISSILE_DEFENCE_I"\n        ],\n        [\n...
   - Example: [\n  "PrereqProjects",\n  [\n    [\n      "PrereqProject",\n      [\n        [\n          "ProjectType",\n          "PROJECT_MISSILE_DEFENCE_II"\n        ],\n        [...
 - `PrereqProjects/PrereqProject`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: [\n  "PrereqProject",\n  [\n    [\n      "ProjectType",\n      "PROJECT_APOLLO_PROGRAM"\n    ],\n    [\n      "iNeeded",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqProject",\n  [\n    [\n      "ProjectType",\n      "PROJECT_MISSILE_DEFENCE_I"\n    ],\n    [\n      "iNeeded",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqProject",\n  [\n    [\n      "ProjectType",\n      "PROJECT_MISSILE_DEFENCE_II"\n    ],\n    [\n      "iNeeded",\n      "1"\n    ]\n  ]\n]
 - `PrereqProjects/PrereqProject/ProjectType`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: PROJECT_APOLLO_PROGRAM
   - Example: PROJECT_MISSILE_DEFENCE_I
   - Example: PROJECT_MISSILE_DEFENCE_II
 - `PrereqProjects/PrereqProject/iNeeded`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1
 - `Strategy`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: TXT_KEY_BUILDING_CANCER_STRATEGY
   - Example: TXT_KEY_BUILDING_COMMERCIAL_SATELLITES_STRATEGY
   - Example: TXT_KEY_BUILDING_HUMAN_GENOME_PROJECT_STRATEGY
 - `TechPrereq`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: TECH_ARTIFICIAL_INTELLIGENCE
   - Example: TECH_BIOLOGY
   - Example: TECH_CLONING
 - `Type`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: PROJECT_APOLLO_NEW
   - Example: PROJECT_APOLLO_PROGRAM
   - Example: PROJECT_COMMERCIAL_SATELLITES
 - `VictoryMinThresholds`
-  - Present: 32. Non-default: 3. Status: preserved.
+  - Present: 32. Non-default: 3. Status: unsupported.
   - Example: [\n  "VictoryMinThresholds",\n  [\n    [\n      "VictoryMinThreshold",\n      [\n        [\n          "VictoryType",\n          "VICTORY_SPACE_RACE"\n        ],\n     ...
 - `VictoryMinThresholds/VictoryMinThreshold`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: [\n  "VictoryMinThreshold",\n  [\n    [\n      "VictoryType",\n      "VICTORY_SPACE_RACE"\n    ],\n    [\n      "iThreshold",\n      "1"\n    ]\n  ]\n]
 - `VictoryMinThresholds/VictoryMinThreshold/VictoryType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: VICTORY_SPACE_RACE
 - `VictoryMinThresholds/VictoryMinThreshold/iThreshold`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: 1
 - `VictoryPrereq`
-  - Present: 32. Non-default: 7. Status: preserved.
+  - Present: 32. Non-default: 7. Status: unsupported.
   - Example: VICTORY_SPACE_RACE
 - `VictoryThresholds`
-  - Present: 32. Non-default: 7. Status: preserved.
+  - Present: 32. Non-default: 7. Status: unsupported.
   - Example: [\n  "VictoryThresholds",\n  [\n    [\n      "VictoryThreshold",\n      [\n        [\n          "VictoryType",\n          "VICTORY_SPACE_RACE"\n        ],\n        [\n ...
 - `VictoryThresholds/VictoryThreshold`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: [\n  "VictoryThreshold",\n  [\n    [\n      "VictoryType",\n      "VICTORY_SPACE_RACE"\n    ],\n    [\n      "iThreshold",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "VictoryThreshold",\n  [\n    [\n      "VictoryType",\n      "VICTORY_SPACE_RACE"\n    ],\n    [\n      "iThreshold",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "VictoryThreshold",\n  [\n    [\n      "VictoryType",\n      "VICTORY_SPACE_RACE"\n    ],\n    [\n      "iThreshold",\n      "5"\n    ]\n  ]\n]
 - `VictoryThresholds/VictoryThreshold/VictoryType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: VICTORY_SPACE_RACE
 - `VictoryThresholds/VictoryThreshold/iThreshold`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 5
 - `bAllowsNukes`
-  - Present: 32. Non-default: 0. Status: preserved.
+  - Present: 32. Non-default: 0. Status: unsupported.
 - `bSpaceprogram`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1
 - `bSpaceship`
-  - Present: 32. Non-default: 7. Status: preserved.
+  - Present: 32. Non-default: 7. Status: unsupported.
   - Example: 1
 - `iConnectedCityMaintenanceModifier`
-  - Present: 32. Non-default: 0. Status: preserved.
+  - Present: 32. Non-default: 0. Status: unsupported.
 - `iCost`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: unsupported.
   - Example: 1000
   - Example: 10000
   - Example: 1500
 - `iDistanceMaintenanceModifier`
-  - Present: 32. Non-default: 0. Status: preserved.
+  - Present: 32. Non-default: 0. Status: unsupported.
 - `iGlobalHappiness`
-  - Present: 9. Non-default: 7. Status: preserved.
+  - Present: 9. Non-default: 7. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iGlobalHealth`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: unsupported.
   - Example: 1
   - Example: 2
 - `iGlobalMaintenanceModifier`
-  - Present: 32. Non-default: 4. Status: preserved.
+  - Present: 32. Non-default: 4. Status: unsupported.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iMaxGlobalInstances`
-  - Present: 32. Non-default: 18. Status: preserved.
+  - Present: 32. Non-default: 18. Status: unsupported.
   - Example: 1
 - `iMaxTeamInstances`
-  - Present: 32. Non-default: 14. Status: preserved.
+  - Present: 32. Non-default: 14. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 5
 - `iNukeInterception`
-  - Present: 32. Non-default: 4. Status: preserved.
+  - Present: 32. Non-default: 4. Status: unsupported.
   - Example: 15
   - Example: 20
   - Example: 30
 - `iNumCitiesMaintenanceModifier`
-  - Present: 32. Non-default: 4. Status: preserved.
+  - Present: 32. Non-default: 4. Status: unsupported.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iSuccessRate`
-  - Present: 32. Non-default: 1. Status: preserved.
+  - Present: 32. Non-default: 1. Status: unsupported.
   - Example: 20
 - `iTechShare`
-  - Present: 32. Non-default: 3. Status: preserved.
+  - Present: 32. Non-default: 3. Status: unsupported.
   - Example: 2
   - Example: 3
   - Example: 5
 - `iVictoryDelayPercent`
-  - Present: 32. Non-default: 2. Status: preserved.
+  - Present: 32. Non-default: 2. Status: unsupported.
   - Example: 100
   - Example: 50
 - `iWorldHappiness`
-  - Present: 8. Non-default: 2. Status: preserved.
+  - Present: 8. Non-default: 2. Status: unsupported.
   - Example: 1
 - `iWorldHealth`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iWorldTradeRoutes`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 
 ## PromotionInfo: 266 records
 
 Era counts: ERA_ANCIENT=3, ERA_CLASSICAL=8, ERA_FUTURE=8, ERA_INDUSTRIAL=11, ERA_MEDIEVAL=4, ERA_MODERN=10, ERA_RENAISSANCE=7, ERA_TRANSHUMAN=17, unknown=198
 
 - `Button`
-  - Present: 266. Non-default: 266. Status: preserved.
+  - Present: 266. Non-default: 266. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,2
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_promotions_atlas.dds,1,5
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_promotions_atlas.dds,1,6
 - `Description`
-  - Present: 266. Non-default: 266. Status: preserved.
+  - Present: 266. Non-default: 266. Status: mapped.
   - Example: TXT_KEY_PROMOTION_ACCURACY
   - Example: TXT_KEY_PROMOTION_ACCURACY2
   - Example: TXT_KEY_PROMOTION_ACCURACY3
 - `DomainMods`
-  - Present: 266. Non-default: 10. Status: preserved.
+  - Present: 266. Non-default: 10. Status: mapped.
   - Example: [\n  "DomainMods",\n  [\n    [\n      "DomainMod",\n      [\n        [\n          "DomainType",\n          "DOMAIN_LAND"\n        ],\n        [\n          "iDomainMod",...
   - Example: [\n  "DomainMods",\n  [\n    [\n      "DomainMod",\n      [\n        [\n          "DomainType",\n          "DOMAIN_SEA"\n        ],\n        [\n          "iDomainMod",\n...
 - `DomainMods/DomainMod`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iDomainMod",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iDomainMod",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iDomainMod",\n      "20"\n    ]\n  ]\n]
 - `DomainMods/DomainMod/DomainType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: DOMAIN_LAND
   - Example: DOMAIN_SEA
 - `DomainMods/DomainMod/iDomainMod`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `FeatureAttacks`
-  - Present: 266. Non-default: 5. Status: preserved.
+  - Present: 266. Non-default: 5. Status: mapped.
   - Example: [\n  "FeatureAttacks",\n  [\n    [\n      "FeatureAttack",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n          "...
 - `FeatureAttacks/FeatureAttack`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "20"\n    ]\n  ]\n]
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "25"\n    ]\n  ]\n]
 - `FeatureAttacks/FeatureAttack/FeatureType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureAttacks/FeatureAttack/iFeatureAttack`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 15
   - Example: 20
   - Example: 25
 - `FeatureDefenses`
-  - Present: 266. Non-default: 3. Status: preserved.
+  - Present: 266. Non-default: 3. Status: mapped.
   - Example: [\n  "FeatureDefenses",\n  [\n    [\n      "FeatureDefense",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n         ...
 - `FeatureDefenses/FeatureDefense`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: [\n  "FeatureDefense",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureDefense",\n      "-25"\n    ]\n  ]\n]
   - Example: [\n  "FeatureDefense",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureDefense",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "FeatureDefense",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "iFeatureDefense",\n      "-25"\n    ]\n  ]\n]
 - `FeatureDefenses/FeatureDefense/FeatureType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureDefenses/FeatureDefense/iFeatureDefense`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: -25
   - Example: 25
 - `FeatureDoubleMoves`
-  - Present: 266. Non-default: 3. Status: preserved.
+  - Present: 266. Non-default: 3. Status: mapped.
   - Example: [\n  "FeatureDoubleMoves",\n  [\n    [\n      "FeatureDoubleMove",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n   ...
   - Example: [\n  "FeatureDoubleMoves",\n  [\n    [\n      "FeatureDoubleMove",\n      [\n        [\n          "FeatureType",\n          "FEATURE_STORM"\n        ],\n        [\n    ...
 - `FeatureDoubleMoves/FeatureDoubleMove`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: [\n  "FeatureDoubleMove",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "bFeatureDoubleMove",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureDoubleMove",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "bFeatureDoubleMove",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureDoubleMove",\n  [\n    [\n      "FeatureType",\n      "FEATURE_STORM"\n    ],\n    [\n      "bFeatureDoubleMove",\n      "1"\n    ]\n  ]\n]
 - `FeatureDoubleMoves/FeatureDoubleMove/FeatureType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
   - Example: FEATURE_STORM
 - `FeatureDoubleMoves/FeatureDoubleMove/bFeatureDoubleMove`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `HotKey`
-  - Present: 247. Non-default: 0. Status: preserved.
+  - Present: 247. Non-default: 0. Status: unsupported.
 - `IgnoreTerrainDamage`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_TUNDRA
 - `LayerAnimationPath`
-  - Present: 245. Non-default: 0. Status: preserved.
+  - Present: 245. Non-default: 0. Status: unsupported.
 - `ObsoleteTech`
-  - Present: 4. Non-default: 2. Status: preserved.
+  - Present: 4. Non-default: 2. Status: mapped.
   - Example: TECH_AUTOMATIC_WEAPONS
   - Example: TECH_MOUNTAINEERING
 - `PrereqOrCivics`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_DESPOTISM"\n        ],\n        [\n          "b...
 - `PrereqOrCivics/PrereqCivic`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_DESPOTISM"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_HEREDITARY_RULE"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_MERCANTILISM"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
 - `PrereqOrCivics/PrereqCivic/CivicOption`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: CIVIC_DESPOTISM
   - Example: CIVIC_HEREDITARY_RULE
   - Example: CIVIC_MERCANTILISM
 - `PrereqOrCivics/PrereqCivic/bPrereqCivic`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `PromotionPrereq`
-  - Present: 264. Non-default: 49. Status: preserved.
+  - Present: 264. Non-default: 49. Status: mapped.
   - Example: PROMOTION_COMBAT1
   - Example: PROMOTION_COMBAT2
   - Example: PROMOTION_DOGFIGHT
 - `PromotionPrereqOr1`
-  - Present: 266. Non-default: 194. Status: preserved.
+  - Present: 266. Non-default: 194. Status: mapped.
   - Example: PROMOTION_ACCURACY
   - Example: PROMOTION_ACCURACY2
   - Example: PROMOTION_ACE
 - `PromotionPrereqOr2`
-  - Present: 266. Non-default: 23. Status: preserved.
+  - Present: 266. Non-default: 23. Status: mapped.
   - Example: PROMOTION_BARRAGE1
   - Example: PROMOTION_CITY_GARRISON1
   - Example: PROMOTION_COMBAT3
 - `Sound`
-  - Present: 266. Non-default: 266. Status: preserved.
+  - Present: 266. Non-default: 266. Status: unsupported.
   - Example: AS2D_IF_LEVELUP
   - Example: AS2D_PING
 - `StateReligionPrereq`
-  - Present: 266. Non-default: 14. Status: preserved.
+  - Present: 266. Non-default: 14. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `TechPrereq`
-  - Present: 266. Non-default: 68. Status: preserved.
+  - Present: 266. Non-default: 68. Status: mapped.
   - Example: TECH_ADVANCED_COMPUTERS
   - Example: TECH_ADVANCED_FLIGHT
   - Example: TECH_ANATOMY
 - `TerrainAttacks`
-  - Present: 266. Non-default: 10. Status: preserved.
+  - Present: 266. Non-default: 10. Status: mapped.
   - Example: [\n  "TerrainAttacks",\n  [\n    [\n      "TerrainAttack",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n          "i...
   - Example: [\n  "TerrainAttacks",\n  [\n    [\n      "TerrainAttack",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n          "...
   - Example: [\n  "TerrainAttacks",\n  [\n    [\n      "TerrainAttack",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          "i...
 - `TerrainAttacks/TerrainAttack`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainAttack",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainAttack",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainAttack",\n      "25"\n    ]\n  ]\n]
 - `TerrainAttacks/TerrainAttack/TerrainType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TerrainAttacks/TerrainAttack/iTerrainAttack`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `TerrainDefenses`
-  - Present: 266. Non-default: 21. Status: preserved.
+  - Present: 266. Non-default: 21. Status: mapped.
   - Example: [\n  "TerrainDefenses",\n  [\n    [\n      "TerrainDefense",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n          ...
   - Example: [\n  "TerrainDefenses",\n  [\n    [\n      "TerrainDefense",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n         ...
   - Example: [\n  "TerrainDefenses",\n  [\n    [\n      "TerrainDefense",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          ...
 - `TerrainDefenses/TerrainDefense`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: [\n  "TerrainDefense",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainDefense",\n      "-20"\n    ]\n  ]\n]
   - Example: [\n  "TerrainDefense",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainDefense",\n      "-25"\n    ]\n  ]\n]
   - Example: [\n  "TerrainDefense",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "iTerrainDefense",\n      "-30"\n    ]\n  ]\n]
 - `TerrainDefenses/TerrainDefense/TerrainType`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `TerrainDefenses/TerrainDefense/iTerrainDefense`
-  - Present: 21. Non-default: 21. Status: preserved.
+  - Present: 21. Non-default: 21. Status: mapped.
   - Example: -20
   - Example: -25
   - Example: -30
 - `TerrainDoubleMoves`
-  - Present: 266. Non-default: 5. Status: preserved.
+  - Present: 266. Non-default: 5. Status: mapped.
   - Example: [\n  "TerrainDoubleMoves",\n  [\n    [\n      "TerrainDoubleMove",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n   ...
   - Example: [\n  "TerrainDoubleMoves",\n  [\n    [\n      "TerrainDoubleMove",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_MARSH"\n        ],\n        [\n    ...
   - Example: [\n  "TerrainDoubleMoves",\n  [\n    [\n      "TerrainDoubleMove",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_PLAINS"\n        ],\n        [\n   ...
 - `TerrainDoubleMoves/TerrainDoubleMove`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "TerrainDoubleMove",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bTerrainDoubleMove",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainDoubleMove",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_MARSH"\n    ],\n    [\n      "bTerrainDoubleMove",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainDoubleMove",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_PLAINS"\n    ],\n    [\n      "bTerrainDoubleMove",\n      "1"\n    ]\n  ]\n]
 - `TerrainDoubleMoves/TerrainDoubleMove/TerrainType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_MARSH
   - Example: TERRAIN_PLAINS
 - `TerrainDoubleMoves/TerrainDoubleMove/bTerrainDoubleMove`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 266. Non-default: 266. Status: preserved.
+  - Present: 266. Non-default: 266. Status: mapped.
   - Example: PROMOTION_ACCURACY
   - Example: PROMOTION_ACCURACY2
   - Example: PROMOTION_ACCURACY3
 - `UnitCombatMods`
-  - Present: 266. Non-default: 72. Status: preserved.
+  - Present: 266. Non-default: 72. Status: mapped.
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ANIMAL"\n        ],\n        [\n     ...
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ARCHER"\n        ],\n        [\n     ...
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ASSAULT_MECH"\n        ],\n        [...
 - `UnitCombatMods/UnitCombatMod`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ANIMAL"\n    ],\n    [\n      "iUnitCombatMod",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ANIMAL"\n    ],\n    [\n      "iUnitCombatMod",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ANIMAL"\n    ],\n    [\n      "iUnitCombatMod",\n      "20"\n    ]\n  ]\n]
 - `UnitCombatMods/UnitCombatMod/UnitCombatType`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: UNITCOMBAT_ANIMAL
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
 - `UnitCombatMods/UnitCombatMod/iUnitCombatMod`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `UnitCombats`
-  - Present: 266. Non-default: 259. Status: preserved.
+  - Present: 266. Non-default: 259. Status: mapped.
   - Example: [\n  "UnitCombats",\n  [\n    [\n      "UnitCombat",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ARCHER"\n        ],\n        [\n          "...
   - Example: [\n  "UnitCombats",\n  [\n    [\n      "UnitCombat",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ASSAULT_MECH"\n        ],\n        [\n     ...
   - Example: [\n  "UnitCombats",\n  [\n    [\n      "UnitCombat",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_COMMANDER"\n        ],\n        [\n        ...
 - `UnitCombats/UnitCombat`
-  - Present: 259. Non-default: 259. Status: preserved.
+  - Present: 259. Non-default: 259. Status: mapped.
   - Example: [\n  "UnitCombat",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "bUnitCombat",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombat",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ASSAULT_MECH"\n    ],\n    [\n      "bUnitCombat",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombat",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_BOMBERS"\n    ],\n    [\n      "bUnitCombat",\n      "1"\n    ]\n  ]\n]
 - `UnitCombats/UnitCombat/UnitCombatType`
-  - Present: 259. Non-default: 259. Status: preserved.
+  - Present: 259. Non-default: 259. Status: mapped.
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
   - Example: UNITCOMBAT_BOMBERS
 - `UnitCombats/UnitCombat/bUnitCombat`
-  - Present: 259. Non-default: 259. Status: preserved.
+  - Present: 259. Non-default: 259. Status: mapped.
   - Example: 1
 - `UnitCombats/UnitCombatMod`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_TRACKED"\n    ],\n    [\n      "bUnitCombat",\n      "1"\n    ]\n  ]\n]
 - `UnitCombats/UnitCombatMod/UnitCombatType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: UNITCOMBAT_TRACKED
 - `UnitCombats/UnitCombatMod/bUnitCombat`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bAltDown`
-  - Present: 246. Non-default: 0. Status: preserved.
+  - Present: 246. Non-default: 0. Status: unsupported.
 - `bAlwaysHeal`
-  - Present: 266. Non-default: 4. Status: preserved.
+  - Present: 266. Non-default: 4. Status: mapped.
   - Example: 1
 - `bAmphib`
-  - Present: 266. Non-default: 4. Status: preserved.
+  - Present: 266. Non-default: 4. Status: mapped.
   - Example: 1
 - `bBlitz`
-  - Present: 266. Non-default: 3. Status: preserved.
+  - Present: 266. Non-default: 3. Status: mapped.
   - Example: 1
 - `bCanLeadThroughPeaks`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCanMovePeaks`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `bCtrlDown`
-  - Present: 246. Non-default: 0. Status: preserved.
+  - Present: 246. Non-default: 0. Status: unsupported.
 - `bEnemyRoute`
-  - Present: 266. Non-default: 4. Status: preserved.
+  - Present: 266. Non-default: 4. Status: mapped.
   - Example: 1
 - `bHillsDoubleMove`
-  - Present: 266. Non-default: 2. Status: preserved.
+  - Present: 266. Non-default: 2. Status: mapped.
   - Example: 1
 - `bImmuneToFirstStrikes`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 1
 - `bIsPirate`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bLeader`
-  - Present: 266. Non-default: 1. Status: preserved.
+  - Present: 266. Non-default: 1. Status: mapped.
   - Example: 1
 - `bOnslaught`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRiver`
-  - Present: 266. Non-default: 3. Status: preserved.
+  - Present: 266. Non-default: 3. Status: mapped.
   - Example: 1
 - `bShiftDown`
-  - Present: 246. Non-default: 0. Status: preserved.
+  - Present: 246. Non-default: 0. Status: unsupported.
 - `bZoneOfControl`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: 1
 - `iAdjacentTileHealChange`
-  - Present: 266. Non-default: 4. Status: preserved.
+  - Present: 266. Non-default: 4. Status: mapped.
   - Example: 15
   - Example: 5
 - `iAirRangeChange`
-  - Present: 266. Non-default: 2. Status: preserved.
+  - Present: 266. Non-default: 2. Status: mapped.
   - Example: 1
 - `iBombardRateChange`
-  - Present: 266. Non-default: 11. Status: preserved.
+  - Present: 266. Non-default: 11. Status: mapped.
   - Example: -10
   - Example: 10
   - Example: 16
 - `iCargoChange`
-  - Present: 266. Non-default: 3. Status: preserved.
+  - Present: 266. Non-default: 3. Status: mapped.
   - Example: 1
 - `iChanceFirstStrikesChange`
-  - Present: 266. Non-default: 19. Status: preserved.
+  - Present: 266. Non-default: 19. Status: mapped.
   - Example: 1
   - Example: 2
 - `iCityAttack`
-  - Present: 266. Non-default: 23. Status: preserved.
+  - Present: 266. Non-default: 23. Status: mapped.
   - Example: -25
   - Example: 10
   - Example: 15
 - `iCityDefense`
-  - Present: 266. Non-default: 13. Status: preserved.
+  - Present: 266. Non-default: 13. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iCollateralDamageChange`
-  - Present: 266. Non-default: 9. Status: preserved.
+  - Present: 266. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iCollateralDamageProtection`
-  - Present: 266. Non-default: 17. Status: preserved.
+  - Present: 266. Non-default: 17. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iCombatPercent`
-  - Present: 266. Non-default: 38. Status: preserved.
+  - Present: 266. Non-default: 38. Status: mapped.
   - Example: -20
   - Example: 00
   - Example: 10
 - `iCommandRange`
-  - Present: 4. Non-default: 2. Status: preserved.
+  - Present: 4. Non-default: 2. Status: mapped.
   - Example: 1
 - `iControlPoints`
-  - Present: 4. Non-default: 3. Status: preserved.
+  - Present: 4. Non-default: 3. Status: mapped.
   - Example: 10
   - Example: 5
 - `iEnemyHealChange`
-  - Present: 266. Non-default: 10. Status: preserved.
+  - Present: 266. Non-default: 10. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 20
 - `iEvasionChange`
-  - Present: 266. Non-default: 5. Status: preserved.
+  - Present: 266. Non-default: 5. Status: mapped.
   - Example: 10
   - Example: 15
 - `iExperiencePercent`
-  - Present: 266. Non-default: 9. Status: preserved.
+  - Present: 266. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `iFirstStrikesChange`
-  - Present: 266. Non-default: 17. Status: preserved.
+  - Present: 266. Non-default: 17. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iFriendlyHealChange`
-  - Present: 266. Non-default: 10. Status: preserved.
+  - Present: 266. Non-default: 10. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 40
 - `iHillsAttack`
-  - Present: 266. Non-default: 6. Status: preserved.
+  - Present: 266. Non-default: 6. Status: mapped.
   - Example: -15
   - Example: -20
   - Example: 15
 - `iHillsDefense`
-  - Present: 266. Non-default: 4. Status: preserved.
+  - Present: 266. Non-default: 4. Status: mapped.
   - Example: -15
   - Example: -20
   - Example: 20
 - `iHotKeyPriority`
-  - Present: 246. Non-default: 0. Status: preserved.
+  - Present: 246. Non-default: 0. Status: unsupported.
 - `iInterceptChange`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 5
 - `iKamikazePercent`
-  - Present: 266. Non-default: 2. Status: preserved.
+  - Present: 266. Non-default: 2. Status: mapped.
   - Example: 100
 - `iMoveDiscountChange`
-  - Present: 266. Non-default: 7. Status: preserved.
+  - Present: 266. Non-default: 7. Status: mapped.
   - Example: 1
 - `iMovesChange`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 2
 - `iNeutralHealChange`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 30
 - `iPillageChange`
-  - Present: 266. Non-default: 2. Status: preserved.
+  - Present: 266. Non-default: 2. Status: mapped.
   - Example: 100
   - Example: 50
 - `iRevoltProtection`
-  - Present: 266. Non-default: 11. Status: preserved.
+  - Present: 266. Non-default: 11. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 30
 - `iSameTileHealChange`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 5
 - `iUpgradeDiscount`
-  - Present: 266. Non-default: 8. Status: preserved.
+  - Present: 266. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 25
 - `iVisibilityChange`
-  - Present: 266. Non-default: 11. Status: preserved.
+  - Present: 266. Non-default: 11. Status: mapped.
   - Example: 1
 - `iWithdrawalChange`
-  - Present: 266. Non-default: 14. Status: preserved.
+  - Present: 266. Non-default: 14. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
@@ -8390,28 +8390,28 @@ Era counts: ERA_ANCIENT=3, ERA_CLASSICAL=8, ERA_FUTURE=8, ERA_INDUSTRIAL=11, ERA
 Era counts: unknown=1
 
 - `Description`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: TEMP
 - `QuestBodyText`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: TXT_KEY_TUTORIAL_MOVE_UNIT_BODYTEXT
 - `QuestLinks`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `QuestMessages`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `QuestObjective`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: TXT_KEY_TUTORIAL_MOVE_UNIT_OBJECTIVE
 - `QuestScript`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `QuestSounds`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: [\n  "QuestSounds",\n  [\n    [\n      "QuestSound",\n      "AS2D_TUT_MOVE_UNIT"\n    ]\n  ]\n]
 - `QuestSounds/QuestSound`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: AS2D_TUT_MOVE_UNIT
 - `Type`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: TUTORIAL_MOVE_UNIT
 
 ## ReligionInfo: 13 records
@@ -8419,103 +8419,103 @@ Era counts: unknown=1
 Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
 
 - `Adjective`
-  - Present: 13. Non-default: 9. Status: preserved.
+  - Present: 13. Non-default: 9. Status: unsupported.
   - Example: TXT_KEY_RELIGION_BUDDHISM_ADJECTIVE
   - Example: TXT_KEY_RELIGION_CHRISTIANITY_ADJECTIVE
   - Example: TXT_KEY_RELIGION_CONFUCIANISM_ADJECTIVE
 - `Button`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: Art/Interface/Buttons/Religions/Buddhism.dds
   - Example: Art/Interface/Buttons/Religions/Christian.dds
   - Example: Art/Interface/Buttons/Religions/Confuscianism.dds
 - `Civilopedia`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TXT_KEY_RELIGION_ASATRU_PEDIA
   - Example: TXT_KEY_RELIGION_BUDDHISM_PEDIA
   - Example: TXT_KEY_RELIGION_CHRISTIANITY_PEDIA
 - `Description`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TXT_KEY_RELIGION_ASATRU
   - Example: TXT_KEY_RELIGION_BUDDHISM
   - Example: TXT_KEY_RELIGION_CHRISTIANITY
 - `FreeUnitClass`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: UNITCLASS_ASATRU_MISSIONARY
   - Example: UNITCLASS_BUDDHIST_MISSIONARY
   - Example: UNITCLASS_CHRISTIAN_MISSIONARY
 - `GenericTechButton`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ,Art/Interface/Buttons/TechTree/Buddhism.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,5,3
   - Example: ,Art/Interface/Buttons/TechTree/Christianity.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,1,3
   - Example: ,Art/Interface/Buttons/TechTree/Hinduism.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,2,3
 - `GlobalReligionCommerces`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n    ...
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "1"\n    ],\n    [\n    ...
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "1"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n    ...
 - `GlobalReligionCommerces/iGlobalReligionCommerce`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1
   - Example: 2
 - `HolyCityCommerces`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommer...
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommerce",\n      "1"\n    ],\n    [\n      "iHolyCityCommer...
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "2"\n    ],\n    [\n      "iHolyCityCommerce",\n      "2"\n    ],\n    [\n      "iHolyCityCommer...
 - `HolyCityCommerces/iHolyCityCommerce`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `MovieFile`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: Art/Movies/Religion/Buddhism/Bud_Found.nif
   - Example: Art/Movies/Religion/Christianity/Chr_Found.nif
   - Example: Art/Movies/Religion/Confucianism/Con_Found.nif
 - `MovieSound`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: AS2D_BUILD_ASATRU_MOVIE
   - Example: AS2D_BUILD_BUDDHIST_MOVIE
   - Example: AS2D_BUILD_CHRISTIAN_MOVIE
 - `Sound`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: AS2D_BUILD_ASATRU
   - Example: AS2D_BUILD_BUDDHIST
   - Example: AS2D_BUILD_CHRISTIAN
 - `StateReligionCommerces`
-  - Present: 13. Non-default: 11. Status: preserved.
+  - Present: 13. Non-default: 11. Status: unsupported.
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "...
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iStateReligionCommerce",\n      "1"\n    ],\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "...
 - `StateReligionCommerces/iStateReligionCommerce`
-  - Present: 13. Non-default: 11. Status: preserved.
+  - Present: 13. Non-default: 11. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `TechButton`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,1,13
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,14
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,12
 - `TechPrereq`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: TECH_ATHLETICS
   - Example: TECH_CALENDAR
   - Example: TECH_DIVINE_RIGHT
 - `Type`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `iFreeUnits`
-  - Present: 13. Non-default: 7. Status: preserved.
+  - Present: 13. Non-default: 7. Status: unsupported.
   - Example: 1
 - `iSpreadFactor`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 20
   - Example: 25
   - Example: 30
 - `iTGAIndex`
-  - Present: 13. Non-default: 12. Status: preserved.
+  - Present: 13. Non-default: 12. Status: unsupported.
   - Example: 16
   - Example: 18
   - Example: 22
@@ -8525,7 +8525,7 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
 Era counts: unknown=1
 
 - `Type`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: RIVER_RIVER
 
 ## RouteInfo: 9 records
@@ -8533,66 +8533,66 @@ Era counts: unknown=1
 Era counts: unknown=9
 
 - `BonusType`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: BONUS_IRON
   - Example: BONUS_SEMICONDUCTORS
   - Example: BONUS_STEEL
 - `Button`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,12
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,12
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,12
 - `Description`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: TXT_KEY_ROUTE_GRAVTUBE
   - Example: TXT_KEY_ROUTE_HIGHWAY
   - Example: TXT_KEY_ROUTE_JUMPLANE
 - `PrereqOrBonuses`
-  - Present: 9. Non-default: 6. Status: preserved.
+  - Present: 9. Non-default: 6. Status: mapped.
   - Example: [\n  "PrereqOrBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_CEMENT"\n    ],\n    [\n      "BonusType",\n      "BONUS_DIESEL"\n    ]\n  ]\n]
   - Example: [\n  "PrereqOrBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_COAL"\n    ],\n    [\n      "BonusType",\n      "BONUS_OIL"\n    ],\n    [\n      "BonusType",\n    ...
   - Example: [\n  "PrereqOrBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_COPPER"\n    ]\n  ]\n]
 - `PrereqOrBonuses/BonusType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_CEMENT
   - Example: BONUS_COAL
 - `TechMovementChanges`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: ROUTE_GRAVTUBE
   - Example: ROUTE_JUMPLANE
   - Example: ROUTE_MODERN_ROAD
 - `Yields`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `Yields/iYield`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `bSeaTunnel`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `iAdvancedStartCost`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 12
   - Example: 18
   - Example: 20
 - `iAdvancedStartCostIncrease`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: mapped.
 - `iFlatMovement`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 10
   - Example: 120
   - Example: 15
 - `iMovement`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 120
   - Example: 15
   - Example: 20
 - `iValue`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -8602,17 +8602,17 @@ Era counts: unknown=9
 Era counts: unknown=3
 
 - `Description`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: TXT_KEY_SEALEVEL_HIGH
   - Example: TXT_KEY_SEALEVEL_LOW
   - Example: TXT_KEY_SEALEVEL_MEDIUM
 - `Type`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: SEALEVEL_HIGH
   - Example: SEALEVEL_LOW
   - Example: SEALEVEL_MEDIUM
 - `iSeaLevelChange`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: unsupported.
   - Example: -8
   - Example: 6
 
@@ -8621,12 +8621,12 @@ Era counts: unknown=3
 Era counts: unknown=4
 
 - `Description`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: unsupported.
   - Example: TXT_KEY_SEASON_FALL
   - Example: TXT_KEY_SEASON_SPRING
   - Example: TXT_KEY_SEASON_SUMMER
 - `Type`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: unsupported.
   - Example: SEASON_FALL
   - Example: SEASON_SPRING
   - Example: SEASON_SUMMER
@@ -8636,17 +8636,17 @@ Era counts: unknown=4
 Era counts: unknown=72
 
 - `Civilopedia`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: unsupported.
   - Example: TXT_KEY_CONCEPT_ABOMBARD_PEDIA
   - Example: TXT_KEY_CONCEPT_ACTIVE_DEFENSE_PEDIA
   - Example: TXT_KEY_CONCEPT_ADVANCED_COMBAT_ODDS_PEDIA
 - `Description`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: unsupported.
   - Example: TXT_KEY_CONCEPT_ABOMBARD_TEXT
   - Example: TXT_KEY_CONCEPT_ACTIVE_DEFENSE_TEXT
   - Example: TXT_KEY_CONCEPT_ADVANCED_COMBAT_ODDS_TEXT
 - `Type`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: unsupported.
   - Example: CONCEPT_ACTIVE_DEFENSE
   - Example: CONCEPT_ADVANCED_COMBAT_ODDS
   - Example: CONCEPT_ADVANCED_DIPLOMACY
@@ -8656,47 +8656,47 @@ Era counts: unknown=72
 Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=2, ERA_INDUSTRIAL=2, ERA_MEDIEVAL=3, unknown=9
 
 - `Button`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: ,Art/Interface/Buttons/Buildings/btn_fusionsreactor.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,10
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,5,10
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,7,3
 - `Description`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: TXT_KEY_BUILDING_FIRST_NUCLEAR_TEST
   - Example: TXT_KEY_BUILDING_ORBITAL_OBSERVATORY
   - Example: TXT_KEY_BUILDING_ZURICH_ORBITAL_UPLINK
 - `ObsoleteTech`
-  - Present: 18. Non-default: 4. Status: preserved.
+  - Present: 18. Non-default: 4. Status: mapped.
   - Example: TECH_COMPUTERS
   - Example: TECH_CORPORATION
   - Example: TECH_THEOLOGY
 - `ProductionTraits`
-  - Present: 18. Non-default: 4. Status: preserved.
+  - Present: 18. Non-default: 4. Status: mapped.
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_SPIRITUAL"\n        ],\n        ...
 - `ProductionTraits/ProductionTrait`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_SPIRITUAL"\n    ],\n    [\n      "iProductionTrait",\n      "100"\n    ]\n  ]\n]
 - `ProductionTraits/ProductionTrait/ProductionTraitType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: TRAIT_SPIRITUAL
 - `ProductionTraits/ProductionTrait/iProductionTrait`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 100
 - `TechPrereq`
-  - Present: 18. Non-default: 9. Status: preserved.
+  - Present: 18. Non-default: 9. Status: mapped.
   - Example: TECH_AESTHETICS
   - Example: TECH_CORPORATION
   - Example: TECH_GUILDS
 - `TechPrereqAnyone`
-  - Present: 18. Non-default: 1. Status: preserved.
+  - Present: 18. Non-default: 1. Status: mapped.
   - Example: TECH_FISSION
 - `Type`
-  - Present: 18. Non-default: 18. Status: preserved.
+  - Present: 18. Non-default: 18. Status: mapped.
   - Example: SPECIALBUILDING_BOMB_SHELTER
   - Example: SPECIALBUILDING_CATHEDRAL
   - Example: SPECIALBUILDING_CLONING_FACTORY
 - `bValid`
-  - Present: 18. Non-default: 10. Status: preserved.
+  - Present: 18. Non-default: 10. Status: mapped.
   - Example: 1
 
 ## SpecialUnitInfo: 9 records
@@ -8704,40 +8704,40 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=2, ERA_INDUSTRIAL=2, ERA_MEDIEVAL=3, un
 Era counts: unknown=9
 
 - `CarrierUnitAIs`
-  - Present: 9. Non-default: 7. Status: preserved.
+  - Present: 9. Non-default: 7. Status: mapped.
   - Example: [\n  "CarrierUnitAIs",\n  [\n    [\n      "CarrierUnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ASSAULT_SEA"\n        ],\n        [\n        ...
   - Example: [\n  "CarrierUnitAIs",\n  [\n    [\n      "CarrierUnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_CARRIER_SEA"\n        ],\n        [\n        ...
   - Example: [\n  "CarrierUnitAIs",\n  [\n    [\n      "CarrierUnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_MISSILE_CARRIER_SEA"\n        ],\n        [\n...
 - `CarrierUnitAIs/CarrierUnitAI`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "CarrierUnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ASSAULT_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "CarrierUnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_CARRIER_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "CarrierUnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_MISSILE_CARRIER_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
 - `CarrierUnitAIs/CarrierUnitAI/UnitAIType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: UNITAI_ASSAULT_SEA
   - Example: UNITAI_CARRIER_SEA
   - Example: UNITAI_MISSILE_CARRIER_SEA
 - `CarrierUnitAIs/CarrierUnitAI/bUnitAI`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
 - `Description`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: TXT_KEY_SPECIALUNIT_FIGHTER
   - Example: TXT_KEY_SPECIALUNIT_HELICOPTER
   - Example: TXT_KEY_SPECIALUNIT_MISSILE
 - `ProductionTraits`
-  - Present: 9. Non-default: 0. Status: preserved.
+  - Present: 9. Non-default: 0. Status: unsupported.
 - `Type`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: SPECIALUNIT_FIGHTER
   - Example: SPECIALUNIT_HELICOPTER
   - Example: SPECIALUNIT_MISSILE
 - `bCityLoad`
-  - Present: 9. Non-default: 3. Status: preserved.
+  - Present: 9. Non-default: 3. Status: mapped.
   - Example: 1
 - `bValid`
-  - Present: 9. Non-default: 9. Status: preserved.
+  - Present: 9. Non-default: 9. Status: mapped.
   - Example: 1
 
 ## SpecialistInfo: 20 records
@@ -8745,415 +8745,415 @@ Era counts: unknown=9
 Era counts: unknown=20
 
 - `Button`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,14
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,14
   - Example: ,Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,6,14
 - `Civilopedia`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: TXT_KEY_CONCEPT_GREAT_GENERALS_PEDIA
   - Example: TXT_KEY_CONCEPT_GREAT_PEOPLE_PEDIA
   - Example: TXT_KEY_CONCEPT_GREAT_SPY_PEDIA
 - `Commerces`
-  - Present: 20. Non-default: 15. Status: preserved.
+  - Present: 20. Non-default: 15. Status: mapped.
   - Example: [\n  "Commerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n    ...
   - Example: [\n  "Commerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "4"\n    ]\n  ]\n]
   - Example: [\n  "Commerces",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "3"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ]\n  ]\n]
 - `Commerces/iCommerce`
-  - Present: 16. Non-default: 15. Status: preserved.
+  - Present: 16. Non-default: 15. Status: mapped.
   - Example: 1
   - Example: 12
   - Example: 2
 - `Description`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: TXT_KEY_SPECIALIST_ANDROID
   - Example: TXT_KEY_SPECIALIST_ARTIST
   - Example: TXT_KEY_SPECIALIST_CELEBRITY
 - `Flavors`
-  - Present: 20. Non-default: 1. Status: preserved.
+  - Present: 20. Non-default: 1. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
 - `Flavors/Flavor`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_ESPIONAGE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_GOLD"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: FLAVOR_ESPIONAGE
   - Example: FLAVOR_GOLD
 - `Flavors/Flavor/iFlavor`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `GreatPeopleUnitClass`
-  - Present: 20. Non-default: 7. Status: preserved.
+  - Present: 20. Non-default: 7. Status: mapped.
   - Example: UNITCLASS_ARTIST
   - Example: UNITCLASS_ENGINEER
   - Example: UNITCLASS_GREAT_DIPLOMAT
 - `Help`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: mapped.
 - `HotKey`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: unsupported.
 - `Strategy`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: TXT_KEY_SPECIALIST_ANDROID_STRATEGY
   - Example: TXT_KEY_SPECIALIST_ARTIST_STRATEGY
   - Example: TXT_KEY_SPECIALIST_CELEBRITY_STRATEGY
 - `Texture`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: unsupported.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,14
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,14
   - Example: ,Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,5,14
 - `Type`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: SPECIALIST_ANDROID
   - Example: SPECIALIST_ARTIST
   - Example: SPECIALIST_CELEBRITY
 - `Yields`
-  - Present: 20. Non-default: 11. Status: preserved.
+  - Present: 20. Non-default: 11. Status: mapped.
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "-1"\n    ],\n    [\n      "iYield",\n      "3"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ]\n  ]\n]
 - `Yields/iYield`
-  - Present: 14. Non-default: 11. Status: preserved.
+  - Present: 14. Non-default: 11. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `bAltDown`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: unsupported.
 - `bCtrlDown`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: unsupported.
 - `bShiftDown`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: unsupported.
 - `bVisible`
-  - Present: 20. Non-default: 10. Status: preserved.
+  - Present: 20. Non-default: 10. Status: mapped.
   - Example: 1
 - `iExperience`
-  - Present: 20. Non-default: 1. Status: preserved.
+  - Present: 20. Non-default: 1. Status: mapped.
   - Example: 2
 - `iGreatPeopleRateChange`
-  - Present: 20. Non-default: 9. Status: preserved.
+  - Present: 20. Non-default: 9. Status: mapped.
   - Example: 3
 - `iHappinessPercent`
-  - Present: 18. Non-default: 1. Status: preserved.
+  - Present: 18. Non-default: 1. Status: mapped.
   - Example: 150
 - `iHealthPercent`
-  - Present: 18. Non-default: 0. Status: preserved.
+  - Present: 18. Non-default: 0. Status: mapped.
 - `iHotKeyPriority`
-  - Present: 20. Non-default: 0. Status: preserved.
+  - Present: 20. Non-default: 0. Status: unsupported.
 
 ## TechInfo: 252 records
 
 Era counts: ERA_ANCIENT=32, ERA_CLASSICAL=30, ERA_FUTURE=3, ERA_INDUSTRIAL=40, ERA_MEDIEVAL=30, ERA_MODERN=40, ERA_RENAISSANCE=32, ERA_TRANSHUMAN=45
 
 - `Advisor`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: unsupported.
   - Example: ADVISOR_CULTURE
   - Example: ADVISOR_ECONOMY
   - Example: ADVISOR_GROWTH
 - `AndPreReqs`
-  - Present: 252. Non-default: 188. Status: preserved.
+  - Present: 252. Non-default: 188. Status: mapped.
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ABSOLUTISM"\n    ]\n  ]\n]
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ACOUSTICS"\n    ]\n  ]\n]
   - Example: [\n  "AndPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ADVANCED_COMPUTERS"\n    ]\n  ]\n]
 - `AndPreReqs/PrereqTech`
-  - Present: 188. Non-default: 188. Status: preserved.
+  - Present: 188. Non-default: 188. Status: mapped.
   - Example: TECH_ABSOLUTISM
   - Example: TECH_ACOUSTICS
   - Example: TECH_ADVANCED_COMPUTERS
 - `Button`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: mapped.
   - Example: ,Art/Afforess/Buttons/Mountianeering.dds,Art/Interface/Buttons/Atlases/Afforess_Atlas.dds,1,11
   - Example: ,Art/Interface/Buttons/Civics/Nationhood.dds,Art/Interface/Buttons/Civics_Civilizations_Religions_Atlas.dds,1,2
   - Example: ,Art/Interface/Buttons/Civics/Pacifism.dds,Art/Interface/Buttons/Civics_Civilizations_Religions_Atlas.dds,3,2
 - `Civilopedia`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: mapped.
   - Example: TXT_KEY_TECH_ABSOLUTISM_PEDIA
   - Example: TXT_KEY_TECH_ACOUSTICS_PEDIA
   - Example: TXT_KEY_TECH_ADVANCED_COMPUTERS_PEDIA
 - `CommerceFlexible`
-  - Present: 250. Non-default: 3. Status: preserved.
+  - Present: 250. Non-default: 3. Status: mapped.
   - Example: [\n  "CommerceFlexible",\n  [\n    [\n      "bFlexible",\n      "0"\n    ],\n    [\n      "bFlexible",\n      "0"\n    ],\n    [\n      "bFlexible",\n      "0"\n    ],\n   ...
   - Example: [\n  "CommerceFlexible",\n  [\n    [\n      "bFlexible",\n      "0"\n    ],\n    [\n      "bFlexible",\n      "0"\n    ],\n    [\n      "bFlexible",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "CommerceFlexible",\n  [\n    [\n      "bFlexible",\n      "0"\n    ],\n    [\n      "bFlexible",\n      "1"\n    ]\n  ]\n]
 - `CommerceFlexible/bFlexible`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `Description`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: mapped.
   - Example: Special Promotion
   - Example: TXT_KEY_TECH_ABSOLUTISM
   - Example: TXT_KEY_TECH_ACOUSTICS
 - `DomainExtraMoves`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: [\n  "DomainExtraMoves",\n  [\n    [\n      "DomainExtraMove",\n      [\n        [\n          "DomainType",\n          "DOMAIN_SEA"\n        ],\n        [\n          "i...
 - `DomainExtraMoves/DomainExtraMove`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "DomainExtraMove",\n  [\n    [\n      "DomainType",\n      "DOMAIN_SEA"\n    ],\n    [\n      "iExtraMoves",\n      "1"\n    ]\n  ]\n]
 - `DomainExtraMoves/DomainExtraMove/DomainType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: DOMAIN_SEA
 - `DomainExtraMoves/DomainExtraMove/iExtraMoves`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `Era`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: mapped.
   - Example: ERA_ANCIENT
   - Example: ERA_CLASSICAL
   - Example: ERA_FUTURE
 - `FirstFreeUnitClass`
-  - Present: 252. Non-default: 25. Status: preserved.
+  - Present: 252. Non-default: 25. Status: mapped.
   - Example: UNITCLASS_ARTIST
   - Example: UNITCLASS_ENGINEER
   - Example: UNITCLASS_GREAT_DIPLOMAT
 - `Flavors`
-  - Present: 252. Non-default: 250. Status: preserved.
+  - Present: 252. Non-default: 250. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_CULTURE"\n        ],\n        [\n          "iFlavor",\n     ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_ESPIONAGE"\n        ],\n        [\n          "iFlavor",\n   ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
 - `Flavors/Flavor`
-  - Present: 250. Non-default: 250. Status: preserved.
+  - Present: 250. Non-default: 250. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "10"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "2"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 250. Non-default: 250. Status: preserved.
+  - Present: 250. Non-default: 250. Status: mapped.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_ESPIONAGE
   - Example: FLAVOR_GOLD
 - `Flavors/Flavor/iFlavor`
-  - Present: 250. Non-default: 250. Status: preserved.
+  - Present: 250. Non-default: 250. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 14
 - `Help`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: TXT_KEY_TECH_ANIMAL_HUSBANDRY_HELP
 - `OrPreReqs`
-  - Present: 252. Non-default: 244. Status: preserved.
+  - Present: 252. Non-default: 244. Status: mapped.
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_ADVANCED_COMPUTERS"\n    ]\n  ]\n]
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_AGRICULTURE"\n    ]\n  ]\n]
   - Example: [\n  "OrPreReqs",\n  [\n    [\n      "PrereqTech",\n      "TECH_AGRICULTURE"\n    ],\n    [\n      "PrereqTech",\n      "TECH_ANIMAL_HUSBANDRY"\n    ]\n  ]\n]
 - `OrPreReqs/PrereqTech`
-  - Present: 243. Non-default: 243. Status: preserved.
+  - Present: 243. Non-default: 243. Status: mapped.
   - Example: TECH_ADVANCED_COMPUTERS
   - Example: TECH_AGRICULTURE
   - Example: TECH_ALCHEMY
 - `OrPreReqs/Tech`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_MYSTICISM
   - Example: TECH_SAILING
 - `Quote`
-  - Present: 252. Non-default: 251. Status: preserved.
+  - Present: 252. Non-default: 251. Status: mapped.
   - Example: TXT_KEY_TECH_ACOUSTICS_QUOTE
   - Example: TXT_KEY_TECH_ADVANCED_COMPUTERS_QUOTE
   - Example: TXT_KEY_TECH_ADVANCED_FLIGHT_QUOTE
 - `Sound`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: unsupported.
   - Example: AS2D_TECH_AESTHETICS
   - Example: AS2D_TECH_AGRICULTURE
   - Example: AS2D_TECH_ALPHABET
 - `SoundMP`
-  - Present: 252. Non-default: 94. Status: preserved.
+  - Present: 252. Non-default: 94. Status: unsupported.
   - Example: AS2D_TECH_MP_AGRICULTURE
   - Example: AS2D_TECH_MP_ALPHABET
   - Example: AS2D_TECH_MP_ANIMALHUSB
 - `Strategy`
-  - Present: 252. Non-default: 251. Status: preserved.
+  - Present: 252. Non-default: 251. Status: mapped.
   - Example: TXT_KEY_TECH_ABSOLUTISM_STRATEGY
   - Example: TXT_KEY_TECH_ACOUSTICS_STRATEGY
   - Example: TXT_KEY_TECH_ADVANCED_COMPUTERS_STRATEGY
 - `TechArrowOverrides`
-  - Present: 19. Non-default: 15. Status: preserved.
+  - Present: 19. Non-default: 15. Status: mapped.
   - Example: [\n  "TechArrowOverrides",\n  [\n    [\n      "PrereqTech",\n      "TECH_STONE_TOOLS"\n    ]\n  ]\n]
   - Example: [\n  "TechArrowOverrides",\n  [\n    [\n      "TechType",\n      "TECH_AGRICULTURE"\n    ]\n  ]\n]
   - Example: [\n  "TechArrowOverrides",\n  [\n    [\n      "TechType",\n      "TECH_ANDROIDS"\n    ]\n  ]\n]
 - `TechArrowOverrides/PrereqTech`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: TECH_STONE_TOOLS
 - `TechArrowOverrides/TechType`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: TECH_AGRICULTURE
   - Example: TECH_ANDROIDS
   - Example: TECH_APPLIED_ECONOMICS
 - `TerrainTrades`
-  - Present: 251. Non-default: 2. Status: preserved.
+  - Present: 251. Non-default: 2. Status: mapped.
   - Example: [\n  "TerrainTrades",\n  [\n    [\n      "TerrainTrade",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_COAST"\n        ],\n        [\n          "bTe...
   - Example: [\n  "TerrainTrades",\n  [\n    [\n      "TerrainTrade",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_OCEAN"\n        ],\n        [\n          "bTe...
 - `TerrainTrades/TerrainTrade`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "TerrainTrade",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_COAST"\n    ],\n    [\n      "bTerrainTrade",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainTrade",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_OCEAN"\n    ],\n    [\n      "bTerrainTrade",\n      "1"\n    ]\n  ]\n]
 - `TerrainTrades/TerrainTrade/TerrainType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_OCEAN
 - `TerrainTrades/TerrainTrade/bTerrainTrade`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 252. Non-default: 252. Status: preserved.
+  - Present: 252. Non-default: 252. Status: mapped.
   - Example: TECH_ABSOLUTISM
   - Example: TECH_ACOUSTICS
   - Example: TECH_ADVANCED_COMPUTERS
 - `UnitClassStrengthChanges`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitClassStrengthChanges",\n  [\n    [\n      "UnitClassStrengthChange",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_ARCHER"\n        ...
   - Example: [\n  "UnitClassStrengthChanges",\n  [\n    [\n      "UnitClassStrengthChange",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_SCOUT"\n        ]...
   - Example: [\n  "UnitClassStrengthChanges",\n  [\n    [\n      "UnitClassStrengthChange",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_SUBMARINE"\n     ...
 - `UnitClassStrengthChanges/UnitClassStrengthChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitClassStrengthChange",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_ARCHER"\n    ],\n    [\n      "iStrengthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassStrengthChange",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_SCOUT"\n    ],\n    [\n      "iStrengthChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassStrengthChange",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_SUBMARINE"\n    ],\n    [\n      "iStrengthChange",\n      "15"\n    ]\n  ]\n]
 - `UnitClassStrengthChanges/UnitClassStrengthChange/UnitClassType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: UNITCLASS_ARCHER
   - Example: UNITCLASS_SCOUT
   - Example: UNITCLASS_SUBMARINE
 - `UnitClassStrengthChanges/UnitClassStrengthChange/iStrengthChange`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 15
   - Example: 3
 - `bAllowsDesertFarming`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bBridgeBuilding`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCanFoundOnPeaks`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCanPassPeaks`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bDCMAirBombTech1`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bDCMAirBombTech2`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bDefensivePactTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bDisable`
-  - Present: 251. Non-default: 2. Status: preserved.
+  - Present: 251. Non-default: 2. Status: mapped.
   - Example: 1
 - `bEmbassyTrading`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bExtendMovementLimits`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `bExtraWaterSeeFrom`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bGoldTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bGoodyTech`
-  - Present: 252. Non-default: 57. Status: preserved.
+  - Present: 252. Non-default: 57. Status: mapped.
   - Example: 1
 - `bIgnoreIrrigation`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bIrrigation`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bMapCentering`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bMapTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bMapVisible`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bOpenBordersTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bPermanentAllianceTrading`
-  - Present: 251. Non-default: 2. Status: preserved.
+  - Present: 251. Non-default: 2. Status: mapped.
   - Example: 1
 - `bRebaseAnywhere`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRemoveMovementLimits`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRepeat`
-  - Present: 250. Non-default: 1. Status: preserved.
+  - Present: 250. Non-default: 1. Status: mapped.
   - Example: 1
 - `bRiverTrade`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bTechTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bTrade`
-  - Present: 252. Non-default: 249. Status: preserved.
+  - Present: 252. Non-default: 249. Status: mapped.
   - Example: 1
 - `bVassalTrading`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `bWaterWork`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `iAITradeModifier`
-  - Present: 251. Non-default: 115. Status: preserved.
+  - Present: 251. Non-default: 115. Status: mapped.
   - Example: 10
 - `iAIWeight`
-  - Present: 251. Non-default: 42. Status: preserved.
+  - Present: 251. Non-default: 42. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 4000
 - `iAdvancedStartCost`
-  - Present: 252. Non-default: 250. Status: preserved.
+  - Present: 252. Non-default: 250. Status: mapped.
   - Example: 100
   - Example: 125
 - `iAdvancedStartCostIncrease`
-  - Present: 251. Non-default: 0. Status: preserved.
+  - Present: 251. Non-default: 0. Status: mapped.
 - `iAsset`
-  - Present: 252. Non-default: 251. Status: preserved.
+  - Present: 252. Non-default: 251. Status: mapped.
   - Example: 16
   - Example: 24
   - Example: 32
 - `iCost`
-  - Present: 252. Non-default: 250. Status: preserved.
+  - Present: 252. Non-default: 250. Status: mapped.
   - Example: 1000
   - Example: 110
   - Example: 1100
 - `iFeatureProductionModifier`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 50
 - `iFirstFreeTechs`
-  - Present: 251. Non-default: 2. Status: preserved.
+  - Present: 251. Non-default: 2. Status: mapped.
   - Example: 1
 - `iGridX`
-  - Present: 252. Non-default: 250. Status: preserved.
+  - Present: 252. Non-default: 250. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 11
 - `iGridY`
-  - Present: 252. Non-default: 250. Status: preserved.
+  - Present: 252. Non-default: 250. Status: mapped.
   - Example: 1
   - Example: 11
   - Example: 13
 - `iHappiness`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 1
 - `iHealth`
-  - Present: 251. Non-default: 2. Status: preserved.
+  - Present: 251. Non-default: 2. Status: mapped.
   - Example: 1
 - `iPower`
-  - Present: 251. Non-default: 101. Status: preserved.
+  - Present: 251. Non-default: 101. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 2
 - `iTradeRoutes`
-  - Present: 251. Non-default: 0. Status: preserved.
+  - Present: 251. Non-default: 0. Status: mapped.
 - `iWorkerSpeedModifier`
-  - Present: 251. Non-default: 1. Status: preserved.
+  - Present: 251. Non-default: 1. Status: mapped.
   - Example: 50
 
 ## TerrainArtInfo: 13 records
@@ -9161,101 +9161,101 @@ Era counts: ERA_ANCIENT=32, ERA_CLASSICAL=30, ERA_FUTURE=3, ERA_INDUSTRIAL=40, E
 Era counts: unknown=13
 
 - `AlphaShader`
-  - Present: 13. Non-default: 0. Status: preserved.
+  - Present: 13. Non-default: 0. Status: unsupported.
 - `Button`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ,Art/Interface/Buttons/BaseTerrain/Coast.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,1,1
   - Example: ,Art/Interface/Buttons/BaseTerrain/Desert.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,2,1
   - Example: ,Art/Interface/Buttons/BaseTerrain/Grassland.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,3,1
 - `Detail`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: Art/Terrain/Textures/CoastDetail.dds
   - Example: Art/Terrain/Textures/DesertDetail.dds
   - Example: Art/Terrain/Textures/GrassDETAIL.dds
 - `Grid`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: Art/Terrain/Textures/CoastGrids.dds
   - Example: Art/Terrain/Textures/DesertGrids.dds
   - Example: Art/Terrain/Textures/GrassGrids.dds
 - `LayerOrder`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1
   - Example: 160
   - Example: 2
 - `Path`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: Art/Terrain/Textures/CoastBLEND.dds
   - Example: Art/Terrain/Textures/DesertBlend.dds
   - Example: Art/Terrain/Textures/GrassBlend.dds
 - `TextureBlend01`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1,180 5,270 9,180  13,270 17,180 21,270
   - Example: 1,180 5,270 9,180  13,270 17,180 21,270 26,270
   - Example: 8,0
 - `TextureBlend02`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1,0
   - Example: 1,270 5,0   9,270  13,0   17,270 21,0  
   - Example: 1,270 5,0   9,270  13,0   17,270 21,0   26,0
 - `TextureBlend03`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 2,0
   - Example: 3,0   7,180 11,0   15,180 19,0   23,180 27,0   31,180
 - `TextureBlend04`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1,0   5,90  9,0    13,90  17,0   21,90 
   - Example: 1,0   5,90  9,0    13,90  17,0   21,90  26,90
   - Example: 6,0
 - `TextureBlend05`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 13,0
   - Example: 2,90  6,0   10,90  14,0   18,90  22,0   
   - Example: 2,90  6,0   10,90  14,0   18,90  22,0   26,90
 - `TextureBlend06`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 10,0
   - Example: 3,90  7,270 11,90  15,270 19,90  23,270 27,90  31,270
 - `TextureBlend07`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 3,0
   - Example: 4,0   8,270 12,0   16,270 20,0   24,270 28,0   32,270
 - `TextureBlend08`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 1,90  5,180 9,90   13,180 17,90  21,180
   - Example: 1,90  5,180 9,90   13,180 17,90  21,180 26,180
   - Example: 5,0
 - `TextureBlend09`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 3,270 7,90  11,270 15,90  19,270 23,90  27,270 31,90
   - Example: 9,0
 - `TextureBlend10`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 2,0   6,90  10,0   14,90  18,0   22,90  
   - Example: 2,0   6,90  10,0   14,90  18,0   22,90  26,0
   - Example: 7,0
 - `TextureBlend11`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 4,0
   - Example: 4,270 8,180 12,270 16,180 20,270 24,180 28,270 32,180
 - `TextureBlend12`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 12,0
   - Example: 3,180 7,0   11,180 15,0   19,180 23,0   27,180 31,0
 - `TextureBlend13`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 11,0
   - Example: 4,180 8,90  12,180 16,90  20,180 24,90  28,180 32,90
 - `TextureBlend14`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 14,0
   - Example: 4,90  8,0   12,90  16,0   20,90  24,0   28,90  32,0
 - `TextureBlend15`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: 15,0 16,0
   - Example: 15,0 16,0 17,0 18,0 19,0 20,0 21,0 22,0 23,0 24,0 25,0 26,0 27,0 28,0 29,0 30,0 31,0 32,0
   - Example: 15,0 16,0 18,0 19,0 20,0 21,0 22,0 23,0 24,0 25,0 26,0 27,0 28,0 29,0 30,0 31,0 32,0
 - `Type`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ART_DEF_TERRAIN_COAST
   - Example: ART_DEF_TERRAIN_DESERT
   - Example: ART_DEF_TERRAIN_GRASS
@@ -9265,114 +9265,114 @@ Era counts: unknown=13
 Era counts: unknown=13
 
 - `ArtDefineTag`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: unsupported.
   - Example: ART_DEF_TERRAIN_COAST
   - Example: ART_DEF_TERRAIN_DESERT
   - Example: ART_DEF_TERRAIN_GRASS
 - `Button`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: ,Art/Interface/Buttons/BaseTerrain/marsh.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,2,2
   - Example: Art/Interface\Buttons\WorldBuilder\Terrain_Coast.dds
   - Example: Art/Interface\Buttons\WorldBuilder\Terrain_Desert.dds
 - `Civilopedia`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TXT_KEY_TERRAIN_COAST_PEDIA
   - Example: TXT_KEY_TERRAIN_DESERT_PEDIA
   - Example: TXT_KEY_TERRAIN_GRASS_PEDIA
 - `Description`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TXT_KEY_TERRAIN_COAST
   - Example: TXT_KEY_TERRAIN_DESERT
   - Example: TXT_KEY_TERRAIN_GRASS
 - `FootstepSounds`
-  - Present: 13. Non-default: 12. Status: preserved.
+  - Present: 13. Non-default: 12. Status: unsupported.
   - Example: [\n  "FootstepSounds",\n  [\n    [\n      "FootstepSound",\n      [\n        [\n          "FootstepAudioType",\n          "FOOTSTEP_AUDIO_HUMAN"\n        ],\n        [...
 - `FootstepSounds/FootstepSound`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_ARTILLERY"\n    ],\n    [\n      "FootstepAudioScript",\n      ""\n    ]\n  ]\n]
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_ARTILLERY"\n    ],\n    [\n      "FootstepAudioScript",\n      "AS3D_UN_ARTILLERY_RUN_EN...
   - Example: [\n  "FootstepSound",\n  [\n    [\n      "FootstepAudioType",\n      "ENDSTEP_DESTROYER"\n    ],\n    [\n      "FootstepAudioScript",\n      ""\n    ]\n  ]\n]
 - `FootstepSounds/FootstepSound/FootstepAudioScript`
-  - Present: 12. Non-default: 10. Status: preserved.
+  - Present: 12. Non-default: 10. Status: unsupported.
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE_LOW
   - Example: AS3D_UN_ANIMAL_FOOT_LARGE_LOW_MUD
 - `FootstepSounds/FootstepSound/FootstepAudioType`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: unsupported.
   - Example: ENDSTEP_ARTILLERY
   - Example: ENDSTEP_DESTROYER
   - Example: ENDSTEP_GUNSHIP
 - `HillsYieldChange`
-  - Present: 13. Non-default: 0. Status: preserved.
+  - Present: 13. Non-default: 0. Status: unsupported.
 - `RiverYieldChange`
-  - Present: 13. Non-default: 5. Status: preserved.
+  - Present: 13. Non-default: 5. Status: mapped.
   - Example: [\n  "RiverYieldChange",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `RiverYieldChange/iYield`
-  - Present: 6. Non-default: 5. Status: preserved.
+  - Present: 6. Non-default: 5. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TERRAIN_COAST
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
 - `WorldSoundscapeAudioScript`
-  - Present: 11. Non-default: 10. Status: preserved.
+  - Present: 11. Non-default: 10. Status: unsupported.
   - Example: ASSS_COAST_SELECT_AMB
   - Example: ASSS_DESERT_SELECT_AMB
   - Example: ASSS_GRASSLAND_SELECT_AMB
 - `Yields`
-  - Present: 13. Non-default: 8. Status: preserved.
+  - Present: 13. Non-default: 8. Status: mapped.
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "2"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `Yields/iYield`
-  - Present: 9. Non-default: 8. Status: preserved.
+  - Present: 9. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `bFound`
-  - Present: 13. Non-default: 4. Status: preserved.
+  - Present: 13. Non-default: 4. Status: mapped.
   - Example: 1
 - `bFoundCoast`
-  - Present: 13. Non-default: 3. Status: preserved.
+  - Present: 13. Non-default: 3. Status: mapped.
   - Example: 1
 - `bFoundFreshWater`
-  - Present: 13. Non-default: 3. Status: preserved.
+  - Present: 13. Non-default: 3. Status: mapped.
   - Example: 1
 - `bGraphicalOnly`
-  - Present: 13. Non-default: 5. Status: preserved.
+  - Present: 13. Non-default: 5. Status: mapped.
   - Example: 1
 - `bImpassable`
-  - Present: 13. Non-default: 0. Status: preserved.
+  - Present: 13. Non-default: 0. Status: mapped.
 - `bWater`
-  - Present: 13. Non-default: 6. Status: preserved.
+  - Present: 13. Non-default: 6. Status: mapped.
   - Example: 1
 - `iBuildModifier`
-  - Present: 13. Non-default: 3. Status: preserved.
+  - Present: 13. Non-default: 3. Status: mapped.
   - Example: 25
   - Example: 50
 - `iCultureDistance`
-  - Present: 12. Non-default: 10. Status: preserved.
+  - Present: 12. Non-default: 10. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iDefense`
-  - Present: 13. Non-default: 3. Status: preserved.
+  - Present: 13. Non-default: 3. Status: mapped.
   - Example: -25
   - Example: 10
 - `iHealthPercent`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: -15
 - `iMovement`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iSeeFrom`
-  - Present: 13. Non-default: 6. Status: preserved.
+  - Present: 13. Non-default: 6. Status: mapped.
   - Example: 1
 - `iSeeThrough`
-  - Present: 13. Non-default: 6. Status: preserved.
+  - Present: 13. Non-default: 6. Status: mapped.
   - Example: 1
 
 ## TraitInfo: 17 records
@@ -9380,159 +9380,159 @@ Era counts: unknown=13
 Era counts: unknown=17
 
 - `BonusHappinessChanges`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "BonusHappinessChanges",\n  [\n    [\n      "BonusHappinessChange",\n      [\n        [\n          "BonusType",\n          "BONUS_HORSE"\n        ],\n        [\n  ...
 - `BonusHappinessChanges/BonusHappinessChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "BonusHappinessChange",\n  [\n    [\n      "BonusType",\n      "BONUS_FUR"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "BonusHappinessChange",\n  [\n    [\n      "BonusType",\n      "BONUS_HORSE"\n    ],\n    [\n      "iHappinessChange",\n      "1"\n    ]\n  ]\n]
 - `BonusHappinessChanges/BonusHappinessChange/BonusType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: BONUS_FUR
   - Example: BONUS_HORSE
 - `BonusHappinessChanges/BonusHappinessChange/iHappinessChange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `CommerceChanges`
-  - Present: 17. Non-default: 3. Status: preserved.
+  - Present: 17. Non-default: 3. Status: mapped.
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    ...
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "2"\n    ]\n  ]\n]
   - Example: [\n  "CommerceChanges",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "1"\n    ],\n    [\n      "iCommerce",\n      "0"\n    ],\n    ...
 - `CommerceChanges/iCommerce`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 4
 - `CommerceModifiers`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: [\n  "CommerceModifiers",\n  [\n    [\n      "iCommerce",\n      "0"\n    ],\n    [\n      "iCommerce",\n      "10"\n    ]\n  ]\n]
 - `CommerceModifiers/iCommerce`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 10
 - `Description`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: TXT_KEY_TRAIT_AGGRESSIVE
   - Example: TXT_KEY_TRAIT_AGRICULTURAL
   - Example: TXT_KEY_TRAIT_CHARISMATIC
 - `ExtraYieldThresholds`
-  - Present: 17. Non-default: 2. Status: preserved.
+  - Present: 17. Non-default: 2. Status: mapped.
   - Example: [\n  "ExtraYieldThresholds",\n  [\n    [\n      "iExtraYieldThreshold",\n      "0"\n    ],\n    [\n      "iExtraYieldThreshold",\n      "0"\n    ],\n    [\n      "iExtra...
   - Example: [\n  "ExtraYieldThresholds",\n  [\n    [\n      "iExtraYieldThreshold",\n      "5"\n    ],\n    [\n      "iExtraYieldThreshold",\n      "0"\n    ],\n    [\n      "iExtra...
 - `ExtraYieldThresholds/iExtraYieldThreshold`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 4
   - Example: 5
 - `FreePromotionUnitCombatTypes`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "FreePromotionUnitCombatTypes",\n  [\n    [\n      "FreePromotionUnitCombatType",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_AMPHIBIO...
   - Example: [\n  "FreePromotionUnitCombatTypes",\n  [\n    [\n      "FreePromotionUnitCombatType",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_CITY_GAR...
   - Example: [\n  "FreePromotionUnitCombatTypes",\n  [\n    [\n      "FreePromotionUnitCombatType",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_COMBAT1"...
 - `FreePromotionUnitCombatTypes/FreePromotionUnitCombatType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "FreePromotionUnitCombatType",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_AMPHIBIOUS"\n    ],\n    [\n      "UnitCombatTypes",\n      [\n        [\n    ...
   - Example: [\n  "FreePromotionUnitCombatType",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_CITY_GARRISON1"\n    ],\n    [\n      "UnitCombatTypes",\n      [\n        [\n...
   - Example: [\n  "FreePromotionUnitCombatType",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_COMBAT1"\n    ],\n    [\n      "UnitCombatTypes",\n      [\n        [\n       ...
 - `FreePromotionUnitCombatTypes/FreePromotionUnitCombatType/PromotionType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: PROMOTION_AMPHIBIOUS
   - Example: PROMOTION_CITY_GARRISON1
   - Example: PROMOTION_COMBAT1
 - `FreePromotionUnitCombatTypes/FreePromotionUnitCombatType/UnitCombatTypes`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: [\n  "UnitCombatTypes",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_GUN"\n    ],\n    [\n ...
   - Example: [\n  "UnitCombatTypes",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_SIEGE"\n    ],\n    [...
   - Example: [\n  "UnitCombatTypes",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_MELEE"\n    ],\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_GUN"\n    ],\n    [\n  ...
 - `FreePromotionUnitCombatTypes/FreePromotionUnitCombatType/UnitCombatTypes/UnitCombatType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
   - Example: UNITCOMBAT_DIESEL_SHIPS
 - `FreePromotionUnitCombats`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `FreePromotions`
-  - Present: 1. Non-default: 0. Status: preserved.
+  - Present: 1. Non-default: 0. Status: unsupported.
 - `ShortDescription`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: TXT_KEY_TRAIT_AGGRESSIVE_SHORT
   - Example: TXT_KEY_TRAIT_AGRICULTURAL_SHORT
   - Example: TXT_KEY_TRAIT_CHARISMATIC_SHORT
 - `TradeYieldModifiers`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: [\n  "TradeYieldModifiers",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "1"\n    ]\n  ]\n]
 - `TradeYieldModifiers/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `Type`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: TRAIT_AGGRESSIVE
   - Example: TRAIT_AGRICULTURAL
   - Example: TRAIT_CHARISMATIC
 - `YieldChanges`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "YieldChanges",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `YieldChanges/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bExtraCultureLevel`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bNonStateReligionCommerce`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: mapped.
 - `bUpgradeAnywhere`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: mapped.
 - `fRevIdxBadReligionMod`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: unsupported.
   - Example: 0.0
 - `fRevIdxGoodReligionMod`
-  - Present: 17. Non-default: 2. Status: preserved.
+  - Present: 17. Non-default: 2. Status: unsupported.
   - Example: 0.0
   - Example: 0.5
 - `fRevIdxNationalityMod`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: unsupported.
   - Example: 0.0
 - `iDomesticGreatGeneralRateModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 50
 - `iGreatGeneralRateModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 100
 - `iGreatPeopleRateModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 100
 - `iHappiness`
-  - Present: 17. Non-default: 2. Status: preserved.
+  - Present: 17. Non-default: 2. Status: mapped.
   - Example: 1
 - `iHealth`
-  - Present: 17. Non-default: 2. Status: preserved.
+  - Present: 17. Non-default: 2. Status: mapped.
   - Example: 1
   - Example: 2
 - `iLevelExperienceModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: -25
 - `iMaxAnarchy`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 1
 - `iMaxGlobalBuildingProductionModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 50
 - `iMaxPlayerBuildingProductionModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 50
 - `iMaxTeamBuildingProductionModifier`
-  - Present: 17. Non-default: 1. Status: preserved.
+  - Present: 17. Non-default: 1. Status: mapped.
   - Example: 50
 - `iRevIdxDistanceModifier`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: unsupported.
 - `iRevIdxHolyCityBad`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: unsupported.
 - `iRevIdxHolyCityGood`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: unsupported.
 - `iRevIdxLocal`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: unsupported.
 - `iRevIdxNational`
-  - Present: 17. Non-default: 0. Status: preserved.
+  - Present: 17. Non-default: 0. Status: unsupported.
 - `iUpkeepModifier`
-  - Present: 17. Non-default: 2. Status: preserved.
+  - Present: 17. Non-default: 2. Status: mapped.
   - Example: -20
   - Example: -50
 
@@ -9541,32 +9541,32 @@ Era counts: unknown=17
 Era counts: unknown=6
 
 - `Description`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: TXT_KEY_TURNTIMER_BLAZING
   - Example: TXT_KEY_TURNTIMER_FAST
   - Example: TXT_KEY_TURNTIMER_MEDIUM
 - `Type`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: TURNTIMER_BLAZING
   - Example: TURNTIMER_FAST
   - Example: TURNTIMER_MEDIUM
 - `iBaseTime`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 100
   - Example: 120
   - Example: 180
 - `iCityBonus`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 12
   - Example: 18
   - Example: 3
 - `iFirstTurnMultiplier`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 2
   - Example: 3
   - Example: 4
 - `iUnitBonus`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: unsupported.
   - Example: 1
   - Example: 12
   - Example: 2
@@ -9576,22 +9576,22 @@ Era counts: unknown=6
 Era counts: unknown=1
 
 - `TutorialMessages`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: [\n  "TutorialMessages",\n  [\n    [\n      "TutorialMessage",\n      [\n        [\n          "TutorialMessageText",\n          "Welcome to Sid Meiers Civilization 4...
 - `TutorialMessages/TutorialMessage`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: [\n  "TutorialMessage",\n  [\n    [\n      "TutorialMessageText",\n      "Welcome to Sid Meiers Civilization 4."\n    ],\n    [\n      "TutorialMessageImage",\n      ...
 - `TutorialMessages/TutorialMessage/TutorialMessageImage`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: ART_DEF_TUTORIAL_CIV4LOGO
 - `TutorialMessages/TutorialMessage/TutorialMessageSound`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: AS2D_TUTORIAL_INTRODUCTION_1
 - `TutorialMessages/TutorialMessage/TutorialMessageText`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: Welcome to Sid Meiers Civilization 4.
 - `Type`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: TUTORIAL_INTRODUCTION
 
 ## UnitAIInfo: 41 records
@@ -9599,12 +9599,12 @@ Era counts: unknown=1
 Era counts: unknown=41
 
 - `Description`
-  - Present: 41. Non-default: 41. Status: preserved.
+  - Present: 41. Non-default: 41. Status: mapped.
   - Example: UNITAI_ANIMAL
   - Example: UNITAI_ARTIST
   - Example: UNITAI_ASSAULT_SEA
 - `Type`
-  - Present: 41. Non-default: 41. Status: preserved.
+  - Present: 41. Non-default: 41. Status: mapped.
   - Example: UNITAI_ANIMAL
   - Example: UNITAI_ARTIST
   - Example: UNITAI_ASSAULT_SEA
@@ -9614,166 +9614,166 @@ Era counts: unknown=41
 Era counts: unknown=913
 
 - `ActionSound`
-  - Present: 197. Non-default: 197. Status: preserved.
+  - Present: 197. Non-default: 197. Status: unsupported.
   - Example: AS3D_UN_AIRSHIP_COMMAND_PATROL
   - Example: AS3D_UN_ARTILLERY_FORT
   - Example: AS3D_UN_CATAPULT_FORT
 - `AudioRunSounds`
-  - Present: 913. Non-default: 165. Status: preserved.
+  - Present: 913. Non-default: 165. Status: unsupported.
   - Example: [\n  "AudioRunSounds",\n  [\n    [\n      "AudioRunTypeLoop",\n      "LOOPSTEP_ARTILLERY"\n    ],\n    [\n      "AudioRunTypeEnd",\n      "ENDSTEP_ARTILLERY"\n    ]\n  ]\n]
   - Example: [\n  "AudioRunSounds",\n  [\n    [\n      "AudioRunTypeLoop",\n      "LOOPSTEP_DESTOYER"\n    ],\n    [\n      "AudioRunTypeEnd",\n      "ENDSTEP_DESTROYER"\n    ]\n  ]\n]
   - Example: [\n  "AudioRunSounds",\n  [\n    [\n      "AudioRunTypeLoop",\n      "LOOPSTEP_DREAD"\n    ],\n    [\n      "AudioRunTypeEnd",\n      "ENDSTEP_DREAD"\n    ]\n  ]\n]
 - `AudioRunSounds/AudioRunTypeEnd`
-  - Present: 904. Non-default: 165. Status: preserved.
+  - Present: 904. Non-default: 165. Status: unsupported.
   - Example: ENDSTEP_ARTILLERY
   - Example: ENDSTEP_DESTROYER
   - Example: ENDSTEP_DREAD
 - `AudioRunSounds/AudioRunTypeLoop`
-  - Present: 904. Non-default: 165. Status: preserved.
+  - Present: 904. Non-default: 165. Status: unsupported.
   - Example: LOOPSTEP_ARTILLERY
   - Example: LOOPSTEP_DESTOYER
   - Example: LOOPSTEP_DREAD
 - `Button`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: , ,Art/Interface/Buttons/Warlords_Atlas_1.dds,5,8
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,10
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,2
 - `KFM`
-  - Present: 913. Non-default: 911. Status: preserved.
+  - Present: 913. Non-default: 911. Status: unsupported.
   - Example: Art/Units/A Bomb/Bomber.kfm
   - Example: Art/Units/Afterworld_Boss/Afterworld_Boss.kfm
   - Example: Art/Units/Afterworld_Gravebringer/Jal/Gravebringer.kfm
 - `NIF`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: Aart/Denmark/Flavor/ModernArmor/Leopard2A5.nif
   - Example: Aart/Picts/Cruithni/Swordsman.nif
   - Example: Art/Units/007/007.nif
 - `PatrolSound`
-  - Present: 30. Non-default: 30. Status: preserved.
+  - Present: 30. Non-default: 30. Status: unsupported.
   - Example: AS3D_UN_AIRSHIP_PATROL
   - Example: AS3D_UN_FIGHTER_PATROL
   - Example: AS3D_UN_JET_PATROL
 - `SHADERNIF`
-  - Present: 895. Non-default: 820. Status: preserved.
+  - Present: 895. Non-default: 820. Status: unsupported.
   - Example: Art/Units/007/007.nif
   - Example: Art/Units/A Bomb/Bomber_FX.nif
   - Example: Art/Units/ACV SAM/ACV_Sam.nif
 - `SelectionSound`
-  - Present: 197. Non-default: 197. Status: preserved.
+  - Present: 197. Non-default: 197. Status: unsupported.
   - Example: AS3D_UN_AIRSHIP_COMMAND_PATROL
   - Example: AS3D_UN_ARTILLERY_FORT
   - Example: AS3D_UN_CATAPULT_FORT
 - `ShadowDef`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: [\n  "ShadowDef",\n  [\n    [\n      "ShadowNIF",\n      "Art/Units/01_UnitShadows/ArtilleryShadow.nif"\n    ],\n    [\n      "ShadowAttachNode",\n      "BIP Pelvis"\n...
   - Example: [\n  "ShadowDef",\n  [\n    [\n      "ShadowNIF",\n      "Art/Units/01_UnitShadows/BattleshipShadow.nif"\n    ],\n    [\n      "ShadowAttachNode",\n      "BIP Pelvis"...
   - Example: [\n  "ShadowDef",\n  [\n    [\n      "ShadowNIF",\n      "Art/Units/01_UnitShadows/BearShadow.nif"\n    ],\n    [\n      "ShadowAttachNode",\n      "BIP Pelvis"\n    ]...
 - `ShadowDef/ShadowAttachNode`
-  - Present: 913. Non-default: 902. Status: preserved.
+  - Present: 913. Non-default: 902. Status: unsupported.
   - Example: BIP Pelvis
   - Example: BIP_Pelvis
   - Example: Bip01 Neck
 - `ShadowDef/ShadowNIF`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: Art/Units/01_UnitShadows/ArtilleryShadow.nif
   - Example: Art/Units/01_UnitShadows/BattleshipShadow.nif
   - Example: Art/Units/01_UnitShadows/BearShadow.nif
 - `ShadowDef/fShadowScale`
-  - Present: 913. Non-default: 910. Status: preserved.
+  - Present: 913. Non-default: 910. Status: unsupported.
   - Example: .6
   - Example: .8
   - Example: 0.001
 - `TrailDefinition`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: [\n  "TrailDefinition",\n  [\n    [\n      "Texture",\n      "Art/Shared/tanktread.dds"\n    ],\n    [\n      "fWidth",\n      ".7"\n    ],\n    [\n      "fLength",\n    ...
   - Example: [\n  "TrailDefinition",\n  [\n    [\n      "Texture",\n      "Art/Shared/tanktread.dds"\n    ],\n    [\n      "fWidth",\n      "0.7"\n    ],\n    [\n      "fLength",\n   ...
   - Example: [\n  "TrailDefinition",\n  [\n    [\n      "Texture",\n      "Art/Shared/tanktread.dds"\n    ],\n    [\n      "fWidth",\n      "0.8"\n    ],\n    [\n      "fLength",\n   ...
 - `TrailDefinition/Texture`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: Art/Shared/tanktread.dds
   - Example: Art/Shared/water_ship_wake.dds
   - Example: Art/Shared/wheeltread.dds
 - `TrailDefinition/fFadeFalloff`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: 0.35
   - Example: 0.4
 - `TrailDefinition/fFadeStartTime`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: .2
   - Example: 0.2
 - `TrailDefinition/fLength`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: 130.0
   - Example: 180.0
 - `TrailDefinition/fTaper`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: 0.0
   - Example: 1
 - `TrailDefinition/fWidth`
-  - Present: 153. Non-default: 153. Status: preserved.
+  - Present: 153. Non-default: 153. Status: unsupported.
   - Example: .7
   - Example: .9
   - Example: 0.7
 - `TrainSound`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: AS2D_JET
   - Example: AS2D_UNIT_BUILD_ASEN_MISSIONARY
   - Example: AS2D_UNIT_BUILD_SHINTO_MISSIONARY
 - `Type`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: ART_DEF_UNIT_007
   - Example: ART_DEF_UNIT_A7V
   - Example: ART_DEF_UNIT_ACV
 - `bActAsAir`
-  - Present: 913. Non-default: 0. Status: preserved.
+  - Present: 913. Non-default: 0. Status: unsupported.
 - `bActAsLand`
-  - Present: 913. Non-default: 14. Status: preserved.
+  - Present: 913. Non-default: 14. Status: unsupported.
   - Example: 1
 - `bActAsRanged`
-  - Present: 913. Non-default: 314. Status: preserved.
+  - Present: 913. Non-default: 314. Status: unsupported.
   - Example: 1
 - `bCombatExempt`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: unsupported.
   - Example: 1
 - `bSmoothMove`
-  - Present: 145. Non-default: 145. Status: preserved.
+  - Present: 145. Non-default: 145. Status: unsupported.
   - Example: 1
 - `fAngleInterpRate`
-  - Present: 96. Non-default: 96. Status: preserved.
+  - Present: 96. Non-default: 96. Status: unsupported.
   - Example: 360.0
   - Example: 720.0
 - `fBankRate`
-  - Present: 109. Non-default: 109. Status: preserved.
+  - Present: 109. Non-default: 109. Status: unsupported.
   - Example: .2
   - Example: .3
   - Example: .4
 - `fBattleDistance`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: 0.20
   - Example: 0.28
   - Example: 0.35
 - `fExchangeAngle`
-  - Present: 88. Non-default: 88. Status: preserved.
+  - Present: 88. Non-default: 88. Status: unsupported.
   - Example: -15.0
   - Example: -30.0
   - Example: -38.0
 - `fInterfaceScale`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: .55
   - Example: .7
   - Example: .8
 - `fRangedDeathTime`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: 0.05
   - Example: 0.12
   - Example: 0.28
 - `fScale`
-  - Present: 913. Non-default: 913. Status: preserved.
+  - Present: 913. Non-default: 913. Status: unsupported.
   - Example: 0.1
   - Example: 0.10
   - Example: 0.12
 - `iDamageStates`
-  - Present: 154. Non-default: 154. Status: preserved.
+  - Present: 154. Non-default: 154. Status: unsupported.
   - Example: 4
 
 ## UnitArtStyleTypeInfo: 25 records
@@ -9781,42 +9781,42 @@ Era counts: unknown=913
 Era counts: unknown=25
 
 - `StyleUnits`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: [\n  "StyleUnits",\n  [\n    [\n      "StyleUnit",\n      [\n        [\n          "UnitType",\n          "UNIT_ADVENTURER"\n        ],\n        [\n          "UnitMeshGr...
   - Example: [\n  "StyleUnits",\n  [\n    [\n      "StyleUnit",\n      [\n        [\n          "UnitType",\n          "UNIT_ARCHER"\n        ],\n        [\n          "UnitMeshGroup"...
   - Example: [\n  "StyleUnits",\n  [\n    [\n      "StyleUnit",\n      [\n        [\n          "UnitType",\n          "UNIT_AT_INFANTRY"\n        ],\n        [\n          "UnitMeshG...
 - `StyleUnits/StyleUnit`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: [\n  "StyleUnit",\n  [\n    [\n      "UnitType",\n      "UNIT_ADVENTURER"\n    ],\n    [\n      "UnitMeshGroup",\n      [\n        [\n          "EarlyArtDefineTag",\n   ...
   - Example: [\n  "StyleUnit",\n  [\n    [\n      "UnitType",\n      "UNIT_ARCHER"\n    ],\n    [\n      "UnitMeshGroup",\n      [\n        [\n          "EarlyArtDefineTag",\n       ...
   - Example: [\n  "StyleUnit",\n  [\n    [\n      "UnitType",\n      "UNIT_ARMOR_M60"\n    ],\n    [\n      "UnitMeshGroup",\n      [\n        [\n          "EarlyArtDefineTag",\n    ...
 - `StyleUnits/StyleUnit/UnitMeshGroup`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_A7V"\n    ],\n    [\n      "LateArtDefineTag",\n      "ART_DEF_UNIT_A7V"\n    ],\n   ...
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_ADVENTURER_AFRICAN"\n    ],\n    [\n      "LateArtDefineTag",\n      "ART_DEF_UNIT_...
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_AFRICAN_SETTLER_BOY"\n    ],\n    [\n      "LateArtDefineTag",\n      "ART_DEF_UNIT...
 - `StyleUnits/StyleUnit/UnitMeshGroup/EarlyArtDefineTag`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: ART_DEF_UNIT_A7V
   - Example: ART_DEF_UNIT_ADVENTURER_AFRICAN
   - Example: ART_DEF_UNIT_AFRICAN_SETTLER_BOY
 - `StyleUnits/StyleUnit/UnitMeshGroup/LateArtDefineTag`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: ART_DEF_UNIT_A7V
   - Example: ART_DEF_UNIT_ADVENTURER_AFRICAN
   - Example: ART_DEF_UNIT_AFRICAN_SETTLER_BOY
 - `StyleUnits/StyleUnit/UnitMeshGroup/MiddleArtDefineTag`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: ART_DEF_UNIT_A7V
   - Example: ART_DEF_UNIT_ADVENTURER_AFRICAN
   - Example: ART_DEF_UNIT_AFRICAN_SETTLER_BOY
 - `StyleUnits/StyleUnit/UnitType`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: UNIT_ADVENTURER
   - Example: UNIT_ARCHER
   - Example: UNIT_ARMOR_M60
 - `Type`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: unsupported.
   - Example: UNIT_ARTSTYLE_AFRICAN
   - Example: UNIT_ARTSTYLE_AMERICAN
   - Example: UNIT_ARTSTYLE_ARABIA
@@ -9826,48 +9826,48 @@ Era counts: unknown=25
 Era counts: unknown=301
 
 - `DefaultUnit`
-  - Present: 301. Non-default: 301. Status: preserved.
+  - Present: 301. Non-default: 301. Status: mapped.
   - Example: UNIT_007
   - Example: UNIT_ACV
   - Example: UNIT_ACVSAM
 - `Description`
-  - Present: 301. Non-default: 301. Status: preserved.
+  - Present: 301. Non-default: 301. Status: unsupported.
   - Example: CHANGED_TXT_KEY_UNIT_EXECUTIVE_2
   - Example: TXT_KEY_GODS_UNIT_INQUISITOR
   - Example: TXT_KEY_SHIP_OF_THE_LINE
 - `Type`
-  - Present: 301. Non-default: 301. Status: preserved.
+  - Present: 301. Non-default: 301. Status: mapped.
   - Example: UNITCLASS_007
   - Example: UNITCLASS_ACV
   - Example: UNITCLASS_ACVSAM
 - `iInstanceCostModifier`
-  - Present: 287. Non-default: 0. Status: preserved.
+  - Present: 287. Non-default: 0. Status: unsupported.
 - `iMaxGlobalInstances`
-  - Present: 301. Non-default: 0. Status: preserved.
+  - Present: 301. Non-default: 0. Status: mapped.
 - `iMaxPlayerInstances`
-  - Present: 301. Non-default: 58. Status: preserved.
+  - Present: 301. Non-default: 58. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `iMaxTeamInstances`
-  - Present: 301. Non-default: 0. Status: preserved.
+  - Present: 301. Non-default: 0. Status: mapped.
 
 ## UnitCombatInfo: 27 records
 
 Era counts: unknown=27
 
 - `Button`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_promotion_atlas2.dds,1,15
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_promotion_atlas2.dds,2,15
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_promotion_atlas2.dds,3,15
 - `Description`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: TXT_KEY_UNITCOMBAT_ANIMAL
   - Example: TXT_KEY_UNITCOMBAT_ARCHER
   - Example: TXT_KEY_UNITCOMBAT_ASSAULT_MECH
 - `Type`
-  - Present: 27. Non-default: 27. Status: preserved.
+  - Present: 27. Non-default: 27. Status: mapped.
   - Example: UNITCOMBAT_ANIMAL
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
@@ -9877,1319 +9877,1319 @@ Era counts: unknown=27
 Era counts: ERA_ANCIENT=24, ERA_CLASSICAL=34, ERA_INDUSTRIAL=51, ERA_MEDIEVAL=33, ERA_MODERN=48, ERA_RENAISSANCE=28, ERA_TRANSHUMAN=44, unknown=97
 
 - `Actions`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: [\n  "Actions",\n  [\n    [\n      "Action",\n      [\n        [\n          "MissionType",\n          "MISSION_BUTCHER"\n        ],\n        [\n          "ActionOutcome...
 - `Actions/Action`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: [\n  "Action",\n  [\n    [\n      "MissionType",\n      "MISSION_BUTCHER"\n    ],\n    [\n      "ActionOutcomes",\n      [\n        [\n          "Outcome",\n          [\n...
   - Example: [\n  "Action",\n  [\n    [\n      "MissionType",\n      "MISSION_HERD"\n    ],\n    [\n      "ActionOutcomes",\n      [\n        [\n          "Outcome",\n          [\n   ...
 - `Actions/Action/ActionOutcomes`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: [\n  "ActionOutcomes",\n  [\n    [\n      "Outcome",\n      [\n        [\n          "OutcomeType",\n          "OUTCOME_ANIMAL_BUTCHERED_NEUTRAL"\n        ],\n        [...
   - Example: [\n  "ActionOutcomes",\n  [\n    [\n      "Outcome",\n      [\n        [\n          "OutcomeType",\n          "OUTCOME_BONUS_SPAWNED"\n        ],\n        [\n          ...
 - `Actions/Action/ActionOutcomes/Outcome`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: [\n  "Outcome",\n  [\n    [\n      "OutcomeType",\n      "OUTCOME_ANIMAL_BUTCHERED_CITY"\n    ],\n    [\n      "iChance",\n      "100"\n    ],\n    [\n      "Yields",\n  ...
   - Example: [\n  "Outcome",\n  [\n    [\n      "OutcomeType",\n      "OUTCOME_ANIMAL_BUTCHERED_FRIENDLY"\n    ],\n    [\n      "iChance",\n      "100"\n    ],\n    [\n      "Yields"...
   - Example: [\n  "Outcome",\n  [\n    [\n      "OutcomeType",\n      "OUTCOME_ANIMAL_BUTCHERED_NEUTRAL"\n    ],\n    [\n      "iChance",\n      "100"\n    ],\n    [\n      "Yields",...
 - `Actions/Action/ActionOutcomes/Outcome/BonusType`
-  - Present: 6. Non-default: 6. Status: preserved.
+  - Present: 6. Non-default: 6. Status: mapped.
   - Example: BONUS_COW
   - Example: BONUS_DEER
   - Example: BONUS_HORSE
 - `Actions/Action/ActionOutcomes/Outcome/OutcomeType`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: OUTCOME_ANIMAL_BUTCHERED_CITY
   - Example: OUTCOME_ANIMAL_BUTCHERED_FRIENDLY
   - Example: OUTCOME_ANIMAL_BUTCHERED_NEUTRAL
 - `Actions/Action/ActionOutcomes/Outcome/Yields`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "2"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "3"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "10"\n    ],\n    [\n      "iYield",\n      "6"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `Actions/Action/ActionOutcomes/Outcome/Yields/iYield`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `Actions/Action/ActionOutcomes/Outcome/iChance`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: 100
 - `Actions/Action/MissionType`
-  - Present: 17. Non-default: 17. Status: preserved.
+  - Present: 17. Non-default: 17. Status: mapped.
   - Example: MISSION_BUTCHER
   - Example: MISSION_HERD
 - `Advisor`
-  - Present: 359. Non-default: 323. Status: preserved.
+  - Present: 359. Non-default: 323. Status: unsupported.
   - Example: ADVISOR_CULTURE
   - Example: ADVISOR_ECONOMY
   - Example: ADVISOR_GROWTH
 - `BonusProductionModifiers`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_LEAD"\n        ],\n       ...
   - Example: [\n  "BonusProductionModifiers",\n  [\n    [\n      "BonusProductionModifier",\n      [\n        [\n          "BonusType",\n          "BONUS_OBSIDIAN"\n        ],\n   ...
 - `BonusProductionModifiers/BonusProductionModifier`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_LEAD"\n    ],\n    [\n      "iProductonModifier",\n      "15"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_LEAD"\n    ],\n    [\n      "iProductonModifier",\n      "20"\n    ]\n  ]\n]
   - Example: [\n  "BonusProductionModifier",\n  [\n    [\n      "BonusType",\n      "BONUS_OBSIDIAN"\n    ],\n    [\n      "iProductonModifier",\n      "25"\n    ]\n  ]\n]
 - `BonusProductionModifiers/BonusProductionModifier/BonusType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: BONUS_LEAD
   - Example: BONUS_OBSIDIAN
 - `BonusProductionModifiers/BonusProductionModifier/iProductonModifier`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 15
   - Example: 20
   - Example: 25
 - `BonusType`
-  - Present: 359. Non-default: 136. Status: preserved.
+  - Present: 359. Non-default: 136. Status: mapped.
   - Example: BONUS_CHEMICALS
   - Example: BONUS_COAL
   - Example: BONUS_DIESEL
 - `Buildings`
-  - Present: 359. Non-default: 25. Status: preserved.
+  - Present: 359. Non-default: 25. Status: mapped.
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingType",\n          "BUILDING_ACADEMY"\n        ],\n        [\n          "bBuildi...
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingType",\n          "BUILDING_CENTRAL_BANK"\n        ],\n        [\n          "bB...
   - Example: [\n  "Buildings",\n  [\n    [\n      "Building",\n      [\n        [\n          "BuildingType",\n          "BUILDING_HEROIC_EPIC"\n        ],\n        [\n          "bBu...
 - `Buildings/Building`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: mapped.
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingType",\n      "BUILDING_ACADEMY"\n    ],\n    [\n      "bBuilding",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingType",\n      "BUILDING_ANTHEM"\n    ],\n    [\n      "bBuilding",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Building",\n  [\n    [\n      "BuildingType",\n      "BUILDING_ASATRU_SHRINE"\n    ],\n    [\n      "bBuilding",\n      "1"\n    ]\n  ]\n]
 - `Buildings/Building/BuildingType`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: mapped.
   - Example: BUILDING_ACADEMY
   - Example: BUILDING_ANTHEM
   - Example: BUILDING_ASATRU_SHRINE
 - `Buildings/Building/bBuilding`
-  - Present: 25. Non-default: 25. Status: preserved.
+  - Present: 25. Non-default: 25. Status: mapped.
   - Example: 1
 - `Builds`
-  - Present: 355. Non-default: 8. Status: preserved.
+  - Present: 355. Non-default: 8. Status: mapped.
   - Example: [\n  "Builds",\n  [\n    [\n      "Build",\n      [\n        [\n          "BuildType",\n          "BUILD_FISHING_BOATS"\n        ],\n        [\n          "bBuild",\n    ...
   - Example: [\n  "Builds",\n  [\n    [\n      "Build",\n      [\n        [\n          "BuildType",\n          "BUILD_TRACK"\n        ],\n        [\n          "bBuild",\n          "1...
 - `Builds/Build`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "Build",\n  [\n    [\n      "BuildType",\n      "BUILD_3FACTORY"\n    ],\n    [\n      "bBuild",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Build",\n  [\n    [\n      "BuildType",\n      "BUILD_5FACTORY"\n    ],\n    [\n      "bBuild",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Build",\n  [\n    [\n      "BuildType",\n      "BUILD_APPLE_FARM"\n    ],\n    [\n      "bBuild",\n      "1"\n    ]\n  ]\n]
 - `Builds/Build/BuildType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: BUILD_3FACTORY
   - Example: BUILD_5FACTORY
   - Example: BUILD_APPLE_FARM
 - `Builds/Build/bBuild`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
 - `Capture`
-  - Present: 359. Non-default: 31. Status: preserved.
+  - Present: 359. Non-default: 31. Status: mapped.
   - Example: UNITCLASS_ARTILLERY
   - Example: UNITCLASS_BALLISTA
   - Example: UNITCLASS_BATTERING_RAM
 - `CivilizationNames`
-  - Present: 49. Non-default: 35. Status: preserved.
+  - Present: 49. Non-default: 35. Status: mapped.
   - Example: [\n  "CivilizationNames",\n  [\n    [\n      "CivilizationName",\n      [\n        [\n          "CivilizationType",\n          "CIVILIZATION_AMERICA"\n        ],\n    ...
   - Example: [\n  "CivilizationNames",\n  [\n    [\n      "CivilizationName",\n      [\n        [\n          "CivilizationType",\n          "CIVILIZATION_ARABIA"\n        ],\n     ...
   - Example: [\n  "CivilizationNames",\n  [\n    [\n      "CivilizationName",\n      [\n        [\n          "CivilizationType",\n          "CIVILIZATION_AZTEC"\n        ],\n      ...
 - `CivilizationNames/CivilizationName`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: mapped.
   - Example: [\n  "CivilizationName",\n  [\n    [\n      "CivilizationType",\n      "CIVILIZATION_AMERICA"\n    ],\n    [\n      "CivilizationUniqueName",\n      "TXT_KEY_UNIT_FT1...
   - Example: [\n  "CivilizationName",\n  [\n    [\n      "CivilizationType",\n      "CIVILIZATION_AMERICA"\n    ],\n    [\n      "CivilizationUniqueName",\n      "TXT_KEY_UNIT_J2F...
   - Example: [\n  "CivilizationName",\n  [\n    [\n      "CivilizationType",\n      "CIVILIZATION_AMERICA"\n    ],\n    [\n      "CivilizationUniqueName",\n      "TXT_KEY_UNIT_M3A...
 - `CivilizationNames/CivilizationName/CivilizationType`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: mapped.
   - Example: CIVILIZATION_AMERICA
   - Example: CIVILIZATION_ARABIA
   - Example: CIVILIZATION_ASSYRIA
 - `CivilizationNames/CivilizationName/CivilizationUniqueName`
-  - Present: 35. Non-default: 35. Status: preserved.
+  - Present: 35. Non-default: 35. Status: mapped.
   - Example: TXT_KEY_UNIT_A7V
   - Example: TXT_KEY_UNIT_ARABIAN_ANSAR
   - Example: TXT_KEY_UNIT_ARMOR_CENTURION
 - `Civilopedia`
-  - Present: 359. Non-default: 354. Status: preserved.
+  - Present: 359. Non-default: 354. Status: mapped.
   - Example: CHANGED_TXT_KEY_UNIT_TRIREME_PEDIA
   - Example: TXT_KEY_CHANGED_UNIT_VIKING_BESERKER_PEDIA
   - Example: TXT_KEY_CONCEPT_ANIMALS_PEDIA
 - `Class`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: UNITCLASS_007
   - Example: UNITCLASS_ACV
   - Example: UNITCLASS_ACVSAM
 - `Combat`
-  - Present: 359. Non-default: 348. Status: preserved.
+  - Present: 359. Non-default: 348. Status: mapped.
   - Example: UNITCOMBAT_ANIMAL
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
 - `CorporationSpreads`
-  - Present: 359. Non-default: 39. Status: preserved.
+  - Present: 359. Non-default: 39. Status: mapped.
   - Example: [\n  "CorporationSpreads",\n  [\n    [\n      "CorporationSpread",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_1"\n        ],\n        [\n...
   - Example: [\n  "CorporationSpreads",\n  [\n    [\n      "CorporationSpread",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_2"\n        ],\n        [\n...
   - Example: [\n  "CorporationSpreads",\n  [\n    [\n      "CorporationSpread",\n      [\n        [\n          "CorporationType",\n          "CORPORATION_3"\n        ],\n        [\n...
 - `CorporationSpreads/CorporationSpread`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: [\n  "CorporationSpread",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_1"\n    ],\n    [\n      "iCorporationSpread",\n      "40"\n    ]\n  ]\n]
   - Example: [\n  "CorporationSpread",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_2"\n    ],\n    [\n      "iCorporationSpread",\n      "40"\n    ]\n  ]\n]
   - Example: [\n  "CorporationSpread",\n  [\n    [\n      "CorporationType",\n      "CORPORATION_3"\n    ],\n    [\n      "iCorporationSpread",\n      "40"\n    ]\n  ]\n]
 - `CorporationSpreads/CorporationSpread/CorporationType`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `CorporationSpreads/CorporationSpread/iCorporationSpread`
-  - Present: 39. Non-default: 39. Status: preserved.
+  - Present: 39. Non-default: 39. Status: mapped.
   - Example: 40
 - `DefaultUnitAI`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: UNITAI_ANIMAL
   - Example: UNITAI_ARTIST
   - Example: UNITAI_ASSAULT_SEA
 - `Description`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: TXT_KEY_GODS_UNIT_INQUISITOR
   - Example: TXT_KEY_SPECIALIST_GREAT_SPY
   - Example: TXT_KEY_UNIT_007
 - `Domain`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: DOMAIN_AIR
   - Example: DOMAIN_IMMOBILE
   - Example: DOMAIN_LAND
 - `DomainCargo`
-  - Present: 359. Non-default: 44. Status: preserved.
+  - Present: 359. Non-default: 44. Status: mapped.
   - Example: DOMAIN_AIR
   - Example: DOMAIN_LAND
 - `DomainMods`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: [\n  "DomainMods",\n  [\n    [\n      "DomainMod",\n      [\n        [\n          "DomainType",\n          "DOMAIN_LAND"\n        ],\n        [\n          "iDomainMod",...
   - Example: [\n  "DomainMods",\n  [\n    [\n      "DomainMod",\n      [\n        [\n          "DomainType",\n          "DOMAIN_SEA"\n        ],\n        [\n          "iDomainMod",\n...
 - `DomainMods/DomainMod`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_LAND"\n    ],\n    [\n      "iDomainMod",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_SEA"\n    ],\n    [\n      "iDomainMod",\n      "-50"\n    ]\n  ]\n]
   - Example: [\n  "DomainMod",\n  [\n    [\n      "DomainType",\n      "DOMAIN_SEA"\n    ],\n    [\n      "iDomainMod",\n      "-75"\n    ]\n  ]\n]
 - `DomainMods/DomainMod/DomainType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: DOMAIN_LAND
   - Example: DOMAIN_SEA
 - `DomainMods/DomainMod/iDomainMod`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: -50
   - Example: -75
   - Example: 50
 - `FeatureAttacks`
-  - Present: 359. Non-default: 52. Status: preserved.
+  - Present: 359. Non-default: 52. Status: mapped.
   - Example: [\n  "FeatureAttacks",\n  [\n    [\n      "FeatureAttack",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n          "...
 - `FeatureAttacks/FeatureAttack`
-  - Present: 52. Non-default: 52. Status: preserved.
+  - Present: 52. Non-default: 52. Status: mapped.
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "-25"\n    ]\n  ]\n]
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "-50"\n    ]\n  ]\n]
   - Example: [\n  "FeatureAttack",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureAttack",\n      "15"\n    ]\n  ]\n]
 - `FeatureAttacks/FeatureAttack/FeatureType`
-  - Present: 52. Non-default: 52. Status: preserved.
+  - Present: 52. Non-default: 52. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
   - Example: FEATURE_SWAMP
 - `FeatureAttacks/FeatureAttack/iFeatureAttack`
-  - Present: 52. Non-default: 52. Status: preserved.
+  - Present: 52. Non-default: 52. Status: mapped.
   - Example: -25
   - Example: -50
   - Example: 15
 - `FeatureDefenses`
-  - Present: 358. Non-default: 2. Status: preserved.
+  - Present: 358. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureDefenses",\n  [\n    [\n      "FeatureDefense",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n         ...
 - `FeatureDefenses/FeatureDefense`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureDefense",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "iFeatureDefense",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "FeatureDefense",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "iFeatureDefense",\n      "25"\n    ]\n  ]\n]
 - `FeatureDefenses/FeatureDefense/FeatureType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureDefenses/FeatureDefense/iFeatureDefense`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 25
 - `FeatureImpassables`
-  - Present: 359. Non-default: 2. Status: preserved.
+  - Present: 359. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureImpassables",\n  [\n    [\n      "FeatureImpassable",\n      [\n        [\n          "FeatureType",\n          "FEATURE_STORM"\n        ],\n        [\n    ...
 - `FeatureImpassables/FeatureImpassable`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "FeatureImpassable",\n  [\n    [\n      "FeatureType",\n      "FEATURE_ICE"\n    ],\n    [\n      "bFeatureImpassable",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureImpassable",\n  [\n    [\n      "FeatureType",\n      "FEATURE_STORM"\n    ],\n    [\n      "bFeatureImpassable",\n      "1"\n    ]\n  ]\n]
 - `FeatureImpassables/FeatureImpassable/FeatureType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: FEATURE_ICE
   - Example: FEATURE_STORM
 - `FeatureImpassables/FeatureImpassable/bFeatureImpassable`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `FeatureNatives`
-  - Present: 359. Non-default: 19. Status: preserved.
+  - Present: 359. Non-default: 19. Status: mapped.
   - Example: [\n  "FeatureNatives",\n  [\n    [\n      "FeatureNative",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FLOOD_PLAINS"\n        ],\n        [\n     ...
   - Example: [\n  "FeatureNatives",\n  [\n    [\n      "FeatureNative",\n      [\n        [\n          "FeatureType",\n          "FEATURE_FOREST"\n        ],\n        [\n          "...
   - Example: [\n  "FeatureNatives",\n  [\n    [\n      "FeatureNative",\n      [\n        [\n          "FeatureType",\n          "FEATURE_JUNGLE"\n        ],\n        [\n          "...
 - `FeatureNatives/FeatureNative`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: [\n  "FeatureNative",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FLOOD_PLAINS"\n    ],\n    [\n      "bFeatureNative",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureNative",\n  [\n    [\n      "FeatureType",\n      "FEATURE_FOREST"\n    ],\n    [\n      "bFeatureNative",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FeatureNative",\n  [\n    [\n      "FeatureType",\n      "FEATURE_JUNGLE"\n    ],\n    [\n      "bFeatureNative",\n      "1"\n    ]\n  ]\n]
 - `FeatureNatives/FeatureNative/FeatureType`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: FEATURE_FLOOD_PLAINS
   - Example: FEATURE_FOREST
   - Example: FEATURE_JUNGLE
 - `FeatureNatives/FeatureNative/bFeatureNative`
-  - Present: 19. Non-default: 19. Status: preserved.
+  - Present: 19. Non-default: 19. Status: mapped.
   - Example: 1
 - `FeaturePassableTechs`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `FlankingStrikes`
-  - Present: 359. Non-default: 32. Status: preserved.
+  - Present: 359. Non-default: 32. Status: mapped.
   - Example: [\n  "FlankingStrikes",\n  [\n    [\n      "FlankingStrike",\n      [\n        [\n          "FlankingStrikeUnitClass",\n          "UNITCLASS_ARCHER"\n        ],\n     ...
   - Example: [\n  "FlankingStrikes",\n  [\n    [\n      "FlankingStrike",\n      [\n        [\n          "FlankingStrikeUnitClass",\n          "UNITCLASS_ARQUEBUSIER"\n        ],\n...
   - Example: [\n  "FlankingStrikes",\n  [\n    [\n      "FlankingStrike",\n      [\n        [\n          "FlankingStrikeUnitClass",\n          "UNITCLASS_CATAPULT"\n        ],\n   ...
 - `FlankingStrikes/FlankingStrike`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: mapped.
   - Example: [\n  "FlankingStrike",\n  [\n    [\n      "FlankingStrikeUnitClass",\n      "UNITCLASS_ARCHER"\n    ],\n    [\n      "iFlankingStrength",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "FlankingStrike",\n  [\n    [\n      "FlankingStrikeUnitClass",\n      "UNITCLASS_ARQUEBUSIER"\n    ],\n    [\n      "iFlankingStrength",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "FlankingStrike",\n  [\n    [\n      "FlankingStrikeUnitClass",\n      "UNITCLASS_ARTILLERY"\n    ],\n    [\n      "iFlankingStrength",\n      "100"\n    ]\n  ]\n]
 - `FlankingStrikes/FlankingStrike/FlankingStrikeUnitClass`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: mapped.
   - Example: UNITCLASS_ARCHER
   - Example: UNITCLASS_ARQUEBUSIER
   - Example: UNITCLASS_ARTILLERY
 - `FlankingStrikes/FlankingStrike/iFlankingStrength`
-  - Present: 32. Non-default: 32. Status: preserved.
+  - Present: 32. Non-default: 32. Status: mapped.
   - Example: 100
   - Example: 50
 - `Flavors`
-  - Present: 359. Non-default: 20. Status: preserved.
+  - Present: 359. Non-default: 20. Status: mapped.
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_CULTURE"\n        ],\n        [\n          "iFlavor",\n     ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_ESPIONAGE"\n        ],\n        [\n          "iFlavor",\n   ...
   - Example: [\n  "Flavors",\n  [\n    [\n      "Flavor",\n      [\n        [\n          "FlavorType",\n          "FLAVOR_GOLD"\n        ],\n        [\n          "iFlavor",\n        ...
 - `Flavors/Flavor`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_CULTURE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_ESPIONAGE"\n    ],\n    [\n      "iFlavor",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "Flavor",\n  [\n    [\n      "FlavorType",\n      "FLAVOR_ESPIONAGE"\n    ],\n    [\n      "iFlavor",\n      "2"\n    ]\n  ]\n]
 - `Flavors/Flavor/FlavorType`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: FLAVOR_CULTURE
   - Example: FLAVOR_ESPIONAGE
   - Example: FLAVOR_GOLD
 - `Flavors/Flavor/iFlavor`
-  - Present: 20. Non-default: 20. Status: preserved.
+  - Present: 20. Non-default: 20. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `ForceBuildings`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: [\n  "ForceBuildings",\n  [\n    [\n      "ForceBuilding",\n      [\n        [\n          "BuildingType",\n          "BUILDING_SCOTLAND_YARD"\n        ],\n        [\n  ...
 - `ForceBuildings/ForceBuilding`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "ForceBuilding",\n  [\n    [\n      "BuildingType",\n      "BUILDING_SCOTLAND_YARD"\n    ],\n    [\n      "bForceBuilding",\n      "1"\n    ]\n  ]\n]
 - `ForceBuildings/ForceBuilding/BuildingType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: BUILDING_SCOTLAND_YARD
 - `ForceBuildings/ForceBuilding/bForceBuilding`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `ForceObsoleteTech`
-  - Present: 26. Non-default: 18. Status: preserved.
+  - Present: 26. Non-default: 18. Status: mapped.
   - Example: TECH_ARCHERY
   - Example: TECH_AUTOMATIC_WEAPONS
   - Example: TECH_CROP_ROTATION
 - `ForceObsoleteUnitClasses`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "ForceObsoleteUnitClasses",\n  [\n    [\n      "ForceObsoleteUnitClass",\n      [\n        [\n          "ForceObsoleteUnitClassType",\n          "NONE"\n        ...
 - `ForceObsoleteUnitClasses/ForceObsoleteUnitClass`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "ForceObsoleteUnitClass",\n  [\n    [\n      "ForceObsoleteUnitClassType",\n      "NONE"\n    ],\n    [\n      "bForceObsoleteUnitClass",\n      "1"\n    ]\n  ]\n]
 - `ForceObsoleteUnitClasses/ForceObsoleteUnitClass/ForceObsoleteUnitClassType`
-  - Present: 8. Non-default: 0. Status: preserved.
+  - Present: 8. Non-default: 0. Status: mapped.
 - `ForceObsoleteUnitClasses/ForceObsoleteUnitClass/bForceObsoleteUnitClass`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
 - `FormationType`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: FORMATION_TYPE_ANIMAL
   - Example: FORMATION_TYPE_DEFAULT
   - Example: FORMATION_TYPE_MACHINE
 - `FreePromotions`
-  - Present: 357. Non-default: 72. Status: preserved.
+  - Present: 357. Non-default: 72. Status: mapped.
   - Example: [\n  "FreePromotions",\n  [\n    [\n      "FreePromotion",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_AMPHIBIOUS"\n        ],\n        [\n   ...
   - Example: [\n  "FreePromotions",\n  [\n    [\n      "FreePromotion",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_BLITZ"\n        ],\n        [\n        ...
   - Example: [\n  "FreePromotions",\n  [\n    [\n      "FreePromotion",\n      [\n        [\n          "PromotionType",\n          "PROMOTION_CHARGE"\n        ],\n        [\n       ...
 - `FreePromotions/FreePromotion`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: [\n  "FreePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_ALCHEMIST1"\n    ],\n    [\n      "bFreePromotion",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_AMPHIBIOUS"\n    ],\n    [\n      "bFreePromotion",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "FreePromotion",\n  [\n    [\n      "PromotionType",\n      "PROMOTION_BLITZ"\n    ],\n    [\n      "bFreePromotion",\n      "1"\n    ]\n  ]\n]
 - `FreePromotions/FreePromotion/PromotionType`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: PROMOTION_ALCHEMIST1
   - Example: PROMOTION_AMPHIBIOUS
   - Example: PROMOTION_BLITZ
 - `FreePromotions/FreePromotion/bFreePromotion`
-  - Present: 72. Non-default: 72. Status: preserved.
+  - Present: 72. Non-default: 72. Status: mapped.
   - Example: 1
 - `GreatPeoples`
-  - Present: 359. Non-default: 8. Status: preserved.
+  - Present: 359. Non-default: 8. Status: mapped.
   - Example: [\n  "GreatPeoples",\n  [\n    [\n      "GreatPeople",\n      [\n        [\n          "GreatPeopleType",\n          "SPECIALIST_GREAT_ARTIST"\n        ],\n        [\n  ...
   - Example: [\n  "GreatPeoples",\n  [\n    [\n      "GreatPeople",\n      [\n        [\n          "GreatPeopleType",\n          "SPECIALIST_GREAT_DIPLOMAT"\n        ],\n        [\n...
   - Example: [\n  "GreatPeoples",\n  [\n    [\n      "GreatPeople",\n      [\n        [\n          "GreatPeopleType",\n          "SPECIALIST_GREAT_ENGINEER"\n        ],\n        [\n...
 - `GreatPeoples/GreatPeople`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "GreatPeople",\n  [\n    [\n      "GreatPeopleType",\n      "SPECIALIST_GREAT_ARTIST"\n    ],\n    [\n      "bGreatPeople",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "GreatPeople",\n  [\n    [\n      "GreatPeopleType",\n      "SPECIALIST_GREAT_DIPLOMAT"\n    ],\n    [\n      "bGreatPeople",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "GreatPeople",\n  [\n    [\n      "GreatPeopleType",\n      "SPECIALIST_GREAT_ENGINEER"\n    ],\n    [\n      "bGreatPeople",\n      "1"\n    ]\n  ]\n]
 - `GreatPeoples/GreatPeople/GreatPeopleType`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: SPECIALIST_GREAT_ARTIST
   - Example: SPECIALIST_GREAT_DIPLOMAT
   - Example: SPECIALIST_GREAT_ENGINEER
 - `GreatPeoples/GreatPeople/bGreatPeople`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
 - `Help`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: mapped.
   - Example: TXT_KEY_UNIT_INQUISITOR_HELP
 - `HolyCity`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: mapped.
 - `HotKey`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `Invisible`
-  - Present: 359. Non-default: 11. Status: preserved.
+  - Present: 359. Non-default: 11. Status: mapped.
   - Example: INVISIBLE_CAMOUFLAGE
   - Example: INVISIBLE_STEALTH
   - Example: INVISIBLE_SUBMARINE
 - `KillOutcomes`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: [\n  "KillOutcomes",\n  [\n    [\n      "Outcome",\n      [\n        [\n          "OutcomeType",\n          "OUTCOME_SUBDUE"\n        ],\n        [\n          "iChance"...
 - `KillOutcomes/Outcome`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: [\n  "Outcome",\n  [\n    [\n      "OutcomeType",\n      "OUTCOME_HUNTING_KILL"\n    ],\n    [\n      "iChance",\n      "90"\n    ],\n    [\n      "Yields",\n      [\n    ...
   - Example: [\n  "Outcome",\n  [\n    [\n      "OutcomeType",\n      "OUTCOME_SUBDUE"\n    ],\n    [\n      "iChance",\n      "10"\n    ],\n    [\n      "UnitType",\n      "UNIT_CAPT...
 - `KillOutcomes/Outcome/OutcomeType`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: OUTCOME_HUNTING_KILL
   - Example: OUTCOME_SUBDUE
 - `KillOutcomes/Outcome/UnitType`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: UNIT_CAPTURED_BEAR
   - Example: UNIT_CAPTURED_BENGALTIGER
   - Example: UNIT_CAPTURED_BOAR
 - `KillOutcomes/Outcome/Yields`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "2"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "1"\n    ],\n    [\n      "iYield",\n      "3"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
   - Example: [\n  "Yields",\n  [\n    [\n      "iYield",\n      "2"\n    ],\n    [\n      "iYield",\n      "4"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `KillOutcomes/Outcome/Yields/iYield`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `KillOutcomes/Outcome/bUnitToCity`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: DONT_ESCORT_SUBDUED_LAND_ANIMAL
 - `KillOutcomes/Outcome/iChance`
-  - Present: 34. Non-default: 34. Status: preserved.
+  - Present: 34. Non-default: 34. Status: mapped.
   - Example: 10
   - Example: 90
 - `LeaderPromotion`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: PROMOTION_LEADER
 - `MaxStartEra`
-  - Present: 8. Non-default: 0. Status: preserved.
+  - Present: 8. Non-default: 0. Status: unsupported.
 - `NotGameOption`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: mapped.
   - Example: GAMEOPTION_NO_INQUISITIONS
 - `NotUnitAIs`
-  - Present: 357. Non-default: 12. Status: preserved.
+  - Present: 357. Non-default: 12. Status: mapped.
   - Example: [\n  "NotUnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_CITY_COUNTER"\n        ],\n        [\n          "bUnitAI...
   - Example: [\n  "NotUnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_CITY_DEFENSE"\n        ],\n        [\n          "bUnitAI...
   - Example: [\n  "NotUnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ESCORT_SEA"\n        ],\n        [\n          "bUnitAI",...
 - `NotUnitAIs/UnitAI`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ASSAULT_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ATTACK_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_CITY_COUNTER"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
 - `NotUnitAIs/UnitAI/UnitAIType`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: UNITAI_ASSAULT_SEA
   - Example: UNITAI_ATTACK_SEA
   - Example: UNITAI_CITY_COUNTER
 - `NotUnitAIs/UnitAI/bUnitAI`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: 1
 - `OverrideResourceBuilding`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: [\n  "OverrideResourceBuilding",\n  [\n    [\n      "BuildingType",\n      "BUILDING_OMNIFACTORY"\n    ]\n  ]\n]
 - `OverrideResourceBuilding/BuildingType`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: BUILDING_OMNIFACTORY
 - `PrereqBonuses`
-  - Present: 358. Non-default: 118. Status: preserved.
+  - Present: 358. Non-default: 118. Status: mapped.
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "BonusType",\n      "BONUS_DURASTEEL"\n    ]\n  ]\n]
   - Example: [\n  "PrereqBonuses",\n  [\n    [\n      "BonusType",\n      "BONUS_ALUMINUM"\n    ],\n    [\n      "BonusType",\n      "BONUS_NANOTUBES"\n    ]\n  ]\n]
 - `PrereqBonuses/BonusType`
-  - Present: 119. Non-default: 118. Status: preserved.
+  - Present: 119. Non-default: 118. Status: mapped.
   - Example: BONUS_ALUMINUM
   - Example: BONUS_COAL
   - Example: BONUS_COPPER
 - `PrereqBuilding`
-  - Present: 359. Non-default: 77. Status: preserved.
+  - Present: 359. Non-default: 77. Status: mapped.
   - Example: BUILDING_ANDROID_FACTORY
   - Example: BUILDING_ASATRU_MONASTERY
   - Example: BUILDING_AUGMENTATION_CENTER
 - `PrereqBuildingClasses`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_INTELLIGENCE_AG...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "BUILDINGCLASS_WARHEAD_FACTORY...
   - Example: [\n  "PrereqBuildingClasses",\n  [\n    [\n      "PrereqBuildingClass",\n      [\n        [\n          "BuildingClassType",\n          "NONE"\n        ],\n        [\n  ...
 - `PrereqBuildingClasses/PrereqBuildingClass`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_INTELLIGENCE_AGENCY"\n    ],\n    [\n      "bPrereq",\n      "1"\n    ],\n    ...
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "BUILDINGCLASS_WARHEAD_FACTORY"\n    ],\n    [\n      "bPrereq",\n      "1"\n    ],\n    [\n  ...
   - Example: [\n  "PrereqBuildingClass",\n  [\n    [\n      "BuildingClassType",\n      "NONE"\n    ],\n    [\n      "bPrereq",\n      "1"\n    ],\n    [\n      "TechOverride",\n     ...
 - `PrereqBuildingClasses/PrereqBuildingClass/BuildingClassType`
-  - Present: 12. Non-default: 4. Status: preserved.
+  - Present: 12. Non-default: 4. Status: mapped.
   - Example: BUILDINGCLASS_INTELLIGENCE_AGENCY
   - Example: BUILDINGCLASS_WARHEAD_FACTORY
 - `PrereqBuildingClasses/PrereqBuildingClass/EraOverride`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: mapped.
 - `PrereqBuildingClasses/PrereqBuildingClass/TechOverride`
-  - Present: 12. Non-default: 0. Status: preserved.
+  - Present: 12. Non-default: 0. Status: mapped.
 - `PrereqBuildingClasses/PrereqBuildingClass/bPrereq`
-  - Present: 12. Non-default: 12. Status: preserved.
+  - Present: 12. Non-default: 12. Status: mapped.
   - Example: 1
 - `PrereqCorporation`
-  - Present: 359. Non-default: 36. Status: preserved.
+  - Present: 359. Non-default: 36. Status: mapped.
   - Example: CORPORATION_1
   - Example: CORPORATION_2
   - Example: CORPORATION_3
 - `PrereqGameOption`
-  - Present: 13. Non-default: 4. Status: preserved.
+  - Present: 13. Non-default: 4. Status: mapped.
   - Example: GAMEOPTION_ADVANCED_NUKES
 - `PrereqOrBuildings`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "PrereqOrBuildings",\n  [\n    [\n      "BuildingType",\n      "BUILDING_BIOLOGICAL_WARFARE_LAB"\n    ],\n    [\n      "BuildingType",\n      "BUILDING_GENGINEER...
   - Example: [\n  "PrereqOrBuildings",\n  [\n    [\n      "BuildingType",\n      "BUILDING_COMPUTER_NETWORK"\n    ],\n    [\n      "BuildingType",\n      "BUILDING_NETWORK_NODE"\n ...
 - `PrereqOrBuildings/BuildingType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: BUILDING_BIOLOGICAL_WARFARE_LAB
   - Example: BUILDING_COMPUTER_NETWORK
   - Example: BUILDING_GENGINEER
 - `PrereqOrCivics`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_FEUDAL"\n        ],\n        [\n          "bPre...
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_MERCANTILISM"\n        ],\n        [\n         ...
   - Example: [\n  "PrereqOrCivics",\n  [\n    [\n      "PrereqCivic",\n      [\n        [\n          "CivicOption",\n          "CIVIC_THEOCRACY"\n        ],\n        [\n          "b...
 - `PrereqOrCivics/PrereqCivic`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_ARISTOCRACY"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_FEUDAL"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "PrereqCivic",\n  [\n    [\n      "CivicOption",\n      "CIVIC_INTOLERANT"\n    ],\n    [\n      "bPrereqCivic",\n      "1"\n    ]\n  ]\n]
 - `PrereqOrCivics/PrereqCivic/CivicOption`
-  - Present: 11. Non-default: 3. Status: preserved.
+  - Present: 11. Non-default: 3. Status: mapped.
   - Example: CIVIC_ARISTOCRACY
   - Example: CIVIC_FEUDAL
   - Example: CIVIC_INTOLERANT
 - `PrereqOrCivics/PrereqCivic/bPrereqCivic`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: 1
 - `PrereqReligion`
-  - Present: 359. Non-default: 13. Status: preserved.
+  - Present: 359. Non-default: 13. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `PrereqTech`
-  - Present: 359. Non-default: 262. Status: preserved.
+  - Present: 359. Non-default: 262. Status: mapped.
   - Example: TECH_ADVANCED_COMPUTERS
   - Example: TECH_ADVANCED_FLIGHT
   - Example: TECH_ADVANCED_WARMACHINES
 - `ProductionTraits`
-  - Present: 359. Non-default: 11. Status: preserved.
+  - Present: 359. Non-default: 11. Status: mapped.
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_EXPANSIVE"\n        ],\n        ...
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_IMPERIALIST"\n        ],\n      ...
   - Example: [\n  "ProductionTraits",\n  [\n    [\n      "ProductionTrait",\n      [\n        [\n          "ProductionTraitType",\n          "TRAIT_SEAFARING"\n        ],\n        ...
 - `ProductionTraits/ProductionTrait`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_EXPANSIVE"\n    ],\n    [\n      "iProductionTrait",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_IMPERIALIST"\n    ],\n    [\n      "iProductionTrait",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "ProductionTrait",\n  [\n    [\n      "ProductionTraitType",\n      "TRAIT_SEAFARING"\n    ],\n    [\n      "iProductionTrait",\n      "50"\n    ]\n  ]\n]
 - `ProductionTraits/ProductionTrait/ProductionTraitType`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: TRAIT_EXPANSIVE
   - Example: TRAIT_IMPERIALIST
   - Example: TRAIT_SEAFARING
 - `ProductionTraits/ProductionTrait/iProductionTrait`
-  - Present: 11. Non-default: 11. Status: preserved.
+  - Present: 11. Non-default: 11. Status: mapped.
   - Example: 50
 - `ReligionSpreads`
-  - Present: 359. Non-default: 13. Status: preserved.
+  - Present: 359. Non-default: 13. Status: mapped.
   - Example: [\n  "ReligionSpreads",\n  [\n    [\n      "ReligionSpread",\n      [\n        [\n          "ReligionType",\n          "RELIGION_ASATRU"\n        ],\n        [\n       ...
   - Example: [\n  "ReligionSpreads",\n  [\n    [\n      "ReligionSpread",\n      [\n        [\n          "ReligionType",\n          "RELIGION_BUDDHISM"\n        ],\n        [\n     ...
   - Example: [\n  "ReligionSpreads",\n  [\n    [\n      "ReligionSpread",\n      [\n        [\n          "ReligionType",\n          "RELIGION_CHRISTIANITY"\n        ],\n        [\n ...
 - `ReligionSpreads/ReligionSpread`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: [\n  "ReligionSpread",\n  [\n    [\n      "ReligionType",\n      "RELIGION_ASATRU"\n    ],\n    [\n      "iReligionSpread",\n      "40"\n    ]\n  ]\n]
   - Example: [\n  "ReligionSpread",\n  [\n    [\n      "ReligionType",\n      "RELIGION_BUDDHISM"\n    ],\n    [\n      "iReligionSpread",\n      "40"\n    ]\n  ]\n]
   - Example: [\n  "ReligionSpread",\n  [\n    [\n      "ReligionType",\n      "RELIGION_CHRISTIANITY"\n    ],\n    [\n      "iReligionSpread",\n      "40"\n    ]\n  ]\n]
 - `ReligionSpreads/ReligionSpread/ReligionType`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: RELIGION_ASATRU
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `ReligionSpreads/ReligionSpread/iReligionSpread`
-  - Present: 13. Non-default: 13. Status: preserved.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: 30
   - Example: 40
 - `ReligionType`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `SeeInvisible`
-  - Present: 359. Non-default: 27. Status: preserved.
+  - Present: 359. Non-default: 27. Status: mapped.
   - Example: INVISIBLE_CAMOUFLAGE
   - Example: INVISIBLE_STEALTH
   - Example: INVISIBLE_STEALTH,INVISIBLE_SUBMARINE
 - `Special`
-  - Present: 359. Non-default: 115. Status: preserved.
+  - Present: 359. Non-default: 115. Status: mapped.
   - Example: SPECIALUNIT_FIGHTER
   - Example: SPECIALUNIT_HELICOPTER
   - Example: SPECIALUNIT_MISSILE
 - `SpecialCargo`
-  - Present: 359. Non-default: 23. Status: preserved.
+  - Present: 359. Non-default: 23. Status: mapped.
   - Example: SPECIALUNIT_FIGHTER,SPECIALUNIT_HELICOPTER
   - Example: SPECIALUNIT_MISSILE
   - Example: SPECIALUNIT_MISSILE,SPECIALUNIT_PEOPLE
 - `StateReligion`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: mapped.
 - `Strategy`
-  - Present: 359. Non-default: 354. Status: preserved.
+  - Present: 359. Non-default: 354. Status: mapped.
   - Example: TXT_KEY_CHARL_UNIT_HEAVY_CAVALRY_STRATEGY
   - Example: TXT_KEY_CHARL_UNIT_HEAVY_SWORDSMAN_STRATEGY
   - Example: TXT_KEY_CHARL_UNIT_LIGHT_CAVALRY_STRATEGY
 - `TechTypes`
-  - Present: 359. Non-default: 11. Status: preserved.
+  - Present: 359. Non-default: 11. Status: mapped.
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_FUSION"\n    ]\n  ]\n]
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_GUIDED_WEAPONS"\n    ]\n  ]\n]
   - Example: [\n  "TechTypes",\n  [\n    [\n      "PrereqTech",\n      "TECH_HORSEBACK_RIDING"\n    ]\n  ]\n]
 - `TechTypes/PrereqTech`
-  - Present: 14. Non-default: 11. Status: preserved.
+  - Present: 14. Non-default: 11. Status: mapped.
   - Example: TECH_FUSION
   - Example: TECH_GUIDED_WEAPONS
   - Example: TECH_HORSEBACK_RIDING
 - `TerrainAttacks`
-  - Present: 359. Non-default: 43. Status: preserved.
+  - Present: 359. Non-default: 43. Status: mapped.
   - Example: [\n  "TerrainAttacks",\n  [\n    [\n      "TerrainAttack",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          "i...
 - `TerrainAttacks/TerrainAttack`
-  - Present: 43. Non-default: 43. Status: preserved.
+  - Present: 43. Non-default: 43. Status: mapped.
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "iTerrainAttack",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "iTerrainAttack",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "TerrainAttack",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_PEAK"\n    ],\n    [\n      "iTerrainAttack",\n      "-50"\n    ]\n  ]\n]
 - `TerrainAttacks/TerrainAttack/TerrainType`
-  - Present: 43. Non-default: 43. Status: preserved.
+  - Present: 43. Non-default: 43. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
   - Example: TERRAIN_PEAK
 - `TerrainAttacks/TerrainAttack/iTerrainAttack`
-  - Present: 43. Non-default: 43. Status: preserved.
+  - Present: 43. Non-default: 43. Status: mapped.
   - Example: -50
   - Example: 25
 - `TerrainDefenses`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `TerrainImpassables`
-  - Present: 359. Non-default: 10. Status: preserved.
+  - Present: 359. Non-default: 10. Status: mapped.
   - Example: [\n  "TerrainImpassables",\n  [\n    [\n      "TerrainImpassable",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_OCEAN"\n        ],\n        [\n    ...
 - `TerrainImpassables/TerrainImpassable`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: [\n  "TerrainImpassable",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_OCEAN"\n    ],\n    [\n      "bTerrainImpassable",\n      "1"\n    ]\n  ]\n]
 - `TerrainImpassables/TerrainImpassable/TerrainType`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TERRAIN_OCEAN
 - `TerrainImpassables/TerrainImpassable/bTerrainImpassable`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: 1
 - `TerrainNatives`
-  - Present: 359. Non-default: 28. Status: preserved.
+  - Present: 359. Non-default: 28. Status: mapped.
   - Example: [\n  "TerrainNatives",\n  [\n    [\n      "TerrainNative",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_DESERT"\n        ],\n        [\n          "...
   - Example: [\n  "TerrainNatives",\n  [\n    [\n      "TerrainNative",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_GRASS"\n        ],\n        [\n          "b...
   - Example: [\n  "TerrainNatives",\n  [\n    [\n      "TerrainNative",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_SNOW"\n        ],\n        [\n          "bT...
 - `TerrainNatives/TerrainNative`
-  - Present: 28. Non-default: 28. Status: preserved.
+  - Present: 28. Non-default: 28. Status: mapped.
   - Example: [\n  "TerrainNative",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_DESERT"\n    ],\n    [\n      "bTerrainNative",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainNative",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_GRASS"\n    ],\n    [\n      "bTerrainNative",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "TerrainNative",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_HILL"\n    ],\n    [\n      "bTerrainNative",\n      "1"\n    ]\n  ]\n]
 - `TerrainNatives/TerrainNative/TerrainType`
-  - Present: 28. Non-default: 28. Status: preserved.
+  - Present: 28. Non-default: 28. Status: mapped.
   - Example: TERRAIN_DESERT
   - Example: TERRAIN_GRASS
   - Example: TERRAIN_HILL
 - `TerrainNatives/TerrainNative/bTerrainNative`
-  - Present: 28. Non-default: 28. Status: preserved.
+  - Present: 28. Non-default: 28. Status: mapped.
   - Example: 1
 - `TerrainPassableTechs`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: [\n  "TerrainPassableTechs",\n  [\n    [\n      "TerrainPassableTech",\n      [\n        [\n          "TerrainType",\n          "TERRAIN_OCEAN"\n        ],\n        [\n...
 - `TerrainPassableTechs/TerrainPassableTech`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "TerrainPassableTech",\n  [\n    [\n      "TerrainType",\n      "TERRAIN_OCEAN"\n    ],\n    [\n      "PassableTech",\n      "TECH_ASTRONOMY"\n    ]\n  ]\n]
 - `TerrainPassableTechs/TerrainPassableTech/PassableTech`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: TECH_ASTRONOMY
 - `TerrainPassableTechs/TerrainPassableTech/TerrainType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: TERRAIN_OCEAN
 - `Type`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: UNIT_007
   - Example: UNIT_ACV
   - Example: UNIT_ACVSAM
 - `UniqueNames`
-  - Present: 359. Non-default: 8. Status: preserved.
+  - Present: 359. Non-default: 8. Status: mapped.
   - Example: [\n  "UniqueNames",\n  [\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_HARKUF"\n    ],\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_HANNO"\n    ...
   - Example: [\n  "UniqueNames",\n  [\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_HOMER"\n    ],\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_THESPIS"\n   ...
   - Example: [\n  "UniqueNames",\n  [\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_IMHOTEP"\n    ],\n    [\n      "UniqueName",\n      "TXT_KEY_GREAT_PERSON_ARCHIMEDES...
 - `UniqueNames/UniqueName`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_GREAT_PERSON_AARON_BURR
   - Example: TXT_KEY_GREAT_PERSON_ABRAHAM
   - Example: TXT_KEY_GREAT_PERSON_ABU_BAKR
 - `UnitAIs`
-  - Present: 359. Non-default: 307. Status: preserved.
+  - Present: 359. Non-default: 307. Status: mapped.
   - Example: [\n  "UnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ANIMAL"\n        ],\n        [\n          "bUnitAI",\n      ...
   - Example: [\n  "UnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ARTIST"\n        ],\n        [\n          "bUnitAI",\n      ...
   - Example: [\n  "UnitAIs",\n  [\n    [\n      "UnitAI",\n      [\n        [\n          "UnitAIType",\n          "UNITAI_ASSAULT_SEA"\n        ],\n        [\n          "bUnitAI",\n ...
 - `UnitAIs/UnitAI`
-  - Present: 307. Non-default: 307. Status: preserved.
+  - Present: 307. Non-default: 307. Status: mapped.
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ANIMAL"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ARTIST"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitAI",\n  [\n    [\n      "UnitAIType",\n      "UNITAI_ASSAULT_SEA"\n    ],\n    [\n      "bUnitAI",\n      "1"\n    ]\n  ]\n]
 - `UnitAIs/UnitAI/UnitAIType`
-  - Present: 307. Non-default: 307. Status: preserved.
+  - Present: 307. Non-default: 307. Status: mapped.
   - Example: UNITAI_ANIMAL
   - Example: UNITAI_ARTIST
   - Example: UNITAI_ASSAULT_SEA
 - `UnitAIs/UnitAI/bUnitAI`
-  - Present: 307. Non-default: 307. Status: preserved.
+  - Present: 307. Non-default: 307. Status: mapped.
   - Example: 1
 - `UnitClassAttackMods`
-  - Present: 357. Non-default: 15. Status: preserved.
+  - Present: 357. Non-default: 15. Status: mapped.
   - Example: [\n  "UnitClassAttackMods",\n  [\n    [\n      "UnitClassAttackMod",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_AXEMAN"\n        ],\n       ...
   - Example: [\n  "UnitClassAttackMods",\n  [\n    [\n      "UnitClassAttackMod",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_CANNON"\n        ],\n       ...
   - Example: [\n  "UnitClassAttackMods",\n  [\n    [\n      "UnitClassAttackMod",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_CATAPULT"\n        ],\n     ...
 - `UnitClassAttackMods/UnitClassAttackMod`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: [\n  "UnitClassAttackMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_AXEMAN"\n    ],\n    [\n      "iUnitClassMod",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassAttackMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_CANNON"\n    ],\n    [\n      "iUnitClassMod",\n      "50"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassAttackMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_CATAPULT"\n    ],\n    [\n      "iUnitClassMod",\n      "50"\n    ]\n  ]\n]
 - `UnitClassAttackMods/UnitClassAttackMod/UnitClassType`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: UNITCLASS_AXEMAN
   - Example: UNITCLASS_CANNON
   - Example: UNITCLASS_CATAPULT
 - `UnitClassAttackMods/UnitClassAttackMod/iUnitClassMod`
-  - Present: 15. Non-default: 15. Status: preserved.
+  - Present: 15. Non-default: 15. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 50
 - `UnitClassDefenders`
-  - Present: 359. Non-default: 3. Status: preserved.
+  - Present: 359. Non-default: 3. Status: mapped.
   - Example: [\n  "UnitClassDefenders",\n  [\n    [\n      "UnitClassDefender",\n      [\n        [\n          "UnitClassDefenderType",\n          "UNITCLASS_SUBMARINE"\n        ]...
 - `UnitClassDefenders/UnitClassDefender`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: [\n  "UnitClassDefender",\n  [\n    [\n      "UnitClassDefenderType",\n      "UNITCLASS_ATTACK_SUBMARINE"\n    ],\n    [\n      "bUnitClassDefender",\n      "1"\n    ]...
   - Example: [\n  "UnitClassDefender",\n  [\n    [\n      "UnitClassDefenderType",\n      "UNITCLASS_NUCLEAR_SUBMARINE"\n    ],\n    [\n      "bUnitClassDefender",\n      "1"\n    ...
   - Example: [\n  "UnitClassDefender",\n  [\n    [\n      "UnitClassDefenderType",\n      "UNITCLASS_SUBMARINE"\n    ],\n    [\n      "bUnitClassDefender",\n      "1"\n    ]\n  ]\n]
 - `UnitClassDefenders/UnitClassDefender/UnitClassDefenderType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: UNITCLASS_ATTACK_SUBMARINE
   - Example: UNITCLASS_NUCLEAR_SUBMARINE
   - Example: UNITCLASS_SUBMARINE
 - `UnitClassDefenders/UnitClassDefender/bUnitClassDefender`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
 - `UnitClassDefenseMods`
-  - Present: 357. Non-default: 4. Status: preserved.
+  - Present: 357. Non-default: 4. Status: mapped.
   - Example: [\n  "UnitClassDefenseMods",\n  [\n    [\n      "UnitClassDefenseMod",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_CHARIOT"\n        ],\n    ...
   - Example: [\n  "UnitClassDefenseMods",\n  [\n    [\n      "UnitClassDefenseMod",\n      [\n        [\n          "UnitClassType",\n          "UNITCLASS_EARLY_TANK"\n        ],\n ...
 - `UnitClassDefenseMods/UnitClassDefenseMod`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: [\n  "UnitClassDefenseMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_CHARIOT"\n    ],\n    [\n      "iUnitClassMod",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassDefenseMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_CHARIOT"\n    ],\n    [\n      "iUnitClassMod",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassDefenseMod",\n  [\n    [\n      "UnitClassType",\n      "UNITCLASS_EARLY_TANK"\n    ],\n    [\n      "iUnitClassMod",\n      "100"\n    ]\n  ]\n]
 - `UnitClassDefenseMods/UnitClassDefenseMod/UnitClassType`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: UNITCLASS_CHARIOT
   - Example: UNITCLASS_EARLY_TANK
 - `UnitClassDefenseMods/UnitClassDefenseMod/iUnitClassMod`
-  - Present: 4. Non-default: 4. Status: preserved.
+  - Present: 4. Non-default: 4. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 75
 - `UnitClassTargets`
-  - Present: 359. Non-default: 5. Status: preserved.
+  - Present: 359. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitClassTargets",\n  [\n    [\n      "UnitClassTarget",\n      [\n        [\n          "UnitClassTargetType",\n          "UNITCLASS_FLUYT"\n        ],\n        ...
 - `UnitClassTargets/UnitClassTarget`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: [\n  "UnitClassTarget",\n  [\n    [\n      "UnitClassTargetType",\n      "UNITCLASS_FLUYT"\n    ],\n    [\n      "bUnitClassTarget",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassTarget",\n  [\n    [\n      "UnitClassTargetType",\n      "UNITCLASS_FUSION_TRANSPORT"\n    ],\n    [\n      "bUnitClassTarget",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassTarget",\n  [\n    [\n      "UnitClassTargetType",\n      "UNITCLASS_GALLEON"\n    ],\n    [\n      "bUnitClassTarget",\n      "1"\n    ]\n  ]\n]
 - `UnitClassTargets/UnitClassTarget/UnitClassTargetType`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: UNITCLASS_FLUYT
   - Example: UNITCLASS_FUSION_TRANSPORT
   - Example: UNITCLASS_GALLEON
 - `UnitClassTargets/UnitClassTarget/bUnitClassTarget`
-  - Present: 5. Non-default: 5. Status: preserved.
+  - Present: 5. Non-default: 5. Status: mapped.
   - Example: 1
 - `UnitClassUpgrades`
-  - Present: 359. Non-default: 238. Status: preserved.
+  - Present: 359. Non-default: 238. Status: mapped.
   - Example: [\n  "UnitClassUpgrades",\n  [\n    [\n      "UnitClassUpgrade",\n      [\n        [\n          "UnitClassUpgradeType",\n          "UNITCLASS_ACV"\n        ],\n       ...
   - Example: [\n  "UnitClassUpgrades",\n  [\n    [\n      "UnitClassUpgrade",\n      [\n        [\n          "UnitClassUpgradeType",\n          "UNITCLASS_ACVSAM"\n        ],\n    ...
   - Example: [\n  "UnitClassUpgrades",\n  [\n    [\n      "UnitClassUpgrade",\n      [\n        [\n          "UnitClassUpgradeType",\n          "UNITCLASS_ADVENTURER"\n        ],\n...
 - `UnitClassUpgrades/UnitClassUpgrade`
-  - Present: 238. Non-default: 238. Status: preserved.
+  - Present: 238. Non-default: 238. Status: mapped.
   - Example: [\n  "UnitClassUpgrade",\n  [\n    [\n      "UnitClassUpgradeType",\n      "UNITCLASS_ACV"\n    ],\n    [\n      "bUnitClassUpgrade",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassUpgrade",\n  [\n    [\n      "UnitClassUpgradeType",\n      "UNITCLASS_ACVSAM"\n    ],\n    [\n      "bUnitClassUpgrade",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitClassUpgrade",\n  [\n    [\n      "UnitClassUpgradeType",\n      "UNITCLASS_ADVENTURER"\n    ],\n    [\n      "bUnitClassUpgrade",\n      "1"\n    ]\n  ]\n]
 - `UnitClassUpgrades/UnitClassUpgrade/UnitClassUpgradeType`
-  - Present: 238. Non-default: 238. Status: preserved.
+  - Present: 238. Non-default: 238. Status: mapped.
   - Example: UNITCLASS_ACV
   - Example: UNITCLASS_ACVSAM
   - Example: UNITCLASS_ADVENTURER
 - `UnitClassUpgrades/UnitClassUpgrade/bUnitClassUpgrade`
-  - Present: 238. Non-default: 238. Status: preserved.
+  - Present: 238. Non-default: 238. Status: mapped.
   - Example: 1
 - `UnitCombatCollateralImmunes`
-  - Present: 359. Non-default: 14. Status: preserved.
+  - Present: 359. Non-default: 14. Status: mapped.
   - Example: [\n  "UnitCombatCollateralImmunes",\n  [\n    [\n      "UnitCombatCollateralImmune",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_SIEGE"\n ...
 - `UnitCombatCollateralImmunes/UnitCombatCollateralImmune`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: [\n  "UnitCombatCollateralImmune",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_SIEGE"\n    ],\n    [\n      "iUnitCombatCollateralImmune",\n      "1"\n    ...
 - `UnitCombatCollateralImmunes/UnitCombatCollateralImmune/UnitCombatType`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: UNITCOMBAT_SIEGE
 - `UnitCombatCollateralImmunes/UnitCombatCollateralImmune/iUnitCombatCollateralImmune`
-  - Present: 14. Non-default: 14. Status: preserved.
+  - Present: 14. Non-default: 14. Status: mapped.
   - Example: 1
 - `UnitCombatDefenders`
-  - Present: 359. Non-default: 2. Status: preserved.
+  - Present: 359. Non-default: 2. Status: mapped.
   - Example: [\n  "UnitCombatDefenders",\n  [\n    [\n      "UnitCombatDefender",\n      [\n        [\n          "UnitCombatDefenderType",\n          "UNITCOMBAT_SUBMARINE"\n     ...
 - `UnitCombatDefenders/UnitCombatDefender`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: [\n  "UnitCombatDefender",\n  [\n    [\n      "UnitCombatDefenderType",\n      "UNITCOMBAT_SUBMARINE"\n    ],\n    [\n      "bUnitCombatDefender",\n      "1"\n    ]\n  ]\n]
 - `UnitCombatDefenders/UnitCombatDefender/UnitCombatDefenderType`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: UNITCOMBAT_SUBMARINE
 - `UnitCombatDefenders/UnitCombatDefender/bUnitCombatDefender`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: mapped.
   - Example: 1
 - `UnitCombatMods`
-  - Present: 359. Non-default: 93. Status: preserved.
+  - Present: 359. Non-default: 93. Status: mapped.
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_ARCHER"\n        ],\n        [\n     ...
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_BOMBERS"\n        ],\n        [\n    ...
   - Example: [\n  "UnitCombatMods",\n  [\n    [\n      "UnitCombatMod",\n      [\n        [\n          "UnitCombatType",\n          "UNITCOMBAT_GUN"\n        ],\n        [\n        ...
 - `UnitCombatMods/UnitCombatMod`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: mapped.
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "iUnitCombatMod",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "iUnitCombatMod",\n      "25"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatMod",\n  [\n    [\n      "UnitCombatType",\n      "UNITCOMBAT_ARCHER"\n    ],\n    [\n      "iUnitCombatMod",\n      "50"\n    ]\n  ]\n]
 - `UnitCombatMods/UnitCombatMod/UnitCombatType`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: mapped.
   - Example: UNITCOMBAT_ARCHER
   - Example: UNITCOMBAT_ASSAULT_MECH
   - Example: UNITCOMBAT_BOMBERS
 - `UnitCombatMods/UnitCombatMod/iUnitCombatMod`
-  - Present: 93. Non-default: 93. Status: preserved.
+  - Present: 93. Non-default: 93. Status: mapped.
   - Example: 100
   - Example: 125
   - Example: 25
 - `UnitCombatTargets`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: [\n  "UnitCombatTargets",\n  [\n    [\n      "UnitCombatTarget",\n      [\n        [\n          "UnitCombatTargetType",\n          "UNITCOMBAT_HELICOPTER"\n        ],...
   - Example: [\n  "UnitCombatTargets",\n  [\n    [\n      "UnitCombatTarget",\n      [\n        [\n          "UnitCombatTargetType",\n          "UNITCOMBAT_MOUNTED"\n        ],\n  ...
   - Example: [\n  "UnitCombatTargets",\n  [\n    [\n      "UnitCombatTarget",\n      [\n        [\n          "UnitCombatTargetType",\n          "UNITCOMBAT_TRACKED"\n        ],\n  ...
 - `UnitCombatTargets/UnitCombatTarget`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: [\n  "UnitCombatTarget",\n  [\n    [\n      "UnitCombatTargetType",\n      "UNITCOMBAT_ASSAULT_MECH"\n    ],\n    [\n      "bUnitCombatTarget",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatTarget",\n  [\n    [\n      "UnitCombatTargetType",\n      "UNITCOMBAT_HELICOPTER"\n    ],\n    [\n      "bUnitCombatTarget",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "UnitCombatTarget",\n  [\n    [\n      "UnitCombatTargetType",\n      "UNITCOMBAT_MOUNTED"\n    ],\n    [\n      "bUnitCombatTarget",\n      "1"\n    ]\n  ]\n]
 - `UnitCombatTargets/UnitCombatTarget/UnitCombatTargetType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: UNITCOMBAT_ASSAULT_MECH
   - Example: UNITCOMBAT_HELICOPTER
   - Example: UNITCOMBAT_MOUNTED
 - `UnitCombatTargets/UnitCombatTarget/bUnitCombatTarget`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: mapped.
   - Example: 1
 - `UnitMeshGroups`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: [\n  "UnitMeshGroups",\n  [\n    [\n      "iGroupSize",\n      "1"\n    ],\n    [\n      "fMaxSpeed",\n      "0.75"\n    ],\n    [\n      "fPadTime",\n      "1"\n    ],\n  ...
   - Example: [\n  "UnitMeshGroups",\n  [\n    [\n      "iGroupSize",\n      "1"\n    ],\n    [\n      "fMaxSpeed",\n      "1.0"\n    ],\n    [\n      "fPadTime",\n      "2.5"\n    ],\n ...
   - Example: [\n  "UnitMeshGroups",\n  [\n    [\n      "iGroupSize",\n      "1"\n    ],\n    [\n      "fMaxSpeed",\n      "1.75"\n    ],\n    [\n      "fPadTime",\n      "1"\n    ],\n  ...
 - `UnitMeshGroups/UnitMeshGroup`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "iRequired",\n      "1"\n    ],\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_007"\n    ]\n  ]\n]
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "iRequired",\n      "1"\n    ],\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_ACVSAM"\n    ]\n  ]\n]
   - Example: [\n  "UnitMeshGroup",\n  [\n    [\n      "iRequired",\n      "1"\n    ],\n    [\n      "EarlyArtDefineTag",\n      "ART_DEF_UNIT_AGENT"\n    ]\n  ]\n]
 - `UnitMeshGroups/UnitMeshGroup/EarlyArtDefineTag`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: ART_DEF_UNIT_007
   - Example: ART_DEF_UNIT_ACV
   - Example: ART_DEF_UNIT_ACVSAM
 - `UnitMeshGroups/UnitMeshGroup/LateArtDefineTag`
-  - Present: 54. Non-default: 54. Status: preserved.
+  - Present: 54. Non-default: 54. Status: unsupported.
   - Example: ART_DEF_UNIT_APOTHMASTER
   - Example: ART_DEF_UNIT_ARTISTMASTER
   - Example: ART_DEF_UNIT_ARTIST_MODERN
 - `UnitMeshGroups/UnitMeshGroup/MiddleArtDefineTag`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: ART_DEF_UNIT_WARLORD_MEDIEVAL
 - `UnitMeshGroups/UnitMeshGroup/iRequired`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `UnitMeshGroups/fMaxSpeed`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: 0.75
   - Example: 1.0
   - Example: 1.75
 - `UnitMeshGroups/fPadTime`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: 1
   - Example: 2.5
 - `UnitMeshGroups/iGroupSize`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `UnitMeshGroups/iMeleeWaveSize`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `UnitMeshGroups/iRangedWaveSize`
-  - Present: 359. Non-default: 207. Status: preserved.
+  - Present: 359. Non-default: 207. Status: unsupported.
   - Example: 1
   - Example: 2
   - Example: 3
 - `bAltDown`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `bAlwaysHostile`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: 1
 - `bAnimal`
-  - Present: 359. Non-default: 17. Status: preserved.
+  - Present: 359. Non-default: 17. Status: mapped.
   - Example: 1
 - `bBarbariansColonisator`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bBribeBarbarian`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bCanMoveAllTerrain`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
 - `bCanMoveImpassable`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: 1
 - `bCounterSpy`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
 - `bCtrlDown`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `bDCMAirBomb1`
-  - Present: 27. Non-default: 18. Status: preserved.
+  - Present: 27. Non-default: 18. Status: mapped.
   - Example: 1
 - `bDCMAirBomb2`
-  - Present: 27. Non-default: 9. Status: preserved.
+  - Present: 27. Non-default: 9. Status: mapped.
   - Example: 1
 - `bDCMAirBomb3`
-  - Present: 27. Non-default: 9. Status: preserved.
+  - Present: 27. Non-default: 9. Status: mapped.
   - Example: 1
 - `bDCMAirBomb4`
-  - Present: 27. Non-default: 18. Status: preserved.
+  - Present: 27. Non-default: 18. Status: mapped.
   - Example: 1
 - `bDCMAirBomb5`
-  - Present: 27. Non-default: 6. Status: preserved.
+  - Present: 27. Non-default: 6. Status: mapped.
   - Example: 1
 - `bDCMFighterEngage`
-  - Present: 20. Non-default: 7. Status: preserved.
+  - Present: 20. Non-default: 7. Status: mapped.
   - Example: 1
 - `bDestroy`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFirstStrikeImmune`
-  - Present: 359. Non-default: 28. Status: preserved.
+  - Present: 359. Non-default: 28. Status: mapped.
   - Example: 1
 - `bFlatMovementCost`
-  - Present: 359. Non-default: 3. Status: preserved.
+  - Present: 359. Non-default: 3. Status: mapped.
   - Example: 1
 - `bFood`
-  - Present: 359. Non-default: 11. Status: preserved.
+  - Present: 359. Non-default: 11. Status: mapped.
   - Example: 1
 - `bForcePeace`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bFound`
-  - Present: 359. Non-default: 3. Status: preserved.
+  - Present: 359. Non-default: 3. Status: mapped.
   - Example: 1
 - `bGoldenAge`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: 1
 - `bGoodwill`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bGreatGeneral`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bHiddenNationality`
-  - Present: 359. Non-default: 2. Status: preserved.
+  - Present: 359. Non-default: 2. Status: mapped.
   - Example: 1
 - `bIgnoreBuildingDefense`
-  - Present: 359. Non-default: 97. Status: preserved.
+  - Present: 359. Non-default: 97. Status: mapped.
   - Example: 1
 - `bIgnoreTerrainCost`
-  - Present: 359. Non-default: 67. Status: preserved.
+  - Present: 359. Non-default: 67. Status: mapped.
   - Example: 1
 - `bInquisitor`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: mapped.
   - Example: 1
 - `bInvestigate`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: 1
 - `bInvisible`
-  - Present: 359. Non-default: 9. Status: preserved.
+  - Present: 359. Non-default: 9. Status: mapped.
   - Example: 1
 - `bLineOfSight`
-  - Present: 5. Non-default: 0. Status: preserved.
+  - Present: 5. Non-default: 0. Status: mapped.
 - `bMechanized`
-  - Present: 359. Non-default: 134. Status: preserved.
+  - Present: 359. Non-default: 134. Status: mapped.
   - Example: 1
 - `bMilitaryHappiness`
-  - Present: 359. Non-default: 156. Status: preserved.
+  - Present: 359. Non-default: 156. Status: mapped.
   - Example: 1
 - `bMilitaryProduction`
-  - Present: 359. Non-default: 245. Status: preserved.
+  - Present: 359. Non-default: 245. Status: mapped.
   - Example: 1
 - `bMilitarySupport`
-  - Present: 359. Non-default: 253. Status: preserved.
+  - Present: 359. Non-default: 253. Status: mapped.
   - Example: 1
 - `bMilitaryTrade`
-  - Present: 321. Non-default: 124. Status: preserved.
+  - Present: 321. Non-default: 124. Status: mapped.
   - Example: 1
 - `bNoBadGoodies`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
 - `bNoCapture`
-  - Present: 359. Non-default: 4. Status: preserved.
+  - Present: 359. Non-default: 4. Status: mapped.
   - Example: 1
 - `bNoDefensiveBonus`
-  - Present: 359. Non-default: 100. Status: preserved.
+  - Present: 359. Non-default: 100. Status: mapped.
   - Example: 1
 - `bNoRevealMap`
-  - Present: 359. Non-default: 2. Status: preserved.
+  - Present: 359. Non-default: 2. Status: mapped.
   - Example: 1
 - `bNukeImmune`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
 - `bOnlyDefensive`
-  - Present: 359. Non-default: 39. Status: preserved.
+  - Present: 359. Non-default: 39. Status: mapped.
   - Example: 1
 - `bPillage`
-  - Present: 359. Non-default: 196. Status: preserved.
+  - Present: 359. Non-default: 196. Status: mapped.
   - Example: 1
 - `bPrereqBonuses`
-  - Present: 359. Non-default: 4. Status: preserved.
+  - Present: 359. Non-default: 4. Status: mapped.
   - Example: 1
 - `bPrereqReligion`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: mapped.
 - `bQuickCombat`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: mapped.
 - `bRenderBelowWater`
-  - Present: 48. Non-default: 48. Status: preserved.
+  - Present: 48. Non-default: 48. Status: unsupported.
   - Example: 1
 - `bRivalTerritory`
-  - Present: 359. Non-default: 25. Status: preserved.
+  - Present: 359. Non-default: 25. Status: mapped.
   - Example: 1
 - `bSabotage`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: 1
 - `bShiftDown`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: unsupported.
 - `bSpy`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
 - `bStateReligion`
-  - Present: 9. Non-default: 1. Status: preserved.
+  - Present: 9. Non-default: 1. Status: mapped.
   - Example: 1
 - `bStealPlans`
-  - Present: 359. Non-default: 5. Status: preserved.
+  - Present: 359. Non-default: 5. Status: mapped.
   - Example: 1
 - `bSuicide`
-  - Present: 359. Non-default: 15. Status: preserved.
+  - Present: 359. Non-default: 15. Status: mapped.
   - Example: 1
 - `bUpgradeImprovements`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `bWorkerTrade`
-  - Present: 321. Non-default: 4. Status: preserved.
+  - Present: 321. Non-default: 4. Status: mapped.
   - Example: 1
 - `iAIWeight`
-  - Present: 359. Non-default: 8. Status: preserved.
+  - Present: 359. Non-default: 8. Status: mapped.
   - Example: -1000
   - Example: 10
 - `iAdvancedStartCost`
-  - Present: 359. Non-default: 257. Status: preserved.
+  - Present: 359. Non-default: 257. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 120
 - `iAdvancedStartCostIncrease`
-  - Present: 359. Non-default: 0. Status: preserved.
+  - Present: 359. Non-default: 0. Status: mapped.
 - `iAirCombat`
-  - Present: 359. Non-default: 28. Status: preserved.
+  - Present: 359. Non-default: 28. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iAirCombatLimit`
-  - Present: 359. Non-default: 28. Status: preserved.
+  - Present: 359. Non-default: 28. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iAirRange`
-  - Present: 359. Non-default: 34. Status: preserved.
+  - Present: 359. Non-default: 34. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 12
 - `iAirUnitCap`
-  - Present: 359. Non-default: 17. Status: preserved.
+  - Present: 359. Non-default: 17. Status: mapped.
   - Example: 1
   - Example: 4
 - `iAnimalCombat`
-  - Present: 359. Non-default: 4. Status: preserved.
+  - Present: 359. Non-default: 4. Status: mapped.
   - Example: 100
 - `iAsset`
-  - Present: 359. Non-default: 325. Status: preserved.
+  - Present: 359. Non-default: 325. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 25
 - `iBaseDiscover`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 10000
   - Example: 15000
 - `iBaseFoodChange`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 15
   - Example: 30
   - Example: 45
 - `iBaseHurry`
-  - Present: 359. Non-default: 5. Status: preserved.
+  - Present: 359. Non-default: 5. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 50
 - `iBaseTrade`
-  - Present: 359. Non-default: 4. Status: preserved.
+  - Present: 359. Non-default: 4. Status: mapped.
   - Example: 100
   - Example: 200
   - Example: 30
 - `iBombRate`
-  - Present: 359. Non-default: 18. Status: preserved.
+  - Present: 359. Non-default: 18. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 14
 - `iBombardRate`
-  - Present: 359. Non-default: 46. Status: preserved.
+  - Present: 359. Non-default: 46. Status: mapped.
   - Example: 10
   - Example: 12
   - Example: 14
 - `iCargo`
-  - Present: 359. Non-default: 36. Status: preserved.
+  - Present: 359. Non-default: 36. Status: mapped.
   - Example: 1
   - Example: 11
   - Example: 2
 - `iChanceFirstStrikes`
-  - Present: 359. Non-default: 10. Status: preserved.
+  - Present: 359. Non-default: 10. Status: mapped.
   - Example: 1
   - Example: 2
 - `iCityAttack`
-  - Present: 359. Non-default: 72. Status: preserved.
+  - Present: 359. Non-default: 72. Status: mapped.
   - Example: -25
   - Example: 10
   - Example: 20
 - `iCityDefense`
-  - Present: 359. Non-default: 15. Status: preserved.
+  - Present: 359. Non-default: 15. Status: mapped.
   - Example: 25
   - Example: 50
 - `iCollateralDamage`
-  - Present: 359. Non-default: 31. Status: preserved.
+  - Present: 359. Non-default: 31. Status: mapped.
   - Example: 100
   - Example: 120
   - Example: 140
 - `iCollateralDamageLimit`
-  - Present: 359. Non-default: 70. Status: preserved.
+  - Present: 359. Non-default: 70. Status: mapped.
   - Example: 100
   - Example: 15
   - Example: 25
 - `iCollateralDamageMaxUnits`
-  - Present: 359. Non-default: 70. Status: preserved.
+  - Present: 359. Non-default: 70. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 2
 - `iCombat`
-  - Present: 359. Non-default: 246. Status: preserved.
+  - Present: 359. Non-default: 246. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 100
 - `iCombatLimit`
-  - Present: 359. Non-default: 243. Status: preserved.
+  - Present: 359. Non-default: 243. Status: mapped.
   - Example: 100
   - Example: 60
   - Example: 75
 - `iCommandRange`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 1
 - `iConscription`
-  - Present: 359. Non-default: 36. Status: preserved.
+  - Present: 359. Non-default: 36. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 11
 - `iControlPoints`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: mapped.
   - Example: 5
 - `iCost`
-  - Present: 359. Non-default: 314. Status: preserved.
+  - Present: 359. Non-default: 314. Status: mapped.
   - Example: 100
   - Example: 1000
   - Example: 1080
 - `iCultureGarrison`
-  - Present: 359. Non-default: 152. Status: preserved.
+  - Present: 359. Non-default: 152. Status: mapped.
   - Example: 10
   - Example: 11
   - Example: 12
 - `iDCMBombAccuracy`
-  - Present: 69. Non-default: 48. Status: preserved.
+  - Present: 69. Non-default: 48. Status: mapped.
   - Example: 25
   - Example: 50
   - Example: 60
 - `iDCMBombRange`
-  - Present: 54. Non-default: 45. Status: preserved.
+  - Present: 54. Non-default: 45. Status: mapped.
   - Example: 1
   - Example: 2
 - `iDiscoverMultiplier`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 2
   - Example: 3
 - `iDropRange`
-  - Present: 359. Non-default: 7. Status: preserved.
+  - Present: 359. Non-default: 7. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 5
 - `iEspionagePoints`
-  - Present: 359. Non-default: 3. Status: preserved.
+  - Present: 359. Non-default: 3. Status: mapped.
   - Example: 3000
   - Example: 500
 - `iEvasionProbability`
-  - Present: 359. Non-default: 24. Status: preserved.
+  - Present: 359. Non-default: 24. Status: mapped.
   - Example: 100
   - Example: 25
   - Example: 30
 - `iExtraCost`
-  - Present: 359. Non-default: 95. Status: preserved.
+  - Present: 359. Non-default: 95. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 2
 - `iFirstStrikes`
-  - Present: 359. Non-default: 40. Status: preserved.
+  - Present: 359. Non-default: 40. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iGreatWorkCulture`
-  - Present: 359. Non-default: 2. Status: preserved.
+  - Present: 359. Non-default: 2. Status: mapped.
   - Example: 200
   - Example: 4000
 - `iHillsAttack`
-  - Present: 359. Non-default: 5. Status: preserved.
+  - Present: 359. Non-default: 5. Status: mapped.
   - Example: 15
   - Example: 25
   - Example: 50
 - `iHillsDefense`
-  - Present: 359. Non-default: 12. Status: preserved.
+  - Present: 359. Non-default: 12. Status: mapped.
   - Example: 10
   - Example: 25
 - `iHotKeyPriority`
-  - Present: 359. Non-default: 3. Status: preserved.
+  - Present: 359. Non-default: 3. Status: unsupported.
   - Example: 100
 - `iHurryCostModifier`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: 50
 - `iHurryMultiplier`
-  - Present: 359. Non-default: 5. Status: preserved.
+  - Present: 359. Non-default: 5. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 20
 - `iInterceptionProbability`
-  - Present: 359. Non-default: 30. Status: preserved.
+  - Present: 359. Non-default: 30. Status: mapped.
   - Example: 10
   - Example: 100
   - Example: 15
 - `iLeaderExperience`
-  - Present: 359. Non-default: 1. Status: preserved.
+  - Present: 359. Non-default: 1. Status: mapped.
   - Example: 30
 - `iMinAreaSize`
-  - Present: 359. Non-default: 47. Status: preserved.
+  - Present: 359. Non-default: 47. Status: mapped.
   - Example: 12
   - Example: 20
 - `iMoves`
-  - Present: 359. Non-default: 359. Status: preserved.
+  - Present: 359. Non-default: 359. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 11
 - `iNukeRange`
-  - Present: 359. Non-default: 6. Status: preserved.
+  - Present: 359. Non-default: 6. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 20
 - `iOrderPriority`
-  - Present: 8. Non-default: 0. Status: preserved.
+  - Present: 8. Non-default: 0. Status: mapped.
 - `iPower`
-  - Present: 359. Non-default: 239. Status: preserved.
+  - Present: 359. Non-default: 239. Status: mapped.
   - Example: 1
   - Example: 10
   - Example: 1000
 - `iSpecialCargoSpace`
-  - Present: 356. Non-default: 19. Status: preserved.
+  - Present: 356. Non-default: 19. Status: mapped.
   - Example: 1
   - Example: 3
   - Example: 4,1
 - `iTotalCargo`
-  - Present: 356. Non-default: 36. Status: preserved.
+  - Present: 356. Non-default: 36. Status: mapped.
   - Example: 1
   - Example: 11
   - Example: 2
 - `iTradeMultiplier`
-  - Present: 359. Non-default: 4. Status: preserved.
+  - Present: 359. Non-default: 4. Status: mapped.
   - Example: 2
   - Example: 200
 - `iWithdrawalProb`
-  - Present: 359. Non-default: 45. Status: preserved.
+  - Present: 359. Non-default: 45. Status: mapped.
   - Example: 10
   - Example: 15
   - Example: 20
 - `iWorkRate`
-  - Present: 359. Non-default: 13. Status: preserved.
+  - Present: 359. Non-default: 13. Status: mapped.
   - Example: 100
   - Example: 125
   - Example: 200
 - `iXPValueAttack`
-  - Present: 359. Non-default: 261. Status: preserved.
+  - Present: 359. Non-default: 261. Status: mapped.
   - Example: 3
   - Example: 6
   - Example: 8
 - `iXPValueDefense`
-  - Present: 359. Non-default: 272. Status: preserved.
+  - Present: 359. Non-default: 272. Status: mapped.
   - Example: 3
   - Example: 4
   - Example: 6
@@ -11199,27 +11199,27 @@ Era counts: ERA_ANCIENT=24, ERA_CLASSICAL=34, ERA_INDUSTRIAL=51, ERA_MEDIEVAL=33
 Era counts: unknown=3
 
 - `Description`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TXT_KEY_UPKEEP_HIGH
   - Example: TXT_KEY_UPKEEP_LOW
   - Example: TXT_KEY_UPKEEP_MEDIUM
 - `Strategy`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TXT_KEY_UPKEEP_HIGH_HELP
   - Example: TXT_KEY_UPKEEP_LOW_HELP
   - Example: TXT_KEY_UPKEEP_MEDIUM_HELP
 - `Type`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: UPKEEP_HIGH
   - Example: UPKEEP_LOW
   - Example: UPKEEP_MEDIUM
 - `iCityPercent`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 35
   - Example: 55
   - Example: 75
 - `iPopulationPercent`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 12
   - Example: 16
   - Example: 20
@@ -11229,66 +11229,66 @@ Era counts: unknown=3
 Era counts: unknown=10
 
 - `CityCulture`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: CULTURELEVEL_LEGENDARY
 - `Civilopedia`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TXT_KEY_VICTORY_CONQUEST_PEDIA
   - Example: TXT_KEY_VICTORY_CULTURAL_PEDIA
   - Example: TXT_KEY_VICTORY_DIPLOMATIC_PEDIA
 - `Description`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: TXT_KEY_VICTORY_CONQUEST
   - Example: TXT_KEY_VICTORY_CULTURAL
   - Example: TXT_KEY_VICTORY_DIPLOMATIC
 - `Type`
-  - Present: 10. Non-default: 10. Status: preserved.
+  - Present: 10. Non-default: 10. Status: mapped.
   - Example: VICTORY_CONQUEST
   - Example: VICTORY_CULTURAL
   - Example: VICTORY_DIPLOMATIC
 - `VictoryMovie`
-  - Present: 10. Non-default: 5. Status: preserved.
+  - Present: 10. Non-default: 5. Status: unsupported.
   - Example: ART_DEF_MOVIE_MASTERY_VICTORY
   - Example: ART_DEF_MOVIE_VICTORY_CONQUEST
   - Example: ART_DEF_MOVIE_VICTORY_CULTURAL
 - `bConquest`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bDiploVote`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bEndScore`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bPermanent`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bTargetScore`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bTotalVictory`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 1
 - `iLandPercent`
-  - Present: 10. Non-default: 2. Status: preserved.
+  - Present: 10. Non-default: 2. Status: unsupported.
   - Example: 100
   - Example: 78
 - `iMinLandPercent`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 51
 - `iNumCultureCities`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 5
 - `iPopulationPercentLead`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 25
 - `iReligionPercent`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 67
 - `iTotalCultureRatio`
-  - Present: 10. Non-default: 0. Status: preserved.
+  - Present: 10. Non-default: 0. Status: unsupported.
 - `iVictoryDelayTurns`
-  - Present: 10. Non-default: 1. Status: preserved.
+  - Present: 10. Non-default: 1. Status: unsupported.
   - Example: 20
 
 ## VoteInfo: 23 records
@@ -11296,130 +11296,130 @@ Era counts: unknown=10
 Era counts: unknown=23
 
 - `Description`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: TXT_KEY_UN_VOTE_FORCE_NO_TRADE
   - Example: TXT_KEY_UN_VOTE_FORCE_WAR
   - Example: TXT_KEY_VOTE_ASSIGN_CITY
 - `DiploVotes`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: [\n  "DiploVotes",\n  [\n    [\n      "DiploVote",\n      [\n        [\n          "DiploVoteType",\n          "DIPLOVOTE_POPE"\n        ],\n        [\n          "bValid...
   - Example: [\n  "DiploVotes",\n  [\n    [\n      "DiploVote",\n      [\n        [\n          "DiploVoteType",\n          "DIPLOVOTE_UN"\n        ],\n        [\n          "bValid",...
 - `DiploVotes/DiploVote`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: [\n  "DiploVote",\n  [\n    [\n      "DiploVoteType",\n      "DIPLOVOTE_POPE"\n    ],\n    [\n      "bValid",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "DiploVote",\n  [\n    [\n      "DiploVoteType",\n      "DIPLOVOTE_UN"\n    ],\n    [\n      "bValid",\n      "1"\n    ]\n  ]\n]
 - `DiploVotes/DiploVote/DiploVoteType`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: DIPLOVOTE_POPE
   - Example: DIPLOVOTE_UN
 - `DiploVotes/DiploVote/bValid`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: 1
 - `ForceCivics`
-  - Present: 23. Non-default: 7. Status: preserved.
+  - Present: 23. Non-default: 7. Status: unsupported.
   - Example: [\n  "ForceCivics",\n  [\n    [\n      "ForceCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_DEMOCRACY"\n        ],\n        [\n          "bForce"...
   - Example: [\n  "ForceCivics",\n  [\n    [\n      "ForceCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_ENVIRONMENTALISM"\n        ],\n        [\n          "...
   - Example: [\n  "ForceCivics",\n  [\n    [\n      "ForceCivic",\n      [\n        [\n          "CivicType",\n          "CIVIC_LIBERAL"\n        ],\n        [\n          "bForce",\n...
 - `ForceCivics/ForceCivic`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: [\n  "ForceCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_DEMOCRACY"\n    ],\n    [\n      "bForce",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ForceCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_ENVIRONMENTALISM"\n    ],\n    [\n      "bForce",\n      "1"\n    ]\n  ]\n]
   - Example: [\n  "ForceCivic",\n  [\n    [\n      "CivicType",\n      "CIVIC_LIBERAL"\n    ],\n    [\n      "bForce",\n      "1"\n    ]\n  ]\n]
 - `ForceCivics/ForceCivic/CivicType`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: CIVIC_DEMOCRACY
   - Example: CIVIC_ENVIRONMENTALISM
   - Example: CIVIC_LIBERAL
 - `ForceCivics/ForceCivic/bForce`
-  - Present: 7. Non-default: 7. Status: preserved.
+  - Present: 7. Non-default: 7. Status: unsupported.
   - Example: 1
 - `Type`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: VOTE_ASSIGN_CITY
   - Example: VOTE_DEFENSIVE_PACT
   - Example: VOTE_EMANCIPATION
 - `bAssignCity`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bCityVoting`
-  - Present: 23. Non-default: 0. Status: preserved.
+  - Present: 23. Non-default: 0. Status: unsupported.
 - `bCivVoting`
-  - Present: 23. Non-default: 0. Status: preserved.
+  - Present: 23. Non-default: 0. Status: unsupported.
 - `bDefensivePact`
-  - Present: 23. Non-default: 1. Status: preserved.
+  - Present: 23. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bForceNoTrade`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bForcePeace`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bForceWar`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bFreeTrade`
-  - Present: 23. Non-default: 1. Status: preserved.
+  - Present: 23. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bNoNukes`
-  - Present: 23. Non-default: 1. Status: preserved.
+  - Present: 23. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bOpenBorders`
-  - Present: 23. Non-default: 1. Status: preserved.
+  - Present: 23. Non-default: 1. Status: unsupported.
   - Example: 1
 - `bSecretaryGeneral`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `bVictory`
-  - Present: 23. Non-default: 2. Status: preserved.
+  - Present: 23. Non-default: 2. Status: unsupported.
   - Example: 1
 - `iMinVoters`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: 3
 - `iPopulationThreshold`
-  - Present: 23. Non-default: 23. Status: preserved.
+  - Present: 23. Non-default: 23. Status: unsupported.
   - Example: 34
   - Example: 40
   - Example: 51
 - `iStateReligionVotePercent`
-  - Present: 23. Non-default: 8. Status: preserved.
+  - Present: 23. Non-default: 8. Status: unsupported.
   - Example: 100
 - `iTradeRoutes`
-  - Present: 23. Non-default: 0. Status: preserved.
+  - Present: 23. Non-default: 0. Status: unsupported.
 
 ## VoteSourceInfo: 2 records
 
 Era counts: unknown=2
 
 - `Civic`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `Description`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_BUILDING_APOSTOLIC_PALACE
   - Example: TXT_KEY_BUILDING_UNITED_NATIONS
 - `FreeSpecialist`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `PopupText`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_POPUP_CHOOSE_ELECTION
   - Example: TXT_KEY_POPUP_POPE_ELECTION
 - `ReligionCommerces`
-  - Present: 2. Non-default: 0. Status: preserved.
+  - Present: 2. Non-default: 0. Status: unsupported.
 - `ReligionYields`
-  - Present: 2. Non-default: 1. Status: preserved.
+  - Present: 2. Non-default: 1. Status: unsupported.
   - Example: [\n  "ReligionYields",\n  [\n    [\n      "iYield",\n      "0"\n    ],\n    [\n      "iYield",\n      "2"\n    ],\n    [\n      "iYield",\n      "0"\n    ]\n  ]\n]
 - `ReligionYields/iYield`
-  - Present: 1. Non-default: 1. Status: preserved.
+  - Present: 1. Non-default: 1. Status: unsupported.
   - Example: 2
 - `SecretaryGeneralText`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: TXT_KEY_APOSTOLIC_PALACE_RESIDENT
   - Example: TXT_KEY_SECRETARY_GENERAL
 - `Type`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: DIPLOVOTE_POPE
   - Example: DIPLOVOTE_UN
 - `iVoteInterval`
-  - Present: 2. Non-default: 2. Status: preserved.
+  - Present: 2. Non-default: 2. Status: unsupported.
   - Example: 5
   - Example: 9
 
@@ -11428,129 +11428,129 @@ Era counts: unknown=2
 Era counts: unknown=8
 
 - `Description`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_WORLD_DUEL
   - Example: TXT_KEY_WORLD_GIANT
   - Example: TXT_KEY_WORLD_GIGANTIC
 - `Help`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: TXT_KEY_WORLD_DUEL_HELP
   - Example: TXT_KEY_WORLD_GIANT_HELP
   - Example: TXT_KEY_WORLD_GIGANTIC_HELP
 - `Percents`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "Percents",\n  [\n    [\n      "Percent",\n      [\n        [\n          "ID",\n          "ADAPT_SCALE_CITY_LIMITS"\n        ],\n        [\n          "iValue",\n   ...
 - `Percents/Percent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_SCALE_CITY_LIMITS"\n    ],\n    [\n      "iValue",\n      "100"\n    ]\n  ]\n]
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_SCALE_CITY_LIMITS"\n    ],\n    [\n      "iValue",\n      "119"\n    ]\n  ]\n]
   - Example: [\n  "Percent",\n  [\n    [\n      "ID",\n      "ADAPT_SCALE_CITY_LIMITS"\n    ],\n    [\n      "iValue",\n      "149"\n    ]\n  ]\n]
 - `Percents/Percent/ID`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: ADAPT_SCALE_CITY_LIMITS
 - `Percents/Percent/iValue`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 119
   - Example: 149
 - `Type`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: WORLDSIZE_DUEL
   - Example: WORLDSIZE_GIANT
   - Example: WORLDSIZE_GIGANTIC
 - `iAdvancedStartPointsMod`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 120
 - `iBuildingClassPrereqModifier`
-  - Present: 8. Non-default: 6. Status: preserved.
+  - Present: 8. Non-default: 6. Status: mapped.
   - Example: 100
   - Example: 125
   - Example: 150
 - `iColonyMaintenancePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 20
   - Example: 25
   - Example: 30
 - `iCorporationMaintenancePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 150
   - Example: 200
 - `iDefaultPlayers`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 13
   - Example: 17
   - Example: 2
 - `iDistanceMaintenancePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 125
 - `iFeatureGrainChange`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: mapped.
   - Example: 1
 - `iGridHeight`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 13
   - Example: 16
 - `iGridWidth`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 13
   - Example: 16
 - `iMaxConscriptModifier`
-  - Present: 8. Non-default: 7. Status: preserved.
+  - Present: 8. Non-default: 7. Status: mapped.
   - Example: -25
   - Example: -50
   - Example: 25
 - `iNumCitiesAnarchyPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 11
   - Example: 4
 - `iNumCitiesMaintenancePercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 12
   - Example: 16
   - Example: 24
 - `iNumCitiesUnhappinessDivisor`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 2
   - Example: 3
 - `iNumFreeBuildingBonuses`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 1
   - Example: 3
   - Example: 5
 - `iResearchPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 130
   - Example: 133
   - Example: 140
 - `iTargetNumCities`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 10
   - Example: 3
   - Example: 4
 - `iTerrainGrainChange`
-  - Present: 8. Non-default: 4. Status: preserved.
+  - Present: 8. Non-default: 4. Status: mapped.
   - Example: 1
 - `iTradeProfitPercent`
-  - Present: 8. Non-default: 8. Status: preserved.
+  - Present: 8. Non-default: 8. Status: mapped.
   - Example: 15
   - Example: 20
   - Example: 30
 - `iUnitNameModifier`
-  - Present: 8. Non-default: 5. Status: preserved.
+  - Present: 8. Non-default: 5. Status: mapped.
   - Example: 10
   - Example: 20
   - Example: 30
 - `iWarWearinessModifier`
-  - Present: 8. Non-default: 6. Status: preserved.
+  - Present: 8. Non-default: 6. Status: mapped.
   - Example: -10
   - Example: -20
   - Example: -30
@@ -11560,63 +11560,63 @@ Era counts: unknown=8
 Era counts: unknown=3
 
 - `ColorType`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: COLOR_YIELD_COMMERCE
   - Example: COLOR_YIELD_FOOD
   - Example: COLOR_YIELD_PRODUCTION
 - `Description`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: TXT_KEY_YIELD_COMMERCE
   - Example: TXT_KEY_YIELD_FOOD
   - Example: TXT_KEY_YIELD_PRODUCTION
 - `SymbolPaths`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: [\n  "SymbolPaths",\n  [\n    [\n      "SymbolPath",\n      "Art/Interface/Symbols/Commerce/Commerce01.nif"\n    ],\n    [\n      "SymbolPath",\n      "Art/Interface/...
   - Example: [\n  "SymbolPaths",\n  [\n    [\n      "SymbolPath",\n      "Art/Interface/Symbols/Food/Food01.nif"\n    ],\n    [\n      "SymbolPath",\n      "Art/Interface/Symbols/...
   - Example: [\n  "SymbolPaths",\n  [\n    [\n      "SymbolPath",\n      "Art/Interface/Symbols/Production/Production01.nif"\n    ],\n    [\n      "SymbolPath",\n      "Art/Interf...
 - `SymbolPaths/SymbolPath`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: unsupported.
   - Example: Art/Interface/Symbols/Commerce/Commerce01.nif
   - Example: Art/Interface/Symbols/Commerce/Commerce02.nif
   - Example: Art/Interface/Symbols/Commerce/Commerce03.nif
 - `Type`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: YIELD_COMMERCE
   - Example: YIELD_FOOD
   - Example: YIELD_PRODUCTION
 - `iAIWeightPercent`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 100
   - Example: 110
   - Example: 80
 - `iCityChange`
-  - Present: 3. Non-default: 0. Status: preserved.
+  - Present: 3. Non-default: 0. Status: mapped.
 - `iGoldenAgeYield`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: 1
 - `iGoldenAgeYieldThreshold`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: 1
 - `iHillsChange`
-  - Present: 3. Non-default: 1. Status: preserved.
+  - Present: 3. Non-default: 1. Status: mapped.
   - Example: 1
 - `iLakeChange`
-  - Present: 3. Non-default: 1. Status: preserved.
+  - Present: 3. Non-default: 1. Status: mapped.
   - Example: 1
 - `iMinCity`
-  - Present: 3. Non-default: 3. Status: preserved.
+  - Present: 3. Non-default: 3. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
 - `iPeakChange`
-  - Present: 3. Non-default: 2. Status: preserved.
+  - Present: 3. Non-default: 2. Status: mapped.
   - Example: -2
   - Example: 3
 - `iPopulationChangeDivisor`
-  - Present: 3. Non-default: 0. Status: preserved.
+  - Present: 3. Non-default: 0. Status: mapped.
 - `iPopulationChangeOffset`
-  - Present: 3. Non-default: 0. Status: preserved.
+  - Present: 3. Non-default: 0. Status: mapped.
 - `iTradeModifier`
-  - Present: 3. Non-default: 1. Status: preserved.
+  - Present: 3. Non-default: 1. Status: mapped.
   - Example: 100
 

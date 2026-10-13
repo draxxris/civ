@@ -59,10 +59,14 @@ public static class Reports
         Converters = { new NeutralStringConverter() }
     };
 
-    public static void Write(ImportRegistry registry, string source, string reports, string? dump)
+    public static void Write(ImportRegistry registry, string source, string reports, string? dump,
+        IReadOnlyDictionary<string, HashSet<string>>? mappedPaths = null)
     {
         Directory.CreateDirectory(reports);
-        var census = FieldCensus.Build(registry.Records);
+        var census = FieldCensus.Build(registry.Records).Select(c => c with
+        {
+            Fields = c.Fields.Select(f => f with { Status = mappedPaths?.TryGetValue(c.Class, out var paths) == true && paths.Contains(f.Field) ? "mapped" : "unsupported" }).ToArray()
+        }).ToArray();
         WriteJson(reports, "collisions-and-merges", new { version = RecordMerger.Version,
             collisions = registry.Collisions, merges = registry.Merges, ignored = registry.IgnoredContributions,
             defines = registry.DefineOverrides, warnings = registry.Warnings, recovery = registry.Recovery });
@@ -114,7 +118,7 @@ public static class Reports
     {
         var text = new StringBuilder("# Field census\n\nCounts are per record. Repeated paths count once per record. Examples are limited to three, at 160 characters.\n\n"
             + "Non-default means non-empty and not 0, NONE, -1, or false. A branch is non-default when any descendant is non-default.\n\n"
-            + "These are census sentinels, not DLL getter defaults. Status is preserved, not parsed or implemented.\n\n");
+            + "These are census sentinels, not DLL getter defaults. Status indicates typed mapping, not implemented gameplay rules.\n\n");
         foreach (var family in census)
         {
             text.AppendLine($"## {family.Class}: {family.Records} records\n");

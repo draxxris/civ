@@ -1,0 +1,144 @@
+[
+  {
+    "carrierUnitAis": {
+      "military:unitai_carrier_sea": true
+    },
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_fighter",
+    "name": "Fighters",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_assault_sea": true
+    },
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_helicopter",
+    "name": "Helicopters",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_missile_carrier_sea": true
+    },
+    "cityLoad": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_missile",
+    "name": "Missiles",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_assault_sea": true,
+      "military:unitai_missionary_sea": true,
+      "military:unitai_spy_sea": true
+    },
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_people",
+    "name": "Scouts, Explorers, Missionaries, Spies, Great People",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_carrier_sea": true
+    },
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_seaplane",
+    "name": "Seaplane",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_missile_carrier_sea": true
+    },
+    "cityLoad": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_slbm",
+    "name": "Nuclear Missiles",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {
+      "military:unitai_missile_carrier_sea": true
+    },
+    "cityLoad": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_tacticalnuke",
+    "name": "Tactical Nukes",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {},
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_troop",
+    "name": "Troops",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  },
+  {
+    "carrierUnitAis": {},
+    "cityLoad": false,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:specialunit_united_nations",
+    "name": "Specialunit United Nations",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "valid": true
+  }
+]

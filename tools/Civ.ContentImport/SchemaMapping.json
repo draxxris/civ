@@ -1,0 +1,6901 @@
+[
+  {
+    "sourceClass": "YieldInfo",
+    "definition": "YieldDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "iAIWeightPercent",
+        "property": "AiWeightPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityChange",
+        "property": "CityChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYield",
+        "property": "GoldenAgeYield",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYieldThreshold",
+        "property": "GoldenAgeYieldThreshold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHillsChange",
+        "property": "HillsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLakeChange",
+        "property": "LakeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinCity",
+        "property": "MinCity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPeakChange",
+        "property": "PeakChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationChangeDivisor",
+        "property": "PopulationChangeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationChangeOffset",
+        "property": "PopulationChangeOffset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeModifier",
+        "property": "TradeModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CommerceInfo",
+    "definition": "CommerceDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "bFlexiblePercent",
+        "property": "FlexiblePercent",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAIWeightPercent",
+        "property": "AiWeightPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInitialHappiness",
+        "property": "InitialHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInitialPercent",
+        "property": "InitialPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "EraInfo",
+    "definition": "EraDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "bNoAnimals",
+        "property": "NoAnimals",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoBarbCities",
+        "property": "NoBarbCities",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoBarbUnits",
+        "property": "NoBarbUnits",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoGoodies",
+        "property": "NoGoodies",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartPoints",
+        "property": "AdvancedStartPoints",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnarchyPercent",
+        "property": "AnarchyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBuildPercent",
+        "property": "BuildPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConstructCostModifier",
+        "property": "ConstructCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConstructPercent",
+        "property": "ConstructPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCreateCostModifier",
+        "property": "CreateCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCreatePercent",
+        "property": "CreatePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCulturePercent",
+        "property": "CulturePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEventChancePerTurn",
+        "property": "EventChancePerTurn",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreePopulation",
+        "property": "FreePopulation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGrowthPercent",
+        "property": "GrowthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iImprovementPercent",
+        "property": "ImprovementPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInitialCityMaintenancePercent",
+        "property": "InitialCityMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iResearchPercent",
+        "property": "ResearchPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartPercent",
+        "property": "StartPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingDefenseUnits",
+        "property": "StartingDefenseUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingExploreUnits",
+        "property": "StartingExploreUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingGold",
+        "property": "StartingGold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingUnitMultiplier",
+        "property": "StartingUnitMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingWorkerUnits",
+        "property": "StartingWorkerUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTechCostModifier",
+        "property": "TechCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTrainCostModifier",
+        "property": "TrainCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTrainPercent",
+        "property": "TrainPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameSpeedInfo",
+    "definition": "GameSpeedDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "GameTurnInfos",
+        "property": "TurnIncrements",
+        "kind": "turns"
+      },
+      {
+        "source": "Percents",
+        "property": "ScalingPercents",
+        "kind": "mapInt",
+        "key": "ID",
+        "value": "iValue"
+      },
+      {
+        "source": "iAnarchyPercent",
+        "property": "AnarchyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbPercent",
+        "property": "BarbPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBuildPercent",
+        "property": "BuildPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConstructPercent",
+        "property": "ConstructPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCreatePercent",
+        "property": "CreatePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCulturePercent",
+        "property": "CulturePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFeatureProductionPercent",
+        "property": "FeatureProductionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldModifier",
+        "property": "GoldModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgePercent",
+        "property": "GoldenAgePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGrowthPercent",
+        "property": "GrowthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryConscriptAngerPercent",
+        "property": "HurryConscriptAngerPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryPercent",
+        "property": "HurryPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iImprovementPercent",
+        "property": "ImprovementPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInflationOffset",
+        "property": "InflationOffset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInflationPercent",
+        "property": "InflationPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iResearchPercent",
+        "property": "ResearchPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTrainPercent",
+        "property": "TrainPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitDiscoverPercent",
+        "property": "UnitDiscoverPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitGreatWorkPercent",
+        "property": "UnitGreatWorkPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitHurryPercent",
+        "property": "UnitHurryPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitTradePercent",
+        "property": "UnitTradePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iVictoryDelayPercent",
+        "property": "VictoryDelayPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HandicapInfo",
+    "definition": "HandicapDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "AIFreeTechs",
+        "property": "AiStartingTechs",
+        "kind": "mapBool",
+        "target": "TechInfo",
+        "key": "TechType",
+        "value": "bFreeTech"
+      },
+      {
+        "source": "FreeTechs",
+        "property": "StartingTechs",
+        "kind": "mapBool",
+        "target": "TechInfo",
+        "key": "TechType",
+        "value": "bFreeTech"
+      },
+      {
+        "source": "Goodies",
+        "property": "Goodies",
+        "kind": "refs",
+        "target": "GoodyInfo"
+      },
+      {
+        "source": "iAIAdvancedStartPercent",
+        "property": "AiAdvancedStartPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIAnimalBonus",
+        "property": "AiAnimalBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIBarbarianBonus",
+        "property": "AiBarbarianBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAICivicUpkeepPercent",
+        "property": "AiCivicUpkeepPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIConstructPercent",
+        "property": "AiConstructPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAICreatePercent",
+        "property": "AiCreatePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIDeclareWarProb",
+        "property": "AiDeclareWarProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIGrowthPercent",
+        "property": "AiGrowthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIInflationPercent",
+        "property": "AiInflationPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIPerEraModifier",
+        "property": "AiPerEraModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIResearchPercent",
+        "property": "AiResearchPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIStartingDefenseUnits",
+        "property": "AiStartingDefenseUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIStartingExploreUnits",
+        "property": "AiStartingExploreUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIStartingUnitMultiplier",
+        "property": "AiStartingUnitMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIStartingWorkerUnits",
+        "property": "AiStartingWorkerUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAITrainPercent",
+        "property": "AiTrainPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIUnitCostPercent",
+        "property": "AiUnitCostPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIUnitSupplyPercent",
+        "property": "AiUnitSupplyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIUnitUpgradePercent",
+        "property": "AiUnitUpgradePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWarWearinessPercent",
+        "property": "AiWarWearinessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWorkRateModifier",
+        "property": "AiWorkRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWorldConstructPercent",
+        "property": "AiWorldConstructPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWorldCreatePercent",
+        "property": "AiWorldCreatePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWorldTrainPercent",
+        "property": "AiWorldTrainPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartPointsMod",
+        "property": "AdvancedStartPointsMod",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnimalAttackProb",
+        "property": "AnimalAttackProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnimalBonus",
+        "property": "AnimalBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAttitudeChange",
+        "property": "AttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianBonus",
+        "property": "BarbarianBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianCityCreationProb",
+        "property": "BarbarianCityCreationProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianCityCreationTurnsElapsed",
+        "property": "BarbarianCityCreationTurnsElapsed",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianCreationTurnsElapsed",
+        "property": "BarbarianCreationTurnsElapsed",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianDefenders",
+        "property": "BarbarianDefenders",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCivicUpkeepPercent",
+        "property": "CivicUpkeepPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iColonyMaintenancePercent",
+        "property": "ColonyMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDistanceMaintenancePercent",
+        "property": "DistanceMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeUnits",
+        "property": "FreeUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeWinsVsBarbs",
+        "property": "FreeWinsAgainstBarbarians",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGold",
+        "property": "Gold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappyBonus",
+        "property": "HappyBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthBonus",
+        "property": "HealthBonus",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInflationPercent",
+        "property": "InflationPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxColonyMaintenance",
+        "property": "MaxColonyMaintenance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxNumCitiesMaintenance",
+        "property": "MaxNumCitiesMaintenance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNoTechTradeModifier",
+        "property": "NoTechTradeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesMaintenancePercent",
+        "property": "NumCitiesMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iResearchPercent",
+        "property": "ResearchPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingDefenseUnits",
+        "property": "StartingDefenseUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingExploreUnits",
+        "property": "StartingExploreUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingLocPercent",
+        "property": "StartingLocPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStartingWorkerUnits",
+        "property": "StartingWorkerUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTechTradeKnownModifier",
+        "property": "TechTradeKnownModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitCostPercent",
+        "property": "UnitCostPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedTilesPerBarbarianCity",
+        "property": "UnownedTilesPerBarbarianCity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedTilesPerBarbarianUnit",
+        "property": "UnownedTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedTilesPerGameAnimal",
+        "property": "UnownedTilesPerGameAnimal",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedWaterTilesPerBarbarianUnit",
+        "property": "UnownedWaterTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "WorldInfo",
+    "definition": "WorldSizeDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "Percents",
+        "property": "ScalingPercents",
+        "kind": "mapInt",
+        "key": "ID",
+        "value": "iValue"
+      },
+      {
+        "source": "iAdvancedStartPointsMod",
+        "property": "AdvancedStartPointsMod",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBuildingClassPrereqModifier",
+        "property": "BuildingClassPrereqModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iColonyMaintenancePercent",
+        "property": "ColonyMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefaultPlayers",
+        "property": "DefaultPlayers",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDistanceMaintenancePercent",
+        "property": "DistanceMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFeatureGrainChange",
+        "property": "FeatureGrainChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGridHeight",
+        "property": "GridHeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGridWidth",
+        "property": "GridWidth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxConscriptModifier",
+        "property": "MaxConscriptModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesAnarchyPercent",
+        "property": "NumCitiesAnarchyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesMaintenancePercent",
+        "property": "NumCitiesMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesUnhappinessDivisor",
+        "property": "NumCitiesUnhappinessDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumFreeBuildingBonuses",
+        "property": "NumFreeBuildingBonuses",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iResearchPercent",
+        "property": "ResearchPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTargetNumCities",
+        "property": "TargetNumCities",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTerrainGrainChange",
+        "property": "TerrainGrainChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeProfitPercent",
+        "property": "TradeProfitPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitNameModifier",
+        "property": "UnitNameModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWarWearinessModifier",
+        "property": "WarWearinessModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CultureLevelInfo",
+    "definition": "CultureLevelDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "SpeedThresholds",
+        "property": "SpeedThresholds",
+        "kind": "mapInt",
+        "target": "GameSpeedInfo",
+        "key": "GameSpeedType",
+        "value": "iThreshold"
+      },
+      {
+        "source": "iCityDefenseModifier",
+        "property": "CityDefenseModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityRadius",
+        "property": "CityRadius",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxNationalWonders",
+        "property": "MaxNationalWonders",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxNationalWondersOCC",
+        "property": "MaxNationalWondersOCC",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxTeamWonders",
+        "property": "MaxTeamWonders",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxWorldWonders",
+        "property": "MaxWorldWonders",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "PrereqGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "SpecialistInfo",
+    "definition": "SpecialistDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "Commerces",
+        "property": "Commerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "Yields",
+        "property": "Yields",
+        "kind": "yield"
+      },
+      {
+        "source": "bVisible",
+        "property": "Visible",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iExperience",
+        "property": "Experience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeopleRateChange",
+        "property": "GreatPeopleRateChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappinessPercent",
+        "property": "HappinessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthPercent",
+        "property": "HealthPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TerrainInfo",
+    "definition": "TerrainDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "RiverYieldChange",
+        "property": "RiverYieldChange",
+        "kind": "yield"
+      },
+      {
+        "source": "Yields",
+        "property": "Yields",
+        "kind": "yield"
+      },
+      {
+        "source": "bFound",
+        "property": "CanFoundCity",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFoundCoast",
+        "property": "FoundCoast",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFoundFreshWater",
+        "property": "FoundFreshWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGraphicalOnly",
+        "property": "GraphicalOnly",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bImpassable",
+        "property": "Impassable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bWater",
+        "property": "IsWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iBuildModifier",
+        "property": "BuildModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCultureDistance",
+        "property": "CultureDistance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefense",
+        "property": "DefensePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthPercent",
+        "property": "HealthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMovement",
+        "property": "MovementCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSeeFrom",
+        "property": "SeeFrom",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSeeThrough",
+        "property": "SeeThrough",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "FeatureInfo",
+    "definition": "FeatureDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "RiverYieldChange",
+        "property": "RiverYieldChange",
+        "kind": "yield"
+      },
+      {
+        "source": "TerrainBooleans",
+        "property": "Terrains",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrain"
+      },
+      {
+        "source": "YieldChanges",
+        "property": "YieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "bAddsFreshWater",
+        "property": "AddsFreshWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanGrowAnywhere",
+        "property": "CanGrowAnywhere",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bIgnoreTerrainCulture",
+        "property": "IgnoreTerrainCulture",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bImpassable",
+        "property": "Impassable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoAdjacent",
+        "property": "NoAdjacent",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoCity",
+        "property": "NoCity",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoCoast",
+        "property": "NoCoast",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoImprovement",
+        "property": "NoImprovement",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoRiver",
+        "property": "NoRiver",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNukeImmune",
+        "property": "NukeImmune",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresFlatlands",
+        "property": "RequiresFlatlands",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresRiver",
+        "property": "RequiresRiver",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bVisibleAlways",
+        "property": "VisibleAlways",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartRemoveCost",
+        "property": "AdvancedStartRemoveCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAppearance",
+        "property": "Appearance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCultureDistance",
+        "property": "CultureDistance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefense",
+        "property": "DefensePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDisappearance",
+        "property": "Disappearance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEffectProbability",
+        "property": "EffectProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGrowth",
+        "property": "Growth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthPercent",
+        "property": "HealthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMovement",
+        "property": "MovementCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSeeThrough",
+        "property": "SeeThrough",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSpread",
+        "property": "Spread",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTurnDamage",
+        "property": "TurnDamage",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWarmingDefense",
+        "property": "WarmingDefense",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BonusClassInfo",
+    "definition": "BonusClassDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "iUnique",
+        "property": "Unique",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BonusInfo",
+    "definition": "BonusDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "BonusClassType",
+        "property": "BonusClass",
+        "kind": "ref",
+        "target": "BonusClassInfo"
+      },
+      {
+        "source": "FeatureBooleans",
+        "property": "Features",
+        "kind": "mapBool",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "bFeature"
+      },
+      {
+        "source": "Rands",
+        "property": "AppearanceRandomRanges",
+        "kind": "intList"
+      },
+      {
+        "source": "TechCityTrade",
+        "property": "TradeTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "TechObsolete",
+        "property": "ObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "TechReveal",
+        "property": "RevealTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "TerrainBooleans",
+        "property": "Terrains",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrain"
+      },
+      {
+        "source": "YieldChanges",
+        "property": "YieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "bArea",
+        "property": "Area",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCurrency",
+        "property": "Currency",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFlatlands",
+        "property": "Flatlands",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bHills",
+        "property": "Hills",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoRiverSide",
+        "property": "NoRiverSide",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNormalize",
+        "property": "Normalize",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPeaks",
+        "property": "Peaks",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bUseLSystem",
+        "property": "UseLSystem",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAIObjective",
+        "property": "AiObjective",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAITradeModifier",
+        "property": "AiTradeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConstAppearance",
+        "property": "ConstAppearance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGroupRand",
+        "property": "GroupRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGroupRange",
+        "property": "GroupRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappiness",
+        "property": "Happiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealth",
+        "property": "Health",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxLatitude",
+        "property": "MaxLatitude",
+        "kind": "int",
+        "default": 90
+      },
+      {
+        "source": "iMaximumPerWorld",
+        "property": "MaximumPerWorld",
+        "kind": "int",
+        "default": -1
+      },
+      {
+        "source": "iMinAreaSize",
+        "property": "MinAreaSize",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinLandPercent",
+        "property": "MinLandPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinLatitude",
+        "property": "MinLatitude",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinimumPerWorld",
+        "property": "MinimumPerWorld",
+        "kind": "int",
+        "default": -1
+      },
+      {
+        "source": "iPlacementOrder",
+        "property": "PlacementOrder",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPlayer",
+        "property": "Player",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTilesPer",
+        "property": "TilesPer",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnique",
+        "property": "Unique",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "FeatureTerrainBooleans",
+        "property": "FeatureTerrains",
+        "kind": "mapBool",
+        "target": "TerrainInfo"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ImprovementInfo",
+    "definition": "ImprovementDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "BonusTypeStructs",
+        "property": "BonusEffects",
+        "kind": "improvementBonuses",
+        "target": "BonusInfo"
+      },
+      {
+        "source": "FeatureMakesValids",
+        "property": "ValidFeatures",
+        "kind": "mapBool",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "bMakesValid"
+      },
+      {
+        "source": "ImprovementPillage",
+        "property": "ImprovementPillage",
+        "kind": "ref",
+        "target": "ImprovementInfo"
+      },
+      {
+        "source": "ImprovementUpgrade",
+        "property": "ImprovementUpgrade",
+        "kind": "ref",
+        "target": "ImprovementInfo"
+      },
+      {
+        "source": "IrrigatedYieldChange",
+        "property": "IrrigatedYieldChange",
+        "kind": "yield"
+      },
+      {
+        "source": "PrereqNatureYields",
+        "property": "PrereqNatureYields",
+        "kind": "yield"
+      },
+      {
+        "source": "PrereqTech",
+        "property": "PrereqTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "RiverSideYieldChange",
+        "property": "RiverSideYieldChange",
+        "kind": "yield"
+      },
+      {
+        "source": "RouteYieldChanges",
+        "property": "RouteYieldChanges",
+        "kind": "mapYield",
+        "target": "RouteInfo",
+        "key": "RouteType",
+        "value": "RouteYields"
+      },
+      {
+        "source": "TechYieldChanges",
+        "property": "TechYieldChanges",
+        "kind": "mapYield",
+        "target": "TechInfo",
+        "key": "PrereqTech",
+        "value": "TechYields"
+      },
+      {
+        "source": "TerrainMakesValids",
+        "property": "ValidTerrains",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bMakesValid"
+      },
+      {
+        "source": "TraitYieldChanges",
+        "property": "TraitYieldChanges",
+        "kind": "mapYield",
+        "target": "TraitInfo",
+        "key": "TraitType",
+        "value": "TraitYields"
+      },
+      {
+        "source": "YieldChanges",
+        "property": "YieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "bActsAsCity",
+        "property": "ActsAsCity",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCarriesIrrigation",
+        "property": "CarriesIrrigation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDepletedMine",
+        "property": "DepletedMine",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreshWaterMakesValid",
+        "property": "FreshWaterMakesValid",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoody",
+        "property": "Goody",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGraphicalOnly",
+        "property": "GraphicalOnly",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bHillsMakesValid",
+        "property": "HillsMakesValid",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoFreshWater",
+        "property": "NoFreshWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bOutsideBorders",
+        "property": "OutsideBorders",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPeakMakesValid",
+        "property": "PeakMakesValid",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPermanent",
+        "property": "Permanent",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresFeature",
+        "property": "RequiresFeature",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresFlatlands",
+        "property": "RequiresFlatlands",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresIrrigation",
+        "property": "RequiresIrrigation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresRiverSide",
+        "property": "RequiresRiverSide",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRiverSideMakesValid",
+        "property": "RiverSideMakesValid",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bUseLSystem",
+        "property": "UseLSystem",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bWater",
+        "property": "IsWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCost",
+        "property": "AdvancedStartCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCostIncrease",
+        "property": "AdvancedStartCostIncrease",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirBombDefense",
+        "property": "AirBombDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefenseModifier",
+        "property": "DefenseModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDepletionRand",
+        "property": "DepletionRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFeatureGrowth",
+        "property": "FeatureGrowth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoodyRange",
+        "property": "GoodyRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappiness",
+        "property": "Happiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthPercent",
+        "property": "HealthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPillageGold",
+        "property": "PillageGold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTilesPerGoody",
+        "property": "TilesPerGoody",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUpgradeTime",
+        "property": "UpgradeTime",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "TechPrereq",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "RouteInfo",
+    "definition": "RouteDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "Yields",
+        "property": "Yields",
+        "kind": "yield"
+      },
+      {
+        "source": "bSeaTunnel",
+        "property": "SeaTunnel",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCost",
+        "property": "AdvancedStartCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCostIncrease",
+        "property": "AdvancedStartCostIncrease",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFlatMovement",
+        "property": "FlatMovement",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMovement",
+        "property": "MovementCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iValue",
+        "property": "Value",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "BonusType",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqOrBonuses",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "any"
+      }
+    ]
+  },
+  {
+    "sourceClass": "BuildInfo",
+    "definition": "BuildDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "FeatureChange",
+        "property": "FeatureChange",
+        "kind": "ref",
+        "target": "FeatureInfo"
+      },
+      {
+        "source": "FeatureStructs",
+        "property": "FeatureEffects",
+        "kind": "buildFeatures",
+        "target": "FeatureInfo"
+      },
+      {
+        "source": "ImprovementType",
+        "property": "ImprovementType",
+        "kind": "ref",
+        "target": "ImprovementInfo"
+      },
+      {
+        "source": "ObsoleteTech",
+        "property": "ObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "RouteType",
+        "property": "RouteType",
+        "kind": "ref",
+        "target": "RouteInfo"
+      },
+      {
+        "source": "TerrainChange",
+        "property": "TerrainChange",
+        "kind": "ref",
+        "target": "TerrainInfo"
+      },
+      {
+        "source": "bKill",
+        "property": "Kill",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMine",
+        "property": "Mine",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iCost",
+        "property": "Cost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTime",
+        "property": "Time",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "PrereqTech",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "TechInfo",
+    "definition": "TechDef",
+    "mod": "research",
+    "fields": [
+      {
+        "source": "CommerceFlexible",
+        "property": "CommerceFlexible",
+        "kind": "commerce"
+      },
+      {
+        "source": "DomainExtraMoves",
+        "property": "DomainExtraMoves",
+        "kind": "mapInt",
+        "target": "DomainInfo",
+        "key": "DomainType",
+        "value": "iExtraMoves"
+      },
+      {
+        "source": "FirstFreeUnitClass",
+        "property": "FirstFreeUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "Quote",
+        "property": "Quote",
+        "kind": "text"
+      },
+      {
+        "source": "TechArrowOverrides",
+        "property": "ArrowTargets",
+        "kind": "refs",
+        "target": "TechInfo"
+      },
+      {
+        "source": "TerrainTrades",
+        "property": "TradeTerrains",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrainTrade"
+      },
+      {
+        "source": "UnitClassStrengthChanges",
+        "property": "UnitClassStrengthChanges",
+        "kind": "mapInt",
+        "target": "UnitClassInfo",
+        "key": "UnitClassType",
+        "value": "iStrengthChange"
+      },
+      {
+        "source": "bAllowsDesertFarming",
+        "property": "AllowsDesertFarming",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBridgeBuilding",
+        "property": "BridgeBuilding",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanFoundOnPeaks",
+        "property": "CanFoundOnPeaks",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanPassPeaks",
+        "property": "CanPassPeaks",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBombTech1",
+        "property": "UnlocksAirBombing",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBombTech2",
+        "property": "UnlocksPrecisionBombing",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDefensivePactTrading",
+        "property": "DefensivePactTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDisable",
+        "property": "Disable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bEmbassyTrading",
+        "property": "EmbassyTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bExtendMovementLimits",
+        "property": "ExtendMovementLimits",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bExtraWaterSeeFrom",
+        "property": "ExtraWaterSeeFrom",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoldTrading",
+        "property": "GoldTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoodyTech",
+        "property": "GoodyTech",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bIgnoreIrrigation",
+        "property": "IgnoreIrrigation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bIrrigation",
+        "property": "Irrigation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMapCentering",
+        "property": "MapCentering",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMapTrading",
+        "property": "MapTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMapVisible",
+        "property": "MapVisible",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bOpenBordersTrading",
+        "property": "OpenBordersTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPermanentAllianceTrading",
+        "property": "PermanentAllianceTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRebaseAnywhere",
+        "property": "RebaseAnywhere",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRemoveMovementLimits",
+        "property": "RemoveMovementLimits",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRepeat",
+        "property": "Repeat",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRiverTrade",
+        "property": "RiverTrade",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bTechTrading",
+        "property": "TechTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bTrade",
+        "property": "Trade",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bVassalTrading",
+        "property": "VassalTrading",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bWaterWork",
+        "property": "WaterWork",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAITradeModifier",
+        "property": "AiTradeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAIWeight",
+        "property": "AiWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCost",
+        "property": "AdvancedStartCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCostIncrease",
+        "property": "AdvancedStartCostIncrease",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAsset",
+        "property": "Asset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCost",
+        "property": "Cost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFeatureProductionModifier",
+        "property": "FeatureProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFirstFreeTechs",
+        "property": "FirstFreeTechs",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGridX",
+        "property": "GridX",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGridY",
+        "property": "GridY",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappiness",
+        "property": "Happiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealth",
+        "property": "Health",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPower",
+        "property": "Power",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorkerSpeedModifier",
+        "property": "WorkerSpeedModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "AndPreReqs",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "OrPreReqs",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingDef",
+    "mod": "cities",
+    "fields": [
+      {
+        "source": "BonusHappinessChanges",
+        "property": "BonusHappinessChanges",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "iHappinessChange"
+      },
+      {
+        "source": "BonusHealthChanges",
+        "property": "BonusHealthChanges",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "iHealthChange"
+      },
+      {
+        "source": "BonusType",
+        "property": "BonusType",
+        "kind": "ref",
+        "target": "BonusInfo"
+      },
+      {
+        "source": "BonusYieldChanges",
+        "property": "BonusYieldChanges",
+        "kind": "mapYield",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "YieldChanges"
+      },
+      {
+        "source": "BonusYieldModifiers",
+        "property": "BonusYieldModifiers",
+        "kind": "mapYield",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "YieldModifiers"
+      },
+      {
+        "source": "BuildingClassProductionModifiers",
+        "property": "BuildingClassProductionModifiers",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "BuildingHappinessChanges",
+        "property": "BuildingHappinessChanges",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingType",
+        "value": "iHappinessChange"
+      },
+      {
+        "source": "CivicOption",
+        "property": "CivicOption",
+        "kind": "ref",
+        "target": "CivicOptionInfo"
+      },
+      {
+        "source": "CommerceChangeDoubleTimes",
+        "property": "CommerceChangeDoubleTimes",
+        "kind": "commerce"
+      },
+      {
+        "source": "CommerceChangeOriginalOwners",
+        "property": "CommerceChangeOriginalOwners",
+        "kind": "commerce"
+      },
+      {
+        "source": "CommerceChanges",
+        "property": "CommerceChanges",
+        "kind": "commerce"
+      },
+      {
+        "source": "CommerceHappinesses",
+        "property": "CommerceHappinesses",
+        "kind": "commerce"
+      },
+      {
+        "source": "CommerceModifiers",
+        "property": "CommerceModifiers",
+        "kind": "commerce"
+      },
+      {
+        "source": "DomainFreeExperiences",
+        "property": "DomainFreeExperiences",
+        "kind": "mapInt",
+        "target": "DomainInfo",
+        "key": "DomainType",
+        "value": "iExperience"
+      },
+      {
+        "source": "DomainProductionModifiers",
+        "property": "DomainProductionModifiers",
+        "kind": "mapInt",
+        "target": "DomainInfo",
+        "key": "DomainType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "ExtendsBuildingClass",
+        "property": "ExtendsBuildingClass",
+        "kind": "ref",
+        "target": "BuildingClassInfo"
+      },
+      {
+        "source": "ExtraFreeBonuses",
+        "property": "ExtraFreeBonuses",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "FreeBonus",
+        "value": "iNumFreeBonuses"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "FoundsCorporation",
+        "property": "FoundsCorporation",
+        "kind": "ref",
+        "target": "CorporationInfo"
+      },
+      {
+        "source": "FreeBonus",
+        "property": "FreeBonus",
+        "kind": "ref",
+        "target": "BonusInfo"
+      },
+      {
+        "source": "FreeBuilding",
+        "property": "FreeBuilding",
+        "kind": "ref",
+        "target": "BuildingClassInfo"
+      },
+      {
+        "source": "FreePromotion",
+        "property": "FreePromotion",
+        "kind": "ref",
+        "target": "PromotionInfo"
+      },
+      {
+        "source": "FreeStartEra",
+        "property": "FreeStartEra",
+        "kind": "ref",
+        "target": "EraInfo"
+      },
+      {
+        "source": "GlobalBuildingClassProductionModifiers",
+        "property": "GlobalBuildingClassProductionModifiers",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "GlobalBuildingExtraCommerces",
+        "property": "GlobalBuildingExtraCommerces",
+        "kind": "buildingCommerce",
+        "target": "BuildingClassInfo"
+      },
+      {
+        "source": "GlobalCommerceModifiers",
+        "property": "GlobalCommerceModifiers",
+        "kind": "commerce"
+      },
+      {
+        "source": "GlobalCorporationCommerce",
+        "property": "GlobalCorporationCommerce",
+        "kind": "ref",
+        "target": "CorporationInfo"
+      },
+      {
+        "source": "GlobalReligionCommerce",
+        "property": "GlobalReligionCommerce",
+        "kind": "ref",
+        "target": "ReligionInfo"
+      },
+      {
+        "source": "GlobalSeaPlotYieldChanges",
+        "property": "GlobalSeaPlotYieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "GlobalYieldModifiers",
+        "property": "GlobalYieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "HappinessTraits",
+        "property": "TraitHappinessChanges",
+        "kind": "mapInt",
+        "target": "TraitInfo",
+        "key": "HappinessTraitType",
+        "value": "iHappinessTrait"
+      },
+      {
+        "source": "ImprovementFreeSpecialists",
+        "property": "ImprovementFreeSpecialists",
+        "kind": "mapInt",
+        "target": "ImprovementInfo",
+        "key": "ImprovementType",
+        "value": "iFreeSpecialistCount"
+      },
+      {
+        "source": "MaxStartEra",
+        "property": "MaxStartEra",
+        "kind": "ref",
+        "target": "EraInfo"
+      },
+      {
+        "source": "NoBonus",
+        "property": "NoBonus",
+        "kind": "ref",
+        "target": "BonusInfo"
+      },
+      {
+        "source": "ObsoleteSafeCommerceChanges",
+        "property": "ObsoleteSafeCommerceChanges",
+        "kind": "commerce"
+      },
+      {
+        "source": "ObsoleteTech",
+        "property": "ObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "PowerBonus",
+        "property": "PowerBonus",
+        "kind": "ref",
+        "target": "BonusInfo"
+      },
+      {
+        "source": "PowerYieldModifiers",
+        "property": "PowerYieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "ProductionTraits",
+        "property": "TraitProductionModifiers",
+        "kind": "mapInt",
+        "target": "TraitInfo",
+        "key": "ProductionTraitType",
+        "value": "iProductionTrait"
+      },
+      {
+        "source": "ReligionChanges",
+        "property": "ReligionChanges",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionChange"
+      },
+      {
+        "source": "ReligionType",
+        "property": "ReligionType",
+        "kind": "ref",
+        "target": "ReligionInfo"
+      },
+      {
+        "source": "ReplaceBuildings",
+        "property": "ReplaceBuildings",
+        "kind": "mapBool",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "bReplace"
+      },
+      {
+        "source": "RiverPlotYieldChanges",
+        "property": "RiverPlotYieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "SeaPlotYieldChanges",
+        "property": "SeaPlotYieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "SpecialBuildingType",
+        "property": "Category",
+        "kind": "ref",
+        "target": "SpecialBuildingInfo"
+      },
+      {
+        "source": "SpecialistCommercePercentChanges",
+        "property": "SpecialistCommercePercentChanges",
+        "kind": "mapCommerce",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "SpecialistCommercePercents"
+      },
+      {
+        "source": "SpecialistCounts",
+        "property": "SpecialistSlots",
+        "kind": "mapInt",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "iSpecialistCount"
+      },
+      {
+        "source": "SpecialistExtraCommerces",
+        "property": "SpecialistExtraCommerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "SpecialistYieldChanges",
+        "property": "SpecialistYieldChanges",
+        "kind": "mapYield",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "YieldChanges"
+      },
+      {
+        "source": "StateReligionCommerces",
+        "property": "StateReligionCommerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "TechCommerceChanges",
+        "property": "TechCommerceChanges",
+        "kind": "mapCommerce",
+        "target": "TechInfo",
+        "key": "PrereqTech",
+        "value": "TechCommerce"
+      },
+      {
+        "source": "TechSpecialistChanges",
+        "property": "TechSpecialistChanges",
+        "kind": "techSpecialists",
+        "target": "TechInfo",
+        "valueTarget": "SpecialistInfo"
+      },
+      {
+        "source": "TechYieldChanges",
+        "property": "TechYieldChanges",
+        "kind": "mapYield",
+        "target": "TechInfo",
+        "key": "PrereqTech",
+        "value": "TechYield"
+      },
+      {
+        "source": "TechYieldModifiers",
+        "property": "TechYieldModifiers",
+        "kind": "mapYield",
+        "target": "TechInfo",
+        "key": "PrereqTech",
+        "value": "TechYield"
+      },
+      {
+        "source": "UnitClassProductionModifiers",
+        "property": "UnitClassProductionModifiers",
+        "kind": "mapInt",
+        "target": "UnitClassInfo",
+        "key": "UnitClassType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "UnitCombatExtraStrengths",
+        "property": "UnitCombatExtraStrengths",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iStrength"
+      },
+      {
+        "source": "UnitCombatFreeExperiences",
+        "property": "UnitCombatFreeExperiences",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iExperience"
+      },
+      {
+        "source": "VicinityBonusYieldChanges",
+        "property": "VicinityBonusYieldChanges",
+        "kind": "mapYield",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "YieldChanges"
+      },
+      {
+        "source": "YieldChanges",
+        "property": "YieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "YieldModifiers",
+        "property": "YieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "bAllowsNukes",
+        "property": "AllowsNukes",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bApplyFreePromotionOnMove",
+        "property": "ApplyFreePromotionOnMove",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bAreaCleanPower",
+        "property": "AreaCleanPower",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBorderObstacle",
+        "property": "BorderObstacle",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBuildingOnlyHealthy",
+        "property": "BuildingOnlyHealthy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCapital",
+        "property": "Capital",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMNukesOkay",
+        "property": "AllowsNuclearStrikes",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDirtyPower",
+        "property": "DirtyPower",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bForceAllTradeRoutes",
+        "property": "ForceAllTradeRoutes",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bForceNoPrereqScaling",
+        "property": "ForceNoPrereqScaling",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bForceTeamVoteEligible",
+        "property": "ForceTeamVoteEligible",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreeFromStateReligion",
+        "property": "FreeFromStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreshWater",
+        "property": "FreshWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoldenAge",
+        "property": "GoldenAge",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGovernmentCenter",
+        "property": "GovernmentCenter",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMapCentering",
+        "property": "MapCentering",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNeverCapture",
+        "property": "NeverCapture",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoPower",
+        "property": "NoPower",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoUnhappiness",
+        "property": "NoUnhappiness",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoUnhealthyPopulation",
+        "property": "NoUnhealthyPopulation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNukeImmune",
+        "property": "NukeImmune",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPower",
+        "property": "ProducesPower",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPrereqPower",
+        "property": "RequiresPower",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPrereqReligion",
+        "property": "RequiresReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bProtectedCulture",
+        "property": "ProtectedCulture",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bProvidesFreshWater",
+        "property": "ProvidesFreshWater",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRequiresActiveCivics",
+        "property": "RequiresActiveCivics",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+"source": "bRiver",
+        "property": "RiverLocation",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bStateReligion",
+        "property": "RequiresStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bTeamShare",
+        "property": "TeamShare",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+"source": "bWater",
+        "property": "CoastalLocation",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bZoneOfControl",
+        "property": "ZoneOfControl",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAIWeight",
+        "property": "AiWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdjacentDamagePercent",
+        "property": "AdjacentDamagePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCost",
+        "property": "AdvancedStartCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCostIncrease",
+        "property": "AdvancedStartCostIncrease",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirModifier",
+        "property": "AirModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirUnitCapacity",
+        "property": "AirUnitCapacity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirlift",
+        "property": "Airlift",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAllCityDefense",
+        "property": "AllCityDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnarchyModifier",
+        "property": "AnarchyModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAreaFreeSpecialist",
+        "property": "AreaFreeSpecialist",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAreaHappiness",
+        "property": "AreaHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAreaHealth",
+        "property": "AreaHealth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAreaMaintenanceModifier",
+        "property": "AreaMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAsset",
+        "property": "Asset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombardDefense",
+        "property": "BombardDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCapitalExtraCommerce",
+        "property": "CapitalExtraCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCitiesPrereq",
+        "property": "CitiesPrereq",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCitiesRequiredPerDomesticConnectedCity",
+        "property": "CitiesRequiredPerDomesticConnectedCity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCitiesRequiredPerForeignConnectedCity",
+        "property": "CitiesRequiredPerForeignConnectedCity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCoastalDistanceMaintenanceModifier",
+        "property": "CoastalDistanceMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCoastalTradeRoutes",
+        "property": "CoastalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConnectedCityMaintenanceModifier",
+        "property": "ConnectedCityMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConquestProb",
+        "property": "CaptureSurvivalPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCost",
+        "property": "Cost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDCMAirbombMission",
+        "property": "AirBombMission",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefense",
+        "property": "DefensePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDistanceMaintenanceModifier",
+        "property": "DistanceMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDomesticConnectedCommerce",
+        "property": "DomesticConnectedCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDomesticGreatGeneralRateModifier",
+        "property": "DomesticGreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEnemyWarWearinessModifier",
+        "property": "EnemyWarWearinessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEspionageDefense",
+        "property": "EspionageDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExperience",
+        "property": "Experience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFoodKept",
+        "property": "FoodKept",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignCapitalExtraCommerce",
+        "property": "ForeignCapitalExtraCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignConnectedCommerce",
+        "property": "ForeignConnectedCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignTradeRouteModifier",
+        "property": "ForeignTradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeSpecialist",
+        "property": "FreeSpecialist",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeTechs",
+        "property": "FreeTechs",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalExperience",
+        "property": "GlobalExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalFreeSpecialist",
+        "property": "GlobalFreeSpecialist",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalGreatPeopleRateModifier",
+        "property": "GlobalGreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalHappiness",
+        "property": "GlobalHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalHealth",
+        "property": "GlobalHealth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalHurryModifier",
+        "property": "GlobalHurryModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalMaintenanceModifier",
+        "property": "GlobalMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalPopulationChange",
+        "property": "GlobalPopulationChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalSpaceProductionModifier",
+        "property": "GlobalSpaceProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalTradeRoutes",
+        "property": "GlobalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalWarWearinessModifier",
+        "property": "GlobalWarWearinessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeModifier",
+        "property": "GoldenAgeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatGeneralRateModifier",
+        "property": "GreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeopleRateChange",
+        "property": "GreatPeopleRateChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeopleRateModifier",
+        "property": "GreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappiness",
+        "property": "Happiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappinessPercentPerPopulation",
+        "property": "HappinessPercentPerPopulation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealRateChange",
+        "property": "HealRateChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealth",
+        "property": "Health",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealthPercentPerPopulation",
+        "property": "HealthPercentPerPopulation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryAngerModifier",
+        "property": "HurryAngerModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryCostModifier",
+        "property": "HurryCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInterestMax",
+        "property": "InterestMax",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInterestPercent",
+        "property": "InterestPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLevelPrereq",
+        "property": "LevelPrereq",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaintenanceModifier",
+        "property": "MaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxDomesticConnectedCommerce",
+        "property": "MaxDomesticConnectedCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxForeignConnectedCommerce",
+        "property": "MaxForeignConnectedCommerce",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxLatitude",
+        "property": "MaxLatitude",
+        "kind": "int",
+        "default": 90
+      },
+      {
+        "source": "iMilitaryProductionModifier",
+        "property": "MilitaryProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinAreaSize",
+        "property": "MinAreaSize",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinLatitude",
+        "property": "MinLatitude",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNoEntryDefenseLevel",
+        "property": "NoEntryDefenseLevel",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNukeExplosionRand",
+        "property": "NukeExplosionRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNukeModifier",
+        "property": "NukeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesMaintenanceModifier",
+        "property": "CityCountMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumFreeBonuses",
+        "property": "FreeBonusCount",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumPopulationEmployed",
+        "property": "NumPopulationEmployed",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumUnitFullHeal",
+        "property": "NumUnitFullHeal",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOccupationTimeModifier",
+        "property": "OccupationTimeModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOtherAreaMaintenanceModifier",
+        "property": "OtherAreaMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationgrowthratepercentage",
+        "property": "PopulationGrowthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPower",
+        "property": "Power",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPrereqPopulation",
+        "property": "MinimumPopulation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSpaceProductionModifier",
+        "property": "SpaceProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHappiness",
+        "property": "StateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTeamsPrereq",
+        "property": "TeamsPrereq",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRouteModifier",
+        "property": "TradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitUpgradePriceModifier",
+        "property": "UnitUpgradePriceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWarWearinessModifier",
+        "property": "WarWearinessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWonderCapacityIncrement",
+        "property": "WonderCapacityIncrement",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorkableRadius",
+        "property": "WorkableRadius",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorkerSpeedModifier",
+        "property": "WorkerSpeedModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "BonusProductionModifiers",
+        "property": "BonusProductionModifiers",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "iProductonModifier"
+      },
+      {
+        "source": "FreeSpecialistCounts",
+        "property": "FreeSpecialistCounts",
+        "kind": "mapInt",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "iFreeSpecialistCount"
+      }
+    ],
+    "requirements": [
+      {
+        "source": "PrereqTech",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "TechTypes",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "Bonus",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqBonuses",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqVicinityBonuses",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "any",
+        "scope": 2
+      },
+      {
+        "source": "PrereqBuildingClasses",
+        "kind": "building-class",
+        "target": "BuildingClassInfo",
+        "mode": "all",
+        "scope": 1
+      },
+      {
+        "source": "BuildingClassNeededs",
+        "kind": "building-class",
+        "target": "BuildingClassInfo",
+        "mode": "all",
+        "scope": 0
+      },
+      {
+        "source": "PrereqOrBuildingClasses",
+        "kind": "building-class",
+        "target": "BuildingClassInfo",
+        "mode": "any",
+        "scope": 0
+      },
+      {
+        "source": "PrereqNotBuildingClasses",
+        "kind": "building-class",
+        "target": "BuildingClassInfo",
+        "mode": "not",
+        "scope": 0
+      },
+      {
+        "source": "PrereqAndCivics",
+        "kind": "civic",
+        "target": "CivicInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqOrCivics",
+        "kind": "civic",
+        "target": "CivicInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqAndTerrain",
+        "kind": "terrain",
+        "target": "TerrainInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqOrTerrain",
+        "kind": "terrain",
+        "target": "TerrainInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqOrFeature",
+        "kind": "feature",
+        "target": "FeatureInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqReligion",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "HolyCity",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all",
+        "scope": 2
+      },
+      {
+        "source": "StateReligion",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all",
+        "scope": 1
+      },
+      {
+        "source": "PrereqCorporation",
+        "kind": "corporation",
+        "target": "CorporationInfo",
+        "mode": "all"
+      },
+      {
+        "source": "VictoryPrereq",
+        "kind": "victory",
+        "target": "VictoryInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqCultureLevel",
+        "kind": "culture-level",
+        "target": "CultureLevelInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "NotGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "not"
+      }
+    ]
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitDef",
+    "mod": "military",
+    "fields": [
+      {
+        "source": "BonusProductionModifiers",
+        "property": "BonusProductionModifiers",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "iProductonModifier"
+      },
+      {
+        "source": "Buildings",
+"property": "ConstructibleBuildings",
+        "kind": "mapBool",
+        "target": "BuildingInfo",
+        "key": "BuildingType",
+        "value": "bBuilding"
+      },
+      {
+        "source": "Builds",
+        "property": "Builds",
+        "kind": "mapBool",
+        "target": "BuildInfo",
+        "key": "BuildType",
+        "value": "bBuild"
+      },
+      {
+        "source": "Capture",
+        "property": "Capture",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "CivilizationNames",
+        "property": "CivilizationNames",
+        "kind": "mapText",
+        "target": "CivilizationInfo",
+        "key": "CivilizationType",
+        "value": "CivilizationUniqueName"
+      },
+      {
+        "source": "Combat",
+        "property": "CombatType",
+        "kind": "ref",
+        "target": "UnitCombatInfo"
+      },
+      {
+        "source": "CorporationSpreads",
+        "property": "CorporationSpreads",
+        "kind": "mapInt",
+        "target": "CorporationInfo",
+        "key": "CorporationType",
+        "value": "iCorporationSpread"
+      },
+      {
+        "source": "Domain",
+        "property": "Domain",
+        "kind": "ref",
+        "target": "DomainInfo"
+      },
+      {
+        "source": "DomainCargo",
+        "property": "CargoDomain",
+        "kind": "ref",
+        "target": "DomainInfo"
+      },
+      {
+        "source": "DomainMods",
+        "property": "DomainMods",
+        "kind": "mapInt",
+        "target": "DomainInfo",
+        "key": "DomainType",
+        "value": "iDomainMod"
+      },
+      {
+        "source": "FeatureAttacks",
+        "property": "FeatureAttacks",
+        "kind": "mapInt",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "iFeatureAttack"
+      },
+      {
+        "source": "FeatureDefenses",
+        "property": "FeatureDefenses",
+        "kind": "mapInt",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "iFeatureDefense"
+      },
+      {
+        "source": "FeatureImpassables",
+        "property": "FeatureImpassables",
+        "kind": "mapBool",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "bFeatureImpassable"
+      },
+      {
+        "source": "FeatureNatives",
+        "property": "FeatureNatives",
+        "kind": "mapBool",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "bFeatureNative"
+      },
+      {
+        "source": "FlankingStrikes",
+        "property": "FlankingStrikes",
+        "kind": "mapInt",
+        "target": "UnitClassInfo",
+        "key": "FlankingStrikeUnitClass",
+        "value": "iFlankingStrength"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "ForceBuildings",
+        "property": "ForceBuildings",
+        "kind": "mapBool",
+        "target": "BuildingInfo",
+        "key": "BuildingType",
+        "value": "bForceBuilding"
+      },
+      {
+        "source": "ForceObsoleteTech",
+        "property": "ForceObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "ForceObsoleteUnitClasses",
+        "property": "ForceObsoleteUnitClasses",
+        "kind": "mapBool",
+"target": "UnitClassInfo",
+        "key": "ForceObsoleteUnitClassType",
+        "value": "bForceObsoleteUnitClass"
+      },
+      {
+        "source": "FreePromotions",
+        "property": "FreePromotions",
+        "kind": "mapBool",
+        "target": "PromotionInfo",
+        "key": "PromotionType",
+        "value": "bFreePromotion"
+      },
+      {
+        "source": "GreatPeoples",
+        "property": "GreatPeoples",
+        "kind": "mapBool",
+        "target": "SpecialistInfo",
+        "key": "GreatPeopleType",
+        "value": "bGreatPeople"
+      },
+      {
+        "source": "Invisible",
+        "property": "Invisibility",
+        "kind": "ref",
+        "target": "InvisibleInfo"
+      },
+      {
+        "source": "LeaderPromotion",
+        "property": "LeaderPromotion",
+        "kind": "ref",
+        "target": "PromotionInfo"
+      },
+      {
+        "source": "NotUnitAIs",
+        "property": "ExcludedUnitAiTypes",
+        "kind": "mapBool",
+        "target": "UnitAIInfo",
+        "key": "UnitAIType",
+        "value": "bUnitAI"
+      },
+      {
+        "source": "OverrideResourceBuilding",
+        "property": "OverrideResourceBuilding",
+        "kind": "refs",
+        "target": "BuildingInfo"
+      },
+      {
+        "source": "ProductionTraits",
+        "property": "TraitProductionModifiers",
+        "kind": "mapInt",
+        "target": "TraitInfo",
+        "key": "ProductionTraitType",
+        "value": "iProductionTrait"
+      },
+      {
+        "source": "ReligionSpreads",
+        "property": "ReligionSpreads",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionSpread"
+      },
+      {
+        "source": "SeeInvisible",
+        "property": "VisibleInvisibilityTypes",
+        "kind": "csvRefs",
+        "target": "InvisibleInfo"
+      },
+      {
+        "source": "Special",
+        "property": "Categories",
+        "kind": "csvRefs",
+        "target": "SpecialUnitInfo"
+      },
+      {
+        "source": "SpecialCargo",
+        "property": "CargoCategories",
+        "kind": "csvRefs",
+        "target": "SpecialUnitInfo"
+      },
+      {
+        "source": "TerrainAttacks",
+        "property": "TerrainAttacks",
+        "kind": "mapInt",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "iTerrainAttack"
+      },
+      {
+        "source": "TerrainImpassables",
+        "property": "TerrainImpassables",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrainImpassable"
+      },
+      {
+        "source": "TerrainNatives",
+        "property": "TerrainNatives",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrainNative"
+      },
+      {
+        "source": "TerrainPassableTechs",
+        "property": "TerrainPassableTechs",
+        "kind": "mapRef",
+        "target": "TerrainInfo",
+        "valueTarget": "TechInfo",
+        "key": "TerrainType",
+        "value": "PassableTech"
+      },
+      {
+        "source": "UniqueNames",
+        "property": "UniqueNames",
+        "kind": "texts"
+      },
+      {
+        "source": "UnitAIs",
+        "property": "UnitAiTypes",
+        "kind": "mapBool",
+"target": "UnitAIInfo",
+        "key": "UnitAIType",
+        "value": "bUnitAI"
+      },
+      {
+        "source": "UnitClassAttackMods",
+        "property": "UnitAttackModifiers",
+        "kind": "mapInt",
+        "target": "UnitClassInfo",
+        "key": "UnitClassType",
+        "value": "iUnitClassMod"
+      },
+      {
+        "source": "UnitClassDefenders",
+        "property": "DefenderUnits",
+        "kind": "mapBool",
+        "target": "UnitClassInfo",
+        "key": "UnitClassDefenderType",
+        "value": "bUnitClassDefender"
+      },
+      {
+        "source": "UnitClassDefenseMods",
+        "property": "UnitDefenseModifiers",
+        "kind": "mapInt",
+        "target": "UnitClassInfo",
+        "key": "UnitClassType",
+        "value": "iUnitClassMod"
+      },
+      {
+        "source": "UnitClassTargets",
+        "property": "TargetUnits",
+        "kind": "mapBool",
+        "target": "UnitClassInfo",
+        "key": "UnitClassTargetType",
+        "value": "bUnitClassTarget"
+      },
+      {
+        "source": "UnitClassUpgrades",
+        "property": "Upgrades",
+        "kind": "mapBool",
+        "target": "UnitClassInfo",
+        "key": "UnitClassUpgradeType",
+        "value": "bUnitClassUpgrade"
+      },
+      {
+        "source": "UnitCombatCollateralImmunes",
+        "property": "CollateralImmuneCombatTypes",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iUnitCombatCollateralImmune"
+      },
+      {
+        "source": "UnitCombatDefenders",
+        "property": "DefenderCombatTypes",
+        "kind": "mapBool",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatDefenderType",
+        "value": "bUnitCombatDefender"
+      },
+      {
+        "source": "UnitCombatMods",
+        "property": "CombatTypeModifiers",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iUnitCombatMod"
+      },
+      {
+        "source": "UnitCombatTargets",
+        "property": "TargetCombatTypes",
+        "kind": "mapBool",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatTargetType",
+        "value": "bUnitCombatTarget"
+      },
+      {
+        "source": "bAlwaysHostile",
+        "property": "AlwaysHostile",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bAnimal",
+        "property": "Animal",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBarbariansColonisator",
+        "property": "BarbariansColonisator",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBribeBarbarian",
+        "property": "BribeBarbarian",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanMoveAllTerrain",
+        "property": "CanMoveAllTerrain",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanMoveImpassable",
+        "property": "CanMoveImpassable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCounterSpy",
+        "property": "CounterSpy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBomb1",
+        "property": "AirBomb1",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBomb2",
+        "property": "AirBomb2",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBomb3",
+        "property": "AirBomb3",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBomb4",
+        "property": "AirBomb4",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMAirBomb5",
+        "property": "AirBomb5",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDCMFighterEngage",
+        "property": "FighterEngagement",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDestroy",
+        "property": "Destroy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFirstStrikeImmune",
+        "property": "FirstStrikeImmune",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFlatMovementCost",
+        "property": "FlatMovementCost",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFood",
+        "property": "FoodProduction",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bForcePeace",
+        "property": "ForcePeace",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFound",
+        "property": "CanFoundCity",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoldenAge",
+        "property": "GoldenAge",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGoodwill",
+        "property": "Goodwill",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bGreatGeneral",
+        "property": "GreatGeneral",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bHiddenNationality",
+        "property": "HiddenNationality",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bIgnoreBuildingDefense",
+        "property": "IgnoreBuildingDefense",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bIgnoreTerrainCost",
+        "property": "IgnoreTerrainCost",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bInquisitor",
+        "property": "Inquisitor",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bInvestigate",
+        "property": "Investigate",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bInvisible",
+        "property": "Invisible",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bLineOfSight",
+        "property": "LineOfSight",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bMechanized",
+        "property": "Mechanized",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bMilitaryHappiness",
+        "property": "MilitaryHappiness",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMilitaryProduction",
+        "property": "MilitaryProduction",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMilitarySupport",
+        "property": "MilitarySupport",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMilitaryTrade",
+        "property": "MilitaryTrade",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bNoBadGoodies",
+        "property": "NoBadGoodies",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoCapture",
+        "property": "NoCapture",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoDefensiveBonus",
+        "property": "NoDefensiveBonus",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoRevealMap",
+        "property": "NoRevealMap",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "bNukeImmune",
+        "property": "NukeImmune",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bOnlyDefensive",
+        "property": "OnlyDefensive",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPillage",
+        "property": "Pillage",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPrereqBonuses",
+        "property": "RequiresResourceArea",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPrereqReligion",
+        "property": "RequiresReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bQuickCombat",
+        "property": "QuickCombat",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRivalTerritory",
+        "property": "RivalTerritory",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bSabotage",
+        "property": "Sabotage",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bSpy",
+        "property": "Spy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bStateReligion",
+        "property": "RequiresStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bStealPlans",
+        "property": "StealPlans",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bSuicide",
+        "property": "Suicide",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bUpgradeImprovements",
+        "property": "UpgradeImprovements",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bWorkerTrade",
+        "property": "WorkerTrade",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "iAIWeight",
+        "property": "AiWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCost",
+        "property": "AdvancedStartCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAdvancedStartCostIncrease",
+        "property": "AdvancedStartCostIncrease",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirCombat",
+        "property": "AirCombat",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirCombatLimit",
+        "property": "AirCombatLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirRange",
+        "property": "AirRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirUnitCap",
+        "property": "AirUnitCap",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnimalCombat",
+        "property": "AnimalCombat",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAsset",
+        "property": "Asset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseDiscover",
+        "property": "BaseDiscover",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseFoodChange",
+        "property": "BaseFoodChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseHurry",
+        "property": "BaseHurry",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseTrade",
+        "property": "BaseTrade",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombRate",
+        "property": "BombRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombardRate",
+        "property": "BombardRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCargo",
+        "property": "Cargo",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iChanceFirstStrikes",
+        "property": "ChanceFirstStrikes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityAttack",
+        "property": "CityAttack",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityDefense",
+        "property": "CityDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCollateralDamage",
+        "property": "CollateralDamage",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCollateralDamageLimit",
+        "property": "CollateralDamageLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCollateralDamageMaxUnits",
+        "property": "CollateralDamageMaxUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCombat",
+        "property": "Strength",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCombatLimit",
+        "property": "CombatLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCommandRange",
+        "property": "CommandRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConscription",
+        "property": "Conscription",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iControlPoints",
+        "property": "ControlPoints",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCost",
+        "property": "Cost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCultureGarrison",
+        "property": "CultureGarrison",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDCMBombAccuracy",
+        "property": "BombAccuracyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDCMBombRange",
+        "property": "BombRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDiscoverMultiplier",
+        "property": "DiscoverMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDropRange",
+        "property": "DropRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEspionagePoints",
+        "property": "EspionagePoints",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEvasionProbability",
+        "property": "EvasionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExtraCost",
+        "property": "ExtraCost",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFirstStrikes",
+        "property": "FirstStrikes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatWorkCulture",
+        "property": "GreatWorkCulture",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHillsAttack",
+        "property": "HillsAttack",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHillsDefense",
+        "property": "HillsDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryCostModifier",
+        "property": "HurryCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryMultiplier",
+        "property": "HurryMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInterceptionProbability",
+        "property": "InterceptionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLeaderExperience",
+        "property": "LeaderExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinAreaSize",
+        "property": "MinAreaSize",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMoves",
+        "property": "Moves",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNukeRange",
+        "property": "NukeRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOrderPriority",
+        "property": "OrderPriority",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPower",
+        "property": "Power",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSpecialCargoSpace",
+        "property": "SpecialCargoCapacity",
+        "kind": "csvInts"
+      },
+      {
+        "source": "iTotalCargo",
+        "property": "TotalCargo",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeMultiplier",
+        "property": "TradeMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWithdrawalProb",
+        "property": "WithdrawalPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorkRate",
+        "property": "WorkRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iXPValueAttack",
+        "property": "AttackExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iXPValueDefense",
+        "property": "DefenseExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+"source": "DefaultUnitAI",
+        "property": "DefaultUnitAi",
+        "kind": "ref",
+        "target": "UnitAIInfo"
+      },
+      { "source": "KillOutcomes", "property": "KillOutcomes", "kind": "outcomes" },
+      { "source": "Actions", "property": "Actions", "kind": "actions" }
+    ],
+    "requirements": [
+      {
+        "source": "PrereqTech",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "TechTypes",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "BonusType",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqBonuses",
+        "kind": "bonus",
+        "target": "BonusInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqBuilding",
+        "kind": "building",
+        "target": "BuildingInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqOrBuildings",
+        "kind": "building",
+        "target": "BuildingInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqBuildingClasses",
+        "kind": "building-class",
+        "target": "BuildingClassInfo",
+        "mode": "overrides",
+        "scope": 0
+      },
+      {
+        "source": "PrereqOrCivics",
+        "kind": "civic",
+        "target": "CivicInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PrereqReligion",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "HolyCity",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all",
+        "scope": 2
+      },
+      {
+        "source": "StateReligion",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all",
+        "scope": 1
+      },
+      {
+        "source": "PrereqCorporation",
+        "kind": "corporation",
+        "target": "CorporationInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "NotGameOption",
+        "kind": "game-option",
+        "target": "GameOptionInfo",
+        "mode": "not"
+      }
+    ]
+  },
+  {
+    "sourceClass": "UnitCombatInfo",
+    "definition": "UnitCombatDef",
+    "mod": "military",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "PromotionInfo",
+    "definition": "PromotionDef",
+    "mod": "military",
+    "fields": [
+      {
+        "source": "DomainMods",
+        "property": "DomainMods",
+        "kind": "mapInt",
+        "target": "DomainInfo",
+        "key": "DomainType",
+        "value": "iDomainMod"
+      },
+      {
+        "source": "FeatureAttacks",
+        "property": "FeatureAttacks",
+        "kind": "mapInt",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "iFeatureAttack"
+      },
+      {
+        "source": "FeatureDefenses",
+        "property": "FeatureDefenses",
+        "kind": "mapInt",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "iFeatureDefense"
+      },
+      {
+        "source": "FeatureDoubleMoves",
+        "property": "FeatureDoubleMoves",
+        "kind": "mapBool",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "bFeatureDoubleMove"
+      },
+      {
+        "source": "IgnoreTerrainDamage",
+        "property": "IgnoreTerrainDamage",
+        "kind": "ref",
+        "target": "TerrainInfo"
+      },
+      {
+        "source": "ObsoleteTech",
+        "property": "ObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "TerrainAttacks",
+        "property": "TerrainAttacks",
+        "kind": "mapInt",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "iTerrainAttack"
+      },
+      {
+        "source": "TerrainDefenses",
+        "property": "TerrainDefenses",
+        "kind": "mapInt",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "iTerrainDefense"
+      },
+      {
+        "source": "TerrainDoubleMoves",
+        "property": "TerrainDoubleMoves",
+        "kind": "mapBool",
+        "target": "TerrainInfo",
+        "key": "TerrainType",
+        "value": "bTerrainDoubleMove"
+      },
+      {
+        "source": "UnitCombatMods",
+        "property": "CombatTypeModifiers",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iUnitCombatMod"
+      },
+      {
+        "source": "UnitCombats",
+        "property": "CombatTypes",
+        "kind": "mapBool",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "bUnitCombat"
+      },
+      {
+        "source": "bAlwaysHeal",
+        "property": "AlwaysHeal",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bAmphib",
+        "property": "Amphibious",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBlitz",
+        "property": "Blitz",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanLeadThroughPeaks",
+        "property": "CanLeadThroughPeaks",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanMovePeaks",
+        "property": "CanMovePeaks",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bEnemyRoute",
+        "property": "EnemyRoute",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bHillsDoubleMove",
+        "property": "HillsDoubleMove",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bImmuneToFirstStrikes",
+        "property": "ImmuneToFirstStrikes",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bIsPirate",
+        "property": "IsPirate",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bLeader",
+        "property": "Leader",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bOnslaught",
+        "property": "Onslaught",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bRiver",
+        "property": "RiverAttack",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bZoneOfControl",
+        "property": "ZoneOfControl",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAdjacentTileHealChange",
+        "property": "AdjacentTileHealChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirRangeChange",
+        "property": "AirRangeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombardRateChange",
+        "property": "BombardRateChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCargoChange",
+        "property": "CargoChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iChanceFirstStrikesChange",
+        "property": "ChanceFirstStrikesChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityAttack",
+        "property": "CityAttack",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityDefense",
+        "property": "CityDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCollateralDamageChange",
+        "property": "CollateralDamageChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCollateralDamageProtection",
+        "property": "CollateralDamageProtection",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCombatPercent",
+        "property": "CombatPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCommandRange",
+        "property": "CommandRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iControlPoints",
+        "property": "ControlPoints",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEnemyHealChange",
+        "property": "EnemyHealChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEvasionChange",
+        "property": "EvasionChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExperiencePercent",
+        "property": "ExperiencePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFirstStrikesChange",
+        "property": "FirstStrikesChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFriendlyHealChange",
+        "property": "FriendlyHealChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHillsAttack",
+        "property": "HillsAttack",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHillsDefense",
+        "property": "HillsDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInterceptChange",
+        "property": "InterceptChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iKamikazePercent",
+        "property": "KamikazePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMoveDiscountChange",
+        "property": "MoveDiscountChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMovesChange",
+        "property": "MovesChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNeutralHealChange",
+        "property": "NeutralHealChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPillageChange",
+        "property": "PillageChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSameTileHealChange",
+        "property": "SameTileHealChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUpgradeDiscount",
+        "property": "UpgradeDiscount",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iVisibilityChange",
+        "property": "VisibilityChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWithdrawalChange",
+        "property": "WithdrawalChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iRevoltProtection",
+        "property": "RevoltProtectionPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "TechPrereq",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PrereqOrCivics",
+        "kind": "civic",
+        "target": "CivicInfo",
+        "mode": "any"
+      },
+      {
+        "source": "PromotionPrereq",
+        "kind": "promotion",
+        "target": "PromotionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "PromotionPrereqOr1",
+        "kind": "promotion",
+        "target": "PromotionInfo",
+        "mode": "promotionAny"
+      },
+      {
+        "source": "PromotionPrereqOr2",
+        "kind": "promotion",
+        "target": "PromotionInfo",
+        "mode": "promotionAny"
+      },
+      {
+        "source": "PrereqReligion",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all"
+      },
+      {
+        "source": "StateReligionPrereq",
+        "kind": "religion",
+        "target": "ReligionInfo",
+        "mode": "all",
+        "scope": 1
+      }
+    ]
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicDef",
+    "mod": "government",
+    "fields": [
+      {
+        "source": "BuildingClassCommerceChanges",
+        "property": "BuildingClassCommerceChanges",
+        "kind": "mapCommerce",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "CommerceChanges"
+      },
+      {
+        "source": "BuildingClassProductionModifiers",
+        "property": "BuildingClassProductionModifiers",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "BuildingHappinessChanges",
+        "property": "BuildingHappinessChanges",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingType",
+        "value": "iHappinessChange"
+      },
+      {
+        "source": "BuildingHealthChanges",
+        "property": "BuildingHealthChanges",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingType",
+        "value": "iHealthChange"
+      },
+      {
+        "source": "CapitalCommerceModifiers",
+        "property": "CapitalCommerceModifiers",
+        "kind": "commerce"
+      },
+      {
+        "source": "CapitalYieldModifiers",
+        "property": "CapitalYieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "CivicAttitudeChanges",
+        "property": "CivicAttitudeChanges",
+        "kind": "civicAttitudes",
+        "target": "CivicInfo"
+      },
+      {
+        "source": "CivicOptionType",
+        "property": "Option",
+        "kind": "ref",
+        "target": "CivicOptionInfo"
+      },
+      {
+        "source": "CommerceModifiers",
+        "property": "CommerceModifiers",
+        "kind": "commerce"
+      },
+      {
+        "source": "FeatureHappinessChanges",
+        "property": "FeatureHappinessChanges",
+        "kind": "mapInt",
+        "target": "FeatureInfo",
+        "key": "FeatureType",
+        "value": "iHappinessChange"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "Hurrys",
+        "property": "Hurrys",
+        "kind": "mapBool",
+        "target": "HurryInfo",
+        "key": "HurryType",
+        "value": "bHurry"
+      },
+      {
+        "source": "ImprovementHealthPercentChanges",
+        "property": "ImprovementHealthPercentChanges",
+        "kind": "mapInt",
+        "target": "ImprovementInfo",
+        "key": "ImprovementType",
+        "value": "iHealthPercent"
+      },
+      {
+        "source": "ImprovementYieldChanges",
+        "property": "ImprovementYieldChanges",
+        "kind": "mapYield",
+        "target": "ImprovementInfo",
+        "key": "ImprovementType",
+        "value": "ImprovementYields"
+      },
+      {
+        "source": "LandmarkYieldChanges",
+        "property": "LandmarkYieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "SpecialBuildingNotRequireds",
+        "property": "SpecialBuildingNotRequireds",
+        "kind": "mapBool",
+        "target": "SpecialBuildingInfo",
+        "key": "SpecialBuildingType",
+        "value": "bNotRequired"
+      },
+      {
+        "source": "SpecialistCommercePercentChanges",
+        "property": "SpecialistCommercePercentChanges",
+        "kind": "mapCommerce",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "SpecialistCommercePercents"
+      },
+      {
+        "source": "SpecialistExtraCommerces",
+        "property": "SpecialistExtraCommerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "SpecialistValids",
+        "property": "SpecialistValids",
+        "kind": "mapBool",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "bValid"
+      },
+      {
+        "source": "SpecialistYieldPercentChanges",
+        "property": "SpecialistYieldPercentChanges",
+        "kind": "mapYield",
+        "target": "SpecialistInfo",
+        "key": "SpecialistType",
+        "value": "SpecialistYieldPercents"
+      },
+      {
+        "source": "TradeYieldModifiers",
+        "property": "TradeYieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "UnitCombatProductionModifiers",
+        "property": "UnitCombatProductionModifiers",
+        "kind": "mapInt",
+        "target": "UnitCombatInfo",
+        "key": "UnitCombatType",
+        "value": "iProductionModifier"
+      },
+      {
+        "source": "Upkeep",
+        "property": "Upkeep",
+        "kind": "ref",
+        "target": "UpkeepInfo"
+      },
+      {
+        "source": "YieldModifiers",
+        "property": "YieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "bAllowInquisitions",
+        "property": "AllowInquisitions",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bBuildingOnlyHealthy",
+        "property": "BuildingOnlyHealthy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanDoElection",
+        "property": "CanDoElection",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCanNotCeaseRelations",
+        "property": "CanNotCeaseRelations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCommunism",
+        "property": "Communism",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDisallowInquisitions",
+        "property": "DisallowInquisitions",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bEnablesMADNukes",
+        "property": "EnablesMADNukes",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFixedBorders",
+        "property": "FixedBorders",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bForcesOpenTradeRoutesWithWeakerPlayers",
+        "property": "ForcesOpenTradeRoutesWithWeakerPlayers",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreeReligion",
+        "property": "FreeReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreeSpeech",
+        "property": "FreeSpeech",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bMilitaryFoodProduction",
+        "property": "MilitaryFoodProduction",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoCapitalUnhappiness",
+        "property": "NoCapitalUnhappiness",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoCorporations",
+        "property": "NoCorporations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoForeignCorporations",
+        "property": "NoForeignCorporations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoForeignTrade",
+        "property": "NoForeignTrade",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoLandmarkAnger",
+        "property": "NoLandmarkAnger",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoNonStateReligionSpread",
+        "property": "NoNonStateReligionSpread",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoUnhealthyPopulation",
+        "property": "NoUnhealthyPopulation",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bStateReligion",
+        "property": "RequiresStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bUpgradeAnywhere",
+        "property": "UpgradeAnywhere",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAIWeight",
+        "property": "AiWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAnarchyLength",
+        "property": "AnarchyLength",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAttitudeShareMod",
+        "property": "AttitudeShareMod",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseFreeMilitaryUnits",
+        "property": "BaseFreeMilitaryUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseFreeUnits",
+        "property": "BaseFreeUnits",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCityLimit",
+        "property": "CityLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCivicHappiness",
+        "property": "CivicHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCivicPercentAnger",
+        "property": "CivicPercentAnger",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCorporationMaintenanceModifier",
+        "property": "CorporationMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDistanceMaintenanceModifier",
+        "property": "DistanceMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDistantUnitSupportCostModifier",
+        "property": "DistantUnitSupportCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDomesticConnectednessModifier",
+        "property": "DomesticConnectednessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDomesticGreatGeneralRateModifier",
+        "property": "DomesticGreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEnslavementChance",
+        "property": "EnslavementChance",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExpInBorderModifier",
+        "property": "ExpInBorderModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExtraCityDefense",
+        "property": "ExtraCityDefense",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExtraHealth",
+        "property": "ExtraHealth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignConnectednessModifier",
+        "property": "ForeignConnectednessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignTradeRouteModifier",
+        "property": "ForeignTradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignerUnhappyPercent",
+        "property": "ForeignerUnhappyPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFractionalXPEarnedInCity",
+        "property": "FractionalXPEarnedInCity",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeExperience",
+        "property": "FreeExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeMilitaryUnitsPopulationPercent",
+        "property": "FreeMilitaryUnitsPopulationPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeSpecialist",
+        "property": "FreeSpecialist",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreeUnitsPopulationPercent",
+        "property": "FreeUnitsPopulationPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalRelationsChange",
+        "property": "GlobalRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldPerMilitaryUnit",
+        "property": "GoldPerMilitaryUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldPerUnit",
+        "property": "GoldPerUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatGeneralRateModifier",
+        "property": "GreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeopleRateModifier",
+        "property": "GreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappyPerMilitaryUnit",
+        "property": "HappyPerMilitaryUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHomeAreaMaintenanceModifier",
+        "property": "HomeAreaMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryCostModifier",
+        "property": "HurryCostModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryInflationModifier",
+        "property": "HurryInflationModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iImprovementUpgradeRateModifier",
+        "property": "ImprovementUpgradeRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iInflation",
+        "property": "Inflation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLandmarkHappiness",
+        "property": "LandmarkHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLargestCityHappiness",
+        "property": "LargestCityHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLessPowerfulRelationsChange",
+        "property": "LessPowerfulRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxConscript",
+        "property": "MaxConscript",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMilitaryProductionModifier",
+        "property": "MilitaryProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNonStateReligionHappiness",
+        "property": "NonStateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNumCitiesMaintenanceModifier",
+        "property": "CityCountMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOtherAreaMaintenanceModifier",
+        "property": "OtherAreaMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationAngerModifier",
+        "property": "PopulationAngerModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationgrowthratepercentage",
+        "property": "PopulationGrowthPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPowerfulRelationsChange",
+        "property": "PowerfulRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iRealCorporationMaintenanceModifier",
+        "property": "RealCorporationMaintenanceModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iReligionSpreadRate",
+        "property": "ReligionSpreadRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSeizedForeignConnectednessPercent",
+        "property": "SeizedForeignConnectednessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSharedCivicTradeRouteModifier",
+        "property": "SharedCivicTradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionBuildingProductionModifier",
+        "property": "StateReligionBuildingProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionFreeExperience",
+        "property": "StateReligionFreeExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionGreatPeopleRateModifier",
+        "property": "StateReligionGreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHappiness",
+        "property": "StateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHealth",
+        "property": "StateReligionHealth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionUnitProductionModifier",
+        "property": "StateReligionUnitProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTaxRateUnhappiness",
+        "property": "TaxRateUnhappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTributePercent",
+        "property": "TributePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWarWearinessModifier",
+        "property": "WarWearinessModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWeakestRelationsChange",
+        "property": "WeakestRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorkerSpeedModifier",
+        "property": "WorkerSpeedModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "TechPrereq",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      },
+      {
+        "source": "ForbiddenCivics",
+        "kind": "civic",
+        "target": "CivicInfo",
+        "mode": "not"
+      }
+    ]
+  },
+  {
+    "sourceClass": "CivicOptionInfo",
+    "definition": "CivicOptionDef",
+    "mod": "government",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivilizationInfo",
+    "definition": "CivilizationDef",
+    "mod": "peoples",
+    "fields": [
+      {
+        "source": "Buildings",
+        "property": "BuildingOverrides",
+        "kind": "civilization"
+      },
+      {
+        "source": "Cities",
+        "property": "CityNames",
+        "kind": "texts"
+      },
+      {
+        "source": "FreeBuildingClasses",
+        "property": "StartingBuildings",
+        "kind": "civilization"
+      },
+      {
+        "source": "FreeTechs",
+        "property": "StartingTechs",
+        "kind": "mapBool",
+        "target": "TechInfo",
+        "key": "TechType",
+        "value": "bFreeTech"
+      },
+      {
+        "source": "FreeUnitClasses",
+        "property": "StartingUnits",
+        "kind": "civilization"
+      },
+      {
+        "source": "InitialCivics",
+        "property": "StartingCivics",
+        "kind": "civilization"
+      },
+      {
+        "source": "Leaders",
+        "property": "Leaders",
+        "kind": "mapBool",
+        "target": "LeaderHeadInfo",
+        "key": "LeaderName",
+        "value": "bLeaderAvailability"
+      },
+      {
+        "source": "ShortDescription",
+        "property": "ShortDescription",
+        "kind": "text"
+      },
+      {
+        "source": "Units",
+        "property": "UnitOverrides",
+        "kind": "civilization"
+      },
+      {
+        "source": "bAIPlayable",
+        "property": "AiPlayable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bPlayable",
+        "property": "Playable",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "Adjective",
+        "property": "Adjective",
+        "kind": "text"
+      },
+      {
+        "source": "DerivativeCiv",
+        "property": "DerivativeCivilization",
+        "kind": "ref",
+        "target": "CivilizationInfo"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "LeaderHeadInfo",
+    "definition": "LeaderDef",
+    "mod": "peoples",
+    "fields": [
+      {
+        "source": "AdoptCivicRefuseAttitudeThreshold",
+        "property": "AdoptCivicRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "ContactDelays",
+        "property": "ContactDelays",
+        "kind": "mapInt",
+        "key": "ContactType",
+        "value": "iContactDelay"
+      },
+      {
+        "source": "ContactRands",
+        "property": "ContactRands",
+        "kind": "mapInt",
+        "key": "ContactType",
+        "value": "iContactRand"
+      },
+      {
+        "source": "ConvertReligionRefuseAttitudeThreshold",
+        "property": "ConvertReligionRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "DeclareWarRefuseAttitudeThreshold",
+        "property": "DeclareWarRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "DeclareWarThemRefuseAttitudeThreshold",
+        "property": "DeclareWarThemRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "DefensivePactRefuseAttitudeThreshold",
+        "property": "DefensivePactRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "DemandTributeAttitudeThreshold",
+        "property": "DemandTributeAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "FavoriteReligion",
+        "property": "FavoriteReligion",
+        "kind": "ref",
+        "target": "ReligionInfo"
+      },
+      {
+        "source": "Flavors",
+        "property": "Flavors",
+        "kind": "mapInt",
+        "key": "FlavorType",
+        "value": "iFlavor"
+      },
+      {
+        "source": "HappinessBonusRefuseAttitudeThreshold",
+        "property": "HappinessBonusRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "HealthBonusRefuseAttitudeThreshold",
+        "property": "HealthBonusRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "ImprovementWeightModifiers",
+        "property": "ImprovementWeightModifiers",
+        "kind": "mapInt",
+        "target": "ImprovementInfo",
+        "key": "ImprovementType",
+        "value": "iWeightModifier"
+      },
+      {
+        "source": "MapRefuseAttitudeThreshold",
+        "property": "MapRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "MemoryAttitudePercents",
+        "property": "MemoryAttitudePercents",
+        "kind": "mapInt",
+        "key": "MemoryType",
+        "value": "iMemoryAttitudePercent"
+      },
+      {
+        "source": "MemoryDecays",
+        "property": "MemoryDecays",
+        "kind": "mapInt",
+        "key": "MemoryType",
+        "value": "iMemoryRand"
+      },
+      {
+        "source": "NoGiveHelpAttitudeThreshold",
+        "property": "NoGiveHelpAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "NoWarAttitudeProbs",
+        "property": "NoWarAttitudeProbabilities",
+        "kind": "mapInt",
+        "key": "AttitudeType",
+        "value": "iNoWarProb"
+      },
+      {
+        "source": "OpenBordersRefuseAttitudeThreshold",
+        "property": "OpenBordersRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "PermanentAllianceRefuseAttitudeThreshold",
+        "property": "PermanentAllianceRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "StopTradingRefuseAttitudeThreshold",
+        "property": "StopTradingRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "StopTradingThemRefuseAttitudeThreshold",
+        "property": "StopTradingThemRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "StrategicBonusRefuseAttitudeThreshold",
+        "property": "StrategicBonusRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "TechRefuseAttitudeThreshold",
+        "property": "TechRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "Traits",
+        "property": "Traits",
+        "kind": "mapBool",
+        "target": "TraitInfo",
+        "key": "TraitType",
+        "value": "bTrait"
+      },
+      {
+        "source": "UnitAIWeightModifiers",
+        "property": "UnitAiWeightModifiers",
+        "kind": "mapInt",
+        "target": "UnitAIInfo",
+        "key": "UnitAIType",
+        "value": "iWeightModifier"
+      },
+      {
+        "source": "VassalRefuseAttitudeThreshold",
+        "property": "VassalRefuseAttitudeThreshold",
+        "kind": "enum"
+      },
+      {
+        "source": "iAtPeaceAttitudeChangeLimit",
+        "property": "AtPeaceAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAtPeaceAttitudeDivisor",
+        "property": "AtPeaceAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAtWarAttitudeChangeLimit",
+        "property": "AtWarAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAtWarAttitudeDivisor",
+        "property": "AtWarAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAttackOddsChangeRand",
+        "property": "AttackOddsChangeRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseAttackOddsChange",
+        "property": "BaseAttackOddsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseAttitude",
+        "property": "BaseAttitude",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBasePeaceWeight",
+        "property": "BasePeaceWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBetterRankDifferenceAttitudeChange",
+        "property": "BetterRankDifferenceAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBonusTradeAttitudeChangeLimit",
+        "property": "BonusTradeAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBonusTradeAttitudeDivisor",
+        "property": "BonusTradeAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBuildUnitProb",
+        "property": "BuildUnitProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCloseBordersAttitudeChange",
+        "property": "CloseBordersAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iConquestVictoryWeight",
+        "property": "ConquestVictoryWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iCultureVictoryWeight",
+        "property": "CultureVictoryWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDeclareWarTradeRand",
+        "property": "DeclareWarTradeRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefensivePactAttitudeChangeLimit",
+        "property": "DefensivePactAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDefensivePactAttitudeDivisor",
+        "property": "DefensivePactAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDemandRebukedSneakProb",
+        "property": "DemandRebukedSneakProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDemandRebukedWarProb",
+        "property": "DemandRebukedWarProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDifferentReligionAttitudeChange",
+        "property": "DifferentReligionAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDifferentReligionAttitudeChangeLimit",
+        "property": "DifferentReligionAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDifferentReligionAttitudeDivisor",
+        "property": "DifferentReligionAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDiplomacyVictoryWeight",
+        "property": "DiplomacyVictoryWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDogpileWarRand",
+        "property": "DogpileWarRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDominationVictoryWeight",
+        "property": "DominationVictoryWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEspionageWeight",
+        "property": "EspionageWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFavoriteCivicAttitudeChange",
+        "property": "FavoriteCivicAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFavoriteCivicAttitudeChangeLimit",
+        "property": "FavoriteCivicAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFavoriteCivicAttitudeDivisor",
+        "property": "FavoriteCivicAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iFreedomAppreciation",
+        "property": "FreedomAppreciation",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLimitedWarPowerRatio",
+        "property": "LimitedWarPowerRatio",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLimitedWarRand",
+        "property": "LimitedWarRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLostWarAttitudeChange",
+        "property": "LostWarAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMakePeaceRand",
+        "property": "MakePeaceRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxGoldPerTurnTradePercent",
+        "property": "MaxGoldPerTurnTradePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxGoldTradePercent",
+        "property": "MaxGoldTradePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxWarDistantPowerRatio",
+        "property": "MaxWarDistantPowerRatio",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxWarMinAdjacentLandPercent",
+        "property": "MaxWarMinAdjacentLandPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxWarNearbyPowerRatio",
+        "property": "MaxWarNearbyPowerRatio",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxWarRand",
+        "property": "MaxWarRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iNoTechTradeThreshold",
+        "property": "NoTechTradeThreshold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOpenBordersAttitudeChangeLimit",
+        "property": "OpenBordersAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iOpenBordersAttitudeDivisor",
+        "property": "OpenBordersAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPeaceWeightRand",
+        "property": "PeaceWeightRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iRazeCityProb",
+        "property": "RazeCityProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iRefuseToTalkWarThreshold",
+        "property": "RefuseToTalkWarThreshold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSameReligionAttitudeChange",
+        "property": "SameReligionAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSameReligionAttitudeChangeLimit",
+        "property": "SameReligionAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSameReligionAttitudeDivisor",
+        "property": "SameReligionAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iShareWarAttitudeChange",
+        "property": "ShareWarAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iShareWarAttitudeChangeLimit",
+        "property": "ShareWarAttitudeChangeLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iShareWarAttitudeDivisor",
+        "property": "ShareWarAttitudeDivisor",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSpaceVictoryWeight",
+        "property": "SpaceVictoryWeight",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTechTradeKnownPercent",
+        "property": "TechTradeKnownPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iVassalPowerModifier",
+        "property": "VassalPowerModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWarmongerRespect",
+        "property": "WarmongerRespect",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWonderConstructRand",
+        "property": "WonderConstructRand",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWorseRankDifferenceAttitudeChange",
+        "property": "WorseRankDifferenceAttitudeChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "FavoriteCivic",
+        "property": "FavoriteCivic",
+        "kind": "ref",
+        "target": "CivicInfo"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TraitInfo",
+    "definition": "TraitDef",
+    "mod": "peoples",
+    "fields": [
+      {
+        "source": "BonusHappinessChanges",
+        "property": "BonusHappinessChanges",
+        "kind": "mapInt",
+        "target": "BonusInfo",
+        "key": "BonusType",
+        "value": "iHappinessChange"
+      },
+      {
+        "source": "CommerceChanges",
+        "property": "CommerceChanges",
+        "kind": "commerce"
+      },
+      {
+        "source": "CommerceModifiers",
+        "property": "CommerceModifiers",
+        "kind": "commerce"
+      },
+      {
+        "source": "ExtraYieldThresholds",
+        "property": "ExtraYieldThresholds",
+        "kind": "yield"
+      },
+      {
+        "source": "FreePromotionUnitCombatTypes",
+        "property": "CombatTypePromotions",
+        "kind": "combatPromotions",
+        "target": "PromotionInfo",
+        "valueTarget": "UnitCombatInfo"
+      },
+      {
+        "source": "ShortDescription",
+        "property": "ShortDescription",
+        "kind": "text"
+      },
+      {
+        "source": "TradeYieldModifiers",
+        "property": "TradeYieldModifiers",
+        "kind": "yield"
+      },
+      {
+        "source": "YieldChanges",
+        "property": "YieldChanges",
+        "kind": "yield"
+      },
+      {
+        "source": "bExtraCultureLevel",
+        "property": "ExtraCultureLevel",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNonStateReligionCommerce",
+        "property": "NonStateReligionCommerce",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bUpgradeAnywhere",
+        "property": "UpgradeAnywhere",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iDomesticGreatGeneralRateModifier",
+        "property": "DomesticGreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatGeneralRateModifier",
+        "property": "GreatGeneralRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatPeopleRateModifier",
+        "property": "GreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHappiness",
+        "property": "Happiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealth",
+        "property": "Health",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLevelExperienceModifier",
+        "property": "ExperienceThresholdPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxAnarchy",
+        "property": "MaximumAnarchyTurns",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxGlobalBuildingProductionModifier",
+        "property": "WorldWonderProductionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxPlayerBuildingProductionModifier",
+        "property": "NationalWonderProductionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMaxTeamBuildingProductionModifier",
+        "property": "TeamWonderProductionPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUpkeepModifier",
+        "property": "UpkeepModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ProcessInfo",
+    "definition": "ProcessDef",
+    "mod": "economy",
+    "fields": [
+      {
+        "source": "ProductionToCommerceModifiers",
+        "property": "ProductionToCommerceModifiers",
+        "kind": "commerce"
+      }
+    ],
+    "requirements": [
+      {
+        "source": "TechPrereq",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "UpkeepInfo",
+    "definition": "UpkeepDef",
+    "mod": "government",
+    "fields": [
+      {
+        "source": "iCityPercent",
+        "property": "CityPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPopulationPercent",
+        "property": "PopulationPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "DomainInfo",
+    "definition": "DomainDef",
+    "mod": "military",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitAIInfo",
+    "definition": "UnitAiDef",
+    "mod": "military",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "InvisibleInfo",
+    "definition": "InvisibilityDef",
+    "mod": "military",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "SpecialBuildingInfo",
+    "definition": "BuildingCategoryDef",
+    "mod": "cities",
+    "fields": [
+      {
+        "source": "ObsoleteTech",
+        "property": "ObsoleteTech",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "ProductionTraits",
+        "property": "TraitProductionModifiers",
+        "kind": "mapInt",
+        "target": "TraitInfo",
+        "key": "ProductionTraitType",
+        "value": "iProductionTrait"
+      },
+      {
+        "source": "TechPrereqAnyone",
+        "property": "TechPrereqAnyone",
+        "kind": "ref",
+        "target": "TechInfo"
+      },
+      {
+        "source": "bValid",
+        "property": "Valid",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": [
+      {
+        "source": "TechPrereq",
+        "kind": "tech",
+        "target": "TechInfo",
+        "mode": "all"
+      }
+    ]
+  },
+  {
+    "sourceClass": "SpecialUnitInfo",
+    "definition": "UnitCategoryDef",
+    "mod": "military",
+    "fields": [
+      {
+        "source": "CarrierUnitAIs",
+        "property": "CarrierUnitAis",
+        "kind": "mapBool",
+        "target": "UnitAIInfo",
+        "key": "UnitAIType",
+        "value": "bUnitAI"
+      },
+      {
+        "source": "bCityLoad",
+        "property": "CityLoad",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bValid",
+        "property": "Valid",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HurryInfo",
+    "definition": "HurryDef",
+    "mod": "cities",
+    "fields": [
+      {
+        "source": "bAnger",
+        "property": "Anger",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iGoldPerProduction",
+        "property": "GoldPerProduction",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iProductionPerPopulation",
+        "property": "ProductionPerPopulation",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GoodyInfo",
+    "definition": "GoodyDef",
+    "mod": "world",
+    "fields": [
+      {
+        "source": "BarbarianClass",
+        "property": "BarbarianUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "UnitClass",
+        "property": "GrantedUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "bBad",
+        "property": "Bad",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bTech",
+        "property": "Tech",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iBarbarianUnitProb",
+        "property": "BarbarianUnitProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDamagePrereq",
+        "property": "DamagePrereq",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iExperience",
+        "property": "Experience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGold",
+        "property": "Gold",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldRand1",
+        "property": "GoldRand1",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldRand2",
+        "property": "GoldRand2",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHealing",
+        "property": "Healing",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMapOffset",
+        "property": "MapOffset",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMapProb",
+        "property": "MapProbability",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMapRange",
+        "property": "MapRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iMinBarbarians",
+        "property": "MinBarbarians",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameOptionInfo",
+    "definition": "GameOptionDef",
+    "mod": "foundation",
+    "fields": [
+      {
+        "source": "bDefault",
+        "property": "Default",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bVisible",
+        "property": "Visible",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ReligionInfo",
+    "definition": "ReligionIdentityDef",
+    "mod": "foundation",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CorporationInfo",
+    "definition": "CorporationIdentityDef",
+    "mod": "foundation",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "VictoryInfo",
+    "definition": "VictoryIdentityDef",
+    "mod": "foundation",
+    "fields": [],
+    "requirements": []
+  },
+  {
+    "sourceClass": "OutcomeInfo",
+    "definition": "OutcomeDef",
+    "mod": "military",
+    "fields": [
+      { "source": "Message", "property": "Message", "kind": "text" },
+      { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
+      { "source": "bFriendlyTerritory", "property": "FriendlyTerritory", "kind": "bool", "default": true },
+      { "source": "bNeutralTerritory", "property": "NeutralTerritory", "kind": "bool", "default": true },
+      { "source": "bHostileTerritory", "property": "HostileTerritory", "kind": "bool", "default": true },
+      { "source": "bBarbarianTerritory", "property": "BarbarianTerritory", "kind": "bool", "default": false },
+      { "source": "bCity", "property": "City", "kind": "bool", "default": false },
+      { "source": "bNotCity", "property": "NotCity", "kind": "bool", "default": false },
+      { "source": "bToCoastalCity", "property": "ToCoastalCity", "kind": "bool", "default": false },
+      { "source": "ExtraChancePromotions", "property": "PromotionChanceChanges", "kind": "mapInt", "target": "PromotionInfo" }
+    ],
+    "requirements": [
+      { "source": "PrereqTech", "kind": "tech", "target": "TechInfo", "mode": "all" },
+      { "source": "PrereqCivic", "kind": "civic", "target": "CivicInfo", "mode": "all" },
+      { "source": "PrereqBuildings", "kind": "building", "target": "BuildingInfo", "mode": "all" }
+    ]
+  },
+  {
+    "sourceClass": "MissionInfo",
+    "definition": "MissionDef",
+    "mod": "military",
+    "fields": [
+      { "source": "iTime", "property": "Time", "kind": "int", "default": 0 },
+      { "source": "bTarget", "property": "Target", "kind": "bool", "default": false },
+      { "source": "bBuild", "property": "Build", "kind": "bool", "default": false },
+      { "source": "bVisible", "property": "Visible", "kind": "bool", "default": false }
+    ],
+    "requirements": []
+  }
+]

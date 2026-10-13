@@ -1,0 +1,551 @@
+[
+  {
+    "anarchyPercent": 100,
+    "barbPercent": 100,
+    "buildPercent": 80,
+    "constructPercent": 88,
+    "createPercent": 88,
+    "culturePercent": 65,
+    "era": null,
+    "featureProductionPercent": 88,
+    "goldModifier": 110,
+    "goldenAgePercent": 100,
+    "greatPeoplePercent": 160,
+    "growthPercent": 55,
+    "help": "Gamespeed Normal Blitz",
+    "hurryConscriptAngerPercent": 100,
+    "hurryPercent": 39,
+    "icon": "",
+    "id": "foundation:gamespeed_blitz",
+    "improvementPercent": 80,
+    "inflationOffset": -110,
+    "inflationPercent": 25,
+    "name": "Blitz",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 42,
+    "scalingPercents": {
+      "default": 40
+    },
+    "strategy": "",
+    "trainPercent": 165,
+    "turnIncrements": [
+      {
+        "months": 1800,
+        "turns": 9
+      },
+      {
+        "months": 540,
+        "turns": 70
+      },
+      {
+        "months": 240,
+        "turns": 91
+      },
+      {
+        "months": 144,
+        "turns": 85
+      },
+      {
+        "months": 48,
+        "turns": 90
+      },
+      {
+        "months": 12,
+        "turns": 95
+      },
+      {
+        "months": 12,
+        "turns": 95
+      },
+      {
+        "months": 24,
+        "turns": 32
+      },
+      {
+        "months": 36,
+        "turns": 32
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 88,
+    "unitGreatWorkPercent": 88,
+    "unitHurryPercent": 88,
+    "unitTradePercent": 88,
+    "unsupported": [],
+    "victoryDelayPercent": 100
+  },
+  {
+    "anarchyPercent": 300,
+    "barbPercent": 300,
+    "buildPercent": 240,
+    "constructPercent": 264,
+    "createPercent": 264,
+    "culturePercent": 195,
+    "era": null,
+    "featureProductionPercent": 264,
+    "goldModifier": 115,
+    "goldenAgePercent": 300,
+    "greatPeoplePercent": 480,
+    "growthPercent": 165,
+    "help": "Experience the full sweep of time when you choose this speed.  The game is balanced to take longer but still feel like a normal game.",
+    "hurryConscriptAngerPercent": 300,
+    "hurryPercent": 13,
+    "icon": "",
+    "id": "foundation:gamespeed_epic",
+    "improvementPercent": 240,
+    "inflationOffset": -330,
+    "inflationPercent": 8,
+    "name": "Epic",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 126,
+    "scalingPercents": {
+      "default": 170
+    },
+    "strategy": "",
+    "trainPercent": 495,
+    "turnIncrements": [
+      {
+        "months": 600,
+        "turns": 29
+      },
+      {
+        "months": 180,
+        "turns": 210
+      },
+      {
+        "months": 84,
+        "turns": 260
+      },
+      {
+        "months": 48,
+        "turns": 256
+      },
+      {
+        "months": 24,
+        "turns": 80
+      },
+      {
+        "months": 12,
+        "turns": 200
+      },
+      {
+        "months": 4,
+        "turns": 570
+      },
+      {
+        "months": 6,
+        "turns": 76
+      },
+      {
+        "months": 12,
+        "turns": 118
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 264,
+    "unitGreatWorkPercent": 264,
+    "unitHurryPercent": 264,
+    "unitTradePercent": 264,
+    "unsupported": [],
+    "victoryDelayPercent": 300
+  },
+  {
+    "anarchyPercent": 800,
+    "barbPercent": 800,
+    "buildPercent": 640,
+    "constructPercent": 704,
+    "createPercent": 704,
+    "culturePercent": 520,
+    "era": null,
+    "featureProductionPercent": 704,
+    "goldModifier": 120,
+    "goldenAgePercent": 800,
+    "greatPeoplePercent": 1280,
+    "growthPercent": 440,
+    "help": "Expect to spend all of time completing these games!",
+    "hurryConscriptAngerPercent": 800,
+    "hurryPercent": 5,
+    "icon": "",
+    "id": "foundation:gamespeed_eternity",
+    "improvementPercent": 640,
+    "inflationOffset": -880,
+    "inflationPercent": 3,
+    "name": "Eternity",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 336,
+    "scalingPercents": {
+      "default": 880
+    },
+    "strategy": "",
+    "trainPercent": 1320,
+    "turnIncrements": [
+      {
+        "months": 240,
+        "turns": 60
+      },
+      {
+        "months": 72,
+        "turns": 580
+      },
+      {
+        "months": 36,
+        "turns": 300
+      },
+      {
+        "months": 24,
+        "turns": 429
+      },
+      {
+        "months": 18,
+        "turns": 680
+      },
+      {
+        "months": 6,
+        "turns": 720
+      },
+      {
+        "months": 3,
+        "turns": 264
+      },
+      {
+        "months": 1,
+        "turns": 1260
+      },
+      {
+        "months": 3,
+        "turns": 248
+      },
+      {
+        "months": 6,
+        "turns": 258
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 704,
+    "unitGreatWorkPercent": 704,
+    "unitHurryPercent": 704,
+    "unitTradePercent": 704,
+    "unsupported": [],
+    "victoryDelayPercent": 800
+  },
+  {
+    "anarchyPercent": 400,
+    "barbPercent": 400,
+    "buildPercent": 320,
+    "constructPercent": 352,
+    "createPercent": 352,
+    "culturePercent": 260,
+    "era": null,
+    "featureProductionPercent": 352,
+    "goldModifier": 120,
+    "goldenAgePercent": 400,
+    "greatPeoplePercent": 640,
+    "growthPercent": 220,
+    "help": "This extremely long game speed will allow almost an entire normal game\u0027s worth of turns for each era.",
+    "hurryConscriptAngerPercent": 400,
+    "hurryPercent": 10,
+    "icon": "",
+    "id": "foundation:gamespeed_marathon",
+    "improvementPercent": 320,
+    "inflationOffset": -440,
+    "inflationPercent": 6,
+    "name": "Marathon",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 168,
+    "scalingPercents": {
+      "default": 250
+    },
+    "strategy": "",
+    "trainPercent": 660,
+    "turnIncrements": [
+      {
+        "months": 480,
+        "turns": 38
+      },
+      {
+        "months": 132,
+        "turns": 282
+      },
+      {
+        "months": 60,
+        "turns": 360
+      },
+      {
+        "months": 36,
+        "turns": 340
+      },
+      {
+        "months": 12,
+        "turns": 360
+      },
+      {
+        "months": 3,
+        "turns": 760
+      },
+      {
+        "months": 6,
+        "turns": 130
+      },
+      {
+        "months": 6,
+        "turns": 52
+      },
+      {
+        "months": 12,
+        "turns": 78
+      }
+    ],
+    "unitDiscoverPercent": 352,
+    "unitGreatWorkPercent": 352,
+    "unitHurryPercent": 352,
+    "unitTradePercent": 352,
+    "unsupported": [],
+    "victoryDelayPercent": 400
+  },
+  {
+    "anarchyPercent": 200,
+    "barbPercent": 200,
+    "buildPercent": 160,
+    "constructPercent": 176,
+    "createPercent": 176,
+    "culturePercent": 130,
+    "era": null,
+    "featureProductionPercent": 176,
+    "goldModifier": 115,
+    "goldenAgePercent": 200,
+    "greatPeoplePercent": 320,
+    "growthPercent": 110,
+    "help": "This is the traditional game speed for Civ.",
+    "hurryConscriptAngerPercent": 200,
+    "hurryPercent": 19,
+    "icon": "",
+    "id": "foundation:gamespeed_normal",
+    "improvementPercent": 160,
+    "inflationOffset": -220,
+    "inflationPercent": 12,
+    "name": "Normal",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 84,
+    "scalingPercents": {
+      "default": 85
+    },
+    "strategy": "",
+    "trainPercent": 330,
+    "turnIncrements": [
+      {
+        "months": 900,
+        "turns": 18
+      },
+      {
+        "months": 276,
+        "turns": 140
+      },
+      {
+        "months": 120,
+        "turns": 182
+      },
+      {
+        "months": 72,
+        "turns": 170
+      },
+      {
+        "months": 24,
+        "turns": 180
+      },
+      {
+        "months": 6,
+        "turns": 380
+      },
+      {
+        "months": 12,
+        "turns": 93
+      },
+      {
+        "months": 24,
+        "turns": 36
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 176,
+    "unitGreatWorkPercent": 176,
+    "unitHurryPercent": 176,
+    "unitTradePercent": 176,
+    "unsupported": [],
+    "victoryDelayPercent": 200
+  },
+  {
+    "anarchyPercent": 150,
+    "barbPercent": 150,
+    "buildPercent": 120,
+    "constructPercent": 132,
+    "createPercent": 132,
+    "culturePercent": 97,
+    "era": null,
+    "featureProductionPercent": 132,
+    "goldModifier": 135,
+    "goldenAgePercent": 150,
+    "greatPeoplePercent": 240,
+    "growthPercent": 83,
+    "help": "Choose this for a game where everything happens a bit quicker.  The game will be faster but is balanced to still feel like a normal game.",
+    "hurryConscriptAngerPercent": 150,
+    "hurryPercent": 26,
+    "icon": "",
+    "id": "foundation:gamespeed_quick",
+    "improvementPercent": 120,
+    "inflationOffset": -165,
+    "inflationPercent": 17,
+    "name": "Quick",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 63,
+    "scalingPercents": {
+      "default": 67
+    },
+    "strategy": "",
+    "trainPercent": 247,
+    "turnIncrements": [
+      {
+        "months": 1200,
+        "turns": 14
+      },
+      {
+        "months": 360,
+        "turns": 105
+      },
+      {
+        "months": 168,
+        "turns": 130
+      },
+      {
+        "months": 96,
+        "turns": 128
+      },
+      {
+        "months": 30,
+        "turns": 140
+      },
+      {
+        "months": 8,
+        "turns": 147
+      },
+      {
+        "months": 8,
+        "turns": 141
+      },
+      {
+        "months": 18,
+        "turns": 48
+      },
+      {
+        "months": 24,
+        "turns": 46
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 132,
+    "unitGreatWorkPercent": 132,
+    "unitHurryPercent": 132,
+    "unitTradePercent": 132,
+    "unsupported": [],
+    "victoryDelayPercent": 110
+  },
+  {
+    "anarchyPercent": 600,
+    "barbPercent": 600,
+    "buildPercent": 480,
+    "constructPercent": 528,
+    "createPercent": 528,
+    "culturePercent": 390,
+    "era": null,
+    "featureProductionPercent": 528,
+    "goldModifier": 120,
+    "goldenAgePercent": 600,
+    "greatPeoplePercent": 960,
+    "growthPercent": 330,
+    "help": "This extremely slow game speed will allow games that can last weeks or even months!",
+    "hurryConscriptAngerPercent": 600,
+    "hurryPercent": 7,
+    "icon": "",
+    "id": "foundation:gamespeed_snail",
+    "improvementPercent": 480,
+    "inflationOffset": -660,
+    "inflationPercent": 4,
+    "name": "Snail",
+    "pedia": "",
+    "requirements": null,
+    "researchPercent": 252,
+    "scalingPercents": {
+      "default": 440
+    },
+    "strategy": "",
+    "trainPercent": 990,
+    "turnIncrements": [
+      {
+        "months": 300,
+        "turns": 59
+      },
+      {
+        "months": 96,
+        "turns": 410
+      },
+      {
+        "months": 36,
+        "turns": 560
+      },
+      {
+        "months": 24,
+        "turns": 510
+      },
+      {
+        "months": 12,
+        "turns": 160
+      },
+      {
+        "months": 6,
+        "turns": 420
+      },
+      {
+        "months": 2,
+        "turns": 1056
+      },
+      {
+        "months": 4,
+        "turns": 228
+      },
+      {
+        "months": 6,
+        "turns": 196
+      },
+      {
+        "months": 12,
+        "turns": 1
+      }
+    ],
+    "unitDiscoverPercent": 528,
+    "unitGreatWorkPercent": 528,
+    "unitHurryPercent": 528,
+    "unitTradePercent": 528,
+    "unsupported": [],
+    "victoryDelayPercent": 600
+  }
+]

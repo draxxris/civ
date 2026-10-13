@@ -1,0 +1,230 @@
+[
+  {
+    "record": "military:bear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:bengaltiger",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:boar",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:bull",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_bear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_bengaltiger",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_boar",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_bull",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_cave_lion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_cavebear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_cheetah",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_direwolf",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_elephant",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_lion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_panther",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_polarbear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_ram",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_siberiantiger",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_stag",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_stallion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:captured_wolf",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:cave_lion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:cavebear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:cheetah",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:direwolf",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:elephant",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:lion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:panther",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:polarbear",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:siberiantiger",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:stag",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:stallion",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:wild_ram",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "military:wolf",
+    "field": "bUnitToCity",
+    "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",
+    "resolution": "Absent boolean define defaults to false; policy key is retained."
+  },
+  {
+    "record": "peoples:leader_charles_martel",
+    "field": "FavoriteCivic",
+    "sourceValue": "CIVIC_NATIONHOOD",
+    "resolution": "Native missing-info sentinel; optional reference becomes null. No guessed alias."
+  },
+  {
+    "record": "peoples:leader_genseric",
+    "field": "FavoriteCivic",
+    "sourceValue": "CIVIC_VASSALAGE",
+    "resolution": "Native missing-info sentinel; optional reference becomes null. No guessed alias."
+  },
+  {
+    "record": "peoples:leader_thrasamund",
+    "field": "FavoriteCivic",
+    "sourceValue": "CIVIC_VASSALAGE",
+    "resolution": "Native missing-info sentinel; optional reference becomes null. No guessed alias."
+  },
+  {
+    "record": "peoples:venezia",
+    "field": "DerivativeCiv",
+    "sourceValue": "CIVILIZATION_ROMAN",
+    "resolution": "Native missing-info sentinel; optional reference becomes null. No guessed alias."
+  }
+]

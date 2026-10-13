@@ -49,7 +49,7 @@ public static class IdMapping
         {
             foreach (var family in classes.Split(' ', StringSplitOptions.RemoveEmptyEntries)) result.Add(family, mod);
         }
-        Assign("foundation", "YieldInfo CommerceInfo EraInfo GameSpeedInfo HandicapInfo WorldInfo CultureLevelInfo SpecialistInfo CalendarInfo TurnTimerInfo GameOptionInfo PlayerOptionInfo MPOptionInfo ForceControlInfo GraphicOptionInfo ControlInfo InterfaceModeInfo CityTabInfo AdvisorInfo EmphasizeInfo MonthInfo SeasonInfo CameraInfo LandscapeInfo PlayerColorInfo ConceptInfo NewConceptInfo SourceConceptInfo InterfaceArtInfo MiscArtInfo CursorInfo AttachableInfo EffectInfo EntityEventInfo MovieArtInfo TutorialInfo QuestInfo");
+        Assign("foundation", "YieldInfo CommerceInfo EraInfo GameSpeedInfo HandicapInfo WorldInfo CultureLevelInfo SpecialistInfo CalendarInfo TurnTimerInfo GameOptionInfo PlayerOptionInfo MPOptionInfo ForceControlInfo GraphicOptionInfo ControlInfo InterfaceModeInfo CityTabInfo AdvisorInfo EmphasizeInfo MonthInfo SeasonInfo CameraInfo LandscapeInfo PlayerColorInfo ConceptInfo NewConceptInfo SourceConceptInfo InterfaceArtInfo MiscArtInfo CursorInfo AttachableInfo EffectInfo EntityEventInfo MovieArtInfo TutorialInfo QuestInfo ReligionInfo CorporationInfo VictoryInfo");
         Assign("world", "TerrainInfo FeatureInfo BonusInfo BonusClassInfo ImprovementInfo RouteInfo BuildInfo RiverInfo MapInfo MapSwitchInfo ClimateInfo SeaLevelInfo GoodyInfo TerrainArtInfo FeatureArtInfo BonusArtInfo ImprovementArtInfo");
         Assign("research", "TechInfo");
         Assign("economy", "ProcessInfo");
@@ -57,12 +57,11 @@ public static class IdMapping
         Assign("military", "UnitInfo UnitClassInfo UnitCombatInfo UnitAIInfo SpecialUnitInfo PromotionInfo DomainInfo InvisibleInfo CommandInfo MissionInfo OutcomeInfo UnitArtInfo");
         Assign("government", "CivicInfo CivicOptionInfo UpkeepInfo");
         Assign("peoples", "CivilizationInfo LeaderHeadInfo TraitInfo CivilizationArtInfo LeaderheadArtInfo UnitArtStyleTypeInfo");
-        Assign("religion", "ReligionInfo");
-        Assign("corporations", "CorporationInfo");
+        // v1 reserves unavailable mechanic identities in foundation. Later rule mods consume these stable ids.
         Assign("diplomacy", "DiplomacyInfo AttitudeInfo MemoryInfo DenialInfo VoteInfo VoteSourceInfo");
         Assign("espionage", "EspionageMissionInfo");
         Assign("events", "EventInfo EventTriggerInfo");
-        Assign("projects-victory", "ProjectInfo VictoryInfo");
+        Assign("projects-victory", "ProjectInfo");
         return result;
     }
 }

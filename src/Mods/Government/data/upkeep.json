@@ -1,0 +1,41 @@
+[
+  {
+    "cityPercent": 75,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:upkeep_high",
+    "name": "High Upkeep",
+    "pedia": "",
+    "populationPercent": 20,
+    "requirements": null,
+    "strategy": "Upkeep High Help",
+    "unsupported": []
+  },
+  {
+    "cityPercent": 35,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:upkeep_low",
+    "name": "Low Upkeep",
+    "pedia": "",
+    "populationPercent": 12,
+    "requirements": null,
+    "strategy": "Upkeep Low Help",
+    "unsupported": []
+  },
+  {
+    "cityPercent": 55,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "government:upkeep_medium",
+    "name": "Medium Upkeep",
+    "pedia": "",
+    "populationPercent": 16,
+    "requirements": null,
+    "strategy": "Upkeep Medium Help",
+    "unsupported": []
+  }
+]

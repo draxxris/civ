@@ -1,0 +1,1306 @@
+[
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an archer unit, select the archer bombard mission and then select the enemy unit to fire at.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,2",
+    "id": "military:mission_abombard",
+    "name": "Archer Bombard",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Destroys city fortifications and tile improvements.",
+    "icon": ",Art/Interface/Buttons/Actions/Airbomb.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,6",
+    "id": "military:mission_airbomb",
+    "name": "Air Bomb",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an air unit that can airbomb, select the airbomb defense mission, then click on the target city to reduce defense, or target improvement to destroy it.",
+    "icon": ",Art/Interface/Buttons/Actions/Airbomb.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,6",
+    "id": "military:mission_airbomb1",
+    "name": "Airbomb Defenses",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an air unit that can airbomb, select the airbomb building mission, then click on the target city to attempt to destroy one civil building.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,1",
+    "id": "military:mission_airbomb2",
+    "name": "Airbomb Buildings",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an air unit that can airbomb, select the airbomb production mission, then click on the target city to attempt to destroy one factory.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,1",
+    "id": "military:mission_airbomb3",
+    "name": "Airbomb Factories",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an air unit that can airbomb, select the port airbomb mission, then click on the target city to damage and attempt to sink a ship.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,1",
+    "id": "military:mission_airbomb4",
+    "name": "Port Airbomb",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an air unit that can airbomb, select the strategic airbomb mission, then click on the target city to damage the current production project.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,1",
+    "id": "military:mission_airbomb5",
+    "name": "Strategic Airbomb",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Airlifts the unit to another city.",
+    "icon": ",Art/Interface/Buttons/Actions/Airlift.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,5",
+    "id": "military:mission_airlift",
+    "name": "Airlift",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 4,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This air unit order will tell the craft to attempt interception with any incoming air attacks.",
+    "icon": ",Art/Interface/Buttons/Actions/Intercept.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,2",
+    "id": "military:mission_airpatrol",
+    "name": "Intercept",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound",
+      "iHotKeyPriority",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_airstrike",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 16,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_begin_combat",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Destroys fortifications and reduces the cities defensive bonus.",
+    "icon": ",Art/Interface/Buttons/Actions/Bombard.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,1",
+    "id": "military:mission_bombard",
+    "name": "Bombard",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Bribe the Barbarian Unit to Return Home.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,2",
+    "id": "military:mission_bribe_barbarian",
+    "name": "{color:highlight_text}Bribe Barbarian Unit{/color}",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "military:mission_build",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Butchers a subdued animal, gives more resources in friendly territory and even more in city.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,13",
+    "id": "military:mission_butcher",
+    "name": "Butcher Animal",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_captured",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 8,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit will occupy the tile it is on and adjoin it to your empire. Effects will be visible next turn.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,2",
+    "id": "military:mission_claim_territory",
+    "name": "Claim territory",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bShiftDown",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This will have the Great Person create their special building. It consumes the Great Person.",
+    "icon": "",
+    "id": "military:mission_construct",
+    "name": "Construct",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_damage",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The {color:unit_text}Spy{/color} will attempt to destroy the city\u0027s current production.",
+    "icon": ",Art/Interface/Buttons/Actions/Destroy.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,1",
+    "id": "military:mission_destroy",
+    "name": "Destroy Production",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_die",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Kill adjacent Spy",
+    "icon": ",Art/Interface/Buttons/Actions/Bombard.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,1",
+    "id": "military:mission_die_animation",
+    "name": "Kill Nearby Spy",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 16,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This will have the Great Person help research a technology. It consumes the Great Person.",
+    "icon": ",Art/Interface/Buttons/Actions/Discover.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,1",
+    "id": "military:mission_discover",
+    "name": "Discover Technology",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_end_combat",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16",
+    "id": "military:mission_espionage",
+    "name": "Perform Espionage Mission",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 14,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,3",
+    "id": "military:mission_espionage_sleep",
+    "name": "Gather Intel",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select a fighter unit, select the fighter engagement mission and then select the enemy unit to attack.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,3",
+    "id": "military:mission_fengage",
+    "name": "Fighter Engagement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit \u0022digs in\u0022 to better withstand enemy attack. A unit gets a 5% defensive bonus for each turn it is fortified, to a maximum bonus of 25%.",
+    "icon": ",Art/Interface/Buttons/Actions/Fortify.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,1",
+    "id": "military:mission_fortify",
+    "name": "Fortify",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "HotKeyAlt",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order causes the {color:unit_text}Settler{/color} to build a city in its current location. The {color:unit_text}Settler{/color} is consumed in the process.",
+    "icon": ",Art/Interface/Buttons/Actions/FoundCity.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,4",
+    "id": "military:mission_found",
+    "name": "Build City",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound",
+      "iHotKeyPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will consume one or more Great People (of different types) and initiate a Golden Age (extra {icon:production}, {icon:commerce}, {icon:greatpeople}, no Anarchy).",
+    "icon": ",Art/Interface/Buttons/Actions/GoldenAge.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,4",
+    "id": "military:mission_golden_age",
+    "name": "Start a Golden Age",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Embark on an Diplomatic Mission to Permanently improve Foreign relations. It consumes the Great Person.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,2",
+    "id": "military:mission_goodwill",
+    "name": "{color:highlight_text}Goodwill Diplomacy{/color}",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select a city to send this unit to. The city does not need to be inside the current Viewport.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,14",
+    "id": "military:mission_goto",
+    "name": "Go To City",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "HotKey",
+      "bShiftDown"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Turns the Great General into a Field Commander, which loses its abilites to join cities, units, or construct wonders, but gives it the ability to earn experience, gain promotions, and lead units in the field.",
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/Atlases/Source_Promotions_Atlas.dds,1,15",
+    "id": "military:mission_great_commander",
+    "name": "Field Commander",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 16,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will have the Great Artist create a Great Work in the city they are currently in. It consumes the Great Person.",
+    "icon": ",Art/Interface/Buttons/Actions/GreatWork.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,3",
+    "id": "military:mission_great_work",
+    "name": "Create Great Work",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit remains inactive until it reaches full strength.",
+    "icon": ",Art/Interface/Buttons/Actions/Heal.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,2",
+    "id": "military:mission_heal",
+    "name": "Fortify Until Healed",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Consumes a Captured Animal unit and spawns the matching animal resource on the target tile.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,15",
+    "id": "military:mission_herd",
+    "name": "Herd Animals",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will hurry production on the city\u0027s current effort. It consumes the Great Person.",
+    "icon": ",Art/Interface/Buttons/Actions/Hurry.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,3",
+    "id": "military:mission_hurry",
+    "name": "Hurry Production",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will increase the cities food supply. It consumes the unit.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,14",
+    "id": "military:mission_hurry_food",
+    "name": "Hurry Food",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_idle",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will have the Spy infiltrate a foreign city, providing you Espionage Points against the target player. It consumes the Spy.",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,16",
+    "id": "military:mission_infiltrate",
+    "name": "Infiltrate Player\u0027s City",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Allows the unit to remove all non-state religions.",
+    "icon": ",Art/Interface/Buttons/Buildings/Temple_Jewish.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,15",
+    "id": "military:mission_inquisition",
+    "name": "Perform Inquisition",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bShiftDown",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will make the Great Person join the city as a super specialist. It will consume the Great Person.",
+    "icon": "",
+    "id": "military:mission_join",
+    "name": "Join City",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/TechTree/Nationalism.dds,Art/Interface/Buttons/Warlords_Atlas_1.dds,5,10",
+    "id": "military:mission_lead",
+    "name": "Lead Troops as a Warlord",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 14,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Set your unit to move to a specific plot",
+    "icon": "",
+    "id": "military:mission_move_to",
+    "name": "Move To",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": true,
+    "time": 4,
+    "unsupported": [
+      "Waypoint"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit moves until an enemy unit of the same type enters its visibility range.",
+    "icon": "",
+    "id": "military:mission_move_to_sentry",
+    "name": "Move and Sentry",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": true,
+    "time": 4,
+    "unsupported": [
+      "Waypoint"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Set your unit to move to a unit",
+    "icon": "",
+    "id": "military:mission_move_to_unit",
+    "name": "Move To Unit",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 4,
+    "unsupported": [
+      "Waypoint",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_multi_deselect",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_multi_select",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Drops a nuclear device onto the selected space.",
+    "icon": ",Art/Interface/Buttons/Actions/Nuke.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,2",
+    "id": "military:mission_nuke",
+    "name": "Plant Nuclear Device",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 40,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Paradrops to a specified location. The mission is subject to interception.",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,5,16",
+    "id": "military:mission_paradrop",
+    "name": "Paradrop",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 1,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit destroys an improvement in the tile it occupies.",
+    "icon": ",Art/Interface/Buttons/Actions/Pillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,2",
+    "id": "military:mission_pillage",
+    "name": "Pillage",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit disrupts the trade route so that no intercontinental trade can pass through the blockaded tile",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,14",
+    "id": "military:mission_plunder",
+    "name": "Blockade",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Pretargets a nuclear device onto the selected space.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,2",
+    "id": "military:mission_pretarget_nuke",
+    "name": "Pretarget Nuke",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Mission Range Attack Help",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13",
+    "id": "military:mission_range_attack",
+    "name": "Mission Range Attack",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Select an artillery unit, select the bombard mission, then click on the plot to bombard.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,13",
+    "id": "military:mission_rbombard",
+    "name": "Ranged Bombardment",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Clears the fog of war from around the selected space for one turn.",
+    "icon": ",Art/Interface/Buttons/Actions/Recon.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,6",
+    "id": "military:mission_recon",
+    "name": "Recon",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order causes the worker to build a road (or railroad) to the location selected. The worker will follow the shortest path to the location. The worker wakes when it has completed the assignment.",
+    "icon": "",
+    "id": "military:mission_route_to",
+    "name": "Route To",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": true,
+    "time": 4,
+    "unsupported": [
+      "Waypoint",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The {color:unit_text}Spy{/color} will attempt to sabotage the tile\u0027s improvement.",
+    "icon": ",Art/Interface/Buttons/Actions/Sabotage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,4",
+    "id": "military:mission_sabotage",
+    "name": "Sabotage",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will tell the unit to attack enemy ships attempting to pillage adjacent tiles",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,6,16",
+    "id": "military:mission_seapatrol",
+    "name": "Sea Patrol",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "HotKey",
+      "bCtrlDownAlt",
+      "bSound",
+      "iHotKeyPriority",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit remains inactive until an enemy unit enters its visibility range.",
+    "icon": ",Art/Interface/Buttons/Actions/Sentry.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,4",
+    "id": "military:mission_sentry",
+    "name": "Sentry",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit remains inactive until an enemy land unit enters its visibility range.",
+    "icon": ",Art/Interface/Buttons/Actions/Sentry.dds,Art/Interface/Buttons/atlases/sentry_actions.dds,3,1",
+    "id": "military:mission_sentry_land_units",
+    "name": "Sentry (Land Units)",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit remains inactive until an enemy naval unit enters its visibility range.",
+    "icon": ",Art/Interface/Buttons/Actions/Sentry.dds,Art/Interface/Buttons/atlases/sentry_actions.dds,2,1",
+    "id": "military:mission_sentry_naval_units",
+    "name": "Sentry (Naval Units)",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The unit remains inactive until it reaches full strength or an enemy unit enters its visibility range.",
+    "icon": ",Art/Interface/Buttons/Actions/Heal.dds,Art/Interface/Buttons/atlases/sentry_actions.dds,1,1",
+    "id": "military:mission_sentry_while_heal",
+    "name": "Sentry Until Healed",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Allows selection of a unit to protect and escort.",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,1",
+    "id": "military:mission_shadow",
+    "name": "Automate Protect",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Do nothing. The unit will awake and ask again for orders the next turn.",
+    "icon": ",Art/Interface/Buttons/Actions/SkipUnit.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,4",
+    "id": "military:mission_skip",
+    "name": "Skip Turn",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "HotKey",
+      "HotKeyAlt",
+      "iHotKeyPriority",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Order the unit to sleep until activated by the player",
+    "icon": ",Art/Interface/Buttons/Actions/Sleep.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,4",
+    "id": "military:mission_sleep",
+    "name": "Sleep",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "HotKeyAlt",
+      "bSound",
+      "iOrderPriority"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will consume the {color:unit_text}Missionary{/color} unit but spread their religion to the city.",
+    "icon": "",
+    "id": "military:mission_spread",
+    "name": "Spread Religion",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 16,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will consume the {color:unit_text}Executive{/color} unit but expand their corporation into the city.",
+    "icon": "",
+    "id": "military:mission_spread_corporation",
+    "name": "Expand Corporation",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 16,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "The {color:unit_text}Spy{/color} will attempt to steal plans, which will reveal all of the target civilization\u0027s units.",
+    "icon": ",Art/Interface/Buttons/Actions/StealPlans.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,5",
+    "id": "military:mission_steal_plans",
+    "name": "Steal Plans",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 20,
+    "unsupported": [
+      "EntityEventType",
+      "HotKey",
+      "bShiftDown",
+      "bSound"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Build Improvement",
+    "icon": "",
+    "id": "military:mission_surrender",
+    "name": "Build Improvement",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 10,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": false
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "This order will have the Great Merchant conduct a trade mission with a foreign city. The amount of gold created is relative to the size of the city and its distance from your capital. It consumes the Great Person.",
+    "icon": ",Art/Interface/Buttons/Actions/Trade.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,3",
+    "id": "military:mission_trade",
+    "name": "Conduct Trade Mission",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 18,
+    "unsupported": [
+      "EntityEventType"
+    ],
+    "visible": true
+  },
+  {
+    "build": false,
+    "era": null,
+    "help": "Allows selection of a of the desired discovery tech. The unit will sleep until that tech becomes available to research, and then will be consumed in researching it.",
+    "icon": ",Art/Interface/Buttons/Actions/Discover.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,1",
+    "id": "military:mission_wait_for_tech",
+    "name": "Choose Desired Discovery Tech",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "target": false,
+    "time": 0,
+    "unsupported": [
+      "EntityEventType",
+      "bSound"
+    ],
+    "visible": true
+  }
+]

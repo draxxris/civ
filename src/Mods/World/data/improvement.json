@@ -1,0 +1,6113 @@
+[
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 15,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildCityRuins.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,9",
+    "id": "world:city_ruins",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "City Ruins",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tRuins are the remains of human-made architecture: structures that were once complete, as time went by, have fallen into a state of partial or complete disrepair, due to lack of maintenance or deliberate acts of destruction. Disasters, war and depopulation are the most common root causes, with many structures becoming progressively derelict over time due to long-term weathering and scavenging. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 15,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildCityRuins.dds,Art/Interface/Buttons/NextWar_Atlas.dds,4,4",
+    "id": "world:city_ruins_arcology",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "City Ruins",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tRuins are the remains of human-made architecture: structures that were once complete, as time went by, have fallen into a state of partial or complete disrepair, due to lack of maintenance or deliberate acts of destruction. Disasters, war and depopulation are the most common root causes, with many structures becoming progressively derelict over time due to long-term weathering and scavenging. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 0,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 0,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": true,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,10",
+    "id": "world:depleted_mine",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Depleted Mine",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Abandoned mines pose a threat to anyone who may attempt to explore them without proper knowledge and safety training. Old mines are often dangerous and can contain deadly gases. Standing water in mines from seepage or infiltration poses a significant hazard as the water can hide deep pits and trap gases below the water. Additionally, since weather may have eroded the earth and rock surrounding it, the entrance to an old mine in particular can be very dangerous. Old mine workings, caves, etc. are commonly hazardous simply due to the lack of oxygen in the air, a condition in mines known as blackdamp.",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": -1,
+      "food": -1,
+      "production": -1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": true,
+    "goodyRange": 3,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildTribalVillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,10",
+    "id": "world:goody_hut",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Tribal Village",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tHut may refer to: Hut (dwelling), a small and crude shelter. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 40,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag",
+      "WorldSoundscapeAudioScript"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {
+      "world:forest": true,
+      "world:jungle": true,
+      "world:swamp": true
+    },
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_industrial",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -100,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,11",
+    "id": "world:improvement_improvement_3factory",
+    "improvementPillage": "world:improvement_improvement_workshop",
+    "improvementUpgrade": "world:improvement_improvement_5factory",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Industry",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tEarly examples of factory-like production, where a number of individuals work cooperatively to produce goods for sale or trade, can be found as far back as ancient Greece and Rome. Modern factories, however, evolved from the concept of specialized labor, where each worker performed a single step in the overall production of an item. This specialization allows factories to increase the speed and efficiency of the manufacturing process, far surpassing earlier means of production. The development of the factory system as a means of production played a key role in the Industrial Revolution.",
+    "permanent": false,
+    "pillageGold": 60,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": "research:assembly_line",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:industrialism": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:plains": true,
+      "world:snow": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 1,
+      "food": -1,
+      "production": 4
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_modern",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -200,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,11",
+    "id": "world:improvement_improvement_5factory",
+    "improvementPillage": "world:improvement_improvement_3factory",
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Industrial Complex",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tEarly examples of factory-like production, where a number of individuals work cooperatively to produce goods for sale or trade, can be found as far back as ancient Greece and Rome. Modern factories, however, evolved from the concept of specialized labor, where each worker performed a single step in the overall production of an item. This specialization allows factories to increase the speed and efficiency of the manufacturing process, far surpassing earlier means of production. The development of the factory system as a means of production played a key role in the Industrial Revolution.",
+    "permanent": false,
+    "pillageGold": 120,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:miniaturization",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:planetary_economics": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:plains": true,
+      "world:snow": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 1,
+      "food": -1,
+      "production": 7
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:apple": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 1
+        }
+      },
+      "world:lemon": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:olives": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 1
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,9",
+    "id": "world:improvement_improvement_apple_farm",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_hybrid_forest",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Orchard",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Improvement Apple Farm Pedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:currency": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:genetics": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:globalization": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:invention": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:organic_chemistry": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {
+      "world:forest": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": -1
+    }
+  },
+  {
+    "actsAsCity": true,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 40,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 75,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,9",
+    "id": "world:improvement_improvement_bunker",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Bunker",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "Improvement Bunker Pedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:snow": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:deer": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 0
+        }
+      },
+      "world:fur": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:ivory": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 1,
+          "production": 1
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildCamp.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,7",
+    "id": "world:improvement_improvement_camp",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Camp",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tThe term camp comes from the Latin word campus, meaning \u0022field\u0022. Therefore, a campsite consists typically of open pieces of ground where a camper can pitch a tent or park a camper. More specifically a campsite is a dedicated area set aside for camping and for which often a user fee is charged. Campsites typically feature a few (but sometimes no) improvements. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:artificial_evolution": {
+        "commerce": 0,
+        "food": 2,
+        "production": 0
+      },
+      "research:automatic_weapons": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:matchlock": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {
+      "peoples:trait_nomad": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildCottage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,7",
+    "id": "world:improvement_improvement_cottage",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_hamlet",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Cottage",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tIn modern usage, a cottage is usually a modest, often cozy dwelling, typically in a rural or semi-rural location. However there are cottage-style dwellings in cities, and in places such as Canada the term exists with no connotations of size at all (cf. vicarage or hermitage). In the United Kingdom the term cottage also tends to denote rural dwellings of traditional build, although it can also be applied to dwellings of modern construction which are designed to resemble traditional ones (\u0022mock cottages\u0022) Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:organic_cities": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 10,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 2,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_modern",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,9",
+    "id": "world:improvement_improvement_desertwindmill",
+    "improvementPillage": "world:improvement_improvement_windmill",
+    "improvementUpgrade": "world:improvement_improvement_windtrap",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Windfarm",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": true,
+    "pedia": "\tA windmill is a machine which converts the energy of wind into rotational motion by means of adjustable vanes called sails or blades. The main use was originally for a grinding mill powered by the wind, reducing a solid or coarse substance into pulp or minute grains, by crushing, grinding, or pressing. Windmills have also been used to power sawmills and other industrial processes and as windpumps for obtaining fresh water from underground or for drainage of land. Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:ecology",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 20,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 4,
+      "food": 1,
+      "production": 2
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:banana": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:cannabis": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:coffee": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:corn": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:cotton": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:cow": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 1
+        }
+      },
+      "world:dye": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:horse": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": -1,
+          "production": 3
+        }
+      },
+      "world:incense": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 7,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:pig": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 1
+        }
+      },
+      "world:potato": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:rice": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:rubber": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": -1,
+          "production": 1
+        }
+      },
+      "world:sheep": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 1
+        }
+      },
+      "world:silk": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:spices": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:sugar": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:tea": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:tobacco": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 7,
+          "food": -1,
+          "production": 0
+        }
+      },
+      "world:wheat": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:wine": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": true,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_transhuman",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,9",
+    "id": "world:improvement_improvement_dome_farm",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Dome Farm",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "This high-tech enclosed farm produces food far more efficiently than a traditional farm growing plants from soil.",
+    "permanent": false,
+    "pillageGold": 90,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:vertical_farming",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:artificial_evolution": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 2,
+      "food": 5,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {
+      "world:ancienttemple": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:fossils": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 1,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,10",
+    "id": "world:improvement_improvement_exploretemple",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Dig Site",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\t This means that the ancient temple has been examined and now can be exploited.",
+    "permanent": true,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_paved": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:artificial_evolution": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "research:nanomining": {
+        "commerce": 2,
+        "food": 0,
+        "production": 1
+      },
+      "research:seismology": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:methane": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 15000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:oil": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 15000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 1
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_transhuman",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,9",
+    "id": "world:improvement_improvement_extraction_facility",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Extraction Facility",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Improvement Extraction Facility Pedia",
+    "permanent": false,
+    "pillageGold": 100,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:superstrong_alloys",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:teleportation": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:coast": true,
+      "world:ocean": true
+    },
+    "yieldChanges": {
+      "commerce": 5,
+      "food": -1,
+      "production": 5
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:corn": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:potato": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:rice": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:wheat": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": true,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildFarm.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,7",
+    "id": "world:improvement_improvement_farm",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_dome_farm",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Farm",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA farm is an area of land, including various structures, devoted primarily to the practice of producing and managing food (produce, grains, or livestock), fibres and, increasingly, fuel. It is the basic production facility in food production. Farms may be owned and operated by a single individual, family, community, corporation or a company. A farm can be a holding of any size from a fraction of a hectare to several thousand hectares. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": true,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:crop_rotation": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:genetics": {
+        "commerce": 1,
+        "food": 1,
+        "production": 0
+      },
+      "research:organic_chemistry": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:clam": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 0
+        }
+      },
+      "world:crab": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 0
+        }
+      },
+      "world:fish": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 3,
+          "production": 0
+        }
+      },
+      "world:pearls": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:shrimp": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildFishingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,7",
+    "id": "world:improvement_improvement_fishing_boats",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Fishing Boats",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA fishing vessel is a boat or ship used to catch fish in the sea, or on a lake or river. Many different kinds of vessels are used in commercial, artisanal and recreational fishing. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:artificial_evolution": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      },
+      "research:compass": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:hydroponics": {
+        "commerce": 1,
+        "food": 1,
+        "production": 0
+      },
+      "research:screw_propeller": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 48,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 20,
+    "bonusEffects": {
+      "world:banana": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:coffee": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:dye": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:gems": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:spices": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:sugar": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_renaissance",
+    "featureGrowth": 64,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 50,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,4,14",
+    "id": "world:improvement_improvement_forest_preserve",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_hybrid_forest",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Forest Preserve",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA nature reserve (natural reserve, nature preserve, natural preserve) is a protected area of importance for wildlife, flora, fauna or features of geological or other special interest, which is reserved and managed for conservation and to provide special opportunities for study or research. Nature reserves may be designated by government institutions in some countries, or by private landowners, such as charities and research institutions, regardless of nationality. Nature reserves fall into different IUCN categories depending on the level of protection afforded by local laws.Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:scientific_method",
+    "requirements": null,
+    "requiresFeature": true,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 1,
+      "food": 1,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_jumplane": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_paved": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:ecology": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {
+      "world:forest": true,
+      "world:jungle": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": true,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 20,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 50,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildFort.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,9",
+    "id": "world:improvement_improvement_fort",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Fort",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tFortifications are military constructions and buildings designed for defence in warfare and military bases. Humans have constructed defensive works for many thousands of years, in a variety of increasingly complex designs. The term is derived from the Latin fortis (\u0022strong\u0022) and facere (\u0022to make\u0022). Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:snow": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": true,
+    "advancedStartCost": 80,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 60,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 100,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,10",
+    "id": "world:improvement_improvement_future_bunker",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Command Center",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "Improvement Future Bunker Pedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:snow": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 50,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:thermal_vent": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,10",
+    "id": "world:improvement_improvement_geothermal_borehole",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Geothermal Factory",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": true,
+    "pedia": "Improvement Geothermal Borehole Pedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 1
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:planetary_economics": {
+        "commerce": 2,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 4
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": true,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,11",
+    "id": "world:improvement_improvement_groundwater_well",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Groundwater Well",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Improvement Groundwater Well Pedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:ecological_engineering": {
+        "commerce": 1,
+        "food": 1,
+        "production": 0
+      },
+      "research:hydroponics": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "research:weather_control": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:grass": true,
+      "world:marsh": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 2,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_classical",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildHamlet.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,10",
+    "id": "world:improvement_improvement_hamlet",
+    "improvementPillage": "world:improvement_improvement_cottage",
+    "improvementUpgrade": "world:improvement_improvement_village",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Hamlet",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA hamlet is usually a rural settlement which is too small to be considered a village, though sometimes the word is used for a different sort of community. The name comes from Anglo-Norman hamelet(t)e; Old French hamelet, the diminutive of Old French hamel. Another diminutive of Old French ham is possibly a cognate with similar words of Germanic origin. Compare with Dutch heem, German Heim, Swiss German cham or -kon, Old English ham and Modern English home, all derived from the Proto-Germanic *kham-. Historically, when a hamlet became large enough to justify building a church, it was then classified as a village. One example of a hamlet is a small cluster of houses surrounding a mill. Wikipedia",
+    "permanent": false,
+    "pillageGold": 60,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": "research:city_planning",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:organic_cities": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 20,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 3,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 120,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:apple": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 2,
+          "production": -1
+        }
+      },
+      "world:lemon": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": -1
+        }
+      },
+      "world:olives": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": -1
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_transhuman",
+    "featureGrowth": 64,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 100,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,9",
+    "id": "world:improvement_improvement_hybrid_forest",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Hybrid Forest",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Improvement Hybrid Forest Pedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:environmental_economics",
+    "requirements": null,
+    "requiresFeature": true,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_jumplane": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_paved": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {
+      "world:forest": true,
+      "world:jungle": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 3,
+      "food": 2,
+      "production": 3
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:banana": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:coffee": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 1,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:dye": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 1,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:gems": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:spices": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 1,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:sugar": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 1,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,11",
+    "id": "world:improvement_improvement_jungle_camp",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_forest_preserve",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Jungle Camp",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Jungle Camp",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": true,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 1,
+      "food": 1,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {
+      "peoples:trait_nomad": {
+        "commerce": 0,
+        "food": 1,
+        "production": 1
+      }
+    },
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 20,
+    "useLSystem": false,
+    "validFeatures": {
+      "world:jungle": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 48,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_medieval",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildLumberMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,7",
+    "id": "world:improvement_improvement_lumbermill",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_hybrid_forest",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Lumbermill",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA sawmill is a facility where logs are cut into boards. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:machinery",
+    "requirements": null,
+    "requiresFeature": true,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 1,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:ecology": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:logistics": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": false,
+    "validFeatures": {
+      "world:forest": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 2
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": "Art/Interface/Buttons/TerrainFeatures/Jungle.dds",
+    "id": "world:improvement_improvement_make_jungle",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Make Jungle",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:marsh": true
+    },
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 1,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:coal": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:copper": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:fossils": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:gems": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:gold": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:iron": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:lead": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:marble": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:obsidian": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:salt": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:silver": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:stone": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 1000,
+    "era": "foundation:era_ancient",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -50,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Builds/BuildMine.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,7",
+    "id": "world:improvement_improvement_mine",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_shaft_mine",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Mine",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": true,
+    "pedia": "\tMine or mines can refer to: Mining, extraction of mineral resources from the ground. Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:mining",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:iron_working": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 20,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 64,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:bauxite": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:coal": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:copper": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:fossils": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:gems": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:gold": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 7,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:iron": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:lead": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:marble": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:obsidian": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:salt": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:silver": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 6,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:stone": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:uranium": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_modern",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -100,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,10",
+    "id": "world:improvement_improvement_modern_mine",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Modern Mine",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": true,
+    "pedia": "Improvement Modern Mine Pedia",
+    "permanent": false,
+    "pillageGold": 80,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:seismology",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:nanomining": {
+        "commerce": 0,
+        "food": 0,
+        "production": 2
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 0,
+      "production": 4
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:oil": {
+        "connects": true,
+        "depletionRandomRange": 200,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": -1,
+          "production": 4
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildOffshorePlatform.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,9",
+    "id": "world:improvement_improvement_offshore_platform",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_extraction_facility",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Offshore Platform",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tAn offshore platform, also referred to as an oil platform or oil rig, is a large structure with facilities to drill wells and extract and process oil and natural gas and export the products to shore. Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:seismology": {
+        "commerce": 2,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:cow": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 1
+        }
+      },
+      "world:horse": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:pig": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 2,
+          "production": 0
+        }
+      },
+      "world:sheep": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 1,
+          "food": 2,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildPasture.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,7",
+    "id": "world:improvement_improvement_pasture",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_dome_farm",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Pasture",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tPasture is land with vegetation cover used for grazing of livestock as part of a farm, or in ranching or other unenclosed pastoral systems or used by wild animals for grazing or browsing. Prior to the advent of factory farming, pasture was the primary source of food for grazing animals such as cattle and horses. It is still used extensively, particularly in arid regions where pasture land is unsuitable for any other agricultural production. In more humid regions, pasture grazing is exploited extensively for free range and organic farming. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:crop_rotation": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:genetics": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:refrigeration": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": "Art/Interface/Buttons/TerrainFeatures/Forest.dds",
+    "id": "world:improvement_improvement_plant_forest",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Plant Forest",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:banana": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 2,
+          "production": 0
+        }
+      },
+      "world:cannabis": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:coffee": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:cotton": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:dye": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:incense": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:rubber": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:silk": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:spices": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:sugar": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": 0
+        }
+      },
+      "world:tea": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:tobacco": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildPlantation.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,9",
+    "id": "world:improvement_improvement_plantation",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_dome_farm",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Plantation",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA plantation is a large artificially established forest, farm or estate, where crops are grown for sale, often in distant markets rather than for local on-site consumption. The term plantation is informal and not precisely defined. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:crop_rotation": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:genetics": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "research:organic_chemistry": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 36,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:marble": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:obsidian": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 2
+        }
+      },
+      "world:salt": {
+        "connects": true,
+        "depletionRandomRange": 200,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:stone": {
+        "connects": true,
+        "depletionRandomRange": 200,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 3
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildQuarry.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,9",
+    "id": "world:improvement_improvement_quarry",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Quarry",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tA quarry is a type of open-pit mine from which rock or minerals are extracted. Quarries are generally used for extracting building materials, such as dimension stone, construction aggregate, riprap, sand, and gravel. They are often colocated with concrete and asphalt plants due to the requirement for large amounts of aggregate in those materials. The word quarry can include underground quarrying for stone, such as Bath stone. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:androids": {
+        "commerce": 1,
+        "food": 0,
+        "production": 2
+      },
+      "research:architecture": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:explosives": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:seismology": {
+        "commerce": 1,
+        "food": 0,
+        "production": 2
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 50,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "{icon:bullet}\u002B50% Air Defense",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,10",
+    "id": "world:improvement_improvement_sea_air_defense",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Aquatic Anti-Air Defense",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": " ",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:coast": true,
+      "world:ocean": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 0,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 50,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,10",
+    "id": "world:improvement_improvement_sea_fort",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Aquatic Forcefield",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": " ",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:coast": true,
+      "world:ocean": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 48,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:bauxite": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:coal": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:copper": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:fossils": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:gems": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:gold": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 5,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:iron": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:lead": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 1
+        }
+      },
+      "world:marble": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:obsidian": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:salt": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:silver": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 4,
+          "food": 0,
+          "production": -1
+        }
+      },
+      "world:stone": {
+        "connects": false,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 10000,
+        "makesValid": false,
+        "yields": {
+          "commerce": 0,
+          "food": 0,
+          "production": 0
+        }
+      },
+      "world:uranium": {
+        "connects": true,
+        "depletionRandomRange": 100,
+        "discoveryRandomRange": 10000,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_renaissance",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -100,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,10",
+    "id": "world:improvement_improvement_shaft_mine",
+    "improvementPillage": "world:improvement_improvement_mine",
+    "improvementUpgrade": "world:improvement_improvement_modern_mine",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Shaft Mine",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": true,
+    "pedia": " ",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:metallurgy",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 0,
+      "production": 3
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,9",
+    "id": "world:improvement_improvement_submerged_town",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Submerged Town",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": " ",
+    "permanent": false,
+    "pillageGold": 50,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:teleportation": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:coast": true,
+      "world:ocean": true
+    },
+    "yieldChanges": {
+      "commerce": 4,
+      "food": 2,
+      "production": 2
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/baseterrain/grassland.dds",
+    "id": "world:improvement_improvement_terraform_grass",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Terraform into Grass",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/baseterrain/plains.dds",
+    "id": "world:improvement_improvement_terraform_plains",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Terraform towards Plains",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:marsh": true,
+      "world:tundra": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/baseterrain/tundra.dds",
+    "id": "world:improvement_improvement_terraform_tundra",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Terraform towards Tundra",
+    "noFreshWater": false,
+    "outsideBorders": true,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:snow": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_renaissance",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -100,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildTown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,10",
+    "id": "world:improvement_improvement_town",
+    "improvementPillage": "world:improvement_improvement_village",
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Town",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA town is a human settlement larger than a village but smaller than a city. The size a settlement must be in order to be called a \u0022town\u0022 varies considerably in different parts of the world, so that, for example, many American \u0022small towns\u0022 seem to British people to be no more than villages, while many British \u0022small towns\u0022 would qualify as cities in the United States. Wikipedia",
+    "permanent": false,
+    "pillageGold": 100,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": "research:social_contract",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:androids": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "research:mass_media": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "research:organic_cities": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:printing_press": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 5,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_medieval",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": -50,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildVillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,9",
+    "id": "world:improvement_improvement_village",
+    "improvementPillage": "world:improvement_improvement_hamlet",
+    "improvementUpgrade": "world:improvement_improvement_town",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Village",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA village is a clustered human settlement or community, larger than a hamlet with the population ranging from a few hundred to a few thousands (sometimes tens of thousands), Though often located in rural areas, the term urban village is also applied to certain urban neighbourhoods, such as the West Village in Manhattan, New York City and the Saifi Village in Beirut, Lebanon, as well as Hampstead Village in the London conurbation. Villages are normally permanent, with fixed dwellings; however, transient villages can occur. Further, the dwellings of a village are fairly close to one another, not scattered broadly over the landscape, as a dispersed settlement. Wikipedia",
+    "permanent": false,
+    "pillageGold": 80,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": "research:charters",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_modern_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_paved": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "world:route_route_road": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:organic_cities": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:printing_press": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 4,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 48,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWaterMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,8",
+    "id": "world:improvement_improvement_watermill",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Watermill",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA watermill is a structure that uses a water wheel or turbine to drive a mechanical process such as flour, lumber or textile production, or metal shaping (rolling, grinding or wire drawing). Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": false,
+    "requiresRiverSide": true,
+    "riverSideMakesValid": true,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:electricity": {
+        "commerce": 2,
+        "food": 0,
+        "production": 1
+      },
+      "research:environmental_economics": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:replaceable_parts": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:wireless_electricity": {
+        "commerce": 1,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 1,
+      "production": 2
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 60,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 10,
+    "bonusEffects": {
+      "world:oil": {
+        "connects": true,
+        "depletionRandomRange": 200,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 3,
+          "food": 0,
+          "production": 3
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWell.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,8",
+    "id": "world:improvement_improvement_well",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Well",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tAn oil well is a general term for any boring through the earth\u0027s surface that is designed to find and acquire petroleum oil hydrocarbons. Usually some natural gas is produced along with the oil. A well that is designed to produce mainly or only gas may be termed a gas well. Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:nanomining": {
+        "commerce": 2,
+        "food": 0,
+        "production": 2
+      },
+      "research:seismology": {
+        "commerce": 2,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:whale": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 0,
+          "production": 2
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWhalingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,9",
+    "id": "world:improvement_improvement_whaling_boats",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": true,
+    "name": "Whaling Boats",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tWhaling is the hunting of whales mainly for meat and oil. Its earliest forms date to at least 3000 BC. Various coastal communities have long histories of sustenance whaling and harvesting beached whales. Industrial whaling emerged with organized fleets in the 17th century; competitive national whaling industries in the 18th and 19th centuries; and the introduction of factory ships along with the concept of whale harvesting in the first half of the 20th century. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:artificial_evolution": {
+        "commerce": 0,
+        "food": 1,
+        "production": 2
+      },
+      "research:hydroponics": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:navigation": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:screw_propeller": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWindMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,8",
+    "id": "world:improvement_improvement_windmill",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_desertwindmill",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Windmill",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": true,
+    "pedia": "\tA windmill is a machine which converts the energy of wind into rotational motion by means of adjustable vanes called sails or blades. The main use was originally for a grinding mill powered by the wind, reducing a solid or coarse substance into pulp or minute grains, by crushing, grinding, or pressing. Windmills have also been used to power sawmills and other industrial processes and as windpumps for obtaining fresh water from underground or for drainage of land. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:electricity": {
+        "commerce": 2,
+        "food": -1,
+        "production": 1
+      },
+      "research:replaceable_parts": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 10,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 1,
+      "food": 2,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 50,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": "foundation:era_transhuman",
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": true,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,11",
+    "id": "world:improvement_improvement_windtrap",
+    "improvementPillage": "world:improvement_improvement_desertwindmill",
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Windtrap",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": true,
+    "pedia": "Improvement Windtrap Pedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": "research:ecological_engineering",
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:weather_control": {
+        "commerce": 0,
+        "food": 1,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:desert": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 5,
+      "food": 1,
+      "production": 2
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 30,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {
+      "world:wine": {
+        "connects": true,
+        "depletionRandomRange": 0,
+        "discoveryRandomRange": 0,
+        "makesValid": true,
+        "yields": {
+          "commerce": 2,
+          "food": 1,
+          "production": 0
+        }
+      }
+    },
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWinery.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,8",
+    "id": "world:improvement_improvement_winery",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_dome_farm",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Winery",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA winery is a building or property that produces wine, or a business involved in the production of wine, such as a wine company. Some wine companies own many wineries. Besides wine making equipment, larger wineries may also feature warehouses, bottling lines, laboratories, and large expanses of tanks known as tank farms. The oldest winery in the world found to date is a 6,000 year old winery in the Areni region of Armenia, which is still a wine making region today Wikipedia",
+    "permanent": false,
+    "pillageGold": 40,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {
+      "research:crop_rotation": {
+        "commerce": 0,
+        "food": 1,
+        "production": 0
+      },
+      "research:genetics": {
+        "commerce": 1,
+        "food": 0,
+        "production": 0
+      },
+      "research:globalization": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "research:organic_chemistry": {
+        "commerce": 1,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 40,
+    "useLSystem": true,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 24,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 0,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,9",
+    "id": "world:improvement_improvement_woodcutter",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_lumbermill",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Woodcutter",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Humans have used wood for various purposes for millenia. Wood could be gathered from branches or trees that had died or been knocked down in storms, or cut down with axes. The first axes were made of stone, followed by bronze and iron.",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": true,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 10,
+    "useLSystem": false,
+    "validFeatures": {
+      "world:forest": true
+    },
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": 36,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": 5,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": true,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Builds/BuildWorkshop.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,8",
+    "id": "world:improvement_improvement_workshop",
+    "improvementPillage": null,
+    "improvementUpgrade": "world:improvement_improvement_3factory",
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Workshop",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tA workshop is a room or building which provides both the area and tools (or machinery) that may be required for the manufacture or repair of manufactured goods. Apart from the larger factories, workshops were the only places of production in the days before industrialisation. Wikipedia",
+    "permanent": false,
+    "pillageGold": 20,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 1,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": true,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {
+      "world:route_route_gravtube": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_jumplane": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_modern_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_paved": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_railroad_electric": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "world:route_route_road": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "strategy": "",
+    "techYieldChanges": {
+      "research:chemistry": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      },
+      "research:invention": {
+        "commerce": 0,
+        "food": 0,
+        "production": 1
+      }
+    },
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 20,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {
+      "world:grass": true,
+      "world:plains": true
+    },
+    "yieldChanges": {
+      "commerce": 0,
+      "food": -1,
+      "production": 1
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Brown_empty.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,-1,-1",
+    "id": "world:land_worked",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Land Worked",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tLand may refer to: The part of the Earth that is not covered by water Terrestrial ecoregion, an ecoregion based on soil instead of water. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": false,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_wonders_atlas.dds,4,6",
+    "id": "world:machu_picchu",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Machu Picchu",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "Machu Picchu is an Incan settlement nestled deep in the Peruvian Andes. At nearly 8,000 feet above sea level, it served as a retreat for the Incan emperor from its building around 1450 to the destruction of the Inca civilization during the Spanish conquest around 1570. The site itself was never touched by the conquistadors, but its abandonment led to it being forgotten until it was rediscovered in 1911.",
+    "permanent": true,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 6,
+      "food": 1,
+      "production": 0
+    }
+  },
+  {
+    "actsAsCity": false,
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "airBombDefense": -1,
+    "bonusEffects": {},
+    "carriesIrrigation": false,
+    "defenseModifier": 0,
+    "depletedMine": false,
+    "depletionRand": 0,
+    "era": null,
+    "featureGrowth": 0,
+    "freshWaterMakesValid": false,
+    "goody": false,
+    "goodyRange": 0,
+    "graphicalOnly": true,
+    "happiness": 0,
+    "healthPercent": 0,
+    "help": "",
+    "hillsMakesValid": false,
+    "icon": ",Art/Interface/Buttons/Brown_empty.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,-1,-1",
+    "id": "world:water_worked",
+    "improvementPillage": null,
+    "improvementUpgrade": null,
+    "irrigatedYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "isWater": false,
+    "name": "Water Worked",
+    "noFreshWater": false,
+    "outsideBorders": false,
+    "peakMakesValid": false,
+    "pedia": "\tWater is a chemical substance with the chemical formula H2O. Its molecule contains one oxygen and two hydrogen atoms connected by covalent bonds. Water is a liquid at ambient conditions, but it often co-exists on Earth with its solid state, ice, and gaseous state (water vapor or steam). Water also exists in a liquid crystal state near hydrophilic surfaces. Wikipedia",
+    "permanent": false,
+    "pillageGold": 0,
+    "prereqNatureYields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "prereqTech": null,
+    "requirements": null,
+    "requiresFeature": false,
+    "requiresFlatlands": false,
+    "requiresIrrigation": false,
+    "requiresRiverSide": false,
+    "riverSideMakesValid": false,
+    "riverSideYieldChange": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "routeYieldChanges": {},
+    "strategy": "",
+    "techYieldChanges": {},
+    "tilesPerGoody": 0,
+    "traitYieldChanges": {},
+    "unsupported": [
+      "ArtDefineTag"
+    ],
+    "upgradeTime": 0,
+    "useLSystem": false,
+    "validFeatures": {},
+    "validTerrains": {},
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "economy",
+  "name": "Economy",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Economy.dll",
+  "dependencies": [],
+  "references": [
+    "foundation",
+    "research"
+  ]
+}

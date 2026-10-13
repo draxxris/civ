@@ -1,0 +1,14 @@
+{
+  "id": "foundation",
+  "name": "Foundation",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Foundation.dll",
+  "dependencies": [],
+  "references": [
+    "cities",
+    "government",
+    "military",
+    "research",
+    "world"
+  ]
+}

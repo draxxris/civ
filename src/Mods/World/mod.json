@@ -1,0 +1,13 @@
+{
+  "id": "world",
+  "name": "World",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.World.dll",
+  "dependencies": [],
+  "references": [
+    "foundation",
+    "military",
+    "peoples",
+    "research"
+  ]
+}

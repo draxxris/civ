@@ -146,9 +146,22 @@ Lockstep peers exchange content hashes before any tick runs. A mismatch raises a
 Peers then submit command batches and exchange state hashes after each tick. A state mismatch raises `Desync`.
 The handshake identifies content, not initial setup. State hashes detect setup divergence.
 
+## V1 content mods
+
+`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, and Peoples.
+These data-only mods have no load-order dependencies yet. Each manifest declares its cross-mod content providers in `references`.
+References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
+The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
+
+`Civ.Content.Schema` holds immutable definitions alongside the legacy BaseGame types.
+The schema includes costs, grouped requirements, vectors, indexed effects, folded class limits, civilization overrides, and AI weights.
+Definitions retain English text, eras, source icon references, and unsupported-field paths.
+Foundation reserves deferred mechanic identities so later religion, corporation, and victory rules do not lose their prerequisites.
+See [content-schema.md](content-schema.md) for definition types, units, scopes, and importer decisions.
+
 ## Remaining feature work
 
-The richer building, unit and tech schemas follow separately.
+The v1 definition schema is available. Gameplay rules follow one feature mod at a time.
 Feature mods must define effect keys, query interfaces, turn priorities, queue rules, diplomacy enforcement and save migrations.
 BaseGame remains a test scaffold: combat does not enforce war relations, and its economy sends all commerce to research.
 Fog rules, advanced AI, border rules, city capture, art conversion and network transports remain separate tasks.

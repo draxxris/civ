@@ -1,0 +1,2616 @@
+[
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:ice": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:combustion",
+        "time": 300
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/TerrainFeatures/Ice.dds",
+    "id": "world:break_ice",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Break {link:world:ice}Ice{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,11",
+    "id": "world:build_build_3factory",
+    "improvementType": "world:improvement_improvement_3factory",
+    "kill": false,
+    "mine": false,
+    "name": "Build {link:world:improvement_improvement_3factory}Industry{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:assembly_line"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "bForceOverwrite"
+    ]
+  },
+  {
+    "cost": 150,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,11",
+    "id": "world:build_build_5factory",
+    "improvementType": "world:improvement_improvement_5factory",
+    "kill": false,
+    "mine": false,
+    "name": "Build an {link:world:improvement_improvement_5factory}Industrial Complex{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:miniaturization"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "bForceOverwrite"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,9",
+    "id": "world:build_build_apple_farm",
+    "improvementType": "world:improvement_improvement_apple_farm",
+    "kill": false,
+    "mine": false,
+    "name": "Build an {link:world:improvement_improvement_apple_farm}Orchard{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:fermentation"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,9",
+    "id": "world:build_build_bunker",
+    "improvementType": "world:improvement_improvement_bunker",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_bunker}Bunker{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:artillery"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1200,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildCamp.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,7",
+    "id": "world:build_build_camp",
+    "improvementType": "world:improvement_improvement_camp",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_camp}Camp{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:hunting"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildCottage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,7",
+    "id": "world:build_build_cottage",
+    "improvementType": "world:improvement_improvement_cottage",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_cottage}Cottage{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:pottery"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 10,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,9",
+    "id": "world:build_build_desertwindmill",
+    "improvementType": "world:improvement_improvement_desertwindmill",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_desertwindmill}Windfarm{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:ecology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 800,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 240,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,9",
+    "id": "world:build_build_dome_farm",
+    "improvementType": "world:improvement_improvement_dome_farm",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_dome_farm}Dome Farm{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:vertical_farming"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_renaissance",
+    "featureChange": null,
+    "featureEffects": {
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,10",
+    "id": "world:build_build_exploretemple",
+    "improvementType": "world:improvement_improvement_exploretemple",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_exploretemple}Dig Site{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:archeology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 100,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,9",
+    "id": "world:build_build_extraction_facility",
+    "improvementType": "world:improvement_improvement_extraction_facility",
+    "kill": true,
+    "mine": false,
+    "name": "Build {link:world:improvement_improvement_extraction_facility}Extraction Facility{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:superstrong_alloys"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildFarm.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,7",
+    "id": "world:build_build_farm",
+    "improvementType": "world:improvement_improvement_farm",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_farm}Farm{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:agriculture"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildFishingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,7",
+    "id": "world:build_build_fishing_boats",
+    "improvementType": "world:improvement_improvement_fishing_boats",
+    "kill": true,
+    "mine": false,
+    "name": "Create {link:world:improvement_improvement_fishing_boats}Fishing Boats{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:sailing"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 60,
+    "era": "foundation:era_renaissance",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/TerrainFeatures/Forest.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,4,14",
+    "id": "world:build_build_forest_preserve",
+    "improvementType": "world:improvement_improvement_forest_preserve",
+    "kill": false,
+    "mine": false,
+    "name": "Preserve {link:world:improvement_improvement_forest_preserve}Forest{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:scientific_method"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 800,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_classical",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildFort.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,9",
+    "id": "world:build_build_fort",
+    "improvementType": "world:improvement_improvement_fort",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_fort}Fort{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:mathematics"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,10",
+    "id": "world:build_build_future_bunker",
+    "improvementType": "world:improvement_improvement_future_bunker",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_future_bunker}Command Center{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:metamaterials"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 2000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,10",
+    "id": "world:build_build_geothermal_borehole",
+    "improvementType": "world:improvement_improvement_geothermal_borehole",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_geothermal_borehole}Geothermal Factory{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:ecological_engineering"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 2000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,12",
+    "id": "world:build_build_gravtube",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Maglev",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:superconductors"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_gravtube",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 600,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,11",
+    "id": "world:build_build_groundwater_well",
+    "improvementType": "world:improvement_improvement_groundwater_well",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_groundwater_well}Groundwater Well{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:seismology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 10,
+    "era": "foundation:era_medieval",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildHamlet.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,10",
+    "id": "world:build_build_hamlet",
+    "improvementType": "world:improvement_improvement_hamlet",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_hamlet}Hamlet{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:charters"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 600,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 360,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,9",
+    "id": "world:build_build_hybrid_forest",
+    "improvementType": "world:improvement_improvement_hybrid_forest",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_hybrid_forest}Hybrid Forest{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:planetary_economics"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 3000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 100,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,12",
+    "id": "world:build_build_jumplane",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Jumplane",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:teleportation"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_jumplane",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,11",
+    "id": "world:build_build_jungle_camp",
+    "improvementType": "world:improvement_improvement_jungle_camp",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_jungle_camp}Jungle Camp{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:stone_tools"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 10,
+    "era": "foundation:era_medieval",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 10,
+        "remove": false,
+        "requirements": "research:iron_working",
+        "time": 100
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 10,
+        "remove": false,
+        "requirements": "research:iron_working",
+        "time": 200
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildLumberMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,7",
+    "id": "world:build_build_lumbermill",
+    "improvementType": "world:improvement_improvement_lumbermill",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_lumbermill}Lumbermill{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:machinery"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 600,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 40,
+    "era": "foundation:era_modern",
+    "featureChange": "world:jungle",
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 400
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/TerrainFeatures/Jungle.dds",
+    "id": "world:build_build_make_jungle",
+    "improvementType": "world:improvement_improvement_make_jungle",
+    "kill": false,
+    "mine": false,
+    "name": "Make Jungle",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:ecology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 3000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildMine.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,7",
+    "id": "world:build_build_mine",
+    "improvementType": "world:improvement_improvement_mine",
+    "kill": false,
+    "mine": true,
+    "name": "Build a {link:world:improvement_improvement_mine}Mine{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:mining"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 100,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,10",
+    "id": "world:build_build_modern_mine",
+    "improvementType": "world:improvement_improvement_modern_mine",
+    "kill": false,
+    "mine": true,
+    "name": "Build {link:world:improvement_improvement_modern_mine}Modern Mine{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:seismology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1200,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 5,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,12",
+    "id": "world:build_build_modern_road",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Highway",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:logistics"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_modern_road",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 200,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildOffshorePlatform.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,9",
+    "id": "world:build_build_offshore_platform",
+    "improvementType": "world:improvement_improvement_offshore_platform",
+    "kill": true,
+    "mine": false,
+    "name": "Create {link:world:improvement_improvement_offshore_platform}Offshore Platform{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:plastics"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildPasture.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,7",
+    "id": "world:build_build_pasture",
+    "improvementType": "world:improvement_improvement_pasture",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_pasture}Pasture{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:animal_husbandry"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 4,
+    "era": "foundation:era_classical",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,11",
+    "id": "world:build_build_paved",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Paved Road",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:construction"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_paved",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 250,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 20,
+    "era": "foundation:era_modern",
+    "featureChange": "world:forest",
+    "featureEffects": {
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 500
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/TerrainFeatures/Forest.dds",
+    "id": "world:build_build_plant_forest",
+    "improvementType": "world:improvement_improvement_plant_forest",
+    "kill": false,
+    "mine": false,
+    "name": "Plant Forest",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:ecology"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 2000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_classical",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildPlantation.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,9",
+    "id": "world:build_build_plantation",
+    "improvementType": "world:improvement_improvement_plantation",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_plantation}Plantation{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:calendar"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildQuarry.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,9",
+    "id": "world:build_build_quarry",
+    "improvementType": "world:improvement_improvement_quarry",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_quarry}Quarry{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:masonry"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 600,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 10,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,12",
+    "id": "world:build_build_railroad",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a {topic:concept_movement}Railroad{/topic}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:railroad"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_railroad",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 300,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 12,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,12",
+    "id": "world:build_build_railroad_electric",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Electric Railroad",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:electronics"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_railroad_electric",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 400,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 2,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,11",
+    "id": "world:build_build_road",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a {topic:concept_movement}Road{/topic}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:the_wheel"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_road",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 200,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "{icon:bullet}\u002B50% Air Defense",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,10",
+    "id": "world:build_build_sea_air_defense",
+    "improvementType": "world:improvement_improvement_sea_air_defense",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_sea_air_defense}Aquatic Anti-Air Defense{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:orbital_flight"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 2000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,10",
+    "id": "world:build_build_sea_fort",
+    "improvementType": "world:improvement_improvement_sea_fort",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_sea_fort}Aquatic Forcefield{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:shielding"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 2000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 60,
+    "era": "foundation:era_renaissance",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,10",
+    "id": "world:build_build_shaft_mine",
+    "improvementType": "world:improvement_improvement_shaft_mine",
+    "kill": false,
+    "mine": true,
+    "name": "Build {link:world:improvement_improvement_shaft_mine}Shaft Mine{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:metallurgy"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 800,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,9",
+    "id": "world:build_build_submerged_town",
+    "improvementType": "world:improvement_improvement_submerged_town",
+    "kill": false,
+    "mine": false,
+    "name": "Build {link:world:improvement_improvement_submerged_town}Submerged Town{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:biomimetics"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {
+      "world:flood_plains": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 0
+      },
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 30,
+        "remove": true,
+        "requirements": null,
+        "time": 250
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/baseterrain/grassland.dds",
+    "id": "world:build_build_terraform_grass",
+    "improvementType": "world:improvement_improvement_terraform_grass",
+    "kill": false,
+    "mine": false,
+    "name": "Terraform into Grass",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:weather_control"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": "world:grass",
+    "time": 2500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 30,
+        "remove": true,
+        "requirements": null,
+        "time": 250
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 400
+      },
+      "world:oasis": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 0
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/baseterrain/plains.dds",
+    "id": "world:build_build_terraform_plains",
+    "improvementType": "world:improvement_improvement_terraform_plains",
+    "kill": false,
+    "mine": false,
+    "name": "Terraform towards Plains",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:weather_control"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": "world:plains",
+    "time": 2500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 100,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 30,
+        "remove": true,
+        "requirements": null,
+        "time": 250
+      }
+    },
+    "help": "",
+    "icon": "Art/Interface/Buttons/baseterrain/tundra.dds",
+    "id": "world:build_build_terraform_tundra",
+    "improvementType": "world:improvement_improvement_terraform_tundra",
+    "kill": false,
+    "mine": false,
+    "name": "Terraform towards Tundra",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:weather_control"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": "world:tundra",
+    "time": 3000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bCtrlDown"
+    ]
+  },
+  {
+    "cost": 240,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildTown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,10",
+    "id": "world:build_build_town",
+    "improvementType": "world:improvement_improvement_town",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_cottage}Town{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:civil_engineering"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,11",
+    "id": "world:build_build_track",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Make a Path",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:stone_tools"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_track",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 150,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 350,
+    "era": "foundation:era_modern",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,12",
+    "id": "world:build_build_tunnel",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Build a Tunnel",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:seismology"
+          ]
+        }
+      ]
+    },
+    "routeType": "world:route_route_tunnel",
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 60,
+    "era": "foundation:era_renaissance",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildVillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,9",
+    "id": "world:build_build_village",
+    "improvementType": "world:improvement_improvement_village",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_village}Village{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:social_contract"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 800,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_medieval",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWaterMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,8",
+    "id": "world:build_build_watermill",
+    "improvementType": "world:improvement_improvement_watermill",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_watermill}Watermill{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:machinery"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 800,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_industrial",
+    "featureChange": null,
+    "featureEffects": {
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWell.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,8",
+    "id": "world:build_build_well",
+    "improvementType": "world:improvement_improvement_well",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_well}Well{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:explosives"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1000,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_medieval",
+    "featureChange": null,
+    "featureEffects": {},
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWhalingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,9",
+    "id": "world:build_build_whaling_boats",
+    "improvementType": "world:improvement_improvement_whaling_boats",
+    "kill": true,
+    "mine": false,
+    "name": "Create {link:world:improvement_improvement_whaling_boats}Whaling Boats{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:optics"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_medieval",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWindMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,8",
+    "id": "world:build_build_windmill",
+    "improvementType": "world:improvement_improvement_windmill",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_windmill}Windmill{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:machinery"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown"
+    ]
+  },
+  {
+    "cost": 50,
+    "era": "foundation:era_transhuman",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,11",
+    "id": "world:build_build_windtrap",
+    "improvementType": "world:improvement_improvement_windtrap",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_windtrap}Windtrap{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:ecological_engineering"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 1500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": true,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWinery.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,8",
+    "id": "world:build_build_winery",
+    "improvementType": "world:improvement_improvement_winery",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_winery}Winery{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:fermentation"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 500,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bShiftDown",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": false,
+        "requirements": null,
+        "time": 100
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,9",
+    "id": "world:build_build_woodcutter",
+    "improvementType": "world:improvement_improvement_woodcutter",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_woodcutter}Woodcutter{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:woodworking"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 200,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_classical",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": true,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      },
+      "world:jungle": {
+        "allowRemovalWithoutProduction": true,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      },
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildWorkshop.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,8",
+    "id": "world:build_build_workshop",
+    "improvementType": "world:improvement_improvement_workshop",
+    "kill": false,
+    "mine": false,
+    "name": "Build a {link:world:improvement_improvement_workshop}Workshop{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:smithing"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 600,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 300
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,8,11",
+    "id": "world:burn_forest",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Burn Forest",
+    "obsoleteTech": "research:bronze_working",
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bAltDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": null,
+        "time": 400
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,8,11",
+    "id": "world:burn_jungle",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Burn Jungle",
+    "obsoleteTech": "research:iron_working",
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bAltDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": "foundation:era_ancient",
+    "featureChange": null,
+    "featureEffects": {
+      "world:forest": {
+        "allowRemovalWithoutProduction": false,
+        "production": 30,
+        "remove": true,
+        "requirements": "research:bronze_working",
+        "time": 300
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildChopDown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,8",
+    "id": "world:remove_forest",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Chop Down a {link:world:forest}Forest{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:bronze_working"
+          ]
+        }
+      ]
+    },
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bAltDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:jungle": {
+        "allowRemovalWithoutProduction": false,
+        "production": 20,
+        "remove": true,
+        "requirements": "research:iron_working",
+        "time": 400
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildChopDown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,8",
+    "id": "world:remove_jungle",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Remove {link:world:jungle}Jungle{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bAltDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:swamp": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:waterworks",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildChopDown.dds,Art/interface/buttons/mainmenu_techscreen_worldbuilder_popups_atlas.dds,4,2",
+    "id": "world:remove_swamp",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Drain Swamp",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "bAltDown"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:biogas": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:genemanipulation",
+        "time": 600
+      },
+      "world:plaguegas": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:artificial_life",
+        "time": 800
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,1",
+    "id": "world:sanitize",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Sanitize",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  },
+  {
+    "cost": 0,
+    "era": null,
+    "featureChange": null,
+    "featureEffects": {
+      "world:fallout": {
+        "allowRemovalWithoutProduction": false,
+        "production": 0,
+        "remove": true,
+        "requirements": "research:ecology",
+        "time": 3000
+      }
+    },
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Builds/BuildScrubFallout.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,8",
+    "id": "world:scrub_fallout",
+    "improvementType": null,
+    "kill": false,
+    "mine": false,
+    "name": "Scrub {link:world:fallout}Fallout{/link}",
+    "obsoleteTech": null,
+    "pedia": "",
+    "requirements": null,
+    "routeType": null,
+    "strategy": "",
+    "terrainChange": null,
+    "time": 0,
+    "unsupported": [
+      "EntityEvent",
+      "HotKey",
+      "iHotKeyPriority"
+    ]
+  }
+]

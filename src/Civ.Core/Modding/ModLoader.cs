@@ -20,7 +20,11 @@ public sealed class ModSource
 public static class ModLoader
 {
     /// <summary>Shared sidecar/command JSON conventions; requirement converters are attached to their types.</summary>
-    public static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip };
+    public static readonly JsonSerializerOptions Json = new()
+    {
+        PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip,
+        UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow
+    };
 
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
     public static ModSource FromDirectory(string dir)
@@ -60,6 +64,7 @@ public static class ModLoader
         }
         db.LoadedMods = ordered.Select(m => m.Manifest.Id).ToList();
         db.Mods = ordered.Select(m => new LoadedMod(m.Manifest.Id, m.Manifest.Version)).ToList();
+        db.ValidateReferences(ordered.Select(m => m.Manifest));
         db.Freeze();
         return db;
     }
@@ -70,9 +75,9 @@ public static class ModLoader
         foreach (var mod in mods)
             if (!pending.TryAdd(mod.Manifest.Id, mod)) throw new InvalidOperationException($"Duplicate mod id '{mod.Manifest.Id}'");
         foreach (var mod in pending.Values)
-            foreach (var dependency in mod.Manifest.Dependencies)
+foreach (var dependency in mod.Manifest.Dependencies.Concat(mod.Manifest.References))
                 if (!pending.ContainsKey(dependency))
-                    throw new InvalidOperationException($"Mod '{mod.Manifest.Id}' requires missing mod '{dependency}'");
+                    throw new InvalidOperationException($"Mod '{mod.Manifest.Id}' requires missing mod '{dependency}' (dependency or content reference)");
 
         var result = new List<ModSource>();
         var loaded = new HashSet<string>(StringComparer.Ordinal);
