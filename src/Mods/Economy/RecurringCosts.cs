@@ -10,6 +10,11 @@ internal static class RecurringCosts
 {
     internal static long Calculate(Simulation sim, int player, List<LedgerLine> lines)
     {
+        if (GovernmentStatus.IsAnarchy(sim, player))
+        {
+            lines.Add(new("government:anarchy", "economy:expenses", 0));
+            return 0;
+        }
         var civics = EconomyData.Civics(sim, player);
         int population = EconomyData.Cities(sim, player).Sum(c => c.Population);
         long maintenanceHundredths = 0;

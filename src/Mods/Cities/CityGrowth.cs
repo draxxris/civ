@@ -19,7 +19,7 @@ internal sealed class CityGrowth(ICityYieldService yields, ICityWellbeingService
         long consumption = normal + health.FoodPenalty + waste;
         long difference = food - consumption;
         if (FoodProduction(sim, city)) difference = Math.Min(0, difference);
-        if (CityData.Read(sim, city).Disorder) difference = 0;
+        if (GovernmentStatus.IsDisorder(sim, city)) difference = 0;
         int kept = (int)Math.Clamp(CityData.Effect(effects, "food_kept_percent"), 0, 100);
         sink.Add("cities:population", "cities:food_consumption", normal);
         sink.Add("cities:health", "cities:food_consumption", health.FoodPenalty);
@@ -48,7 +48,12 @@ internal sealed class CityGrowth(ICityYieldService yields, ICityWellbeingService
         ledger.Add(source, "cities:growth_factor_percent", percent);
         return value * percent / 100;
     }
-    internal static bool FoodProduction(Simulation sim, City city) => city.ProductionQueue.FirstOrDefault() is { Kind: "cities:unit" } order && sim.Content.Get<S.UnitDef>(order.ContentId).FoodProduction;
+    internal static bool FoodProduction(Simulation sim, City city)
+    {
+        if (city.ProductionQueue.FirstOrDefault() is not { Kind: "cities:unit" } order) return false;
+        var unit = sim.Content.Get<S.UnitDef>(order.ContentId);
+        return unit.FoodProduction || (unit.MilitaryProduction && CityData.Effect(CityData.Effects(sim, city), "military_food_production") > 0);
+    }
     internal static long Waste(Simulation sim, long surplus, long normal)
     {
         int start = CityData.Raw(sim, "WASTAGE_START_CONSUMPTION_PERCENT", -1);

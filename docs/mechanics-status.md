@@ -126,17 +126,30 @@ Status describes executable rules, not imported data. All eight mods load their 
 
 ## Government
 
-- **Implemented:** the existing active-civic predicate. Field: player `Civics`.
-- **Not started:** civic commands, adoption, anarchy, upkeep and modifier sources.
+- **Implemented:** one civic per option per player, initial civics from the civilization or `CivicOptionDef.DefaultCivic`,
+  and the `government:set_civics` command (one or several options in one revolution).
+  Requirements, including negative civic gates, are checked against the final cabinet.
+- **Implemented:** anarchy length from the source formula: base, city-count percent, civic lengths, building and trait modifiers,
+  speed and era scaling, golden-age exemption, trait cap (spiritual-like), minimum revolution timer.
+  Anarchy disables city yields, commerce, culture, growth, production, research and civic/unit costs through `GovernmentStatus`.
+  Timers are saved player state, decrement at `PlayerEnd + 1`.
+- **Implemented:** `CivicEffects` modifier source: yield/commerce modifiers, capital modifiers, improvement yields, building-class commerce,
+  happiness and health (per building class, per military unit, largest cities, features, improvements), population anger,
+  war weariness, maintenance percentages, growth, great people, free and unlimited specialists, specialist yield and commerce changes,
+  production modifiers (military, building class, unit combat), worker speed, improvement upgrade rate, general rates,
+  free experience, military food production. Cities, World and Military consume these keys.
+- **Partial:** `RequiresActiveCivics` buildings deactivate when the civic requirement fails. Max sliders, hurry, unit support and upkeep use
+  civic definitions in Economy. Not consumed yet: state religion effects (stub keys `religion:*`), corporation maintenance, draft,
+  trade routes, connectedness, diplomacy attitudes, revolution-index fields, city limit, can't-build specials.
 
 ## Peoples
 
-- **Partial:** starting civilizations, technologies, civic declarations and free units through Foundation setup.
-  Fields: civilization `Playable/Leaders/StartingTechs/StartingUnits/UnitOverrides/StartingCivics`,
-  leader identity, unit `DefaultUnit/Requirements/Domain/Cost/UnitAiTypes/WorkRate/Strength/Moves/NoBadGoodies/CityDefense`.
-  Initial units share one tile. Role valuation approximates the source military AI.
-- **Implemented in Cities:** civilization city names and construction class replacements.
-- **Not started:** trait modifier sources, assimilation, and starting civic defaults.
+- **Implemented:** `IPeoplesService` (leader, civilization, traits, and the complete leader AI data for the AI mod),
+  `TraitEffects` modifier source: city yield/commerce changes and modifiers, happiness/health, building and bonus happiness,
+  great people, wonder production percents, building/unit trait production modifiers, improvement trait yields, extra-yield thresholds,
+  upkeep, general rates, anarchy cap, level experience, free promotions by combat type.
+- **Implemented:** starting civilizations, technologies, free units, civics, civilization unit/building replacements in Cities.
+- **Not consumed yet:** extra culture level, non-state-religion commerce, upgrade anywhere, assimilation.
 
 ## Validation
 

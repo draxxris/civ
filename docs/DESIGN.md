@@ -286,6 +286,14 @@ Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate 
 
 See [mechanics-status.md](mechanics-status.md) for partial rules and deferred combat options.
 
+## Government and Peoples services
+
+`IGovernmentService` validates, previews (`CivicSwitchResult`) and adopts civic changes. `SetCivicsCommand` calls it.
+Anarchy and cooldown timers live in `GovernmentPlayerState`. `GovernmentStatus.IsAnarchy` and `IsDisorder` give other mods one query.
+`IPeoplesService` exposes leader, civilization and trait data. Both mods contribute through `IModifierSource`.
+Civic and trait keys use the owning consumer's namespace: `cities:*`, `economy:*`, `world:*`, `military:*`, and `government:*`.
+`RequirementContext.ProposedCivics` lets civic requirements see a pending cabinet without mutating state.
+
 ## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
 A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.

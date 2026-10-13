@@ -18,7 +18,7 @@ internal sealed class CityMaintenance : ICityMaintenanceService
         sink.Add("cities:distance", "cities:maintenance_hundredths", distance);
         sink.Add("cities:city_count", "cities:maintenance_hundredths", count);
         sink.Add("cities:modifiers", "cities:maintenance_hundredths", total - distance - count);
-        if (CityData.Read(sim, city).Disorder) { sink.Add("cities:disorder", "cities:maintenance_hundredths", -total); total = 0; }
+        if (GovernmentStatus.IsDisorder(sim, city)) { sink.Add("cities:disorder", "cities:maintenance_hundredths", -total); total = 0; }
         return new(distance, count, total, sink.Ledger);
     }
     private static long Distance(Simulation sim, City city, ModifierSink effects)

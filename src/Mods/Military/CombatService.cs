@@ -113,7 +113,14 @@ internal sealed class CombatService : ICombatService
         long previous = winner.Experience * 100L + state.ExperienceRemainder;
         long next = previous < cap * 100L ? Math.Min(cap * 100L, previous + change) : previous;
         winner.Experience = (int)(next / 100); state.ExperienceRemainder = (int)(next % 100);
-        if (!MilitaryData.Player(sim, opponent.Owner).Barbarian) MilitaryData.EditPlayer(sim, winner.Owner).GeneralPoints += amount;
+        if (!MilitaryData.Player(sim, opponent.Owner).Barbarian) AwardGeneralPoints(sim, winner, opponent, amount);
+    }
+    private static void AwardGeneralPoints(Simulation sim, Unit winner, Unit opponent, int amount)
+    {
+        var ledger = Civ.Content.ModifierSink.Collect(new(sim, Civ.Content.ModifierScope.Player, winner.Owner)).Ledger;
+        long percent = 100 + ledger.Total("military:general_rate_percent");
+        if (sim.State.PlotAt(opponent.Position).Owner == winner.Owner) percent += ledger.Total("military:domestic_general_rate_percent");
+        MilitaryData.EditPlayer(sim, winner.Owner).GeneralPoints += (int)(amount * Math.Max(0, percent) / 100);
     }
     private static IReadOnlyList<CollateralHit> Collateral(Simulation sim, Unit a, Unit primary)
     {

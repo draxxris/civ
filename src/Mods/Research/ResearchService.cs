@@ -54,6 +54,7 @@ internal sealed class ResearchService : IResearchService
     }
     public void Contribute(Simulation sim, int player, long beakers)
     {
+        if (GovernmentStatus.IsAnarchy(sim, player)) return;
         var team = sim.TeamOf(player);
         var state = Edit(sim, team);
         SelectNext(sim, player, team, state);
@@ -126,6 +127,7 @@ internal sealed class ResearchPhase(IResearchService research) : IPlayerTurnSyst
     public int Order => TurnPhase.Research;
     public void Run(Simulation sim, int player)
     {
+        if (GovernmentStatus.IsAnarchy(sim, player)) return;
         long commerce = sim.Content.Services.Get<IPlayerResearchSource>().SingleOrDefault()?.ResearchHundredths(sim, player) ?? 0;
         // Players without cities cannot accumulate the otherwise unconditional base research.
         if (!sim.State.Cities.Any(c => c.Owner == player)) return;

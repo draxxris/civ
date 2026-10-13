@@ -55,6 +55,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     private static int WorkRate(Simulation sim, Unit unit)
     {
         int modifier = sim.TeamOf(unit.Owner).Techs.Sum(t => sim.Content.Get<S.TechDef>(t).WorkerSpeedModifier);
+        modifier += (int)ModifierSink.Collect(new(sim, ModifierScope.Player, unit.Owner)).Ledger.Total("world:worker_speed_percent");
         if (sim.State.PlayerById(unit.Owner).Ai is not null) modifier += sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).AiWorkRateModifier;
         return Math.Max(0, sim.Content.Get<S.UnitDef>(unit.Type).WorkRate * (100 + modifier) / 100);
     }
@@ -105,6 +106,8 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
         if (!worked && !target.OutsideBorders) return;
         int time = improvement.UpgradeTime * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).ImprovementPercent / 100;
         time = time * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).ImprovementPercent / 100;
+        int modifier = (int)ModifierSink.Collect(new(sim, ModifierScope.Player, plot.Owner.Value)).Ledger.Total("world:improvement_upgrade_percent");
+        time = time * 100 / Math.Max(1, 100 + modifier);
         plot.ImprovementTurns++;
         if (plot.ImprovementTurns < Math.Max(1, time)) return;
         plot.Improvement = next;

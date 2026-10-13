@@ -1,5 +1,6 @@
 [
   {
+    "defaultCivic": "government:barter",
     "era": null,
     "help": "",
     "icon": "",
@@ -11,6 +12,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:isolationism",
     "era": null,
     "help": "",
     "icon": "",
@@ -22,6 +24,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:chiefdom",
     "era": null,
     "help": "",
     "icon": "",
@@ -33,6 +36,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:bandits",
     "era": null,
     "help": "",
     "icon": "",
@@ -44,6 +48,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:oligarchy",
     "era": null,
     "help": "",
     "icon": "",
@@ -55,6 +60,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:folklore",
     "era": null,
     "help": "",
     "icon": "",
@@ -66,6 +72,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:tribal",
     "era": null,
     "help": "",
     "icon": "",
@@ -77,6 +84,7 @@
     "unsupported": []
   },
   {
+    "defaultCivic": "government:survival",
     "era": null,
     "help": "",
     "icon": "",

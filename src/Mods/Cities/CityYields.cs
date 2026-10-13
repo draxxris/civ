@@ -18,7 +18,7 @@ internal sealed class CityYields : ICityYieldService
         yields = new(Math.Max(0, yields.Food), Math.Max(0, yields.Production), Math.Max(0, yields.Commerce));
         var direct = sink.FlatCommerce * 100 + new CommerceVector(CityData.Effect(sink, "direct_gold_hundredths"),
             CityData.Effect(sink, "direct_research_hundredths"), CityData.Effect(sink, "direct_culture_hundredths"), CityData.Effect(sink, "direct_espionage_hundredths"));
-        if (CityData.Read(sim, city).Disorder) { yields = default; direct = default; }
+        if (GovernmentStatus.IsDisorder(sim, city)) { yields = default; direct = default; }
         sink.Add("cities:total", "cities:food", yields.Food); sink.Add("cities:total", "cities:production", yields.Production);
         sink.Add("cities:total", "cities:commerce", yields.Commerce);
         sink.Add("cities:total", "cities:gold_hundredths", direct.Gold); sink.Add("cities:total", "cities:research_hundredths", direct.Research);

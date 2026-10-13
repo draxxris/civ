@@ -18,7 +18,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         int percent = Math.Max(0, 100 + modifier);
         var state = CityData.Read(sim, city);
         long production = (result.BaseYields.Production + state.Overflow + state.FeatureProduction) * percent / 100;
-        if (kind == "cities:unit" && sim.Content.Get<S.UnitDef>(content).FoodProduction)
+        if (kind == "cities:unit" && CityGrowth.FoodProduction(sim, city))
         {
             // Food-production excludes angry mouths, matching foodConsumption(true).
             long consumption = growth.Calculate(sim, cityId).Consumption;
@@ -27,7 +27,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
             long food = Math.Max(0, result.Yields.Food - consumption);
             production += food; sink.Add(content, "cities:food_production", food);
         }
-        if (state.Disorder) production = 0;
+        if (GovernmentStatus.IsDisorder(sim, city)) production = 0;
         sink.Add("cities:base", "cities:base_production", result.BaseYields.Production);
         sink.Add("cities:overflow", "cities:overflow", state.Overflow + state.FeatureProduction);
         sink.Add("cities:total", "cities:production_factor_percent", percent);
@@ -62,6 +62,8 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         if (kind == "cities:building")
         {
             var def = sim.Content.Get<S.BuildingDef>(id);
+            modifier += BuildingModifiers(def, sink);
+            modifier += TraitProduction(def.TraitProductionModifiers, sink);
             modifier += bonuses.Keys.Sum(b => def.BonusProductionModifiers.GetValueOrDefault(b));
             foreach (var b in CityData.Active(sim, city)) modifier += b.BuildingClassProductionModifiers.GetValueOrDefault(def.DefaultBuilding);
             foreach (var other in CityData.Owned(sim, city.Owner))
@@ -73,6 +75,8 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     private static int UnitModifiers(Simulation sim, City city, S.UnitDef unit, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         int modifier = unit.MilitaryProduction ? (int)CityData.Effect(sink, "military_production_percent") : 0;
+        modifier += (int)CityData.Effect(sink, "combat_production_percent:" + unit.CombatType);
+        modifier += TraitProduction(unit.TraitProductionModifiers, sink);
         modifier += bonuses.Keys.Sum(b => unit.BonusProductionModifiers.GetValueOrDefault(b));
         foreach (var b in CityData.Active(sim, city))
         {
@@ -81,11 +85,21 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         }
         return modifier;
     }
+    private static int BuildingModifiers(S.BuildingDef def, ModifierSink sink)
+    {
+        int modifier = (int)CityData.Effect(sink, "building_class_production_percent:" + def.DefaultBuilding);
+        if (def.Limits.World >= 0) modifier += (int)CityData.Effect(sink, "world_wonder_production_percent");
+        if (def.Limits.Team >= 0) modifier += (int)CityData.Effect(sink, "team_wonder_production_percent");
+        if (def.Limits.Player >= 0) modifier += (int)CityData.Effect(sink, "national_wonder_production_percent");
+        return modifier;
+    }
+    private static int TraitProduction(IReadOnlyDictionary<string, int> modifiers, ModifierSink sink) =>
+        modifiers.Where(p => CityData.Effect(sink, "trait:" + p.Key) > 0).Sum(p => p.Value);
     internal void Work(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);
         state.PendingCompletion = null;
-        if (state.Disorder || city.ProductionQueue.Count == 0) return;
+        if (GovernmentStatus.IsDisorder(sim, city) || city.ProductionQueue.Count == 0) return;
         var order = city.ProductionQueue[0];
         if (order.Kind == "economy:process") return; // Conversion is settled as commerce; do not consume overflow.
         if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success) return;

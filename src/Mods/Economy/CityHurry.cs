@@ -54,7 +54,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
     }
     private static string? ValidateProduction(Simulation sim, City city)
     {
-        if (city.Extensions.Get<CityRuleState>(sim.Content)?.Disorder == true) return "City is in disorder";
+        if (GovernmentStatus.IsDisorder(sim, city)) return "City is in disorder";
         if (city.ProductionQueue.FirstOrDefault() is not { } order) return "No production to hurry";
         if (order.Kind == "economy:process") return "Processes cannot be hurried";
         var service = sim.Content.Services.Get<ICityProductionService>().Single();

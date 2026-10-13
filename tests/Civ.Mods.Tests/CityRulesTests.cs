@@ -12,6 +12,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private Simulation Scenario()
     {
         var sim = GameFactory.Scenario(mods.Content);
+        GameFactory.NeutralPolitics(sim);
         sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Name = "Test" });
         return sim;
     }
@@ -103,6 +104,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var source = new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["research", "foundation", "military"] }, Root = mods.Root, Instance = new ProbeMod() };
         var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(source)));
+        GameFactory.NeutralPolitics(sim);
         sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Name = "Test" });
         sim.State.Cities[0].Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         return sim;
@@ -209,6 +211,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(50, sim.State.Cities.Count);
         Assert.True(clock.ElapsedMilliseconds < 1500, $"Fifty-city turn took {clock.ElapsedMilliseconds}ms");
     }
+
     private sealed class ProbeMod : IMod
     {
         public void Register(IModContext context)

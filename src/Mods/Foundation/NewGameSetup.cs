@@ -44,6 +44,8 @@ internal sealed class NewGameSetup : INewGameSetup
             Id = id, TeamId = teamId, Civilization = civ.Id, Leader = leader.Id, Name = civ.Name, Ai = ai,
             Treasury = handicap.Gold + sim.Content.Get<EraDef>(settings.StartingEra).StartingGold,
         };
+        foreach (var option in sim.Content.Get<CivicOptionDef>().All)
+            player.Civics[option.Id] = option.DefaultCivic ?? sim.Content.Get<CivicDef>().All.Single(c => c.Option == option.Id && c.Requirements is null).Id;
         foreach (var civic in civ.StartingCivics)
             player.Civics[sim.Content.Get<CivicDef>(civic).Option!] = civic;
         sim.State.Players.Add(player);

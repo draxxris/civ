@@ -25,6 +25,8 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     {
         var sim = probe ? SaveGame.Load(ProbeScenario.Value.Content, ProbeScenario.Value.Save)
             : SaveGame.Load(mods.Content, StandardScenario.Value);
+        // Isolate Economy/Research equations from political modifiers. Integration has its own fixture.
+        GameFactory.NeutralPolitics(sim);
         var city = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Name = "Test" };
         sim.State.AddCity(city);
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });

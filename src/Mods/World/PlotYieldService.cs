@@ -19,11 +19,23 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         if (plot.Improvement is { } id) AddImprovement(sim, player, tile, sim.Content.Get<S.ImprovementDef>(id), sink);
         if (plot.Route is { } route) sink.AddYield(route, sim.Content.Get<S.RouteDef>(route).Yields);
         foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(new(sim, ModifierScope.Plot, player, Plot: tile), sink);
+        AddThresholds(sim, sink);
         var total = Clamp(sink.FlatYield.WithPercent(sink.PercentYield));
         sink.Add("world:total", "world:food", total.Food);
         sink.Add("world:total", "world:production", total.Production);
         sink.Add("world:total", "world:commerce", total.Commerce);
         return new(total, sink.Ledger);
+    }
+    private static void AddThresholds(Simulation sim, ModifierSink sink)
+    {
+        long Extra(string yield, long value)
+        {
+            long threshold = sink.Ledger.Lines.Where(l => l.Key == "world:extra_" + yield + "_threshold" && l.Amount > 0)
+                .Select(l => l.Amount).DefaultIfEmpty(long.MaxValue).Min();
+            return value >= threshold ? int.Parse(sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.GetValueOrDefault("EXTRA_YIELD", "1"), System.Globalization.CultureInfo.InvariantCulture) : 0;
+        }
+        var flat = sink.FlatYield;
+        sink.AddYield("peoples:yield_threshold", new(Extra("food", flat.Food), Extra("production", flat.Production), Extra("commerce", flat.Commerce)));
     }
     public PlotYieldResult CalculateNature(Simulation sim, int player, TileId tile, bool ignoreFeature = false)
     {
