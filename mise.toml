@@ -1,2 +1,4 @@
 [tools]
 dotnet = "10"
+# Godot 4.7.2-stable .NET (mono) build, matching Godot.NET.Sdk/4.7.2 in src/Civ.Godot. Run as `godot-mono`.
+"github:godotengine/godot" = { version = "4.7.2-stable", asset_pattern = "Godot_v4.7.2-stable_mono_linux_x86_64.zip", rename_exe = "godot-mono" }
