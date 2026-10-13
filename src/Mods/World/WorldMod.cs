@@ -3,7 +3,7 @@ using Civ.Modding;
 
 namespace Civ.Mods.World;
 
-/// <summary>World definitions and requirement identities. Gameplay systems follow separately.</summary>
+/// <summary>World definitions and deterministic geography, worker and query rules.</summary>
 public sealed class WorldMod : IMod
 {
     public void Register(IModContext context)
@@ -16,7 +16,26 @@ public sealed class WorldMod : IMod
         ContentRegistration.Load<ImprovementDef>(context, "improvement.json");
         ContentRegistration.Load<RouteDef>(context, "route.json");
         ContentRegistration.Load<TerrainDef>(context, "terrain.json");
-        ContentRegistration.Evaluator<BonusDef>(context, "bonus");
+        var water = new WaterService();
+        var yields = new PlotYieldService(water);
+        var network = new ResourceNetwork();
+        var visibility = new VisibilityService();
+        var workers = new WorkerBuildService(water);
+        context.MapGenerators.Register(new ContinentsGenerator());
+        context.RegisterService<Civ.Game.IWaterService>("water", water);
+        context.RegisterService<Civ.Game.IPlotYieldService>("plot_yields", yields);
+        context.RegisterService<Civ.Game.IResourceNetwork>("resource_network", network);
+        context.RegisterService<Civ.Game.IStartingPositionService>("starts", new StartingPositions(water));
+        context.RegisterService<Civ.Game.IVisibilityService>("visibility", visibility);
+        context.RegisterService<Civ.Game.IWorkerBuildService>("workers", workers);
+        context.RegisterService<Civ.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator(network));
+        context.RegisterStateComponent<WorkerOrder>("worker_order");
+        context.RegisterCommand<Civ.Game.StartBuildCommand>("start_build");
+        context.TurnSystems.Register(workers);
+        context.TurnSystems.Register(new ImprovementTurnSystem());
+        context.TurnSystems.Register(visibility);
+        context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
         ContentRegistration.Evaluator<FeatureDef>(context, "feature");
         ContentRegistration.Evaluator<TerrainDef>(context, "terrain");
         ContentRegistration.Evaluator<ImprovementDef>(context, "improvement");

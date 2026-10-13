@@ -13,10 +13,15 @@ public sealed class LoadedMods
     public string Root { get; } = Path.Combine(AppContext.BaseDirectory, "mods");
     public ModSource[] Sources { get; }
     public ContentDb Content { get; }
+    private static readonly Lazy<(ModSource[] Sources, ContentDb Content)> Shared = new(() =>
+    {
+        var root = Path.Combine(AppContext.BaseDirectory, "mods");
+        var sources = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
+        return (sources, ModLoader.Build(sources.AsEnumerable().Reverse()));
+    });
     public LoadedMods()
     {
-        Sources = Directory.GetDirectories(Root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
-        Content = ModLoader.Build(Sources.AsEnumerable().Reverse());
+        (Sources, Content) = Shared.Value;
     }
 }
 

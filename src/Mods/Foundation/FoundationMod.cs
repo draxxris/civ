@@ -3,11 +3,13 @@ using Civ.Modding;
 
 namespace Civ.Mods.Foundation;
 
-/// <summary>Foundation definitions and requirement identities. Gameplay systems follow separately.</summary>
+/// <summary>Foundation definitions, shared hex tuning and new-game setup.</summary>
 public sealed class FoundationMod : IMod
 {
     public void Register(IModContext context)
     {
+        ContentRegistration.Load<HexOverridesDef>(context, "hex-overrides.json");
+        context.RegisterService<Civ.Game.INewGameSetup>("new_game", new NewGameSetup());
         ContentRegistration.Load<CommerceDef>(context, "commerce.json");
         ContentRegistration.Load<CorporationIdentityDef>(context, "corporation-identity.json");
         ContentRegistration.Load<CultureLevelDef>(context, "culture-level.json");

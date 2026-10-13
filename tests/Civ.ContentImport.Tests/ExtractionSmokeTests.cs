@@ -73,8 +73,17 @@ public sealed class ExtractionSmokeTests
         var secondEmission = ContentEmission.Compile(secondRegistry);
         Reports.Write(registry, source, first.Path, System.IO.Path.Combine(first.Path, "dump"), firstEmission.MappedPaths);
         Reports.Write(secondRegistry, source, second.Path, null, secondEmission.MappedPaths);
+        const string handAuthored = "[{\"id\":\"foundation:hex_overrides\",\"waterPercent\":71}]\n";
+        foreach (var root in new[] { first.Path, second.Path })
+        {
+            var data = System.IO.Path.Combine(root, "mods", "Foundation", "data");
+            Directory.CreateDirectory(data);
+            File.WriteAllText(System.IO.Path.Combine(data, "hex-overrides.json"), handAuthored);
+        }
         ContentEmission.Write(firstEmission, System.IO.Path.Combine(first.Path, "mods"), first.Path);
         ContentEmission.Write(secondEmission, System.IO.Path.Combine(second.Path, "mods"), second.Path);
+        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(first.Path, "mods", "Foundation", "data", "hex-overrides.json")));
+        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(second.Path, "mods", "Foundation", "data", "hex-overrides.json")));
         foreach (var payload in Directory.GetFiles(System.IO.Path.Combine(first.Path, "mods"), "*.json", SearchOption.AllDirectories))
             Assert.Equal(File.ReadAllBytes(payload), File.ReadAllBytes(System.IO.Path.Combine(second.Path, System.IO.Path.GetRelativePath(first.Path, payload))));
         var reports = Directory.GetFiles(first.Path).Order(StringComparer.Ordinal).ToArray();

@@ -73,8 +73,137 @@ Ids use `modid:name`. Registration requires the owning namespace. Overrides can 
 Registries freeze after load. Definitions and their nested collections must not change after that point.
 The content hash includes canonical definitions, loaded mod ids/versions, command identities, service order and state-component identities.
 
-## Requirements
+## Turn phases
 
+`Civ.Game.TurnPhase` defines shared order slots. Systems use these constants instead of private numeric priorities.
+Systems with equal orders run by ordinal `Id`. Additional orders can use the gaps between slots.
+
+Orders from `PlayerBegin` through `Map - 1` require `IPlayerTurnSystem.Run(Simulation, int player)`.
+The scheduler completes this interval for one player before the next player, in ascending player-id order.
+Other orders use `ITurnSystem.Run(Simulation)` once per boundary. Legacy BaseGame orders remain outside the player interval.
+
+| Constant | Order | Work |
+| --- | ---: | --- |
+| `GameBegin` | 0 | Global begin hooks |
+| `Properties` | 100 | Global properties |
+| `Deals` | 200 | Deal settlement |
+| `Teams` | 300 | Team maintenance |
+| `PlayerBegin` | 1000 | Player timers and caches |
+| `AssignWork` | 1100 | City work assignments |
+| `Gold` | 2000 | Treasury settlement |
+| `Research` | 2100 | Research and discoveries |
+| `Espionage` | 2200 | Espionage allocation |
+| `Economy` | 2300 | Taxes, consumption, inflation |
+| `CityBegin` | 3000 | City preparation |
+| `CityGrowth` | 4000 | Food, growth, starvation |
+| `CityCulture` | 4100 | City culture |
+| `CityPlotCulture` | 4200 | Plot culture and borders |
+| `CityAutoBuildings` | 4300 | Automatic buildings |
+| `CityProduction` | 5000 | Production eligibility and work |
+| `CityCompletion` | 5100 | Completion effects |
+| `CityPostProduction` | 6000 | Decay and later city rules |
+| `PlayerEnd` | 7000 | Remaining player maintenance |
+| `Units` | 8000 | Units and worker progress |
+| `Map` | 9000 | Improvements and map updates |
+| `Spawns` | 9100 | Barbarians and other spawns |
+| `Environment` | 9200 | Environment and global founding |
+| `Visibility` | 9500 | Team sight |
+| `GameEnd` | 9900 | Pre-end hooks |
+
+These slots follow `CvPlayer::doTurn` and the city pipeline: gold precedes research, and growth and culture precede production.
+Cities processes all owned cities at each city slot, in ascending city-id order. Completion commits effects in that same order.
+This preserves the source pipeline's cross-city stage boundaries without parallel mutations.
+New buildings cannot change already-settled gold or research in that turn.
+
+The simultaneous engine resolves submitted commands before these slots.
+It resolves global map work after player work, rather than before player activation as in `CvGame::doTurn`.
+This boundary adaptation gives worker completions one defined map-update point.
+It does not reproduce sequential activation or shuffled source player order.
+Most slots reserve future work and do not yet contain systems.
+
+`TurnEnded` follows `GameEnd`, before the turn counter increases.
+`TurnStarted` follows the counter increase and precedes AI commands. Both events retain their existing presentation semantics.
+
+## Feature ruleset setup
+
+A non-null `SimulationSettings.WorldSize` selects Foundation's `INewGameSetup` service.
+Null retains the legacy setup. Feature settings include `WorldSize`, `GameSpeed`, `Handicap`, `StartingEra`, and one entry in `Leaders` per player.
+`MapGenerator = "world:continents"` selects World generation.
+An optional `Civilizations` entry resolves a leader shared by multiple civilizations. An incompatible selection fails before generation.
+
+Foundation resolves dimensions from `WorldSizeDef.GridWidth/GridHeight` times the source landscape-cell scale of four.
+Standard therefore contains 84 × 52 = 4368 plots, with east–west wrap.
+`State.Map` holds the effective map. `Settings.Map` remains the caller's original legacy map setting.
+
+Foundation creates teams and grants civilization and handicap starting technologies.
+Civilization free-unit classes resolve through `UnitOverrides`, including explicit disabled classes.
+Era and handicap fields supply multipliers, extra worker/defense/exploration grants, and starting gold.
+Role selection uses eligible land units, known requirements, work rate, strength, movement, and exploration suitability.
+It approximates `CvPlayer::addFreeUnitAI`, not the full military AI valuation.
+All initial units share their player's start plot. Movement rules remain a Military task.
+
+World scores radius-two and radius-three food and production, with coast and fresh-water weights.
+It selects habitable starts with minimum wrapped spacing, then improves weak starts with grass and forest near the center.
+Normalization never changes water, peaks, or resource plots. Impossible spacing produces a setup error, not overlapping starts.
+The harness `tests/Civ.Mods.Tests/GameFactory.cs` creates full headless games through this API.
+
+## World services
+
+Clients and other mods resolve these Core contracts through `ContentDb.Services.Get<T>().Single()`:
+
+- `IPlotYieldService.Calculate(Simulation, int player, TileId)` returns `PlotYieldResult(YieldVector, Ledger)`.
+- `IPlotYieldService.CalculateNature(Simulation, int player, TileId, bool ignoreFeature = false)` returns natural potential.
+- `IWaterService.IsFreshWater(Simulation, TileId)` and `IsIrrigated(Simulation, int player, TileId)` return availability.
+- `IResourceNetwork.ConnectedCount(Simulation, int player, int city, string bonus)` returns physical connected copies.
+- `IWorkerBuildService.Validate(Simulation, int player, int unit, string build)` returns a rejection reason or null.
+- `IWorkerBuildService.Start(Simulation, int player, int unit, string build)` applies a validated assignment.
+- `IWorkerBuildService.RequiredWork(Simulation, TileId, string build)` returns the integer work threshold.
+- `IVisibilityService.Recompute(Simulation)` updates visible and revealed team masks.
+- `IStartingPositionService.Select(Simulation, int count)` selects locations without mutation.
+- `IStartingPositionService.Normalize(Simulation, IReadOnlyList<TileId>)` applies setup-only terrain changes.
+
+Read-only queries never consume RNG or change authoritative state. Services hold no per-game caches.
+Plot yields include terrain, relief, lakes, features, revealed resources, improvements, routes, irrigation, technology changes, and registered plot modifier sources.
+Feature river changes replace terrain river changes. Route synergy suppresses smaller river contributions per yield, as in `CvPlot::calculateNatureYield`.
+Nature clamps before improvement effects. Flat sources sum before percentage multiplication, integer division, and the final nonnegative clamp.
+Ledger keys `yield.flat.*` and `yield.percent.*` explain inputs. `world:food`, `world:production`, and `world:commerce` hold final outputs.
+Cities owns city-center minima and city-specific plot effects. Government and Peoples can contribute through `IModifierSource` with `ModifierScope.Plot`.
+
+The generator adapts `Continents.py` and `FractalWorld`: polar fractal land with 75% water, separate relief, and latitude-based climate.
+Integer value noise replaces the native fractal primitive. Priority-flood drainage connects high ground to water across a temporary filled surface.
+River masks describe shared hex edges, not square-map river directions. `SetRiver` maintains both sides.
+Flooded depressions can produce level drainage steps. The drainage parent order prevents cycles.
+Connected water areas with at most the configured lake size supply fresh water.
+Features and resources obey typed placement restrictions. Resource density uses appearance, eligible tiles, player count, class spacing, and clustering.
+Starting normalization can replace climate-selected terrain near starts, but never invalidates a resource's terrain or feature.
+Goody huts use improvement spacing and tiles-per rules. Starting eras can suppress all huts.
+
+Networks use routes, city nodes, shared river edges, and technology-enabled coast/ocean plots.
+Unowned plots require exploration. Foreign territory remains inaccessible until diplomacy rules supply permissions.
+Queries recompute components so ownership, pillage and technology changes take effect immediately.
+The `bonus` evaluator uses connected counts. Vicinity requirements remain unavailable until Cities defines their scope.
+
+`world:start_build` serializes the Core `StartBuildCommand`.
+Workers share plot progress by build id. An assignment stores its original tile, so movement cancels the assignment at the next worker phase.
+Build times apply terrain, speed and starting-era multipliers in sequence. Known technologies and AI handicap fields modify work rates.
+Completion can remove a feature, create an improvement or route, change terrain, or consume a worker.
+A feature effect can permit removal without its production technology. Such removal grants no production.
+`FeatureProduction` names the nearest owned city and the production grant. Cities must subscribe to apply overflow.
+Improvement upgrades require worked turns or an outside-borders target, plus the target's technology.
+
+Visibility runs at `TurnPhase.Visibility`, after founding, and after unit creation events.
+Military must call `Recompute` after moves. Sight uses hex distance, team sharing, and promotion visibility changes.
+It does not yet model terrain occlusion or remembered hidden terrain.
+
+`Plot.Kind`, `IsLake`, `ImprovementTurns`, `BuildProgress`, player leader/start ids, and worker components enter saves and state hashes.
+These fields are additive to save schema 1 and have defaults for older JSON.
+Changed mod versions reject old content identities unless the caller explicitly forces loading.
+Hand-authored geometry tuning lives in `src/Mods/Foundation/data/hex-overrides.json` and enters the content hash.
+The importer writes only its declared definition families and rejects that reserved filename.
+
+See [mechanics-status.md](mechanics-status.md) for consumed fields and remaining mechanics.
+
+## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
 A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.
 
@@ -149,7 +278,7 @@ The handshake identifies content, not initial setup. State hashes detect setup d
 ## V1 content mods
 
 `src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, and Peoples.
-These data-only mods have no load-order dependencies yet. Each manifest declares its cross-mod content providers in `references`.
+These mods have no load-order dependencies yet. Foundation and World now register setup and gameplay services. Each manifest declares its cross-mod content providers in `references`.
 References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
 
@@ -161,7 +290,7 @@ See [content-schema.md](content-schema.md) for definition types, units, scopes, 
 
 ## Remaining feature work
 
-The v1 definition schema is available. Gameplay rules follow one feature mod at a time.
+The v1 definition schema, Foundation setup, and the first World rules are available. Gameplay rules continue one feature mod at a time.
 Feature mods must define effect keys, query interfaces, turn priorities, queue rules, diplomacy enforcement and save migrations.
 BaseGame remains a test scaffold: combat does not enforce war relations, and its economy sends all commerce to research.
 Fog rules, advanced AI, border rules, city capture, art conversion and network transports remain separate tasks.

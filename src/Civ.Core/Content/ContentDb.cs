@@ -147,6 +147,8 @@ public interface IMapGenerator : IHasId
 {
     /// <summary>Fill every plot, in tile order, for the given map specification. Array length must equal Width * Height.</summary>
     void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content);
+    /// <summary>Setup-aware placement. Legacy generators ignore player-dependent resource density.</summary>
+    void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players) => Generate(spec, plots, rng, content);
 }
 /// <summary>Deterministic player AI; called on every peer, returning ordinary validated commands.</summary>
 public interface IPlayerAI : IHasId
@@ -154,7 +156,7 @@ public interface IPlayerAI : IHasId
     /// <summary>Decide using only simulation state and RNG.</summary>
     IEnumerable<GameCommand> Decide(Simulation sim, int playerId);
 }
-/// <summary>A rule step executed once per turn in (Order, Id) order.</summary>
+/// <summary>A rule step in (Order, Id) order. Player-interval steps implement IPlayerTurnSystem and run once per player.</summary>
 public interface ITurnSystem : IHasId
 {
     /// <summary>Ascending execution priority.</summary>
