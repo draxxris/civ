@@ -108,6 +108,12 @@ public sealed partial class GameSession
                 return Note(turn, "project", $"{CityName(p.City)} completed {(Sim.Content.TryGet<Schema.ProjectDef>(p.Project, out var project) ? project.Name : Labels.Humanize(p.Project))}", p.City);
             case VictoryAchieved v:
                 return Note(turn, "victory", $"{PlayerName(v.Player)} won a {(Sim.Content.TryGet<Schema.VictoryDef>(v.Victory, out var victory) ? victory.Name : Labels.Humanize(v.Victory))}");
+            case CityRebellionTriggered r when r.Player == Human || Mine(r.City):
+                return Note(turn, "rebellion", $"{CityName(r.City)} rebelled: {r.Units.Count} rebel units appeared", r.City);
+            case CityRebellionSuppressed r when r.Player == Human:
+                return Note(turn, "rebellion", $"Rebellion in {CityName(r.City)} was suppressed", r.City);
+            case ScriptedWonderEffectApplied w when Mine(w.City):
+                return Note(turn, "wonder", $"{(Sim.Content.TryGet<Schema.BuildingDef>(w.Building, out var wonder) ? wonder.Name : Labels.Humanize(w.Building))} in {CityName(w.City)}: {Labels.Humanize(w.Effect)}", w.City);
             default: return null;
         }
     }

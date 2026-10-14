@@ -37,7 +37,7 @@ public sealed record CityScreen(
     IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry,
     IReadOnlyList<CityReligion> Religions, long GreatPeopleRate, IReadOnlyDictionary<string, int> SettledSpecialists,
     int GoldenAgeTurns, IReadOnlyList<TradeRouteResult> TradeRoutes, int MaxTradeRoutes,
-    IReadOnlyList<CityCorporation> Corporations)
+    IReadOnlyList<CityCorporation> Corporations, CityStabilityReport? Stability, IReadOnlyList<CityWonderScript> WonderScripts)
 {
     public int Citizens => Population;
 }
@@ -74,7 +74,7 @@ public sealed partial class GameSession
             HurryOptions(city), ReligionsIn(city), greatPeople?.Rate ?? 0,
             greatPeopleService?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>(),
             greatPeopleService?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0, trade?.Routes ?? [],
-            tradeService?.MaxRoutes(Sim, city.Id) ?? 0, CorporationsIn(city));
+            tradeService?.MaxRoutes(Sim, city.Id) ?? 0, CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city));
     }
 
     private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);

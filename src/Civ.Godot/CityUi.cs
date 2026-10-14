@@ -59,6 +59,8 @@ internal sealed partial class CityUi : Control
         if (c.Disorder) box.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
         AddReligions(box, c);
         AddCorporations(box, c);
+        AddStability(box, c);
+        AddWonderScripts(box, c);
         box.AddChild(FoodBox(c));
         box.AddChild(Stats(c));
         box.AddChild(Wellbeing(c));
@@ -117,6 +119,25 @@ internal sealed partial class CityUi : Control
             row.AddChild(Ui.Text(r.Name + (r.Holy ? " ★ holy city" : "") + (r.State ? " (state)" : ""), 13, r.Holy ? Ui.Accent : Ui.Dim, wrap: false));
         }
         box.AddChild(row);
+    }
+
+    private void AddStability(VBoxContainer box, CityScreen c)
+    {
+        if (c.Stability is not { } s) return;
+        box.AddChild(Ui.Heading($"Stability: {s.Status} ({s.Index})"));
+        string extra = s.CooldownTurns > 0 ? $", rebellion cooldown {s.CooldownTurns} turns" : "";
+        box.AddChild(Ui.Text($"{Labels.Signed(s.ChangePerTurn)} per turn{extra}", 13, s.Status == CityStabilityStatus.Stable ? Ui.Dim : Ui.Bad));
+        foreach (var row in s.Ledger) box.AddChild(Ui.Text(row.Text, 12, Ui.Dim));
+        if (s.CanSuppress) box.AddChild(Ui.Button("Suppress Rebellion", () => _session.SuppressRebellion(c.Id), "Pay to reduce instability", size: 13));
+    }
+
+    private void AddWonderScripts(VBoxContainer box, CityScreen c)
+    {
+        foreach (var w in c.WonderScripts)
+        {
+            string line = !w.Active ? "inactive" : w.TurnsToSpawn is int t ? $"next {w.SpawnUnit} in {t} turns" : "active";
+            box.AddChild(Ui.Text($"{w.Name}: {line}", 13, Ui.Dim));
+        }
     }
 
     private void AddCorporations(VBoxContainer box, CityScreen c)
