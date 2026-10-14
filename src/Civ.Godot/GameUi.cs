@@ -49,7 +49,8 @@ internal sealed partial class GameUi : CanvasLayer
         _governmentDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
         _governmentDialog.Visible = false;
         _city = new CityUi(session, icons);
-        foreach (var node in new Node[] { _top, _left, _message, _endTurn, _researchDialog, _city, _governmentDialog, _hoverTip }) AddChild(node);
+        InitPanels();
+        foreach (var node in new Node[] { _top, _left, _feed, _message, _endTurn, _researchDialog, _city, _governmentDialog, _modal, _hoverTip }) AddChild(node);
     }
 
     public void Refresh()
@@ -66,6 +67,9 @@ internal sealed partial class GameUi : CanvasLayer
         else BuildLeft();
         BuildResearchDialog();
         BuildGovernmentDialog();
+        BuildModal();
+        BuildFeed();
+        _shownModalRevision = _modalRevision;
         _shownGovernmentRevision = _governmentRevision;
         _message.Text = _session.Message;
         int idle = _session.UnitsNeedingOrders;
@@ -74,7 +78,8 @@ internal sealed partial class GameUi : CanvasLayer
     }
 
     private bool NeedsRefresh() => _shownRevision != _session.Revision || _shownResearchOpen != _researchOpen
-        || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision;
+        || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
+        || _shownModalRevision != _modalRevision;
 
     // --- hover -------------------------------------------------------------------------------------
 
@@ -110,6 +115,7 @@ internal sealed partial class GameUi : CanvasLayer
         row.AddChild(RateBox("Espionage", RateKind.Espionage, s.Rates.Espionage));
         var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
         row.AddChild(Ui.Button(anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics", ToggleGovernment));
+        AddPanelButtons(row);
         row.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         row.AddChild(Ui.Text($"{s.Cities} cities  ·  {s.Units} units", 14, Ui.Dim, wrap: false));
         _top.AddChild(row);
@@ -140,12 +146,14 @@ internal sealed partial class GameUi : CanvasLayer
     public void ToggleResearch()
     {
         if (_governmentOpen) ToggleGovernment();
+        if (_modalKind != Modal.None) CloseModal();
         _researchOpen = !_researchOpen;
     }
 
     public bool CloseDialogs()
     {
-        bool wasOpen = _researchOpen || _governmentOpen;
+        bool wasOpen = _researchOpen || _governmentOpen || _modalKind != Modal.None;
+        if (_modalKind != Modal.None) CloseModal();
         if (_governmentOpen) ToggleGovernment();
         _researchOpen = false;
         return wasOpen;

@@ -79,6 +79,7 @@ public sealed partial class GameSession
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
                 new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
         actions.AddRange(PromotionActions(unit));
+        actions.AddRange(ReligionActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
     }
 
