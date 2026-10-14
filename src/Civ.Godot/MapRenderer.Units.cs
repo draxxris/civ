@@ -47,7 +47,7 @@ internal sealed partial class MapRenderer
                 _actors[unit.Id] = actor;
                 AddChild(actor);
             }
-            actor.Anchor = new Vector3(at.X, YTokens, at.Z);
+            actor.Anchor = at;
             actor.Position = actor.Anchor;
             actor.Rotation = new Vector3(0, FacingOf(unit), 0);
             actor.Play(_session.ActivityOf(unit) is UnitActivity.Fortify or UnitActivity.Sentry ? "fortify" : "idle");
@@ -164,7 +164,7 @@ internal sealed partial class MapRenderer
             a.Lunge = d.Lunge = a.Shake = d.Shake = 0;
             var (winner, loser) = b.Playback.WinnerId == b.Playback.AttackerId ? (a, d) : (d, a);
             winner.Play("idle");
-            if (b.Playback.LoserDied) loser.Play("die"); else loser.Play("idle");
+            if (b.Playback.LoserDied) loser.Play("die", FinaleTime); else loser.Play("idle");
         }
         float f = Mathf.Clamp((b.Time - strikesEnd) / FinaleTime, 0f, 1f);
         if (b.Playback.LoserDied)
@@ -186,13 +186,13 @@ internal sealed partial class MapRenderer
         if (i != b.Strike)
         {
             b.Strike = i;
-            hitter.Play("attack");
-            victim.Play("hurt");
+            hitter.Play("attack", StrikeTime);
+            victim.Play("hurt", StrikeTime);
         }
-        hitter.Lunge = Mathf.Sin(f * Mathf.Pi) * MaxLunge;
+        hitter.Lunge = hitter.HasClip("attack") ? 0 : Mathf.Sin(f * Mathf.Pi) * MaxLunge;
         hitter.Shake = 0;
         victim.Lunge = 0;
-        victim.Shake = f > 0.4f ? Mathf.Sin(f * 50f) * 0.05f * (1 - f) : 0;
+        victim.Shake = !victim.HasClip("hurt") && f > 0.4f ? Mathf.Sin(f * 50f) * 0.05f * (1 - f) : 0;
     }
 
     private void EndBattle(Battle b)
