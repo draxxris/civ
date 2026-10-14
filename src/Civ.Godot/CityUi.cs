@@ -6,7 +6,7 @@ namespace Civ.Client;
 /// <summary>City screen: ledgers on the left, production and citizens on the right, the city's tiles on the map between.</summary>
 internal sealed partial class CityUi : Control
 {
-    private enum Tab { Buildings, Units, Processes }
+
 
     private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = 44f;
     private const int MaxBlockedShown = 40;
@@ -15,11 +15,11 @@ internal sealed partial class CityUi : Control
     private readonly IconCache _icons;
     private readonly PanelContainer _left = Ui.Panel();
     private readonly PanelContainer _right = Ui.Panel();
-    private Tab _tab = Tab.Buildings;
+    private int _tab;
     private bool _showBlocked;
 
     /// <summary>Changes when a local choice (tab, filter) changes, so the owner knows to rebuild.</summary>
-    public int State => (int)_tab * 2 + (_showBlocked ? 1 : 0);
+    public int State => _tab * 2 + (_showBlocked ? 1 : 0);
 
     public CityUi(GameSession session, IconCache icons)
     {

@@ -9,7 +9,7 @@ internal sealed class DebugOptions
     public string Stage { get; private init; } = "setup";
     public int Frames { get; private init; } = 60;
     public int Turns { get; private init; }
-    public string World { get; private init; } = "standard";
+    public string World { get; private init; } = "";
     public int Opponents { get; private init; } = 3;
     public ulong Seed { get; private init; } = 1;
     public bool Reveal { get; private init; }
@@ -21,7 +21,7 @@ internal sealed class DebugOptions
         return new DebugOptions
         {
             ScreenshotPath = Value("--screenshot", ""), Stage = Value("--stage", "setup"), Frames = int.Parse(Value("--frames", "60")),
-            Turns = int.Parse(Value("--turns", "0")), World = Value("--world", "standard"), Opponents = int.Parse(Value("--opponents", "3")),
+            Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), Opponents = int.Parse(Value("--opponents", "3")),
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
         }.Normalized();
     }
@@ -100,8 +100,10 @@ public partial class Main : Node3D
 
     private NewGameOptions DebugGame()
     {
-        var size = _catalog!.WorldSizes.First(w => w.Id.EndsWith("_" + _debug.World, StringComparison.Ordinal)).Id;
-        return _catalog.DefaultOptions() with { WorldSize = size, Opponents = _debug.Opponents, Seed = _debug.Seed };
+        var defaults = _catalog!.DefaultOptions();
+        var size = _debug.World.Length == 0 ? defaults.WorldSize : _catalog.WorldSizes.First(w =>
+            w.Id == _debug.World || w.Name.Equals(_debug.World, StringComparison.OrdinalIgnoreCase)).Id;
+        return defaults with { WorldSize = size, Opponents = _debug.Opponents, Seed = _debug.Seed };
     }
 
     private void Start(NewGameOptions options)

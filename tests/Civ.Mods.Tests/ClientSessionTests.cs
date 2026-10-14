@@ -271,7 +271,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         s.ToggleTile(city, worked);
         Assert.Equal("", s.Message);
         Assert.DoesNotContain(worked, city.Worked);
-        Assert.Equal(1, city.Specialists.GetValueOrDefault(GameSession.CitizenSpecialist));
+        Assert.Equal(1, city.Specialists.GetValueOrDefault(s.CitizenSpecialist));
         s.ToggleTile(city, worked);
         Assert.Contains(worked, city.Worked);
         Assert.Equal(TileMark.Worked, MarkWithCity(s, city, worked));

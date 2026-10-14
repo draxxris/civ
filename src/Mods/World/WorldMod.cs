@@ -22,6 +22,8 @@ public sealed class WorldMod : IMod
         var visibility = new VisibilityService();
         var workers = new WorkerBuildService(water);
         context.MapGenerators.Register(new ContinentsGenerator());
+        context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
+        context.RegisterService<Civ.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
         context.RegisterService<Civ.Game.IWaterService>("water", water);
         context.RegisterService<Civ.Game.IPlotYieldService>("plot_yields", yields);
         context.RegisterService<Civ.Game.IResourceNetwork>("resource_network", network);

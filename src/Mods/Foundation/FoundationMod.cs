@@ -8,6 +8,7 @@ public sealed class FoundationMod : IMod
 {
     public void Register(IModContext context)
     {
+        context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         ContentRegistration.Load<HexOverridesDef>(context, "hex-overrides.json");
         context.RegisterService<Civ.Game.INewGameSetup>("new_game", new NewGameSetup());
         ContentRegistration.Load<CommerceDef>(context, "commerce.json");

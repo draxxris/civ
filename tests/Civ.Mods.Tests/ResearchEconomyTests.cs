@@ -229,18 +229,18 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     public void Gold_hurry_uses_new_item_surcharge_and_whip_uses_scaled_population_and_anger()
     {
         var sim = Scenario(true); var city = sim.State.Cities[0]; var service = Service<ICityHurryService>(sim);
-        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, ContentId = "probe:building" }, out _));
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, Kind = "cities:building", ContentId = "probe:building" }, out _));
         var hurry = service.Calculate(sim, 1, "cities:hurry_gold");
         Assert.Equal(17, Service<ICityProductionService>(sim).Calculate(sim, 1, "cities:building", "probe:building").Cost); // 10*176/100*100/100.
         Assert.Equal(78, hurry.Gold); // ceil(17*150/100)*3.
         Assert.Equal(150, hurry.Ledger.Total("economy:hurry_factor_percent"));
         sim.State.PlayerById(0).Treasury = 77;
-        Assert.False(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1 }, out var error)); Assert.Contains("gold", error);
+        Assert.False(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1, HurryId = "cities:hurry_gold" }, out var error)); Assert.Contains("gold", error);
         sim.State.PlayerById(0).Treasury = 78;
-        Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1 }, out error), error);
+        Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1, HurryId = "cities:hurry_gold" }, out error), error);
         Assert.Equal(0, sim.State.PlayerById(0).Treasury); Assert.Equal(17, city.ProductionQueue[0].Progress);
         sim.AdvanceTurn(); Assert.Contains("probe:building", city.Buildings);
-        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, ContentId = "probe:whip" }, out _));
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, Kind = "cities:building", ContentId = "probe:whip" }, out _));
         city.Population = 20; city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 1 };
         // Happiness is not modelled here: give the city 18 workers, as if it had grown content, so the whip must release them.
         var center = sim.State.Grid.TileAt(city.Position);

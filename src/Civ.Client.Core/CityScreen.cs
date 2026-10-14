@@ -11,10 +11,10 @@ public sealed record LedgerRow(string Label, long Amount, bool Percent = false)
 
 public sealed record SpecialistRow(string Id, string Name, int Count, int Slots, string Effects);
 
-public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns);
+public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns, bool IsContinuous);
 
 /// <summary>Something the city could produce. <see cref="Blockers"/> are the requirement failures, empty when it can be queued.</summary>
-public sealed record ProductionChoice(string Kind, string Id, string Name, long Cost, int? Turns, IReadOnlyList<string> Blockers)
+public sealed record ProductionChoice(string Kind, string Id, string Name, long Cost, int? Turns, IReadOnlyList<string> Blockers, bool IsContinuous)
 {
     public bool Available => Blockers.Count == 0;
     public string Tooltip => Available ? $"{Name}: {Cost} production" : string.Join("\n", Blockers);
@@ -122,26 +122,25 @@ public sealed partial class GameSession
             s.Commerces.Gold != 0 ? $"{Labels.Signed(s.Commerces.Gold)} gold" : "", s.Commerces.Research != 0 ? $"{Labels.Signed(s.Commerces.Research)} research" : "" }
             .Where(t => t.Length > 0));
 
+    public IReadOnlyList<IProductionKind> ProductionKinds => Sim.Content.Services.Get<IProductionKind>();
+
+    private IProductionKind KindOf(string kind) => ProductionKinds.Single(k => k.Id == kind);
+
     private IReadOnlyList<QueueRow> QueueRows(City city)
     {
-        var production = Service<ICityProductionService>();
         var rows = new List<QueueRow>();
         for (int i = 0; i < city.ProductionQueue.Count; i++)
         {
             var order = city.ProductionQueue[i];
-            var calc = production.Calculate(Sim, city.Id, order.Kind, order.ContentId);
-            rows.Add(new(i, order.Kind, order.ContentId, NameOf(order.Kind, order.ContentId), order.Progress, calc.Cost,
-                order.Kind == "economy:process" ? null : TurnsToFinish(calc.Cost - order.Progress, calc.Production)));
+            var kind = KindOf(order.Kind);
+            var calc = kind.Calculate(Sim, city.Id, order.ContentId);
+            rows.Add(new(i, order.Kind, order.ContentId, kind.Definition(Sim.Content, order.ContentId).Name, order.Progress, calc.Cost,
+                kind.IsContinuous ? null : TurnsToFinish(calc.Cost - order.Progress, calc.Production), kind.IsContinuous));
         }
         return rows;
     }
 
-    private string NameOf(string kind, string id) => kind switch
-    {
-        "cities:building" => Sim.Content.Get<Schema.BuildingDef>(id).Name,
-        "cities:unit" => Sim.Content.Get<Schema.UnitDef>(id).Name,
-        _ => Sim.Content.TryGet<Schema.ProcessDef>(id, out var p) ? p.Name : id,
-    };
+
 
     private IReadOnlyList<HurryOption> HurryOptions(City city)
     {
@@ -154,8 +153,7 @@ public sealed partial class GameSession
         }).ToList();
     }
 
-    private static readonly string[] HiddenBlockers =
-        ["Civilization class replacement required", "Building cannot be constructed", "Unit cannot be trained", "Unknown building", "Unknown unit"];
+
 
     private readonly Dictionary<string, IReadOnlyList<(Content.ContentDef Def, IReadOnlyList<string> Blockers)>> _eligibility = new();
     private (int Revision, int City) _eligibilityKey = (-1, -1);
@@ -167,42 +165,36 @@ public sealed partial class GameSession
         var key = (WorldRevision, city.Id);
         if (key != _eligibilityKey) { _eligibility.Clear(); _eligibilityKey = key; }
         if (!_eligibility.TryGetValue(kind, out var eligible)) _eligibility[kind] = eligible = CheckEligibility(city, kind);
-        var production = Service<ICityProductionService>();
+        var production = KindOf(kind);
         return eligible.Select(e => e.Blockers.Count > 0
-            ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, BaseCost(e.Def), null, e.Blockers)
-            : Priced(city, production, kind, e.Def)).ToList();
+            ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, production.BaseCost(e.Def), null, e.Blockers, production.IsContinuous)
+            : Priced(city, production, e.Def)).ToList();
     }
 
-    /// <summary>All three kinds together.</summary>
+    /// <summary>All registered kinds together.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city) =>
-        new[] { "cities:building", "cities:unit", "economy:process" }.SelectMany(k => ProductionChoices(city, k)).ToList();
+        ProductionKinds.SelectMany(k => ProductionChoices(city, k.Id)).ToList();
 
     private IReadOnlyList<(Content.ContentDef, IReadOnlyList<string>)> CheckEligibility(City city, string kind)
     {
-        IEnumerable<Content.ContentDef> defs = kind switch
-        {
-            "cities:building" => Sim.Content.Get<Schema.BuildingDef>().All.Where(b => b.Cost >= 0),
-            "cities:unit" => Sim.Content.Get<Schema.UnitDef>().All.Where(u => u.Cost >= 0),
-            _ => OptionalService<ICityProcessService>() == null ? [] : Sim.Content.Get<Schema.ProcessDef>().All,
-        };
-        var production = Service<ICityProductionService>();
+        var production = KindOf(kind);
+        var defs = production.Candidates(Sim.Content);
         var result = new List<(Content.ContentDef, IReadOnlyList<string>)>();
         foreach (var def in defs.OrderBy(d => d.Name, StringComparer.Ordinal))
         {
-            var blockers = production.Validate(Sim, city.Id, kind, def.Id).Failures.Select(f => f.Explanation).Distinct().ToList();
-            if (!blockers.Any(HiddenBlockers.Contains)) result.Add((def, blockers));
+            var eligibility = production.Validate(Sim, city.Id, def.Id);
+            var blockers = eligibility.Failures.Select(f => f.Explanation).Distinct().ToList();
+            if (production.IsVisible(eligibility)) result.Add((def, blockers));
         }
         return result;
     }
 
-    private ProductionChoice Priced(City city, ICityProductionService production, string kind, Content.ContentDef def)
+    private ProductionChoice Priced(City city, IProductionKind production, Content.ContentDef def)
     {
-        var calc = production.Calculate(Sim, city.Id, kind, def.Id);
-        int? turns = kind == "economy:process" ? null : TurnsToFinish(calc.Cost - ProgressOf(city, kind, def.Id), calc.Production);
-        return new(kind, def.Id, def.Name, calc.Cost, turns, []);
+        var calc = production.Calculate(Sim, city.Id, def.Id);
+        int? turns = production.IsContinuous ? null : TurnsToFinish(calc.Cost - ProgressOf(city, production.Id, def.Id), calc.Production);
+        return new(production.Id, def.Id, def.Name, calc.Cost, turns, [], production.IsContinuous);
     }
-
-    private static long BaseCost(Content.ContentDef def) => def switch { Schema.BuildingDef b => b.Cost, Schema.UnitDef u => u.Cost, _ => 0 };
 
     private long ProgressOf(City city, string kind, string id)
     {

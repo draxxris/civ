@@ -3,14 +3,14 @@ using Civ.Content;
 namespace Civ.Game;
 
 /// <summary>Deterministic game setup, included in versioned saves.</summary>
-public sealed class SimulationSettings
+public sealed record SimulationSettings
 {
     /// <summary>Initial RNG seed.</summary>
     public ulong Seed { get; init; } = 1;
     /// <summary>Map dimensions and wrapping.</summary>
     public MapSpec Map { get; init; } = new(21, 21);
-    /// <summary>Registered generator id.</summary>
-    public string MapGenerator { get; init; } = "base:continents";
+    /// <summary>Registered generator id. Empty selects the loaded ruleset default.</summary>
+    public string MapGenerator { get; init; } = "";
     /// <summary>Player count.</summary>
     public int PlayerCount { get; init; } = 2;
     /// <summary>Civilization per player. Missing entries cycle through content in ordinal id order.</summary>
@@ -18,17 +18,29 @@ public sealed class SimulationSettings
     /// <summary>Feature ruleset world size. Null retains legacy setup.</summary>
     public string? WorldSize { get; init; }
     /// <summary>Speed definition for feature rules.</summary>
-    public string GameSpeed { get; init; } = "foundation:gamespeed_normal";
+    public string GameSpeed { get; init; } = "";
     /// <summary>Difficulty definition for feature rules.</summary>
-    public string Handicap { get; init; } = "foundation:handicap_noble";
+    public string Handicap { get; init; } = "";
     /// <summary>Initial era, used for starting grants and build-time scaling.</summary>
-    public string StartingEra { get; init; } = "foundation:era_ancient";
+    public string StartingEra { get; init; } = "";
     /// <summary>One leader per player in feature rulesets.</summary>
     public string[] Leaders { get; init; } = [];
     /// <summary>AI per player; missing or null means human.</summary>
     public string?[] PlayerAis { get; init; } = [];
     /// <summary>Team id per player; missing entries default to player id.</summary>
     public int[] PlayerTeams { get; init; } = [];
+
+    /// <summary>Resolve omitted identities once, before generation. Explicit choices are never replaced.</summary>
+    public SimulationSettings Resolve(ContentDb content) => this with
+    {
+        MapGenerator = Choose(content, SetupField.MapGenerator, MapGenerator, content.MapGenerators.All.FirstOrDefault()?.Id ?? ""),
+        GameSpeed = Choose(content, SetupField.GameSpeed, GameSpeed),
+        Handicap = Choose(content, SetupField.Handicap, Handicap),
+        StartingEra = Choose(content, SetupField.StartingEra, StartingEra),
+    };
+
+    private static string Choose(ContentDb content, SetupField field, string value, string fallback = "") =>
+        value.Length > 0 ? value : SetupPolicies.Default(content, field) ?? fallback;
 }
 
 /// <summary>Headless deterministic simulation. Rules, commands and cross-mod services come from frozen content.</summary>
@@ -40,7 +52,7 @@ public sealed class Simulation
     public GameState State { get; }
     /// <summary>Resumable deterministic RNG.</summary>
     public DeterministicRng Rng { get; }
-    /// <summary>Original game setup.</summary>
+    /// <summary>Game setup with omitted identities resolved from the loaded ruleset.</summary>
     public SimulationSettings Settings { get; }
     /// <summary>Deterministic rule notification bus and non-authoritative presentation events.</summary>
     public DomainEventBus Events { get; }
@@ -48,8 +60,10 @@ public sealed class Simulation
 
     /// <summary>Create a new game, generate plots, initialize teams, then let AI players act.</summary>
     public Simulation(ContentDb content, SimulationSettings settings)
-        : this(content, settings, new GameState { Map = ResolveMap(content, settings) }, new DeterministicRng(settings.Seed))
+        : this(content, settings.Resolve(content), new GameState(), new DeterministicRng(settings.Seed))
     {
+        settings = Settings;
+        State.Map = ResolveMap(content, settings);
         if (settings.PlayerCount <= 0) throw new ArgumentOutOfRangeException(nameof(settings.PlayerCount));
         var setup = settings.WorldSize is null ? null : content.Services.Get<INewGameSetup>().Single();
         if (setup is not null) setup.CreatePlayers(this);

@@ -38,6 +38,7 @@ public sealed class BaseGameMod : IMod
         foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.ExperienceLevels.Register(l);
 
         ctx.MapGenerators.Register(new ContinentsGenerator());
+        ctx.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
 
         ctx.RegisterCommand<FoundCityCommand>("found_city");
         ctx.RegisterCommand<SetResearchCommand>("set_research");

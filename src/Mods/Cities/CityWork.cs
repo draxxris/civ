@@ -6,6 +6,8 @@ namespace Civ.Mods.Cities;
 
 internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkService
 {
+    public string DefaultSpecialist(Simulation sim) => Specialists.Citizen;
+
     public int Radius(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
