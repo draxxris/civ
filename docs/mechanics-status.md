@@ -1,7 +1,6 @@
 # Mechanics status
 
-Status describes executable rules, not imported data. Nine content mods load definition sidecars. AI, GreatPeople, and Trade supply additional rules.
-
+Status describes executable rules, not imported data. Feature mods load definition sidecars and executable systems. AI, GreatPeople, and Trade supply additional rules.
 ## Foundation
 
 - **Implemented:** phase contract, setup selection, source plot counts, speed/handicap/era validation, team creation, starting gold.
@@ -9,8 +8,7 @@ Status describes executable rules, not imported data. Nine content mods load def
 - **Partial:** era and handicap grants. Fields: `StartingUnitMultiplier`, `StartingDefenseUnits`, `StartingWorkerUnits`,
   `StartingExploreUnits`, their AI counterparts, `StartingTechs`, and `AiStartingTechs`.
   Earlier-era technology grants, advanced start, calendar progression, and per-player difficulty remain absent.
-- **Not started:** default civics for civilizations with incomplete civic declarations, global properties, deals, victory rules.
-
+- **Not started:** default civics for civilizations with incomplete civic declarations and global properties.
 ## World
 
 - **Implemented:** continents, relief, climate, shared river masks, areas, lakes, feature placement and goody huts.
@@ -31,7 +29,7 @@ Status describes executable rules, not imported data. Nine content mods load def
 - **Partial:** resource networks and the `bonus` evaluator.
   Fields: bonus reveal/trade/obsolescence technologies, improvement `BonusEffects.Connects/ActsAsCity`,
   technology `RiverTrade/TradeTerrains`, plot ownership, exploration, routes, and shared river edges.
-  Foreign permissions, blockades, traded allocations, corporation consumption and vicinity predicates remain absent.
+  Foreign permissions, blockades, corporation-aware resource accounting beyond diplomatic allocations, and vicinity predicates remain absent.
 - **Implemented:** worker assignment, shared progress, feature removal events, route/improvement creation and direct upgrades.
   Fields: build requirements, `Cost/Time/ObsoleteTech/FeatureEffects/ImprovementType/RouteType/TerrainChange/FeatureChange/Kill`,
   terrain `BuildModifier`, unit `Builds/WorkRate`, technology `WorkerSpeedModifier/IgnoreIrrigation/CanPassPeaks`,
@@ -90,13 +88,13 @@ Status describes executable rules, not imported data. Nine content mods load def
   Completion rechecks world/team/player class limits in city-id order. Unit creation supplies experience and a domain event.
 - **Partial:** eligibility covers requirements, civilization replacements, class limits, culture wonder capacity, obsolescence, latitude, population, coast, and river.
   Religion supplies its predicates. Power predicates fail closed. Economy supplies process eligibility and hurry commands.
-  Automatic buildings, active-civic disabling, decay, draft, and projects remain absent.
+  Automatic buildings, active-civic disabling, decay, and draft remain absent. ProjectsVictory owns project production and completion.
   One queue item completes per city per turn. Excess above the overflow cap does not convert to gold yet.
 - **Partial:** city culture keeps hundredths. Plot culture uses hex distance and the source level/rate equation.
   Ownership preserves incumbent ties, then uses player-id order. Capture, terrain-obstructed spread, and isolated-coast eligibility remain absent.
 - **Partial:** maintenance provides distance/government-center and exponential city-count costs in hundredths, including early-turn reduction.
   Hex map diameter normalizes distance. A fixed-point root replaces floating-point exponentiation.
-  Colony, vassal, corporation, and connectedness costs remain absent. Economy must charge the returned total.
+  Colony, vassal, and connectedness costs remain absent. Corporations owns branch maintenance. Economy charges the returned city total.
 - **Delegated to GreatPeople:** specialist/building GP rates, historical pools, weighted births, and threshold progression.
 - **Partial:** current-era growth uses `CityPlayerState.CurrentEra`, with starting-era fallback.
   Technology discovery events update that state. AI per-era growth/cost factors and flexible difficulty remain absent.
@@ -138,9 +136,8 @@ Status describes executable rules, not imported data. Nine content mods load def
   production modifiers (military, building class, unit combat), worker speed, improvement upgrade rate, general rates,
   free experience, military food production. Cities, World and Military consume these keys.
 - **Partial:** `RequiresActiveCivics` buildings deactivate when the civic requirement fails. Max sliders, hurry, unit support and upkeep use
-  civic definitions in Economy. Religion consumes state religion effects. Not consumed yet: corporation maintenance, draft,
-  trade routes, connectedness, diplomacy attitudes, revolution-index fields, city limit, can't-build specials.
-
+  Religion consumes state religion effects. Corporations consumes corporation prohibitions and maintenance modifiers.
+  Revolution consumes civic and religious inputs for city instability. Draft, trade routes, connectedness, city limit, and can't-build specials remain unconsumed.
 ## Peoples
 
 - **Implemented:** `IPeoplesService` (leader, civilization, traits, and the complete leader AI data for the AI mod),
@@ -189,8 +186,69 @@ Status describes executable rules, not imported data. Nine content mods load def
 - **Profile:** imported initial and maximum route counts are zero. Tests override these values to exercise enabled trade.
 - **Deferred:** blockades, open borders, peace-credit recovery, forced trade, and connectedness economics.
 
-## Computer players
+## P6 features
 
+### Diplomacy
+
+- **Implemented:** contact discovery between teams, attitude scores and ledgers, open borders, defensive pacts, war, peace, and saved relation history.
+- **Implemented:** validated deal proposals, recipient acceptance, cancellation, and settlement of resource, gold, gold-per-turn, and technology items.
+  Settlements revalidate assets. War cancels agreements and deals between the affected teams. Defensive pacts can involve partners.
+- **Partial:** trade deals do not cover every source deal type. AI diplomacy does not negotiate deals or treaties.
+
+### ProjectsVictory
+
+- **Implemented:** project eligibility, city production integration, team and world counts, prerequisites, limits, and saved completion state.
+- **Implemented:** conquest, domination, cultural, project, and time victories. Priority order selects the first eligible condition.
+  Saved outcome records winner, victory id, and turn. Score uses population, land, technologies, and world wonders.
+- **Partial:** game rules depend on loaded victory definitions. Diplomatic, religious, and other vote-based victories are not defined by this service.
+
+### Corporations
+
+- **Implemented:** Great Person founding, local and foreign branch spread, resource requirements, civic restrictions, competing branch replacement, and headquarters protection.
+  Spread can use gold or a valid executive. Founding consumes the Great Person.
+- **Implemented:** branch yields, commerce, headquarters commerce, resource-based maintenance, and civic maintenance modifiers.
+  Branch presence, activity, headquarters, and consumed resource counts are queryable.
+- **Partial:** resource queries use physical connections plus diplomatic resource allocations. Trade-network corporation costs remain separate from city maintenance totals.
+
+### Espionage
+
+- **Implemented:** saved rival-team point pools, player weights, fractional output, deterministic point allocation, passive thresholds, mission costs, and success chances.
+  Missions cover treasury theft, production sabotage, revolt, unhappiness, and technology theft.
+- **Implemented:** passive effects for demographics, city visibility, research inspection, and city investigation.
+  Spy missions validate units, target cities, point balances, and mission-specific requirements before execution.
+- **Partial:** the UI exposes allocation and passive unlocks. It does not yet show every passive intelligence result or mission detail.
+
+## P7 features
+
+### Events
+
+- **Implemented:** integer eligibility checks, per-turn random rolls, city and plot subjects, repeat cooldowns, pending choices, automatic fallback, and saved effects.
+  Options change gold, research, city food, queued production, culture, happiness, health, and plot yields.
+- **Implemented:** AI resolves events automatically. Unresolved human events use the default option at the next event phase.
+- **Partial:** option effects cover the schema fields only. Event triggers allow one pending event per player at a time.
+
+### ScriptedWonders
+
+- **Implemented:** wonder completion rewards, periodic unit spawns, combat experience, upgrade discounts, and barbarian combat penalties.
+  City timers pause while inactive and survive capture and saves. Completion rewards apply once.
+- **Partial:** scripted effects are data-driven and limited to the registered effect fields. Inactive wonders do not advance timers.
+
+### Revolution
+
+- **Implemented:** saved city instability, per-turn change ledgers, stable/warning/mutiny/rebellion states, unrest, and rebellion cooldowns.
+  Inputs include wellbeing, capital distance, religion, civics, anarchy, garrisons, Golden Ages, and natural recovery.
+- **Implemented:** suppression spends gold or the remaining movement of an owned military garrison.
+  Rebellion can spawn rebel units and applies temporary unrest.
+- **Partial:** revolution rules and thresholds come from mod content. Rebellion scope does not implement every source-era revolution feature.
+
+## Client and Godot UI
+
+- **Implemented:** Core-backed screen models for diplomacy, agreements, deals, attitudes, victory status, score, corporations, espionage allocation, and pending events.
+- **Implemented:** Godot panels for diplomacy and victory, corporations, espionage, events, religion, pedia, save, and load.
+  City screens show corporations and espionage commerce. Unit actions expose legal corporation and spy commands.
+- **Partial:** spy passive effects are visible, while full city intelligence detail remains unavailable. Scripted-wonder and revolution status have no dedicated global panels.
+
+## Computer players
 - **Implemented:** `ai:standard` selects research, civics, commerce rates, production, citizen assignments and gold hurry purchases.
   Scores use integer AI weights, content flavors, unit AI types and leader personality from `IPeoplesService`.
   Civic changes account for anarchy and the revolution cooldown. Research includes free-tech selections.
@@ -206,6 +264,6 @@ Status describes executable rules, not imported data. Nine content mods load def
   Dense barbarian pressure and the imported one-production settler cost still require balance work.
 
 ## Validation
-Generated games, active worker orders, exploration and RNG state survive save/load with identical hashes.
-Tests cover deterministic maps, physical placement, ledgers, network gates, worker commands, upgrades, setup and phase order.
-The Godot client remains on the legacy ruleset. Its feature-ruleset setup screen and rendering remain separate work.
+Generated games, active worker orders, exploration, feature state, and RNG state survive save/load with identical hashes.
+Tests cover deterministic maps, feature services, diplomacy, projects, corporations, espionage, events, scripted wonders, revolution, client models, and phase order.
+The Godot client loads feature rules through Core contracts. The test ruleset resides in `tests/Civ.Tests/TestRuleset`.

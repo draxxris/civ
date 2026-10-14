@@ -1,7 +1,7 @@
 # Content schema
 
-The v1 definitions are in `Civ.Content.Schema`. The older `Civ.Content` definitions remain for BaseGame and the current client.
-Each feature mod loads immutable definitions from its `data/` directory. Foundation registers setup, and World registers the first gameplay services and systems.
+The feature definitions are in `Civ.Content.Schema`. The older `Civ.Content` definitions remain for legacy contracts.
+Feature mods load immutable definitions from their `data/` directories. Foundation registers setup and feature mods register gameplay services and systems.
 The mechanics status is in [mechanics-status.md](mechanics-status.md).
 
 ## Definitions
@@ -15,14 +15,18 @@ The mechanics status is in [mechanics-status.md](mechanics-status.md).
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
 - Religion: `ReligionDef` with founding technology, missionary, spread factor, commerce vectors, and related building ids.
-
+- ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable victory conditions.
+- Corporations: `CorporationDef` for founding, required resources, branch output, headquarters output, spread cost, and maintenance.
+- Events: `EventTriggerDef` and `EventOptionDef` for eligibility, chance, repeat behavior, outcomes, and timed effects.
+- ScriptedWonders: `WonderScriptDef` for building-linked completion, timed, combat, and modifier effects.
+- Revolution: `RevolutionRulesDef` for instability thresholds, contributing factors, suppression, unrest, and rebellion.
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition families.
 Its noise, climate, sight, lake, source-grid scale and start-balance integers enter the content hash.
 The importer never writes `hex-overrides.json`.
 
-Foundation also reserves `GameOptionDef`, `ConditionDef`, `CorporationIdentityDef`, and `VictoryIdentityDef`.
-Corporation and victory definitions contain identities and text, not effects. Their `Deferred` flag is always true.
-Religion replaces the former deferred identities with `religion:*` ids. Existing content references use those ids.
+Foundation reserves `GameOptionDef` and `ConditionDef`, plus corporation and victory identity records.
+Corporation and victory gameplay now uses `CorporationDef`, `ProjectDef`, and `VictoryDef` in their feature mods.
+Religion owns `religion:*` identities and their prerequisites. Existing content references use those ids.
 `ReligionDef` retains state, holy-city, and per-city shrine commerce in whole points.
 The importer derives temple, monastery, cathedral, and shrine relations from building categories and religion fields.
 Building happiness, civic religion effects, missionary chances, trait commerce policy, and leader favorites retain their existing typed properties.
@@ -31,8 +35,33 @@ Every definition has an id, English name, help, pedia, strategy, era, icon, requ
 An unknown era is null. An empty text field remains empty. A missing English key uses readable words from its key.
 The localization report lists missing keys. Unsupported source paths use ordinal order.
 
-## Numeric and collection contracts
+### Project and victory fields
 
+`ProjectDef.Cost` uses integer production points. Negative instance limits mean unlimited.
+`TechPrereq`, project prerequisites, and the optional victory link use typed content references.
+`PrereqProjects` maps project ids to required team counts. `AnyonePrereqProject` requires at least one world completion.
+`VictoryThresholds` and `VictoryMinThresholds` map victory ids to team project counts.
+`Spaceship` marks a project for project victory. `AllowsNukes` retains the project rule flag.
+
+`VictoryDef.Rule` selects conquest, domination, cultural, time, or project logic.
+Lower `Priority` values run first. `Enabled` disables a condition without removing its definition.
+Population and land thresholds use percentages. Culture requires a count of cities at a culture level.
+Time rules define a speed-scaled turn limit and score weights for population, land, technologies, and wonders.
+
+### Corporation fields
+
+`CorporationDef` links an identity, optional founding technology, required Great Person class, and prerequisite resources.
+Yield and commerce vectors use whole points. Headquarters commerce is separate from branch commerce.
+`SpreadCost` uses whole gold. `MaintenanceHundredths` uses hundredths of gold per consumed resource copy.
+
+### Event fields
+
+`EventTriggerDef` uses integer eligibility fields for technology, building, nearby improvement or feature, scope, population, treasury, and turn.
+`ChancePercent` is from 0 to 100. `Repeatable` and `CooldownTurns` control later event rolls.
+`EventOptionDef` links to one trigger. Gold, research, food, production, culture, happiness, health, and plot-yield changes use integer units.
+City culture uses hundredths of a point. Negative gold is a cost. `DurationTurns` makes happiness, health, and plot effects temporary; zero means permanent.
+
+## Numeric and collection contracts
 Authoritative JSON numbers are integers. Collections use `ImmutableArray` and `ImmutableDictionary`.
 Requirement composites deserialize into immutable arrays. Definitions have init-only properties.
 
@@ -91,9 +120,8 @@ Each mod owns evaluators for its leaf kinds. Research checks known technologies.
 Cities checks exact local building ids. Military checks exact unit ids and held promotions.
 World checks connected resource counts through `IResourceNetwork`. Vicinity resources remain unavailable.
 Other evaluators fail closed with an unavailable-state explanation.
-TODO: feature rules must implement scoped class counts, era, culture, location, diplomacy permissions, and deferred mechanics.
-The conservative evaluators must not grant content whose needed runtime state does not exist.
-
+Feature services now evaluate diplomacy permissions, project prerequisites, corporation rules, and event choices where their runtime state exists.
+Unsupported predicates remain fail-closed. See [mechanics-status.md](mechanics-status.md) for remaining gaps.
 ## Import decisions and limits
 
 The importer retains source button and atlas strings for later conversion. It replaces branded path segments with neutral segments.
@@ -114,5 +142,5 @@ Native hunting, subdue, butchering, and resource-spawn outcomes retain chances, 
 Action maps use mission ids. Outcome lists retain source order and promotion chance modifiers.
 One absent delivery-policy boolean define affects 34 units. The native getter returns false. The schema also retains each policy key for review.
 
-Artwork, audio, Python-scripted effects, and revolution fields remain unsupported.
+Artwork, audio, and Python-scripted effects remain unsupported. Revolution gameplay uses the typed rules in `RevolutionRulesDef`.
 The census labels mapped and unsupported paths separately. A mapped field does not mean that gameplay rules exist.
