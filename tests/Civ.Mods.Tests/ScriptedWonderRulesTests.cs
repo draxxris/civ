@@ -246,4 +246,48 @@ public sealed class ScriptedWonderRulesTests(P7ModFixture mods) : IClassFixture<
         }
         Assert.True(sim.State.Units.Count(u => u.Type == "military:unit_unit_crusader") >= 2);
     }
+
+    [Fact]
+    public void Art_of_war_victory_experience_respects_the_barbarian_cap()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        var city = P7ModFixture.City(sim);
+        sim.State.PlayerById(1).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        Complete(sim, city, "cities:art_of_war");
+        var unit = P7ModFixture.Unit(sim, city, "military:swordsman");
+        unit.Experience = 40;
+        var fallen = P7ModFixture.Unit(sim, city, owner: 1);
+        sim.State.RemoveUnit(fallen.Id);
+        sim.Events.Publish(new CombatResolved(unit.Id, fallen.Id, unit.Id, 1));
+        Assert.Equal(40, unit.Experience);
+        unit.Experience = 39;
+        sim.Events.Publish(new CombatResolved(unit.Id, fallen.Id, unit.Id, 1));
+        Assert.Equal(40, unit.Experience);
+    }
+
+    [Fact]
+    public void Great_wall_blocks_barbarian_entry_and_weakens_cross_border_attackers()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        var city = P7ModFixture.City(sim);
+        sim.State.PlotAt(city.Position).Owner = 0;
+        var target = sim.State.Grid.HexOf(new TileId(41));
+        sim.State.PlotAt(target).Owner = 0;
+        var outside = new TileId(42);
+        sim.State.PlotAt(sim.State.Grid.HexOf(outside)).Owner = null;
+        var raider = P7ModFixture.Unit(sim, city, owner: 1);
+        sim.State.PlayerById(1).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        sim.State.MoveUnit(raider.Id, sim.State.Grid.HexOf(outside));
+        sim.State.SetWar(0, 1, true);
+        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var from = sim.State.Grid.TileAt(raider.Position);
+        Assert.Null(movement.CanEnter(sim, raider.Id, from, new TileId(41)));
+        var defender = P7ModFixture.Unit(sim, city);
+        sim.State.MoveUnit(defender.Id, target);
+        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        long baseline = combat.Preview(sim, raider.Id, defender.Id).AttackStrength.Maximum;
+        Complete(sim, city, "cities:great_wall");
+        Assert.NotNull(movement.CanEnter(sim, raider.Id, from, new TileId(41)));
+        Assert.True(combat.Preview(sim, raider.Id, defender.Id).AttackStrength.Maximum < baseline);
+    }
 }
