@@ -108,9 +108,28 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         {
             var city = ActiveCity(sim, winner.Owner, rule);
             if (city is null) continue;
-            winner.Experience += rule.VictoryExperience;
-            Effect(sim, city, rule, "victory_experience", rule.VictoryExperience);
+            int grant = rule.VictoryExperience;
+            if (message.LoserOwner >= 0 && Barbarian(sim, message.LoserOwner))
+                grant = Math.Clamp(BarbarianXpCap(sim) - winner.Experience, 0, grant);
+            if (grant == 0) continue;
+            winner.Experience += grant;
+            Effect(sim, city, rule, "victory_experience", grant);
         }
+    }
+
+    private static bool Barbarian(Simulation sim, int player) =>
+        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
+
+    private static int BarbarianXpCap(Simulation sim) =>
+        sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue("BARBARIAN_MAX_XP_VALUE", out var v)
+        && int.TryParse(v, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var n) ? n : 40;
+
+    public bool BlocksBarbarianEntry(Simulation sim, int barbarianUnitId, Hex targetHex)
+    {
+        var unit = sim.State.UnitById(barbarianUnitId);
+        if (!Barbarian(sim, unit.Owner) || sim.Content.Get<S.UnitDef>(unit.Type).Domain != "military:domain_land") return false;
+        return sim.State.PlotAt(targetHex).Owner is { } owner && owner != unit.Owner
+            && Rules(sim).Any(r => r.BarbarianBorderPenalty > 0 && ActiveCity(sim, owner, r) is not null);
     }
 
     /// <summary>The first active wonder city of the player's team, so team wonders reach teammates.</summary>
@@ -136,9 +155,17 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
 
     private bool ProtectedBarbarian(Simulation sim, Unit unit, WonderScriptDef rule)
     {
-        if (sim.State.PlayerById(unit.Owner).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian != true) return false;
+        if (!Barbarian(sim, unit.Owner)) return false;
         if (sim.Content.Get<S.UnitDef>(unit.Type).Domain != "military:domain_land") return false;
-        return sim.State.PlotAt(unit.Position).Owner is { } owner && owner != unit.Owner && ActiveCity(sim, owner, rule) is not null;
+        if (sim.State.PlotAt(unit.Position).Owner is { } owner && owner != unit.Owner && ActiveCity(sim, owner, rule) is not null) return true;
+        if (sim.State.PlotAt(unit.Position).Owner == unit.Owner) return false;
+        // Cross-border: next to a protected tile that holds a unit or city of the wall's team.
+        return sim.State.Grid.Neighbors(sim.State.Grid.TileAt(unit.Position)).Any(t =>
+        {
+            var hex = sim.State.Grid.HexOf(t);
+            return sim.State.PlotAt(hex).Owner is { } o && o != unit.Owner && ActiveCity(sim, o, rule) is not null
+                && (sim.State.CityAt(hex)?.Owner == o || sim.State.UnitsAt(hex).Any(u => u.Owner == o));
+        });
     }
 
     private static void AddCulture(Simulation sim, City city, int amount) =>

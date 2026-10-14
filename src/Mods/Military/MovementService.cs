@@ -17,6 +17,9 @@ internal sealed class MovementService : IMovementService
         var error = TerrainEntry(sim, unit, def, plot, effects);
         if (error is not null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
+        if (!attack && MilitaryData.Player(sim, unit.Owner).Barbarian
+            && sim.Content.Services.Get<IScriptedWonderService>().Any(w => w.BlocksBarbarianEntry(sim, unit.Id, sim.State.Grid.HexOf(to))))
+            return "Blocked by border wonder";
         var target = sim.State.Grid.HexOf(to);
         var targetError = TargetEntry(sim, unit, def, effects, target, attack);
         if (targetError is not null) return targetError;

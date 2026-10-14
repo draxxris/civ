@@ -5,6 +5,8 @@ public interface IScriptedWonderService
 {
     IReadOnlyList<ScriptedWonderStatus> DescribeCity(Simulation sim, int cityId);
     bool IsActive(Simulation sim, int cityId, string building);
+    /// <summary>True when an active wonder bars this barbarian land unit from entering the target hex.</summary>
+    bool BlocksBarbarianEntry(Simulation sim, int barbarianUnitId, Hex targetHex) => false;
 }
 
 public sealed record ScriptedWonderStatus(string Building, bool Active, bool CompletionApplied,

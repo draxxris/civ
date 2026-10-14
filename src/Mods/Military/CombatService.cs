@@ -41,7 +41,7 @@ internal sealed class CombatService : ICombatService
         var report = new CombatReport(sim.State.Turn, a.Id, d.Id, outcome.Value, rounds.AsReadOnly(), collateral);
         HistoryState(sim).Combats.Add(report);
         int winner = outcome == CombatOutcome.DefenderWon ? d.Id : a.Id;
-        sim.Events.Publish(new CombatResolved(a.Id, d.Id, winner));
+        sim.Events.Publish(new CombatResolved(a.Id, d.Id, winner, outcome == CombatOutcome.DefenderWon ? a.Owner : d.Owner));
         MilitaryData.Sight(sim);
         return report;
     }
