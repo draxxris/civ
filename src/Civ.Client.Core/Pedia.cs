@@ -34,6 +34,10 @@ public sealed class PediaCatalog
         Add<S.CivilizationDef>(content, "Civilizations", _ => 0, _ => null);
         Add<S.LeaderDef>(content, "Leaders", _ => 0, _ => null);
         Add<S.TraitDef>(content, "Traits", _ => 0, _ => null);
+        AddIfRegistered<S.CorporationDef>(content, "Corporations", _ => 0, d => [Tech(content, d.FoundingTech, "Founded with")]);
+        AddIfRegistered<S.ProjectDef>(content, "Projects", _ => 0, _ => null);
+        AddIfRegistered<S.VictoryDef>(content, "Victories", _ => 0, _ => null);
+        AddIfRegistered<S.EventTriggerDef>(content, "Events", _ => 0, d => [Tech(content, d.RequiredTech, "Requires")]);
         Categories = _entries.Select(e => e.Category).Distinct().ToList();
     }
 
@@ -49,6 +53,13 @@ public sealed class PediaCatalog
         return _entries.Where(e => category == null || e.Category == category)
             .Where(e => q.Length == 0 || e.Matches(q))
             .OrderBy(e => e.Title, StringComparer.Ordinal).ThenBy(e => e.Id, StringComparer.Ordinal).ToList();
+    }
+
+    private void AddIfRegistered<T>(ContentDb content, string category, Func<T, int> cost, Func<T, string?[]?> extra) where T : S.GameContentDef
+    {
+        try { _ = content.Get<T>(); }
+        catch (KeyNotFoundException) { return; }
+        Add(content, category, cost, extra);
     }
 
     private void Add<T>(ContentDb content, string category, Func<T, int> cost, Func<T, string?[]?> extra) where T : S.GameContentDef
