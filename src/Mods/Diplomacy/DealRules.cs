@@ -21,6 +21,9 @@ internal sealed partial class DiplomacyService
         if (!HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id)) return "teams have not met";
         if (sim.TeamOf(player).Wars.Contains(sim.TeamOf(target).Id)) return "teams are at war";
         if (items.Count is 0 or > 64) return "deal requires between one and 64 items";
+        int ta = sim.TeamOf(player).Id, tb = sim.TeamOf(target).Id;
+        if (items.Any(i => i.Kind is TradeItemKind.Gold or TradeItemKind.GoldPerTurn) && TradeTech(sim, ta, tb, t => t.GoldTrading, "gold trading") is { } goldError) return goldError;
+        if (items.Any(i => i.Kind == TradeItemKind.Technology) && TradeTech(sim, ta, tb, t => t.TechTrading, "technology trading") is { } techError) return techError;
         foreach (var item in items)
         {
             if (item.FromPlayer != player && item.FromPlayer != target) return "item giver is not a participant";

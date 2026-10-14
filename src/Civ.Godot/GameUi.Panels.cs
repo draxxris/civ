@@ -224,6 +224,7 @@ internal sealed partial class GameUi
         {
             var line = Ui.HBox(6);
             line.AddChild(Ui.Text($"#{d.Id} {d.Status}: {d.Summary}", 12, Colors.White));
+            if (d.Accept is { } accept) line.AddChild(Ui.Button(accept.Label, () => _session.DoDiplomacy(accept), accept.Blocked, accept.Blocked == null, 12));
             if (d.Cancel is { } cancel) line.AddChild(Ui.Button(cancel.Label, () => _session.DoDiplomacy(cancel), cancel.Blocked, cancel.Blocked == null, 12));
             list.AddChild(line);
         }

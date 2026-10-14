@@ -15,7 +15,10 @@ public sealed class ClientDiplomacyVictoryTests(LoadedMods mods) : IClassFixture
         var sources = mods.Sources.AsEnumerable();
         if (diplomacy) sources = sources.Append(Optional("Diplomacy"));
         if (victory) sources = sources.Append(Optional("ProjectsVictory"));
-        return new(GameFactory.Create(ModLoader.Build(sources), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar"));
+        var sim = GameFactory.Create(ModLoader.Build(sources), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
+        if (diplomacy)
+            sim.TeamOf(0).Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
+        return new(sim);
     }
 
     [Fact]
@@ -69,6 +72,29 @@ public sealed class ClientDiplomacyVictoryTests(LoadedMods mods) : IClassFixture
         Assert.Contains("You give 10 gold", deal.Summary);
         Assert.True(session.DoDiplomacy(deal.Cancel!));
         Assert.Empty(session.DescribeDiplomacy().Deals);
+    }
+
+    [Fact]
+    public void Proposed_deals_to_the_human_can_be_accepted()
+    {
+        var session = Session();
+        var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
+        service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        var goldTrading = session.Sim.Content.Get<Civ.Content.Schema.TechDef>().All.First(t => t.GoldTrading);
+        session.Sim.TeamOf(GameSession.Human).Techs.Add(goldTrading.Id);
+        session.Sim.TeamOf(1).Techs.Add(goldTrading.Id);
+        session.Sim.State.PlayerById(1).Treasury = 100;
+        Assert.True(session.Submit(new ProposeDealCommand
+        {
+            Player = 1, Target = GameSession.Human,
+            Items = [new(1, TradeItemKind.GoldPerTurn, Amount: 1)],
+        }));
+
+        var deal = Assert.Single(session.DescribeDiplomacy().Deals);
+        Assert.Equal("Proposed", deal.Status);
+        Assert.NotNull(deal.Accept);
+        Assert.True(session.DoDiplomacy(deal.Accept));
+        Assert.Equal("Active", Assert.Single(session.DescribeDiplomacy().Deals).Status);
     }
 
     [Fact]

@@ -13,7 +13,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return counts;
-        foreach (var tile in Reachable(sim, player, target))
+        bool transit = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault() is not null;
+        foreach (var tile in Reachable(sim, player, target, transit))
             if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
                 counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
         return counts;
