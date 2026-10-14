@@ -1,4 +1,6 @@
 using Civ.Content.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Civ.Modding;
 
 namespace Civ.Mods.Foundation;
@@ -6,6 +8,22 @@ namespace Civ.Mods.Foundation;
 /// <summary>Foundation definitions, shared hex tuning and new-game setup.</summary>
 public sealed class FoundationMod : IMod
 {
+    private static void LoadHexHandicaps(IModContext context)
+    {
+        var tuning = context.Data.ReadJson<HexOverridesDef[]>("data/hex-overrides.json").Single();
+        if (tuning.BarbarianUnownedTilesMultiplier < 1 || tuning.AiMinimumGarrison < 1
+            || tuning.AiThreatStrengthPerDefender < 1 || tuning.AiMaximumGarrison < tuning.AiMinimumGarrison)
+            throw new InvalidDataException("Invalid hex barbarian or garrison tuning");
+        // Adapt the loaded definitions, not the imported sidecar. Military consumes the effective handicap.
+        var rows = context.Data.ReadJson<JsonArray>("data/handicap.json");
+        foreach (var row in rows)
+        {
+            int tiles = row!["unownedTilesPerBarbarianUnit"]!.GetValue<int>();
+            row["unownedTilesPerBarbarianUnit"] = checked(tiles * tuning.BarbarianUnownedTilesMultiplier);
+            context.Content<HandicapDef>().Register(row.Deserialize<HandicapDef>(ModLoader.Json)!);
+        }
+    }
+
     public void Register(IModContext context)
     {
         context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
@@ -17,7 +35,7 @@ public sealed class FoundationMod : IMod
         ContentRegistration.Load<EraDef>(context, "era.json");
         ContentRegistration.Load<GameOptionDef>(context, "game-option.json");
         ContentRegistration.Load<GameSpeedDef>(context, "game-speed.json");
-        ContentRegistration.Load<HandicapDef>(context, "handicap.json");
+        LoadHexHandicaps(context);
 
         ContentRegistration.Load<SpecialistDef>(context, "specialist.json");
         ContentRegistration.Load<VictoryIdentityDef>(context, "victory-identity.json");

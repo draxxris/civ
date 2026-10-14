@@ -49,7 +49,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (!ctx.Service<ICityProductionService>().Validate(ctx.Sim, v.City.Id, head.Kind, head.ContentId).Success) return true;
         if (head.Kind != "cities:unit") return v.Garrison < army.DesiredGarrison(v) || NeedsEscort() || ReadyToColonize(v, head);
         var role = ctx.Catalog.Roles.GetValueOrDefault(head.ContentId);
-        if (v.Garrison < army.DesiredGarrison(v) && role is not (UnitRole.Melee or UnitRole.Siege)) return true;
+        if (v.Garrison < army.DesiredGarrison(v) && role != UnitRole.Melee) return true;
         return role == UnitRole.Settler && !SettlerStillWanted(v);
     }
 
@@ -88,7 +88,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (NeedsEscort() && v.City.Id == ctx.Cities.Min(c => c.Id)) garrisonWanted++;
         if (v.Garrison >= garrisonWanted) yield break;
         // Even a warrior is better than leaving a city empty. City-defense types receive a preference, not a gate.
-        if (Options.Best(v.City.Id, UnitRole.Melee, u => AiOptions.DefenderQuality(u) + (AiOptions.Defends(u) ? 30 : 0)) is { } defender)
+        if (Options.Best(v.City.Id, UnitRole.Melee, u => AiOptions.DefenderQuality(u) + (v.Threat > 0 ? u.Strength * 30 : 0) + (AiOptions.Defends(u) ? 30 : 0)) is { } defender)
             yield return ("cities:unit", defender.Id);
     }
 

@@ -1,4 +1,5 @@
 using Civ.Game;
+using Civ.Content.Schema;
 
 namespace Civ.Mods.Ai;
 
@@ -11,8 +12,10 @@ internal sealed class ArmyPlan(AiContext ctx)
     public int DesiredGarrison(CityView v)
     {
         if (ctx.Turn < 8 && v.Threat == 0) return 0;
-        int want = 1 + (ctx.Turn >= 20 ? 1 : 0) + (v.Threat > 0 || ctx.Turn >= 40 && v.City.Id == ctx.Cities.Min(c => c.Id) ? 1 : 0);
-        return Math.Min(want, 3);
+        var tuning = ctx.Sim.Content.Get<HexOverridesDef>("foundation:hex_overrides");
+        int baseline = ctx.Turn < 20 ? 1 : tuning.AiMinimumGarrison;
+        int threat = (v.Threat + tuning.AiThreatStrengthPerDefender - 1) / tuning.AiThreatStrengthPerDefender;
+        return Math.Clamp(baseline + threat, baseline, tuning.AiMaximumGarrison);
     }
 
     /// <summary>Field army beyond garrisons: grows with empire size, leader militarism and wartime.</summary>
