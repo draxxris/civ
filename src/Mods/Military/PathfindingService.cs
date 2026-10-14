@@ -42,12 +42,10 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
     private static int MinimumStep(Simulation sim)
     {
         int minimum = Math.Max(1, sim.Content.Get<Civ.Content.Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator / 2);
-        // Regular movement can be halved once. Routes can be cheaper; include every route currently on the map.
-        foreach (var route in sim.State.Plots.Select(p => p.Route).OfType<string>().Distinct(StringComparer.Ordinal))
-        {
-            var def = sim.Content.Get<Civ.Content.Schema.RouteDef>(route);
-            minimum = Math.Min(minimum, Math.Max(1, Math.Min(def.MovementCost, def.FlatMovement)));
-        }
+        // Regular movement can be halved once. Routes can be cheaper. The minimum over every route definition is never
+        // above the cheapest route on the map, so it stays a valid lower bound without scanning every plot per search.
+        foreach (var route in sim.Content.Get<Civ.Content.Schema.RouteDef>().All)
+            minimum = Math.Min(minimum, Math.Max(1, Math.Min(route.MovementCost, route.FlatMovement)));
         return minimum;
     }
 

@@ -175,4 +175,38 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Null(Service<IReligionService>(sim).StateReligion(sim, 0));
         Assert.Equal("religion:hinduism", sim.State.PlayerById(0).Extensions.Get<ReligionPlayerState>(sim.Content)!.LastStateReligion);
     }
+    [Fact]
+    public void Old_religion_spread_odds_scale_down_smoothly_instead_of_truncating_to_zero()
+    {
+        var sim = Scenario(); var source = City(sim, 0); LearnFoundingTech(sim, 0);
+        source.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
+        var connected = City(sim, 1);
+        var religion = Service<IReligionService>(sim);
+        int founded = sim.State.Turn;
+        // Base threshold is 41 for this pair. Range 1100 implies 110% growth, so the old-age line is 250 * 110 / 100 = 275.
+        // Threshold is then 41 * 275 / age, and the reported odds divide that by four.
+        sim.State.Turn = founded + 101;
+        Assert.Equal(10, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
+        sim.State.Turn = founded + 300;
+        Assert.Equal(9, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
+        sim.State.Turn = founded + 400;
+        Assert.Equal(7, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
+        sim.State.Turn = founded + 550;
+        Assert.Equal(5, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
+    }
+    [Fact]
+    public void State_religion_buildings_need_an_active_state_religion_even_when_they_name_no_religion()
+    {
+        var sim = Scenario(); City(sim, 0); LearnFoundingTech(sim, 0);
+        var city = City(sim, 5); Spread(sim, city);
+        var religion = Service<IReligionService>(sim);
+        var palace = sim.Content.Get<S.BuildingDef>("cities:apostolic_palace");
+        Assert.NotNull(religion.ValidateBuilding(sim, city, palace));
+        Assert.Null(religion.ValidateBuilding(sim, city, sim.Content.Get<S.BuildingDef>("cities:buddhist_temple"))); // Temple exemption.
+        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        Assert.True(sim.TryApply(new SetStateReligionCommand { Player = 0, Religion = Buddhism }, out var error), error);
+        Assert.Null(religion.ValidateBuilding(sim, city, palace));
+        Assert.Equal("Requires matching state religion: religion:islam",
+            religion.ValidateBuilding(sim, city, sim.Content.Get<S.BuildingDef>("cities:alhambra")));
+    }
 }

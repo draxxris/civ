@@ -169,6 +169,29 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 
+    [Fact]
+    public void Peace_treaty_blocks_redeclaring_war_for_ten_turns_and_survives_save_load()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var codec = new CommandCodec(mods.Content);
+        var war = codec.Decode("{\"type\":\"ai:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
+        var peace = codec.Decode("{\"type\":\"ai:make_peace\",\"data\":{\"player\":0,\"target\":1}}");
+        Assert.True(sim.TryApply(war, out var error), error);
+        sim.State.Turn += 12; // Minimum war duration before a treaty.
+        Assert.True(sim.TryApply(peace, out error), error);
+        var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+        ulong before = sim.ComputeHash();
+        Assert.False(sim.TryApply(war, out error)); Assert.Contains("peace treaty", error);
+        Assert.Equal(before, sim.ComputeHash());
+        Assert.False(loaded.TryApply(war, out var loadedError)); Assert.Equal(error, loadedError);
+        sim.State.Turn += 9; loaded.State.Turn += 9; // Nine turns after peace is still inside the cooldown.
+        Assert.False(sim.TryApply(war, out _)); Assert.False(loaded.TryApply(war, out _));
+        sim.State.Turn += 1; loaded.State.Turn += 1;
+        Assert.True(sim.TryApply(war, out error), error);
+        Assert.True(loaded.TryApply(war, out loadedError), loadedError);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
     private static void CountDevelopment(IEnumerable<DomainEvent> events, Dictionary<int, int> owners, int[] founded, int[] completed)
     {
         foreach (var message in events)

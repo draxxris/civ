@@ -46,7 +46,7 @@ internal sealed class AiContext
     public UnitRole Role(Unit unit) => Catalog.Roles[unit.Type];
     public IReadOnlyList<Unit> Enemies => _enemies.Value;
     public bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);
-    public bool AtWarWithPlayers => Team.Wars.Any(t => !WarRules.IsBarbarian(Sim, Sim.State.TeamById(t).Members.First()));
+    public bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !WarRules.IsBarbarian(Sim, m)));
     public TileId Tile(Hex hex) => Grid.TileAt(hex);
 
     /// <summary>Flavor weight: a base of 10 plus the leader's own flavor, so every flavor counts a little.</summary>

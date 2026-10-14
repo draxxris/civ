@@ -53,7 +53,7 @@ internal sealed partial class ReligionService
             else if (rank == 2) threshold /= 10;
         }
         int old = ReligionData.Raw(sim, "OLD_RELIGION_SPREAD_TURN_THRESHOLD", 250) * growth / 100;
-        if (age > old) threshold = threshold / age * old;
+        if (age > old) threshold = (int)((long)threshold * old / age);
         return threshold;
     }
     internal void NaturalSpread(Simulation sim, City city)
