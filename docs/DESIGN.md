@@ -1,7 +1,21 @@
 # Design
 
-A deterministic Civilization-4-style game on a hex grid. Core defines the contract. Mods implement the rules.
+A deterministic Civilization-4-style game on a hex grid where **everything is a mod**. Core defines the contract.
+Mods implement the rules.
 
+## Principles
+
+1. **Dogfood.** The shipped game is nothing but ordinary mods: Foundation, World, Research, Economy, Cities,
+   Military, Government, Peoples, AI and later feature mods. They get no private hooks. If a shipped mod needs
+   something, the mod API grows to offer it to every mod. Terrain, techs, buildings, units, civics, map
+   generators, commands, turn systems and the AI are all registered through `IModContext`.
+2. **No mod knowledge outside mods.** `Civ.Core`, `Civ.Client.Core` and `Civ.Godot` never hard-code a mod's
+   content ids or kinds. Defaults and choices come from loaded content or from mod-registered services, so a
+   different mod set can replace any shipped mod.
+3. **Headless deterministic core.** `Civ.Core` has no engine dependency, no floats in game state, no wall clock
+   and no unordered iteration affecting state. The renderer is a view.
+4. **Commands over the wire.** Multiplayer is lockstep: only player commands are exchanged, and every peer runs
+   the same simulation.
 ## Projects
 
 - `Civ.Core`: geometry, shared data, content registries, extension contracts, simulation, commands, saves and hashes.

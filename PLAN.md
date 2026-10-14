@@ -195,6 +195,15 @@ sounds.
 Deterministic utility AI driven by the content's own AI weights, flavors, unit AI types and leader
 personalities. Layers: city management and workers, research and civics, settling, military, then diplomacy.
 
+### Dogfood cleanup (before P6)
+
+`Civ.Core` and the client still hard-code some mod ids and kinds (for example the default game speed, handicap
+and era in `SimulationSettings`, `cities:hurry_gold` in `EconomyContracts`, and production kinds such as
+`cities:building` and `economy:process` in `Civ.Client.Core` and `Civ.Godot`). Move these behind loaded content or
+mod-registered services (for example a production-kind registry that a mod fills with label, icon and query
+service), so that `docs/DESIGN.md` principles 1 and 2 hold. Add a test that scans Core and client sources for
+hard-coded mod ids.
+
 ### P6 – Full content
 
 Lift the era filter one era at a time and add the later mods. Records that need a missing mechanic are shown as
