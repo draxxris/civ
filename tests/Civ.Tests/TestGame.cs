@@ -10,7 +10,7 @@ internal static class TestGame
     /// <summary>Base game loaded the same way any mod is: manifest + assembly + sidecar data.</summary>
     public static ContentDb Content()
     {
-        var src = ModLoader.FromAssembly(typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var src = ModLoader.FromAssembly(typeof(TestRulesetMod).Assembly, AppContext.BaseDirectory);
         return ModLoader.Build([src]);
     }
 

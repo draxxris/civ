@@ -2,6 +2,6 @@
   "id": "base",
   "name": "Base Game",
   "version": "0.2.1",
-  "assembly": "Civ.BaseGame.dll",
+  "assembly": "Civ.Tests.dll",
   "dependencies": []
 }

@@ -32,7 +32,7 @@ public class ModTests
     [Fact]
     public void ModsLoadInDependencyOrderAndCanOverrideBase()
     {
-        var baseSrc = ModLoader.FromAssembly(new ModManifest { Id = "base" }, typeof(BaseGame.BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var baseSrc = ModLoader.FromAssembly(new ModManifest { Id = "base" }, typeof(BaseGame.TestRulesetMod).Assembly, AppContext.BaseDirectory);
         var extra = Src("extra", ctx =>
         {
             ctx.Terrains.Register(new TerrainDef { Id = "extra:swamp", Name = "Swamp", Food = 1 });
@@ -69,7 +69,7 @@ public class ModTests
     [Fact]
     public void BaseModLoadsFromItsFolder()
     {
-        // The test bin directory contains the copied mod.json, data/ and Civ.BaseGame.dll.
+        // The test bin directory contains the copied test-ruleset mod.json and data/.
         var src = ModLoader.FromDirectory(AppContext.BaseDirectory);
         var db = ModLoader.Build([src]);
         Assert.True(db.Techs.Contains("base:monarchy"));
