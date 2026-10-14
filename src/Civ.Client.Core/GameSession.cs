@@ -14,7 +14,7 @@ public sealed partial class GameSession
 
     private readonly Dictionary<int, Hex> _gotos = new();
 
-    public Simulation Sim { get; }
+    public Simulation Sim { get; private set; }
     public string Message { get; private set; } = "";
     public int? SelectedUnitId { get; private set; }
     public int? SelectedCityId { get; private set; }
@@ -26,6 +26,7 @@ public sealed partial class GameSession
     public GameSession(Simulation sim)
     {
         Sim = sim;
+        ResetNotifications();
         SelectNextUnit();
     }
 
@@ -51,6 +52,7 @@ public sealed partial class GameSession
         Message = ok ? "" : $"Can't do that: {error}";
         Revision++;
         if (ok) WorldRevision++;
+        CollectNotifications();
         if (City == null) SelectedCityId = null;
         if (Unit == null) SelectedUnitId = null;
         return ok;

@@ -13,6 +13,7 @@ internal sealed partial class GameUi
     public void ToggleGovernment()
     {
         _governmentOpen = !_governmentOpen;
+        if (_governmentOpen && _modalKind != Modal.None) CloseModal();
         _researchOpen = false;
         _proposedCivics.Clear();
         _governmentRevision++;

@@ -57,6 +57,7 @@ internal sealed partial class CityUi : Control
         head.AddChild(Ui.Button("Close", _session.ClearSelection, "Back to the map (Esc)"));
         box.AddChild(head);
         if (c.Disorder) box.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
+        AddReligions(box, c);
         box.AddChild(FoodBox(c));
         box.AddChild(Stats(c));
         box.AddChild(Wellbeing(c));
@@ -103,5 +104,17 @@ internal sealed partial class CityUi : Control
         if (rows.Count == 0) return;
         box.AddChild(Ui.Text(title, 15, Ui.Accent));
         foreach (var row in rows) box.AddChild(Ui.Text(row.Text, 13, row.Amount < 0 ? Ui.Bad : Ui.Dim));
+    }
+
+    private void AddReligions(VBoxContainer box, CityScreen c)
+    {
+        if (c.Religions.Count == 0) return;
+        var row = Ui.HBox(6);
+        foreach (var r in c.Religions)
+        {
+            row.AddChild(Ui.Icon(_icons.TextureOf(r.Id), 24));
+            row.AddChild(Ui.Text(r.Name + (r.Holy ? " ★ holy city" : "") + (r.State ? " (state)" : ""), 13, r.Holy ? Ui.Accent : Ui.Dim, wrap: false));
+        }
+        box.AddChild(row);
     }
 }

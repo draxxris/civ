@@ -34,7 +34,8 @@ public sealed record CityScreen(
     IReadOnlyList<LedgerRow> FoodLedger, IReadOnlyList<LedgerRow> ProductionLedger, IReadOnlyList<LedgerRow> CommerceLedger,
     IReadOnlyList<LedgerRow> HappinessLedger, IReadOnlyList<LedgerRow> HealthLedger,
     IReadOnlyList<TileRow> WorkedTiles, int IdleCitizens, IReadOnlyList<SpecialistRow> Specialists,
-    IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry)
+    IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry,
+    IReadOnlyList<CityReligion> Religions)
 {
     public int Citizens => Population;
 }
@@ -63,7 +64,7 @@ public sealed partial class GameSession
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
             city.Worked.Select(h => TileRowOf(h)).ToList(), idle, SpecialistRows(city),
             QueueRows(city), city.Buildings.Select(b => Sim.Content.Get<Schema.BuildingDef>(b).Name).Order(StringComparer.Ordinal).ToList(),
-            HurryOptions(city));
+            HurryOptions(city), ReligionsIn(city));
     }
 
     private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);

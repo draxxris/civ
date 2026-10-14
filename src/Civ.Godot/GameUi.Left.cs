@@ -58,7 +58,7 @@ internal sealed partial class GameUi
         foreach (var city in _session.Sim.State.Cities.Where(c => c.Owner == GameSession.Human).OrderBy(c => c.Id))
         {
             var id = city.Id;
-            box.AddChild(Ui.Button($"{city.Name}  ({city.Population})", () => _session.SelectCity(id), "Open the city screen"));
+            box.AddChild(Ui.Button($"{city.Name}  ({city.Population})" + (_session.ReligionBadge(city) is { Length: > 0 } badge ? $"  [{badge}]" : ""), () => _session.SelectCity(id), "Open the city screen"));
         }
         if (box.GetChildCount() == 0) box.AddChild(Ui.Text("None yet. Found one with a settler (B).", 13, Ui.Dim));
         return box;

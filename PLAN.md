@@ -264,11 +264,15 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] P6 Religion mod, `src/Mods/Religion`, plus importer and schema edits (`b3112b6`).
 - [x] P5 AI mod, `src/Mods/Ai`: functional deterministic computer player (`ai:standard`).
 - [x] Dogfood cleanup: mod-supplied setup defaults, production kinds, citizen role, ledger labels, and terrain appearance.
-  Core and client source scans reject shipped mod ids. Custom-ruleset contract tests cover unrelated ids.
+  Core and client source scans reject shipped mod ids. Custom-ruleset contract tests cover unrelated ids (`da4a4a0`).
+- [x] Adversarial audit fixes for Religion spread scaling, AI peace treaties, staging area checks, and route bounds (`70fa3e2`).
+- [x] P6 Great People mod (`src/Mods/GreatPeople`) and Trade mod (`src/Mods/Trade`) (`3872fcb`).
+- [x] Client follow-ups: religion screen & city/unit religion actions, pedia browser, save/load UI, and turn notifications.
 
 ### In progress
 
-- [ ] P6 Great People mod (`src/Mods/GreatPeople`) and Trade mod (`src/Mods/Trade`).
+- [ ] P6 Diplomacy mod (`src/Mods/Diplomacy`) and Projects & Victory mod (`src/Mods/ProjectsVictory`), plus wiring
+  `IGreatPeopleService` / `ITradeRouteService` into `Civ.Client.Core` / `Civ.Godot`.
 
 ### Next
 

@@ -117,6 +117,8 @@ internal sealed partial class GameView : Node3D
             case Key.B: _session.RunAction("found"); break;
             case Key.R: _ui.ToggleResearch(); break;
             case Key.C: _ui.ToggleGovernment(); break;
+            case Key.F5: _ui.QuickSaveGame(); break;
+            case Key.F9: _ui.QuickLoadGame(); break;
         }
     }
 
