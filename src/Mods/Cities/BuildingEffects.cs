@@ -44,6 +44,7 @@ internal sealed class BuildingEffects : IModifierSource
         sink.AddCommerce(b.Id, b.CommerceChanges); sink.AddCommerce(b.Id, b.CommerceModifiers, true);
         AddNumbers(b, sink);
         AddMaps(sim, city, b, bonuses, sink);
+        AddVicinity(sim, city, b, sink);
         foreach (var tech in sim.TeamOf(city.Owner).Techs)
         {
             sink.AddYield(b.Id + ":" + tech, b.TechYieldChanges.GetValueOrDefault(tech));
@@ -77,6 +78,20 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var slot in b.SpecialistSlots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
         foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
         foreach (var other in CityData.Active(sim, city)) sink.Add(b.Id, "cities:happiness", b.BuildingHappinessChanges.GetValueOrDefault(other.DefaultBuilding));
+    }
+    private static void AddVicinity(Simulation sim, City city, S.BuildingDef b, ModifierSink sink)
+    {
+        if (b.VicinityBonusYieldChanges.Count == 0) return;
+        var present = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var tile in sim.Content.Services.Get<ICityWorkService>().Single().WorkArea(sim, city.Id))
+        {
+            var plot = sim.State.Plots[tile.Value];
+            if (plot.Owner != city.Owner || plot.Bonus is not { } id) continue;
+            if (sim.Content.Get<S.BonusDef>(id).RevealTech is { } tech && !sim.KnowsTech(city.Owner, tech)) continue;
+            present.Add(id);
+        }
+        foreach (var id in present)
+            if (b.VicinityBonusYieldChanges.TryGetValue(id, out var delta)) sink.AddYield(b.Id + ":vicinity:" + id, delta);
     }
     private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, ModifierSink sink)
     {

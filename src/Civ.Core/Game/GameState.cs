@@ -148,18 +148,37 @@ public sealed class GameState
     public IEnumerable<Unit> UnitsAt(Hex pos) => Grid.TryTile(pos, out var t) && _unitPlots.TryGetValue(t, out var units) ? units.Values : [];
     /// <summary>Mutable plot at a valid axial coordinate.</summary>
     public Plot PlotAt(Hex pos) => Plots[Grid.TileAt(pos).Value];
-    /// <summary>Add a city and update its indexes.</summary>
-    public void AddCity(City city) { city.SetPosition(Grid.Normalize(city.Position)); IndexCity(city); Cities.Add(city); }
+    /// <summary>Add a city and update its indexes. Duplicate ids or plots throw before any state changes.</summary>
+    public void AddCity(City city)
+    {
+        var position = Grid.Normalize(city.Position);
+        var tile = Grid.TileAt(position);
+        if (_cities.ContainsKey(city.Id)) throw new ArgumentException($"City id {city.Id} is already in use", nameof(city));
+        if (_cityPlots.ContainsKey(tile)) throw new ArgumentException($"Plot {tile.Value} already has a city", nameof(city));
+        city.SetPosition(position);
+        IndexCity(city);
+        Cities.Add(city);
+    }
     private void IndexCity(City city) { _cities.Add(city.Id, city); _cityPlots.Add(Grid.TileAt(city.Position), city); }
     /// <summary>Remove a city and its indexes.</summary>
     public void RemoveCity(int id) { var c = _cities[id]; _cities.Remove(id); _cityPlots.Remove(Grid.TileAt(c.Position)); Cities.Remove(c); }
-    /// <summary>Add a unit at a canonicalized position.</summary>
-    public void AddUnit(Unit unit) { unit.SetPosition(Grid.Normalize(unit.Position)); IndexUnit(unit); Units.Add(unit); }
+    /// <summary>Add a unit at a canonicalized position. Duplicate ids throw before any state changes.</summary>
+    public void AddUnit(Unit unit)
+    {
+        var position = Grid.Normalize(unit.Position);
+        if (_units.ContainsKey(unit.Id)) throw new ArgumentException($"Unit id {unit.Id} is already in use", nameof(unit));
+        unit.SetPosition(position);
+        IndexUnit(unit);
+        Units.Add(unit);
+    }
     private void IndexUnit(Unit unit)
     {
         _units.Add(unit.Id, unit);
-        var t = Grid.TileAt(unit.Position);
-        if (!_unitPlots.TryGetValue(t, out var units)) _unitPlots[t] = units = new();
+        AddUnitPlot(Grid.TileAt(unit.Position), unit);
+    }
+    private void AddUnitPlot(TileId tile, Unit unit)
+    {
+        if (!_unitPlots.TryGetValue(tile, out var units)) _unitPlots[tile] = units = new();
         units.Add(unit.Id, unit);
     }
     /// <summary>Remove a unit and all its indexes.</summary>
@@ -172,13 +191,15 @@ public sealed class GameState
         var t = Grid.TileAt(u.Position); var units = _unitPlots[t]; units.Remove(u.Id);
         if (units.Count == 0) _unitPlots.Remove(t);
     }
-    /// <summary>Move a unit and update the spatial index.</summary>
+    /// <summary>Move a unit and update the spatial index. Unknown units and off-map targets throw before any state changes.</summary>
     public void MoveUnit(int id, Hex to)
     {
-        var canonical = Grid.Normalize(to); var u = _units[id]; RemoveUnitPlot(u); u.SetPosition(canonical);
-        var t = Grid.TileAt(canonical);
-        if (!_unitPlots.TryGetValue(t, out var units)) _unitPlots[t] = units = new();
-        units.Add(id, u);
+        var u = _units[id];
+        var position = Grid.Normalize(to);
+        var tile = Grid.TileAt(position);
+        RemoveUnitPlot(u);
+        u.SetPosition(position);
+        AddUnitPlot(tile, u);
     }
     /// <summary>Set a symmetric war/peace relation. Self-war is invalid.</summary>
     public void SetWar(int a, int b, bool war)
@@ -187,13 +208,14 @@ public sealed class GameState
         var x = TeamById(a); var y = TeamById(b);
         if (war) { x.Wars.Add(b); y.Wars.Add(a); } else { x.Wars.Remove(b); y.Wars.Remove(a); }
     }
-    /// <summary>Set a river bit and its opposite on the neighboring plot; bounded edges belong to their plot.</summary>
+    /// <summary>Set a river bit and its opposite on the neighboring plot. Off-map edges have no neighbor, so they never carry a river.</summary>
     public void SetRiver(TileId tile, int direction, bool present)
     {
         if (direction < 0 || direction >= 6) throw new ArgumentOutOfRangeException(nameof(direction));
-        void Set(TileId t, int d) { var p = Plots[t.Value]; p.RiverEdges = (byte)(present ? p.RiverEdges | (1 << d) : p.RiverEdges & ~(1 << d)); }
-        Set(tile, direction);
-        if (Grid.Neighbor(tile, direction) is { } n) Set(n, (direction + 3) % 6);
+        void Set(TileId t, int d, bool on) { var p = Plots[t.Value]; p.RiverEdges = (byte)(on ? p.RiverEdges | (1 << d) : p.RiverEdges & ~(1 << d)); }
+        if (Grid.Neighbor(tile, direction) is not { } neighbor) { Set(tile, direction, false); return; } // clears any stale off-map bit
+        Set(tile, direction, present);
+        Set(neighbor, (direction + 3) % 6, present);
     }
     /// <summary>Rebuild caches after deserialization or setup. Restores ordinal collection comparers.</summary>
     public void RebuildIndexes()
@@ -201,9 +223,9 @@ public sealed class GameState
         _grid = new HexGrid(Map);
         if (Plots.Length != Grid.Count) throw new InvalidDataException("Plot count does not match map dimensions");
         _players.Clear(); _teams.Clear(); _units.Clear(); _cities.Clear(); _cityPlots.Clear(); _unitPlots.Clear();
-        foreach (var plot in Plots) plot.BuildProgress = new(plot.BuildProgress, StringComparer.Ordinal);
+        foreach (var plot in Plots) { plot.BuildProgress = new(plot.BuildProgress, StringComparer.Ordinal); plot.Culture = new(plot.Culture); }
         foreach (var p in Players) { p.Civics = new(p.Civics, StringComparer.Ordinal); _players.Add(p.Id, p); }
-        foreach (var t in Teams) { t.Techs = new(t.Techs, StringComparer.Ordinal); t.Research = new(t.Research, StringComparer.Ordinal); _teams.Add(t.Id, t); }
+        foreach (var t in Teams) { t.Techs = new(t.Techs, StringComparer.Ordinal); t.Research = new(t.Research, StringComparer.Ordinal); t.Members = new(t.Members); t.Wars = new(t.Wars); _teams.Add(t.Id, t); }
         foreach (var c in Cities) { c.Specialists = new(c.Specialists, StringComparer.Ordinal); IndexCity(c); }
         foreach (var u in Units) { u.Promotions = new(u.Promotions, StringComparer.Ordinal); IndexUnit(u); }
     }

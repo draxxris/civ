@@ -8,6 +8,8 @@ public sealed class StateComponentRegistry
     private bool _frozen;
     /// <summary>Resolve the stable id of a registered component type.</summary>
     public string IdOf(Type type) => _ids.TryGetValue(type, out var id) ? id : throw new InvalidOperationException($"Unregistered state type '{type.FullName}'");
+    /// <summary>Resolve the stable id of a registered component type, or null when the type is not registered.</summary>
+    public string? TryIdOf(Type type) => _ids.GetValueOrDefault(type);
     /// <summary>Resolve a component id; unknown types cannot be loaded safely, even with forced content loading.</summary>
     public Type TypeOf(string id) => _types.TryGetValue(id, out var type) ? type : throw new InvalidDataException($"Unknown state component '{id}'");
     internal IEnumerable<string> Ids => _types.Keys;

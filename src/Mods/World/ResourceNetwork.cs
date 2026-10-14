@@ -45,7 +45,7 @@ internal sealed class ResourceNetwork : IResourceNetwork
     {
         var plot = sim.State.Plots[tile.Value];
         if (!Access(sim, player, plot) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
-        if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) ? NetworkMode.Water : NetworkMode.None;
+        if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) || plot.Owner == player ? NetworkMode.Water : NetworkMode.None;
         var mode = NetworkMode.None;
         if (plot.Route is not null) mode |= NetworkMode.Route;
         if (river && plot.RiverEdges != 0) mode |= NetworkMode.River;
@@ -70,7 +70,11 @@ internal sealed class ResourceNetwork : IResourceNetwork
         if (((a | b) & NetworkMode.River) == 0) return false;
         if ((a & (NetworkMode.River | NetworkMode.Water)) == 0 || (b & (NetworkMode.River | NetworkMode.Water)) == 0) return false;
         int direction = Enumerable.Range(0, 6).First(d => sim.State.Grid.Neighbor(from, d) == to);
-        return (sim.State.Plots[from.Value].RiverEdges & (1 << direction)) != 0;
+        int fromEdges = sim.State.Plots[from.Value].RiverEdges, toEdges = sim.State.Plots[to.Value].RiverEdges;
+        // Same river corridor: the shared edge, or an edge meeting it at either shared vertex.
+        return (fromEdges & (1 << direction)) != 0
+            || (fromEdges & ((1 << ((direction + 1) % 6)) | (1 << ((direction + 5) % 6)))) != 0
+            || (toEdges & ((1 << ((direction + 2) % 6)) | (1 << ((direction + 4) % 6)))) != 0;
     }
     private static bool CityNode(Simulation sim, int player, TileId tile)
     {

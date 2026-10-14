@@ -23,8 +23,11 @@ public abstract class GameCommand
 public sealed class EndTurnCommand : GameCommand
 {
     /// <inheritdoc/>
-    public override string? Validate(Simulation sim) =>
-        sim.State.Players.Any(p => p.Id == Player) ? null : "unknown player";
+    public override string? Validate(Simulation sim)
+    {
+        if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
+        return sim.State.PlayerById(Player).EndedTurn ? "Player has already ended turn." : null;
+    }
 
     /// <inheritdoc/>
     public override void Apply(Simulation sim)

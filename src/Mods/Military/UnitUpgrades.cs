@@ -67,7 +67,15 @@ internal static class UnitUpgrades
         var service = sim.Content.Services.Get<ICityProductionService>().Single();
         return sim.State.Cities.Where(c => c.Owner == unit.Owner).OrderBy(c => c.Id).Any(c =>
             sim.State.Grid.Distance(c.Position, unit.Position) <= MilitaryData.Raw(sim, "MAX_UNIT_UPGRADE_CITY_DISTANCE", 3)
-            && sim.State.PlotAt(c.Position).AreaId == sim.State.PlotAt(unit.Position).AreaId && service.Validate(sim, c.Id, "cities:unit", target).Success);
+            && SameArea(sim, c, unit) && service.Validate(sim, c.Id, "cities:unit", target).Success);
+    }
+    private static bool SameArea(Simulation sim, City city, Unit unit)
+    {
+        var plot = sim.State.PlotAt(unit.Position);
+        if (sim.State.PlotAt(city.Position).AreaId == plot.AreaId) return true;
+        if (!sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater) return false;
+        return city.Position == unit.Position || sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position))
+            .Any(t => sim.State.Plots[t.Value].AreaId == plot.AreaId && sim.Content.Get<S.TerrainDef>(sim.State.Plots[t.Value].Terrain).IsWater);
     }
     internal static void Apply(Simulation sim, Unit unit, string targetId)
     {

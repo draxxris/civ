@@ -73,8 +73,13 @@ internal sealed class GovernmentService : IGovernmentService
         foreach (var civic in changes) lines.Add(new(civic.Id, "government:base_anarchy", civic.AnarchyLength));
         int turns = (baseline + cityTurns + changes.Sum(c => c.AnarchyLength)) * percent / 100;
         if (turns == 0) return 0;
-        turns = turns * sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).AnarchyPercent / 100;
-        turns = turns * sim.Content.Get<EraDef>(sim.Settings.StartingEra).AnarchyPercent / 100;
+        var eraId = sim.State.PlayerById(player).Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra;
+        int speed = sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).AnarchyPercent;
+        int era = sim.Content.Get<EraDef>(eraId).AnarchyPercent;
+        // An explicit zero scale means no anarchy. A positive scale that rounds to zero still costs one turn.
+        if (speed == 0 || era == 0) return 0;
+        turns = turns * speed / 100;
+        turns = turns * era / 100;
         return Math.Clamp(turns, 1, maximum);
     }
     public void Adopt(Simulation sim, int player, IReadOnlyList<string> civics)

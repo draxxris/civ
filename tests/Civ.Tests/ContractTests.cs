@@ -370,4 +370,64 @@ public class ContractTests
         sim.State.Cities[0].ProductionQueue.Add(new("cities:building", "base:granary", 2));
         Assert.NotEqual(hash, sim.ComputeHash());
     }
+
+    [Fact]
+    public void EndTurnRejectsSecondEndForSamePlayerWithoutChangingState()
+    {
+        var sim = TestGame.Sim();
+        Assert.True(sim.TryApply(new EndTurnCommand { Player = 0 }, out _));
+        ulong before = sim.ComputeHash();
+        Assert.False(sim.TryApply(new EndTurnCommand { Player = 0 }, out var error));
+        Assert.Equal("Player has already ended turn.", error);
+        Assert.Equal("unknown player", new EndTurnCommand { Player = 9 }.Validate(sim));
+        Assert.Equal(before, sim.ComputeHash());
+        Assert.Equal(1, sim.State.Turn);
+        Assert.True(sim.TryApply(new EndTurnCommand { Player = 1 }, out _));
+        Assert.Equal(2, sim.State.Turn);
+    }
+
+    [Fact]
+    public void PercentModifiersClampAtZeroInsteadOfInvertingYields()
+    {
+        Assert.Equal(new YieldVector(0, 20, 0), new YieldVector(10, 20, 30).WithPercent(new(-150, 0, -100)));
+        Assert.Equal(new YieldVector(0, 0, 0), new YieldVector(10, 20, 30).WithPercent(new(-1000, -1000, -1000)));
+        Assert.Equal(new YieldVector(5, 30, 45), new YieldVector(10, 20, 30).WithPercent(new(-50, 50, 50)));
+        Assert.Equal(new CommerceVector(0, 0, 0, 40), new CommerceVector(10, 20, 30, 40).WithPercent(new(-200, -150, -101, 0)));
+        Assert.Equal(new CommerceVector(5, 30, 45, 0), new CommerceVector(10, 20, 30, 0).WithPercent(new(-50, 50, 50, 0)));
+    }
+
+    [Fact]
+    public void OptionalStateReadsReturnNullWhenTheOwningModIsNotLoaded()
+    {
+        var sim = TestGame.Sim();
+        var player = sim.State.PlayerById(0);
+        Assert.Null(player.Extensions.TryGet<GovernmentPlayerState>(sim.Content));
+        Assert.Throws<InvalidOperationException>(() => player.Extensions.Get<GovernmentPlayerState>(sim.Content));
+        Assert.False(GovernmentStatus.IsAnarchy(sim, 0));
+        Assert.True(sim.TryApply(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) }, out _));
+        Assert.False(GovernmentStatus.IsDisorder(sim, sim.State.Cities[0]));
+    }
+
+    [Fact]
+    public void RejectedCityAndUnitInsertsAndMovesLeaveAllIndexesUnchanged()
+    {
+        var state = new GameState { Map = new(4, 3) };
+        state.AddCity(new City { Id = 1, Owner = 0, Position = new Hex(0, 0) });
+        state.AddUnit(new Unit { Id = 1, Owner = 0, Type = "base:warrior", Position = new Hex(1, 0) });
+        Assert.Throws<ArgumentException>(() => state.AddCity(new City { Id = 2, Owner = 0, Position = new Hex(0, 0) })); // plot taken
+        Assert.Throws<ArgumentException>(() => state.AddCity(new City { Id = 1, Owner = 0, Position = new Hex(2, 0) })); // id taken
+        Assert.Throws<ArgumentException>(() => state.AddUnit(new Unit { Id = 1, Owner = 0, Type = "base:warrior", Position = new Hex(2, 0) }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => state.MoveUnit(1, new Hex(9, 9)));
+        Assert.Equal([1], state.Cities.Select(c => c.Id));
+        Assert.Null(state.FindCity(2));
+        Assert.Null(state.CityAt(new Hex(2, 0)));
+        Assert.Equal(1, state.CityAt(new Hex(0, 0))!.Id);
+        Assert.Equal([1], state.Units.Select(u => u.Id));
+        Assert.Equal(new Hex(1, 0), state.UnitById(1).Position);
+        Assert.Equal(1, Assert.Single(state.UnitsAt(new Hex(1, 0))).Id);
+        Assert.Empty(state.UnitsAt(new Hex(2, 0)));
+        state.MoveUnit(1, new Hex(1, 1));
+        Assert.Empty(state.UnitsAt(new Hex(1, 0)));
+        Assert.Equal(1, Assert.Single(state.UnitsAt(new Hex(1, 1))).Id);
+    }
 }

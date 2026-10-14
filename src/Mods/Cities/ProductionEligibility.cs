@@ -32,7 +32,15 @@ internal static class ProductionEligibility
         Location(sim, city, b, failures);
         WonderCapacity(sim, city, b, failures);
         if (b.RequiresReligion || b.RequiresStateReligion || b.ReligionType is not null) Fail(failures, "Religion state is unavailable");
+        Upgrade(sim, city, b, failures);
+        if (b.BonusType is { } bonus && sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCount(sim, city.Owner, city.Id, bonus) <= 0)
+            Fail(failures, "Requires connected resource: " + bonus);
         if (b.RequiresPower) Fail(failures, "Power state is unavailable");
+    }
+    private static void Upgrade(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
+    {
+        if (city.Buildings.Any(existing => sim.Content.Get<S.BuildingDef>(existing).ReplaceBuildings.GetValueOrDefault(b.Id)))
+            Fail(failures, "Replaced by an upgraded building");
     }
     private static void Unit(Simulation sim, City city, string id, List<RequirementFailure> failures)
     {

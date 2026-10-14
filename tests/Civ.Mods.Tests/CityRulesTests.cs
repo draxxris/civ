@@ -43,7 +43,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         city.Worked.Clear(); city.Specialists.Clear();
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.AdvanceTurn();
-        Assert.Equal(7, city.Population); Assert.Equal(0, city.FoodStored);
+        Assert.Equal(7, city.Population); Assert.True(city.FoodStored > 0); // Starvation refills the lower tier instead of emptying it.
     }
     [Fact]
     public void Governor_and_mid_production_save_are_deterministic()
@@ -154,7 +154,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Buildings.Add("cities:granary"); city.FoodStored = 29;
         sim.AdvanceTurn();
         Assert.Equal(2, city.Population); Assert.Equal(6, city.FoodStored);
-        Assert.Equal(4, city.Extensions.Get<CityRuleState>(sim.Content)!.FoodKept);
+        Assert.Equal(0, city.Extensions.Get<CityRuleState>(sim.Content)!.FoodKept); // Reset once the kept food is applied.
         city.FoodStored = 100;
         Assert.True(sim.TryApply(new SetCityAssignmentsCommand { Player = 0, CityId = 1, AvoidGrowth = true }, out _));
         var threshold = Service<ICityGrowthService>(sim).Calculate(sim, 1).Threshold;

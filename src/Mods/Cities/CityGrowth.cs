@@ -84,14 +84,19 @@ internal sealed class CityGrowth(ICityYieldService yields, ICityWellbeingService
             else
             {
                 city.FoodStored -= Math.Max(0, result.Threshold - state.FoodKept);
+                state.FoodKept = 0;
                 city.Population++;
                 sim.Events.Publish(new CityGrew(city.Id, city.Population));
             }
         }
         else if (city.FoodStored < 0)
         {
-            city.FoodStored = 0;
-            city.Population = Math.Max(1, city.Population - 1);
+            if (city.Population > 1)
+            {
+                city.Population--;
+                city.FoodStored = Math.Max(0, Calculate(sim, city.Id).Threshold + city.FoodStored);
+            }
+            else city.FoodStored = 0;
         }
         work.Assign(sim, city.Id);
     }

@@ -60,6 +60,9 @@ public sealed class ExtensionState
     }
     /// <summary>Get a component by its registered type, or null when absent.</summary>
     public T? Get<T>(Content.ContentDb content) where T : class => Values.GetValueOrDefault(content.StateComponents.IdOf(typeof(T))) as T;
+    /// <summary>Get a component by its registered type, or null when the type is unregistered or the component is absent. Never throws for unregistered types.</summary>
+    public T? TryGet<T>(Content.ContentDb content) where T : class =>
+        content.StateComponents.TryIdOf(typeof(T)) is { } id ? Values.GetValueOrDefault(id) as T : null;
     /// <summary>Remove a registered component.</summary>
     public bool Remove<T>(Content.ContentDb content) where T : class => Values.Remove(content.StateComponents.IdOf(typeof(T)));
 }

@@ -6,7 +6,12 @@ namespace Civ.Mods.Cities;
 
 internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkService
 {
-    public int Radius(Simulation sim, int cityId) => Math.Clamp(CityData.Level(sim, sim.State.CityById(cityId)).CityRadius, 2, 3);
+    public int Radius(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        int buildingRadius = CityData.Active(sim, city).Select(b => b.WorkableRadius).DefaultIfEmpty(0).Max();
+        return Math.Clamp(Math.Max(CityData.Level(sim, city).CityRadius, buildingRadius), 2, 3);
+    }
     public IReadOnlyList<TileId> WorkArea(Simulation sim, int cityId) => sim.State.Grid.Range(CityData.Tile(sim, sim.State.CityById(cityId)), Radius(sim, cityId)).ToArray();
     public string? Validate(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
     {

@@ -83,6 +83,23 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         Assert.False(GovernmentStatus.IsAnarchy(sim, 0));
     }
     [Fact]
+    public void Republic_switch_passes_through_anarchy_then_raises_city_production()
+    {
+        var sim = Create(Caesar); var city = AddCity(sim);
+        sim.TeamOf(0).Techs.UnionWith(["research:democracy"]);
+        city.Population = 3; Service<ICityWorkService>(sim).Assign(sim, city.Id);
+        long before = Service<ICityYieldService>(sim).Calculate(sim, city.Id).Yields.Production;
+        Assert.True(sim.TryApply(new SetCivicsCommand { Player = 0, Civics = ["government:republic"] }, out var error), error);
+        Assert.Equal("government:republic", sim.State.Players[0].Civics["government:civicoption_government"]);
+        Assert.True(GovernmentStatus.IsAnarchy(sim, 0));
+        Assert.Equal(0, Service<ICityYieldService>(sim).Calculate(sim, city.Id).Yields.Production);
+        for (int turn = 0; turn < 5 && GovernmentStatus.IsAnarchy(sim, 0); turn++) sim.AdvanceTurn();
+        Assert.False(GovernmentStatus.IsAnarchy(sim, 0));
+        var after = Service<ICityYieldService>(sim).Calculate(sim, city.Id);
+        Assert.Equal(25, after.Ledger.Total("yield.percent.production")); // Republic: +25% production.
+        Assert.True(after.Yields.Production > before, $"production {before} -> {after.Yields.Production}");
+    }
+    [Fact]
     public void Civic_modifiers_reach_city_ledgers_with_hand_checked_numbers()
     {
         var sim = Create(Caesar); var city = AddCity(sim);

@@ -147,4 +147,73 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(5, Service<IUnitService>(sim).ExperienceNeeded(sim, unit.Id));
         Assert.False(sim.TryApply(new PromoteMilitaryUnitCommand { Player = 0, Unit = unit.Id, Promotion = "military:combat1" }, out _));
     }
+    [Fact]
+    public void First_strikes_cancel_so_equal_first_strikes_do_not_burn_dummy_rounds()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = Add(sim, 0, 39); var d = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true);
+        a.Promotions.Add("military:drill2"); d.Promotions.Add("military:drill2");
+        var combat = Service<ICombatService>(sim);
+        var preview = combat.Preview(sim, a.Id, d.Id);
+        var report = combat.Resolve(sim, a.Id, d.Id);
+        Assert.Equal(preview.AttackerFirstStrikes, preview.DefenderFirstStrikes);
+        Assert.DoesNotContain(report.Rounds, r => r.FirstStrike);
+    }
+    [Fact]
+    public void Siege_cannot_walk_onto_a_defended_city_when_defenders_are_at_the_combat_limit()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = Add(sim, 0, 39, "military:catapult"); var d = Add(sim, 1, 40);
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 1, Name = "Target", Position = d.Position, Population = 3 });
+        sim.State.SetWar(0, 1, true);
+        d.Health = 100 - MilitaryDataLimit(sim, a);
+        sim.State.PlotAt(d.Position).Owner = 1;
+        sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = a.Id, Path = [d.Position] }, out _);
+        Assert.Equal(1, sim.State.CityAt(d.Position)!.Owner);
+        Assert.NotNull(sim.State.FindUnit(d.Id));
+        Assert.NotEqual(d.Position, sim.State.UnitById(a.Id).Position);
+    }
+    private static int MilitaryDataLimit(Simulation sim, Unit unit) => sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).CombatLimit;
+    [Fact]
+    public void Defender_winning_on_its_own_plot_gets_domestic_experience_even_if_attacker_is_outside()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = Add(sim, 0, 39); var d = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true);
+        sim.State.PlotAt(a.Position).Owner = null; sim.State.PlotAt(d.Position).Owner = 1;
+        a.Health = 1;
+        var baseline = d.Experience;
+        var report = Service<ICombatService>(sim).Resolve(sim, a.Id, d.Id);
+        Assert.Equal(CombatOutcome.DefenderWon, report.Outcome);
+        Assert.True(d.Experience > baseline);
+    }
+    [Fact]
+    public void Fortify_turns_only_accumulate_while_fortified()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var idle = Add(sim, 0, 39); var fortified = Add(sim, 0, 40);
+        Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 0, Unit = fortified.Id, Activity = UnitActivity.Fortify }, out var error), error);
+        var enemy = Add(sim, 1, 41);
+        sim.State.SetWar(0, 1, true);
+        sim.AdvanceTurn(); sim.AdvanceTurn();
+        var combat = Service<ICombatService>(sim);
+        int idleDefense = combat.Preview(sim, enemy.Id, idle.Id).DefenseStrength.Current;
+        int fortifiedDefense = combat.Preview(sim, enemy.Id, fortified.Id).DefenseStrength.Current;
+        Assert.True(idleDefense > 0);
+        Assert.True(fortifiedDefense > idleDefense);
+    }
+    [Fact]
+    public void Naval_unit_on_water_upgrades_from_an_adjacent_coastal_city()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.Plots[40].Terrain = "world:coast"; sim.State.Plots[41].Terrain = "world:coast";
+        sim.State.Plots[40].AreaId = 5; sim.State.Plots[41].AreaId = 5;
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Name = "Port", Position = sim.State.Grid.HexOf(new(39)), Population = 3 });
+        var ship = Add(sim, 0, 41, "military:wargalley");
+        sim.TeamOf(0).Techs.UnionWith(["research:rudder", "research:seafaring"]);
+        sim.State.PlayerById(0).Treasury = 1000;
+        var error = Service<IUnitService>(sim).Validate(sim, 0, ship.Id, UnitAction.Upgrade, "military:cog");
+        Assert.NotEqual("No eligible nearby training city", error);
+    }
 }

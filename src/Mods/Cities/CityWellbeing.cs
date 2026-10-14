@@ -19,7 +19,7 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
         if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
             Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
-        AddModifiers(effects, lines);
+        AddModifiers(sim, effects, lines);
         AddEnvironment(sim, city, lines);
         AddSpecialists(sim, city, effects, lines);
         var ledger = new Ledger(lines);
@@ -32,10 +32,12 @@ internal sealed class CityWellbeingService : ICityWellbeingService
     {
         if (value != 0) lines.Add(new(source, "cities:" + kind + (value > 0 ? "_good" : "_bad"), Math.Abs(value)));
     }
-    private static void AddModifiers(ModifierSink effects, List<LedgerLine> lines)
+    private static void AddModifiers(Simulation sim, ModifierSink effects, List<LedgerLine> lines)
     {
+        bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
         foreach (var line in effects.Ledger.Lines)
         {
+            if (onlyHealthy && line.Key == "cities:health" && line.Amount < 0 && IsBuildingSource(sim, line.Source)) continue;
             if (line.Key == "cities:happiness") Add(lines, line.Source, "happiness", line.Amount);
             if (line.Key == "cities:health") Add(lines, line.Source, "health", line.Amount);
             if (line.Key == "cities:unhappiness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
@@ -43,6 +45,8 @@ internal sealed class CityWellbeingService : ICityWellbeingService
                 -Math.Max(0, line.Amount) * Math.Max(0, 100 + CityData.Effect(effects, "war_weariness_percent")) / 100);
         }
     }
+    private static bool IsBuildingSource(Simulation sim, string source) =>
+        sim.Content.TryGet<S.BuildingDef>(source.Split(':', 3) is { Length: >= 2 } p ? p[0] + ":" + p[1] : source, out _);
     private static void AddEnvironment(Simulation sim, City city, List<LedgerLine> lines)
     {
         long featureGood = 0, featureBad = 0, terrainGood = 0, terrainBad = 0;

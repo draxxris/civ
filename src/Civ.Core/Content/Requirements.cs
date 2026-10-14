@@ -77,21 +77,29 @@ public sealed class RequirementService
         }
     }
     /// <summary>Evaluate only one requirement kind, for persistent effects with scoped activation gates.</summary>
-    public RequirementResult EvaluateKind(Requirement? requirement, RequirementContext context, string kind) =>
-        Evaluate(Filter(requirement, kind), context);
-    private static Requirement? Filter(Requirement? requirement, string kind) => requirement switch
+    public RequirementResult EvaluateKind(Requirement? requirement, RequirementContext context, string kind)
     {
-        Requirement.Leaf leaf => leaf.Kind == kind ? leaf : null,
-        Requirement.All all => FilterGroup(all.Items, kind, false),
-        Requirement.Any any => FilterGroup(any.Items, kind, true),
-        Requirement.Not not => Filter(not.Item, kind) is { } item ? new Requirement.Not(item) : null,
-        _ => null,
-    };
-    private static Requirement? FilterGroup(IReadOnlyList<Requirement> items, string kind, bool alternative)
+        if (requirement == null || !Leaves(requirement).Any(l => l.Kind == kind)) return new(true, []);
+        switch (requirement)
+        {
+            case Requirement.Leaf: return Evaluate(requirement, context);
+            case Requirement.All all: return CombineKind(all.Items, context, kind, false);
+            case Requirement.Any any: return CombineKind(any.Items, context, kind, true);
+            case Requirement.Not not:
+                var inner = EvaluateKind(not.Item, context, kind);
+                return inner.Success ? new(false, [new(null, "Forbidden requirement is satisfied")]) : new(true, []);
+            default: throw new InvalidDataException("Unknown requirement expression");
+        }
+    }
+    private RequirementResult CombineKind(IReadOnlyList<Requirement> items, RequirementContext context, string kind, bool alternative)
     {
-        var selected = items.Select(item => Filter(item, kind)).OfType<Requirement>().ToArray();
-        if (selected.Length == 0) return null;
-        return alternative ? new Requirement.Any(selected) : new Requirement.All(selected);
+        // In All, branches without target leaves are neutral; in Any they only count when they actually pass.
+        var results = items.Select(r => Leaves(r).Any(l => l.Kind == kind) ? EvaluateKind(r, context, kind)
+            : alternative ? Evaluate(r, context) : new RequirementResult(true, [])).ToArray();
+        bool success = alternative ? results.Any(r => r.Success) : results.All(r => r.Success);
+        var failures = results.SelectMany(r => r.Failures).ToArray();
+        if (!success && failures.Length == 0) failures = [new(null, "No requirement alternative is available")];
+        return new(success, success ? [] : failures);
     }
     private RequirementResult Combine(IReadOnlyList<Requirement> items, RequirementContext context, bool alternative)
     {

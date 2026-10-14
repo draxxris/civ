@@ -45,9 +45,12 @@ internal sealed class NewGameSetup : INewGameSetup
             Treasury = handicap.Gold + sim.Content.Get<EraDef>(settings.StartingEra).StartingGold,
         };
         foreach (var option in sim.Content.Get<CivicOptionDef>().All)
-            player.Civics[option.Id] = option.DefaultCivic ?? sim.Content.Get<CivicDef>().All.Single(c => c.Option == option.Id && c.Requirements is null).Id;
+        {
+            var defaultCivic = option.DefaultCivic ?? sim.Content.Get<CivicDef>().All.FirstOrDefault(c => c.Option == option.Id && c.Requirements is null)?.Id;
+            if (defaultCivic is not null) player.Civics[option.Id] = defaultCivic;
+        }
         foreach (var civic in civ.StartingCivics)
-            player.Civics[sim.Content.Get<CivicDef>(civic).Option!] = civic;
+            if (sim.Content.Get<CivicDef>(civic).Option is { } optionId) player.Civics[optionId] = civic;
         sim.State.Players.Add(player);
     }
 

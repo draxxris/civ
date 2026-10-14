@@ -161,6 +161,8 @@ internal sealed class MovementService : IMovementService
         var state = MilitaryData.Edit(sim, unit);
         state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
         bool hostile = HostilePlot(sim, unit, target);
+        var combatService = sim.Content.Services.Get<ICombatService>().Single();
+        if (hostile && HostileDefenders(sim, unit, target) && combatService.BestDefender(sim, unit.Id, target) is null) return true;
         if (hostile && sim.Content.Services.Get<ICombatService>().Single().BestDefender(sim, unit.Id, target) is { } defender)
         {
             sim.Content.Services.Get<ICombatService>().Single().Resolve(sim, unit.Id, defender);
