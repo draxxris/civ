@@ -1,3 +1,12 @@
+[tasks."build:game"]
+description = "Build the Godot game"
+run = "dotnet build src/Civ.Godot"
+
+[tasks."start:game"]
+description = "Build and start the Godot game"
+depends = ["build:game"]
+run = "godot-mono --path src/Civ.Godot"
+
 [tasks.test]
 description = "Run default tests, excluding E2E and extractor tests"
 run = "dotnet test Civ.slnx --filter 'Category!=Extractor&Category!=E2E'"
