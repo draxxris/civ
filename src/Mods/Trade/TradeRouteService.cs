@@ -50,8 +50,11 @@ internal sealed class TradeRouteService : ITradeRouteService
     {
         if (source.Id == partner.Id || GovernmentStatus.IsDisorder(sim, partner)) return false;
         if (sim.TeamOf(source.Owner).Id == sim.TeamOf(partner.Owner).Id) return true;
+var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        int mine = sim.TeamOf(source.Owner).Id, theirs = sim.TeamOf(partner.Owner).Id;
         return !noForeign && !TradeData.Civics(sim, partner.Owner).Any(c => c.NoForeignTrade)
-            && !sim.TeamOf(source.Owner).Wars.Contains(sim.TeamOf(partner.Owner).Id);
+            && !sim.TeamOf(source.Owner).Wars.Contains(theirs)
+            && (diplomacy is null || diplomacy.HasMet(sim, mine, theirs) && diplomacy.HasOpenBorders(sim, mine, theirs));
     }
     private static TradeRouteResult Route(Simulation sim, City city, City partner, Ledger effects)
     {

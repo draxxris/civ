@@ -72,7 +72,8 @@ internal sealed class MovementService : IMovementService
             && sim.State.Grid.Neighbors(tile).Any(n => sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater);
     }
     private static bool TerritoryEntry(Simulation sim, Unit unit, S.UnitDef def, int? owner) => owner is null
-        || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory;
+        || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory
+        || sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasOpenBorders(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id) == true;
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
         sim.State.UnitsAt(target).Any(other => MilitaryData.Enemy(sim, unit.Owner, other.Owner))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);

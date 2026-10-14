@@ -13,5 +13,18 @@ public sealed class AiMod : IMod
         context.RegisterStateComponent<AiTeamState>("team_state");
         context.RegisterCommand<DeclareWarCommand>("declare_war");
         context.RegisterCommand<MakePeaceCommand>("make_peace");
+        context.Subscribe<DiplomaticWarDeclared>("diplomatic_war", (sim, war) =>
+        {
+            WarRules.State(sim, war.AggressorTeam).WarStarted[war.DefenderTeam] = sim.State.Turn;
+            WarRules.State(sim, war.DefenderTeam).WarStarted[war.AggressorTeam] = sim.State.Turn;
+        });
+        context.Subscribe<DiplomaticPeaceSigned>("diplomatic_peace", (sim, peace) =>
+        {
+            var first = WarRules.State(sim, peace.FirstTeam);
+            var second = WarRules.State(sim, peace.SecondTeam);
+            first.WarStarted.Remove(peace.SecondTeam); second.WarStarted.Remove(peace.FirstTeam);
+            first.PeaceStarted[peace.SecondTeam] = sim.State.Turn;
+            second.PeaceStarted[peace.FirstTeam] = sim.State.Turn;
+        });
     }
 }
