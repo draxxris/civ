@@ -4,7 +4,7 @@ Status describes executable rules, not imported data. Feature mods load definiti
 ## Foundation
 
 - **Implemented:** phase contract, setup selection, source plot counts, speed/handicap/era validation, team creation, starting gold.
-  Fields: `WorldSizeDef.GridWidth/GridHeight`, `EraDef.StartingGold`, `HandicapDef.Gold`, and `HexOverridesDef`.
+  Fields: `WorldSizeDef.GridWidth/GridHeight`, `EraDef.StartingGold`, `HandicapDef.Gold`, and `HexOverridesDef`, including `barbarianUnownedTilesMultiplier` for barbarian density on unowned tiles and `aiMinimumCityGarrison` for the AI minimum city garrison.
 - **Partial:** era and handicap grants. Fields: `StartingUnitMultiplier`, `StartingDefenseUnits`, `StartingWorkerUnits`,
   `StartingExploreUnits`, their AI counterparts, `StartingTechs`, and `AiStartingTechs`.
   Earlier-era technology grants, advanced start, calendar progression, and per-player difficulty remain absent.
@@ -261,7 +261,7 @@ Status describes executable rules, not imported data. Feature mods load definiti
   The AI keeps no hidden per-game memory. War-start turns use a saved team component.
 - **Partial:** war and peace commands change symmetric Core team relations. Peace is unilateral; agreements and diplomatic attitudes remain absent.
   Road corridors do not plan detours around terrain barriers. Naval expansion, transport operations and great-person missions remain absent.
-  Dense barbarian pressure and the imported one-production settler cost still require balance work.
+  With hex barbarian density scaling and non-siege garrison retention, all four AI players survive 200-turn soak runs with standing cities. The imported one-production settler cost still requires balance work.
 
 ## Validation
 Generated games, active worker orders, exploration, feature state, and RNG state survive save/load with identical hashes.
