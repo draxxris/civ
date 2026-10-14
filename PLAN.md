@@ -285,17 +285,18 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] P6 ContentImport multi-era closure sweep (`--max-era` `ancient`..`future` and `all`) and lowercase asset
   branding scrub (`502c09b`).
 - [x] Adversarial audit fixes across Espionage bilateral ratios/eliminated teams, Corporations HQ Mercantilism,
-  ProjectsVictory team tie-breaks, and Events duration parity/empire-wide modifiers.
-
-### In progress
-
-- [ ] P9 Hex balance (`src/Mods/Foundation/data/hex-overrides.json`) & remaining diplomatic/corporate/event audit
-  polish.
+  ProjectsVictory team tie-breaks, and Events duration parity/empire-wide modifiers (`d3d3451`).
+- [x] Open-Borders resource transit, diplomatic tech gates, and Client proposed-deal acceptance (`62965b1`).
+- [x] Adversarial audit fixes across ScriptedWonders, Revolution, ProjectsVictory team tech score, and Client
+  intelligence/revolution helpers (`d24a3e6`).
+- [x] P9 Hex balance (`src/Mods/Foundation/data/hex-overrides.json`) and AI city garrison defense tuning (all 4 AI
+  civilizations survive 200-turn soak with 9/4/3/3 cities).
 
 ### Next
 
-- [ ] P8: unit 3D art spike.
-- [ ] P9: hex balance (`hex-overrides.json`) and polish.
+- [ ] P8: unit 3D art spike (`tools/art/` NIF/KF → glTF conversion spike + art registry, off the critical path).
+- [ ] Optional remaining polish: Great Wall barbarian border entry block / cross-border defender bonus, barbarian XP cap
+  on `ScriptedWonders`, and Corporate maintenance integration into `ICityMaintenanceService`.
 
 ### Working conventions
 

@@ -31,6 +31,10 @@ public sealed class HexOverridesDef : ContentDef
     public int StartQualityPercent { get; init; }
     public int UnitSight { get; init; }
     public int CitySight { get; init; }
+    public int BarbarianUnownedTilesMultiplier { get; init; } = 1;
+    public int AiMinimumGarrison { get; init; } = 2;
+    public int AiThreatStrengthPerDefender { get; init; } = 3;
+    public int AiMaximumGarrison { get; init; } = 8;
     public int GovernorFoodWeight { get; init; } = 10;
     public int GovernorProductionWeight { get; init; } = 6;
     public int GovernorCommerceWeight { get; init; } = 4;

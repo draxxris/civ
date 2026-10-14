@@ -33,8 +33,9 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             Assert.True(sim.TeamOf(player.Id).Techs.Count >= 15, $"player {player.Id}: {sim.TeamOf(player.Id).Techs.Count} technologies");
             Assert.True(completed[player.Id] > 0, $"player {player.Id} completed no buildings");
         }
-        // Require actual expansion, but not survival or three cities per player under barbarian pressure.
-        // Those are strategy/balance goals, not the functional turn-loop contract.
+        Assert.True(sim.State.Cities.Count(c => c.Owner is >= 0 and < 4) >= 4, "Fewer than four civilization cities survived");
+        Assert.True(sim.State.Cities.Where(c => c.Owner is >= 0 and < 4).Select(c => c.Owner).Distinct().Count() >= 3,
+            "Fewer than three civilizations survived");
         Assert.True(founded.Sum() > founded.Length, "No AI founded a city beyond its initial capital");
         Assert.True(combat > 0, "No combat occurred");
     }

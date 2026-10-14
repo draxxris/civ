@@ -30,7 +30,8 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         foreach (var view in Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id))
         {
             int want = army.DesiredGarrison(view);
-            var here = ctx.Sim.State.UnitsAt(view.City.Position).Where(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee).OrderBy(u => u.Id).ToList();
+            var here = ctx.Sim.State.UnitsAt(view.City.Position).Where(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee)
+                .OrderByDescending(u => AiOptions.DefenderQuality(ctx.Def(u)) * u.Health).ThenBy(u => u.Id).ToList();
             foreach (var unit in here.Take(want)) { ctx.Done.Add(unit.Id); _orders.Fortify(unit); }
         }
         // Reserve all existing garrisons before choosing reinforcements: never steal a city's last defender.

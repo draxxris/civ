@@ -15,7 +15,7 @@ internal sealed record CityView(City City, YieldVector Yields, int HappyMargin, 
     {
         var yield = ctx.Service<ICityYieldService>().Calculate(ctx.Sim, city.Id);
         var well = ctx.Service<ICityWellbeingService>().Calculate(ctx.Sim, city.Id);
-        int garrison = ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+        int garrison = ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
         return new(city, yield.Yields, well.Happy - well.Unhappy - well.Angry, well.Healthy - well.Unhealthy,
             ctx.ThreatAround(city.Position, 3), garrison);
     }
