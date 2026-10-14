@@ -294,11 +294,15 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] Wire all 19 feature mods into `Civ.Godot` and verify headless 200-frame Godot startup (`16b9f5f`).
 - [x] Great Wall barbarian border entry block, cross-border defense penalty, and barbarian XP cap on `ScriptedWonders`
   (`8b6bf43`).
-- [x] Corporate maintenance integration into `CityMaintenance` and Economy deficit slider adjustment.
+- [x] Corporate maintenance integration into `CityMaintenance` and Economy deficit slider adjustment (`2f2f31c`).
+- [x] P8: unit 3D art conversion (`tools/art/convert_units.py` converting 357/359 units to `.glb` with `idle`, `run`,
+  `fortify`, `attack`, `hurt`, `die` clips + `tools/art/report.md`) (`6b131c7`).
+- [x] World-map 3D unit rendering and Civ 4-style combat attack/death animation playback in `Civ.Client.Core` and
+  `Civ.Godot`.
 
 ### Next
 
-- [ ] P8: unit 3D art spike (`tools/art/` NIF/KF → glTF conversion spike + art registry, off the critical path).
+- [ ] End-to-end Godot 3D unit & battle animation smoke test and screenshot capture.
 
 ### Working conventions
 

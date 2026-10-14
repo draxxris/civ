@@ -30,7 +30,8 @@ internal sealed partial class GameView : Node3D
     {
         AddChild(new WorldEnvironment
         {
-            Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.03f, 0.04f, 0.06f) },
+            Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.03f, 0.04f, 0.06f),
+                AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = Colors.White, AmbientLightEnergy = 0.55f },
         });
         _map = new MapRenderer(_session, _icons);
         AddChild(_map);

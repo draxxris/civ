@@ -28,6 +28,8 @@ public sealed partial class GameSession
         _seenPrevious = Sim.Events.PreviousTurn;
         _seenCount = Sim.Events.Published.Count;
         _myUnits = MyUnitIds();
+        SnapshotUnits();
+        _battles.Clear();
     }
 
     private HashSet<int> MyUnitIds() => Sim.State.Units.Where(u => u.Owner == Human).Select(u => u.Id).ToHashSet();
@@ -46,11 +48,13 @@ public sealed partial class GameSession
         var published = events.Published;
         for (; _seenCount < published.Count; _seenCount++) Notify(published[_seenCount], turn);
         _myUnits = MyUnitIds();
+        SnapshotUnits();
         if (_notifications.Count > MaxNotifications) _notifications.RemoveRange(0, _notifications.Count - MaxNotifications);
     }
 
     private void Notify(DomainEvent e, int turn)
     {
+        if (e is CombatResolved combat) RecordBattle(combat);
         var note = Describe(e, turn);
         if (note != null) _notifications.Add(note);
     }

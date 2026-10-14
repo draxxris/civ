@@ -12,7 +12,10 @@ internal sealed partial class MapRenderer
         var shapes = new MeshBuilder();
         var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv };
         foreach (var city in _session.KnownCities()) DrawCity(shapes, city);
-        foreach (var group in _session.VisibleUnits().GroupBy(u => u.Position)) DrawUnitStack(shapes, icons, group.OrderBy(u => u.Id).ToList());
+        _standing.Clear();
+        foreach (var group in _session.VisibleUnits().Where(u => !_battleIds.Contains(u.Id)).GroupBy(u => u.Position))
+            DrawUnitStack(shapes, icons, group.OrderBy(u => u.Id).ToList());
+        SyncActors();
         _tokens.Mesh = shapes.Build(_tokenMaterial);
         _tokenIcons.Mesh = icons.Build(_tokenIconMaterial);
     }
@@ -39,9 +42,19 @@ internal sealed partial class MapRenderer
         float radius = inCity ? 0.3f : 0.4f;
         var owner = Ui.ToColor(MapStyle.PlayerColor(top.Owner));
         float shade = top.Owner == GameSession.Human && top.MovesLeft <= 0 ? 0.62f : 1f;
-        shapes.Disc(at, radius + 0.06f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 16);
-        shapes.Disc(at + Up(0.002f), radius, owner * shade, 16);
-        if (_atlas.UvOf(top.Type) is Rect2 uv) icons.Icon(at + Up(0.03f), radius * 1.6f, uv, new Color(shade, shade, shade));
+        if (_models.Has(top.Type))
+        {
+            // The 3D model stands on its own team coloured base; the flat layer only adds selection, health and the stack count.
+            _standing.Add((top, at));
+            shapes.Ring(at, 0.47f, 0.05f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 20);
+            radius = 0.4f;
+        }
+        else
+        {
+            shapes.Disc(at, radius + 0.06f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 16);
+            shapes.Disc(at + Up(0.002f), radius, owner * shade, 16);
+            if (_atlas.UvOf(top.Type) is Rect2 uv) icons.Icon(at + Up(0.03f), radius * 1.6f, uv, new Color(shade, shade, shade));
+        }
         DrawHealth(shapes, top, at + new Vector3(0, 0.004f, radius + 0.16f));
         if (stack.Count > 1) AddLabel($"×{stack.Count}", at + new Vector3(radius, 0.2f, -radius), 22, Colors.White);
     }

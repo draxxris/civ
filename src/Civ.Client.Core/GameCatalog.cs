@@ -22,6 +22,7 @@ public sealed class GameCatalog
 
     private readonly Dictionary<string, string> _modRoots;
     private readonly Dictionary<string, string?> _icons = new();
+    private readonly Dictionary<string, string?> _models = new();
 
     public ContentDb Content { get; }
     public IReadOnlyList<ModSource> Mods { get; }
@@ -99,6 +100,21 @@ public sealed class GameCatalog
             if (File.Exists(candidate)) path = candidate;
         }
         return _icons[id] = path;
+    }
+
+    /// <summary>glTF model for a content id from its owning mod's <c>art/models</c> folder, or null when the mod ships none.</summary>
+    public string? ModelPath(string? id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        if (_models.TryGetValue(id, out var cached)) return cached;
+        int colon = id.IndexOf(':');
+        string? path = null;
+        if (colon > 0 && _modRoots.TryGetValue(id[..colon], out var root))
+        {
+            var candidate = Path.Combine(root, "art", "models", id[(colon + 1)..] + ".glb");
+            if (File.Exists(candidate)) path = candidate;
+        }
+        return _models[id] = path;
     }
 
     public SimulationSettings SettingsFor(NewGameOptions options) => options.ToSettings(this);
