@@ -19,6 +19,10 @@
     <Project Path="src/Mods/GreatPeople/Civ.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/Trade/Civ.Mods.Trade.csproj" />
     <Project Path="src/Mods/Diplomacy/Civ.Mods.Diplomacy.csproj" />
+    <Project Path="src/Mods/ProjectsVictory/Civ.Mods.ProjectsVictory.csproj" />
+    <Project Path="src/Mods/Corporations/Civ.Mods.Corporations.csproj" />
+    <Project Path="src/Mods/Espionage/Civ.Mods.Espionage.csproj" />
+    <Project Path="src/Mods/Events/Civ.Mods.Events.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />

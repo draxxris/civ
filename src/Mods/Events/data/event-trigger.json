@@ -1,0 +1,97 @@
+[
+  {
+    "id": "events:herbalists",
+    "name": "Herbalists",
+    "help": "A local healer offers a medical trial.",
+    "chancePercent": 3,
+    "requiredTech": "research:agriculture",
+    "minPopulation": 3,
+    "repeatable": true,
+    "cooldownTurns": 40
+  },
+  {
+    "id": "events:forest_fire",
+    "name": "Forest Fire",
+    "help": "Fire spreads through a forest near the city.",
+    "chancePercent": 2,
+    "requiredFeature": "world:forest",
+    "repeatable": true,
+    "cooldownTurns": 30
+  },
+  {
+    "id": "events:rich_ore",
+    "name": "Rich Ore Vein",
+    "help": "Workers find a rich vein at the mine.",
+    "chancePercent": 2,
+    "requiredImprovement": "world:improvement_improvement_mine",
+    "requiredTech": "research:mining"
+  },
+  {
+    "id": "events:artisans",
+    "name": "Inspired Artisans",
+    "help": "Local artisans produce a great work.",
+    "chancePercent": 3,
+    "requiredTech": "research:pottery",
+    "minPopulation": 2,
+    "repeatable": true,
+    "cooldownTurns": 50
+  },
+  {
+    "id": "events:border_dispute",
+    "name": "Border Dispute",
+    "help": "Farmers argue over a border.",
+    "chancePercent": 3,
+    "minPopulation": 2,
+    "minTurn": 20,
+    "repeatable": true,
+    "cooldownTurns": 40
+  },
+  {
+    "id": "events:surplus",
+    "name": "Granary Surplus",
+    "help": "The granary overflows after a good harvest.",
+    "chancePercent": 4,
+    "requiredBuilding": "cities:granary",
+    "repeatable": true,
+    "cooldownTurns": 30
+  },
+  {
+    "id": "events:flood",
+    "name": "Flood",
+    "help": "River water covers the fields.",
+    "chancePercent": 3,
+    "requiredFeature": "world:flood_plains",
+    "repeatable": true,
+    "cooldownTurns": 30
+  },
+  {
+    "id": "events:manuscript",
+    "name": "Scholarly Manuscript",
+    "help": "A traveler offers a rare manuscript.",
+    "chancePercent": 3,
+    "requiredBuilding": "cities:library",
+    "repeatable": true,
+    "cooldownTurns": 40
+  },
+  {
+    "id": "events:bandits",
+    "name": "Bandit Raid",
+    "help": "Bandits threaten a trade road.",
+    "chancePercent": 3,
+    "requiredTech": "research:bronze_working",
+    "minTreasury": 60,
+    "repeatable": true,
+    "cooldownTurns": 30,
+    "cityScope": true
+  },
+  {
+    "id": "events:festival",
+    "name": "Religious Festival",
+    "help": "Priests propose a public festival.",
+    "chancePercent": 3,
+    "requiredTech": "research:priesthood",
+    "minPopulation": 3,
+    "repeatable": true,
+    "cooldownTurns": 40
+  }
+]

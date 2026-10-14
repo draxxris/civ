@@ -1,0 +1,176 @@
+[
+  {
+    "id": "events:herbalists_fund",
+    "name": "Fund the trial",
+    "trigger": "events:herbalists",
+    "goldDelta": -30,
+    "healthDelta": 2,
+    "outcome": "The city is healthier."
+  },
+  {
+    "id": "events:herbalists_ignore",
+    "name": "Send the healer away",
+    "trigger": "events:herbalists",
+    "isDefault": true,
+    "outcome": "Nothing happens."
+  },
+  {
+    "id": "events:forest_fire_fight",
+    "name": "Fight the fire",
+    "trigger": "events:forest_fire",
+    "goldDelta": -20,
+    "outcome": "The forest is saved."
+  },
+  {
+    "id": "events:forest_fire_burn",
+    "name": "Let it burn",
+    "trigger": "events:forest_fire",
+    "isDefault": true,
+    "plotFoodDelta": -1,
+    "durationTurns": 15,
+    "outcome": "The burned plot grows less food for a while."
+  },
+  {
+    "id": "events:rich_ore_exploit",
+    "name": "Dig deeper",
+    "trigger": "events:rich_ore",
+    "plotProductionDelta": 1,
+    "goldDelta": -25,
+    "outcome": "The mine produces more for good."
+  },
+  {
+    "id": "events:rich_ore_sell",
+    "name": "Sell the ore",
+    "trigger": "events:rich_ore",
+    "isDefault": true,
+    "goldDelta": 40,
+    "outcome": "The ore sells for gold."
+  },
+  {
+    "id": "events:artisans_patron",
+    "name": "Become their patron",
+    "trigger": "events:artisans",
+    "goldDelta": -40,
+    "cityCultureHundredthsDelta": 1500,
+    "happinessDelta": 1,
+    "outcome": "The city gains culture."
+  },
+  {
+    "id": "events:artisans_tax",
+    "name": "Tax their sales",
+    "trigger": "events:artisans",
+    "isDefault": true,
+    "goldDelta": 25,
+    "outcome": "The treasury grows."
+  },
+  {
+    "id": "events:border_dispute_judge",
+    "name": "Judge fairly",
+    "trigger": "events:border_dispute",
+    "isDefault": true,
+    "happinessDelta": 1,
+    "durationTurns": 20,
+    "outcome": "The city is calm."
+  },
+  {
+    "id": "events:border_dispute_side",
+    "name": "Side with the rich",
+    "trigger": "events:border_dispute",
+    "goldDelta": 30,
+    "happinessDelta": -1,
+    "durationTurns": 20,
+    "outcome": "You are paid, and people are upset."
+  },
+  {
+    "id": "events:surplus_feast",
+    "name": "Hold a feast",
+    "trigger": "events:surplus",
+    "cityFoodDelta": 10,
+    "happinessDelta": 1,
+    "durationTurns": 10,
+    "outcome": "The city eats well."
+  },
+  {
+    "id": "events:surplus_trade",
+    "name": "Sell the grain",
+    "trigger": "events:surplus",
+    "isDefault": true,
+    "goldDelta": 35,
+    "outcome": "The grain sells for gold."
+  },
+  {
+    "id": "events:flood_dikes",
+    "name": "Build dikes",
+    "trigger": "events:flood",
+    "goldDelta": -25,
+    "plotFoodDelta": 1,
+    "durationTurns": 20,
+    "outcome": "Silt makes the plot richer."
+  },
+  {
+    "id": "events:flood_wait",
+    "name": "Wait for the water",
+    "trigger": "events:flood",
+    "isDefault": true,
+    "cityFoodDelta": -5,
+    "outcome": "Some food spoils."
+  },
+  {
+    "id": "events:manuscript_buy",
+    "name": "Buy the manuscript",
+    "trigger": "events:manuscript",
+    "goldDelta": -50,
+    "researchBonus": 40,
+    "outcome": "Scholars gain new knowledge."
+  },
+  {
+    "id": "events:manuscript_copy",
+    "name": "Make a copy",
+    "trigger": "events:manuscript",
+    "isDefault": true,
+    "researchBonus": 10,
+    "outcome": "Scholars copy a part."
+  },
+  {
+    "id": "events:bandits_guards",
+    "name": "Hire guards",
+    "trigger": "events:bandits",
+    "goldDelta": -30,
+    "happinessDelta": 1,
+    "durationTurns": 15,
+    "outcome": "The road is safe."
+  },
+  {
+    "id": "events:bandits_pay",
+    "name": "Pay the bandits",
+    "trigger": "events:bandits",
+    "isDefault": true,
+    "goldDelta": -60,
+    "outcome": "The bandits leave."
+  },
+  {
+    "id": "events:bandits_ignore",
+    "name": "Ignore the raid",
+    "trigger": "events:bandits",
+    "healthDelta": -1,
+    "durationTurns": 10,
+    "outcome": "Trade suffers."
+  },
+  {
+    "id": "events:festival_host",
+    "name": "Host the festival",
+    "trigger": "events:festival",
+    "goldDelta": -35,
+    "happinessDelta": 2,
+    "cityCultureHundredthsDelta": 1000,
+    "durationTurns": 15,
+    "outcome": "People celebrate."
+  },
+  {
+    "id": "events:festival_decline",
+    "name": "Decline",
+    "trigger": "events:festival",
+    "isDefault": true,
+    "outcome": "Nothing happens."
+  }
+]
