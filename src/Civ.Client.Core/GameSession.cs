@@ -81,6 +81,7 @@ public sealed partial class GameSession
             if (unit == null || unit.Position == destination) { _gotos.Remove(id); continue; }
             if (!TryWalk(unit, destination)) _gotos.Remove(id);
         }
+        CollectNotifications(); // Walks bypass Submit, so collect the fights and events they published.
         Revision++;
         WorldRevision++;
     }

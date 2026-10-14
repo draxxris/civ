@@ -26,8 +26,11 @@ public sealed record CombatPreview(int Attacker, int Defender, CombatStrength At
 public enum CombatOutcome { AttackerWon, DefenderWon, Withdrawn, LimitedDamage }
 public sealed record CombatRound(int Number, int AttackerHealth, int DefenderHealth, bool FirstStrike);
 public sealed record CollateralHit(int Unit, int Damage);
+/// <summary>One fight. Unit fields are captured as it resolves, so they stay true after a loser is removed or a winner moves.</summary>
 public sealed record CombatReport(int Turn, int Attacker, int Defender, CombatOutcome Outcome,
-    IReadOnlyList<CombatRound> Rounds, IReadOnlyList<CollateralHit> Collateral);
+    IReadOnlyList<CombatRound> Rounds, IReadOnlyList<CollateralHit> Collateral,
+    string AttackerType = "", int AttackerOwner = -1, Hex AttackerHex = default,
+    string DefenderType = "", int DefenderOwner = -1, Hex DefenderHex = default, bool LoserDied = false);
 public interface ICombatService
 {
     int? BestDefender(Simulation sim, int attacker, Hex target);

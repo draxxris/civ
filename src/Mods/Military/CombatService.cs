@@ -21,6 +21,8 @@ internal sealed class CombatService : ICombatService
     {
         var a = sim.State.UnitById(attackerId); var d = sim.State.UnitById(defenderId);
         ValidateCombat(sim, a, d);
+        var (attackerType, attackerOwner, attackerHex) = (a.Type, a.Owner, a.Position); // Read before any unit is removed.
+        var (defenderType, defenderOwner, defenderHex) = (d.Type, d.Owner, d.Position);
         var preview = Preview(sim, attackerId, defenderId);
         var collateral = Collateral(sim, a, d);
         int netFirst = preview.AttackerFirstStrikes + Chance(sim, preview.AttackerChanceFirstStrikes)
@@ -38,10 +40,12 @@ internal sealed class CombatService : ICombatService
             firstA = Math.Max(0, firstA - 1); firstD = Math.Max(0, firstD - 1);
         }
         Finish(sim, a, d, preview, outcome.Value);
-        var report = new CombatReport(sim.State.Turn, a.Id, d.Id, outcome.Value, rounds.AsReadOnly(), collateral);
+        bool loserDied = outcome is CombatOutcome.AttackerWon or CombatOutcome.DefenderWon;
+        var report = new CombatReport(sim.State.Turn, a.Id, d.Id, outcome.Value, rounds.AsReadOnly(), collateral,
+            attackerType, attackerOwner, attackerHex, defenderType, defenderOwner, defenderHex, loserDied);
         HistoryState(sim).Combats.Add(report);
         int winner = outcome == CombatOutcome.DefenderWon ? d.Id : a.Id;
-        sim.Events.Publish(new CombatResolved(a.Id, d.Id, winner, outcome == CombatOutcome.DefenderWon ? a.Owner : d.Owner));
+        sim.Events.Publish(new CombatResolved(a.Id, d.Id, winner, outcome == CombatOutcome.DefenderWon ? a.Owner : d.Owner, report));
         MilitaryData.Sight(sim);
         return report;
     }
