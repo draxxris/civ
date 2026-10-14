@@ -14,10 +14,12 @@ internal sealed class CityMaintenance : ICityMaintenanceService
         var sink = new ModifierSink();
         long distance = Distance(sim, city, effects);
         long count = CityCount(sim, city, effects);
-        long total = (distance + count) * Math.Max(0, 100 + CityData.Effect(effects, "maintenance_percent")) / 100;
+        long flat = CityData.Effect(effects, "maintenance_flat_hundredths");
+        long total = (distance + count + flat) * Math.Max(0, 100 + CityData.Effect(effects, "maintenance_percent")) / 100;
         sink.Add("cities:distance", "cities:maintenance_hundredths", distance);
         sink.Add("cities:city_count", "cities:maintenance_hundredths", count);
-        sink.Add("cities:modifiers", "cities:maintenance_hundredths", total - distance - count);
+        sink.Add("cities:flat", "cities:maintenance_hundredths", flat);
+        sink.Add("cities:modifiers", "cities:maintenance_hundredths", total - distance - count - flat);
         if (GovernmentStatus.IsDisorder(sim, city)) { sink.Add("cities:disorder", "cities:maintenance_hundredths", -total); total = 0; }
         return new(distance, count, total, sink.Ledger);
     }

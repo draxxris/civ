@@ -290,13 +290,15 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] Adversarial audit fixes across ScriptedWonders, Revolution, ProjectsVictory team tech score, and Client
   intelligence/revolution helpers (`d24a3e6`).
 - [x] P9 Hex balance (`src/Mods/Foundation/data/hex-overrides.json`) and AI city garrison defense tuning (all 4 AI
-  civilizations survive 200-turn soak with 9/4/3/3 cities).
+  civilizations survive 200-turn soak with 9/4/3/3 cities) (`55b7dea`).
+- [x] Wire all 19 feature mods into `Civ.Godot` and verify headless 200-frame Godot startup (`16b9f5f`).
+- [x] Great Wall barbarian border entry block, cross-border defense penalty, and barbarian XP cap on `ScriptedWonders`
+  (`8b6bf43`).
+- [x] Corporate maintenance integration into `CityMaintenance` and Economy deficit slider adjustment.
 
 ### Next
 
 - [ ] P8: unit 3D art spike (`tools/art/` NIF/KF → glTF conversion spike + art registry, off the critical path).
-- [ ] Optional remaining polish: Great Wall barbarian border entry block / cross-border defender bonus, barbarian XP cap
-  on `ScriptedWonders`, and Corporate maintenance integration into `ICityMaintenanceService`.
 
 ### Working conventions
 

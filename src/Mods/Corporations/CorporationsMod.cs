@@ -40,16 +40,19 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
                 sink.AddCommerce(def.Id + ":headquarters", def.HeadquartersCommerce * branches);
             }
         }
-        sink.Add("corporations:maintenance", "corporations:maintenance_hundredths", service.MaintenanceHundredths(sim, city.Id));
+        long maintenance = service.MaintenanceHundredths(sim, city.Id);
+        sink.Add("corporations:maintenance", "corporations:maintenance_hundredths", maintenance);
+        sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", maintenance);
     }
 }
-/// <summary>Separate treasury settlement because the city maintenance service has no extension-source hook.</summary>
+/// <summary>Fallback settlement when Economy is absent. Economy otherwise owns all city maintenance.</summary>
 internal sealed class CorporationMaintenance(ICorporationService service) : IPlayerTurnSystem
 {
     public string Id => "corporations:maintenance";
     public int Order => TurnPhase.Economy + 1;
     public void Run(Simulation sim, int player)
     {
+        if (sim.Content.Services.Get<IPlayerEconomyService>().Any()) return;
         var owner = sim.State.PlayerById(player);
         long cost = sim.State.Cities.Where(c => c.Owner == player).Sum(c => service.MaintenanceHundredths(sim, c.Id));
         var state = owner.Extensions.Get<CorporationPlayerState>(sim.Content);
@@ -57,8 +60,7 @@ internal sealed class CorporationMaintenance(ICorporationService service) : IPla
         state ??= new(); owner.Extensions.Set(sim.Content, state);
         long total = state.MaintenanceRemainder + cost;
         long gold = total / 100; state.MaintenanceRemainder = total % 100;
-        var economy = owner.Extensions.TryGet<EconomyPlayerState>(sim.Content);
-        if (economy is not null) economy.UnpaidGold += Math.Max(0, gold - owner.Treasury);
+
         owner.Treasury = Math.Max(0, owner.Treasury - gold);
     }
 }
