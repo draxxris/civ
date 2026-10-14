@@ -1,6 +1,6 @@
 # Mechanics status
 
-Status describes executable rules, not imported data. Nine content mods load definition sidecars. A tenth mod supplies computer players.
+Status describes executable rules, not imported data. Nine content mods load definition sidecars. AI, GreatPeople, and Trade supply additional rules.
 
 ## Foundation
 
@@ -97,8 +97,7 @@ Status describes executable rules, not imported data. Nine content mods load def
 - **Partial:** maintenance provides distance/government-center and exponential city-count costs in hundredths, including early-turn reduction.
   Hex map diameter normalizes distance. A fixed-point root replaces floating-point exponentiation.
   Colony, vassal, corporation, and connectedness costs remain absent. Economy must charge the returned total.
-- **Implemented:** specialist/building great-person rates, historical type pools, weighted births, speed/era thresholds, and saved player/team threshold progression.
-  Combat great people and specialist settlement remain separate future mechanics.
+- **Delegated to GreatPeople:** specialist/building GP rates, historical pools, weighted births, and threshold progression.
 - **Partial:** current-era growth uses `CityPlayerState.CurrentEra`, with starting-era fallback.
   Technology discovery events update that state. AI per-era growth/cost factors and flexible difficulty remain absent.
 - **Not started:** building power, free-building propagation, replacement effects, original-owner commerce, calendar doubling, and scripted rewards.
@@ -166,6 +165,29 @@ Status describes executable rules, not imported data. Nine content mods load def
 - **Deferred:** foreign trade connections, religion decay, optional multiple natural spread, inquisitions, religion-picking settings, diplomacy, and religious votes.
   Vote-source religion yields and commerce remain unsupported. The client has query data but no religion screen.
 - **Save compatibility:** the religion id change alters the content hash. Older saves need a migration; forced loading does not rewrite old ids.
+
+## Great People
+
+- **Implemented:** Core queries, saved city progress and class pools, specialist/building sources, additive city/player modifiers, and deterministic weighted births.
+  Thresholds use speed and starting-era scaling. Civilization overrides resolve the selected class.
+  Personal and team threshold increases both apply to the creator.
+- **Implemented:** settlement through free-specialist effects, flavor-selected research, capped building production, and immediate culture works.
+  Research grants use team population and speed scaling. Hurry grants use city population and speed scaling.
+- **Implemented:** distinct-class Golden Age commands, increasing unit requirements, wonder triggers, scaled duration, plot yield bonuses, and GP bonuses.
+  Timers, unit-use counts, settled specialists, and threshold progression survive saves.
+- **Deferred:** combat births, resource-sensitive bulb valuation, trade missions, and AI mission selection.
+  Legacy Cities GP components need migration. Forced loading does not transfer their progress.
+
+## Trade
+
+- **Implemented:** read-only route queries, slot limits, physical connectivity, deterministic partner selection, and domestic/foreign routes.
+  Capacity consumes technology, civic, local, coastal, global-building, and external modifier fields.
+- **Implemented:** source population/distance profit, capital connection, overseas, building/civic foreign bonuses, shared civics, and trade-yield modifiers.
+  Route hundredths aggregate before whole city yields enter Economy sliders.
+- **Adapted:** peaceful foreign connections do not require diplomatic agreements yet. Foreign routes receive full peace credit.
+  Partners are unique per city, not across the player's entire empire.
+- **Profile:** imported initial and maximum route counts are zero. Tests override these values to exercise enabled trade.
+- **Deferred:** blockades, open borders, peace-credit recovery, forced trade, and connectedness economics.
 
 ## Computer players
 

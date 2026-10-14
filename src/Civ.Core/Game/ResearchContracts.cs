@@ -12,6 +12,8 @@ public interface IResearchService
     void SetQueue(Simulation sim, int player, IReadOnlyList<string> queue, bool freeTech = false);
     /// <summary>Whole unmodified beakers. Overflow is normalized before moving between technologies.</summary>
     void Contribute(Simulation sim, int player, long beakers);
+    /// <summary>Immediate unmodified research for a specific eligible technology, capped at remaining cost.</summary>
+    void AddProgress(Simulation sim, int player, string tech, long beakers);
 }
 /// <summary>Economy supplies research settled before discoveries and city production.</summary>
 public interface IPlayerResearchSource

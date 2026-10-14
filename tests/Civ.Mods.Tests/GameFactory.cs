@@ -3,7 +3,8 @@ using Civ.Game;
 
 namespace Civ.Mods.Tests;
 
-/// <summary>Headless full-ruleset harness. Frozen content is shared; state and RNG are never shared.</summary>
+/// <summary>Headless full-ruleset harness, including GreatPeople and Trade from LoadedMods' payload discovery.
+/// Frozen content is shared; state and RNG are never shared.</summary>
 public static class GameFactory
 {
     public static Simulation Create(ContentDb content, ulong seed = 1, params string[] leaders)

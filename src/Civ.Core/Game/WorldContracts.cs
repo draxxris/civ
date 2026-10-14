@@ -22,6 +22,11 @@ public interface IPlotYieldService
     /// <summary>Natural potential for worker validation; excludes improvements and modifier sources.</summary>
     PlotYieldResult CalculateNature(Simulation sim, int player, TileId tile, bool ignoreFeature = false);
 }
+/// <summary>Final yield adjustments, after ordinary modifiers. The supplied sink contains the plot ledger.</summary>
+public interface IPlotYieldFinalizer
+{
+    YieldVector Adjust(Simulation sim, int player, TileId tile, Plot plot, YieldVector yields, ModifierSink sink);
+}
 /// <summary>Read-only fresh-water and team-gated irrigation queries.</summary>
 public interface IWaterService
 {

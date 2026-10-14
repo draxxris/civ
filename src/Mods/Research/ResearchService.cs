@@ -74,6 +74,20 @@ internal sealed class ResearchService : IResearchService
         SelectNext(sim, player, team, state);
         // Like the source player phase, overflow is spent on the next research contribution, not recursively this turn.
     }
+    public void AddProgress(Simulation sim, int player, string tech, long beakers)
+    {
+        if (!Validate(sim, player, tech).Success || beakers <= 0) return;
+        var team = sim.TeamOf(player);
+        long cost = CalculateCost(sim, team.Id, tech).Cost;
+        team.Research[tech] = Math.Min(cost, team.Research.GetValueOrDefault(tech) + beakers);
+        if (team.Research[tech] < cost) return;
+        team.Research[tech] = 0;
+        Discover(sim, player, team, tech);
+        var state = Edit(sim, team);
+        state.Queue.RemoveAll(t => t == tech);
+        if (team.Researching == tech) team.Researching = null;
+        SelectNext(sim, player, team, state);
+    }
     private void SelectNext(Simulation sim, int player, Team team, ResearchTeamState state)
     {
         if (team.Researching is { } active && Validate(sim, player, active).Success) return;

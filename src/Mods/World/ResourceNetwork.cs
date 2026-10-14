@@ -22,12 +22,12 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     {
         var first = sim.State.CityById(firstCity);
         var second = sim.State.CityById(secondCity);
-        if (sim.TeamOf(first.Owner).Id != sim.TeamOf(second.Owner).Id) return false;
-        return Reachable(sim, first.Owner, first).Contains(sim.State.Grid.TileAt(second.Position));
+        if (sim.TeamOf(first.Owner).Wars.Contains(sim.TeamOf(second.Owner).Id)) return false;
+        return Reachable(sim, first.Owner, first, peacefulForeign: true).Contains(sim.State.Grid.TileAt(second.Position));
     }
-    private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target)
+    private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target, bool peacefulForeign = false)
     {
-        var modes = Modes(sim, player);
+        var modes = Modes(sim, player, peacefulForeign);
         var start = sim.State.Grid.TileAt(target.Position);
         var seen = new bool[modes.Length];
         var queue = new Queue<TileId>();
@@ -46,27 +46,28 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         }
     }
     [Flags] private enum NetworkMode { None = 0, Route = 1, River = 2, Water = 4, City = 8 }
-    private static NetworkMode[] Modes(Simulation sim, int player)
+    private static NetworkMode[] Modes(Simulation sim, int player, bool peacefulForeign)
     {
         var techs = sim.TeamOf(player).Techs.Select(t => sim.Content.Get<S.TechDef>(t)).ToArray();
         bool river = techs.Any(t => t.RiverTrade);
         var terrainTrade = techs.SelectMany(t => t.TradeTerrains.Where(p => p.Value).Select(p => p.Key)).ToHashSet(StringComparer.Ordinal);
-        return sim.State.Grid.Tiles.Select(t => Mode(sim, player, t, river, terrainTrade)).ToArray();
+        return sim.State.Grid.Tiles.Select(t => Mode(sim, player, t, river, terrainTrade, peacefulForeign)).ToArray();
     }
-    private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains)
+    private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains, bool peacefulForeign)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (!Access(sim, player, plot) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
+        if (!Access(sim, player, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
         if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) || plot.Owner == player ? NetworkMode.Water : NetworkMode.None;
         var mode = NetworkMode.None;
         if (plot.Route is not null) mode |= NetworkMode.Route;
         if (river && plot.RiverEdges != 0) mode |= NetworkMode.River;
-        if (CityNode(sim, player, tile)) mode |= NetworkMode.City;
+        if (CityNode(sim, player, tile, peacefulForeign)) mode |= NetworkMode.City;
         return mode;
     }
-    private static bool Access(Simulation sim, int player, Plot plot)
+private static bool Access(Simulation sim, int player, Plot plot, bool peacefulForeign)
     {
-        if (plot.Owner is { } owner) return sim.State.PlayerById(owner).TeamId == sim.State.PlayerById(player).TeamId;
+        if (plot.Owner is { } owner) return sim.TeamOf(owner).Id == sim.TeamOf(player).Id
+            || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id));
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
     private static bool Edge(Simulation sim, TileId from, TileId to, NetworkMode[] modes)
@@ -88,9 +89,10 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
             || (fromEdges & ((1 << ((direction + 1) % 6)) | (1 << ((direction + 5) % 6)))) != 0
             || (toEdges & ((1 << ((direction + 2) % 6)) | (1 << ((direction + 4) % 6)))) != 0;
     }
-    private static bool CityNode(Simulation sim, int player, TileId tile)
+private static bool CityNode(Simulation sim, int player, TileId tile, bool peacefulForeign = false)
     {
-        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id;
+        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id
+            || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(city.Owner).Id));
         var plot = sim.State.Plots[tile.Value];
         return plot.Owner == player && plot.Improvement is { } id && sim.Content.Get<S.ImprovementDef>(id).ActsAsCity;
     }

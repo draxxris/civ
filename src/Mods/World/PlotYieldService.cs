@@ -21,6 +21,8 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(new(sim, ModifierScope.Plot, player, Plot: tile, ProposedPlot: plot), sink);
         AddThresholds(sim, sink);
         var total = Clamp(sink.FlatYield.WithPercent(sink.PercentYield));
+        foreach (var finalizer in sim.Content.Services.Get<IPlotYieldFinalizer>())
+            total = Clamp(finalizer.Adjust(sim, player, tile, plot, total, sink));
         sink.Add("world:total", "world:food", total.Food);
         sink.Add("world:total", "world:production", total.Production);
         sink.Add("world:total", "world:commerce", total.Commerce);

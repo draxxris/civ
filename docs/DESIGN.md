@@ -358,6 +358,38 @@ The baseline natural-spread policy stops after the first religion. Missionaries 
 Religion contributes happiness, health, direct commerce, shrine commerce, state-building commerce, production modifiers, and training experience.
 Religion requirements distinguish city presence, state choice, and holy-city identity. Queries never consume RNG or change state.
 
+## Great People and Trade
+
+`src/Mods/GreatPeople` owns city GP progress, historical class weights, births, settlement, unit actions, and Golden Age timers.
+`IGreatPeopleService` supplies read-only progress, rate ledgers, thresholds, settled specialists, timers, and available actions.
+The existing `ICityGreatPeopleService` delegates to the same calculation. Cities no longer runs a birth system.
+Threshold increases include both the personal increase and the team increase for the creator, as in the source.
+Births use one simulation RNG draw, resolve civilization replacements, and publish `UnitCreated` and `GreatPersonBorn`.
+
+Commands use `great_people:join_city`, `discover_tech`, `hurry_production`, `culture_bomb`, and `golden_age`.
+Settlement contributes free-specialist keys, so Cities applies normal specialist yields, commerce, and modifiers.
+Discovery selects the highest eligible flavor score, with ordinal technology ties. `IResearchService.AddProgress` grants unmodified, capped research.
+Hurry adds capped production to the current eligible building. Cities completes it during the normal completion phase.
+Culture works use `ICityCultureService` to update city history, surrounding plots, and ownership immediately.
+Golden Ages consume distinct unit classes. Optional command `Units` lists all participants, including the initiating unit.
+An omitted list selects nearest eligible units, then unit ids. Wonder completion also starts a Golden Age without increasing unit requirements.
+Golden Ages add threshold-based plot production and commerce through `IPlotYieldFinalizer`, and additive GP rate modifiers.
+Wonder-triggered timers retain their full duration until the next player turn. Unit-triggered timers include the current turn.
+
+`src/Mods/Trade` derives active partners through `ICityConnectionService` and exposes `ITradeRouteService`.
+Capacity includes initial, technology, civic, local-building, coastal-building, global-building, and external modifier contributions.
+Routes use partner population, wrapped hex distance, world-size scaling, capital connection, overseas, building, civic, and foreign modifiers.
+Profit and route yields retain hundredths. City aggregation truncates once per yield before the ordinary city modifiers and Economy sliders.
+Routes select highest profit, then same-team partners, then city ids. Each city uses a partner at most once.
+The source's empire-wide foreign-partner exclusivity is not implemented.
+World permits peaceful foreign city connections, but resource queries retain their same-team ownership restrictions.
+This interim policy uses peace instead of open-border agreements. Foreign routes receive full peace credit until diplomacy supplies peace counters.
+Blockades, connectedness economics, and forced-trade diplomacy remain deferred.
+The imported profile sets `INITIAL_TRADE_ROUTES` and `MAX_TRADE_ROUTES` to zero. Trade remains disabled unless a profile overrides these values.
+External keys are `trade:slots`, `trade:profit_percent`, `trade:foreign_profit_percent`, and `trade:yield_percent:<yield>`.
+GP accepts both the existing `cities:great_people_percent` and `cities:great_people_rate_percent` in city and player scopes.
+Mod versions change the content identity. Older city GP state needs a migration before it can continue under the new owner.
+
 ## Computer players
 
 `src/Mods/Ai` registers `ai:standard` under `IPlayerAI`. Select it through `SimulationSettings.PlayerAis`.
@@ -454,7 +486,7 @@ The handshake identifies content, not initial setup. State hashes detect setup d
 
 ## V1 content mods
 
-`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, Peoples, Religion, and Ai.
+`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, Peoples, Religion, Ai, GreatPeople, and Trade.
 These mods have no load-order dependencies yet. Foundation, World, Cities, Research, and Economy register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
 References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
