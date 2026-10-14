@@ -12,7 +12,8 @@ public static class Branding
         ("source-title", new("A[ _]+New[ _]+Dawn", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant), "the source mod"),
         ("source-parent-title", new("Rise[ _]+of[ _]+Mankind", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant), "the source mod"),
         ("source-short-name", new("\u0052oM", RegexOptions.CultureInvariant), "Source"),
-        ("source-acronym", new(@"(?<![A-Za-z0-9])\u0041ND(?= |[_.:/\\-]|$|Concept)", RegexOptions.CultureInvariant), "Source")
+        ("source-acronym", new(@"(?<![A-Za-z0-9])\u0041ND(?=[^A-Za-z0-9]|$|Concept)", RegexOptions.CultureInvariant), "Source"),
+        ("source-path", new(@"(?<![A-Za-z0-9])and(?=[_:/\\.\-])", RegexOptions.CultureInvariant), "source")
     ];
 
     public static string Scrub(string text)

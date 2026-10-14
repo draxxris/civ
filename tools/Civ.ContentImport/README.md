@@ -14,7 +14,12 @@ dotnet test Civ.slnx
 
 Use `--dump tools/Civ.ContentImport/out` for the optional, git-ignored generic dump.
 The default mod destination is `src/Mods`. Use `--out-mods` to select another directory.
-Use `--max-era foundation:era_ancient` for a closed ancient subset. Without this filter, the importer emits all eras.
+Use `--max-era ancient` or `--max-era foundation:era_ancient` for a closed ancient subset.
+The active extraction contains ancient, classical, medieval, renaissance, industrial, modern, transhuman, and future eras.
+It has no prehistoric era. Unknown era values fail import.
+Use `--max-era all`, or omit the filter, to emit all eras.
+For era experiments, select temporary `--out-mods` and `--reports` directories.
+Do not replace the committed ancient sidecars or their count report.
 Reports contain no timestamps or absolute machine paths.
 The tool rejects output directories inside the source directory.
 Extraction-backed tests skip when the source is absent. `CIV_CONTENT_SOURCE` can specify its location for tests.
@@ -137,6 +142,9 @@ The importer never reads sparse records as content. Enabled modules add 20 build
 Synthetic tests cover tree fidelity, reference errors, nested controls, merge defaults, art replacement, text precedence,
 markup, branding, census counts, and ID conflicts.
 Source-backed tests check profile counts, selected merged values, recovery evidence, deterministic typed output, and closed era filtering.
+The era sweep loads temporary sidecars through `ModLoader` for every era and unfiltered output.
+It checks reference closure, branding, increasing total counts, and non-decreasing counts for each definition family.
+It also checks that future and unfiltered output contain the same IDs.
 `Civ.Mods.Tests` loads the feature mod DLLs from build output. It checks counts, typed closure, golden records, and branding without the extraction.
 
 ## Typed emission

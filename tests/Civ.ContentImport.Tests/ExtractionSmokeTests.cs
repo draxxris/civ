@@ -120,6 +120,22 @@ public sealed class ExtractionSmokeTests
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "Foundation/data/handicap.json")).Trim());
     }
 
+    [SourceFact]
+    public void Corporation_and_victory_source_records_keep_deferred_identities_without_invented_gameplay_rules()
+    {
+        var result = ContentEmission.Compile(Registry.Value);
+        var corporations = result.Definitions.Select(d => d.Definition).OfType<Civ.Content.Schema.CorporationIdentityDef>().ToArray();
+        var victories = result.Definitions.Select(d => d.Definition).OfType<Civ.Content.Schema.VictoryIdentityDef>().ToArray();
+        Assert.NotEmpty(corporations);
+        Assert.NotEmpty(victories);
+        Assert.Equal(Registry.Value.Ids.Where(i => i.Class == "CorporationInfo").Select(i => i.Id).Order(StringComparer.Ordinal),
+            corporations.Select(c => c.Id).Order(StringComparer.Ordinal));
+        Assert.Equal(Registry.Value.Ids.Where(i => i.Class == "VictoryInfo").Select(i => i.Id).Order(StringComparer.Ordinal),
+            victories.Select(v => v.Id).Order(StringComparer.Ordinal));
+        Assert.All(corporations, c => Assert.True(c.Deferred));
+        Assert.All(victories, v => Assert.True(v.Deferred));
+    }
+
     private static EffectiveRecord Record(ImportRegistry registry, string family, string type) =>
         registry.Records.Single(x => x.Class == family && x.Type == type);
 }
