@@ -10,8 +10,14 @@ internal sealed class BuildEligibility(IWaterService water)
     {
         var unit = sim.State.FindUnit(unitId);
         if (unit is null || unit.Owner != player) return "Worker is not owned by this player";
+        return ValidateAt(sim, player, unitId, sim.State.Grid.TileAt(unit.Position), buildId, continuing);
+    }
+    internal string? ValidateAt(Simulation sim, int player, int unitId, TileId tile, string buildId, bool continuing = false)
+    {
+        var unit = sim.State.FindUnit(unitId);
+        if (unit is null || unit.Owner != player) return "Worker is not owned by this player";
+        if (tile.Value < 0 || tile.Value >= sim.State.Plots.Length) return "Off map";
         if (!sim.Content.TryGet<S.BuildDef>(buildId, out var build)) return "Unknown build";
-        var tile = sim.State.Grid.TileAt(unit.Position);
         return Worker(sim, unit, build, continuing) ?? Prerequisites(sim, unit, tile, build)
             ?? Location(sim, player, tile, build);
     }

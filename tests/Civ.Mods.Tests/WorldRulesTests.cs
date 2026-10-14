@@ -149,6 +149,31 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void Remote_build_preview_is_read_only_and_matches_completed_yields()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        sim.State.SetRiver(tile, 0, true);
+        var worker = AddWorker(sim, sim.State.Grid.TileAt(2, 3));
+        var builds = Service<IWorkerBuildService>(sim);
+        const string farm = "world:build_build_farm";
+        var hash = sim.ComputeHash();
+        Assert.NotNull(builds.Preview(sim, 0, worker.Id, tile, farm).Error);
+        Assert.Equal(hash, sim.ComputeHash());
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        hash = sim.ComputeHash();
+        var preview = builds.Preview(sim, 0, worker.Id, tile, farm);
+        Assert.Null(preview.Error);
+        Assert.Equal(new YieldVector(3, 0, 1), preview.Yields);
+        Assert.Equal(hash, sim.ComputeHash());
+        sim.State.MoveUnit(worker.Id, sim.State.Grid.HexOf(tile));
+        Assert.True(sim.TryApply(new StartBuildCommand { Player = 0, Unit = worker.Id, Build = farm }, out var error), error);
+        for (int i = 0; i < 8; i++) sim.AdvanceTurn();
+        Assert.Equal(preview.Yields, Service<IPlotYieldService>(sim).Calculate(sim, 0, tile).Yields);
+        Assert.NotNull(builds.Preview(sim, 0, worker.Id, tile, farm).Error);
+    }
+
+    [Fact]
     public void Chopping_publishes_city_production_and_cottages_upgrade_only_when_worked()
     {
         var sim = GameFactory.Scenario(Content);

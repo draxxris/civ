@@ -37,7 +37,7 @@ public enum ModifierScope
     Unit,
 }
 /// <summary>Calculation subject. The calculating mod chooses the scope and supplies applicable subject ids.</summary>
-public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null);
+public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null);
 /// <summary>Cross-mod contribution source. Contribute must not change simulation state.</summary>
 public interface IModifierSource
 {

@@ -259,19 +259,17 @@ Keep this list current. It is the source of truth for where the work is.
   client).
 - [x] History rewritten. The verbose commit messages follow the felix2 example style: subject, summary
   paragraph, titled sections of bullets. `main` must be force-pushed to update origin; that is not done yet.
+- [x] Adversarial audit fixes across Core, World/ResourceNetwork, Cities, Economy, Government, Peoples and
+  Military (`43cbf94`).
+- [x] P6 Religion mod, `src/Mods/Religion`, plus importer and schema edits (`b3112b6`).
+- [x] P5 AI mod, `src/Mods/Ai`: functional deterministic computer player (`ai:standard`).
 
-### In progress (uncommitted in the working tree, paused for quota)
+### In progress
 
-- [ ] P5 AI mod, `src/Mods/Ai`. Subagent `subtask_pawn_1791920869722_e188c242`. Goal: functional, not smart.
-- [ ] P6 Religion mod, `src/Mods/Religion`, plus importer and schema edits. Subagent
-  `subtask_pawn_1791934616990_f2ffe85a`. It must not start its own subagents.
-- At 11:55pm, the scheduled job `resume-p5-p6` resumes both with `subagent_continue`, `model=sol`,
-  background mode.
+- [ ] Dogfood cleanup (see the section above P6).
 
 ### Next
 
-- [ ] Commit P5 and P6 when they finish.
-- [ ] Dogfood cleanup (see the section above P6).
 - [ ] P6, other mods: great-people, trade, diplomacy, corporations, espionage, events, projects-victory. Lift
   the era filter one era at a time.
 - [ ] Client follow-ups: save/load UI, diplomacy UI, religion display, a pedia, turn notifications.

@@ -53,6 +53,21 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.NotNull(Service<IPathfindingService>(sim).FindPath(sim, unit.Id, sim.State.Grid.HexOf(new(42))));
     }
     [Fact]
+    public void Pathfinding_prefers_a_cheaper_route_detour_over_the_shortest_hex_line()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var start = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 3));
+        var goal = start.Neighbor(0).Neighbor(0);
+        var unit = Add(sim, 0, sim.State.Grid.TileAt(start).Value);
+        var detour = new[] { start.Neighbor(1), start.Neighbor(1).Neighbor(0), goal };
+        foreach (var hex in detour.Prepend(start)) sim.State.PlotAt(hex).Route = "world:route_route_gravtube";
+        var path = Service<IPathfindingService>(sim).FindPath(sim, unit.Id, goal);
+        Assert.NotNull(path);
+        Assert.Equal(18, path.Cost); // Three route edges at six sub-moves each, not two ordinary edges at 120.
+        Assert.Equal(detour, path.Steps);
+    }
+
+    [Fact]
     public void First_strikes_and_lethal_withdrawal_use_the_same_round_model_as_preview()
     {
         var sim = GameFactory.Scenario(mods.Content);

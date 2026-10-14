@@ -308,6 +308,50 @@ Anarchy and cooldown timers live in `GovernmentPlayerState`. `GovernmentStatus.I
 Civic and trait keys use the owning consumer's namespace: `cities:*`, `economy:*`, `world:*`, `military:*`, and `government:*`.
 `RequirementContext.ProposedCivics` lets civic requirements see a pending cabinet without mutating state.
 
+## Religion
+
+`src/Mods/Religion` owns religion definitions, founding, city presence, state choice, spread, and shrine construction.
+`IReligionService` exposes read-only presence, holy cities, adoption choices, missionary definitions, odds, and conversion costs through Core.
+AI and client code can use this service without a reference to the Religion assembly.
+
+Commands are `religion:set_state_religion`, `religion:spread_religion`, and `religion:build_shrine`.
+Discovery events reserve the first discovering team. Founding selects a player and holy city with the source scoring rules.
+A reservation survives saves when that team has no city. Discovery awards the imported free missionaries through `UnitCreated`.
+
+City presence, last state choice, conversion cooldown, holy cities, founding turns, and reservations use saved extension components.
+Secular civics suppress the last choice without deleting it. Conversion adds source-scaled anarchy to `GovernmentPlayerState`.
+Natural spread runs immediately before the city post-production phase. All random draws use the simulation RNG.
+
+World supplies `ICityConnectionService` for physical routes, river trade, and unlocked water trade within one team.
+Foreign connections remain deferred. Distance uses hex distance and the hex map diameter.
+Religion age uses elapsed turns. This corrects the source's reversed subtraction rather than preserving its age bug.
+The baseline natural-spread policy stops after the first religion. Missionaries can add more religions.
+
+Religion contributes happiness, health, direct commerce, shrine commerce, state-building commerce, production modifiers, and training experience.
+Religion requirements distinguish city presence, state choice, and holy-city identity. Queries never consume RNG or change state.
+
+## Computer players
+
+`src/Mods/Ai` registers `ai:standard` under `IPlayerAI`. Select it through `SimulationSettings.PlayerAis`.
+Small planners handle citizens, production, workers, research, civics, commerce, settling, exploration and warfare.
+They use Core services, not other mod assemblies. Content supplies weights, flavors, unit roles and leader personality.
+
+Decisions use integer scores and ordinal content-id ties. War checks use only `Simulation.Rng`.
+Planners apply ordinary commands through `Simulation.TryApply` during `Decide`, then return an empty command sequence.
+This explicit sequential policy lets later decisions see founding, movement and production changes in the same turn.
+Calling `Decide` therefore takes the AI turn; it is not a read-only preview.
+
+The AI has no hidden per-game caches. Immutable content indexes can be shared between games.
+War-start turns live in a saved team component. `ai:declare_war` and `ai:make_peace` change symmetric Core team relations.
+Peace has a minimum war duration but no negotiation system yet.
+
+World exposes `IWorkerBuildService.Preview` for remote build legality, resulting yields and required work.
+Plot modifier queries accept a proposed plot, so civic and trait improvement effects enter the preview without state mutation.
+Military path queries reuse modifier ledgers within one search. Their integer heuristic accounts for fractional routes.
+Neither query cache survives a command or enters saves.
+
+See [mechanics-status.md](mechanics-status.md) for AI limitations and the remaining rule systems.
+
 ## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
 A bare string denotes a `tech` leaf. Multiple composite clauses in one object form an `All` expression.
@@ -382,7 +426,7 @@ The handshake identifies content, not initial setup. State hashes detect setup d
 
 ## V1 content mods
 
-`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, and Peoples.
+`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, Peoples, Religion, and Ai.
 These mods have no load-order dependencies yet. Foundation, World, Cities, Research, and Economy register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
 References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
@@ -390,7 +434,7 @@ The post-registration pass runs before freeze and content hashing. Unknown sidec
 `Civ.Content.Schema` holds immutable definitions alongside the legacy BaseGame types.
 The schema includes costs, grouped requirements, vectors, indexed effects, folded class limits, civilization overrides, and AI weights.
 Definitions retain English text, eras, source icon references, and unsupported-field paths.
-Foundation reserves deferred mechanic identities so later religion, corporation, and victory rules do not lose their prerequisites.
+Foundation reserves deferred corporation and victory identities. Religion owns playable religion definitions and their prerequisites.
 See [content-schema.md](content-schema.md) for definition types, units, scopes, and importer decisions.
 
 ## Remaining feature work
@@ -398,4 +442,4 @@ See [content-schema.md](content-schema.md) for definition types, units, scopes, 
 The v1 definition schema, Foundation setup, and the first World rules are available. Gameplay rules continue one feature mod at a time.
 Feature mods must define effect keys, query interfaces, turn priorities, queue rules, diplomacy enforcement and save migrations.
 BaseGame remains a test scaffold: combat does not enforce war relations, and its economy sends all commerce to research.
-Fog rules, advanced AI, border rules, city capture, art conversion and network transports remain separate tasks.
+Naval AI, diplomatic agreements, advanced fog rules, art conversion and network transports remain separate tasks.

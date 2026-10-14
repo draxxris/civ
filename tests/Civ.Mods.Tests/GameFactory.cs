@@ -16,6 +16,21 @@ public static class GameFactory
             StartingEra = "foundation:era_ancient", PlayerCount = leaders.Length, Leaders = leaders,
         });
     }
+    /// <summary>Headless AI game with the same setup defaults as the normal feature harness.</summary>
+    public static Simulation CreateAi(ContentDb content, ulong seed = 1, int players = 4,
+        string world = "foundation:worldsize_small") => new(content, new SimulationSettings
+    {
+        Seed = seed, WorldSize = world, MapGenerator = "world:continents",
+        GameSpeed = "foundation:gamespeed_normal", Handicap = "foundation:handicap_noble",
+        StartingEra = "foundation:era_ancient", PlayerCount = players,
+        Leaders = Enumerable.Range(0, players).Select(i => new[]
+        {
+            "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar",
+            "peoples:leader_bismarck", "peoples:leader_gandhi",
+        }[i % 4]).ToArray(),
+        PlayerAis = Enumerable.Repeat<string?>("ai:standard", players).ToArray(),
+    });
+
     /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
     public static void NeutralPolitics(Simulation sim)
     {
