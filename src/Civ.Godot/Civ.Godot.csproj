@@ -24,7 +24,17 @@
     <ProjectReference Include="..\Mods\Military\Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Government\Civ.Mods.Government.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Peoples\Civ.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\Mods\Ai\Civ.Mods.Ai.csproj" ReferenceOutputAssembly="false" Condition="Exists('..\Mods\Ai\Civ.Mods.Ai.csproj')" />
+    <ProjectReference Include="..\Mods\Religion\Civ.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Ai\Civ.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\GreatPeople\Civ.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Trade\Civ.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Diplomacy\Civ.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\ProjectsVictory\Civ.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Corporations\Civ.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Espionage\Civ.Mods.Espionage.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Events\Civ.Mods.Events.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\ScriptedWonders\Civ.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Revolution\Civ.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <Target Name="CopyModPayloads" AfterTargets="Build">
     <ItemGroup>
@@ -36,7 +46,17 @@
       <ModPayload Include="..\Mods\Military\bin\$(Configuration)\net10.0\**\*" ModDir="Military" />
       <ModPayload Include="..\Mods\Government\bin\$(Configuration)\net10.0\**\*" ModDir="Government" />
       <ModPayload Include="..\Mods\Peoples\bin\$(Configuration)\net10.0\**\*" ModDir="Peoples" />
-      <ModPayload Include="..\Mods\Ai\bin\$(Configuration)\net10.0\**\*" ModDir="Ai" Condition="Exists('..\Mods\Ai\Civ.Mods.Ai.csproj')" />
+      <ModPayload Include="..\Mods\Religion\bin\$(Configuration)\net10.0\**\*" ModDir="Religion" />
+      <ModPayload Include="..\Mods\Ai\bin\$(Configuration)\net10.0\**\*" ModDir="Ai" />
+      <ModPayload Include="..\Mods\GreatPeople\bin\$(Configuration)\net10.0\**\*" ModDir="GreatPeople" />
+      <ModPayload Include="..\Mods\Trade\bin\$(Configuration)\net10.0\**\*" ModDir="Trade" />
+      <ModPayload Include="..\Mods\Diplomacy\bin\$(Configuration)\net10.0\**\*" ModDir="Diplomacy" />
+      <ModPayload Include="..\Mods\ProjectsVictory\bin\$(Configuration)\net10.0\**\*" ModDir="ProjectsVictory" />
+      <ModPayload Include="..\Mods\Corporations\bin\$(Configuration)\net10.0\**\*" ModDir="Corporations" />
+      <ModPayload Include="..\Mods\Espionage\bin\$(Configuration)\net10.0\**\*" ModDir="Espionage" />
+      <ModPayload Include="..\Mods\Events\bin\$(Configuration)\net10.0\**\*" ModDir="Events" />
+      <ModPayload Include="..\Mods\ScriptedWonders\bin\$(Configuration)\net10.0\**\*" ModDir="ScriptedWonders" />
+      <ModPayload Include="..\Mods\Revolution\bin\$(Configuration)\net10.0\**\*" ModDir="Revolution" />
     </ItemGroup>
     <Copy SourceFiles="@(ModPayload)" DestinationFiles="@(ModPayload->'$(OutDir)mods/%(ModDir)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
