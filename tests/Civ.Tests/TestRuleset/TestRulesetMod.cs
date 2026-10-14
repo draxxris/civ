@@ -7,7 +7,7 @@ namespace Civ.BaseGame;
 /// The base game is an ordinary mod: it has no privileges over any other. Terrain is code, techs/buildings/culture
 /// levels are sidecar JSON, rules are turn systems and commands.
 /// </summary>
-public sealed class BaseGameMod : IMod
+public sealed class TestRulesetMod : IMod
 {
     public void Register(IModContext ctx)
     {

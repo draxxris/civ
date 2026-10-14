@@ -10,6 +10,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Civ.Core\Civ.Core.csproj" />
     <ProjectReference Include="..\..\src\Civ.Net\Civ.Net.csproj" />
-    <ProjectReference Include="..\..\src\Civ.BaseGame\Civ.BaseGame.csproj" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestRuleset/mod.json" CopyToOutputDirectory="PreserveNewest" Link="mod.json" />
+    <None Include="TestRuleset/data\**\*" CopyToOutputDirectory="PreserveNewest" TargetPath="data\%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

@@ -52,7 +52,7 @@ public class LockstepTests
         var simA = TestGame.Sim();
         var changed = Civ.Modding.ModLoader.FromAssembly(
             new Civ.Modding.ModManifest { Id = "base", Version = "different" },
-            typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+            typeof(TestRulesetMod).Assembly, AppContext.BaseDirectory);
         var simB = new Simulation(Civ.Modding.ModLoader.Build([changed]), new SimulationSettings());
         var a = new LockstepSession(simA, new CommandCodec(simA.Content), hub.CreateEndpoint(), [0, 1], 0);
         var b = new LockstepSession(simB, new CommandCodec(simB.Content), hub.CreateEndpoint(), [0, 1], 1);

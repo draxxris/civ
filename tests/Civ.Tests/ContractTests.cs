@@ -19,7 +19,7 @@ public class ContractTests
         Instance = new TestMod(register), Root = AppContext.BaseDirectory,
     };
     private static ContentDb Content(params ModSource[] extra) => ModLoader.Build(extra.Prepend(
-        ModLoader.FromAssembly(new ModManifest { Id = "base", Version = "1" }, typeof(BaseGameMod).Assembly, AppContext.BaseDirectory)));
+        ModLoader.FromAssembly(new ModManifest { Id = "base", Version = "1" }, typeof(TestRulesetMod).Assembly, AppContext.BaseDirectory)));
 
     private sealed class BonusDef : ContentDef
     {

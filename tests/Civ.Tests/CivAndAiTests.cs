@@ -73,7 +73,7 @@ public class CivAndAiTests
     [Fact]
     public void ModsCanRegisterTheirOwnCivilizationAndAi()
     {
-        var baseSrc = ModLoader.FromAssembly(new ModManifest { Id = "base" }, typeof(BaseGameMod).Assembly, AppContext.BaseDirectory);
+        var baseSrc = ModLoader.FromAssembly(new ModManifest { Id = "base" }, typeof(TestRulesetMod).Assembly, AppContext.BaseDirectory);
         var extra = new ModSource
         {
             Manifest = new ModManifest { Id = "mymod", Dependencies = ["base"] },
