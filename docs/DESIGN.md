@@ -20,13 +20,12 @@ Mods implement the rules.
 
 - `Civ.Core`: geometry, shared data, content registries, extension contracts, simulation, commands, saves and hashes.
 - `Civ.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects local peers.
-- `Civ.BaseGame`: small test ruleset loaded through the same mod API as other rulesets.
+- `tests/Civ.Tests/TestRuleset`: test-only ruleset loaded through the same mod API as feature rulesets.
 - `Civ.Client.Core`: engine-free selection, picking, commands and city screen data.
 - `Civ.Godot`: Godot view. Build separately with `dotnet build src/Civ.Godot`.
 - `Civ.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-The client uses Core query contracts. It has no reference to a feature-mod or BaseGame assembly.
-
+The client uses Core query contracts. It has no reference to a feature-mod or test-ruleset assembly.
 ## Determinism
 
 Authoritative state uses integer math. Rule code uses only simulation state and `Simulation.Rng`, not clocks or engine APIs.
@@ -64,8 +63,7 @@ Teams hold members, known techs, a research target, progress per tech and war re
 Changing a research target retains its progress. `GameState.SetWar` keeps the war matrix symmetric.
 
 Cities include a generic `ProductionQueue` of `ProductionOrder(Kind, ContentId, Progress)` entries.
-BaseGame still uses its existing building/training fields. Cities owns feature queues, paused item progress, completion snapshots, and normalized overflow.
-
+Cities owns feature queues, paused item progress, completion snapshots, and normalized overflow. Test rules live in `tests/Civ.Tests/TestRuleset`.
 `GameState` contains plain data and rebuildable lookup caches. Caches do not enter saves or hashes.
 `UnitById`, `UnitsAt`, `CityById` and `CityAt` use indexes.
 Runtime edits use `AddCity`, `RemoveCity`, `AddUnit`, `RemoveUnit` and `MoveUnit`.
@@ -118,8 +116,7 @@ Systems with equal orders run by ordinal `Id`. Additional orders can use the gap
 
 Orders from `PlayerBegin` through `Map - 1` require `IPlayerTurnSystem.Run(Simulation, int player)`.
 The scheduler completes this interval for one player before the next player, in ascending player-id order.
-Other orders use `ITurnSystem.Run(Simulation)` once per boundary. Legacy BaseGame orders remain outside the player interval.
-
+Other orders use `ITurnSystem.Run(Simulation)` once per boundary. Legacy test-ruleset orders remain outside the player interval.
 | Constant | Order | Work |
 | --- | ---: | --- |
 | `GameBegin` | 0 | Global begin hooks |
@@ -169,7 +166,7 @@ Null retains the legacy setup. Feature settings include `WorldSize`, `GameSpeed`
 Empty speed, handicap, era, and generator ids resolve through mod-registered `ISetupPolicy` services before generation.
 Explicit ids remain unchanged. `Simulation.Settings` stores the resolved ids, and saves retain them.
 World supplies its generator default. Foundation supplies the speed, handicap, era, and setup-screen world-size defaults.
-BaseGame supplies its own generator default. Without a generator policy, Core selects the first loaded generator in ordinal id order.
+The test ruleset supplies its own generator default. Without a generator policy, Core selects the first loaded generator in ordinal id order.
 Core never selects a world size implicitly, so omitted `WorldSize` retains legacy setup.
 An optional `Civilizations` entry resolves a leader shared by multiple civilizations. An incompatible selection fails before generation.
 
@@ -277,8 +274,7 @@ These deterministic adaptations can differ from native floating-point results ne
 Maintenance uses the maximum wrapped hex distance as the map normalization.
 Plot culture uses hex distance without terrain obstacles. Ownership keeps an incumbent on ties, then selects the lowest player id.
 Governor weights live in the hand-authored hex sidecar. The governor orders equal plot scores by tile id.
-No feature mod references the BaseGame assembly. The client loads the feature ruleset through Core contracts.
-
+No feature mod references a test ruleset assembly. The client loads feature rules through Core contracts.
 ## Research and economy services
 
 Research registers `IResearchService` for cost ledgers, rate modifiers, eligibility, queues, and team contributions.
@@ -390,8 +386,45 @@ External keys are `trade:slots`, `trade:profit_percent`, `trade:foreign_profit_p
 GP accepts both the existing `cities:great_people_percent` and `cities:great_people_rate_percent` in city and player scopes.
 Mod versions change the content identity. Older city GP state needs a migration before it can continue under the new owner.
 
-## Computer players
+## P6 and P7 feature services
 
+P6 adds Diplomacy, ProjectsVictory, Corporations, and Espionage. P7 adds Events, ScriptedWonders, and Revolution.
+Each mod registers Core contracts, commands, and saved extension state. The contracts remain available without references to mod assemblies.
+
+Diplomacy tracks contact between teams, attitude ledgers, open borders, defensive pacts, war, peace, and bilateral deals.
+Commands validate treaty changes, deal proposals, execution, cancellation, war declarations, and peace.
+Deal assets include resources, gold, gold per turn, and technology. Team ids identify relations; player ids identify deal participants.
+
+ProjectsVictory owns project eligibility and completion, team project counts, scores, and saved victory status.
+Project definitions carry costs, technology and project prerequisites, instance limits, victory links, spaceship flags, and thresholds.
+Victory definitions select conquest, domination, cultural, project, or time rules. Enabled conditions run by priority.
+Projects enter the city production queue through a registered production kind and completion handler.
+
+Corporations use founding and spread commands. A Great Person founds a corporation in a city with a connected prerequisite resource.
+Active branches apply corporation yield, commerce, headquarters commerce, and resource-based maintenance.
+Civics can prohibit local or foreign corporations. A branch requires an active branch owned by the spreading player.
+
+Espionage allocates whole points from saved commerce output across met rival teams by player-set weights.
+Passive thresholds unlock demographics, city visibility, research inspection, and city investigation.
+Spy missions spend points and use a calculated success chance. Saved team, player, and city state tracks points, weights, remainders, and timers.
+
+Events roll eligible triggers per turn with the simulation RNG. Trigger definitions set eligibility, chance, repeat policy, and cooldown.
+Pending events hold a player choice. Options can change treasury, research, city stores, happiness, health, and plot yields.
+Unresolved events use a default option. AI players resolve events automatically.
+
+ScriptedWonders adds completion, periodic, combat, and modifier effects to selected buildings.
+City-local timers survive saves and capture. Inactive wonders pause their timers, while completed effects do not repeat.
+Revolution tracks city instability from wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural recovery.
+Thresholds can trigger mutiny or rebellion. Players can suppress instability with gold or a military garrison.
+
+## Client presentation
+
+`Civ.Client.Core` supplies screen models and validated commands for diplomacy, score and victory, corporations, espionage, and pending events.
+The city screen shows corporations, religion, commerce, wellbeing, and ledgers. Unit actions expose corporation and spy commands when valid.
+`Civ.Godot` presents diplomacy and victory, corporation, espionage, event, religion, pedia, save, and load panels.
+It also shows espionage rates, pending-event notifications, and corporation details on the city screen.
+
+## Computer players
 `src/Mods/Ai` registers `ai:standard` under `IPlayerAI`. Select it through `SimulationSettings.PlayerAis`.
 Small planners handle citizens, production, workers, research, civics, commerce, settling, exploration and warfare.
 They use Core services, not other mod assemblies. Content supplies weights, flavors, unit roles and leader personality.
@@ -444,8 +477,7 @@ Percentages add before integer multiplication and division. Division truncates t
 
 The sink produces a `Ledger` with ordered `(Source, Key, Amount)` lines and totals by key.
 Typed keys separate flat and percent units. Each calculating mod owns effect-key meanings, final formulas and rounding boundaries.
-BaseGame civilization and civic bonuses are modifier sources, not special cases in the turn systems.
-
+Test-ruleset civilization and civic bonuses are modifier sources, not special cases in the turn systems.
 ## Events and extension state
 
 `ctx.Subscribe<TEvent>(name, handler)` registers deterministic event handlers.
@@ -484,22 +516,19 @@ Lockstep peers exchange content hashes before any tick runs. A mismatch raises a
 Peers then submit command batches and exchange state hashes after each tick. A state mismatch raises `Desync`.
 The handshake identifies content, not initial setup. State hashes detect setup divergence.
 
-## V1 content mods
+## Feature content mods
 
-`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, Peoples, Religion, Ai, GreatPeople, and Trade.
-These mods have no load-order dependencies yet. Foundation, World, Cities, Research, and Economy register setup or gameplay services. Each manifest declares its cross-mod content providers in `references`.
-References can be cyclic. ModLoader checks provider presence before registration and typed reference closure after all mods register.
+`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government, Peoples, Religion, Ai, GreatPeople, Trade, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders, and Revolution.
+Each manifest declares content providers in `references` and load-order needs in `dependencies`.
+ModLoader checks provider presence before registration and typed references after all mods register.
 The post-registration pass runs before freeze and content hashing. Unknown sidecar properties fail load.
 
-`Civ.Content.Schema` holds immutable definitions alongside the legacy BaseGame types.
-The schema includes costs, grouped requirements, vectors, indexed effects, folded class limits, civilization overrides, and AI weights.
-Definitions retain English text, eras, source icon references, and unsupported-field paths.
-Foundation reserves deferred corporation and victory identities. Religion owns playable religion definitions and their prerequisites.
+`Civ.Content.Schema` holds immutable definitions. The schema includes costs, grouped requirements, vectors, indexed effects, class limits, civilization overrides, and AI weights.
+Definitions retain English text, eras, icon references, and unsupported-field paths.
+Corporation and victory identities now have executable definitions. Religion owns playable religion definitions and prerequisites.
+The test ruleset moved to `tests/Civ.Tests/TestRuleset`; `src/Civ.BaseGame` was removed.
 See [content-schema.md](content-schema.md) for definition types, units, scopes, and importer decisions.
 
 ## Remaining feature work
 
-The v1 definition schema, Foundation setup, and the first World rules are available. Gameplay rules continue one feature mod at a time.
-Feature mods must define effect keys, query interfaces, turn priorities, queue rules, diplomacy enforcement and save migrations.
-BaseGame remains a test scaffold: combat does not enforce war relations, and its economy sends all commerce to research.
-Naval AI, diplomatic agreements, advanced fog rules, art conversion and network transports remain separate tasks.
+Feature rules continue to expand through mod contracts. Deferred rules and client gaps are listed in [mechanics-status.md](mechanics-status.md).
