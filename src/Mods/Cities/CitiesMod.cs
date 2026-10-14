@@ -27,6 +27,9 @@ public sealed class CitiesMod : IMod
         var culture = new CityCulture(yields, work);
         var production = new CityProduction(yields, growth);
         var greatPeople = new CityGreatPeople();
+        context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production));
+        context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production));
+        context.RegisterService<ILedgerSourceLabel>("plot_labels", new PlotSourceLabel());
         context.RegisterService<ICityYieldService>("yields", yields);
         context.RegisterService<ICityWellbeingService>("wellbeing", wellbeing);
         context.RegisterService<ICityWorkService>("work", work);

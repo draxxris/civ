@@ -35,7 +35,7 @@ internal sealed partial class CityUi
             head.AddChild(Ui.Button("▼", () => _session.MoveInQueue(city, index, 1), "Later", index < c.Queue.Count - 1, 12));
             head.AddChild(Ui.Button("✕", () => _session.RemoveFromQueue(city, index), "Remove", size: 12));
             line.AddChild(head);
-            if (row.Kind != "economy:process") line.AddChild(Ui.Bar(row.Progress, row.Cost, Ui.Accent, $"{row.Progress}/{row.Cost}"));
+            if (!row.IsContinuous) line.AddChild(Ui.Bar(row.Progress, row.Cost, Ui.Accent, $"{row.Progress}/{row.Cost}"));
             box.AddChild(line);
         }
     }
@@ -53,19 +53,21 @@ internal sealed partial class CityUi
     private void AddChoices(VBoxContainer box, City city)
     {
         var tabs = Ui.HBox(4);
-        foreach (var tab in Enum.GetValues<Tab>())
+        var kinds = _session.ProductionKinds;
+        for (int index = 0; index < kinds.Count; index++)
         {
-            var t = tab;
-            var button = Ui.Button(tab.ToString(), () => _tab = t, size: 13);
-            button.ToggleMode = true; button.ButtonPressed = _tab == tab;
+            var t = index;
+            var button = Ui.Button(kinds[index].Label, () => _tab = t, size: 13);
+            button.ToggleMode = true; button.ButtonPressed = _tab == index;
             tabs.AddChild(button);
         }
         var blocked = new CheckBox { Text = "Show unavailable", ButtonPressed = _showBlocked, FocusMode = FocusModeEnum.None };
         blocked.Toggled += on => _showBlocked = on;
         tabs.AddChild(blocked);
         box.AddChild(tabs);
-        var kind = _tab switch { Tab.Buildings => "cities:building", Tab.Units => "cities:unit", _ => "economy:process" };
-        var choices = _session.ProductionChoices(city, kind);
+        if (kinds.Count == 0) return;
+        var kind = kinds[Math.Clamp(_tab, 0, kinds.Count - 1)];
+        var choices = _session.ProductionChoices(city, kind.Id);
         foreach (var choice in choices.Where(p => p.Available)) box.AddChild(ChoiceButton(city, choice));
         if (!_showBlocked) return;
         foreach (var choice in choices.Where(p => !p.Available).Take(MaxBlockedShown)) box.AddChild(ChoiceButton(city, choice));
@@ -75,7 +77,7 @@ internal sealed partial class CityUi
     {
         var row = Ui.HBox(6);
         row.AddChild(Ui.Icon(_icons.TextureOf(choice.Id), 28));
-        string detail = choice.Kind == "economy:process" ? "converts production" : $"{choice.Cost}" + (choice.Turns is int t ? $" / {t}t" : "");
+        string detail = choice.IsContinuous ? "converts production" : $"{choice.Cost}" + (choice.Turns is int t ? $" / {t}t" : "");
         var button = Ui.Button($"{choice.Name}   {detail}", () => _session.Enqueue(city, choice.Kind, choice.Id, append: true), choice.Tooltip, choice.Available, 13);
         button.SizeFlagsHorizontal = SizeFlags.ExpandFill;
         button.Alignment = HorizontalAlignment.Left;
@@ -102,7 +104,7 @@ internal sealed partial class CityUi
         var row = Ui.HBox(4);
         var id = s.Id;
         row.AddChild(Ui.Text($"{s.Name}: {s.Count}/{s.Slots}" + (s.Effects.Length > 0 ? $"  ({s.Effects})" : ""), 13));
-        row.AddChild(Ui.Button("−", () => _session.ChangeSpecialist(city, id, -1), enabled: s.Count > 0 && id != GameSession.CitizenSpecialist, size: 12));
+        row.AddChild(Ui.Button("−", () => _session.ChangeSpecialist(city, id, -1), enabled: s.Count > 0 && id != _session.CitizenSpecialist, size: 12));
         row.AddChild(Ui.Button("+", () => _session.ChangeSpecialist(city, id, 1), enabled: s.Count < s.Slots, size: 12));
         return row;
     }

@@ -9,7 +9,7 @@ public enum TileMark { None, Worked, Workable, Selected, Locked }
 
 public sealed partial class GameSession
 {
-    public const string CitizenSpecialist = "foundation:specialist_citizen";
+    public string CitizenSpecialist => Service<ICityWorkService>().DefaultSpecialist(Sim);
 
     public IReadOnlyList<Hex> WorkArea(City city) =>
         Service<ICityWorkService>().WorkArea(Sim, city.Id).Select(Sim.State.Grid.HexOf).ToList();

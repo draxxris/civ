@@ -19,7 +19,7 @@ public sealed record LeaderChoice(string Id, string Name, string CivilizationId,
 /// </summary>
 public sealed class GameCatalog
 {
-    private static readonly string[] HandicapOrder = ["settler", "chieftain", "warlord", "noble", "prince", "monarch", "emperor", "immortal", "deity"];
+
     private readonly Dictionary<string, string> _modRoots;
     private readonly Dictionary<string, string?> _icons = new();
 
@@ -39,7 +39,7 @@ public sealed class GameCatalog
         _modRoots = mods.ToDictionary(m => m.Manifest.Id, m => m.Root, StringComparer.Ordinal);
         WorldSizes = Choices(Content.Get<Schema.WorldSizeDef>().All.OrderBy(w => w.GridWidth * w.GridHeight));
         GameSpeeds = Choices(Content.Get<Schema.GameSpeedDef>().All.OrderBy(s => s.GrowthPercent));
-        Handicaps = Choices(Content.Get<Schema.HandicapDef>().All.OrderBy(h => Array.IndexOf(HandicapOrder, h.Id.Split('_').Last())).ThenBy(h => h.Id, StringComparer.Ordinal));
+        Handicaps = Choices(Content.Get<Schema.HandicapDef>().All.OrderBy(h => SetupPolicies.SortOrder(Content, SetupField.Handicap, h.Id)).ThenBy(h => h.Id, StringComparer.Ordinal));
         Leaders = BuildLeaders(Content);
         OpponentAi = Content.PlayerAIs.All.OrderBy(a => a.Id, StringComparer.Ordinal).FirstOrDefault()?.Id;
     }
@@ -81,10 +81,10 @@ public sealed class GameCatalog
     }
 
     public NewGameOptions DefaultOptions() => new(
-        Pick(WorldSizes, "standard"), Pick(GameSpeeds, "normal"), Pick(Handicaps, "noble"), Leaders[0].Id, 3, 1);
+        Pick(WorldSizes, SetupField.WorldSize), Pick(GameSpeeds, SetupField.GameSpeed), Pick(Handicaps, SetupField.Handicap), Leaders[0].Id, 3, 1);
 
-    private static string Pick(IReadOnlyList<SetupChoice> choices, string word) =>
-        (choices.FirstOrDefault(c => c.Id.EndsWith("_" + word, StringComparison.Ordinal)) ?? choices[0]).Id;
+    private string Pick(IReadOnlyList<SetupChoice> choices, SetupField field) =>
+        SetupPolicies.Default(Content, field) is { } id ? choices.First(c => c.Id == id).Id : choices[0].Id;
 
     /// <summary>PNG for a content id from its owning mod's <c>art/icons</c> folder, or null when the mod ships none.</summary>
     public string? IconPath(string? id)

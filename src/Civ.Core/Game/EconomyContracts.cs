@@ -47,7 +47,7 @@ public sealed class SetCommerceRatesCommand : GameCommand
 public sealed class HurryCityCommand : GameCommand
 {
     public int CityId { get; init; }
-    public string HurryId { get; init; } = "cities:hurry_gold";
+    public string HurryId { get; init; } = "";
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityHurryService>().Single().Validate(sim, Player, CityId, HurryId);
     public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityHurryService>().Single().Hurry(sim, CityId, HurryId);
 }

@@ -27,6 +27,7 @@ public interface ICityCultureSource
 }
 public interface ICityWorkService
 {
+    string DefaultSpecialist(Simulation sim);
     int Radius(Simulation sim, int city);
     IReadOnlyList<TileId> WorkArea(Simulation sim, int city);
     string? Validate(Simulation sim, int city, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists);
@@ -122,7 +123,7 @@ public sealed class SetCityAssignmentsCommand : GameCommand
 public sealed class SetCityProductionCommand : GameCommand
 {
     public int CityId { get; init; }
-public string Kind { get; init; } = "cities:building";
+    public string Kind { get; init; } = "";
     public string ContentId { get; init; } = "";
     public bool Append { get; init; }
     public int? RemoveIndex { get; init; }

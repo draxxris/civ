@@ -25,7 +25,7 @@ Mods implement the rules.
 - `Civ.Godot`: Godot view. Build separately with `dotnet build src/Civ.Godot`.
 - `Civ.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-The current client still references BaseGame rules. Future feature mods need Core query contracts before that dependency can disappear.
+The client uses Core query contracts. It has no reference to a feature-mod or BaseGame assembly.
 
 ## Determinism
 
@@ -87,6 +87,30 @@ Ids use `modid:name`. Registration requires the owning namespace. Overrides can 
 Registries freeze after load. Definitions and their nested collections must not change after that point.
 The content hash includes canonical definitions, loaded mod ids/versions, command identities, service order and state-component identities.
 
+## Setup and presentation services
+
+Mods register these contracts through `ctx.RegisterService<T>()`:
+
+- `ISetupPolicy.Default(SetupField)` supplies an optional default content id.
+  `SortOrder(SetupField, string id)` supplies an optional display order.
+  Each field permits at most one default provider. Each choice permits at most one display-order provider.
+  The client selects the first loaded choice when no default exists. Display-order ties use ordinal ids.
+- `IProductionKind` supplies a queue-kind id, tab label, continuous-production flag, content candidates, and definition lookup.
+  It also supplies base costs, eligibility visibility, validation, and production calculations.
+  The client builds tabs and choices from all registered kinds in service order.
+  Continuous kinds show no completion turns or progress bar.
+  Cities registers building and unit kinds. Economy registers the process kind.
+  Commands require an explicit kind or hurry id, except queue-removal commands.
+- `ILedgerSourceLabel.Label(Simulation, string source)` supplies optional text for mod-owned ledger sources.
+  The client uses the first non-null label in service order, then content names or generic text.
+- `ITileAppearanceService` supplies optional terrain and feature metadata by full content id.
+  `TileAppearance` stores integer RGB, tint percent, and mark count.
+  The client uses the first non-null result in service order. Unknown terrain is gray, and unknown features have no marks.
+
+`ICityWorkService.DefaultSpecialist(Simulation)` identifies the plain citizen role for assignment controls.
+All presentation and setup queries must avoid state changes and RNG use. Service implementations hold no mutable per-game state.
+Service identities enter the content hash. Mods must change their manifest version when service behavior changes.
+
 ## Turn phases
 
 `Civ.Game.TurnPhase` defines shared order slots. Systems use these constants instead of private numeric priorities.
@@ -142,7 +166,11 @@ Most slots reserve future work and do not yet contain systems.
 
 A non-null `SimulationSettings.WorldSize` selects Foundation's `INewGameSetup` service.
 Null retains the legacy setup. Feature settings include `WorldSize`, `GameSpeed`, `Handicap`, `StartingEra`, and one entry in `Leaders` per player.
-`MapGenerator = "world:continents"` selects World generation.
+Empty speed, handicap, era, and generator ids resolve through mod-registered `ISetupPolicy` services before generation.
+Explicit ids remain unchanged. `Simulation.Settings` stores the resolved ids, and saves retain them.
+World supplies its generator default. Foundation supplies the speed, handicap, era, and setup-screen world-size defaults.
+BaseGame supplies its own generator default. Without a generator policy, Core selects the first loaded generator in ordinal id order.
+Core never selects a world size implicitly, so omitted `WorldSize` retains legacy setup.
 An optional `Civilizations` entry resolves a leader shared by multiple civilizations. An incompatible selection fails before generation.
 
 Foundation resolves dimensions from `WorldSizeDef.GridWidth/GridHeight` times the source landscape-cell scale of four.
@@ -249,7 +277,7 @@ These deterministic adaptations can differ from native floating-point results ne
 Maintenance uses the maximum wrapped hex distance as the map normalization.
 Plot culture uses hex distance without terrain obstacles. Ownership keeps an incumbent on ties, then selects the lowest player id.
 Governor weights live in the hand-authored hex sidecar. The governor orders equal plot scores by tile id.
-No feature mod references the BaseGame assembly. The client still uses the legacy ruleset.
+No feature mod references the BaseGame assembly. The client loads the feature ruleset through Core contracts.
 
 ## Research and economy services
 

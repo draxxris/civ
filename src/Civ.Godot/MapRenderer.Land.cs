@@ -35,8 +35,8 @@ internal sealed partial class MapRenderer
 
     private Color TerrainTone(Plot plot, float fog)
     {
-        var colour = MapStyle.TerrainColor(plot.Terrain);
-        if (plot.Feature is { } f && MapStyle.FeatureOf(f) is { } style) colour = colour.Lerp(style.Tint, style.TintStrength);
+        var colour = MapStyle.TerrainColor(_session.Sim.Content, plot.Terrain);
+        if (plot.Feature is { } f && MapStyle.FeatureOf(_session.Sim.Content, f) is { } style) colour = colour.Lerp(style.Tint, style.TintStrength);
         if (plot.Owner is int owner) colour = colour.Lerp(MapStyle.PlayerColor(owner), 0.14f);
         return Ui.ToColor(colour.Scale(fog));
     }
@@ -73,7 +73,7 @@ internal sealed partial class MapRenderer
     private void DrawRelief(MeshBuilder b, Vector3 centre, int tile, Plot plot, float fog)
     {
         if (plot.Kind == PlotKind.Flat) return;
-        var ground = MapStyle.TerrainColor(plot.Terrain).Scale(fog);
+        var ground = MapStyle.TerrainColor(_session.Sim.Content, plot.Terrain).Scale(fog);
         if (plot.Kind == PlotKind.Hills)
         {
             Mark(b, centre + new Vector3(-0.22f, 0, 0.18f), 0.62f, 0.42f, Ui.ToColor(ground.Scale(0.68f)), Ui.ToColor(ground.Scale(0.9f)));
@@ -87,7 +87,7 @@ internal sealed partial class MapRenderer
 
     private void DrawFeature(MeshBuilder b, Vector3 centre, int tile, Plot plot, float fog)
     {
-        if (plot.Feature is not { } id || MapStyle.FeatureOf(id) is not { } style || style.Marks == 0) return;
+        if (plot.Feature is not { } id || MapStyle.FeatureOf(_session.Sim.Content, id) is not { } style || style.Marks == 0) return;
         var body = Ui.ToColor(style.Tint.Scale(0.8f * fog));
         var light = Ui.ToColor(style.Tint.Lerp(Rgb.Hex(0xffffff), 0.25f).Scale(0.85f * fog));
         for (int i = 0; i < style.Marks; i++)

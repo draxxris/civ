@@ -14,6 +14,7 @@ public sealed class EconomyMod : IMod
         var commerce = new CityCommerce();
         var economy = new PlayerEconomy(commerce);
         var hurry = new CityHurry();
+        context.RegisterService<IProductionKind>("process_kind", new ProcessKind(commerce));
         context.RegisterService<IPlayerEconomyService>("economy", economy);
         context.RegisterService<IPlayerResearchSource>("research_source", economy);
         context.RegisterService<ICityCultureSource>("culture", commerce);

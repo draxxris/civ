@@ -16,8 +16,8 @@ public static class Labels
     /// <summary>The name of a ledger source: a building, civic, trait, tile terrain, or a humanized id.</summary>
     public static string Source(Simulation sim, string source)
     {
-        if (source.StartsWith("cities:plot:", StringComparison.Ordinal) && int.TryParse(source[12..], out var tile))
-            return sim.Content.Get<Content.Schema.TerrainDef>(sim.State.Plots[tile].Terrain).Name;
+        foreach (var provider in sim.Content.Services.Get<ILedgerSourceLabel>())
+            if (provider.Label(sim, source) is { } label) return label;
         foreach (var name in new[] { Lookup<Content.Schema.BuildingDef>(sim, source), Lookup<Content.Schema.CivicDef>(sim, source),
                      Lookup<Content.Schema.TraitDef>(sim, source), Lookup<Content.Schema.SpecialistDef>(sim, source),
                      Lookup<Content.Schema.BonusDef>(sim, source), Lookup<Content.Schema.FeatureDef>(sim, source),

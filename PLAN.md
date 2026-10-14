@@ -263,10 +263,12 @@ Keep this list current. It is the source of truth for where the work is.
   Military (`43cbf94`).
 - [x] P6 Religion mod, `src/Mods/Religion`, plus importer and schema edits (`b3112b6`).
 - [x] P5 AI mod, `src/Mods/Ai`: functional deterministic computer player (`ai:standard`).
+- [x] Dogfood cleanup: mod-supplied setup defaults, production kinds, citizen role, ledger labels, and terrain appearance.
+  Core and client source scans reject shipped mod ids. Custom-ruleset contract tests cover unrelated ids.
 
 ### In progress
 
-- [ ] Dogfood cleanup (see the section above P6).
+- [ ] P6 Great People mod (`src/Mods/GreatPeople`) and Trade mod (`src/Mods/Trade`).
 
 ### Next
 
@@ -278,9 +280,13 @@ Keep this list current. It is the source of truth for where the work is.
 
 ### Working conventions
 
-- Subagents: `pawn:luna` for trivial tasks, `pawn:haiku` for medium-low, `pawn:sol` for medium-high. Use
-  `pawn:sonnet` only as a fallback when sol quota runs out. Prefer `mode=background`, and always give a title.
+- Subagents: blend `pawn:luna` / `pawn:haiku` for trivial/medium-low tasks and `pawn:sol` / `pawn:sonnet` for
+  medium-high/complicated tasks. You can switch a subagent's model mid-work with `subagent_continue()` if one
+  model family hits quota (`haiku`/`sonnet` reset at 3am; `luna`/`sol` reset at 5am). If both pools are out of
+  quota, use `schedule_prompt` to wake up at 3am or 5am. Prefer `mode=background`, and always give a title.
 - Subagents do not commit. The orchestrator commits after each task, with verbose messages.
+- Occasionally use `AskAntigravity` (`thinking="high"`, `digest=true`, strictly read-only) to perform an
+  adversarial review on recent commits to look for bugs, determinism leaks, save/load holes, and footguns.
 - Product rule: never write "AND", "A New Dawn", "Rise of Mankind" or "RoM" in shipped code, ids, text or
   docs.
 - Verification: `dotnet test Civ.slnx`, `dotnet build src/Civ.Godot`, and

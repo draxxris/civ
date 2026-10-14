@@ -117,7 +117,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var result = service.Calculate(sim, 1, "cities:building", "probe:wonder");
         Assert.Equal(7, result.Production); // (center 2 + flat 3) * 150 / 100.
         Assert.Equal(150, result.Ledger.Total("cities:production_factor_percent"));
-        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, ContentId = "probe:wonder" }, out var error), error);
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, Kind = "cities:building", ContentId = "probe:wonder" }, out var error), error);
         sim.AdvanceTurn();
         Assert.Contains("probe:wonder", city.Buildings);
         Assert.Equal(4, city.Extensions.Get<CityRuleState>(sim.Content)!.Overflow); // (7 - cost 1) * 100 / 150.
