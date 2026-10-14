@@ -13,8 +13,8 @@ public sealed record TerrainMeshData(float[] Positions, float[] Normals, int[] I
 /// edges lie on lattice lines and neighbouring chunks (and the two ends of the wrap) share identical border vertices.</summary>
 public static class TerrainMesher
 {
-    /// <summary>Default lattice resolution: lattice steps per tile column (about 36 vertices per hex).</summary>
-    public const int DefaultResolution = 6;
+    /// <summary>Default lattice resolution: lattice steps per tile column (about 81 vertices per hex, fine enough for pointed summits and crags).</summary>
+    public const int DefaultResolution = 9;
 
     private static readonly double Sqrt3 = Math.Sqrt(3);
 
@@ -42,7 +42,6 @@ public static class TerrainMesher
                 heights[(b - b0 + 1) * rx + (a - a0 + 1)] = field.HeightAt(LatticeX(a, b, k), z);
         }
         double H(int a, int b) => heights[(b - b0 + 1) * rx + (a - a0 + 1)];
-        double stepX = Sqrt3 / k, stepZ = 1.5 / k;
         var positions = new float[nx * nz * 3];
         var normals = new float[nx * nz * 3];
         for (int b = b0; b <= b1; b++)
@@ -52,12 +51,8 @@ public static class TerrainMesher
                 positions[i] = (float)LatticeX(a, b, k);
                 positions[i + 1] = (float)H(a, b);
                 positions[i + 2] = (float)LatticeZ(b, k);
-                // Rows b ± 1 are offset by half a step; the mean of the two vertices either side lies straight north/south.
-                int w = (b & 1) == 0 ? a - 1 : a;
-                double north = (H(w, b - 1) + H(w + 1, b - 1)) / 2, south = (H(w, b + 1) + H(w + 1, b + 1)) / 2;
-                double dx = (H(a + 1, b) - H(a - 1, b)) / (2 * stepX), dz = (south - north) / (2 * stepZ);
-                double len = Math.Sqrt(dx * dx + 1 + dz * dz);
-                normals[i] = (float)(-dx / len); normals[i + 1] = (float)(1 / len); normals[i + 2] = (float)(-dz / len);
+                var normal = LatticeNormal(H, a, b, k);
+                normals[i] = (float)normal.X; normals[i + 1] = (float)normal.Y; normals[i + 2] = (float)normal.Z;
             }
         var indices = new int[(nx - 1) * (nz - 1) * 6];
         int t = 0;
@@ -79,5 +74,65 @@ public static class TerrainMesher
         return new(positions, normals, indices);
 
         void Emit(int p, int q, int r) { indices[t++] = p; indices[t++] = q; indices[t++] = r; }
+    }
+
+    /// <summary>Unit normal of lattice vertex (a, b): central differences of the lattice heights around it. Rows b ± 1 are
+    /// offset by half a step; the mean of the two vertices either side lies straight north/south.</summary>
+    public static (double X, double Y, double Z) LatticeNormal(Func<int, int, double> height, int a, int b, int k)
+    {
+        double stepX = Sqrt3 / k, stepZ = 1.5 / k;
+        int w = (b & 1) == 0 ? a - 1 : a;
+        double north = (height(w, b - 1) + height(w + 1, b - 1)) / 2, south = (height(w, b + 1) + height(w + 1, b + 1)) / 2;
+        double dx = (height(a + 1, b) - height(a - 1, b)) / (2 * stepX), dz = (south - north) / (2 * stepZ);
+        double len = Math.Sqrt(dx * dx + 1 + dz * dz);
+        return (-dx / len, 1 / len, -dz / len);
+    }
+}
+
+/// <summary>The chunk meshes' exact surface between lattice vertices: the height and smooth normal that the rendered
+/// triangles interpolate at any point, so surfaces draped over the terrain (river water) sit on what is drawn rather than
+/// on the finer field. Caches lattice heights; use one instance per thread.</summary>
+public sealed class TerrainLattice(TerrainField field, int k = TerrainMesher.DefaultResolution)
+{
+    private static readonly double Sqrt3 = Math.Sqrt(3);
+    private readonly Dictionary<(int, int), double> _heights = new();
+
+    /// <summary>Field height at lattice vertex (a, b).</summary>
+    public double Height(int a, int b)
+    {
+        if (!_heights.TryGetValue((a, b), out double h))
+            _heights[(a, b)] = h = field.HeightAt(TerrainMesher.LatticeX(a, b, k), TerrainMesher.LatticeZ(b, k));
+        return h;
+    }
+
+    /// <summary>Height and normal of the rendered terrain at (x, z), interpolated across its lattice triangle.</summary>
+    public (double Height, double NX, double NY, double NZ) Sample(double x, double z)
+    {
+        double step = Sqrt3 / k;
+        double v = z / (1.5 / k);
+        int b = (int)Math.Floor(v);
+        double fz = v - b;
+        bool even = (b & 1) == 0;
+        double u = even ? x / step - 0.5 * fz : (x - step / 2) / step + 0.5 * fz;
+        int a = (int)Math.Floor(u);
+        double fx = u - a;
+        // Weights of v00, v10, v01, v11, following the mesher's triangle split.
+        double w00, w10, w01, w11;
+        if (even && fx + fz <= 1) (w00, w10, w01, w11) = (1 - fx - fz, fx, fz, 0);
+        else if (even) (w00, w10, w01, w11) = (0, 1 - fz, 1 - fx, fx + fz - 1);
+        else if (fz >= fx) (w00, w10, w01, w11) = (1 - fz, 0, fz - fx, fx);
+        else (w00, w10, w01, w11) = (1 - fx, fx - fz, 0, fz);
+        double h = 0, nx = 0, ny = 0, nz = 0;
+        Add(a, b, w00); Add(a + 1, b, w10); Add(a, b + 1, w01); Add(a + 1, b + 1, w11);
+        double len = Math.Sqrt(nx * nx + ny * ny + nz * nz);
+        return (h, nx / len, ny / len, nz / len);
+
+        void Add(int va, int vb, double w)
+        {
+            if (w <= 0) return;
+            h += w * Height(va, vb);
+            var n = TerrainMesher.LatticeNormal(Height, va, vb, k);
+            nx += w * n.X; ny += w * n.Y; nz += w * n.Z;
+        }
     }
 }

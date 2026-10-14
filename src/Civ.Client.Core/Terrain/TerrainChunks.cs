@@ -32,7 +32,7 @@ public sealed class TerrainChunks
     public const int NorthMarginUnits = 2;
 
     private static readonly double Sqrt3 = Math.Sqrt(3);
-    private readonly int[][] _tiles;
+    private readonly int[][] _tiles, _riverTiles;
 
     /// <summary>Partition a map. The ring of tiles hashed per chunk is wide enough for the height field with
     /// <paramref name="tuning"/> sampled on a lattice of resolution <paramref name="resolution"/>.</summary>
@@ -44,7 +44,9 @@ public sealed class TerrainChunks
         // The field reads tiles within InfluenceRadius of a sample; a lattice row overhangs the east edge by half a step,
         // and mesh normals also sample the neighbouring lattice vertices, one step away.
         double step = Sqrt3 / resolution;
-        RingRadius = (tuning ?? new TerrainTuning()).InfluenceRadius + step + step / 2;
+        tuning ??= new TerrainTuning();
+        RingRadius = tuning.InfluenceRadius + step + step / 2;
+        RiverRingRadius = tuning.RiverReach + step + step / 2;
         int zEnd = map.Height + 1; // last row centre + 2 tile rows (3 world units)
         Columns = (map.Width + TileColumns - 1) / TileColumns;
         Rows = (zEnd + NorthMarginUnits + TileRows - 1) / TileRows;
@@ -57,7 +59,8 @@ public sealed class TerrainChunks
                     z0, Math.Min(z0 + TileRows, zEnd)));
             }
         Chunks = chunks;
-        _tiles = chunks.Select(c => InfluenceTiles(c, grid)).ToArray();
+        _tiles = chunks.Select(c => InfluenceTiles(c, grid, RingRadius)).ToArray();
+        _riverTiles = chunks.Select(c => InfluenceTiles(c, grid, RiverRingRadius)).ToArray();
     }
 
     /// <summary>Partitioned map.</summary>
@@ -70,13 +73,17 @@ public sealed class TerrainChunks
     public IReadOnlyList<TerrainChunk> Chunks { get; }
     /// <summary>Distance beyond a chunk's rectangle within which a tile centre can change the chunk's geometry.</summary>
     public double RingRadius { get; }
+    /// <summary>Distance beyond a chunk's rectangle within which a tile's river bits or relief can change the chunk's river
+    /// geometry (see <see cref="TerrainTuning.RiverReach"/>).</summary>
+    public double RiverRingRadius { get; }
 
     /// <summary>Tiles whose data can change a chunk: its own tiles and a ring around them, ascending.</summary>
     public IReadOnlyList<int> TilesOf(TerrainChunk chunk) => _tiles[chunk.Id];
 
     /// <summary>64-bit hash of everything that shapes a chunk's geometry and scatter: layer, relief class (which includes
     /// water and the hidden flag), river bits and feature ground of its tiles and their ring, plus an optional per-tile
-    /// <paramref name="extras"/> value (for example feature id, city or improvement presence) indexed by tile.</summary>
+    /// <paramref name="extras"/> value (for example feature id, city or improvement presence) indexed by tile. When any
+    /// tile in the wider river ring has river bits, the river bits and relief of that whole ring count too.</summary>
     public ulong Signature(TerrainChunk chunk, TerrainSnapshot snapshot, IReadOnlyList<int>? extras = null)
     {
         if (snapshot.Grid.Spec != Map) throw new ArgumentException("Snapshot is for a different map", nameof(snapshot));
@@ -90,6 +97,10 @@ public sealed class TerrainChunks
             h = MixString(h, snapshot.Feature[t]);
             if (extras != null) h = Mix(h ^ (uint)extras[t]);
         }
+        var rivers = _riverTiles[chunk.Id];
+        if (!rivers.Any(t => snapshot.Rivers[t] != 0)) return h;
+        foreach (int t in rivers)
+            h = Mix(h ^ ((ulong)(uint)t << 32 | (ulong)snapshot.Relief[t] << 8 | snapshot.Rivers[t]));
         return h;
     }
 
@@ -101,9 +112,8 @@ public sealed class TerrainChunks
     public static IReadOnlyList<int> DirtyChunks(IReadOnlyList<ulong>? previous, IReadOnlyList<ulong> current) =>
         Enumerable.Range(0, current.Count).Where(i => previous == null || i >= previous.Count || previous[i] != current[i]).ToList();
 
-    private int[] InfluenceTiles(TerrainChunk chunk, HexGrid grid)
+    private int[] InfluenceTiles(TerrainChunk chunk, HexGrid grid, double m)
     {
-        double m = RingRadius;
         var tiles = new SortedSet<int>();
         int rowFrom = (int)Math.Floor((chunk.Z0 - m) / 1.5), rowTo = (int)Math.Ceiling((chunk.Z1 + m) / 1.5);
         for (int row = rowFrom; row <= rowTo; row++)
