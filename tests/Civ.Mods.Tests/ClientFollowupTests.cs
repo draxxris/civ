@@ -1,6 +1,7 @@
 using Civ.Client;
 using Civ.Content;
 using Civ.Game;
+using Civ.Modding;
 using Xunit;
 using S = Civ.Content.Schema;
 
@@ -118,6 +119,11 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var tech = pedia.Search("Technologies").First(e => e.Cost > 0);
         Assert.False(string.IsNullOrEmpty(tech.Title));
         Assert.True(pedia.Search("Buildings").Any(e => e.Cost > 0));
+        // Cross-category search must list matches in title order.
+        var everywhere = pedia.Search(query: "a");
+        Assert.True(everywhere.Select(e => e.Category).Distinct().Count() > 1);
+        var titleOrder = everywhere.OrderBy(e => e.Title, StringComparer.Ordinal).ThenBy(e => e.Id, StringComparer.Ordinal).Select(e => e.Id).ToList();
+        Assert.Equal(titleOrder, everywhere.Select(e => e.Id).ToList());
     }
 
     [Fact]
@@ -185,5 +191,59 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         s.Submit(new SetUnitActivityCommand { Player = 0, Unit = AddUnit(s.Sim, s.Sim.State.Cities[0], "military:buddhist_missionary").Id, Activity = UnitActivity.Sleep });
         Assert.Contains(s.Notifications, n => n.Kind == "tech");
         Assert.Contains(s.Notifications, n => n.Kind == "religion" && n.Text.Contains("was founded"));
+    }
+
+    [Fact]
+    public void Unit_trained_and_fought_in_one_turn_roll_reports_the_battle_from_the_same_batch()
+    {
+        var s = Scenario();
+        var city = AddCity(s.Sim, 0);
+        var enemy = AddUnit(s.Sim, AddCity(s.Sim, 5, owner: 1), "military:warrior");
+        // Both units join the roster after the session last read it, then fight within the same batch.
+        var victor = AddUnit(s.Sim, city, "military:warrior");
+        var casualty = AddUnit(s.Sim, city, "military:warrior");
+        s.Sim.Events.Publish(new UnitCreated(victor.Id, GameSession.Human, victor.Type, victor.Position));
+        s.Sim.Events.Publish(new UnitCreated(casualty.Id, GameSession.Human, casualty.Type, casualty.Position));
+        s.Sim.Events.Publish(new CombatResolved(victor.Id, enemy.Id, victor.Id));
+        s.Sim.Events.Publish(new CombatResolved(enemy.Id, casualty.Id, enemy.Id));
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = victor.Id, Activity = UnitActivity.Sleep });
+        Assert.Contains(s.Notifications, n => n.Kind == "combat" && n.Text == "Your unit won a battle");
+        Assert.Contains(s.Notifications, n => n.Kind == "combat" && n.Text == "Your unit was lost in battle");
+    }
+
+    [Fact]
+    public void Setup_default_that_names_unregistered_content_falls_back_to_the_first_choice()
+    {
+        var catalog = new GameCatalog([new ModSource
+        {
+            Manifest = new() { Id = "setup_probe", Version = "1" }, Root = AppContext.BaseDirectory, Instance = new SetupProbe(),
+        }]);
+        var options = catalog.DefaultOptions();
+        Assert.Equal("setup_probe:small", options.WorldSize);
+        Assert.Equal("setup_probe:quick", options.GameSpeed);
+        Assert.Equal("setup_probe:easy", options.Handicap);
+    }
+
+    private sealed class SetupProbe : IMod
+    {
+        public void Register(IModContext ctx)
+        {
+            ctx.Content<S.WorldSizeDef>().Register(new() { Id = "setup_probe:small", Name = "Small", GridWidth = 2, GridHeight = 2 });
+            ctx.Content<S.GameSpeedDef>().Register(new() { Id = "setup_probe:quick", Name = "Quick" });
+            ctx.Content<S.HandicapDef>().Register(new() { Id = "setup_probe:easy", Name = "Easy" });
+            ctx.Content<S.LeaderDef>().Register(new() { Id = "setup_probe:guide", Name = "Guide" });
+            ctx.Content<S.CivilizationDef>().Register(new()
+            {
+                Id = "setup_probe:people", Name = "People", Playable = true,
+                Leaders = System.Collections.Immutable.ImmutableDictionary<string, bool>.Empty.Add("setup_probe:guide", true),
+            });
+            ctx.RegisterService<ISetupPolicy>("setup", new MissingDefaults());
+        }
+    }
+
+    /// <summary>Names setup defaults that no mod registers, as a misconfigured ruleset would.</summary>
+    private sealed class MissingDefaults : ISetupPolicy
+    {
+        public string? Default(SetupField field) => field is SetupField.WorldSize or SetupField.GameSpeed or SetupField.Handicap ? "setup_probe:missing" : null;
     }
 }

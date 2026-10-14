@@ -73,6 +73,7 @@ public sealed partial class GameSession
             case BuildingCompleted b when Mine(b.City):
                 return Note(turn, "building", $"{CityName(b.City)} completed {(Sim.Content.TryGet<Schema.BuildingDef>(b.Building, out var def) ? def.Name : b.Building)}", b.City);
             case UnitCreated u when u.Player == Human:
+                _myUnits.Add(u.Unit); // Later events in this batch, such as a fight on the same roll, belong to this unit.
                 return Note(turn, "unit", $"New {(Sim.Content.TryGet<Schema.UnitDef>(u.Type, out var unit) ? unit.Name : u.Type)}", null, u.Position);
             case CombatResolved c: return Combat(c, turn);
             case ReligionFounded r:

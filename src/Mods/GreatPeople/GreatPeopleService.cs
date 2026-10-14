@@ -102,9 +102,11 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
         player.Births++;
         int scale = player.Births / 10 + 1;
         player.ThresholdModifier += GreatPeopleData.Raw(sim, "GREAT_PEOPLE_THRESHOLD_INCREASE", 50) * scale;
-        // The source team increase includes the creator, in addition to their personal increase.
-        foreach (int member in sim.TeamOf(city.Owner).Members.Order())
-            GreatPeopleData.Edit(sim, member).ThresholdModifier += GreatPeopleData.Raw(sim, "GREAT_PEOPLE_THRESHOLD_INCREASE_TEAM", 50) * scale;
+        // The team increase includes the creator's personal increase and scales with every member's births.
+        var team = sim.TeamOf(city.Owner).Members;
+        int teamScale = team.Sum(m => GreatPeopleData.Read(sim, m).Births) / 10 + 1;
+        foreach (int member in team.Order())
+            GreatPeopleData.Edit(sim, member).ThresholdModifier += GreatPeopleData.Raw(sim, "GREAT_PEOPLE_THRESHOLD_INCREASE_TEAM", 50) * teamScale;
         sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
         sim.Events.Publish(new GreatPersonBorn(city.Owner, city.Id, unit.Id, unitClass));
     }

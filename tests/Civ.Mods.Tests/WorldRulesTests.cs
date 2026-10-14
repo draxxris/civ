@@ -361,6 +361,27 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(1, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
     }
 
+    [Fact]
+    public void Foreign_trade_connections_cannot_path_through_unrevealed_tiles()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var home = AddCity(sim, sim.State.Grid.TileAt(2, 3));
+        var foreignTile = sim.State.Grid.TileAt(6, 3);
+        var foreign = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(foreignTile), Name = "Foreign city" };
+        sim.State.AddCity(foreign);
+        sim.State.Plots[foreignTile.Value].Revealed.Add(0);
+        var road = new[] { 3, 4, 5 }.Select(x => sim.State.Grid.TileAt(x, 3)).ToArray();
+        foreach (var tile in road)
+        {
+            sim.State.Plots[tile.Value].Owner = 1;
+            sim.State.Plots[tile.Value].Route = "world:route_route_road";
+        }
+        var connections = Service<ICityConnectionService>(sim);
+        Assert.False(connections.Connected(sim, home.Id, foreign.Id));
+        foreach (var tile in road) sim.State.Plots[tile.Value].Revealed.Add(0);
+        Assert.True(connections.Connected(sim, home.Id, foreign.Id));
+    }
+
     private static Unit AddWorker(Simulation sim, TileId tile)
     {
         var worker = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:worker", Position = sim.State.Grid.HexOf(tile), MovesLeft = 1 };

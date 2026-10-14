@@ -35,7 +35,8 @@ public sealed record CityScreen(
     IReadOnlyList<LedgerRow> HappinessLedger, IReadOnlyList<LedgerRow> HealthLedger,
     IReadOnlyList<TileRow> WorkedTiles, int IdleCitizens, IReadOnlyList<SpecialistRow> Specialists,
     IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry,
-    IReadOnlyList<CityReligion> Religions)
+    IReadOnlyList<CityReligion> Religions, long GreatPeopleRate, IReadOnlyDictionary<string, int> SettledSpecialists,
+    int GoldenAgeTurns, IReadOnlyList<TradeRouteResult> TradeRoutes, int MaxTradeRoutes)
 {
     public int Citizens => Population;
 }
@@ -50,7 +51,11 @@ public sealed partial class GameSession
         var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
         var commerce = Service<IPlayerEconomyService>().CalculateCity(Sim, city.Id);
         var rules = city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();
-        var greatPeople = Service<ICityGreatPeopleService>().Calculate(Sim, city.Id);
+        var greatPeopleService = OptionalService<IGreatPeopleService>();
+        var greatPeople = greatPeopleService?.Calculate(Sim, city.Id);
+        var cityGreatPeople = OptionalService<ICityGreatPeopleService>()?.Calculate(Sim, city.Id);
+        var tradeService = OptionalService<ITradeRouteService>();
+        var trade = tradeService?.Calculate(Sim, city.Id);
         long perTurn = yield.Yields.Production;
         int? grow = growth.Difference > 0 ? (int?)Math.Max(1, (growth.Threshold - city.FoodStored + growth.Difference - 1) / growth.Difference) : null;
         int idle = Math.Max(0, city.Population - wellbeing.Angry - city.Worked.Count - city.Specialists.Values.Sum());
@@ -58,13 +63,17 @@ public sealed partial class GameSession
             yield.Yields.Food, perTurn, PerTurn(commerce.Hundredths),
             Service<ICityMaintenanceService>().Calculate(Sim, city.Id).TotalHundredths / 100,
             wellbeing.Happy, wellbeing.Unhappy, wellbeing.Angry, wellbeing.Healthy, wellbeing.Unhealthy,
-            CultureOf(city), CultureLevelName(city), rules.GreatPeopleProgress, greatPeople.Threshold,
+            CultureOf(city), CultureLevelName(city), greatPeople?.Progress ?? rules.GreatPeopleProgress,
+            greatPeople?.Threshold ?? cityGreatPeople?.Threshold ?? 0,
             rules.ManualWork, rules.AvoidGrowth, GovernmentStatus.IsDisorder(Sim, city),
             Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
             city.Worked.Select(h => TileRowOf(h)).ToList(), idle, SpecialistRows(city),
             QueueRows(city), city.Buildings.Select(b => Sim.Content.Get<Schema.BuildingDef>(b).Name).Order(StringComparer.Ordinal).ToList(),
-            HurryOptions(city), ReligionsIn(city));
+            HurryOptions(city), ReligionsIn(city), greatPeople?.Rate ?? 0,
+            greatPeopleService?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>(),
+            greatPeopleService?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0, trade?.Routes ?? [],
+            tradeService?.MaxRoutes(Sim, city.Id) ?? 0);
     }
 
     private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);

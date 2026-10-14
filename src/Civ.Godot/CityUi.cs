@@ -87,7 +87,7 @@ internal sealed partial class CityUi : Control
         Row("Culture", $"{c.CommercePerTurn.Culture} per turn" + (c.CultureLevel is { } l ? $"  ({l})" : ""));
         Row("Espionage", $"{c.CommercePerTurn.Espionage} per turn");
         Row("Maintenance", $"{c.Maintenance} gold");
-        Row("Great people", c.GreatPeopleThreshold > 0 ? $"{c.GreatPeopleProgress}/{c.GreatPeopleThreshold}" : "—");
+        Row("Great people", c.GreatPeopleThreshold > 0 ? $"{c.GreatPeopleProgress}/{c.GreatPeopleThreshold}  ·  +{c.GreatPeopleRate}/turn" : "—");
         return grid;
     }
 

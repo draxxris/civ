@@ -138,6 +138,27 @@ public sealed class GreatPeopleRulesTests(LoadedMods mods) : IClassFixture<Loade
         Assert.True(Service<IGreatPeopleService>(sim).GoldenAgeTurnsRemaining(sim, 0) > 0);
         Assert.Equal(1, Service<IGreatPeopleService>(sim).GoldenAgeUnitsRequired(sim, 0));
     }
+    [Fact]
+    public void Team_threshold_increase_scales_with_all_team_births_including_the_creator()
+    {
+        var sim = Scenario();
+        // Player 1 joins the creator's team and has already produced ten births.
+        var original = sim.State.Players[1];
+        sim.State.Teams[1].Members.Clear();
+        sim.State.Players[1] = new Player { Id = 1, TeamId = 0, Civilization = original.Civilization };
+        sim.TeamOf(0).Members.Add(1); sim.State.RebuildIndexes();
+        sim.State.PlayerById(1).Extensions.Set(sim.Content, new GreatPeoplePlayerState { Births = 10 });
+        var gp = Service<IGreatPeopleService>(sim);
+        long teammateBefore = gp.Threshold(sim, 1);
+        var pending = new GreatPeopleCityState { Progress = gp.Threshold(sim, 0) };
+        pending.ClassPoints["gp_probe:sage"] = 1;
+        sim.State.Cities[0].Extensions.Set(sim.Content, pending);
+        sim.AdvanceTurn();
+        Assert.Single(sim.State.Units, u => u.Type == "gp_probe:sage");
+        // The team increase is 50 * (11 / 10 + 1) = 100 for each member, so the teammate's threshold doubles.
+        Assert.Equal(teammateBefore * 2, gp.Threshold(sim, 1));
+    }
+
     private sealed class Probe : IMod
     {
         public void Register(IModContext context)

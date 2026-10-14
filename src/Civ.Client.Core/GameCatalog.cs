@@ -84,7 +84,7 @@ public sealed class GameCatalog
         Pick(WorldSizes, SetupField.WorldSize), Pick(GameSpeeds, SetupField.GameSpeed), Pick(Handicaps, SetupField.Handicap), Leaders[0].Id, 3, 1);
 
     private string Pick(IReadOnlyList<SetupChoice> choices, SetupField field) =>
-        SetupPolicies.Default(Content, field) is { } id ? choices.First(c => c.Id == id).Id : choices[0].Id;
+        SetupPolicies.Default(Content, field) is { } id ? choices.FirstOrDefault(c => c.Id == id)?.Id ?? choices[0].Id : choices[0].Id;
 
     /// <summary>PNG for a content id from its owning mod's <c>art/icons</c> folder, or null when the mod ships none.</summary>
     public string? IconPath(string? id)
