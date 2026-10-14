@@ -51,12 +51,15 @@ internal sealed partial class UnitActor : Node3D
     }
 
     /// <summary>Play a clip by state name (idle, run, fortify, attack, hurt, die); false when the model has none.</summary>
-    public bool Play(string state)
+    public bool Play(string state, float duration = 0)
     {
         if (!_clips.TryGetValue(state, out var clip) && !(state == "fortify" && _clips.TryGetValue("idle", out clip))) { _state = state; return false; }
-        if (_player != null && (_state != state || !_player.IsPlaying()))
+        if (_player != null && (_state != state || !_player.IsPlaying() || state is "attack" or "hurt" or "die"))
         {
-            _player.Play(clip);
+            // Each blow restarts its one-shot clip. Fit it to the battle phase instead of cutting it off.
+            _player.Stop();
+            var length = _player.GetAnimation(clip).Length;
+            _player.Play(clip, customSpeed: duration > 0 ? (float)length / duration : 1);
         }
         _state = state;
         return true;
@@ -83,10 +86,11 @@ internal sealed partial class UnitActor : Node3D
         {
             foreach (var alias in aliases)
             {
-                var name = names.FirstOrDefault(n => string.Equals(n, alias, StringComparison.OrdinalIgnoreCase));
+                var name = names.FirstOrDefault(n => string.Equals(n.Split('/')[^1], alias, StringComparison.OrdinalIgnoreCase));
                 if (name == null) continue;
                 _clips[state] = name;
-                if (state is "idle" or "run" or "fortify" && player.GetAnimation(name) is { } animation) animation.LoopMode = Animation.LoopModeEnum.Linear;
+                if (player.GetAnimation(name) is { } animation)
+                    animation.LoopMode = state is "idle" or "run" or "fortify" ? Animation.LoopModeEnum.Linear : Animation.LoopModeEnum.None;
                 break;
             }
         }

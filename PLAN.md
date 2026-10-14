@@ -296,13 +296,10 @@ Keep this list current. It is the source of truth for where the work is.
   (`8b6bf43`).
 - [x] Corporate maintenance integration into `CityMaintenance` and Economy deficit slider adjustment (`2f2f31c`).
 - [x] P8: unit 3D art conversion (`tools/art/convert_units.py` converting 357/359 units to `.glb` with `idle`, `run`,
-  `fortify`, `attack`, `hurt`, `die` clips + `tools/art/report.md`) (`6b131c7`).
+  `fortify`, `attack`, `hurt`, `die` clips + `tools/art/report.md`) (`6b131c7`, `3e70cb3`).
 - [x] World-map 3D unit rendering and Civ 4-style combat attack/death animation playback in `Civ.Client.Core` and
-  `Civ.Godot`.
-
-### Next
-
-- [ ] End-to-end Godot 3D unit & battle animation smoke test and screenshot capture.
+  `Civ.Godot` (`aa5e82e`, `3b1b013`).
+- [x] End-to-end Godot 3D unit & battle animation verification and `docs/screenshots/*.png` regeneration.
 
 ### Working conventions
 

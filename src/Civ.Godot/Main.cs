@@ -3,7 +3,7 @@ using Godot;
 namespace Civ.Client;
 
 /// <summary>Command-line switches for automated screenshots (after <c>--</c> on the Godot command line).</summary>
-internal sealed class DebugOptions
+internal sealed record DebugOptions
 {
     public string? ScreenshotPath { get; private init; }
     public string Stage { get; private init; } = "setup";
@@ -26,6 +26,13 @@ internal sealed class DebugOptions
         }.Normalized();
     }
 
+    public DebugOptions ForScreenshot(string stage) => this with
+    {
+        ScreenshotPath = ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{stage}.png"),
+        Stage = stage, Frames = 90, Turns = stage == "city" ? 3 : 0,
+        Reveal = stage is "world" or "path", Zoom = stage == "map" ? -10 : stage == "world" ? 18 : 0,
+    };
+
     private DebugOptions Normalized() => ScreenshotPath is { Length: 0 } ? new DebugOptions
     {
         ScreenshotPath = null, Stage = Stage, Frames = Frames, Turns = Turns, World = World, Opponents = Opponents, Seed = Seed, Reveal = Reveal, Zoom = Zoom,
@@ -35,7 +42,8 @@ internal sealed class DebugOptions
 /// <summary>Godot entry point: loads the mods once, shows the setup screen, then the game. All rules live in the mods and Client.Core.</summary>
 public partial class Main : Node3D
 {
-    private readonly DebugOptions _debug = DebugOptions.Parse(OS.GetCmdlineUserArgs());
+    private DebugOptions _debug = DebugOptions.Parse(OS.GetCmdlineUserArgs());
+    private readonly Queue<string> _screenshotStages = new();
     private readonly Label _status = new() { Text = "Loading mods…" };
     private Task<GameCatalog>? _loading;
     private Task<GameSession>? _starting;
@@ -47,6 +55,12 @@ public partial class Main : Node3D
 
     public override void _Ready()
     {
+        if (OS.GetCmdlineUserArgs().Contains("--screenshots"))
+        {
+            foreach (var stage in new[] { "setup", "map", "city", "civics", "research", "path", "world" }) _screenshotStages.Enqueue(stage);
+            _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
+            GetWindow().Size = new Vector2I(1600, 900);
+        }
         var layer = new CanvasLayer();
         _status.AddThemeFontSizeOverride("font_size", 24);
         _status.Position = new Vector2(40, 40);
@@ -184,6 +198,16 @@ public partial class Main : Node3D
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
         var error = image.SavePng(path);
         GD.Print($"screenshot {path}: {error}");
+        if (error == Error.Ok && _screenshotStages.Count > 0)
+        {
+            _game?.QueueFree();
+            _setup?.QueueFree();
+            _game = null;
+            _setup = null;
+            _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
+            ShowSetup();
+            return;
+        }
         GetTree().Quit(error == Error.Ok ? 0 : 1);
     }
 }
