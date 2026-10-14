@@ -1,0 +1,41 @@
+using Civ.Content;
+using Civ.Game;
+
+namespace Civ.Mods.Ai;
+
+/// <summary>The standard computer player (<c>ai:standard</c>).
+/// Planning is sequential, so each decision sees the effect of the previous one: commands go through
+/// <see cref="Simulation.TryApply"/> (the normal validate/apply path) inside <see cref="Decide"/>, and nothing
+/// is returned for the engine to apply again. The AI keeps no state of its own; every turn is a pure function of
+/// the simulation state and <c>sim.Rng</c>, so lockstep peers and save/load stay in sync.</summary>
+public sealed class StandardAi : IPlayerAI
+{
+    public string Id => "ai:standard";
+
+    public IEnumerable<GameCommand> Decide(Simulation sim, int playerId)
+    {
+        var ctx = new AiContext(sim, playerId);
+        if (ctx.Cities.Count == 0 && ctx.Units.Count == 0) return [];
+        Run(ctx);
+        return [];
+    }
+
+    private static void Run(AiContext ctx)
+    {
+        var sites = new SitePlanner(ctx);
+        var army = new ArmyPlan(ctx);
+        new ResearchPlanner(ctx).Plan();
+        new WarPlanner(ctx, army).Plan();
+        new CivicPlanner(ctx).Plan();
+        new SettlerPlanner(ctx, sites, army).Plan();
+        ctx.Refresh();
+        new CitizenPlanner(ctx, army).Plan();
+        var cities = new CityPlanner(ctx, sites, army);
+        cities.Plan();
+        new WorkerPlanner(ctx).Plan();
+        var orders = new UnitOrders(ctx);
+        new MilitaryPlanner(ctx, army, cities, new AttackPlanner(ctx, orders)).Plan();
+        new EconomyPlanner(ctx).Plan();
+        new HurryPlanner(ctx, cities).Plan();
+    }
+}

@@ -16,6 +16,25 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     public string Id => "world:workers";
     public int Order => TurnPhase.Units;
     public string? Validate(Simulation sim, int player, int unit, string build) => _eligibility.Validate(sim, player, unit, build);
+    public WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build)
+    {
+        var error = _eligibility.ValidateAt(sim, player, unit, tile, build);
+        if (error is not null) return new(error, default, 0);
+        var proposed = BuildResult(sim.State.Plots[tile.Value], sim.Content.Get<S.BuildDef>(build));
+        var yields = new PlotYieldService(water).CalculatePlot(sim, player, tile, proposed).Yields;
+        return new(null, yields, RequiredWork(sim, tile, build));
+    }
+    private static Plot BuildResult(Plot plot, S.BuildDef build)
+    {
+        bool remove = plot.Feature is { } feature && build.FeatureEffects.GetValueOrDefault(feature)?.Remove == true;
+        return new Plot
+        {
+            Terrain = build.TerrainChange ?? plot.Terrain, Kind = plot.Kind, IsLake = plot.IsLake,
+            RiverEdges = plot.RiverEdges, Bonus = plot.Bonus, Owner = plot.Owner, AreaId = plot.AreaId,
+            Improvement = build.ImprovementType ?? plot.Improvement, Route = build.RouteType ?? plot.Route,
+            Feature = build.FeatureChange ?? (remove ? null : plot.Feature),
+        };
+    }
     public void Start(Simulation sim, int player, int unitId, string buildId)
     {
         var unit = sim.State.UnitById(unitId);

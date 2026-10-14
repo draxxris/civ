@@ -1,6 +1,6 @@
 # Mechanics status
 
-Status describes executable rules, not imported data. All eight mods load their definition sidecars.
+Status describes executable rules, not imported data. Nine content mods load definition sidecars. A tenth mod supplies computer players.
 
 ## Foundation
 
@@ -54,7 +54,7 @@ Status describes executable rules, not imported data. All eight mods load their 
 - **Implemented:** `TechDiscovered`, first-discovery free-tech credits and unit grants, and current-era updates through the Cities event handler.
   Other mods use the discovery event for obsolescence. Starting technologies remain setup grants.
 - **Partial:** queues belong to teams, not individual players. Overflow carries to the next contribution instead of completing multiple technologies immediately.
-  Era order uses `EraDef.StartPercent`. Flexible difficulty, timeline scaling, diffusion welfare, traded-tech permissions, and religion rewards remain absent.
+  Era order uses `EraDef.StartPercent`. Flexible difficulty, timeline scaling, diffusion welfare, and traded-tech permissions remain absent. Religion supplies founding rewards through discovery events.
 
 ## Economy
 
@@ -85,11 +85,11 @@ Status describes executable rules, not imported data. All eight mods load their 
 - **Implemented:** food consumption, health penalties, fixed-point food waste, sequential growth thresholds, retained food history, starvation, and avoid-growth.
   Growth occurs once per turn, before culture and production. Third-ring access applies the imported growth surcharge.
 - **Partial:** happiness and health ledgers cover population, handicap, city count, buildings, connected bonuses, specialists, terrain, and features.
-  War weariness is an external modifier hook. Military presence, distance anger, occupation, religion, taxation, and temporary anger remain absent.
+  War weariness is an external modifier hook. Military presence, distance anger, occupation, taxation, and temporary anger remain absent. Religion supplies religious happiness and health.
 - **Implemented:** set/append/remove production commands, paused item progress, item modifiers, normalized capped overflow, feature grants, buildings, and Core unit creation.
   Completion rechecks world/team/player class limits in city-id order. Unit creation supplies experience and a domain event.
 - **Partial:** eligibility covers requirements, civilization replacements, class limits, culture wonder capacity, obsolescence, latitude, population, coast, and river.
-  Religion and power predicates fail closed. Economy supplies process eligibility and hurry commands.
+  Religion supplies its predicates. Power predicates fail closed. Economy supplies process eligibility and hurry commands.
   Automatic buildings, active-civic disabling, decay, draft, and projects remain absent.
   One queue item completes per city per turn. Excess above the overflow cap does not convert to gold yet.
 - **Partial:** city culture keeps hundredths. Plot culture uses hex distance and the source level/rate equation.
@@ -139,7 +139,7 @@ Status describes executable rules, not imported data. All eight mods load their 
   production modifiers (military, building class, unit combat), worker speed, improvement upgrade rate, general rates,
   free experience, military food production. Cities, World and Military consume these keys.
 - **Partial:** `RequiresActiveCivics` buildings deactivate when the civic requirement fails. Max sliders, hurry, unit support and upkeep use
-  civic definitions in Economy. Not consumed yet: state religion effects (stub keys `religion:*`), corporation maintenance, draft,
+  civic definitions in Economy. Religion consumes state religion effects. Not consumed yet: corporation maintenance, draft,
   trade routes, connectedness, diplomacy attitudes, revolution-index fields, city limit, can't-build specials.
 
 ## Peoples
@@ -149,10 +149,41 @@ Status describes executable rules, not imported data. All eight mods load their 
   great people, wonder production percents, building/unit trait production modifiers, improvement trait yields, extra-yield thresholds,
   upkeep, general rates, anarchy cap, level experience, free promotions by combat type.
 - **Implemented:** starting civilizations, technologies, free units, civics, civilization unit/building replacements in Cities.
-- **Not consumed yet:** extra culture level, non-state-religion commerce, upgrade anywhere, assimilation.
+- **Not consumed yet:** extra culture level, upgrade anywhere, assimilation. Religion consumes non-state-religion commerce.
+
+## Religion
+
+- **Implemented:** 13 imported religions replace deferred identities. Definitions retain founding technologies, missionaries, commerce, text, icons, and related buildings.
+- **Implemented:** first-discovery founding, source holy-city scoring, free missionaries, and saved reservations when the discovering team has no city.
+- **Implemented:** deterministic natural spread through same-team physical trade connections, with influence, distance, civic, speed, and age factors.
+  Religion age uses elapsed turns instead of the source's reversed subtraction. Natural spread stops after the first religion.
+- **Implemented:** missionary commands, foreign civic restrictions, source success chances, and unit consumption on success or failure.
+  Prophets construct shrines through `religion:build_shrine`, subject to holy-city requirements and class limits.
+- **Implemented:** state religion commands, civic permission, conversion cooldown, scaled anarchy, and saved last choice under secular civics.
+- **Implemented:** religious happiness and health, state-building happiness and commerce, holy-city commerce, worldwide shrine commerce, and trait commerce policy.
+  State religion civics also affect production, great-person rates, and unit training experience.
+- **Implemented:** presence, state religion, and holy-city requirements. `IReligionService` supplies Core-only AI and client queries.
+- **Deferred:** foreign trade connections, religion decay, optional multiple natural spread, inquisitions, religion-picking settings, diplomacy, and religious votes.
+  Vote-source religion yields and commerce remain unsupported. The client has query data but no religion screen.
+- **Save compatibility:** the religion id change alters the content hash. Older saves need a migration; forced loading does not rewrite old ids.
+
+## Computer players
+
+- **Implemented:** `ai:standard` selects research, civics, commerce rates, production, citizen assignments and gold hurry purchases.
+  Scores use integer AI weights, content flavors, unit AI types and leader personality from `IPeoplesService`.
+  Civic changes account for anarchy and the revolution cooldown. Research includes free-tech selections.
+- **Implemented:** settlers score revealed radius-two/three sites, use escorts under nearby threat, and found cities through normal commands.
+  Cities retain garrisons. Spare soldiers explore, collect goody huts, fight nearby enemies, heal, promote and upgrade.
+  Strong armies can declare war and move siege-first stacks toward weak cities. Combat previews supply the attack thresholds.
+- **Implemented:** workers use read-only World build previews to compare legal yield gains and resource connections.
+  Workers finish active tasks before new tasks and construct road corridors between cities and resources.
+- **Implemented:** all mutations use validated commands. Personality war checks use the simulation RNG; ties use ordinal ids or entity ids.
+  The AI keeps no hidden per-game memory. War-start turns use a saved team component.
+- **Partial:** war and peace commands change symmetric Core team relations. Peace is unilateral; agreements and diplomatic attitudes remain absent.
+  Road corridors do not plan detours around terrain barriers. Naval expansion, transport operations and great-person missions remain absent.
+  Dense barbarian pressure and the imported one-production settler cost still require balance work.
 
 ## Validation
-
 Generated games, active worker orders, exploration and RNG state survive save/load with identical hashes.
 Tests cover deterministic maps, physical placement, ledgers, network gates, worker commands, upgrades, setup and phase order.
 The Godot client remains on the legacy ruleset. Its feature-ruleset setup screen and rendering remain separate work.

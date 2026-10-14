@@ -8,17 +8,17 @@ namespace Civ.Mods.World;
 /// Nature clamps before improvement changes; final yields clamp after modifier percentages.</summary>
 internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
 {
-    public PlotYieldResult Calculate(Simulation sim, int player, TileId tile)
+    public PlotYieldResult Calculate(Simulation sim, int player, TileId tile) => CalculatePlot(sim, player, tile, sim.State.Plots[tile.Value]);
+    internal PlotYieldResult CalculatePlot(Simulation sim, int player, TileId tile, Plot plot)
     {
-        var plot = sim.State.Plots[tile.Value];
         var sink = new ModifierSink();
         if (Unworkable(sim, player, plot)) return new(default, sink.Ledger);
         AddNature(sim, player, plot, sink);
         var nature = Clamp(sink.FlatYield);
         sink.AddYield("world:nature_clamp", Difference(nature, sink.FlatYield));
-        if (plot.Improvement is { } id) AddImprovement(sim, player, tile, sim.Content.Get<S.ImprovementDef>(id), sink);
+        if (plot.Improvement is { } id) AddImprovement(sim, player, tile, plot, sim.Content.Get<S.ImprovementDef>(id), sink);
         if (plot.Route is { } route) sink.AddYield(route, sim.Content.Get<S.RouteDef>(route).Yields);
-        foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(new(sim, ModifierScope.Plot, player, Plot: tile), sink);
+        foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(new(sim, ModifierScope.Plot, player, Plot: tile, ProposedPlot: plot), sink);
         AddThresholds(sim, sink);
         var total = Clamp(sink.FlatYield.WithPercent(sink.PercentYield));
         sink.Add("world:total", "world:food", total.Food);
@@ -80,9 +80,8 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         }
         return new(Change("foundation:yield_food"), Change("foundation:yield_production"), Change("foundation:yield_commerce"));
     }
-    private void AddImprovement(Simulation sim, int player, TileId tile, S.ImprovementDef improvement, ModifierSink sink)
+private void AddImprovement(Simulation sim, int player, TileId tile, Plot plot, S.ImprovementDef improvement, ModifierSink sink)
     {
-        var plot = sim.State.Plots[tile.Value];
         sink.AddYield(improvement.Id, improvement.YieldChanges);
         if (plot.RiverEdges != 0) sink.AddYield(improvement.Id + ":river", improvement.RiverSideYieldChange);
         if (water.IsIrrigated(sim, player, tile)) sink.AddYield(improvement.Id + ":irrigation", improvement.IrrigatedYieldChange);

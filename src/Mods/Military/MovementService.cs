@@ -5,21 +5,22 @@ namespace Civ.Mods.Military;
 
 internal sealed class MovementService : IMovementService
 {
-    public string? CanEnter(Simulation sim, int unitId, TileId from, TileId to, bool attack = false)
+    public string? CanEnter(Simulation sim, int unitId, TileId from, TileId to, bool attack = false) => Query(sim, unitId).CanEnter(from, to, attack);
+    internal MovementQuery Query(Simulation sim, int unit) => new(this, sim, sim.State.UnitById(unit));
+
+    private string? CanEnter(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects,
+        TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
     {
         if (!ValidTile(sim, from) || !ValidTile(sim, to)) return "Off map";
         if (!sim.State.Grid.Neighbors(from).Contains(to)) return "Not adjacent";
-        var unit = sim.State.UnitById(unitId);
-        var def = MilitaryData.Definition(sim, unit);
         var plot = sim.State.Plots[to.Value];
-        var effects = MilitaryData.Effects(sim, unit);
         var error = TerrainEntry(sim, unit, def, plot, effects);
         if (error is not null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
         var target = sim.State.Grid.HexOf(to);
         var targetError = TargetEntry(sim, unit, def, effects, target, attack);
         if (targetError is not null) return targetError;
-        return ControlledTransition(sim, unit, from, to, attack) ? "Enemy zone of control" : null;
+        return ControlledTransition(sim, unit, from, to, attack, hasControl) ? "Enemy zone of control" : null;
     }
     private static string? TargetEntry(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, Hex target, bool attack)
     {
@@ -77,26 +78,24 @@ internal sealed class MovementService : IMovementService
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
     private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects) =>
         def.Strength > 0 && !def.OnlyDefensive && (!MilitaryData.Read(sim, unit).Attacked || MilitaryData.Effect(effects, "blitz") > 0);
-    private static bool ControlledTransition(Simulation sim, Unit unit, TileId from, TileId to, bool attack)
+    private static bool ControlledTransition(Simulation sim, Unit unit, TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
     {
         var def = MilitaryData.Definition(sim, unit);
         if (def.HiddenNationality || def.AlwaysHostile) return false;
         var city = sim.State.CityAt(sim.State.Grid.HexOf(to));
         if (city is not null && MilitaryData.Friendly(sim, unit.Owner, city.Owner)) return false;
-        if (attack && sim.State.UnitsAt(sim.State.Grid.HexOf(to)).Any(u => HasControl(sim, unit, u))) return false;
-        return InControl(sim, unit, from) && InControl(sim, unit, to);
+        if (attack && sim.State.UnitsAt(sim.State.Grid.HexOf(to)).Any(hasControl)) return false;
+        return InControl(sim, from, hasControl) && InControl(sim, to, hasControl);
     }
-    private static bool InControl(Simulation sim, Unit unit, TileId tile) => sim.State.Grid.Neighbors(tile)
-        .SelectMany(n => sim.State.UnitsAt(sim.State.Grid.HexOf(n))).Any(u => HasControl(sim, unit, u));
+    private static bool InControl(Simulation sim, TileId tile, Func<Unit, bool> hasControl) => sim.State.Grid.Neighbors(tile)
+        .SelectMany(n => sim.State.UnitsAt(sim.State.Grid.HexOf(n))).Any(hasControl);
     private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.Enemy(sim, unit.Owner, other.Owner)
         && MilitaryData.Effect(MilitaryData.Effects(sim, other), "zone_control") > 0;
-    public int StepCost(Simulation sim, int unitId, TileId from, TileId to)
+    public int StepCost(Simulation sim, int unitId, TileId from, TileId to) => Query(sim, unitId).StepCost(from, to);
+    private int StepCost(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, TileId from, TileId to)
     {
-        var unit = sim.State.UnitById(unitId);
-        var def = MilitaryData.Definition(sim, unit);
         int denominator = MilitaryData.Constants(sim).MoveDenominator;
         if (def.FlatMovementCost || def.Domain == "military:domain_air") return denominator;
-        var effects = MilitaryData.Effects(sim, unit);
         int regular = RegularCost(sim, unit, def, sim.State.Plots[to.Value], effects);
         return Math.Max(1, Math.Min(regular, RouteCost(sim, unit, def, from, to, effects)));
     }
@@ -179,6 +178,30 @@ internal sealed class MovementService : IMovementService
         MilitaryData.Sight(sim);
         return hostile;
     }
+    /// <summary>Read-only context scoped to one path query. Modifier ledgers and control checks are reused across edges,
+    /// never cached across commands or games.</summary>
+    internal sealed class MovementQuery
+    {
+        private readonly MovementService movement;
+        private readonly Simulation sim;
+        private readonly Unit unit;
+        private readonly S.UnitDef def;
+        private readonly Civ.Content.ModifierSink effects;
+        private readonly Dictionary<int, bool> control = new();
+        internal MovementQuery(MovementService movement, Simulation sim, Unit unit)
+        {
+            this.movement = movement; this.sim = sim; this.unit = unit;
+            def = MilitaryData.Definition(sim, unit); effects = MilitaryData.Effects(sim, unit);
+        }
+        internal string? CanEnter(TileId from, TileId to, bool attack) => movement.CanEnter(sim, unit, def, effects, from, to, attack, Controls);
+        internal int StepCost(TileId from, TileId to) => movement.StepCost(sim, unit, def, effects, from, to);
+        private bool Controls(Unit other)
+        {
+            if (!control.TryGetValue(other.Id, out var value)) control[other.Id] = value = HasControl(sim, unit, other);
+            return value;
+        }
+    }
+
     private static bool HostileDefenders(Simulation sim, Unit unit, Hex target) => sim.State.UnitsAt(target)
         .Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner) && MilitaryData.Definition(sim, u).Strength > 0);
     private static void CaptureCivilians(Simulation sim, Unit unit, Hex target)

@@ -5,6 +5,7 @@
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <ProjectReference Include="../../src/Civ.Core/Civ.Core.csproj" />
+    <ProjectReference Include="../../src/Civ.Client.Core/Civ.Client.Core.csproj" />
     <ProjectReference Include="../../src/Mods/Foundation/Civ.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/World/Civ.Mods.World.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Research/Civ.Mods.Research.csproj" ReferenceOutputAssembly="false" />
@@ -14,6 +15,7 @@
     <ProjectReference Include="../../src/Mods/Government/Civ.Mods.Government.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Peoples/Civ.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Religion/Civ.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Ai/Civ.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyModPayloads" AfterTargets="Build">
@@ -33,6 +35,8 @@
     <Copy SourceFiles="@(GovernmentPayload)" DestinationFiles="@(GovernmentPayload -> '$(OutDir)mods/Government/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <ItemGroup><PeoplesPayload Include="../../src/Mods/Peoples/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
     <Copy SourceFiles="@(PeoplesPayload)" DestinationFiles="@(PeoplesPayload -> '$(OutDir)mods/Peoples/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><AiPayload Include="../../src/Mods/Ai/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(AiPayload)" DestinationFiles="@(AiPayload -> '$(OutDir)mods/Ai/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <ItemGroup><ReligionPayload Include="../../src/Mods/Religion/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
     <Copy SourceFiles="@(ReligionPayload)" DestinationFiles="@(ReligionPayload -> '$(OutDir)mods/Religion/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
