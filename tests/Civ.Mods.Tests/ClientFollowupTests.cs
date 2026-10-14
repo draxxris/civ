@@ -334,6 +334,60 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void Multi_step_attack_records_the_hex_it_attacked_from_not_where_the_walk_started()
+    {
+        var s = Scenario();
+        var grid = s.Sim.State.Grid;
+        var target = grid.HexOf(new TileId(40));
+        var start = grid.Ring(target, 2).First(h => grid.Neighbors(h).Any(n => grid.Distance(n, target) == 1));
+        var attacker = AddFighter(s.Sim, 0, grid.TileAt(start).Value, "military:horseman"); // Two moves: one step, then the attack.
+        var defender = AddFighter(s.Sim, 1, grid.TileAt(target).Value, "military:archer");
+        s.Sim.State.SetWar(0, 1, true);
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = attacker.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the walk.
+        s.SelectUnit(attacker.Id);
+        var path = s.PreviewAt(target)!.Path;
+        Assert.Equal(2, path.Count);
+        s.RightClick(target);
+        var battle = Assert.Single(s.PendingBattles);
+        Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
+        Assert.Equal(path[0], battle.AttackerHex);
+        Assert.NotEqual(start, battle.AttackerHex);
+        Assert.Equal(target, battle.DefenderHex);
+        Assert.NotEmpty(battle.Rounds);
+    }
+
+    [Fact]
+    public void End_of_turn_enemy_attack_keeps_its_rounds_and_loser_after_the_turn_rolls_over()
+    {
+        var strike = new TurnEndStrike();
+        var probe = new ModSource
+        {
+            Manifest = new() { Id = "turn_end_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] },
+            Root = mods.Root,
+            Instance = strike,
+        };
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(probe)));
+        GameFactory.NeutralPolitics(sim);
+        var s = new GameSession(sim);
+        var defender = AddFighter(sim, 0, 40, "military:archer");
+        var attacker = AddFighter(sim, 1, 39, "military:warrior");
+        sim.State.SetWar(0, 1, true);
+        defender.Health = 1;
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = defender.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the turn ends.
+        strike.Pending = (attacker.Id, defender.Id);
+        int turn = sim.State.Turn;
+        s.EndTurn();
+        Assert.Equal(turn + 1, sim.State.Turn);
+        var battle = Assert.Single(s.PendingBattles);
+        Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
+        Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
+        Assert.True(battle.LoserDied);
+        Assert.Null(sim.State.FindUnit(defender.Id));
+        Assert.NotEmpty(battle.Rounds);
+        Assert.Contains(s.RecentNotifications(), n => n.Turn == turn && n.Kind == "combat" && n.Text == "Your unit was lost in battle");
+    }
+
+    [Fact]
     public void Setup_default_that_names_unregistered_content_falls_back_to_the_first_choice()
     {
         var catalog = new GameCatalog([new ModSource
@@ -344,6 +398,21 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal("setup_probe:small", options.WorldSize);
         Assert.Equal("setup_probe:quick", options.GameSpeed);
         Assert.Equal("setup_probe:easy", options.Handicap);
+    }
+
+    /// <summary>Test-only turn system that lands one enemy attack in the end-of-turn phase, before TurnEnded and TurnStarted.</summary>
+    private sealed class TurnEndStrike : IMod, ITurnSystem
+    {
+        public (int Attacker, int Defender)? Pending { get; set; }
+        public string Id => "turn_end_probe:strike";
+        public int Order => TurnPhase.Map;
+        public void Register(IModContext context) => context.TurnSystems.Register(this);
+        public void Run(Simulation sim)
+        {
+            if (Pending is not { } pair) return;
+            Pending = null;
+            sim.Content.Services.Get<ICombatService>().Single().Resolve(sim, pair.Attacker, pair.Defender);
+        }
     }
 
     private sealed class SetupProbe : IMod

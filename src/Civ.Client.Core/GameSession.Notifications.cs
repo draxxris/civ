@@ -125,8 +125,9 @@ public sealed partial class GameSession
     private TurnNotification? Combat(CombatResolved c, int turn)
     {
         int loser = c.Winner == c.Attacker ? c.Defender : c.Attacker;
-        if (_myUnits.Contains(c.Winner)) return Note(turn, "combat", "Your unit won a battle", null, Sim.State.FindUnit(c.Winner)?.Position);
-        return _myUnits.Contains(loser) ? Note(turn, "combat", "Your unit was lost in battle", null, Sim.State.FindUnit(c.Winner)?.Position) : null;
+        Hex? at = c.Report?.DefenderHex ?? Sim.State.FindUnit(c.Winner)?.Position; // The fight happened on the defender's hex, even if the winner has moved since.
+        if (_myUnits.Contains(c.Winner)) return Note(turn, "combat", "Your unit won a battle", null, at);
+        return _myUnits.Contains(loser) ? Note(turn, "combat", "Your unit was lost in battle", null, at) : null;
     }
 
     private string PlayerName(int player) => player == Human ? "You" : Sim.State.Players.FirstOrDefault(p => p.Id == player)?.Name ?? $"Player {player}";

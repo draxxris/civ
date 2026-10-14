@@ -32,13 +32,26 @@ public sealed partial class GameSession
 
     private void RecordBattle(CombatResolved c)
     {
-        if (Placement(c.Attacker) is not { } a || Placement(c.Defender) is not { } d) return;
-        var report = OptionalService<ICombatService>()?.History(Sim)
-            .LastOrDefault(r => r.Attacker == c.Attacker && r.Defender == c.Defender);
-        int loser = c.Winner == c.Attacker ? c.Defender : c.Attacker;
-        var outcome = report?.Outcome ?? (c.Winner == c.Attacker ? CombatOutcome.AttackerWon : CombatOutcome.DefenderWon);
-        _battles.Enqueue(new BattlePlayback(c.Attacker, a.Type, a.Owner, a.Hex, c.Defender, d.Type, d.Owner, d.Hex,
-            outcome, c.Winner, loser, Sim.State.FindUnit(loser) == null, report?.Rounds ?? []));
+        var battle = c.Report is { } report ? FromReport(c, report) : FromPlacement(c);
+        if (battle is null) return;
+        _battles.Enqueue(battle);
         while (_battles.Count > MaxBattles) _battles.Dequeue();
     }
+
+    /// <summary>The report was captured as the fight resolved, so it stays exact after turn rollover, unit removal and later moves.</summary>
+    private static BattlePlayback FromReport(CombatResolved c, CombatReport r) =>
+        new(c.Attacker, r.AttackerType, r.AttackerOwner, r.AttackerHex, c.Defender, r.DefenderType, r.DefenderOwner, r.DefenderHex,
+            r.Outcome, c.Winner, Loser(c), r.LoserDied, r.Rounds);
+
+    /// <summary>Fallback for events published without a report: places the units from the last snapshot and infers the outcome.</summary>
+    private BattlePlayback? FromPlacement(CombatResolved c)
+    {
+        if (Placement(c.Attacker) is not { } a || Placement(c.Defender) is not { } d) return null;
+        int loser = Loser(c);
+        return new BattlePlayback(c.Attacker, a.Type, a.Owner, a.Hex, c.Defender, d.Type, d.Owner, d.Hex,
+            c.Winner == c.Attacker ? CombatOutcome.AttackerWon : CombatOutcome.DefenderWon, c.Winner, loser,
+            Sim.State.FindUnit(loser) == null, []);
+    }
+
+    private static int Loser(CombatResolved c) => c.Winner == c.Attacker ? c.Defender : c.Attacker;
 }
