@@ -32,7 +32,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     public void All_mod_outputs_load_with_reported_registry_counts_and_reference_closure()
     {
         using var report = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "emitted-counts.json")));
-        Assert.Equal(10, mods.Sources.Length);
+        Assert.Equal(12, mods.Sources.Length);
         int total = 0;
         foreach (var row in report.RootElement.GetProperty("classes").EnumerateArray())
         {

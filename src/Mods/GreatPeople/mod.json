@@ -1,0 +1,8 @@
+{
+  "id": "great_people",
+  "name": "Great People",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.GreatPeople.dll",
+  "dependencies": [],
+  "references": ["cities", "foundation", "government", "military", "peoples", "religion", "research", "world"]
+}

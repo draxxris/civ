@@ -3,7 +3,7 @@ using Civ.Game;
 
 namespace Civ.Mods.Cities;
 
-internal sealed class CityCulture(ICityYieldService yields, ICityWorkService work)
+internal sealed class CityCulture(ICityYieldService yields, ICityWorkService work) : ICityCultureService
 {
     internal void Accumulate(Simulation sim, City city)
     {
@@ -14,6 +14,25 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         city.Culture += total / 100;
         state.CultureRemainder = total % 100;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
+    }
+    public void AddCulture(Simulation sim, int cityId, long culture, int spreadTurns)
+    {
+        var city = sim.State.CityById(cityId);
+        var state = CityData.Edit(sim, city);
+        long savedRate = state.LastCultureRateHundredths;
+        int turns = Math.Max(1, spreadTurns);
+        long total = Math.Max(0, culture) * 100;
+        for (int i = 0; i < turns; i++)
+        {
+            long amount = total / turns + (i == turns - 1 ? total % turns : 0);
+            long stored = state.CultureRemainder + amount;
+            city.Culture += stored / 100;
+            state.CultureRemainder = stored % 100;
+            state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
+            state.LastCultureRateHundredths = amount;
+            Spread(sim, city);
+        }
+        state.LastCultureRateHundredths = savedRate;
     }
     private long Rate(Simulation sim, City city)
     {

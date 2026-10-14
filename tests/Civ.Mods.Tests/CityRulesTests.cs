@@ -189,13 +189,13 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var service = Service<ICityGreatPeopleService>(sim);
         Assert.Equal(320, service.Calculate(sim, 1).Threshold);
         sim.AdvanceTurn();
-        Assert.Equal(160, city.Extensions.Get<CityRuleState>(sim.Content)!.GreatPeopleProgress);
+        Assert.Equal(160, city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.Progress);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         Assert.Contains(sim.State.Units, u => u.Type == "military:scientist");
-        Assert.Equal(480, service.Calculate(sim, 1).Threshold);
-        Assert.Empty(city.Extensions.Get<CityRuleState>(sim.Content)!.GreatPeopleWeights);
+        Assert.Equal(640, service.Calculate(sim, 1).Threshold);
+        Assert.Empty(city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.ClassPoints);
     }
     [Fact]
     public void Fifty_city_turn_stays_within_interactive_budget()

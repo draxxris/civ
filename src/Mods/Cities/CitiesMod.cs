@@ -26,7 +26,7 @@ public sealed class CitiesMod : IMod
         var growth = new CityGrowth(yields, wellbeing, work);
         var culture = new CityCulture(yields, work);
         var production = new CityProduction(yields, growth);
-        var greatPeople = new CityGreatPeople();
+        context.RegisterService<ICityCultureService>("culture_grants", culture);
         context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production));
         context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production));
         context.RegisterService<ILedgerSourceLabel>("plot_labels", new PlotSourceLabel());
@@ -36,7 +36,7 @@ public sealed class CitiesMod : IMod
         context.RegisterService<ICityGrowthService>("growth", growth);
         context.RegisterService<ICityProductionService>("production", production);
         context.RegisterService<ICityMaintenanceService>("maintenance", new CityMaintenance());
-        context.RegisterService<ICityGreatPeopleService>("great_people", greatPeople);
+
         context.RegisterService<ICityRequirementService>("requirements", new CityRequirements(work));
         context.RegisterService<ICityCommandService>("commands", new CityCommands(production, work));
         context.RegisterCommand<FoundCityWithSettlerCommand>("found_city");
@@ -48,7 +48,7 @@ public sealed class CitiesMod : IMod
         context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread));
         context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
         context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
-        context.TurnSystems.Register(new CityPhase("great_people", TurnPhase.CityPostProduction, greatPeople.Run));
+
         context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
         context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
         {

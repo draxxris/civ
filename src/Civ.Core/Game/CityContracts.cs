@@ -25,6 +25,11 @@ public interface ICityCultureSource
 {
     long CultureHundredths(Simulation sim, int city);
 }
+/// <summary>Immediate culture grants use the same border and historical-culture rules as city turns.</summary>
+public interface ICityCultureService
+{
+    void AddCulture(Simulation sim, int city, long culture, int spreadTurns);
+}
 public interface ICityWorkService
 {
     string DefaultSpecialist(Simulation sim);
