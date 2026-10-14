@@ -21,6 +21,8 @@ internal sealed partial class UnitActor : Node3D
 
     /// <summary>Where the unit stands before any wrap-around shift.</summary>
     public Vector3 Anchor { get; set; }
+    /// <summary>Visible surface height, used to keep procedural lunges and shakes above slopes.</summary>
+    public Func<float, float, float>? Ground { get; init; }
     /// <summary>Procedural pose: metres toward the facing, sideways shake, and 0..1 fall.</summary>
     public float Lunge { get; set; }
     public float Shake { get; set; }
@@ -67,7 +69,10 @@ internal sealed partial class UnitActor : Node3D
 
     public override void _Process(double delta)
     {
-        _pivot.Position = new Vector3(Shake, -Fall * 0.2f, Lunge);
+        var motion = new Vector3(Shake, 0, Lunge);
+        var worldMotion = Basis * motion;
+        float rise = Ground == null ? 0 : Ground(Anchor.X + worldMotion.X, Anchor.Z + worldMotion.Z) - Ground(Anchor.X, Anchor.Z);
+        _pivot.Position = motion + new Vector3(0, rise - Fall * 0.2f, 0);
         _pivot.Rotation = new Vector3(0, 0, HasClip("die") ? 0 : Fall * Mathf.Pi / 2);
     }
 

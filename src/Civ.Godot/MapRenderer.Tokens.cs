@@ -9,8 +9,8 @@ internal sealed partial class MapRenderer
 
     private void BuildTokens()
     {
-        var shapes = new MeshBuilder();
-        var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv };
+        var shapes = new MeshBuilder { Ground = GroundAt };
+        var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv, Ground = GroundAt };
         foreach (var city in _session.KnownCities()) DrawCity(shapes, city);
         _standing.Clear();
         foreach (var group in _session.VisibleUnits().Where(u => !_battleIds.Contains(u.Id)).GroupBy(u => u.Position))
@@ -23,14 +23,14 @@ internal sealed partial class MapRenderer
     private void DrawCity(MeshBuilder b, City city)
     {
         var owner = Ui.ToColor(MapStyle.PlayerColor(city.Owner));
-        var at = WorldOf(city.Position, YTokens);
+        var at = PositionOf(city.Position, YTokens);
         b.Disc(at, 0.62f, Ink, 16);
         b.Disc(at, 0.55f, owner, 16);
         b.Quad(at + new Vector3(-0.3f, 0.002f, -0.02f), at + new Vector3(0.3f, 0.002f, -0.02f), at + new Vector3(0.3f, 0.002f, 0.3f), at + new Vector3(-0.3f, 0.002f, 0.3f), new Color(0.93f, 0.9f, 0.82f));
         b.Tri(at + new Vector3(-0.36f, 0.003f, -0.02f), at + new Vector3(0.36f, 0.003f, -0.02f), at + new Vector3(0, 0.003f, -0.4f), owner.Darkened(0.45f));
         b.Quad(at + new Vector3(-0.07f, 0.004f, 0.14f), at + new Vector3(0.07f, 0.004f, 0.14f), at + new Vector3(0.07f, 0.004f, 0.3f), at + new Vector3(-0.07f, 0.004f, 0.3f), Ink);
         if (_session.City?.Id == city.Id) b.Ring(at, 0.8f, 0.07f, new Color(1f, 0.85f, 0.25f), 24);
-        AddLabel($"{city.Name}  {city.Population}", at + new Vector3(0, 0.25f, 0.9f), 24, Colors.White);
+        AddLabel($"{city.Name}  {city.Population}", WorldOf(city.Position, YTokens) + new Vector3(0, 0.25f, 0.9f), 24, Colors.White);
     }
 
     private void DrawUnitStack(MeshBuilder shapes, MeshBuilder icons, List<Unit> stack)
@@ -38,14 +38,16 @@ internal sealed partial class MapRenderer
         var selected = stack.FirstOrDefault(u => u.Id == _session.SelectedUnitId);
         var top = selected ?? stack.OrderByDescending(u => _session.DefOf(u).Strength).First();
         bool inCity = _session.Sim.State.CityAt(top.Position) != null;
-        var at = WorldOf(top.Position, YTokens + 0.01f) + (inCity ? new Vector3(0.42f, 0, 0.36f) : Vector3.Zero);
+        var at = PositionOf(top.Position, YTokens + 0.01f) + (inCity ? new Vector3(0.42f, 0, 0.36f) : Vector3.Zero);
         float radius = inCity ? 0.3f : 0.4f;
         var owner = Ui.ToColor(MapStyle.PlayerColor(top.Owner));
         float shade = top.Owner == GameSession.Human && top.MovesLeft <= 0 ? 0.62f : 1f;
         if (_models.Has(top.Type))
         {
             // The 3D model stands on its own team coloured base; the flat layer only adds selection, health and the stack count.
-            _standing.Add((top, at));
+            var anchor = at;
+            anchor.Y = GroundAt(anchor.X, anchor.Z) + 0.015f;
+            _standing.Add((top, anchor));
             shapes.Ring(at, 0.47f, 0.05f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 20);
             radius = 0.4f;
         }
@@ -56,7 +58,7 @@ internal sealed partial class MapRenderer
             if (_atlas.UvOf(top.Type) is Rect2 uv) icons.Icon(at + Up(0.03f), radius * 1.6f, uv, new Color(shade, shade, shade));
         }
         DrawHealth(shapes, top, at + new Vector3(0, 0.004f, radius + 0.16f));
-        if (stack.Count > 1) AddLabel($"×{stack.Count}", at + new Vector3(radius, 0.2f, -radius), 22, Colors.White);
+        if (stack.Count > 1) AddLabel($"×{stack.Count}", at + Up(GroundAt(at.X, at.Z)) + new Vector3(radius, 0.2f, -radius), 22, Colors.White);
     }
 
     private static void DrawHealth(MeshBuilder b, Unit unit, Vector3 at)
@@ -70,25 +72,27 @@ internal sealed partial class MapRenderer
 
     // --- city screen overlay --------------------------------------------------------------------
 
+    /// <summary>Work-tile tints go to the terrain shader (<c>tileB.G</c>); the yield labels stay as text.</summary>
     private void BuildOverlay()
     {
-        var b = new MeshBuilder();
-        foreach (var (hex, mark) in _session.TileMarks()) DrawWorkTile(b, hex, mark);
-        _overlay.Mesh = b.Build(_overlayMaterial);
+        var marks = new List<(Hex, byte)>();
+        foreach (var (hex, mark) in _session.TileMarks())
+        {
+            if (mark is TileMark.None or TileMark.Selected || _session.SightOf(hex) == Sight.Hidden) continue;
+            marks.Add((hex, mark switch
+            {
+                TileMark.Worked => TileDataTexture.MarkWorked,
+                TileMark.Workable => TileDataTexture.MarkWorkable,
+                _ => TileDataTexture.MarkLocked,
+            }));
+            if (mark != TileMark.Locked) DrawYields(hex, mark);
+        }
+        _terrain.SetMarks(marks);
     }
 
-    private void DrawWorkTile(MeshBuilder b, Hex hex, TileMark mark)
+    private void DrawYields(Hex hex, TileMark mark)
     {
-        if (mark is TileMark.None or TileMark.Selected || _session.SightOf(hex) == Sight.Hidden) return;
         var at = WorldOf(hex, YOverlay);
-        var colour = mark switch
-        {
-            TileMark.Worked => new Color(1f, 0.6f, 0.1f, 0.42f),
-            TileMark.Workable => new Color(1f, 1f, 1f, 0.16f),
-            _ => new Color(0f, 0f, 0f, 0.5f),
-        };
-        b.Hex(at, 0.97f, colour, colour);
-        if (mark == TileMark.Locked) return;
         var y = _session.YieldsOf(hex);
         var text = string.Join("  ", new[] { (y.Food, "F"), (y.Production, "P"), (y.Commerce, "C") }.Where(p => p.Item1 != 0).Select(p => $"{p.Item1}{p.Item2}"));
         AddLabel(text.Length == 0 ? "-" : text, at + new Vector3(0, 0.25f, 0.55f), 20, mark == TileMark.Worked ? new Color(1f, 0.95f, 0.6f) : Colors.White);
@@ -100,12 +104,12 @@ internal sealed partial class MapRenderer
     public void ShowPath(Unit? unit, MovePreview? preview)
     {
         if (unit == null || preview == null) { _path.Mesh = null; return; }
-        var b = new MeshBuilder();
+        var b = new MeshBuilder { Ground = GroundAt };
         var colour = preview.Attack != null ? new Color(1f, 0.3f, 0.25f, 0.9f) : new Color(0.4f, 1f, 0.5f, 0.9f);
-        var previous = WorldOf(unit.Position, YPath);
+        var previous = PositionOf(unit.Position, YPath);
         foreach (var step in preview.Path)
         {
-            var next = WorldOf(step, YPath);
+            var next = PositionOf(step, YPath);
             if (Period > 0) next.X += Mathf.Round((previous.X - next.X) / Period) * Period;
             b.Line(previous, next, 0.12f, colour);
             b.Disc(next, 0.1f, colour);

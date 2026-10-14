@@ -15,12 +15,26 @@ internal sealed class TileAppearanceService : ITileAppearanceService
 
     private static readonly IReadOnlyDictionary<string, TileAppearance> Features = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)
     {
-        ["world:forest"] = new(0x1f6b2a, 45, 4), ["world:jungle"] = new(0x0f7a4c, 55, 5),
-        ["world:swamp"] = new(0x3f6b55, 40, 3), ["world:ice"] = new(0xe8f4ff, 70),
-        ["world:flood_plains"] = new(0x8ec26a, 35), ["world:oasis"] = new(0x3fb6c9, 50, 1),
+        ["world:forest"] = new(0x1f6b2a, 45, 4, "forest", 70), ["world:jungle"] = new(0x0f7a4c, 55, 5, "jungle", 85),
+        ["world:swamp"] = new(0x3f6b55, 40, 3, "swamp", 40), ["world:ice"] = new(0xe8f4ff, 70),
+        ["world:flood_plains"] = new(0x8ec26a, 35), ["world:oasis"] = new(0x3fb6c9, 50, 1, "oasis", 25),
         ["world:fallout"] = new(0x9a9a2a, 40, 2),
     };
 
     public TileAppearance? Terrain(string id) => Terrains.GetValueOrDefault(id);
     public TileAppearance? Feature(string id) => Features.GetValueOrDefault(id);
+
+    public string? Surface(TerrainSurface surface) => surface switch
+    {
+        TerrainSurface.Cliff => "world:rock",
+        TerrainSurface.Seabed => "world:seabed",
+        TerrainSurface.DeepSeabed => "world:deep_seabed",
+        TerrainSurface.Unexplored => "world:unexplored",
+        _ => null,
+    };
+
+    public TileAppearance? Scatter(string feature, string terrain) =>
+        feature == "world:forest" && terrain is "world:tundra" or "world:snow"
+            ? new(0x1f6b2a, 45, 4, "forest_snow", 70)
+            : null;
 }

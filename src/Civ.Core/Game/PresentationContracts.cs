@@ -41,10 +41,14 @@ public interface ILedgerSourceLabel
 }
 
 /// <summary>Integer RGB and percent tint metadata. No renderer or engine types cross the mod contract.</summary>
-public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0);
+public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0);
+
+public enum TerrainSurface { Cliff, Seabed, DeepSeabed, Unexplored }
 
 public interface ITileAppearanceService
 {
     TileAppearance? Terrain(string id);
     TileAppearance? Feature(string id);
+    string? Surface(TerrainSurface surface) => null;
+    TileAppearance? Scatter(string feature, string terrain) => null;
 }

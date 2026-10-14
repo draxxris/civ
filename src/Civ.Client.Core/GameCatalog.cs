@@ -23,6 +23,8 @@ public sealed class GameCatalog
     private readonly Dictionary<string, string> _modRoots;
     private readonly Dictionary<string, string?> _icons = new();
     private readonly Dictionary<string, string?> _models = new();
+    private readonly Dictionary<string, string?> _textures = new();
+    private readonly Dictionary<string, IReadOnlyList<string>> _scatterModels = new(StringComparer.Ordinal);
 
     public ContentDb Content { get; }
     public IReadOnlyList<ModSource> Mods { get; }
@@ -115,6 +117,43 @@ public sealed class GameCatalog
             if (File.Exists(candidate)) path = candidate;
         }
         return _models[id] = path;
+    }
+
+    /// <summary>PNG for a content id from its owning mod's <c>art/terrain</c> folder, or null when the mod ships none.</summary>
+    public string? TexturePath(string? id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        if (_textures.TryGetValue(id, out var cached)) return cached;
+        int colon = id.IndexOf(':');
+        string? path = null;
+        if (colon > 0 && _modRoots.TryGetValue(id[..colon], out var root))
+        {
+            var candidate = Path.Combine(root, "art", "terrain", id[(colon + 1)..] + ".png");
+            if (File.Exists(candidate)) path = candidate;
+        }
+        return _textures[id] = path;
+    }
+
+    /// <summary>Sorted GLB files for a scatter set. A namespaced set selects its mod; a plain set uses the first matching mod.</summary>
+    public IReadOnlyList<string> ScatterModels(string? set)
+    {
+        if (string.IsNullOrEmpty(set)) return Array.Empty<string>();
+        if (_scatterModels.TryGetValue(set, out var cached)) return cached;
+
+        int colon = set.IndexOf(':');
+        string suffix = colon > 0 ? set[(colon + 1)..] : set;
+        IEnumerable<string> roots = colon > 0 && _modRoots.TryGetValue(set[..colon], out var ownerRoot)
+            ? [ownerRoot]
+            : _modRoots.OrderBy(entry => entry.Key, StringComparer.Ordinal).Select(entry => entry.Value);
+        foreach (var root in roots)
+        {
+            var directory = Path.Combine(root, "art", "scatter", suffix);
+            if (!Directory.Exists(directory)) continue;
+            return _scatterModels[set] = Directory.GetFiles(directory, "*.glb", SearchOption.TopDirectoryOnly)
+                .OrderBy(path => Path.GetFileName(path), StringComparer.Ordinal)
+                .ToArray();
+        }
+        return _scatterModels[set] = Array.Empty<string>();
     }
 
     public SimulationSettings SettingsFor(NewGameOptions options) => options.ToSettings(this);

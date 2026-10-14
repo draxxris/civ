@@ -62,6 +62,7 @@ public sealed class ExtractionSmokeTests
     }
 
     [SourceFact]
+    [Trait("Category", "Extractor")]
     public void Independent_imports_write_identical_reports_and_brand_free_generic_data()
     {
         using var first = new TemporaryDirectory();

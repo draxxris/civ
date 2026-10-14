@@ -1,4 +1,5 @@
 using Civ.Game;
+using Civ.Client.Terrain;
 using Godot;
 
 namespace Civ.Client;
@@ -20,6 +21,8 @@ internal sealed partial class GameView : Node3D
 
     public void DebugZoom(float delta) => _camera.Zoom(delta);
 
+    public void DebugFocus(Vector3 world) => _camera.FocusOn(world);
+
     private Hex? _forcedHover;
 
     public void ForceHover(Hex? hex) => _forcedHover = hex;
@@ -31,7 +34,7 @@ internal sealed partial class GameView : Node3D
         AddChild(new WorldEnvironment
         {
             Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.03f, 0.04f, 0.06f),
-                AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = Colors.White, AmbientLightEnergy = 0.55f },
+                AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = Colors.White, AmbientLightEnergy = 0.45f },
         });
         _map = new MapRenderer(_session, _icons);
         AddChild(_map);
@@ -40,14 +43,14 @@ internal sealed partial class GameView : Node3D
         _ui = new GameUi(_session, _icons);
         AddChild(_ui);
         var start = _session.Unit?.Position ?? _session.Sim.State.Cities.FirstOrDefault(c => c.Owner == GameSession.Human)?.Position ?? new Hex(0, 0);
-        _camera.FocusOn(MapRenderer.WorldOf(start));
+        _camera.FocusOn(MapRenderer.PositionOf(start));
     }
 
     public override void _Process(double delta)
     {
         if (!_ui.TextInputFocused) _camera.Move(PanDirection(), delta);
         var city = _session.City;
-        _camera.FollowCity(city?.Id, city == null ? Vector3.Zero : MapRenderer.WorldOf(city.Position));
+        _camera.FollowCity(city?.Id, city == null ? Vector3.Zero : MapRenderer.PositionOf(city.Position));
         _map.Refresh();
         _map.WrapLabels(_camera.Focus.X);
         _ui.Refresh();
@@ -69,6 +72,12 @@ internal sealed partial class GameView : Node3D
     {
         var origin = _camera.ProjectRayOrigin(screen);
         var direction = _camera.ProjectRayNormal(screen);
+        if (_map.TerrainField is { } field)
+        {
+            var hit = TerrainRay.Pick(new System.Numerics.Vector3(origin.X, origin.Y, origin.Z),
+                new System.Numerics.Vector3(direction.X, direction.Y, direction.Z), field, includeWaterSurface: true);
+            if (hit is { } point) return _session.Pick(point.X, point.Z);
+        }
         if (Mathf.Abs(direction.Y) < 1e-5f) return null;
         float t = -origin.Y / direction.Y;
         if (t < 0) return null;
@@ -82,7 +91,7 @@ internal sealed partial class GameView : Node3D
         Hex? hex = HoveredHex(mouse);
         if (hex == _hover && _hoverRevision == _session.Revision) { _ui.MoveHoverTip(mouse); return; }
         _hover = hex; _hoverRevision = _session.Revision;
-        _map.ShowHover(hex, _camera.Focus.X);
+        _map.ShowHover(hex);
         var preview = HoverPreview(hex);
         _map.ShowPath(_session.City == null ? _session.Unit : null, preview);
         _ui.SetHover(hex is Hex t ? _session.DescribeTile(t) : null, preview?.Summary);
@@ -125,7 +134,7 @@ internal sealed partial class GameView : Node3D
 
     private void FocusSelection()
     {
-        if (_session.Unit is { } unit) _camera.FocusOn(MapRenderer.WorldOf(unit.Position));
+        if (_session.Unit is { } unit) _camera.FocusOn(MapRenderer.PositionOf(unit.Position));
     }
 
     private void OnMouseButton(InputEventMouseButton mouse)

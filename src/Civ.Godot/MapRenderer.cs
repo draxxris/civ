@@ -1,4 +1,5 @@
 using Godot;
+using Civ.Client.Terrain;
 
 namespace Civ.Client;
 
@@ -23,8 +24,9 @@ internal sealed partial class WrapMesh : Node3D
 }
 
 /// <summary>
-/// Draws the map: terrain, relief, features, rivers, borders, routes and icons as one baked mesh (rebuilt when the
-/// simulation changes), plus a cheap token layer for cities, units and the city-screen overlay.
+/// Draws the map: the 3D terrain and water (<see cref="TerrainRenderer"/>, which also shades fog, borders, rivers, hover and
+/// the city-screen overlay), feature marks, routes and icons as one baked mesh (rebuilt when the simulation changes), plus a
+/// cheap token layer for cities and units.
 /// </summary>
 internal sealed partial class MapRenderer : Node3D
 {
@@ -33,9 +35,9 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _landIcons, _overlay, _tokens, _tokenIcons, _path;
-    private readonly MeshInstance3D _hover;
-    private readonly StandardMaterial3D _opaque, _alpha, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial, _overlayMaterial;
+    private readonly WrapMesh _land, _landIcons, _tokens, _tokenIcons, _path;
+    private readonly TerrainRenderer _terrain;
+    private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
@@ -55,21 +57,18 @@ internal sealed partial class MapRenderer : Node3D
         _models = new ModelCache(icons.Catalog);
         Period = (float)session.WrapPeriod;
         _opaque = Material(null, false, 0);
-        _alpha = Material(null, true, 1);
-        _overlayMaterial = Material(null, true, 1);
         _landIconMaterial = Material(_atlas.Texture, true, 2);
         _tokenMaterial = Material(null, true, 3);
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = Material(null, true, 5);
+        _terrain = new TerrainRenderer(session, icons.Catalog);
+        AddChild(_terrain);
         _land = Layer();
-        _overlay = Layer();
         _landIcons = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();
         _path = Layer();
-        _hover = new MeshInstance3D { Visible = false, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
-        AddChild(_hover);
-        AddChild(new DirectionalLight3D { RotationDegrees = new Vector3(-55, -35, 0), LightEnergy = 0.9f, ShadowEnabled = false });
+        AddChild(new DirectionalLight3D { RotationDegrees = new Vector3(-40, -135, 0), LightEnergy = 1.0f, ShadowEnabled = false });
     }
 
     private WrapMesh Layer()
@@ -87,7 +86,21 @@ internal sealed partial class MapRenderer : Node3D
         CullMode = BaseMaterial3D.CullModeEnum.Disabled, TextureFilter = BaseMaterial3D.TextureFilterEnum.Linear,
     };
 
-    public static Vector3 WorldOf(Hex hex, float y = 0)
+    /// <summary>The same field used by the rendered chunks, including local fog knowledge.</summary>
+    public TerrainField TerrainField => _terrain.Field;
+
+    public float GroundAt(float x, float z) => (float)TerrainField.SurfaceHeightAt(x, z);
+
+    /// <summary>A tile centre seated on the visible surface, plus a clearance offset.</summary>
+    public Vector3 WorldOf(Hex hex, float yOffset = 0)
+    {
+        var p = PositionOf(hex, yOffset);
+        p.Y += GroundAt(p.X, p.Z);
+        return p;
+    }
+
+    /// <summary>Flat map coordinates for camera focus and input to a draped mesh.</summary>
+    public static Vector3 PositionOf(Hex hex, float y = 0)
     {
         var (x, z) = hex.ToPixel(1);
         return new Vector3((float)x, y, (float)z);
@@ -96,15 +109,21 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Rebuild whatever the session changed since the last call.</summary>
     public void Refresh()
     {
-        if (_battle == null) StartNextBattle();
         bool world = _worldRevision != _session.WorldRevision;
         var clock = System.Diagnostics.Stopwatch.StartNew();
+        bool dynamic = world || _revision != _session.Revision;
+        // Heights must be current before seating tokens, marks or a newly queued battle.
+        _terrain.Refresh(world, dynamic);
+        long terrain = clock.ElapsedMilliseconds;
+        if (_battle == null) StartNextBattle();
+        dynamic = world || _revision != _session.Revision;
         if (world) { BuildLand(); _worldRevision = _session.WorldRevision; }
-        long land = clock.ElapsedMilliseconds;
-        if (!world && _revision == _session.Revision) return;
-        BuildDynamic();
-        _revision = _session.Revision;
-        if (LogTimings) GD.Print($"map refresh: land {land} ms, tokens {clock.ElapsedMilliseconds - land} ms");
+        long land = clock.ElapsedMilliseconds - terrain;
+        if (dynamic) { BuildDynamic(); _revision = _session.Revision; }
+        long tokens = clock.ElapsedMilliseconds - terrain - land;
+        // BuildOverlay writes marks after the height refresh.
+        if (dynamic) _terrain.Refresh(false, true);
+        if (LogTimings && dynamic) GD.Print($"map refresh: land {land} ms, tokens {tokens} ms, terrain {terrain} ms");
     }
 
     private void BuildDynamic()
@@ -146,18 +165,6 @@ internal sealed partial class MapRenderer : Node3D
         return label;
     }
 
-    public void ShowHover(Hex? hex, float focusX)
-    {
-        if (hex is not Hex h) { _hover.Visible = false; return; }
-        if (_hover.Mesh == null)
-        {
-            var b = new MeshBuilder();
-            for (int k = 0; k < 6; k++) b.Line(MeshBuilder.Corner(k, 0.97f), MeshBuilder.Corner(k + 1, 0.97f), 0.07f, new Color(1, 1, 1, 0.9f));
-            _hover.Mesh = b.Build(_alpha);
-        }
-        var pos = WorldOf(h, YOverlay);
-        if (Period > 0) pos.X += Mathf.Round((focusX - pos.X) / Period) * Period;
-        _hover.Position = pos;
-        _hover.Visible = true;
-    }
+    /// <summary>Outline the hovered tile in the terrain shader.</summary>
+    public void ShowHover(Hex? hex) => _terrain.SetHover(hex);
 }

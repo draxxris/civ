@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Civ.Game;
 using Xunit;
 using Xunit.Abstractions;
@@ -8,6 +7,7 @@ namespace Civ.Mods.Tests;
 public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassFixture<LoadedMods>
 {
     [Fact]
+    [Trait("Category", "E2E")]
     public void Four_computer_players_develop_and_fight_over_200_turns()
     {
         var sim = GameFactory.CreateAi(mods.Content, seed: 17);
@@ -15,7 +15,6 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         var founded = new int[4];
         var completed = new int[4];
         var owners = new Dictionary<int, int>();
-        var timer = Stopwatch.StartNew();
         for (int turn = 0; turn < 200; turn++)
         {
             sim.AdvanceTurn();
@@ -26,7 +25,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         combat += sim.Events.Published.OfType<CombatResolved>().Count();
         output.WriteLine($"Cities founded per AI: {string.Join(", ", founded)}");
         output.WriteLine($"Buildings completed per AI: {string.Join(", ", completed)}");
-        output.WriteLine($"Combats: {combat}; elapsed: {timer.ElapsedMilliseconds} ms");
+        output.WriteLine($"Combats: {combat}");
         foreach (var player in sim.State.Players.Where(p => p.Ai == "ai:standard"))
         {
             Assert.True(founded[player.Id] >= 1, $"player {player.Id}: founded no city");
@@ -41,6 +40,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    [Trait("Category", "E2E")]
     public void Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn()
     {
         var a = GameFactory.CreateAi(mods.Content, seed: 5);
@@ -55,22 +55,6 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             a.AdvanceTurn(); b.AdvanceTurn(); saved?.AdvanceTurn();
         }
         Metrics(a, "determinism turn 151");
-    }
-
-    [Fact]
-    public void Eight_players_on_standard_have_bounded_turn_100_decision_time()
-    {
-        var sim = GameFactory.CreateAi(mods.Content, seed: 9, players: 8, world: "foundation:worldsize_standard");
-        for (int i = 0; i < 99; i++) sim.AdvanceTurn();
-        // Isolate AI decisions from the cost of turn systems. Saving does not rerun the AI.
-        var decisionGame = SaveGame.Load(mods.Content, SaveGame.Save(sim));
-        foreach (var player in decisionGame.State.Players.Where(p => p.Ai is not null)) player.EndedTurn = false;
-        var timer = Stopwatch.StartNew();
-        decisionGame.RunAi();
-        timer.Stop();
-        output.WriteLine($"Eight-player AI decision time at turn 100: {timer.ElapsedMilliseconds} ms");
-        Metrics(sim, "timing turn 100");
-        Assert.True(timer.Elapsed < TimeSpan.FromSeconds(5), $"AI decisions took {timer.Elapsed}");
     }
 
     [Fact]
