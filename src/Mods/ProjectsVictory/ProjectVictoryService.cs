@@ -115,12 +115,12 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private static bool Alive(Simulation sim, int player) =>
         sim.State.Cities.Any(c => c.Owner == player) || sim.State.Units.Any(u => u.Owner == player);
 
-    private static int? Conquest(Simulation sim)
+    private int? Conquest(Simulation sim)
     {
         var civs = Civilizations(sim).ToArray();
         if (civs.Select(p => p.TeamId).Distinct().Count() < 2) return null;
         var alive = civs.Where(p => Alive(sim, p.Id)).ToArray();
-        return alive.Select(p => p.TeamId).Distinct().Count() == 1 ? alive[0].Id : null;
+        return alive.Select(p => p.TeamId).Distinct().Count() == 1 ? BestMember(sim, alive.Select(p => p.Id)) : null;
     }
 
     private int? Domination(Simulation sim, VictoryDef def)
@@ -167,7 +167,8 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private int? Time(Simulation sim, VictoryDef def)
     {
         if (def.MaxTurns <= 0 || sim.State.Turn < MaxTurns(sim, def)) return null;
-        var scores = Civilizations(sim).Select(p => (p.Id, Score: GetScore(sim, p.Id).Total)).ToArray();
-        return scores.Length == 0 ? null : scores.OrderByDescending(s => s.Score).ThenBy(s => s.Id).First().Id;
+        var winningTeam = TeamsByScore(sim).FirstOrDefault(team => team.Any(p => Alive(sim, p.Id)));
+        // An eliminated teammate can hold land and outscore the living, so only living members may win.
+        return winningTeam is null ? null : BestMember(sim, winningTeam.Where(p => Alive(sim, p.Id)).Select(p => p.Id));
     }
 }

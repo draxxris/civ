@@ -12,7 +12,7 @@ internal sealed class EventModifiers : IModifierSource
         if (state is null) return;
         foreach (var effect in state.Effects)
         {
-            if (context.Scope == ModifierScope.City && context.City is { } city && effect.City == city.Id)
+            if (context.Scope == ModifierScope.City && context.City is { } city && AppliesToCity(effect, city))
             {
                 sink.Add(effect.Option, "cities:happiness", effect.Happiness);
                 sink.Add(effect.Option, "cities:health", effect.Health);
@@ -21,6 +21,10 @@ internal sealed class EventModifiers : IModifierSource
                 sink.AddYield(effect.Option, new(effect.PlotFood, effect.PlotProduction, effect.PlotCommerce));
         }
     }
+
+    /// <summary>A city event stays with its city. An empire-wide event (no city) covers every city its player owns.</summary>
+    private static bool AppliesToCity(ActiveEventEffect effect, City city) =>
+        effect.City == city.Id || (effect.City == -1 && effect.Player == city.Owner);
 }
 
 internal sealed class EventService : IEventService
@@ -80,7 +84,8 @@ internal sealed class EventService : IEventService
         state.Effects.Add(new ActiveEventEffect
         {
             Player = player.Id, City = pending.City, Plot = pending.Plot, Option = option.Id,
-            ExpiresTurn = option.DurationTurns > 0 ? sim.State.Turn + option.DurationTurns : 0,
+            // Timed effects count from the trigger turn, so a late answer does not outlast an automatic one.
+            ExpiresTurn = option.DurationTurns > 0 ? Math.Max(sim.State.Turn, pending.Turn + option.DurationTurns) : 0,
             Happiness = option.HappinessDelta, Health = option.HealthDelta,
             PlotFood = option.PlotFoodDelta, PlotProduction = option.PlotProductionDelta, PlotCommerce = option.PlotCommerceDelta,
         });

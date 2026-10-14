@@ -7,11 +7,12 @@ namespace Civ.Mods.Tests;
 public sealed class EspionageRulesTests
 {
     private static IEspionageService Spies(Simulation sim) => P6RulesScenario.Service<IEspionageService>(sim);
-    private static void Fund(Simulation sim, int team = 0, int target = 1, long points = 100000)
+    private static EspionageTeamState TeamState(Simulation sim, int team)
     {
         var state = sim.State.TeamById(team).Extensions.Get<EspionageTeamState>(sim.Content) ?? new();
-        sim.State.TeamById(team).Extensions.Set(sim.Content, state); state.Points[target] = points;
+        sim.State.TeamById(team).Extensions.Set(sim.Content, state); return state;
     }
+    private static void Fund(Simulation sim, int team = 0, int target = 1, long points = 100000) => TeamState(sim, team).Points[target] = points;
     private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "military:spy");
     private static ExecuteEspionageMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => new() { Player = spy.Owner, Unit = spy.Id, City = city.Id, Mission = mission, Tech = tech };
 
@@ -55,20 +56,51 @@ public sealed class EspionageRulesTests
     [InlineData(PassiveEspionageKind.CityVisibility, 100)]
     [InlineData(PassiveEspionageKind.InspectResearch, 150)]
     [InlineData(PassiveEspionageKind.InvestigateCity, 200)]
-    public void Passive_effects_use_live_balances_and_lifetime_spending_ratio(PassiveEspionageKind kind, long baseline)
+    public void Passive_effects_use_live_balances_and_bilateral_spending_ratio(PassiveEspionageKind kind, long baseline)
     {
         var sim = P6RulesScenario.Create();
-        Fund(sim, points: baseline - 1);
-        ulong hash = sim.ComputeHash(); Assert.False(Spies(sim).HasPassiveEffect(sim, 0, 1, kind)); Assert.Equal(hash, sim.ComputeHash());
-        Fund(sim, points: baseline); Assert.True(Spies(sim).HasPassiveEffect(sim, 0, 1, kind));
-        sim.State.TeamById(0).Extensions.Get<EspionageTeamState>(sim.Content)!.Spent[1] = 100;
+        // No investment on either side is neutral: the threshold is the baseline, and empty balances grant nothing.
+        ulong hash = sim.ComputeHash();
+        Assert.Equal(baseline, Spies(sim).PassiveThreshold(sim, 0, 1, kind));
+        Assert.False(Spies(sim).HasPassiveEffect(sim, 0, 1, kind)); Assert.Equal(hash, sim.ComputeHash());
+        // Live points count as own investment. At twice the baseline the ratio reaches its 50% floor, so half the baseline qualifies.
+        Fund(sim, points: baseline * 2);
         Assert.Equal(baseline / 2, Spies(sim).PassiveThreshold(sim, 0, 1, kind));
-        Fund(sim, 1, 0, 0); sim.State.TeamById(1).Extensions.Get<EspionageTeamState>(sim.Content)!.Spent[0] = 300;
-        Assert.Equal(baseline * 140 / 100, Spies(sim).PassiveThreshold(sim, 0, 1, kind));
-        Assert.False(Spies(sim).HasPassiveEffect(sim, 0, 1, kind));
+        Assert.True(Spies(sim).HasPassiveEffect(sim, 0, 1, kind));
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Equal(baseline * 140 / 100, Spies(loaded).PassiveThreshold(loaded, 0, 1, kind));
+        Assert.True(Spies(loaded).HasPassiveEffect(loaded, 0, 1, kind));
+        // Rival spending raises the threshold: team 1 spent 300 against team 0, a 175% ratio, with no points on either side.
+        var rival = P6RulesScenario.Create(); TeamState(rival, 1).Spent[0] = 300;
+        Assert.Equal(baseline * 175 / 100, Spies(rival).PassiveThreshold(rival, 0, 1, kind));
+        Assert.False(Spies(rival).HasPassiveEffect(rival, 0, 1, kind));
     }
+    [Fact]
+    public void Ratio_ignores_investment_against_other_teams()
+    {
+        var sim = P6RulesScenario.Create();
+        TeamState(sim, 0).Spent[2] = 1000; // Team 0 spends on team 2, so the 0-1 ratio stays neutral.
+        Assert.Equal(50, Spies(sim).PassiveThreshold(sim, 0, 1, PassiveEspionageKind.Demographics));
+    }
+    [Fact]
+    public void Eliminated_teams_stop_receiving_espionage_points()
+    {
+        var sim = P6RulesScenario.Create();
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 2, Treasury = 10000 });
+        sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();
+        var colony = P6RulesScenario.AddCity(sim, 2, 80);
+        P6RulesScenario.Service<IPlayerEconomyService>(sim).SetRates(sim, 0, new(0, 0, 0, 100));
+        P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 2);
+        P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
+        P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });
+        for (int turn = 0; turn < 5; turn++) sim.AdvanceTurn();
+        long colonyPoints = Spies(sim).Points(sim, 0, 2), mainPoints = Spies(sim).Points(sim, 0, 1);
+        Assert.True(colonyPoints > 0);
+        sim.State.RemoveCity(colony.Id); // Team 2 keeps its weight but has no living member.
+        for (int turn = 0; turn < 10; turn++) sim.AdvanceTurn();
+        Assert.Equal(colonyPoints, Spies(sim).Points(sim, 0, 2));
+        Assert.True(Spies(sim).Points(sim, 0, 1) > mainPoints);
+    }
+
     [Fact]
     public void Mission_rejections_leave_state_and_rng_unchanged()
     {
