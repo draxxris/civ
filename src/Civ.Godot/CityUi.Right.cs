@@ -16,6 +16,8 @@ internal sealed partial class CityUi
         AddChoices(box, city);
         box.AddChild(Ui.Heading($"Citizens ({c.Citizens})"));
         AddCitizens(box, city, c);
+        AddTradeRoutes(box, c);
+        AddSettledSpecialists(box, c);
         box.AddChild(Ui.Heading("Buildings"));
         box.AddChild(Ui.Text(c.Buildings.Count == 0 ? "None" : string.Join(", ", c.Buildings), 13, Ui.Dim));
         _right.AddChild(Ui.Scroll(box));
@@ -85,6 +87,30 @@ internal sealed partial class CityUi
         button.CustomMinimumSize = new Vector2(220, 0);
         row.AddChild(button);
         return row;
+    }
+
+    private void AddTradeRoutes(VBoxContainer box, CityScreen c)
+    {
+        box.AddChild(Ui.Heading($"Trade routes ({c.TradeRoutes.Count}/{c.MaxTradeRoutes})"));
+        foreach (var route in c.TradeRoutes)
+        {
+            var partner = _session.Sim.State.FindCity(route.PartnerCity);
+            string flags = string.Join(", ", new[] { route.Foreign ? "foreign" : "domestic", route.Overseas ? "overseas" : "" }.Where(x => x.Length > 0));
+            string partnerName = partner?.Name ?? "City " + route.PartnerCity;
+            box.AddChild(Ui.Text($"{partnerName}  ·  {route.ProfitHundredths / 100} gold  ({flags})", 13, Ui.Dim));
+        }
+        if (c.TradeRoutes.Count == 0) box.AddChild(Ui.Text("No active routes.", 13, Ui.Dim));
+    }
+
+    private void AddSettledSpecialists(VBoxContainer box, CityScreen c)
+    {
+        if (c.SettledSpecialists.Count == 0) return;
+        box.AddChild(Ui.Heading("Settled great people"));
+        foreach (var (id, count) in c.SettledSpecialists.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            string name = _session.Sim.Content.TryGet<Civ.Content.Schema.SpecialistDef>(id, out var specialist) ? specialist.Name : id;
+            box.AddChild(Ui.Text($"{name} ×{count}", 13, Ui.Dim));
+        }
     }
 
     private void AddCitizens(VBoxContainer box, City city, CityScreen c)

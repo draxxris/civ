@@ -47,7 +47,8 @@ public sealed class PediaCatalog
     {
         var q = query?.Trim() ?? "";
         return _entries.Where(e => category == null || e.Category == category)
-            .Where(e => q.Length == 0 || e.Matches(q)).ToList();
+            .Where(e => q.Length == 0 || e.Matches(q))
+            .OrderBy(e => e.Title, StringComparer.Ordinal).ThenBy(e => e.Id, StringComparer.Ordinal).ToList();
     }
 
     private void Add<T>(ContentDb content, string category, Func<T, int> cost, Func<T, string?[]?> extra) where T : S.GameContentDef

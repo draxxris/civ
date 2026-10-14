@@ -108,6 +108,8 @@ internal sealed partial class GameUi : CanvasLayer
         var s = _session.Summary();
         var row = Ui.HBox(10);
         row.AddChild(Ui.Text($"Turn {s.Turn}  ·  {s.Era}", 15, Colors.White, wrap: false));
+        int goldenAge = _session.GoldenAgeTurnsRemaining;
+        if (goldenAge > 0) row.AddChild(Ui.Text($"Golden Age · {goldenAge} turns", 14, Ui.Accent, wrap: false));
         row.AddChild(Ui.Text($"Gold {_session.Me.Treasury} ({Labels.Signed(s.Net)})", 15, s.Net < 0 ? Ui.Bad : Ui.Accent, wrap: false));
         row.AddChild(ResearchButton(s));
         row.AddChild(RateBox("Science", RateKind.Research, s.Rates.Research));

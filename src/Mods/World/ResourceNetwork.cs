@@ -67,7 +67,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 private static bool Access(Simulation sim, int player, Plot plot, bool peacefulForeign)
     {
         if (plot.Owner is { } owner) return sim.TeamOf(owner).Id == sim.TeamOf(player).Id
-            || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id));
+            || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id)
+            && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId));
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
     private static bool Edge(Simulation sim, TileId from, TileId to, NetworkMode[] modes)

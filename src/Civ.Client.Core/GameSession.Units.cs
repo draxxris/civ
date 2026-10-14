@@ -23,8 +23,9 @@ public sealed record UnitPanel(
 
 public sealed partial class GameSession
 {
-    public Schema.UnitDef DefOf(Unit unit) => Sim.Content.Get<Schema.UnitDef>(unit.Type);
+    public int GoldenAgeTurnsRemaining => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, Human) ?? 0;
 
+    public Schema.UnitDef DefOf(Unit unit) => Sim.Content.Get<Schema.UnitDef>(unit.Type);
     /// <summary>Route and combat odds for sending the selected unit to a tile, or null with no unit or route.</summary>
     public MovePreview? PreviewAt(Hex hex)
     {
@@ -80,7 +81,38 @@ public sealed partial class GameSession
                 new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
         actions.AddRange(PromotionActions(unit));
         actions.AddRange(ReligionActions(unit));
+        actions.AddRange(GreatPeopleActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
+    }
+
+    private IEnumerable<UnitActionInfo> GreatPeopleActions(Unit unit)
+    {
+        var service = OptionalService<IGreatPeopleService>();
+        if (service == null) yield break;
+        foreach (var action in service.AvailableActions(Sim, Human, unit.Id))
+        {
+            string suffix = action.Command[(action.Command.LastIndexOf(':') + 1)..];
+            GameCommand? command = suffix switch
+            {
+                "join_city" => new JoinGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "discover_tech" => new DiscoverGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "hurry_production" => new HurryGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "culture_bomb" => new CultureGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "golden_age" => new GoldenAgeGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                _ => null,
+            };
+            if (command == null) continue;
+            string label = suffix switch
+            {
+                "join_city" => "Join city",
+                "discover_tech" => "Discover technology",
+                "hurry_production" => "Hurry production",
+                "culture_bomb" => "Great work",
+                "golden_age" => "Start golden age",
+                _ => suffix,
+            };
+            yield return Action(action.Command, label, command, action.Amount > 0 ? action.Amount.ToString() : "");
+        }
     }
 
     private UnitActionInfo Action(string id, string label, GameCommand command, string tooltip = "")
