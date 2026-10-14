@@ -32,8 +32,10 @@ internal sealed partial class ReligionService : IReligionService
     }
     public string? ValidateBuilding(Simulation sim, City city, BuildingDef building)
     {
+        if (building.FreeFromStateReligion) return null;
         var state = StateReligion(sim, city.Owner);
-        if (building.FreeFromStateReligion || state is null) return null;
+        // A building that requires a state religion cannot be built without one, even when it names no religion.
+        if (state is null) return building.RequiresStateReligion ? "Requires an active state religion" : null;
         if (ReligionData.Civics(sim, city.Owner).Any(c => c.FreeReligion)) return null;
         var required = ContentReferences.Leaves(building.Requirements ?? new Requirement.All([]))
             .FirstOrDefault(l => l.Kind == "religion" && l.Param is null);

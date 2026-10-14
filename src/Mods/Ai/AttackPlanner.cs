@@ -51,11 +51,14 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
             .OrderBy(c => ctx.Cities.Min(own => ctx.Grid.Distance(own.Position, c.Position))).ThenBy(c => c.Id).FirstOrDefault();
     }
 
-    /// <summary>Walkable tile two steps from the target, closest to our nearest city.</summary>
+    /// <summary>Walkable tile on our nearest city's land area, two steps from the target, closest to that city.</summary>
     private Hex StagingTile(City target)
     {
         var home = ctx.NearestCity(target.Position)!;
-        var ring = ctx.Grid.Ring(ctx.Grid.TileAt(target.Position), 2).Where(t => Walkable(t)).ToList();
+        int area = ctx.Sim.State.PlotAt(home.Position).AreaId;
+        // Offshore ring tiles cannot be reached by land from home, so the army stages on home's landmass.
+        var ring = ctx.Grid.Ring(ctx.Grid.TileAt(target.Position), 2)
+            .Where(t => Walkable(t) && ctx.Sim.State.Plots[t.Value].AreaId == area).ToList();
         if (ring.Count == 0) return home.Position;
         return ctx.Grid.HexOf(ring.OrderBy(t => ctx.Grid.Distance(t, ctx.Grid.TileAt(home.Position))).ThenBy(t => t.Value).First());
     }

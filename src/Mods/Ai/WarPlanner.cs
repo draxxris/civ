@@ -10,7 +10,8 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
 
     public void Plan()
     {
-        MakePeace();
+        // A treaty signed this turn also blocks new wars this turn, so one turn never holds both peace and war.
+        if (MakePeace()) return;
         if (ctx.Turn < MinimumTurn || (ctx.Turn + ctx.PlayerId) % CheckInterval != 0 || ctx.AtWarWithPlayers) return;
         if (army.Soldiers < 5 + ctx.Cities.Count) return;
         var target = ChooseTarget();
@@ -49,17 +50,20 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
         return theirs.Count > 0 && theirs.Min(c => ctx.Cities.Min(own => ctx.Grid.Distance(own.Position, c.Position))) <= 14;
     }
 
-    private void MakePeace()
+    /// <summary>Asks for peace with enemy teams that are losing or have fought too long. Returns true when a treaty was signed.</summary>
+    private bool MakePeace()
     {
         long mine = AiContext.Power(ctx.Sim, ctx.PlayerId);
+        bool signed = false;
         foreach (var teamId in ctx.Team.Wars.ToList())
         {
-            var enemy = ctx.Sim.State.TeamById(teamId).Members.First();
-            if (WarRules.IsBarbarian(ctx.Sim, enemy)) continue;
-            long theirs = AiContext.Power(ctx.Sim, enemy);
+            var enemies = ctx.Sim.State.TeamById(teamId).Members.Where(m => !WarRules.IsBarbarian(ctx.Sim, m)).ToList();
+            if (enemies.Count == 0) continue;
+            long theirs = enemies.Sum(m => AiContext.Power(ctx.Sim, m));
             bool losing = mine * 100 < theirs * 85;
             bool tired = ctx.Sim.State.Turn - WarRules.Read(ctx.Sim, ctx.Self.TeamId).WarStarted.GetValueOrDefault(teamId) > 40;
-            if (losing || tired) ctx.Issue(new MakePeaceCommand { Player = ctx.PlayerId, Target = enemy });
+            if ((losing || tired) && ctx.Issue(new MakePeaceCommand { Player = ctx.PlayerId, Target = enemies[0] })) signed = true;
         }
+        return signed;
     }
 }
