@@ -38,6 +38,7 @@ internal sealed class UnitService : IUnitService, IUnitSupportService
     {
         if (!sim.Content.TryGet<S.PromotionDef>(id, out var promotion)) return "Unknown promotion";
         if (unit.Promotions.Contains(id)) return "Promotion already held";
+        if (unit.MovesLeft <= 0) return "Unit has no movement left";
         if (unit.Experience < ExperienceNeeded(sim, unit.Id)) return "Not enough experience";
         return PromotionEligibility(sim, unit, promotion);
     }
@@ -77,11 +78,17 @@ internal sealed class UnitService : IUnitService, IUnitSupportService
         switch (action)
         {
             case UnitAction.Promote: Promote(sim, unit, argument); break;
-            case UnitAction.Activity: MilitaryData.Edit(sim, unit).Activity = Enum.Parse<UnitActivity>(argument); break;
+            case UnitAction.Activity: SetActivity(sim, unit, Enum.Parse<UnitActivity>(argument)); break;
             case UnitAction.Pillage: Pillage(sim, unit); break;
             case UnitAction.Upgrade: UnitUpgrades.Apply(sim, unit, argument); break;
             case UnitAction.Disband: sim.State.RemoveUnit(unitId); MilitaryData.Sight(sim); break;
         }
+    }
+    private static void SetActivity(Simulation sim, Unit unit, UnitActivity activity)
+    {
+        var state = MilitaryData.Edit(sim, unit);
+        if (activity != UnitActivity.Fortify) state.FortifyTurns = 0;
+        state.Activity = activity;
     }
     private static void Promote(Simulation sim, Unit unit, string id)
     {
@@ -148,7 +155,7 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
         if (state.CreatedTurn != sim.State.Turn)
         {
             if (!active || alwaysHeal) unit.Health = Math.Min(MilitaryData.Constants(sim).MaxHitPoints, unit.Health + units.HealRate(sim, unit.Id));
-            if (!active && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
+            if (!active && state.Activity == UnitActivity.Fortify && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
                 state.FortifyTurns = Math.Min(MilitaryData.Raw(sim, "MAX_FORTIFY_TURNS", 5), state.FortifyTurns + 1);
         }
         WakeSentry(sim, unit, state);

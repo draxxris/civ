@@ -168,7 +168,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         for (int i = 0; i < 20; i++) sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(new TileId(0)) });
         sim.State.Plots[0].Owner = null;
         // Inflation 25%: civic base (12 * 50/100 + 1*100/100) = 7;
-        // 7*125/100=8; *80/100=6; *115/100=6. Aggregate also applies inflation, as in the source.
+        // 7*125/100=8; *80/100=6; *115/100=6. Civic upkeep is inflated only here, not again by the aggregate.
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new EconomyPlayerState { AccruedCostRatioTimes10000 = 12500 });
         var result = Service<IPlayerEconomyService>(sim).Calculate(sim, 0);
         Assert.Equal(18, result.Ledger.Total("economy:free_units"));
@@ -178,10 +178,10 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.Equal(6, result.Ledger.Total("economy:civic_upkeep"));
         Assert.Equal(1938, result.Ledger.Total("economy:maintenance_hundredths")); // Capital 25 + other 1888+25.
         Assert.Equal(19, result.Ledger.Total("economy:maintenance"));
-        Assert.Equal(34, result.Ledger.Total("economy:pre_inflated"));
+        Assert.Equal(28, result.Ledger.Total("economy:pre_inflated")); // Maintenance 19 + units 1 + supply 8.
         Assert.Equal(25, result.Ledger.Total("economy:inflation_percent"));
-        Assert.Equal(8, result.Ledger.Total("economy:inflation"));
-        Assert.Equal(42, result.Expenses);
+        Assert.Equal(7, result.Ledger.Total("economy:inflation")); // 28*125/100 - 28.
+        Assert.Equal(41, result.Expenses); // 35 inflated aggregate + 6 civic upkeep.
     }
     [Fact]
     public void Inflation_updates_after_gold_and_imported_profile_disables_it()
@@ -242,11 +242,15 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         sim.AdvanceTurn(); Assert.Contains("probe:building", city.Buildings);
         Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, ContentId = "probe:whip" }, out _));
         city.Population = 20; city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 1 };
+        // Happiness is not modelled here: give the city 18 workers, as if it had grown content, so the whip must release them.
+        var center = sim.State.Grid.TileAt(city.Position);
+        city.Worked = Service<ICityWorkService>(sim).WorkArea(sim, 1).Where(t => t != center).Take(18).Select(t => sim.State.Grid.HexOf(t)).ToList();
         hurry = service.Calculate(sim, 1, "cities:hurry_population");
         Assert.Equal(3, hurry.Population); // Cost 528, left 527. ceil(527²/790)=352; per citizen 3000/19=157.
         Assert.Equal(706, hurry.Production); // 3*157*150/100 = 706.
         Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1, HurryId = "cities:hurry_population" }, out error), error);
         Assert.Equal(17, city.Population);
+        Assert.True(city.Worked.Count + city.Specialists.Values.Sum() <= city.Population);
         Assert.Equal(20, city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns);
         Assert.Contains(Service<ICityWellbeingService>(sim).Calculate(sim, 1).Ledger.Lines, l => l.Source == "economy:hurry" && l.Amount == 1);
     }

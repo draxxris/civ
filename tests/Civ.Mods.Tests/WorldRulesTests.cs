@@ -294,6 +294,12 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         foreach (var p in sim.State.Plots) p.RiverEdges = 0;
         sim.State.Plots[sim.State.Grid.TileAt(3, 3).Value].Terrain = "world:coast";
         sim.State.Plots[sim.State.Grid.TileAt(4, 3).Value].Terrain = "world:ocean";
+        // Unowned water is gated by trade techs; it must stay revealed to the team.
+        foreach (int x in new[] { 3, 4 })
+        {
+            var water = sim.State.Plots[sim.State.Grid.TileAt(x, 3).Value];
+            water.Owner = null; water.Revealed.Add(sim.State.PlayerById(0).TeamId);
+        }
         var port = AddCity(sim, target);
         Assert.Equal(0, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
         var coastTech = Content.Get<S.TechDef>().All.First(t => t.TradeTerrains.GetValueOrDefault("world:coast"));
@@ -304,6 +310,30 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(1, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
         sim.State.Plots[target.Value].Owner = 1;
         Assert.Equal(0, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
+    }
+
+    [Fact]
+    public void Same_bank_river_and_owned_coast_connect_resources()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var city = AddCity(sim, sim.State.Grid.TileAt(2, 3));
+        var target = sim.State.Grid.TileAt(5, 3);
+        var plot = sim.State.Plots[target.Value];
+        plot.Bonus = "world:copper";
+        plot.Improvement = "world:improvement_improvement_mine";
+        sim.TeamOf(0).Techs.UnionWith(["research:mining", "research:bronze_working"]);
+        var riverTech = Content.Get<S.TechDef>().All.First(t => t.RiverTrade);
+        sim.TeamOf(0).Techs.Add(riverTech.Id);
+        // Edge 1 is not the shared edge between east neighbors, but runs along the same corridor.
+        foreach (int x in new[] { 2, 3, 4, 5 }) sim.State.SetRiver(sim.State.Grid.TileAt(x, 3), 1, true);
+        var network = Service<IResourceNetwork>(sim);
+        Assert.Equal(1, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
+        foreach (var p in sim.State.Plots) p.RiverEdges = 0;
+        Assert.Equal(0, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
+        // Own-border water connects before any sailing tech.
+        foreach (int x in new[] { 3, 4 }) sim.State.Plots[sim.State.Grid.TileAt(x, 3).Value].Terrain = "world:coast";
+        AddCity(sim, target);
+        Assert.Equal(1, network.ConnectedCount(sim, 0, city.Id, "world:copper"));
     }
 
     private static Unit AddWorker(Simulation sim, TileId tile)

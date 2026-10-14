@@ -52,10 +52,26 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     {
         var plot = sim.State.Plots[tile.Value];
         if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) { plot.Owner = city.Owner; return; }
-        long maximum = plot.Culture.Values.DefaultIfEmpty().Max();
-        if (maximum <= 0) { plot.Owner = null; return; }
+        // Only players with a living city whose cultural radius covers the tile may own it.
+        var eligible = plot.Culture.Where(p => p.Value > 0 && InRange(sim, p.Key, tile)).ToArray();
+        if (eligible.Length == 0) { plot.Owner = null; return; }
+        long maximum = eligible.Max(p => p.Value);
         // Preserve an incumbent on equal culture; otherwise lowest player id breaks ties.
-        if (plot.Owner is { } owner && plot.Culture.GetValueOrDefault(owner) == maximum) return;
-        plot.Owner = plot.Culture.First(p => p.Value == maximum).Key;
+        if (plot.Owner is { } owner && eligible.Any(p => p.Key == owner && p.Value == maximum)) return;
+        plot.Owner = eligible.First(p => p.Value == maximum).Key;
     }
+    private static bool InRange(Simulation sim, int player, TileId tile)
+    {
+        IReadOnlyList<Civ.Content.Schema.CultureLevelDef>? levels = null;
+        foreach (var c in sim.State.Cities)
+        {
+            if (c.Owner != player) continue;
+            int distance = sim.State.Grid.Distance(CityData.Tile(sim, c), tile);
+            if (distance <= 1) return true;
+            levels ??= CityData.Levels(sim);
+            if (distance < levels.Count && distance <= Math.Max(1, CityData.LevelIndex(sim, c, levels))) return true;
+        }
+        return false;
+    }
+    internal static int CultureRadius(Simulation sim, City city) => Math.Max(1, CityData.LevelIndex(sim, city));
 }

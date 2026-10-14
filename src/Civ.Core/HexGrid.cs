@@ -111,10 +111,10 @@ public sealed class HexGrid
         foreach (var h in Hex.Range(HexOf(center), radius)) if (TryTile(h, out var t)) tiles.Add(t.Value);
         return tiles.Select(i => new TileId(i));
     }
-    /// <summary>Clipped shortest-distance ring (not duplicated wrap images).</summary>
+    /// <summary>Clipped shortest-distance ring (not duplicated wrap images), in ascending TileId order.</summary>
     public IEnumerable<TileId> Ring(TileId center, int radius) => Range(center, radius).Where(t => Distance(center, t) == radius);
     /// <summary>Range expressed as canonical axial coordinates.</summary>
     public IEnumerable<Hex> Range(Hex center, int radius) => Range(TileAt(center), radius).Select(HexOf);
-    /// <summary>Ring expressed as canonical axial coordinates.</summary>
+    /// <summary>Ring expressed as canonical axial coordinates, in the same ascending TileId order.</summary>
     public IEnumerable<Hex> Ring(Hex center, int radius) => Ring(TileAt(center), radius).Select(HexOf);
 }

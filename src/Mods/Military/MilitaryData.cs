@@ -41,7 +41,8 @@ internal static class MilitaryData
         return false;
     }
     internal static IEnumerable<S.BuildingDef> Buildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
-        .Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech));
+        .Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
+        .Where(b => !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success);
     internal static Unit Spawn(Simulation sim, int owner, string type, Hex position)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };

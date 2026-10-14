@@ -88,9 +88,10 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     private static int BuildingModifiers(S.BuildingDef def, ModifierSink sink)
     {
         int modifier = (int)CityData.Effect(sink, "building_class_production_percent:" + def.DefaultBuilding);
+        if (def.Limits.NoLimit) return modifier;
         if (def.Limits.World >= 0) modifier += (int)CityData.Effect(sink, "world_wonder_production_percent");
         if (def.Limits.Team >= 0) modifier += (int)CityData.Effect(sink, "team_wonder_production_percent");
-        if (def.Limits.Player >= 0) modifier += (int)CityData.Effect(sink, "national_wonder_production_percent");
+        if (def.Limits.Player == 1) modifier += (int)CityData.Effect(sink, "national_wonder_production_percent");
         return modifier;
     }
     private static int TraitProduction(IReadOnlyDictionary<string, int> modifiers, ModifierSink sink) =>
@@ -99,10 +100,10 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     {
         var state = CityData.Edit(sim, city);
         state.PendingCompletion = null;
-        if (GovernmentStatus.IsDisorder(sim, city) || city.ProductionQueue.Count == 0) return;
+        if (GovernmentStatus.IsDisorder(sim, city)) return;
+        if (!DropInvalidHead(sim, city)) return;
         var order = city.ProductionQueue[0];
         if (order.Kind == "economy:process") return; // Conversion is settled as commerce; do not consume overflow.
-        if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success) return;
         var result = Calculate(sim, city.Id, order.Kind, order.ContentId);
         order = order with { Progress = order.Progress + result.Production };
         city.ProductionQueue[0] = order;
@@ -113,13 +114,31 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         state.PendingProduction = result.Production;
         state.PendingModifierPercent = result.ModifierPercent;
     }
+    /// <summary>Dequeue (and refund progress for) invalid head orders; false when no valid order remains.</summary>
+    private bool DropInvalidHead(Simulation sim, City city)
+    {
+        while (city.ProductionQueue.Count > 0)
+        {
+            var order = city.ProductionQueue[0];
+            if (order.Kind == "economy:process" || Validate(sim, city.Id, order.Kind, order.ContentId).Success) return true;
+            city.ProductionQueue.RemoveAt(0);
+            if (order.Progress > 0) sim.State.PlayerById(city.Owner).Treasury += order.Progress;
+        }
+        return false;
+    }
     internal void Complete(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);
         if (state.PendingCompletion is not { } order) return;
         state.PendingCompletion = null;
         // Earlier city completions may consume a global/team/player class limit.
-        if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success) return;
+        if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success)
+        {
+            int index = city.ProductionQueue.FindIndex(o => o.Kind == order.Kind && o.ContentId == order.ContentId);
+            if (index >= 0) city.ProductionQueue.RemoveAt(index);
+            if (order.Progress > 0) sim.State.PlayerById(city.Owner).Treasury += order.Progress;
+            return;
+        }
         long excess = order.Progress - state.PendingCost;
         long cap = Math.Max(state.PendingCost, state.PendingProduction);
         state.Overflow = Math.Min(excess, cap) * 100 / Math.Max(1, state.PendingModifierPercent);
@@ -127,6 +146,8 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         city.ProductionQueue.RemoveAt(0);
         if (order.Kind == "cities:building")
         {
+            foreach (var replaced in sim.Content.Get<S.BuildingDef>(order.ContentId).ReplaceBuildings.Where(p => p.Value).Select(p => p.Key))
+                city.Buildings.Remove(replaced);
             city.Buildings.Add(order.ContentId);
             sim.Events.Publish(new BuildingCompleted(city.Id, order.ContentId));
         }

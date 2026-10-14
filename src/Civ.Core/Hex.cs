@@ -46,7 +46,7 @@ public readonly record struct Hex(int Q, int R)
         }
     }
 
-    /// <summary>Unbounded ring in clockwise traversal order.</summary>
+    /// <summary>Unbounded ring in counter-clockwise traversal order as drawn with +Y down (pointy-top layout), starting at the south-west corner.</summary>
     public static IEnumerable<Hex> Ring(Hex center, int radius)
     {
         if (radius == 0) { yield return center; yield break; }

@@ -73,6 +73,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         var result = Calculate(sim, cityId, hurry);
         sim.State.PlayerById(city.Owner).Treasury -= result.Gold;
         city.Population -= result.Population;
+        if (result.Population > 0) sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, cityId);
         city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + result.Production };
         if (!sim.Content.Get<HurryDef>(hurry).Anger) return;
         var state = city.Extensions.Get<EconomyCityState>(sim.Content) ?? new();

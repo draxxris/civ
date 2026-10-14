@@ -23,8 +23,10 @@ internal sealed class CombatService : ICombatService
         ValidateCombat(sim, a, d);
         var preview = Preview(sim, attackerId, defenderId);
         var collateral = Collateral(sim, a, d);
-        int firstA = preview.AttackerFirstStrikes + Chance(sim, preview.AttackerChanceFirstStrikes);
-        int firstD = preview.DefenderFirstStrikes + Chance(sim, preview.DefenderChanceFirstStrikes);
+        int netFirst = preview.AttackerFirstStrikes + Chance(sim, preview.AttackerChanceFirstStrikes)
+            - preview.DefenderFirstStrikes - Chance(sim, preview.DefenderChanceFirstStrikes);
+        int firstA = Math.Max(0, netFirst);
+        int firstD = Math.Max(0, -netFirst);
         var rounds = new List<CombatRound>();
         CombatOutcome? outcome = null;
         while (outcome is null)
@@ -79,12 +81,12 @@ internal sealed class CombatService : ICombatService
         a.MovesLeft = Math.Max(0, a.MovesLeft - Math.Max(cost, MilitaryData.Constants(sim).MoveDenominator));
         if (outcome == CombatOutcome.Withdrawn || outcome == CombatOutcome.LimitedDamage)
         {
-            Experience(sim, a, d, MilitaryData.Raw(sim, "EXPERIENCE_FROM_WITHDRAWL", 3));
+            Experience(sim, a, d, d.Position, MilitaryData.Raw(sim, "EXPERIENCE_FROM_WITHDRAWL", 3));
             return;
         }
-        AwardVictory(sim, a, d, preview, outcome);
+        AwardVictory(sim, a, d, d.Position, preview, outcome);
     }
-    private static void AwardVictory(Simulation sim, Unit a, Unit d, CombatPreview preview, CombatOutcome outcome)
+    private static void AwardVictory(Simulation sim, Unit a, Unit d, Hex combatPlot, CombatPreview preview, CombatOutcome outcome)
     {
         bool attackWon = outcome == CombatOutcome.AttackerWon;
         var winner = attackWon ? a : d; var loser = attackWon ? d : a;
@@ -93,12 +95,12 @@ internal sealed class CombatService : ICombatService
         int loserStrength = attackWon ? preview.DefenseStrength.Current : preview.AttackStrength.Current;
         int winnerStrength = attackWon ? preview.AttackStrength.Current : preview.DefenseStrength.Current;
         int experience = Math.Clamp(baseExperience * loserStrength / Math.Max(1, winnerStrength), constants.MinExperiencePerCombat, constants.MaxExperiencePerCombat);
-        Experience(sim, winner, loser, experience);
+        Experience(sim, winner, loser, combatPlot, experience);
         if (MilitaryData.Player(sim, loser.Owner).Barbarian) MilitaryData.EditPlayer(sim, winner.Owner).WinsAgainstBarbarians++;
         sim.State.RemoveUnit(loser.Id);
         if (MilitaryData.Definition(sim, a).Suicide && sim.State.FindUnit(a.Id) is not null) sim.State.RemoveUnit(a.Id);
     }
-    private static void Experience(Simulation sim, Unit winner, Unit opponent, int amount)
+    private static void Experience(Simulation sim, Unit winner, Unit opponent, Hex combatPlot, int amount)
     {
         int cap = int.MaxValue;
         if (MilitaryData.Player(sim, opponent.Owner).Barbarian) cap = MilitaryData.Raw(sim, "BARBARIAN_MAX_XP_VALUE", 40);
@@ -106,20 +108,20 @@ internal sealed class CombatService : ICombatService
         var state = MilitaryData.Edit(sim, winner);
         int change = amount * 100;
         var effects = MilitaryData.Effects(sim, winner);
-        if (sim.State.PlotAt(opponent.Position).Owner == winner.Owner)
+        if (sim.State.PlotAt(combatPlot).Owner == winner.Owner)
             change += change * MilitaryData.Effect(effects, "experience_in_borders_percent") / 100;
         int percent = MilitaryData.Effect(effects, "experience_percent");
         change = change * Math.Max(0, 100 + percent) / 100;
         long previous = winner.Experience * 100L + state.ExperienceRemainder;
         long next = previous < cap * 100L ? Math.Min(cap * 100L, previous + change) : previous;
         winner.Experience = (int)(next / 100); state.ExperienceRemainder = (int)(next % 100);
-        if (!MilitaryData.Player(sim, opponent.Owner).Barbarian) AwardGeneralPoints(sim, winner, opponent, amount);
+        if (!MilitaryData.Player(sim, opponent.Owner).Barbarian) AwardGeneralPoints(sim, winner, opponent, combatPlot, amount);
     }
-    private static void AwardGeneralPoints(Simulation sim, Unit winner, Unit opponent, int amount)
+    private static void AwardGeneralPoints(Simulation sim, Unit winner, Unit opponent, Hex combatPlot, int amount)
     {
         var ledger = Civ.Content.ModifierSink.Collect(new(sim, Civ.Content.ModifierScope.Player, winner.Owner)).Ledger;
         long percent = 100 + ledger.Total("military:general_rate_percent");
-        if (sim.State.PlotAt(opponent.Position).Owner == winner.Owner) percent += ledger.Total("military:domestic_general_rate_percent");
+        if (sim.State.PlotAt(combatPlot).Owner == winner.Owner) percent += ledger.Total("military:domestic_general_rate_percent");
         MilitaryData.EditPlayer(sim, winner.Owner).GeneralPoints += (int)(amount * Math.Max(0, percent) / 100);
     }
     private static IReadOnlyList<CollateralHit> Collateral(Simulation sim, Unit a, Unit primary)

@@ -33,8 +33,9 @@ internal sealed class CityCapture : ICityCaptureService
     {
         var city = sim.State.CityById(cityId);
         var tile = CityData.Tile(sim, city);
+        int radius = Math.Max(1, CityCulture.CultureRadius(sim, city));
         sim.State.RemoveCity(cityId);
-        foreach (var plot in sim.State.Grid.Range(tile, 1)) CityCulture.Resolve(sim, plot);
+        foreach (var plot in sim.State.Grid.Range(tile, radius)) CityCulture.Resolve(sim, plot);
         sim.Events.Publish(new CityRazed(cityId, city.Owner, city.Position));
         sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
     }

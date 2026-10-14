@@ -10,11 +10,6 @@ internal static class RecurringCosts
 {
     internal static long Calculate(Simulation sim, int player, List<LedgerLine> lines)
     {
-        if (GovernmentStatus.IsAnarchy(sim, player))
-        {
-            lines.Add(new("government:anarchy", "economy:expenses", 0));
-            return 0;
-        }
         var civics = EconomyData.Civics(sim, player);
         int population = EconomyData.Cities(sim, player).Sum(c => c.Population);
         long maintenanceHundredths = 0;
@@ -29,18 +24,25 @@ internal static class RecurringCosts
         long upkeep = CivicUpkeep(sim, player, civics, population, lines);
         long units = UnitUpkeep(sim, player, civics, population, lines);
         long supply = Supply(sim, player, civics, lines);
-        long preInflated = maintenanceHundredths / 100 + upkeep + units + supply;
+        long preInflated = maintenanceHundredths / 100 + units + supply;
         int inflation = Inflation.Rate(sim, player);
-        long total = preInflated * Math.Max(0, 100 + inflation) / 100;
+        long inflationCost = preInflated * Math.Max(0, 100 + inflation) / 100 - preInflated;
+        // Civic upkeep already carries its own inflation, so the aggregate rate must not apply to it again.
+        long total = preInflated + inflationCost + upkeep;
         lines.Add(new("economy:rules", "economy:maintenance", maintenanceHundredths / 100));
         lines.Add(new("economy:rules", "economy:pre_inflated", preInflated));
         lines.Add(new("economy:rules", "economy:inflation_percent", inflation));
-        lines.Add(new("economy:rules", "economy:inflation", total - preInflated));
+        lines.Add(new("economy:rules", "economy:inflation", inflationCost));
         lines.Add(new("economy:rules", "economy:expenses", total));
         return total;
     }
     private static long CivicUpkeep(Simulation sim, int player, CivicDef[] civics, int population, List<LedgerLine> lines)
     {
+        if (GovernmentStatus.IsAnarchy(sim, player))
+        {
+            lines.Add(new("government:anarchy", "economy:civic_upkeep", 0));
+            return 0;
+        }
         long total = 0;
         var rules = EconomyData.Rules(sim).Values;
         int cities = EconomyData.Cities(sim, player).Count();

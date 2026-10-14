@@ -50,7 +50,15 @@ internal static class GoodyService
         var techs = Technologies(sim, unit).ToArray();
         if (techs.Length == 0) return;
         var tech = techs[sim.Rng.Next(techs.Length)];
-        sim.TeamOf(unit.Owner).Techs.Add(tech.Id);
+        var team = sim.TeamOf(unit.Owner);
+        team.Techs.Add(tech.Id);
+        if (team.Research.Remove(tech.Id, out long saved) && saved > 0)
+        {
+            var research = team.Extensions.Get<ResearchTeamState>(sim.Content) ?? new ResearchTeamState();
+            research.Overflow += saved;
+            team.Extensions.Set(sim.Content, research);
+        }
+        if (team.Researching == tech.Id) team.Researching = null;
         sim.Events.Publish(new TechDiscovered(sim.TeamOf(unit.Owner).Id, tech.Id));
     }
     private static void GrantUnit(Simulation sim, Unit unit, string type)

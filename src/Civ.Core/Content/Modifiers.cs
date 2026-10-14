@@ -9,8 +9,8 @@ public readonly record struct YieldVector(long Food, long Production, long Comme
     public static YieldVector operator +(YieldVector a, YieldVector b) => new(a.Food + b.Food, a.Production + b.Production, a.Commerce + b.Commerce);
     /// <summary>Integer scaling.</summary>
     public static YieldVector operator *(YieldVector a, long n) => new(a.Food * n, a.Production * n, a.Commerce * n);
-    /// <summary>Apply percentage bonuses component-wise; 25 means +25%.</summary>
-    public YieldVector WithPercent(YieldVector percent) => new(Food * (100 + percent.Food) / 100, Production * (100 + percent.Production) / 100, Commerce * (100 + percent.Commerce) / 100);
+    /// <summary>Apply percentage bonuses component-wise; 25 means +25%. Multipliers clamp at zero, so reductions below -100% yield nothing.</summary>
+    public YieldVector WithPercent(YieldVector percent) => new(Food * Math.Max(0, 100 + percent.Food) / 100, Production * Math.Max(0, 100 + percent.Production) / 100, Commerce * Math.Max(0, 100 + percent.Commerce) / 100);
 }
 /// <summary>Integer gold, research, culture and espionage.</summary>
 public readonly record struct CommerceVector(long Gold, long Research, long Culture, long Espionage)
@@ -19,8 +19,8 @@ public readonly record struct CommerceVector(long Gold, long Research, long Cult
     public static CommerceVector operator +(CommerceVector a, CommerceVector b) => new(a.Gold + b.Gold, a.Research + b.Research, a.Culture + b.Culture, a.Espionage + b.Espionage);
     /// <summary>Integer scaling.</summary>
     public static CommerceVector operator *(CommerceVector a, long n) => new(a.Gold * n, a.Research * n, a.Culture * n, a.Espionage * n);
-    /// <summary>Apply percentage bonuses component-wise.</summary>
-    public CommerceVector WithPercent(CommerceVector p) => new(Gold * (100 + p.Gold) / 100, Research * (100 + p.Research) / 100, Culture * (100 + p.Culture) / 100, Espionage * (100 + p.Espionage) / 100);
+    /// <summary>Apply percentage bonuses component-wise. Multipliers clamp at zero, so reductions below -100% yield nothing.</summary>
+    public CommerceVector WithPercent(CommerceVector p) => new(Gold * Math.Max(0, 100 + p.Gold) / 100, Research * Math.Max(0, 100 + p.Research) / 100, Culture * Math.Max(0, 100 + p.Culture) / 100, Espionage * Math.Max(0, 100 + p.Espionage) / 100);
 }
 /// <summary>Target scope of a modifier calculation.</summary>
 public enum ModifierScope
