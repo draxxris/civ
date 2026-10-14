@@ -267,12 +267,21 @@ Keep this list current. It is the source of truth for where the work is.
   Core and client source scans reject shipped mod ids. Custom-ruleset contract tests cover unrelated ids (`da4a4a0`).
 - [x] Adversarial audit fixes for Religion spread scaling, AI peace treaties, staging area checks, and route bounds (`70fa3e2`).
 - [x] P6 Great People mod (`src/Mods/GreatPeople`) and Trade mod (`src/Mods/Trade`) (`3872fcb`).
-- [x] Client follow-ups: religion screen & city/unit religion actions, pedia browser, save/load UI, and turn notifications.
+- [x] Client follow-ups: religion screen & city/unit religion actions, pedia browser, save/load UI, turn notifications,
+  and Great People / Trade city-screen & unit-action wiring (`a7c8537`, `239bb82`).
+- [x] P6 Diplomacy mod (`src/Mods/Diplomacy`): contact discovery, attitude ledgers, peace treaties, open borders,
+  defensive pacts, and trade deals (`3879029`).
+- [x] P6 Projects & Victory mod (`src/Mods/ProjectsVictory`): team/world projects, score breakdowns, and Conquest,
+  Domination, Cultural, Time, and Space Race victories (`5015e41`).
+- [x] Adversarial audit fixes across Trade, AI, Diplomacy, ProjectsVictory, and ResourceNetwork (`439f168`).
+- [x] P6 Corporations mod (`src/Mods/Corporations`) and Espionage mod (`src/Mods/Espionage`) (`dc28917`).
+- [x] P6 Events mod (`src/Mods/Events`) and Client Diplomacy / Score / Victory UI.
 
 ### In progress
 
-- [ ] P6 Diplomacy mod (`src/Mods/Diplomacy`) and Projects & Victory mod (`src/Mods/ProjectsVictory`), plus wiring
-  `IGreatPeopleService` / `ITradeRouteService` into `Civ.Client.Core` / `Civ.Godot`.
+- [ ] Client Corporations, Espionage & Events UI + deleting legacy `src/Civ.BaseGame` once its remaining tests are
+  migrated.
+- [ ] P6 era progression (`classical` onwards) & P7 (`scripted-wonders` and `revolution`).
 
 ### Next
 

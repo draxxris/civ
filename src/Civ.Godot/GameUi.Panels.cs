@@ -5,7 +5,7 @@ namespace Civ.Client;
 /// <summary>Religion, pedia and load dialogs, the save button, and the turn notification feed.</summary>
 internal sealed partial class GameUi
 {
-    private enum Modal { None, Religion, Pedia, Load }
+    private enum Modal { None, Religion, Diplomacy, Pedia, Load }
 
     private const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
@@ -42,6 +42,7 @@ internal sealed partial class GameUi
     private void AddPanelButtons(HBoxContainer row)
     {
         row.AddChild(Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world"));
+        row.AddChild(Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory"));
         row.AddChild(Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more"));
         row.AddChild(Ui.Button("Save", QuickSaveGame, "Quick save (F5)"));
         row.AddChild(Ui.Button("Load", () => OpenModal(Modal.Load), "Load a saved game (F9)"));
@@ -89,6 +90,7 @@ internal sealed partial class GameUi
         switch (_modalKind)
         {
             case Modal.Religion: BuildReligion(box); break;
+            case Modal.Diplomacy: BuildDiplomacy(box); break;
             case Modal.Pedia: BuildPedia(box); break;
             case Modal.Load: BuildLoad(box); break;
         }
@@ -121,6 +123,54 @@ internal sealed partial class GameUi
         box.AddChild(Ui.Scroll(list, 340));
         box.AddChild(Ui.Button("No state religion", () => _session.AdoptStateReligion(null), screen.NoReligionBlocked,
             screen.StateReligion != null && screen.NoReligionBlocked == null));
+    }
+
+    // --- diplomacy, score and victory --------------------------------------------------------------------
+
+    private void BuildDiplomacy(VBoxContainer box)
+    {
+        var screen = _session.DescribeDiplomacy();
+        var victory = _session.DescribeVictoryAndScores();
+        var list = Ui.VBox(6);
+        if (!screen.Available) list.AddChild(Ui.Text("Diplomacy is not part of this ruleset.", 13, Ui.Dim));
+        else if (screen.Rivals.Count == 0) list.AddChild(Ui.Text("You have not met any other leader yet.", 13, Ui.Dim));
+        foreach (var r in screen.Rivals)
+        {
+            list.AddChild(Ui.Text($"{r.Leader} of {r.Civilization} ({r.Name})  -  {r.Status}", 15, r.AtWar ? Ui.Bad : Colors.White));
+            var terms = new List<string>();
+            if (r.OpenBorders) terms.Add("open borders");
+            if (r.DefensivePact) terms.Add("defensive pact");
+            list.AddChild(Ui.Text($"Attitude: {r.Tier} ({r.AttitudeScore:+#;-#;0})" + (terms.Count > 0 ? "  ·  " + string.Join(", ", terms) : ""), 12, Ui.Accent));
+            foreach (var line in r.Breakdown.Where(l => l.Amount != 0))
+                list.AddChild(Ui.Text($"    {line.Source}: {line.Amount:+#;-#;0}", 11, Ui.Dim));
+            var actions = Ui.HBox(4);
+            foreach (var a in r.Actions)
+            {
+                var action = a;
+                actions.AddChild(Ui.Button(a.Label, () => _session.DoDiplomacy(action), a.Blocked, a.Blocked == null, 12));
+            }
+            list.AddChild(actions);
+        }
+        if (screen.Deals.Count > 0) list.AddChild(Ui.Heading("Active deals"));
+        foreach (var d in screen.Deals)
+        {
+            var line = Ui.HBox(6);
+            line.AddChild(Ui.Text($"#{d.Id} {d.Status}: {d.Summary}", 12, Colors.White));
+            if (d.Cancel is { } cancel) line.AddChild(Ui.Button(cancel.Label, () => _session.DoDiplomacy(cancel), cancel.Blocked, cancel.Blocked == null, 12));
+            list.AddChild(line);
+        }
+        list.AddChild(Ui.Heading("Score and victory"));
+        if (victory.Status is { } status)
+        {
+            list.AddChild(Ui.Text(status.IsGameOver ? $"Game over: {victory.WinnerName ?? "no winner"} won by {victory.VictoryName ?? "unknown"} on turn {status.TurnWon}"
+                : $"Game in progress  ·  turn limit {status.MaxTurns}", 13, status.IsGameOver ? Ui.Accent : Colors.White));
+            if (victory.Conditions.Count > 0) list.AddChild(Ui.Text("Victory: " + string.Join(", ", victory.Conditions), 12, Ui.Dim));
+            foreach (var s in victory.Scores)
+                list.AddChild(Ui.Text($"{(s.IsLocal ? "> " : "  ")}{s.Name} ({s.Civilization}): {s.Score.Total}  "
+                    + $"[pop {s.Score.Population}, land {s.Score.Land}, techs {s.Score.Techs}, wonders {s.Score.Wonders}]", 12, s.IsLocal ? Ui.Accent : Colors.White));
+        }
+        else list.AddChild(Ui.Text("No victory rules in this ruleset.", 12, Ui.Dim));
+        box.AddChild(Ui.Scroll(list, 420));
     }
 
     // --- pedia ----------------------------------------------------------------------------------------------
