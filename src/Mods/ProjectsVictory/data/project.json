@@ -1,0 +1,158 @@
+[
+  {
+    "id": "projects_victory:apollo_program",
+    "name": "Apollo Program",
+    "cost": 1600,
+    "techPrereq": "research:rocketry",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "victory": "projects_victory:space_race"
+  },
+  {
+    "id": "projects_victory:manhattan_project",
+    "name": "Manhattan Project",
+    "cost": 1500,
+    "techPrereq": "research:fission",
+    "maxGlobalInstances": 1,
+    "maxTeamInstances": -1,
+    "allowsNukes": true
+  },
+  {
+    "id": "projects_victory:sdi",
+    "name": "SDI",
+    "cost": 1000,
+    "techPrereq": "research:laser",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "anyonePrereqProject": "projects_victory:manhattan_project"
+  },
+  {
+    "id": "projects_victory:ss_casing",
+    "name": "Space Casing",
+    "cost": 1200,
+    "techPrereq": "research:composites",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 5,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 5
+    },
+    "victoryMinThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_cockpit",
+    "name": "Space Cockpit",
+    "cost": 1000,
+    "techPrereq": "research:fiber_optics",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_docking_bay",
+    "name": "Space Docking Bay",
+    "cost": 2000,
+    "techPrereq": "research:satellites",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_engine",
+    "name": "Space Engine",
+    "cost": 1600,
+    "techPrereq": "research:fusion",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 2,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 2
+    },
+    "victoryMinThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_life_support",
+    "name": "Space Life Support",
+    "cost": 1000,
+    "techPrereq": "research:ecology",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_stasis_chamber",
+    "name": "Space Stasis Chamber",
+    "cost": 1200,
+    "techPrereq": "research:genetics",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 1,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:ss_thrusters",
+    "name": "Space Thrusters",
+    "cost": 1200,
+    "techPrereq": "research:superconductors",
+    "maxGlobalInstances": -1,
+    "maxTeamInstances": 5,
+    "victory": "projects_victory:space_race",
+    "spaceship": true,
+    "prereqProjects": {
+      "projects_victory:apollo_program": 1
+    },
+    "victoryThresholds": {
+      "projects_victory:space_race": 5
+    },
+    "victoryMinThresholds": {
+      "projects_victory:space_race": 1
+    }
+  },
+  {
+    "id": "projects_victory:the_internet",
+    "name": "The Internet",
+    "cost": 2000,
+    "techPrereq": "research:computers",
+    "maxGlobalInstances": 1,
+    "maxTeamInstances": -1
+  }
+]

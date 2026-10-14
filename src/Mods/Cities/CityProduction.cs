@@ -46,6 +46,11 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     }
     private static long Cost(Simulation sim, City city, string kind, string id)
     {
+        if (kind != "cities:unit" && kind != "cities:building")
+        {
+            var owner = sim.Content.Services.Get<IProductionKind>().Single(k => k.Id == kind);
+            return Math.Max(1, owner.BaseCost(owner.Definition(sim.Content, id)) * CityData.Speed(sim).CreatePercent / 100);
+        }
         bool unit = kind == "cities:unit";
         long cost = unit ? sim.Content.Get<S.UnitDef>(id).Cost : sim.Content.Get<S.BuildingDef>(id).Cost;
         var speed = CityData.Speed(sim);
@@ -69,7 +74,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
             foreach (var other in CityData.Owned(sim, city.Owner))
                 foreach (var b in CityData.Active(sim, other)) modifier += b.GlobalBuildingClassProductionModifiers.GetValueOrDefault(def.DefaultBuilding);
         }
-        else modifier += UnitModifiers(sim, city, sim.Content.Get<S.UnitDef>(id), bonuses, sink);
+        else if (kind == "cities:unit") modifier += UnitModifiers(sim, city, sim.Content.Get<S.UnitDef>(id), bonuses, sink);
         return modifier;
     }
     private static int UnitModifiers(Simulation sim, City city, S.UnitDef unit, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
@@ -153,7 +158,8 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
             city.Buildings.Add(order.ContentId);
             sim.Events.Publish(new BuildingCompleted(city.Id, order.ContentId));
         }
-        else Spawn(sim, city, order.ContentId);
+        else if (order.Kind == "cities:unit") Spawn(sim, city, order.ContentId);
+        else foreach (var handler in sim.Content.Services.Get<IProductionCompletion>().Where(h => h.Kind == order.Kind)) handler.Complete(sim, city.Id, order.ContentId);
     }
     internal static void Spawn(Simulation sim, City city, string id)
     {
