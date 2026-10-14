@@ -118,6 +118,36 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
         Assert.Empty(trade.Calculate(sim, home.Id).Routes);
     }
     [Fact]
+    public void Domestic_resources_transit_open_borders_partner_roads_only_while_open_borders_last()
+    {
+        var sim = Scenario(); Meet(sim);
+        var home = City(sim, 0, 40); City(sim, 0, 43).Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
+        for (int i = 0; i < 96; i++) if (i is < 40 or > 43) sim.State.Plots[i].Route = null;
+        sim.State.Plots[41].Owner = 1; sim.State.Plots[42].Owner = 1; sim.State.Plots[43].Bonus = Grain;
+        sim.State.Plots.ToList().ForEach(p => { p.Revealed.Add(0); p.Revealed.Add(1); });
+        var network = sim.Content.Services.Get<IResourceNetwork>().Single();
+        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
+        Assert.Equal(1, network.ConnectedCount(sim, 0, home.Id, Grain));
+        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
+    }
+    [Fact]
+    public void Open_borders_and_technology_trades_need_an_enabling_technology_once_any_team_has_techs()
+    {
+        var sim = Scenario(); Meet(sim);
+        var content = sim.Content.Get<S.TechDef>().All;
+        var other = content.First(t => !t.OpenBordersTrading && !t.TechTrading && !t.GoldTrading);
+        var giver = content.First(t => !t.OpenBordersTrading && !t.TechTrading && t.Id != other.Id);
+        sim.TeamOf(0).Techs.Add(other.Id); sim.TeamOf(0).Techs.Add(giver.Id);
+        Reject(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }, "open borders");
+        Reject(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, giver.Id)] }, "technology trading");
+        sim.TeamOf(1).Techs.Add(content.First(t => t.OpenBordersTrading).Id);
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
+        sim.TeamOf(0).Techs.Add(content.First(t => t.TechTrading).Id);
+        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, giver.Id)] });
+    }
+    [Fact]
     public void Defensive_partners_join_against_aggressors_and_offensive_wars_cancel_the_aggressors_pacts()
     {
         var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2); Meet(sim, 0, 3);
@@ -136,7 +166,7 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
     {
         var sim = Scenario(); Meet(sim); var home = City(sim, 0, 40); var foreign = City(sim, 1, 41);
         sim.State.Plots[40].Bonus = "diplomacy_probe:grain";
-        sim.TeamOf(0).Techs.Add("research:woodworking");
+        sim.TeamOf(0).Techs.Add("research:woodworking"); sim.TeamOf(0).Techs.Add("research:currency"); sim.TeamOf(0).Techs.Add("research:alphabet");
         Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Resource, "diplomacy_probe:grain"), new(1, TradeItemKind.GoldPerTurn, Amount: 3), new(1, TradeItemKind.Gold, Amount: 7), new(0, TradeItemKind.Technology, "research:woodworking")] });
         int deal = Service(sim).Deals(sim).Last().Id;
         Reject(sim, new ExecuteDealCommand { Player = 0, Deal = deal }, "recipient");

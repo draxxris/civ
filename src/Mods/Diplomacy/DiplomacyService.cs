@@ -1,4 +1,5 @@
 using Civ.Game;
+using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Diplomacy;
 
@@ -64,8 +65,18 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         if (!HasMet(sim, a, b)) return "teams have not met";
         if (sim.TeamOf(player).Wars.Contains(b)) return "teams are at war";
         if (agreement == DiplomaticAgreement.DefensivePact && (sim.TeamOf(player).Wars.Count > 0 || sim.TeamOf(target).Wars.Count > 0)) return "defensive pacts require peace with all teams";
+        var tech = agreement == DiplomaticAgreement.OpenBorders ? TradeTech(sim, a, b, t => t.OpenBordersTrading, "open borders") : TradeTech(sim, a, b, t => t.DefensivePactTrading, "defensive pacts");
+        if (tech is not null) return tech;
         bool exists = agreement == DiplomaticAgreement.OpenBorders ? HasOpenBorders(sim, a, b) : HasDefensivePact(sim, a, b);
         return exists ? "agreement already active" : null;
+    }
+    /// <summary>Enforced only when content defines the enabling flag and some team has researched anything, so tech-less synthetic scenarios stay open.</summary>
+    internal static string? TradeTech(Simulation sim, int teamA, int teamB, Func<S.TechDef, bool> flag, string what)
+    {
+        var techs = sim.Content.Get<S.TechDef>().All;
+        if (!techs.Any(flag) || !sim.State.Teams.Any(t => t.Techs.Count > 0)) return null;
+        bool enabled = new[] { teamA, teamB }.Any(t => sim.State.TeamById(t).Techs.Any(id => sim.Content.TryGet<S.TechDef>(id, out var def) && flag(def)));
+        return enabled ? null : $"no team has researched the technology enabling {what}";
     }
     public void SignAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
     {

@@ -8,7 +8,7 @@ namespace Civ.Client;
 public sealed record DiplomacyAction(string Kind, string Label, GameCommand Command, string? Blocked);
 
 /// <summary>An open or active deal with a rival.</summary>
-public sealed record DiplomacyDealRow(int Id, int OtherPlayer, string Status, string Summary, DiplomacyAction? Cancel);
+public sealed record DiplomacyDealRow(int Id, int OtherPlayer, string Status, string Summary, DiplomacyAction? Cancel, DiplomacyAction? Accept);
 
 /// <summary>A met rival with attitude, treaties and the actions available against them.</summary>
 public sealed record DiplomacyRival(
@@ -72,7 +72,10 @@ public sealed partial class GameSession
             $"{(i.FromPlayer == Human ? "You give" : "You get")} {(i.Kind is TradeItemKind.Technology ? "" : i.Amount + " ")}{ItemName(i)}"));
         var cancel = new DiplomacyAction("cancel_deal", "Cancel deal", new CancelDealCommand { Player = Human, Deal = deal.Id },
             service.ValidateCancellation(Sim, Human, deal.Id));
-        return new(deal.Id, other, deal.Status.ToString(), summary, cancel);
+        DiplomacyAction? accept = deal.Status == DiplomaticDealStatus.Proposed && deal.Recipient == Human
+            ? new("accept_deal", "Accept", new ExecuteDealCommand { Player = Human, Deal = deal.Id }, service.ValidateExecution(Sim, Human, deal.Id))
+            : null;
+        return new(deal.Id, other, deal.Status.ToString(), summary, cancel, accept);
     }
 
     private string ItemName(DiplomaticTradeItem item) => item.Kind switch
