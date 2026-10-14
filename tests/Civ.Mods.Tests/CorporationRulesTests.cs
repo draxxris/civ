@@ -7,19 +7,31 @@ namespace Civ.Mods.Tests;
 
 internal static class P6RulesScenario
 {
-    private static readonly Lazy<ContentDb> Content = new(() =>
+    private static readonly Lazy<ContentDb> Content = new(() => BuildContent());
+    private static readonly Lazy<ContentDb> HalfMaintenanceContent = new(() => BuildContent(new HalfMaintenanceMod()));
+    private static ContentDb BuildContent(IMod? extra = null)
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         string configuration = dir.Parent!.Name;
         while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Civ.slnx"))) dir = dir.Parent;
         var names = new[] { "Corporations", "Espionage", "Diplomacy" };
         var sources = names.Select(name => ModLoader.FromDirectory(Path.Combine(dir!.FullName, "src", "Mods", name, "bin", configuration, "net10.0"))).ToArray();
-        return ModLoader.Build(new LoadedMods().Sources.Where(s => !sources.Any(n => n.Manifest.Id == s.Manifest.Id)).Concat(sources));
-    });
-    public static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
-    public static Simulation Create()
+        var loaded = new LoadedMods();
+        var all = loaded.Sources.Where(s => !sources.Any(n => n.Manifest.Id == s.Manifest.Id)).Concat(sources);
+        if (extra is not null) all = all.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["cities"] }, Root = loaded.Root, Instance = extra });
+        return ModLoader.Build(all);
+    }
+    private sealed class HalfMaintenanceMod : IMod
     {
-        var sim = GameFactory.Scenario(Content.Value);
+        public void Register(IModContext context) => context.Content<Civ.Content.Schema.BuildingDef>().Override(new()
+        {
+            Id = "cities:courthouse", Name = "Courthouse", DefaultBuilding = "cities:courthouse", MaintenanceModifier = -50,
+        });
+    }
+    public static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
+    public static Simulation Create(bool halfMaintenance = false)
+    {
+        var sim = GameFactory.Scenario(halfMaintenance ? HalfMaintenanceContent.Value : Content.Value);
         GameFactory.NeutralPolitics(sim);
         foreach (var plot in sim.State.Plots) plot.Owner = null;
         AddCity(sim, 0, 14); AddCity(sim, 0, 18); AddCity(sim, 1, 57);
@@ -167,21 +179,59 @@ public sealed class CorporationRulesTests
         Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
         Assert.True(Corps(sim).IsActive(sim, hq.Id, Cereal)); // Domestic to the new owner, which has no mercantilism.
     }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(10000)]
+    public void Courthouse_reduces_corporate_costs_before_economy_adjusts_sliders_and_settles_once(long treasury)
+    {
+        var sim = P6RulesScenario.Create(halfMaintenance: true); var branch = sim.State.Cities[1]; var hq = sim.State.Cities[2];
+        sim.State.RemoveCity(sim.State.Cities[0].Id);
+        foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        Found(sim, hq); P6RulesScenario.Resource(sim, branch, "world:corn");
+        var tile = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(branch.Position)).First();
+        var extra = sim.State.Plots[tile.Value]; extra.Owner = 0; extra.Bonus = "world:corn";
+        extra.Improvement = "world:improvement_improvement_farm"; extra.Route = "world:road";
+        var executive = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_1");
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 1, City = branch.Id, Unit = executive.Id, Corporation = Cereal });
+        var maintenance = P6RulesScenario.Service<ICityMaintenanceService>(sim);
+        var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);
+        long corporateCost = Corps(sim).MaintenanceHundredths(sim, branch.Id);
+        Assert.Equal(200, corporateCost);
+        var full = maintenance.Calculate(sim, branch.Id);
+        Assert.Equal(full.DistanceHundredths + full.CityCountHundredths + corporateCost, full.TotalHundredths);
+        branch.Buildings.Add("cities:courthouse");
+        var reduced = maintenance.Calculate(sim, branch.Id);
+        Assert.Equal(full.TotalHundredths / 2, reduced.TotalHundredths);
+        Assert.Equal(reduced.TotalHundredths, reduced.Ledger.Total("cities:maintenance_hundredths"));
+        economy.SetRates(sim, 0, new(0, 100, 0, 0));
+        var before = economy.Calculate(sim, 0);
+        Assert.Equal(reduced.TotalHundredths, before.Ledger.Total("economy:maintenance_hundredths"));
+        Assert.Equal(1, before.Expenses);
+        var owner = sim.State.PlayerById(0); owner.Treasury = treasury;
+        sim.AdvanceTurn();
+        var settled = owner.Extensions.Get<EconomyPlayerState>(sim.Content)!;
+        Assert.Equal(treasury + settled.SettledCommerceHundredths.Gold / 100 - before.Expenses, owner.Treasury);
+        Assert.Equal(0, settled.UnpaidGold);
+        if (treasury == 0) Assert.True(economy.Rates(sim, 0).Gold > 0);
+        else Assert.Equal(new CommerceVector(0, 100, 0, 0), economy.Rates(sim, 0));
+    }
     [Fact]
-    public void Maintenance_is_settled_once_and_fractional_costs_and_founding_records_survive_save_load()
+    public void Maintenance_is_settled_once_with_economy_rounding_and_founding_records_survive_save_load()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; Found(sim, hq);
         sim.State.PlayerById(0).Civics["test"] = "government:guilds";
+        foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        Assert.Equal(90, Corps(sim).MaintenanceHundredths(sim, hq.Id));
         long net = P6RulesScenario.Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold;
         long gold = sim.State.PlayerById(0).Treasury;
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         sim.AdvanceTurn(); loaded.AdvanceTurn();
-        Assert.Equal(gold + net, sim.State.PlayerById(0).Treasury); // First cost is 0.90 gold, retained as a fraction.
-        Assert.Equal(90, sim.State.PlayerById(0).Extensions.Get<CorporationPlayerState>(sim.Content)!.MaintenanceRemainder);
+        Assert.Equal(gold + net, sim.State.PlayerById(0).Treasury); // Economy rounds the combined city costs, not each corporation.
+        Assert.Null(sim.State.PlayerById(0).Extensions.Get<CorporationPlayerState>(sim.Content));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         net = P6RulesScenario.Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold; gold = sim.State.PlayerById(0).Treasury;
-        sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(gold + net - 1, sim.State.PlayerById(0).Treasury);
+        sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(gold + net, sim.State.PlayerById(0).Treasury);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         sim.State.RemoveCity(hq.Id); Assert.Null(Corps(sim).Headquarters(sim, Cereal));
         var rival = sim.State.Cities.Last(); var gp = P6RulesScenario.AddUnit(sim, rival.Owner, rival, "military:merchant");
