@@ -1,0 +1,17 @@
+{
+  "id": "corporations",
+  "name": "Corporations",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Corporations.dll",
+  "dependencies": [],
+  "references": [
+    "foundation",
+    "world",
+    "military",
+    "research",
+    "government",
+    "cities",
+    "economy",
+    "diplomacy"
+  ]
+}

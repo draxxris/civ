@@ -1,0 +1,221 @@
+[
+  {
+    "id": "corporations:cereal_mills",
+    "name": "Cereal Mills",
+    "identity": "foundation:1",
+    "foundingTech": "research:refrigeration",
+    "requiredGreatPersonClass": "military:merchant",
+    "prereqBonuses": [
+      "world:wheat",
+      "world:corn",
+      "world:rice"
+    ],
+    "yieldProduced": {
+      "food": 1,
+      "production": 0,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:sids_sushi",
+    "name": "Sid's Sushi Co.",
+    "identity": "foundation:2",
+    "foundingTech": "research:medicine",
+    "requiredGreatPersonClass": "military:merchant",
+    "prereqBonuses": [
+      "world:fish",
+      "world:clam",
+      "world:crab",
+      "world:rice"
+    ],
+    "yieldProduced": {
+      "food": 1,
+      "production": 0,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 0,
+      "culture": 2,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:standard_ethanol",
+    "name": "Standard Ethanol",
+    "identity": "foundation:3",
+    "foundingTech": "research:combustion",
+    "requiredGreatPersonClass": "military:scientist",
+    "prereqBonuses": [
+      "world:corn",
+      "world:rice",
+      "world:sugar"
+    ],
+    "yieldProduced": {
+      "food": 0,
+      "production": 0,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 2,
+      "culture": 0,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:creative_constructions",
+    "name": "Creative Constructions",
+    "identity": "foundation:4",
+    "foundingTech": "research:combustion",
+    "requiredGreatPersonClass": "military:engineer",
+    "prereqBonuses": [
+      "world:iron",
+      "world:copper",
+      "world:marble",
+      "world:stone"
+    ],
+    "yieldProduced": {
+      "food": 0,
+      "production": 1,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 0,
+      "culture": 2,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:mining_inc",
+    "name": "Mining Inc.",
+    "identity": "foundation:5",
+    "foundingTech": "research:corporation",
+    "requiredGreatPersonClass": "military:engineer",
+    "prereqBonuses": [
+      "world:iron",
+      "world:copper",
+      "world:coal",
+      "world:gold",
+      "world:silver"
+    ],
+    "yieldProduced": {
+      "food": 0,
+      "production": 1,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:civilized_jewelers",
+    "name": "Civilized Jewelers",
+    "identity": "foundation:7",
+    "foundingTech": "research:corporation",
+    "requiredGreatPersonClass": "military:artist",
+    "prereqBonuses": [
+      "world:gold",
+      "world:silver",
+      "world:gems"
+    ],
+    "yieldProduced": {
+      "food": 0,
+      "production": 0,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 1,
+      "research": 0,
+      "culture": 3,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  },
+  {
+    "id": "corporations:aluminum_co",
+    "name": "Aluminum Co.",
+    "identity": "foundation:6",
+    "foundingTech": "research:assembly_line",
+    "requiredGreatPersonClass": "military:scientist",
+    "prereqBonuses": [
+      "world:coal"
+    ],
+    "yieldProduced": {
+      "food": 0,
+      "production": 0,
+      "commerce": 0
+    },
+    "commerceProduced": {
+      "gold": 0,
+      "research": 2,
+      "culture": 0,
+      "espionage": 0
+    },
+    "headquartersCommerce": {
+      "gold": 4,
+      "research": 0,
+      "culture": 0,
+      "espionage": 0
+    },
+    "spreadCost": 100,
+    "maintenanceHundredths": 100
+  }
+]
