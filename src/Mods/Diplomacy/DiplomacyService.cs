@@ -93,7 +93,11 @@ internal sealed partial class DiplomacyService : IDiplomacyService
             .Select(r => r.First == b ? r.Second : r.First).Where(t => t != a).Order().ToArray();
         StartWar(sim, a, b, true);
         foreach (int defender in defenders)
+        {
+            // The war consumes the victim's pact with each partner, whether or not that partner can join it.
+            Relation(sim, b, defender)!.DefensivePactStarted = null;
             if (!sim.State.TeamById(defender).Wars.Contains(a) && !BindingPeace(sim, defender, a)) StartWar(sim, a, defender, false);
+        }
     }
     private void StartWar(Simulation sim, int aggressor, int defender, bool offensive)
     {

@@ -44,6 +44,19 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
         return city;
     }
+    private const string Grain = "diplomacy_probe:grain";
+    /// <summary>Foreign, unrevealed columns 0 and 6 split the 12-wide map into two continents.</summary>
+    private static void Wall(Simulation sim)
+    {
+        for (int i = 0; i < sim.State.Plots.Length; i++)
+            if (i % 12 is 0 or 6) sim.State.Plots[i].Owner = 1;
+    }
+    /// <summary>Player 0 offers one copy of a resource to player 1, and player 1 accepts it.</summary>
+    private static void Export(Simulation sim, string resource)
+    {
+        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Resource, resource)] });
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Last().Id });
+    }
     [Fact]
     public void Current_sight_and_adjacent_borders_discover_teams_but_exploration_and_barbarians_do_not()
     {
@@ -149,12 +162,77 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
         foreach (var game in new[] { sim, loaded }) Apply(game, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
         Assert.Equal(DiplomaticDealStatus.Cancelled, Service(sim).Deals(sim).Last().Status); Assert.False(Service(sim).HasOpenBorders(sim, 0, 1)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
+    [Fact]
+    public void Gold_per_turn_settles_after_the_turn_income_arrives()
+    {
+        var sim = Scenario(); Meet(sim);
+        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.GoldPerTurn, Amount: 3)] });
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Last().Id });
+        sim.State.PlayerById(0).Treasury = 0;
+        sim.AdvanceTurn();
+        Assert.Equal(DiplomaticDealStatus.Active, Service(sim).Deals(sim).Last().Status);
+        Assert.Equal(2, sim.State.PlayerById(0).Treasury);
+    }
+    [Fact]
+    public void Imported_resource_satisfies_building_requirements_in_the_receiving_city()
+    {
+        var sim = Scenario(); Meet(sim);
+        City(sim, 0, 40); var foreign = City(sim, 1, 41);
+        sim.State.Plots[40].Bonus = Grain;
+        var production = sim.Content.Services.Get<ICityProductionService>().Single();
+        Assert.Contains(production.Validate(sim, foreign.Id, "cities:building", "diplomacy_probe:granary").Failures,
+            f => f.Explanation == "Requires connected resource: " + Grain);
+        Export(sim, Grain);
+        Assert.True(production.Validate(sim, foreign.Id, "cities:building", "diplomacy_probe:granary").Success);
+    }
+    [Fact]
+    public void Exports_draw_on_every_disconnected_copy_and_leave_the_capital_network_its_remaining_copy()
+    {
+        var sim = Scenario(); Meet(sim); Wall(sim);
+        var capital = City(sim, 0, 40); var colony = City(sim, 0, 47);
+        sim.State.Plots[40].Bonus = Grain; sim.State.Plots[47].Bonus = Grain;
+        var diplomacy = Service(sim);
+        Export(sim, Grain);
+        Assert.Equal(1, diplomacy.AvailableResourceCount(sim, 0, capital.Id, Grain));
+        Assert.Equal(0, diplomacy.AvailableResourceCount(sim, 0, colony.Id, Grain));
+        Export(sim, Grain);
+        Reject(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Resource, Grain)] }, "unreserved");
+    }
+    [Fact]
+    public void Foreign_passage_between_own_cities_needs_open_borders()
+    {
+        var sim = Scenario(); Meet(sim);
+        var west = City(sim, 0, 40); var east = City(sim, 0, 42);
+        sim.State.Plots[41].Owner = 1; sim.State.Plots[41].Revealed.Add(0);
+        var connections = sim.Content.Services.Get<ICityConnectionService>().Single();
+        Assert.False(connections.Connected(sim, west.Id, east.Id));
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
+        Assert.True(connections.Connected(sim, west.Id, east.Id));
+    }
+    [Fact]
+    public void Declaring_war_consumes_the_victims_defensive_pacts()
+    {
+        var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2);
+        Apply(sim, new SignDefensivePactCommand { Player = 1, Target = 2 });
+        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Assert.Contains(0, sim.TeamOf(2).Wars);
+        Assert.False(Service(sim).HasDefensivePact(sim, 1, 2));
+    }
+    /// <summary>Five gold per player, run after the Gold phase so settlement sees income earned during the turn.</summary>
+    private sealed class IncomeProbe : IPlayerTurnSystem
+    {
+        public string Id => "diplomacy_probe:income";
+        public int Order => TurnPhase.Gold + 1;
+        public void Run(Simulation sim, int player) => sim.State.PlayerById(player).Treasury += 5;
+    }
     private sealed class Probe(S.CivicDef civic, S.RuleConstantsDef constants) : IMod
     {
         public void Register(IModContext context)
         {
             context.Content<S.RuleConstantsDef>().Override(new() { Id = constants.Id, Values = constants.Values, Raw = constants.Raw.SetItem("MAX_TRADE_ROUTES", "1").SetItem("INITIAL_TRADE_ROUTES", "1") });
             context.Content<S.BonusDef>().Register(new() { Id = "diplomacy_probe:grain" });
+            context.Content<S.BuildingDef>().Register(new() { Id = "diplomacy_probe:granary", DefaultBuilding = "diplomacy_probe:granary", BonusType = Grain });
+            context.TurnSystems.Register(new IncomeProbe());
             context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2 });
             context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_b", BasePeaceWeight = 5, WarmongerRespect = 1 });
         }

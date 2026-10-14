@@ -39,11 +39,48 @@ internal sealed partial class DiplomacyService
         if (!sim.KnowsTech(item.FromPlayer, item.ContentId)) return "giver does not know technology";
         return sim.KnowsTech(recipient, item.ContentId) ? "recipient already knows technology" : null;
     }
-    private static long PhysicalCopies(Simulation sim, int player, string resource)
+    /// <summary>One connected group of the player's cities, counted once.</summary>
+    private sealed class CityGroup(City representative, long copies)
+    {
+        public City Representative { get; } = representative;
+        public long Copies { get; private set; } = copies;
+        public List<City> Members { get; } = [representative];
+        /// <summary>Adds a city that the peaceful-passage connection links to the group. Members may sit on different tiles, so the largest count stands in for the group.</summary>
+        public void Add(City city, long count) { Members.Add(city); Copies = Math.Max(Copies, count); }
+    }
+    /// <summary>The player's connected city groups. The capital's group is last, so exports drain the other groups first.</summary>
+    private static List<CityGroup> Groups(Simulation sim, int player, string resource)
     {
         var network = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault();
-        if (network is null) return 0;
-        return sim.State.Cities.Where(c => c.Owner == player).Select(c => (long)network.ConnectedCount(sim, player, c.Id, resource)).DefaultIfEmpty().Max();
+        var connections = sim.Content.Services.Get<ICityConnectionService>().SingleOrDefault();
+        if (network is null || connections is null) return [];
+        var groups = new List<CityGroup>();
+        foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
+        {
+            long count = network.ConnectedCount(sim, player, city.Id, resource);
+            var group = groups.FirstOrDefault(g => connections.Connected(sim, g.Representative.Id, city.Id));
+            if (group is null) groups.Add(new(city, count));
+            else group.Add(city, count);
+        }
+        var capital = Root(sim, player);
+        return groups.OrderBy(g => capital is not null && g.Members.Contains(capital) ? 1 : 0).ToList();
+    }
+    /// <summary>Distinct physical copies across all of the player's networks. Cities that share a network count once.</summary>
+    private static long PhysicalCopies(Simulation sim, int player, string resource) => Groups(sim, player, resource).Sum(g => g.Copies);
+    /// <summary>Imports arrive from the other side of each live deal the player takes part in.</summary>
+    private static long Imports(Simulation sim, int player, string resource) => Read(sim).Deals
+        .Where(d => Live(sim, d) && (d.Proposer == player || d.Recipient == player)).SelectMany(d => d.Items)
+        .Where(i => i.FromPlayer != player && i.Kind == TradeItemKind.Resource && i.ContentId == resource).Sum(i => i.Amount);
+    /// <summary>The capital, or the oldest city when the player has no capital building.</summary>
+    private static City? Root(Simulation sim, int player)
+    {
+        var cities = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray();
+        return cities.FirstOrDefault(c => c.Buildings.Any(b => sim.Content.Get<S.BuildingDef>(b).Capital)) ?? cities.FirstOrDefault();
+    }
+    private static bool ConnectedToRoot(Simulation sim, int player, City city)
+    {
+        var root = Root(sim, player);
+        return root is not null && (root.Id == city.Id || sim.Content.Services.Get<ICityConnectionService>().SingleOrDefault()?.Connected(sim, root.Id, city.Id) == true);
     }
     private static long Exports(Simulation sim, int player, string resource, int excludedDeal = 0) => Read(sim).Deals
         .Where(d => d.Id != excludedDeal && Live(sim, d)).SelectMany(d => d.Items)
@@ -107,12 +144,27 @@ internal sealed partial class DiplomacyService
             foreach (var i in d.Items.Where(i => i.Kind == TradeItemKind.Resource && i.ContentId == resource)) balance += i.FromPlayer == player ? -i.Amount : i.Amount;
         return balance;
     }
+    /// <summary>The city's own network copies, capped by what exports leave in its group, plus imports when the city is linked to the capital.</summary>
     public long AvailableResourceCount(Simulation sim, int player, int city, string resource)
     {
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return 0;
-        long physical = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault()?.ConnectedCount(sim, player, city, resource) ?? 0;
-        return Math.Max(0, physical + ResourceBalance(sim, player, resource));
+        long own = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault()?.ConnectedCount(sim, player, city, resource) ?? 0;
+        long physical = Exports(sim, player, resource) == 0 ? own : Math.Min(own, Remaining(sim, player, target, resource));
+        long imports = Imports(sim, player, resource);
+        return Math.Max(0, physical + (imports > 0 && ConnectedToRoot(sim, player, target) ? imports : 0));
+    }
+    /// <summary>Exports leave the empire pool in group order. Returns the copies that stay in the target's group.</summary>
+    private static long Remaining(Simulation sim, int player, City target, string resource)
+    {
+        long pending = Exports(sim, player, resource);
+        foreach (var group in Groups(sim, player, resource))
+        {
+            long taken = Math.Min(group.Copies, pending);
+            pending -= taken;
+            if (group.Members.Contains(target)) return group.Copies - taken;
+        }
+        return 0;
     }
     internal void SettleDeals(Simulation sim)
     {

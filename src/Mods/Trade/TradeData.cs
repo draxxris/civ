@@ -18,12 +18,10 @@ internal static class TradeData
     }
     internal static bool Coastal(Simulation sim, City city)
     {
-        int minimum = Raw(sim, "MIN_WATER_SIZE_FOR_OCEAN", 10);
         return sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).Any(t =>
         {
             var plot = sim.State.Plots[t.Value];
-            return !plot.IsLake && sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater
-                && sim.State.Plots.Count(p => p.AreaId == plot.AreaId && sim.Content.Get<S.TerrainDef>(p.Terrain).IsWater) >= minimum;
+            return !plot.IsLake && sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater;
         });
     }
     internal static ModifierSink Effects(Simulation sim, City city)

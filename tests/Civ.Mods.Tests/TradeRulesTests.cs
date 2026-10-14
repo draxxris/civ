@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -35,6 +36,16 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         sim.State.SetWar(0, 1, false);
         foreach (var plot in sim.State.Plots) plot.Route = null;
         Assert.Empty(trade.Calculate(sim, 1).Routes);
+    }
+    [Fact]
+    public void Missing_world_size_falls_back_when_calculating_routes()
+    {
+        var sim = Scenario();
+        var save = JsonNode.Parse(SaveGame.Save(sim))!;
+        save["Settings"]!["WorldSize"] = null;
+        sim = SaveGame.Load(sim.Content, save.ToJsonString());
+        Assert.Null(sim.Settings.WorldSize);
+        Assert.Contains(Service(sim).Calculate(sim, 1).Routes, r => r.PartnerCity == 3);
     }
     [Fact]
     public void Profit_uses_population_distance_foreign_and_capital_modifiers_and_flows_through_sliders()

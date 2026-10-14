@@ -28,7 +28,8 @@ public sealed class DiplomacyMod : IMod
 internal sealed class DiplomacyDeals(DiplomacyService service) : ITurnSystem
 {
     public string Id => "diplomacy:deals";
-    public int Order => TurnPhase.Deals;
+    // Player phases all run before Map, so settling here sees each player's Gold income first.
+    public int Order => TurnPhase.Map + 1;
     public void Run(Simulation sim) => service.SettleDeals(sim);
 }
 internal sealed class DiplomacyHistory(DiplomacyService service) : ITurnSystem

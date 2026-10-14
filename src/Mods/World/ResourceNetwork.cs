@@ -68,9 +68,12 @@ private static bool Access(Simulation sim, int player, Plot plot, bool peacefulF
     {
         if (plot.Owner is { } owner) return sim.TeamOf(owner).Id == sim.TeamOf(player).Id
             || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id)
-            && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId));
+            && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId) && OpenBorders(sim, player, owner));
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
+    /// <summary>Foreign plots need open borders once Diplomacy is loaded. Without Diplomacy, peaceful access is enough.</summary>
+    private static bool OpenBorders(Simulation sim, int player, int owner) =>
+        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasOpenBorders(sim, sim.TeamOf(player).Id, sim.TeamOf(owner).Id) ?? true;
     private static bool Edge(Simulation sim, TileId from, TileId to, NetworkMode[] modes)
     {
         var a = modes[from.Value]; var b = modes[to.Value];
@@ -120,7 +123,9 @@ internal sealed class BonusEvaluator(IResourceNetwork network) : IContentRequire
             return service is null ? "Vicinity resources require Cities scope rules" : service.Evaluate(leaf, context);
         }
         var cities = context.City is { } city ? new[] { city } : context.Sim.State.Cities.Where(c => c.Owner == context.Player);
-        int count = cities.Select(c => network.ConnectedCount(context.Sim, context.Player, c.Id, leaf.Id)).DefaultIfEmpty().Max();
+        var diplomacy = context.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        long count = cities.Select(c => diplomacy?.AvailableResourceCount(context.Sim, context.Player, c.Id, leaf.Id)
+            ?? network.ConnectedCount(context.Sim, context.Player, c.Id, leaf.Id)).DefaultIfEmpty().Max();
         return count >= (leaf.Count ?? 1) ? null : $"Required connected bonus: {leaf.Id}";
     }
 }
