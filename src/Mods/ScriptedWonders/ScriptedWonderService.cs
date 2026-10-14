@@ -44,11 +44,17 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     {
         var city = sim.State.FindCity(message.City);
         var rule = Rules(sim).SingleOrDefault(r => r.Building == message.Building);
+        // An inactive wonder, such as one finished during anarchy, is granted later by Tick.
         if (city is null || rule is null || !IsActive(sim, city.Id, rule.Building)) return;
+        ApplyCompletion(sim, city, rule);
+    }
+
+    private static void ApplyCompletion(Simulation sim, City city, WonderScriptDef rule)
+    {
         var progress = Edit(sim, city, rule.Building);
         if (progress.CompletionApplied) return;
         progress.CompletionApplied = true;
-        progress.LastProcessedTurn = sim.State.Turn; // The construction turn is not a full active turn.
+        progress.LastProcessedTurn = sim.State.Turn; // The completion turn is not a full active turn.
         for (int i = 0; i < rule.CompletionUnits; i++) Spawn(sim, city, rule.Unit!);
         if (rule.CompletionUnits > 0) Effect(sim, city, rule, "units", rule.CompletionUnits);
         if (rule.CompletionCulture > 0)
@@ -71,8 +77,13 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         Effect(sim, city, rule, "free_building", 1);
     }
 
+    private static bool CompletionPending(Simulation sim, City city, WonderScriptDef rule) =>
+        city.Extensions.TryGet<ScriptedWonderCityState>(sim.Content)?.Wonders.GetValueOrDefault(rule.Building)?.CompletionApplied != true;
+
     internal void Tick(Simulation sim, City city)
     {
+        foreach (var rule in Rules(sim).Where(r => IsActive(sim, city.Id, r.Building) && CompletionPending(sim, city, r)).ToArray())
+            ApplyCompletion(sim, city, rule);
         foreach (var rule in Rules(sim).Where(r => r.IntervalTurns > 0 && IsActive(sim, city.Id, r.Building)))
         {
             var progress = Edit(sim, city, rule.Building);
@@ -90,7 +101,9 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     internal void Victory(Simulation sim, CombatResolved message)
     {
         var winner = sim.State.FindUnit(message.Winner);
-        if (winner is null) return;
+        int loser = message.Winner == message.Attacker ? message.Defender : message.Attacker;
+        // Withdrawals and damaging attacks leave the loser alive, so they grant no victory experience.
+        if (winner is null || sim.State.FindUnit(loser) is not null) return;
         foreach (var rule in Rules(sim).Where(r => r.VictoryExperience > 0))
         {
             var city = ActiveCity(sim, winner.Owner, rule);
@@ -100,8 +113,13 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         }
     }
 
-    private City? ActiveCity(Simulation sim, int player, WonderScriptDef rule) => sim.State.Cities
-        .Where(c => c.Owner == player).OrderBy(c => c.Id).FirstOrDefault(c => IsActive(sim, c.Id, rule.Building));
+    /// <summary>The first active wonder city of the player's team, so team wonders reach teammates.</summary>
+    private City? ActiveCity(Simulation sim, int player, WonderScriptDef rule)
+    {
+        int team = sim.TeamOf(player).Id;
+        return sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == team).OrderBy(c => c.Id)
+            .FirstOrDefault(c => IsActive(sim, c.Id, rule.Building));
+    }
 
     public void Contribute(ModifierContext context, ModifierSink sink)
     {

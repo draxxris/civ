@@ -117,7 +117,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.All(rebels, u => { Assert.Equal(rebellion.RebelPlayer, u.Owner); Assert.True(u.MovesLeft > 0); });
         var unrest = ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger;
         Assert.Equal(3, unrest.Lines.Single(l => l.Source == "revolution:unrest").Amount);
-        Assert.Equal(8, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
+        Assert.Equal(9, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
         state.InstabilityIndex = 1000; Rebellions(sim);
         Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
         sim.State.Turn = state.UnrestUntilTurn;
@@ -138,6 +138,52 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Empty(sim.State.Units);
         Assert.Equal(400, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
         Assert.Empty(Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>()).Units);
+    }
+
+    [Fact]
+    public void Cooldown_protects_the_eight_turns_after_a_rebellion()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 1000);
+        int start = sim.State.Turn;
+        Rebellions(sim);
+        state.InstabilityIndex = 1000; sim.State.Turn = start + 8; Rebellions(sim);
+        Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
+        sim.State.Turn = start + 9; Rebellions(sim);
+        Assert.Equal(2, sim.Events.Published.OfType<CityRebellionTriggered>().Count());
+    }
+
+    [Fact]
+    public void Rebellion_drops_overflowing_pressure_back_below_the_threshold()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 2500);
+        Rebellions(sim);
+        var rebellion = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
+        // Pressure above the threshold is discarded, so the city restarts at 1000 - 600.
+        Assert.Equal(400, state.InstabilityIndex);
+        Assert.Equal(2100, rebellion.InstabilityReleased);
+    }
+
+    [Fact]
+    public void Rebels_never_spawn_inside_a_third_party_border()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        State(sim, city, 1000);
+        var neighbors = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).OrderBy(t => t.Value).ToArray();
+        // Blocking the first three neighbors leaves neighbors[3] and [4] as the legal spots, as in the rebellion test.
+        sim.State.Plots[neighbors[0].Value].Terrain = "world:coast";
+        sim.State.Plots[neighbors[1].Value].Kind = PlotKind.Peak;
+        P7ModFixture.Unit(sim, P7ModFixture.City(sim, neighbors[2].Value));
+        sim.State.Plots[neighbors[3].Value].Owner = 1;
+        Rebellions(sim);
+        var rebellion = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
+        var positions = rebellion.Units.Select(id => sim.State.UnitById(id).Position).ToArray();
+        Assert.DoesNotContain(sim.State.Grid.HexOf(neighbors[3]), positions);
+        Assert.Contains(sim.State.Grid.HexOf(neighbors[4]), positions);
     }
 
     [Fact]

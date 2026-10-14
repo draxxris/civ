@@ -173,6 +173,61 @@ public sealed class ScriptedWonderRulesTests(P7ModFixture mods) : IClassFixture<
     }
 
     [Fact]
+    public void Art_of_war_grants_no_experience_when_the_loser_survives()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        var city = P7ModFixture.City(sim);
+        var attacker = P7ModFixture.Unit(sim, city, "military:swordsman");
+        var defender = P7ModFixture.Unit(sim, city, owner: 1);
+        Complete(sim, city, "cities:art_of_war");
+        int before = attacker.Experience;
+        // A damaging attack leaves the defender alive, so no victory experience is due.
+        sim.Events.Publish(new CombatResolved(attacker.Id, defender.Id, attacker.Id));
+        Assert.Equal(before, attacker.Experience);
+        Assert.DoesNotContain(sim.Events.Published.OfType<ScriptedWonderEffectApplied>(), e => e.Effect == "victory_experience");
+    }
+
+    [Fact]
+    public void Team_wonders_reach_teammates_but_not_other_teams()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 0, Treasury = 0 });
+        sim.State.Teams.Single(t => t.Id == 0).Members.Add(2);
+        sim.State.RebuildIndexes();
+        var wonderCity = P7ModFixture.City(sim, 40, owner: 2);
+        Complete(sim, wonderCity, "cities:art_of_war");
+        var teammate = P7ModFixture.Unit(sim, wonderCity, "military:swordsman", owner: 0);
+        var fallen = P7ModFixture.Unit(sim, wonderCity, owner: 1);
+        sim.State.RemoveUnit(fallen.Id);
+        sim.Events.Publish(new CombatResolved(teammate.Id, fallen.Id, teammate.Id));
+        Assert.Equal(2, teammate.Experience);
+
+        var rival = P7ModFixture.Unit(sim, wonderCity, "military:swordsman", owner: 1);
+        var defeated = P7ModFixture.Unit(sim, wonderCity, owner: 0);
+        sim.State.RemoveUnit(defeated.Id);
+        sim.Events.Publish(new CombatResolved(rival.Id, defeated.Id, rival.Id));
+        Assert.Equal(0, rival.Experience);
+    }
+
+    [Fact]
+    public void Wonder_finished_while_obsolete_grants_its_completion_once_it_turns_active()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        var city = P7ModFixture.City(sim);
+        int units = sim.State.Units.Count;
+        sim.TeamOf(0).Techs.Add("research:liberalism"); // Obsoletes King Richard's Crusade, so the wonder is inactive.
+        Complete(sim, city, "cities:crusade");
+        Tick(sim);
+        Assert.Equal(units, sim.State.Units.Count);
+        sim.TeamOf(0).Techs.Remove("research:liberalism");
+        Tick(sim);
+        Assert.Equal(units + 1, sim.State.Units.Count);
+        Tick(sim);
+        Assert.Equal(units + 1, sim.State.Units.Count);
+        Assert.Single(sim.Events.Published.OfType<ScriptedWonderEffectApplied>(), e => e.Effect == "units");
+    }
+
+    [Fact]
     public void Mid_interval_save_and_full_turn_replay_preserve_hashes_and_queries_are_pure()
     {
         var sim = P7ModFixture.Scenario(mods.Combined);

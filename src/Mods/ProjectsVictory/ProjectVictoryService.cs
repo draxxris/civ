@@ -19,10 +19,27 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         sim.State.Players.Where(p => !IsBarbarian(sim, p.Id)).OrderBy(p => p.Id);
     /// <summary>Candidate winning teams, highest combined score first. Ties go to the lower team id.</summary>
     private IEnumerable<IGrouping<int, Player>> TeamsByScore(Simulation sim) => Civilizations(sim).GroupBy(p => p.TeamId)
-        .OrderByDescending(team => team.Sum(p => GetScore(sim, p.Id).Total)).ThenBy(team => team.Key);
+        .OrderByDescending(team => TeamScore(sim, team)).ThenBy(team => team.Key);
+    /// <summary>Members' population, land and wonders, plus the team's technology score counted once.</summary>
+    private int TeamScore(Simulation sim, IEnumerable<Player> team)
+    {
+        var rule = ScoreRule(sim);
+        var members = team.Select(p => GetScore(sim, p.Id)).ToArray();
+        // Technologies are shared by the team, so they must not be multiplied by the member count.
+        int sharedTech = members.Length == 0 ? 0 : members[0].Techs * (rule?.ScorePerTech ?? 0);
+        int personal = members.Sum(s => s.Population * (rule?.ScorePerPopulation ?? 0) + s.Land * (rule?.ScorePerLand ?? 0)
+            + s.Wonders * (rule?.ScorePerWonder ?? 0));
+        return personal + sharedTech;
+    }
     /// <summary>The team's highest-scoring member. Ties go to the lower player id.</summary>
     private int BestMember(Simulation sim, IEnumerable<int> members) =>
         members.OrderByDescending(id => GetScore(sim, id).Total).ThenBy(id => id).First();
+    private int BestLivingMember(Simulation sim, IEnumerable<int> members)
+    {
+        var all = members.ToArray();
+        var living = all.Where(id => Alive(sim, id)).ToArray();
+        return BestMember(sim, living.Length > 0 ? living : all);
+    }
 
     public int TeamCount(Simulation sim, int team, string project) => ReadTeam(sim, team).Completed.GetValueOrDefault(project);
     public int WorldCount(Simulation sim, string project) => sim.State.Teams.Sum(t => TeamCount(sim, t.Id, project));
@@ -62,10 +79,13 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private static int Wonders(Simulation sim, Player player) => sim.State.Cities.Where(c => c.Owner == player.Id)
         .SelectMany(c => c.Buildings).Count(b => sim.Content.Get<BuildingDef>(b).Limits is { NoLimit: false, World: >= 0 });
 
+    private static VictoryDef? ScoreRule(Simulation sim) =>
+        sim.Content.Get<VictoryDef>().All.Where(v => v.Rule == "time").OrderBy(v => v.Id, StringComparer.Ordinal).FirstOrDefault();
+
     public PlayerScore GetScore(Simulation sim, int playerId)
     {
         var player = sim.State.PlayerById(playerId);
-        var rule = sim.Content.Get<VictoryDef>().All.Where(v => v.Rule == "time").OrderBy(v => v.Id, StringComparer.Ordinal).FirstOrDefault();
+        var rule = ScoreRule(sim);
         int population = sim.State.Cities.Where(c => c.Owner == playerId).Sum(c => c.Population);
         int land = sim.State.Plots.Count(p => p.Owner == playerId);
         int techs = sim.State.TeamOf(playerId).Techs.Count;
@@ -136,7 +156,7 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
             long population = sim.State.Cities.Where(c => members.Contains(c.Owner)).Sum(c => (long)c.Population);
             long land = landPlots.Count(p => p.Owner is { } o && members.Contains(o));
             if (population * 100 >= totalPopulation * def.PopulationPercent && land * 100 >= landPlots.Length * def.LandPercent)
-                return BestMember(sim, members);
+                return BestLivingMember(sim, members);
         }
         return null;
     }
@@ -148,7 +168,7 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         foreach (var team in TeamsByScore(sim))
         {
             var members = team.Select(p => p.Id).ToHashSet();
-            if (sim.State.Cities.Count(c => members.Contains(c.Owner) && c.Culture >= threshold) >= def.CultureCities) return BestMember(sim, members);
+            if (sim.State.Cities.Count(c => members.Contains(c.Owner) && c.Culture >= threshold) >= def.CultureCities) return BestLivingMember(sim, members);
         }
         return null;
     }
@@ -160,7 +180,7 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         if (required.Length == 0) return null;
         var service = sim.Content.Services.Get<IProjectVictoryService>().Single();
         foreach (var team in TeamsByScore(sim))
-            if (required.All(r => service.TeamCount(sim, team.Key, r.Id) >= r.Count)) return BestMember(sim, team.Select(p => p.Id));
+            if (required.All(r => service.TeamCount(sim, team.Key, r.Id) >= r.Count)) return BestLivingMember(sim, team.Select(p => p.Id));
         return null;
     }
 

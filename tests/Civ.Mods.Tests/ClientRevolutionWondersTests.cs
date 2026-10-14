@@ -52,6 +52,35 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
     }
 
     [Fact]
+    public void A_garrison_suppresses_when_gold_cannot_pay()
+    {
+        var session = Session(mods.Revolution, out var city);
+        session.Sim.State.PlayerById(0).Treasury = 0;
+        city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
+        var garrison = P7ModFixture.Unit(session.Sim, city);
+        garrison.MovesLeft = 1;
+        var report = session.DescribeCity(city)!.Stability!;
+        Assert.True(report.CanSuppress);
+        Assert.Null(report.SuppressBlocked);
+        Assert.True(session.SuppressRebellion(city.Id));
+        Assert.Equal(0, garrison.MovesLeft);
+        Assert.Equal(0, session.Me.Treasury);
+        Assert.True(session.DescribeCity(city)!.Stability!.Index < 800);
+    }
+
+    [Fact]
+    public void Suppression_without_gold_or_a_garrison_reports_the_gold_block()
+    {
+        var session = Session(mods.Revolution, out var city);
+        session.Sim.State.PlayerById(0).Treasury = 0;
+        city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
+        var report = session.DescribeCity(city)!.Stability!;
+        Assert.False(report.CanSuppress);
+        Assert.Equal("Insufficient gold", report.SuppressBlocked);
+        Assert.False(session.SuppressRebellion(city.Id));
+    }
+
+    [Fact]
     public void Wonder_scripts_show_countdowns_and_spawn_notifications()
     {
         var session = Session(mods.Wonders, out var city);
