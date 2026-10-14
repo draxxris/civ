@@ -105,9 +105,17 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     [Fact]
     public void City_screen_combines_religion_great_people_and_trade_service_data()
     {
-        var s = Scenario();
-        var sim = s.Sim;
-        foreach (var plot in sim.State.Plots) plot.Route = "world:route_route_road";
+        var original = mods.Content.Get<S.RuleConstantsDef>().All.Single();
+        var probe = new ModSource
+        {
+            Manifest = new() { Id = "trade_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] },
+            Root = mods.Root,
+            Instance = new TradeProbe(original),
+        };
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(probe)));
+        GameFactory.NeutralPolitics(sim);
+        var s = new GameSession(sim);
+        foreach (var plot in sim.State.Plots) { plot.Route = "world:route_route_road"; plot.Revealed.Add(0); }
         var city = AddCity(sim, 0);
         city.Specialists["foundation:specialist_scientist"] = 1;
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
@@ -283,5 +291,16 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     private sealed class MissingDefaults : ISetupPolicy
     {
         public string? Default(SetupField field) => field is SetupField.WorldSize or SetupField.GameSpeed or SetupField.Handicap ? "setup_probe:missing" : null;
+    }
+
+    private sealed class TradeProbe(S.RuleConstantsDef original) : IMod
+    {
+        public void Register(IModContext context) =>
+            context.Content<S.RuleConstantsDef>().Override(new()
+            {
+                Id = original.Id,
+                Values = original.Values,
+                Raw = original.Raw.SetItem("INITIAL_TRADE_ROUTES", "2").SetItem("MAX_TRADE_ROUTES", "3"),
+            });
     }
 }

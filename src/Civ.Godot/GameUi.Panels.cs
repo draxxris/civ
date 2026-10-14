@@ -5,7 +5,7 @@ namespace Civ.Client;
 /// <summary>Religion, pedia and load dialogs, the save button, and the turn notification feed.</summary>
 internal sealed partial class GameUi
 {
-    private enum Modal { None, Religion, Diplomacy, Pedia, Load }
+    private enum Modal { None, Religion, Corporations, Espionage, Events, Diplomacy, Pedia, Load }
 
     private const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
@@ -42,6 +42,9 @@ internal sealed partial class GameUi
     private void AddPanelButtons(HBoxContainer row)
     {
         row.AddChild(Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world"));
+        if (_session.DescribeCorporations().Available) row.AddChild(Ui.Button("Corporations", () => OpenModal(Modal.Corporations), "Corporations and their branches"));
+        if (_session.DescribeEspionage().Available) row.AddChild(Ui.Button("Espionage", () => OpenModal(Modal.Espionage), "Espionage points and weights"));
+        if (_session.DescribePendingEvents().Count > 0) row.AddChild(Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice"));
         row.AddChild(Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory"));
         row.AddChild(Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more"));
         row.AddChild(Ui.Button("Save", QuickSaveGame, "Quick save (F5)"));
@@ -90,6 +93,9 @@ internal sealed partial class GameUi
         switch (_modalKind)
         {
             case Modal.Religion: BuildReligion(box); break;
+            case Modal.Corporations: BuildCorporations(box); break;
+            case Modal.Espionage: BuildEspionage(box); break;
+            case Modal.Events: BuildEvents(box); break;
             case Modal.Diplomacy: BuildDiplomacy(box); break;
             case Modal.Pedia: BuildPedia(box); break;
             case Modal.Load: BuildLoad(box); break;
@@ -123,6 +129,68 @@ internal sealed partial class GameUi
         box.AddChild(Ui.Scroll(list, 340));
         box.AddChild(Ui.Button("No state religion", () => _session.AdoptStateReligion(null), screen.NoReligionBlocked,
             screen.StateReligion != null && screen.NoReligionBlocked == null));
+    }
+
+    // --- corporations, espionage, events ------------------------------------------------------------------
+
+    private void BuildCorporations(VBoxContainer box)
+    {
+        var screen = _session.DescribeCorporations();
+        var list = Ui.VBox(4);
+        foreach (var c in screen.Corporations)
+        {
+            var line = Ui.HBox(6);
+            line.AddChild(Ui.Icon(_icons.TextureOf(c.Id), 32));
+            string state = c.Founded ? $"headquarters {c.HeadquartersName ?? "?"}, {c.Branches} cities" : "not founded";
+            var info = Ui.VBox(0);
+            info.AddChild(Ui.Text(c.Name, 15, Colors.White));
+            info.AddChild(Ui.Text(state, 12, Ui.Dim));
+            line.AddChild(info);
+            list.AddChild(line);
+        }
+        foreach (var city in screen.Cities)
+            list.AddChild(Ui.Text($"{city.CityName}: " + string.Join(", ", city.Corporations.Select(c => c.Name + (c.Headquarters ? "*" : ""))), 13, Ui.Accent));
+        box.AddChild(Ui.Scroll(list, 340));
+    }
+
+    private void BuildEspionage(VBoxContainer box)
+    {
+        var screen = _session.DescribeEspionage();
+        var list = Ui.VBox(6);
+        if (screen.Rivals.Count == 0) list.AddChild(Ui.Text("You have not met any rival.", 13, Ui.Dim));
+        foreach (var r in screen.Rivals)
+        {
+            var line = Ui.HBox(6);
+            var flags = new[] { (r.Demographics, "demographics"), (r.CityVisibility, "city visibility"), (r.InspectResearch, "research"), (r.InvestigateCity, "investigate city") }
+                .Where(f => f.Item1).Select(f => f.Item2).ToList();
+            var info = Ui.VBox(0);
+            info.AddChild(Ui.Text($"{r.Name} - {r.Points} points, weight {r.Weight}", 15, Colors.White));
+            info.AddChild(Ui.Text(flags.Count == 0 ? "No passive effects yet" : string.Join(", ", flags), 12, Ui.Dim));
+            line.AddChild(info);
+            int team = r.TeamId, weight = r.Weight;
+            line.AddChild(Ui.Button("-", () => _session.SetEspionageWeight(team, weight - 1), "Lower weight", weight > 0));
+            line.AddChild(Ui.Button("+", () => _session.SetEspionageWeight(team, weight + 1), "Raise weight"));
+            list.AddChild(line);
+        }
+        box.AddChild(Ui.Scroll(list, 340));
+    }
+
+    private void BuildEvents(VBoxContainer box)
+    {
+        var events = _session.DescribePendingEvents();
+        var list = Ui.VBox(8);
+        if (events.Count == 0) list.AddChild(Ui.Text("No events are waiting.", 13, Ui.Dim));
+        foreach (var e in events)
+        {
+            list.AddChild(Ui.Text(e.Name + (e.CityName is { } n ? $" ({n})" : ""), 15, Ui.Accent));
+            if (e.Help.Length > 0) list.AddChild(Ui.Text(StripMarkup(e.Help), 12, Ui.Dim));
+            foreach (var o in e.Options)
+            {
+                string trigger = e.Trigger, option = o.Id;
+                list.AddChild(Ui.Button(o.Name, () => _session.ChooseEventOption(trigger, option), o.Blocked ?? StripMarkup(o.Help), o.Blocked == null));
+            }
+        }
+        box.AddChild(Ui.Scroll(list, 340));
     }
 
     // --- diplomacy, score and victory --------------------------------------------------------------------
