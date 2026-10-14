@@ -18,6 +18,7 @@
     <ProjectReference Include="../../src/Mods/Ai/Civ.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Civ.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Civ.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Diplomacy/Civ.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
     <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyModPayloads" AfterTargets="Build">
@@ -45,5 +46,7 @@
     <Copy SourceFiles="@(GreatPeoplePayload)" DestinationFiles="@(GreatPeoplePayload -> '$(OutDir)mods/GreatPeople/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <ItemGroup><TradePayload Include="../../src/Mods/Trade/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
     <Copy SourceFiles="@(TradePayload)" DestinationFiles="@(TradePayload -> '$(OutDir)mods/Trade/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><DiplomacyPayload Include="../../src/Mods/Diplomacy/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(DiplomacyPayload)" DestinationFiles="@(DiplomacyPayload -> '$(OutDir)optional-mods/Diplomacy/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>

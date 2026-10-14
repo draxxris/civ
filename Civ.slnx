@@ -18,6 +18,7 @@
     <Project Path="src/Mods/Ai/Civ.Mods.Ai.csproj" />
     <Project Path="src/Mods/GreatPeople/Civ.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/Trade/Civ.Mods.Trade.csproj" />
+    <Project Path="src/Mods/Diplomacy/Civ.Mods.Diplomacy.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />

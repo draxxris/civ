@@ -33,7 +33,11 @@ internal static class MilitaryData
     internal static ModifierSink Effects(Simulation sim, Unit unit) => ModifierSink.Collect(new(sim, ModifierScope.Unit, unit.Owner,
         sim.State.CityAt(unit.Position), sim.State.Grid.TileAt(unit.Position), unit, sim.TeamOf(unit.Owner)));
     internal static int Effect(ModifierSink sink, string key) => checked((int)sink.Ledger.Total("military:" + key));
-    internal static void Sight(Simulation sim) => sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+    internal static void Sight(Simulation sim)
+    {
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.DiscoverContacts(sim);
+    }
     internal static bool CrossesRiver(Simulation sim, TileId from, TileId to)
     {
         for (int direction = 0; direction < 6; direction++)
