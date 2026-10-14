@@ -275,21 +275,21 @@ Keep this list current. It is the source of truth for where the work is.
   Domination, Cultural, Time, and Space Race victories (`5015e41`).
 - [x] Adversarial audit fixes across Trade, AI, Diplomacy, ProjectsVictory, and ResourceNetwork (`439f168`).
 - [x] P6 Corporations mod (`src/Mods/Corporations`) and Espionage mod (`src/Mods/Espionage`) (`dc28917`).
-- [x] P6 Events mod (`src/Mods/Events`) and Client Diplomacy / Score / Victory UI.
+- [x] P6 Events mod (`src/Mods/Events`) and Client Diplomacy / Score / Victory UI (`a2b1236`).
+- [x] Delete legacy `src/Civ.BaseGame` and move its test ruleset into `tests/Civ.Tests/TestRuleset` (`5ce9f9a`).
+- [x] Client Corporations, Espionage & Events UI (`2a9d72f`).
+- [x] P7 Scripted Wonders mod (`src/Mods/ScriptedWonders`) and Revolution mod (`src/Mods/Revolution`).
 
 ### In progress
 
-- [ ] Client Corporations, Espionage & Events UI + deleting legacy `src/Civ.BaseGame` once its remaining tests are
-  migrated.
-- [ ] P6 era progression (`classical` onwards) & P7 (`scripted-wonders` and `revolution`).
+- [ ] Client Scripted Wonders & Revolution UI + docs (`docs/DESIGN.md`, `docs/mechanics-status.md`) update.
+- [ ] P6 era progression (`tools/Civ.ContentImport` importer for Projects, Victories, Corporations, Events, and lifting
+  `--max-era`).
 
 ### Next
 
-- [ ] P6, other mods: great-people, trade, diplomacy, corporations, espionage, events, projects-victory. Lift
-  the era filter one era at a time.
-- [ ] Client follow-ups: save/load UI, diplomacy UI, religion display, a pedia, turn notifications.
-- [ ] Delete legacy `src/Civ.BaseGame` and move its tests once nothing depends on it.
-- [ ] P7: scripted wonders and revolution. P8: unit 3D art. P9: hex balance.
+- [ ] P8: unit 3D art spike.
+- [ ] P9: hex balance (`hex-overrides.json`) and polish.
 
 ### Working conventions
 

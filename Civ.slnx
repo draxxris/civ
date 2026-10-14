@@ -2,7 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Civ.Core/Civ.Core.csproj" />
     <Project Path="src/Civ.Net/Civ.Net.csproj" />
-    <Project Path="src/Civ.BaseGame/Civ.BaseGame.csproj" />
+
     <Project Path="src/Civ.Client.Core/Civ.Client.Core.csproj" />
   </Folder>
   <Folder Name="/src/Mods/">
@@ -23,6 +23,8 @@
     <Project Path="src/Mods/Corporations/Civ.Mods.Corporations.csproj" />
     <Project Path="src/Mods/Espionage/Civ.Mods.Espionage.csproj" />
     <Project Path="src/Mods/Events/Civ.Mods.Events.csproj" />
+    <Project Path="src/Mods/ScriptedWonders/Civ.Mods.ScriptedWonders.csproj" />
+    <Project Path="src/Mods/Revolution/Civ.Mods.Revolution.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Civ.Tests/Civ.Tests.csproj" />

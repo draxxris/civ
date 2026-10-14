@@ -1,0 +1,8 @@
+{
+  "id": "scripted_wonders",
+  "name": "Scripted Wonders",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.ScriptedWonders.dll",
+  "dependencies": ["cities", "foundation", "military"],
+  "references": ["government", "peoples", "research", "world"]
+}

@@ -23,6 +23,8 @@
     <ProjectReference Include="../../src/Mods/Corporations/Civ.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Espionage/Civ.Mods.Espionage.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Events/Civ.Mods.Events.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/ScriptedWonders/Civ.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Revolution/Civ.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
     <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyModPayloads" AfterTargets="Build">
@@ -60,5 +62,9 @@
     <Copy SourceFiles="@(EspionagePayload)" DestinationFiles="@(EspionagePayload -> '$(OutDir)optional-mods/Espionage/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <ItemGroup><EventsPayload Include="../../src/Mods/Events/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
     <Copy SourceFiles="@(EventsPayload)" DestinationFiles="@(EventsPayload -> '$(OutDir)optional-mods/Events/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><ScriptedWondersPayload Include="../../src/Mods/ScriptedWonders/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(ScriptedWondersPayload)" DestinationFiles="@(ScriptedWondersPayload -> '$(OutDir)optional-mods/ScriptedWonders/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><RevolutionPayload Include="../../src/Mods/Revolution/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(RevolutionPayload)" DestinationFiles="@(RevolutionPayload -> '$(OutDir)optional-mods/Revolution/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>
