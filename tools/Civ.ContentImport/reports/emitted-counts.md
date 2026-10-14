@@ -2,12 +2,13 @@
 
 The counts describe typed v1 content, not the generic archive inventory.
 
-- cities: 665. Content providers: foundation, government, military, peoples, research, world.
+- cities: 665. Content providers: foundation, government, military, peoples, religion, research, world.
 - economy: 5. Content providers: foundation, research.
-- foundation: 203. Content providers: cities, government, military, research, world.
+- foundation: 190. Content providers: cities, government, military, research, world.
 - government: 92. Content providers: cities, foundation, military, research, world.
-- military: 791. Content providers: cities, foundation, government, peoples, research, world.
-- peoples: 212. Content providers: cities, foundation, government, military, research, world.
+- military: 791. Content providers: cities, foundation, government, peoples, religion, research, world.
+- peoples: 212. Content providers: cities, government, military, religion, research, world.
+- religion: 13. Content providers: cities, foundation, military, research.
 - research: 252. Content providers: foundation, military, world.
 - world: 242. Content providers: foundation, military, peoples, research.
 
@@ -25,7 +26,6 @@ The counts describe typed v1 content, not the generic archive inventory.
 - foundation/GameOptionDef: 64.
 - foundation/GameSpeedDef: 7.
 - foundation/HandicapDef: 9.
-- foundation/ReligionIdentityDef: 13.
 - foundation/RuleConstantsDef: 1.
 - foundation/SpecialistDef: 20.
 - foundation/VictoryIdentityDef: 10.
@@ -46,6 +46,7 @@ The counts describe typed v1 content, not the generic archive inventory.
 - peoples/CivilizationDef: 60.
 - peoples/LeaderDef: 135.
 - peoples/TraitDef: 17.
+- religion/ReligionDef: 13.
 - research/TechDef: 252.
 - world/BonusClassDef: 11.
 - world/BonusDef: 71.

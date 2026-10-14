@@ -25,6 +25,7 @@ public sealed class WorldMod : IMod
         context.RegisterService<Civ.Game.IWaterService>("water", water);
         context.RegisterService<Civ.Game.IPlotYieldService>("plot_yields", yields);
         context.RegisterService<Civ.Game.IResourceNetwork>("resource_network", network);
+        context.RegisterService<Civ.Game.ICityConnectionService>("city_connections", network);
         context.RegisterService<Civ.Game.IStartingPositionService>("starts", new StartingPositions(water));
         context.RegisterService<Civ.Game.IVisibilityService>("visibility", visibility);
         context.RegisterService<Civ.Game.IWorkerBuildService>("workers", workers);

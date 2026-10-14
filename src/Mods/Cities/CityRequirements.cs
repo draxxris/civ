@@ -22,6 +22,11 @@ internal sealed class CityRequirements(ICityWorkService work) : ICityRequirement
     {
         var sim = context.Sim;
         if (leaf.Id is "foundation:coastal" or "foundation:river" or "foundation:fresh_water") return Location(leaf, context);
+        if (leaf.Id is "foundation:any_religion" or "foundation:state_religion")
+        {
+            var religion = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+            return religion is null ? null : religion.EvaluateCondition(leaf, context) is null;
+        }
         return leaf.Id switch
         {
             "foundation:population" => context.City?.Population >= (leaf.Count ?? 1),

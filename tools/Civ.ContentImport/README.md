@@ -137,7 +137,7 @@ The importer never reads sparse records as content. Enabled modules add 20 build
 Synthetic tests cover tree fidelity, reference errors, nested controls, merge defaults, art replacement, text precedence,
 markup, branding, census counts, and ID conflicts.
 Source-backed tests check profile counts, selected merged values, recovery evidence, deterministic typed output, and closed era filtering.
-`Civ.Mods.Tests` loads all eight mod DLLs from build output. It checks counts, typed closure, golden records, and branding without the extraction.
+`Civ.Mods.Tests` loads the feature mod DLLs from build output. It checks counts, typed closure, golden records, and branding without the extraction.
 
 ## Typed emission
 
@@ -160,7 +160,9 @@ It also lists every direct content provider for each manifest's cyclic `referenc
 All v1 load-order `dependencies` are empty because these data-only mods have no overrides or ordering constraints.
 The game checks provider presence first, then checks reference types after all mods register.
 
-Foundation reserves religion, corporation, and victory identities for future rules. Their definitions have `Deferred = true` and no gameplay effects.
+Religion emits 13 playable `ReligionDef` records with founding technologies, missionaries, commerce vectors, and related buildings.
+The importer removes the obsolete generated Foundation religion identity sidecar. Religion references now use `religion:*` ids.
+Foundation reserves corporation and victory identities for future rules. Their definitions have `Deferred = true` and no gameplay effects.
 Their evaluators fail closed. Prerequisites retain these identities instead of silently disappearing.
 Four native unit-AI roles absent from the XML inventory receive explicit military identities.
 The native enum and `registerUnitAIs` in the reference DLL define these roles.

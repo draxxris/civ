@@ -5,7 +5,7 @@ using S = Civ.Content.Schema;
 namespace Civ.Mods.World;
 
 /// <summary>CvPlotGroup connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
-internal sealed class ResourceNetwork : IResourceNetwork
+internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 {
     public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
     public IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city)
@@ -13,6 +13,20 @@ internal sealed class ResourceNetwork : IResourceNetwork
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return counts;
+        foreach (var tile in Reachable(sim, player, target))
+            if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
+                counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
+        return counts;
+    }
+    public bool Connected(Simulation sim, int firstCity, int secondCity)
+    {
+        var first = sim.State.CityById(firstCity);
+        var second = sim.State.CityById(secondCity);
+        if (sim.TeamOf(first.Owner).Id != sim.TeamOf(second.Owner).Id) return false;
+        return Reachable(sim, first.Owner, first).Contains(sim.State.Grid.TileAt(second.Position));
+    }
+    private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target)
+    {
         var modes = Modes(sim, player);
         var start = sim.State.Grid.TileAt(target.Position);
         var seen = new bool[modes.Length];
@@ -22,8 +36,7 @@ internal sealed class ResourceNetwork : IResourceNetwork
 
         while (queue.TryDequeue(out var tile))
         {
-            if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
-                counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
+            yield return tile;
             foreach (var neighbor in sim.State.Grid.Neighbors(tile))
             {
                 if (seen[neighbor.Value] || !Edge(sim, tile, neighbor, modes)) continue;
@@ -31,7 +44,6 @@ internal sealed class ResourceNetwork : IResourceNetwork
                 queue.Enqueue(neighbor);
             }
         }
-        return counts;
     }
     [Flags] private enum NetworkMode { None = 0, Route = 1, River = 2, Water = 4, City = 8 }
     private static NetworkMode[] Modes(Simulation sim, int player)
@@ -78,7 +90,7 @@ internal sealed class ResourceNetwork : IResourceNetwork
     }
     private static bool CityNode(Simulation sim, int player, TileId tile)
     {
-        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return city.Owner == player;
+        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id;
         var plot = sim.State.Plots[tile.Value];
         return plot.Owner == player && plot.Improvement is { } id && sim.Content.Get<S.ImprovementDef>(id).ActsAsCity;
     }

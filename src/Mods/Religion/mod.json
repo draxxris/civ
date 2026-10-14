@@ -1,0 +1,8 @@
+{
+  "id": "religion",
+  "name": "Religion",
+  "version": "1.0.0",
+  "assembly": "Civ.Mods.Religion.dll",
+  "dependencies": [],
+  "references": ["cities", "foundation", "military", "research"]
+}

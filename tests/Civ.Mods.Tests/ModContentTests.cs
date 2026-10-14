@@ -32,7 +32,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     public void All_mod_outputs_load_with_reported_registry_counts_and_reference_closure()
     {
         using var report = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "emitted-counts.json")));
-        Assert.Equal(8, mods.Sources.Length);
+        Assert.Equal(10, mods.Sources.Length);
         int total = 0;
         foreach (var row in report.RootElement.GetProperty("classes").EnumerateArray())
         {
@@ -61,6 +61,15 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Contains(clauses, r => r is Requirement.All a && a.Items.Contains(new Requirement.Leaf("tech", "research:free_artistry")));
         Assert.Contains(clauses, r => r is Requirement.Any a && a.Items.Contains(new Requirement.Leaf("tech", "research:social_contract")));
         Assert.Equal(90, db.Get<Schema.TechDef>("research:bronze_working").Cost);
+        var religion = db.Get<Schema.ReligionDef>("religion:buddhism");
+        Assert.Equal("research:meditation", religion.FoundingTech);
+        Assert.Equal("military:buddhist_missionary", religion.Missionary);
+        Assert.Equal(35, religion.SpreadFactor);
+        Assert.Equal(new CommerceVector(1, 0, 2, 0), religion.GlobalCityCommerce);
+        Assert.Equal(new[] { "cities:buddhist_temple" }, religion.Temples);
+        Assert.Equal(new[] { "cities:buddhist_monastery" }, religion.Monasteries);
+        Assert.Equal(new[] { "cities:buddhist_cathedral" }, religion.Cathedrals);
+        Assert.Equal(new[] { "cities:buddhist_shrine" }, religion.Shrines);
 
         var wonder = db.Get<Schema.BuildingDef>("cities:abu_simbel");
         Assert.Equal(150, wonder.Cost);

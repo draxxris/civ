@@ -52,7 +52,7 @@ public sealed class BuildingDef : GameContentDef
     public CommerceVector GlobalCommerceModifiers { get; init; } = default;
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public string? GlobalCorporationCommerce { get; init; } = null;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
     public string? GlobalReligionCommerce { get; init; } = null;
     public YieldVector GlobalSeaPlotYieldChanges { get; init; } = default;
     public YieldVector GlobalYieldModifiers { get; init; } = default;
@@ -74,9 +74,9 @@ public sealed class BuildingDef : GameContentDef
     public YieldVector PowerYieldModifiers { get; init; } = default;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
     public string? ReligionType { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ReplaceBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;

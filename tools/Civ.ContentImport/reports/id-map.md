@@ -78,7 +78,7 @@ Cross-class name conflicts add the class stem and complete source symbol. Neutra
 | ProjectInfo | projects-victory | 32 |
 | PromotionInfo | military | 266 |
 | QuestInfo | foundation | 1 |
-| ReligionInfo | foundation | 13 |
+| ReligionInfo | religion | 13 |
 | RiverInfo | world | 1 |
 | RouteInfo | world | 9 |
 | SeaLevelInfo | world | 3 |

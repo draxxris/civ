@@ -23,7 +23,7 @@ internal sealed class CivicEffects : IModifierSource
         if (context.Scope == ModifierScope.Player) Player(context.Sim, context.Player, civic, sink);
         if (context.Scope == ModifierScope.Plot && context.Plot is { } tile)
         {
-            var plot = context.Sim.State.Plots[tile.Value];
+            var plot = context.ProposedPlot ?? context.Sim.State.Plots[tile.Value];
             if (plot.Improvement is { } improvement) sink.AddYield(civic.Id, civic.ImprovementYieldChanges.GetValueOrDefault(improvement));
         }
         if (context.Scope == ModifierScope.Unit)
@@ -39,9 +39,7 @@ internal sealed class CivicEffects : IModifierSource
             ("cities:distance_maintenance_percent", c.DistanceMaintenanceModifier), ("cities:count_maintenance_percent", c.CityCountMaintenancePercent),
             ("cities:corporation_maintenance_percent", c.CorporationMaintenanceModifier), ("cities:growth_percent", c.PopulationGrowthPercent),
             ("world:worker_speed_percent", c.WorkerSpeedModifier), ("world:improvement_upgrade_percent", c.ImprovementUpgradeRateModifier),
-            ("military:general_rate_percent", c.GreatGeneralRateModifier), ("military:domestic_general_rate_percent", c.DomesticGreatGeneralRateModifier),
-            ("religion:state_enabled", c.RequiresStateReligion ? 1 : 0), ("religion:state_happiness", c.StateReligionHappiness),
-            ("religion:state_health", c.StateReligionHealth), ("religion:non_state_happiness", c.NonStateReligionHappiness) };
+            ("military:general_rate_percent", c.GreatGeneralRateModifier), ("military:domestic_general_rate_percent", c.DomesticGreatGeneralRateModifier) };
         foreach (var value in values) sink.Add(c.Id, value.Key, value.Value);
         // Unit support, supply, hurry permissions and civic upkeep already use the active definitions in Economy.
 

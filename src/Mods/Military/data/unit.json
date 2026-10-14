@@ -4150,7 +4150,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:asatru": 40
+      "religion:asatru": 40
     },
     "requirements": {
       "all": [
@@ -4165,7 +4165,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -10093,7 +10093,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:buddhism": 40
+      "religion:buddhism": 40
     },
     "requirements": {
       "all": [
@@ -10108,7 +10108,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -18713,7 +18713,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:christianity": 40
+      "religion:christianity": 40
     },
     "requirements": {
       "all": [
@@ -18728,7 +18728,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -19602,7 +19602,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:confucianism": 40
+      "religion:confucianism": 40
     },
     "requirements": {
       "all": [
@@ -19617,7 +19617,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -23174,7 +23174,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:egypt_mythology": 30
+      "religion:egypt_mythology": 30
     },
     "requirements": {
       "all": [
@@ -23189,7 +23189,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -42290,7 +42290,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:hellenism": 40
+      "religion:hellenism": 40
     },
     "requirements": {
       "all": [
@@ -42305,7 +42305,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -42716,7 +42716,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:hinduism": 40
+      "religion:hinduism": 40
     },
     "requirements": {
       "all": [
@@ -42731,7 +42731,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -47628,7 +47628,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:islam": 40
+      "religion:islam": 40
     },
     "requirements": {
       "all": [
@@ -47643,7 +47643,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -48714,7 +48714,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:judaism": 40
+      "religion:judaism": 40
     },
     "requirements": {
       "all": [
@@ -48729,7 +48729,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -58258,7 +58258,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:mesoamericanism": 30
+      "religion:mesoamericanism": 30
     },
     "requirements": {
       "all": [
@@ -58273,7 +58273,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -67746,7 +67746,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:shinto": 40
+      "religion:shinto": 40
     },
     "requirements": {
       "all": [
@@ -67761,7 +67761,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -74434,7 +74434,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:taoism": 40
+      "religion:taoism": 40
     },
     "requirements": {
       "all": [
@@ -74449,7 +74449,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -79945,7 +79945,7 @@
     "power": 0,
     "quickCombat": false,
     "religionSpreads": {
-      "foundation:zoroastrianism": 30
+      "religion:zoroastrianism": 30
     },
     "requirements": {
       "all": [
@@ -79960,7 +79960,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]

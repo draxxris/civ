@@ -70,7 +70,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:islam",
+    "favoriteReligion": "religion:islam",
     "flavors": {
       "religion": 10
     },
@@ -282,7 +282,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 5,
       "military": 2
@@ -495,7 +495,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 10
     },
@@ -913,7 +913,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "growth": 2,
       "military": 5
@@ -1122,7 +1122,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "religion": 2,
       "science": 5
@@ -1336,7 +1336,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 5,
       "military": 2
@@ -1968,7 +1968,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:buddhism",
+    "favoriteReligion": "religion:buddhism",
     "flavors": {
       "religion": 5,
       "science": 2
@@ -2179,7 +2179,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:mesoamericanism",
+    "favoriteReligion": "religion:mesoamericanism",
     "flavors": {
       "gold": 2,
       "religion": 5
@@ -2599,7 +2599,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "military": 2,
       "production": 5
@@ -2923,7 +2923,7 @@
     "favoriteCivicAttitudeChange": 2,
     "favoriteCivicAttitudeChangeLimit": 6,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 3,
       "military": 5
@@ -3135,7 +3135,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 5,
       "religion": 2
@@ -3344,7 +3344,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 10
     },
@@ -3764,7 +3764,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:asatru",
+    "favoriteReligion": "religion:asatru",
     "flavors": {
       "growth": 2,
       "military": 5
@@ -3977,7 +3977,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:asatru",
+    "favoriteReligion": "religion:asatru",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -4825,7 +4825,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -5243,7 +5243,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 5,
       "military": 2
@@ -5665,7 +5665,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -5875,7 +5875,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -6083,7 +6083,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "production": 2
@@ -6505,7 +6505,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -6715,7 +6715,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "military": 5
@@ -6929,7 +6929,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "gold": 5,
       "military": 2
@@ -7143,7 +7143,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -7351,7 +7351,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 2,
       "military": 5
@@ -7564,7 +7564,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:zoroastrianism",
+    "favoriteReligion": "religion:zoroastrianism",
     "flavors": {
       "growth": 2,
       "military": 5
@@ -7779,7 +7779,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:zoroastrianism",
+    "favoriteReligion": "religion:zoroastrianism",
     "flavors": {
       "gold": 5,
       "growth": 2
@@ -7992,7 +7992,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 2,
       "production": 5
@@ -8628,7 +8628,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 10
     },
@@ -8839,7 +8839,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 2,
       "gold": 5
@@ -9053,7 +9053,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "science": 5
@@ -9263,7 +9263,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 2,
       "religion": 5
@@ -9474,7 +9474,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "production": 5
@@ -9684,7 +9684,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "production": 10
     },
@@ -9896,7 +9896,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 10
     },
@@ -10106,7 +10106,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 6,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hinduism",
+    "favoriteReligion": "religion:hinduism",
     "flavors": {
       "culture": 10
     },
@@ -11153,7 +11153,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "production": 3
@@ -11580,7 +11580,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 10
     },
@@ -11792,7 +11792,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:zoroastrianism",
+    "favoriteReligion": "religion:zoroastrianism",
     "flavors": {
       "culture": 10
     },
@@ -12428,7 +12428,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:egypt_mythology",
+    "favoriteReligion": "religion:egypt_mythology",
     "flavors": {
       "culture": 5,
       "religion": 2
@@ -12637,7 +12637,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 5,
       "religion": 2
@@ -12847,7 +12847,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:shinto",
+    "favoriteReligion": "religion:shinto",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -13057,7 +13057,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:mesoamericanism",
+    "favoriteReligion": "religion:mesoamericanism",
     "flavors": {
       "gold": 5,
       "production": 2
@@ -13270,7 +13270,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "religion": 10
     },
@@ -13482,7 +13482,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "religion": 10
     },
@@ -13906,7 +13906,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:confucianism",
+    "favoriteReligion": "religion:confucianism",
     "flavors": {
       "gold": 2,
       "military": 5
@@ -14116,7 +14116,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -14329,7 +14329,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 2,
       "science": 5
@@ -14543,7 +14543,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -14757,7 +14757,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "military": 5,
       "production": 2
@@ -14967,7 +14967,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 2,
       "religion": 5
@@ -15177,7 +15177,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:taoism",
+    "favoriteReligion": "religion:taoism",
     "flavors": {
       "culture": 2,
       "military": 5
@@ -15599,7 +15599,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:confucianism",
+    "favoriteReligion": "religion:confucianism",
     "flavors": {
       "culture": 2,
       "military": 5
@@ -16021,7 +16021,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "military": 2,
       "production": 5
@@ -16230,7 +16230,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 2,
       "science": 5
@@ -16653,7 +16653,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 5,
       "military": 2
@@ -16862,7 +16862,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -17076,7 +17076,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:islam",
+    "favoriteReligion": "religion:islam",
     "flavors": {
       "gold": 5,
       "religion": 2
@@ -17500,7 +17500,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 5,
       "gold": 2
@@ -18564,7 +18564,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:islam",
+    "favoriteReligion": "religion:islam",
     "flavors": {
       "culture": 2,
       "military": 5
@@ -18778,7 +18778,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 5,
       "religion": 2
@@ -19199,7 +19199,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:buddhism",
+    "favoriteReligion": "religion:buddhism",
     "flavors": {
       "culture": 2,
       "science": 5
@@ -19409,7 +19409,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:mesoamericanism",
+    "favoriteReligion": "religion:mesoamericanism",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -19619,7 +19619,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "military": 5
@@ -19833,7 +19833,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 6,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:zoroastrianism",
+    "favoriteReligion": "religion:zoroastrianism",
     "flavors": {
       "military": 5,
       "production": 2
@@ -20046,7 +20046,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:egypt_mythology",
+    "favoriteReligion": "religion:egypt_mythology",
     "flavors": {
       "culture": 5,
       "religion": 2
@@ -20468,7 +20468,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -20681,7 +20681,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:mesoamericanism",
+    "favoriteReligion": "religion:mesoamericanism",
     "flavors": {
       "culture": 5,
       "growth": 2
@@ -20895,7 +20895,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hellenism",
+    "favoriteReligion": "religion:hellenism",
     "flavors": {
       "production": 5,
       "science": 2
@@ -21109,7 +21109,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 2,
       "science": 5
@@ -21324,7 +21324,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:taoism",
+    "favoriteReligion": "religion:taoism",
     "flavors": {
       "growth": 2,
       "production": 5
@@ -21533,7 +21533,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:asatru",
+    "favoriteReligion": "religion:asatru",
     "flavors": {
       "military": 10
     },
@@ -21743,7 +21743,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:egypt_mythology",
+    "favoriteReligion": "religion:egypt_mythology",
     "flavors": {
       "culture": 5,
       "production": 2
@@ -21954,7 +21954,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:buddhism",
+    "favoriteReligion": "religion:buddhism",
     "flavors": {
       "gold": 4,
       "growth": 3
@@ -22167,7 +22167,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -22380,7 +22380,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "military": 5
@@ -22800,7 +22800,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 1,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:islam",
+    "favoriteReligion": "religion:islam",
     "flavors": {
       "military": 5,
       "religion": 2
@@ -23011,7 +23011,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:confucianism",
+    "favoriteReligion": "religion:confucianism",
     "flavors": {
       "gold": 2,
       "production": 5
@@ -23222,7 +23222,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 6,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 5,
       "military": 2
@@ -23645,7 +23645,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 2,
       "science": 5
@@ -24493,7 +24493,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 2,
       "production": 5
@@ -24701,7 +24701,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 2,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 2,
       "religion": 5
@@ -24910,7 +24910,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:islam",
+    "favoriteReligion": "religion:islam",
     "flavors": {
       "culture": 5,
       "military": 2
@@ -25124,7 +25124,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:egypt_mythology",
+    "favoriteReligion": "religion:egypt_mythology",
     "flavors": {
       "growth": 3,
       "science": 4
@@ -25335,7 +25335,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:hinduism",
+    "favoriteReligion": "religion:hinduism",
     "flavors": {
       "culture": 2,
       "gold": 5
@@ -25757,7 +25757,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 6,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "culture": 10
     },
@@ -26386,7 +26386,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 5,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:shinto",
+    "favoriteReligion": "religion:shinto",
     "flavors": {
       "military": 2,
       "science": 5
@@ -26597,7 +26597,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 5,
       "growth": 2
@@ -26808,7 +26808,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:confucianism",
+    "favoriteReligion": "religion:confucianism",
     "flavors": {
       "gold": 5,
       "science": 2
@@ -27020,7 +27020,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 2,
       "military": 5
@@ -27235,7 +27235,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 3,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "military": 5,
       "production": 3
@@ -27450,7 +27450,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 10
     },
@@ -27661,7 +27661,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 5,
       "science": 3
@@ -27874,7 +27874,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "gold": 5,
       "science": 2
@@ -28088,7 +28088,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:buddhism",
+    "favoriteReligion": "religion:buddhism",
     "flavors": {
       "culture": 2,
       "gold": 5
@@ -28298,7 +28298,7 @@
     "favoriteCivicAttitudeChange": 1,
     "favoriteCivicAttitudeChangeLimit": 4,
     "favoriteCivicAttitudeDivisor": 10,
-    "favoriteReligion": "foundation:christianity",
+    "favoriteReligion": "religion:christianity",
     "flavors": {
       "growth": 5,
       "religion": 2

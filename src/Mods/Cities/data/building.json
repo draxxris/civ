@@ -4229,9 +4229,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:islam": 3
+      "religion:islam": 3
     },
-    "religionType": "foundation:islam",
+    "religionType": "religion:islam",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -4243,7 +4243,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -4251,7 +4251,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion",
               "param": 1
             }
@@ -7332,7 +7332,7 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {},
-    "religionType": "foundation:zoroastrianism",
+    "religionType": "religion:zoroastrianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -7349,7 +7349,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -7357,7 +7357,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion",
               "param": 1
             }
@@ -12600,9 +12600,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:asatru": 3
+      "religion:asatru": 3
     },
-    "religionType": "foundation:asatru",
+    "religionType": "religion:asatru",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -12629,7 +12629,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -12923,9 +12923,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:asatru": 1
+      "religion:asatru": 1
     },
-    "religionType": "foundation:asatru",
+    "religionType": "religion:asatru",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -12935,7 +12935,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -13143,7 +13143,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:asatru",
+    "globalReligionCommerce": "religion:asatru",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -13230,16 +13230,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:asatru": 4
+      "religion:asatru": 4
     },
-    "religionType": "foundation:asatru",
+    "religionType": "religion:asatru",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion",
               "param": 2
             }
@@ -13536,16 +13536,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:asatru": 1
+      "religion:asatru": 1
     },
-    "religionType": "foundation:asatru",
+    "religionType": "religion:asatru",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -22586,9 +22586,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 3
+      "religion:buddhism": 3
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -22615,7 +22615,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -22908,9 +22908,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 1
+      "religion:buddhism": 1
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -22920,7 +22920,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -23131,7 +23131,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:buddhism",
+    "globalReligionCommerce": "religion:buddhism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -23218,16 +23218,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 4
+      "religion:buddhism": 4
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 2
             }
@@ -23522,16 +23522,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 2
+      "religion:buddhism": 2
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -32663,9 +32663,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:christianity": 3
+      "religion:christianity": 3
     },
-    "religionType": "foundation:christianity",
+    "religionType": "religion:christianity",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -32692,7 +32692,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -32985,9 +32985,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:christianity": 1
+      "religion:christianity": 1
     },
-    "religionType": "foundation:christianity",
+    "religionType": "religion:christianity",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -32997,7 +32997,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -33208,7 +33208,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:christianity",
+    "globalReligionCommerce": "religion:christianity",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -33295,16 +33295,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:christianity": 4
+      "religion:christianity": 4
     },
-    "religionType": "foundation:christianity",
+    "religionType": "religion:christianity",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion",
               "param": 2
             }
@@ -33599,16 +33599,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:christianity": 2
+      "religion:christianity": 2
     },
-    "religionType": "foundation:christianity",
+    "religionType": "religion:christianity",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -39533,9 +39533,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:confucianism": 1
+      "religion:confucianism": 1
     },
-    "religionType": "foundation:confucianism",
+    "religionType": "religion:confucianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -39562,7 +39562,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -39855,9 +39855,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:confucianism": 1
+      "religion:confucianism": 1
     },
-    "religionType": "foundation:confucianism",
+    "religionType": "religion:confucianism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -39867,7 +39867,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -40078,7 +40078,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:confucianism",
+    "globalReligionCommerce": "religion:confucianism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -40165,16 +40165,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:confucianism": 4
+      "religion:confucianism": 4
     },
-    "religionType": "foundation:confucianism",
+    "religionType": "religion:confucianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion",
               "param": 2
             }
@@ -40469,16 +40469,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:confucianism": 0
+      "religion:confucianism": 0
     },
-    "religionType": "foundation:confucianism",
+    "religionType": "religion:confucianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -58794,9 +58794,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:christianity": 3
+      "religion:christianity": 3
     },
-    "religionType": "foundation:christianity",
+    "religionType": "religion:christianity",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -58808,7 +58808,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -58816,7 +58816,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion",
               "param": 1
             }
@@ -63199,7 +63199,7 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {},
-    "religionType": "foundation:confucianism",
+    "religionType": "religion:confucianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -63221,7 +63221,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -63229,7 +63229,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion",
               "param": 1
             }
@@ -66068,9 +66068,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -66097,7 +66097,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -66390,9 +66390,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 1
+      "religion:egypt_mythology": 1
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -66402,7 +66402,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -66613,7 +66613,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:egypt_mythology",
+    "globalReligionCommerce": "religion:egypt_mythology",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -66700,16 +66700,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 4
+      "religion:egypt_mythology": 4
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 2
             }
@@ -67003,16 +67003,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 2
+      "religion:egypt_mythology": 2
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -88286,9 +88286,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hellenism": 3
+      "religion:hellenism": 3
     },
-    "religionType": "foundation:hellenism",
+    "religionType": "religion:hellenism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -88315,7 +88315,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -88608,9 +88608,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
-    "religionType": "foundation:hellenism",
+    "religionType": "religion:hellenism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -88620,7 +88620,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -88918,16 +88918,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
-    "religionType": "foundation:hellenism",
+    "religionType": "religion:hellenism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -91423,9 +91423,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hinduism": 3
+      "religion:hinduism": 3
     },
-    "religionType": "foundation:hinduism",
+    "religionType": "religion:hinduism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -91437,7 +91437,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -91445,7 +91445,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion",
               "param": 1
             }
@@ -91748,9 +91748,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hinduism": 3
+      "religion:hinduism": 3
     },
-    "religionType": "foundation:hinduism",
+    "religionType": "religion:hinduism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -91777,7 +91777,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -92070,9 +92070,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
-    "religionType": "foundation:hinduism",
+    "religionType": "religion:hinduism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -92082,7 +92082,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -92293,7 +92293,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:hinduism",
+    "globalReligionCommerce": "religion:hinduism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -92380,16 +92380,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
-    "religionType": "foundation:hinduism",
+    "religionType": "religion:hinduism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion",
               "param": 2
             }
@@ -92684,16 +92684,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
-    "religionType": "foundation:hinduism",
+    "religionType": "religion:hinduism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -104258,9 +104258,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:islam": 3
+      "religion:islam": 3
     },
-    "religionType": "foundation:islam",
+    "religionType": "religion:islam",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -104287,7 +104287,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -104580,9 +104580,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:islam": 1
+      "religion:islam": 1
     },
-    "religionType": "foundation:islam",
+    "religionType": "religion:islam",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -104592,7 +104592,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -104803,7 +104803,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:islam",
+    "globalReligionCommerce": "religion:islam",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -104890,16 +104890,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:islam": 4
+      "religion:islam": 4
     },
-    "religionType": "foundation:islam",
+    "religionType": "religion:islam",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion",
               "param": 2
             }
@@ -105194,16 +105194,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:islam": 2
+      "religion:islam": 2
     },
-    "religionType": "foundation:islam",
+    "religionType": "religion:islam",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -105500,9 +105500,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:shinto": 3
+      "religion:shinto": 3
     },
-    "religionType": "foundation:shinto",
+    "religionType": "religion:shinto",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -105514,7 +105514,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -105522,7 +105522,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion",
               "param": 1
             }
@@ -106785,9 +106785,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:judaism": 3
+      "religion:judaism": 3
     },
-    "religionType": "foundation:judaism",
+    "religionType": "religion:judaism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -106814,7 +106814,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -107107,9 +107107,9 @@
     "protectedCulture": true,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:judaism": 3
+      "religion:judaism": 3
     },
-    "religionType": "foundation:judaism",
+    "religionType": "religion:judaism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -107121,7 +107121,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -107129,7 +107129,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion",
               "param": 1
             }
@@ -107427,9 +107427,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:judaism": 2
+      "religion:judaism": 2
     },
-    "religionType": "foundation:judaism",
+    "religionType": "religion:judaism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -107439,7 +107439,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -107650,7 +107650,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:judaism",
+    "globalReligionCommerce": "religion:judaism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -107737,16 +107737,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:judaism": 4
+      "religion:judaism": 4
     },
-    "religionType": "foundation:judaism",
+    "religionType": "religion:judaism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion",
               "param": 2
             }
@@ -108041,16 +108041,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:judaism": 1
+      "religion:judaism": 1
     },
-    "religionType": "foundation:judaism",
+    "religionType": "religion:judaism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -109920,9 +109920,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 3
+      "religion:buddhism": 3
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -109934,7 +109934,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -109942,7 +109942,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 1
             }
@@ -120159,9 +120159,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:mesoamericanism": 3
+      "religion:mesoamericanism": 3
     },
-    "religionType": "foundation:mesoamericanism",
+    "religionType": "religion:mesoamericanism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -120188,7 +120188,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -120485,9 +120485,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:mesoamericanism": 3
+      "religion:mesoamericanism": 3
     },
-    "religionType": "foundation:mesoamericanism",
+    "religionType": "religion:mesoamericanism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -120499,7 +120499,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -120507,7 +120507,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion",
               "param": 1
             }
@@ -120806,9 +120806,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:mesoamericanism": 1
+      "religion:mesoamericanism": 1
     },
-    "religionType": "foundation:mesoamericanism",
+    "religionType": "religion:mesoamericanism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -120818,7 +120818,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -121029,7 +121029,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:mesoamericanism",
+    "globalReligionCommerce": "religion:mesoamericanism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -121118,16 +121118,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:mesoamericanism": 4
+      "religion:mesoamericanism": 4
     },
-    "religionType": "foundation:mesoamericanism",
+    "religionType": "religion:mesoamericanism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion",
               "param": 2
             }
@@ -121421,16 +121421,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:mesoamericanism": 2
+      "religion:mesoamericanism": 2
     },
-    "religionType": "foundation:mesoamericanism",
+    "religionType": "religion:mesoamericanism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -141836,9 +141836,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hellenism": 3
+      "religion:hellenism": 3
     },
-    "religionType": "foundation:hellenism",
+    "religionType": "religion:hellenism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -141855,7 +141855,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -141863,7 +141863,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion",
               "param": 1
             }
@@ -148627,9 +148627,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:buddhism": 1
+      "religion:buddhism": 1
     },
-    "religionType": "foundation:buddhism",
+    "religionType": "religion:buddhism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -148641,7 +148641,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -148649,7 +148649,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 1
             }
@@ -159486,9 +159486,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:asatru": 3
+      "religion:asatru": 3
     },
-    "religionType": "foundation:asatru",
+    "religionType": "religion:asatru",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -159500,7 +159500,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -159508,7 +159508,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion",
               "param": 1
             }
@@ -165067,9 +165067,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:shinto": 3
+      "religion:shinto": 3
     },
-    "religionType": "foundation:shinto",
+    "religionType": "religion:shinto",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -165096,7 +165096,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -165389,9 +165389,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:shinto": 1
+      "religion:shinto": 1
     },
-    "religionType": "foundation:shinto",
+    "religionType": "religion:shinto",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -165401,7 +165401,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -165612,7 +165612,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:shinto",
+    "globalReligionCommerce": "religion:shinto",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -165699,16 +165699,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:shinto": 4
+      "religion:shinto": 4
     },
-    "religionType": "foundation:shinto",
+    "religionType": "religion:shinto",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion",
               "param": 2
             }
@@ -166003,16 +166003,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:shinto": 1
+      "religion:shinto": 1
     },
-    "religionType": "foundation:shinto",
+    "religionType": "religion:shinto",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -174955,7 +174955,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:hellenism",
+    "globalReligionCommerce": "religion:hellenism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -175042,16 +175042,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
-    "religionType": "foundation:hellenism",
+    "religionType": "religion:hellenism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion",
               "param": 2
             }
@@ -179744,9 +179744,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:taoism": 3
+      "religion:taoism": 3
     },
-    "religionType": "foundation:taoism",
+    "religionType": "religion:taoism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -179773,7 +179773,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -180066,9 +180066,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:taoism": 1
+      "religion:taoism": 1
     },
-    "religionType": "foundation:taoism",
+    "religionType": "religion:taoism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -180078,7 +180078,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -180289,7 +180289,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:taoism",
+    "globalReligionCommerce": "religion:taoism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -180376,16 +180376,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:taoism": 4
+      "religion:taoism": 4
     },
-    "religionType": "foundation:taoism",
+    "religionType": "religion:taoism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 2
             }
@@ -180680,16 +180680,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:taoism": 2
+      "religion:taoism": 2
     },
-    "religionType": "foundation:taoism",
+    "religionType": "religion:taoism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -181011,9 +181011,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:taoism": 3
+      "religion:taoism": 3
     },
-    "religionType": "foundation:taoism",
+    "religionType": "religion:taoism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -181025,7 +181025,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -181033,7 +181033,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 1
             }
@@ -182577,9 +182577,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -182611,7 +182611,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -182619,7 +182619,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
@@ -182958,9 +182958,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -182992,7 +182992,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -183000,7 +183000,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
@@ -183333,9 +183333,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
-    "religionType": "foundation:egypt_mythology",
+    "religionType": "religion:egypt_mythology",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -183367,7 +183367,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -183375,7 +183375,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
@@ -200135,9 +200135,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:zoroastrianism": 3
+      "religion:zoroastrianism": 3
     },
-    "religionType": "foundation:zoroastrianism",
+    "religionType": "religion:zoroastrianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
@@ -200164,7 +200164,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -200457,9 +200457,9 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:zoroastrianism": 1
+      "religion:zoroastrianism": 1
     },
-    "religionType": "foundation:zoroastrianism",
+    "religionType": "religion:zoroastrianism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -200469,7 +200469,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -200680,7 +200680,7 @@
     "globalHurryModifier": 0,
     "globalMaintenanceModifier": 0,
     "globalPopulationChange": 0,
-    "globalReligionCommerce": "foundation:zoroastrianism",
+    "globalReligionCommerce": "religion:zoroastrianism",
     "globalSeaPlotYieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -200767,16 +200767,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:zoroastrianism": 6
+      "religion:zoroastrianism": 6
     },
-    "religionType": "foundation:zoroastrianism",
+    "religionType": "religion:zoroastrianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion",
               "param": 2
             }
@@ -201071,16 +201071,16 @@
     "protectedCulture": false,
     "providesFreshWater": false,
     "religionChanges": {
-      "foundation:zoroastrianism": 2
+      "religion:zoroastrianism": 2
     },
-    "religionType": "foundation:zoroastrianism",
+    "religionType": "religion:zoroastrianism",
     "replaceBuildings": {},
     "requirements": {
       "all": [
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]

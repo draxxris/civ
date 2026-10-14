@@ -13,7 +13,7 @@ public sealed class LeaderDef : GameContentDef
     public string DeclareWarThemRefuseAttitudeThreshold { get; init; } = "";
     public string DefensivePactRefuseAttitudeThreshold { get; init; } = "";
     public string DemandTributeAttitudeThreshold { get; init; } = "";
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
     public string? FavoriteReligion { get; init; } = null;
     public ImmutableDictionary<string, int> Flavors { get; init; } = ImmutableDictionary<string, int>.Empty;
     public string HappinessBonusRefuseAttitudeThreshold { get; init; } = "";
