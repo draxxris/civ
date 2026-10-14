@@ -128,56 +128,26 @@ def add_hierarchy(glb, data):
     return ids, names, worlds, parents
 
 
-def source_skin_matrices(shape, worlds):
+def bind_matrices(shape, worlds):
+    """Per-bone matrices taking shape-local vertices to bind-pose world space."""
     instance = shape.skin_instance
-    skin = instance.data
-    # Some source meshes intentionally offset their whole deformed skin relative
-    # to the skeleton (the warrior body is one). A corrected skeleton copy keeps
-    # that left-side transform without changing inverse-bind matrices or weapons.
-    correction = worlds[shape] @ matrix(skin.get_transform()) @ np.linalg.inv(worlds[instance.skeleton_root])
-    return [matrix(b.get_transform()) for b in skin.bone_list], correction
+    skin = matrix(instance.data.get_transform())
+    return [worlds[bone] @ matrix(b.get_transform()) @ skin
+            for bone, b in zip(instance.bones, instance.data.bone_list)]
 
 
-def corrected_joints(glb, bones, ids, parents, correction, names):
-    if np.allclose(correction, np.eye(4), atol=1e-5):
-        return {b: ids[b] for b in bones}
-    needed = set()
-    for bone in bones:
-        while bone is not None:
-            needed.add(bone)
-            bone = parents.get(bone)
-    wrapper = len(glb.doc["nodes"])
-    glb.doc["nodes"].append({"name": "SkinOffset", **decompose(correction), "children": []})
-    glb.doc["nodes"][0]["children"].append(wrapper)
-    copies = {}
-    for obj in ids:
-        if obj not in needed:
-            continue
-        copies[obj] = len(glb.doc["nodes"])
-        original = glb.doc["nodes"][ids[obj]]
-        node = {k: v for k, v in original.items() if k not in ("mesh", "skin", "children")}
-        node["name"] += "_SkinOffset"
-        glb.doc["nodes"].append(node)
-        names[obj.name].append(copies[obj])
-    for obj, index in copies.items():
-        parent = copies.get(parents.get(obj), wrapper)
-        glb.doc["nodes"][parent].setdefault("children", []).append(index)
-    return copies
-
-
-def add_skin(glb, shape, ids, worlds, parents, names, warnings):
+def add_skin(glb, shape, ids, worlds, warnings):
     instance = shape.skin_instance
     if not instance.bones or any(b not in ids for b in instance.bones):
         raise ValueError("Skin references missing bones")
-    inverse_bind, correction = source_skin_matrices(shape, worlds)
-    corrected = corrected_joints(glb, instance.bones, ids, parents, correction, names)
     joints, weights = skin_arrays(shape, warnings)
     if joints.max() >= len(instance.bones):
         raise ValueError("Skin joint index outside bone table")
-    skin = {"joints": [corrected[b] for b in instance.bones],
+    inverse_bind = [np.linalg.pinv(worlds[b]) for b in instance.bones]
+    skin = {"joints": [ids[b] for b in instance.bones],
             "inverseBindMatrices": glb.accessor([m.T.reshape(16) for m in inverse_bind], "MAT4")}
     glb.doc["skins"].append(skin)
-    return len(glb.doc["skins"]) - 1, joints, weights, inverse_bind, correction
+    return len(glb.doc["skins"]) - 1, joints, weights
 
 
 def normals_for(vertices, triangles):
@@ -189,7 +159,7 @@ def normals_for(vertices, triangles):
     return normals
 
 
-def mesh_attributes(glb, shape):
+def mesh_attributes(glb, shape, deform=None):
     geometry = shape.data
     vertices = np.array([v.as_list() for v in geometry.vertices])
     triangles = np.array(list(geometry.get_triangles()), dtype="<u4")
@@ -199,6 +169,8 @@ def mesh_attributes(glb, shape):
     lengths = np.linalg.norm(normals, axis=1)
     normals[lengths < 1e-10] = [0, 0, 1]
     normals /= np.linalg.norm(normals, axis=1)[:, None]
+    if deform:
+        vertices, normals = deform(vertices, normals)
     attributes = {"POSITION": glb.accessor(vertices, "VEC3", target=34962, bounds=True),
                   "NORMAL": glb.accessor(normals, "VEC3", target=34962)}
     if geometry.uv_sets:
@@ -210,33 +182,41 @@ def mesh_attributes(glb, shape):
     return primitive, vertices, len(triangles)
 
 
-def skinned_points(shape, vertices, joints, weights, inverse_bind, worlds, correction):
-    result = np.zeros_like(vertices)
-    for i, bone in enumerate(shape.skin_instance.bones):
-        # A vertex can mention the same bone more than once in malformed assets.
-        influence = np.sum(np.where(joints == i, weights, 0), axis=1)
-        result += transform_points(correction @ worlds[bone] @ inverse_bind[i], vertices) * influence[:, None]
-    return result
+def skin_deformer(shape, joints, weights, worlds):
+    matrices = bind_matrices(shape, worlds)
+
+    def deform(vertices, normals):
+        points, result = np.zeros_like(vertices), np.zeros_like(normals)
+        for i, m in enumerate(matrices):
+            # A vertex can mention the same bone more than once in malformed assets.
+            influence = np.sum(np.where(joints == i, weights, 0), axis=1)[:, None]
+            points += transform_points(m, vertices) * influence
+            result += (normals @ m[:3, :3].T) * influence
+        lengths = np.linalg.norm(result, axis=1)
+        result[lengths < 1e-10] = [0, 0, 1]
+        return points, result / np.linalg.norm(result, axis=1)[:, None]
+    return deform
 
 
-def add_shape(glb, shape, ids, worlds, parents, names, assets, folders, warnings):
-    primitive, vertices, triangles = mesh_attributes(glb, shape)
+def add_shape(glb, shape, ids, worlds, assets, folders, warnings):
+    deform = skin = None
+    if shape.skin_instance:
+        skin, joints, weights = add_skin(glb, shape, ids, worlds, warnings)
+        deform = skin_deformer(shape, joints, weights, worlds)
+    primitive, vertices, triangles = mesh_attributes(glb, shape, deform)
     primitive["material"] = mesh_material(glb, shape, assets, folders, warnings)
     node = glb.doc["nodes"][ids[shape]]
     points = transform_points(worlds[shape], vertices)
-    if shape.skin_instance:
-        skin, joints, weights, inverse_bind, correction = add_skin(glb, shape, ids, worlds, parents, names, warnings)
+    if skin is not None:
         primitive["attributes"].update(JOINTS_0=glb.accessor(joints, "VEC4", "<u2", target=34962),
                                         WEIGHTS_0=glb.accessor(weights, "VEC4", target=34962))
-        node["skin"] = skin
-        # glTF skin matrices ignore the mesh node's own transform. Keep the source
-        # node (and its attachments) intact and put the skinned mesh on a sibling.
+        # glTF skin matrices ignore the mesh node's own transform, and vertices
+        # are already in bind-pose world space. Use a root-level sibling node.
         mesh_node = {"name": node["name"] + "_Skin", "skin": skin}
         glb.doc["nodes"].append(mesh_node)
         glb.doc["nodes"][0]["children"].append(len(glb.doc["nodes"]) - 1)
-        del node["skin"]
         node = mesh_node
-        points = skinned_points(shape, vertices, joints, weights, inverse_bind, worlds, correction)
+        points = vertices
     node["mesh"] = len(glb.doc["meshes"])
     glb.doc["meshes"].append({"name": text(shape.name), "primitives": [primitive]})
     return points, triangles
@@ -256,7 +236,7 @@ def geometry(data, assets, folders, warnings):
         if shape.flags & 1:
             warnings.append("Hidden geometry omitted: " + text(shape.name))
             continue
-        points, triangles = add_shape(glb, shape, ids, worlds, parents, names, assets, folders, warnings)
+        points, triangles = add_shape(glb, shape, ids, worlds, assets, folders, warnings)
         all_points.append(points)
         triangle_count += triangles
     if not all_points:

@@ -127,8 +127,9 @@ def euler_track(data, start, stop):
     for x, y, z in zip(*angles):
         cx, cy, cz = np.cos(np.array([x, y, z]) / 2)
         sx, sy, sz = np.sin(np.array([x, y, z]) / 2)
-        values.append([sx*cy*cz+cx*sy*sz, cx*sy*cz-sx*cy*sz,
-                       cx*cy*sz+sx*sy*cz, cx*cy*cz-sx*sy*sz])
+        q = np.array([sx*cy*cz+cx*sy*sz, cx*sy*cz-sx*cy*sz,
+                      cx*cy*sz+sx*sy*cz, cx*cy*cz-sx*sy*sz])
+        values.append(q / np.linalg.norm(q))
     return times, np.array(values)
 
 
