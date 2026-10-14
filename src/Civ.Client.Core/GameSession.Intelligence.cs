@@ -62,9 +62,10 @@ public sealed partial class GameSession
     {
         var service = OptionalService<IEspionageService>();
         if (service == null) return new(false, []);
-        var diplomacy = OptionalService<IDiplomacyService>();
         int me = MyTeam.Id;
-        var rivals = Sim.State.Teams.Where(t => t.Id != me && (diplomacy == null || diplomacy.HasMet(Sim, me, t.Id))).OrderBy(t => t.Id)
+        // ValidateWeight admits only met, living, non-barbarian rivals, so eliminated and barbarian teams stay hidden.
+        var rivals = Sim.State.Teams.Where(t => t.Id != me).OrderBy(t => t.Id)
+            .Where(t => service.ValidateWeight(Sim, Human, t.Id, service.Weight(Sim, Human, t.Id)) is null)
             .Select(t => new EspionageRow(t.Id, TeamName(t), service.Points(Sim, me, t.Id), service.Weight(Sim, Human, t.Id),
                 service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.Demographics),
                 service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.CityVisibility),

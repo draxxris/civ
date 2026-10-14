@@ -227,6 +227,77 @@ public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<L
     }
 
     [Fact]
+    public void Team_score_counts_shared_technologies_once_per_team()
+    {
+        var sim = Scenario();
+        // Alternating borders would add land to both teams, so only population and technology decide here.
+        foreach (var plot in sim.State.Plots) plot.Owner = null;
+        JoinTeam(sim, 2, 0);
+        Learn(sim, 0, "research:fission", "research:laser", "research:fusion");
+        sim.State.Cities.Single(c => c.Owner == 0).Population = 1; // 2 points
+        sim.State.Cities.Single(c => c.Owner == 1).Population = 10; // 20 points
+        // Team 0 scores 2 + 3 techs x 4 = 14. Counting its techs once per member would wrongly give 26.
+        sim.State.Turn = Status(sim).MaxTurns;
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:time", status.VictoryId);
+        Assert.Equal(1, status.WinningTeamId);
+        Assert.Equal(1, status.WinningPlayerId);
+    }
+
+    [Fact]
+    public void Domination_victory_never_names_an_eliminated_teammate()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 2, 0);
+        foreach (var plot in sim.State.Plots) plot.Owner = 2;
+        sim.State.Cities[0].Population = 10;
+        sim.State.Cities[1].Population = 3;
+
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:domination", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(0, status.WinningPlayerId);
+    }
+
+    [Fact]
+    public void Cultural_victory_never_names_an_eliminated_teammate()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 2, 0);
+        foreach (var plot in sim.State.Plots) plot.Owner = null;
+        var land = sim.State.Plots.Where(p => !sim.Content.Get<S.TerrainDef>(p.Terrain).IsWater).ToArray();
+        foreach (var plot in land.Take(land.Length * 55 / 100)) plot.Owner = 2;
+        foreach (var plot in land.Skip(land.Length * 55 / 100)) plot.Owner = 1;
+
+        long legendary = sim.Content.Get<S.CultureLevelDef>("foundation:culturelevel_legendary").SpeedThresholds[Speed];
+        sim.State.Cities[0].Culture = legendary;
+        AddCity(sim, 0, 20).Culture = legendary;
+        AddCity(sim, 0, 30).Culture = legendary;
+
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:cultural", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(0, status.WinningPlayerId);
+    }
+
+    [Fact]
+    public void Space_race_victory_never_names_an_eliminated_teammate()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 2, 0);
+        foreach (var plot in sim.State.Plots) plot.Owner = 2;
+        sim.State.Cities[1].Population = 10; // Keep domination from ending the game first.
+        var city = sim.State.Cities[0];
+        var parts = new[] { "apollo_program", "ss_cockpit", "ss_life_support", "ss_stasis_chamber", "ss_docking_bay", "ss_engine", "ss_casing", "ss_thrusters" };
+        foreach (var part in parts) Pv(sim).CompleteProject(sim, city.Id, "projects_victory:" + part);
+
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:space_race", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(0, status.WinningPlayerId);
+    }
+
+    [Fact]
     public void Time_victory_never_names_an_eliminated_teammate()
     {
         var sim = Scenario();

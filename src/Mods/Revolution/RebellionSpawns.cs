@@ -9,7 +9,7 @@ internal static class RebellionSpawns
     internal static void Trigger(Simulation sim, City city, RevolutionRulesDef rules)
     {
         var tiles = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).Distinct().OrderBy(t => t.Value)
-            .Where(t => Walkable(sim, t)).Take(rules.RebelUnits).ToArray();
+            .Where(t => Walkable(sim, city, t)).Take(rules.RebelUnits).ToArray();
         // An enclosed city still suffers unrest and releases pressure; no illegal units are placed.
         int rebel = tiles.Length == 0 ? -1 : EnsureBarbarians(sim);
         var units = new List<int>();
@@ -22,9 +22,12 @@ internal static class RebellionSpawns
             units.Add(unit.Id);
         }
         var state = RevolutionService.Edit(sim, city);
-        int released = Math.Min(state.InstabilityIndex, rules.RebellionRelease);
-        state.InstabilityIndex -= released;
-        state.RebellionCooldownUntilTurn = sim.State.Turn + Duration(sim, rules.CooldownTurns);
+        // Pressure above the threshold is discarded, so a rebellion always leaves the city below it.
+        int before = state.InstabilityIndex;
+        state.InstabilityIndex = Math.Max(0, Math.Min(before, rules.RebellionThreshold) - rules.RebellionRelease);
+        int released = before - state.InstabilityIndex;
+        // The +1 makes the cooldown cover the next turn, as UnrestUntilTurn does.
+        state.RebellionCooldownUntilTurn = sim.State.Turn + 1 + Duration(sim, rules.CooldownTurns);
         state.UnrestUntilTurn = sim.State.Turn + 1 + Duration(sim, rules.UnrestTurns);
         sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), released));
         sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
@@ -33,9 +36,11 @@ internal static class RebellionSpawns
     private static int Duration(Simulation sim, int turns) => Math.Max(1,
         turns * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).ResearchPercent / 100);
 
-    private static bool Walkable(Simulation sim, TileId tile)
+    /// <summary>Rebels spawn on unowned tiles or the city owner's tiles, never inside a third party's borders.</summary>
+    private static bool Walkable(Simulation sim, City city, TileId tile)
     {
         var plot = sim.State.Plots[tile.Value];
+        if (plot.Owner is { } owner && owner != city.Owner) return false;
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         if (terrain.IsWater || terrain.Impassable || plot.Kind == PlotKind.Peak) return false;
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return false;

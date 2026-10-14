@@ -110,6 +110,29 @@ public sealed class ClientIntelligenceEventsTests(LoadedMods mods) : IClassFixtu
     }
 
     [Fact]
+    public void Espionage_hides_eliminated_and_barbarian_rivals()
+    {
+        var session = Session("Espionage", "Diplomacy");
+        var sim = session.Sim;
+        AddCity(sim, 0, 14);
+        AddCity(sim, 1, 57);
+        // Team 2 is a barbarian horde that has met us. Barbarians are never espionage targets.
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 2, Treasury = 0 });
+        sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } });
+        sim.State.RebuildIndexes();
+        sim.State.PlayerById(2).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        AddUnit(sim, sim.State.Cities.Single(c => c.Owner == 1), "military:warrior", owner: 2);
+        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
+        diplomacy.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
+        diplomacy.EstablishContact(sim, session.MyTeam.Id, 2);
+        Assert.Equal(1, Assert.Single(session.DescribeEspionage().Rivals).TeamId);
+
+        foreach (var unit in sim.State.Units.Where(u => u.Owner == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
+        sim.State.RemoveCity(sim.State.Cities.Single(c => c.Owner == 1).Id);
+        Assert.Empty(session.DescribeEspionage().Rivals);
+    }
+
+    [Fact]
     public void Spies_in_rival_cities_get_mission_actions()
     {
         var session = Session("Espionage", "Diplomacy");
