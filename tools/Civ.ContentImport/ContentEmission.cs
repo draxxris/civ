@@ -46,6 +46,8 @@ public static class ContentEmission
             Directory.CreateDirectory(directory);
             File.WriteAllText(Path.Combine(directory, file.File), file.Json, new UTF8Encoding(false));
         }
+        // Retire the former generated identity family when upgrading an existing output directory.
+        File.Delete(Path.Combine(destination, "Foundation", "data", "religion-identity.json"));
         WriteReports(result, reports);
     }
 

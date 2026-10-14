@@ -31,7 +31,7 @@ internal static class ProductionEligibility
         Limits(sim, city, b.DefaultBuilding, b.Limits, false, failures);
         Location(sim, city, b, failures);
         WonderCapacity(sim, city, b, failures);
-        if (b.RequiresReligion || b.RequiresStateReligion || b.ReligionType is not null) Fail(failures, "Religion state is unavailable");
+        Religion(sim, city, b, failures);
         Upgrade(sim, city, b, failures);
         if (b.BonusType is { } bonus && sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCount(sim, city.Owner, city.Id, bonus) <= 0)
             Fail(failures, "Requires connected resource: " + bonus);
@@ -41,6 +41,16 @@ internal static class ProductionEligibility
     {
         if (city.Buildings.Any(existing => sim.Content.Get<S.BuildingDef>(existing).ReplaceBuildings.GetValueOrDefault(b.Id)))
             Fail(failures, "Replaced by an upgraded building");
+    }
+    private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
+    {
+        var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        if (service is not null)
+        {
+            if (service.ValidateBuilding(sim, city, b) is { } error) Fail(failures, error);
+            return;
+        }
+        if (b.RequiresReligion || b.RequiresStateReligion || b.ReligionType is not null) Fail(failures, "Religion state is unavailable");
     }
     private static void Unit(Simulation sim, City city, string id, List<RequirementFailure> failures)
     {

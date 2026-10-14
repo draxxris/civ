@@ -11,7 +11,7 @@ public static class ContentLeafKinds
         ["unit"] = typeof(UnitDef), ["unit-class"] = typeof(UnitDef), ["unit-combat"] = typeof(UnitCombatDef),
         ["promotion"] = typeof(PromotionDef), ["civic"] = typeof(CivicDef), ["era"] = typeof(EraDef),
         ["culture-level"] = typeof(CultureLevelDef), ["condition"] = typeof(ConditionDef),
-        ["game-option"] = typeof(GameOptionDef), ["religion"] = typeof(ReligionIdentityDef),
+        ["game-option"] = typeof(GameOptionDef), ["religion"] = typeof(ReligionDef),
         ["corporation"] = typeof(CorporationIdentityDef), ["victory"] = typeof(VictoryIdentityDef)
     };
 }

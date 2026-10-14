@@ -43,7 +43,8 @@ Typed text uses readable key words when no English entry exists.
 
 ## Deferred mechanics
 
-Foundation reserves 13 religion, 36 corporation, and ten victory identities.
+Religion now emits 13 playable definitions instead of deferred Foundation identities.
+Foundation still reserves 36 corporation and ten victory identities.
 Their effects remain unsupported. Their prerequisite evaluators fail closed until future rule mods implement these mechanics.
 
 The era filter removes every reference dependent, including text links and future upgrades.

@@ -13,6 +13,7 @@
     <ProjectReference Include="../../src/Mods/Military/Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Government/Civ.Mods.Government.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Peoples/Civ.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Religion/Civ.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
     <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyModPayloads" AfterTargets="Build">
@@ -32,5 +33,7 @@
     <Copy SourceFiles="@(GovernmentPayload)" DestinationFiles="@(GovernmentPayload -> '$(OutDir)mods/Government/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <ItemGroup><PeoplesPayload Include="../../src/Mods/Peoples/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
     <Copy SourceFiles="@(PeoplesPayload)" DestinationFiles="@(PeoplesPayload -> '$(OutDir)mods/Peoples/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><ReligionPayload Include="../../src/Mods/Religion/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(ReligionPayload)" DestinationFiles="@(ReligionPayload -> '$(OutDir)mods/Religion/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>

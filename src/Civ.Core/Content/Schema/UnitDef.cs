@@ -56,7 +56,7 @@ public sealed class UnitDef : GameContentDef
     public ImmutableArray<string> OverrideResourceBuilding { get; init; } = [];
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(InvisibilityDef), ReferencePart.Values)]
     public ImmutableArray<string> VisibleInvisibilityTypes { get; init; } = [];

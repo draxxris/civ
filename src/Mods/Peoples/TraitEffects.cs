@@ -20,7 +20,7 @@ internal sealed class TraitEffects(IPeoplesService peoples) : IModifierSource
         {
             if (context.Scope == ModifierScope.City && context.City is { } city) City(context.Sim, city, trait, sink);
             if (context.Scope == ModifierScope.Player) Player(context.Sim, trait, sink);
-            if (context.Scope == ModifierScope.Plot && context.Plot is { } tile) Plot(context.Sim, tile, trait, sink);
+            if (context.Scope == ModifierScope.Plot && context.Plot is { } tile) Plot(context.Sim, context.ProposedPlot ?? context.Sim.State.Plots[tile.Value], trait, sink);
             if (context.Scope == ModifierScope.Unit && context.Unit is { } unit) Unit(context.Sim, unit, trait, sink);
         }
     }
@@ -62,9 +62,9 @@ internal sealed class TraitEffects(IPeoplesService peoples) : IModifierSource
         foreach (var pair in t.BonusHappinessChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (network.ConnectedCount(sim, city.Owner, city.Id, pair.Key) > 0) sink.Add(t.Id + ":" + pair.Key, "cities:happiness", pair.Value);
     }
-    private static void Plot(Simulation sim, TileId tile, S.TraitDef t, ModifierSink sink)
+private static void Plot(Simulation sim, Plot plot, S.TraitDef t, ModifierSink sink)
     {
-        if (sim.State.Plots[tile.Value].Improvement is { } improvement)
+        if (plot.Improvement is { } improvement)
             sink.AddYield(t.Id, sim.Content.Get<S.ImprovementDef>(improvement).TraitYieldChanges.GetValueOrDefault(t.Id));
         // Thresholds are tested after all flat plot contributions. World resolves the smallest positive threshold.
         sink.Add(t.Id, "world:extra_food_threshold", t.ExtraYieldThresholds.Food);

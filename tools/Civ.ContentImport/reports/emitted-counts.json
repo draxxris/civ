@@ -9,6 +9,7 @@
         "government",
         "military",
         "peoples",
+        "religion",
         "research",
         "world"
       ]
@@ -23,7 +24,7 @@
     },
     {
       "id": "foundation",
-      "count": 203,
+      "count": 190,
       "references": [
         "cities",
         "government",
@@ -51,6 +52,7 @@
         "foundation",
         "government",
         "peoples",
+        "religion",
         "research",
         "world"
       ]
@@ -60,11 +62,21 @@
       "count": 212,
       "references": [
         "cities",
-        "foundation",
         "government",
         "military",
+        "religion",
         "research",
         "world"
+      ]
+    },
+    {
+      "id": "religion",
+      "count": 13,
+      "references": [
+        "cities",
+        "foundation",
+        "military",
+        "research"
       ]
     },
     {
@@ -147,11 +159,6 @@
       "mod": "foundation",
       "definition": "HandicapDef",
       "count": 9
-    },
-    {
-      "mod": "foundation",
-      "definition": "ReligionIdentityDef",
-      "count": 13
     },
     {
       "mod": "foundation",
@@ -252,6 +259,11 @@
       "mod": "peoples",
       "definition": "TraitDef",
       "count": 17
+    },
+    {
+      "mod": "religion",
+      "definition": "ReligionDef",
+      "count": 13
     },
     {
       "mod": "research",

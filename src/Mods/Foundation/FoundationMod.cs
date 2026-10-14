@@ -17,7 +17,7 @@ public sealed class FoundationMod : IMod
         ContentRegistration.Load<GameOptionDef>(context, "game-option.json");
         ContentRegistration.Load<GameSpeedDef>(context, "game-speed.json");
         ContentRegistration.Load<HandicapDef>(context, "handicap.json");
-        ContentRegistration.Load<ReligionIdentityDef>(context, "religion-identity.json");
+
         ContentRegistration.Load<SpecialistDef>(context, "specialist.json");
         ContentRegistration.Load<VictoryIdentityDef>(context, "victory-identity.json");
         ContentRegistration.Load<WorldSizeDef>(context, "world-size.json");
@@ -28,7 +28,7 @@ public sealed class FoundationMod : IMod
         ContentRegistration.Evaluator<CultureLevelDef>(context, "culture-level");
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
         ContentRegistration.Evaluator<GameOptionDef>(context, "game-option");
-        ContentRegistration.Evaluator<ReligionIdentityDef>(context, "religion");
+
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation");
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");
     }

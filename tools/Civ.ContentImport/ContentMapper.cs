@@ -11,7 +11,7 @@ public sealed record DataIssue(string Record, string Field, string SourceValue, 
 public sealed record MappedDefinition(DefinitionMapping Mapping, GameContentDef Definition);
 
 /// <summary>Compiles merged trees into immutable Core definitions. No source table is read at game startup.</summary>
-public sealed class ContentMapper
+public sealed partial class ContentMapper
 {
     public static readonly JsonSerializerOptions Json = new()
     {
@@ -79,6 +79,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         FoldClass(record, values, mapped);
+        if (record.Class == "ReligionInfo") ReligionBuildings(record, values);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
         values["unsupported"] = FieldCensus.Flatten(record.Node).Where(f => !mapped.Contains(f.Path) && RecordMerger.IsNonDefault(f.Node))
             .Select(f => f.Path).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();

@@ -38,6 +38,11 @@ public interface IResourceNetwork
     /// <summary>All physical copies in one network traversal.</summary>
     IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city);
 }
+/// <summary>Physical city connection through routes, rivers and unlocked water trade.</summary>
+public interface ICityConnectionService
+{
+    bool Connected(Simulation sim, int firstCity, int secondCity);
+}
 /// <summary>Authoritative team sight updates, owned by World.</summary>
 public interface IVisibilityService
 {

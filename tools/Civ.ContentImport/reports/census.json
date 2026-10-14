@@ -43910,7 +43910,7 @@
           "TXT_KEY_RELIGION_CHRISTIANITY_ADJECTIVE",
           "TXT_KEY_RELIGION_CONFUCIANISM_ADJECTIVE"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "Button",
@@ -43954,7 +43954,7 @@
           "UNITCLASS_BUDDHIST_MISSIONARY",
           "UNITCLASS_CHRISTIAN_MISSIONARY"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "GenericTechButton",
@@ -43976,7 +43976,7 @@
           "[\n  \"GlobalReligionCommerces\",\n  [\n    [\n      \"iGlobalReligionCommerce\",\n      \"0\"\n    ],\n    [\n      \"iGlobalReligionCommerce\",\n      \"1\"\n    ],\n    [\n    ...",
           "[\n  \"GlobalReligionCommerces\",\n  [\n    [\n      \"iGlobalReligionCommerce\",\n      \"1\"\n    ],\n    [\n      \"iGlobalReligionCommerce\",\n      \"0\"\n    ],\n    [\n    ..."
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "GlobalReligionCommerces/iGlobalReligionCommerce",
@@ -43986,7 +43986,7 @@
           "1",
           "2"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "HolyCityCommerces",
@@ -43997,7 +43997,7 @@
           "[\n  \"HolyCityCommerces\",\n  [\n    [\n      \"iHolyCityCommerce\",\n      \"0\"\n    ],\n    [\n      \"iHolyCityCommerce\",\n      \"1\"\n    ],\n    [\n      \"iHolyCityCommer...",
           "[\n  \"HolyCityCommerces\",\n  [\n    [\n      \"iHolyCityCommerce\",\n      \"2\"\n    ],\n    [\n      \"iHolyCityCommerce\",\n      \"2\"\n    ],\n    [\n      \"iHolyCityCommer..."
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "HolyCityCommerces/iHolyCityCommerce",
@@ -44008,7 +44008,7 @@
           "2",
           "3"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "MovieFile",
@@ -44051,7 +44051,7 @@
           "[\n  \"StateReligionCommerces\",\n  [\n    [\n      \"iStateReligionCommerce\",\n      \"0\"\n    ],\n    [\n      \"iStateReligionCommerce\",\n      \"0\"\n    ],\n    [\n      \"...",
           "[\n  \"StateReligionCommerces\",\n  [\n    [\n      \"iStateReligionCommerce\",\n      \"1\"\n    ],\n    [\n      \"iStateReligionCommerce\",\n      \"0\"\n    ],\n    [\n      \"..."
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "StateReligionCommerces/iStateReligionCommerce",
@@ -44062,7 +44062,7 @@
           "2",
           "3"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "TechButton",
@@ -44084,7 +44084,7 @@
           "TECH_CALENDAR",
           "TECH_DIVINE_RIGHT"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "Type",
@@ -44104,7 +44104,7 @@
         "examples": [
           "1"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "iSpreadFactor",
@@ -44115,7 +44115,7 @@
           "25",
           "30"
         ],
-        "status": "unsupported"
+        "status": "mapped"
       },
       {
         "field": "iTGAIndex",

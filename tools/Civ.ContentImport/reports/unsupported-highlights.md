@@ -27,7 +27,7 @@ Counts are non-default uses per emitted record. Each class lists its three most-
 - OutcomeInfo: none.
 - ProcessInfo: none.
 - PromotionInfo: `Sound` (266).
-- ReligionInfo: `FreeUnitClass` (13), `GenericTechButton` (13), `GlobalReligionCommerces` (13).
+- ReligionInfo: `GenericTechButton` (13), `MovieFile` (13), `MovieSound` (13).
 - RouteInfo: none.
 - SpecialBuildingInfo: none.
 - SpecialUnitInfo: none.

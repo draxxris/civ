@@ -14,14 +14,18 @@ The mechanics status is in [mechanics-status.md](mechanics-status.md).
 - Military: `UnitDef`, `UnitCombatDef`, `UnitAiDef`, `UnitCategoryDef`, `DomainDef`, `InvisibilityDef`, `PromotionDef`, `MissionDef`, and `OutcomeDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
+- Religion: `ReligionDef` with founding technology, missionary, spread factor, commerce vectors, and related building ids.
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition families.
 Its noise, climate, sight, lake, source-grid scale and start-balance integers enter the content hash.
 The importer never writes `hex-overrides.json`.
 
-Foundation also reserves `GameOptionDef`, `ConditionDef`, `ReligionIdentityDef`, `CorporationIdentityDef`, and `VictoryIdentityDef`.
-The last three types contain identities and text, not effects. Their `Deferred` flag is always true.
-Future rule mods consume these stable foundation identities. This avoids false prerequisite removal and nonexistent v1 providers.
+Foundation also reserves `GameOptionDef`, `ConditionDef`, `CorporationIdentityDef`, and `VictoryIdentityDef`.
+Corporation and victory definitions contain identities and text, not effects. Their `Deferred` flag is always true.
+Religion replaces the former deferred identities with `religion:*` ids. Existing content references use those ids.
+`ReligionDef` retains state, holy-city, and per-city shrine commerce in whole points.
+The importer derives temple, monastery, cathedral, and shrine relations from building categories and religion fields.
+Building happiness, civic religion effects, missionary chances, trait commerce policy, and leader favorites retain their existing typed properties.
 
 Every definition has an id, English name, help, pedia, strategy, era, icon, requirements, and unsupported source paths.
 An unknown era is null. An empty text field remains empty. A missing English key uses readable words from its key.
@@ -75,7 +79,7 @@ In this profile, 38 civilizations declare six initial civics. Another 22 declare
 
 ## Registration and reference checks
 
-All eight mods currently have empty load-order `dependencies`. They have no overrides or registration-order requirements.
+All content mods currently have empty load-order `dependencies`. They have no overrides or registration-order requirements.
 Each manifest declares its direct cross-mod content providers in `references`. These presence requirements can be cyclic.
 The importer reports the complete provider graph in `emitted-counts.json`.
 

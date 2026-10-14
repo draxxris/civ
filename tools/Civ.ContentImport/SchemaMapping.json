@@ -6845,9 +6845,18 @@
   },
   {
     "sourceClass": "ReligionInfo",
-    "definition": "ReligionIdentityDef",
-    "mod": "foundation",
-    "fields": [],
+    "definition": "ReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "TechPrereq", "property": "FoundingTech", "kind": "ref", "target": "TechInfo" },
+      { "source": "FreeUnitClass", "property": "Missionary", "kind": "ref", "target": "UnitClassInfo" },
+      { "source": "iFreeUnits", "property": "FreeUnits", "kind": "int" },
+      { "source": "iSpreadFactor", "property": "SpreadFactor", "kind": "int" },
+      { "source": "Adjective", "property": "Adjective", "kind": "text" },
+      { "source": "StateReligionCommerces", "property": "StateReligionCommerce", "kind": "commerce" },
+      { "source": "HolyCityCommerces", "property": "HolyCityCommerce", "kind": "commerce" },
+      { "source": "GlobalReligionCommerces", "property": "GlobalCityCommerce", "kind": "commerce" }
+    ],
     "requirements": []
   },
   {

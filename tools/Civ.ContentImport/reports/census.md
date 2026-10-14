@@ -8419,7 +8419,7 @@ Era counts: unknown=1
 Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
 
 - `Adjective`
-  - Present: 13. Non-default: 9. Status: unsupported.
+  - Present: 13. Non-default: 9. Status: mapped.
   - Example: TXT_KEY_RELIGION_BUDDHISM_ADJECTIVE
   - Example: TXT_KEY_RELIGION_CHRISTIANITY_ADJECTIVE
   - Example: TXT_KEY_RELIGION_CONFUCIANISM_ADJECTIVE
@@ -8439,7 +8439,7 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
   - Example: TXT_KEY_RELIGION_BUDDHISM
   - Example: TXT_KEY_RELIGION_CHRISTIANITY
 - `FreeUnitClass`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: UNITCLASS_ASATRU_MISSIONARY
   - Example: UNITCLASS_BUDDHIST_MISSIONARY
   - Example: UNITCLASS_CHRISTIAN_MISSIONARY
@@ -8449,21 +8449,21 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
   - Example: ,Art/Interface/Buttons/TechTree/Christianity.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,1,3
   - Example: ,Art/Interface/Buttons/TechTree/Hinduism.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,2,3
 - `GlobalReligionCommerces`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n    ...
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "1"\n    ],\n    [\n    ...
   - Example: [\n  "GlobalReligionCommerces",\n  [\n    [\n      "iGlobalReligionCommerce",\n      "1"\n    ],\n    [\n      "iGlobalReligionCommerce",\n      "0"\n    ],\n    [\n    ...
 - `GlobalReligionCommerces/iGlobalReligionCommerce`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: 1
   - Example: 2
 - `HolyCityCommerces`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommer...
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "0"\n    ],\n    [\n      "iHolyCityCommerce",\n      "1"\n    ],\n    [\n      "iHolyCityCommer...
   - Example: [\n  "HolyCityCommerces",\n  [\n    [\n      "iHolyCityCommerce",\n      "2"\n    ],\n    [\n      "iHolyCityCommerce",\n      "2"\n    ],\n    [\n      "iHolyCityCommer...
 - `HolyCityCommerces/iHolyCityCommerce`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -8483,11 +8483,11 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
   - Example: AS2D_BUILD_BUDDHIST
   - Example: AS2D_BUILD_CHRISTIAN
 - `StateReligionCommerces`
-  - Present: 13. Non-default: 11. Status: unsupported.
+  - Present: 13. Non-default: 11. Status: mapped.
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "...
   - Example: [\n  "StateReligionCommerces",\n  [\n    [\n      "iStateReligionCommerce",\n      "1"\n    ],\n    [\n      "iStateReligionCommerce",\n      "0"\n    ],\n    [\n      "...
 - `StateReligionCommerces/iStateReligionCommerce`
-  - Present: 13. Non-default: 11. Status: unsupported.
+  - Present: 13. Non-default: 11. Status: mapped.
   - Example: 1
   - Example: 2
   - Example: 3
@@ -8497,7 +8497,7 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,2,14
   - Example: ,Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_techtree_atlas2.dds,3,12
 - `TechPrereq`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: TECH_ATHLETICS
   - Example: TECH_CALENDAR
   - Example: TECH_DIVINE_RIGHT
@@ -8507,10 +8507,10 @@ Era counts: ERA_ANCIENT=2, ERA_CLASSICAL=7, ERA_MEDIEVAL=4
   - Example: RELIGION_BUDDHISM
   - Example: RELIGION_CHRISTIANITY
 - `iFreeUnits`
-  - Present: 13. Non-default: 7. Status: unsupported.
+  - Present: 13. Non-default: 7. Status: mapped.
   - Example: 1
 - `iSpreadFactor`
-  - Present: 13. Non-default: 13. Status: unsupported.
+  - Present: 13. Non-default: 13. Status: mapped.
   - Example: 20
   - Example: 25
   - Example: 30

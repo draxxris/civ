@@ -76,6 +76,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     {
         int modifier = unit.MilitaryProduction ? (int)CityData.Effect(sink, "military_production_percent") : 0;
         modifier += (int)CityData.Effect(sink, "combat_production_percent:" + unit.CombatType);
+        modifier += (int)CityData.Effect(sink, "religion_unit_production_percent");
         modifier += TraitProduction(unit.TraitProductionModifiers, sink);
         modifier += bonuses.Keys.Sum(b => unit.BonusProductionModifiers.GetValueOrDefault(b));
         foreach (var b in CityData.Active(sim, city))
@@ -88,6 +89,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     private static int BuildingModifiers(S.BuildingDef def, ModifierSink sink)
     {
         int modifier = (int)CityData.Effect(sink, "building_class_production_percent:" + def.DefaultBuilding);
+        modifier += (int)CityData.Effect(sink, "religion_building_production_percent");
         if (def.Limits.NoLimit) return modifier;
         if (def.Limits.World >= 0) modifier += (int)CityData.Effect(sink, "world_wonder_production_percent");
         if (def.Limits.Team >= 0) modifier += (int)CityData.Effect(sink, "team_wonder_production_percent");
