@@ -239,6 +239,82 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Contains(s.Notifications, n => n.Kind == "religion" && n.Text.Contains("was founded"));
     }
 
+    private static Unit AddFighter(Simulation sim, int owner, int tile, string type = "military:warrior")
+    {
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new TileId(tile)) };
+        sim.State.AddUnit(unit);
+        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        return unit;
+    }
+
+    /// <summary>Advance the random stream until the next combat round goes to the defender (or the attacker).</summary>
+    private static void RigNextRound(Simulation sim, Unit a, Unit d, bool defenderHits)
+    {
+        var preview = sim.Content.Services.Get<ICombatService>().Single().Preview(sim, a.Id, d.Id);
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if ((DeterministicRng.Restore(w, x, y, z).Next(preview.DieSides) < preview.DefenderRoundOdds) == defenderHits) break;
+            sim.Rng.NextUInt64();
+        }
+    }
+
+    private (GameSession Session, Unit Attacker, Unit Defender, BattlePlayback Battle) Fight(bool defenderHits, Action<Unit, Unit>? tweak = null)
+    {
+        var s = Scenario();
+        var a = AddFighter(s.Sim, 0, 39); var d = AddFighter(s.Sim, 1, 40, "military:archer");
+        s.Sim.State.SetWar(0, 1, true);
+        var (attackerHex, defenderHex) = (a.Position, d.Position);
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = a.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands.
+        tweak?.Invoke(a, d);
+        RigNextRound(s.Sim, a, d, defenderHits);
+        s.Sim.Content.Services.Get<ICombatService>().Single().Resolve(s.Sim, a.Id, d.Id);
+        s.SetMessage("");
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = a.Id, Activity = UnitActivity.Sleep });
+        var battle = Assert.Single(s.PendingBattles);
+        Assert.Equal(attackerHex, battle.AttackerHex);
+        Assert.Equal(defenderHex, battle.DefenderHex);
+        Assert.Equal("military:warrior", battle.AttackerType);
+        Assert.Equal("military:archer", battle.DefenderType);
+        Assert.Equal((0, 1), (battle.AttackerOwner, battle.DefenderOwner));
+        Assert.NotEmpty(battle.Rounds);
+        return (s, a, d, battle);
+    }
+
+    [Fact]
+    public void Battle_playback_records_a_defender_that_died()
+    {
+        var (s, a, d, battle) = Fight(defenderHits: false, (_, def) => def.Health = 1);
+        Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
+        Assert.Equal((a.Id, d.Id), (battle.WinnerId, battle.LoserId));
+        Assert.True(battle.LoserDied);
+        Assert.Same(battle, s.DequeueBattle());
+        Assert.Empty(s.PendingBattles);
+        Assert.Null(s.DequeueBattle());
+    }
+
+    [Fact]
+    public void Battle_playback_records_an_attacker_that_died()
+    {
+        var (_, a, d, battle) = Fight(defenderHits: true, (att, _) => att.Health = 1);
+        Assert.Equal(CombatOutcome.DefenderWon, battle.Outcome);
+        Assert.Equal((d.Id, a.Id), (battle.WinnerId, battle.LoserId));
+        Assert.True(battle.LoserDied);
+    }
+
+    [Fact]
+    public void Battle_playback_for_a_withdrawal_keeps_the_loser_alive()
+    {
+        var (s, a, _, battle) = Fight(defenderHits: true, (att, _) =>
+        {
+            att.Health = 1;
+            att.Promotions.UnionWith(["military:escape1", "military:escape2", "military:tactics"]);
+        });
+        Assert.Equal(CombatOutcome.Withdrawn, battle.Outcome);
+        Assert.False(battle.LoserDied);
+        Assert.NotNull(s.Sim.State.FindUnit(a.Id));
+    }
+
     [Fact]
     public void Unit_trained_and_fought_in_one_turn_roll_reports_the_battle_from_the_same_batch()
     {

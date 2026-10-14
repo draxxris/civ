@@ -38,6 +38,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly StandardMaterial3D _opaque, _alpha, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial, _overlayMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
+    private readonly ModelCache _models;
     private int _worldRevision = -1, _revision = -1;
 
     /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
@@ -51,6 +52,7 @@ internal sealed partial class MapRenderer : Node3D
         _session = session;
         _icons = icons;
         _atlas = new IconAtlas(icons);
+        _models = new ModelCache(icons.Catalog);
         Period = (float)session.WrapPeriod;
         _opaque = Material(null, false, 0);
         _alpha = Material(null, true, 1);
@@ -67,6 +69,7 @@ internal sealed partial class MapRenderer : Node3D
         _path = Layer();
         _hover = new MeshInstance3D { Visible = false, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
         AddChild(_hover);
+        AddChild(new DirectionalLight3D { RotationDegrees = new Vector3(-55, -35, 0), LightEnergy = 0.9f, ShadowEnabled = false });
     }
 
     private WrapMesh Layer()
@@ -93,6 +96,7 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Rebuild whatever the session changed since the last call.</summary>
     public void Refresh()
     {
+        if (_battle == null) StartNextBattle();
         bool world = _worldRevision != _session.WorldRevision;
         var clock = System.Diagnostics.Stopwatch.StartNew();
         if (world) { BuildLand(); _worldRevision = _session.WorldRevision; }
@@ -115,6 +119,7 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Keep each label on the world copy nearest the camera so text never sits a map-width away.</summary>
     public void WrapLabels(float focusX)
     {
+        PlaceActors(focusX);
         if (Period <= 0) return;
         foreach (var (label, basePos) in _labels)
             label.Position = basePos + new Vector3(Mathf.Round((focusX - basePos.X) / Period) * Period, 0, 0);
