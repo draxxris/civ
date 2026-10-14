@@ -1,0 +1,42 @@
+[
+  {
+    "id": "scripted_wonders:crusade",
+    "name": "Crusade unit grants",
+    "building": "cities:crusade",
+    "unit": "military:unit_unit_crusader",
+    "intervalTurns": 6,
+    "completionUnits": 1
+  },
+  {
+    "id": "scripted_wonders:terracotta",
+    "name": "Terracotta Army muster",
+    "building": "cities:terracotta",
+    "unit": "military:swordsman",
+    "completionUnits": 3,
+    "completionCulture": 100
+  },
+  {
+    "id": "scripted_wonders:pyramids",
+    "name": "Pyramids empire granaries",
+    "building": "cities:pyramid",
+    "empireFreeBuilding": "cities:granary"
+  },
+  {
+    "id": "scripted_wonders:great_wall",
+    "name": "Great Wall border protection",
+    "building": "cities:great_wall",
+    "barbarianBorderPenalty": 50
+  },
+  {
+    "id": "scripted_wonders:leonardo",
+    "name": "Workshop upgrade discount",
+    "building": "cities:leonardo",
+    "upgradeDiscount": 50
+  },
+  {
+    "id": "scripted_wonders:art_of_war",
+    "name": "Art of War victory experience",
+    "building": "cities:art_of_war",
+    "victoryExperience": 2
+  }
+]

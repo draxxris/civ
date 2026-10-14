@@ -1,0 +1,10 @@
+{
+  "id": "revolution:rules",
+  "name": "City instability rules",
+  "rebelUnit": "military:warrior",
+  "civicFactors": {
+    "government:slavery": 10,
+    "government:despotism": 8,
+    "government:democracy": -10
+  }
+}
