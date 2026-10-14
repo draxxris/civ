@@ -151,6 +151,23 @@ public sealed class CorporationRulesTests
         Assert.Contains(Cereal, Corps(sim).Present(sim, foreign.Id)); Assert.True(Corps(sim).IsActive(sim, hq.Id, Cereal));
     }
     [Fact]
+    public void Captured_headquarters_moves_the_mercantilism_boundary_to_the_new_owner()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var branch = sim.State.Cities[1];
+        Found(sim, hq);
+        P6RulesScenario.Resource(sim, branch, "world:corn");
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
+        sim.State.PlayerById(0).Civics["test"] = "government:mercantilism";
+        Assert.True(Corps(sim).IsActive(sim, branch.Id, Cereal)); // The branch shares a team with the headquarters.
+        sim.State.SetWar(0, 1, true);
+        P6RulesScenario.Service<ICityCaptureService>(sim).Capture(sim, hq.Id, 1);
+        Assert.False(Corps(sim).IsActive(sim, branch.Id, Cereal)); // The headquarters now belongs to team 1.
+        Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, branch.Id));
+        Assert.Contains(Cereal, Corps(sim).Present(sim, branch.Id));
+        Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
+        Assert.True(Corps(sim).IsActive(sim, hq.Id, Cereal)); // Domestic to the new owner, which has no mercantilism.
+    }
+    [Fact]
     public void Maintenance_is_settled_once_and_fractional_costs_and_founding_records_survive_save_load()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; Found(sim, hq);

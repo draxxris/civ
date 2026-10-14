@@ -20,9 +20,9 @@ public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private static IEventService Events(Simulation sim) => sim.Content.Services.Get<IEventService>().Single();
     private static void Turn(Simulation sim) => sim.Content.TurnSystems.Get("events:turn").Run(sim);
 
-    private Simulation Scenario(ulong seed = 1)
+    private Simulation Scenario(params ModSource[] extra)
     {
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(Mine.Value)));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(Mine.Value).Concat(extra)));
         GameFactory.NeutralPolitics(sim);
         sim.State.Players[0].Treasury = 100;
         return sim;
@@ -150,6 +150,61 @@ public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var bandits = Wait(sim, "events:bandits");
         Choose(sim, bandits, "events:bandits_guards");
         Assert.Equal(1, ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger.Total("cities:happiness"));
+    }
+
+    /// <summary>Test-only empire-wide trigger. Every shipped trigger needs a city, so only this reaches the empire-wide path.</summary>
+    private sealed class EmpireProbe : IMod
+    {
+        public void Register(IModContext context)
+        {
+            context.Content<S.EventTriggerDef>().Register(new() { Id = "empire_probe:decree", Name = "Decree", ChancePercent = 100 });
+            context.Content<S.EventOptionDef>().Register(new()
+            {
+                Id = "empire_probe:decree_accept", Name = "Accept", Trigger = "empire_probe:decree", IsDefault = true, HappinessDelta = 1, HealthDelta = 1,
+            });
+        }
+    }
+    private Simulation EmpireScenario() => Scenario(new ModSource
+    {
+        Manifest = new() { Id = "empire_probe", Version = "1", References = ["events"] }, Root = mods.Root, Instance = new EmpireProbe(),
+    });
+    private static long Happiness(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Total("cities:happiness");
+    private static long Health(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Total("cities:health");
+
+    [Fact]
+    public void Empire_wide_effects_reach_every_city_the_player_owns_and_stop_at_capture()
+    {
+        var sim = EmpireScenario();
+        var home = AddCity(sim, 14); var second = AddCity(sim, 20);
+        var rival = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new TileId(57)), Population = 3 };
+        sim.State.AddCity(rival);
+        var e = Wait(sim, "empire_probe:decree");
+        Assert.Equal(-1, e.City);
+        Choose(sim, e, "empire_probe:decree_accept");
+        Assert.Equal(1, Happiness(sim, home)); Assert.Equal(1, Happiness(sim, second)); Assert.Equal(0, Happiness(sim, rival));
+        Assert.Equal(1, Health(sim, home)); Assert.Equal(1, Health(sim, second)); Assert.Equal(0, Health(sim, rival));
+        sim.State.SetWar(0, 1, true);
+        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, second.Id, 1);
+        var captured = sim.State.CityById(second.Id);
+        Assert.Equal(0, Happiness(sim, captured)); Assert.Equal(0, Health(sim, captured));
+        Assert.Equal(1, Happiness(sim, home));
+    }
+
+    [Fact]
+    public void A_late_answer_to_a_timed_event_expires_with_the_trigger_turn()
+    {
+        var sim = Scenario();
+        var city = AddCity(sim, 14);
+        sim.TeamOf(0).Techs.Add("research:bronze_working");
+        var e = Wait(sim, "events:bandits");
+        sim.State.Turn = e.Turn + 1; // The human answers one turn after the trigger.
+        Choose(sim, e, "events:bandits_ignore"); // Health -1 for 10 turns.
+        Assert.Equal(-1, Health(sim, city));
+        sim.State.Turn = e.Turn + 9; Turn(sim);
+        Assert.Equal(-1, Health(sim, city)); // still active on its last turn
+        sim.State.Turn = e.Turn + 10; // The duration counts from the trigger turn, as it does for automatic answers.
+        Turn(sim);
+        Assert.Equal(0, Health(sim, city));
     }
 
     [Fact]

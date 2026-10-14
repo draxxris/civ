@@ -183,6 +183,66 @@ public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<L
         Assert.Equal(max, status.TurnWon);
     }
 
+    /// <summary>Adds a civilization to an existing team.</summary>
+    private static void JoinTeam(Simulation sim, int player, int team)
+    {
+        sim.State.Players.Add(new Player { Id = player, TeamId = team, Treasury = 0 });
+        sim.State.Teams.Single(t => t.Id == team).Members.Add(player);
+        sim.State.RebuildIndexes();
+    }
+
+    [Fact]
+    public void Conquest_names_the_highest_scoring_survivor_of_the_winning_team()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 2, 0);
+        AddCity(sim, 2, 20, population: 30); // Player 2 scores 60 against player 0's 50.
+        sim.State.RemoveCity(sim.State.Cities.Single(c => c.Owner == 1).Id);
+        sim.AdvanceTurn();
+        var status = Status(sim);
+        Assert.Equal("projects_victory:conquest", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(2, status.WinningPlayerId);
+    }
+
+    [Fact]
+    public void Time_victory_ranks_teams_by_combined_score_and_names_the_best_member()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 2, 0);
+        // Team 0 totals 70 (player 0 at 58, player 2 at 12) against team 1's 68, yet player 1 alone scores highest.
+        sim.State.Cities[0].Population = 5;
+        sim.State.Cities.Single(c => c.Owner == 1).Population = 10;
+        AddCity(sim, 2, 20, population: 6);
+        int max = Status(sim).MaxTurns;
+        sim.State.Turn = max - 1;
+        sim.AdvanceTurn();
+        Assert.False(Status(sim).IsGameOver);
+        Assert.Equal(max, sim.State.Turn);
+        sim.AdvanceTurn();
+        var status = Status(sim);
+        Assert.Equal("projects_victory:time", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(0, status.WinningPlayerId);
+    }
+
+    [Fact]
+    public void Time_victory_never_names_an_eliminated_teammate()
+    {
+        var sim = Scenario();
+        JoinTeam(sim, 3, 0); // Player 3 has no city or unit, but its land outscores its living teammate.
+        foreach (var plot in sim.State.Plots) plot.Owner = 3;
+        int max = Status(sim).MaxTurns;
+        sim.State.Turn = max - 1;
+        sim.AdvanceTurn();
+        Assert.False(Status(sim).IsGameOver);
+        sim.AdvanceTurn();
+        var status = Status(sim);
+        Assert.Equal("projects_victory:time", status.VictoryId);
+        Assert.Equal(0, status.WinningTeamId);
+        Assert.Equal(0, status.WinningPlayerId);
+    }
+
     [Fact]
     public void Space_race_victory_when_a_team_completes_the_required_spaceship_projects()
     {

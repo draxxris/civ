@@ -9,9 +9,12 @@ internal sealed class CorporationService : ICorporationService
     private static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Select(sim.Content.Get<CivicDef>);
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.CityById(city).Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
     public int? Headquarters(Simulation sim, string corporation) => Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record.Headquarters : null;
-    private static bool Blocked(Simulation sim, City city, int founderTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != founderTeam));
+    /// <summary>The team that owns the headquarters now. A captured headquarters moves the corporation with it; a razed one falls back to the founder.</summary>
+    private static int HeadquartersTeam(Simulation sim, CorporationFounding founded) =>
+        sim.State.FindCity(founded.Headquarters) is { } hq ? sim.TeamOf(hq.Owner).Id : founded.FounderTeam;
+    private static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
     public bool IsActive(Simulation sim, int city, string corporation) => Read(sim).Founded.TryGetValue(corporation, out var record)
-        && Present(sim, city).Contains(corporation) && !Blocked(sim, sim.State.CityById(city), record.FounderTeam);
+        && Present(sim, city).Contains(corporation) && !Blocked(sim, sim.State.CityById(city), HeadquartersTeam(sim, record));
     public long ConsumedBonusCount(Simulation sim, int city, string corporation)
     {
         var owner = sim.State.CityById(city).Owner;
@@ -69,7 +72,7 @@ internal sealed class CorporationService : ICorporationService
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)
     {
         if (Present(sim, city.Id).Contains(corporation)) return "Corporation is already present";
-        if (Blocked(sim, city, record.FounderTeam)) return "Civics prohibit this corporation";
+        if (Blocked(sim, city, HeadquartersTeam(sim, record))) return "Civics prohibit this corporation";
         return sim.State.Cities.Any(c => c.Owner == player && IsActive(sim, c.Id, corporation)) ? null : "Requires an active owned branch";
     }
     private static string? ValidateSpreadAgent(Simulation sim, int player, City city, CorporationDef def, int? unitId)

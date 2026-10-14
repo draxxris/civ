@@ -278,13 +278,19 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] P6 Events mod (`src/Mods/Events`) and Client Diplomacy / Score / Victory UI (`a2b1236`).
 - [x] Delete legacy `src/Civ.BaseGame` and move its test ruleset into `tests/Civ.Tests/TestRuleset` (`5ce9f9a`).
 - [x] Client Corporations, Espionage & Events UI (`2a9d72f`).
-- [x] P7 Scripted Wonders mod (`src/Mods/ScriptedWonders`) and Revolution mod (`src/Mods/Revolution`).
+- [x] P7 Scripted Wonders mod (`src/Mods/ScriptedWonders`) and Revolution mod (`src/Mods/Revolution`) (`eb1ab91`).
+- [x] Update `docs/DESIGN.md`, `docs/mechanics-status.md`, and `docs/content-schema.md` for P6/P7 mods and
+  `TestRuleset` (`5d1defd`).
+- [x] Client Scripted Wonders & Revolution UI (`8f3ffc2`).
+- [x] P6 ContentImport multi-era closure sweep (`--max-era` `ancient`..`future` and `all`) and lowercase asset
+  branding scrub (`502c09b`).
+- [x] Adversarial audit fixes across Espionage bilateral ratios/eliminated teams, Corporations HQ Mercantilism,
+  ProjectsVictory team tie-breaks, and Events duration parity/empire-wide modifiers.
 
 ### In progress
 
-- [ ] Client Scripted Wonders & Revolution UI + docs (`docs/DESIGN.md`, `docs/mechanics-status.md`) update.
-- [ ] P6 era progression (`tools/Civ.ContentImport` importer for Projects, Victories, Corporations, Events, and lifting
-  `--max-era`).
+- [ ] P9 Hex balance (`src/Mods/Foundation/data/hex-overrides.json`) & remaining diplomatic/corporate/event audit
+  polish.
 
 ### Next
 

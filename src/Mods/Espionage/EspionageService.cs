@@ -16,8 +16,17 @@ internal sealed partial class EspionageService : IEspionageService
     {
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
         int own = sim.TeamOf(player).Id;
-        return sim.State.Teams.Where(t => t.Id != own && (diplomacy is null || diplomacy.HasMet(sim, own, t.Id))).Select(t => t.Id).Order();
+        var living = LivingTeams(sim);
+        return sim.State.Teams.Where(t => t.Id != own && living.Contains(t.Id) && (diplomacy is null || diplomacy.HasMet(sim, own, t.Id))).Select(t => t.Id).Order();
     }
+    /// <summary>Teams with a non-barbarian civilization that still owns a city or unit. Eliminated teams receive no espionage.</summary>
+    private static HashSet<int> LivingTeams(Simulation sim)
+    {
+        var owners = sim.State.Cities.Select(c => c.Owner).Concat(sim.State.Units.Select(u => u.Owner)).ToHashSet();
+        return sim.State.Players.Where(p => owners.Contains(p.Id) && !IsBarbarian(sim, p.Id)).Select(p => p.TeamId).ToHashSet();
+    }
+    private static bool IsBarbarian(Simulation sim, int player) =>
+        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     public string? ValidateWeight(Simulation sim, int player, int targetTeam, int weight)
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
@@ -55,11 +64,17 @@ internal sealed partial class EspionageService : IEspionageService
         }
         foreach (var share in shares.OrderByDescending(s => s.Remainder).ThenBy(s => s.Team).Take((int)(points - assigned))) team.Points[share.Team]++;
     }
+    /// <summary>Bilateral ratio from each side's lifetime spending plus live points against the other side.</summary>
     private static long RatioPercent(Simulation sim, int team, int target)
     {
-        long own = Read(sim, team).Spent.Values.Sum();
-        long rival = Read(sim, target).Spent.Values.Sum();
+        long own = Invested(sim, team, target);
+        long rival = Invested(sim, target, team);
         return Math.Clamp(200 * (rival + 50) / (own + rival + 100), 50, 200);
+    }
+    private static long Invested(Simulation sim, int team, int target)
+    {
+        var state = Read(sim, team);
+        return state.Spent.GetValueOrDefault(target) + state.Points.GetValueOrDefault(target);
     }
     public long PassiveThreshold(Simulation sim, int team, int targetTeam, PassiveEspionageKind kind)
     {
