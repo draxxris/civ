@@ -17,6 +17,8 @@ internal static class ProductionEligibility
             if (processes is null) Fail(failures, "Process service is unavailable");
             else failures.AddRange(processes.Validate(sim, city.Id, id).Failures);
         }
+        else if (sim.Content.Services.Get<IProductionKind>().FirstOrDefault(k => k.Id == kind) is { } owner)
+            failures.AddRange(owner.Validate(sim, city.Id, id).Failures);
         else Fail(failures, "Unsupported production kind: " + kind);
         return new(failures.Count == 0, failures);
     }

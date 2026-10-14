@@ -1,0 +1,46 @@
+[
+  {
+    "id": "projects_victory:conquest",
+    "name": "Conquest",
+    "identity": "foundation:victory_conquest",
+    "rule": "conquest",
+    "priority": 10
+  },
+  {
+    "id": "projects_victory:cultural",
+    "name": "Cultural",
+    "identity": "foundation:victory_cultural",
+    "rule": "cultural",
+    "priority": 30,
+    "cultureCities": 3,
+    "cultureLevel": "foundation:culturelevel_legendary"
+  },
+  {
+    "id": "projects_victory:domination",
+    "name": "Domination",
+    "identity": "foundation:victory_domination",
+    "rule": "domination",
+    "priority": 20,
+    "populationPercent": 60,
+    "landPercent": 60
+  },
+  {
+    "id": "projects_victory:space_race",
+    "name": "Space Race",
+    "identity": "foundation:victory_space_race",
+    "rule": "project",
+    "priority": 40
+  },
+  {
+    "id": "projects_victory:time",
+    "name": "Time",
+    "identity": "foundation:victory_time",
+    "rule": "time",
+    "priority": 50,
+    "maxTurns": 250,
+    "scorePerPopulation": 2,
+    "scorePerLand": 1,
+    "scorePerTech": 4,
+    "scorePerWonder": 5
+  }
+]
