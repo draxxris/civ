@@ -17,6 +17,12 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     private static IEnumerable<Player> Civilizations(Simulation sim) =>
         sim.State.Players.Where(p => !IsBarbarian(sim, p.Id)).OrderBy(p => p.Id);
+    /// <summary>Candidate winning teams, highest combined score first. Ties go to the lower team id.</summary>
+    private IEnumerable<IGrouping<int, Player>> TeamsByScore(Simulation sim) => Civilizations(sim).GroupBy(p => p.TeamId)
+        .OrderByDescending(team => team.Sum(p => GetScore(sim, p.Id).Total)).ThenBy(team => team.Key);
+    /// <summary>The team's highest-scoring member. Ties go to the lower player id.</summary>
+    private int BestMember(Simulation sim, IEnumerable<int> members) =>
+        members.OrderByDescending(id => GetScore(sim, id).Total).ThenBy(id => id).First();
 
     public int TeamCount(Simulation sim, int team, string project) => ReadTeam(sim, team).Completed.GetValueOrDefault(project);
     public int WorldCount(Simulation sim, string project) => sim.State.Teams.Sum(t => TeamCount(sim, t.Id, project));
@@ -117,44 +123,44 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         return alive.Select(p => p.TeamId).Distinct().Count() == 1 ? alive[0].Id : null;
     }
 
-    private static int? Domination(Simulation sim, VictoryDef def)
+    private int? Domination(Simulation sim, VictoryDef def)
     {
         var civs = Civilizations(sim).ToArray();
         if (civs.Select(p => p.TeamId).Distinct().Count() < 2) return null;
         long totalPopulation = sim.State.Cities.Sum(c => (long)c.Population);
         var landPlots = sim.State.Plots.Where(p => !(sim.Content.TryGet<TerrainDef>(p.Terrain, out var t) && t.IsWater)).ToArray();
         if (totalPopulation == 0 || landPlots.Length == 0) return null;
-        foreach (var team in civs.GroupBy(p => p.TeamId).OrderBy(g => g.Key))
+        foreach (var team in TeamsByScore(sim))
         {
             var members = team.Select(p => p.Id).ToHashSet();
             long population = sim.State.Cities.Where(c => members.Contains(c.Owner)).Sum(c => (long)c.Population);
             long land = landPlots.Count(p => p.Owner is { } o && members.Contains(o));
             if (population * 100 >= totalPopulation * def.PopulationPercent && land * 100 >= landPlots.Length * def.LandPercent)
-                return members.Min();
+                return BestMember(sim, members);
         }
         return null;
     }
 
-    private static int? Cultural(Simulation sim, VictoryDef def)
+    private int? Cultural(Simulation sim, VictoryDef def)
     {
         if (def.CultureLevel is null || def.CultureCities <= 0) return null;
         long threshold = sim.Content.Get<CultureLevelDef>(def.CultureLevel).SpeedThresholds[sim.Settings.GameSpeed];
-        foreach (var team in Civilizations(sim).GroupBy(p => p.TeamId).OrderBy(g => g.Key))
+        foreach (var team in TeamsByScore(sim))
         {
             var members = team.Select(p => p.Id).ToHashSet();
-            if (sim.State.Cities.Count(c => members.Contains(c.Owner) && c.Culture >= threshold) >= def.CultureCities) return members.Min();
+            if (sim.State.Cities.Count(c => members.Contains(c.Owner) && c.Culture >= threshold) >= def.CultureCities) return BestMember(sim, members);
         }
         return null;
     }
 
-    private static int? ProjectWinner(Simulation sim, VictoryDef def)
+    private int? ProjectWinner(Simulation sim, VictoryDef def)
     {
         var required = sim.Content.Get<ProjectDef>().All.Where(p => p.Spaceship && p.Victory == def.Id)
             .Select(p => (p.Id, Count: p.VictoryMinThresholds.TryGetValue(def.Id, out int min) ? min : p.VictoryThresholds.GetValueOrDefault(def.Id, 1))).ToArray();
         if (required.Length == 0) return null;
         var service = sim.Content.Services.Get<IProjectVictoryService>().Single();
-        foreach (var team in Civilizations(sim).GroupBy(p => p.TeamId).OrderBy(g => g.Key))
-            if (required.All(r => service.TeamCount(sim, team.Key, r.Id) >= r.Count)) return team.Min(p => p.Id);
+        foreach (var team in TeamsByScore(sim))
+            if (required.All(r => service.TeamCount(sim, team.Key, r.Id) >= r.Count)) return BestMember(sim, team.Select(p => p.Id));
         return null;
     }
 

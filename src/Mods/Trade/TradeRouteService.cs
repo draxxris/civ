@@ -60,7 +60,9 @@ var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
     {
         var sink = new ModifierSink();
         int distance = sim.State.Grid.Distance(sim.State.Grid.TileAt(city.Position), sim.State.Grid.TileAt(partner.Position));
-        int worldPercent = sim.Content.Get<S.WorldSizeDef>(sim.Settings.WorldSize!).TradeProfitPercent;
+        int worldPercent = sim.Content.TryGet<S.WorldSizeDef>(sim.Settings.WorldSize ?? "", out var worldSize)
+            ? worldSize.TradeProfitPercent
+            : sim.Content.Get<S.WorldSizeDef>().All.FirstOrDefault()?.TradeProfitPercent ?? 100;
         long population = (long)partner.Population * TradeData.Raw(sim, "THEIR_POPULATION_TRADE_PERCENT", 50);
         long distanceValue = (long)distance * worldPercent;
         long baseProfit = Math.Max(100, Math.Min(population, distanceValue) * TradeData.Raw(sim, "TRADE_PROFIT_PERCENT", TradeData.Constants(sim).Values.TradeProfitPercent) / 100);

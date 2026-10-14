@@ -53,7 +53,7 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
     /// <summary>Asks for peace with enemy teams that are losing or have fought too long. Returns true when a treaty was signed.</summary>
     private bool MakePeace()
     {
-        long mine = AiContext.Power(ctx.Sim, ctx.PlayerId);
+        long mine = ctx.Team.Members.Where(m => !WarRules.IsBarbarian(ctx.Sim, m)).Sum(m => AiContext.Power(ctx.Sim, m));
         bool signed = false;
         foreach (var teamId in ctx.Team.Wars.ToList())
         {

@@ -35,7 +35,7 @@ internal static class ProductionEligibility
         WonderCapacity(sim, city, b, failures);
         Religion(sim, city, b, failures);
         Upgrade(sim, city, b, failures);
-        if (b.BonusType is { } bonus && sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCount(sim, city.Owner, city.Id, bonus) <= 0)
+        if (b.BonusType is { } bonus && Available(sim, city, bonus) <= 0)
             Fail(failures, "Requires connected resource: " + bonus);
         if (b.RequiresPower) Fail(failures, "Power state is unavailable");
     }
@@ -44,6 +44,10 @@ internal static class ProductionEligibility
         if (city.Buildings.Any(existing => sim.Content.Get<S.BuildingDef>(existing).ReplaceBuildings.GetValueOrDefault(b.Id)))
             Fail(failures, "Replaced by an upgraded building");
     }
+    /// <summary>Connected copies after diplomatic allocations. Imports count here; exports reduce the count.</summary>
+    private static long Available(Simulation sim, City city, string bonus) =>
+        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.AvailableResourceCount(sim, city.Owner, city.Id, bonus)
+        ?? sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCount(sim, city.Owner, city.Id, bonus);
     private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
         var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();

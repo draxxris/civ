@@ -11,13 +11,7 @@ public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<L
 {
     private const string Speed = "foundation:gamespeed_normal";
     private static readonly Lazy<ModSource> Mine = new(() =>
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Civ.slnx"))) dir = dir.Parent;
-        var root = Path.Combine(dir!.FullName, "src", "Mods", "ProjectsVictory", "bin");
-        var built = Directory.GetFiles(root, "mod.json", SearchOption.AllDirectories).OrderByDescending(File.GetLastWriteTimeUtc).First();
-        return ModLoader.FromDirectory(Path.GetDirectoryName(built)!);
-    });
+        ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "ProjectsVictory")));
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static IProjectVictoryService Pv(Simulation sim) => Service<IProjectVictoryService>(sim);
 
@@ -141,6 +135,36 @@ public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<L
         Assert.Equal(0, status.WinningPlayerId);
     }
 
+    [Fact]
+    public void Cultural_tie_goes_to_the_team_with_the_higher_combined_score()
+    {
+        var sim = Scenario();
+        long legendary = sim.Content.Get<S.CultureLevelDef>("foundation:culturelevel_legendary").SpeedThresholds[Speed];
+        sim.State.Cities[0].Culture = legendary; AddCity(sim, 0, 20).Culture = legendary; AddCity(sim, 0, 30).Culture = legendary;
+        sim.State.Cities[1].Culture = legendary; AddCity(sim, 1, 40, population: 10).Culture = legendary; AddCity(sim, 1, 50, population: 10).Culture = legendary;
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:cultural", status.VictoryId);
+        Assert.Equal(1, status.WinningPlayerId);
+    }
+    [Fact]
+    public void Team_victory_names_the_highest_scoring_member_not_the_lowest_id()
+    {
+        var sim = Scenario();
+        // Both civilizations share team 0, so the team wins as a whole and only the member choice can pick the winner.
+        sim.State.Players = sim.State.Players.Select(p => new Player
+        {
+            Id = p.Id, TeamId = 0, Civilization = p.Civilization, Name = p.Name,
+            Treasury = p.Treasury, Ai = p.Ai, StartingPlot = p.StartingPlot,
+        }).ToList();
+        sim.State.RebuildIndexes();
+        long legendary = sim.Content.Get<S.CultureLevelDef>("foundation:culturelevel_legendary").SpeedThresholds[Speed];
+        sim.State.Cities[0].Culture = legendary;
+        AddCity(sim, 1, 30, population: 10).Culture = legendary; AddCity(sim, 1, 40, population: 10).Culture = legendary;
+        AddCity(sim, 1, 50, population: 10).Culture = legendary;
+        var status = Pv(sim).Evaluate(sim, true);
+        Assert.Equal("projects_victory:cultural", status.VictoryId);
+        Assert.Equal(1, status.WinningPlayerId);
+    }
     [Fact]
     public void Time_victory_at_scaled_max_turns_goes_to_the_highest_score()
     {

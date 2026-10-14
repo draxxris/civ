@@ -103,6 +103,44 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void City_screen_combines_religion_great_people_and_trade_service_data()
+    {
+        var s = Scenario();
+        var sim = s.Sim;
+        foreach (var plot in sim.State.Plots) plot.Route = "world:route_route_road";
+        var city = AddCity(sim, 0);
+        city.Specialists["foundation:specialist_scientist"] = 1;
+        city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
+        city.Extensions.Set(sim.Content, new GreatPeopleCityState
+        {
+            Progress = 12,
+            SettledSpecialists = new SortedDictionary<string, int>(StringComparer.Ordinal)
+            {
+                ["foundation:specialist_great_artist"] = 1,
+            },
+        });
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GreatPeoplePlayerState { GoldenAgeTurns = 7 });
+        Found(sim);
+        AddCity(sim, 4);
+        AddCity(sim, 7, owner: 1);
+
+        var screen = s.DescribeCity(city)!;
+        Assert.Contains(screen.Religions, religion => religion.Id == Buddhism);
+        Assert.Equal(12, screen.GreatPeopleProgress);
+        Assert.True(screen.GreatPeopleThreshold > 0);
+        Assert.True(screen.GreatPeopleRate > 0);
+        Assert.Equal(1, screen.SettledSpecialists["foundation:specialist_great_artist"]);
+        Assert.Equal(7, screen.GoldenAgeTurns);
+        Assert.True(screen.MaxTradeRoutes > 0);
+        Assert.NotEmpty(screen.TradeRoutes);
+
+        var greatPerson = AddUnit(sim, city, "military:artist");
+        s.SelectUnit(greatPerson.Id);
+        Assert.Contains(s.DescribeUnit(greatPerson)!.Actions,
+            action => action.Id == "great_people:join_city" && action.Command is JoinGreatPersonCommand);
+    }
+
+    [Fact]
     public void Pedia_indexes_every_category_and_searches_by_text()
     {
         var s = Scenario();
