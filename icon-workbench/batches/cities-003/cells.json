@@ -1,0 +1,1450 @@
+{
+  "model": "openai/gpt-image-2.5-flare",
+  "rows": 12,
+  "columns": 12,
+  "style_reference": "generation/style-preview/flare-12x12-torso-v4-20261015-031843-001.png",
+  "layout_reference": "generation/style-preview/template-12x12.png",
+  "status": "awaiting_generation_and_review",
+  "cells": [
+    {
+      "path": "src/Mods/Cities/art/icons/hoard.png",
+      "catalog_id": "cities:hoard",
+      "label": "Hoard",
+      "subject": "Open timber treasure chest with gold vessels, silver coins, carved cups, and a folded woven covering",
+      "row": 1,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hollywood.png",
+      "catalog_id": "cities:hollywood",
+      "label": "Hollywood",
+      "subject": "Hollywood film studio with a soundstage, cinema camera, bright arc lamps, and several unmarked film reels",
+      "row": 1,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/holo_combat_simulator.png",
+      "catalog_id": "cities:holo_combat_simulator",
+      "label": "Holographic Combat Simulator",
+      "subject": "Combat simulator projecting a miniature battlefield around a seated pilot and compact armored vehicle",
+      "row": 1,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/holo_flight_simulator.png",
+      "catalog_id": "cities:holo_flight_simulator",
+      "label": "Holographic Flight Simulator",
+      "subject": "Flight simulator with a projected cloudscape, wrapped cockpit canopy, instrument panels, and motion platform",
+      "row": 1,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/holy_order.png",
+      "catalog_id": "cities:holy_order",
+      "label": "Holy Order",
+      "subject": "Medieval religious order's chapterhouse with a stone chapel, cloistered court, plain shields, and candlelit altar",
+      "row": 1,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/holy_roman_rathaus.png",
+      "catalog_id": "cities:holy_roman_rathaus",
+      "label": "Rathaus",
+      "subject": "German rathaus with stepped gable, timber balconies, arched arcade, and a small civic courtyard",
+      "row": 1,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hospital.png",
+      "catalog_id": "cities:hospital",
+      "label": "Hospital",
+      "subject": "Stone hospital with a sheltered entrance, clean linen windows, garden courtyard, and a brass medical emblem",
+      "row": 1,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hotel.png",
+      "catalog_id": "cities:hotel",
+      "label": "Hotel",
+      "subject": "Grand hotel with a columned porte-cochere, glowing lobby windows, luggage cart, and tall corner towers",
+      "row": 1,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/house_of_parliment.png",
+      "catalog_id": "cities:house_of_parliment",
+      "label": "House of Parliament",
+      "subject": "Parliament building with a riverside clock tower, ornate Gothic windows, and a broad arched entrance",
+      "row": 1,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hung_vegvar.png",
+      "catalog_id": "cities:hung_vegvar",
+      "label": "Vegvar",
+      "subject": "Hungarian hillfort with timber palisade, square lookout tower, steep earthen rampart, and a narrow gate",
+      "row": 1,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hydro_plant.png",
+      "catalog_id": "cities:hydro_plant",
+      "label": "Hydro Plant",
+      "subject": "Hydroelectric station beneath a concrete dam, with steel penstocks, turbine hall, and rushing water",
+      "row": 1,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hydroponic_farm.png",
+      "catalog_id": "cities:hydroponic_farm",
+      "label": "Hydroponic Farm",
+      "subject": "Hydroponic greenhouse with vertical crop channels, water pipes, leafy trays, and violet grow lamps",
+      "row": 1,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/hypermarket.png",
+      "catalog_id": "cities:hypermarket",
+      "label": "Hypermarket",
+      "subject": "Vast hypermarket with a glass entrance, stocked aisles, shopping carts, and a wide covered loading dock",
+      "row": 2,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/ice_hotel.png",
+      "catalog_id": "cities:ice_hotel",
+      "label": "SnowCastle of Kemi",
+      "subject": "SnowCastle of Kemi with sculpted ice turrets, translucent walls, blue-lit entrance, and carved snow courtyard",
+      "row": 2,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/ice_house.png",
+      "catalog_id": "cities:ice_house",
+      "label": "Ice Storehouse",
+      "subject": "Ice storehouse with thick timber walls, packed ice blocks, insulated door, and frozen water barrels",
+      "row": 2,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/idol_shrine.png",
+      "catalog_id": "cities:idol_shrine",
+      "label": "Shrine",
+      "subject": "Small idol shrine with a painted stone figure, offering bowls, flower garlands, and a sheltered carved niche",
+      "row": 2,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/igloo.png",
+      "catalog_id": "cities:igloo",
+      "label": "Igloo",
+      "subject": "Snow igloo with a low arched entrance, compact ice blocks, fur-covered doorway, and a windblown Arctic ridge",
+      "row": 2,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/incan_terrace.png",
+      "catalog_id": "cities:incan_terrace",
+      "label": "Terrace",
+      "subject": "Incan agricultural terraces cascade down a mountain slope, with stone retaining walls and narrow irrigation channels",
+      "row": 2,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/incubation_center.png",
+      "catalog_id": "cities:incubation_center",
+      "label": "Incubation Center",
+      "subject": "Incubation center with heated glass pods, delicate hatchlings, temperature gauges, and a sterile nursery room",
+      "row": 2,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/independence_hall.png",
+      "catalog_id": "cities:independence_hall",
+      "label": "Independence Hall",
+      "subject": "Independence Hall with red brick wings, a white clock tower, arched windows, and a broad green lawn",
+      "row": 2,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/indian_mausoleum.png",
+      "catalog_id": "cities:indian_mausoleum",
+      "label": "Mausoleum",
+      "subject": "Indian mausoleum with a domed stone roof, carved screen windows, garden pools, and symmetrical corner kiosks",
+      "row": 2,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/industrial_park.png",
+      "catalog_id": "cities:industrial_park",
+      "label": "Industrial Park",
+      "subject": "Industrial park of low factory blocks, loading bays, freight lanes, water tower, and orderly green margins",
+      "row": 2,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/industrial_robots.png",
+      "catalog_id": "cities:industrial_robots",
+      "label": "Industrial Robots",
+      "subject": "Pair of articulated industrial robots welding a metal frame beneath bright sparks and overhead gantry rails",
+      "row": 2,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/infomatrix.png",
+      "catalog_id": "cities:infomatrix",
+      "label": "Infomatrix",
+      "subject": "Information center with a luminous globe, branching data lines, small server towers, and a glass control dais",
+      "row": 2,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/intelligence_agency.png",
+      "catalog_id": "cities:intelligence_agency",
+      "label": "Intelligence Agency",
+      "subject": "Intelligence agency headquarters with guarded entrance, radio dishes, secure file cabinets, and dark glass windows",
+      "row": 3,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/international_port.png",
+      "catalog_id": "cities:international_port",
+      "label": "International Port",
+      "subject": "International port with container ships, gantry cranes, customs sheds, and a crowded network of cargo docks",
+      "row": 3,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/interrogation_building.png",
+      "catalog_id": "cities:interrogation_building",
+      "label": "Interrogation Building",
+      "subject": "Secure interrogation facility with a stark concrete facade, barred windows, heavy door, and a single lit room",
+      "row": 3,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/irish_ringfort.png",
+      "catalog_id": "cities:irish_ringfort",
+      "label": "Ringfort",
+      "subject": "Irish ringfort with circular earthen banks, timber palisade, central thatched house, and a grassy enclosure",
+      "row": 3,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/iron_works.png",
+      "catalog_id": "cities:iron_works",
+      "label": "Ironworks",
+      "subject": "Ironworks with blast furnace, glowing molten pour, ore carts, chimney stacks, and dark brick walls",
+      "row": 3,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/iroquois_longhouse.png",
+      "catalog_id": "cities:iroquois_longhouse",
+      "label": "Longhouse",
+      "subject": "Iroquois longhouse with rounded bark roof, timber frame, central smoke vents, and forest clearing",
+      "row": 3,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/ishtar_gate.png",
+      "catalog_id": "cities:ishtar_gate",
+      "label": "Ishtar Gate",
+      "subject": "Ishtar Gate with brilliant blue glazed bricks, golden lions, bulls, rosettes, and a monumental arched passage",
+      "row": 3,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/islamic_cathedral.png",
+      "catalog_id": "cities:islamic_cathedral",
+      "label": "Islamic Mosque",
+      "subject": "Great mosque with a broad dome, two slender minarets, geometric tilework, and a spacious courtyard",
+      "row": 3,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/islamic_monastery.png",
+      "catalog_id": "cities:islamic_monastery",
+      "label": "Islamic Monastery",
+      "subject": "Islamic monastery with a quiet tiled courtyard, arched arcades, small domed hall, and shaded fountain",
+      "row": 3,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/islamic_shrine.png",
+      "catalog_id": "cities:islamic_shrine",
+      "label": "Masjid al-Haram",
+      "subject": "Masjid al-Haram with the Kaaba centered within a vast colonnaded courtyard and slender minarets",
+      "row": 3,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/islamic_temple.png",
+      "catalog_id": "cities:islamic_temple",
+      "label": "Islamic Temple",
+      "subject": "Islamic temple with a small domed prayer hall, pointed arches, geometric mosaics, and a shaded entry court",
+      "row": 3,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/itsukushima.png",
+      "catalog_id": "cities:itsukushima",
+      "label": "Itsukushima Shrine",
+      "subject": "Itsukushima Shrine with vermilion timber halls, a great torii in shallow water, and wooded island hills",
+      "row": 3,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jail.png",
+      "catalog_id": "cities:jail",
+      "label": "Jail",
+      "subject": "Stone jail with barred windows, iron-bound entrance, corner watchtower, and a small walled exercise yard",
+      "row": 4,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/japanese_shale_plant.png",
+      "catalog_id": "cities:japanese_shale_plant",
+      "label": "Shale Plant",
+      "subject": "Shale processing plant with crushing drums, dark rock conveyor, retort vessels, and tall industrial stacks",
+      "row": 4,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jewish_cathedral.png",
+      "catalog_id": "cities:jewish_cathedral",
+      "label": "Jewish Synagogue",
+      "subject": "Jewish synagogue with a broad central dome, paired towers, arched windows, and a stone courtyard",
+      "row": 4,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jewish_masada.png",
+      "catalog_id": "cities:jewish_masada",
+      "label": "Masada",
+      "subject": "Masada's flat-topped desert fortress with layered stone walls, cliffside palace, and barren mountain escarpment",
+      "row": 4,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jewish_monastery.png",
+      "catalog_id": "cities:jewish_monastery",
+      "label": "Jewish Monastery",
+      "subject": "Jewish monastery with a quiet stone courtyard, arched study hall, cypress garden, and simple roofline",
+      "row": 4,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jewish_shrine.png",
+      "catalog_id": "cities:jewish_shrine",
+      "label": "Temple of Solomon",
+      "subject": "Temple of Solomon with a cedar-clad sanctuary, bronze pillars, golden altar, and broad stepped platform",
+      "row": 4,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/jewish_temple.png",
+      "catalog_id": "cities:jewish_temple",
+      "label": "Jewish Temple",
+      "subject": "Jewish temple with a carved stone facade, paired columns, menorah-shaped lampstand, and sheltered court",
+      "row": 4,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/keep.png",
+      "catalog_id": "cities:keep",
+      "label": "Castle Keep",
+      "subject": "Compact castle keep with a square stone tower, crenellated roof, narrow slit windows, and guarded doorway",
+      "row": 4,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/knight_stable.png",
+      "catalog_id": "cities:knight_stable",
+      "label": "Knight's Stable",
+      "subject": "Knight's stable with saddled horses, polished armor stands, hay bales, and a timber training yard",
+      "row": 4,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/korean_seowon.png",
+      "catalog_id": "cities:korean_seowon",
+      "label": "Seowon",
+      "subject": "Korean seowon academy with tiled lecture hall, timber gate, pine trees, and a stepped courtyard",
+      "row": 4,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/kotoku.png",
+      "catalog_id": "cities:kotoku",
+      "label": "Kotoku-in",
+      "subject": "Kotoku-in's bronze Buddha sits beneath open sky, framed by temple pines and a low stone platform",
+      "row": 4,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/kremlin.png",
+      "catalog_id": "cities:kremlin",
+      "label": "Kremlin",
+      "subject": "Kremlin ensemble with red brick walls, onion-domed towers, golden cupolas, and a broad riverside approach",
+      "row": 4,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/labor_union.png",
+      "catalog_id": "cities:labor_union",
+      "label": "Labor Union",
+      "subject": "Workers' union hall with a meeting table, empty hard hats, work boots, and a brick street entrance",
+      "row": 5,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/laboratory.png",
+      "catalog_id": "cities:laboratory",
+      "label": "Research Laboratory",
+      "subject": "Research laboratory with glass beakers, brass microscope, specimen shelves, and a bright tiled workbench",
+      "row": 5,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/labyrinth.png",
+      "catalog_id": "cities:labyrinth",
+      "label": "Labyrinth of Knossos",
+      "subject": "Stone labyrinth of Knossos with winding corridors, red columns, bull frescoes, and a central palace court",
+      "row": 5,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/las_vegas.png",
+      "catalog_id": "cities:las_vegas",
+      "label": "Las Vegas Strip",
+      "subject": "Las Vegas Strip with illuminated hotel towers, fountains, desert palms, and a winding boulevard at dusk",
+      "row": 5,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/lascaux.png",
+      "catalog_id": "cities:lascaux",
+      "label": "Lascaux Caves",
+      "subject": "Lascaux cave chamber with ochre animal paintings on rough stone, a low passage, and flickering torchlight",
+      "row": 5,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/levee.png",
+      "catalog_id": "cities:levee",
+      "label": "Levee",
+      "subject": "River levee with a broad grassy embankment, stone floodgate, rippling water, and a protected settlement",
+      "row": 5,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/library.png",
+      "catalog_id": "cities:library",
+      "label": "Library",
+      "subject": "Classical library with arched reading galleries, tall wooden bookcases, marble columns, and a central desk",
+      "row": 5,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/lighthouse.png",
+      "catalog_id": "cities:lighthouse",
+      "label": "Lighthouse",
+      "subject": "White stone lighthouse on a rugged headland, with a beacon lantern, winding stairs, and foaming sea",
+      "row": 5,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/lithuanian_piliakalnis.png",
+      "catalog_id": "cities:lithuanian_piliakalnis",
+      "label": "Piliakalnis",
+      "subject": "Lithuanian hillfort with a steep grassy mound, timber palisade, watch platform, and surrounding woodland",
+      "row": 5,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/louvre.png",
+      "catalog_id": "cities:louvre",
+      "label": "Louvre",
+      "subject": "Louvre palace wing with a long mansard roof, ornate stone facade, inner courtyard, and glass pyramid nearby",
+      "row": 5,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/machu_picchu.png",
+      "catalog_id": "cities:machu_picchu",
+      "label": "Machu Picchu",
+      "subject": "Machu Picchu's terraced stone citadel clings to a green Andean ridge above misty mountain peaks",
+      "row": 5,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/madison_avenue.png",
+      "catalog_id": "cities:madison_avenue",
+      "label": "Madison Avenue",
+      "subject": "Advertising agency studio with drafting tables, blank poster studies, camera equipment, and a Manhattan skyline",
+      "row": 5,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/magellan.png",
+      "catalog_id": "cities:magellan",
+      "label": "Magellan's Voyage",
+      "subject": "Three-masted exploration ship rounds a headland, with taut sails, ocean charts, and distant islands",
+      "row": 6,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mali_mint.png",
+      "catalog_id": "cities:mali_mint",
+      "label": "Mint",
+      "subject": "Mali mint with a clay-brick courtyard, gold dust scales, coin dies, and a guarded treasury chest",
+      "row": 6,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/manor.png",
+      "catalog_id": "cities:manor",
+      "label": "Manor",
+      "subject": "Fortified manor house with a timber upper story, stone gate, enclosed garden, and surrounding fields",
+      "row": 6,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/manufacturing_plant.png",
+      "catalog_id": "cities:manufacturing_plant",
+      "label": "Manufacturing Plant",
+      "subject": "Manufacturing plant with assembly conveyors, steel rafters, loading doors, and a bank of factory windows",
+      "row": 6,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/marching_pavilion.png",
+      "catalog_id": "cities:marching_pavilion",
+      "label": "Parade Grounds",
+      "subject": "Military parade pavilion beside a geometric drill field, reviewing stand, lined ranks, and tall plain banners",
+      "row": 6,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/marco_polo.png",
+      "catalog_id": "cities:marco_polo",
+      "label": "Marco Polo's Embassy",
+      "subject": "Medieval envoy receives visitors in a vaulted stone embassy, with travel chests, silk bolts, and a globe",
+      "row": 6,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/market.png",
+      "catalog_id": "cities:market",
+      "label": "Market",
+      "subject": "Open market square with striped stalls, produce baskets, pottery, hanging fabrics, and a central stone fountain",
+      "row": 6,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/matter_decompiler.png",
+      "catalog_id": "cities:matter_decompiler",
+      "label": "Matter Decompiler",
+      "subject": "Futuristic decompiler chamber with a glowing matter stream, segmented containment ring, and precision control consoles",
+      "row": 6,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mausoleum_of_maussollos.png",
+      "catalog_id": "cities:mausoleum_of_maussollos",
+      "label": "Mausoleum of Maussollos",
+      "subject": "Mausoleum of Maussollos with a high stepped base, colonnaded chamber, sculpted frieze, and pyramidal roof",
+      "row": 6,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mech_assembly_plant.png",
+      "catalog_id": "cities:mech_assembly_plant",
+      "label": "Mech Assembly Plant",
+      "subject": "Mech assembly hangar with a towering unfinished robot, overhead cranes, welding sparks, and tool platforms",
+      "row": 6,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/medical_center.png",
+      "catalog_id": "cities:medical_center",
+      "label": "Organ Bank",
+      "subject": "Organ bank clinic with chilled storage vessels, sealed specimen cases, clean counters, and blue-lit medical monitors",
+      "row": 6,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/meetingofminds.png",
+      "catalog_id": "cities:meetingofminds",
+      "label": "Meeting of Minds",
+      "subject": "Mind-link laboratory with two luminous neural chairs, a shared glass display, and a ring of quiet terminals",
+      "row": 6,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/menagerie.png",
+      "catalog_id": "cities:menagerie",
+      "label": "Menagerie",
+      "subject": "Royal menagerie with stone animal enclosures, a striped pavilion, leafy courtyard, and peacocks on a path",
+      "row": 7,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mercenary_camp.png",
+      "catalog_id": "cities:mercenary_camp",
+      "label": "Mercenary Camp",
+      "subject": "Mercenary camp with canvas tents, weapon racks, supply wagons, cooking fire, and a guarded central pavilion",
+      "row": 7,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mesoamerican_cathedral.png",
+      "catalog_id": "cities:mesoamerican_cathedral",
+      "label": "Temple of Tlaloc",
+      "subject": "Temple of Tlaloc with a stepped stone pyramid, rain-god carvings, turquoise accents, and broad stairway",
+      "row": 7,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mesoamerican_magician_pyramid.png",
+      "catalog_id": "cities:mesoamerican_magician_pyramid",
+      "label": "Pyramid of the Magician",
+      "subject": "Pyramid of the Magician with steep rounded tiers, a narrow summit temple, and carved serpent entrances",
+      "row": 7,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mesoamerican_shrine.png",
+      "catalog_id": "cities:mesoamerican_shrine",
+      "label": "Teotihuacan",
+      "subject": "Teotihuacan ceremonial avenue with stepped pyramids, feathered standards, and distant mountain silhouettes",
+      "row": 7,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mesoamerican_temple.png",
+      "catalog_id": "cities:mesoamerican_temple",
+      "label": "Temple of Quetzalcoatl",
+      "subject": "Temple of Quetzalcoatl with feathered-serpent carvings, stepped platforms, stone masks, and a broad stair",
+      "row": 7,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/metropolitan_administration.png",
+      "catalog_id": "cities:metropolitan_administration",
+      "label": "Metropolitan Administration",
+      "subject": "Metropolitan administration building with a domed council chamber, columned wings, and an orderly civic plaza",
+      "row": 7,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mid_lab.png",
+      "catalog_id": "cities:mid_lab",
+      "label": "Laboratory",
+      "subject": "Private research laboratory with glass apparatus, precision scales, microscopes, and a compact cleanroom",
+      "row": 7,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/military_academy.png",
+      "catalog_id": "cities:military_academy",
+      "label": "Military Academy",
+      "subject": "Military academy with a formal stone hall, parade ground, cadet barracks, and a small training monument",
+      "row": 7,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/military_base.png",
+      "catalog_id": "cities:military_base",
+      "label": "Military Base",
+      "subject": "Military base with hangars, parked utility vehicles, radio mast, and a guarded perimeter road",
+      "row": 7,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mill.png",
+      "catalog_id": "cities:mill",
+      "label": "Mill",
+      "subject": "Water-powered grain mill with a broad wooden wheel, stone race, millhouse, and sacks of fresh flour",
+      "row": 7,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mind_control_center.png",
+      "catalog_id": "cities:mind_control_center",
+      "label": "Mind-Control Center",
+      "subject": "Futuristic control center with a sealed neural chamber, concentric signal panels, and a row of empty chairs",
+      "row": 7,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mind_storage.png",
+      "catalog_id": "cities:mind_storage",
+      "label": "Mind Storage",
+      "subject": "Mind storage vault with glowing glass memory cylinders, cooling pipes, numbered bays, and a central server core",
+      "row": 8,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mining_inc_survey_office.png",
+      "catalog_id": "cities:mining_inc_survey_office",
+      "label": "Mining Inc. Survey",
+      "subject": "Mining survey office with geological maps, mineral samples, drill core racks, and a rugged field entrance",
+      "row": 8,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/missile_silo.png",
+      "catalog_id": "cities:missile_silo",
+      "label": "Missile Lab",
+      "subject": "Underground missile silo with a raised circular hatch, concrete launch shaft, steel gantry, and distant control bunker",
+      "row": 8,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/moai_statues.png",
+      "catalog_id": "cities:moai_statues",
+      "label": "Moai Statues",
+      "subject": "Row of monumental moai heads with long carved faces, grassy island slope, and blue ocean beyond",
+      "row": 8,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/moat.png",
+      "catalog_id": "cities:moat",
+      "label": "Moat",
+      "subject": "Broad castle moat encircles a stone wall, with calm water, a drawbridge, reeds, and square guard towers",
+      "row": 8,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/mt_rushmore.png",
+      "catalog_id": "cities:mt_rushmore",
+      "label": "Mt. Rushmore",
+      "subject": "Mount Rushmore's four monumental granite faces emerge from a pine-covered cliff above a rocky ledge",
+      "row": 8,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/museum.png",
+      "catalog_id": "cities:museum",
+      "label": "Museum",
+      "subject": "Museum gallery with sculpted antiquities, glass display cases, marble columns, and a high skylit ceiling",
+      "row": 8,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/myth_beast.png",
+      "catalog_id": "cities:myth_beast",
+      "label": "Myth of the Beast",
+      "subject": "Bronze beast figurine beside a painted story scroll, carved stone plinth, and curling decorative smoke",
+      "row": 8,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/myth_hero.png",
+      "catalog_id": "cities:myth_hero",
+      "label": "Myth of the Hero",
+      "subject": "Heroic bronze figure holding a simple shield beside an open parchment and laurel-wreathed stone pedestal",
+      "row": 8,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/myth_sea.png",
+      "catalog_id": "cities:myth_sea",
+      "label": "Myth of the Sea",
+      "subject": "Sea myth vignette with a carved wave, bronze trident, curling fish, and a small sailing vessel",
+      "row": 8,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/myth_sky.png",
+      "catalog_id": "cities:myth_sky",
+      "label": "Myth of the Sky",
+      "subject": "Sky myth vignette with a bronze sun disk, crescent moon, winged bird, and painted star field",
+      "row": 8,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nanite_defuser.png",
+      "catalog_id": "cities:nanite_defuser",
+      "label": "Nanite Defuser",
+      "subject": "Nanite defuser device with a glass containment sphere, delicate emitter arms, and a compact control pedestal",
+      "row": 8,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nanite_lab.png",
+      "catalog_id": "cities:nanite_lab",
+      "label": "Nanite Lab",
+      "subject": "Nanite laboratory with a magnified robotic swarm, sealed glass vessel, microscopes, and glowing blue instruments",
+      "row": 9,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nanite_population.png",
+      "catalog_id": "cities:nanite_population",
+      "label": "Utility Fog",
+      "subject": "Utility fog machine releasing a sparkling cloud of tiny robots around miniature tools and a small structure",
+      "row": 9,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nano_research_department.png",
+      "catalog_id": "cities:nano_research_department",
+      "label": "Nano Research Department",
+      "subject": "Nanotechnology lab with a magnified nanotube lattice, precision probe, glass chamber, and blue-lit workbench",
+      "row": 9,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nanofactory.png",
+      "catalog_id": "cities:nanofactory",
+      "label": "Nanofactory",
+      "subject": "Nanofactory with robotic assembly arms, molecular-scale display, compact feedstock vats, and a spotless enclosure",
+      "row": 9,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_epic.png",
+      "catalog_id": "cities:national_epic",
+      "label": "National Epic",
+      "subject": "Open heroic manuscript on a carved lectern, with a bronze helmet, laurel wreath, and candlelit backdrop",
+      "row": 9,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_mint.png",
+      "catalog_id": "cities:national_mint",
+      "label": "National Mint",
+      "subject": "National mint with a heavy coin press, polished dies, stacked blank disks, and a stone treasury hall",
+      "row": 9,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_park.png",
+      "catalog_id": "cities:national_park",
+      "label": "National Park",
+      "subject": "Protected mountain park with a forested valley, winding trail, ranger shelter, and distant snow peaks",
+      "row": 9,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_redoubt.png",
+      "catalog_id": "cities:national_redoubt",
+      "label": "National Redoubt",
+      "subject": "Mountain redoubt with layered stone bunkers, narrow tunnels, gun embrasures, and a concealed alpine entrance",
+      "row": 9,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_security.png",
+      "catalog_id": "cities:national_security",
+      "label": "Security Bureau",
+      "subject": "Security bureau headquarters with reinforced windows, guarded vestibule, radio mast, and secure records room",
+      "row": 9,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/national_shield.png",
+      "catalog_id": "cities:national_shield",
+      "label": "National Shield",
+      "subject": "Protective energy shield over a compact city model, anchored by four glowing pylons and a central emitter",
+      "row": 9,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/native_america_totem.png",
+      "catalog_id": "cities:native_america_totem",
+      "label": "Totem Pole",
+      "subject": "Carved Pacific Northwest totem pole with stacked animal figures, painted wings, and a cedar-plank village backdrop",
+      "row": 9,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/naval_yard.png",
+      "catalog_id": "cities:naval_yard",
+      "label": "Naval Yard",
+      "subject": "Naval yard with drydock, timber ship frames, repair cranes, rope coils, and a harbor-side workshop",
+      "row": 9,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/network_node.png",
+      "catalog_id": "cities:network_node",
+      "label": "Network Node",
+      "subject": "Network node with a central router, branching luminous cables, small server racks, and glass connection panels",
+      "row": 10,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/neuschwanstein.png",
+      "catalog_id": "cities:neuschwanstein",
+      "label": "Neuschwanstein",
+      "subject": "Neuschwanstein Castle rises above an alpine forest, with pale towers, steep roofs, and rugged mountain peaks",
+      "row": 10,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nhl.png",
+      "catalog_id": "cities:nhl",
+      "label": "National Sports League",
+      "subject": "Ice hockey arena with curved glass rink, empty spectator tiers, crossed sticks, and bright overhead lights",
+      "row": 10,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/norway_fishmarket.png",
+      "catalog_id": "cities:norway_fishmarket",
+      "label": "Stockfish",
+      "subject": "Norwegian stockfish racks beside a fjord harbor, with drying cod, timber wharf, and a small fishing boat",
+      "row": 10,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/notre_dame.png",
+      "catalog_id": "cities:notre_dame",
+      "label": "Notre Dame",
+      "subject": "Notre Dame Cathedral with twin Gothic towers, flying buttresses, rose window, and the Seine-side stone facade",
+      "row": 10,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nuclear_plant.png",
+      "catalog_id": "cities:nuclear_plant",
+      "label": "Nuclear Plant",
+      "subject": "Nuclear power station with twin cooling towers, turbine hall, enclosed reactor dome, and high-voltage lines",
+      "row": 10,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/nws.png",
+      "catalog_id": "cities:nws",
+      "label": "National Weather Service",
+      "subject": "Weather service station with radar dome, wind gauges, cloud maps, and a compact meteorological office",
+      "row": 10,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/obelisk.png",
+      "catalog_id": "cities:obelisk",
+      "label": "Monument",
+      "subject": "Memorial obelisk rises from a circular plaza, with a carved stone base, wreaths, and shallow reflecting pool",
+      "row": 10,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/observatory.png",
+      "catalog_id": "cities:observatory",
+      "label": "Observatory",
+      "subject": "Stone observatory with a copper telescope, rotating dome, star charts, and a clear high-altitude night sky",
+      "row": 10,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/oil_plant.png",
+      "catalog_id": "cities:oil_plant",
+      "label": "Oil Power Plant",
+      "subject": "Oil-fired power station with fuel tanks, a turbine building, pipe racks, and compact exhaust stacks",
+      "row": 10,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/oil_refinery.png",
+      "catalog_id": "cities:oil_refinery",
+      "label": "Oil Refinery",
+      "subject": "Oil refinery with distillation columns, steel catwalks, pipework, storage tanks, and a loading pipeline",
+      "row": 10,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/omnifactory.png",
+      "catalog_id": "cities:omnifactory",
+      "label": "Omnifactory",
+      "subject": "Robotic omnifactory with modular production cells, conveyor belts, component bins, and a bright central assembly arm",
+      "row": 10,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/oracle.png",
+      "catalog_id": "cities:oracle",
+      "label": "The Oracle",
+      "subject": "Ancient oracle sanctuary with a veiled tripod, incense bowl, carved columns, and a shadowed inner chamber",
+      "row": 11,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/orbital_factory.png",
+      "catalog_id": "cities:orbital_factory",
+      "label": "Orbital Factory",
+      "subject": "Orbital factory module with articulated arms, solar panels, cargo pods, and Earth visible through a window",
+      "row": 11,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/orbital_hotel.png",
+      "catalog_id": "cities:orbital_hotel",
+      "label": "Orbital Hotel",
+      "subject": "Orbital hotel with a ring-shaped guest deck, observation windows, docking bay, and Earthlight beyond",
+      "row": 11,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/ottoman_hammam.png",
+      "catalog_id": "cities:ottoman_hammam",
+      "label": "Hammam",
+      "subject": "Ottoman hammam with a domed bathhouse, marble fountain, arched steam chambers, and patterned tiled walls",
+      "row": 11,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/oxford_university.png",
+      "catalog_id": "cities:oxford_university",
+      "label": "Oxford University",
+      "subject": "Oxford college courtyard with honey-colored stone halls, a chapel tower, arched walkways, and clipped lawn",
+      "row": 11,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/painter.png",
+      "catalog_id": "cities:painter",
+      "label": "Painter's Studio",
+      "subject": "Painter's studio with an easel, half-finished landscape, pigment jars, brush rack, and tall north-facing window",
+      "row": 11,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/palace.png",
+      "catalog_id": "cities:palace",
+      "label": "Palace",
+      "subject": "Royal palace with a broad ceremonial stair, domed audience hall, carved balconies, and symmetrical garden wings",
+      "row": 11,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/palisade.png",
+      "catalog_id": "cities:palisade",
+      "label": "Palisade",
+      "subject": "Wooden palisade of sharpened logs surrounds a compact settlement, with a watch platform and heavy timber gate",
+      "row": 11,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/papermill.png",
+      "catalog_id": "cities:papermill",
+      "label": "Paper Mill",
+      "subject": "Water-powered paper mill with pulp vats, drying sheets, wooden presses, and a stone millrace",
+      "row": 11,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/park_arcology.png",
+      "catalog_id": "cities:park_arcology",
+      "label": "Park Arcology",
+      "subject": "Green arcology tower with planted terraces, glass atrium, rooftop forest, and cascading garden balconies",
+      "row": 11,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/parthenon.png",
+      "catalog_id": "cities:parthenon",
+      "label": "Parthenon",
+      "subject": "Parthenon with fluted marble columns, sculpted triangular pediment, broad steps, and a sunlit Acropolis ridge",
+      "row": 11,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/peace_movement.png",
+      "catalog_id": "cities:peace_movement",
+      "label": "Peace Movement",
+      "subject": "Peace gathering beneath a white dove sculpture, with folded banners, flower wreaths, and a quiet civic square",
+      "row": 11,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/pentagon.png",
+      "catalog_id": "cities:pentagon",
+      "label": "Pentagon",
+      "subject": "Pentagon headquarters with five-sided wings, central courtyard, low stone facade, and broad surrounding lawn",
+      "row": 12,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/persian_satrap.png",
+      "catalog_id": "cities:persian_satrap",
+      "label": "Satrap",
+      "subject": "Persian provincial hall with a columned audience porch, carved reliefs, tiled roof, and guarded garden gate",
+      "row": 12,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/petra.png",
+      "catalog_id": "cities:petra",
+      "label": "Petra",
+      "subject": "Petra's rose-red Treasury facade carved into a sheer sandstone cliff, with a narrow canyon approach",
+      "row": 12,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/pharmacy.png",
+      "catalog_id": "cities:pharmacy",
+      "label": "Pharmacy",
+      "subject": "Old-world pharmacy with glass medicine jars, brass scales, herb drawers, and a green-painted wooden counter",
+      "row": 12,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/photographer.png",
+      "catalog_id": "cities:photographer",
+      "label": "Photographer's Studio",
+      "subject": "Photographer's studio with a bellows camera, folding screen, portrait chair, glass plates, and darkroom lantern",
+      "row": 12,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/pisa.png",
+      "catalog_id": "cities:pisa",
+      "label": "Leaning Tower",
+      "subject": "Leaning Tower of Pisa with open marble arcades, a pronounced tilt, bell chamber, and crowded stone base",
+      "row": 12,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/plague_hospital.png",
+      "catalog_id": "cities:plague_hospital",
+      "label": "Plague Hospital",
+      "subject": "Plague hospital with a walled isolation ward, shuttered windows, herb garden, and a small watch pavilion",
+      "row": 12,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/planning_office.png",
+      "catalog_id": "cities:planning_office",
+      "label": "Planning Office",
+      "subject": "Planning office with architectural models, rolled city plans, drafting tables, and orderly map cabinets",
+      "row": 12,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/platos_academy.png",
+      "catalog_id": "cities:platos_academy",
+      "label": "Plato's Academy",
+      "subject": "Plato's Academy beneath olive trees, with a marble teaching portico, benches, and a quiet garden path",
+      "row": 12,
+      "column": 9,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/pleisto_park.png",
+      "catalog_id": "cities:pleisto_park",
+      "label": "Pleistocene Park",
+      "subject": "Ice-age wildlife park with shaggy mammoths, grazing horses, frozen grasses, and distant snowy hills",
+      "row": 12,
+      "column": 10,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/police_station.png",
+      "catalog_id": "cities:police_station",
+      "label": "Police Station",
+      "subject": "Police station with a stone entrance, barred holding windows, secure courtyard, and a parked patrol carriage",
+      "row": 12,
+      "column": 11,
+      "review_status": "pending",
+      "installed": false
+    },
+    {
+      "path": "src/Mods/Cities/art/icons/polis_council.png",
+      "catalog_id": "cities:polis_council",
+      "label": "Polis Council",
+      "subject": "Greek polis council chamber with semicircular stone benches, a speaker's dais, columns, and a civic courtyard",
+      "row": 12,
+      "column": 12,
+      "review_status": "pending",
+      "installed": false
+    }
+  ]
+}

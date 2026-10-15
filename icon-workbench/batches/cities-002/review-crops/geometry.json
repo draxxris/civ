@@ -1,0 +1,14 @@
+{
+  "source_sheet": "sheet-20261015-035637-001.png",
+  "source_size": [
+    1024,
+    1024
+  ],
+  "rows": 12,
+  "columns": 12,
+  "crop_rule": "Equal divisions use floor(index * dimension / cell count).",
+  "output_size": [
+    64,
+    64
+  ]
+}

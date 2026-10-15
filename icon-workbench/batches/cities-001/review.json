@@ -1,0 +1,17 @@
+{
+  "image": "sheet-20261015-033845-001.png",
+  "status": "awaiting_user_review",
+  "observed_columns": 12,
+  "observed_rows": 12,
+  "geometry_review": "Initial visual inspection shows regular rows without obvious bottom-row compression. Pixel-level crop boundaries remain unchecked.",
+  "subject_review": "Initial scan only. Each cell still needs a detailed comparison against cells.json before installation.",
+  "flags": [
+    {
+      "row": 8,
+      "column": 6,
+      "catalog_id": "cities:courier_system",
+      "issue": "The courier composition contains a full-body mounted human. Review against the torso-up character requirement."
+    }
+  ],
+  "installed_count": 0
+}

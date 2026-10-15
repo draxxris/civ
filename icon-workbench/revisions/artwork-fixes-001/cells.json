@@ -1,0 +1,312 @@
+[
+  {
+    "catalog_id": "cities:corporation_burgerworld_hq",
+    "label": "Burgerworld Headquarters",
+    "path": "src/Mods/Cities/art/icons/corporation_burgerworld_hq.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 1,
+    "subject": "Modern fast-food company headquarters office, glass tower and small entrance. NO hamburger sculpture, food, signage or logo.",
+    "note": "original icon has a giant hamburger, but then there is now second hamburger from logo. remove the icon's burger."
+  },
+  {
+    "catalog_id": "cities:courthouse",
+    "label": "Courthouse",
+    "path": "src/Mods/Cities/art/icons/courthouse.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 2,
+    "subject": "Large golden justice balance scale dominating the foreground, with a small courthouse silhouette behind it.",
+    "note": "does not have the justice scale"
+  },
+  {
+    "catalog_id": "cities:egyptian_obelisk",
+    "label": "Obelisk",
+    "path": "src/Mods/Cities/art/icons/egyptian_obelisk.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 3,
+    "subject": "One tall carved sandstone Egyptian obelisk alone. No buildings, settlement or landscape.",
+    "note": "should show only the obelisk, not the surrounding buildings"
+  },
+  {
+    "catalog_id": "cities:global_stock_exchange",
+    "label": "Global Stock Exchange",
+    "path": "src/Mods/Cities/art/icons/global_stock_exchange.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 4,
+    "subject": "Modern trading exchange represented by a prominent connected internet globe above a rising market chart.",
+    "note": "should include an internet icon"
+  },
+  {
+    "catalog_id": "cities:goths_plunder",
+    "label": "Plunder",
+    "path": "src/Mods/Cities/art/icons/goths_plunder.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 5,
+    "subject": "One open wooden treasure chest with bright gold coins spilling over the edge. Nothing else.",
+    "note": "should just be a open chest with gold spilling out"
+  },
+  {
+    "catalog_id": "cities:great_firewall",
+    "label": "Great Firewall",
+    "path": "src/Mods/Cities/art/icons/great_firewall.png",
+    "batch": "cities-002",
+    "row": 1,
+    "column": 6,
+    "subject": "One modern rack-mount computer server cabinet with a prominent glowing brick-wall-and-shield firewall symbol.",
+    "note": "should be a rack mount server with a firewall icon"
+  },
+  {
+    "catalog_id": "cities:greekfire",
+    "label": "Greek Fire",
+    "path": "src/Mods/Cities/art/icons/greekfire.png",
+    "batch": "cities-002",
+    "row": 2,
+    "column": 1,
+    "subject": "A single bronze brazier filled with vivid flames. No boat, no ship, no human.",
+    "note": "drop the boat, just show fire in a brazier"
+  },
+  {
+    "catalog_id": "cities:hollywood",
+    "label": "Hollywood",
+    "path": "src/Mods/Cities/art/icons/hollywood.png",
+    "batch": "cities-003",
+    "row": 2,
+    "column": 2,
+    "subject": "The iconic white HOLLYWOOD hillside letters, clearly spelling HOLLYWOOD, tightly framed. No studio or other buildings.",
+    "note": "should just be the hollywood sign"
+  },
+  {
+    "catalog_id": "cities:oil_plant",
+    "label": "Oil Power Plant",
+    "path": "src/Mods/Cities/art/icons/oil_plant.png",
+    "batch": "cities-003",
+    "row": 2,
+    "column": 3,
+    "subject": "Modern oil-fired power station with two tall smokestacks emitting obvious dark pollution. No refinery towers or storage tanks.",
+    "note": "looks too similar to oil refinery, needs smokestacks with pollution coming out"
+  },
+  {
+    "catalog_id": "cities:orbital_factory",
+    "label": "Orbital Factory",
+    "path": "src/Mods/Cities/art/icons/orbital_factory.png",
+    "batch": "cities-003",
+    "row": 2,
+    "column": 4,
+    "subject": "Large industrial factory floating in outer space, with blocky assembly halls, cargo gantries and windows. Not a satellite.",
+    "note": "looks like a mere satellite instead of a factory in space"
+  },
+  {
+    "catalog_id": "cities:propaganda_office",
+    "label": "Propaganda Office",
+    "path": "src/Mods/Cities/art/icons/propaganda_office.png",
+    "batch": "cities-004",
+    "row": 2,
+    "column": 5,
+    "subject": "Modern rectangular office building with a broadcast mast mounted directly on its flat roof. No ancient architecture.",
+    "note": "looks too ancient, should just be a generic building with a broadcast tower on top"
+  },
+  {
+    "catalog_id": "cities:railgun_turret",
+    "label": "Railgun Turret",
+    "path": "src/Mods/Cities/art/icons/railgun_turret.png",
+    "batch": "cities-004",
+    "row": 2,
+    "column": 6,
+    "subject": "Square armored modern gun turret, box-shaped housing and a long straight railgun barrel. No round turret.",
+    "note": "gun turret should be square"
+  },
+  {
+    "catalog_id": "cities:spaceport",
+    "label": "Spaceport",
+    "path": "src/Mods/Cities/art/icons/spaceport.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 1,
+    "subject": "Orbital space harbor already in outer space, with a ring of docking piers and small docked spacecraft. No launchpad or rocket launch.",
+    "note": "this looks like a launchpad, rather than a port that is already in outer space"
+  },
+  {
+    "catalog_id": "cities:swiss_zoll",
+    "label": "Zoll",
+    "path": "src/Mods/Cities/art/icons/swiss_zoll.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 2,
+    "subject": "Small alpine customs post with a gate barrier and cargo crates. Absolutely no flags, crosses, emblems or national markings.",
+    "note": "remove the Swiss flag"
+  },
+  {
+    "catalog_id": "cities:tax_office",
+    "label": "Tax Office",
+    "path": "src/Mods/Cities/art/icons/tax_office.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 3,
+    "subject": "Natural-proportioned torso-up tax collector in medieval riding clothes, holding a large gold-filled moneybag; visible horse head beside shoulder.",
+    "note": "looks like generic neoclassical building. should be a horseback rider with a moneybag"
+  },
+  {
+    "catalog_id": "cities:un_mission",
+    "label": "UN Mission",
+    "path": "src/Mods/Cities/art/icons/un_mission.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 4,
+    "subject": "Small modest humanitarian field outpost with canvas tents and a low prefabricated office. No skyscraper, no main headquarters.",
+    "note": "looks too much like UN building itself instead of a UN outpost"
+  },
+  {
+    "catalog_id": "cities:university",
+    "label": "University",
+    "path": "src/Mods/Cities/art/icons/university.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 5,
+    "subject": "One large open book with a black graduation mortarboard cap resting on it. No buildings.",
+    "note": "should be a book with a graduate hat"
+  },
+  {
+    "catalog_id": "cities:warhead_factory",
+    "label": "Warhead Factory",
+    "path": "src/Mods/Cities/art/icons/warhead_factory.png",
+    "batch": "cities-004",
+    "row": 3,
+    "column": 6,
+    "subject": "Modern industrial weapons factory: gray assembly hall with a large missile warhead on a conveyor. No ancient architecture.",
+    "note": "looks too ancient, should be from modern era"
+  },
+  {
+    "catalog_id": "cities:ad_agency",
+    "label": "Advertising Agency",
+    "path": "src/Mods/Cities/art/icons/ad_agency.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 1,
+    "subject": "Contemporary advertising agency represented by a modern digital billboard with bold abstract colored shapes. No gallery, no classical buildings.",
+    "note": "looks like an art gallery, and too much from the ancient era"
+  },
+  {
+    "catalog_id": "cities:arena",
+    "label": "Arena",
+    "path": "src/Mods/Cities/art/icons/arena.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 2,
+    "subject": "Compact square gladiatorial arena with a square sand floor enclosed by four straight stands. No oval Colosseum.",
+    "note": "this is more of a coliseum than an arena, maybe try a square arena instead"
+  },
+  {
+    "catalog_id": "cities:arsenal",
+    "label": "Arsenal",
+    "path": "src/Mods/Cities/art/icons/arsenal.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 3,
+    "subject": "Modern military arsenal warehouse with steel doors, orderly ammunition crates and a tank barrel beside the entrance. No medieval shipyard.",
+    "note": "I'm not sure that the description you gave for this is correct, I am pretty sure Arsenal is from a more modern era in the original game."
+  },
+  {
+    "catalog_id": "cities:arthub",
+    "label": "Arthub",
+    "path": "src/Mods/Cities/art/icons/arthub.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 4,
+    "subject": "Futuristic art exhibition center with curved glass architecture and one luminous holographic abstract sculpture. No classical gallery.",
+    "note": "looks just like the Art Gallery image, needs to be more futuristic."
+  },
+  {
+    "catalog_id": "cities:automated_defenses",
+    "label": "Automated Defenses",
+    "path": "src/Mods/Cities/art/icons/automated_defenses.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 5,
+    "subject": "Modern automated defense system: angular armored sensor tower and unmanned gun turret on a concrete base. No ancient stone fortress.",
+    "note": "icon looks like its from the ancient era, not modern at all."
+  },
+  {
+    "catalog_id": "cities:barbwire_fence",
+    "label": "Barbwire Fence",
+    "path": "src/Mods/Cities/art/icons/barbwire_fence.png",
+    "batch": "cities-001",
+    "row": 4,
+    "column": 6,
+    "subject": "Barbed wire fence stretched between THIN metal posts. Clear wire silhouette, no thick stone pillars.",
+    "note": "pillars are too thick"
+  },
+  {
+    "catalog_id": "cities:broadway",
+    "label": "Broadway",
+    "path": "src/Mods/Cities/art/icons/broadway.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 1,
+    "subject": "Close-up glowing neon theater sign reading BROADWAY in large unmistakable letters, with a few surrounding light bulbs. No building scene.",
+    "note": "cannot see enough of the building, description is asking for too much detail for such a small image. original image is just a close-up of a neon sign that says BROADWAY"
+  },
+  {
+    "catalog_id": "cities:burningman",
+    "label": "Burning Man",
+    "path": "src/Mods/Cities/art/icons/burningman.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 2,
+    "subject": "One wooden human-shaped festival effigy with exactly TWO arms raised upward and exactly TWO legs. No crowd, no extra limbs.",
+    "note": "burning man has 4 arms"
+  },
+  {
+    "catalog_id": "cities:bulgarian_chitalishte",
+    "label": "Chitalishte",
+    "path": "src/Mods/Cities/art/icons/bulgarian_chitalishte.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 3,
+    "subject": "Simple close-up cultural reading-room emblem: an open book in front of a small theater curtain. No neoclassical building or tiny details.",
+    "note": "too much detail drawn in the image, so it just looks like a generic neoclassical building"
+  },
+  {
+    "catalog_id": "cities:ebgatehouse",
+    "label": "City Gatehouse",
+    "path": "src/Mods/Cities/art/icons/ebgatehouse.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 4,
+    "subject": "Twin-tower medieval stone gatehouse with a clearly visible broad BLUE WATER MOAT across the foreground and a raised drawbridge.",
+    "note": "there is no moat visible in the icon"
+  },
+  {
+    "catalog_id": "cities:cryogenic_prison",
+    "label": "Cryoprison",
+    "path": "src/Mods/Cities/art/icons/cryogenic_prison.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 5,
+    "subject": "Exactly ONE upright glass cryogenic prison chamber containing one human silhouette, with icy pipes. No additional pods.",
+    "note": "should only show a single cryo chamber, this shows 3"
+  },
+  {
+    "catalog_id": "cities:highway_project",
+    "label": "Expressway",
+    "path": "src/Mods/Cities/art/icons/highway_project.png",
+    "batch": "cities-001",
+    "row": 5,
+    "column": 6,
+    "subject": "Clean plausible highway cloverleaf interchange with four smoothly connected loop ramps. No vehicles, buildings or extra disconnected roads.",
+    "note": "interchange does not look realistic, some distortion on the curves, exclude the cars in the request, just show the interchange"
+  },
+  {
+    "catalog_id": "cities:foundation",
+    "label": "Foundation",
+    "path": "src/Mods/Cities/art/icons/foundation.png",
+    "batch": "cities-001",
+    "row": 6,
+    "column": 1,
+    "subject": "One simple wooden desk with a small open chest full of gold coins placed on top. No estate or other buildings.",
+    "note": "looks too much like the estate icon, maybe try just a desk with a chest with some gold in it"
+  }
+]

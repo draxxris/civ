@@ -1,0 +1,542 @@
+[
+  {
+    "row": 1,
+    "column": 1,
+    "path": "src/Mods/Cities/art/icons/pyramid.png",
+    "catalog_id": "cities:pyramid",
+    "label": "Pyramids",
+    "confidence": "high",
+    "note": "Full-resolution icon shows an Egyptian pyramid; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 2,
+    "path": "src/Mods/Cities/art/icons/parthenon.png",
+    "catalog_id": "cities:parthenon",
+    "label": "Parthenon",
+    "confidence": "high",
+    "note": "Columned classical temple is visible; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 4,
+    "path": "src/Mods/Cities/art/icons/academy.png",
+    "catalog_id": "cities:academy",
+    "label": "Academy",
+    "confidence": "high",
+    "note": "Full-resolution icon shows an academic building; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 5,
+    "path": "src/Mods/Cities/art/icons/granary.png",
+    "catalog_id": "cities:granary",
+    "label": "Granary",
+    "confidence": "high",
+    "note": "Icon depicts a grain store; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 7,
+    "path": "src/Mods/Cities/art/icons/aqueduct.png",
+    "catalog_id": "cities:aqueduct",
+    "label": "Aqueduct",
+    "confidence": "high",
+    "note": "Stone arcade matches the aqueduct subject; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 8,
+    "path": "src/Mods/Cities/art/icons/castle.png",
+    "catalog_id": "cities:castle",
+    "label": "Castle",
+    "confidence": "high",
+    "note": "Icon depicts a fortified castle; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 9,
+    "path": "src/Mods/Cities/art/icons/lighthouse.png",
+    "catalog_id": "cities:lighthouse",
+    "label": "Lighthouse",
+    "confidence": "high",
+    "note": "Icon depicts a lighthouse; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 10,
+    "path": "src/Mods/Cities/art/icons/harbor.png",
+    "catalog_id": "cities:harbor",
+    "label": "Harbor",
+    "confidence": "high",
+    "note": "Icon depicts harbor docks and vessels; verify final crop."
+  },
+  {
+    "row": 1,
+    "column": 11,
+    "path": "src/Mods/Cities/art/icons/market.png",
+    "catalog_id": "cities:market",
+    "label": "Market",
+    "confidence": "high",
+    "note": "Icon shows a striped market stall; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 2,
+    "path": "src/Mods/Cities/art/icons/observatory.png",
+    "catalog_id": "cities:observatory",
+    "label": "Observatory",
+    "confidence": "high",
+    "note": "Dome and telescope are visible; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 3,
+    "path": "src/Mods/Cities/art/icons/factory.png",
+    "catalog_id": "cities:factory",
+    "label": "Factory",
+    "confidence": "high",
+    "note": "Industrial factory equipment is visible; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 5,
+    "path": "src/Mods/Cities/art/icons/nuclear_plant.png",
+    "catalog_id": "cities:nuclear_plant",
+    "label": "Nuclear Plant",
+    "confidence": "high",
+    "note": "Cooling towers match the power-station subject; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 6,
+    "path": "src/Mods/Cities/art/icons/laboratory.png",
+    "catalog_id": "cities:laboratory",
+    "label": "Research Laboratory",
+    "confidence": "high",
+    "note": "Laboratory apparatus is visible; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 11,
+    "path": "src/Mods/Cities/art/icons/townwatch.png",
+    "catalog_id": "cities:townwatch",
+    "label": "Watchtower",
+    "confidence": "high",
+    "note": "Stone watchtower is visible; verify final crop."
+  },
+  {
+    "row": 2,
+    "column": 12,
+    "path": "src/Mods/Cities/art/icons/walls.png",
+    "catalog_id": "cities:walls",
+    "label": "Walls",
+    "confidence": "high",
+    "note": "Icon depicts a fortified wall; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 1,
+    "path": "src/Mods/Military/art/icons/spearman.png",
+    "catalog_id": "military:spearman",
+    "label": "Spearman",
+    "confidence": "high",
+    "note": "Armored spear bearer matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 2,
+    "path": "src/Mods/Military/art/icons/archer.png",
+    "catalog_id": "military:archer",
+    "label": "Archer",
+    "confidence": "high",
+    "note": "Archer with bow matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 3,
+    "path": "src/Mods/Military/art/icons/swordsman.png",
+    "catalog_id": "military:swordsman",
+    "label": "Swordsman",
+    "confidence": "high",
+    "note": "Sword-bearing infantry matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 5,
+    "path": "src/Mods/Military/art/icons/knight.png",
+    "catalog_id": "military:knight",
+    "label": "Knight",
+    "confidence": "high",
+    "note": "Armored knight matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 6,
+    "path": "src/Mods/Military/art/icons/french_musketeer.png",
+    "catalog_id": "military:french_musketeer",
+    "label": "Musketeer",
+    "confidence": "high",
+    "note": "Tricorn-hatted musketeer matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 7,
+    "path": "src/Mods/Military/art/icons/envoy.png",
+    "catalog_id": "military:envoy",
+    "label": "Envoy",
+    "confidence": "high",
+    "note": "Diplomatic envoy portrait matches; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 9,
+    "path": "src/Mods/Military/art/icons/merchant.png",
+    "catalog_id": "military:merchant",
+    "label": "Great Merchant",
+    "confidence": "high",
+    "note": "Merchant portrait and trade goods match; verify final crop."
+  },
+  {
+    "row": 3,
+    "column": 11,
+    "path": "src/Mods/Military/art/icons/engineer.png",
+    "catalog_id": "military:engineer",
+    "label": "Great Engineer",
+    "confidence": "high",
+    "note": "Engineer portrait with tool matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 1,
+    "path": "src/Mods/Military/art/icons/cannon.png",
+    "catalog_id": "military:cannon",
+    "label": "Cannon",
+    "confidence": "high",
+    "note": "Field cannon matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 2,
+    "path": "src/Mods/Military/art/icons/tank.png",
+    "catalog_id": "military:tank",
+    "label": "Tank",
+    "confidence": "high",
+    "note": "Armored tank matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 3,
+    "path": "src/Mods/Military/art/icons/fighter.png",
+    "catalog_id": "military:fighter",
+    "label": "Fighter",
+    "confidence": "high",
+    "note": "Propeller fighter aircraft matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 4,
+    "path": "src/Mods/Military/art/icons/airship.png",
+    "catalog_id": "military:airship",
+    "label": "Airship",
+    "confidence": "high",
+    "note": "Airship silhouette matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 5,
+    "path": "src/Mods/Military/art/icons/galleon.png",
+    "catalog_id": "military:galleon",
+    "label": "Galleon",
+    "confidence": "high",
+    "note": "Sailing vessel matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 6,
+    "path": "src/Mods/Military/art/icons/steamer.png",
+    "catalog_id": "military:steamer",
+    "label": "Steamer",
+    "confidence": "high",
+    "note": "Steam-powered ship matches; verify final crop."
+  },
+  {
+    "row": 4,
+    "column": 7,
+    "path": "src/Mods/Military/art/icons/submarine.png",
+    "catalog_id": "military:submarine",
+    "label": "Submarine",
+    "confidence": "high",
+    "note": "Submarine matches; verify final crop."
+  },
+  {
+    "row": 5,
+    "column": 1,
+    "path": "src/Mods/World/art/icons/wheat.png",
+    "catalog_id": "world:wheat",
+    "label": "Wheat",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 2,
+    "path": "src/Mods/World/art/icons/corn.png",
+    "catalog_id": "world:corn",
+    "label": "Corn",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 3,
+    "path": "src/Mods/World/art/icons/banana.png",
+    "catalog_id": "world:banana",
+    "label": "Banana",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 6,
+    "path": "src/Mods/World/art/icons/fish.png",
+    "catalog_id": "world:fish",
+    "label": "Fish",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 7,
+    "path": "src/Mods/World/art/icons/crab.png",
+    "catalog_id": "world:crab",
+    "label": "Crab",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 8,
+    "path": "src/Mods/World/art/icons/clam.png",
+    "catalog_id": "world:clam",
+    "label": "Clam",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 9,
+    "path": "src/Mods/World/art/icons/sheep.png",
+    "catalog_id": "world:sheep",
+    "label": "Sheep",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 10,
+    "path": "src/Mods/World/art/icons/cow.png",
+    "catalog_id": "world:cow",
+    "label": "Cow",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 11,
+    "path": "src/Mods/World/art/icons/horse.png",
+    "catalog_id": "world:horse",
+    "label": "Horse",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 5,
+    "column": 12,
+    "path": "src/Mods/World/art/icons/pig.png",
+    "catalog_id": "world:pig",
+    "label": "Pig",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 1,
+    "path": "src/Mods/World/art/icons/deer.png",
+    "catalog_id": "world:deer",
+    "label": "Deer",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 5,
+    "path": "src/Mods/World/art/icons/copper.png",
+    "catalog_id": "world:copper",
+    "label": "Copper",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 6,
+    "path": "src/Mods/World/art/icons/coal.png",
+    "catalog_id": "world:coal",
+    "label": "Coal",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 7,
+    "path": "src/Mods/World/art/icons/iron.png",
+    "catalog_id": "world:iron",
+    "label": "Iron",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 8,
+    "path": "src/Mods/World/art/icons/silver.png",
+    "catalog_id": "world:silver",
+    "label": "Silver",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 9,
+    "path": "src/Mods/World/art/icons/gold.png",
+    "catalog_id": "world:gold",
+    "label": "Gold",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 10,
+    "path": "src/Mods/World/art/icons/gems.png",
+    "catalog_id": "world:gems",
+    "label": "Gems",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 6,
+    "column": 12,
+    "path": "src/Mods/World/art/icons/spices.png",
+    "catalog_id": "world:spices",
+    "label": "Spices",
+    "confidence": "high",
+    "note": "World icon visually depicts the same resource; verify full-resolution crop."
+  },
+  {
+    "row": 7,
+    "column": 1,
+    "path": "src/Mods/World/art/icons/silk.png",
+    "catalog_id": "world:silk",
+    "label": "Silk",
+    "confidence": "high",
+    "note": "Silk bundle matches the resource subject; verify crop."
+  },
+  {
+    "row": 7,
+    "column": 8,
+    "path": "src/Mods/Cities/art/icons/gutenberg.png",
+    "catalog_id": "cities:gutenberg",
+    "label": "Gutenberg Bible",
+    "confidence": "high",
+    "note": "Open book is visible; verify crop."
+  },
+  {
+    "row": 8,
+    "column": 2,
+    "path": "src/Mods/Cities/art/icons/observatory.png",
+    "catalog_id": "cities:observatory",
+    "label": "Observatory",
+    "confidence": "medium",
+    "note": "Telescope-like instrument; visual verification required."
+  },
+  {
+    "row": 9,
+    "column": 3,
+    "path": "src/Mods/Military/art/icons/treasure.png",
+    "catalog_id": "military:treasure",
+    "label": "Treasure",
+    "confidence": "high",
+    "note": "Icon depicts a treasure chest; verify crop."
+  },
+  {
+    "row": 9,
+    "column": 7,
+    "path": "src/Mods/Cities/art/icons/artesian_well.png",
+    "catalog_id": "cities:artesian_well",
+    "label": "Artesian Well",
+    "confidence": "medium",
+    "note": "Well structure is similar; visual verification required."
+  },
+  {
+    "row": 9,
+    "column": 9,
+    "path": "src/Mods/Cities/art/icons/bakery.png",
+    "catalog_id": "cities:bakery",
+    "label": "Bakery",
+    "confidence": "high",
+    "note": "Bread matches; verify crop."
+  },
+  {
+    "row": 9,
+    "column": 11,
+    "path": "src/Mods/Cities/art/icons/colosseum.png",
+    "catalog_id": "cities:colosseum",
+    "label": "Colosseum",
+    "confidence": "high",
+    "note": "Roman amphitheater matches; verify crop."
+  },
+  {
+    "row": 9,
+    "column": 12,
+    "path": "src/Mods/Cities/art/icons/specialbuilding_monastery.png",
+    "catalog_id": "cities:specialbuilding_monastery",
+    "label": "Monastery",
+    "confidence": "high",
+    "note": "Monastery building matches; verify crop."
+  },
+  {
+    "row": 10,
+    "column": 4,
+    "path": "src/Mods/Military/art/icons/great_diplomat.png",
+    "catalog_id": "military:great_diplomat",
+    "label": "TXT_UNIT_GREAT_DIPLOMAT",
+    "confidence": "high",
+    "note": "Diplomat portrait matches; verify crop."
+  },
+  {
+    "row": 10,
+    "column": 6,
+    "path": "src/Mods/Military/art/icons/great_general.png",
+    "catalog_id": "military:great_general",
+    "label": "Great General",
+    "confidence": "high",
+    "note": "General portrait matches; verify crop."
+  },
+  {
+    "row": 10,
+    "column": 7,
+    "path": "src/Mods/Military/art/icons/worker.png",
+    "catalog_id": "military:worker",
+    "label": "Worker",
+    "confidence": "high",
+    "note": "Worker portrait matches; verify crop."
+  },
+  {
+    "row": 11,
+    "column": 1,
+    "path": "src/Mods/World/art/icons/olives.png",
+    "catalog_id": "world:olives",
+    "label": "Olives",
+    "confidence": "high",
+    "note": "Olive branch matches; verify crop."
+  }
+]

@@ -1,0 +1,23 @@
+Model: openai/gpt-image-2.5-flare
+Name: OpenAI: GPT Image 2.5 Flare
+Description: GPT Image 2.5 Flare is an image generation and editing model from OpenAI, positioned as the speed-oriented tier of the GPT Image 2.5 series. It is suited to high-volume everyday...
+Input modalities: text, image
+Output modalities: image
+Streaming: yes
+Model-level supported parameters (union across providers):
+  --aspect-ratio: enum: 1:1, 3:2, 2:3, 4:3, 3:4, 16:9, 9:16, 21:9, auto
+  --quality: enum: auto, low, medium, high, xhigh, max
+  --background: enum: auto, transparent, opaque
+  --n: range: 1..10
+  --input-references: range: 0..16
+  --output-compression: range: 0..100
+Provider endpoints (definitive capabilities):
+  OpenAI [openai]
+    --aspect-ratio: enum: 1:1, 3:2, 2:3, 4:3, 3:4, 16:9, 9:16, 21:9, auto
+    --quality: enum: auto, low, medium, high, xhigh, max
+    --background: enum: auto, transparent, opaque
+    --n: range: 1..10
+    --input-references: range: 0..16
+    --output-compression: range: 0..100
+    provider.options passthrough: moderation
+    pricing: [{"billable": "input_image", "unit": "token", "cost_usd": 8e-06}, {"billable": "input_text", "unit": "token", "cost_usd": 5e-06}, {"billable": "output_image", "unit": "token", "cost_usd": 3e-05}]

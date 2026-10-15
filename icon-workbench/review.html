@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Icon replacement review</title>
+  <link rel="stylesheet" href="/review.css">
+  <script src="/review.js" defer></script>
+</head>
+<body>
+  <header class="page-header">
+    <p class="eyebrow">Local review tool</p>
+    <h1>Icon replacement review</h1>
+    <p>Review one batch at a time. Your saved choices stay separate from the game assets.</p>
+  </header>
+
+  <main>
+    <section class="notice" aria-label="Review instructions">
+      <h2>How approval works</h2>
+      <p>New items start checked. Saving approves each checked replacement. Uncheck an item to reject it, then enter a note before you save.</p>
+      <p>Rejection notes save with the item so they can guide regeneration. Items stay unreviewed until you save. Saving does not install any icon.</p>
+      <p>All decisions save in <code>icon-workbench/review-selections.json</code>.</p>
+      <p class="crop-note"><strong>Crop note:</strong> Each candidate uses an equal division of its 12×12 sheet, then resizes to 64×64. A frame can touch the crop edge. Leave the item unchecked if a frame or subject looks cut off, and add a note.</p>
+    </section>
+
+    <section class="toolbar" aria-label="Batch controls">
+      <div class="batch-control">
+        <label for="batch-picker">Batch</label>
+        <select id="batch-picker" disabled></select>
+      </div>
+      <div class="search-control">
+        <label for="filter-input">Filter this batch</label>
+        <input id="filter-input" type="search" placeholder="Label, ID, or subject" autocomplete="off">
+      </div>
+      <label class="zoom-control">
+        <input id="large-preview-toggle" type="checkbox">
+        Enlarge previews
+      </label>
+      <label class="hide-approved-control">
+        <input id="hide-approved-toggle" type="checkbox">
+        Hide approved icons
+      </label>
+      <p id="batch-summary" class="batch-summary" aria-live="polite">Loading batches…</p>
+    </section>
+
+    <p id="page-message" class="page-message" role="status" aria-live="polite"></p>
+
+    <form id="review-form" method="post" action="/api/selections" novalidate>
+      <input id="batch-value" type="hidden" name="batch">
+      <div id="cards" class="cards" aria-live="polite"></div>
+      <div class="save-row">
+        <button id="save-button" type="submit" disabled>Save decisions for this batch</button>
+        <p>Saving changes only this batch. Other batches keep their saved choices and notes.</p>
+      </div>
+    </form>
+    <noscript>This page needs JavaScript to load images and save choices.</noscript>
+  </main>
+</body>
+</html>

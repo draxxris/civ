@@ -1,0 +1,1373 @@
+{
+  "baseline": "previous equal-cell crops in revisions/artwork-fixes-001/crops; source bounds reconstructed from prepare_artwork_fixes.py",
+  "items": [
+    {
+      "row": 0,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        0,
+        170,
+        170
+      ],
+      "equal_crop_size": [
+        170,
+        170
+      ],
+      "splitter_crop_box": [
+        3,
+        3,
+        167,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        7,
+        163,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 0,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        0,
+        341,
+        170
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        174,
+        3,
+        338,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        7,
+        334,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 0,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        0,
+        512,
+        170
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        345,
+        3,
+        509,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        7,
+        505,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 0,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        0,
+        682,
+        170
+      ],
+      "equal_crop_size": [
+        170,
+        170
+      ],
+      "splitter_crop_box": [
+        515,
+        3,
+        679,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        7,
+        675,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 0,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        0,
+        853,
+        170
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        686,
+        3,
+        850,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        7,
+        846,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 0,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        0,
+        1024,
+        170
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        857,
+        3,
+        1021,
+        167
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        7,
+        1017,
+        163
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        170,
+        170,
+        341
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        3,
+        174,
+        167,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        178,
+        163,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        170,
+        341,
+        341
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        174,
+        174,
+        338,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        178,
+        334,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        170,
+        512,
+        341
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        345,
+        174,
+        509,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        178,
+        505,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        170,
+        682,
+        341
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        515,
+        174,
+        679,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        178,
+        675,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        170,
+        853,
+        341
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        686,
+        174,
+        850,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        178,
+        846,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 1,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        170,
+        1024,
+        341
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        857,
+        174,
+        1021,
+        338
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        178,
+        1017,
+        334
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        341,
+        170,
+        512
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        3,
+        345,
+        167,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        349,
+        163,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        341,
+        341,
+        512
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        174,
+        345,
+        338,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        349,
+        334,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        341,
+        512,
+        512
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        345,
+        345,
+        509,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        349,
+        505,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        341,
+        682,
+        512
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        515,
+        345,
+        679,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        349,
+        675,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        341,
+        853,
+        512
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        686,
+        345,
+        850,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        349,
+        846,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 2,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        341,
+        1024,
+        512
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        857,
+        345,
+        1021,
+        509
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        349,
+        1017,
+        505
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        512,
+        170,
+        682
+      ],
+      "equal_crop_size": [
+        170,
+        170
+      ],
+      "splitter_crop_box": [
+        3,
+        515,
+        167,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        519,
+        163,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        512,
+        341,
+        682
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        174,
+        515,
+        338,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        519,
+        334,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        512,
+        512,
+        682
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        345,
+        515,
+        509,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        519,
+        505,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        512,
+        682,
+        682
+      ],
+      "equal_crop_size": [
+        170,
+        170
+      ],
+      "splitter_crop_box": [
+        515,
+        515,
+        679,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        519,
+        675,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        512,
+        853,
+        682
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        686,
+        515,
+        850,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        519,
+        846,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 3,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        512,
+        1024,
+        682
+      ],
+      "equal_crop_size": [
+        171,
+        170
+      ],
+      "splitter_crop_box": [
+        857,
+        515,
+        1021,
+        679
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        519,
+        1017,
+        675
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        682,
+        170,
+        853
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        3,
+        686,
+        167,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        690,
+        163,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        682,
+        341,
+        853
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        174,
+        686,
+        338,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        690,
+        334,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        682,
+        512,
+        853
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        345,
+        686,
+        509,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        690,
+        505,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        682,
+        682,
+        853
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        515,
+        686,
+        679,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        690,
+        675,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        682,
+        853,
+        853
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        686,
+        686,
+        850,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        690,
+        846,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 4,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        682,
+        1024,
+        853
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        857,
+        686,
+        1021,
+        850
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        690,
+        1017,
+        846
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 0,
+      "equal_crop_box": [
+        0,
+        853,
+        170,
+        1024
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        3,
+        857,
+        167,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        7,
+        861,
+        163,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 1,
+      "equal_crop_box": [
+        170,
+        853,
+        341,
+        1024
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        174,
+        857,
+        338,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        178,
+        861,
+        334,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 2,
+      "equal_crop_box": [
+        341,
+        853,
+        512,
+        1024
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        345,
+        857,
+        509,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        349,
+        861,
+        505,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 3,
+      "equal_crop_box": [
+        512,
+        853,
+        682,
+        1024
+      ],
+      "equal_crop_size": [
+        170,
+        171
+      ],
+      "splitter_crop_box": [
+        515,
+        857,
+        679,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        519,
+        861,
+        675,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 4,
+      "equal_crop_box": [
+        682,
+        853,
+        853,
+        1024
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        686,
+        857,
+        850,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        690,
+        861,
+        846,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    },
+    {
+      "row": 5,
+      "column": 5,
+      "equal_crop_box": [
+        853,
+        853,
+        1024,
+        1024
+      ],
+      "equal_crop_size": [
+        171,
+        171
+      ],
+      "splitter_crop_box": [
+        857,
+        857,
+        1021,
+        1021
+      ],
+      "splitter_crop_size": [
+        164,
+        164
+      ],
+      "trimmed_source_box": [
+        861,
+        861,
+        1017,
+        1017
+      ],
+      "trimmed_source_size": [
+        156,
+        156
+      ],
+      "both_final_sizes": [
+        64,
+        64
+      ]
+    }
+  ]
+}

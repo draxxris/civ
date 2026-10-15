@@ -1,0 +1,162 @@
+Create a NEW sheet of original replacement icons. Image 1 is the mandatory layout template. Image 2 is the APPROVED ART STYLE reference only, not the new subject list. Replace its sample subjects with the exact new subjects below.
+Layout: exactly TWELVE columns and TWELVE rows, 144 identical SQUARE cells. Preserve all boundaries of image 1. Keep ALL row heights equal, including the bottom four rows. No perspective, no squashed bottom rows, no missing cells, no merged cells. Fill all 144 cells, in the given order. Keep breathing room inside every frame.
+Match image 2 exactly in art direction: mature stylized hand-painted strategy illustrations, simplified dimensional forms, warm rich palette, softly brushed shading, not realistic photography or detailed 3D renders, not childish cartoons, no thick ink outlines. Match its beveled silver frames, charcoal-blue backgrounds and visible warm ivory or pale cyan soft glows BEHIND every subject. Do not weaken the glow. Keep the four corners dark.
+Every cell represents ONE coherent building, institution or concept. Secondary props can identify that institution, but keep the composition simple and readable at 64 pixels. Prefer a recognizable building silhouette over tiny interior details. Depict human subjects as natural-proportioned TORSO-UP portraits, never compressed full-body figures. Do not fuse tools, weapons or unrelated objects. No text, labels, letters, numbers, logos or watermarks. Use original designs, not copied game art.
+The following numbered rows and columns are instructions, NOT text to render. Make every cell represent its assigned subject. Do not borrow sample subjects from the style reference.
+ROW 1:
+Column 1, Hoard: Open timber treasure chest with gold vessels, silver coins, carved cups, and a folded woven covering.
+Column 2, Hollywood: Hollywood film studio with a soundstage, cinema camera, bright arc lamps, and several unmarked film reels.
+Column 3, Holographic Combat Simulator: Combat simulator projecting a miniature battlefield around a seated pilot and compact armored vehicle.
+Column 4, Holographic Flight Simulator: Flight simulator with a projected cloudscape, wrapped cockpit canopy, instrument panels, and motion platform.
+Column 5, Holy Order: Medieval religious order's chapterhouse with a stone chapel, cloistered court, plain shields, and candlelit altar.
+Column 6, Rathaus: German rathaus with stepped gable, timber balconies, arched arcade, and a small civic courtyard.
+Column 7, Hospital: Stone hospital with a sheltered entrance, clean linen windows, garden courtyard, and a brass medical emblem.
+Column 8, Hotel: Grand hotel with a columned porte-cochere, glowing lobby windows, luggage cart, and tall corner towers.
+Column 9, House of Parliament: Parliament building with a riverside clock tower, ornate Gothic windows, and a broad arched entrance.
+Column 10, Vegvar: Hungarian hillfort with timber palisade, square lookout tower, steep earthen rampart, and a narrow gate.
+Column 11, Hydro Plant: Hydroelectric station beneath a concrete dam, with steel penstocks, turbine hall, and rushing water.
+Column 12, Hydroponic Farm: Hydroponic greenhouse with vertical crop channels, water pipes, leafy trays, and violet grow lamps.
+ROW 2:
+Column 1, Hypermarket: Vast hypermarket with a glass entrance, stocked aisles, shopping carts, and a wide covered loading dock.
+Column 2, SnowCastle of Kemi: SnowCastle of Kemi with sculpted ice turrets, translucent walls, blue-lit entrance, and carved snow courtyard.
+Column 3, Ice Storehouse: Ice storehouse with thick timber walls, packed ice blocks, insulated door, and frozen water barrels.
+Column 4, Shrine: Small idol shrine with a painted stone figure, offering bowls, flower garlands, and a sheltered carved niche.
+Column 5, Igloo: Snow igloo with a low arched entrance, compact ice blocks, fur-covered doorway, and a windblown Arctic ridge.
+Column 6, Terrace: Incan agricultural terraces cascade down a mountain slope, with stone retaining walls and narrow irrigation channels.
+Column 7, Incubation Center: Incubation center with heated glass pods, delicate hatchlings, temperature gauges, and a sterile nursery room.
+Column 8, Independence Hall: Independence Hall with red brick wings, a white clock tower, arched windows, and a broad green lawn.
+Column 9, Mausoleum: Indian mausoleum with a domed stone roof, carved screen windows, garden pools, and symmetrical corner kiosks.
+Column 10, Industrial Park: Industrial park of low factory blocks, loading bays, freight lanes, water tower, and orderly green margins.
+Column 11, Industrial Robots: Pair of articulated industrial robots welding a metal frame beneath bright sparks and overhead gantry rails.
+Column 12, Infomatrix: Information center with a luminous globe, branching data lines, small server towers, and a glass control dais.
+ROW 3:
+Column 1, Intelligence Agency: Intelligence agency headquarters with guarded entrance, radio dishes, secure file cabinets, and dark glass windows.
+Column 2, International Port: International port with container ships, gantry cranes, customs sheds, and a crowded network of cargo docks.
+Column 3, Interrogation Building: Secure interrogation facility with a stark concrete facade, barred windows, heavy door, and a single lit room.
+Column 4, Ringfort: Irish ringfort with circular earthen banks, timber palisade, central thatched house, and a grassy enclosure.
+Column 5, Ironworks: Ironworks with blast furnace, glowing molten pour, ore carts, chimney stacks, and dark brick walls.
+Column 6, Longhouse: Iroquois longhouse with rounded bark roof, timber frame, central smoke vents, and forest clearing.
+Column 7, Ishtar Gate: Ishtar Gate with brilliant blue glazed bricks, golden lions, bulls, rosettes, and a monumental arched passage.
+Column 8, Islamic Mosque: Great mosque with a broad dome, two slender minarets, geometric tilework, and a spacious courtyard.
+Column 9, Islamic Monastery: Islamic monastery with a quiet tiled courtyard, arched arcades, small domed hall, and shaded fountain.
+Column 10, Masjid al-Haram: Masjid al-Haram with the Kaaba centered within a vast colonnaded courtyard and slender minarets.
+Column 11, Islamic Temple: Islamic temple with a small domed prayer hall, pointed arches, geometric mosaics, and a shaded entry court.
+Column 12, Itsukushima Shrine: Itsukushima Shrine with vermilion timber halls, a great torii in shallow water, and wooded island hills.
+ROW 4:
+Column 1, Jail: Stone jail with barred windows, iron-bound entrance, corner watchtower, and a small walled exercise yard.
+Column 2, Shale Plant: Shale processing plant with crushing drums, dark rock conveyor, retort vessels, and tall industrial stacks.
+Column 3, Jewish Synagogue: Jewish synagogue with a broad central dome, paired towers, arched windows, and a stone courtyard.
+Column 4, Masada: Masada's flat-topped desert fortress with layered stone walls, cliffside palace, and barren mountain escarpment.
+Column 5, Jewish Monastery: Jewish monastery with a quiet stone courtyard, arched study hall, cypress garden, and simple roofline.
+Column 6, Temple of Solomon: Temple of Solomon with a cedar-clad sanctuary, bronze pillars, golden altar, and broad stepped platform.
+Column 7, Jewish Temple: Jewish temple with a carved stone facade, paired columns, menorah-shaped lampstand, and sheltered court.
+Column 8, Castle Keep: Compact castle keep with a square stone tower, crenellated roof, narrow slit windows, and guarded doorway.
+Column 9, Knight's Stable: Knight's stable with saddled horses, polished armor stands, hay bales, and a timber training yard.
+Column 10, Seowon: Korean seowon academy with tiled lecture hall, timber gate, pine trees, and a stepped courtyard.
+Column 11, Kotoku-in: Kotoku-in's bronze Buddha sits beneath open sky, framed by temple pines and a low stone platform.
+Column 12, Kremlin: Kremlin ensemble with red brick walls, onion-domed towers, golden cupolas, and a broad riverside approach.
+ROW 5:
+Column 1, Labor Union: Workers' union hall with a meeting table, empty hard hats, work boots, and a brick street entrance.
+Column 2, Research Laboratory: Research laboratory with glass beakers, brass microscope, specimen shelves, and a bright tiled workbench.
+Column 3, Labyrinth of Knossos: Stone labyrinth of Knossos with winding corridors, red columns, bull frescoes, and a central palace court.
+Column 4, Las Vegas Strip: Las Vegas Strip with illuminated hotel towers, fountains, desert palms, and a winding boulevard at dusk.
+Column 5, Lascaux Caves: Lascaux cave chamber with ochre animal paintings on rough stone, a low passage, and flickering torchlight.
+Column 6, Levee: River levee with a broad grassy embankment, stone floodgate, rippling water, and a protected settlement.
+Column 7, Library: Classical library with arched reading galleries, tall wooden bookcases, marble columns, and a central desk.
+Column 8, Lighthouse: White stone lighthouse on a rugged headland, with a beacon lantern, winding stairs, and foaming sea.
+Column 9, Piliakalnis: Lithuanian hillfort with a steep grassy mound, timber palisade, watch platform, and surrounding woodland.
+Column 10, Louvre: Louvre palace wing with a long mansard roof, ornate stone facade, inner courtyard, and glass pyramid nearby.
+Column 11, Machu Picchu: Machu Picchu's terraced stone citadel clings to a green Andean ridge above misty mountain peaks.
+Column 12, Madison Avenue: Advertising agency studio with drafting tables, blank poster studies, camera equipment, and a Manhattan skyline.
+ROW 6:
+Column 1, Magellan's Voyage: Three-masted exploration ship rounds a headland, with taut sails, ocean charts, and distant islands.
+Column 2, Mint: Mali mint with a clay-brick courtyard, gold dust scales, coin dies, and a guarded treasury chest.
+Column 3, Manor: Fortified manor house with a timber upper story, stone gate, enclosed garden, and surrounding fields.
+Column 4, Manufacturing Plant: Manufacturing plant with assembly conveyors, steel rafters, loading doors, and a bank of factory windows.
+Column 5, Parade Grounds: Military parade pavilion beside a geometric drill field, reviewing stand, lined ranks, and tall plain banners.
+Column 6, Marco Polo's Embassy: Medieval envoy receives visitors in a vaulted stone embassy, with travel chests, silk bolts, and a globe.
+Column 7, Market: Open market square with striped stalls, produce baskets, pottery, hanging fabrics, and a central stone fountain.
+Column 8, Matter Decompiler: Futuristic decompiler chamber with a glowing matter stream, segmented containment ring, and precision control consoles.
+Column 9, Mausoleum of Maussollos: Mausoleum of Maussollos with a high stepped base, colonnaded chamber, sculpted frieze, and pyramidal roof.
+Column 10, Mech Assembly Plant: Mech assembly hangar with a towering unfinished robot, overhead cranes, welding sparks, and tool platforms.
+Column 11, Organ Bank: Organ bank clinic with chilled storage vessels, sealed specimen cases, clean counters, and blue-lit medical monitors.
+Column 12, Meeting of Minds: Mind-link laboratory with two luminous neural chairs, a shared glass display, and a ring of quiet terminals.
+ROW 7:
+Column 1, Menagerie: Royal menagerie with stone animal enclosures, a striped pavilion, leafy courtyard, and peacocks on a path.
+Column 2, Mercenary Camp: Mercenary camp with canvas tents, weapon racks, supply wagons, cooking fire, and a guarded central pavilion.
+Column 3, Temple of Tlaloc: Temple of Tlaloc with a stepped stone pyramid, rain-god carvings, turquoise accents, and broad stairway.
+Column 4, Pyramid of the Magician: Pyramid of the Magician with steep rounded tiers, a narrow summit temple, and carved serpent entrances.
+Column 5, Teotihuacan: Teotihuacan ceremonial avenue with stepped pyramids, feathered standards, and distant mountain silhouettes.
+Column 6, Temple of Quetzalcoatl: Temple of Quetzalcoatl with feathered-serpent carvings, stepped platforms, stone masks, and a broad stair.
+Column 7, Metropolitan Administration: Metropolitan administration building with a domed council chamber, columned wings, and an orderly civic plaza.
+Column 8, Laboratory: Private research laboratory with glass apparatus, precision scales, microscopes, and a compact cleanroom.
+Column 9, Military Academy: Military academy with a formal stone hall, parade ground, cadet barracks, and a small training monument.
+Column 10, Military Base: Military base with hangars, parked utility vehicles, radio mast, and a guarded perimeter road.
+Column 11, Mill: Water-powered grain mill with a broad wooden wheel, stone race, millhouse, and sacks of fresh flour.
+Column 12, Mind-Control Center: Futuristic control center with a sealed neural chamber, concentric signal panels, and a row of empty chairs.
+ROW 8:
+Column 1, Mind Storage: Mind storage vault with glowing glass memory cylinders, cooling pipes, numbered bays, and a central server core.
+Column 2, Mining Inc. Survey: Mining survey office with geological maps, mineral samples, drill core racks, and a rugged field entrance.
+Column 3, Missile Lab: Underground missile silo with a raised circular hatch, concrete launch shaft, steel gantry, and distant control bunker.
+Column 4, Moai Statues: Row of monumental moai heads with long carved faces, grassy island slope, and blue ocean beyond.
+Column 5, Moat: Broad castle moat encircles a stone wall, with calm water, a drawbridge, reeds, and square guard towers.
+Column 6, Mt. Rushmore: Mount Rushmore's four monumental granite faces emerge from a pine-covered cliff above a rocky ledge.
+Column 7, Museum: Museum gallery with sculpted antiquities, glass display cases, marble columns, and a high skylit ceiling.
+Column 8, Myth of the Beast: Bronze beast figurine beside a painted story scroll, carved stone plinth, and curling decorative smoke.
+Column 9, Myth of the Hero: Heroic bronze figure holding a simple shield beside an open parchment and laurel-wreathed stone pedestal.
+Column 10, Myth of the Sea: Sea myth vignette with a carved wave, bronze trident, curling fish, and a small sailing vessel.
+Column 11, Myth of the Sky: Sky myth vignette with a bronze sun disk, crescent moon, winged bird, and painted star field.
+Column 12, Nanite Defuser: Nanite defuser device with a glass containment sphere, delicate emitter arms, and a compact control pedestal.
+ROW 9:
+Column 1, Nanite Lab: Nanite laboratory with a magnified robotic swarm, sealed glass vessel, microscopes, and glowing blue instruments.
+Column 2, Utility Fog: Utility fog machine releasing a sparkling cloud of tiny robots around miniature tools and a small structure.
+Column 3, Nano Research Department: Nanotechnology lab with a magnified nanotube lattice, precision probe, glass chamber, and blue-lit workbench.
+Column 4, Nanofactory: Nanofactory with robotic assembly arms, molecular-scale display, compact feedstock vats, and a spotless enclosure.
+Column 5, National Epic: Open heroic manuscript on a carved lectern, with a bronze helmet, laurel wreath, and candlelit backdrop.
+Column 6, National Mint: National mint with a heavy coin press, polished dies, stacked blank disks, and a stone treasury hall.
+Column 7, National Park: Protected mountain park with a forested valley, winding trail, ranger shelter, and distant snow peaks.
+Column 8, National Redoubt: Mountain redoubt with layered stone bunkers, narrow tunnels, gun embrasures, and a concealed alpine entrance.
+Column 9, Security Bureau: Security bureau headquarters with reinforced windows, guarded vestibule, radio mast, and secure records room.
+Column 10, National Shield: Protective energy shield over a compact city model, anchored by four glowing pylons and a central emitter.
+Column 11, Totem Pole: Carved Pacific Northwest totem pole with stacked animal figures, painted wings, and a cedar-plank village backdrop.
+Column 12, Naval Yard: Naval yard with drydock, timber ship frames, repair cranes, rope coils, and a harbor-side workshop.
+ROW 10:
+Column 1, Network Node: Network node with a central router, branching luminous cables, small server racks, and glass connection panels.
+Column 2, Neuschwanstein: Neuschwanstein Castle rises above an alpine forest, with pale towers, steep roofs, and rugged mountain peaks.
+Column 3, National Sports League: Ice hockey arena with curved glass rink, empty spectator tiers, crossed sticks, and bright overhead lights.
+Column 4, Stockfish: Norwegian stockfish racks beside a fjord harbor, with drying cod, timber wharf, and a small fishing boat.
+Column 5, Notre Dame: Notre Dame Cathedral with twin Gothic towers, flying buttresses, rose window, and the Seine-side stone facade.
+Column 6, Nuclear Plant: Nuclear power station with twin cooling towers, turbine hall, enclosed reactor dome, and high-voltage lines.
+Column 7, National Weather Service: Weather service station with radar dome, wind gauges, cloud maps, and a compact meteorological office.
+Column 8, Monument: Memorial obelisk rises from a circular plaza, with a carved stone base, wreaths, and shallow reflecting pool.
+Column 9, Observatory: Stone observatory with a copper telescope, rotating dome, star charts, and a clear high-altitude night sky.
+Column 10, Oil Power Plant: Oil-fired power station with fuel tanks, a turbine building, pipe racks, and compact exhaust stacks.
+Column 11, Oil Refinery: Oil refinery with distillation columns, steel catwalks, pipework, storage tanks, and a loading pipeline.
+Column 12, Omnifactory: Robotic omnifactory with modular production cells, conveyor belts, component bins, and a bright central assembly arm.
+ROW 11:
+Column 1, The Oracle: Ancient oracle sanctuary with a veiled tripod, incense bowl, carved columns, and a shadowed inner chamber.
+Column 2, Orbital Factory: Orbital factory module with articulated arms, solar panels, cargo pods, and Earth visible through a window.
+Column 3, Orbital Hotel: Orbital hotel with a ring-shaped guest deck, observation windows, docking bay, and Earthlight beyond.
+Column 4, Hammam: Ottoman hammam with a domed bathhouse, marble fountain, arched steam chambers, and patterned tiled walls.
+Column 5, Oxford University: Oxford college courtyard with honey-colored stone halls, a chapel tower, arched walkways, and clipped lawn.
+Column 6, Painter's Studio: Painter's studio with an easel, half-finished landscape, pigment jars, brush rack, and tall north-facing window.
+Column 7, Palace: Royal palace with a broad ceremonial stair, domed audience hall, carved balconies, and symmetrical garden wings.
+Column 8, Palisade: Wooden palisade of sharpened logs surrounds a compact settlement, with a watch platform and heavy timber gate.
+Column 9, Paper Mill: Water-powered paper mill with pulp vats, drying sheets, wooden presses, and a stone millrace.
+Column 10, Park Arcology: Green arcology tower with planted terraces, glass atrium, rooftop forest, and cascading garden balconies.
+Column 11, Parthenon: Parthenon with fluted marble columns, sculpted triangular pediment, broad steps, and a sunlit Acropolis ridge.
+Column 12, Peace Movement: Peace gathering beneath a white dove sculpture, with folded banners, flower wreaths, and a quiet civic square.
+ROW 12:
+Column 1, Pentagon: Pentagon headquarters with five-sided wings, central courtyard, low stone facade, and broad surrounding lawn.
+Column 2, Satrap: Persian provincial hall with a columned audience porch, carved reliefs, tiled roof, and guarded garden gate.
+Column 3, Petra: Petra's rose-red Treasury facade carved into a sheer sandstone cliff, with a narrow canyon approach.
+Column 4, Pharmacy: Old-world pharmacy with glass medicine jars, brass scales, herb drawers, and a green-painted wooden counter.
+Column 5, Photographer's Studio: Photographer's studio with a bellows camera, folding screen, portrait chair, glass plates, and darkroom lantern.
+Column 6, Leaning Tower: Leaning Tower of Pisa with open marble arcades, a pronounced tilt, bell chamber, and crowded stone base.
+Column 7, Plague Hospital: Plague hospital with a walled isolation ward, shuttered windows, herb garden, and a small watch pavilion.
+Column 8, Planning Office: Planning office with architectural models, rolled city plans, drafting tables, and orderly map cabinets.
+Column 9, Plato's Academy: Plato's Academy beneath olive trees, with a marble teaching portico, benches, and a quiet garden path.
+Column 10, Pleistocene Park: Ice-age wildlife park with shaggy mammoths, grazing horses, frozen grasses, and distant snowy hills.
+Column 11, Police Station: Police station with a stone entrance, barred holding windows, secure courtyard, and a parked patrol carriage.
+Column 12, Polis Council: Greek polis council chamber with semicircular stone benches, a speaker's dais, columns, and a civic courtyard.
+Final check: 12 columns, 12 equal-height rows, 144 distinct square framed icons. Bottom-row cells have exactly the same dimensions as top-row cells.

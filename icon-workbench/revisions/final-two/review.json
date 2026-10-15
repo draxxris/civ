@@ -1,0 +1,10 @@
+{
+  "changed_candidates": [
+    "cities:railgun_turret",
+    "cities:burningman"
+  ],
+  "inspection": "Visible flames and exactly two arms on the effigy; rectangular railgun housing, barrel and muzzle.",
+  "approved_candidates_unchanged": true,
+  "saved_decisions_unchanged": true,
+  "extraction": "Shared splitter helper, 1x1 source, full square crop, no border trimming required."
+}

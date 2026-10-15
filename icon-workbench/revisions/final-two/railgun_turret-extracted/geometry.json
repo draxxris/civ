@@ -1,0 +1,67 @@
+{
+  "source": "/home/gordon/workspace/civ-worktrees/goodies/icon-workbench/revisions/final-two/railgun_turret-20261015-133413-001.png",
+  "source_size": [
+    1024,
+    1024
+  ],
+  "grid": {
+    "rows": 1,
+    "cols": 1,
+    "cell_width": 1024.0,
+    "cell_height": 1024.0
+  },
+  "parameters": {
+    "crop_size": 1024,
+    "cut_edges": 0,
+    "output_size": 64,
+    "search_radius": 0,
+    "coarse_step": 4,
+    "tolerance": 0.03,
+    "cleanup": 3,
+    "balance_depth": 12,
+    "manual_offsets": {}
+  },
+  "centering_note": "Automatic centering uses the vendored outer-edge background mask. Silver frames can enclose blue cell backgrounds, so the mask may not describe each cell interior. Check the debug images and adjust manual offsets or use search_radius=0 when automatic scores are not useful.",
+  "icons": [
+    {
+      "row": 0,
+      "column": 0,
+      "display_row": 1,
+      "display_column": 1,
+      "file": "icons/icon_r00_c00.png",
+      "nominal_center": [
+        512.0,
+        512.0
+      ],
+      "auto_center": [
+        512.0,
+        512.0
+      ],
+      "manual_offset": [
+        0,
+        0
+      ],
+      "final_center": [
+        512.0,
+        512.0
+      ],
+      "center_score": 0,
+      "crop_box": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "trimmed_source_box": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "output_size": [
+        64,
+        64
+      ]
+    }
+  ]
+}

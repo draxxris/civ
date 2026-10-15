@@ -1,0 +1,16 @@
+127.0.0.1 - - [15/Oct/2026 09:53:15] "GET /api/review?batch=cities-001 HTTP/1.1" 500 -
+.127.0.0.1 - - [15/Oct/2026 09:53:15] "GET /api/review?batch=cities-001 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 09:53:15] "GET /media/candidate?batch=cities-001&index=0 HTTP/1.1" 200 -
+.127.0.0.1 - - [15/Oct/2026 09:53:16] "GET /api/review?batch=cities-001 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 09:53:16] "GET /media/candidate?batch=cities-001&index=0 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 09:53:16] "GET /media/original?batch=cities-001&index=0 HTTP/1.1" 200 -
+.
+----------------------------------------------------------------------
+Ran 3 tests in 1.673s
+
+OK
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.018s
+
+OK

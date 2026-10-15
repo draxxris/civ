@@ -1,0 +1,2886 @@
+{
+  "version": 1,
+  "approval_scope": "Style and content only; no geometry approvals",
+  "candidates": {
+    "cities:abu_simbel": {
+      "candidate": "batches/cities-001/review-crops/r01-c01.png",
+      "sha256": "a3e55b60437208d1dc23c4b39e800dd0efedd7f1237e1e83f17449d9a77de035",
+      "geometry_status": "pending"
+    },
+    "cities:adam_smith": {
+      "candidate": "batches/cities-001/review-crops/r01-c02.png",
+      "sha256": "cb3be94e11a12b49620474d936684f9af79f7a489539e3b70edc42f524b86009",
+      "geometry_status": "pending"
+    },
+    "cities:admiralty": {
+      "candidate": "batches/cities-001/review-crops/r01-c03.png",
+      "sha256": "e7e50fa0ca828884a9fe8e78869625ede7f3f56ed581e40989e3fe8a01792942",
+      "geometry_status": "pending"
+    },
+    "cities:advanced_quality_control": {
+      "candidate": "batches/cities-001/review-crops/r01-c04.png",
+      "sha256": "0dae7ff0a8524c3bddbdffd0b98546319badcd5d3aa67ffc25d4a23a249423da",
+      "geometry_status": "pending"
+    },
+    "cities:ad_agency": {
+      "candidate": "revisions/logo-overlays/ad_agency.png",
+      "sha256": "901c6e8081cee665784c9a8909f6b32f820906421b5ac82ddfbb38810e609da9",
+      "geometry_status": "pending"
+    },
+    "cities:agora": {
+      "candidate": "batches/cities-001/review-crops/r01-c06.png",
+      "sha256": "6cb635037873a37e9cf44a0eda583191e6f8df4d1e54323cafe5c7e04adbd59f",
+      "geometry_status": "pending"
+    },
+    "cities:ai_surveillance": {
+      "candidate": "batches/cities-001/review-crops/r01-c07.png",
+      "sha256": "e9fb63547e11ce5f9d0479b841dac03d1decffab42b88e24cc60d32d10662aec",
+      "geometry_status": "pending"
+    },
+    "cities:airport": {
+      "candidate": "batches/cities-001/review-crops/r01-c08.png",
+      "sha256": "1057cb45413e4bf292b21284b3ae3b2dcb13475a69c0d83e3d386b32b448e0c8",
+      "geometry_status": "pending"
+    },
+    "cities:commercial_airport": {
+      "candidate": "batches/cities-001/review-crops/r01-c09.png",
+      "sha256": "84ff0abc5400e1f26af6aae3b191b5f72e96ee23e8303ce3c1e9b6a3b3d922c6",
+      "geometry_status": "pending"
+    },
+    "cities:aluminum_co_r_source_d": {
+      "candidate": "batches/cities-001/review-crops/r01-c10.png",
+      "sha256": "57f28d399768dbacc3641b3833962c84077217667d25eab5c1133345878c8302",
+      "geometry_status": "pending"
+    },
+    "cities:apadana_palace": {
+      "candidate": "batches/cities-001/review-crops/r01-c11.png",
+      "sha256": "18d41be890a5c2f03aac39c8f8c040008fcc0cd84595942a5ea01e74aa51c615",
+      "geometry_status": "pending"
+    },
+    "cities:apiary": {
+      "candidate": "batches/cities-001/review-crops/r01-c12.png",
+      "sha256": "019c8b4e3936b929491a4b377d4df532479dec01eed23165d36a6a4205d53c56",
+      "geometry_status": "pending"
+    },
+    "cities:apostolic_palace": {
+      "candidate": "batches/cities-001/review-crops/r02-c01.png",
+      "sha256": "636937de0c7d1b4c2e131ebc074f55e71dee4aaadb75a4222d69c3f4cc0fb17b",
+      "geometry_status": "pending"
+    },
+    "cities:apothecary": {
+      "candidate": "batches/cities-001/review-crops/r02-c02.png",
+      "sha256": "30583b4d34612621895c72c0d8924ca601f261867c9f85411f8dea8be6ffe020",
+      "geometry_status": "pending"
+    },
+    "cities:arcology": {
+      "candidate": "batches/cities-001/review-crops/r02-c03.png",
+      "sha256": "4efd8142effc18e0bc35116753cc7ef5e281cd7abe225ada9a48ade24ea659dc",
+      "geometry_status": "pending"
+    },
+    "cities:advanced_shielding": {
+      "candidate": "batches/cities-001/review-crops/r02-c04.png",
+      "sha256": "b9a05a8f07cba77fa432a657f6433f92446b55a90d036779cbd92c78454c6efc",
+      "geometry_status": "pending"
+    },
+    "cities:arena": {
+      "candidate": "revisions/logo-overlays/arena.png",
+      "sha256": "fb13419a9ec680ba8952a9c54489db661c8dc526f0b545dadfb87a8dc864f163",
+      "geometry_status": "pending"
+    },
+    "cities:arsenal": {
+      "candidate": "revisions/logo-overlays/arsenal.png",
+      "sha256": "0c5ec5f723946abf968ded32151dddda1c8741d06ed0abdca6433717e2373143",
+      "geometry_status": "pending"
+    },
+    "cities:art_gallery": {
+      "candidate": "batches/cities-001/review-crops/r02-c07.png",
+      "sha256": "d0141fc627888ff9792639560176c4b06a209a2dfca560da8591dc9126e1b5d3",
+      "geometry_status": "pending"
+    },
+    "cities:art_of_war": {
+      "candidate": "batches/cities-001/review-crops/r02-c08.png",
+      "sha256": "e2eaeb64cee9a7d5fcd4e91c42e03eb535ff81d6304fa4477f43301e16b44885",
+      "geometry_status": "pending"
+    },
+    "cities:arthub": {
+      "candidate": "revisions/logo-overlays/arthub.png",
+      "sha256": "87d6b0a7797ec45b8f36a8d33c962a2651c8d3470f173cb853331408d197458a",
+      "geometry_status": "pending"
+    },
+    "cities:artist_guild": {
+      "candidate": "batches/cities-001/review-crops/r02-c10.png",
+      "sha256": "82ca347671bb950b59d9de285a6340d9e6587b437f2c81268b33e115cafbdb9d",
+      "geometry_status": "pending"
+    },
+    "cities:asatru_cathedral": {
+      "candidate": "revisions/logo-overlays/asatru_cathedral.png",
+      "sha256": "cd33eb6d24f5227592f54752f4562ee0367100ac8fe43c6275919438ee1e5fb3",
+      "geometry_status": "pending"
+    },
+    "cities:asatru_temple": {
+      "candidate": "revisions/logo-overlays/asatru_temple.png",
+      "sha256": "4d8e47023729ee63f174f6059fb5d504581ff365b2ab1d654fa2691cbdc4e613",
+      "geometry_status": "pending"
+    },
+    "cities:german_assembly_plant": {
+      "candidate": "batches/cities-001/review-crops/r03-c01.png",
+      "sha256": "d14488701bb7aafc4a7b4bc87fe50ad23c13bf64528b9a7fec8cb306fb0d72bb",
+      "geometry_status": "pending"
+    },
+    "cities:augmentation_center": {
+      "candidate": "batches/cities-001/review-crops/r03-c02.png",
+      "sha256": "728fcc924214de45a5125dc748661ffde65a7696c9924a169f01a44043b5d471",
+      "geometry_status": "pending"
+    },
+    "cities:automated_defenses": {
+      "candidate": "revisions/logo-overlays/automated_defenses.png",
+      "sha256": "82c84f70a5660f19724ef9b3edd187ad67bab04abd1d1915372868f84cadf0d6",
+      "geometry_status": "pending"
+    },
+    "cities:body_exchange": {
+      "candidate": "batches/cities-001/review-crops/r03-c04.png",
+      "sha256": "edaf54c5cdb69fc3913703d67e6d31bb302c90bd74395e5455fb8d88719bb60f",
+      "geometry_status": "pending"
+    },
+    "cities:maya_ball_court": {
+      "candidate": "batches/cities-001/review-crops/r03-c05.png",
+      "sha256": "bcea721d23990ac5b94265d41159becb0fd205336201fd21cf9d6e6f2d9ce84f",
+      "geometry_status": "pending"
+    },
+    "cities:siege_towers": {
+      "candidate": "batches/cities-001/review-crops/r03-c06.png",
+      "sha256": "1a279f96218376fab04011c6d838f766851fca50563ecd64811be1984d927b8f",
+      "geometry_status": "pending"
+    },
+    "cities:bank": {
+      "candidate": "batches/cities-001/review-crops/r03-c07.png",
+      "sha256": "65bf35958bc6c40c01b4d79cc9e55c4b976c2873035d8959e86d7b1b33c80a0e",
+      "geometry_status": "pending"
+    },
+    "cities:khmer_baray": {
+      "candidate": "batches/cities-001/review-crops/r03-c08.png",
+      "sha256": "ae33ba528b90b06ff174adf84704abe005b83a50f66603cb2641ff0124bb0814",
+      "geometry_status": "pending"
+    },
+    "cities:barbwire_fence": {
+      "candidate": "revisions/logo-overlays/barbwire_fence.png",
+      "sha256": "8cdcac0d5ae87eccf4df4884c34a6ab72021d9e6a8ce332266d9b82fe719c336",
+      "geometry_status": "pending"
+    },
+    "cities:barracks": {
+      "candidate": "batches/cities-001/review-crops/r03-c10.png",
+      "sha256": "0cedfb9ca34e70932a195cc5790cfad726ae755cc925c2ce881f4209af7a0549",
+      "geometry_status": "pending"
+    },
+    "cities:bauhaus": {
+      "candidate": "batches/cities-001/review-crops/r03-c11.png",
+      "sha256": "cf60adb42daeeb13b4685f93c89ab002e1787060b45cd7b4a3b7fa3ae8c59ac6",
+      "geometry_status": "pending"
+    },
+    "cities:beadmaker": {
+      "candidate": "batches/cities-001/review-crops/r03-c12.png",
+      "sha256": "4b00eee6cd3e3760ff95e0471357d84742d035c790ec9186a802ce5a92545178",
+      "geometry_status": "pending"
+    },
+    "cities:biological_warfare_lab": {
+      "candidate": "batches/cities-001/review-crops/r04-c01.png",
+      "sha256": "58036026837618fe48cf22f7cbc3f89a5379bc663c2a6f725189f81af53871e1",
+      "geometry_status": "pending"
+    },
+    "cities:bolshoi": {
+      "candidate": "batches/cities-001/review-crops/r04-c02.png",
+      "sha256": "73673da1b23b50279df9d02f1a03aa78b9243b5c5ac5d2b4dc8da9142b8f5005",
+      "geometry_status": "pending"
+    },
+    "cities:bomb_shelter": {
+      "candidate": "batches/cities-001/review-crops/r04-c03.png",
+      "sha256": "121a81488cf955e590752871e175e04069c4bf0243d43082113ffe02b1aa339f",
+      "geometry_status": "pending"
+    },
+    "cities:boulevard_circle": {
+      "candidate": "batches/cities-001/review-crops/r04-c04.png",
+      "sha256": "301f77eb14483ba5c0383cc25bf5a58585c345f164b546c4440d5fc230b53f30",
+      "geometry_status": "pending"
+    },
+    "cities:brandenburg_gate": {
+      "candidate": "batches/cities-001/review-crops/r04-c05.png",
+      "sha256": "74ac082088ddf65137b6303f39625ce8f82bf54eabfe066137a553666976475d",
+      "geometry_status": "pending"
+    },
+    "cities:brewery": {
+      "candidate": "batches/cities-001/review-crops/r04-c06.png",
+      "sha256": "7f4a03f866f6a5cbde76a97579d1b82ada12695a1f2b1649cb2c31a224e474fb",
+      "geometry_status": "pending"
+    },
+    "cities:hindu_brihadeeswarar": {
+      "candidate": "revisions/logo-overlays/hindu_brihadeeswarar.png",
+      "sha256": "8728877b766d0748958f2ec4270c7eab1f5aa4cf5a479364a00c5bdfadc2c737",
+      "geometry_status": "pending"
+    },
+    "cities:national_tv_station": {
+      "candidate": "batches/cities-001/review-crops/r04-c08.png",
+      "sha256": "f992c02880ed8e4007c29e758af03f93e54b5793e03e883c2d8b094cd86b290d",
+      "geometry_status": "pending"
+    },
+    "cities:broadcast_tower": {
+      "candidate": "batches/cities-001/review-crops/r04-c09.png",
+      "sha256": "353c48a8935781ee06a2755364a59949f4cdb9ca46539de29f7c5ad9bc0dacc8",
+      "geometry_status": "pending"
+    },
+    "cities:broadway": {
+      "candidate": "revisions/logo-overlays/broadway.png",
+      "sha256": "7b0b9b0ed04de7da73d963b9e9d31ab7d97703e7c1cb5b383a34e80505a55b80",
+      "geometry_status": "pending"
+    },
+    "cities:scottish_broch": {
+      "candidate": "batches/cities-001/review-crops/r04-c11.png",
+      "sha256": "842e6f58699c21d4a1329712683b5513e5f9d17da193ea8d7d2153ad9264c8a3",
+      "geometry_status": "pending"
+    },
+    "cities:buddhist_cathedral": {
+      "candidate": "revisions/logo-overlays/buddhist_cathedral.png",
+      "sha256": "3dcf5f03e42dc925aceca79152daad5941dc551ba76aa9c290edba9d77d847d1",
+      "geometry_status": "pending"
+    },
+    "cities:buddhist_temple": {
+      "candidate": "revisions/logo-overlays/buddhist_temple.png",
+      "sha256": "9f35dcbaee286a6a647f845a32fa14008fb154b3426b09806c5f480a8043c32e",
+      "geometry_status": "pending"
+    },
+    "cities:bunker": {
+      "candidate": "batches/cities-001/review-crops/r05-c02.png",
+      "sha256": "d95ddb428ed27d361af44cdfe90c17ed255dea1cb528f0053723e8a3c4d4121b",
+      "geometry_status": "pending"
+    },
+    "cities:burningman": {
+      "candidate": "revisions/logo-overlays/burningman.png",
+      "sha256": "a6bfa68b83b8157b9421448065d1efcc66834ef9bc7952f692af236d2266fae4",
+      "geometry_status": "pending"
+    },
+    "cities:butchery": {
+      "candidate": "batches/cities-001/review-crops/r05-c04.png",
+      "sha256": "a8550c151495975ec676deeeb660077659ef2a3739a5875e19d91412dd98a4b7",
+      "geometry_status": "pending"
+    },
+    "cities:cabinet": {
+      "candidate": "batches/cities-001/review-crops/r05-c05.png",
+      "sha256": "2c95eb08a619e2874278d1218c936844465a2b70416fcdd872a1e9d0c9d4fe23",
+      "geometry_status": "pending"
+    },
+    "cities:welsh_caer": {
+      "candidate": "batches/cities-001/review-crops/r05-c06.png",
+      "sha256": "026d0282dc55aa1e4410484243ce03556673475b9fc9a634381a1f2d33ade407",
+      "geometry_status": "pending"
+    },
+    "cities:mesoamerican_monastery": {
+      "candidate": "batches/cities-001/review-crops/r05-c07.png",
+      "sha256": "c13c12ca2b3779f210bcbe00262ecc26ea4e86cc460b85a307a8e0ad8ae49792",
+      "geometry_status": "pending"
+    },
+    "cities:candlemaker": {
+      "candidate": "batches/cities-001/review-crops/r05-c08.png",
+      "sha256": "dcd4470ece5eb40e553ca4e4eb0b0d3ade5cad7c04a70aa5e428f3e3b1acabe8",
+      "geometry_status": "pending"
+    },
+    "cities:cannon_turret": {
+      "candidate": "batches/cities-001/review-crops/r05-c09.png",
+      "sha256": "4dc8af2eb1806fd7c991a1734889665ea9d51a15565aa3021d755fda2a4c6662",
+      "geometry_status": "pending"
+    },
+    "cities:capital_administration": {
+      "candidate": "batches/cities-001/review-crops/r05-c10.png",
+      "sha256": "9e984f390978fcce099863fa0e597156e5c9e4832a168066c3097e0c033fdd67",
+      "geometry_status": "pending"
+    },
+    "cities:caravanserai": {
+      "candidate": "batches/cities-001/review-crops/r05-c11.png",
+      "sha256": "03c73dff924fef5e503b9675e575a9309bb4075e2495a00692ee50c4a1a77081",
+      "geometry_status": "pending"
+    },
+    "cities:carhenge": {
+      "candidate": "batches/cities-001/review-crops/r05-c12.png",
+      "sha256": "f111b0932c5a71154afab07c75ed38cbb42d63533f0231ffdf18d75b35f40b9a",
+      "geometry_status": "pending"
+    },
+    "cities:carpenter": {
+      "candidate": "batches/cities-001/review-crops/r06-c01.png",
+      "sha256": "507ac4bbd766bbcc21659a1151bbc52d9242e1a3996d333786d51045dfbb69ee",
+      "geometry_status": "pending"
+    },
+    "cities:huns_cattle": {
+      "candidate": "batches/cities-001/review-crops/r06-c02.png",
+      "sha256": "806b06432c7ce634f050083c93f54472117f9b81abc0f7403e13b0eb0c7ec1fd",
+      "geometry_status": "pending"
+    },
+    "cities:cement_mill": {
+      "candidate": "batches/cities-001/review-crops/r06-c03.png",
+      "sha256": "6ce5499ad0bf0f7fd3856bfe1cb75df441832c8c10715f70ebeaa104c0eac95e",
+      "geometry_status": "pending"
+    },
+    "cities:cheomseongdae": {
+      "candidate": "batches/cities-001/review-crops/r06-c04.png",
+      "sha256": "9eebd92a04b4fe8c23160508f75e60ea8e9b86779d55e252e38621699bfc1c39",
+      "geometry_status": "pending"
+    },
+    "cities:chichen_itza": {
+      "candidate": "batches/cities-001/review-crops/r06-c05.png",
+      "sha256": "f3405b4df3a39a74c5ca2f84740aaee33df1ed713a5feb567691f5b9d1e072cc",
+      "geometry_status": "pending"
+    },
+    "cities:bulgarian_chitalishte": {
+      "candidate": "revisions/logo-overlays/bulgarian_chitalishte.png",
+      "sha256": "48d7a750a3abccecb01e7aadea421dce3eb65079caa8513302a170746af3a138",
+      "geometry_status": "pending"
+    },
+    "cities:christian_cathedral": {
+      "candidate": "revisions/logo-overlays/christian_cathedral.png",
+      "sha256": "ebf7942bc9a64c3678635a285775c7e6a69bca7e1d34feeaf718f38518d914e5",
+      "geometry_status": "pending"
+    },
+    "cities:christian_temple": {
+      "candidate": "revisions/logo-overlays/christian_temple.png",
+      "sha256": "e6a7af2d3b781560230599111e99c72b0f759657ab2aa7a5adfdee975b03bd95",
+      "geometry_status": "pending"
+    },
+    "cities:christian_shrine": {
+      "candidate": "revisions/logo-overlays/christian_shrine.png",
+      "sha256": "081efe381382ceabd19593d9964308ebd7ecfaa61f89938f1cbadb526fb83a42",
+      "geometry_status": "pending"
+    },
+    "cities:spanish_citadel": {
+      "candidate": "batches/cities-001/review-crops/r06-c10.png",
+      "sha256": "07c51ce958d6ad08e8805a239b6b9ca0abf5cf3ef56346c50bd6a61e1a46b53f",
+      "geometry_status": "pending"
+    },
+    "cities:city_council": {
+      "candidate": "batches/cities-001/review-crops/r06-c11.png",
+      "sha256": "710345684ff3aa7b095000dbd8723b838f510b6c3b20626c3569e0e1181bd239",
+      "geometry_status": "pending"
+    },
+    "cities:ebgatehouse": {
+      "candidate": "revisions/logo-overlays/ebgatehouse.png",
+      "sha256": "d02828642f8db7fc12ec8d7cfe4c0f32bd1a2f7bb91b8602c9f25e784014e1a5",
+      "geometry_status": "pending"
+    },
+    "cities:city_park": {
+      "candidate": "batches/cities-001/review-crops/r07-c01.png",
+      "sha256": "8f101c1452bd0205d483696b0d35caa6f98f57231227619ed34d001a2b1dffc2",
+      "geometry_status": "pending"
+    },
+    "cities:citycreche": {
+      "candidate": "batches/cities-001/review-crops/r07-c02.png",
+      "sha256": "8073bfa10eff7a7b443a676cddb67e0d46074a89cb7dedc4d5c111d2754bfe23",
+      "geometry_status": "pending"
+    },
+    "cities:lombard_cloister": {
+      "candidate": "batches/cities-001/review-crops/r07-c03.png",
+      "sha256": "b90ef8ba480f5c8669309deb031af00fd30c36bfc645db9a74af1472482740f4",
+      "geometry_status": "pending"
+    },
+    "cities:cloning_factory": {
+      "candidate": "batches/cities-001/review-crops/r07-c04.png",
+      "sha256": "5c7b4c78b4ac9790bcd193af9710c2654258fb1503e126aa1aa026d5d493688b",
+      "geometry_status": "pending"
+    },
+    "cities:coal_plant": {
+      "candidate": "batches/cities-001/review-crops/r07-c05.png",
+      "sha256": "8a842947176601779a7c7380497e25897ecd5246a1d93e08512dc49ba4d01335",
+      "geometry_status": "pending"
+    },
+    "cities:colosseum": {
+      "candidate": "batches/cities-001/review-crops/r07-c06.png",
+      "sha256": "6b95ae38f503b997e670cb8e7465fb9340eaf5979adb075910d37c51fc210af4",
+      "geometry_status": "pending"
+    },
+    "cities:colossus": {
+      "candidate": "batches/cities-001/review-crops/r07-c07.png",
+      "sha256": "f98fb7b98912c753544b8a43dab0ba7d91e832688593dfbae098555d2e130771",
+      "geometry_status": "pending"
+    },
+    "cities:combat_simulator": {
+      "candidate": "batches/cities-001/review-crops/r07-c08.png",
+      "sha256": "8ef96167f7c05e2075ea9d29b8c1522278a963ba2762332dc20b747f62ffeab9",
+      "geometry_status": "pending"
+    },
+    "cities:community_center": {
+      "candidate": "batches/cities-001/review-crops/r07-c09.png",
+      "sha256": "1632c3db0970f8f782b00c4d6d1adc234d66ba25e2c468125ec88d41480d84b0",
+      "geometry_status": "pending"
+    },
+    "cities:computer_network": {
+      "candidate": "batches/cities-001/review-crops/r07-c10.png",
+      "sha256": "d784df62989e5066ceaba865a624b9a168da1725f9a2bb2eefcc46dfae410daa",
+      "geometry_status": "pending"
+    },
+    "cities:confucian_temple": {
+      "candidate": "batches/cities-001/review-crops/r07-c11.png",
+      "sha256": "23d8211e9eb85b946a8561c55ed9a80957a363da09a5c8f4b7422e5913e611b4",
+      "geometry_status": "pending"
+    },
+    "cities:construction_firm": {
+      "candidate": "batches/cities-001/review-crops/r07-c12.png",
+      "sha256": "1e2f21a8b779dbda6fdbaac89e5cfffd5c1ec0f544b03d580f1c135168977ea5",
+      "geometry_status": "pending"
+    },
+    "cities:control_center": {
+      "candidate": "batches/cities-001/review-crops/r08-c01.png",
+      "sha256": "9d9300f9fd3ab2daf4c4c7201d4c804fe483a4819fe03621080b81d530fb066b",
+      "geometry_status": "pending"
+    },
+    "cities:corporate_enclave": {
+      "candidate": "batches/cities-001/review-crops/r08-c02.png",
+      "sha256": "c309889b24e98a338613639b31b8c1ae632658cfd7d1e5c047c52da5790ff2d8",
+      "geometry_status": "pending"
+    },
+    "cities:cortegiane_oneste": {
+      "candidate": "batches/cities-001/review-crops/r08-c03.png",
+      "sha256": "b4518badb062558ac48a74836d0a79b1644523cc826d1c00e7573f5b98ca9c49",
+      "geometry_status": "pending"
+    },
+    "cities:carthage_cothon": {
+      "candidate": "batches/cities-001/review-crops/r08-c04.png",
+      "sha256": "1d20eb158f37b2e17769ba2d3de16e9b752abc8b428c6b63a921943011938624",
+      "geometry_status": "pending"
+    },
+    "cities:cotton_gin": {
+      "candidate": "batches/cities-001/review-crops/r08-c05.png",
+      "sha256": "375a7ea43e51d7d9439a99c0e87cdaba4ca6b1ce252206d83902b78fa3746b23",
+      "geometry_status": "pending"
+    },
+    "cities:courier_system": {
+      "candidate": "batches/cities-001/review-crops/r08-c06.png",
+      "sha256": "39cebbb1b34e5c0d75a040cf6905a23a3cc835e1bd259dd28504d42d9606822c",
+      "geometry_status": "pending"
+    },
+    "cities:cguildhall": {
+      "candidate": "batches/cities-001/review-crops/r08-c07.png",
+      "sha256": "994c052566fe69a83e7b90e28941a9e3d0607fd32be4faabee0302656c5fb1fa",
+      "geometry_status": "pending"
+    },
+    "cities:picts_crannog": {
+      "candidate": "batches/cities-001/review-crops/r08-c08.png",
+      "sha256": "07f022373ff7c7f50600dec90ff3795e41a5ce4ed33caf7c76aff5b92d07eb4f",
+      "geometry_status": "pending"
+    },
+    "cities:creative_constructions_office": {
+      "candidate": "batches/cities-001/review-crops/r08-c09.png",
+      "sha256": "ddea8742e695050cdd10135e3a0be2e6ec265d1648a02b565f1526dfeb3ae520",
+      "geometry_status": "pending"
+    },
+    "cities:cristo_redentor": {
+      "candidate": "batches/cities-001/review-crops/r08-c10.png",
+      "sha256": "eff81195d55bd3627c0ab75206c478327f6be7705311b5031252b7250b0ec8e7",
+      "geometry_status": "pending"
+    },
+    "cities:cryogenic_prison": {
+      "candidate": "revisions/logo-overlays/cryogenic_prison.png",
+      "sha256": "df5b3e31b0929f267a6773839d45f854f7b5e90688fc897dbf93d10e88593b89",
+      "geometry_status": "pending"
+    },
+    "cities:crystal_palace": {
+      "candidate": "batches/cities-001/review-crops/r08-c12.png",
+      "sha256": "1b4842e3bbf8d4a3bab3d1c2bac8c5472ccd207f0d8a7159298307ac5d3014b9",
+      "geometry_status": "pending"
+    },
+    "cities:custom_house": {
+      "candidate": "batches/cities-001/review-crops/r09-c01.png",
+      "sha256": "0b3c0b3393f7ded21e0bb84ff39749e580cdc52504d907e2cb6ee41d9e31d69c",
+      "geometry_status": "pending"
+    },
+    "cities:taoist_shrine": {
+      "candidate": "batches/cities-001/review-crops/r09-c02.png",
+      "sha256": "9973b7bbaccc905e9a966947adbd60e88e2c6adea27ccbf6d1dd7d7bda7c2578",
+      "geometry_status": "pending"
+    },
+    "cities:deep_core_mine": {
+      "candidate": "batches/cities-001/review-crops/r09-c03.png",
+      "sha256": "68cf8764c2a17b240017c51534da59c68f332e2f00fcaad24ffc6b96e7c99a1d",
+      "geometry_status": "pending"
+    },
+    "cities:deep_space_research": {
+      "candidate": "batches/cities-001/review-crops/r09-c04.png",
+      "sha256": "31fad464d595dd8abc11a4efdc3ddbe79c5b23b6fe8a0009a156003b0a1e6adc",
+      "geometry_status": "pending"
+    },
+    "cities:design_studio": {
+      "candidate": "batches/cities-001/review-crops/r09-c05.png",
+      "sha256": "c91c2a8263f076cbf9dcd79ac2ac94e1456b53bd5b3887d4697976f2a9f298b3",
+      "geometry_status": "pending"
+    },
+    "cities:netherlands_dike": {
+      "candidate": "batches/cities-001/review-crops/r09-c06.png",
+      "sha256": "dfc15b402b637b5f3f64942daf5b0501f2c7c4874be56dca544b9fb179801b8f",
+      "geometry_status": "pending"
+    },
+    "cities:dinosaur_park": {
+      "candidate": "batches/cities-001/review-crops/r09-c07.png",
+      "sha256": "dc4de9e7ce1d85e264175b03a134fb2830af893d3d333964db6320a49dbc294e",
+      "geometry_status": "pending"
+    },
+    "cities:polling_place": {
+      "candidate": "batches/cities-001/review-crops/r09-c08.png",
+      "sha256": "27dd5a1ea6751dab7a3d220f7f5f400a98165b0d3a0070e28d6c673dfdbb0dff",
+      "geometry_status": "pending"
+    },
+    "cities:river_port": {
+      "candidate": "batches/cities-001/review-crops/r09-c09.png",
+      "sha256": "b05d4a5e8e9a1427968a1735d10cbba2c212561095c58d8c7a4f5827e1406fea",
+      "geometry_status": "pending"
+    },
+    "cities:doctor": {
+      "candidate": "batches/cities-001/review-crops/r09-c10.png",
+      "sha256": "20be1dc442751b45d0d959b5ccc31960f1de2e01c5ccd43ec9a06fe6d7aebcb7",
+      "geometry_status": "pending"
+    },
+    "cities:dosan_seowon": {
+      "candidate": "batches/cities-001/review-crops/r09-c11.png",
+      "sha256": "a0b6dfc2e73765e342e919a8a766fdf8c498a16742d054bb75bde0d04097f25d",
+      "geometry_status": "pending"
+    },
+    "cities:draft_office": {
+      "candidate": "batches/cities-001/review-crops/r09-c12.png",
+      "sha256": "48d32e2d84247e6c5089c15890130ff9a9969026eb8562878d40555b7a902a42",
+      "geometry_status": "pending"
+    },
+    "cities:drydock": {
+      "candidate": "batches/cities-001/review-crops/r10-c01.png",
+      "sha256": "ba595855ccfa9a0039edd3dacf88805c94e75f991dd49e67844f3967e4b832fc",
+      "geometry_status": "pending"
+    },
+    "cities:celtic_dun": {
+      "candidate": "batches/cities-001/review-crops/r10-c02.png",
+      "sha256": "bbec50bb2bfe170d827e20c24486a82cbba1c0cd4a199c11b8da1ad23eb08fe8",
+      "geometry_status": "pending"
+    },
+    "cities:durasteel_plant": {
+      "candidate": "batches/cities-001/review-crops/r10-c03.png",
+      "sha256": "5aa5f24b57a34e975a4af5496958338a4679bb9159f36b81eaf0c0ef125cad9d",
+      "geometry_status": "pending"
+    },
+    "cities:east_india_company": {
+      "candidate": "batches/cities-001/review-crops/r10-c04.png",
+      "sha256": "6c5a77bf0236109f054e9d44665413f0d3572123fcf7550e21497e10a83a898d",
+      "geometry_status": "pending"
+    },
+    "cities:eiffel_tower": {
+      "candidate": "batches/cities-001/review-crops/r10-c05.png",
+      "sha256": "fad5e758f40308e4d588e2debe19b0de8d858257c5577f152ed58f33ede620dc",
+      "geometry_status": "pending"
+    },
+    "cities:elder_council": {
+      "candidate": "batches/cities-001/review-crops/r10-c06.png",
+      "sha256": "def7b399276a265a90205200961636d46f22fc48bdd73831f027ca6a57e42809",
+      "geometry_status": "pending"
+    },
+    "cities:estate": {
+      "candidate": "batches/cities-001/review-crops/r10-c07.png",
+      "sha256": "187727ed84a512edc422a3e93f8247485027a4e1a3fc5536f0dee100bdb2ac27",
+      "geometry_status": "pending"
+    },
+    "cities:exhibition": {
+      "candidate": "batches/cities-001/review-crops/r10-c08.png",
+      "sha256": "6e505744c41dc945a172d7ab25435281b6fe1fff400f8b74e09f7eb77f033891",
+      "geometry_status": "pending"
+    },
+    "cities:highway_project": {
+      "candidate": "revisions/logo-overlays/highway_project.png",
+      "sha256": "000f1fbd1da162efe4a5c02d1b12e68bad62aadba249887e5fef6fdc26494fd8",
+      "geometry_status": "pending"
+    },
+    "cities:farmscraper_i": {
+      "candidate": "batches/cities-001/review-crops/r10-c10.png",
+      "sha256": "25c4c2c26bda7b17770be97223a9f69001392086305e9fe3a7c5273703db9346",
+      "geometry_status": "pending"
+    },
+    "cities:federal_reserve": {
+      "candidate": "batches/cities-001/review-crops/r10-c11.png",
+      "sha256": "56f447c70af96909d5c08f1d11516f47ffd62e0bc94e5664d06522e31905a781",
+      "geometry_status": "pending"
+    },
+    "cities:portugal_feitoria": {
+      "candidate": "batches/cities-001/review-crops/r10-c12.png",
+      "sha256": "0f696b1f509f143f721ce2ff140d8a42efdd4e3a9987c4a966adcb524a6575ad",
+      "geometry_status": "pending"
+    },
+    "cities:fertilizer_plant": {
+      "candidate": "batches/cities-001/review-crops/r11-c01.png",
+      "sha256": "59aae11c1c92f49846f00d2239d4b3b5e27bb79e2e8d93d7abb9e0c9f3223fcd",
+      "geometry_status": "pending"
+    },
+    "cities:festival": {
+      "candidate": "batches/cities-001/review-crops/r11-c02.png",
+      "sha256": "52cc766757ae5716dd72b393284d779fbf493bca401ae3a732573bab585fe867",
+      "geometry_status": "pending"
+    },
+    "cities:fighting_pit": {
+      "candidate": "batches/cities-001/review-crops/r11-c03.png",
+      "sha256": "a6918d8bc1885f1c8aeda469bf0dfcaafd79c173d2cb0d0fee9f787f937ee0cf",
+      "geometry_status": "pending"
+    },
+    "cities:first_nuclear_test": {
+      "candidate": "batches/cities-001/review-crops/r11-c04.png",
+      "sha256": "cab87954cf9a06c0521549c07273cc70495b00cba91361a16b0fee3bdc8b6d75",
+      "geometry_status": "pending"
+    },
+    "cities:fish_farm": {
+      "candidate": "batches/cities-001/review-crops/r11-c05.png",
+      "sha256": "53fa52e1348751db113b1590be1d1f3c2c4d45e6abf6c7ed6079fb2c8bb42213",
+      "geometry_status": "pending"
+    },
+    "cities:fishtraps": {
+      "candidate": "batches/cities-001/review-crops/r11-c06.png",
+      "sha256": "0ea17b756e49ce90355476f80e312821c2cdaf598edbc187a4813a4c65a9a771",
+      "geometry_status": "pending"
+    },
+    "cities:fisherman_hut": {
+      "candidate": "batches/cities-001/review-crops/r11-c07.png",
+      "sha256": "a000015174f25a7766566163763f2da71b5343fa6771855d4d78e97b4c4c6693",
+      "geometry_status": "pending"
+    },
+    "cities:flagpole": {
+      "candidate": "batches/cities-001/review-crops/r11-c08.png",
+      "sha256": "310b54383b978c6f41c239d7350a1f5a69cc065d1e0793a523f99709c23d57d3",
+      "geometry_status": "pending"
+    },
+    "cities:flak_tower": {
+      "candidate": "batches/cities-001/review-crops/r11-c09.png",
+      "sha256": "9704c191aab2a0a5f81c01e54a2c244f7bd396e43bcb021dc23427f91d7a0994",
+      "geometry_status": "pending"
+    },
+    "cities:flight_simulator": {
+      "candidate": "batches/cities-001/review-crops/r11-c10.png",
+      "sha256": "c730743f0e28283c8029dad9d2874fae71eec1b6eac9577804cd4a72b10ee29b",
+      "geometry_status": "pending"
+    },
+    "cities:polish_folwark": {
+      "candidate": "batches/cities-001/review-crops/r11-c11.png",
+      "sha256": "3e27ef60092cb5f3abcd22fd492338645a37bf05bfd2b4291c880a239bf29e4c",
+      "geometry_status": "pending"
+    },
+    "cities:forge": {
+      "candidate": "batches/cities-001/review-crops/r11-c12.png",
+      "sha256": "ca66b509258d228325e5a814bfdcf2e861d2a2328674b96018ed02174a65f971",
+      "geometry_status": "pending"
+    },
+    "cities:roman_forum": {
+      "candidate": "batches/cities-001/review-crops/r12-c01.png",
+      "sha256": "04e1b5a1bde27133ccbcd9b64744ac756f870e8f82f2fb73ae1cc789e616104c",
+      "geometry_status": "pending"
+    },
+    "cities:foundation": {
+      "candidate": "revisions/logo-overlays/foundation.png",
+      "sha256": "d6d90a927e1613f646a9dd3d0ca7179d5b77d9a47aa283e58014c555e9257c2d",
+      "geometry_status": "pending"
+    },
+    "cities:funeral_pyre": {
+      "candidate": "batches/cities-001/review-crops/r12-c03.png",
+      "sha256": "09c48f35051aa232eb251d03a1c5dbcd9959f8a525233491fa5058cb71b9f7fb",
+      "geometry_status": "pending"
+    },
+    "cities:furrier": {
+      "candidate": "batches/cities-001/review-crops/r12-c04.png",
+      "sha256": "e32e0e143bf655e8924694ab1e2ab35c2e7fcfa6d8800f09ea2c6eab7a4beaf4",
+      "geometry_status": "pending"
+    },
+    "cities:gambling_hall": {
+      "candidate": "batches/cities-001/review-crops/r12-c05.png",
+      "sha256": "baad6fd11a087faf5aba8ca5e819650bbea87d494e910eed4caf644f8837b2fa",
+      "geometry_status": "pending"
+    },
+    "cities:babylon_garden": {
+      "candidate": "batches/cities-001/review-crops/r12-c06.png",
+      "sha256": "c9079afd160c939868821ba5735a7dc4dae9a7224c0ce6ca8ef980a3e08af3ad",
+      "geometry_status": "pending"
+    },
+    "cities:gardens_bay": {
+      "candidate": "batches/cities-001/review-crops/r12-c07.png",
+      "sha256": "647cb7196a84e3b12ee3ec909ff779e5ccfa27fd675958f0925c2cc0c27b3d9a",
+      "geometry_status": "pending"
+    },
+    "cities:garrison": {
+      "candidate": "batches/cities-001/review-crops/r12-c08.png",
+      "sha256": "db442478797aa7ea6f983f4f85d4cec884bbf7fe6de6417595c13a682f017f8e",
+      "geometry_status": "pending"
+    },
+    "cities:gengineer": {
+      "candidate": "batches/cities-001/review-crops/r12-c09.png",
+      "sha256": "6064fec2dd90326993cfa376b8955101a712051110b14e941b9dcaebace1f923",
+      "geometry_status": "pending"
+    },
+    "cities:geothermal_power_plant": {
+      "candidate": "batches/cities-001/review-crops/r12-c10.png",
+      "sha256": "64cb394238418c4f7d7ffb8e27654bcaf4b51f992f984c4bb6529162eb037a82",
+      "geometry_status": "pending"
+    },
+    "cities:mongol_ger": {
+      "candidate": "batches/cities-001/review-crops/r12-c11.png",
+      "sha256": "190ca02fd1889f2b3a07f7d65909edeb3393e1f35ec779c971fd8fea02b86239",
+      "geometry_status": "pending"
+    },
+    "cities:glasssmith": {
+      "candidate": "batches/cities-001/review-crops/r12-c12.png",
+      "sha256": "eb734df632ccc73d228a7d0cdaff9542b4fe18ed4bcaa33faa7ce17fb7116791",
+      "geometry_status": "pending"
+    },
+    "cities:academy": {
+      "candidate": "batches/cities-002/review-crops/r01-c01.png",
+      "sha256": "2707e09a9456256861fcfa7024432c5929bb898b7389e5b09bc6b3bca4d23fbf",
+      "geometry_status": "pending"
+    },
+    "cities:aerospace_complex": {
+      "candidate": "batches/cities-002/review-crops/r01-c02.png",
+      "sha256": "bad9cd298eb1841f76323f2da4c6a1b4c7bac47f135cb87934478d84abd1e4bb",
+      "geometry_status": "pending"
+    },
+    "cities:albania_illogor": {
+      "candidate": "batches/cities-002/review-crops/r01-c03.png",
+      "sha256": "d7239665592026e1287c9e65d2a70d62f81b17fa019edb06e993d2b0483538f8",
+      "geometry_status": "pending"
+    },
+    "cities:aluminum_factory": {
+      "candidate": "batches/cities-002/review-crops/r01-c04.png",
+      "sha256": "93b69906db68ed92c4fb317dcd12c8bd6602704c80319fce262ae9318eb2f728",
+      "geometry_status": "pending"
+    },
+    "cities:american_mall": {
+      "candidate": "batches/cities-002/review-crops/r01-c05.png",
+      "sha256": "26a9a1628f43589349ab47b65e98d1bf8b60e637fc0f6e503c38f24fa2373a0a",
+      "geometry_status": "pending"
+    },
+    "cities:android_factory": {
+      "candidate": "batches/cities-002/review-crops/r01-c06.png",
+      "sha256": "681f863fd8b7eb89cb72978bab2dfc447ac9adafbdf57d6595f39c508d357a44",
+      "geometry_status": "pending"
+    },
+    "cities:angkor_wat": {
+      "candidate": "batches/cities-002/review-crops/r01-c07.png",
+      "sha256": "cbc51780fa640128fdfaa89fb5a5197041a41b5d0a85237374c9c5927943bb7b",
+      "geometry_status": "pending"
+    },
+    "cities:anglo_saxon_moot_hill": {
+      "candidate": "batches/cities-002/review-crops/r01-c08.png",
+      "sha256": "bb6e6d2c39ad3dd33ca2c206a2d3ae3a10b1a598d7913942d5c1e0757aed51d7",
+      "geometry_status": "pending"
+    },
+    "cities:anthem": {
+      "candidate": "batches/cities-002/review-crops/r01-c09.png",
+      "sha256": "c738f75bff08a514c6e907ffd6e81a21a6567909963dbc7fa98f8aab2c1a9d41",
+      "geometry_status": "pending"
+    },
+    "cities:aqueduct": {
+      "candidate": "batches/cities-002/review-crops/r01-c10.png",
+      "sha256": "ab4765998691059164b9c23a4d0892ea9c5e6d1e59b7fc66f9521d5ec762ce1a",
+      "geometry_status": "pending"
+    },
+    "cities:arabian_madrassa": {
+      "candidate": "batches/cities-002/review-crops/r01-c11.png",
+      "sha256": "f70b6fe19204bb478d2739a8d0a0d62c96eab6b73fa7bf3e55003100d99b8882",
+      "geometry_status": "pending"
+    },
+    "cities:artemis": {
+      "candidate": "batches/cities-002/review-crops/r01-c12.png",
+      "sha256": "96f65550ddead068519410f35967302ca71dd4d7b4a6f4a97b641b7fde657399",
+      "geometry_status": "pending"
+    },
+    "cities:artesian_well": {
+      "candidate": "batches/cities-002/review-crops/r02-c01.png",
+      "sha256": "06891752465cb9121121b0c202b2146f6944846bd9378b386dfdc6a1756e4409",
+      "geometry_status": "pending"
+    },
+    "cities:asatru_monastery": {
+      "candidate": "batches/cities-002/review-crops/r02-c02.png",
+      "sha256": "97764f9099e32918efd849e49333e2c3a1acf0d98c2cff36049b1b926453b502",
+      "geometry_status": "pending"
+    },
+    "cities:asatru_shrine": {
+      "candidate": "batches/cities-002/review-crops/r02-c03.png",
+      "sha256": "0610322f5bfd72a2f430ccdf1dabf0e6b4f8c810c4f1e17a94ee37102926aa26",
+      "geometry_status": "pending"
+    },
+    "cities:ascension_gate": {
+      "candidate": "batches/cities-002/review-crops/r02-c04.png",
+      "sha256": "dcbc685974ff7801c4f41fb844886faa280f7bfd2ca9d128cc4b37a5e0f0eafd",
+      "geometry_status": "pending"
+    },
+    "cities:aztec_sacrificial_altar": {
+      "candidate": "batches/cities-002/review-crops/r02-c05.png",
+      "sha256": "0829156da9c54611dcd0608f1d91d8dc0e7e7a71f048284a925662bd75f1d5c6",
+      "geometry_status": "pending"
+    },
+    "cities:bakery": {
+      "candidate": "batches/cities-002/review-crops/r02-c06.png",
+      "sha256": "3488e1c84fd5e92f27810a0d2f99969700fa1f0b3724d38a12a8bcbe24ecea6b",
+      "geometry_status": "pending"
+    },
+    "cities:biofuel_refinery": {
+      "candidate": "batches/cities-002/review-crops/r02-c07.png",
+      "sha256": "cbdaa0cd03c2b18ed1bc2edf6fb9f12561995008a073ee4e26566103674782cb",
+      "geometry_status": "pending"
+    },
+    "cities:blarney": {
+      "candidate": "batches/cities-002/review-crops/r02-c08.png",
+      "sha256": "a98dbbe2f813fa84f43e0cc1ba60b07fb344243c915742ef08507e6b0c3d0768",
+      "geometry_status": "pending"
+    },
+    "cities:body_exchange_clinic": {
+      "candidate": "batches/cities-002/review-crops/r02-c09.png",
+      "sha256": "365072fe80ad12056188f25c3f849373cb2957542e6309dfb210008e902bf452",
+      "geometry_status": "pending"
+    },
+    "cities:buddhist_monastery": {
+      "candidate": "batches/cities-002/review-crops/r02-c10.png",
+      "sha256": "8cea187f0cd7998ddd1891dca7b8420d370427ceb240f37bc7bffccda3b79ab5",
+      "geometry_status": "pending"
+    },
+    "cities:buddhist_shrine": {
+      "candidate": "batches/cities-002/review-crops/r02-c11.png",
+      "sha256": "63a67196a44f20344612d51b162d27d9b799eb04e5e8e91069034cc5c8da245b",
+      "geometry_status": "pending"
+    },
+    "cities:byzantine_hippodrome": {
+      "candidate": "batches/cities-002/review-crops/r02-c12.png",
+      "sha256": "355e0d6d7996ecf4470dab4a980ed93bff1e96049891e5d9191c14eb13d61624",
+      "geometry_status": "pending"
+    },
+    "cities:cannery": {
+      "candidate": "batches/cities-002/review-crops/r03-c01.png",
+      "sha256": "433a59b1815a177991786dce9862e6c944e45871f73f3150bf167d65e3e59414",
+      "geometry_status": "pending"
+    },
+    "cities:cannon_forge": {
+      "candidate": "batches/cities-002/review-crops/r03-c02.png",
+      "sha256": "003772eb93d867c29375fbbed25a934415fdd73c8fe795360652b01031e94f0c",
+      "geometry_status": "pending"
+    },
+    "cities:castle": {
+      "candidate": "batches/cities-002/review-crops/r03-c03.png",
+      "sha256": "554ceaee3a2e313f35c2569a58c5bee615835e5d464fd514a765f1d2dbd0f252",
+      "geometry_status": "pending"
+    },
+    "cities:castle_garden": {
+      "candidate": "batches/cities-002/review-crops/r03-c04.png",
+      "sha256": "1e6f8ae538dc8576688e902c0f9c5b9138739c4e36874b1a27f8851015399631",
+      "geometry_status": "pending"
+    },
+    "cities:cereal_mills_factory": {
+      "candidate": "batches/cities-002/review-crops/r03-c05.png",
+      "sha256": "9b2fa437605eedfb4974e43fe61e5cd83251a90a833ce4ee3cd82646d075c87e",
+      "geometry_status": "pending"
+    },
+    "cities:chinese_pavillion": {
+      "candidate": "batches/cities-002/review-crops/r03-c06.png",
+      "sha256": "2be88cc5be13c49458c1dd669b91ad554cd3124388ed968efa9f98f855a6d004",
+      "geometry_status": "pending"
+    },
+    "cities:christian_monastery": {
+      "candidate": "batches/cities-002/review-crops/r03-c07.png",
+      "sha256": "9f86baa95f4f3eac681e22ddd587a03b3989247adf5f0222a7931faaa335774f",
+      "geometry_status": "pending"
+    },
+    "cities:civil_servant_school": {
+      "candidate": "batches/cities-002/review-crops/r03-c08.png",
+      "sha256": "7661a5e743e6044054163473526f660ec33db5bebbb87ca141253017257a6470",
+      "geometry_status": "pending"
+    },
+    "cities:civilized_jewelers_store": {
+      "candidate": "batches/cities-002/review-crops/r03-c09.png",
+      "sha256": "c6cc76ab995fcf11fd8cef4c6acb6df4d4886683b45557fcf026f82c0a2f60be",
+      "geometry_status": "pending"
+    },
+    "cities:cloning_laboratory": {
+      "candidate": "batches/cities-002/review-crops/r03-c10.png",
+      "sha256": "b612140f05fecc98e39f748ce413b5f7b5b34be27ba7912ce3e95be8cf7ec5d8",
+      "geometry_status": "pending"
+    },
+    "cities:commercial_port": {
+      "candidate": "batches/cities-002/review-crops/r03-c11.png",
+      "sha256": "9fe226257379527b0eeac0f9b261305a782f8f202a6dd885c81ca05e569d5448",
+      "geometry_status": "pending"
+    },
+    "cities:communication_tower": {
+      "candidate": "batches/cities-002/review-crops/r03-c12.png",
+      "sha256": "206bafc12cbf81555a0621f0de815d78804243561e1069b42d7d2bdafeced517",
+      "geometry_status": "pending"
+    },
+    "cities:confucian_cathedral": {
+      "candidate": "batches/cities-002/review-crops/r04-c01.png",
+      "sha256": "f9b5efe779ccf5dc019daa32d1b23342ccd1adb922eb2eb2f4430237d7daf24e",
+      "geometry_status": "pending"
+    },
+    "cities:confucian_monastery": {
+      "candidate": "batches/cities-002/review-crops/r04-c02.png",
+      "sha256": "485750f434ca70f4579c5431baccc24394613e0b42b433685321f435cf82a782",
+      "geometry_status": "pending"
+    },
+    "cities:confucian_shrine": {
+      "candidate": "batches/cities-002/review-crops/r04-c03.png",
+      "sha256": "30c64bbefafb07bb85473bd59188c36b2e684265ea33026062a64c571eced132",
+      "geometry_status": "pending"
+    },
+    "cities:copernicus_observatory": {
+      "candidate": "batches/cities-002/review-crops/r04-c04.png",
+      "sha256": "01ef5f317f5926307fab961343f641aeb4ba0540b43e20846abc7ed419e6a596",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_1": {
+      "candidate": "revisions/logo-overlays/corporation_1.png",
+      "sha256": "fd67c67ef11864dda36ac94bfd34991d94e11bd62554c5f8957bbc8707388bf7",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_2": {
+      "candidate": "revisions/logo-overlays/corporation_2.png",
+      "sha256": "ff0341532e1a511e4f998465e6fb6d2fdd94a16b042edf779897861a7c911826",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_3": {
+      "candidate": "revisions/logo-overlays/corporation_3.png",
+      "sha256": "f2584742548aee7a76bf63e87144fa1c82403ecc80f9e99ccd009101508e41ac",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_4": {
+      "candidate": "revisions/logo-overlays/corporation_4.png",
+      "sha256": "8fc9e8c9372b98f512d82751c8c2af16fc55bff8dad87ec94ec38af79e185435",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_5": {
+      "candidate": "revisions/logo-overlays/corporation_5.png",
+      "sha256": "fc28c0a73413a3b6aa7eb4016b9ac62c8d844300ae56176e60d313e7f0f0f160",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_6": {
+      "candidate": "revisions/logo-overlays/corporation_6.png",
+      "sha256": "f64f1dd7d821d5b96fbcf763bfd98dd16a22daa5cb56bd909e7eae7a654bfdc3",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_7": {
+      "candidate": "revisions/logo-overlays/corporation_7.png",
+      "sha256": "605bdf9bf9199295efdee48420e1960fd819426fbd949abe5acd2556664f2503",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_adventure_franchise": {
+      "candidate": "revisions/logo-overlays/corporation_adventure_franchise.png",
+      "sha256": "9defe85efaddfdc00707d274218255b2dbcf11285351f670baf81e4e3f79f5ba",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_adventure_hq": {
+      "candidate": "revisions/logo-overlays/corporation_adventure_hq.png",
+      "sha256": "e45fc8a1bfa3b60f3303ec624c9c538591622f04a098aae0de65ee02bc809624",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_apotheguild": {
+      "candidate": "revisions/logo-overlays/corporation_apotheguild.png",
+      "sha256": "9f542c5a80bebd780096420cb17705c0837c98fdeafec9934a480d6e64183270",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_artistguild": {
+      "candidate": "revisions/logo-overlays/corporation_artistguild.png",
+      "sha256": "f50188b2d4c082c0e724cf0f2b91e666f2b6297f062b3fb170413467cd01087c",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_bakerguild": {
+      "candidate": "revisions/logo-overlays/corporation_bakerguild.png",
+      "sha256": "d055f75dde639fd864991403d072f409bbe68862be6ebdab6a59391c8952750b",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_blacksmguild": {
+      "candidate": "revisions/logo-overlays/corporation_blacksmguild.png",
+      "sha256": "ca8df23ed7297f1d75a1de98cd246a0be382ed3acf08794941e0bbca94f914e7",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_burgerworld_hq": {
+      "candidate": "revisions/logo-overlays/corporation_burgerworld_hq.png",
+      "sha256": "560e7ba8066a97e5e9008e20039eb5613d8c418594e5fa2fa016c3cca1795eb3",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_burgerworld_restaurant": {
+      "candidate": "revisions/logo-overlays/corporation_burgerworld_restaurant.png",
+      "sha256": "fa5504deaf9ede88fb85c7c94f9686a44161296b1d59c17599b8e25026fb840d",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_butcherguild": {
+      "candidate": "revisions/logo-overlays/corporation_butcherguild.png",
+      "sha256": "50503334e80d1a7f438a745b46991e94dcbdb1a8f6d5cbd95c379e499aeb5620",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_carpenterguild": {
+      "candidate": "revisions/logo-overlays/corporation_carpenterguild.png",
+      "sha256": "3224273a6ac4c57e2bba8848fcafb6f4b908670bfe4a65c618f99da79a1dd201",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_clerksguild": {
+      "candidate": "revisions/logo-overlays/corporation_clerksguild.png",
+      "sha256": "8cdd54a479139d0efb98644a959707a02f57fd5744c076b67b7a64df11da5c67",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_drapersguild": {
+      "candidate": "revisions/logo-overlays/corporation_drapersguild.png",
+      "sha256": "2e73dadf590adb5d40dc01d3cfce8107ab66637e100413a10bd977d0198357b8",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_empcloth_hq": {
+      "candidate": "revisions/logo-overlays/corporation_empcloth_hq.png",
+      "sha256": "3d01b700389ddc110c90c4f328618c48fd01a1b805ddeeba7d8912968efad990",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_equestguild": {
+      "candidate": "revisions/logo-overlays/corporation_equestguild.png",
+      "sha256": "d29965e812d51326ea59936f079b26a01a412bb6a531044debd6d9436b913a6b",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_ewtrade_hq": {
+      "candidate": "revisions/logo-overlays/corporation_ewtrade_hq.png",
+      "sha256": "6d650bd382c3347e7d4424061d16a6985851dd9bf04a5293256acc0b2450244e",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_ewtrade_store": {
+      "candidate": "revisions/logo-overlays/corporation_ewtrade_store.png",
+      "sha256": "507edc52359b82f0f5d91cfa24c606bf3b35913efd742cf753e93f5dc9352b07",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_fashion_hq": {
+      "candidate": "revisions/logo-overlays/corporation_fashion_hq.png",
+      "sha256": "5694d48e7d837eab10ce3ad6f069453a796c6a35d84bb91a422456c9a1e1ce91",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_fishmonguild": {
+      "candidate": "revisions/logo-overlays/corporation_fishmonguild.png",
+      "sha256": "17ea79dfeab25bbc4f4e9eb32c4ac38b9028f3d1334257dc28f3f78876d7645a",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_glassguild": {
+      "candidate": "revisions/logo-overlays/corporation_glassguild.png",
+      "sha256": "9720f12ed9092c16106379c85157119ae8d1696805f9e70fb2bf590ca11557ba",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_goldsmguild": {
+      "candidate": "revisions/logo-overlays/corporation_goldsmguild.png",
+      "sha256": "d61609d18d3792df529236ae18dacb7bd7951e7d7e9fed7785353cca10348ddc",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_grocerguild": {
+      "candidate": "revisions/logo-overlays/corporation_grocerguild.png",
+      "sha256": "2255630cfefe4955a36420f3cb56fd42306536d40a63788f9ba42ae82811761c",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mallwart_hq": {
+      "candidate": "revisions/logo-overlays/corporation_mallwart_hq.png",
+      "sha256": "2e81244946f5ec78b132eb379bf7b1c3f07c9c345b5d7697dbd22c0aefbdff6a",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mallwart_store": {
+      "candidate": "revisions/logo-overlays/corporation_mallwart_store.png",
+      "sha256": "3000327ff18bdc5ada39fb9d86b5c7579b9be2de65f50af880edc46805de3ada",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mapster_hq": {
+      "candidate": "revisions/logo-overlays/corporation_mapster_hq.png",
+      "sha256": "09d4337159d0e1660a5d445addc52a5d47758efd7950fc96a3c037f265969429",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_masonguild": {
+      "candidate": "revisions/logo-overlays/corporation_masonguild.png",
+      "sha256": "89f90574fe839f9a073dd40188cc956298d71e271e4bdba3ed7a2a81271d06b6",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mercerguild": {
+      "candidate": "revisions/logo-overlays/corporation_mercerguild.png",
+      "sha256": "9ab28de7fbca654be112b734a1300b59017ebf4b23cc50020d5a602947d22516",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_milehigh_franchise": {
+      "candidate": "revisions/logo-overlays/corporation_milehigh_franchise.png",
+      "sha256": "69c873e16f1942be8b78067ed58d6b616adfaa251ca5b7d28b96ddd6a73b16b4",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_milehigh_hq": {
+      "candidate": "revisions/logo-overlays/corporation_milehigh_hq.png",
+      "sha256": "0f6f7d679e1142f7b32681dae32f615abf53fe72c5b034e1a8360b4126b7ceb5",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mobby_hq": {
+      "candidate": "revisions/logo-overlays/corporation_mobby_hq.png",
+      "sha256": "3a2381de6ca4957970d0169f3d51377e06ebcd307036cd0cf2750793c5a7d7f4",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_mobby_store": {
+      "candidate": "revisions/logo-overlays/corporation_mobby_store.png",
+      "sha256": "212ac679f7f630a5f8250da6d371eaf5d404be75d277e405cddba308d8ec54ac",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_moonbean_hq": {
+      "candidate": "revisions/logo-overlays/corporation_moonbean_hq.png",
+      "sha256": "5f67cac5c742711827c7c15d3a511066c8d49805322cff5c27570e6742f94dcc",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_moonbean_shop": {
+      "candidate": "revisions/logo-overlays/corporation_moonbean_shop.png",
+      "sha256": "dadf7b9fc7a61cd11f74f44886bec032b534cbce5325dbaef4f5234a88c5c945",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_red_hq": {
+      "candidate": "revisions/logo-overlays/corporation_red_hq.png",
+      "sha256": "46ac69a9d753180a5d969af6375e50c7b1830a9483801f9f6bb01ff804f2c6cf",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_red_theater": {
+      "candidate": "revisions/logo-overlays/corporation_red_theater.png",
+      "sha256": "804421f54ba4b1f641d637eafcdf6ab0427c55a2bcf4ee7ed57de5a3b44696b4",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_safari_guide": {
+      "candidate": "revisions/logo-overlays/corporation_safari_guide.png",
+      "sha256": "ed28f94c3595a5a7bb965635b2661be757b43980211e82c210c32754da4f73fc",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_safari_hq": {
+      "candidate": "revisions/logo-overlays/corporation_safari_hq.png",
+      "sha256": "7fd7fb5b67abaedde9a31c69642d21f8881c77d93591076ac7de868dd44f4ffe",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_ultsoldier_hq": {
+      "candidate": "revisions/logo-overlays/corporation_ultsoldier_hq.png",
+      "sha256": "1f18c23512cba95b895f584b1c497085279642823181ff2ed4751f6bc7fc4812",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_ultsoldier_trainer": {
+      "candidate": "revisions/logo-overlays/corporation_ultsoldier_trainer.png",
+      "sha256": "28be4b6f3908046dd32803755a8d3e427a8dc1ff50477ac78a1e069f34d03dea",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_wonka_hq": {
+      "candidate": "revisions/logo-overlays/corporation_wonka_hq.png",
+      "sha256": "0e19481782daebae88692676de2dcc23b4f08397d7de2261427c012306dced3a",
+      "geometry_status": "pending"
+    },
+    "cities:corporation_wonka_shop": {
+      "candidate": "revisions/logo-overlays/corporation_wonka_shop.png",
+      "sha256": "ceb47d74c740fc3860eacb6bc6b5fbe0229229537fe998b87253f4efc9233ad0",
+      "geometry_status": "pending"
+    },
+    "cities:courthouse": {
+      "candidate": "revisions/logo-overlays/courthouse.png",
+      "sha256": "4bd8bf747de63b5e7b1ec0436ab855557f8a75e3c838bd6a5e137050f360401c",
+      "geometry_status": "pending"
+    },
+    "cities:czech_vysilac": {
+      "candidate": "batches/cities-002/review-crops/r08-c05.png",
+      "sha256": "33264bea5fecfb87def04d4e031cbedbbdf3142967076b92197dc26d304f1452",
+      "geometry_status": "pending"
+    },
+    "cities:danish_hof": {
+      "candidate": "batches/cities-002/review-crops/r08-c06.png",
+      "sha256": "865d90c23d5960db6a939a32c6406e565c65dd987ea8d8574739b4eb9c4b0306",
+      "geometry_status": "pending"
+    },
+    "cities:dictator_monument": {
+      "candidate": "batches/cities-002/review-crops/r08-c07.png",
+      "sha256": "b94a536ee7ac4ad38540984c295ed61b5668cbd3ef42649fca29ef3aaffb9ef6",
+      "geometry_status": "pending"
+    },
+    "cities:djenne": {
+      "candidate": "batches/cities-002/review-crops/r08-c08.png",
+      "sha256": "ad0e79b23a01caf4ef71f6a46e33cbd950ad474a86b5aed65fdd63d3defd8696",
+      "geometry_status": "pending"
+    },
+    "cities:edinburgh_castle": {
+      "candidate": "batches/cities-002/review-crops/r08-c09.png",
+      "sha256": "eb9b8dad26b86e74e90b24a0580af2684d8eb43508ea0005eb501d89eb81a91e",
+      "geometry_status": "pending"
+    },
+    "cities:edison": {
+      "candidate": "batches/cities-002/review-crops/r08-c10.png",
+      "sha256": "afb08ba5109d4a9e4b00d076ba986ecd97b732c6e00f6e166051eb6932754384",
+      "geometry_status": "pending"
+    },
+    "cities:egyptian_obelisk": {
+      "candidate": "revisions/logo-overlays/egyptian_obelisk.png",
+      "sha256": "ef49970191d19fbee3a9b24f7500f4a65211695792d25eb8aeaee495f89f7766",
+      "geometry_status": "pending"
+    },
+    "cities:einstein_lab": {
+      "candidate": "batches/cities-002/review-crops/r08-c12.png",
+      "sha256": "d4633677e093bce9cc0312705b56ec6391ccba211a58de1d0dd050d661a1047a",
+      "geometry_status": "pending"
+    },
+    "cities:empcloth_store": {
+      "candidate": "revisions/logo-overlays/empcloth_store.png",
+      "sha256": "52a552d7fabb74b2aa55cf2456b254da13354a61b05f9f83b1f32de5c7251405",
+      "geometry_status": "pending"
+    },
+    "cities:english_stock_exchange": {
+      "candidate": "batches/cities-002/review-crops/r09-c02.png",
+      "sha256": "671f204af7a7ca26b8b861d45582ce750d8a96d826a5f1040008eaa082472e2a",
+      "geometry_status": "pending"
+    },
+    "cities:ethiopian_stele": {
+      "candidate": "batches/cities-002/review-crops/r09-c03.png",
+      "sha256": "13da4c194a0aa9e4dfca07d28115cd1372d73635cdd5106d0e2fd40b719eecc5",
+      "geometry_status": "pending"
+    },
+    "cities:factory": {
+      "candidate": "batches/cities-002/review-crops/r09-c04.png",
+      "sha256": "5e4292569ffa8b414e35766009b04ff427f4b18791ae1611989d16e74bf40040",
+      "geometry_status": "pending"
+    },
+    "cities:fashion_store": {
+      "candidate": "revisions/logo-overlays/fashion_store.png",
+      "sha256": "db31465b02e0054185313df530c4197028072f968649017b4c9286412ea449b0",
+      "geometry_status": "pending"
+    },
+    "cities:foundling_hospital": {
+      "candidate": "batches/cities-002/review-crops/r09-c06.png",
+      "sha256": "37bfa99c879d4ae1e5a6fe13184abd9eb7e394d33d5fa3fde11ce7870c31f788",
+      "geometry_status": "pending"
+    },
+    "cities:foundry": {
+      "candidate": "batches/cities-002/review-crops/r09-c07.png",
+      "sha256": "6a2d5077282f3f042c7b08f12d1f7eca5c1c8ac8f243f16f7f89b61d447f7be1",
+      "geometry_status": "pending"
+    },
+    "cities:french_salon": {
+      "candidate": "batches/cities-002/review-crops/r09-c08.png",
+      "sha256": "1738d679da811497496b59fdd1b3c8e2c91ff1b33fea69136d8e8611c957cbe5",
+      "geometry_status": "pending"
+    },
+    "cities:global_stock_exchange": {
+      "candidate": "revisions/logo-overlays/global_stock_exchange.png",
+      "sha256": "0b70f7a38010b990ba6be51d430ac3ca8af1d6a3316813db2d9f195a04b5b1d5",
+      "geometry_status": "pending"
+    },
+    "cities:globe_theatre": {
+      "candidate": "batches/cities-002/review-crops/r09-c10.png",
+      "sha256": "d947a94494b2b68cce788872980d83a94219dca65c87bfbb992f363d23ea929a",
+      "geometry_status": "pending"
+    },
+    "cities:golden_spike": {
+      "candidate": "batches/cities-002/review-crops/r09-c11.png",
+      "sha256": "55a1a484a9d885142530516cd1fe59ada198f592dc00ad5c9442700dd830b77f",
+      "geometry_status": "pending"
+    },
+    "cities:goths_plunder": {
+      "candidate": "revisions/logo-overlays/goths_plunder.png",
+      "sha256": "4f20455900aeb7f9f6d93191bd561562e2abc33280b4f834936eea7f7a2d4e78",
+      "geometry_status": "pending"
+    },
+    "cities:granary": {
+      "candidate": "batches/cities-002/review-crops/r10-c01.png",
+      "sha256": "d71afd924ba04878a983bbbcc440474158016b1daefd7814d2196935f8c09c0d",
+      "geometry_status": "pending"
+    },
+    "cities:graveyard": {
+      "candidate": "batches/cities-002/review-crops/r10-c02.png",
+      "sha256": "84d15659090f29581a2e084d36d4d0deab4c830b3df4dfa241a414d3de704d6a",
+      "geometry_status": "pending"
+    },
+    "cities:great_dam": {
+      "candidate": "batches/cities-002/review-crops/r10-c03.png",
+      "sha256": "bdfda261a9dffe9fba74cbcfbae736e8fc658b23b21762bf8e014516f033615a",
+      "geometry_status": "pending"
+    },
+    "cities:great_firewall": {
+      "candidate": "revisions/logo-overlays/great_firewall.png",
+      "sha256": "91d13ef0506e5b48373df4698b136d2896690fead25a9a5b911f5969cb157cad",
+      "geometry_status": "pending"
+    },
+    "cities:great_library": {
+      "candidate": "batches/cities-002/review-crops/r10-c05.png",
+      "sha256": "623f4cb5c45b21c84e13790da7a0ff594387eb69e6e466ce75841ffe13383acc",
+      "geometry_status": "pending"
+    },
+    "cities:great_lighthouse": {
+      "candidate": "batches/cities-002/review-crops/r10-c06.png",
+      "sha256": "eb1072012a86bb01cc02a88d62805e325d8669a92ef047b98a145401011dbb7a",
+      "geometry_status": "pending"
+    },
+    "cities:great_palace": {
+      "candidate": "batches/cities-002/review-crops/r10-c07.png",
+      "sha256": "d7f97e66b5fd8ced491d521a584270d574e9df2ece736feb72dbf100d772aafa",
+      "geometry_status": "pending"
+    },
+    "cities:great_wall": {
+      "candidate": "batches/cities-002/review-crops/r10-c08.png",
+      "sha256": "f037f9cfe514a7c63f76fab2cf27e5080312976cf80d24b5e806303dc93e41e8",
+      "geometry_status": "pending"
+    },
+    "cities:greek_odeon": {
+      "candidate": "batches/cities-002/review-crops/r10-c09.png",
+      "sha256": "5f38d9d9f2105d73346eb8729260e13b975c1947a0128fdb92895e44426d5fd5",
+      "geometry_status": "pending"
+    },
+    "cities:greekfire": {
+      "candidate": "revisions/logo-overlays/greekfire.png",
+      "sha256": "c0df5c3f2d8d167b8c6149a5ec5d4cb57b7537fba6f25a836134235fefba40a3",
+      "geometry_status": "pending"
+    },
+    "cities:greenhouse": {
+      "candidate": "batches/cities-002/review-crops/r10-c11.png",
+      "sha256": "0e227e63d6532f57a7f69b757666a291b01e80788720183ced78a3aa7e8bc8eb",
+      "geometry_status": "pending"
+    },
+    "cities:grocer": {
+      "candidate": "batches/cities-002/review-crops/r10-c12.png",
+      "sha256": "7d87529f53e8a709b31853a617268f9e1aae5b2569df9f28726d509070eae5bd",
+      "geometry_status": "pending"
+    },
+    "cities:grove": {
+      "candidate": "batches/cities-002/review-crops/r11-c01.png",
+      "sha256": "d425edac7d58fa21b8eb9bc8f1f08cc48c851391feba90d8d5f2021ab291c535",
+      "geometry_status": "pending"
+    },
+    "cities:gun_turret": {
+      "candidate": "batches/cities-002/review-crops/r11-c02.png",
+      "sha256": "0773192afbf1702b21589b9647566ddc63c1d33875b41abeb053cbdcc39e4513",
+      "geometry_status": "pending"
+    },
+    "cities:gutenberg": {
+      "candidate": "batches/cities-002/review-crops/r11-c03.png",
+      "sha256": "32228a02a150f95a6f4f6726603a2e1394512a6809ede55d1661440b90f45e83",
+      "geometry_status": "pending"
+    },
+    "cities:hab_complex": {
+      "candidate": "batches/cities-002/review-crops/r11-c04.png",
+      "sha256": "dc7e04e8fb58a094cb409b9b1f990f5499d77f6f1b9078e37711ff34872dfeb5",
+      "geometry_status": "pending"
+    },
+    "cities:hagia_sophia": {
+      "candidate": "batches/cities-002/review-crops/r11-c05.png",
+      "sha256": "37baf2a3f086f510b02a8742d9daf88c37074ab2bbe1ab7f8bc117e9db3b07be",
+      "geometry_status": "pending"
+    },
+    "cities:hanging_garden": {
+      "candidate": "batches/cities-002/review-crops/r11-c06.png",
+      "sha256": "77a2aa6345230bf93a801a7d763399c280209438087c73c4238b7b21f4f21ec6",
+      "geometry_status": "pending"
+    },
+    "cities:hanseatic": {
+      "candidate": "batches/cities-002/review-crops/r11-c07.png",
+      "sha256": "082abf4d26ec4eb24cb53f9fbc931421999d2fbf5875465aa92cc27ff063fd44",
+      "geometry_status": "pending"
+    },
+    "cities:harbor": {
+      "candidate": "batches/cities-002/review-crops/r11-c08.png",
+      "sha256": "b111f74469ce5d319455d9cfbb91f5e72a1cf8a1b96a66c31f064bccc078e844",
+      "geometry_status": "pending"
+    },
+    "cities:healerhut": {
+      "candidate": "batches/cities-002/review-crops/r11-c09.png",
+      "sha256": "6148f2483135bc67cbb5ad85911b1553180ad1c15075649510cac5ef81ecbdc9",
+      "geometry_status": "pending"
+    },
+    "cities:heavy_gates": {
+      "candidate": "batches/cities-002/review-crops/r11-c10.png",
+      "sha256": "b43abece7e2b0bdb86b78b3b8493984feaa2878579d03140a428fbc3bc4ee6d7",
+      "geometry_status": "pending"
+    },
+    "cities:hellenic_cathedral": {
+      "candidate": "batches/cities-002/review-crops/r11-c11.png",
+      "sha256": "f94272e888232399e05833d65a786c334c486d38b116f179a072a08143d1bf0b",
+      "geometry_status": "pending"
+    },
+    "cities:hellenic_monastery": {
+      "candidate": "batches/cities-002/review-crops/r11-c12.png",
+      "sha256": "38e2bfb78ce6b26616544cb631670b0b4701d4479cb1c0c2b4c4d9ae71e284ac",
+      "geometry_status": "pending"
+    },
+    "cities:hellenic_temple": {
+      "candidate": "batches/cities-002/review-crops/r12-c01.png",
+      "sha256": "85897157011444eaf17cf85e0503bb8f36bc9a62a51e65afb0c9395cb08017e0",
+      "geometry_status": "pending"
+    },
+    "cities:herbalist": {
+      "candidate": "batches/cities-002/review-crops/r12-c02.png",
+      "sha256": "fd30ee085280291f91f522a1c410513db8cbdc8ef32eaf3f9c52b23c64db166e",
+      "geometry_status": "pending"
+    },
+    "cities:hermitage": {
+      "candidate": "batches/cities-002/review-crops/r12-c03.png",
+      "sha256": "bdc40b5898e4960e1d406f63882b13ea701d31d824a58a80a498edf3264680c5",
+      "geometry_status": "pending"
+    },
+    "cities:heroic_epic": {
+      "candidate": "batches/cities-002/review-crops/r12-c04.png",
+      "sha256": "ce60806c6cef04ab9a5bc84f6f7b243d8cb76504d37961687832e05f1a600097",
+      "geometry_status": "pending"
+    },
+    "cities:high_walls": {
+      "candidate": "batches/cities-002/review-crops/r12-c05.png",
+      "sha256": "6cf98fce565a9dc0e77eb900f752667dab2ba01cdceaa5b04cddcc206afee02d",
+      "geometry_status": "pending"
+    },
+    "cities:hilltara": {
+      "candidate": "batches/cities-002/review-crops/r12-c06.png",
+      "sha256": "31b512976e3b474b482965dad76e052c59378c5be457a29eaecd4cd325576e23",
+      "geometry_status": "pending"
+    },
+    "cities:himeji_castle": {
+      "candidate": "batches/cities-002/review-crops/r12-c07.png",
+      "sha256": "e03e5669ce0cf7b325f36afa59b8888cf059a65bde958e97ee753f7dd3566ef5",
+      "geometry_status": "pending"
+    },
+    "cities:hindu_cathedral": {
+      "candidate": "revisions/logo-overlays/hindu_cathedral.png",
+      "sha256": "2635fdace294182630488866fefa3244cec7a17a2cd4f00cf1670b87ee3ac5aa",
+      "geometry_status": "pending"
+    },
+    "cities:hindu_monastery": {
+      "candidate": "revisions/logo-overlays/hindu_monastery.png",
+      "sha256": "5c9f2c9796e2f023bfd301f9a4b594c5f8827bcde155d2449e1f4d5277f3b629",
+      "geometry_status": "pending"
+    },
+    "cities:hindu_shrine": {
+      "candidate": "revisions/logo-overlays/hindu_shrine.png",
+      "sha256": "a9e1f10cc25c9ddd2184523955b3bf764944a46b266b4ae8dad5f678a681e80b",
+      "geometry_status": "pending"
+    },
+    "cities:hindu_temple": {
+      "candidate": "revisions/logo-overlays/hindu_temple.png",
+      "sha256": "aba885d45eaf44f4c88b5c8c02f6c5ec0aadf326d0240ecd12cfa624f671a59b",
+      "geometry_status": "pending"
+    },
+    "cities:hippocratic": {
+      "candidate": "batches/cities-002/review-crops/r12-c12.png",
+      "sha256": "754a504eac782a42391b76d6835d0e66d468334a22be4ddf48f90c32e83fd42d",
+      "geometry_status": "pending"
+    },
+    "cities:hoard": {
+      "candidate": "batches/cities-003/review-crops/r01-c01.png",
+      "sha256": "51d3b764e87573740f15fe4bda49776954e2c8bb33917fc55981d9083add6f8d",
+      "geometry_status": "pending"
+    },
+    "cities:hollywood": {
+      "candidate": "revisions/logo-overlays/hollywood.png",
+      "sha256": "7c27c3a71e877411be840c375cf56776d2b37d0d4edafce49c2caec6020b766a",
+      "geometry_status": "pending"
+    },
+    "cities:holo_combat_simulator": {
+      "candidate": "batches/cities-003/review-crops/r01-c03.png",
+      "sha256": "d04d073ce6ffb85e9bc5ab405b44852c1234c0005893080f2f00142f390da11b",
+      "geometry_status": "pending"
+    },
+    "cities:holo_flight_simulator": {
+      "candidate": "batches/cities-003/review-crops/r01-c04.png",
+      "sha256": "321f44196a5259e5b6e41a461d6310e0d1f6b3bc879b2fd5032c99c10ad3037e",
+      "geometry_status": "pending"
+    },
+    "cities:holy_order": {
+      "candidate": "batches/cities-003/review-crops/r01-c05.png",
+      "sha256": "cd3442afe3654823172bbcad5e93e40d92e77841b6a0577ceef053426c8dbb57",
+      "geometry_status": "pending"
+    },
+    "cities:holy_roman_rathaus": {
+      "candidate": "batches/cities-003/review-crops/r01-c06.png",
+      "sha256": "027dc56fc06e0f2263beb0264fedf48da6b7f61abec3354a396c86593deb776c",
+      "geometry_status": "pending"
+    },
+    "cities:hospital": {
+      "candidate": "batches/cities-003/review-crops/r01-c07.png",
+      "sha256": "7237f416a94dc2cda7cc188be1c943797e70e7acc13c5bf94833b71066f8c2ad",
+      "geometry_status": "pending"
+    },
+    "cities:hotel": {
+      "candidate": "batches/cities-003/review-crops/r01-c08.png",
+      "sha256": "7cef7bbc0360b332a6563f438807cea68e060a294b19c01f04daf3574aa859c4",
+      "geometry_status": "pending"
+    },
+    "cities:house_of_parliment": {
+      "candidate": "batches/cities-003/review-crops/r01-c09.png",
+      "sha256": "e0b6290136d4947a9a4a38cb9f2280f1ad78837284b43b73e9c0b997f45097d2",
+      "geometry_status": "pending"
+    },
+    "cities:hung_vegvar": {
+      "candidate": "batches/cities-003/review-crops/r01-c10.png",
+      "sha256": "8468f55f688da44e2856e3d7e78de105e334fe96b2eaff20c8828efa5d6344d7",
+      "geometry_status": "pending"
+    },
+    "cities:hydro_plant": {
+      "candidate": "batches/cities-003/review-crops/r01-c11.png",
+      "sha256": "9aed267ff7db0a259543f7cb58210f8a7291b34f3a66915171e2982c4b29e25c",
+      "geometry_status": "pending"
+    },
+    "cities:hydroponic_farm": {
+      "candidate": "batches/cities-003/review-crops/r01-c12.png",
+      "sha256": "b98177ef7e767d3b5b95bcde85285c15b34efc14e22319adfa19578f65474e30",
+      "geometry_status": "pending"
+    },
+    "cities:hypermarket": {
+      "candidate": "batches/cities-003/review-crops/r02-c01.png",
+      "sha256": "c0225622984fd9f22015a2de005da31de142433d3d7cc8e640e7e9434da8d8b4",
+      "geometry_status": "pending"
+    },
+    "cities:ice_hotel": {
+      "candidate": "batches/cities-003/review-crops/r02-c02.png",
+      "sha256": "53482bfaba751a82eb46855cc4e31b0116e52f359d1f95cecb71faa87d3a2f90",
+      "geometry_status": "pending"
+    },
+    "cities:ice_house": {
+      "candidate": "batches/cities-003/review-crops/r02-c03.png",
+      "sha256": "756e5fdfa5b40dd021dfea87390592b6e0e13268f4c6185aa4fab23c90194cef",
+      "geometry_status": "pending"
+    },
+    "cities:idol_shrine": {
+      "candidate": "batches/cities-003/review-crops/r02-c04.png",
+      "sha256": "97ea572cde2329ca9c0fe34c49e35ca51d36a481889bbf66568810d0ddb7a9ae",
+      "geometry_status": "pending"
+    },
+    "cities:igloo": {
+      "candidate": "batches/cities-003/review-crops/r02-c05.png",
+      "sha256": "20da8f8900afac512c18c014589b285906ab31438d83bc25ba42df8be1a95ffc",
+      "geometry_status": "pending"
+    },
+    "cities:incan_terrace": {
+      "candidate": "batches/cities-003/review-crops/r02-c06.png",
+      "sha256": "b11db09b5de9e32698887cfb5ab283deb33eb8bc1d55c78e64cb272ebe122d7d",
+      "geometry_status": "pending"
+    },
+    "cities:incubation_center": {
+      "candidate": "batches/cities-003/review-crops/r02-c07.png",
+      "sha256": "683423f8fff9ced0c35ae618c3bba8bc347af1e32220dfb621974b03437edc35",
+      "geometry_status": "pending"
+    },
+    "cities:independence_hall": {
+      "candidate": "batches/cities-003/review-crops/r02-c08.png",
+      "sha256": "0a4de14a42832a7dfee2a196e6113cc42fcc2ad72b476402031dbeb6a3b1f5f8",
+      "geometry_status": "pending"
+    },
+    "cities:indian_mausoleum": {
+      "candidate": "batches/cities-003/review-crops/r02-c09.png",
+      "sha256": "a4c00899ad8fef543162fd9f63c45e3b1d529f1365817feb7e913189eb4f6012",
+      "geometry_status": "pending"
+    },
+    "cities:industrial_park": {
+      "candidate": "batches/cities-003/review-crops/r02-c10.png",
+      "sha256": "28f93ff65a738d881183e4ea470ff1eb3d333384e7c0bb4dda43a12872b1a5a4",
+      "geometry_status": "pending"
+    },
+    "cities:industrial_robots": {
+      "candidate": "batches/cities-003/review-crops/r02-c11.png",
+      "sha256": "fc67fb56f851a03570ab84b031c6b2c4a914b7d5bd98adaf85a8d976ab68b81f",
+      "geometry_status": "pending"
+    },
+    "cities:infomatrix": {
+      "candidate": "batches/cities-003/review-crops/r02-c12.png",
+      "sha256": "0313bc82a2da0c73e003deb8f23aa39e0df48a0da6465d723e0abadc9141ea82",
+      "geometry_status": "pending"
+    },
+    "cities:intelligence_agency": {
+      "candidate": "batches/cities-003/review-crops/r03-c01.png",
+      "sha256": "a77d4b5fb729c0417ae2b861aeaa897b4240006a8187f2b01b40e616aaf243d7",
+      "geometry_status": "pending"
+    },
+    "cities:international_port": {
+      "candidate": "batches/cities-003/review-crops/r03-c02.png",
+      "sha256": "f1985ee3e3679efdd4dc69c9f9b2a82ad0078d5c37d644dad51293e7802bc261",
+      "geometry_status": "pending"
+    },
+    "cities:interrogation_building": {
+      "candidate": "batches/cities-003/review-crops/r03-c03.png",
+      "sha256": "34e45fbf877b2872a8ea3c7518d86b101b892f74cb2d40ba6becad783de7363b",
+      "geometry_status": "pending"
+    },
+    "cities:irish_ringfort": {
+      "candidate": "batches/cities-003/review-crops/r03-c04.png",
+      "sha256": "4c970ae6d08e14ab8930d5fe68306beccf7fec4dc07b00e5f917708274cd3d95",
+      "geometry_status": "pending"
+    },
+    "cities:iron_works": {
+      "candidate": "batches/cities-003/review-crops/r03-c05.png",
+      "sha256": "6ec903e3ea327801838db3e3faf47989451a2a05e9479e71c6b8ccbc98657265",
+      "geometry_status": "pending"
+    },
+    "cities:iroquois_longhouse": {
+      "candidate": "batches/cities-003/review-crops/r03-c06.png",
+      "sha256": "8c64898881bb21011e5feed779b451ddc7c92f1c6e7370d2384d5781942ae193",
+      "geometry_status": "pending"
+    },
+    "cities:ishtar_gate": {
+      "candidate": "batches/cities-003/review-crops/r03-c07.png",
+      "sha256": "80d5dba196ea0bd7a39bde25d818a59e5a710ccd6f1ef5475e15afa19c99cfb4",
+      "geometry_status": "pending"
+    },
+    "cities:islamic_cathedral": {
+      "candidate": "revisions/logo-overlays/islamic_cathedral.png",
+      "sha256": "3a820194115a6987ffaa49c5dd143c94998e2514904fec985ff698135068de5f",
+      "geometry_status": "pending"
+    },
+    "cities:islamic_monastery": {
+      "candidate": "revisions/logo-overlays/islamic_monastery.png",
+      "sha256": "59d480fdda5cd5530c0c3fba9c0c81abc4f16f704368083092fe1d42d9ea34ab",
+      "geometry_status": "pending"
+    },
+    "cities:islamic_shrine": {
+      "candidate": "revisions/logo-overlays/islamic_shrine.png",
+      "sha256": "0f10b2d2b93362a047bcb443752c35d1efd80476ad9530b1f4830bfa0bbf0561",
+      "geometry_status": "pending"
+    },
+    "cities:islamic_temple": {
+      "candidate": "revisions/logo-overlays/islamic_temple.png",
+      "sha256": "71f54fe481d590cd0b2beb6823b4c7feac6cb62fd97253806b4821d870e76193",
+      "geometry_status": "pending"
+    },
+    "cities:itsukushima": {
+      "candidate": "batches/cities-003/review-crops/r03-c12.png",
+      "sha256": "e98b1856b6305b7f0775837b782711d1eb984ca4f8b41502ec486983b149e65f",
+      "geometry_status": "pending"
+    },
+    "cities:jail": {
+      "candidate": "batches/cities-003/review-crops/r04-c01.png",
+      "sha256": "f419df4b463cdf6d593f8492b1e4bd48e4b946335745690fc8ffef6cd52f0d6a",
+      "geometry_status": "pending"
+    },
+    "cities:japanese_shale_plant": {
+      "candidate": "batches/cities-003/review-crops/r04-c02.png",
+      "sha256": "93a486ffc08ab6ad0c61d3c4adb081041f40fa46eb516c8c675be4bb1a5e20b7",
+      "geometry_status": "pending"
+    },
+    "cities:jewish_cathedral": {
+      "candidate": "revisions/logo-overlays/jewish_cathedral.png",
+      "sha256": "dc52db992c87988c3465bd45013b5662e692d0a849aad746040ff8ee9f5d8ea1",
+      "geometry_status": "pending"
+    },
+    "cities:jewish_masada": {
+      "candidate": "revisions/logo-overlays/jewish_masada.png",
+      "sha256": "b4ab132555d5af05bf5227dde1f8aabce616c22ec88d4ffb8087a7177adde85b",
+      "geometry_status": "pending"
+    },
+    "cities:jewish_monastery": {
+      "candidate": "revisions/logo-overlays/jewish_monastery.png",
+      "sha256": "fc9fb8fc777196ec51746545c5733893c30a844201a4963ac8f290404a733019",
+      "geometry_status": "pending"
+    },
+    "cities:jewish_shrine": {
+      "candidate": "revisions/logo-overlays/jewish_shrine.png",
+      "sha256": "e4a043004279a9fb25749dbb7d5c5a6cb82dc05341856a0d112543af5c794588",
+      "geometry_status": "pending"
+    },
+    "cities:jewish_temple": {
+      "candidate": "revisions/logo-overlays/jewish_temple.png",
+      "sha256": "c659217336807adefc65e6b08017475d140084a06f11b7fec868af2fc4414edc",
+      "geometry_status": "pending"
+    },
+    "cities:keep": {
+      "candidate": "batches/cities-003/review-crops/r04-c08.png",
+      "sha256": "90531e41887f9a515d4c0e8f3e0645a9ecc18f52a7b6c5a127b4a5501fe2698e",
+      "geometry_status": "pending"
+    },
+    "cities:knight_stable": {
+      "candidate": "batches/cities-003/review-crops/r04-c09.png",
+      "sha256": "8e482dcda0d13b2bf304ae09a404bf171638ffb7fd6fa2487c46260a54ceb2da",
+      "geometry_status": "pending"
+    },
+    "cities:korean_seowon": {
+      "candidate": "batches/cities-003/review-crops/r04-c10.png",
+      "sha256": "5f3498546f01b933191194317c879c140fe2da26fcbc3ee0227433af11c70cee",
+      "geometry_status": "pending"
+    },
+    "cities:kotoku": {
+      "candidate": "batches/cities-003/review-crops/r04-c11.png",
+      "sha256": "480f6f8bc5afa603fe64d229e3e294e204e85a8601de6225aead16d8d2b54302",
+      "geometry_status": "pending"
+    },
+    "cities:kremlin": {
+      "candidate": "batches/cities-003/review-crops/r04-c12.png",
+      "sha256": "b16424baee0b734346bbbb7e5e8a590a33af17056f88d93c190f9d06234d8aaa",
+      "geometry_status": "pending"
+    },
+    "cities:labor_union": {
+      "candidate": "batches/cities-003/review-crops/r05-c01.png",
+      "sha256": "cd1db43d58cc833183a1f0be3ce471108a55e448aeb2db51b2b66c8aa1da6773",
+      "geometry_status": "pending"
+    },
+    "cities:laboratory": {
+      "candidate": "batches/cities-003/review-crops/r05-c02.png",
+      "sha256": "8a9cf7bdd1bff63cf2208065e6697b6740205d05f098438923a5f29700c64b09",
+      "geometry_status": "pending"
+    },
+    "cities:labyrinth": {
+      "candidate": "batches/cities-003/review-crops/r05-c03.png",
+      "sha256": "1bbf15cfccd19beb0f39fb4f1db4cbc32cc6834d07cceb6bac7b94c121bcde8f",
+      "geometry_status": "pending"
+    },
+    "cities:las_vegas": {
+      "candidate": "batches/cities-003/review-crops/r05-c04.png",
+      "sha256": "7773acb9e380a1a63fd0baedf36ebe8006b9a7d0758e0a2251d8ca72bd051e22",
+      "geometry_status": "pending"
+    },
+    "cities:lascaux": {
+      "candidate": "batches/cities-003/review-crops/r05-c05.png",
+      "sha256": "a4da03e6c5d465365df56175c6c34cc4ef352b4ad1f6167d8b4e57e4b37eb492",
+      "geometry_status": "pending"
+    },
+    "cities:levee": {
+      "candidate": "batches/cities-003/review-crops/r05-c06.png",
+      "sha256": "6ff0c873706041eab1cebd1a3cdc8b0c9c49cf3ed65aa96ebcf88cc1f50e8658",
+      "geometry_status": "pending"
+    },
+    "cities:library": {
+      "candidate": "batches/cities-003/review-crops/r05-c07.png",
+      "sha256": "754741ae8fc2ede82b791e6e20bb354223211db3435238c6d2eaac7ec39bcb05",
+      "geometry_status": "pending"
+    },
+    "cities:lighthouse": {
+      "candidate": "batches/cities-003/review-crops/r05-c08.png",
+      "sha256": "bff92cfadbbde7d056483a9a04cc6ea2761ecfc910dd4cafa91411b6909f766d",
+      "geometry_status": "pending"
+    },
+    "cities:lithuanian_piliakalnis": {
+      "candidate": "batches/cities-003/review-crops/r05-c09.png",
+      "sha256": "778f8a9b2fd03faee2581a8d0579041a67b86aa0f30d95ec5a15259b0ec4044c",
+      "geometry_status": "pending"
+    },
+    "cities:louvre": {
+      "candidate": "batches/cities-003/review-crops/r05-c10.png",
+      "sha256": "987b3d5275be363451f11bfc0b5620cacec4894fde05facf76e9fdb03c9bb030",
+      "geometry_status": "pending"
+    },
+    "cities:machu_picchu": {
+      "candidate": "batches/cities-003/review-crops/r05-c11.png",
+      "sha256": "57693d21cc79ba1115206bd80a3278b77ff6351c2ec38848186a0cc52c0d9990",
+      "geometry_status": "pending"
+    },
+    "cities:madison_avenue": {
+      "candidate": "batches/cities-003/review-crops/r05-c12.png",
+      "sha256": "f04b9de9c2313777d5c8ee52dcaa539d08034b8cbee33f45148d0e4a006514a2",
+      "geometry_status": "pending"
+    },
+    "cities:magellan": {
+      "candidate": "batches/cities-003/review-crops/r06-c01.png",
+      "sha256": "d965b15c1f7610861756a3939e102afdd972eefb1e4c1c908a957b423ad4d922",
+      "geometry_status": "pending"
+    },
+    "cities:mali_mint": {
+      "candidate": "batches/cities-003/review-crops/r06-c02.png",
+      "sha256": "68f4e77487d6209af560372460c2d3d97ba20cf22ff265d7b885df940a3940fb",
+      "geometry_status": "pending"
+    },
+    "cities:manor": {
+      "candidate": "batches/cities-003/review-crops/r06-c03.png",
+      "sha256": "2876ed0e38a10b23188489506b7886719731877672d8b06d7351d1cc9600d29c",
+      "geometry_status": "pending"
+    },
+    "cities:manufacturing_plant": {
+      "candidate": "batches/cities-003/review-crops/r06-c04.png",
+      "sha256": "e6842a87d9da01454ee3fd34d1f61a157f2cb22b1f492a15cbdbd2624d46606c",
+      "geometry_status": "pending"
+    },
+    "cities:marching_pavilion": {
+      "candidate": "batches/cities-003/review-crops/r06-c05.png",
+      "sha256": "59e049ff9406266245ac290581a74a5cb9bd45fb27eee2670b67d0984426e584",
+      "geometry_status": "pending"
+    },
+    "cities:marco_polo": {
+      "candidate": "batches/cities-003/review-crops/r06-c06.png",
+      "sha256": "4872150ddfa911e64c31076996bcf2c3c61e7500cc3d82b52d1a7e19ae3f11ce",
+      "geometry_status": "pending"
+    },
+    "cities:market": {
+      "candidate": "batches/cities-003/review-crops/r06-c07.png",
+      "sha256": "b1c950cbf352b4ef7ac57831943af075601e669d38c209cc435bf55b6df5ff78",
+      "geometry_status": "pending"
+    },
+    "cities:matter_decompiler": {
+      "candidate": "batches/cities-003/review-crops/r06-c08.png",
+      "sha256": "23a4226a01558201dddb3773f8f6515fd9acfea5b738587b0b5d50df364bd75a",
+      "geometry_status": "pending"
+    },
+    "cities:mausoleum_of_maussollos": {
+      "candidate": "batches/cities-003/review-crops/r06-c09.png",
+      "sha256": "e81828bddc8df9b45e688a30217333e0c413409a3faf849d159738e8540e2739",
+      "geometry_status": "pending"
+    },
+    "cities:mech_assembly_plant": {
+      "candidate": "batches/cities-003/review-crops/r06-c10.png",
+      "sha256": "a2f18eeec7847386bf60c3ea7bc17507f38a1c524b05c2204b3a1b442377131c",
+      "geometry_status": "pending"
+    },
+    "cities:medical_center": {
+      "candidate": "batches/cities-003/review-crops/r06-c11.png",
+      "sha256": "543d0f3787af60b96e9ee8af0f782e546eb1a5d1a5e0b343ec6dc764a4456182",
+      "geometry_status": "pending"
+    },
+    "cities:meetingofminds": {
+      "candidate": "batches/cities-003/review-crops/r06-c12.png",
+      "sha256": "33fb52a8edd41a0b8f9ffc478f6212bdd53946a9f4746b3a1ce30949325589a6",
+      "geometry_status": "pending"
+    },
+    "cities:menagerie": {
+      "candidate": "batches/cities-003/review-crops/r07-c01.png",
+      "sha256": "6981771d0fc1deb0ff5309ba7118e2ba23b9e84315395c4b0243af88abe68d60",
+      "geometry_status": "pending"
+    },
+    "cities:mercenary_camp": {
+      "candidate": "batches/cities-003/review-crops/r07-c02.png",
+      "sha256": "25587f06e1f27bf375231501c1ed94bc4ee9746fe5ce130171540cae4b0fc2a0",
+      "geometry_status": "pending"
+    },
+    "cities:mesoamerican_cathedral": {
+      "candidate": "batches/cities-003/review-crops/r07-c03.png",
+      "sha256": "2cd3306a1094e97744485b750d5dea00ad2bc2e0183bc7dc9972ab960e625646",
+      "geometry_status": "pending"
+    },
+    "cities:mesoamerican_magician_pyramid": {
+      "candidate": "batches/cities-003/review-crops/r07-c04.png",
+      "sha256": "cf07df0278357af05c39446a4c9635b9948338b99d8af7253562559aaaa5f2b9",
+      "geometry_status": "pending"
+    },
+    "cities:mesoamerican_shrine": {
+      "candidate": "batches/cities-003/review-crops/r07-c05.png",
+      "sha256": "2de8916777f24f70f50e0cbe815a2c268cbf37d19d6f3fc0e4d8e3cc0f4d3949",
+      "geometry_status": "pending"
+    },
+    "cities:mesoamerican_temple": {
+      "candidate": "batches/cities-003/review-crops/r07-c06.png",
+      "sha256": "c53b04820393551c6ba66b7206235af38ce00c5a3d78ed8b385fdb94e22e864a",
+      "geometry_status": "pending"
+    },
+    "cities:metropolitan_administration": {
+      "candidate": "batches/cities-003/review-crops/r07-c07.png",
+      "sha256": "5f96a702485a129b4650a1171fcda53bf749f3df0a8a26c30b9a635ded157b40",
+      "geometry_status": "pending"
+    },
+    "cities:mid_lab": {
+      "candidate": "batches/cities-003/review-crops/r07-c08.png",
+      "sha256": "d9f242948b6877ae32169da28e53401ad0b0082b3ae6ee438e751a7336395781",
+      "geometry_status": "pending"
+    },
+    "cities:military_academy": {
+      "candidate": "batches/cities-003/review-crops/r07-c09.png",
+      "sha256": "cb8ef020d3e326bdfddcfe27518f2711d655751c01ff2517d5f4d4f9f7b4717f",
+      "geometry_status": "pending"
+    },
+    "cities:military_base": {
+      "candidate": "batches/cities-003/review-crops/r07-c10.png",
+      "sha256": "7815cdac8265118849f8f8dcfe28dd4b614308c6e14e8fcbbc2c62df5b0ef3fb",
+      "geometry_status": "pending"
+    },
+    "cities:mill": {
+      "candidate": "batches/cities-003/review-crops/r07-c11.png",
+      "sha256": "d264890ce6f3aae2ee37cc4f0e0e1a0536a377c78deef491a960b24f92488395",
+      "geometry_status": "pending"
+    },
+    "cities:mind_control_center": {
+      "candidate": "batches/cities-003/review-crops/r07-c12.png",
+      "sha256": "bca5d9475eb0b8aa251cacb2368a1f5f6bf50860ae630ade2c80b915ece01f94",
+      "geometry_status": "pending"
+    },
+    "cities:mind_storage": {
+      "candidate": "batches/cities-003/review-crops/r08-c01.png",
+      "sha256": "8fe09451a203cb13d5d65629ce15c36520c3282d65a7ecae8a1b8dac1dd73fb0",
+      "geometry_status": "pending"
+    },
+    "cities:mining_inc_survey_office": {
+      "candidate": "revisions/logo-overlays/mining_inc_survey_office.png",
+      "sha256": "f96b97722eec223e1233b23b90ddb285f5b501c27f11d8d8caa2fb9b9663a868",
+      "geometry_status": "pending"
+    },
+    "cities:missile_silo": {
+      "candidate": "batches/cities-003/review-crops/r08-c03.png",
+      "sha256": "cf07163e6954343072b796622c9f63f78d326534ca8d2066e3dce8915d5cad07",
+      "geometry_status": "pending"
+    },
+    "cities:moai_statues": {
+      "candidate": "batches/cities-003/review-crops/r08-c04.png",
+      "sha256": "1a213196281227e21119d45370c7b289e6df0aa1a81a4f69036e6c9fe7abab29",
+      "geometry_status": "pending"
+    },
+    "cities:moat": {
+      "candidate": "batches/cities-003/review-crops/r08-c05.png",
+      "sha256": "4424e23d96fcb3ee10881e3aa7db862bd2698bf2b57768fcc21165bd9e164be1",
+      "geometry_status": "pending"
+    },
+    "cities:mt_rushmore": {
+      "candidate": "batches/cities-003/review-crops/r08-c06.png",
+      "sha256": "c07a83b4f302c1eddc02403ded015e3eed9a6c2bb7c9ccd0b763356804d25723",
+      "geometry_status": "pending"
+    },
+    "cities:museum": {
+      "candidate": "batches/cities-003/review-crops/r08-c07.png",
+      "sha256": "10b2010926c4df62e19e099b3d5908bc33a20f2157386b62c1d425579d9d0dbd",
+      "geometry_status": "pending"
+    },
+    "cities:myth_beast": {
+      "candidate": "batches/cities-003/review-crops/r08-c08.png",
+      "sha256": "af4897ab58fd1c8701d8d26879a2ea99bf91a9d789815d1b58d8e6966f5fd0ae",
+      "geometry_status": "pending"
+    },
+    "cities:myth_hero": {
+      "candidate": "batches/cities-003/review-crops/r08-c09.png",
+      "sha256": "0db08998be04279b3f9119acb03132d2df1006881dfb0fa9e4f37798770a4820",
+      "geometry_status": "pending"
+    },
+    "cities:myth_sea": {
+      "candidate": "batches/cities-003/review-crops/r08-c10.png",
+      "sha256": "faa3dafafcc9a4301a04ee8d0e263d43581a0c6fbcab4dafdc7122e081fb5995",
+      "geometry_status": "pending"
+    },
+    "cities:myth_sky": {
+      "candidate": "batches/cities-003/review-crops/r08-c11.png",
+      "sha256": "506e9500aff89580dae47cff3ccc6751fd7f02e67d637800db06feb6df0e6ea4",
+      "geometry_status": "pending"
+    },
+    "cities:nanite_defuser": {
+      "candidate": "batches/cities-003/review-crops/r08-c12.png",
+      "sha256": "47a889c37743e238e9599c634557d03ae78ee11a5cffc93f363d841644af2140",
+      "geometry_status": "pending"
+    },
+    "cities:nanite_lab": {
+      "candidate": "batches/cities-003/review-crops/r09-c01.png",
+      "sha256": "e9405147fd6db71a46ae6efb6392918adb731a73774f669880af7790d806fad0",
+      "geometry_status": "pending"
+    },
+    "cities:nanite_population": {
+      "candidate": "batches/cities-003/review-crops/r09-c02.png",
+      "sha256": "a8b66ce7722874b654f44c6a3f880370e5c1985c6c623d26ec5bc8349839dd87",
+      "geometry_status": "pending"
+    },
+    "cities:nano_research_department": {
+      "candidate": "batches/cities-003/review-crops/r09-c03.png",
+      "sha256": "d5334f372ae3de8b467dd25b21c4f377e72bad686cc28aca908c84e72114d81e",
+      "geometry_status": "pending"
+    },
+    "cities:nanofactory": {
+      "candidate": "batches/cities-003/review-crops/r09-c04.png",
+      "sha256": "33892049074f037670624b68c26b7c7e938e7884abea3fc97e3e6c503d287f29",
+      "geometry_status": "pending"
+    },
+    "cities:national_epic": {
+      "candidate": "batches/cities-003/review-crops/r09-c05.png",
+      "sha256": "ea951cb153c3e977cd10361f076790389aca932beaf86a66486e3d43cdd01e1f",
+      "geometry_status": "pending"
+    },
+    "cities:national_mint": {
+      "candidate": "batches/cities-003/review-crops/r09-c06.png",
+      "sha256": "7bc8dd2212ea999abc540f9f016c4d97b4e493050bf76d1e3868347ec382d829",
+      "geometry_status": "pending"
+    },
+    "cities:national_park": {
+      "candidate": "batches/cities-003/review-crops/r09-c07.png",
+      "sha256": "8c3df6fbb5032576ed97bb4c81b55344944a87d835eb40c07fa143a2cd9cbd44",
+      "geometry_status": "pending"
+    },
+    "cities:national_redoubt": {
+      "candidate": "batches/cities-003/review-crops/r09-c08.png",
+      "sha256": "f416e30dad0e1c92477cb57a8e0e5fd90b1780c5006d281a1e8e89e585bc2016",
+      "geometry_status": "pending"
+    },
+    "cities:national_security": {
+      "candidate": "batches/cities-003/review-crops/r09-c09.png",
+      "sha256": "dde3fd5455dd5d5833f95d6bd788702fbaa9e29338c697d3d9d9601f253ee0aa",
+      "geometry_status": "pending"
+    },
+    "cities:national_shield": {
+      "candidate": "batches/cities-003/review-crops/r09-c10.png",
+      "sha256": "b708456ba491185e6eff3362bb961ce6397bbb149b02144d927823b02b426711",
+      "geometry_status": "pending"
+    },
+    "cities:native_america_totem": {
+      "candidate": "batches/cities-003/review-crops/r09-c11.png",
+      "sha256": "db72f33944086fb87938285a03dda7a0ef81b483f2eaec94b3009186dbe8a4ca",
+      "geometry_status": "pending"
+    },
+    "cities:naval_yard": {
+      "candidate": "batches/cities-003/review-crops/r09-c12.png",
+      "sha256": "24e8279af88164c93566063bf7a5c5384ae4e1284f79f9be8a25465af0a545c6",
+      "geometry_status": "pending"
+    },
+    "cities:network_node": {
+      "candidate": "batches/cities-003/review-crops/r10-c01.png",
+      "sha256": "6b69f5f6eac4c65976e8eb26d3bd4824cd5063ef4667635dbecfb165a1224f84",
+      "geometry_status": "pending"
+    },
+    "cities:neuschwanstein": {
+      "candidate": "batches/cities-003/review-crops/r10-c02.png",
+      "sha256": "8bdc6a23635fd6a6e0f6b4fcfeb4ddc1b7f42e280b42abdeec8af1e40a809a66",
+      "geometry_status": "pending"
+    },
+    "cities:nhl": {
+      "candidate": "batches/cities-003/review-crops/r10-c03.png",
+      "sha256": "3f915089a80f6b8e6b546f6f7507e7b8b9d25bf5eb5fa6754e393adca1d9dec4",
+      "geometry_status": "pending"
+    },
+    "cities:norway_fishmarket": {
+      "candidate": "batches/cities-003/review-crops/r10-c04.png",
+      "sha256": "5f7019179517af8ca000e231b72c5d626ccde1cbdfee093e2e68e752f90ffeaa",
+      "geometry_status": "pending"
+    },
+    "cities:notre_dame": {
+      "candidate": "batches/cities-003/review-crops/r10-c05.png",
+      "sha256": "95be438b72e15256ee751ca345ee0009b958e2d286c2c48298ce956cf0d0cb12",
+      "geometry_status": "pending"
+    },
+    "cities:nuclear_plant": {
+      "candidate": "batches/cities-003/review-crops/r10-c06.png",
+      "sha256": "6fc93eff7bd09e597367fe9241c92b548a760502a325cc4fe2fc66b3877f8511",
+      "geometry_status": "pending"
+    },
+    "cities:nws": {
+      "candidate": "batches/cities-003/review-crops/r10-c07.png",
+      "sha256": "4c9c87715876d0e3f5e96f81f56c462b72dbf496c9ef351baa39452085004852",
+      "geometry_status": "pending"
+    },
+    "cities:obelisk": {
+      "candidate": "batches/cities-003/review-crops/r10-c08.png",
+      "sha256": "4dde8b29144ab7633a86d4454167aa0586a6411231d774165a0ea2a83158f876",
+      "geometry_status": "pending"
+    },
+    "cities:observatory": {
+      "candidate": "batches/cities-003/review-crops/r10-c09.png",
+      "sha256": "35e1d1f9dbd76103eee09576128150c7856c6a40c0d0d3947e7ef408b9a9b823",
+      "geometry_status": "pending"
+    },
+    "cities:oil_plant": {
+      "candidate": "revisions/logo-overlays/oil_plant.png",
+      "sha256": "3658ec150f7be5cbae7017a33e424eb68b91f45f919dcc096958a5ab1f130b62",
+      "geometry_status": "pending"
+    },
+    "cities:oil_refinery": {
+      "candidate": "batches/cities-003/review-crops/r10-c11.png",
+      "sha256": "12b33b0aed4eb3a31ef5f9d8ff3f56d51025da770e526c903af04308c645fbf0",
+      "geometry_status": "pending"
+    },
+    "cities:omnifactory": {
+      "candidate": "batches/cities-003/review-crops/r10-c12.png",
+      "sha256": "acadd911ed4289b9d1a076987d0d4d41e416e152c94f39137de79282b617ac60",
+      "geometry_status": "pending"
+    },
+    "cities:oracle": {
+      "candidate": "batches/cities-003/review-crops/r11-c01.png",
+      "sha256": "e065c0565e24135fddc2a59d25c74b3dce742ab4d3b3a11db7161d290208c9d7",
+      "geometry_status": "pending"
+    },
+    "cities:orbital_factory": {
+      "candidate": "revisions/logo-overlays/orbital_factory.png",
+      "sha256": "fcf0459e28f73bc665d10cfa0dd0d1c12f314f21e7f6898d446b91448441634e",
+      "geometry_status": "pending"
+    },
+    "cities:orbital_hotel": {
+      "candidate": "batches/cities-003/review-crops/r11-c03.png",
+      "sha256": "f11b3cbd0163fed20ee071181c1e64ab8afe0955636b2542ce1e73fac2116162",
+      "geometry_status": "pending"
+    },
+    "cities:ottoman_hammam": {
+      "candidate": "batches/cities-003/review-crops/r11-c04.png",
+      "sha256": "18ad03204824d828e6baa98ae2e55d9eb715121443f6a07dfca6c82a97d96118",
+      "geometry_status": "pending"
+    },
+    "cities:oxford_university": {
+      "candidate": "batches/cities-003/review-crops/r11-c05.png",
+      "sha256": "e2c80af88cff95904cd55d8a3920ec0a200c1137a56cb69bac817eeb4540efc6",
+      "geometry_status": "pending"
+    },
+    "cities:painter": {
+      "candidate": "batches/cities-003/review-crops/r11-c06.png",
+      "sha256": "fa7d91f17bfd088889f2f0780fab2b86a20ab4eb1686dd4ea0e631a1b67bec11",
+      "geometry_status": "pending"
+    },
+    "cities:palace": {
+      "candidate": "batches/cities-003/review-crops/r11-c07.png",
+      "sha256": "d744b70324fa58c040c28f47aa1ced73ddfea900a278a562fbe01f10d51273dd",
+      "geometry_status": "pending"
+    },
+    "cities:palisade": {
+      "candidate": "batches/cities-003/review-crops/r11-c08.png",
+      "sha256": "f3999e3e7a47f61f172b51281b165bb64c3549f110f527e06fd555c97e66a603",
+      "geometry_status": "pending"
+    },
+    "cities:papermill": {
+      "candidate": "batches/cities-003/review-crops/r11-c09.png",
+      "sha256": "a66dd772827e7bbf3ea1bfc0903ec9a6e5976a02b7107b1f1e996be5481d8662",
+      "geometry_status": "pending"
+    },
+    "cities:park_arcology": {
+      "candidate": "batches/cities-003/review-crops/r11-c10.png",
+      "sha256": "1def23b407ae7b65b33b2b46c2b1e5934969d08de394ecaf0c8658458f37b7d8",
+      "geometry_status": "pending"
+    },
+    "cities:parthenon": {
+      "candidate": "batches/cities-003/review-crops/r11-c11.png",
+      "sha256": "3a088ba04e7c17c0877d413e60e48f616d73b19b1f58811aa6fdb6a84a5e2605",
+      "geometry_status": "pending"
+    },
+    "cities:peace_movement": {
+      "candidate": "batches/cities-003/review-crops/r11-c12.png",
+      "sha256": "792af0d7fb1e0c866844822735d02dcb0f606530913be95be39877cc0a11bcaa",
+      "geometry_status": "pending"
+    },
+    "cities:pentagon": {
+      "candidate": "batches/cities-003/review-crops/r12-c01.png",
+      "sha256": "7e821c3f84b04da0aa070fbe5a8ab5d8d90c29aedbb413b0570727d9f28a587d",
+      "geometry_status": "pending"
+    },
+    "cities:persian_satrap": {
+      "candidate": "batches/cities-003/review-crops/r12-c02.png",
+      "sha256": "85eda6751cacaddfd1d010cf617bd9ddf74cd14bba63e4d58fe304c9c37615ce",
+      "geometry_status": "pending"
+    },
+    "cities:petra": {
+      "candidate": "batches/cities-003/review-crops/r12-c03.png",
+      "sha256": "f4a4356dd286df340f4dba4bde033ae8ebc6600f3e9d63692a2a84374d7664b3",
+      "geometry_status": "pending"
+    },
+    "cities:pharmacy": {
+      "candidate": "batches/cities-003/review-crops/r12-c04.png",
+      "sha256": "60f079ff7c9cd9e7f0513667cc0a6acb734bc13b6feafb08c72dbb86bdf3b8d3",
+      "geometry_status": "pending"
+    },
+    "cities:photographer": {
+      "candidate": "batches/cities-003/review-crops/r12-c05.png",
+      "sha256": "69268bbe772881517c637e041a445743f904c3d6de17bd2369f630177cfe615b",
+      "geometry_status": "pending"
+    },
+    "cities:pisa": {
+      "candidate": "batches/cities-003/review-crops/r12-c06.png",
+      "sha256": "7c8ef8078fdb85373af26a2cea3cbf7afaa486dc5fc52a96102b4bd51ed73872",
+      "geometry_status": "pending"
+    },
+    "cities:plague_hospital": {
+      "candidate": "batches/cities-003/review-crops/r12-c07.png",
+      "sha256": "4080347cc92b852cbd71b6ee0d38a0ca5559528cee2365bab0f26141618f0ecc",
+      "geometry_status": "pending"
+    },
+    "cities:planning_office": {
+      "candidate": "batches/cities-003/review-crops/r12-c08.png",
+      "sha256": "0d1957a3c7078b800b401b05b97b2bfe712fc0d142c0a64097157d01ed99a7f3",
+      "geometry_status": "pending"
+    },
+    "cities:platos_academy": {
+      "candidate": "batches/cities-003/review-crops/r12-c09.png",
+      "sha256": "34bc73c689a47bf743374b95bc3036d27fa30e2bd177e5c56145ac892ae2d4ab",
+      "geometry_status": "pending"
+    },
+    "cities:pleisto_park": {
+      "candidate": "batches/cities-003/review-crops/r12-c10.png",
+      "sha256": "f5f813c705a70b3927a1a9a5792b0f1d9b4d2e7c73523149cab2ad81867effc8",
+      "geometry_status": "pending"
+    },
+    "cities:police_station": {
+      "candidate": "batches/cities-003/review-crops/r12-c11.png",
+      "sha256": "0b665ea4c19928cfd22f12b3ce7e2cd5988ed2dbe210278534b2f2c8b5c8878a",
+      "geometry_status": "pending"
+    },
+    "cities:polis_council": {
+      "candidate": "batches/cities-003/review-crops/r12-c12.png",
+      "sha256": "e418a3fa51172cc1ebb9332e2c35bc6ea4c179e1d5d848b41713f0568ecd617d",
+      "geometry_status": "pending"
+    },
+    "cities:porcelain_tower": {
+      "candidate": "batches/cities-004/review-crops/r01-c01.png",
+      "sha256": "6f3bde29d6fdd0a748243a0165a7077425e0a865df87577a51ca645c5e893287",
+      "geometry_status": "pending"
+    },
+    "cities:potter": {
+      "candidate": "batches/cities-004/review-crops/r01-c02.png",
+      "sha256": "249beaf3811d70a764477c264bd7973502afc388fa4380145ad4be22e6b63869",
+      "geometry_status": "pending"
+    },
+    "cities:power_receiver": {
+      "candidate": "batches/cities-004/review-crops/r01-c03.png",
+      "sha256": "71e03136f5c2dddf348add41915e303deb32015f6980e9a06f2079f2472db2d6",
+      "geometry_status": "pending"
+    },
+    "cities:press_gang": {
+      "candidate": "batches/cities-004/review-crops/r01-c04.png",
+      "sha256": "d2bf99a55d3d5b51a46a9890a6de4be622c30289b3ccb9e2ed3e53a63cf6cb0d",
+      "geometry_status": "pending"
+    },
+    "cities:printer": {
+      "candidate": "batches/cities-004/review-crops/r01-c05.png",
+      "sha256": "21bb7c24a41232cb8feb49559335ab5273e10a5eb76eb14032c7222837b94371",
+      "geometry_status": "pending"
+    },
+    "cities:propaganda_net": {
+      "candidate": "batches/cities-004/review-crops/r01-c06.png",
+      "sha256": "1cb986009f237e6eb7abff45a0e6d6bc64497281b99917970eed521d9f9fdda6",
+      "geometry_status": "pending"
+    },
+    "cities:propaganda_office": {
+      "candidate": "revisions/logo-overlays/propaganda_office.png",
+      "sha256": "f2e0e4165c8540b8a9c94dd745e76e36cba288702701517ff374bcf3d0ce269a",
+      "geometry_status": "pending"
+    },
+    "cities:provincial_hall": {
+      "candidate": "batches/cities-004/review-crops/r01-c08.png",
+      "sha256": "769e3d0356961b7b690c312ec17da86e7086c79fa2a934a78651506aba25cd51",
+      "geometry_status": "pending"
+    },
+    "cities:public_transportation": {
+      "candidate": "batches/cities-004/review-crops/r01-c09.png",
+      "sha256": "3a06ade5fc60a1c078a60f084251f744838fb3a8e29553d606308b0e2f9ecc87",
+      "geometry_status": "pending"
+    },
+    "cities:pyramid": {
+      "candidate": "batches/cities-004/review-crops/r01-c10.png",
+      "sha256": "bb558cccf112b2f1559996a13dd8fdc885b10398606793badd80388f1f64cc6a",
+      "geometry_status": "pending"
+    },
+    "cities:quern": {
+      "candidate": "batches/cities-004/review-crops/r01-c11.png",
+      "sha256": "07c4a1e4aa6dad998c4b161721c7de67b3d6d4004c42da3222c9934c44739cdf",
+      "geometry_status": "pending"
+    },
+    "cities:radio_telescope": {
+      "candidate": "batches/cities-004/review-crops/r01-c12.png",
+      "sha256": "b6d831d5455ab61ed20369738e5bad8aef5e39c053153016b82232993366b840",
+      "geometry_status": "pending"
+    },
+    "cities:rail_station": {
+      "candidate": "batches/cities-004/review-crops/r02-c01.png",
+      "sha256": "89d6ad1201ac919a25ab0923ce71a7be3da2764cc8c0445d69d38363285364f6",
+      "geometry_status": "pending"
+    },
+    "cities:railgun_turret": {
+      "candidate": "revisions/logo-overlays/railgun_turret.png",
+      "sha256": "ee9ca4aebcfaef733b7eb780e863671fd294e8a897891159024e5ebde14afdf7",
+      "geometry_status": "pending"
+    },
+    "cities:recruitment_office": {
+      "candidate": "batches/cities-004/review-crops/r02-c03.png",
+      "sha256": "c3f3f255d3840011e92df8811dcec4542439340050341443f8367b2083e249d1",
+      "geometry_status": "pending"
+    },
+    "cities:recycling_center": {
+      "candidate": "batches/cities-004/review-crops/r02-c04.png",
+      "sha256": "c7c1ed1eb01628901508b1c0ccd0ca412bf51be11a609bafebac8682875db75e",
+      "geometry_status": "pending"
+    },
+    "cities:recycling_factory": {
+      "candidate": "batches/cities-004/review-crops/r02-c05.png",
+      "sha256": "3c58b0a824644339b305bd3b953c46d84bc84b04ecabd9fd7380ac1088b8418c",
+      "geometry_status": "pending"
+    },
+    "cities:red_cross": {
+      "candidate": "batches/cities-004/review-crops/r02-c06.png",
+      "sha256": "9df3a1b55396a9422b85db604060db7a0bb761826023e869143bdb6e1f793fc8",
+      "geometry_status": "pending"
+    },
+    "cities:regenerator": {
+      "candidate": "batches/cities-004/review-crops/r02-c07.png",
+      "sha256": "4d01523df732ea1861f7f89c21beee874c7b58041326856cf1739e70e8ba01bb",
+      "geometry_status": "pending"
+    },
+    "cities:reichstag": {
+      "candidate": "batches/cities-004/review-crops/r02-c08.png",
+      "sha256": "e4e0fa32db7f08fa1ec37a93ff2b940c4259e4d5c161123f1a547c4917efc8c6",
+      "geometry_status": "pending"
+    },
+    "cities:replicator_plant": {
+      "candidate": "batches/cities-004/review-crops/r02-c09.png",
+      "sha256": "1836f8b3cdd6decafbe10d5f96d9cc226b752d150b522b775d72e23a98cdb84b",
+      "geometry_status": "pending"
+    },
+    "cities:research_hospital": {
+      "candidate": "batches/cities-004/review-crops/r02-c10.png",
+      "sha256": "f21837f7157d5b14ef98cedd36ed80e228bdfe664614e4a7267bae49cfd4f8f4",
+      "geometry_status": "pending"
+    },
+    "cities:revivalist_church": {
+      "candidate": "batches/cities-004/review-crops/r02-c11.png",
+      "sha256": "c01c47dcc12a3ae869b0716760777d133213e37768678cee3b2cbd07430698f0",
+      "geometry_status": "pending"
+    },
+    "cities:rocknroll": {
+      "candidate": "batches/cities-004/review-crops/r02-c12.png",
+      "sha256": "2ec9c5578a0f92fde5a45fb8c7cb42b177fa5e0e912be2c412e21e9663bf3593",
+      "geometry_status": "pending"
+    },
+    "cities:rosetta": {
+      "candidate": "batches/cities-004/review-crops/r03-c01.png",
+      "sha256": "91092cdf7363e79cb7d7087456d71c661c472e5ab673e69cf80410de0ab5c042",
+      "geometry_status": "pending"
+    },
+    "cities:russian_research_institute": {
+      "candidate": "batches/cities-004/review-crops/r03-c02.png",
+      "sha256": "b36c98dbdb0899520d5dae25e2d5c64ec45ef196a48993baeb37ea4230eef886",
+      "geometry_status": "pending"
+    },
+    "cities:safehouse": {
+      "candidate": "batches/cities-004/review-crops/r03-c03.png",
+      "sha256": "6b2eb04f462877298b1dcc8599b1b484422702f4e77ef6c7a3255e29bd222a47",
+      "geometry_status": "pending"
+    },
+    "cities:sagas": {
+      "candidate": "batches/cities-004/review-crops/r03-c04.png",
+      "sha256": "9abd2135e90966e12bd94581e949cc2b3cd3ca3c4dcdcc6408efda721928a2ce",
+      "geometry_status": "pending"
+    },
+    "cities:san_marco": {
+      "candidate": "batches/cities-004/review-crops/r03-c05.png",
+      "sha256": "84c4e189e60a66af71b7311c8906ae3f01d4e4440d2e4f5fea83970e9eec0563",
+      "geometry_status": "pending"
+    },
+    "cities:sankore": {
+      "candidate": "batches/cities-004/review-crops/r03-c06.png",
+      "sha256": "c6ff8d0608c6e8491a58f475dd605f11dc133d901ade0d741014f7df337ce579",
+      "geometry_status": "pending"
+    },
+    "cities:school_of_law": {
+      "candidate": "batches/cities-004/review-crops/r03-c07.png",
+      "sha256": "4e8d6f837a1e7c571e367c7950382df9e052675c659db50ff0a88ad1ec61b960",
+      "geometry_status": "pending"
+    },
+    "cities:school_of_medicine": {
+      "candidate": "batches/cities-004/review-crops/r03-c08.png",
+      "sha256": "6c00708a70442b84f417b7317354d93eec1e5cfed45aaa84d87ab74b0bf4dc72",
+      "geometry_status": "pending"
+    },
+    "cities:scotland_yard": {
+      "candidate": "batches/cities-004/review-crops/r03-c09.png",
+      "sha256": "f0ad51a582feb38fc504450e2cbbabc6163f1a9e2b49240c28d796c2b933e3c0",
+      "geometry_status": "pending"
+    },
+    "cities:scriptorium": {
+      "candidate": "batches/cities-004/review-crops/r03-c10.png",
+      "sha256": "d1b8922a623dd1efc0ecfcc6eceb27833dcc120990a0be090c08872ffd68d0b5",
+      "geometry_status": "pending"
+    },
+    "cities:sculptor": {
+      "candidate": "batches/cities-004/review-crops/r03-c11.png",
+      "sha256": "f4e6bf6ef42b403f868517b1f618bb48bcfdcf0039c3a060ab2bd8329cbfa502",
+      "geometry_status": "pending"
+    },
+    "cities:security_center": {
+      "candidate": "batches/cities-004/review-crops/r03-c12.png",
+      "sha256": "c24ee4daab9832596b163d62cc3eaa221b72e0410537a3e4ec0ffd1d891a68cd",
+      "geometry_status": "pending"
+    },
+    "cities:seminary": {
+      "candidate": "batches/cities-004/review-crops/r04-c01.png",
+      "sha256": "2a2a9b202acc39be4ee5e90fc03e772fe9b75eb22e8e53448cb22048700e67f2",
+      "geometry_status": "pending"
+    },
+    "cities:seti_program": {
+      "candidate": "batches/cities-004/review-crops/r04-c02.png",
+      "sha256": "94f61d437c54caa4a7641a2a84ed5c996aabc9f5309b9574215e04cdee7d887e",
+      "geometry_status": "pending"
+    },
+    "cities:sguildhall": {
+      "candidate": "batches/cities-004/review-crops/r04-c03.png",
+      "sha256": "4cc800fe7a1f8432703d011809579f40c1780da210b73c792d1a01cd12b4f988",
+      "geometry_status": "pending"
+    },
+    "cities:shantytown": {
+      "candidate": "batches/cities-004/review-crops/r04-c04.png",
+      "sha256": "753c939d7c6d2ad2fc97fa448894d85c3323e53a8cad2a21ce1796e5089dc927",
+      "geometry_status": "pending"
+    },
+    "cities:shaolin": {
+      "candidate": "batches/cities-004/review-crops/r04-c05.png",
+      "sha256": "967254c8f5b283c57e4bbf1d193cfd16f79ced1a25cfad062f6be2aa3ded91bc",
+      "geometry_status": "pending"
+    },
+    "cities:shinto_cathedral": {
+      "candidate": "revisions/logo-overlays/shinto_cathedral.png",
+      "sha256": "2236f96b79debfb0908f503e6ab242359a05f4f778d445bd13228682e24c5769",
+      "geometry_status": "pending"
+    },
+    "cities:shinto_monastery": {
+      "candidate": "revisions/logo-overlays/shinto_monastery.png",
+      "sha256": "6f7643dc8570713b21651751e26a9d359cad5dcfe392ff8de92818d670b6d926",
+      "geometry_status": "pending"
+    },
+    "cities:shinto_shrine": {
+      "candidate": "revisions/logo-overlays/shinto_shrine.png",
+      "sha256": "53bf9e9df1eb40f5e075588a8d746922637d0fe7b50781e701e2c2457920c209",
+      "geometry_status": "pending"
+    },
+    "cities:shinto_temple": {
+      "candidate": "revisions/logo-overlays/shinto_temple.png",
+      "sha256": "4b5754679fa07895751937a662229551445318ee69ec1bdeb5d61ebb991789f9",
+      "geometry_status": "pending"
+    },
+    "cities:shopping_district": {
+      "candidate": "batches/cities-004/review-crops/r04-c10.png",
+      "sha256": "a7c77590a6e3e29ca79eebc72342b180e9ca8e608b2cd62514f688e1fc0ca94d",
+      "geometry_status": "pending"
+    },
+    "cities:shwedagon_paya": {
+      "candidate": "batches/cities-004/review-crops/r04-c11.png",
+      "sha256": "338740a73448363b0c1bf81bc5c38ccf4b4fc11a032979e86090faaa7c5a3417",
+      "geometry_status": "pending"
+    },
+    "cities:sid_sushi_restaurant": {
+      "candidate": "batches/cities-004/review-crops/r04-c12.png",
+      "sha256": "893a7cc8df1ed5a256ed33a63adffcacd0347c7485572c38b8ddc4f0b7615856",
+      "geometry_status": "pending"
+    },
+    "cities:siege_workshop": {
+      "candidate": "batches/cities-004/review-crops/r05-c01.png",
+      "sha256": "351204c0fc5371af03be189aa427ebafcc89350db4c29f1fbb970851ef2dd758",
+      "geometry_status": "pending"
+    },
+    "cities:silicon_valley": {
+      "candidate": "batches/cities-004/review-crops/r05-c02.png",
+      "sha256": "ce7693c713880205b25cea88b87180b9037b50c021c04f88bf89c46c36c4f2ec",
+      "geometry_status": "pending"
+    },
+    "cities:sistine_chapel": {
+      "candidate": "batches/cities-004/review-crops/r05-c03.png",
+      "sha256": "aa2cb6aacc30948321759b47e9a2e33fa60733d1062d1cdbfcf0da5e333f8366",
+      "geometry_status": "pending"
+    },
+    "cities:social_justice_organization": {
+      "candidate": "batches/cities-004/review-crops/r05-c04.png",
+      "sha256": "b754c256fb9b599c7804084de72e14e6e8c4cd01bbe4c6f0f93017283fe26903",
+      "geometry_status": "pending"
+    },
+    "cities:social_services": {
+      "candidate": "batches/cities-004/review-crops/r05-c05.png",
+      "sha256": "a2c638d02d740dcdbcbfe54c34974c08aadf92e126ff8c637a9412b1d08af4eb",
+      "geometry_status": "pending"
+    },
+    "cities:solar_plant": {
+      "candidate": "batches/cities-004/review-crops/r05-c06.png",
+      "sha256": "9ec09b505ef82e967a5e2b7916a191aed30fde373fe5e3f7670200f8bcd171a6",
+      "geometry_status": "pending"
+    },
+    "cities:space_elevator": {
+      "candidate": "batches/cities-004/review-crops/r05-c07.png",
+      "sha256": "dea41b39e658e650b31679d4bcb342405e3a9c28132a8a061b0ce4cef4bf4629",
+      "geometry_status": "pending"
+    },
+    "cities:spaceport": {
+      "candidate": "revisions/logo-overlays/spaceport.png",
+      "sha256": "da1bb29c0d6ca3908a08b09f188a3ada8aff5ab35c852a3ff63a49661ffa43a9",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_bomb_shelter": {
+      "candidate": "batches/cities-004/review-crops/r05-c09.png",
+      "sha256": "89885508c12385031dc0c61e3fe943f4f95861b5932c67036787abd870f83a6c",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_cloning_factory": {
+      "candidate": "batches/cities-004/review-crops/r05-c10.png",
+      "sha256": "06c872c05212626741986640d79e5a8426326ec25942e1c8534e6aaf2c10dca4",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_corporate_store": {
+      "candidate": "revisions/logo-overlays/specialbuilding_corporate_store.png",
+      "sha256": "dee9eba191fcc14eab58db5a7a8f4d0b5ae5519981d020cbf49881cfec2a62e8",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_corporation_hq": {
+      "candidate": "batches/cities-004/review-crops/r05-c12.png",
+      "sha256": "f5ba080cbe15171e8796d9a09fa81b48c29460c19ddaf930ebd1ae0bfd10303e",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_first_nuclear_test": {
+      "candidate": "batches/cities-004/review-crops/r06-c01.png",
+      "sha256": "950daf4c33c1ecf496196e65bd9ef2a3fe1cb1eb715050b0b58a4107851f30e0",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_guild_hq": {
+      "candidate": "batches/cities-004/review-crops/r06-c02.png",
+      "sha256": "0b45ac8a955e3215ee4eb233dc1e1a3e87a56ce53700c7ef7848196a90d04798",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_masters_hall": {
+      "candidate": "batches/cities-004/review-crops/r06-c03.png",
+      "sha256": "d5789349aa90120558464b59413ae5268b6b7ea3dda6acf8074ab34ce7502731",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_monastery": {
+      "candidate": "revisions/logo-overlays/specialbuilding_monastery.png",
+      "sha256": "5fe11c2de02749d2f32ef7b24c784b25c50dac32d68be97677489f32e84c1859",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_myth": {
+      "candidate": "batches/cities-004/review-crops/r06-c05.png",
+      "sha256": "64a69c66080318179ea2f927b10285a073a1dc19f62eed3e35870bd04347ddd7",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_pantheon": {
+      "candidate": "batches/cities-004/review-crops/r06-c06.png",
+      "sha256": "ec2e30a6af50f034e703f80a9464367761d061bb0fad2c3196284a930369943a",
+      "geometry_status": "pending"
+    },
+    "cities:specialbuilding_world_bank": {
+      "candidate": "batches/cities-004/review-crops/r06-c07.png",
+      "sha256": "e952877873b7fa4c46af1c1f991d51096ec0b68453202ac085f9ff12294d36b3",
+      "geometry_status": "pending"
+    },
+    "cities:spiral_minaret": {
+      "candidate": "batches/cities-004/review-crops/r06-c08.png",
+      "sha256": "5097bbe91b3bbcfa16dbe9004cfc36c2783727f2ff971f74a5717ea0486679db",
+      "geometry_status": "pending"
+    },
+    "cities:stable": {
+      "candidate": "batches/cities-004/review-crops/r06-c09.png",
+      "sha256": "dbb74d138594d995cbc282a67ba64a17369bb9e1fafdcc19073795f89be76eb3",
+      "geometry_status": "pending"
+    },
+    "cities:stadium": {
+      "candidate": "batches/cities-004/review-crops/r06-c10.png",
+      "sha256": "71c78d67405694661d24c4529b1e700bbbf2c9a674aabc9267546b4462334014",
+      "geometry_status": "pending"
+    },
+    "cities:standard_ethanol_distillery": {
+      "candidate": "revisions/logo-overlays/standard_ethanol_distillery.png",
+      "sha256": "e3fae690e20c68535fc457891362fbcc2eb6ea9b6b71482985ca8244c2b59748",
+      "geometry_status": "pending"
+    },
+    "cities:standing_stone": {
+      "candidate": "batches/cities-004/review-crops/r06-c12.png",
+      "sha256": "2be46b1179ae7b84df0d7f9aae1513df80cb40690df0f32371eebb86b7a422e8",
+      "geometry_status": "pending"
+    },
+    "cities:star_fort": {
+      "candidate": "batches/cities-004/review-crops/r07-c01.png",
+      "sha256": "183722553ec8ad790fcfe794e63f0e896369cdc6e9b4c63812966247e936d6e1",
+      "geometry_status": "pending"
+    },
+    "cities:starport": {
+      "candidate": "batches/cities-004/review-crops/r07-c02.png",
+      "sha256": "5f9731ee464d5780cb66041a898c6ad8786cf9dfa1424b03e21633f906964def",
+      "geometry_status": "pending"
+    },
+    "cities:statue_of_champion": {
+      "candidate": "batches/cities-004/review-crops/r07-c03.png",
+      "sha256": "36b4a3f2221957240974de0d461b8141b9d9055d010417ffa2c01deff890d4ca",
+      "geometry_status": "pending"
+    },
+    "cities:statue_of_liberty": {
+      "candidate": "batches/cities-004/review-crops/r07-c04.png",
+      "sha256": "f694cb2aeae567f9e4fc8f0c7cba764947773952a92dfc9f8eeacc13b9e5e375",
+      "geometry_status": "pending"
+    },
+    "cities:statue_of_zeus": {
+      "candidate": "batches/cities-004/review-crops/r07-c05.png",
+      "sha256": "b03f11f49fd3ca620812ce662e55e7db7a838608b66070558f68b55cfa8dcfab",
+      "geometry_status": "pending"
+    },
+    "cities:stock_exchange": {
+      "candidate": "batches/cities-004/review-crops/r07-c06.png",
+      "sha256": "41ae1f065da3d2219684cd9544c20b122e77c6379db0fffd45f39615a3298ed2",
+      "geometry_status": "pending"
+    },
+    "cities:stonehenge": {
+      "candidate": "batches/cities-004/review-crops/r07-c07.png",
+      "sha256": "55b068ceb3e02d81e907a1f52fd0381449603a08123575ac04271fc34af49ebe",
+      "geometry_status": "pending"
+    },
+    "cities:stoneworker": {
+      "candidate": "batches/cities-004/review-crops/r07-c08.png",
+      "sha256": "70f4a3ab3e62bd9b2fb56596f56b45aad3f0e6690a6f0edb17cc5d7948b06626",
+      "geometry_status": "pending"
+    },
+    "cities:storyteller_circle": {
+      "candidate": "batches/cities-004/review-crops/r07-c09.png",
+      "sha256": "3c68153aaa1b4cafe2595d478270b607b7f1baf65936b830474438ca832e698f",
+      "geometry_status": "pending"
+    },
+    "cities:sumerian_ziggurat": {
+      "candidate": "batches/cities-004/review-crops/r07-c10.png",
+      "sha256": "6ef544c9e2b6c3bb92dd18e00e70748817ba34781106775f100cc3d0e6d9414e",
+      "geometry_status": "pending"
+    },
+    "cities:supermarket": {
+      "candidate": "batches/cities-004/review-crops/r07-c11.png",
+      "sha256": "1fdaa998cce3f74b1a32391aea9fe64250ca5dcb462437fbee0dc4c83526cf9c",
+      "geometry_status": "pending"
+    },
+    "cities:supreme_court": {
+      "candidate": "batches/cities-004/review-crops/r07-c12.png",
+      "sha256": "fd430972489d473e1e052dee4ef3d7e0d51cc0dd50b8c925066c0ac4a1d651b3",
+      "geometry_status": "pending"
+    },
+    "cities:surveillance_network": {
+      "candidate": "batches/cities-004/review-crops/r08-c01.png",
+      "sha256": "eeecfe72cf6df4a6aa4835f6ad1f7abc60369c59742cc940b57af3de50a2e837",
+      "geometry_status": "pending"
+    },
+    "cities:swiss_zoll": {
+      "candidate": "revisions/logo-overlays/swiss_zoll.png",
+      "sha256": "55a676eb752b4e89ead381e3bc53b621c22dcdf7725c8abc218f1a883a88590f",
+      "geometry_status": "pending"
+    },
+    "cities:tailor_shop": {
+      "candidate": "batches/cities-004/review-crops/r08-c03.png",
+      "sha256": "ccf460bf0085acb445adc675e9eb5a121195625197d9fc46d67053a8d04bba8c",
+      "geometry_status": "pending"
+    },
+    "cities:taj_mahal": {
+      "candidate": "batches/cities-004/review-crops/r08-c04.png",
+      "sha256": "40515e08b4e866390be89e54bba91a7a4a1efe1d9c7aa09380985f24066e04f6",
+      "geometry_status": "pending"
+    },
+    "cities:taoist_cathedral": {
+      "candidate": "revisions/logo-overlays/taoist_cathedral.png",
+      "sha256": "2e6903bc12f22254f008d85aac5a6ef5cdc2be6826949480aa92e109352360ef",
+      "geometry_status": "pending"
+    },
+    "cities:taoist_monastery": {
+      "candidate": "revisions/logo-overlays/taoist_monastery.png",
+      "sha256": "f7e4281e48cb3567bb385b4ba1412b05188a914c4ce99b36020452d35fc44195",
+      "geometry_status": "pending"
+    },
+    "cities:taoist_temple": {
+      "candidate": "revisions/logo-overlays/taoist_temple.png",
+      "sha256": "7f9f581e3b15c2214ee66caf2e554a63b857083c434f3d74c2ab912920f7ae6b",
+      "geometry_status": "pending"
+    },
+    "cities:tax_office": {
+      "candidate": "revisions/logo-overlays/tax_office.png",
+      "sha256": "1e968ab2dab8abfd17173d1c6315743c00fd1aa7d82458dfde1dfd2f91ea3dd2",
+      "geometry_status": "pending"
+    },
+    "cities:technological_capital": {
+      "candidate": "batches/cities-004/review-crops/r08-c09.png",
+      "sha256": "3f46b6dcd552721df15ffa146c7fd85ebc4f4b39ab196dc1bbf633d0eb84df7d",
+      "geometry_status": "pending"
+    },
+    "cities:telegraph_office": {
+      "candidate": "batches/cities-004/review-crops/r08-c10.png",
+      "sha256": "387c46b8139d4a97a85a2b1a3fb373fa749d438f1688b4c2fc9dffb68f7601d4",
+      "geometry_status": "pending"
+    },
+    "cities:telephone_network": {
+      "candidate": "batches/cities-004/review-crops/r08-c11.png",
+      "sha256": "e0a44527f35edd6e9bd8c4388b0731db89fe9868c05e74ed5b9cba1d72d88fdd",
+      "geometry_status": "pending"
+    },
+    "cities:temple_of_isis": {
+      "candidate": "batches/cities-004/review-crops/r08-c12.png",
+      "sha256": "a02ee89561f350e5de82ca82efd130563101552269858ae1c3a7cbce87b6b0be",
+      "geometry_status": "pending"
+    },
+    "cities:temple_of_osiris": {
+      "candidate": "batches/cities-004/review-crops/r09-c01.png",
+      "sha256": "8763e1a073ba83651df2edd0bd0e2be7b5bf362de21a50f2232d88829e4bca84",
+      "geometry_status": "pending"
+    },
+    "cities:temple_of_set": {
+      "candidate": "batches/cities-004/review-crops/r09-c02.png",
+      "sha256": "d268b4648e9437c03aaba515240dfc7e004fb428f1698dcb9ffcee3c3a44a75d",
+      "geometry_status": "pending"
+    },
+    "cities:terracotta": {
+      "candidate": "batches/cities-004/review-crops/r09-c03.png",
+      "sha256": "1097cb46ea1052ae05ad2c5868a05e006dedf673019e4d8c1aaec5f49a228907",
+      "geometry_status": "pending"
+    },
+    "cities:textile_mill": {
+      "candidate": "batches/cities-004/review-crops/r09-c04.png",
+      "sha256": "4876fc00d98fb0bf799ea23462b71edb581dbdd17dff878282a3febbeeb92fb6",
+      "geometry_status": "pending"
+    },
+    "cities:the_agency": {
+      "candidate": "batches/cities-004/review-crops/r09-c05.png",
+      "sha256": "cb5fe33a05e2310697d0d15f06a557666ace95a587ef0ae29a30fbf1eaab567b",
+      "geometry_status": "pending"
+    },
+    "cities:theatre": {
+      "candidate": "batches/cities-004/review-crops/r09-c06.png",
+      "sha256": "b6958b9f655cf2bb3dfee63dd306536805d5a289af71a54b756459f0cf1821e6",
+      "geometry_status": "pending"
+    },
+    "cities:theatre_of_dionysus": {
+      "candidate": "batches/cities-004/review-crops/r09-c07.png",
+      "sha256": "c191114b3e92c3ca86f325ae13b4582ef4a6f2e2375fc740317ce9f0139a6eb3",
+      "geometry_status": "pending"
+    },
+    "cities:think_tank": {
+      "candidate": "batches/cities-004/review-crops/r09-c08.png",
+      "sha256": "5e74a687f58a95eb9d74a6e1ea982c7e1c8c55fb9b842a12e0b24db364b0e9d8",
+      "geometry_status": "pending"
+    },
+    "cities:throne_room": {
+      "candidate": "batches/cities-004/review-crops/r09-c09.png",
+      "sha256": "9409d04667368ca4663d492c967c875a118b77fdf0693e2a9f44ffbb4f914f35",
+      "geometry_status": "pending"
+    },
+    "cities:tidal_power_plant": {
+      "candidate": "batches/cities-004/review-crops/r09-c10.png",
+      "sha256": "51223ab54db8fcb03b891413a076826f22373fda8c1d1428f3225000ca2c14be",
+      "geometry_status": "pending"
+    },
+    "cities:toll_house": {
+      "candidate": "batches/cities-004/review-crops/r09-c11.png",
+      "sha256": "c915778ae6ec4e82ea62700fabf43dfb5ba392cacc2dac9b65f002960f607fc9",
+      "geometry_status": "pending"
+    },
+    "cities:town_hall": {
+      "candidate": "batches/cities-004/review-crops/r09-c12.png",
+      "sha256": "261b7d36cb97a97549223c58215c7ecb3c86fa8e9f67b67d5158511bf57216dc",
+      "geometry_status": "pending"
+    },
+    "cities:townwatch": {
+      "candidate": "batches/cities-004/review-crops/r10-c01.png",
+      "sha256": "b610f7f17b15dc0f25b57157943b951873f16a3c3318b873abbb5327a4ae7147",
+      "geometry_status": "pending"
+    },
+    "cities:trading_company": {
+      "candidate": "batches/cities-004/review-crops/r10-c02.png",
+      "sha256": "921058aa3b2d18d25dc1334b005d01603b810b518825e73d85fe21dbc38e4013",
+      "geometry_status": "pending"
+    },
+    "cities:trafalgar_square": {
+      "candidate": "batches/cities-004/review-crops/r10-c03.png",
+      "sha256": "1b399be1b515a9ca3742033d8d3647765b27bb37c70b64181df7da67790a1512",
+      "geometry_status": "pending"
+    },
+    "cities:transporter": {
+      "candidate": "batches/cities-004/review-crops/r10-c04.png",
+      "sha256": "acb8f8b1f2e82141398b42fd8a289a06c01f1e0eb7d07bd728babedf72ae403b",
+      "geometry_status": "pending"
+    },
+    "cities:treadmill_crane": {
+      "candidate": "batches/cities-004/review-crops/r10-c05.png",
+      "sha256": "6148f77b533acd0aec7d5172c936a8066bfa8d0062946ad698ab96132a336a55",
+      "geometry_status": "pending"
+    },
+    "cities:tv_station": {
+      "candidate": "batches/cities-004/review-crops/r10-c06.png",
+      "sha256": "b417f6262be3faa2842e7a3403a7a531d2579d8ebe6c78dcd32b8bbdaa7ec282",
+      "geometry_status": "pending"
+    },
+    "cities:un_mission": {
+      "candidate": "revisions/logo-overlays/un_mission.png",
+      "sha256": "5153f198862da84837a78932ff36fe3fd5ffed8c0ccbcd131a938e71b67f494c",
+      "geometry_status": "pending"
+    },
+    "cities:united_nations": {
+      "candidate": "batches/cities-004/review-crops/r10-c08.png",
+      "sha256": "b80b904ee6a151455fa9b826f0b60c5f0cb861b4806699bc57d52eb542ed7830",
+      "geometry_status": "pending"
+    },
+    "cities:universal_church": {
+      "candidate": "batches/cities-004/review-crops/r10-c09.png",
+      "sha256": "450da7a1b705ee5d1ebdedbbb9bec36aec9f22e63cf9277a11722f7b6608fa06",
+      "geometry_status": "pending"
+    },
+    "cities:university": {
+      "candidate": "revisions/logo-overlays/university.png",
+      "sha256": "9f9f840dbfac312cd0829fc85c5f1eb780b2b5f98ff5f9c3d7d2a4656697eae4",
+      "geometry_status": "pending"
+    },
+    "cities:vandal_naval_base": {
+      "candidate": "batches/cities-004/review-crops/r10-c11.png",
+      "sha256": "095725a80324dba2713f0e7c66637858b772c82b7f6f62cfe47ec23ad6760379",
+      "geometry_status": "pending"
+    },
+    "cities:venetian_arsenal": {
+      "candidate": "batches/cities-004/review-crops/r10-c12.png",
+      "sha256": "7849bf4751b57ecbd547cdf22c3d85c12953e36f9c612b1add6ad60bc088e381",
+      "geometry_status": "pending"
+    },
+    "cities:versailles": {
+      "candidate": "batches/cities-004/review-crops/r11-c01.png",
+      "sha256": "3aa0d2b6921a2b7dca28fc1e36f5c66f85379327539714e4fe4de62a3862d232",
+      "geometry_status": "pending"
+    },
+    "cities:vguildhall": {
+      "candidate": "batches/cities-004/review-crops/r11-c02.png",
+      "sha256": "fd8ecd58b45924fcfa5ff5a1cc5505ddc153fe2b45984e701b217fb54eaa3e41",
+      "geometry_status": "pending"
+    },
+    "cities:via_appia": {
+      "candidate": "batches/cities-004/review-crops/r11-c03.png",
+      "sha256": "d1ef3fd0acfbbd54d43883e5d5bc417ee44e42b1cec4ea7d72b4774d9d7a0e2c",
+      "geometry_status": "pending"
+    },
+    "cities:viking_trading_post": {
+      "candidate": "batches/cities-004/review-crops/r11-c04.png",
+      "sha256": "ab156e5f2ba0888dba662ebe3c592c435e09ee79b6a7a868574c4416e9debd86",
+      "geometry_status": "pending"
+    },
+    "cities:villa": {
+      "candidate": "batches/cities-004/review-crops/r11-c05.png",
+      "sha256": "afb9de58c91603aa7bfe63722068e72e73bf4fbd0da0a6acb886aa305230e053",
+      "geometry_status": "pending"
+    },
+    "cities:village_hall": {
+      "candidate": "batches/cities-004/review-crops/r11-c06.png",
+      "sha256": "f098ece3881172ac65c3dd8461e577843f92a3720241e2655953beb8dc6b24ca",
+      "geometry_status": "pending"
+    },
+    "cities:voting_link": {
+      "candidate": "batches/cities-004/review-crops/r11-c07.png",
+      "sha256": "1a525cc7ecb16e600207d3fac7dc50d7f06adba98c40d4a055f93b3d3fe29158",
+      "geometry_status": "pending"
+    },
+    "cities:vr_theater": {
+      "candidate": "batches/cities-004/review-crops/r11-c08.png",
+      "sha256": "b40c4eccc185f69fedc88c67291e24688488863989d9b508df286ff21c1e9a2a",
+      "geometry_status": "pending"
+    },
+    "cities:wall_street": {
+      "candidate": "batches/cities-004/review-crops/r11-c09.png",
+      "sha256": "3fe6a758a553cae9d99fbc1e6b35dd3018d1d6397cc90a14cd50d5363f9ba32f",
+      "geometry_status": "pending"
+    },
+    "cities:walls": {
+      "candidate": "batches/cities-004/review-crops/r11-c10.png",
+      "sha256": "848b40681f1a757dd9e2831a762163ede706658fbb9670c3b6d9220b0dc41625",
+      "geometry_status": "pending"
+    },
+    "cities:warhead_factory": {
+      "candidate": "revisions/logo-overlays/warhead_factory.png",
+      "sha256": "435aab6cf63144feb032d9197bda327ddc886939bf43dbd5398feee061ee0a6f",
+      "geometry_status": "pending"
+    },
+    "cities:waste_digester": {
+      "candidate": "batches/cities-004/review-crops/r11-c12.png",
+      "sha256": "563819802ed52dc8c84dff186d8abac606a8c82755ef6b444ca5dc0289a6e8b1",
+      "geometry_status": "pending"
+    },
+    "cities:weaver": {
+      "candidate": "batches/cities-004/review-crops/r12-c01.png",
+      "sha256": "f4a0d1bdab36a510d414dc1a11873448f93ab8ffc49e9047baec8e3c15110578",
+      "geometry_status": "pending"
+    },
+    "cities:welfare_office": {
+      "candidate": "batches/cities-004/review-crops/r12-c02.png",
+      "sha256": "ff5a5616ac49e5ea27b92c3324102bd2d24c5b489c036a9f6a9cc966bdb742ff",
+      "geometry_status": "pending"
+    },
+    "cities:west_point": {
+      "candidate": "batches/cities-004/review-crops/r12-c03.png",
+      "sha256": "e70fc6b1520ccaf9297be9f9745fac6c0c932422aa56d13dcc7cc6252d827fba",
+      "geometry_status": "pending"
+    },
+    "cities:wheelwright": {
+      "candidate": "batches/cities-004/review-crops/r12-c04.png",
+      "sha256": "fc6675082bcc2f7c695e3b130c18b14c2d2d1c86e75570bf5e3f859774418c07",
+      "geometry_status": "pending"
+    },
+    "cities:willowrun": {
+      "candidate": "batches/cities-004/review-crops/r12-c05.png",
+      "sha256": "8a61c0a64bca53312a58135573134b178b4cc2a128a3fda48a015d4f9932ebaa",
+      "geometry_status": "pending"
+    },
+    "cities:woodstock": {
+      "candidate": "batches/cities-004/review-crops/r12-c06.png",
+      "sha256": "b3af6032e32bcda36519f9779a07f5d651196f21fc59ed894f4d4b01912530b8",
+      "geometry_status": "pending"
+    },
+    "cities:workhouse": {
+      "candidate": "batches/cities-004/review-crops/r12-c07.png",
+      "sha256": "9fdd76f6e0ef411988d7ca153e4d2e224da5453ac15b5cf4f321b5c76802f871",
+      "geometry_status": "pending"
+    },
+    "cities:world_bank": {
+      "candidate": "batches/cities-004/review-crops/r12-c08.png",
+      "sha256": "0e584036c6c2a4a6806ac81184315af82fe9281ea4513c661ae57468892e3f2d",
+      "geometry_status": "pending"
+    },
+    "cities:world_news_network": {
+      "candidate": "batches/cities-004/review-crops/r12-c09.png",
+      "sha256": "bc621159a4617231aa5a9a7ac627b4bec65d27d0c4bd8c8d4acf298690c90b99",
+      "geometry_status": "pending"
+    },
+    "cities:world_trade_center": {
+      "candidate": "batches/cities-004/review-crops/r12-c10.png",
+      "sha256": "3a133f77bbff4d196d6b11025103e40bbc59d2205ce93931ae91780e8a2a5385",
+      "geometry_status": "pending"
+    },
+    "cities:zero_g_sports_arena": {
+      "candidate": "batches/cities-004/review-crops/r12-c11.png",
+      "sha256": "466c8527804ac2a211c82b9b6c2fd90e2f3ac00b34062bfe241f8264ffbeba2c",
+      "geometry_status": "pending"
+    },
+    "cities:zoo": {
+      "candidate": "batches/cities-004/review-crops/r12-c12.png",
+      "sha256": "93bc12fe96d5fb8e56420dd3f4b8519384dd8789387cf6f8de7955d6c9689e97",
+      "geometry_status": "pending"
+    }
+  }
+}

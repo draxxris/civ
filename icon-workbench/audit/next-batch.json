@@ -1,0 +1,866 @@
+[
+  {
+    "path": "src/Mods/Cities/art/icons/abu_simbel.png",
+    "catalog_id": "cities:abu_simbel",
+    "label": "Abu Simbel",
+    "subject": "Twin monumental sandstone temples carved into a cliff face, with four seated pharaoh statues flanking the entrance"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/adam_smith.png",
+    "catalog_id": "cities:adam_smith",
+    "label": "Adam Smith's Trading Company",
+    "subject": "Georgian trading house with cargo crates and a small balance scale at its entrance"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/admiralty.png",
+    "catalog_id": "cities:admiralty",
+    "label": "Admiralty",
+    "subject": "Neoclassical naval headquarters with a columned stone facade, anchor reliefs, and a moored warship nearby"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/advanced_quality_control.png",
+    "catalog_id": "cities:advanced_quality_control",
+    "label": "Advanced Quality Control",
+    "subject": "Factory inspection station with a metal gear beneath a magnifying lens and a bright checkmark"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/ad_agency.png",
+    "catalog_id": "cities:ad_agency",
+    "label": "Advertising Agency",
+    "subject": "Creative agency storefront with an illuminated display board, colorful poster drafts, and a drafting table"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/agora.png",
+    "catalog_id": "cities:agora",
+    "label": "Agora",
+    "subject": "Open Greek civic square ringed by pale marble colonnades, market awnings, and a central speaking platform"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/ai_surveillance.png",
+    "catalog_id": "cities:ai_surveillance",
+    "label": "AI Surveillance",
+    "subject": "Futuristic surveillance center topped by a camera cluster, with glowing monitors visible through broad windows"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/airport.png",
+    "catalog_id": "cities:airport",
+    "label": "Airfield",
+    "subject": "Grass airfield with a small hangar, windsock, and single early propeller aircraft on the runway"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/commercial_airport.png",
+    "catalog_id": "cities:commercial_airport",
+    "label": "Airport",
+    "subject": "Modern passenger terminal with glass concourse, control tower, and a commercial jet at the gate"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/aluminum_co_r_source_d.png",
+    "catalog_id": "cities:aluminum_co_r_source_d",
+    "label": "Aluminum Co. Research and Development",
+    "subject": "Aluminum research laboratory with a gleaming ingot, glass crucible, microscope, and precision testing equipment"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/apadana_palace.png",
+    "catalog_id": "cities:apadana_palace",
+    "label": "Apadana Palace",
+    "subject": "Persian audience palace with a vast columned portico, carved stairways, and winged bull capitals"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/apiary.png",
+    "catalog_id": "cities:apiary",
+    "label": "Apiary",
+    "subject": "Sunlit bee yard with wooden hive boxes, flowering clover, and bees circling a honeycomb frame"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/apostolic_palace.png",
+    "catalog_id": "cities:apostolic_palace",
+    "label": "Apostolic Palace",
+    "subject": "Vatican palace facade with ornate Renaissance windows, a central balcony, and a small domed chapel"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/apothecary.png",
+    "catalog_id": "cities:apothecary",
+    "label": "Apothecary",
+    "subject": "Medieval apothecary shop with glass medicine bottles, herb bundles, brass scales, and a timber counter"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/arcology.png",
+    "catalog_id": "cities:arcology",
+    "label": "Arcology",
+    "subject": "Enormous self-contained tower city with stacked gardens, housing terraces, and a central glass atrium"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/advanced_shielding.png",
+    "catalog_id": "cities:advanced_shielding",
+    "label": "Arcology Shield",
+    "subject": "Arcology protected by a translucent blue energy dome anchored to four compact perimeter emitters"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/arena.png",
+    "catalog_id": "cities:arena",
+    "label": "Arena",
+    "subject": "Stone oval arena with tiered seating, a sandy central ring, and arched entry passages"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/arsenal.png",
+    "catalog_id": "cities:arsenal",
+    "label": "Arsenal",
+    "subject": "Venetian shipyard arsenal with brick halls, timber ship frames, and a canal-side loading crane"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/art_gallery.png",
+    "catalog_id": "cities:art_gallery",
+    "label": "Art Gallery",
+    "subject": "Elegant art gallery interior with framed landscapes, sculpted busts, and warm skylight illuminating white walls"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/art_of_war.png",
+    "catalog_id": "cities:art_of_war",
+    "label": "Art of War",
+    "subject": "Ancient military academy with an open strategy scroll beside a miniature wooden battlefield map"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/arthub.png",
+    "catalog_id": "cities:arthub",
+    "label": "Arthub",
+    "subject": "Contemporary art hub with a glass-fronted gallery, abstract sculpture, and visitors viewing large canvases"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/artist_guild.png",
+    "catalog_id": "cities:artist_guild",
+    "label": "Artist Guild",
+    "subject": "Artists' guild workshop with easels, pigment jars, canvases, and a carved guildhall doorway"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/asatru_cathedral.png",
+    "catalog_id": "cities:asatru_cathedral",
+    "label": "Asatru Festhall",
+    "subject": "Norse timber festhall with soaring longhouse roof, carved gables, central hearth, and richly patterned shields"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/asatru_temple.png",
+    "catalog_id": "cities:asatru_temple",
+    "label": "Asatru Temple",
+    "subject": "Norse timber shrine with a peaked roof, carved posts, an offering bowl, and evergreen wreaths"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/german_assembly_plant.png",
+    "catalog_id": "cities:german_assembly_plant",
+    "label": "Assembly Plant",
+    "subject": "Industrial assembly plant with a moving conveyor, robotic arms, and unfinished machinery beneath sawtooth roofs"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/augmentation_center.png",
+    "catalog_id": "cities:augmentation_center",
+    "label": "Augmentation Center",
+    "subject": "Cybernetic augmentation clinic with a reclining treatment chair, articulated implant arm, and glowing diagnostic screens"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/automated_defenses.png",
+    "catalog_id": "cities:automated_defenses",
+    "label": "Automated Defenses",
+    "subject": "Fortified control bunker with compact defense turrets and a robotic sentry at the sealed entrance"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/body_exchange.png",
+    "catalog_id": "cities:body_exchange",
+    "label": "Auxiliary Body Exchange",
+    "subject": "Futuristic body-exchange clinic with a translucent medical pod and a lifelike synthetic body silhouette"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/maya_ball_court.png",
+    "catalog_id": "cities:maya_ball_court",
+    "label": "Ball Court",
+    "subject": "Mesoamerican ball court with sloped stone walls, carved rings, and a bright rubber ball in play"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/siege_towers.png",
+    "catalog_id": "cities:siege_towers",
+    "label": "Ballista Turret",
+    "subject": "Compact stone turret with a mounted wooden ballista aimed through crenellated battlements"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bank.png",
+    "catalog_id": "cities:bank",
+    "label": "Bank",
+    "subject": "Grand neoclassical bank with a columned entrance, bronze doors, and guarded marble steps"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/khmer_baray.png",
+    "catalog_id": "cities:khmer_baray",
+    "label": "Baray",
+    "subject": "Vast Khmer reservoir framed by stepped stone embankments, lotus-filled water, and a temple island"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/barbwire_fence.png",
+    "catalog_id": "cities:barbwire_fence",
+    "label": "Barbwire Fence",
+    "subject": "Heavy iron fence line strung with sharp barbed wire between weathered stone posts"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/barracks.png",
+    "catalog_id": "cities:barracks",
+    "label": "Barracks",
+    "subject": "Military barracks with a long timber dormitory, visible bunk beds, and an orderly drill yard"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bauhaus.png",
+    "catalog_id": "cities:bauhaus",
+    "label": "Bauhaus School",
+    "subject": "Bauhaus design school with flat-roofed white blocks, steel-framed glass walls, and asymmetrical wings"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/beadmaker.png",
+    "catalog_id": "cities:beadmaker",
+    "label": "Beadmaker",
+    "subject": "Beadmaker's workshop with colorful glass beads, a hand spindle, thread, and an artisan's workbench"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/biological_warfare_lab.png",
+    "catalog_id": "cities:biological_warfare_lab",
+    "label": "Biological Warfare Lab",
+    "subject": "Sealed biolab with glass containment vessels, hazard-striped doors, and a glowing sample under a microscope"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bolshoi.png",
+    "catalog_id": "cities:bolshoi",
+    "label": "Bolshoi",
+    "subject": "Bolshoi Theatre with grand neoclassical portico, sculpted quadriga, and broad red-carpeted steps"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bomb_shelter.png",
+    "catalog_id": "cities:bomb_shelter",
+    "label": "Bomb Shelters",
+    "subject": "Reinforced underground shelter entrance with thick concrete doors, earth-covered roof, and ventilation pipes"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/boulevard_circle.png",
+    "catalog_id": "cities:boulevard_circle",
+    "label": "Boulevard Circle",
+    "subject": "Circular fortified boulevard with concentric stone walls, watchtowers, and a guarded central gate"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/brandenburg_gate.png",
+    "catalog_id": "cities:brandenburg_gate",
+    "label": "Brandenburg Gate",
+    "subject": "Brandenburg Gate's neoclassical sandstone arch with five passages, fluted columns, and a chariot quadriga"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/brewery.png",
+    "catalog_id": "cities:brewery",
+    "label": "Brewery",
+    "subject": "Brewery with copper brewing kettles, timber roof beams, wooden casks, and a squat brick chimney"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/hindu_brihadeeswarar.png",
+    "catalog_id": "cities:hindu_brihadeeswarar",
+    "label": "Brihadeeswarar Temple",
+    "subject": "Tamil stone temple with a soaring pyramidal vimana, carved granite tiers, and a sacred bull statue"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/national_tv_station.png",
+    "catalog_id": "cities:national_tv_station",
+    "label": "Broadcast Network",
+    "subject": "National television studio with a glass broadcast booth, camera on tripod, and glowing monitor bank"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/broadcast_tower.png",
+    "catalog_id": "cities:broadcast_tower",
+    "label": "Broadcast Tower",
+    "subject": "Tall lattice broadcast tower with antenna panels, blinking lights, and concentric signal waves"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/broadway.png",
+    "catalog_id": "cities:broadway",
+    "label": "Broadway",
+    "subject": "Broadway theater district marquee with glowing bulb-lined canopy, red curtains, and a rising skyline"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/scottish_broch.png",
+    "catalog_id": "cities:scottish_broch",
+    "label": "Broch",
+    "subject": "Scottish broch, a round dry-stone tower with thick hollow walls, a narrow doorway, and surrounding turf"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/buddhist_cathedral.png",
+    "catalog_id": "cities:buddhist_cathedral",
+    "label": "Buddhist Stupa",
+    "subject": "White Buddhist stupa with a golden spire, circular terraces, prayer flags, and a domed reliquary"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/buddhist_temple.png",
+    "catalog_id": "cities:buddhist_temple",
+    "label": "Buddhist Temple",
+    "subject": "Buddhist temple with curved tiled eaves, a bronze bell, red pillars, and a serene seated Buddha"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bunker.png",
+    "catalog_id": "cities:bunker",
+    "label": "Bunker",
+    "subject": "Low-profile military bunker of reinforced concrete with an armored hatch, firing slit, and camouflage earthwork"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/burningman.png",
+    "catalog_id": "cities:burningman",
+    "label": "Burning Man",
+    "subject": "Desert festival camp with a towering wooden effigy, colorful tents, and a ring of small lights"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/butchery.png",
+    "catalog_id": "cities:butchery",
+    "label": "Butchery",
+    "subject": "Traditional butcher shop with a stone cutting block, hanging cured meats, cleavers, and tiled workroom"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cabinet.png",
+    "catalog_id": "cities:cabinet",
+    "label": "Cabinet",
+    "subject": "Government cabinet chamber with a long polished conference table, high-backed chairs, and circular seal motif"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/welsh_caer.png",
+    "catalog_id": "cities:welsh_caer",
+    "label": "Caer",
+    "subject": "Welsh hilltop royal residence enclosed by rough stone ramparts, with a timber hall and watchtower"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/mesoamerican_monastery.png",
+    "catalog_id": "cities:mesoamerican_monastery",
+    "label": "Calmacec",
+    "subject": "Mesoamerican religious school with a stepped stone sanctuary, cloister courtyard, and carved serpent columns"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/candlemaker.png",
+    "catalog_id": "cities:candlemaker",
+    "label": "Candlemaker",
+    "subject": "Candle workshop with rows of beeswax tapers, a melting pot, cotton wicks, and brass dipping frame"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cannon_turret.png",
+    "catalog_id": "cities:cannon_turret",
+    "label": "Cannon Turret",
+    "subject": "Stone fortress turret with a bronze cannon protruding through a crenellated embrasure above the ramparts"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/capital_administration.png",
+    "catalog_id": "cities:capital_administration",
+    "label": "Capital Administration",
+    "subject": "Grand civic administration hall with a broad stair, symmetrical wings, and a council chamber beneath a glass dome"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/caravanserai.png",
+    "catalog_id": "cities:caravanserai",
+    "label": "Caravanserai",
+    "subject": "Desert caravanserai with a fortified square courtyard, vaulted gatehouse, pack camels, and shaded arcades"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/carhenge.png",
+    "catalog_id": "cities:carhenge",
+    "label": "Carhenge",
+    "subject": "Circular monument of upright vintage automobiles arranged like standing stones beneath an open prairie sky"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/carpenter.png",
+    "catalog_id": "cities:carpenter",
+    "label": "Carpenter",
+    "subject": "Carpenter's workshop with a wooden workbench, hand plane, saw, and neatly stacked lumber"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/huns_cattle.png",
+    "catalog_id": "cities:huns_cattle",
+    "label": "Cattle Herd",
+    "subject": "Small herd of long-horned cattle beside a portable felt tent and grazing pasture"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cement_mill.png",
+    "catalog_id": "cities:cement_mill",
+    "label": "Cement Mill",
+    "subject": "Cement mill with a long rotating kiln, stone aggregate piles, conveyor belts, and a dust-filter tower"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cheomseongdae.png",
+    "catalog_id": "cities:cheomseongdae",
+    "label": "Cheomseongdae",
+    "subject": "Cheomseongdae's tapered stone observatory tower with narrow openings, square top platform, and moonlit sky"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/chichen_itza.png",
+    "catalog_id": "cities:chichen_itza",
+    "label": "Chichen Itza",
+    "subject": "Mayan stepped pyramid with a steep central staircase, feathered-serpent balustrades, and temple at its summit"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/bulgarian_chitalishte.png",
+    "catalog_id": "cities:bulgarian_chitalishte",
+    "label": "Chitalishte",
+    "subject": "Bulgarian community hall with a neoclassical facade, central pediment, broad windows, and an open reading room"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/christian_cathedral.png",
+    "catalog_id": "cities:christian_cathedral",
+    "label": "Christian Cathedral",
+    "subject": "Gothic Christian cathedral with twin spires, pointed stained-glass windows, flying buttresses, and a rose window"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/christian_temple.png",
+    "catalog_id": "cities:christian_temple",
+    "label": "Christian Temple",
+    "subject": "Small Christian church with a stone nave, bell tower, arched doorway, and simple cross-shaped roofline"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/christian_shrine.png",
+    "catalog_id": "cities:christian_shrine",
+    "label": "Church of the Nativity",
+    "subject": "Church of the Nativity with pale limestone basilica walls, a modest bell tower, and low arched doorway"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/spanish_citadel.png",
+    "catalog_id": "cities:spanish_citadel",
+    "label": "Citadel",
+    "subject": "Spanish stone citadel with angular bastions, a central keep, and thick ramparts overlooking a fortified town"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/city_council.png",
+    "catalog_id": "cities:city_council",
+    "label": "City Council",
+    "subject": "Compact city council hall with columned entrance, civic tower, and semicircular council chamber visible inside"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/ebgatehouse.png",
+    "catalog_id": "cities:ebgatehouse",
+    "label": "City Gatehouse",
+    "subject": "Medieval gatehouse with twin square towers, a raised portcullis, and a stone bridge over the moat"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/city_park.png",
+    "catalog_id": "cities:city_park",
+    "label": "City Park",
+    "subject": "Urban park entrance with a tree-lined path, fountain, benches, and flowerbeds framed by city buildings"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/citycreche.png",
+    "catalog_id": "cities:citycreche",
+    "label": "Citycreche",
+    "subject": "Bioengineered nursery complex with translucent greenhouse domes, organically grown building modules, and branching vine-like supports"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/lombard_cloister.png",
+    "catalog_id": "cities:lombard_cloister",
+    "label": "Cloister",
+    "subject": "Monastic cloister with a quiet square garden enclosed by covered stone arcades and slender columns"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cloning_factory.png",
+    "catalog_id": "cities:cloning_factory",
+    "label": "Cloning Tanks",
+    "subject": "Cloning factory interior with rows of luminous glass growth tanks, fluid tubes, and a central control gantry"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/coal_plant.png",
+    "catalog_id": "cities:coal_plant",
+    "label": "Coal Plant",
+    "subject": "Coal-fired power station with twin smokestacks, a blocky turbine hall, and coal conveyor feeding its furnace"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/colosseum.png",
+    "catalog_id": "cities:colosseum",
+    "label": "Colosseum",
+    "subject": "Roman Colosseum with elliptical tiers of arches, weathered travertine, and a broad arena opening"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/colossus.png",
+    "catalog_id": "cities:colossus",
+    "label": "Colossus",
+    "subject": "Monumental bronze Helios statue holding a raised torch above a Rhodes harbor, merchant ships below"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/combat_simulator.png",
+    "catalog_id": "cities:combat_simulator",
+    "label": "Combat Simulator",
+    "subject": "Combat training simulator with a glass cockpit, terrain projection table, and compact armored vehicle mockup"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/community_center.png",
+    "catalog_id": "cities:community_center",
+    "label": "Community Center",
+    "subject": "Neighborhood community center with a welcoming porch, meeting-room windows, and people gathered beneath a canopy"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/computer_network.png",
+    "catalog_id": "cities:computer_network",
+    "label": "Computer Network",
+    "subject": "Network operations center with server racks linked by luminous cables around a central router"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/confucian_temple.png",
+    "catalog_id": "cities:confucian_temple",
+    "label": "Confucian Temple",
+    "subject": "Confucian temple courtyard with a red timber hall, tiled roof, stone incense burner, and symmetrical gates"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/construction_firm.png",
+    "catalog_id": "cities:construction_firm",
+    "label": "Construction Firm",
+    "subject": "Construction company's headquarters beside a tower crane, scaffolding, stacked beams, and architectural drawing table"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/control_center.png",
+    "catalog_id": "cities:control_center",
+    "label": "Control Center",
+    "subject": "Central control center with a broad command desk, circular wall display, and orderly instrument panels"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/corporate_enclave.png",
+    "catalog_id": "cities:corporate_enclave",
+    "label": "Corporate Enclave",
+    "subject": "Fortified corporate campus of glass towers behind a security wall, guarded gate, and private landing pad"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cortegiane_oneste.png",
+    "catalog_id": "cities:cortegiane_oneste",
+    "label": "Cortegiane Oneste",
+    "subject": "Venetian salon house with carved balconies, silk curtains, a gilded mirror, and an intimate music room"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/carthage_cothon.png",
+    "catalog_id": "cities:carthage_cothon",
+    "label": "Cothon",
+    "subject": "Carthaginian circular harbor with a central island dock, moored ships, and encircling stone breakwater"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cotton_gin.png",
+    "catalog_id": "cities:cotton_gin",
+    "label": "Cotton Gin",
+    "subject": "Cotton gin workshop with a wooden roller machine separating white cotton fibers from seed baskets"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/courier_system.png",
+    "catalog_id": "cities:courier_system",
+    "label": "Courier System",
+    "subject": "Courier station with a mounted messenger, relay horses, sealed document pouch, and a roadside post"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cguildhall.png",
+    "catalog_id": "cities:cguildhall",
+    "label": "Crafts Guild Hall",
+    "subject": "Medieval crafts guildhall with timbered facade, carved trade emblems, a long meeting table, and tool displays"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/picts_crannog.png",
+    "catalog_id": "cities:picts_crannog",
+    "label": "Crannog",
+    "subject": "Round timber dwelling raised on a small lake island, with a wooden palisade, narrow causeway, and thatched roof"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/creative_constructions_office.png",
+    "catalog_id": "cities:creative_constructions_office",
+    "label": "Creative Constructions Contractors",
+    "subject": "Construction design office with a model bridge, drafting table, rolled plans, and miniature tower crane"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cristo_redentor.png",
+    "catalog_id": "cities:cristo_redentor",
+    "label": "Cristo Redentor",
+    "subject": "Christ the Redeemer statue with outstretched arms atop Corcovado, overlooking Rio's bay and layered mountains"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/cryogenic_prison.png",
+    "catalog_id": "cities:cryogenic_prison",
+    "label": "Cryoprison",
+    "subject": "Cryogenic prison chamber with secure glass pods, frost-covered pipes, and a heavy sealed containment door"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/crystal_palace.png",
+    "catalog_id": "cities:crystal_palace",
+    "label": "Crystal Palace",
+    "subject": "Crystal Palace exhibition hall with soaring iron arches, vast glass panes, and a long central nave"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/custom_house.png",
+    "catalog_id": "cities:custom_house",
+    "label": "Customs Office",
+    "subject": "Harbor customs house with columned stone facade, cargo scales, sealed crates, and a busy inspection quay"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/taoist_shrine.png",
+    "catalog_id": "cities:taoist_shrine",
+    "label": "Dai Miao",
+    "subject": "Dai Miao temple complex with red-walled courtyards, yellow-tiled roofs, stone stairways, and ancient cypress trees"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/deep_core_mine.png",
+    "catalog_id": "cities:deep_core_mine",
+    "label": "Deep Core Mine",
+    "subject": "Futuristic deep mine with a huge drilling rig boring into glowing bedrock beneath a reinforced shaft"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/deep_space_research.png",
+    "catalog_id": "cities:deep_space_research",
+    "label": "Deep Space Research Institute",
+    "subject": "Deep-space research institute with a silver observatory dome, radio dishes, and a rocket assembly hangar"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/design_studio.png",
+    "catalog_id": "cities:design_studio",
+    "label": "Design Studio",
+    "subject": "Modern design studio with a sculptural desk lamp, material swatches, scale models, and a glass drafting room"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/netherlands_dike.png",
+    "catalog_id": "cities:netherlands_dike",
+    "label": "Dike",
+    "subject": "Dutch dike with a grassy embankment, stone retaining wall, sluice gates, and water held back"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/dinosaur_park.png",
+    "catalog_id": "cities:dinosaur_park",
+    "label": "Dinosaur Park",
+    "subject": "Enclosed dinosaur park with a living long-necked dinosaur behind glass fencing, ferns, and visitor walkway"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/polling_place.png",
+    "catalog_id": "cities:polling_place",
+    "label": "District Office",
+    "subject": "District election office with a modest civic facade, voting booths, ballot box, and queue rails"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/river_port.png",
+    "catalog_id": "cities:river_port",
+    "label": "Docks",
+    "subject": "River port with timber wharves, moored cargo barges, warehouse cranes, and stacked trading crates"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/doctor.png",
+    "catalog_id": "cities:doctor",
+    "label": "Doctor's Office",
+    "subject": "Neighborhood doctor's office with a white doorway, brass stethoscope, medicine cabinet, and examination table"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/dosan_seowon.png",
+    "catalog_id": "cities:dosan_seowon",
+    "label": "Dosan Seowon",
+    "subject": "Dosan Seowon academy with a low tiled-roof lecture hall, timber pillars, pine trees, and stepped stone courtyard"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/draft_office.png",
+    "catalog_id": "cities:draft_office",
+    "label": "Draft Office",
+    "subject": "Military conscription office with a stone civic facade, registration counter, uniform rack, and orderly file cabinets"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/drydock.png",
+    "catalog_id": "cities:drydock",
+    "label": "Drydock",
+    "subject": "Ship drydock with a massive hull resting in a drained stone basin beside repair cranes and scaffolding"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/celtic_dun.png",
+    "catalog_id": "cities:celtic_dun",
+    "label": "Dun",
+    "subject": "Celtic hillfort with a circular stone rampart, timber palisade, and a small roundhouse on its summit"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/durasteel_plant.png",
+    "catalog_id": "cities:durasteel_plant",
+    "label": "Durasteel Plant",
+    "subject": "Advanced alloy plant with a glowing steel ingot, nanotube coils, robotic forge arms, and furnace glow"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/east_india_company.png",
+    "catalog_id": "cities:east_india_company",
+    "label": "East India Company",
+    "subject": "Trading company headquarters with a Georgian portico, cargo ledgers, spice chests, and harbor cranes"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/eiffel_tower.png",
+    "catalog_id": "cities:eiffel_tower",
+    "label": "Eiffel Tower",
+    "subject": "Eiffel Tower's open iron lattice rising above the Seine, with broad lower arches and a narrow summit"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/elder_council.png",
+    "catalog_id": "cities:elder_council",
+    "label": "Elder Council",
+    "subject": "Elder council gathering in a timber longhouse around a circular fire, with carved staffs and benches"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/estate.png",
+    "catalog_id": "cities:estate",
+    "label": "Estate",
+    "subject": "Country estate with a manor house, formal gardens, rolling farmland, and a wooded stone boundary"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/exhibition.png",
+    "catalog_id": "cities:exhibition",
+    "label": "Exhibition",
+    "subject": "Grand exhibition pavilion with display cases, sculptural exhibits, hanging banners without lettering, and a glass roof"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/highway_project.png",
+    "catalog_id": "cities:highway_project",
+    "label": "Expressway",
+    "subject": "Elevated expressway interchange with sweeping concrete ramps, support pillars, and small cars flowing between lanes"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/farmscraper_i.png",
+    "catalog_id": "cities:farmscraper_i",
+    "label": "Farmscraper",
+    "subject": "Vertical farm tower with stacked greenhouse floors, crop terraces, irrigation channels, and rooftop wind turbines"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/federal_reserve.png",
+    "catalog_id": "cities:federal_reserve",
+    "label": "Federal Reserve",
+    "subject": "Central bank headquarters with neoclassical stone columns, a secure vault door, and ascending coin stacks"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/portugal_feitoria.png",
+    "catalog_id": "cities:portugal_feitoria",
+    "label": "Feitoria",
+    "subject": "Portuguese coastal trading post with whitewashed fort walls, red roof, dockside warehouse, and a small sailing ship"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/fertilizer_plant.png",
+    "catalog_id": "cities:fertilizer_plant",
+    "label": "Fertilizer Plant",
+    "subject": "Fertilizer works with tall reaction tanks, pipework, granular nutrient sacks, and a plume-free smokestack"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/festival.png",
+    "catalog_id": "cities:festival",
+    "label": "Festival",
+    "subject": "Open-air festival grounds with a central stage, lantern strings, food stalls, and a cheering crowd"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/fighting_pit.png",
+    "catalog_id": "cities:fighting_pit",
+    "label": "Fighting Pit",
+    "subject": "Sunken combat arena with a circular sand pit, wooden viewing tiers, and crossed practice shields"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/first_nuclear_test.png",
+    "catalog_id": "cities:first_nuclear_test",
+    "label": "First Nuclear Test",
+    "subject": "Desert nuclear test site with a distant control bunker, steel test tower, and rising mushroom cloud"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/fish_farm.png",
+    "catalog_id": "cities:fish_farm",
+    "label": "Fish Farm",
+    "subject": "Coastal fish farm with circular net pens, floating walkways, feed bins, and fish visible below water"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/fishtraps.png",
+    "catalog_id": "cities:fishtraps",
+    "label": "Fish Traps",
+    "subject": "Traditional woven fish traps set in a shallow stream beside a small timber fishing platform"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/fisherman_hut.png",
+    "catalog_id": "cities:fisherman_hut",
+    "label": "Fisherman's Hut",
+    "subject": "Lakeside fisherman's hut with a shingled roof, hanging nets, wooden skiff, and fish baskets"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/flagpole.png",
+    "catalog_id": "cities:flagpole",
+    "label": "Flagpole",
+    "subject": "Tall civic flagpole with a plain unmarked cloth banner, stone base, and open plaza paving"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/flak_tower.png",
+    "catalog_id": "cities:flak_tower",
+    "label": "Flak Tower",
+    "subject": "Monolithic concrete anti-aircraft tower with rooftop gun emplacements, narrow windows, and heavy buttressed walls"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/flight_simulator.png",
+    "catalog_id": "cities:flight_simulator",
+    "label": "Flight Simulator",
+    "subject": "Flight simulator cabin with a wraparound cockpit, instrument panels, projected runway, and hydraulic motion base"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/polish_folwark.png",
+    "catalog_id": "cities:polish_folwark",
+    "label": "Folwark",
+    "subject": "Polish manor farmstead with a timber granary, broad fields, barns, and a horse-drawn wagon"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/forge.png",
+    "catalog_id": "cities:forge",
+    "label": "Forge",
+    "subject": "Blacksmith's forge with a glowing furnace, anvil, hammer, and a newly shaped iron bar"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/roman_forum.png",
+    "catalog_id": "cities:roman_forum",
+    "label": "Forum",
+    "subject": "Roman forum with a broad paved plaza, basilica columns, temple steps, and market stalls"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/foundation.png",
+    "catalog_id": "cities:foundation",
+    "label": "Foundation",
+    "subject": "Charitable foundation office with a welcoming stone facade, donation chest, grant ledger, and community garden plans"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/funeral_pyre.png",
+    "catalog_id": "cities:funeral_pyre",
+    "label": "Funeral Pyre",
+    "subject": "Ceremonial funeral pyre of stacked timber on a stone platform, with rising warm flames and offerings"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/furrier.png",
+    "catalog_id": "cities:furrier",
+    "label": "Furrier",
+    "subject": "Furrier's workshop with fur pelts, a tailor's cutting table, sewing tools, and a garment form"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/gambling_hall.png",
+    "catalog_id": "cities:gambling_hall",
+    "label": "Gambling Hall",
+    "subject": "Gambling hall with a green gaming table, roulette wheel, brass lamps, and an ornate entrance"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/babylon_garden.png",
+    "catalog_id": "cities:babylon_garden",
+    "label": "Garden",
+    "subject": "Walled royal garden with clipped hedges, flowering beds, a small fountain, and fruit trees"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/gardens_bay.png",
+    "catalog_id": "cities:gardens_bay",
+    "label": "Gardens by the Bay",
+    "subject": "Gardens by the Bay with towering illuminated Supertrees, glass conservatories, and lush tropical planting"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/garrison.png",
+    "catalog_id": "cities:garrison",
+    "label": "Garrison",
+    "subject": "Fort garrison with a timber barracks, stone watchtower, stacked supplies, and a guarded courtyard"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/gengineer.png",
+    "catalog_id": "cities:gengineer",
+    "label": "Gengineer",
+    "subject": "Genetic engineering laboratory with a glowing DNA helix, sealed sample vials, and a precision gene-editing workstation"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/geothermal_power_plant.png",
+    "catalog_id": "cities:geothermal_power_plant",
+    "label": "Geothermal Power Plant",
+    "subject": "Geothermal power station with steam rising from a wellhead, insulated pipes, and a turbine hall"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/mongol_ger.png",
+    "catalog_id": "cities:mongol_ger",
+    "label": "Ger",
+    "subject": "Mongolian ger with a circular felt-covered frame, orange roof ring, low doorway, and open grassland"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/glasssmith.png",
+    "catalog_id": "cities:glasssmith",
+    "label": "Glassmith",
+    "subject": "Glassmaker's workshop with a glowing furnace, molten glass on a blowpipe, colorful vessels, and cooling racks"
+  }
+]

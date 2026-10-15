@@ -1,0 +1,88 @@
+[test] $ dotnet test Civ.slnx --filter 'Category!=Extractor&Category!=E2E'
+  Determining projects to restore...
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Espionage/Civ.Mods.Espionage.csproj (in 270 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Economy/Civ.Mods.Economy.csproj (in 267 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Diplomacy/Civ.Mods.Diplomacy.csproj (in 267 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Client.Core/Civ.Client.Core.csproj (in 272 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/World/Civ.Mods.World.csproj (in 270 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Revolution/Civ.Mods.Revolution.csproj (in 270 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/ProjectsVictory/Civ.Mods.ProjectsVictory.csproj (in 270 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Ai/Civ.Mods.Ai.csproj (in 271 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Cities/Civ.Mods.Cities.csproj (in 5 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Corporations/Civ.Mods.Corporations.csproj (in 23 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Net/Civ.Net.csproj (in 3 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Trade/Civ.Mods.Trade.csproj (in 6 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Core/Civ.Core.csproj (in 2 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/tools/Civ.ContentImport/Civ.ContentImport.csproj (in 20 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Religion/Civ.Mods.Religion.csproj (in 6 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/ScriptedWonders/Civ.Mods.ScriptedWonders.csproj (in 18 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Events/Civ.Mods.Events.csproj (in 3 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Research/Civ.Mods.Research.csproj (in 23 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Foundation/Civ.Mods.Foundation.csproj (in 3 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Military/Civ.Mods.Military.csproj (in 11 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Government/Civ.Mods.Government.csproj (in 9 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/GreatPeople/Civ.Mods.GreatPeople.csproj (in 13 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Peoples/Civ.Mods.Peoples.csproj (in 19 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Tests/Civ.Tests.csproj (in 582 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj (in 576 ms).
+  Restored /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.ContentImport.Tests/Civ.ContentImport.Tests.csproj (in 582 ms).
+  Civ.Core -> /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Core/bin/Debug/net10.0/Civ.Core.dll
+  Civ.ContentImport -> /home/gordon/workspace/civ-worktrees/goodies/tools/Civ.ContentImport/bin/Debug/net10.0/Civ.ContentImport.dll
+  Civ.Net -> /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Net/bin/Debug/net10.0/Civ.Net.dll
+  Civ.ContentImport.Tests -> /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.ContentImport.Tests/bin/Debug/net10.0/Civ.ContentImport.Tests.dll
+Test run for /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.ContentImport.Tests/bin/Debug/net10.0/Civ.ContentImport.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Civ.Client.Core -> /home/gordon/workspace/civ-worktrees/goodies/src/Civ.Client.Core/bin/Debug/net10.0/Civ.Client.Core.dll
+  Civ.Mods.Government -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Government/bin/Debug/net10.0/Civ.Mods.Government.dll
+  Civ.Mods.Events -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Events/bin/Debug/net10.0/Civ.Mods.Events.dll
+  Civ.Mods.Revolution -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Revolution/bin/Debug/net10.0/Civ.Mods.Revolution.dll
+[xUnit.net 00:00:00.89]     Civ.ContentImport.Tests.ExtractionSmokeTests.Era_filter_drops_later_content_and_transitive_dependents_and_overwrites_empty_families [SKIP]
+[xUnit.net 00:00:00.92]     Civ.ContentImport.Tests.ExtractionSmokeTests.Corporation_and_victory_source_records_keep_deferred_identities_without_invented_gameplay_rules [SKIP]
+[xUnit.net 00:00:00.93]     Civ.ContentImport.Tests.ExtractionSmokeTests.Default_profile_has_expected_counts_and_preserves_selected_merge_and_era_results [SKIP]
+  Civ.Mods.Military -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Military/bin/Debug/net10.0/Civ.Mods.Military.dll
+  Civ.Mods.Foundation -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Foundation/bin/Debug/net10.0/Civ.Mods.Foundation.dll
+  Civ.Mods.Economy -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Economy/bin/Debug/net10.0/Civ.Mods.Economy.dll
+  Civ.Mods.Peoples -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Peoples/bin/Debug/net10.0/Civ.Mods.Peoples.dll
+  Civ.Mods.ScriptedWonders -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/ScriptedWonders/bin/Debug/net10.0/Civ.Mods.ScriptedWonders.dll
+  Skipped Civ.ContentImport.Tests.ExtractionSmokeTests.Era_filter_drops_later_content_and_transitive_dependents_and_overwrites_empty_families [1 ms]
+  Skipped Civ.ContentImport.Tests.ExtractionSmokeTests.Corporation_and_victory_source_records_keep_deferred_identities_without_invented_gameplay_rules [1 ms]
+  Skipped Civ.ContentImport.Tests.ExtractionSmokeTests.Default_profile_has_expected_counts_and_preserves_selected_merge_and_era_results [1 ms]
+  Civ.Mods.World -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/World/bin/Debug/net10.0/Civ.Mods.World.dll
+
+Passed!  - Failed:     0, Passed:    37, Skipped:     3, Total:    40, Duration: 1 s - Civ.ContentImport.Tests.dll (net10.0)
+  Civ.Mods.Research -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Research/bin/Debug/net10.0/Civ.Mods.Research.dll
+  Civ.Mods.Trade -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Trade/bin/Debug/net10.0/Civ.Mods.Trade.dll
+  Civ.Mods.Ai -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Ai/bin/Debug/net10.0/Civ.Mods.Ai.dll
+  Civ.Mods.GreatPeople -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/GreatPeople/bin/Debug/net10.0/Civ.Mods.GreatPeople.dll
+  Civ.Tests -> /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Tests/bin/Debug/net10.0/Civ.Tests.dll
+Test run for /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Tests/bin/Debug/net10.0/Civ.Tests.dll (.NETCoreApp,Version=v10.0)
+  Civ.Mods.Cities -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Cities/bin/Debug/net10.0/Civ.Mods.Cities.dll
+  Civ.Mods.Espionage -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Espionage/bin/Debug/net10.0/Civ.Mods.Espionage.dll
+  Civ.Mods.Diplomacy -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Diplomacy/bin/Debug/net10.0/Civ.Mods.Diplomacy.dll
+A total of 1 test files matched the specified pattern.
+  Civ.Mods.ProjectsVictory -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/ProjectsVictory/bin/Debug/net10.0/Civ.Mods.ProjectsVictory.dll
+  Civ.Mods.Religion -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Religion/bin/Debug/net10.0/Civ.Mods.Religion.dll
+  Civ.Mods.Corporations -> /home/gordon/workspace/civ-worktrees/goodies/src/Mods/Corporations/bin/Debug/net10.0/Civ.Mods.Corporations.dll
+[xUnit.net 00:00:00.94]     Civ.Tests.DogfoodTests.CoreAndClientsDoNotKnowShippedModIdentities [FAIL]
+  Failed Civ.Tests.DogfoodTests.CoreAndClientsDoNotKnowShippedModIdentities [343 ms]
+  Error Message:
+   src/Civ.Godot/Debug/DebugScenario.cs:9: /// { "fill":  { "terrain": "world:grass", "kind": "Flat" },
+src/Civ.Godot/Debug/DebugScenario.cs:11: ///              { "rect": [3, 3, 7, 5], "terrain": "world:plains", "feature": "world:forest" } ],
+  Stack Trace:
+     at Civ.Tests.DogfoodTests.CoreAndClientsDoNotKnowShippedModIdentities() in /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Tests/DogfoodTests.cs:line 27
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:    79, Skipped:     0, Total:    80, Duration: 5 s - Civ.Tests.dll (net10.0)
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/ClientFollowupTests.cs(167,9): warning xUnit2012: Do not use Assert.True() to check if a value exists in a collection. Use Assert.Contains instead. (https://xunit.net/xunit.analyzers/rules/xUnit2012) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/DiplomacyRulesTests.cs(156,9): warning xUnit2017: Do not use Assert.True() to check if a value exists in a collection. Use Assert.Contains instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/DiplomacyRulesTests.cs(156,54): warning xUnit2017: Do not use Assert.True() to check if a value exists in a collection. Use Assert.Contains instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/DiplomacyRulesTests.cs(156,99): warning xUnit2017: Do not use Assert.False() to check if a value exists in a collection. Use Assert.DoesNotContain instead. (https://xunit.net/xunit.analyzers/rules/xUnit2017) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/ProjectsVictoryRulesTests.cs(53,9): warning xUnit2031: Do not use a Where clause to filter before calling Assert.Single. Use the overload of Assert.Single that accepts a filtering function. (https://xunit.net/xunit.analyzers/rules/xUnit2031) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/TradeRulesTests.cs(55,23): warning xUnit2031: Do not use a Where clause to filter before calling Assert.Single. Use the overload of Assert.Single that accepts a filtering function. (https://xunit.net/xunit.analyzers/rules/xUnit2031) [/home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj]
+  Civ.Mods.Tests -> /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/bin/Debug/net10.0/Civ.Mods.Tests.dll
+Test run for /home/gordon/workspace/civ-worktrees/goodies/tests/Civ.Mods.Tests/bin/Debug/net10.0/Civ.Mods.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   313, Skipped:     0, Total:   313, Duration: 2 m 29 s - Civ.Mods.Tests.dll (net10.0)
+[test] ERROR task failed

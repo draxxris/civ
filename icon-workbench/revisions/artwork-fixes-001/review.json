@@ -1,0 +1,9 @@
+{
+  "status": "ready_for_user_review",
+  "candidate_count": 31,
+  "observed_rows": 6,
+  "observed_columns": 6,
+  "inspection": "All 31 corrected subjects inspected in the source sheet before publication. Five filler cells excluded.",
+  "saved_decisions_unchanged": true,
+  "approved_candidates_unchanged": true
+}

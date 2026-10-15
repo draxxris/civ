@@ -1,0 +1,1435 @@
+{
+  "reason": "Remove superseded style calibration, old overlay snapshots, stale audit generator, and disposable caches. Current sources and review candidates retained.",
+  "removed": [
+    {
+      "path": "generation/style-preview/flare-16x16-prompt.txt",
+      "bytes": 4685,
+      "sha256": "65c6ce6baba40251af33e30356e28e5f118ae45c9abfea996df1089e00e01e45"
+    },
+    {
+      "path": "generation/style-preview/generate_flare_16x16.py",
+      "bytes": 5437,
+      "sha256": "4345c7578a3f8c3f2eb41ac8bc7a9d97942390d999b0bc9bf5c622190e299217"
+    },
+    {
+      "path": "generation/style-preview/flare-10x10-torso-v2-20261015-031250-001.png",
+      "bytes": 1673349,
+      "sha256": "9a1ba10b912c3ab67aff71f4585b3df693c750af276340de455cb1c91f3ad8cd"
+    },
+    {
+      "path": "generation/style-preview/flare-10x10-painterly-v1-20261015-030928-001.png",
+      "bytes": 1666027,
+      "sha256": "d1c76eb5a2c76a10db47b728bc921822a1e3d53f5e7cd75fc5f2f06ef15dc4d8"
+    },
+    {
+      "path": "generation/style-preview/qwen-10x10-painterly-v2-20261015-025703-001.png",
+      "bytes": 4444041,
+      "sha256": "bc7e1c55df1d918f58b6ab027613e3f029e8f74aa045493b6aabc32dd9913800"
+    },
+    {
+      "path": "generation/style-preview/qwen-10x10-soft-v1-20261015-024957-001.png",
+      "bytes": 4540022,
+      "sha256": "fc1ff18d859da6a68c77fdba01db6e2d52e28502c70725e87ebd2cd374e89eb1"
+    },
+    {
+      "path": "generation/style-preview/mai-10x10-soft-v1-20261015-024736-001.png",
+      "bytes": 1795602,
+      "sha256": "17ea89fa7cc46d2ceeddf97dcca5b6fd98a9875fd602090c3452905e75450489"
+    },
+    {
+      "path": "generation/style-preview/recraft-10x10-soft-v1-20261015-024618-001.webp",
+      "bytes": 1258086,
+      "sha256": "ec93cfc78b684db5add7fe5a068d00da742a37ad3c1c07c0e3273565dddd86ef"
+    },
+    {
+      "path": "generation/style-preview/tencent-10x10-soft-v3-20261015-024318-001.png",
+      "bytes": 23374914,
+      "sha256": "02dee0c98843adb13f93c03d4f8b598e4affb3e55c5a56d0624ab9f9de34ec1d"
+    },
+    {
+      "path": "generation/style-preview/tencent-10x10-prompt.txt",
+      "bytes": 2599,
+      "sha256": "f0e9b49fb2790d8753a8bc5e29e1a37e91f10b216af314368de68a625985281e"
+    },
+    {
+      "path": "generation/style-preview/template-10x10-soft-glow.png",
+      "bytes": 153103,
+      "sha256": "86729f8866dcd9bc05ce38cfe6af74feb9f98ec8977fbec1d8613565310d453d"
+    },
+    {
+      "path": "generation/style-preview/tencent-v2-style-cell.jpg",
+      "bytes": 29081,
+      "sha256": "cc8fe386f95dbb0397f036056cafed6db885c5dc33cfcc2428351ae6826e6462"
+    },
+    {
+      "path": "generation/style-preview/generate_tencent_10x10.py",
+      "bytes": 4631,
+      "sha256": "e590b7ddd61cfb4304c43584f194956c857781aaa5d7baffa7edb5ea38151b71"
+    },
+    {
+      "path": "generation/style-preview/tencent-square-grid-v2-20261015-023958-001.png",
+      "bytes": 21878500,
+      "sha256": "6d7b803d5144dc04c7bf8a97a9a0a1b681e3b10577b97b80c62b6e8c37053fa8"
+    },
+    {
+      "path": "generation/style-preview/tencent-v1-reference.jpg",
+      "bytes": 690995,
+      "sha256": "65c4d5cb5240ea5639ec36ff369e126f26e8ac48a840955ab23a26d129f7235a"
+    },
+    {
+      "path": "generation/style-preview/tencent-painterly-16x16-v1-20261015-023616-001.png",
+      "bytes": 22006265,
+      "sha256": "76d94f1fd285f06e1bfd3ccd834cfa15e93ff643b093b5029ee500ef03d2ee7d"
+    },
+    {
+      "path": "generation/style-preview/boardgame-painted-v5-20261015-023316-001.webp",
+      "bytes": 1044446,
+      "sha256": "a55d7da219bc208428e9efe7026c9aa6b6d9d6609cd683ef8e52eac077292c04"
+    },
+    {
+      "path": "generation/style-preview/boardgame-16x16-v4-20261015-023200-001.webp",
+      "bytes": 923086,
+      "sha256": "c75e8ecf3c19d8a372b0d4227738d38d1a2b7937c12f76e43c1112b4c0daaee0"
+    },
+    {
+      "path": "generation/style-preview/silver-framed-16x16-preview.png",
+      "bytes": 3569162,
+      "sha256": "ce679387e59295c88f24b5a303174754af264e2d505020ac1591bbfa8bdf75b8"
+    },
+    {
+      "path": "generation/style-preview/assemble_preview.py",
+      "bytes": 1184,
+      "sha256": "04357616f0a6dacec65fee5096ba0aa05c96067d8c89d79cede802b753a90581"
+    },
+    {
+      "path": "generation/style-preview/painterly-16x16-v3-20261015-022055-001.webp",
+      "bytes": 832614,
+      "sha256": "fe6cc9dfc93879cee766e0b4a6730d66ad5ba3a71176797d6ab75beda912ea01"
+    },
+    {
+      "path": "generation/style-preview/template-16x16.png",
+      "bytes": 132297,
+      "sha256": "af75c253de701ac7d80abb4766321710525a24156c7f792c92e534bcd7ff3b94"
+    },
+    {
+      "path": "generation/style-preview/painterly-16x16-v2-20261015-021857-001.webp",
+      "bytes": 725432,
+      "sha256": "a75fe4f4c2d5136992a046d699f2d6e66d3245156b07afa7545dc8fec196038b"
+    },
+    {
+      "path": "generation/style-preview/v2-prompt.txt",
+      "bytes": 5686,
+      "sha256": "133b925f06c78cda1d88f851214876effe8d044311c442bf555c4df8205a9e18"
+    },
+    {
+      "path": "generation/style-preview/v2-subjects.json",
+      "bytes": 229690,
+      "sha256": "2b4dfbb8d28245237624baa2e8a06aee40aab50f8d09441371d46a1105be4769"
+    },
+    {
+      "path": "generation/style-preview/generate_v2.py",
+      "bytes": 3137,
+      "sha256": "03e144103ce4d7947e4881187e043e9538127064cbde132c3e72c2b2ff39a3c0"
+    },
+    {
+      "path": "generation/style-preview/stylized-grid-v1-20261015-020818-001.webp",
+      "bytes": 322496,
+      "sha256": "5ea263449072cb37eda5c53612a166939eaffd69ecea893b9f4e7d96367a7ea0"
+    },
+    {
+      "path": "audit/make_outputs.py",
+      "bytes": 7130,
+      "sha256": "b04ddd37fdb274973c4b800299330d745d178d2d0efe8ef022b217be272a9dc7"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_1.png",
+      "bytes": 10758,
+      "sha256": "1ca25d25fdf823d900590aefcc139be6b6567df28c1d3e58795e77c2fe20f085"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_2.png",
+      "bytes": 10683,
+      "sha256": "730685d0af13b96e7b6db435eb6adfe32a0a4b444767d17121f5d977bad8d845"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_3.png",
+      "bytes": 10316,
+      "sha256": "290ed0adbb153f2b0b6fb0200f8d191dc4121e88be203f96c2f4dc5f5a10385b"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_4.png",
+      "bytes": 10617,
+      "sha256": "db6cd27153c3ace5accd2abb1b3329e99562c77bdfaf7df74589e3d2a5aa2bfb"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_5.png",
+      "bytes": 11150,
+      "sha256": "f554cca6e0cd5db8f794c28159c0977ea2c95346b55cdbf8b6487da489c00829"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_6.png",
+      "bytes": 10627,
+      "sha256": "2a147aaec61176773593041a470ed109744130230254b5593e47518295c02997"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_7.png",
+      "bytes": 11015,
+      "sha256": "ef5ad0a8f146aa3c2dcb16037a858dd85c452163769dccb7f69fb9144f92a0db"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_adventure_franchise.png",
+      "bytes": 10795,
+      "sha256": "9a9c52953851c87d6dfd433ddfcd26b1d091e8a5191dcae6d0f51c1557078b79"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_adventure_hq.png",
+      "bytes": 10749,
+      "sha256": "5637ca314e181da84f4a9a16c7a3f2658620dff66c4514f8df43ccc02944641c"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_apotheguild.png",
+      "bytes": 10900,
+      "sha256": "fc7cf80f91f9e0cad562e60ba4c74a93da01a8d639a34f43555ffca9eeb4aa76"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_artistguild.png",
+      "bytes": 10508,
+      "sha256": "7a1bff90c4fbfdb660126c5afe19087fc052fcf77c6b61be43e57a473dd19436"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_bakerguild.png",
+      "bytes": 10808,
+      "sha256": "0806abc0d5fd57a1a3cc8320b164a0242977c2fd64eef5dfebb97eebf3176ae3"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_blacksmguild.png",
+      "bytes": 10410,
+      "sha256": "bd774354c3138fb961ab01cf3fb857cbb9678d15c59fce4d04bfe221d1da023b"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_burgerworld_hq.png",
+      "bytes": 10719,
+      "sha256": "98b788df22d7700e0d2536500bbb975e899c3ed7cac01c0fde2b8002a692863d"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_burgerworld_restaurant.png",
+      "bytes": 10695,
+      "sha256": "929bc20dae61f60fd3e9338686af00a0fdd9abc86e689193de036e8c6c8620e5"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_butcherguild.png",
+      "bytes": 10533,
+      "sha256": "2858d0707c8b4e85726d580a8508a309af1282fb3db1a7c84091336e425b253e"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_carpenterguild.png",
+      "bytes": 10608,
+      "sha256": "d7f6dd3813e922e000529db3260c53a88736f5cd89271dc5e5a6b8a11687701a"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_clerksguild.png",
+      "bytes": 10782,
+      "sha256": "b3884092f4496569c0e8788681a94403490bd98f7b5a0f8c766e1abdad61e468"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_drapersguild.png",
+      "bytes": 10716,
+      "sha256": "ce38fefaa5df7353dfbd9c540bcc3e31b8d7f8c090906bf5e01f3d36e029bcf3"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_empcloth_hq.png",
+      "bytes": 10297,
+      "sha256": "78d1c7b73c396537048fba109355b04b9ddcd30b5e58c6cb94e20d85066f3ebe"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_equestguild.png",
+      "bytes": 10695,
+      "sha256": "e8f23412c981ad8e0aaf63aef17a251870cac618b60d3fb891383cfa9e760593"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_ewtrade_hq.png",
+      "bytes": 10329,
+      "sha256": "040f8cacb9145ea42265a9a30d8efdfb61044a62bfde6cbaac9b00d7a54f0bc5"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_ewtrade_store.png",
+      "bytes": 10898,
+      "sha256": "6843f4526f53cb108695c36c292e67a328dbfc675211ec13db769cefadd31b54"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_fashion_hq.png",
+      "bytes": 10536,
+      "sha256": "eae28f8c117bc312da536ef58e67d49b04f0fd79bdf0ab7654905b1be07b61b8"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_fishmonguild.png",
+      "bytes": 11169,
+      "sha256": "c12ec4519028e45c7dabb8694d6f472c7cc39e0b9f0e7dd5a54759790de7f29c"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_glassguild.png",
+      "bytes": 10607,
+      "sha256": "14ed1c9ea317d6d76b1abd35516b9c5efa13b6e89b93ad50d3c2e566403abc41"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_goldsmguild.png",
+      "bytes": 11134,
+      "sha256": "2b49d6ae20709c9f2d9af49df916b57ab1d1bcd9bd99448a0c07cdf93a086368"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_grocerguild.png",
+      "bytes": 10809,
+      "sha256": "8a0f7919e2ab9bddf40755b8018e94e0414ff6c2a7cae2e0dd75424eeb636167"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mallwart_hq.png",
+      "bytes": 10052,
+      "sha256": "b38e3966ad30e4f8dfd5399f6ffd9d53116b4cccf13d36e8d2d0a2fcd7dfd7fd"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mallwart_store.png",
+      "bytes": 10850,
+      "sha256": "1d68d6fd58e276f4b20e59ca5f85c92bee487c031f79cec8c03061ce5854f52b"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mapster_hq.png",
+      "bytes": 10655,
+      "sha256": "f1157a5bca573e6e9235dad6235ccaa3b8dd49aa9b6267ef841ea4911129cc14"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_masonguild.png",
+      "bytes": 10717,
+      "sha256": "a74a689f0b11bef301cfe6cccee8a1cbe58ed07a5e6aed22da7ea0c7a43a900a"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mercerguild.png",
+      "bytes": 10754,
+      "sha256": "699c8f412b02d31464262f87ebb92ca1bad3f4fbc1ad346fcbb8eb60888ec587"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_milehigh_franchise.png",
+      "bytes": 10375,
+      "sha256": "3dbc1edeacc05e04bf64c91698f2b3e43c230687031fae003a90830446a10c41"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_milehigh_hq.png",
+      "bytes": 10357,
+      "sha256": "aa888d7b4566071fcf3286b5c78ad7e128300318b32629e5e6706b9655092e6c"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mobby_hq.png",
+      "bytes": 10678,
+      "sha256": "848f342c11c45d96f0b88664d5d6a142668501d5531c235352a896351a7ac5ec"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_mobby_store.png",
+      "bytes": 11051,
+      "sha256": "bf1d8312588dcb39a3bc8b1afc19d13b35672268ef15f8347adc8a9c0eff0eb9"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_moonbean_hq.png",
+      "bytes": 10748,
+      "sha256": "680ba47b3c6b65e6b12fc2c0f750f1de40ece7e78ab3db28a62fb2f1cc15ffda"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_moonbean_shop.png",
+      "bytes": 10767,
+      "sha256": "e42abc83e71c43b31ff4a86fa773e47dff432ab04a7364df95649e817f6a3a81"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_red_hq.png",
+      "bytes": 10504,
+      "sha256": "402bb6978746c953eb7c5aa36dcd1f537cd05fc5af484480f7bf42bb6a268182"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_red_theater.png",
+      "bytes": 10199,
+      "sha256": "68421f51ce7edddf1fc597ef0d5cfc08994f51b21ac3e9653df917f40ca250c7"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_safari_guide.png",
+      "bytes": 10982,
+      "sha256": "9bb412bf555dcaf23f70d7eba11b0ee43da05596bffaa46bff3b22de909749cc"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_safari_hq.png",
+      "bytes": 10777,
+      "sha256": "421c46e24cd5af2ac4f36480db870b70c5ab95a47879f3a5c87805e63202e843"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_ultsoldier_hq.png",
+      "bytes": 10702,
+      "sha256": "6a4f121aebab1bf6b95d30d7c6061dcd4c61e83a8a7e524b2fba184f0ac8d37a"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_ultsoldier_trainer.png",
+      "bytes": 10414,
+      "sha256": "cb71768c9e542083f85b309cc8de631526ba48f7f46bb898dd3cdb83d9080191"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_wonka_hq.png",
+      "bytes": 10893,
+      "sha256": "690b87f83deb4c83f6091b70cae481595abca4dfeef3d312812620aca24edb90"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/corporation_wonka_shop.png",
+      "bytes": 10922,
+      "sha256": "78ff5f750dcb825ead4e414a3d5f23bade37b5607a4c7b0a0f66420f53eef8aa"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/empcloth_store.png",
+      "bytes": 10225,
+      "sha256": "47777c6ad890ca63bb37581ee56f35285ebb95ecb7d3ffb015f4a2f22bd9bc4b"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/fashion_store.png",
+      "bytes": 9956,
+      "sha256": "4a240f34cbc7a0fe35f9a09fd7408e3deb18bcb712af45cb93b4d54cbb278eb9"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/hindu_cathedral.png",
+      "bytes": 10980,
+      "sha256": "40f0387d2fd7a6517486c882e32ce1b49c6ca6e1edbc6e4fc06309d7bdf6d919"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/hindu_monastery.png",
+      "bytes": 10707,
+      "sha256": "c21a019548999237429c8d6fa642b3e0c8ef4aa8d14500054b3b0d7766fcda7c"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/hindu_shrine.png",
+      "bytes": 10744,
+      "sha256": "6b720ab700c20da1e0ac8ecaf70ee7cceffa8c615367fce45b71090894073cdd"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/hindu_temple.png",
+      "bytes": 10776,
+      "sha256": "f93cb214fc096b6b61fd101692c44c7ab7e922f9b2555a65d43a349962fe25fc"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/asatru_cathedral.png",
+      "bytes": 10281,
+      "sha256": "22206733629b6bda5fa9277039977873f93b3f18a840d61af096066823345ad2"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/asatru_temple.png",
+      "bytes": 9700,
+      "sha256": "56677d68405c302dc1dfef166a96e158d262cc96ca23fa5260b04afb4cdd4ef9"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/hindu_brihadeeswarar.png",
+      "bytes": 9773,
+      "sha256": "969030a4f6b0792128cc50c02cc39e57affcc8c1e7813963a0b0b25012f633d3"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/buddhist_cathedral.png",
+      "bytes": 10384,
+      "sha256": "b6d2a6b26ef7aaa9c31126d217f5be41f4609266e2be308890c6c14e242a2288"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/buddhist_temple.png",
+      "bytes": 10629,
+      "sha256": "51073ee02f2b72746a62eb9d9e99b54e44c49e7ce0b502510010c707af255043"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/christian_cathedral.png",
+      "bytes": 9798,
+      "sha256": "c133dc62a736f81dd86f4ab377034b68607bb6dc87ee0f2f48f2b60065b91e72"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/christian_temple.png",
+      "bytes": 9065,
+      "sha256": "63860233d59acb9a572813b9331f8074eeb0ec32630675e78fd4e76757038979"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/christian_shrine.png",
+      "bytes": 9385,
+      "sha256": "6c98ca9c7b4ac9e11926747ce47361387576b440ca08f418ea08b907932d41a9"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/islamic_cathedral.png",
+      "bytes": 10449,
+      "sha256": "32ceb3d1f7fdaa9a45208a8fe75921962ada23afd1299f43b595dfa33b0e30c8"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/islamic_monastery.png",
+      "bytes": 10895,
+      "sha256": "c067fd0be6fa07301b652a51e5ab0ab6a27620b04c2956be41df8dfc6b240e06"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/islamic_shrine.png",
+      "bytes": 11032,
+      "sha256": "566dc197878d3abd68a9af6edf839763235c50e487b88d96459c120f037a17e4"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/islamic_temple.png",
+      "bytes": 10246,
+      "sha256": "8569b6e3e56f1a21176a9fd747fb2f38a5246f2f093fccf9e693bc1b468be313"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/jewish_cathedral.png",
+      "bytes": 10715,
+      "sha256": "dc7063f6886eb5d1a46766433822681f1f2a590f5bccfe5fd23260405d78b5bc"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/jewish_masada.png",
+      "bytes": 10714,
+      "sha256": "d857e35c9e8e2a9617542a4362e24d72f650374cee489207221c7d6b367ba8cd"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/jewish_monastery.png",
+      "bytes": 10665,
+      "sha256": "82c088bf2e844984129132c334898db39dd88375120f0505c0f01aa1c2ed98f4"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/jewish_shrine.png",
+      "bytes": 10578,
+      "sha256": "f94f79beff55ccb6a7089fbf496dbad572b25a9c57d3d377bae53357c1215383"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/jewish_temple.png",
+      "bytes": 10506,
+      "sha256": "f0aced8f1d36e008d776d74146dd7cff4fb0271fce08bdb56ce016aa30ad7756"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/mining_inc_survey_office.png",
+      "bytes": 11854,
+      "sha256": "d73043f0a8ba02169ce202f4d8eef22046eaea49ba7978ed46a59ba1ebea7135"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/shinto_cathedral.png",
+      "bytes": 10189,
+      "sha256": "240d63a359dfc3a96909c12b436acf4a81f62f5e0427db2544420f0385a0f564"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/shinto_monastery.png",
+      "bytes": 10465,
+      "sha256": "3f1a59ee369339364ee801f80dc990ac4553dfd8c5e23e776fc0e0019d4719e8"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/shinto_shrine.png",
+      "bytes": 10039,
+      "sha256": "61a1e163079c01d8ddad4a7a8fa26b8f87f0f711bf4af19d63585733276b2ac4"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/shinto_temple.png",
+      "bytes": 10261,
+      "sha256": "05ac023ae20f750123fa117f2dde11af636a46bdc4f0c8f94a6fcdd6677beb1f"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/specialbuilding_corporate_store.png",
+      "bytes": 10307,
+      "sha256": "020da2c4ee42cdea3fa71b9ab0bf195a836f59911026cb9b02584ab2869218dc"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/specialbuilding_monastery.png",
+      "bytes": 10781,
+      "sha256": "ca5810dcb14143ecd7588309fd677e04a01cc2f51e8b36e4500552dcd68761ac"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/standard_ethanol_distillery.png",
+      "bytes": 10079,
+      "sha256": "18770156b890fd21d8859c17954bde389001748e3ae18e656c96fb313226e8db"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/taoist_cathedral.png",
+      "bytes": 10273,
+      "sha256": "dddd4934d10bd1e44c0a75d33ecc8565a689e47abae9e46beda55fb4591ebd02"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/taoist_monastery.png",
+      "bytes": 10402,
+      "sha256": "aedbded972c3e537970ca148d2fcddcdda7db481ff5b4b02b90be7a3f8e25096"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/taoist_temple.png",
+      "bytes": 10348,
+      "sha256": "edfe1134e101e1808e157e0f9d0d892f322b035fbf7b91de6fdece7e39b642f1"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/manifest.json",
+      "bytes": 25150,
+      "sha256": "3b1089419bfb23097017b473482a3b006443103ff155059fd432d11435f1dcf3"
+    },
+    {
+      "path": "revisions/logo-overlays-v1-archive/contact.png",
+      "bytes": 1262925,
+      "sha256": "63a22c7112f196e602de14378f322c58757b71de0dcbfc9763889277cc052dbf"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_1.png",
+      "bytes": 10955,
+      "sha256": "488e53c4e47a40553ac970f1115960bb2bff30e2ec247cf0a9f81e991f9f36ba"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_2.png",
+      "bytes": 10858,
+      "sha256": "f8697b0f8a2e0b7e0dc717dbded1dc416901fe4add6c820f30e2b44d4ddc9052"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_3.png",
+      "bytes": 10532,
+      "sha256": "a42c4b92250654d4a0a0a3cb3946ced43aa185c3ae9a4fe0b6b1fc300e6eea49"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_4.png",
+      "bytes": 10746,
+      "sha256": "cf7acf1aaa8fdd568632c89f0e41d1eeb625ea955a74e623ae12ff806a689419"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_5.png",
+      "bytes": 11363,
+      "sha256": "14b3ee812eebc10f468616a4e6e64db298466c60acd514ed75ff03622498a578"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_6.png",
+      "bytes": 10811,
+      "sha256": "2803f777504db831cedee0aa572c2cdf3273275bb30e5f8ee7d2be5cca08b12b"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_7.png",
+      "bytes": 11025,
+      "sha256": "dca2bfeda1307676e726d75437c0c2a986f83b33597872adee5747610b8e45f1"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_adventure_franchise.png",
+      "bytes": 10837,
+      "sha256": "6acf01772b78ca22ce65808b7e518e9933722ef471a75ddeb7e840ce63fab89c"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_adventure_hq.png",
+      "bytes": 10792,
+      "sha256": "cb6b219d6221be3b65056d3534ee06874921401e248be929d9985fa200026dc2"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_apotheguild.png",
+      "bytes": 10964,
+      "sha256": "2a3872a0aaf7735a6ac6ef1017d49999a8d5fe731478eafa87f4e4a033af5956"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_artistguild.png",
+      "bytes": 10604,
+      "sha256": "c629431eb45f37b794a49787744e4fcd4df761f89438a884eadb7abe1ebd36fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_bakerguild.png",
+      "bytes": 10734,
+      "sha256": "28943608bec4b0bd00f2f860798594c7dcb9d368d1db8614fb9f6b799e131e27"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_blacksmguild.png",
+      "bytes": 10444,
+      "sha256": "bfbfca7ca51f20f75134aeaba6495c60485c2babb4641a4bd5dc287eaa040d7f"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_burgerworld_hq.png",
+      "bytes": 10882,
+      "sha256": "6fc760ffe1ee8198316e4365a8796753494b796c393c699c09c0403edb08c0cc"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_burgerworld_restaurant.png",
+      "bytes": 10809,
+      "sha256": "7bdb693eb167f9ea0d9ef2d53f59832eaaf5c2f19cff226af36000f42400949c"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_butcherguild.png",
+      "bytes": 10621,
+      "sha256": "d20988ba4ad746c7a19ad493961b1a1c489bfd75dd1addf179815d6123a7ed3a"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_carpenterguild.png",
+      "bytes": 10503,
+      "sha256": "8ef9234e969801195a5f962091d6c5aeb1579e59e06e56f6e0d83c97b781928a"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_clerksguild.png",
+      "bytes": 10663,
+      "sha256": "3854a5c905f1fa3d51251341c948871c25220d79ba47251ed95338380a5287ec"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_drapersguild.png",
+      "bytes": 10699,
+      "sha256": "0e619f02d3c2591d0377828abdefa40ab6a7064d45e5c9a0e0d725f596a96002"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_empcloth_hq.png",
+      "bytes": 10480,
+      "sha256": "d111ffdf40e3b040fb376dcc591dd64248ec44ec216d059e4e49814b069c3cad"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_equestguild.png",
+      "bytes": 10653,
+      "sha256": "ded8e3a9b6a137bedcb6dc7265e432d7ac07e06439fb2d36661be76f50a0e255"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_ewtrade_hq.png",
+      "bytes": 10369,
+      "sha256": "5d93648295df23242fd72c8b5ea49ba9f0563d1b9bad4662b28cc5301be38efd"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_ewtrade_store.png",
+      "bytes": 10891,
+      "sha256": "84c0f0cff02c06b90760740a2769c9db40f149295c2acf8fabc87bf8ecf63b57"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_fashion_hq.png",
+      "bytes": 10566,
+      "sha256": "f99705418d69b9c900e65ec21a7f020dcfc5439788f06c5e328c018d5cfcdb2a"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_fishmonguild.png",
+      "bytes": 11064,
+      "sha256": "29356ca6020816c280545c364ab7765c7f6dee1025bfd6add5f82bcc2d45b9fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_glassguild.png",
+      "bytes": 10671,
+      "sha256": "62c981454b5150e756ffe4eeab2f3acbed4618735f6761ba61337cc9feec7b00"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_goldsmguild.png",
+      "bytes": 11249,
+      "sha256": "63a1a8eecd7974f2e050bc7d3667f74d22e3c27b2984224a141c3edc5549dd3b"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_grocerguild.png",
+      "bytes": 10850,
+      "sha256": "aab0a05042c5c7a6ae6455150c4c1583c5a50e42dd5048248ccfb671647927ac"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mallwart_hq.png",
+      "bytes": 10232,
+      "sha256": "6d16e84460ab6a4374f7e11ecb07517d123b790af4acaf33a4d4adda3e7da622"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mallwart_store.png",
+      "bytes": 10853,
+      "sha256": "d1aecb5a8e7834b00c522196839f0f9e69d04172ff91f200ac7e3d1a754037ed"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mapster_hq.png",
+      "bytes": 10719,
+      "sha256": "80c414f3a7cff5484b24a706e8283f514fe0fae4f16ec9c3e66d4f1e24363fe6"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_masonguild.png",
+      "bytes": 10631,
+      "sha256": "fa2a76a74693eccdc32eb1dd559e9c49d7d8105cc8c1e68ed8d015773b2b56de"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mercerguild.png",
+      "bytes": 10852,
+      "sha256": "8a704f71df0092a44f1061efead724e30a072478fea3bb25069aef234ba679da"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_milehigh_franchise.png",
+      "bytes": 10179,
+      "sha256": "348e468e9859e5c754e6b8837749f118e04672c5e675354a1e012a8dc546c069"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_milehigh_hq.png",
+      "bytes": 10366,
+      "sha256": "9d9370ab8a5ef6c8595c3a0bd2730611ab3dccaf2a26810e756eb3d98d58b5f6"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mobby_hq.png",
+      "bytes": 10790,
+      "sha256": "d109e0df14522d0e226dc3d8c80b9bb93dec8e276ad3e0ca431896973c7bba34"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_mobby_store.png",
+      "bytes": 10994,
+      "sha256": "3353da8fd7f8bedbd36f92ddba8be8b22cca656f18d8e9ca4596a07b27414d34"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_moonbean_hq.png",
+      "bytes": 10906,
+      "sha256": "636e1127acfc407587d4885d902cfcc6988cfffa5e6d0ab9664461ec50eb166b"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_moonbean_shop.png",
+      "bytes": 10961,
+      "sha256": "922a0f479e96732d6187cedeaf8df709add4e3c7e40fe1019fd417942ed4fe7d"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_red_hq.png",
+      "bytes": 10369,
+      "sha256": "ef69c04162ced272f4e01398467744a4c0144c3f952e3df94e693ec9d33fd1e7"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_red_theater.png",
+      "bytes": 10166,
+      "sha256": "1324ec62e890bc3a65b9af5e4f6a300d0432935544cbfdb1b87565706b884a56"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_safari_guide.png",
+      "bytes": 10898,
+      "sha256": "90f8e59f4ae9fa8e44fbb195109bf417f0ebdc87e96323924a40c137b8c27679"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_safari_hq.png",
+      "bytes": 10829,
+      "sha256": "b701e22d0958de3284ea09a45d6a144ba97c5f5c10e8613f22105aa3f3cc4f31"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_ultsoldier_hq.png",
+      "bytes": 10814,
+      "sha256": "828227000f140d5001a3da1fe8f768303fdad16d3c316dcf9f034cba18fdc400"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_ultsoldier_trainer.png",
+      "bytes": 10530,
+      "sha256": "0c3b46672ada7409280979c7c1a1cd7f3886ecd63d2e3c0bfc5fd1dd89ee5a1e"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_wonka_hq.png",
+      "bytes": 10967,
+      "sha256": "59a2595b2e9d9d58335109dc81e0d56833e9e5b66dc291d9ff7ff17ec39fef11"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/corporation_wonka_shop.png",
+      "bytes": 10911,
+      "sha256": "12ea18359836833adf4e22f60e18b43a2baa1e5e1773126fc083afe9c811e94d"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/empcloth_store.png",
+      "bytes": 10306,
+      "sha256": "739d956a9aac346659265ea7f8b0b7bcbdf6f09732267f4617c25600139c7e81"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/fashion_store.png",
+      "bytes": 10147,
+      "sha256": "c6bab14cbb41a9510e636cc6e2ca306211bb1fbcf2f83b9f22d64526c6e535b5"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/hindu_cathedral.png",
+      "bytes": 10872,
+      "sha256": "a9d3d883b95e1c68f99047d62c7d30c6e39320be942714ad1fa2b00a5cbb2a13"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/hindu_monastery.png",
+      "bytes": 10640,
+      "sha256": "5b789f5ed6409177c524616be286f68562c289ad62646ca928a54812fa6b21ac"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/hindu_shrine.png",
+      "bytes": 10712,
+      "sha256": "27098e4f337cc24429f2a85327fe4c537ae4c8c1baf8d57969e18f295f4ffadc"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/hindu_temple.png",
+      "bytes": 10716,
+      "sha256": "ccb3f7bb84105029f02df0f5a8658c5d95a79dd9ae4b2181c6ceb31eaa587b1e"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/asatru_cathedral.png",
+      "bytes": 10241,
+      "sha256": "374b71f31647e55cdf41ef78b2a1facc3bf54a333af1b9756d341ddc1c96763f"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/asatru_temple.png",
+      "bytes": 9793,
+      "sha256": "0a70c18150f4bdc8635732cf9ee3e53d33cf8034a951987a61335656b2f4adae"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/hindu_brihadeeswarar.png",
+      "bytes": 9870,
+      "sha256": "4fe6e0e1a3fe1a39b14c76bcc22d33b2d33ce9406d454bedc6fba5d56a90c9b7"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/buddhist_cathedral.png",
+      "bytes": 10495,
+      "sha256": "991c4037b041d1a19628b31b96a94c0db96d077162448aa44d14d835a6028758"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/buddhist_temple.png",
+      "bytes": 10777,
+      "sha256": "a4b3f9c9d6594792d5ddc0499fcb4ec9f95047836634237e993051ee750120cb"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/christian_cathedral.png",
+      "bytes": 9886,
+      "sha256": "987a9646f3cfde50cc6840b92b85574692bb1da59e10055cdaeac93e21ecbc29"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/christian_temple.png",
+      "bytes": 9297,
+      "sha256": "59959cfa42bb11eacdcd4637676c9c7c0210496bfbea2e99f2207edd9b75b61b"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/christian_shrine.png",
+      "bytes": 9618,
+      "sha256": "6141ba74a731fa25a27b90b2e454372a74613e60148143da3122c5b6fe091015"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/islamic_cathedral.png",
+      "bytes": 10610,
+      "sha256": "1476f0eb52c24fa207a0e537d7d48c2aebd9de02e5667e6a9186cdb734f5c581"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/islamic_monastery.png",
+      "bytes": 10989,
+      "sha256": "2f6cbd9d17217e24a2f20f6ce13579fdf734e1c4e9d6a1eab298685bac38f3da"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/islamic_shrine.png",
+      "bytes": 11064,
+      "sha256": "e1a1f3a97d8fae066dd46b19b037e2b945d013f58a6d6e5bd07bc472327d48fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/islamic_temple.png",
+      "bytes": 10401,
+      "sha256": "02b66be75d46e4b95dbc84576c4a128fd39a4fc54475b929483664e74fb790af"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/jewish_cathedral.png",
+      "bytes": 10819,
+      "sha256": "378c9271f9eb92df062ed377b26c7572ef9638af8ed34e855d7d2d797075e8b1"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/jewish_masada.png",
+      "bytes": 10836,
+      "sha256": "97f67630cded75b4b1a7371252c40dc412ae3fa3451a5878b9c0bd2df7609659"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/jewish_monastery.png",
+      "bytes": 10804,
+      "sha256": "0687448d3010e096f2ddc5931469eb20fa25402eed8dd7affa70e8e7863725cc"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/jewish_shrine.png",
+      "bytes": 10722,
+      "sha256": "7f501267561c18bfc97a74e75a2735a2c494c5edc05bc68e6acae89777286faf"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/jewish_temple.png",
+      "bytes": 10600,
+      "sha256": "44e7fa760e67a0c72e5f8944405c1b0ebd6241ab8e1ffe79f7e40d25d38a921a"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/mining_inc_survey_office.png",
+      "bytes": 11960,
+      "sha256": "23c7e4f96a6c06e58670e1d9d6e7106d60397ba179d9d73e479a90871b2ed5fd"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/shinto_cathedral.png",
+      "bytes": 10046,
+      "sha256": "0821476897a8898adcd2db741944703252736c8f594ae5c856c97d425faa5c07"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/shinto_monastery.png",
+      "bytes": 10297,
+      "sha256": "c6ce9026c2440e71a5f793eb360caa5e019bd18a3fe9579740025f20980282b9"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/shinto_shrine.png",
+      "bytes": 9912,
+      "sha256": "1003282abf4cb85bca073d65827982c6b4f12ed51c9f2b47836409473faa4cb2"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/shinto_temple.png",
+      "bytes": 10146,
+      "sha256": "99c49c2aa1e9808058ee105fb46efca6db4232277f41316b8d832857b1d2ce5d"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/specialbuilding_corporate_store.png",
+      "bytes": 10387,
+      "sha256": "6c8c469fb8dec01dd801b44540abd313a432daa197f60ebd82ed3367c20292dc"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/specialbuilding_monastery.png",
+      "bytes": 10807,
+      "sha256": "3caf1b700db9857635a13f4a1eeb42316a8b53519a886226505db47ac202324b"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/standard_ethanol_distillery.png",
+      "bytes": 10321,
+      "sha256": "09db446d33d90c9eca13b8b742eb243fb7ac3a88101c8ec12cfaa0fee99ef40f"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/taoist_cathedral.png",
+      "bytes": 10456,
+      "sha256": "7eec09721dc80c09bf069e9462c9495110c742218bdc6dadc13575b04b7bed69"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/taoist_monastery.png",
+      "bytes": 10544,
+      "sha256": "d14687c3ea2597711fb01343d2f43a8e409e6605e92e8af6e18a2ef2b11e9ee6"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/taoist_temple.png",
+      "bytes": 10439,
+      "sha256": "078d9fe48064aeb09e8f136dfddab6312babbc8c935fe8ef3084e81645d657e3"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/manifest.json",
+      "bytes": 25717,
+      "sha256": "fdc330fcf40924344267e4b745f9113200db3f4513e456fb526b7395eca676a6"
+    },
+    {
+      "path": "revisions/logo-overlays-v2-archive/contact.png",
+      "bytes": 1244495,
+      "sha256": "b9eccc28e03ff41660e3e7997329c01dff2a3dca9396baed6a123770c25e7f9b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_1.png",
+      "bytes": 10955,
+      "sha256": "488e53c4e47a40553ac970f1115960bb2bff30e2ec247cf0a9f81e991f9f36ba"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_2.png",
+      "bytes": 10858,
+      "sha256": "f8697b0f8a2e0b7e0dc717dbded1dc416901fe4add6c820f30e2b44d4ddc9052"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_3.png",
+      "bytes": 10532,
+      "sha256": "a42c4b92250654d4a0a0a3cb3946ced43aa185c3ae9a4fe0b6b1fc300e6eea49"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_4.png",
+      "bytes": 10746,
+      "sha256": "cf7acf1aaa8fdd568632c89f0e41d1eeb625ea955a74e623ae12ff806a689419"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_5.png",
+      "bytes": 11363,
+      "sha256": "14b3ee812eebc10f468616a4e6e64db298466c60acd514ed75ff03622498a578"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_6.png",
+      "bytes": 10811,
+      "sha256": "2803f777504db831cedee0aa572c2cdf3273275bb30e5f8ee7d2be5cca08b12b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_7.png",
+      "bytes": 11025,
+      "sha256": "dca2bfeda1307676e726d75437c0c2a986f83b33597872adee5747610b8e45f1"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_adventure_franchise.png",
+      "bytes": 10877,
+      "sha256": "caacc9c5eed9df21a8b5d4ee6905db94b8de44bc11dadb0c6b21a8ee0c5f39ea"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_adventure_hq.png",
+      "bytes": 10815,
+      "sha256": "e6e031bd364965bdad1f02a0d0b685734f9d1f92617c890348948e1e1a0ff9ba"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_apotheguild.png",
+      "bytes": 10964,
+      "sha256": "2a3872a0aaf7735a6ac6ef1017d49999a8d5fe731478eafa87f4e4a033af5956"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_artistguild.png",
+      "bytes": 10604,
+      "sha256": "c629431eb45f37b794a49787744e4fcd4df761f89438a884eadb7abe1ebd36fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_bakerguild.png",
+      "bytes": 10734,
+      "sha256": "28943608bec4b0bd00f2f860798594c7dcb9d368d1db8614fb9f6b799e131e27"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_blacksmguild.png",
+      "bytes": 10444,
+      "sha256": "bfbfca7ca51f20f75134aeaba6495c60485c2babb4641a4bd5dc287eaa040d7f"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_burgerworld_hq.png",
+      "bytes": 10882,
+      "sha256": "6fc760ffe1ee8198316e4365a8796753494b796c393c699c09c0403edb08c0cc"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_burgerworld_restaurant.png",
+      "bytes": 10809,
+      "sha256": "7bdb693eb167f9ea0d9ef2d53f59832eaaf5c2f19cff226af36000f42400949c"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_butcherguild.png",
+      "bytes": 10621,
+      "sha256": "d20988ba4ad746c7a19ad493961b1a1c489bfd75dd1addf179815d6123a7ed3a"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_carpenterguild.png",
+      "bytes": 10530,
+      "sha256": "8dea51400c0e1ee9833a29d8e7a473de50b9b2e11ad0cfe4f7b530254b4a21eb"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_clerksguild.png",
+      "bytes": 10663,
+      "sha256": "3854a5c905f1fa3d51251341c948871c25220d79ba47251ed95338380a5287ec"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_drapersguild.png",
+      "bytes": 10699,
+      "sha256": "0e619f02d3c2591d0377828abdefa40ab6a7064d45e5c9a0e0d725f596a96002"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_empcloth_hq.png",
+      "bytes": 10571,
+      "sha256": "96d78e53c1bfad0c9579f300c19efbf0d1b1475f02f316804c8a99f883635f80"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_equestguild.png",
+      "bytes": 10705,
+      "sha256": "81f7c8c1e4f9f0eb1e94acc8af3b1d43e420cf14ca43628c54cb11e328dc18fa"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_ewtrade_hq.png",
+      "bytes": 10549,
+      "sha256": "64fb7e25db0dc4c6f2d5e51e3467a86da693bbfe974216a7194e02ef29306912"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_ewtrade_store.png",
+      "bytes": 11053,
+      "sha256": "8e558a55ade75015cee96a4e16c2e889571a2812285eead8e60b383cbd5eb993"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_fashion_hq.png",
+      "bytes": 10566,
+      "sha256": "f99705418d69b9c900e65ec21a7f020dcfc5439788f06c5e328c018d5cfcdb2a"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_fishmonguild.png",
+      "bytes": 11064,
+      "sha256": "29356ca6020816c280545c364ab7765c7f6dee1025bfd6add5f82bcc2d45b9fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_glassguild.png",
+      "bytes": 10671,
+      "sha256": "62c981454b5150e756ffe4eeab2f3acbed4618735f6761ba61337cc9feec7b00"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_goldsmguild.png",
+      "bytes": 11249,
+      "sha256": "63a1a8eecd7974f2e050bc7d3667f74d22e3c27b2984224a141c3edc5549dd3b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_grocerguild.png",
+      "bytes": 10932,
+      "sha256": "20b3c5f3a0bed56230d643a8603348b398b5e3ede2d422033c30c9e224bb03aa"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mallwart_hq.png",
+      "bytes": 10328,
+      "sha256": "572b74401a5b48438576fbe819f6bfbbab5f0e676185af17e61103a0be18298a"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mallwart_store.png",
+      "bytes": 10953,
+      "sha256": "9083cd5dfdcc82092c8e32f8ca16c5175f356522d28f56904e25f6fe08e3283a"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mapster_hq.png",
+      "bytes": 10754,
+      "sha256": "bd6f8d8dd51a7af4e57ddd77ef53fae9343cf40d8ae1948224d1a524531209fb"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_masonguild.png",
+      "bytes": 10631,
+      "sha256": "fa2a76a74693eccdc32eb1dd559e9c49d7d8105cc8c1e68ed8d015773b2b56de"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mercerguild.png",
+      "bytes": 10852,
+      "sha256": "8a704f71df0092a44f1061efead724e30a072478fea3bb25069aef234ba679da"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_milehigh_franchise.png",
+      "bytes": 10179,
+      "sha256": "348e468e9859e5c754e6b8837749f118e04672c5e675354a1e012a8dc546c069"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_milehigh_hq.png",
+      "bytes": 10366,
+      "sha256": "9d9370ab8a5ef6c8595c3a0bd2730611ab3dccaf2a26810e756eb3d98d58b5f6"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mobby_hq.png",
+      "bytes": 10790,
+      "sha256": "d109e0df14522d0e226dc3d8c80b9bb93dec8e276ad3e0ca431896973c7bba34"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_mobby_store.png",
+      "bytes": 10994,
+      "sha256": "3353da8fd7f8bedbd36f92ddba8be8b22cca656f18d8e9ca4596a07b27414d34"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_moonbean_hq.png",
+      "bytes": 10914,
+      "sha256": "10847f823293ac4d293abb918b41e93734c3df6e5ae045190fd6cb5ed4c9bd28"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_moonbean_shop.png",
+      "bytes": 10961,
+      "sha256": "eda1057acb9674bc309af875cf654f3a09ce35e31bf944589ff571bfd404e88e"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_red_hq.png",
+      "bytes": 10351,
+      "sha256": "21baf38cc1505a94b666d38464abc508425864e859199a8fb1cb1235a3ca2d12"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_red_theater.png",
+      "bytes": 10145,
+      "sha256": "7fe38fb68a58316aca28ba3687f99706d62bb998246d5fea4e7c6711889753dd"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_safari_guide.png",
+      "bytes": 10898,
+      "sha256": "90f8e59f4ae9fa8e44fbb195109bf417f0ebdc87e96323924a40c137b8c27679"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_safari_hq.png",
+      "bytes": 10829,
+      "sha256": "b701e22d0958de3284ea09a45d6a144ba97c5f5c10e8613f22105aa3f3cc4f31"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_ultsoldier_hq.png",
+      "bytes": 10876,
+      "sha256": "9b755ca5136af0cf9236254b2c70d24c9dea00f2b0675ce06e98c78022b8be04"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_ultsoldier_trainer.png",
+      "bytes": 10591,
+      "sha256": "f18f9ef35fb7f2733bb474575193c05e7fcdf26a8823ecc1be16ce36d8a54d4f"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_wonka_hq.png",
+      "bytes": 10967,
+      "sha256": "59a2595b2e9d9d58335109dc81e0d56833e9e5b66dc291d9ff7ff17ec39fef11"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/corporation_wonka_shop.png",
+      "bytes": 10911,
+      "sha256": "12ea18359836833adf4e22f60e18b43a2baa1e5e1773126fc083afe9c811e94d"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/empcloth_store.png",
+      "bytes": 10431,
+      "sha256": "714602171035a58f91aae87be61be5d2225bfe896e941daf0cea03fc6ca31678"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/fashion_store.png",
+      "bytes": 10147,
+      "sha256": "c6bab14cbb41a9510e636cc6e2ca306211bb1fbcf2f83b9f22d64526c6e535b5"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/hindu_cathedral.png",
+      "bytes": 10875,
+      "sha256": "dad81764ecd6a3e8df198e7f34ac194b0bccae3cbd94c579f7c7e50728334de4"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/hindu_monastery.png",
+      "bytes": 10638,
+      "sha256": "4e3ec98e0070580ce3b2bc535d5dda76f4969019c2bf082f40270dd3b638d826"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/hindu_shrine.png",
+      "bytes": 10712,
+      "sha256": "5bd752304cc8dc25cb76c32b967c0e52a7dc88362d7d952ea1ed28b7935c821b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/hindu_temple.png",
+      "bytes": 10716,
+      "sha256": "376900f49e6c8a05023b6e847c5c0739ab929696da397534bde7a0dfe4c55228"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/asatru_cathedral.png",
+      "bytes": 10523,
+      "sha256": "70dfded7d5d33dae9e201705f83071e0dffaca6e716b8e9f433edad5e67f1d60"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/asatru_temple.png",
+      "bytes": 10076,
+      "sha256": "38b0e0de60b948a24065e6303991db3753ade4f8a53fee077c6bfe5a61abd312"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/hindu_brihadeeswarar.png",
+      "bytes": 9870,
+      "sha256": "67e34962249bfe969b2828ed69d103b681b77bbaa44e0c85e4708e45b7cd06af"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/buddhist_cathedral.png",
+      "bytes": 10495,
+      "sha256": "991c4037b041d1a19628b31b96a94c0db96d077162448aa44d14d835a6028758"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/buddhist_temple.png",
+      "bytes": 10777,
+      "sha256": "a4b3f9c9d6594792d5ddc0499fcb4ec9f95047836634237e993051ee750120cb"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/christian_cathedral.png",
+      "bytes": 9886,
+      "sha256": "987a9646f3cfde50cc6840b92b85574692bb1da59e10055cdaeac93e21ecbc29"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/christian_temple.png",
+      "bytes": 9297,
+      "sha256": "59959cfa42bb11eacdcd4637676c9c7c0210496bfbea2e99f2207edd9b75b61b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/christian_shrine.png",
+      "bytes": 9618,
+      "sha256": "6141ba74a731fa25a27b90b2e454372a74613e60148143da3122c5b6fe091015"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/islamic_cathedral.png",
+      "bytes": 10610,
+      "sha256": "1476f0eb52c24fa207a0e537d7d48c2aebd9de02e5667e6a9186cdb734f5c581"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/islamic_monastery.png",
+      "bytes": 10989,
+      "sha256": "2f6cbd9d17217e24a2f20f6ce13579fdf734e1c4e9d6a1eab298685bac38f3da"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/islamic_shrine.png",
+      "bytes": 11064,
+      "sha256": "e1a1f3a97d8fae066dd46b19b037e2b945d013f58a6d6e5bd07bc472327d48fe"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/islamic_temple.png",
+      "bytes": 10401,
+      "sha256": "02b66be75d46e4b95dbc84576c4a128fd39a4fc54475b929483664e74fb790af"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/jewish_cathedral.png",
+      "bytes": 10819,
+      "sha256": "378c9271f9eb92df062ed377b26c7572ef9638af8ed34e855d7d2d797075e8b1"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/jewish_masada.png",
+      "bytes": 10836,
+      "sha256": "97f67630cded75b4b1a7371252c40dc412ae3fa3451a5878b9c0bd2df7609659"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/jewish_monastery.png",
+      "bytes": 10804,
+      "sha256": "0687448d3010e096f2ddc5931469eb20fa25402eed8dd7affa70e8e7863725cc"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/jewish_shrine.png",
+      "bytes": 10722,
+      "sha256": "7f501267561c18bfc97a74e75a2735a2c494c5edc05bc68e6acae89777286faf"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/jewish_temple.png",
+      "bytes": 10600,
+      "sha256": "44e7fa760e67a0c72e5f8944405c1b0ebd6241ab8e1ffe79f7e40d25d38a921a"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/mining_inc_survey_office.png",
+      "bytes": 11960,
+      "sha256": "23c7e4f96a6c06e58670e1d9d6e7106d60397ba179d9d73e479a90871b2ed5fd"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/shinto_cathedral.png",
+      "bytes": 10046,
+      "sha256": "0821476897a8898adcd2db741944703252736c8f594ae5c856c97d425faa5c07"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/shinto_monastery.png",
+      "bytes": 10297,
+      "sha256": "c6ce9026c2440e71a5f793eb360caa5e019bd18a3fe9579740025f20980282b9"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/shinto_shrine.png",
+      "bytes": 9912,
+      "sha256": "1003282abf4cb85bca073d65827982c6b4f12ed51c9f2b47836409473faa4cb2"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/shinto_temple.png",
+      "bytes": 10146,
+      "sha256": "99c49c2aa1e9808058ee105fb46efca6db4232277f41316b8d832857b1d2ce5d"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/specialbuilding_corporate_store.png",
+      "bytes": 10387,
+      "sha256": "6c8c469fb8dec01dd801b44540abd313a432daa197f60ebd82ed3367c20292dc"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/specialbuilding_monastery.png",
+      "bytes": 10806,
+      "sha256": "361a9e3264520b8b0951b09998b42c70d7776c45bc276b59be6b9433e6cd607b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/standard_ethanol_distillery.png",
+      "bytes": 10321,
+      "sha256": "09db446d33d90c9eca13b8b742eb243fb7ac3a88101c8ec12cfaa0fee99ef40f"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/taoist_cathedral.png",
+      "bytes": 10449,
+      "sha256": "2fc146e6e114e3c7c221bcc1188d343ffd8dd9b5884b050bec4cbbf062ee7073"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/taoist_monastery.png",
+      "bytes": 10534,
+      "sha256": "e2c1b9cdab6bc0998a3f9e966888bd3227da70fdb165b25b6f0a745ee40fb950"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/taoist_temple.png",
+      "bytes": 10435,
+      "sha256": "c800106566b74532957240e89041fd630cd1acef761c91c801125d6c81dad556"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/manifest.json",
+      "bytes": 26527,
+      "sha256": "dfae89819405cfbaf14602ca896d38cabc90d5af187dcbfb00d93c307f3e236b"
+    },
+    {
+      "path": "revisions/logo-overlays-v3-archive/contact.png",
+      "bytes": 1246535,
+      "sha256": "8549780fb4756fd239e6f3fcd6c1ca202ca4e20337ebd22c1301169a969da9d0"
+    },
+    {
+      "path": "logos/alignment-audit-before.png",
+      "bytes": 167593,
+      "sha256": "5d5e41aa835ff6c95c4d7389e0e4a7dd9d9316c087bae3794ffef49f3f6e3b36"
+    },
+    {
+      "path": "logos/alignment-audit-after.png",
+      "bytes": 531118,
+      "sha256": "ae88725fcba01b4aef45747eee9d6b0f6c096ea6d2a5efb036573e1a7335405e"
+    },
+    {
+      "path": "logos/optical-offset-review.png",
+      "bytes": 73446,
+      "sha256": "ce7d3a94af7bc7bf4e67c8ff79abc686311bebdccfce4aa2b375bccd4019adfb"
+    },
+    {
+      "path": "logos/valknut-size-review.png",
+      "bytes": 28859,
+      "sha256": "ea01743657130bd0ef313690e0f8241750dbddda776231885baff882593df3e3"
+    },
+    {
+      "path": "__pycache__/review_server.cpython-314.pyc",
+      "bytes": 36034,
+      "sha256": "4432bc4d93f33481b9fe83c77dfe3c7bf94ebfdaf3db48ce91b87d3301fae806"
+    },
+    {
+      "path": "__pycache__/test_review_server.cpython-314.pyc",
+      "bytes": 11532,
+      "sha256": "d3708095cfbb4a5633cd300e54e011d3679811c9ba71f590d5f1afd939be1035"
+    },
+    {
+      "path": "__pycache__/logo_geometry.cpython-314.pyc",
+      "bytes": 4972,
+      "sha256": "d83c40434738a02835c84f1519ceafa772d99083bf8f8f135c01cae135fd6eb1"
+    },
+    {
+      "path": "extraction/__pycache__/extract_icons.cpython-314.pyc",
+      "bytes": 13274,
+      "sha256": "7748fe9692ef24e40d8ba1334c07b9cf2567266a720330b5ed33f261b37b5145"
+    },
+    {
+      "path": "extraction/__pycache__/split_icons_base.cpython-314.pyc",
+      "bytes": 29123,
+      "sha256": "5d6b0670cf6e56fc021c8f9eef71deb8720a730aa3d5a6158a32de88af2ad5ec"
+    }
+  ]
+}

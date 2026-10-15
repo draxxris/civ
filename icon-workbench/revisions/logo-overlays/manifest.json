@@ -1,0 +1,782 @@
+{
+  "version": 1,
+  "candidates": {
+    "cities:corporation_1": {
+      "file": "revisions/logo-overlays/corporation_1.png",
+      "badge": "c",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c05.png",
+      "prior_rejection_note": "must include the circular \"C\" logo as in the original"
+    },
+    "cities:corporation_2": {
+      "file": "revisions/logo-overlays/corporation_2.png",
+      "badge": "sushi",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c06.png",
+      "prior_rejection_note": "must include the circular sushi logo as seen in original"
+    },
+    "cities:corporation_3": {
+      "file": "revisions/logo-overlays/corporation_3.png",
+      "badge": "ethanol",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c07.png",
+      "prior_rejection_note": "must include \"e\" logo as in the original"
+    },
+    "cities:corporation_4": {
+      "file": "revisions/logo-overlays/corporation_4.png",
+      "badge": "construction",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c08.png",
+      "prior_rejection_note": "must include \"traffic cone\" logo as in the original"
+    },
+    "cities:corporation_5": {
+      "file": "revisions/logo-overlays/corporation_5.png",
+      "badge": "mining",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c09.png",
+      "prior_rejection_note": "must include circular \"M\" logo as in the original"
+    },
+    "cities:corporation_6": {
+      "file": "revisions/logo-overlays/corporation_6.png",
+      "badge": "aluminum",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c10.png",
+      "prior_rejection_note": "must include \"A\" logo as in the original"
+    },
+    "cities:corporation_7": {
+      "file": "revisions/logo-overlays/corporation_7.png",
+      "badge": "diamond",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c11.png",
+      "prior_rejection_note": "must include \"diamond\" logo as in the original"
+    },
+    "cities:corporation_adventure_franchise": {
+      "file": "revisions/logo-overlays/corporation_adventure_franchise.png",
+      "badge": "palm",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r04-c12.png",
+      "prior_rejection_note": "must include the palm tree logo as in original"
+    },
+    "cities:corporation_adventure_hq": {
+      "file": "revisions/logo-overlays/corporation_adventure_hq.png",
+      "badge": "palm",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c01.png",
+      "prior_rejection_note": "must include the palm tree logo as in original"
+    },
+    "cities:corporation_apotheguild": {
+      "file": "revisions/logo-overlays/corporation_apotheguild.png",
+      "badge": "beaker",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c02.png",
+      "prior_rejection_note": "must include the beaker logo as in original"
+    },
+    "cities:corporation_artistguild": {
+      "file": "revisions/logo-overlays/corporation_artistguild.png",
+      "badge": "music",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c03.png",
+      "prior_rejection_note": "must include music logo as in original"
+    },
+    "cities:corporation_bakerguild": {
+      "file": "revisions/logo-overlays/corporation_bakerguild.png",
+      "badge": "bread",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c04.png",
+      "prior_rejection_note": "must include bread logo as in original"
+    },
+    "cities:corporation_blacksmguild": {
+      "file": "revisions/logo-overlays/corporation_blacksmguild.png",
+      "badge": "anvil",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c05.png",
+      "prior_rejection_note": "must include anvil logo as in original"
+    },
+    "cities:corporation_burgerworld_hq": {
+      "file": "revisions/logo-overlays/corporation_burgerworld_hq.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/corporation_burgerworld_hq.png",
+      "prior_rejection_note": "original icon has a giant hamburger, but then there is now second hamburger from logo. remove the icon's burger."
+    },
+    "cities:corporation_burgerworld_restaurant": {
+      "file": "revisions/logo-overlays/corporation_burgerworld_restaurant.png",
+      "badge": "burger",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c07.png",
+      "prior_rejection_note": "must include hamburger logo as in original"
+    },
+    "cities:corporation_butcherguild": {
+      "file": "revisions/logo-overlays/corporation_butcherguild.png",
+      "badge": "bull",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c08.png",
+      "prior_rejection_note": "must include bull head logo as in original"
+    },
+    "cities:corporation_carpenterguild": {
+      "file": "revisions/logo-overlays/corporation_carpenterguild.png",
+      "badge": "saw",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c09.png",
+      "prior_rejection_note": "must include handsaw logo as in original"
+    },
+    "cities:corporation_clerksguild": {
+      "file": "revisions/logo-overlays/corporation_clerksguild.png",
+      "badge": "quill",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c10.png",
+      "prior_rejection_note": "must include pen+quill logo as in original"
+    },
+    "cities:corporation_drapersguild": {
+      "file": "revisions/logo-overlays/corporation_drapersguild.png",
+      "badge": "cloth",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c11.png",
+      "prior_rejection_note": "must include cloth bolt logo as in original"
+    },
+    "cities:corporation_empcloth_hq": {
+      "file": "revisions/logo-overlays/corporation_empcloth_hq.png",
+      "badge": "ec",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r05-c12.png",
+      "prior_rejection_note": "must include \"EC\" logo as in original"
+    },
+    "cities:corporation_equestguild": {
+      "file": "revisions/logo-overlays/corporation_equestguild.png",
+      "badge": "horseshoe",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c01.png",
+      "prior_rejection_note": "must include horseshoe logo as in original"
+    },
+    "cities:corporation_ewtrade_hq": {
+      "file": "revisions/logo-overlays/corporation_ewtrade_hq.png",
+      "badge": "ewc",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c02.png",
+      "prior_rejection_note": "must include E-W-C logo as in original"
+    },
+    "cities:corporation_ewtrade_store": {
+      "file": "revisions/logo-overlays/corporation_ewtrade_store.png",
+      "badge": "ewc",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c03.png",
+      "prior_rejection_note": "must include E-W-C logo as in original"
+    },
+    "cities:corporation_fashion_hq": {
+      "file": "revisions/logo-overlays/corporation_fashion_hq.png",
+      "badge": "dress",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c04.png",
+      "prior_rejection_note": "must include dress logo as in original"
+    },
+    "cities:corporation_fishmonguild": {
+      "file": "revisions/logo-overlays/corporation_fishmonguild.png",
+      "badge": "fish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c05.png",
+      "prior_rejection_note": "must include fish logo as in original"
+    },
+    "cities:corporation_glassguild": {
+      "file": "revisions/logo-overlays/corporation_glassguild.png",
+      "badge": "jar",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c06.png",
+      "prior_rejection_note": "must include glass jar logo as in original"
+    },
+    "cities:corporation_goldsmguild": {
+      "file": "revisions/logo-overlays/corporation_goldsmguild.png",
+      "badge": "crown",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c07.png",
+      "prior_rejection_note": "must include crown logo as in original"
+    },
+    "cities:corporation_grocerguild": {
+      "file": "revisions/logo-overlays/corporation_grocerguild.png",
+      "badge": "apple",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c08.png",
+      "prior_rejection_note": "must include apple logo as in original"
+    },
+    "cities:corporation_mallwart_hq": {
+      "file": "revisions/logo-overlays/corporation_mallwart_hq.png",
+      "badge": "star",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c09.png",
+      "prior_rejection_note": "must include star logo as in original"
+    },
+    "cities:corporation_mallwart_store": {
+      "file": "revisions/logo-overlays/corporation_mallwart_store.png",
+      "badge": "star",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c10.png",
+      "prior_rejection_note": "must include star logo as in original"
+    },
+    "cities:corporation_mapster_hq": {
+      "file": "revisions/logo-overlays/corporation_mapster_hq.png",
+      "badge": "map",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c11.png",
+      "prior_rejection_note": "must include map logo as in original"
+    },
+    "cities:corporation_masonguild": {
+      "file": "revisions/logo-overlays/corporation_masonguild.png",
+      "badge": "pillar",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r06-c12.png",
+      "prior_rejection_note": "must include roman pillar logo as in original"
+    },
+    "cities:corporation_mercerguild": {
+      "file": "revisions/logo-overlays/corporation_mercerguild.png",
+      "badge": "textile",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c01.png",
+      "prior_rejection_note": "must include textile logo as in original"
+    },
+    "cities:corporation_milehigh_franchise": {
+      "file": "revisions/logo-overlays/corporation_milehigh_franchise.png",
+      "badge": "airplane",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c02.png",
+      "prior_rejection_note": "must include airplane logo as in original"
+    },
+    "cities:corporation_milehigh_hq": {
+      "file": "revisions/logo-overlays/corporation_milehigh_hq.png",
+      "badge": "airplane",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c03.png",
+      "prior_rejection_note": "must include airplane logo as in original"
+    },
+    "cities:corporation_mobby_hq": {
+      "file": "revisions/logo-overlays/corporation_mobby_hq.png",
+      "badge": "cow",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c04.png",
+      "prior_rejection_note": "must include goofy cow logo as in original"
+    },
+    "cities:corporation_mobby_store": {
+      "file": "revisions/logo-overlays/corporation_mobby_store.png",
+      "badge": "cow",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c05.png",
+      "prior_rejection_note": "must include goofy cow logo as in original"
+    },
+    "cities:corporation_moonbean_hq": {
+      "file": "revisions/logo-overlays/corporation_moonbean_hq.png",
+      "badge": "coffee",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c06.png",
+      "prior_rejection_note": "must include coffee logo as in original"
+    },
+    "cities:corporation_moonbean_shop": {
+      "file": "revisions/logo-overlays/corporation_moonbean_shop.png",
+      "badge": "coffee",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c07.png",
+      "prior_rejection_note": "must include coffee logo as in original"
+    },
+    "cities:corporation_red_hq": {
+      "file": "revisions/logo-overlays/corporation_red_hq.png",
+      "badge": "curtain",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c08.png",
+      "prior_rejection_note": "must include red curtain logo as in original"
+    },
+    "cities:corporation_red_theater": {
+      "file": "revisions/logo-overlays/corporation_red_theater.png",
+      "badge": "curtain",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c09.png",
+      "prior_rejection_note": "must include red curtain logo as in original"
+    },
+    "cities:corporation_safari_guide": {
+      "file": "revisions/logo-overlays/corporation_safari_guide.png",
+      "badge": "paw",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c10.png",
+      "prior_rejection_note": "must include paw print logo as in original"
+    },
+    "cities:corporation_safari_hq": {
+      "file": "revisions/logo-overlays/corporation_safari_hq.png",
+      "badge": "paw",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c11.png",
+      "prior_rejection_note": "must include paw print logo as in original"
+    },
+    "cities:corporation_ultsoldier_hq": {
+      "file": "revisions/logo-overlays/corporation_ultsoldier_hq.png",
+      "badge": "soldier",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r07-c12.png",
+      "prior_rejection_note": "must include soldier logo as in original"
+    },
+    "cities:corporation_ultsoldier_trainer": {
+      "file": "revisions/logo-overlays/corporation_ultsoldier_trainer.png",
+      "badge": "soldier",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r08-c01.png",
+      "prior_rejection_note": "must include soldier logo as in original"
+    },
+    "cities:corporation_wonka_hq": {
+      "file": "revisions/logo-overlays/corporation_wonka_hq.png",
+      "badge": "confectionery",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r08-c02.png",
+      "prior_rejection_note": "must include Wonka logo as in original"
+    },
+    "cities:corporation_wonka_shop": {
+      "file": "revisions/logo-overlays/corporation_wonka_shop.png",
+      "badge": "confectionery",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r08-c03.png",
+      "prior_rejection_note": "must include Wonka logo as in original"
+    },
+    "cities:empcloth_store": {
+      "file": "revisions/logo-overlays/empcloth_store.png",
+      "badge": "ec",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r09-c01.png",
+      "prior_rejection_note": "must include E-C logo as in original"
+    },
+    "cities:fashion_store": {
+      "file": "revisions/logo-overlays/fashion_store.png",
+      "badge": "dress",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-002/review-crops/r09-c05.png",
+      "prior_rejection_note": "must include dress logo as in original"
+    },
+    "cities:hindu_cathedral": {
+      "file": "revisions/logo-overlays/hindu_cathedral.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r12-c08.png",
+      "prior_rejection_note": "needs to include hindu logo"
+    },
+    "cities:hindu_monastery": {
+      "file": "revisions/logo-overlays/hindu_monastery.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r12-c09.png",
+      "prior_rejection_note": "needs to include hindu logo"
+    },
+    "cities:hindu_shrine": {
+      "file": "revisions/logo-overlays/hindu_shrine.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r12-c10.png",
+      "prior_rejection_note": "needs to include hindu logo"
+    },
+    "cities:hindu_temple": {
+      "file": "revisions/logo-overlays/hindu_temple.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-002/review-crops/r12-c11.png",
+      "prior_rejection_note": "needs to include hindu logo"
+    },
+    "cities:asatru_cathedral": {
+      "file": "revisions/logo-overlays/asatru_cathedral.png",
+      "badge": "asatru",
+      "revision": "logo-overlay-v6-larger-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r02-c11.png",
+      "prior_rejection_note": "needs to include asatru logo"
+    },
+    "cities:asatru_temple": {
+      "file": "revisions/logo-overlays/asatru_temple.png",
+      "badge": "asatru",
+      "revision": "logo-overlay-v6-larger-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r02-c12.png",
+      "prior_rejection_note": "needs to include asatru logo"
+    },
+    "cities:hindu_brihadeeswarar": {
+      "file": "revisions/logo-overlays/hindu_brihadeeswarar.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-001/review-crops/r04-c07.png",
+      "prior_rejection_note": "needs to include hindu logo"
+    },
+    "cities:buddhist_cathedral": {
+      "file": "revisions/logo-overlays/buddhist_cathedral.png",
+      "badge": "buddhist",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r04-c12.png",
+      "prior_rejection_note": "needs to include buddhist logo"
+    },
+    "cities:buddhist_temple": {
+      "file": "revisions/logo-overlays/buddhist_temple.png",
+      "badge": "buddhist",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r05-c01.png",
+      "prior_rejection_note": "needs to include buddhist logo"
+    },
+    "cities:christian_cathedral": {
+      "file": "revisions/logo-overlays/christian_cathedral.png",
+      "badge": "christian",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r06-c07.png",
+      "prior_rejection_note": "needs to include christian logo"
+    },
+    "cities:christian_temple": {
+      "file": "revisions/logo-overlays/christian_temple.png",
+      "badge": "christian",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r06-c08.png",
+      "prior_rejection_note": "needs to include christian logo"
+    },
+    "cities:christian_shrine": {
+      "file": "revisions/logo-overlays/christian_shrine.png",
+      "badge": "christian",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-001/review-crops/r06-c09.png",
+      "prior_rejection_note": "needs to include christian logo"
+    },
+    "cities:islamic_cathedral": {
+      "file": "revisions/logo-overlays/islamic_cathedral.png",
+      "badge": "islam",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r03-c08.png",
+      "prior_rejection_note": "must include islam logo"
+    },
+    "cities:islamic_monastery": {
+      "file": "revisions/logo-overlays/islamic_monastery.png",
+      "badge": "islam",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r03-c09.png",
+      "prior_rejection_note": "must include islam logo"
+    },
+    "cities:islamic_shrine": {
+      "file": "revisions/logo-overlays/islamic_shrine.png",
+      "badge": "islam",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r03-c10.png",
+      "prior_rejection_note": "must include islam logo"
+    },
+    "cities:islamic_temple": {
+      "file": "revisions/logo-overlays/islamic_temple.png",
+      "badge": "islam",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r03-c11.png",
+      "prior_rejection_note": "must include islam logo"
+    },
+    "cities:jewish_cathedral": {
+      "file": "revisions/logo-overlays/jewish_cathedral.png",
+      "badge": "jewish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r04-c03.png",
+      "prior_rejection_note": "must include jewish logo"
+    },
+    "cities:jewish_masada": {
+      "file": "revisions/logo-overlays/jewish_masada.png",
+      "badge": "jewish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r04-c04.png",
+      "prior_rejection_note": "must include jewish logo"
+    },
+    "cities:jewish_monastery": {
+      "file": "revisions/logo-overlays/jewish_monastery.png",
+      "badge": "jewish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r04-c05.png",
+      "prior_rejection_note": "must include jewish logo"
+    },
+    "cities:jewish_shrine": {
+      "file": "revisions/logo-overlays/jewish_shrine.png",
+      "badge": "jewish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r04-c06.png",
+      "prior_rejection_note": "must include jewish logo"
+    },
+    "cities:jewish_temple": {
+      "file": "revisions/logo-overlays/jewish_temple.png",
+      "badge": "jewish",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r04-c07.png",
+      "prior_rejection_note": "must include jewish logo"
+    },
+    "cities:mining_inc_survey_office": {
+      "file": "revisions/logo-overlays/mining_inc_survey_office.png",
+      "badge": "mining",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-003/review-crops/r08-c02.png",
+      "prior_rejection_note": "must include M logo as in original"
+    },
+    "cities:shinto_cathedral": {
+      "file": "revisions/logo-overlays/shinto_cathedral.png",
+      "badge": "shinto",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r04-c06.png",
+      "prior_rejection_note": "needs shinto logo"
+    },
+    "cities:shinto_monastery": {
+      "file": "revisions/logo-overlays/shinto_monastery.png",
+      "badge": "shinto",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r04-c07.png",
+      "prior_rejection_note": "needs shinto logo"
+    },
+    "cities:shinto_shrine": {
+      "file": "revisions/logo-overlays/shinto_shrine.png",
+      "badge": "shinto",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r04-c08.png",
+      "prior_rejection_note": "needs shinto logo"
+    },
+    "cities:shinto_temple": {
+      "file": "revisions/logo-overlays/shinto_temple.png",
+      "badge": "shinto",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r04-c09.png",
+      "prior_rejection_note": "needs shinto logo"
+    },
+    "cities:specialbuilding_corporate_store": {
+      "file": "revisions/logo-overlays/specialbuilding_corporate_store.png",
+      "badge": "briefcase",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r05-c11.png",
+      "prior_rejection_note": "needs briefcase logo"
+    },
+    "cities:specialbuilding_monastery": {
+      "file": "revisions/logo-overlays/specialbuilding_monastery.png",
+      "badge": "hindu",
+      "revision": "logo-overlay-v5-optical-offset",
+      "base_candidate": "batches/cities-004/review-crops/r06-c04.png",
+      "prior_rejection_note": "needs hindu logo"
+    },
+    "cities:standard_ethanol_distillery": {
+      "file": "revisions/logo-overlays/standard_ethanol_distillery.png",
+      "badge": "ethanol",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r06-c11.png",
+      "prior_rejection_note": "needs \"e\" logo"
+    },
+    "cities:taoist_cathedral": {
+      "file": "revisions/logo-overlays/taoist_cathedral.png",
+      "badge": "taoist",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r08-c05.png",
+      "prior_rejection_note": "needs a taijitu logo"
+    },
+    "cities:taoist_monastery": {
+      "file": "revisions/logo-overlays/taoist_monastery.png",
+      "badge": "taoist",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r08-c06.png",
+      "prior_rejection_note": "needs a taijitu logo"
+    },
+    "cities:taoist_temple": {
+      "file": "revisions/logo-overlays/taoist_temple.png",
+      "badge": "taoist",
+      "revision": "logo-overlay-v4-simple-centered-valknut",
+      "base_candidate": "batches/cities-004/review-crops/r08-c07.png",
+      "prior_rejection_note": "needs a taijitu logo"
+    },
+    "cities:courthouse": {
+      "file": "revisions/logo-overlays/courthouse.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/courthouse.png",
+      "prior_rejection_note": "does not have the justice scale"
+    },
+    "cities:egyptian_obelisk": {
+      "file": "revisions/logo-overlays/egyptian_obelisk.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/egyptian_obelisk.png",
+      "prior_rejection_note": "should show only the obelisk, not the surrounding buildings"
+    },
+    "cities:global_stock_exchange": {
+      "file": "revisions/logo-overlays/global_stock_exchange.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/global_stock_exchange.png",
+      "prior_rejection_note": "should include an internet icon"
+    },
+    "cities:goths_plunder": {
+      "file": "revisions/logo-overlays/goths_plunder.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/goths_plunder.png",
+      "prior_rejection_note": "should just be a open chest with gold spilling out"
+    },
+    "cities:great_firewall": {
+      "file": "revisions/logo-overlays/great_firewall.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/great_firewall.png",
+      "prior_rejection_note": "should be a rack mount server with a firewall icon"
+    },
+    "cities:greekfire": {
+      "file": "revisions/logo-overlays/greekfire.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/greekfire.png",
+      "prior_rejection_note": "drop the boat, just show fire in a brazier"
+    },
+    "cities:hollywood": {
+      "file": "revisions/logo-overlays/hollywood.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/hollywood.png",
+      "prior_rejection_note": "should just be the hollywood sign"
+    },
+    "cities:oil_plant": {
+      "file": "revisions/logo-overlays/oil_plant.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/oil_plant.png",
+      "prior_rejection_note": "looks too similar to oil refinery, needs smokestacks with pollution coming out"
+    },
+    "cities:orbital_factory": {
+      "file": "revisions/logo-overlays/orbital_factory.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/orbital_factory.png",
+      "prior_rejection_note": "looks like a mere satellite instead of a factory in space"
+    },
+    "cities:propaganda_office": {
+      "file": "revisions/logo-overlays/propaganda_office.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/propaganda_office.png",
+      "prior_rejection_note": "looks too ancient, should just be a generic building with a broadcast tower on top"
+    },
+    "cities:railgun_turret": {
+      "file": "revisions/logo-overlays/railgun_turret.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v2",
+      "base_candidate": "revisions/final-two/railgun_turret-20261015-133413-001.png",
+      "prior_rejection_note": "gun turret and gun barrel should both be square/rectangular"
+    },
+    "cities:spaceport": {
+      "file": "revisions/logo-overlays/spaceport.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/spaceport.png",
+      "prior_rejection_note": "this looks like a launchpad, rather than a port that is already in outer space"
+    },
+    "cities:swiss_zoll": {
+      "file": "revisions/logo-overlays/swiss_zoll.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/swiss_zoll.png",
+      "prior_rejection_note": "remove the Swiss flag"
+    },
+    "cities:tax_office": {
+      "file": "revisions/logo-overlays/tax_office.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/tax_office.png",
+      "prior_rejection_note": "looks like generic neoclassical building. should be a horseback rider with a moneybag"
+    },
+    "cities:un_mission": {
+      "file": "revisions/logo-overlays/un_mission.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/un_mission.png",
+      "prior_rejection_note": "looks too much like UN building itself instead of a UN outpost"
+    },
+    "cities:university": {
+      "file": "revisions/logo-overlays/university.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/university.png",
+      "prior_rejection_note": "should be a book with a graduate hat"
+    },
+    "cities:warhead_factory": {
+      "file": "revisions/logo-overlays/warhead_factory.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/warhead_factory.png",
+      "prior_rejection_note": "looks too ancient, should be from modern era"
+    },
+    "cities:ad_agency": {
+      "file": "revisions/logo-overlays/ad_agency.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/ad_agency.png",
+      "prior_rejection_note": "looks like an art gallery, and too much from the ancient era"
+    },
+    "cities:arena": {
+      "file": "revisions/logo-overlays/arena.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/arena.png",
+      "prior_rejection_note": "this is more of a coliseum than an arena, maybe try a square arena instead"
+    },
+    "cities:arsenal": {
+      "file": "revisions/logo-overlays/arsenal.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/arsenal.png",
+      "prior_rejection_note": "I'm not sure that the description you gave for this is correct, I am pretty sure Arsenal is from a more modern era in the original game."
+    },
+    "cities:arthub": {
+      "file": "revisions/logo-overlays/arthub.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/arthub.png",
+      "prior_rejection_note": "looks just like the Art Gallery image, needs to be more futuristic."
+    },
+    "cities:automated_defenses": {
+      "file": "revisions/logo-overlays/automated_defenses.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/automated_defenses.png",
+      "prior_rejection_note": "icon looks like its from the ancient era, not modern at all."
+    },
+    "cities:barbwire_fence": {
+      "file": "revisions/logo-overlays/barbwire_fence.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/barbwire_fence.png",
+      "prior_rejection_note": "pillars are too thick"
+    },
+    "cities:broadway": {
+      "file": "revisions/logo-overlays/broadway.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/broadway.png",
+      "prior_rejection_note": "cannot see enough of the building, description is asking for too much detail for such a small image. original image is just a close-up of a neon sign that says BROADWAY"
+    },
+    "cities:burningman": {
+      "file": "revisions/logo-overlays/burningman.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v2",
+      "base_candidate": "revisions/final-two/burningman-20261015-133352-001.png",
+      "prior_rejection_note": "man is not on fire, its just a straw man"
+    },
+    "cities:bulgarian_chitalishte": {
+      "file": "revisions/logo-overlays/bulgarian_chitalishte.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/bulgarian_chitalishte.png",
+      "prior_rejection_note": "too much detail drawn in the image, so it just looks like a generic neoclassical building"
+    },
+    "cities:ebgatehouse": {
+      "file": "revisions/logo-overlays/ebgatehouse.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/ebgatehouse.png",
+      "prior_rejection_note": "there is no moat visible in the icon"
+    },
+    "cities:cryogenic_prison": {
+      "file": "revisions/logo-overlays/cryogenic_prison.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/cryogenic_prison.png",
+      "prior_rejection_note": "should only show a single cryo chamber, this shows 3"
+    },
+    "cities:highway_project": {
+      "file": "revisions/logo-overlays/highway_project.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/highway_project.png",
+      "prior_rejection_note": "interchange does not look realistic, some distortion on the curves, exclude the cars in the request, just show the interchange"
+    },
+    "cities:foundation": {
+      "file": "revisions/logo-overlays/foundation.png",
+      "badge": "Artwork correction",
+      "revision": "artwork-fix-v1",
+      "base_candidate": "revisions/artwork-fixes-001/crops/foundation.png",
+      "prior_rejection_note": "looks too much like the estate icon, maybe try just a desk with a chest with some gold in it"
+    }
+  }
+}

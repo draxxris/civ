@@ -1,0 +1,162 @@
+Create a NEW sheet of original replacement icons. Image 1 is the mandatory layout template. Image 2 is the APPROVED ART STYLE reference only, not the new subject list. Replace its sample subjects with the exact new subjects below.
+Layout: exactly TWELVE columns and TWELVE rows, 144 identical SQUARE cells. Preserve all boundaries of image 1. Keep ALL row heights equal, including the bottom four rows. No perspective, no squashed bottom rows, no missing cells, no merged cells. Fill all 144 cells, in the given order. Keep breathing room inside every frame.
+Match image 2 exactly in art direction: mature stylized hand-painted strategy illustrations, simplified dimensional forms, warm rich palette, softly brushed shading, not realistic photography or detailed 3D renders, not childish cartoons, no thick ink outlines. Match its beveled silver frames, charcoal-blue backgrounds and visible warm ivory or pale cyan soft glows BEHIND every subject. Do not weaken the glow. Keep the four corners dark.
+Every cell represents ONE coherent building, institution or concept. Secondary props can identify that institution, but keep the composition simple and readable at 64 pixels. Prefer a recognizable building silhouette over tiny interior details. Depict human subjects as natural-proportioned TORSO-UP portraits, never compressed full-body figures. Do not fuse tools, weapons or unrelated objects. No text, labels, letters, numbers, logos or watermarks. Use original designs, not copied game art.
+The following numbered rows and columns are instructions, NOT text to render. Make every cell represent its assigned subject. Do not borrow sample subjects from the style reference.
+ROW 1:
+Column 1, Academy: Stone academy with a cloistered courtyard, open lecture hall, writing desks, and scholars gathered beneath arches.
+Column 2, Aerospace Complex: Aerospace campus with a broad assembly hangar, orbital capsule, launch gantry, and radar dishes against twilight.
+Column 3, Llogor: Albanian hilltop stronghold with a timber watchtower, stone enclosure, and rugged mountain path.
+Column 4, Aluminum Factory: Aluminum smelter with glowing ingots, tall reduction pots, overhead cranes, and a bright industrial furnace.
+Column 5, Mall: Expansive shopping mall with glass atrium, storefronts, escalators, and a central indoor fountain.
+Column 6, Android Factory: Android production hall with articulated robotic arms assembling humanoid figures along a luminous conveyor.
+Column 7, Angkor Wat: Angkor Wat's stepped Khmer towers rise above a lotus moat, carved galleries, and palm-fringed causeway.
+Column 8, Moot Hill: Anglo-Saxon moot hill with a circular grassy mound, timber speaking platform, and ring of standing stones.
+Column 9, National Anthem: Civic music hall with a brass band, blank sheet music, and a conductor on a raised podium.
+Column 10, Aqueduct: Arched stone aqueduct carries a clear water channel across a green valley toward distant rooftops.
+Column 11, Madrassa: Arabian madrassa with a tiled courtyard, pointed archways, fountain basin, and a domed teaching hall.
+Column 12, Temple of Artemis: Temple of Artemis with pale marble columns, sculpted deer, broad steps, and a moonlit sanctuary.
+ROW 2:
+Column 1, Artesian Well: Stone artesian well sending a clear upward water jet into a carved circular basin.
+Column 2, Asatru Monastery: Norse timber monastery with steep roof, carved dragon posts, quiet cloister, and evergreen trees.
+Column 3, Uppsala Temple: Uppsala sanctuary with timber pillars, carved sacred posts, offering bowls, and a peaked Nordic roof.
+Column 4, Ascension Gate: Futuristic ascension gate framed by luminous pylons, a circular energy aperture, and floating stone steps.
+Column 5, Sacrificial Altar: Aztec ceremonial altar of dark volcanic stone, feathered standards, carved serpents, and copal braziers.
+Column 6, Bakery: Village bakery with brick oven, fresh round loaves, flour sacks, and a wooden cooling rack.
+Column 7, Biofuel Refinery: Biofuel refinery with green feedstock tanks, copper pipes, fermenting vats, and a clean distillation column.
+Column 8, Blarney Castle: Blarney Castle's weathered stone keep crowns a green crag, with narrow windows and ivy-covered walls.
+Column 9, Body Exchange Clinic: Futuristic exchange clinic with two luminous medical pods, articulated monitors, and a sterile glass treatment room.
+Column 10, Buddhist Monastery: Buddhist monastery with red timber halls, curved tiled roofs, prayer courtyard, and a bronze temple bell.
+Column 11, Mahabodhi: Mahabodhi Temple with a soaring brick spire, sacred fig tree, carved niches, and pilgrims at the steps.
+Column 12, Hippodrome: Byzantine hippodrome with an elongated sand track, tiered stone stands, and ornate central obelisk.
+ROW 3:
+Column 1, Cannery: Coastal cannery with tin cans, fish baskets, steaming pipes, and a long brick processing building.
+Column 2, Cannon Forge: Cannon foundry with a glowing crucible, heavy bronze barrel mold, tongs, and stone casting floor.
+Column 3, Castle: Medieval stone castle with round corner towers, crenellated walls, raised drawbridge, and a steep rocky mound.
+Column 4, Castle Garden: Walled castle garden with clipped hedges, flowering beds, stone fountain, and a small summer pavilion.
+Column 5, Cereal Mills Factory: Grain mill factory with towering silos, flour conveyor, grain sacks, and a rotating mill wheel.
+Column 6, Pavilion: Chinese pavilion with red lacquered columns, layered tiled roof, carved railings, and garden rocks.
+Column 7, Christian Monastery: Christian monastery with a quiet cloister, bell tower, arched stone chapel, and central herb garden.
+Column 8, Prefecture: Civic administration school with a formal entrance, lecture benches, document shelves, and a courtyard flagpole.
+Column 9, Civilized Jewelers' Store: Jeweler's boutique with a glass display of gemstones, goldsmith bench, velvet cases, and elegant doorway.
+Column 10, Genetics Laboratory: Genetics laboratory with luminous cloning vessels, coiled tubes, diagnostic panels, and a spotless control station.
+Column 11, Seaport: Busy seaport with container cranes, cargo ship, stone breakwater, and warehouses lining the quay.
+Column 12, Communication Tower: Slender communications tower with dish antennas, red beacon lights, and concentric signal ripples.
+ROW 4:
+Column 1, Confucian Academy: Confucian academy with a grand red timber hall, tiled roof, stone courtyard, and ceremonial incense burner.
+Column 2, Confucian Monastery: Confucian monastery with balanced timber halls, a quiet garden, stone lanterns, and a tiled entry gate.
+Column 3, Kong Miao: Kong Miao sanctuary with red pillars, golden roof tiles, carved stone dragons, and a broad ceremonial court.
+Column 4, Copernicus' Observatory: Copernicus observatory with a brass armillary sphere, open rooftop dome, star charts, and night sky.
+Column 5, Cereal Mills: Cereal Mills headquarters with grain silos, a golden wheat sheaf, milling wheel, and flour sacks.
+Column 6, Sushi Dining Company: Sushi restaurant headquarters with a curved timber roof, fish display, rice bowls, and lantern-lit entrance.
+Column 7, Standard Ethanol: Ethanol company distillery with fermentation tanks, crop bundles, copper pipes, and tall clean chimney.
+Column 8, Creative Constructions: Construction company office with a miniature bridge, tower crane, rolled plans, and steel frame models.
+Column 9, Mining Inc: Mining company headquarters beside an ore cart, drill rig, exposed mineral seam, and survey table.
+Column 10, Aluminum Co: Aluminum company foundry with shining ingots, casting molds, furnace glow, and overhead metal crane.
+Column 11, Civilized Jewelers Inc: Jewelry company atelier with gemstone cases, fine metal tools, gold rings, and a bright workshop lamp.
+Column 12, Adventure Tours Franchise: Adventure tour outpost with canvas awnings, expedition packs, trail map, and rugged off-road vehicle.
+ROW 5:
+Column 1, Adventure Tours Headquarters: Adventure travel headquarters with a globe, expedition photographs, climbing gear, and timber reception desk.
+Column 2, Apothecaries Master Guild: Apothecaries guildhall with herb bundles, glass vials, brass scales, and a carved timber doorway.
+Column 3, Artists Master Guild: Artists guild workshop with easels, pigment jars, unfinished canvases, and a bright upper-floor studio.
+Column 4, Bakers Master Guild: Bakers guildhall with a brick oven, flour sacks, bread loaves, and a carved guild emblem.
+Column 5, Blacksmiths Master Guild: Blacksmiths guildhall with a glowing forge, anvils, iron tools, and a soot-darkened timber roof.
+Column 6, Burgerworld Headquarters: Burger restaurant headquarters with a glass tower, stylized burger sculpture, delivery vans, and bright windows.
+Column 7, Burgerworld Restaurant: Neighborhood burger shop with a striped awning, counter stools, grill, and a tray of fresh sandwiches.
+Column 8, Butchers Master Guild: Butchers guildhall with hanging cured meats, butcher blocks, sharpened cleavers, and a stone archway.
+Column 9, Carpenters Master Guild: Carpenters guild workshop with saw horses, hand planes, lumber stacks, and an open timber frame.
+Column 10, Clerks Master Guild: Clerks guildhall with a long records counter, ink pots, document shelves, and a row of writing desks.
+Column 11, Drapers Master Guild: Drapers guildhall with colorful fabric bolts, measuring table, folded cloth, and a timber merchant facade.
+Column 12, Emperors Clothing Headquarters: Clothing company headquarters with mannequins, fabric swatches, glass offices, and a fashion design studio.
+ROW 6:
+Column 1, Equestrians Master Guild: Equestrians guild stable with bridles, polished saddles, grooming tools, and horses in timber stalls.
+Column 2, East West Traders Headquarters: East-west trading headquarters with a globe, sailing ship model, spice chests, and broad stone portico.
+Column 3, East West Traders Store: Trading company storefront with market awning, stacked cargo crates, woven rugs, and brass scales.
+Column 4, Fashion House Headquarters: Fashion house headquarters with elegant glass frontage, garment forms, fabric rolls, and a lit design atelier.
+Column 5, Fishmongers Master Guild: Fishmongers guildhall with a tiled fish counter, hanging nets, wooden baskets, and harbor-facing doors.
+Column 6, Glassblowers Master Guild: Glassblowers guild workshop with a glowing furnace, molten glass, colored vessels, and iron blowing pipes.
+Column 7, Goldsmiths Master Guild: Goldsmiths guildhall with delicate jewelry tools, golden chains, a workbench, and locked display cabinets.
+Column 8, Grocers Master Guild: Grocers guildhall with produce baskets, dry-goods jars, weighing scales, and a timber market stall.
+Column 9, MallWart Headquarters: Retail headquarters with a broad glass tower, shopping bags, loading dock, and bright corporate atrium.
+Column 10, MallWart Store: Large retail store with broad glass entrance, shopping carts, stocked shelves, and a striped parking canopy.
+Column 11, Mapster Headquarters: Mapmaking company office with a giant globe, rolled charts, compass tools, and a tall drafting table.
+Column 12, Masons Master Guild: Masons guildhall with carved stone blocks, plumb line, chisels, and a half-built arched doorway.
+ROW 7:
+Column 1, Mercers Master Guild: Mercers guildhall with silk bolts, a merchant counter, fine scales, and richly folded fabric.
+Column 2, MileHigh Travels Franchise: Travel franchise kiosk with a mountain-route map, compact aircraft model, luggage, and bright ticket counter.
+Column 3, MileHigh Travels Headquarters: Travel company headquarters with a tall glass tower, globe sculpture, flight board, and luggage-lined lobby.
+Column 4, Mobby Meats Headquarters: Meat company headquarters with a refrigerated loading bay, delivery truck, market crates, and clean brick offices.
+Column 5, Mobby Meats Store: Butcher shop with a striped canopy, chilled display case, meat hooks, and a tidy tiled counter.
+Column 6, MoonBean Coffee Headquarters: Coffee company headquarters with a copper roaster, coffee bean sacks, glass tower, and tasting counter.
+Column 7, MoonBean Coffeeshop: Coffeehouse with a steaming cup, timber counter, roasted bean jars, and a warmly lit street window.
+Column 8, Red Curtains Headquarters: Theater company headquarters with red curtains, a marquee canopy, costume racks, and a rehearsal stage.
+Column 9, Red Curtains Theater: Red-curtained neighborhood theater with brass sconces, velvet seats, stage proscenium, and a lit entrance.
+Column 10, Safari Hunters Guide: Safari guide lodge with binoculars, field maps, canvas packs, and a four-wheel-drive vehicle beneath acacias.
+Column 11, Safari Hunters Headquarters: Safari company headquarters with a carved wildlife relief, field equipment, travel maps, and canvas awning.
+Column 12, Ultimate Soldiers Headquarters: Security training headquarters with armored display gear, obstacle-course models, briefing table, and guarded entry.
+ROW 8:
+Column 1, Ultimate Soldiers Trainer: Soldier training hall with padded practice dummies, equipment racks, training mats, and a raised instructor platform.
+Column 2, Wonka Confectioneries Headquarters: Confectionery headquarters with a whimsical candy-shaped roof, chocolate vats, striped chimneys, and a bright glass atrium.
+Column 3, Wonka Confectioneries Shop: Candy shop with glass jars, colorful sweets, chocolate fountain, and a striped shopfront awning.
+Column 4, Courthouse: Neoclassical courthouse with broad columns, balanced stone wings, a central stair, and a bronze justice scale.
+Column 5, Vysilac: Czech broadcast tower with a narrow futuristic mast, bulbous observation pods, antenna dishes, and mountain summit.
+Column 6, Hof: Danish royal hof with timber wings, red-tiled roof, enclosed courtyard, and a carved ceremonial entrance.
+Column 7, Monument of the Dictator: Severe stone monument with a towering leader statue, broad plinth, empty parade square, and heavy banners.
+Column 8, Great Mosque of Djenné: Great Mosque of Djenné with earthen towers, wooden toron beams, buttressed walls, and a wide sandy plaza.
+Column 9, Edinburgh Castle: Edinburgh Castle crowns a dark volcanic ridge, with stone curtain walls, square towers, and a guarded gate.
+Column 10, Edison's Workshop: Inventor's workshop with brass generators, glass bulbs, copper wire coils, and a cluttered wooden workbench.
+Column 11, Obelisk: Egyptian obelisk of warm granite with carved bands, tapered summit, and a low desert temple enclosure.
+Column 12, Einstein's Laboratory: Physics laboratory with a chalkboard of abstract equations, brass instruments, glass apparatus, and a cluttered desk.
+ROW 9:
+Column 1, Emperors Clothing Store: Clothing boutique with tailored coats, dress forms, folded fabrics, glass cabinets, and a striped awning.
+Column 2, Royal Exchange: Royal Exchange with a classical stone portico, busy trading floor, ledger desks, and a domed roof.
+Column 3, Stele: Ethiopian carved stone stele with stacked windows, false doors, and a broad sunlit base.
+Column 4, Factory: Industrial factory with sawtooth roof, tall chimney, moving conveyor, and glowing windows above brick walls.
+Column 5, Fashion House Boutique: Fashion boutique with elegant mannequins, folded silk, display windows, and a polished stone entrance.
+Column 6, Foundling Hospital: Foundling hospital with a calm stone facade, arched windows, garden gate, and a sheltered courtyard.
+Column 7, Foundry: Iron foundry with a glowing furnace, pouring ladle, heavy molds, and dark overhead rafters.
+Column 8, Salon: French salon with gilded mirror, upholstered chairs, painted ceiling, and a small round conversation table.
+Column 9, Global Stock Exchange: Global exchange hall with a circular trading floor, suspended world map, bronze columns, and display screens.
+Column 10, Globe Theatre: Globe Theatre with a round timber gallery, open central courtyard, white plaster walls, and stage canopy.
+Column 11, Golden Spike: Golden railway spike rests on a wooden sleeper beside converging steel rails and a small hammer.
+Column 12, Plunder: Gothic raiders' encampment with laden wagons, stacked treasure chests, torn canvas tents, and smoky horizon.
+ROW 10:
+Column 1, Granary: Ancient granary with raised timber bins, bundled grain sheaves, clay storage jars, and a thatched roof.
+Column 2, Graveyard: Quiet graveyard with weathered headstones, wrought-iron gate, cypress trees, and a small stone chapel.
+Column 3, Three Gorges Dam: Three Gorges Dam spans a deep river gorge, with stepped spillways, turbines, and steep green banks.
+Column 4, Great Firewall: Great Firewall represented as a monumental stone rampart with beacon towers, watch posts, and misty mountain ridges.
+Column 5, Great Library: Ancient library with towering scroll shelves, marble columns, reading tables, and an oil-lamp-lit rotunda.
+Column 6, Great Lighthouse: Pharos lighthouse rises above a rocky harbor, with tiered pale stone levels and a bright beacon flame.
+Column 7, Summer Palace: Chinese summer palace with lakefront pavilions, vermilion bridges, layered roofs, and landscaped gardens.
+Column 8, Great Wall: Long stone wall winds along rugged mountain ridges, punctuated by square watchtowers and a fortified pass.
+Column 9, Odeon: Greek odeon with semicircular marble seating, a compact stage, columned facade, and sculpted theatrical masks.
+Column 10, Greek Fire: Bronze shipboard siphon sprays a bright stream of Greek fire above choppy water and a wooden galley.
+Column 11, Greenhouse: Glass greenhouse with leafy crop beds, iron arches, watering cans, and warm light through misted panes.
+Column 12, Grocer: Corner grocer with striped awning, produce baskets, glass jars, hand scales, and a wooden counter.
+ROW 11:
+Column 1, Grove: Sacred grove of ancient trees surrounding a small stone altar, winding path, and hanging votive ribbons.
+Column 2, Gun Turret: Armored gun turret with rotating barrel, riveted steel housing, concrete base, and narrow observation slit.
+Column 3, Gutenberg Bible: Early printing workshop with wooden press, movable type blocks, blank pages, and a leather-bound volume.
+Column 4, Hab Complex: Compact habitat complex with stacked modular dwellings, rooftop gardens, enclosed walkways, and a central airlock.
+Column 5, Hagia Sophia: Hagia Sophia with a vast central dome, half-domes, minarets, and luminous mosaics over a stone plaza.
+Column 6, Hanging Gardens: Terraced hanging gardens with stone retaining arches, flowering vines, cascading water, and a central pavilion.
+Column 7, Hanseatic League: Hanseatic merchant hall with a stepped brick gable, harbor cranes, bundled goods, and a sailing ship beyond.
+Column 8, Harbor: Protected harbor with a stone breakwater, docked sailing vessels, harbor cranes, and warehouses along the quay.
+Column 9, Healer's Hut: Healer's hut with a thatched roof, herb bundles, mortar and pestle, and a small woodland garden.
+Column 10, Castle Gatehouse: Fortified castle gatehouse with twin stone towers, raised portcullis, iron-bound doors, and a bridge.
+Column 11, Hellenic Pantheon: Hellenic pantheon with marble columns, sculpted pediment, bronze incense bowl, and broad ceremonial steps.
+Column 12, Hellenic Gymnasia: Hellenic gymnasium with a colonnaded exercise court, wrestling mats, olive trees, and a marble fountain.
+ROW 12:
+Column 1, Hellenic Temple: Greek temple with fluted columns, painted pediment, stone altar, and a sheltered statue of a deity.
+Column 2, Herbalist: Herbalist's shop with dried leaves, ceramic jars, bundles of roots, and a mortar beside the counter.
+Column 3, Hermitage: Remote hermitage built into a rocky hillside, with a tiny chapel, wooden door, and a solitary pine.
+Column 4, Heroic Epic: Open illuminated manuscript beside a bronze hero's helmet, laurel wreath, and carved stone reading stand.
+Column 5, High Walls: High defensive walls of pale stone with crenellated parapets, square towers, and a deep arched gateway.
+Column 6, Hill of Tara: Hill of Tara with an ancient ring-shaped earthwork, standing stone, grassy mound, and distant Irish hills.
+Column 7, Himeji Castle: Himeji Castle with white plaster walls, layered tiled roofs, curved gables, and a tall central keep.
+Column 8, Hindu Mandir: Hindu mandir with carved sandstone towers, sculpted guardians, bright doorway, and an offering-filled courtyard.
+Column 9, Hindu Monastery: Hindu monastery with a red stone cloister, carved columns, quiet garden, and a small sacred shrine.
+Column 10, Kashi Vishwanath: Kashi Vishwanath temple with a golden spire, crowded stone courtyard, carved doorway, and brass lamps.
+Column 11, Hindu Temple: Hindu temple with a tiered sculpted tower, red pillars, flower garlands, and a stone offering bowl.
+Column 12, Hippocratic Oath: Ancient medical school with Hippocratic scroll, bronze instruments, herb jars, and a stone lecture hall.
+Final check: 12 columns, 12 equal-height rows, 144 distinct square framed icons. Bottom-row cells have exactly the same dimensions as top-row cells.

@@ -1,0 +1,23 @@
+{
+  "phase": "paused_before_geometry_review",
+  "model": "openai/gpt-image-2.5-flare",
+  "grid": { "rows": 12, "columns": 12 },
+  "approved_reference": "generation/style-preview/flare-12x12-torso-v4-20261015-031843-001.png",
+  "inventory": "audit/inventory.json",
+  "inherited_icon_count": 1153,
+  "mapped_candidate_count": 576,
+  "remaining_unmapped_count": 577,
+  "production_icons_replaced": 0,
+  "artwork_approval": "All generated artwork approved for style and content by user",
+  "saved_artwork_approved_count": 576,
+  "saved_artwork_rejected_count": 0,
+  "geometry_approved_count": 0,
+  "geometry_pending_count": 576,
+  "geometry_manifest": "geometry-review.json",
+  "candidate_overrides": "revisions/logo-overlays/manifest.json",
+  "review_url": "http://127.0.0.1:40559/",
+  "geometry_issue": "Equal grid divisions can miscenter subjects, retain overflow borders, and distort non-square source cells. Existing mask search is ineffective for enclosed framed backgrounds.",
+  "next_action": "Develop and stage checked square extraction. Separate geometry approval from existing artwork decisions. Do not install or generate more artwork yet.",
+  "script_documentation": "SCRIPTS.md",
+  "cleanup_record": "cleanup-record.json"
+}

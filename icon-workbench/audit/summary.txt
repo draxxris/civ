@@ -1,0 +1,38 @@
+Civ icon and image audit
+
+Total image files: 1180
+Inherited catalog icons: 1153
+Icon locations and counts:
+- src/Mods/Cities/art/icons/: 582 icons, all 64x64 PNG
+- src/Mods/Economy/art/icons/: 1 icons, all 64x64 PNG
+- src/Mods/Foundation/art/icons/: 38 icons, all 64x64 PNG
+- src/Mods/Government/art/icons/: 9 icons, all 64x64 PNG
+- src/Mods/Military/art/icons/: 422 icons, all 64x64 PNG
+- src/Mods/Peoples/art/icons/: 46 icons, all 64x64 PNG
+- src/Mods/Research/art/icons/: 14 icons, all 64x64 PNG
+- src/Mods/World/art/icons/: 41 icons, all 64x64 PNG
+
+Non-icon images:
+- src/Mods/World/art/terrain/: 16 terrain textures, all 1024x1024 PNG
+- docs/screenshots/: 9 application screenshots, all 1600x900 PNG
+- docs/references/: 2 reference images: civ6-rivers.jpg (1024x576 JPEG) and civ6-roads.png (993x767 PNG)
+
+Catalog association: every icon filename stem matched exactly one ID suffix in its owning mod data JSON. The inventory records label, kind, concise catalog description, source icon reference, and data path.
+
+Visual review: icon contact sheets show 64px pictograms for buildings/wonders, military units and abilities, civilizations/leaders, technologies, resources, civic concepts, and map actions. Terrain textures are ground/water surfaces. Screenshots show city, civic, map, path, research, river, setup, terrain, and world views. The two references show river and road map treatment. Subjects are summarized as objects/concepts, not artistic style.
+
+Provenance and uncertainty: tools/icons/convert_icons.py says icons are emitted as 64x64 RGBA PNGs from direct images or atlas cells in a local extraction media tree, using 1-based top-left 64px atlas cells; tools/icons/report.md reports 1,153 outputs (34 direct, 1,119 atlas) from 2,195 icon-bearing definitions, with 1,042 unresolved. Current icon counts match the report per mod. The referenced extraction media path is absent from this worktree; a separate extraction exists under /home/gordon/workspace/civ/legacy-extraction, so this audit did not independently validate each PNG’s exact source DDS/atlas cell. The report’s aggregate source split is not assigned per PNG.
+
+Generation grouping: create independent sheets by subject family, with separate sets for buildings/wonders (582), units/abilities/promotions (422), civilization and leader portraits/flags (46), resources/map actions/terrain types (41), technology (14), civics (9), economy process (1), and foundation corporation identities (36), commerce (1), and specialist (1). Keep 64px square outputs and map results back to catalog IDs from inventory.json. Keep terrain textures and documentation/reference images out of icon sheets.
+
+Contact sheets: /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/cities-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/economy-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/foundation-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/government-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/military-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/peoples-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/research-icons.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/screenshots.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/terrain.jpg
+- /home/gordon/workspace/civ-worktrees/goodies/icon-workbench/audit/contact-sheets/world-icons.jpg
