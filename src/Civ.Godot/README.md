@@ -87,8 +87,8 @@ These switches apply only to capture runs and go after `--` on the Godot command
 - `--turns N`: end this many turns before capture.
 - `--reveal`: explore the whole map for the human team without making distant units visible.
 - `--scenario <file.json>`: replace the generated map with a hand-made scene. The format is described in
-  `src/Civ.Godot/Debug/DebugScenario.cs` and an example is `tools/shots/scenarios/hills-forest-roads.json`.
-  It reveals every tile and makes every tile visible.
+`src/Civ.Godot/Debug/DebugScenario.cs` and examples are `tools/shots/scenarios/hills-forest-roads.json` and
+  `tools/shots/scenarios/improvements.json`. It reveals every tile and makes every tile visible.
 
 ### Camera and view
 
@@ -131,6 +131,7 @@ River meshes follow curved channels and use a separate shader for water, ripples
 Visual connectors join disconnected river marks without changing gameplay river masks.
 A world change rebuilds only the chunks whose tiles changed.
 Feature marks, routes, and icons use batched triangle meshes and an icon atlas.
+An improvement with a `.glb` in its mod's `art/models` folder is drawn as 3D parts seated on the terrain, instead of its icon.
 The renderer shares each mesh across three horizontal copies for the east-west seam.
 Camera movement does not rebuild the map. Commands rebuild the changed presentation layers.
 The Standard map contains 84 × 52 hexes without one scene node per hex.

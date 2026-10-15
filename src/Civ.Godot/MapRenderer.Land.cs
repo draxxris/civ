@@ -6,13 +6,17 @@ namespace Civ.Client;
 
 internal sealed partial class MapRenderer
 {
-    /// <summary>Feature marks, routes and resource/improvement icons. The ground itself, relief, rivers and borders are the
-    /// <see cref="TerrainRenderer"/>'s job.</summary>
+    /// <summary>Most a settlement layout turns either way from its authored pose, so fronts still face the camera.</summary>
+    private const float ImprovementTurn = 0.45f;
+
+    /// <summary>Feature marks, routes, improvement models and resource/improvement icons. The ground itself, relief, rivers
+    /// and borders are the <see cref="TerrainRenderer"/>'s job.</summary>
     private void BuildLand()
     {
         var sim = _session.Sim;
         var marks = new MeshBuilder { Ground = GroundAt };
         var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv, Ground = GroundAt };
+        var sites = new List<ImprovementSite>();
         foreach (var tile in sim.State.Grid.Tiles)
         {
             var plot = sim.State.Plots[tile.Value];
@@ -23,10 +27,41 @@ internal sealed partial class MapRenderer
             DrawFeature(marks, centre, tile.Value, plot, fog);
             DrawRoute(marks, tile, centre, plot, fog);
             DrawResources(icons, centre, plot, fog);
+            if (plot.Improvement is { } improvement && _improvements.Has(improvement))
+                sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
         }
+        _improvements.Rebuild(sites);
         _land.Mesh = marks.Build(_opaque);
         _landIcons.Mesh = icons.Build(_landIconMaterial);
         _atlas.Flush();
+    }
+
+    /// <summary>Layout turn of an improvement: a model that faces the river (its +X side) is turned toward it, the rest get
+    /// a hashed turn.</summary>
+    private float ImprovementYaw(string improvement, int tile, byte riverEdges)
+    {
+        if (riverEdges != 0 && _improvements.FacesRiver(improvement)) return RiverYaw(riverEdges);
+        return Signed(Hash(tile, 7)) * ImprovementTurn;
+    }
+
+    /// <summary>Yaw that turns a model's +X side toward the river on a tile. Edge bits follow <c>Hex.Directions</c>. One
+    /// edge: that edge. Several: the mean of their directions, so an adjacent pair faces the bend between them. When the
+    /// directions cancel (opposite edges, three at 120°) the lowest edge is used.</summary>
+    internal static float RiverYaw(byte riverEdges)
+    {
+        double sumX = 0, sumZ = 0;
+        int first = -1;
+        for (int d = 0; d < 6; d++)
+        {
+            if ((riverEdges & (1 << d)) == 0) continue;
+            if (first < 0) first = d;
+            var (x, z) = Hex.Directions[d].ToPixel(1);
+            sumX += x; sumZ += z;
+        }
+        if (first < 0) return 0;
+        if (Math.Abs(sumX) + Math.Abs(sumZ) < 0.01) (sumX, sumZ) = Hex.Directions[first].ToPixel(1);
+        // Basis(Up, yaw) turns +X to (cos yaw, 0, -sin yaw).
+        return (float)Math.Atan2(-sumZ, sumX);
     }
 
     private static int Hash(int tile, int salt)
@@ -133,7 +168,7 @@ internal sealed partial class MapRenderer
     {
         var tint = new Color(fog, fog, fog);
         if (plot.Bonus is { } bonus && _session.BonusVisible(bonus)) DrawIcon(icons, bonus, centre + new Vector3(-0.34f, YIcons, -0.26f), 0.56f, tint, new Color(0.95f, 0.8f, 0.2f));
-        if (plot.Improvement is { } improvement) DrawIcon(icons, improvement, centre + new Vector3(0.34f, YIcons, 0.26f), 0.56f, tint, new Color(0.7f, 0.55f, 0.4f));
+        if (plot.Improvement is { } improvement && !_improvements.Has(improvement)) DrawIcon(icons, improvement, centre + new Vector3(0.34f, YIcons, 0.26f), 0.56f, tint, new Color(0.7f, 0.55f, 0.4f));
     }
 
     private void DrawIcon(MeshBuilder icons, string id, Vector3 at, float size, Color tint, Color fallback)

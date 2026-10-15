@@ -74,10 +74,18 @@ public partial class Main : Node3D
 
     public override void _Process(double delta)
     {
-        PollLoading();
-        PollStarting();
-        if (_fpsProbe is not null && _fpsProbe.Tick()) GetTree().Quit();
-        if (_framesSinceReady >= 0 && ++_framesSinceReady >= _debug.Frames) TakeScreenshot();
+        try
+        {
+            PollLoading();
+            PollStarting();
+            if (_fpsProbe is not null && _fpsProbe.Tick()) GetTree().Quit();
+            if (_framesSinceReady >= 0 && ++_framesSinceReady >= _debug.Frames) TakeScreenshot();
+        }
+        catch (Exception error) when (_debug.ScreenshotPath != null || _debug.FpsProbe)
+        {
+            GD.PrintErr(error.ToString());
+            GetTree().Quit(1);
+        }
     }
 
     private void PollLoading()

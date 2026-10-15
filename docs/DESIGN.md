@@ -621,7 +621,7 @@ The presentation contract in `Civ.Core` and client catalog in `Civ.Client.Core` 
 - `ITileAppearanceService`: Interface offering default methods `string? Surface(TerrainSurface surface) => null;` and `TileAppearance? Scatter(string feature, string terrain) => null;`. Mods override these to specify procedural surface textures and terrain-specific scatter variants (e.g. snowy pine trees on tundra/snow forests).
 - `GameCatalog.TexturePath(string? id)`: Resolves texture PNGs from `<mod>/art/terrain/<name>.png`.
 - `GameCatalog.ScatterModels(string? set)`: Discovers sorted `.glb` models from `<mod>/art/scatter/<suffix>/*.glb`.
-
+- `GameCatalog.ModelPath(string? id)`: Resolves `<mod>/art/models/<name>.glb`. Units and improvements share it. `ImprovementRenderer` treats each top-level node of an improvement model as one part. It seats each part upright on the ground at the part's offset from the tile centre, or tilts it to the surface when its name starts with `ground`. The scene extras `"clear"` value (`tile` by default, or `centre`) decides whether scatter props are removed from the whole tile or only from its centre. It batches parts into MultiMeshes per model and part, and uses instance colour for fog.
 ## Remaining feature work
 
 Feature rules continue to expand through mod contracts. Deferred rules and client gaps are listed in [ROADMAP.md](ROADMAP.md).

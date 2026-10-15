@@ -33,4 +33,11 @@ Run twice with different values, then `mise run shot:compare -- a.png b.png ab.p
 ## Hand-made scenes
 
 `--scenario tools/shots/scenarios/hills-forest-roads.json --world tiny` replaces the generated map with a fixed scene.
-The format is in `src/Civ.Godot/Debug/DebugScenario.cs`. Every tile is revealed and visible. Use `--clean` to hide the starting units.
+Use `tools/shots/scenarios/improvements.json` to preview improvement icons. The format is in `src/Civ.Godot/Debug/DebugScenario.cs`.
+Every tile is revealed and visible. Use `--clean` to hide the starting units.
+
+## Improvement models
+
+`tools/shots/scenarios/improvements-all.json` places every improvement that has a 3D model (land models in rows, water models on an ocean strip).
+Capture it with `--shots tools/shots/improvements-all-poses.json --scenario tools/shots/scenarios/improvements-all.json --world tiny --clean`.
+It takes about two minutes. The models come from `python3 tools/art/improvement_models.py`.
