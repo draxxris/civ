@@ -2,6 +2,6 @@
   <PropertyGroup>
     <AssemblyName>Civ.Core</AssemblyName>
     <RootNamespace>Civ</RootNamespace>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- XML docs default lives in Directory.Build.props (Release only) so Debug builds skip it. -->
   </PropertyGroup>
 </Project>
