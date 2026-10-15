@@ -62,6 +62,7 @@ internal sealed partial class MapRenderer : Node3D
     {
         ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles,
         ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
+        ["improvement_ground"] = _improvements.DecalTriangles,
         ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
     };
 
