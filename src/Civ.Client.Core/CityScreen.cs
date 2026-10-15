@@ -79,10 +79,7 @@ public sealed partial class GameSession
 
     private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
 
-    private string? CultureLevelName(City city) => Sim.Content.Get<Schema.CultureLevelDef>().All
-        .Where(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed) <= city.Culture)
-        .Where(l => Sim.Content.Requirements.Evaluate(l.Requirements, new(Sim, city.Owner)).Success)
-        .OrderByDescending(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed)).FirstOrDefault()?.Name;
+    private string? CultureLevelName(City city) => OptionalService<ICityCultureService>()?.Level(Sim, city.Id).Name;
 
     private long CultureOf(City city) => OptionalService<ICityCultureSource>()?.CultureHundredths(Sim, city.Id) ?? 0;
 

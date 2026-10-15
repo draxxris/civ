@@ -76,9 +76,10 @@ internal static class CombatCalculator
     }
     private static int CityDefense(Simulation sim, City city, bool ignoreBuilding)
     {
-        var levels = sim.Content.Get<S.CultureLevelDef>().All.Where(l => l.SpeedThresholds.TryGetValue(sim.Settings.GameSpeed, out var threshold) && city.Culture >= threshold)
-            .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal);
-        int culture = levels.LastOrDefault()?.CityDefenseModifier ?? 0;
+        int culture = sim.Content.Services.Get<ICityCultureService>().SingleOrDefault()?.Level(sim, city.Id).CityDefenseModifier
+            ?? sim.Content.Get<S.CultureLevelDef>().All.Where(l => l.SpeedThresholds.TryGetValue(sim.Settings.GameSpeed, out var threshold) && city.Culture >= threshold)
+                .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal)
+                .LastOrDefault()?.CityDefenseModifier ?? 0;
         int building = ignoreBuilding ? 0 : MilitaryData.Buildings(sim, city).Sum(b => b.DefensePercent);
         int global = sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id).Sum(c => MilitaryData.Buildings(sim, c).Sum(b => b.AllCityDefense));
         return Math.Max(culture, building) + global;

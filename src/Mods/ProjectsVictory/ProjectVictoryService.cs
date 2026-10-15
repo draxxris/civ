@@ -165,10 +165,13 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     {
         if (def.CultureLevel is null || def.CultureCities <= 0) return null;
         long threshold = sim.Content.Get<CultureLevelDef>(def.CultureLevel).SpeedThresholds[sim.Settings.GameSpeed];
+        var culture = sim.Content.Services.Get<ICityCultureService>().SingleOrDefault();
         foreach (var team in TeamsByScore(sim))
         {
             var members = team.Select(p => p.Id).ToHashSet();
-            if (sim.State.Cities.Count(c => members.Contains(c.Owner) && c.Culture >= threshold) >= def.CultureCities) return BestLivingMember(sim, members);
+            if (sim.State.Cities.Count(c => members.Contains(c.Owner)
+                && (culture?.Level(sim, c.Id).SpeedThresholds[sim.Settings.GameSpeed]
+                    ?? c.Culture) >= threshold) >= def.CultureCities) return BestLivingMember(sim, members);
         }
         return null;
     }

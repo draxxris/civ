@@ -15,6 +15,9 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         state.CultureRemainder = total % 100;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
     }
+    public int LevelIndex(Simulation sim, int cityId) => CityData.LevelIndex(sim, sim.State.CityById(cityId));
+    public Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int cityId) => CityData.Level(sim, sim.State.CityById(cityId));
+
     public void AddCulture(Simulation sim, int cityId, long culture, int spreadTurns)
     {
         var city = sim.State.CityById(cityId);
@@ -59,12 +62,40 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     }
     internal static void Initialize(Simulation sim, City city)
     {
-        foreach (var tile in sim.State.Grid.Range(CityData.Tile(sim, city), 1))
+        var center = CityData.Tile(sim, city);
+        foreach (var tile in sim.State.Grid.Range(center, 1))
         {
             var plot = sim.State.Plots[tile.Value];
-            int free = tile == CityData.Tile(sim, city) ? CityData.Constants(sim).FreeCityCulture : CityData.Constants(sim).FreeCityAdjacentCulture;
+            int free = tile == center ? CityData.Constants(sim).FreeCityCulture : CityData.Constants(sim).FreeCityAdjacentCulture;
             plot.Culture[city.Owner] = Math.Max(plot.Culture.GetValueOrDefault(city.Owner), free);
             Resolve(sim, tile);
+        }
+
+        long extraLevels = CityData.Effect(CityData.Effects(sim, city), "extra_culture_level");
+        var levels = CityData.Levels(sim, city.Owner, city);
+        for (long step = 0; step < extraLevels; step++)
+        {
+            var next = levels.FirstOrDefault(l => l.SpeedThresholds[sim.Settings.GameSpeed] > city.Culture);
+            if (next is null) break;
+            long threshold = next.SpeedThresholds[sim.Settings.GameSpeed];
+            city.Culture = threshold;
+            var state = CityData.Edit(sim, city);
+            state.CultureRemainder = 0;
+            state.CultureHundredths[city.Owner] = threshold * 100;
+        }
+
+        if (extraLevels > 0)
+        {
+            int radius = CultureRadius(sim, city);
+            long growth = CityData.Constants(sim).CityFreeCultureGrowthFactor;
+            foreach (var tile in sim.State.Grid.Range(center, radius))
+            {
+                int distance = sim.State.Grid.Distance(center, tile);
+                long amount = (radius - distance + 1) * growth + 1;
+                var plot = sim.State.Plots[tile.Value];
+                plot.Culture[city.Owner] = plot.Culture.GetValueOrDefault(city.Owner) + amount;
+                Resolve(sim, tile);
+            }
         }
     }
     internal static void Resolve(Simulation sim, TileId tile)
