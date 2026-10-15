@@ -95,7 +95,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
 
     private static double RockDensity(ReliefClass relief, TerrainField field, double x, double y, double z)
     {
-        if (relief == ReliefClass.Hills) return 0.18;
+        // Hills read from their raised mounds alone; only low, gentle mountain feet get rocks.
         if (relief != ReliefClass.Peak || y > field.Tuning.PeakBase + field.Tuning.PeakRise * 0.2) return 0;
         return field.NormalAt(x, z).Y >= 0.65f ? 0.18 : 0;
     }

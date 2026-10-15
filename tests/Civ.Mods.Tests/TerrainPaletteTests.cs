@@ -62,8 +62,8 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
         var ordinaryForest = _palette.ScatterFor("world:forest", "world:grass");
 
         Assert.Equal("forest_snow", snowyForest?.Scatter);
-        Assert.Equal(70, snowyForest?.ScatterDensity);
+        Assert.Equal(95, snowyForest?.ScatterDensity);
         Assert.Equal("forest", ordinaryForest?.Scatter);
-        Assert.Equal(70, ordinaryForest?.ScatterDensity);
+        Assert.Equal(95, ordinaryForest?.ScatterDensity);
     }
 }

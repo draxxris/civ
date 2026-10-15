@@ -65,18 +65,68 @@ internal sealed partial class MapRenderer
 
     private static Vector3 Up(float y) => new(0, y, 0);
 
+    private const float RoadVergeWidth = 0.12f, RoadTrackWidth = 0.065f, RoadTrackLift = 0.006f;
+    /// <summary>Largest sideways bow of a road link, and of its S-shaped second harmonic, in world units.</summary>
+    private const float RoadBow = 0.17f, RoadWiggle = 0.08f;
+    /// <summary>Ribbon segments per half link (tile centre to shared edge).</summary>
+    private const int RoadSteps = 8;
+
+    /// <summary>Each road link between two tile centres is one gently swerving curve: a bow plus a weaker S-bend, both
+    /// zero at the centres. The bend is hashed from the unordered tile pair, so each tile draws its own half (in its own
+    /// fog) and the halves meet exactly at the shared edge with the same tangent.</summary>
     private void DrawRoute(MeshBuilder b, TileId tile, Vector3 centre, Plot plot, float fog)
     {
         if (plot.Route == null) return;
-        var colour = Ui.ToColor(MapStyle.Road.Scale(fog));
+        var verge = Ui.ToColor(MapStyle.Road.Scale(fog));
+        var track = Ui.ToColor(MapStyle.RoadTrack.Scale(fog));
         var grid = _session.Sim.State.Grid;
+        var hex = grid.HexOf(tile);
         for (int d = 0; d < 6; d++)
         {
-            if (grid.Neighbor(tile, d) is not TileId n || _session.Sim.State.Plots[n.Value].Route == null) continue;
-            var to = (MeshBuilder.EdgeCorner(d, 0, 0.87f) + MeshBuilder.EdgeCorner(d, 1, 0.87f)) / 2 * 1f;
-            b.Line(centre + Up(YLines), centre + to + Up(YLines), 0.1f, colour);
+            if (grid.Neighbor(tile, d) is not TileId n || n == tile || _session.Sim.State.Plots[n.Value].Route == null) continue;
+            // Unwrapped neighbour centre, so a link across the wrap seam stays short.
+            var other = PositionOf(hex.Neighbor(d));
+            bool first = tile.Value < n.Value;
+            var link = new RoadLink(first ? centre : other, first ? other : centre,
+                Signed(Hash(Math.Min(tile.Value, n.Value), 2 * Math.Max(tile.Value, n.Value) + 1)) * RoadBow,
+                Signed(Hash(Math.Min(tile.Value, n.Value), 2 * Math.Max(tile.Value, n.Value) + 2)) * RoadWiggle);
+            float t0 = first ? 0f : 0.5f;
+            DrawRoadHalf(b, link, t0, RoadVergeWidth, YLines, verge);
+            DrawRoadHalf(b, link, t0, RoadTrackWidth, YLines + RoadTrackLift, track);
         }
-        b.Disc(centre + Up(YLines), 0.1f, colour, 8);
+        b.Disc(centre + Up(YLines), RoadVergeWidth / 2, verge, 10);
+        b.Disc(centre + Up(YLines + RoadTrackLift), RoadTrackWidth / 2, track, 10);
+    }
+
+    private static float Signed(int hash) => hash % 2001 / 1000f - 1f;
+
+    /// <summary>A road curve from <c>From</c> (t = 0) to <c>To</c> (t = 1) with a sideways offset
+    /// <c>Bow·sin(πt) + Wiggle·sin(2πt)</c>.</summary>
+    private readonly record struct RoadLink(Vector3 From, Vector3 To, float Bow, float Wiggle)
+    {
+        private Vector3 Normal => new Vector3(-(To.Z - From.Z), 0, To.X - From.X).Normalized();
+
+        public Vector3 At(float t) =>
+            From.Lerp(To, t) + Normal * (Bow * Mathf.Sin(Mathf.Pi * t) + Wiggle * Mathf.Sin(Mathf.Tau * t));
+
+        public Vector3 Tangent(float t) =>
+            To - From + Normal * (Bow * Mathf.Pi * Mathf.Cos(Mathf.Pi * t) + Wiggle * Mathf.Tau * Mathf.Cos(Mathf.Tau * t));
+    }
+
+    /// <summary>A draped ribbon along half a link, from t0 to t0 + ½, with analytic sides so the two halves join cleanly.</summary>
+    private static void DrawRoadHalf(MeshBuilder b, RoadLink link, float t0, float width, float lift, Color colour)
+    {
+        Vector3 prevPoint = default, prevSide = default;
+        for (int i = 0; i <= RoadSteps; i++)
+        {
+            float t = t0 + 0.5f * i / RoadSteps;
+            var tangent = link.Tangent(t);
+            var side = new Vector3(-tangent.Z, 0, tangent.X).Normalized() * (width / 2);
+            var point = link.At(t) + Up(lift);
+            if (i > 0) b.Quad(prevPoint - prevSide, prevPoint + prevSide, point + side, point - side, colour);
+            prevPoint = point;
+            prevSide = side;
+        }
     }
 
     private void DrawResources(MeshBuilder icons, Vector3 centre, Plot plot, float fog)

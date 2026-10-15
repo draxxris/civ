@@ -32,10 +32,24 @@ public sealed record TerrainTuning
     /// <summary>Flat land: fbm frequency.</summary>
     public double FlatFrequency { get; init; } = 1.5;
 
-    /// <summary>Hills: base height.</summary>
-    public double HillsBase { get; init; } = 0.20;
+    /// <summary>Hills: height of a hill's own profile away from its mounds; the saddle level between neighbouring hills.</summary>
+    public double HillsBase { get; init; } = 0.05;
+    /// <summary>Hills: largest mound rise above <see cref="HillsBase"/>. Base plus rise stays at or below
+    /// <see cref="PeakBase"/>, so a hill never outgrows a mountain's saddle.</summary>
+    public double HillsRise { get; init; } = 0.33;
+    /// <summary>Hills: distance across a mound's long axis at which its rise reaches zero (along it, times
+    /// <see cref="HillsStretch"/>).</summary>
+    public double HillsRadius { get; init; } = 0.68;
+    /// <summary>Hills: largest offset of the main mound from the tile centre.</summary>
+    public double HillsJitter { get; init; } = 0.18;
+    /// <summary>Hills: how much longer a mound is along its axis than across it.</summary>
+    public double HillsStretch { get; init; } = 1.3;
+    /// <summary>Hills: fraction of <see cref="HillsRise"/> by which the lowest main mound falls short of the highest.</summary>
+    public double HillsVariation { get; init; } = 0.3;
+    /// <summary>Hills: height of the smaller shoulder knoll beside the main mound, as a fraction of the main rise.</summary>
+    public double HillsKnoll { get; init; } = 0.6;
     /// <summary>Hills: fbm amplitude.</summary>
-    public double HillsNoise { get; init; } = 0.14;
+    public double HillsNoise { get; init; } = 0.04;
     /// <summary>Hills: fbm frequency.</summary>
     public double HillsFrequency { get; init; } = 2.2;
 
@@ -119,7 +133,7 @@ public sealed class TerrainField
         Rivers = new RiverNetwork(snapshot, tuning, noise);
         _wrap = snapshot.Grid.Spec.Wrap;
         MaxHeight = new[] { 0, tuning.DeepWater + tuning.WaterNoise, tuning.ShallowWater + tuning.WaterNoise,
-            tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsNoise,
+            tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsRise + tuning.HillsNoise,
             tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise }.Max();
         MinHeight = new[] { 0, tuning.DeepWater - tuning.WaterNoise, tuning.ShallowWater - tuning.WaterNoise,
             tuning.FlatBase - tuning.FlatNoise, tuning.HillsBase - tuning.HillsNoise, tuning.PeakBase }.Min() - tuning.RiverDepth;
@@ -163,6 +177,7 @@ public sealed class TerrainField
             var relief = corners.Relief(k);
             if (relief == ReliefClass.Hidden) hidden += w[k];
             else if (relief == ReliefClass.Peak) h += w[k] * PeakProfile(corners, k, peak);
+            else if (relief == ReliefClass.Hills) h += w[k] * HillProfile(corners, k, x, z);
             else h += w[k] * Profile(relief, x, z);
         }
         if (hidden < 1) h -= (1 - hidden) * Rivers.Carve(x, z);
@@ -270,6 +285,40 @@ public sealed class TerrainField
         return t.PeakBase + t.PeakRise * summit * rise + t.PeakNoise * detail.Crag * (0.5 + 0.5 * rise);
     }
 
+    /// <summary>One hill tile's own landform: a rounded main mound near its centre and a smaller shoulder knoll to one side,
+    /// merged with a soft union, on the <see cref="TerrainTuning.HillsBase"/> saddle level, plus gentle fbm. Both bells have
+    /// flat tops and feet, so the tile reads as a raised, rolling hill rather than a plateau, and neighbouring hills form
+    /// one range of distinct crowns. The tile's blend weight fades this to zero at its borders.</summary>
+    private double HillProfile(in CornerSet corners, int k, double x, double z)
+    {
+        var t = Tuning;
+        int tile = corners.Tile(k);
+        var (cx, cz) = corners.Triangle[k].ToPixel(1);
+        double axis = TileHash(tile, 11) * Math.PI;
+        double jitterAngle = TileHash(tile, 12) * Math.Tau, jitter = t.HillsJitter * TileHash(tile, 13);
+        double mx = cx + jitter * Math.Cos(jitterAngle), mz = cz + jitter * Math.Sin(jitterAngle);
+        double main = Bell(corners.X - mx, corners.Z - mz, axis, t.HillsRadius, t.HillsStretch);
+        main *= 1 - t.HillsVariation * TileHash(tile, 14);
+        // The knoll sits on the far side of the main mound, roughly along its axis, so the pair reads as one ridge.
+        double knollAngle = axis + (TileHash(tile, 15) < 0.5 ? 0 : Math.PI) + 0.8 * (TileHash(tile, 16) - 0.5);
+        double reach = 0.42 + 0.12 * TileHash(tile, 17);
+        double kx = mx + reach * Math.Cos(knollAngle), kz = mz + reach * Math.Sin(knollAngle);
+        double knoll = t.HillsKnoll * (0.6 + 0.4 * TileHash(tile, 18))
+            * Bell(corners.X - kx, corners.Z - kz, knollAngle, t.HillsRadius * 0.62, 1.15);
+        double shape = main + knoll - main * knoll;
+        return t.HillsBase + t.HillsRise * shape + t.HillsNoise * _noise.Fbm(x, z, t.HillsFrequency, t.Octaves, salt: 3);
+    }
+
+    /// <summary>A smooth bell in [0, 1]: (1 − u²)² over an elliptical distance u, flat at its crown and its rim.</summary>
+    private static double Bell(double dx, double dz, double axis, double radius, double stretch)
+    {
+        double along = (dx * Math.Cos(axis) + dz * Math.Sin(axis)) / stretch, across = dz * Math.Cos(axis) - dx * Math.Sin(axis);
+        double u2 = (along * along + across * across) / (radius * radius);
+        if (u2 >= 1) return 0;
+        double f = 1 - u2;
+        return f * f;
+    }
+
     /// <summary>Deterministic per-tile value in [0, 1) for the map seed.</summary>
     private double TileHash(int tile, uint channel)
     {
@@ -292,7 +341,7 @@ public sealed class TerrainField
             ReliefClass.DeepWater => t.DeepWater + t.WaterNoise * _noise.Fbm(x, z, t.WaterFrequency, t.Octaves, salt: 1),
             ReliefClass.ShallowWater => t.ShallowWater + t.WaterNoise * _noise.Fbm(x, z, t.WaterFrequency, t.Octaves, salt: 1),
             ReliefClass.Flat => t.FlatBase + t.FlatNoise * _noise.Fbm(x, z, t.FlatFrequency, t.Octaves, salt: 2),
-            ReliefClass.Hills => t.HillsBase + t.HillsNoise * _noise.Fbm(x, z, t.HillsFrequency, t.Octaves, salt: 3),
+
             _ => 0,
         };
     }
