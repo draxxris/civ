@@ -29,6 +29,10 @@ public interface ICityCultureSource
 public interface ICityCultureService
 {
     void AddCulture(Simulation sim, int city, long culture, int spreadTurns);
+    int LevelIndex(Simulation sim, int city);
+    Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int city);
+    int OwnerCulturePercent(Simulation sim, int city);
+    int TeamCulturePercent(Simulation sim, int city);
 }
 public interface ICityWorkService
 {
@@ -38,7 +42,7 @@ public interface ICityWorkService
     string? Validate(Simulation sim, int city, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists);
     void Assign(Simulation sim, int city);
 }
-public sealed record CityMaintenanceResult(long DistanceHundredths, long CityCountHundredths, long TotalHundredths, Ledger Ledger);
+public sealed record CityMaintenanceResult(long DistanceHundredths, long CityCountHundredths, long TotalHundredths, Ledger Ledger, long CorporateHundredths = 0);
 public interface ICityMaintenanceService
 {
     CityMaintenanceResult Calculate(Simulation sim, int city);
@@ -48,6 +52,13 @@ public interface ICityProductionService
 {
     RequirementResult Validate(Simulation sim, int city, string kind, string content);
     CityProductionResult Calculate(Simulation sim, int city, string kind, string content);
+}
+public sealed record ConscriptResult(string UnitId, int PopulationCost, int MinPopulation, int Experience, int AngerTurns, int MaxPlayerDrafts, Ledger Ledger);
+public interface ICityConscriptService
+{
+    ConscriptResult? Calculate(Simulation sim, int city);
+    string? Validate(Simulation sim, int player, int city);
+    void Conscript(Simulation sim, int city);
 }
 public sealed record CityGreatPeopleResult(long Threshold, long Rate, Ledger Ledger);
 public interface ICityGreatPeopleService
@@ -76,6 +87,9 @@ public sealed class CityRuleState
     public bool ManualWork { get; set; }
     public bool AvoidGrowth { get; set; }
     public bool Disorder { get; set; }
+    public int ConscriptAngerTurns { get; set; }
+    public bool DraftedThisTurn { get; set; }
+    public string? OriginalCivilization { get; set; }
     public long CultureRemainder { get; set; }
     public long LastCultureRateHundredths { get; set; }
     public SortedDictionary<int, long> CultureHundredths { get; set; } = new();
@@ -93,6 +107,7 @@ public sealed class CityPlayerState
     public string? CurrentEra { get; set; }
     public bool GoldenAge { get; set; }
     public int GreatPeopleBorn { get; set; }
+    public int ConscriptCountThisTurn { get; set; }
     public int GreatPeopleThresholdModifier { get; set; }
 }
 public sealed class FoundCityWithSettlerCommand : GameCommand
@@ -124,6 +139,12 @@ public sealed class SetCityAssignmentsCommand : GameCommand
         city.Specialists = new(Specialists, StringComparer.Ordinal);
         sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, CityId);
     }
+}
+public sealed class ConscriptCityCommand : GameCommand
+{
+    public int CityId { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityConscriptService>().Single().Validate(sim, Player, CityId);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityConscriptService>().Single().Conscript(sim, CityId);
 }
 public sealed class SetCityProductionCommand : GameCommand
 {

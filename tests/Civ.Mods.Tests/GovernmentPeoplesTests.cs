@@ -8,13 +8,13 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
 {
     private const string Caesar = "peoples:leader_julius_caesar", Godwinson = "peoples:leader_godwinson", Hus = "peoples:leader_hus";
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
-    private Simulation Create(string leader, string speed = "normal")
+    private Simulation Create(string leader, string speed = "normal", int[]? playerTeams = null, string world = "standard")
     {
         var sim = new Simulation(mods.Content, new SimulationSettings
         {
-            Seed = 5, WorldSize = "foundation:worldsize_standard", MapGenerator = "world:continents",
+            Seed = 5, WorldSize = "foundation:worldsize_" + world, MapGenerator = "world:continents",
             GameSpeed = "foundation:gamespeed_" + speed, Handicap = "foundation:handicap_noble",
-            StartingEra = "foundation:era_ancient", PlayerCount = 2, Leaders = [leader, Caesar],
+            StartingEra = "foundation:era_ancient", PlayerCount = 2, Leaders = [leader, Caesar], PlayerTeams = playerTeams ?? [],
         });
         sim.TeamOf(0).Techs.UnionWith(["research:code_of_laws", "research:monarchy", "research:slavery"]);
         return sim;
@@ -113,6 +113,25 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         sim.State.Players[0].Civics["government:civicoption_society"] = "government:tribal";
         Assert.Equal(50, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("cities:growth_percent"));
     }
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 0)]
+    public void Foreign_civic_pressure_affects_non_adopters_not_adopters(bool sameTeam, long expectedAnger)
+    {
+        var sim = Create(Caesar, playerTeams: sameTeam ? [0, 0] : [0, 1]);
+        var nonAdopter = AddCity(sim, 0);
+        var adopter = AddCity(sim, 1);
+        nonAdopter.Population = adopter.Population = 10;
+        const string category = "government:civicoption_military";
+        sim.State.Players[0].Civics[category] = "government:standing_army";
+        sim.State.Players[1].Civics[category] = "government:mutually_assured_destruction";
+        var wellbeing = Service<ICityWellbeingService>(sim);
+        var pressure = wellbeing.Calculate(sim, nonAdopter.Id).Ledger.Lines
+            .Where(l => l.Source == "government:civic_anger").ToArray();
+        if (expectedAnger == 0) Assert.Empty(pressure);
+        else Assert.Equal(new LedgerLine("government:civic_anger", "cities:happiness_bad", expectedAnger), Assert.Single(pressure));
+        Assert.DoesNotContain(wellbeing.Calculate(sim, adopter.Id).Ledger.Lines, l => l.Source == "government:civic_anger");
+    }
     [Fact]
     public void Trait_modifiers_reach_city_and_player_ledgers()
     {
@@ -139,6 +158,20 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         Assert.DoesNotContain(production.Validate(sim, city.Id, "cities:building", "cities:agora").Failures, f => f.Explanation.Contains("government:republic"));
         Assert.Contains(production.Validate(sim, city.Id, "cities:unit", "military:swordsman").Failures, f => f.Explanation.Contains("replacement"));
         Assert.DoesNotContain(production.Validate(sim, city.Id, "cities:unit", "military:anglo_saxon_huscarl").Failures, f => f.Explanation.Contains("replacement"));
+    }
+    [Theory]
+    [InlineData("duel", 2)]
+    [InlineData("tiny", 3)]
+    [InlineData("standard", 5)]
+    [InlineData("huge", 7)]
+    public void Civic_draft_quota_scales_by_world_size_with_integer_truncation(string world, int maximum)
+    {
+        var sim = Create(Caesar, world: world); var city = AddCity(sim);
+        sim.TeamOf(0).Techs.Add("research:archery");
+        sim.State.PlayerById(0).Civics["government:civicoption_military"] = "government:conscription1";
+        var result = Assert.IsType<ConscriptResult>(Service<ICityConscriptService>(sim).Calculate(sim, city.Id));
+        Assert.Equal(maximum, result.MaxPlayerDrafts); // Base quota four, scaled by -50%, -25%, +25%, +75%.
+        Assert.Equal(maximum, result.Ledger.Total("cities:max_conscript"));
     }
     [Fact]
     public void Leader_personality_is_exposed_through_core_query()

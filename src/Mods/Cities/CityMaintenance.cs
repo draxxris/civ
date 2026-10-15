@@ -14,14 +14,22 @@ internal sealed class CityMaintenance : ICityMaintenanceService
         var sink = new ModifierSink();
         long distance = Distance(sim, city, effects);
         long count = CityCount(sim, city, effects);
-        long flat = CityData.Effect(effects, "maintenance_flat_hundredths");
+        long flat = CorporateMaintenance(effects.Ledger);
         long total = (distance + count + flat) * Math.Max(0, 100 + CityData.Effect(effects, "maintenance_percent")) / 100;
         sink.Add("cities:distance", "cities:maintenance_hundredths", distance);
         sink.Add("cities:city_count", "cities:maintenance_hundredths", count);
         sink.Add("cities:flat", "cities:maintenance_hundredths", flat);
         sink.Add("cities:modifiers", "cities:maintenance_hundredths", total - distance - count - flat);
         if (GovernmentStatus.IsDisorder(sim, city)) { sink.Add("cities:disorder", "cities:maintenance_hundredths", -total); total = 0; }
-        return new(distance, count, total, sink.Ledger);
+        return new(distance, count, total, sink.Ledger, flat);
+    }
+    private static long CorporateMaintenance(Ledger effects)
+    {
+        var flat = effects.Lines.Where(l => l.Key == "cities:maintenance_flat_hundredths").ToArray();
+        var sources = flat.Select(l => l.Source).ToHashSet(StringComparer.Ordinal);
+        // A source can expose both keys. Its city-cost contribution already includes its corporate cost.
+        return flat.Sum(l => l.Amount) + effects.Lines
+            .Where(l => l.Key == "corporations:maintenance_hundredths" && !sources.Contains(l.Source)).Sum(l => l.Amount);
     }
     private static long Distance(Simulation sim, City city, ModifierSink effects)
     {

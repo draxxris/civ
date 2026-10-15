@@ -161,18 +161,36 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         else if (order.Kind == "cities:unit") Spawn(sim, city, order.ContentId);
         else foreach (var handler in sim.Content.Services.Get<IProductionCompletion>().Where(h => h.Kind == order.Kind)) handler.Complete(sim, city.Id, order.ContentId);
     }
-    internal static void Spawn(Simulation sim, City city, string id)
+    internal static int CityExperience(Simulation sim, City city, S.UnitDef def)
     {
-        var def = sim.Content.Get<S.UnitDef>(id);
+        var unit = new Unit { Owner = city.Owner, Position = city.Position, Type = def.Id };
+        var effects = ModifierSink.Collect(new(sim, ModifierScope.Unit, city.Owner, city, CityData.Tile(sim, city), unit, sim.TeamOf(city.Owner)));
+        return LocalExperience(sim, city, def) + (int)Math.Max(0, effects.Ledger.Total("military:initial_experience"));
+    }
+    private static int LocalExperience(Simulation sim, City city, S.UnitDef def)
+    {
         int experience = (int)CityData.Effect(CityData.Effects(sim, city), "experience");
         foreach (var b in CityData.Active(sim, city))
         {
             if (def.Domain is { } domain) experience += b.DomainFreeExperiences.GetValueOrDefault(domain);
             if (def.CombatType is { } combat) experience += b.UnitCombatFreeExperiences.GetValueOrDefault(combat);
         }
+        return Math.Max(0, experience);
+    }
+    internal static void Spawn(Simulation sim, City city, string id, bool conscript = false)
+    {
+        var def = sim.Content.Get<S.UnitDef>(id);
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = city.Owner, Position = city.Position,
-            Type = id, Experience = Math.Max(0, experience), MovesLeft = def.Moves * CityData.Constants(sim).MoveDenominator };
+            Type = id, MovesLeft = def.Moves * CityData.Constants(sim).MoveDenominator };
         sim.State.AddUnit(unit);
+        // Initialize before publishing: Military grants promotions, experience and full movement here.
+        sim.Content.Services.Get<IUnitService>().SingleOrDefault()?.Initialize(sim, unit.Id);
+        unit.Experience += LocalExperience(sim, city, def);
+        if (conscript)
+        {
+            unit.Experience /= 2;
+            unit.MovesLeft = 0;
+        }
         sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
     }
 }

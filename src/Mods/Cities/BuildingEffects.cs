@@ -9,6 +9,13 @@ internal sealed class BuildingEffects : IModifierSource
 {
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
+        if (context.Scope == ModifierScope.Player)
+        {
+            foreach (var ownedCity in CityData.Owned(context.Sim, context.Player))
+                foreach (var building in CityData.Active(context.Sim, ownedCity))
+                    sink.Add(building.Id, "economy:hurry_percent", building.GlobalHurryModifier);
+            return;
+        }
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var sim = context.Sim;
         var bonuses = Bonuses(sim, city);
@@ -62,6 +69,7 @@ internal sealed class BuildingEffects : IModifierSource
     {
         sink.AddYield(b.Id, b.YieldChanges); sink.AddYield(b.Id, b.YieldModifiers, true);
         sink.AddCommerce(b.Id, b.CommerceChanges); sink.AddCommerce(b.Id, b.CommerceModifiers, true);
+        sink.Add(b.Id, "cities:hurry_anger_percent", b.HurryAngerModifier);
         AddNumbers(b, sink);
         AddMaps(sim, city, b, bonuses, sink);
         AddVicinity(sim, city, b, sink);

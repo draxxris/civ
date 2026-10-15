@@ -12,11 +12,13 @@ internal static class RecurringCosts
     {
         var civics = EconomyData.Civics(sim, player);
         int population = EconomyData.Cities(sim, player).Sum(c => c.Population);
-        long maintenanceHundredths = 0;
+        long maintenanceHundredths = 0, totalCorporateHundredths = 0;
         foreach (var city in EconomyData.Cities(sim, player))
         {
             var cost = sim.Content.Services.Get<ICityMaintenanceService>().Single().Calculate(sim, city.Id);
             maintenanceHundredths += cost.TotalHundredths;
+            totalCorporateHundredths += cost.CorporateHundredths;
+            lines.Add(new("economy:city:" + city.Id, "economy:corporate_maintenance_hundredths", cost.CorporateHundredths));
             lines.Add(new("economy:city:" + city.Id, "economy:maintenance_hundredths", cost.TotalHundredths));
             lines.Add(new("economy:city:" + city.Id, "economy:distance_maintenance_hundredths", cost.DistanceHundredths));
             lines.Add(new("economy:city:" + city.Id, "economy:count_maintenance_hundredths", cost.CityCountHundredths));
@@ -30,10 +32,11 @@ internal static class RecurringCosts
         // Civic upkeep already carries its own inflation, so the aggregate rate must not apply to it again.
         long total = preInflated + inflationCost + upkeep;
         lines.Add(new("economy:rules", "economy:maintenance", maintenanceHundredths / 100));
+        lines.Add(new("economy:rules", "economy:corporate_maintenance", totalCorporateHundredths / 100));
         lines.Add(new("economy:rules", "economy:pre_inflated", preInflated));
         lines.Add(new("economy:rules", "economy:inflation_percent", inflation));
         lines.Add(new("economy:rules", "economy:inflation", inflationCost));
-        lines.Add(new("economy:rules", "economy:expenses", total));
+
         return total;
     }
     private static long CivicUpkeep(Simulation sim, int player, CivicDef[] civics, int population, List<LedgerLine> lines)
@@ -111,21 +114,34 @@ internal static class Inflation
         : (int)((EconomyData.Read(sim, player).AccruedCostRatioTimes10000 - 10000) / 100);
     internal static void Update(Simulation sim, int player)
     {
-        if (EconomyData.Raw(sim, "DISABLE_INFLATION", 0) != 0) return;
-        var speed = EconomyData.Speed(sim); var handicap = EconomyData.Handicap(sim);
+        var speed = EconomyData.Speed(sim);
+        var civics = EconomyData.Civics(sim, player);
+        var state = EconomyData.Edit(sim, player);
+        int hurryInflationMod = civics.Sum(c => c.HurryInflationModifier);
+        long decayInterval = Math.Max(1, (long)EconomyData.Raw(sim, "HURRY_INFLATION_DECAY_RATE", 0)
+            * speed.TrainPercent / 100 * Math.Max(0, 100 + hurryInflationMod) / 100);
+        long elapsedTurns = Math.Max(0, sim.State.Turn - 1);
+        bool decayHurryCount = state.HurriedCount > 0 && elapsedTurns % decayInterval == 0;
+        if (EconomyData.Raw(sim, "DISABLE_INFLATION", 0) != 0)
+        {
+            if (decayHurryCount) state.HurriedCount--;
+            return;
+        }
+        var handicap = EconomyData.Handicap(sim);
         long perTurn = speed.InflationPercent * handicap.InflationPercent;
+        perTurn = perTurn * Math.Max(0, 100 + state.HurriedCount) / 100;
         long modifier = EconomyData.Effects(sim, player).Ledger.Total("economy:inflation_percent");
         if (sim.State.PlayerById(player).Ai is not null)
             modifier += handicap.AiInflationPercent * Math.Max(0, 100 + handicap.AiPerEraModifier * EconomyData.EraIndex(sim, player)) / 100 - 100;
         perTurn = perTurn * Math.Max(0, 100 + modifier) / 100;
-        perTurn = perTurn * Math.Max(0, 100 + EconomyData.Civics(sim, player).Sum(c => c.Inflation)) / 100;
+        perTurn = perTurn * Math.Max(0, 100 + civics.Sum(c => c.Inflation)) / 100;
+        if (decayHurryCount) state.HurriedCount--;
         perTurn /= 100;
         // Engine turn one represents elapsed turn zero. No maximum-turn option exists yet.
         long turns = Math.Clamp(sim.State.Turn - 1 + speed.InflationOffset, 0, EconomyData.Raw(sim, "MAX_INFLATION_EFFECT_WINDOW", 200));
         long equilibrium = 10000 + turns * perTurn + turns * (turns - 1) * perTurn * perTurn / 20000;
         equilibrium = equilibrium / 100 * 100; // Native equilibrium modifier drops fractional percent.
         int momentum = Math.Max(1, EconomyData.Raw(sim, "INFLATION_RATE_MOMENTUM", 50) * speed.ImprovementPercent / 100);
-        var state = EconomyData.Edit(sim, player);
         long difference = equilibrium - state.AccruedCostRatioTimes10000;
         state.AccruedCostRatioTimes10000 += (difference + Math.Sign(difference) * (momentum - 1)) / momentum;
     }

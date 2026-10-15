@@ -203,6 +203,73 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
         Assert.Equal(DiplomaticDealStatus.Active, Service(sim).Deals(sim).Last().Status);
         Assert.Equal(2, sim.State.PlayerById(0).Treasury);
     }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void Incoming_deal_gold_covers_domestic_deficits_without_slider_changes_or_duplicate_credit(int recipient)
+    {
+        var sim = Scenario(); Meet(sim);
+        int giver = 1 - recipient;
+        var city = City(sim, recipient, 40);
+        for (int i = 0; i < 40; i++)
+            sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = recipient, Type = "military:warrior", Position = city.Position });
+        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        var rates = new CommerceVector(0, 100, 0, 0);
+        economy.SetRates(sim, recipient, rates);
+        var domestic = economy.Calculate(sim, recipient);
+        Assert.True(domestic.NetGold < 0);
+        Apply(sim, new ProposeDealCommand { Player = giver, Target = recipient,
+            Items = [new(giver, TradeItemKind.GoldPerTurn, Amount: 100), new(recipient, TradeItemKind.GoldPerTurn, Amount: 7)] });
+        int deal = Service(sim).Deals(sim).Last().Id;
+        Apply(sim, new ExecuteDealCommand { Player = recipient, Deal = deal });
+        var combined = economy.Calculate(sim, recipient);
+        Assert.Equal(domestic.Income + 100, combined.Income);
+        Assert.Equal(domestic.Expenses + 7, combined.Expenses);
+        Assert.Equal(domestic.NetGold + 93, combined.NetGold);
+        Assert.Equal(100, combined.Ledger.Total("economy:deal_income"));
+        Assert.Equal(7, combined.Ledger.Total("economy:deal_expenses"));
+        Assert.Equal(combined.Expenses, combined.Ledger.Total("economy:expenses"));
+        long giverNet = economy.Calculate(sim, giver).NetGold;
+        sim.State.PlayerById(recipient).Treasury = 0;
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Equal(rates, economy.Rates(sim, recipient));
+        Assert.Equal(combined.NetGold + 5, sim.State.PlayerById(recipient).Treasury); // The fixture also earns five gold after Gold.
+        Assert.Equal(100 + giverNet + 5, sim.State.PlayerById(giver).Treasury);
+        Assert.Equal(0, sim.State.PlayerById(recipient).Extensions.Get<EconomyPlayerState>(sim.Content)!.UnpaidGold);
+        Assert.Equal(DiplomaticDealStatus.Active, Service(sim).Deals(sim).Last().Status);
+        sim.Content.TurnSystems.Get("diplomacy:deals").Run(sim);
+        Assert.Equal(combined.NetGold + 5, sim.State.PlayerById(recipient).Treasury);
+        sim.State.SetWar(0, 1, true);
+        Assert.Equal(0, economy.Calculate(sim, recipient).Ledger.Total("economy:deal_income"));
+        Assert.Equal(0, economy.Calculate(sim, recipient).Ledger.Total("economy:deal_expenses"));
+    }
+    [Fact]
+    public void Outgoing_deal_payments_shift_science_only_as_far_as_needed_before_settlement()
+    {
+        var sim = P6RulesScenario.Create();
+        foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        sim.State.Cities[0].Buildings.Add("cities:palace");
+        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        economy.SetRates(sim, 0, new(0, 100, 0, 0));
+        var diplomacy = Service(sim);
+        int deal = diplomacy.ProposeDeal(sim, 0, 1, [new(0, TradeItemKind.GoldPerTurn, Amount: 3)]);
+        Assert.Null(diplomacy.ValidateExecution(sim, 1, deal)); diplomacy.ExecuteDeal(sim, deal);
+        var player = sim.State.PlayerById(0); player.Treasury = 0;
+        Assert.True(economy.Calculate(sim, 0).NetGold < 0);
+        sim.AdvanceTurn();
+        var rates = economy.Rates(sim, 0);
+        Assert.True(rates.Gold > 0); Assert.Equal(100, rates.Gold + rates.Research);
+        Assert.Equal(0, rates.Culture); Assert.Equal(0, rates.Espionage);
+        var settled = player.Extensions.Get<EconomyPlayerState>(sim.Content)!;
+        Assert.Equal(settled.SettledCommerceHundredths.Gold / 100 - economy.Calculate(sim, 0).Expenses, player.Treasury);
+        Assert.Equal(0, settled.UnpaidGold); Assert.Equal(0, settled.StrikeTurns);
+        Assert.Equal(DiplomaticDealStatus.Active, diplomacy.Deals(sim).Single().Status);
+        Assert.True(economy.Calculate(sim, 0).NetGold >= 0);
+        economy.SetRates(sim, 0, new(rates.Gold - 5, rates.Research + 5, 0, 0));
+        Assert.True(economy.Calculate(sim, 0).NetGold < 0); // One fewer legal slider step cannot fund the payment.
+    }
     [Fact]
     public void Imported_resource_satisfies_building_requirements_in_the_receiving_city()
     {

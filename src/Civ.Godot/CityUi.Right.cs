@@ -12,6 +12,7 @@ internal sealed partial class CityUi
         box.AddChild(Ui.Heading("Production queue"));
         AddQueue(box, city, c);
         AddHurry(box, city, c);
+        AddConscript(box, city, c);
         box.AddChild(Ui.Heading("Add to queue"));
         AddChoices(box, city);
         box.AddChild(Ui.Heading($"Citizens ({c.Citizens})"));
@@ -50,6 +51,15 @@ internal sealed partial class CityUi
             string cost = option.Gold > 0 ? $"{option.Gold} gold" : $"{option.Population} population";
             box.AddChild(Ui.Button($"Hurry: {cost}", () => _session.Hurry(city, id), option.Blocked ?? option.Name, option.Blocked == null, 13));
         }
+    }
+
+    private void AddConscript(VBoxContainer box, City city, CityScreen c)
+    {
+        if (c.Conscript is not { } option) return;
+        string details = $"Minimum population: {option.MinPopulation}. Experience: {option.Experience}. "
+            + $"Draft anger: {option.AngerTurns} turns. Player limit: {option.MaxPlayerDrafts} per turn.";
+        box.AddChild(Ui.Button($"Draft {option.Name}: {option.PopulationCost} population", () => _session.Conscript(city),
+            option.Blocked ?? details, option.Blocked == null, 13));
     }
 
     private void AddChoices(VBoxContainer box, City city)

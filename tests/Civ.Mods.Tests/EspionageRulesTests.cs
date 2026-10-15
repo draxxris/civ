@@ -27,16 +27,27 @@ public sealed class EspionageRulesTests
         economy.SetRates(sim, 0, new(0, 0, 0, 100));
         Assert.Equal(1, Spies(sim).Weight(sim, 0, 1));
         Assert.Contains("known", P6RulesScenario.Reject(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 }));
-        long generated = economy.Calculate(sim, 0).CommerceHundredths.Espionage;
+        ulong beforeForecast = sim.ComputeHash();
+        var forecast = economy.Calculate(sim, 0);
+        Assert.Equal(beforeForecast, sim.ComputeHash());
+        long generated = forecast.CommerceHundredths.Espionage;
+        Assert.Equal(generated / 100, Assert.Single(forecast.Ledger.Lines, l => l.Source == "economy:espionage_target:1").Amount);
+        Assert.DoesNotContain(forecast.Ledger.Lines, l => l.Source == "economy:espionage_target:2");
         Assert.True(generated > 0);
         sim.AdvanceTurn();
         Assert.Equal(generated / 100, Spies(sim).Points(sim, 0, 1)); Assert.Equal(0, Spies(sim).Points(sim, 0, 2));
+        var settled = sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!;
+        Assert.Equal(0, settled.EspionageHundredths);
+        Assert.Equal(generated, settled.SettledCommerceHundredths.Espionage);
         P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 2);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
         long previous = Spies(sim).Points(sim, 0, 1);
         generated = economy.Calculate(sim, 0).CommerceHundredths.Espionage + sim.State.PlayerById(0).Extensions.Get<EspionagePlayerState>(sim.Content)!.RemainderHundredths;
+        var allocations = economy.Calculate(sim, 0).Ledger.Lines.Where(l => l.Key == "economy:espionage_spending").ToDictionary(l => l.Source, l => l.Amount);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Equal(allocations["economy:espionage_target:1"], Spies(sim).Points(sim, 0, 1) - previous);
+        Assert.Equal(allocations["economy:espionage_target:2"], Spies(sim).Points(sim, 0, 2));
         long points = generated / 100;
         Assert.Equal(points, Spies(sim).Points(sim, 0, 1) - previous + Spies(sim).Points(sim, 0, 2));
         // The larger fractional remainder gets the indivisible point; ties go to the lower team id.

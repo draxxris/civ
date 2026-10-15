@@ -75,20 +75,47 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         city.Population -= result.Population;
         if (result.Population > 0) sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, cityId);
         city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + result.Production };
+        EconomyData.Edit(sim, city.Owner).HurriedCount++;
         if (!sim.Content.Get<HurryDef>(hurry).Anger) return;
         var state = city.Extensions.Get<EconomyCityState>(sim.Content) ?? new();
-        state.HurryAngerTurns += AngerLength(sim);
+        state.HurryAngerTurns += AngerLength(sim, city);
         city.Extensions.Set(sim.Content, state);
     }
-    private static int AngerLength(Simulation sim) => Math.Max(1, EconomyData.Rules(sim).Values.HurryAngerDivisor * EconomyData.Speed(sim).HurryConscriptAngerPercent / 100);
+    internal static int AngerLength(Simulation sim, City city)
+    {
+        long anger = EconomyData.Rules(sim).Values.HurryAngerDivisor;
+        anger = anger * EconomyData.Speed(sim).HurryConscriptAngerPercent / 100;
+        long mod = HurryAngerModifier(sim, city);
+        anger = anger * Math.Max(0, 100 + mod) / 100;
+        return (int)Math.Max(1, anger);
+    }
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         int turns = city.Extensions.Get<EconomyCityState>(context.Sim.Content)?.HurryAngerTurns ?? 0;
-        int length = AngerLength(context.Sim);
+        int length = AngerLength(context.Sim, city);
         int anger = (turns + length - 1) / length * EconomyData.Rules(context.Sim).Values.HurryPopulationAnger;
         sink.Add("economy:hurry", "cities:unhappiness", anger);
     }
+    internal static void BuildingCompleted(Simulation sim, BuildingCompleted completed)
+    {
+        var building = sim.Content.Get<BuildingDef>(completed.Building);
+        if (building.HurryAngerModifier == 0 || sim.State.FindCity(completed.City) is not { } city) return;
+        var state = city.Extensions.Get<EconomyCityState>(sim.Content);
+        if (state is not { HurryAngerTurns: > 0 }) return;
+
+        long newMod = HurryAngerModifier(sim, city);
+        long oldMod = newMod - building.HurryAngerModifier;
+        long oldFactor = Math.Max(1, 100 + oldMod);
+        long newFactor = Math.Max(0, 100 + newMod);
+        state.HurryAngerTurns = (int)Math.Clamp((long)state.HurryAngerTurns * newFactor / oldFactor, 0, int.MaxValue);
+    }
+    private static long HurryAngerModifier(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
+        .Select(sim.Content.Get<BuildingDef>)
+        .Where(b => (b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
+            && (!b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements,
+                new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success))
+        .Sum(b => (long)b.HurryAngerModifier);
     internal static void DecayAnger(Simulation sim, int player)
     {
         foreach (var city in EconomyData.Cities(sim, player))

@@ -154,4 +154,6 @@ public sealed partial class GameSession
     }
 
     public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = Human, CityId = city.Id, HurryId = hurryId });
+
+    public bool Conscript(City city) => Submit(new ConscriptCityCommand { Player = Human, CityId = city.Id });
 }
