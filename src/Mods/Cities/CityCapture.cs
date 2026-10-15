@@ -12,6 +12,7 @@ internal sealed class CityCapture : ICityCaptureService
         var city = sim.State.CityById(cityId);
         if (!sim.TeamOf(player).Wars.Contains(sim.TeamOf(city.Owner).Id)) throw new InvalidOperationException("Capture requires war");
         var state = CityData.Edit(sim, city);
+        state.OriginalCivilization ??= sim.State.PlayerById(city.Owner).Civilization;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
         long culture = state.CultureHundredths.GetValueOrDefault(player);
         state.CultureRemainder = culture % 100; state.LastCultureRateHundredths = 0;

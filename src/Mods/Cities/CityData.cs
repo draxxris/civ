@@ -30,6 +30,17 @@ internal static class CityData
     }
     internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(city.Owner)));
     internal static TileId Tile(Simulation sim, City city) => sim.State.Grid.TileAt(city.Position);
+    internal static IEnumerable<Player> LivingPlayers(Simulation sim)
+    {
+        var owners = sim.State.Cities.Select(c => c.Owner).Concat(sim.State.Units.Select(u => u.Owner)).ToHashSet();
+        return sim.State.Players.Where(p => owners.Contains(p.Id));
+    }
+    internal static int OwnerCulturePercent(Simulation sim, City city)
+    {
+        var plot = sim.State.PlotAt(city.Position);
+        long total = plot.Culture.Values.Sum();
+        return total > 0 ? (int)(plot.Culture.GetValueOrDefault(city.Owner) * 100 / total) : 100;
+    }
     internal static bool Coastal(Simulation sim, City city, int minimum = 0) => Coastal(sim, Tile(sim, city), minimum);
     internal static bool Coastal(Simulation sim, TileId tile, int minimum = 0)
     {

@@ -31,6 +31,8 @@ public interface ICityCultureService
     void AddCulture(Simulation sim, int city, long culture, int spreadTurns);
     int LevelIndex(Simulation sim, int city);
     Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int city);
+    int OwnerCulturePercent(Simulation sim, int city);
+    int TeamCulturePercent(Simulation sim, int city);
 }
 public interface ICityWorkService
 {
@@ -78,6 +80,7 @@ public sealed class CityRuleState
     public bool ManualWork { get; set; }
     public bool AvoidGrowth { get; set; }
     public bool Disorder { get; set; }
+    public string? OriginalCivilization { get; set; }
     public long CultureRemainder { get; set; }
     public long LastCultureRateHundredths { get; set; }
     public SortedDictionary<int, long> CultureHundredths { get; set; } = new();
