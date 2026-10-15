@@ -5,6 +5,22 @@ namespace Civ.Client.Terrain;
 /// <summary>Every terrain height tunable in one place. Heights are world units; hexes have outer radius 1.</summary>
 public sealed record TerrainTuning
 {
+    /// <summary>A copy with the named properties replaced (names are case-insensitive), for debug sweeps and A/B captures.
+    /// Throws with the list of valid names for an unknown or non-numeric property.</summary>
+    public TerrainTuning WithOverrides(IEnumerable<KeyValuePair<string, double>> overrides)
+    {
+        var clone = this with { };
+        var properties = typeof(TerrainTuning).GetProperties()
+            .Where(p => p.CanWrite && (p.PropertyType == typeof(double) || p.PropertyType == typeof(int))).ToArray();
+        foreach (var (name, value) in overrides)
+        {
+            var property = properties.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                ?? throw new ArgumentException($"Unknown tuning '{name}'. Valid: {string.Join(", ", properties.Select(p => p.Name))}.");
+            property.SetValue(clone, property.PropertyType == typeof(int) ? (object)(int)Math.Round(value) : value);
+        }
+        return clone;
+    }
+
     /// <summary>Maximum domain-warp offset per axis applied before blending (organic tile borders).</summary>
     public double WarpAmplitude { get; init; } = 0.3;
     /// <summary>Warp noise frequency, cells per world unit.</summary>

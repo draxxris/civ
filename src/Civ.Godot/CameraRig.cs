@@ -5,7 +5,9 @@ namespace Civ.Client;
 /// <summary>Tilted strategy camera over the map. The focus wraps east-west on a cylinder map and is clamped at the poles.</summary>
 internal sealed partial class CameraRig : Camera3D
 {
-    private const float Pitch = 62f, MinDistance = 6f, MaxDistance = 44f;
+    private const float MinDistance = 6f, MaxDistance = 44f;
+
+    private float _pitch = 62f, _yaw;
 
     private readonly float _period;
     private readonly float _depth;
@@ -23,13 +25,22 @@ internal sealed partial class CameraRig : Camera3D
 
     public void FocusOn(Vector3 world) { Focus = world; Clamp(); Apply(); }
 
+    /// <summary>Capture aid: set the camera pitch and yaw (degrees; yaw 0 looks north) and distance outside the player's zoom limits.</summary>
+    public void SetView(float? pitch, float? yaw, float? distance)
+    {
+        if (pitch is { } p) _pitch = Mathf.Clamp(p, 5f, 89f);
+        if (yaw is { } y) _yaw = y;
+        if (distance is { } d) _distance = Mathf.Clamp(d, 1f, 120f);
+        Apply();
+    }
+
     public void Zoom(float delta) { _distance = Mathf.Clamp(_distance + delta, MinDistance, MaxDistance); Apply(); }
 
     /// <summary>Pan by a mouse drag measured in screen pixels.</summary>
     public void Drag(Vector2 pixels)
     {
         float perPixel = 2f * _distance * Mathf.Tan(Mathf.DegToRad(Fov / 2)) / GetViewport().GetVisibleRect().Size.Y;
-        Focus += new Vector3(-pixels.X * perPixel, 0, -pixels.Y * perPixel / Mathf.Sin(Mathf.DegToRad(Pitch)));
+        Focus += new Vector3(-pixels.X * perPixel, 0, -pixels.Y * perPixel / Mathf.Sin(Mathf.DegToRad(_pitch)));
         Clamp(); Apply();
     }
 
@@ -60,8 +71,9 @@ internal sealed partial class CameraRig : Camera3D
 
     private void Apply()
     {
-        float rad = Mathf.DegToRad(Pitch);
-        Position = Focus + new Vector3(0, _distance * Mathf.Sin(rad), _distance * Mathf.Cos(rad));
+        float rad = Mathf.DegToRad(_pitch), yaw = Mathf.DegToRad(_yaw);
+        float flat = _distance * Mathf.Cos(rad);
+        Position = Focus + new Vector3(flat * Mathf.Sin(yaw), _distance * Mathf.Sin(rad), flat * Mathf.Cos(yaw));
         LookAt(Focus, Vector3.Up);
     }
 
