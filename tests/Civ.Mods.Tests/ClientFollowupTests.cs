@@ -164,7 +164,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Empty(pedia.Search("Units", "zzzz-no-such-article"));
         var tech = pedia.Search("Technologies").First(e => e.Cost > 0);
         Assert.False(string.IsNullOrEmpty(tech.Title));
-        Assert.True(pedia.Search("Buildings").Any(e => e.Cost > 0));
+        Assert.Contains(pedia.Search("Buildings"), e => e.Cost > 0);
         // Cross-category search must list matches in title order.
         var everywhere = pedia.Search(query: "a");
         Assert.True(everywhere.Select(e => e.Category).Distinct().Count() > 1);
@@ -244,6 +244,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new TileId(tile)) };
         sim.State.AddUnit(unit);
         sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
         return unit;
     }
 

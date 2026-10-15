@@ -229,6 +229,7 @@ public sealed class BuildingDef : GameContentDef
     public int TeamsPrereq { get; init; } = 0;
     public int TradeRouteModifier { get; init; } = 0;
     public int TradeRoutes { get; init; } = 0;
+    public int TradeMissionModifier { get; init; } = 0;
     public int UnitUpgradePriceModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;
     public int WonderCapacityIncrement { get; init; } = 0;

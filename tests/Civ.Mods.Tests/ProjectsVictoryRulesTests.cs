@@ -50,7 +50,7 @@ public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<L
         pv.CompleteProject(sim, city1.Id, sdi);
         Assert.Contains(pv.ValidateProject(sim, city1.Id, sdi).Failures, f => f.Explanation == "TeamLimitReached");
         Assert.True(pv.ValidateProject(sim, city0.Id, sdi).Success); // the limit is per team
-        Assert.Single(sim.Events.Published.OfType<ProjectCompleted>().Where(e => e.Project == manhattan));
+        Assert.Single(sim.Events.Published.OfType<ProjectCompleted>(), e => e.Project == manhattan);
     }
 
     [Fact]

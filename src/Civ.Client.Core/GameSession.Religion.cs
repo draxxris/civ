@@ -68,6 +68,10 @@ public sealed partial class GameSession
     {
         var service = Religions;
         if (service == null || unit.MovesLeft <= 0) yield break;
+        var inquisition = new PerformInquisitionCommand { Player = Human, Unit = unit.Id };
+        if (inquisition.Validate(Sim) == null)
+            yield return new("inquisition", "Perform inquisition", inquisition, null,
+                $"{service.InquisitionChance(Sim, unit.Id)}% chance");
         foreach (var religion in Sim.Content.Get<Schema.ReligionDef>().All.OrderBy(r => r.Id, StringComparer.Ordinal))
         {
             var spread = new SpreadReligionCommand { Player = Human, Unit = unit.Id, Religion = religion.Id };

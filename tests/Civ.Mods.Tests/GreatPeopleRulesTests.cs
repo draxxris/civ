@@ -159,6 +159,133 @@ public sealed class GreatPeopleRulesTests(LoadedMods mods) : IClassFixture<Loade
         Assert.Equal(teammateBefore * 2, gp.Threshold(sim, 1));
     }
 
+    [Fact]
+    public void Attaching_a_general_splits_stack_experience_without_raising_levels_and_survives_reload()
+    {
+        var sim = Scenario();
+        var general = Unit(sim, "gp_probe:general");
+        var first = Unit(sim, "military:warrior");
+        var second = Unit(sim, "military:warrior");
+        Service<IUnitService>(sim).Initialize(sim, first.Id); Service<IUnitService>(sim).Initialize(sim, second.Id);
+        first.Experience = 2;
+        Assert.NotNull(Service<IUnitService>(sim).Validate(sim, 0, first.Id, UnitAction.Promote, "gp_probe:leader_skill"));
+        first.Experience = 0;
+        Apply(sim, new LeadGreatPersonCommand { Player = 0, UnitId = general.Id, Target = first.Id.ToString() });
+        Assert.Null(sim.State.FindUnit(general.Id));
+        Assert.Equal(11, first.Experience + second.Experience);
+        Assert.Equal(first.Experience, second.Experience + 1);
+        Assert.Equal(1, first.Extensions.Get<MilitaryUnitState>(sim.Content)!.Level);
+        Assert.Contains("military:leader", first.Promotions);
+        Assert.Null(Service<IUnitService>(sim).Validate(sim, 0, first.Id, UnitAction.Promote, "gp_probe:leader_skill"));
+        Assert.NotNull(Service<IUnitService>(sim).Validate(sim, 0, second.Id, UnitAction.Promote, "gp_probe:leader_skill"));
+        Apply(sim, new PromoteMilitaryUnitCommand { Player = 0, Unit = first.Id, Promotion = "gp_probe:leader_skill" });
+        Assert.Contains("gp_probe:leader_skill", first.Promotions);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.Equal("gp_probe:general", loaded.State.UnitById(first.Id).Extensions.Get<MilitaryUnitState>(loaded.Content)!.AttachedLeaderUnitType);
+        Assert.DoesNotContain(Service<IGreatPeopleService>(loaded).AvailableActions(loaded, 0, Unit(loaded, "gp_probe:general").Id),
+            a => a.Command == "great_people:lead_unit" && a.Target == first.Id.ToString());
+    }
+    [Fact]
+    public void Special_construction_and_foreign_trade_consume_the_person_and_apply_the_preview()
+    {
+        var sim = Scenario(); var city = sim.State.Cities[0];
+        var builder = Unit(sim, "gp_probe:builder");
+        Apply(sim, new ConstructGreatPersonCommand { Player = 0, UnitId = builder.Id, Target = "gp_probe:monument" });
+        Assert.Contains("gp_probe:monument", city.Buildings);
+        Assert.Null(sim.State.FindUnit(builder.Id));
+        var foreign = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new TileId(40)) };
+        sim.State.AddCity(foreign);
+        var merchant = Unit(sim, "gp_probe:merchant");
+        Assert.DoesNotContain(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Command == "great_people:trade_mission");
+        sim.State.MoveUnit(merchant.Id, foreign.Position);
+        long before = sim.State.PlayerById(0).Treasury;
+        Apply(sim, new TradeGreatPersonCommand { Player = 0, UnitId = merchant.Id });
+        Assert.Equal(before + 100 * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).UnitTradePercent / 100, sim.State.PlayerById(0).Treasury);
+        Assert.Null(sim.State.FindUnit(merchant.Id));
+    }
+
+    [Fact]
+    public void Combat_earns_generals_and_repeated_births_raise_personal_and_team_thresholds()
+    {
+        var sim = Scenario(); var best = sim.State.Cities[0]; best.Population = 100;
+        var poor = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(70)), Population = 1 };
+        sim.State.AddCity(poor);
+        // Same team, but separate ownership: the teammate must share the threshold increase, not the unit.
+        var original = sim.State.Players[1]; sim.State.Teams[1].Members.Clear();
+        sim.State.Players[1] = new Player { Id = 1, TeamId = 0, Civilization = original.Civilization };
+        sim.TeamOf(0).Members.Add(1); sim.State.RebuildIndexes();
+        var enemy = new Player { Id = 2, TeamId = 2, Civilization = original.Civilization };
+        sim.State.Players.Add(enemy); sim.State.Teams.Add(new Team { Id = 2, Members = [2] }); sim.State.RebuildIndexes();
+        sim.State.SetWar(0, 2, true);
+        var gp = Service<IGreatPeopleService>(sim); long firstThreshold = gp.GeneralThreshold(sim, 0);
+        long teammateThreshold = gp.GeneralThreshold(sim, 1);
+        var playerState = new MilitaryPlayerState(); sim.State.PlayerById(0).Extensions.Set(sim.Content, playerState);
+        for (int birth = 1; birth <= 2; birth++)
+        {
+            long threshold = gp.GeneralThreshold(sim, 0);
+            playerState.GeneralPoints = threshold - 1;
+            var attacker = Unit(sim, "military:javelineer");
+            Service<IUnitService>(sim).Initialize(sim, attacker.Id);
+            var defender = Unit(sim, "military:warrior", 2);
+            sim.State.MoveUnit(defender.Id, best.Position.Neighbor(0)); defender.Health = 1;
+            Service<IVisibilityService>(sim).Recompute(sim);
+            var preview = Service<ICombatService>(sim).Preview(sim, attacker.Id, defender.Id);
+            while (true)
+            {
+                var (w, x, y, z) = sim.Rng.State;
+                if (DeterministicRng.Restore(w, x, y, z).Next(preview.DieSides) >= preview.DefenderRoundOdds) break;
+                sim.Rng.NextUInt64();
+            }
+            var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+            Service<ICombatService>(sim).Resolve(sim, attacker.Id, defender.Id);
+            Service<ICombatService>(loaded).Resolve(loaded, attacker.Id, defender.Id);
+            var born = sim.Events.Published.OfType<GreatGeneralBorn>().Last();
+            Assert.Equal(0, born.Player); Assert.Equal(best.Id, born.City);
+            Assert.Equal(best.Position, sim.State.UnitById(born.Unit).Position);
+            Assert.True(sim.Content.Get<S.UnitDef>(born.UnitType).GreatGeneral);
+            Assert.Equal(birth, playerState.GreatGeneralsCreated);
+            Assert.True(gp.GeneralProgress(sim, 0) < gp.GeneralThreshold(sim, 0));
+            Assert.True(gp.GeneralThreshold(sim, 0) > threshold);
+            Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        }
+        Assert.Equal(2, sim.Events.Published.OfType<GreatGeneralBorn>().Count());
+        Assert.True(gp.GeneralThreshold(sim, 0) > firstThreshold); Assert.True(gp.GeneralThreshold(sim, 1) > teammateThreshold);
+    }
+
+    [Theory]
+    [InlineData("military:scientist", "cities:academy")]
+    [InlineData("military:great_general", "cities:military_academy")]
+    public void Special_buildings_are_constructed_by_their_real_great_person(string type, string building)
+    {
+        var sim = Scenario(); sim.TeamOf(0).Techs.Add("research:military_tradition");
+        var person = Unit(sim, type); var city = sim.State.Cities[0];
+        Apply(sim, new ConstructGreatPersonCommand { Player = 0, UnitId = person.Id, Target = building });
+        Assert.Contains(building, city.Buildings); Assert.Null(sim.State.FindUnit(person.Id));
+        Assert.Contains(sim.Events.Published.OfType<BuildingCompleted>(), e => e.City == city.Id && e.Building == building);
+    }
+
+    [Fact]
+    public void Merchant_crosses_closed_peaceful_borders_and_earns_distance_trade_profit()
+    {
+        var sim = Scenario(); sim.State.Cities[0].Buildings.Add("cities:palace");
+        var foreign = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Cities[0].Position.Neighbor(0), Population = 12 };
+        sim.State.AddCity(foreign); sim.State.PlotAt(foreign.Position).Owner = 1;
+        var merchant = Unit(sim, "military:merchant"); Service<IUnitService>(sim).Initialize(sim, merchant.Id);
+        var soldier = Unit(sim, "military:warrior"); Service<IUnitService>(sim).Initialize(sim, soldier.Id);
+        Assert.Empty(sim.Content.Services.Get<IDiplomacyService>()); // No agreement service: ordinary units still need border permission.
+        var move = new MoveUnitPathCommand { Player = 0, Unit = merchant.Id, Path = [foreign.Position] };
+        Assert.False(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = soldier.Id, Path = [foreign.Position] }, out _));
+        Apply(sim, move);
+        var action = Assert.Single(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Command == "great_people:trade_mission");
+        Assert.True(action.Amount > sim.Content.Get<S.UnitDef>(merchant.Type).BaseTrade);
+        long before = sim.State.PlayerById(0).Treasury;
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var trade = new TradeGreatPersonCommand { Player = 0, UnitId = merchant.Id };
+        Apply(sim, trade); Apply(loaded, trade);
+        Assert.Equal(before + action.Amount, sim.State.PlayerById(0).Treasury); Assert.Null(sim.State.FindUnit(merchant.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
     private sealed class Probe : IMod
     {
         public void Register(IModContext context)
@@ -166,6 +293,11 @@ public sealed class GreatPeopleRulesTests(LoadedMods mods) : IClassFixture<Loade
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:sage", DefaultUnit = "gp_probe:sage", GoldenAge = true, BaseDiscover = 10000, BaseHurry = 10000, GreatWorkCulture = 1000,
                 GreatPeoples = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:settled_sage", true), Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
             context.Content<S.SpecialistDef>().Register(new() { Id = "gp_probe:settled_sage", Commerces = new(0, 6, 0, 0), GreatPeopleRateChange = 2, GreatPersonUnit = "gp_probe:sage" });
+            context.Content<S.PromotionDef>().Register(new() { Id = "gp_probe:leader_skill", Leader = true,
+                CombatTypes = ImmutableDictionary<string, bool>.Empty.Add("military:unitcombat_melee", true) });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:general", DefaultUnit = "gp_probe:general", GreatGeneral = true, LeaderExperience = 11, LeaderPromotion = "military:leader" });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:builder", DefaultUnit = "gp_probe:builder", ForceBuildings = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:monument", true) });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:merchant", DefaultUnit = "gp_probe:merchant", BaseTrade = 100 });
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:engineer", DefaultUnit = "gp_probe:engineer", GoldenAge = true });
             context.Content<S.TechDef>().Register(new() { Id = "gp_probe:insight", Cost = 10, Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
             context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:academy", DefaultBuilding = "gp_probe:academy", GreatPersonUnit = "gp_probe:sage", GreatPeopleRateChange = 80 });

@@ -1,5 +1,6 @@
 using Civ.Content;
 using Civ.Game;
+using Civ.Modding;
 using Xunit;
 using S = Civ.Content.Schema;
 
@@ -43,6 +44,216 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var unit = Missionary(sim, city, city.Owner, type);
         Assert.True(sim.TryApply(new SpreadReligionCommand { Player = city.Owner, Unit = unit.Id, Religion = religion }, out var error), error);
     }
+    private static void Presence(Simulation sim, City city, params string[] religions) =>
+        city.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(religions, StringComparer.Ordinal) });
+
+    private static void StateFaith(Simulation sim, int player, string? faith = Buddhism)
+    {
+        sim.State.PlayerById(player).Civics["government:civicoption_religion"] = "government:intolerant";
+        sim.State.PlayerById(player).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = faith });
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Foreign_spread_requires_contact_and_peace_and_scales_with_existing_faiths(bool multiple)
+    {
+        var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
+        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, multiple) };
+        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured).Append(diplomacy)));
+        GameFactory.NeutralPolitics(sim);
+        var holy = City(sim, 0); var foreign = City(sim, 1, 1);
+        foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); plot.Route = "world:route_route_road"; }
+        LearnFoundingTech(sim, 0);
+        holy.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
+        sim.State.Turn = 101;
+        var religion = Service<IReligionService>(sim);
+        Assert.True(Service<ICityConnectionService>(sim).Connected(sim, holy.Id, foreign.Id));
+        Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        Service<IDiplomacyService>(sim).SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
+        Assert.Contains(Service<ITradeRouteService>(sim).Calculate(sim, foreign.Id).Routes, r => r.PartnerCity == holy.Id && r.Foreign);
+        Assert.Equal(10, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Presence(sim, foreign, "religion:hinduism");
+        Assert.Equal(multiple ? 5 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Presence(sim, foreign, "religion:hinduism", "religion:christianity");
+        Assert.Equal(multiple ? 3 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Presence(sim, foreign);
+        sim.State.SetWar(0, 1, true);
+        Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        sim.State.SetWar(0, 1, false);
+        Service<IDiplomacyService>(sim).SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
+        if (multiple) Presence(sim, foreign, "religion:hinduism");
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        for (int i = 0; i < 2200 && !religion.Present(sim, foreign.Id).Contains(Buddhism); i++)
+        {
+            sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(sim);
+            loaded.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(loaded);
+        }
+        Assert.Contains(Buddhism, religion.Present(sim, foreign.Id));
+        if (multiple) Assert.Contains("religion:hinduism", religion.Present(sim, foreign.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    private sealed class SpreadOptions(IMod foundation, bool multiple) : IMod
+    {
+        public void Register(IModContext context)
+        {
+            foundation.Register(context);
+            // The default catalog does not declare this opt-in option. Exercise a configured ruleset.
+            context.Content<S.GameOptionDef>().Register(new() { Id = "foundation:gameoption_multiple_religion_spread", Default = multiple });
+            var rules = context.Content<S.RuleConstantsDef>().All.Single();
+            context.Content<S.RuleConstantsDef>().Override(new() { Id = rules.Id, Values = rules.Values, Raw = rules.Raw.SetItem("INITIAL_TRADE_ROUTES", "1").SetItem("MAX_TRADE_ROUTES", "2") });
+        }
+    }
+
+    [Fact]
+    public void Minority_decay_removes_prerequisite_buildings_but_preserves_state_faith_and_holy_cities()
+    {
+        var sim = Scenario(); var city = City(sim, 39); var holy = City(sim, 44, 1);
+        const string minority = "religion:hinduism";
+        Presence(sim, city, Buddhism, minority); Presence(sim, holy, minority);
+        StateFaith(sim, 0);
+        var founded = new ReligionGameState();
+        founded.Founded[minority] = new(holy.Id, 0); sim.State.Extensions.Set(sim.Content, founded);
+        var religion = Service<IReligionService>(sim);
+        int young = religion.DecayChancePermille(sim, city.Id, minority);
+        sim.State.Turn = 101;
+        int mature = religion.DecayChancePermille(sim, city.Id, minority);
+        sim.State.Turn = 400;
+        Assert.True(religion.DecayChancePermille(sim, city.Id, minority) > mature);
+        Assert.True(mature > young);
+        sim.State.Turn = 101;
+        city.Buildings.Add("cities:hindu_temple");
+        Assert.True(religion.DecayChancePermille(sim, city.Id, minority) < mature);
+        city.Buildings.AddRange(["cities:hindu_monastery", "cities:buddhist_temple", "cities:granary"]);
+        Assert.Equal(0, religion.DecayChancePermille(sim, city.Id, Buddhism));
+        Assert.Equal(0, religion.DecayChancePermille(sim, holy.Id, minority));
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        for (int i = 0; i < 2000 && religion.Present(sim, city.Id).Contains(minority); i++)
+        {
+            sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(sim);
+            loaded.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(loaded);
+        }
+        Assert.DoesNotContain(minority, religion.Present(sim, city.Id));
+        Assert.Contains(Buddhism, religion.Present(sim, city.Id));
+        Assert.Contains(minority, religion.Present(sim, holy.Id));
+        Assert.DoesNotContain("cities:hindu_temple", city.Buildings);
+        Assert.DoesNotContain("cities:hindu_monastery", city.Buildings);
+        Assert.Contains("cities:buddhist_temple", city.Buildings); Assert.Contains("cities:granary", city.Buildings);
+        Assert.Contains(sim.Events.Published.OfType<ReligionRemoved>(), e => e.City == city.Id && e.Religion == minority && e.Reason == "decay");
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(true, false, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, true, true)]
+    public void Inquisitor_training_and_actions_require_state_faith_permission_and_no_prohibition(bool state, bool allow, bool disallow)
+    {
+        var sim = Scenario(); var city = City(sim, 39); Presence(sim, city, Buddhism, "religion:hinduism");
+        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Select(t => t.Id));
+        StateFaith(sim, 0, state ? Buddhism : null);
+        if (!allow) sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        if (disallow) sim.State.PlayerById(0).Civics["government:civicoption_society"] = "government:liberal";
+        bool enabled = state && allow && !disallow;
+        Assert.Equal(enabled, Service<IReligionService>(sim).IsInquisitionEnabled(sim, 0));
+        var result = Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:unit", "military:inquisitor");
+        Assert.Equal(enabled, result.Success);
+        var unit = Missionary(sim, city, type: "military:inquisitor");
+        var command = new PerformInquisitionCommand { Player = 0, Unit = unit.Id };
+        Assert.Equal(enabled, command.Validate(sim) is null);
+        if (!enabled)
+        {
+            ulong hash = sim.ComputeHash(); Assert.False(sim.TryApply(command, out _)); Assert.Equal(hash, sim.ComputeHash());
+        }
+    }
+
+    private (Simulation Sim, City City, City Refuge, Unit Inquisitor) InquisitionScenario(bool holy, bool relocate, bool revolution)
+    {
+        var optional = (revolution ? new[] { "Diplomacy", "Revolution" } : ["Diplomacy"]).Select(name =>
+            ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Concat(optional)));
+        foreach (var player in sim.State.Players) player.Civics.Clear(); // Keep personalities for diplomatic memory effects.
+        var city = City(sim, 39); var refuge = City(sim, 44, 1);
+        const string minority = "religion:hinduism";
+        Presence(sim, city, Buddhism, minority); StateFaith(sim, 0); StateFaith(sim, 1, minority);
+        if (relocate) Presence(sim, refuge, minority);
+        var game = new ReligionGameState(); game.Founded[minority] = new(holy ? city.Id : refuge.Id, 0);
+        sim.State.Extensions.Set(sim.Content, game);
+        city.Buildings.AddRange(["cities:hindu_temple", "cities:hindu_monastery", "cities:buddhist_temple", "cities:granary"]);
+        if (revolution) city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 10000 });
+        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1); sim.State.PlotAt(city.Position).Revealed.Add(1);
+        return (sim, city, refuge, Missionary(sim, city, type: "military:inquisitor"));
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, false, true)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, true)]
+    public void Inquisition_purges_buildings_relocates_holy_city_and_records_compensation_and_memory(bool holy, bool relocate, bool revolution)
+    {
+        var (sim, city, refuge, inquisitor) = InquisitionScenario(holy, relocate, revolution);
+        const string minority = "religion:hinduism";
+        long treasury = sim.State.PlayerById(0).Treasury;
+        var religion = Service<IReligionService>(sim);
+        Assert.Equal(holy ? 40 : 90, religion.InquisitionChance(sim, inquisitor.Id));
+        city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Add("religion:christianity");
+        Assert.Equal(holy ? 35 : 85, religion.InquisitionChance(sim, inquisitor.Id));
+        city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Remove("religion:christianity");
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) < religion.InquisitionChance(sim, inquisitor.Id)) break;
+            sim.Rng.NextUInt64();
+        }
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id };
+        Assert.True(sim.TryApply(command, out var error), error); Assert.True(loaded.TryApply(command, out error), error);
+        var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
+        Assert.True(attempt.Success); Assert.Equal([minority], attempt.RemovedReligions); Assert.True(attempt.CompensationGold > 0);
+        Assert.Equal([Buddhism], religion.Present(sim, city.Id));
+        Assert.DoesNotContain("cities:hindu_temple", city.Buildings); Assert.DoesNotContain("cities:hindu_monastery", city.Buildings);
+        Assert.Contains("cities:buddhist_temple", city.Buildings); Assert.Contains("cities:granary", city.Buildings);
+        if (revolution) Assert.Equal(10000 - attempt.CompensationGold, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
+        else Assert.Equal(treasury + attempt.CompensationGold, sim.State.PlayerById(0).Treasury);
+        Assert.True(city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns > 0);
+        Assert.Contains(Service<IDiplomacyService>(sim).GetAttitude(sim, 1, 0).Ledger.Lines, l => l.Source.Contains("memory_inquisition") && l.Amount < 0);
+        int? destination = holy && !relocate ? null : refuge.Id;
+        Assert.Equal(destination ?? -1, sim.State.Extensions.Get<ReligionGameState>(sim.Content)!.Founded[minority].HolyCity);
+        Assert.Equal(destination, religion.HolyCity(sim, minority));
+        Assert.Null(sim.State.FindUnit(inquisitor.Id)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Failed_inquisition_consumes_the_inquisitor_and_adds_anger_without_purging_or_compensation()
+    {
+        var sim = Scenario(); var city = City(sim, 39); StateFaith(sim, 0);
+        Presence(sim, city, Buddhism, "religion:hinduism"); city.Buildings.Add("cities:hindu_temple");
+        var inquisitor = Missionary(sim, city, type: "military:inquisitor");
+        var religion = Service<IReligionService>(sim);
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) >= religion.InquisitionChance(sim, inquisitor.Id)) break;
+            sim.Rng.NextUInt64();
+        }
+        long gold = sim.State.PlayerById(0).Treasury;
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id };
+        Assert.True(sim.TryApply(command, out var error), error); Assert.True(loaded.TryApply(command, out error), error);
+        var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
+        Assert.False(attempt.Success); Assert.Empty(attempt.RemovedReligions); Assert.Equal(0, attempt.CompensationGold);
+        Assert.Equal(gold, sim.State.PlayerById(0).Treasury); Assert.Contains("religion:hinduism", religion.Present(sim, city.Id));
+        Assert.Contains("cities:hindu_temple", city.Buildings); Assert.Null(sim.State.FindUnit(inquisitor.Id));
+        Assert.True(city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns > 0);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
     [Theory]
     [InlineData(Buddhism, 0)]
     [InlineData("religion:christianity", 1)]

@@ -14,8 +14,53 @@ internal sealed class BarbarianSpawns : ITurnSystem
         int player = EnsurePlayer(sim);
         ShareTechnologies(sim, player);
         foreach (var area in sim.State.Grid.Tiles.GroupBy(t => sim.State.Plots[t.Value].AreaId).OrderBy(g => g.Key)) SpawnArea(sim, player, area.ToArray());
+        SpawnWater(sim, player);
         MilitaryData.Sight(sim);
     }
+    private static void SpawnWater(Simulation sim, int player)
+    {
+        var candidates = sim.State.Grid.Tiles.Where(t => WaterSpawnPlot(sim, t)).ToList();
+        int divisor = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).UnownedWaterTilesPerBarbarianUnit;
+        if (divisor <= 0) divisor = 40;
+        int existing = sim.State.Units.Count(u => u.Owner == player && u.Health > 0
+            && MilitaryData.Definition(sim, u).Domain == "military:domain_sea");
+        int needed = candidates.Count / Math.Max(1, divisor * 3) - existing;
+        if (needed <= 0) return;
+        var best = NavalUnit(sim);
+        if (best is null) return;
+        for (int i = 0; i < needed && candidates.Count > 0; i++)
+        {
+            int index = sim.Rng.Next(candidates.Count);
+            var tile = candidates[index]; candidates.RemoveAt(index);
+            MilitaryData.Spawn(sim, player, best.Id, sim.State.Grid.HexOf(tile));
+        }
+    }
+    private static S.UnitDef? NavalUnit(Simulation sim)
+    {
+        var civ = sim.Content.Get<S.CivilizationDef>("peoples:barbarian");
+        var civilians = sim.State.Players.Where(p => !MilitaryData.Player(sim, p.Id).Barbarian).ToArray();
+        return sim.Content.Get<S.UnitDef>().All.Where(u => NavalCandidate(u)
+            && civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id)
+            .Where(u => civilians.Any(p => sim.Content.Requirements.EvaluateKind(u.Requirements, new(sim, p.Id), "tech").Success))
+            .OrderByDescending(u => u.Strength).ThenBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
+    }
+    private static bool NavalCandidate(S.UnitDef unit) => unit.Domain == "military:domain_sea" && unit.Strength > 0
+        && unit.Cost >= 0 && !unit.Animal && !unit.OnlyDefensive;
+
+    private static bool WaterSpawnPlot(Simulation sim, TileId tile)
+    {
+        var plot = sim.State.Plots[tile.Value];
+        var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
+        if (!terrain.IsWater || terrain.Impassable || plot.IsLake || plot.Owner is not null) return false;
+        if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return false;
+        if (plot.Visible.Any(t => sim.State.TeamById(t).Members.Any(p => !MilitaryData.Player(sim, p).Barbarian))) return false;
+        var position = sim.State.Grid.HexOf(tile);
+        if (sim.State.CityAt(position) is not null || sim.State.UnitsAt(position).Any()) return false;
+        return CoastalWater(sim, tile);
+    }
+    internal static bool CoastalWater(Simulation sim, TileId tile) => sim.State.Grid.Neighbors(tile)
+        .Any(n => !sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater);
+
     private static bool Ready(Simulation sim)
     {
         var handicap = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap);
@@ -46,7 +91,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
     private static void SpawnArea(Simulation sim, int player, TileId[] area)
     {
         if (area.Length == 0) return;
-        if (sim.Content.Get<S.TerrainDef>(sim.State.Plots[area[0].Value].Terrain).IsWater) return; // Naval spawning is deferred.
+        if (sim.Content.Get<S.TerrainDef>(sim.State.Plots[area[0].Value].Terrain).IsWater) return; // Water is handled after the land areas.
         int divisor = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).UnownedTilesPerBarbarianUnit;
         if (divisor <= 0) return;
         int existing = sim.State.Units.Count(u => u.Owner == player && sim.State.PlotAt(u.Position).AreaId == sim.State.Plots[area[0].Value].AreaId);
@@ -93,9 +138,55 @@ internal sealed class BarbarianBehavior : ITurnSystem
     {
         foreach (var unit in sim.State.Units.Where(u => MilitaryData.Player(sim, u.Owner).Barbarian).OrderBy(u => u.Id).ToArray()) Act(sim, unit);
     }
+    private static void ActSea(Simulation sim, Unit unit)
+    {
+        var grid = sim.State.Grid;
+        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var from = grid.TileAt(unit.Position);
+        var enemy = grid.Neighbors(from).Where(t => movement.CanEnter(sim, unit.Id, from, t, true) is null)
+            .Where(t => sim.State.UnitsAt(grid.HexOf(t)).Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
+                && MilitaryData.Definition(sim, u).Domain == "military:domain_sea"))
+            .Select(t => (Tile: t, Defender: combat.BestDefender(sim, unit.Id, grid.HexOf(t))))
+            .Where(x => x.Defender is not null)
+            .Select(x => (x.Tile, Odds: combat.Preview(sim, unit.Id, x.Defender!.Value).SuccessOdds))
+            .Where(x => x.Odds >= 500_000).OrderByDescending(x => x.Odds).ThenBy(x => x.Tile.Value).ToArray();
+        if (enemy.Length > 0) { movement.Move(sim, unit.Id, [grid.HexOf(enemy[0].Tile)]); return; }
+        if (PillageFish(sim, unit)) return;
+        var targets = grid.Tiles.Where(t => SeaTarget(sim, unit, t))
+            .OrderBy(t => grid.Distance(from, t)).ThenBy(t => t.Value);
+        foreach (var target in targets)
+            if (Sail(sim, unit, target)) { PillageFish(sim, unit); return; }
+        foreach (var tile in grid.Neighbors(from).Where(t => BarbarianSpawns.CoastalWater(sim, t)).OrderBy(t => t.Value))
+            if (movement.CanEnter(sim, unit.Id, from, tile) is null)
+            { movement.Move(sim, unit.Id, [grid.HexOf(tile)]); return; }
+    }
+    private static bool SeaTarget(Simulation sim, Unit unit, TileId tile)
+    {
+        var plot = sim.State.Plots[tile.Value];
+        if (!plot.Visible.Contains(sim.TeamOf(unit.Owner).Id) || !sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater) return false;
+        if (Fishing(plot) && plot.Owner is { } owner && MilitaryData.Enemy(sim, unit.Owner, owner)) return true;
+        return sim.State.UnitsAt(sim.State.Grid.HexOf(tile)).Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
+            && MilitaryData.Definition(sim, u).Domain == "military:domain_sea");
+    }
+    private static bool Fishing(Plot plot) => plot.Improvement is "world:improvement_improvement_fishing_boats"
+        or "world:improvement_improvement_whaling_boats";
+    private static bool PillageFish(Simulation sim, Unit unit)
+    {
+        if (!Fishing(sim.State.PlotAt(unit.Position))) return false;
+        return sim.TryApply(new PillageCommand { Player = unit.Owner, Unit = unit.Id }, out _);
+    }
+    private static bool Sail(Simulation sim, Unit unit, TileId target)
+    {
+        var path = sim.Content.Services.Get<IPathfindingService>().Single().FindPath(sim, unit.Id, sim.State.Grid.HexOf(target));
+        if (path is null || path.Steps.Count == 0) return false;
+        sim.Content.Services.Get<IMovementService>().Single().Move(sim, unit.Id, path.Steps);
+        return true;
+    }
     private static void Act(Simulation sim, Unit unit)
     {
-        if (unit.MovesLeft <= 0) return;
+        if (unit.Health <= 0 || sim.State.FindUnit(unit.Id) is null || unit.MovesLeft <= 0) return;
+        if (MilitaryData.Definition(sim, unit).Domain == "military:domain_sea") { ActSea(sim, unit); return; }
         var movement = sim.Content.Services.Get<IMovementService>().Single();
         var combat = sim.Content.Services.Get<ICombatService>().Single();
         var from = sim.State.Grid.TileAt(unit.Position);

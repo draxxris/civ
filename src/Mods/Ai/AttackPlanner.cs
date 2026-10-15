@@ -2,73 +2,102 @@ using Civ.Game;
 
 namespace Civ.Mods.Ai;
 
-/// <summary>Offensive operations: gather free soldiers, stage two tiles from the nearest enemy city, then
-/// attack in waves (siege first) while respecting odds thresholds. Stateless: every turn recomputes the same plan.</summary>
+/// <summary>One army per landmass. Gather first, advance at the slowest unit's pace, then prepare and assault.</summary>
 internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
 {
-    private const int AdvanceRange = 3;
+    private readonly CampaignTargets _targets = new(ctx);
 
     public List<Unit> Plan(List<Unit> free, IReadOnlyList<CityView> views)
     {
-        if (free.Count == 0 || TargetCity() is not { } target) return free;
-        int defenders = ctx.Sim.State.UnitsAt(target.Position).Count(u => ctx.IsEnemy(u.Owner));
-        if (free.Count < Math.Max(3, defenders + 2)) return free;
-        var stage = StagingTile(target);
-        int near = free.Count(u => ctx.Grid.Distance(u.Position, target.Position) <= AdvanceRange);
-        foreach (var unit in free.OrderBy(u => ctx.Role(u) == UnitRole.Siege ? 0 : 1).ThenBy(u => u.Id))
+        var remaining = new List<Unit>();
+        foreach (var theater in free.GroupBy(u => _targets.Area(u.Position)).OrderBy(g => g.Key))
         {
-            ctx.Done.Add(unit.Id);
-            if (!ctx.Alive(unit)) continue;
-            Order(unit, target, stage, near * 10 >= free.Count * 6);
+            var force = theater.OrderBy(u => u.Id).ToList();
+            if (_targets.SelectPrimaryTargetCity(theater.Key) is not { } target) { remaining.AddRange(force); continue; }
+            int defenders = ctx.Sim.State.UnitsAt(target.Position).Count(u => ctx.IsEnemy(u.Owner));
+            if (force.Count < Math.Max(3, defenders + 2)) { remaining.AddRange(force); continue; }
+            Campaign(force, target);
         }
-        return [];
+        return remaining;
     }
 
-    private void Order(Unit unit, City target, Hex stage, bool assembled)
+    private void Campaign(List<Unit> force, City target)
     {
-        int distance = ctx.Grid.Distance(unit.Position, target.Position);
-        if (distance <= 1) Engage(unit, target);
-        else if (distance <= AdvanceRange && assembled)
+        var stage = StagingTile(force, target);
+        foreach (var unit in force) ctx.Done.Add(unit.Id);
+        // Units already at the front wait for the rear and for slow siege pieces.
+        if (force.Any(u => ctx.Grid.Distance(u.Position, target.Position) > 2))
         {
-            orders.Approach(unit, target.Position);
-            if (ctx.Alive(unit) && ctx.Grid.Distance(unit.Position, target.Position) <= 1) Engage(unit, target);
+            foreach (var unit in force.Where(u => u.Position != stage)) ctx.MoveToward(unit, stage);
+            Prepare(target.Position);
+            return;
         }
-        else if (unit.Position != stage) ctx.MoveToward(unit, stage);
+        var assault = AssaultTile(force, target);
+        if (assault is null)
+        {
+            foreach (var unit in force.Where(u => u.Position != stage)) ctx.MoveToward(unit, stage);
+            Prepare(target.Position);
+            return;
+        }
+        foreach (var unit in force.Where(u => u.Position != assault.Value)) ctx.MoveToward(unit, assault.Value);
+        Prepare(target.Position);
+        if (force.Any(u => ctx.Role(u) == UnitRole.Melee && u.MovesLeft <= 0)) return;
+        foreach (var unit in force.OrderBy(u => ctx.Role(u) == UnitRole.Siege ? 0 : 1).ThenBy(u => u.Id))
+            Engage(unit, target.Position);
     }
 
-    private void Engage(Unit unit, City target)
+    /// <summary>All legal support fire is resolved before any close combat, including opportunistic stack attacks.</summary>
+    public void Prepare(Hex target)
     {
-        var odds = orders.Odds(unit, target.Position);
-        int threshold = orders.ThresholdFor(unit);
-        if (odds is null || odds >= threshold) orders.Attack(unit, target.Position);
+        var support = ctx.Units.Where(u => ctx.Alive(u) && u.MovesLeft > 0 && ctx.MilitaryState(u).TransportId is null)
+            .OrderBy(u => u.Id).ToArray();
+        foreach (var unit in support.Where(u => ctx.Def(u).BombardRate > 0))
+            Fire(unit, new BombardCityCommand { Player = ctx.PlayerId, Unit = unit.Id, Target = target });
+        foreach (var unit in support.Where(u => ctx.Def(u).BombRange > 0))
+            Fire(unit, new RangedStrikeCommand { Player = ctx.PlayerId, Unit = unit.Id, Target = target });
     }
 
-    /// <summary>Nearest enemy city (any owner at war with us, barbarians included) on a continent we hold a city on.</summary>
-    public City? TargetCity()
+    private void Fire(Unit unit, GameCommand command)
     {
-        var areas = ctx.Cities.Select(c => ctx.Sim.State.PlotAt(c.Position).AreaId).ToHashSet();
-        return ctx.Sim.State.Cities.Where(c => ctx.IsEnemy(c.Owner) && areas.Contains(ctx.Sim.State.PlotAt(c.Position).AreaId))
-            .OrderBy(c => ctx.Cities.Min(own => ctx.Grid.Distance(own.Position, c.Position))).ThenBy(c => c.Id).FirstOrDefault();
+        if (ctx.Issue(command)) ctx.Done.Add(unit.Id);
     }
 
-    /// <summary>Walkable tile on our nearest city's land area, two steps from the target, closest to that city.</summary>
-    private Hex StagingTile(City target)
+    private void Engage(Unit unit, Hex target)
     {
-        int targetArea = ctx.Sim.State.PlotAt(target.Position).AreaId;
-        var home = ctx.Cities.Where(c => ctx.Sim.State.PlotAt(c.Position).AreaId == targetArea)
-            .OrderBy(c => ctx.Grid.Distance(c.Position, target.Position)).ThenBy(c => c.Id).FirstOrDefault()
-            ?? ctx.NearestCity(target.Position)!;
-        // Offshore ring tiles cannot be reached by land from home, so the army stages on the target's landmass.
-        var ring = ctx.Grid.Ring(ctx.Grid.TileAt(target.Position), 2)
-            .Where(t => Walkable(t) && ctx.Sim.State.Plots[t.Value].AreaId == targetArea).ToList();
-        if (ring.Count == 0) return home.Position;
-        return ctx.Grid.HexOf(ring.OrderBy(t => ctx.Grid.Distance(t, ctx.Grid.TileAt(home.Position))).ThenBy(t => t.Value).First());
+        if (!ctx.Alive(unit) || ctx.MilitaryState(unit).Attacked) return;
+        var odds = orders.Odds(unit, target);
+        if (odds is null || odds >= orders.ThresholdFor(unit)) orders.Attack(unit, target);
     }
 
-    private bool Walkable(TileId tile)
+    private Hex? AssaultTile(List<Unit> force, City target)
     {
-        var plot = ctx.Sim.State.Plots[tile.Value];
-        var terrain = ctx.Sim.Content.Get<Civ.Content.Schema.TerrainDef>(plot.Terrain);
-        return !terrain.IsWater && !terrain.Impassable && plot.Kind != PlotKind.Peak;
+        foreach (var tile in ctx.Grid.Neighbors(ctx.Tile(target.Position)).Where(_targets.Land)
+            .OrderBy(t => force.Sum(u => ctx.Grid.Distance(u.Position, ctx.Grid.HexOf(t)))).ThenBy(t => t.Value))
+        {
+            var hex = ctx.Grid.HexOf(tile);
+            if (force.All(u => CanReachThisTurn(u, hex))) return hex;
+        }
+        return null;
+    }
+
+    private bool CanReachThisTurn(Unit unit, Hex hex)
+    {
+        if (unit.Position == hex) return true;
+        var path = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, hex);
+        // A slow unit may finish beside the city; the wave then waits until the next turn.
+        return path is not null && path.Cost <= unit.MovesLeft;
+    }
+
+    private Hex StagingTile(List<Unit> force, City target)
+    {
+        var leader = force[0];
+        foreach (var tile in ctx.Grid.Ring(ctx.Tile(target.Position), 2).Where(_targets.Land)
+            .Where(t => ctx.Sim.State.Plots[t.Value].AreaId == _targets.Area(leader.Position))
+            .OrderBy(t => ctx.Grid.Distance(ctx.Tile(leader.Position), t)).ThenBy(t => t.Value))
+        {
+            var hex = ctx.Grid.HexOf(tile);
+            if (force.All(u => u.Position == hex || ctx.Service<IPathfindingService>().FindPath(ctx.Sim, u.Id, hex) is not null)) return hex;
+        }
+        return leader.Position;
     }
 }

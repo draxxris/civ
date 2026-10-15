@@ -87,6 +87,8 @@ public sealed class CityRuleState
     public bool ManualWork { get; set; }
     public bool AvoidGrowth { get; set; }
     public bool Disorder { get; set; }
+    public int DefenseDamage { get; set; }
+    public bool BombardedThisTurn { get; set; }
     public int ConscriptAngerTurns { get; set; }
     public bool DraftedThisTurn { get; set; }
     public string? OriginalCivilization { get; set; }

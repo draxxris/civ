@@ -15,7 +15,7 @@ internal sealed class MovementService : IMovementService
         if (!sim.State.Grid.Neighbors(from).Contains(to)) return "Not adjacent";
         var plot = sim.State.Plots[to.Value];
         var error = TerrainEntry(sim, unit, def, plot, effects);
-        if (error is not null) return error;
+        if (error is not null && AutoLoadTransport(sim, unit, def, to) is null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
         if (!attack && MilitaryData.Player(sim, unit.Owner).Barbarian
             && sim.Content.Services.Get<IScriptedWonderService>().Any(w => w.BlocksBarbarianEntry(sim, unit.Id, sim.State.Grid.HexOf(to))))
@@ -31,12 +31,12 @@ internal sealed class MovementService : IMovementService
         if (!attack) return "Enemy occupies plot";
         if (!CanAttack(sim, unit, def, effects)) return "Unit cannot attack";
         if (def.NoCapture && sim.State.CityAt(target) is not null) return "Unit cannot capture cities";
-        var defenders = sim.State.UnitsAt(target).Where(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner) && MilitaryData.Definition(sim, u).Strength > 0);
+        var defenders = sim.State.UnitsAt(target).Where(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u) && MilitaryData.Definition(sim, u).Strength > 0);
         if (defenders.Any() && defenders.All(u => MilitaryData.Constants(sim).MaxHitPoints - u.Health >= def.CombatLimit)) return "Defenders are at combat limit";
         return null;
     }
     private static bool ValidTile(Simulation sim, TileId tile) => tile.Value >= 0 && tile.Value < sim.State.Grid.Count;
-    private static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Civ.Content.ModifierSink effects)
+    internal static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Civ.Content.ModifierSink effects)
     {
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         if (!DomainEntry(sim, unit, def, terrain.IsWater, plot)) return "Wrong domain";
@@ -66,6 +66,14 @@ internal sealed class MovementService : IMovementService
             _ => false,
         };
     }
+    private static int? AutoLoadTransport(Simulation sim, Unit unit, S.UnitDef def, TileId to)
+    {
+        if (def.Domain != "military:domain_land" || def.CanMoveAllTerrain || MilitaryData.Read(sim, unit).TransportId is not null) return null;
+        if (!sim.Content.Get<S.TerrainDef>(sim.State.Plots[to.Value].Terrain).IsWater) return null;
+        var target = sim.State.Grid.HexOf(to);
+        return sim.State.UnitsAt(target).OrderByDescending(u => u.Owner == unit.Owner).ThenBy(u => u.Id)
+            .Where(u => UnitService.LoadError(sim, unit, u, target) is null).Select(u => (int?)u.Id).FirstOrDefault();
+    }
     private static bool FriendlyCoastalCity(Simulation sim, Unit unit, Plot plot)
     {
         int index = Array.IndexOf(sim.State.Plots, plot);
@@ -75,10 +83,10 @@ internal sealed class MovementService : IMovementService
             && sim.State.Grid.Neighbors(tile).Any(n => sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater);
     }
     private static bool TerritoryEntry(Simulation sim, Unit unit, S.UnitDef def, int? owner) => owner is null
-        || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory
+        || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory || def.BaseTrade > 0 || def.TradeMultiplier > 0
         || sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasOpenBorders(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id) == true;
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
-        sim.State.UnitsAt(target).Any(other => MilitaryData.Enemy(sim, unit.Owner, other.Owner))
+        sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
     private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects) =>
         def.Strength > 0 && !def.OnlyDefensive && (!MilitaryData.Read(sim, unit).Attacked || MilitaryData.Effect(effects, "blitz") > 0);
@@ -93,7 +101,7 @@ internal sealed class MovementService : IMovementService
     }
     private static bool InControl(Simulation sim, TileId tile, Func<Unit, bool> hasControl) => sim.State.Grid.Neighbors(tile)
         .SelectMany(n => sim.State.UnitsAt(sim.State.Grid.HexOf(n))).Any(hasControl);
-    private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.Enemy(sim, unit.Owner, other.Owner)
+    private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.VisibleEnemy(sim, unit.Owner, other)
         && MilitaryData.Effect(MilitaryData.Effects(sim, other), "zone_control") > 0;
     public int StepCost(Simulation sim, int unitId, TileId from, TileId to) => Query(sim, unitId).StepCost(from, to);
     private int StepCost(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, TileId from, TileId to)
@@ -161,6 +169,7 @@ internal sealed class MovementService : IMovementService
         var from = sim.State.Grid.TileAt(unit.Position);
         var target = sim.State.Grid.HexOf(to);
         int cost = StepCost(sim, unit.Id, from, to);
+        int? transport = AutoLoadTransport(sim, unit, MilitaryData.Definition(sim, unit), to);
         var state = MilitaryData.Edit(sim, unit);
         state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
         bool hostile = HostilePlot(sim, unit, target);
@@ -168,8 +177,9 @@ internal sealed class MovementService : IMovementService
         if (hostile && HostileDefenders(sim, unit, target) && combatService.BestDefender(sim, unit.Id, target) is null) return true;
         if (hostile && sim.Content.Services.Get<ICombatService>().Single().BestDefender(sim, unit.Id, target) is { } defender)
         {
-            sim.Content.Services.Get<ICombatService>().Single().Resolve(sim, unit.Id, defender);
+            var report = combatService.Resolve(sim, unit.Id, defender);
             if (sim.State.FindUnit(unit.Id) is null) return true;
+            if (report.Outcome is not (CombatOutcome.AttackerWon or CombatOutcome.DefenderWithdrawn)) return true;
             if (HostileDefenders(sim, unit, target)) return true;
         }
         else unit.MovesLeft = Math.Max(0, unit.MovesLeft - cost);
@@ -177,10 +187,25 @@ internal sealed class MovementService : IMovementService
         var city = sim.State.CityAt(target);
         if (city is not null && MilitaryData.Enemy(sim, unit.Owner, city.Owner) && !MilitaryData.Definition(sim, unit).NoCapture)
             sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, unit.Owner);
-        sim.State.MoveUnit(unit.Id, target);
+        MilitaryData.MoveUnit(sim, unit.Id, target);
+        CompleteBoarding(sim, unit, from, to, transport);
         GoodyService.Receive(sim, unit);
         MilitaryData.Sight(sim);
         return hostile;
+    }
+    private static void CompleteBoarding(Simulation sim, Unit unit, TileId from, TileId to, int? transport)
+    {
+        if (transport is { } id)
+        {
+            sim.Content.Services.Get<IUnitService>().Single().Load(sim, unit.Id, id);
+            unit.MovesLeft = 0;
+            return;
+        }
+        var state = MilitaryData.Edit(sim, unit);
+        if (state.TransportId is null || sim.Content.Get<S.TerrainDef>(sim.State.Plots[to.Value].Terrain).IsWater) return;
+        state.TransportId = null;
+        if (sim.Content.Get<S.TerrainDef>(sim.State.Plots[from.Value].Terrain).IsWater
+            && MilitaryData.Effect(MilitaryData.Effects(sim, unit), "amphibious") == 0) unit.MovesLeft = 0;
     }
     /// <summary>Read-only context scoped to one path query. Modifier ledgers and control checks are reused across edges,
     /// never cached across commands or games.</summary>
@@ -207,13 +232,13 @@ internal sealed class MovementService : IMovementService
     }
 
     private static bool HostileDefenders(Simulation sim, Unit unit, Hex target) => sim.State.UnitsAt(target)
-        .Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner) && MilitaryData.Definition(sim, u).Strength > 0);
+        .Any(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u) && MilitaryData.Definition(sim, u).Strength > 0);
     private static void CaptureCivilians(Simulation sim, Unit unit, Hex target)
     {
-        foreach (var other in sim.State.UnitsAt(target).Where(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)).ToArray())
+        foreach (var other in sim.State.UnitsAt(target).Where(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u)).ToArray())
         {
             var def = MilitaryData.Definition(sim, other);
-            sim.State.RemoveUnit(other.Id);
+            MilitaryData.RemoveUnit(sim, other.Id);
             if (def.Capture is { } type && !MilitaryData.Definition(sim, unit).NoCapture)
             {
                 var captured = MilitaryData.Spawn(sim, unit.Owner, type, target);

@@ -60,5 +60,6 @@ public sealed class TechDef : GameContentDef
     public int Health { get; init; } = 0;
     public int Power { get; init; } = 0;
     public int TradeRoutes { get; init; } = 0;
+    public int TradeMissionModifier { get; init; } = 0;
     public int WorkerSpeedModifier { get; init; } = 0;
 }

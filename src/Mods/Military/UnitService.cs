@@ -4,7 +4,7 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Military;
 
-internal sealed class UnitService : IUnitService, IUnitSupportService
+internal sealed partial class UnitService : IUnitService, IUnitSupportService
 {
     public int MaximumMoves(Simulation sim, int unit)
     {
@@ -46,7 +46,7 @@ internal sealed class UnitService : IUnitService, IUnitSupportService
     {
         string? type = MilitaryData.Definition(sim, unit).CombatType;
         if (type is null || !promotion.CombatTypes.GetValueOrDefault(type)) return "Promotion not allowed for this combat type";
-        if (promotion.Leader) return "Requires an attached leader";
+        if (promotion.Leader && MilitaryData.Read(sim, unit).AttachedLeaderUnitType is null) return "Requires an attached leader";
         if (promotion.ObsoleteTech is { } obsolete && sim.KnowsTech(unit.Owner, obsolete)) return "Promotion is obsolete";
         var result = sim.Content.Requirements.Evaluate(promotion.Requirements, new(sim, unit.Owner, Unit: unit, Plot: sim.State.Grid.TileAt(unit.Position)));
         return result.Success ? null : string.Join("; ", result.Failures.Select(f => f.Explanation));
@@ -55,6 +55,11 @@ internal sealed class UnitService : IUnitService, IUnitSupportService
     {
         if (!Enum.TryParse<UnitActivity>(argument, out var activity) || !Enum.IsDefined(activity)) return "Unknown activity";
         if (activity == UnitActivity.Fortify && !CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit))) return "Unit cannot fortify";
+        if (activity == UnitActivity.Intercept)
+        {
+            if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
+            if (MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved) return "Aircraft has moved";
+        }
         return null;
     }
     private static string? ValidatePillage(Simulation sim, Unit unit)
@@ -81,7 +86,7 @@ internal sealed class UnitService : IUnitService, IUnitSupportService
             case UnitAction.Activity: SetActivity(sim, unit, Enum.Parse<UnitActivity>(argument)); break;
             case UnitAction.Pillage: Pillage(sim, unit); break;
             case UnitAction.Upgrade: UnitUpgrades.Apply(sim, unit, argument); break;
-            case UnitAction.Disband: sim.State.RemoveUnit(unitId); MilitaryData.Sight(sim); break;
+            case UnitAction.Disband: MilitaryData.RemoveUnit(sim, unitId); MilitaryData.Sight(sim); break;
         }
     }
     private static void SetActivity(Simulation sim, Unit unit, UnitActivity activity)
@@ -160,11 +165,13 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
         }
         WakeSentry(sim, unit, state);
         unit.MovesLeft = units.MaximumMoves(sim, unit.Id); state.Moved = false; state.Attacked = false;
+        state.InterceptedThisTurn = false;
     }
     private static void WakeSentry(Simulation sim, Unit unit, MilitaryUnitState state)
     {
         if (state.Activity != UnitActivity.Sentry) return;
         int team = sim.TeamOf(unit.Owner).Id;
-        if (sim.State.Units.Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner) && sim.State.PlotAt(u.Position).Visible.Contains(team))) state.Activity = UnitActivity.Awake;
+        if (sim.State.Units.Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
+            && sim.Content.Services.Get<IVisibilityService>().Single().IsUnitVisible(sim, u.Id, team))) state.Activity = UnitActivity.Awake;
     }
 }

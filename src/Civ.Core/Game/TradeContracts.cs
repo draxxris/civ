@@ -11,4 +11,5 @@ public interface ITradeRouteService
 {
     int MaxRoutes(Simulation sim, int city);
     CityTradeResult Calculate(Simulation sim, int city);
+    TradeRouteResult CalculateProfit(Simulation sim, int city, int partnerCity);
 }

@@ -74,7 +74,14 @@ internal static class CombatCalculator
             Add(sink, improvement, sim.Content.Get<S.ImprovementDef>(improvement).DefenseModifier);
         if (sim.State.CityAt(defender.Position) is { } city) Add(sink, "cities:defense", CityDefense(sim, city, ignoreBuilding));
     }
-    private static int CityDefense(Simulation sim, City city, bool ignoreBuilding)
+    internal static int CityDefense(Simulation sim, City city, bool ignoreBuilding)
+    {
+        if (GovernmentStatus.IsDisorder(sim, city)) return 0;
+        int maxDamage = Math.Max(1, MilitaryData.Constants(sim).MaximumCityDefenseDamage);
+        int damage = city.Extensions.Get<CityRuleState>(sim.Content)?.DefenseDamage ?? 0;
+        return TotalCityDefense(sim, city, ignoreBuilding) * Math.Clamp(maxDamage - damage, 0, maxDamage) / maxDamage;
+    }
+    internal static int TotalCityDefense(Simulation sim, City city, bool ignoreBuilding)
     {
         int culture = sim.Content.Services.Get<ICityCultureService>().SingleOrDefault()?.Level(sim, city.Id).CityDefenseModifier
             ?? sim.Content.Get<S.CultureLevelDef>().All.Where(l => l.SpeedThresholds.TryGetValue(sim.Settings.GameSpeed, out var threshold) && city.Culture >= threshold)

@@ -3,17 +3,20 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.GreatPeople;
 
-internal static class GreatPersonActions
+internal static partial class GreatPersonActions
 {
-    internal static IReadOnlyList<GreatPersonAction> Available(Simulation sim, int player, int unitId)
+    internal static IReadOnlyList<GreatPersonAction> Available(Simulation sim, int player, int unitId, Hex? destination = null)
     {
         var unit = sim.State.FindUnit(unitId);
         if (unit is null || unit.Owner != player || unit.Health <= 0) return [];
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
         var actions = new List<GreatPersonAction>();
-        var city = sim.State.CityAt(unit.Position);
+        var position = destination ?? unit.Position;
+        var city = sim.State.CityAt(position);
         if (city is not null && city.Owner == player && !GovernmentStatus.IsDisorder(sim, city))
             CityActions(sim, city, def, actions);
+        AddLeadActions(sim, unit, def, position, actions);
+        if (Trade(sim, unit, def, position) is { } trade) actions.Add(trade);
         if (Discovery(sim, player, def) is { } discovery) actions.Add(discovery);
         if (def.GoldenAge && GoldenAgeUnits(sim, player, unit, []).Length == Required(sim, player))
             actions.Add(new("great_people:golden_age", null, GoldenAges.Length(sim, player)));
@@ -23,6 +26,7 @@ internal static class GreatPersonActions
     {
         foreach (var specialist in def.GreatPeoples.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
             actions.Add(new("great_people:join_city", specialist.Key, 1));
+        AddConstructionActions(sim, city, def, actions);
         if (Hurry(sim, city, def) is { } hurry) actions.Add(hurry);
         long culture = Math.Max(0, (long)def.GreatWorkCulture * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100);
         if (culture > 0) actions.Add(new("great_people:culture_bomb", null, culture));
@@ -88,7 +92,8 @@ internal sealed class GreatPeopleCommands : IGreatPeopleCommandService
     private static string Command(string action) => action switch
     {
         "join" => "great_people:join_city", "discover" => "great_people:discover_tech", "hurry" => "great_people:hurry_production",
-        "culture" => "great_people:culture_bomb", "golden-age" => "great_people:golden_age", _ => "",
+        "culture" => "great_people:culture_bomb", "golden-age" => "great_people:golden_age",
+        "lead" => "great_people:lead_unit", "construct" => "great_people:construct_building", "trade" => "great_people:trade_mission", _ => "",
     };
     private static GreatPersonAction? Preview(Simulation sim, int player, int unit, string action, string? target) =>
         GreatPersonActions.Available(sim, player, unit).FirstOrDefault(a => a.Command == Command(action) && (target is null || a.Target == target));
@@ -110,6 +115,12 @@ internal sealed class GreatPeopleCommands : IGreatPeopleCommandService
                 var state = GreatPeopleData.Edit(sim, city!);
                 state.SettledSpecialists[preview.Target!] = state.SettledSpecialists.GetValueOrDefault(preview.Target!) + 1;
                 break;
+            case "lead": GreatPersonActions.Lead(sim, unit, preview); break;
+            case "construct":
+                city!.Buildings.Add(preview.Target!);
+                sim.Events.Publish(new BuildingCompleted(city.Id, preview.Target!));
+                break;
+            case "trade": sim.State.PlayerById(player).Treasury += preview.Amount; break;
             case "discover": sim.Content.Services.Get<IResearchService>().Single().AddProgress(sim, player, preview.Target!, preview.Amount); break;
             case "hurry": city!.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + preview.Amount }; break;
             case "culture":

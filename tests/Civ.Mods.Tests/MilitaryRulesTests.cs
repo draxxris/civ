@@ -9,7 +9,8 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     private static Unit Add(Simulation sim, int owner, int tile, string type = "military:warrior")
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new(tile)) };
-        sim.State.AddUnit(unit); Service<IUnitService>(sim).Initialize(sim, unit.Id); return unit;
+        sim.State.AddUnit(unit); Service<IUnitService>(sim).Initialize(sim, unit.Id);
+        Service<IVisibilityService>(sim).Recompute(sim); return unit;
     }
     [Fact]
     public void Equal_strength_odds_and_combat_save_replay_match()
@@ -189,6 +190,513 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.NotNull(sim.State.FindUnit(d.Id));
         Assert.NotEqual(d.Position, sim.State.UnitById(a.Id).Position);
     }
+    [Fact]
+    public void Lethal_defender_withdrawal_keeps_both_units_and_allows_attacker_to_advance()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = Add(sim, 0, 39, "military:javelineer"); var d = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true);
+        d.Promotions.UnionWith(["military:escape1", "military:escape2", "military:tactics"]);
+        var target = d.Position;
+        var preview = Service<ICombatService>(sim).Preview(sim, a.Id, d.Id);
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            var probe = DeterministicRng.Restore(w, x, y, z);
+            if (Enumerable.Range(0, 8).All(_ => probe.Next(preview.DieSides) >= preview.DefenderRoundOdds)) break;
+            sim.Rng.NextUInt64();
+        }
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = a.Id, Path = [target] }, out var error), error);
+        var report = Assert.Single(Service<ICombatService>(sim).History(sim));
+        Assert.Equal(CombatOutcome.DefenderWithdrawn, report.Outcome);
+        Assert.Equal(1, d.Health); Assert.NotEqual(target, d.Position); Assert.Equal(target, a.Position);
+        Assert.True(report.Rounds.Count > 1); Assert.Equal(1, sim.State.Grid.Distance(target, d.Position));
+        Assert.True(sim.State.Grid.Distance(a.Position, d.Position) > 0);
+        Assert.DoesNotContain(sim.State.Grid.Range(sim.State.Grid.TileAt(d.Position), 1).SelectMany(t => sim.State.UnitsAt(sim.State.Grid.HexOf(t))),
+            u => u.Owner == 0 && u.Id != a.Id);
+        Assert.True(a.Experience > 0); Assert.True(d.Experience > 0); Assert.False(report.LoserDied);
+        Assert.Equal(sim.ComputeHash(), SaveGame.Load(sim.Content, SaveGame.Save(sim)).ComputeHash());
+    }
+
+    [Fact]
+    public void Bombardment_reduces_defense_and_recovery_skips_the_bombarded_turn()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var siege = Add(sim, 0, 39, "military:catapult");
+        var defender = Add(sim, 1, 40);
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = defender.Position, Population = 3 };
+        city.Buildings.Add("cities:walls"); sim.State.AddCity(city);
+        sim.State.SetWar(0, 1, true);
+        var combat = Service<ICombatService>(sim);
+        long before = combat.Preview(sim, siege.Id, defender.Id).DefenseStrength.Ledger.Total("military:combat_percent");
+        Assert.True(sim.TryApply(new BombardCityCommand { Player = 0, Unit = siege.Id, Target = city.Position }, out var error), error);
+        var state = city.Extensions.Get<CityRuleState>(sim.Content)!;
+        Assert.Equal(20, state.DefenseDamage); // 8 * 80 / 100 = 6 defense points; 100 * 6 / 30 = 20 damage.
+        Assert.True(state.BombardedThisTurn);
+        Assert.Equal(6, Assert.Single(sim.Events.Published.OfType<CityBombarded>()).DefenseReduction);
+        Assert.True(combat.Preview(sim, siege.Id, defender.Id).DefenseStrength.Ledger.Total("military:combat_percent") < before);
+        Assert.NotNull(combat.ValidateBombard(sim, 0, siege.Id, city.Position));
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(20, state.DefenseDamage); Assert.False(state.BombardedThisTurn);
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(15, state.DefenseDamage);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Ranged_fire_spends_the_attack_without_melee_retaliation_and_replays(bool hit)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var siege = Add(sim, 0, 39, "military:catapult");
+        var defender = Add(sim, 1, 40); var secondary = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true);
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if ((DeterministicRng.Restore(w, x, y, z).Next(100) < 70) == hit) break;
+            sim.Rng.NextUInt64();
+        }
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new RangedStrikeCommand { Player = 0, Unit = siege.Id, Target = defender.Position };
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        Assert.Equal(100, siege.Health); Assert.Equal(0, siege.MovesLeft);
+        Assert.Equal(hit, defender.Health < 100); Assert.Equal(hit, secondary.Health < 100);
+        Assert.NotNull(command.Validate(sim));
+        Assert.Single(Service<ICombatService>(sim).History(sim));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Cargo_boards_on_move_travels_hidden_and_unloads_after_save()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.Plots[40].Terrain = "world:coast"; sim.State.Plots[41].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog"); var cargo = Add(sim, 0, 39);
+        Add(sim, 1, 42);
+        var units = Service<IUnitService>(sim);
+        var hash = sim.ComputeHash();
+        Assert.Null(Service<IMovementService>(sim).CanEnter(sim, cargo.Id, new(39), new(40)));
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = cargo.Id, Path = [ship.Position] }, out var error), error);
+        Assert.Equal(ship.Id, cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        Assert.Equal(0, cargo.MovesLeft);
+        Assert.False(Service<IVisibilityService>(sim).IsUnitVisible(sim, cargo.Id, 1));
+        Assert.True(Service<IVisibilityService>(sim).IsUnitVisible(sim, cargo.Id, 0));
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = ship.Id, Path = [sim.State.Grid.HexOf(new(41))] }, out error), error);
+        Assert.Equal(ship.Position, cargo.Position);
+        cargo.MovesLeft = units.MaximumMoves(sim, cargo.Id);
+        Assert.NotNull(units.ValidateUnload(sim, 0, cargo.Id));
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var unload = new UnloadUnitCommand { Player = 0, Unit = cargo.Id, Destination = sim.State.Grid.HexOf(new(42)) };
+        Assert.True(sim.TryApply(unload, out error), error);
+        Assert.True(loaded.TryApply(unload, out error), error);
+        Assert.Null(cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        Assert.Equal(0, cargo.MovesLeft); Assert.Empty(units.CargoUnits(sim, ship.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Removing_a_transport_removes_its_cargo(bool combatLoss)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.Plots[39].Terrain = "world:coast"; sim.State.Plots[40].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog"); var cargo = Add(sim, 0, 40);
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+        Assert.NotNull(Service<IUnitService>(sim).ValidateLoad(sim, 0, cargo.Id, ship.Id));
+        if (combatLoss)
+        {
+            var attacker = Add(sim, 1, 39, "military:battleship");
+            sim.State.SetWar(0, 1, true); ship.Health = 1;
+            Assert.Equal(ship.Id, Service<ICombatService>(sim).BestDefender(sim, attacker.Id, ship.Position));
+            Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 1, Unit = attacker.Id, Path = [ship.Position] }, out error), error);
+        }
+        else Assert.True(sim.TryApply(new DisbandUnitCommand { Player = 0, Unit = ship.Id }, out error), error);
+        Assert.Null(sim.State.FindUnit(ship.Id)); Assert.Null(sim.State.FindUnit(cargo.Id));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Amphibious_landings_detach_cargo_and_only_trained_units_keep_moves(bool amphibious)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.Plots[40].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog"); var cargo = Add(sim, 0, 40, "military:worker");
+        if (amphibious) cargo.Promotions.Add("military:amphibious");
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = cargo.Id, Path = [sim.State.Grid.HexOf(new(41))] }, out error), error);
+        Assert.Null(cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        Assert.Equal(amphibious, cargo.MovesLeft > 0);
+    }
+
+    [Fact]
+    public void Cargo_capacity_promotions_allow_one_more_passenger_without_relaxing_domain_rules()
+    {
+        var sim = GameFactory.Scenario(mods.Content); sim.State.Plots[40].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog"); var units = Service<IUnitService>(sim);
+        int capacity = units.CargoCapacity(sim, ship.Id); Assert.True(capacity > 0);
+        for (int i = 0; i < capacity; i++)
+        {
+            var passenger = Add(sim, 0, 40);
+            Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = passenger.Id, Transport = ship.Id }, out var error), error);
+        }
+        var extra = Add(sim, 0, 40); var load = new LoadUnitCommand { Player = 0, Unit = extra.Id, Transport = ship.Id };
+        Assert.False(sim.TryApply(load, out _));
+        ship.Promotions.Add("military:transport1");
+        Assert.Equal(capacity + 1, units.CargoCapacity(sim, ship.Id));
+        Assert.True(sim.TryApply(load, out var loadError), loadError); Assert.Equal(capacity + 1, units.CargoUnits(sim, ship.Id).Count);
+        ship.Promotions.Add("military:transport2");
+        var aircraft = Add(sim, 0, 40, "military:fighter");
+        Assert.NotNull(units.ValidateLoad(sim, 0, aircraft.Id, ship.Id));
+    }
+
+    [Fact]
+    public void Recon_sight_survives_recompute_and_save_but_expires_next_turn()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var plane = Add(sim, 0, 39, "military:bomber");
+        var target = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf)
+            .First(h => sim.State.Grid.Distance(plane.Position, h) == 5);
+        var sight = Service<IVisibilityService>(sim);
+        Assert.DoesNotContain(0, sim.State.PlotAt(target).Visible);
+        var command = new AirMissionCommand { Player = 0, Unit = plane.Id, Kind = AirMissionKind.Recon, Target = target };
+        var hash = sim.ComputeHash();
+        Assert.Null(command.Validate(sim)); Assert.Equal(hash, sim.ComputeHash());
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.Equal(0, plane.MovesLeft);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sight.Recompute(sim); sight.Recompute(loaded);
+        Assert.Contains(0, sim.State.PlotAt(target).Visible);
+        Assert.Contains(0, loaded.State.PlotAt(target).Visible);
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.DoesNotContain(0, sim.State.PlotAt(target).Visible);
+        Assert.Contains(0, sim.State.PlotAt(target).Revealed);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Rebase_obeys_base_capacity_and_loads_onto_a_carrier()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var plane = Add(sim, 0, 39, "military:fighter");
+        var target = sim.State.Grid.HexOf(new(41));
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = target, Population = 3 });
+        var residents = Enumerable.Range(0, 8).Select(_ => Add(sim, 0, 41, "military:fighter")).ToArray();
+        var command = new AirMissionCommand { Player = 0, Unit = plane.Id, Kind = AirMissionKind.Rebase, Target = target };
+        var hash = sim.ComputeHash();
+        Assert.NotNull(command.Validate(sim)); Assert.Equal(hash, sim.ComputeHash());
+        sim.State.RemoveUnit(residents[0].Id);
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.Equal(target, plane.Position); Assert.Equal(0, plane.MovesLeft);
+        Assert.NotNull(new SetUnitActivityCommand { Player = 0, Unit = plane.Id, Activity = UnitActivity.Intercept }.Validate(sim));
+        Assert.Null(plane.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        sim.AdvanceTurn();
+        sim.State.Plots[42].Terrain = "world:coast";
+        var carrier = Add(sim, 0, 42, "military:carrier");
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        command = new AirMissionCommand { Player = 0, Unit = plane.Id, Kind = AirMissionKind.Rebase, Target = carrier.Position };
+        Assert.True(sim.TryApply(command, out error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        Assert.Equal(carrier.Id, plane.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        Assert.Contains(plane.Id, Service<IUnitService>(sim).CargoUnits(sim, carrier.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        var units = Service<IUnitService>(sim);
+        while (units.CargoUnits(sim, carrier.Id).Count < units.CargoCapacity(sim, carrier.Id))
+        {
+            var resident = Add(sim, 0, 42, "military:fighter");
+            Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = resident.Id, Transport = carrier.Id }, out error), error);
+        }
+        var extra = Add(sim, 0, 41, "military:fighter");
+        var full = new AirMissionCommand { Player = 0, Unit = extra.Id, Kind = AirMissionKind.Rebase, Target = carrier.Position };
+        ulong before = sim.ComputeHash(); Assert.False(sim.TryApply(full, out _)); Assert.Equal(before, sim.ComputeHash());
+    }
+
+    [Fact]
+    public void Aircraft_can_rebase_at_twice_their_range_but_not_one_hex_farther()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.Map = new(40, 8, false);
+        sim.State.Plots = Enumerable.Range(0, 320).Select(_ => new Plot { Terrain = "world:grass", Owner = 0 }).ToArray();
+        sim.State.RebuildIndexes();
+        var aircraft = Add(sim, 0, 0, "military:fighter");
+        int range = Service<IAirMissionService>(sim).AirRange(sim, aircraft.Id);
+        var boundary = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).First(h => sim.State.Grid.Distance(aircraft.Position, h) == range * 2);
+        var tooFar = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).First(h => sim.State.Grid.Distance(aircraft.Position, h) == range * 2 + 1);
+        foreach (var hex in new[] { boundary, tooFar }) sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = hex });
+        var rejected = new AirMissionCommand { Player = 0, Unit = aircraft.Id, Kind = AirMissionKind.Rebase, Target = tooFar };
+        ulong hash = sim.ComputeHash(); Assert.False(sim.TryApply(rejected, out _)); Assert.Equal(hash, sim.ComputeHash());
+        Assert.True(sim.TryApply(new AirMissionCommand { Player = 0, Unit = aircraft.Id, Kind = AirMissionKind.Rebase, Target = boundary }, out var error), error);
+        Assert.Equal(boundary, aircraft.Position);
+    }
+
+    [Fact]
+    public void Air_strike_stops_at_the_air_damage_limit_without_melee_retaliation()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var bomber = Add(sim, 0, 39, "military:bomber");
+        var defender = Add(sim, 1, 40); defender.Health = 51;
+        sim.State.SetWar(0, 1, true);
+        var command = new AirMissionCommand { Player = 0, Unit = bomber.Id, Kind = AirMissionKind.AirStrike, Target = defender.Position };
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        Assert.Equal(50, defender.Health); Assert.Equal(100, bomber.Health);
+        Assert.Equal(0, bomber.MovesLeft); Assert.NotNull(command.Validate(sim));
+        var report = Assert.Single(sim.Events.Published.OfType<AirMissionResolved>()).Report;
+        Assert.Equal(defender.Id, report.TargetUnit); Assert.Equal(1, report.TargetDamage); Assert.Null(report.Interceptor);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        sim.AdvanceTurn();
+        Assert.NotNull(command.Validate(sim)); // The target remains at the air damage limit.
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Air_bomb_reduces_city_defense_or_pillages_an_improvement(bool cityTarget)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var bomber = Add(sim, 0, 39, "military:bomber");
+        var target = sim.State.Grid.HexOf(new(40)); var plot = sim.State.PlotAt(target); plot.Owner = 1;
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = target, Population = 3 };
+        if (cityTarget) { city.Buildings.Add("cities:walls"); sim.State.AddCity(city); }
+        else plot.Improvement = "world:improvement_improvement_woodcutter";
+        sim.State.SetWar(0, 1, true);
+        var command = new AirMissionCommand { Player = 0, Unit = bomber.Id, Kind = AirMissionKind.AirBomb, Target = target };
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        var report = Assert.Single(sim.Events.Published.OfType<AirMissionResolved>()).Report;
+        if (cityTarget)
+        {
+            Assert.Equal(12, report.CityDefenseReduction); // 15 rate, reduced by the wall's 20% resistance.
+            Assert.Equal(40, city.Extensions.Get<CityRuleState>(sim.Content)!.DefenseDamage);
+            Assert.True(city.Extensions.Get<CityRuleState>(sim.Content)!.BombardedThisTurn);
+        }
+        else
+        {
+            Assert.Equal("world:improvement_improvement_woodcutter", report.DestroyedImprovement);
+            Assert.Null(plot.Improvement); Assert.Equal(0, plot.ImprovementTurns);
+        }
+        Assert.Equal(0, bomber.MovesLeft); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public void Interception_aborts_the_mission_and_only_ground_defense_is_used_up(bool airPatrol, bool airBomb)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var bomber = Add(sim, 0, 39, "military:bomber");
+        var defender = Add(sim, 1, 40);
+        var interceptor = Add(sim, 1, 40, airPatrol ? "military:fighter" : "military:sam_infantry");
+        var plot = sim.State.PlotAt(defender.Position); plot.Owner = 1; plot.Improvement = "world:improvement_improvement_woodcutter";
+        sim.State.SetWar(0, 1, true);
+        if (airPatrol)
+        {
+            interceptor.Health = 50;
+            interceptor.Promotions.UnionWith(["military:interception1", "military:interception2"]);
+            Add(sim, 1, 40, "military:sam_infantry"); // The patrol has better odds than this ground defense.
+            Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 1, Unit = interceptor.Id, Activity = UnitActivity.Intercept }, out var activityError), activityError);
+        }
+        // Pick a stream where the interception check succeeds; round outcomes remain unconstrained.
+        int probability = airPatrol ? 42 : 30;
+        Assert.Equal(probability, Service<IAirMissionService>(sim).InterceptionProbability(sim, interceptor.Id));
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            var rng = DeterministicRng.Restore(w, x, y, z); rng.Next(100);
+            if (rng.Next(100) < probability) break;
+            sim.Rng.NextUInt64();
+        }
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new AirMissionCommand { Player = 0, Unit = bomber.Id, Kind = airBomb ? AirMissionKind.AirBomb : AirMissionKind.AirStrike, Target = defender.Position };
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        var report = Assert.Single(sim.Events.Published.OfType<AirMissionResolved>()).Report;
+        Assert.Equal(interceptor.Id, report.Interceptor); Assert.Equal(0, report.TargetDamage);
+        Assert.Equal(100, defender.Health);
+        Assert.Equal("world:improvement_improvement_woodcutter", plot.Improvement);
+        Assert.Equal(!airPatrol, interceptor.Extensions.Get<MilitaryUnitState>(sim.Content)!.InterceptedThisTurn);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        sim.AdvanceTurn();
+        Assert.False(interceptor.Extensions.Get<MilitaryUnitState>(sim.Content)!.InterceptedThisTurn);
+    }
+
+    [Fact]
+    public void Missile_evasion_bypasses_interception_and_a_successful_strike_consumes_the_missile()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var missile = Add(sim, 0, 39, "military:guided_missile");
+        var defender = Add(sim, 1, 40);
+        Add(sim, 1, 40, "military:sam_infantry");
+        sim.State.SetWar(0, 1, true);
+        var command = new AirMissionCommand { Player = 0, Unit = missile.Id, Kind = AirMissionKind.AirStrike, Target = defender.Position };
+        Assert.NotNull(new AirMissionCommand { Player = 0, Unit = missile.Id, Kind = AirMissionKind.Recon, Target = defender.Position }.Validate(sim));
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        var report = Assert.Single(sim.Events.Published.OfType<AirMissionResolved>()).Report;
+        Assert.Null(report.Interceptor); Assert.True(report.TargetDamage > 0);
+        Assert.Null(sim.State.FindUnit(missile.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Submarines_do_not_block_or_wake_enemies_until_a_detector_is_in_range()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
+        var hunter = Add(sim, 0, 39, "military:battleship"); var submarine = Add(sim, 1, 40, "military:submarine");
+        sim.State.SetWar(0, 1, true);
+        var sight = Service<IVisibilityService>(sim); var combat = Service<ICombatService>(sim);
+        var session = new Civ.Client.GameSession(sim);
+        Assert.Contains(0, sim.State.PlotAt(submarine.Position).Visible);
+        Assert.False(sight.IsUnitVisible(sim, submarine.Id, 0)); Assert.True(sight.IsUnitVisible(sim, submarine.Id, 1));
+        Assert.Null(combat.BestDefender(sim, hunter.Id, submarine.Position));
+        Assert.DoesNotContain(session.VisibleUnits(), u => u.Id == submarine.Id);
+        Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 0, Unit = hunter.Id, Activity = UnitActivity.Sentry }, out var error), error);
+        sim.AdvanceTurn();
+        Assert.Equal(UnitActivity.Sentry, hunter.Extensions.Get<MilitaryUnitState>(sim.Content)!.Activity);
+        var detector = Add(sim, 0, 80, "military:destroyer");
+        Assert.False(sight.IsUnitVisible(sim, submarine.Id, 0));
+        sim.State.MoveUnit(detector.Id, sim.State.Grid.HexOf(new(41))); sight.Recompute(sim);
+        Assert.True(sight.IsUnitVisible(sim, submarine.Id, 0)); Assert.Equal(submarine.Id, combat.BestDefender(sim, hunter.Id, submarine.Position));
+        Assert.Contains(session.VisibleUnits(), u => u.Id == submarine.Id);
+        Assert.NotNull(Service<IMovementService>(sim).CanEnter(sim, hunter.Id, new(39), new(40)));
+        sim.AdvanceTurn(); Assert.Equal(UnitActivity.Awake, hunter.Extensions.Get<MilitaryUnitState>(sim.Content)!.Activity);
+        sim.State.RemoveUnit(detector.Id); sight.Recompute(sim);
+        var target = submarine.Position;
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = hunter.Id, Path = [target] }, out error), error);
+        Assert.Equal(target, hunter.Position); Assert.NotNull(sim.State.FindUnit(submarine.Id)); Assert.Empty(combat.History(sim));
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Cavalry_flanks_siege_after_winning_or_withdrawing_but_not_inside_cities(bool withdraw, bool inCity)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var cavalry = Add(sim, 0, 39, "military:cavalry"); var primary = Add(sim, 1, 40);
+        var siege = Add(sim, 1, 40, "military:catapult"); var untouched = Add(sim, 1, 40);
+        siege.Health = 1; sim.State.SetWar(0, 1, true);
+        if (inCity) sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 1, Position = primary.Position });
+        if (withdraw)
+        {
+            cavalry.Health = 1; cavalry.Promotions.UnionWith(["military:escape1", "military:escape2", "military:tactics"]);
+        }
+        else primary.Health = 1;
+        var combat = Service<ICombatService>(sim); var preview = combat.Preview(sim, cavalry.Id, primary.Id);
+        // Select the first lethal round and a successful flank; no combat outcome is mocked.
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State; var rng = DeterministicRng.Restore(w, x, y, z);
+            bool defenderHits = rng.Next(preview.DieSides) < preview.DefenderRoundOdds;
+            if (withdraw) rng.Next(100);
+            if (defenderHits == withdraw && rng.Next(preview.DieSides) >= preview.DefenderRoundOdds * (100 - preview.WithdrawalPercent) / 100) break;
+            sim.Rng.NextUInt64();
+        }
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var report = combat.Resolve(sim, cavalry.Id, primary.Id); combat.Resolve(loaded, cavalry.Id, primary.Id);
+        Assert.Equal(withdraw ? CombatOutcome.Withdrawn : CombatOutcome.AttackerWon, report.Outcome);
+        if (inCity) { Assert.Empty(report.Flanking!); Assert.NotNull(sim.State.FindUnit(siege.Id)); }
+        else { Assert.Contains(report.Flanking!, h => h.Unit == siege.Id && h.Damage > 0); Assert.Null(sim.State.FindUnit(siege.Id)); }
+        Assert.Equal(100, untouched.Health); Assert.NotNull(sim.State.FindUnit(cavalry.Id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Amphibious_assault_penalty_is_removed_only_by_amphibious_training(bool trained)
+    {
+        var sim = GameFactory.Scenario(mods.Content); sim.State.Plots[39].Terrain = "world:coast";
+        var ship = Add(sim, 0, 39, "military:cog"); var attacker = Add(sim, 0, 39); var defender = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true);
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = attacker.Id, Transport = ship.Id }, out var error), error);
+        if (trained) attacker.Promotions.Add("military:amphibious");
+        var preview = Service<ICombatService>(sim).Preview(sim, attacker.Id, defender.Id);
+        Assert.Equal(trained ? 200 : 300, preview.DefenseStrength.Maximum);
+        Assert.Null(Service<IMovementService>(sim).CanEnter(sim, attacker.Id, new(39), new(40), attack: true));
+    }
+
+    [Fact]
+    public void Ranged_damage_stops_at_the_combat_limit()
+    {
+        var sim = GameFactory.Scenario(mods.Content); var siege = Add(sim, 0, 39, "military:catapult"); var defender = Add(sim, 1, 40);
+        sim.State.SetWar(0, 1, true); defender.Health = 100 - MilitaryDataLimit(sim, siege) + 1;
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) < 70) break;
+            sim.Rng.NextUInt64();
+        }
+        Assert.True(sim.TryApply(new RangedStrikeCommand { Player = 0, Unit = siege.Id, Target = defender.Position }, out var error), error);
+        Assert.Equal(100 - MilitaryDataLimit(sim, siege), defender.Health); Assert.Equal(100, siege.Health);
+    }
+
+    [Fact]
+    public void Surviving_suicide_missile_is_not_consumed_when_interception_aborts_its_strike()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var missile = Add(sim, 0, 39, "military:biological_warfare_missile");
+        var defender = Add(sim, 1, 40); var secondary = Add(sim, 1, 40);
+        var interceptor = Add(sim, 1, 40, "military:sam_infantry");
+        sim.State.SetWar(0, 1, true);
+        // Choose interception without lethal duel damage. Even five ground hits deal only 75 HP.
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State; var rng = DeterministicRng.Restore(w, x, y, z);
+            if (rng.Next(100) >= 65 && rng.Next(100) < 30) break;
+            sim.Rng.NextUInt64();
+        }
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new AirMissionCommand { Player = 0, Unit = missile.Id, Kind = AirMissionKind.AirStrike, Target = defender.Position };
+        Assert.True(sim.TryApply(command, out var error), error); Assert.True(loaded.TryApply(command, out error), error);
+        var report = Assert.Single(sim.Events.Published.OfType<AirMissionResolved>()).Report;
+        Assert.Equal(interceptor.Id, report.Interceptor); Assert.Equal(0, report.TargetDamage);
+        Assert.InRange(missile.Health, 25, 100); Assert.NotNull(sim.State.FindUnit(missile.Id));
+        Assert.Equal(100, defender.Health); Assert.Equal(100, secondary.Health);
+        Assert.True(missile.Extensions.Get<MilitaryUnitState>(sim.Content)!.Attacked);
+        Assert.True(interceptor.Extensions.Get<MilitaryUnitState>(sim.Content)!.InterceptedThisTurn);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData("cities:bunker", 80, false)]
+    [InlineData("cities:flak_tower", 0, false)]
+    [InlineData("cities:bunker", 80, true)]
+    public void City_air_defenses_reduce_direct_and_collateral_damage_before_limits(string building, int percent, bool nearCollateralLimit)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var bomber = Add(sim, 0, 39, "military:bomber");
+        var defender = Add(sim, 1, 40, "military:infantry"); var secondary = Add(sim, 1, 40, "military:infantry");
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = defender.Position };
+        sim.State.AddCity(city); sim.State.SetWar(0, 1, true);
+        var protectedSim = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        protectedSim.State.CityById(city.Id).Buildings.Add(building);
+        if (nearCollateralLimit) protectedSim.State.UnitById(secondary.Id).Health = 51;
+        var replay = SaveGame.Load(sim.Content, SaveGame.Save(protectedSim));
+        var command = new AirMissionCommand { Player = 0, Unit = bomber.Id, Kind = AirMissionKind.AirStrike, Target = defender.Position };
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(protectedSim.TryApply(command, out error), error); Assert.True(replay.TryApply(command, out error), error);
+        int direct = 100 - defender.Health, collateral = 100 - secondary.Health;
+        Assert.True(direct > 0); Assert.True(collateral > 0);
+        Assert.Equal(100 - direct * percent / 100, protectedSim.State.UnitById(defender.Id).Health);
+        int initialHealth = nearCollateralLimit ? 51 : 100;
+        int expectedCollateral = Math.Min(collateral * percent / 100, initialHealth - 50);
+        Assert.Equal(initialHealth - expectedCollateral, protectedSim.State.UnitById(secondary.Id).Health);
+        Assert.Equal(protectedSim.ComputeHash(), replay.ComputeHash());
+    }
+
     private static int MilitaryDataLimit(Simulation sim, Unit unit) => sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).CombatLimit;
     [Fact]
     public void Defender_winning_on_its_own_plot_gets_domestic_experience_even_if_attacker_is_outside()

@@ -17,6 +17,9 @@ public sealed class GreatPeopleMod : IMod
         context.RegisterService<IPlotYieldFinalizer>("golden_age_yields", effects);
         context.RegisterStateComponent<GreatPeopleCityState>("city_state");
         context.RegisterStateComponent<GreatPeoplePlayerState>("player_state");
+        context.RegisterCommand<LeadGreatPersonCommand>("lead_unit");
+        context.RegisterCommand<ConstructGreatPersonCommand>("construct_building");
+        context.RegisterCommand<TradeGreatPersonCommand>("trade_mission");
         context.RegisterCommand<JoinGreatPersonCommand>("join_city");
         context.RegisterCommand<DiscoverGreatPersonCommand>("discover_tech");
         context.RegisterCommand<HurryGreatPersonCommand>("hurry_production");
