@@ -2,7 +2,7 @@
 
 The feature definitions are in `Civ.Content.Schema`. The older `Civ.Content` definitions remain for legacy contracts.
 Feature mods load immutable definitions from their `data/` directories. Foundation registers setup and feature mods register gameplay services and systems.
-The mechanics status is in [mechanics-status.md](mechanics-status.md).
+The mechanics status and development roadmap are in [ROADMAP.md](ROADMAP.md).
 
 ## Definitions
 
@@ -121,7 +121,7 @@ Cities checks exact local building ids. Military checks exact unit ids and held 
 World checks connected resource counts through `IResourceNetwork`. Vicinity resources remain unavailable.
 Other evaluators fail closed with an unavailable-state explanation.
 Feature services now evaluate diplomacy permissions, project prerequisites, corporation rules, and event choices where their runtime state exists.
-Unsupported predicates remain fail-closed. See [mechanics-status.md](mechanics-status.md) for remaining gaps.
+Unsupported predicates remain fail-closed. See [ROADMAP.md](ROADMAP.md) for remaining gaps.
 ## Import decisions and limits
 
 The importer retains source button and atlas strings for later conversion. It replaces branded path segments with neutral segments.

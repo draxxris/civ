@@ -21,7 +21,11 @@ Headless on Linux: `xvfb-run` plus software GL (`LIBGL_ALWAYS_SOFTWARE=1 godot-m
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user data folder. Mod DLLs reference only `Civ.Core`, never Godot types; visuals ship as data (`.pck` packs, plain assets). AI players implement `IPlayerAI`.
 
-Private project; no license.
+## Documentation
+
+- **[docs/DESIGN.md](docs/DESIGN.md)**: Architectural design, core principles ("everything is a mod"), and subsystem contracts.
+- **[docs/ROADMAP.md](docs/ROADMAP.md)**: Single source of truth for project roadmap: what is done (implemented systems and mechanics) and what needs to be done.
+- **[PLAN.md](PLAN.md)**: Source extraction porting plan, product rules, and hex adaptation specifications.
 
 ## Operational benchmarks
 
