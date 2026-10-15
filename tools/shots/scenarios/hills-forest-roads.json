@@ -1,0 +1,11 @@
+{
+  "// note": "Terrain ids must exist in the loaded mods. Columns and rows are offset coordinates.",
+  "fill": { "terrain": "world:grass", "kind": "Flat" },
+  "tiles": [
+    { "rect": [3, 3, 5, 5], "kind": "Hills", "terrain": "world:plains" },
+    { "rect": [7, 3, 9, 5], "feature": "world:forest" },
+    { "at": [6, 7], "feature": "world:jungle" }
+  ],
+  "roads": [ [[2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7], [8, 7], [9, 6], [9, 5]], [[5, 7], [5, 8], [5, 9]] ],
+  "focus": [6, 5]
+}

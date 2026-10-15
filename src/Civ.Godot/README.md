@@ -56,18 +56,66 @@ xvfb-run -a -s "-screen 0 1600x900x24" env LIBGL_ALWAYS_SOFTWARE=1 \
   -- --screenshot /tmp/civ-setup.png --stage setup --frames 60
 ```
 
-Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`, `world`, `terrain`, and `rivers`.
+Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`, `world`, `terrain`, `rivers`, `peak` and `wrap`.
 `map-city` founds a city before capture. `city` also opens its city screen and adds three eligible queue entries.
 `terrain` showcases a snow-capped mountain range, softened ground transitions, and scattered nature props.
 `rivers` focuses on generated river bends and mouths without changing the map.
-`--screenshots` runs through all stages and captures each screenshot to `docs/screenshots/<stage>.png`.
-`--fps-probe` runs on a rendered display with VSync disabled and reports average FPS over 100 frames.
-`--turns N` advances the game before capture.
-`--world small`, `--opponents 2`, and `--seed 3` override debug game settings.
-`--reveal` explores the map for terrain inspection without making distant units visible.
-`--zoom 14` increases the initial camera distance.
-`--terrain-debug N` sets the terrain shader debug view: 1 blend weights, 2 hidden weight, 3 colour only, 4 lighting only.
-These inspection switches apply only to screenshot runs.
+`peak` focuses on the first mountain, and `wrap` on the east-west seam.
+
+These switches apply only to capture runs and go after `--` on the Godot command line.
+`mise run shot -- <switches>` builds and runs with them. See also `tools/shots/README.md` for worked examples.
+
+### Run and output
+
+- `--screenshot <path|name>`: save one capture, then quit. A bare name (no slash) goes to `--out-dir`. Use an absolute path otherwise.
+- `--screenshots`: run every stage above in turn. Each goes to `docs/screenshots/<stage>.png`, or to `--out-dir`.
+- `--shots <file.json>`: take several captures in one launch. Each entry has a `name` and optional `focus`, `focusTile` `[col,row]`,
+  `pitch`, `yaw`, `distance`, `terrainDebug` and `wireframe`. A missing camera field keeps the previous shot's value.
+- `--out-dir <dir>`: where captures and stats go. The default is `docs/screenshots`, which holds the committed images, so set this for test captures.
+- `--stage <name>`: the stage for `--screenshot`. It defaults to `setup`, or to `map` when a scene switch below is used.
+- `--frames N`: ready frames to wait before each capture. The default is 60, or 30 with a scene switch, and 90 in the stage tour.
+- `--stats`: print and save `<name>.json` beside each capture: props per scatter set before and after thinning, triangles per layer,
+  height minimum, maximum and mean per relief class, and FPS.
+- `--fps-probe`: needs a rendered display. It uses a huge map, VSync off and a 1600 × 900 window, and reports average and 1%-low FPS
+  at the default zoom and at maximum zoom-out (120 warm-up frames, then 300 sampled frames each).
+
+### Game setup
+
+- `--world <size>`: world size by id or name, for example `tiny`, `small`, `huge`.
+- `--seed N`: map seed. The default is 1.
+- `--opponents N`: number of opponents. The default is 3.
+- `--turns N`: end this many turns before capture.
+- `--reveal`: explore the whole map for the human team without making distant units visible.
+- `--scenario <file.json>`: replace the generated map with a hand-made scene. The format is described in
+  `src/Civ.Godot/Debug/DebugScenario.cs` and an example is `tools/shots/scenarios/hills-forest-roads.json`.
+  It reveals every tile and makes every tile visible.
+
+### Camera and view
+
+- `--focus <kind>`: centre on the best patch of `hills`, `forest`, `jungle`, `road`, `peak`, `river` or `city`.
+  "Best" is the matching tile with the most matching tiles within two steps. Ties go to the lowest tile id.
+- `--focus-tile col,row`: centre on a tile, in offset coordinates.
+- `--pitch DEG`, `--yaw DEG`, `--distance N`: camera pose. The defaults are 62, 0 (looking north) and 18.
+  Pitch is clamped to 5–89 and distance to 1–120, which is wider than the player's zoom limits.
+- `--zoom D`: change the initial camera distance by D, for example `--zoom -8` to move closer. `--distance` is applied after it.
+- `--clean`: hide the HUD, tooltips, hover outline, path preview, units, cities and labels.
+
+### Terrain debug views
+
+- `--terrain-debug <mode>`: a number or a name. 0 `normal`, 1 `weights` (blend weights as colour), 2 `hidden` (hidden weight),
+  3 colour only, 4 `relief` (white ground, lighting only), 5 `bands` (height colour with contour lines every 0.05),
+  6 `slope` (green flat to red steep), 7 `lattice` (the mesh triangles).
+- `--wireframe`: the same as `--terrain-debug lattice`. The compatibility renderer has no wireframe mode, so the shader draws the lines.
+  It assumes the default lattice of 9 steps per tile column.
+
+### Tuning overrides
+
+- `--tuning Name=value,Name=value`: replace values in `TerrainTuning` (`src/Civ.Client.Core/Terrain/TerrainField.cs`), for example
+  `HillsRise=0.4,HillsRadius=0.7`. Names are not case sensitive. An unknown name stops the run and lists the valid names.
+- `--tuning-file <file.json>`: the same, as `{"HillsRise": 0.4}`. `--tuning` wins when both set a name.
+- `--scatter-density-scale F`: multiply forest, jungle and other feature scatter density. Rock density is not affected.
+- `--scatter-keep tree=F,other=F`: the fraction of props drawn after the deterministic thinning that protects the frame rate.
+  The defaults are `tree=0.667` and `other=0.5`.
 
 ## Rendering and limits
 

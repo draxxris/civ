@@ -1,0 +1,8 @@
+[
+  { "name": "hills_default", "focus": "hills" },
+  { "name": "hills_low", "pitch": 28, "distance": 9 },
+  { "name": "hills_bands", "terrainDebug": "bands" },
+  { "name": "hills_slope", "terrainDebug": "slope" },
+  { "name": "hills_relief", "terrainDebug": "relief" },
+  { "name": "hills_wire", "terrainDebug": "normal", "wireframe": true }
+]

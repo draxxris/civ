@@ -17,9 +17,16 @@ internal sealed partial class WrapMesh : Node3D
         }
     }
 
+    /// <summary>Triangles in the current mesh (one world copy).</summary>
+    public int Triangles { get; private set; }
+
     public Mesh? Mesh
     {
-        set { foreach (var copy in _copies) copy.Mesh = value; }
+        set
+        {
+            foreach (var copy in _copies) copy.Mesh = value;
+            Triangles = value is ArrayMesh { } m && m.GetSurfaceCount() > 0 ? m.SurfaceGetArrayIndexLen(0) / 3 : 0;
+        }
     }
 }
 
@@ -45,6 +52,18 @@ internal sealed partial class MapRenderer : Node3D
 
     /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
     public static bool LogTimings { get; set; }
+
+    /// <summary>Capture aid: draw no units, cities or labels, only the world.</summary>
+    public bool Clean { get; set; }
+
+    /// <summary>Triangles per baked layer and in all terrain chunks (one world copy each).</summary>
+    public Dictionary<string, int> TriangleCounts() => new()
+    {
+        ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles,
+        ["land_icons"] = _landIcons.Triangles, ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
+    };
+
+    public TerrainRenderer Terrain => _terrain;
 
     public float Period { get; }
     public float MapDepth => 1.5f * (_session.Sim.State.Map.Height - 1);
@@ -130,7 +149,7 @@ internal sealed partial class MapRenderer : Node3D
     {
         foreach (var (label, _) in _labels) label.Visible = false;
         _labels.Clear();
-        BuildTokens();
+        if (!Clean) BuildTokens();
         BuildOverlay();
         _atlas.Flush();
     }
