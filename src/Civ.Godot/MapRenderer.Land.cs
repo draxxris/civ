@@ -6,13 +6,18 @@ namespace Civ.Client;
 
 internal sealed partial class MapRenderer
 {
-    /// <summary>Feature marks, routes and resource/improvement icons. The ground itself, relief, rivers and borders are the
-    /// <see cref="TerrainRenderer"/>'s job.</summary>
+    /// <summary>Most a settlement layout turns either way from its authored pose, so fronts still face the camera.</summary>
+    private const float ImprovementTurn = 0.45f;
+
+    /// <summary>Feature marks, routes, improvement models and resource/improvement icons. The ground itself, relief, rivers
+    /// and borders are the <see cref="TerrainRenderer"/>'s job.</summary>
     private void BuildLand()
     {
         var sim = _session.Sim;
         var marks = new MeshBuilder { Ground = GroundAt };
         var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv, Ground = GroundAt };
+        var roads = new RoadMesh(TerrainField);
+        var sites = new List<ImprovementSite>();
         foreach (var tile in sim.State.Grid.Tiles)
         {
             var plot = sim.State.Plots[tile.Value];
@@ -21,12 +26,50 @@ internal sealed partial class MapRenderer
             var centre = PositionOf(sim.State.Grid.HexOf(tile));
             float fog = sight == Sight.Visible ? 1f : 0.55f;
             DrawFeature(marks, centre, tile.Value, plot, fog);
-            DrawRoute(marks, tile, centre, plot, fog);
+            DrawRoute(roads, tile, centre, plot);
             DrawResources(icons, centre, plot, fog);
+            if (plot.Improvement is { } improvement && _improvements.Has(improvement))
+                sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
         }
+        foreach (var city in _session.KnownCities())
+        {
+            var sight = _session.SightOf(city.Position);
+            if (sight == Sight.Hidden || _improvements.CityRing(city) is not { } ring) continue;
+            sites.Add(new ImprovementSite(ring, PositionOf(city.Position), 0, sight == Sight.Visible ? 1f : 0.55f));
+        }
+        _improvements.Rebuild(sites);
         _land.Mesh = marks.Build(_opaque);
+        _roads.Mesh = roads.Build(_terrain.RoadMaterial);
         _landIcons.Mesh = icons.Build(_landIconMaterial);
         _atlas.Flush();
+    }
+
+    /// <summary>Layout turn of an improvement: a model that faces the river (its +X side) is turned toward it, the rest get
+    /// a hashed turn.</summary>
+    private float ImprovementYaw(string improvement, int tile, byte riverEdges)
+    {
+        if (riverEdges != 0 && _improvements.FacesRiver(improvement)) return RiverYaw(riverEdges);
+        return Signed(Hash(tile, 7)) * ImprovementTurn;
+    }
+
+    /// <summary>Yaw that turns a model's +X side toward the river on a tile. Edge bits follow <c>Hex.Directions</c>. One
+    /// edge: that edge. Several: the mean of their directions, so an adjacent pair faces the bend between them. When the
+    /// directions cancel (opposite edges, three at 120°) the lowest edge is used.</summary>
+    internal static float RiverYaw(byte riverEdges)
+    {
+        double sumX = 0, sumZ = 0;
+        int first = -1;
+        for (int d = 0; d < 6; d++)
+        {
+            if ((riverEdges & (1 << d)) == 0) continue;
+            if (first < 0) first = d;
+            var (x, z) = Hex.Directions[d].ToPixel(1);
+            sumX += x; sumZ += z;
+        }
+        if (first < 0) return 0;
+        if (Math.Abs(sumX) + Math.Abs(sumZ) < 0.01) (sumX, sumZ) = Hex.Directions[first].ToPixel(1);
+        // Basis(Up, yaw) turns +X to (cos yaw, 0, -sin yaw).
+        return (float)Math.Atan2(-sumZ, sumX);
     }
 
     private static int Hash(int tile, int salt)
@@ -65,75 +108,13 @@ internal sealed partial class MapRenderer
 
     private static Vector3 Up(float y) => new(0, y, 0);
 
-    private const float RoadVergeWidth = 0.12f, RoadTrackWidth = 0.065f, RoadTrackLift = 0.006f;
-    /// <summary>Largest sideways bow of a road link, and of its S-shaped second harmonic, in world units.</summary>
-    private const float RoadBow = 0.17f, RoadWiggle = 0.08f;
-    /// <summary>Ribbon segments per half link (tile centre to shared edge).</summary>
-    private const int RoadSteps = 8;
-
-    /// <summary>Each road link between two tile centres is one gently swerving curve: a bow plus a weaker S-bend, both
-    /// zero at the centres. The bend is hashed from the unordered tile pair, so each tile draws its own half (in its own
-    /// fog) and the halves meet exactly at the shared edge with the same tangent.</summary>
-    private void DrawRoute(MeshBuilder b, TileId tile, Vector3 centre, Plot plot, float fog)
-    {
-        if (plot.Route == null) return;
-        var verge = Ui.ToColor(MapStyle.Road.Scale(fog));
-        var track = Ui.ToColor(MapStyle.RoadTrack.Scale(fog));
-        var grid = _session.Sim.State.Grid;
-        var hex = grid.HexOf(tile);
-        for (int d = 0; d < 6; d++)
-        {
-            if (grid.Neighbor(tile, d) is not TileId n || n == tile || _session.Sim.State.Plots[n.Value].Route == null) continue;
-            // Unwrapped neighbour centre, so a link across the wrap seam stays short.
-            var other = PositionOf(hex.Neighbor(d));
-            bool first = tile.Value < n.Value;
-            var link = new RoadLink(first ? centre : other, first ? other : centre,
-                Signed(Hash(Math.Min(tile.Value, n.Value), 2 * Math.Max(tile.Value, n.Value) + 1)) * RoadBow,
-                Signed(Hash(Math.Min(tile.Value, n.Value), 2 * Math.Max(tile.Value, n.Value) + 2)) * RoadWiggle);
-            float t0 = first ? 0f : 0.5f;
-            DrawRoadHalf(b, link, t0, RoadVergeWidth, YLines, verge);
-            DrawRoadHalf(b, link, t0, RoadTrackWidth, YLines + RoadTrackLift, track);
-        }
-        b.Disc(centre + Up(YLines), RoadVergeWidth / 2, verge, 10);
-        b.Disc(centre + Up(YLines + RoadTrackLift), RoadTrackWidth / 2, track, 10);
-    }
-
     private static float Signed(int hash) => hash % 2001 / 1000f - 1f;
-
-    /// <summary>A road curve from <c>From</c> (t = 0) to <c>To</c> (t = 1) with a sideways offset
-    /// <c>Bow·sin(πt) + Wiggle·sin(2πt)</c>.</summary>
-    private readonly record struct RoadLink(Vector3 From, Vector3 To, float Bow, float Wiggle)
-    {
-        private Vector3 Normal => new Vector3(-(To.Z - From.Z), 0, To.X - From.X).Normalized();
-
-        public Vector3 At(float t) =>
-            From.Lerp(To, t) + Normal * (Bow * Mathf.Sin(Mathf.Pi * t) + Wiggle * Mathf.Sin(Mathf.Tau * t));
-
-        public Vector3 Tangent(float t) =>
-            To - From + Normal * (Bow * Mathf.Pi * Mathf.Cos(Mathf.Pi * t) + Wiggle * Mathf.Tau * Mathf.Cos(Mathf.Tau * t));
-    }
-
-    /// <summary>A draped ribbon along half a link, from t0 to t0 + ½, with analytic sides so the two halves join cleanly.</summary>
-    private static void DrawRoadHalf(MeshBuilder b, RoadLink link, float t0, float width, float lift, Color colour)
-    {
-        Vector3 prevPoint = default, prevSide = default;
-        for (int i = 0; i <= RoadSteps; i++)
-        {
-            float t = t0 + 0.5f * i / RoadSteps;
-            var tangent = link.Tangent(t);
-            var side = new Vector3(-tangent.Z, 0, tangent.X).Normalized() * (width / 2);
-            var point = link.At(t) + Up(lift);
-            if (i > 0) b.Quad(prevPoint - prevSide, prevPoint + prevSide, point + side, point - side, colour);
-            prevPoint = point;
-            prevSide = side;
-        }
-    }
 
     private void DrawResources(MeshBuilder icons, Vector3 centre, Plot plot, float fog)
     {
         var tint = new Color(fog, fog, fog);
         if (plot.Bonus is { } bonus && _session.BonusVisible(bonus)) DrawIcon(icons, bonus, centre + new Vector3(-0.34f, YIcons, -0.26f), 0.56f, tint, new Color(0.95f, 0.8f, 0.2f));
-        if (plot.Improvement is { } improvement) DrawIcon(icons, improvement, centre + new Vector3(0.34f, YIcons, 0.26f), 0.56f, tint, new Color(0.7f, 0.55f, 0.4f));
+        if (plot.Improvement is { } improvement && !_improvements.Has(improvement)) DrawIcon(icons, improvement, centre + new Vector3(0.34f, YIcons, 0.26f), 0.56f, tint, new Color(0.7f, 0.55f, 0.4f));
     }
 
     private void DrawIcon(MeshBuilder icons, string id, Vector3 at, float size, Color tint, Color fallback)

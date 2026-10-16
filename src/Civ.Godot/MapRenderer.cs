@@ -42,12 +42,13 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _landIcons, _tokens, _tokenIcons, _path;
+    private readonly WrapMesh _land, _roads, _landIcons, _tokens, _tokenIcons, _path;
     private readonly TerrainRenderer _terrain;
     private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
+    private readonly ImprovementRenderer _improvements;
     private int _worldRevision = -1, _revision = -1;
 
     /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
@@ -59,8 +60,10 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Triangles per baked layer and in all terrain chunks (one world copy each).</summary>
     public Dictionary<string, int> TriangleCounts() => new()
     {
-        ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles,
-        ["land_icons"] = _landIcons.Triangles, ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
+        ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles + _roads.Triangles, ["roads"] = _roads.Triangles,
+        ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
+        ["improvement_ground"] = _improvements.DecalTriangles,
+        ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
     };
 
     public TerrainRenderer Terrain => _terrain;
@@ -80,9 +83,12 @@ internal sealed partial class MapRenderer : Node3D
         _tokenMaterial = Material(null, true, 3);
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = Material(null, true, 5);
-        _terrain = new TerrainRenderer(session, icons.Catalog);
+        _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
+        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile, _improvements.CityRing);
         AddChild(_terrain);
+        AddChild(_improvements);
         _land = Layer();
+        _roads = Layer();
         _landIcons = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();
