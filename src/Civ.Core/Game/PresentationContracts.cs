@@ -6,10 +6,13 @@ namespace Civ.Game;
 public enum SetupField { WorldSize, GameSpeed, Handicap, StartingEra, MapGenerator }
 
 /// <summary>Optional ruleset policy. At most one provider may supply a default for each field.</summary>
+public sealed record SetupGameOption(string Id, string Name, bool Default, string Help = "");
+
 public interface ISetupPolicy
 {
     string? Default(SetupField field);
     int? SortOrder(SetupField field, string id) => null;
+    IEnumerable<SetupGameOption> GameOptions(ContentDb content) => [];
 }
 
 public static class SetupPolicies
@@ -19,6 +22,10 @@ public static class SetupPolicies
 
     public static int SortOrder(ContentDb content, SetupField field, string id) =>
         content.Services.Get<ISetupPolicy>().Select(p => p.SortOrder(field, id)).Where(n => n != null).SingleOrDefault() ?? 0;
+
+    public static IReadOnlyList<SetupGameOption> GameOptions(ContentDb content) =>
+        content.Services.Get<ISetupPolicy>().SelectMany(p => p.GameOptions(content))
+            .OrderBy(option => option.Name, StringComparer.Ordinal).ThenBy(option => option.Id, StringComparer.Ordinal).ToList();
 }
 
 /// <summary>A mod-owned queue kind and its read-only catalog and query behavior.</summary>

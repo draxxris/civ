@@ -8,6 +8,12 @@ namespace Civ.Mods.Foundation;
 /// <summary>Foundation definitions, shared hex tuning and new-game setup.</summary>
 public sealed class FoundationMod : IMod
 {
+    private sealed class GameOptionRequirements : Civ.Content.IRequirementEvaluator
+    {
+        public string Kind => "game-option";
+        public string? Evaluate(Civ.Content.Requirement.Leaf leaf, Civ.Content.RequirementContext context) =>
+            context.Sim.IsOptionEnabled(leaf.Id) ? null : $"Required game-option: {leaf.Id}";
+    }
     private static void LoadHexHandicaps(IModContext context)
     {
         var tuning = context.Data.ReadJson<HexOverridesDef[]>("data/hex-overrides.json").Single();
@@ -46,8 +52,7 @@ public sealed class FoundationMod : IMod
         ContentRegistration.Evaluator<EraDef>(context, "era");
         ContentRegistration.Evaluator<CultureLevelDef>(context, "culture-level");
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
-        ContentRegistration.Evaluator<GameOptionDef>(context, "game-option",
-            (leaf, ctx) => ctx.Sim.Content.Get<GameOptionDef>(leaf.Id).Default);
+        context.RegisterService<Civ.Content.IRequirementEvaluator>("game-option_requirements", new GameOptionRequirements());
 
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation");
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");
