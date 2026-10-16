@@ -73,25 +73,51 @@ public sealed record TerrainTuning
     /// It stays above the hills so adjacent peaks keep one ridge.</summary>
     public double PeakBase { get; init; } = 0.38;
     /// <summary>Peaks: largest summit rise above <see cref="PeakBase"/>; each tile scales it by its own variation.</summary>
-    public double PeakRise { get; init; } = 0.9;
+    public double PeakRise { get; init; } = 1.15;
     /// <summary>Peaks: distance across the ridge axis at which a summit's rise reaches zero (along it, times
     /// <see cref="PeakStretch"/>).</summary>
-    public double PeakRadius { get; init; } = 1.1;
-    /// <summary>Peaks: exponent of the summit falloff. Above 1 gives steep, pointed tops over gentle feet.</summary>
-    public double PeakCurve { get; init; } = 1.7;
+    public double PeakRadius { get; init; } = 1.25;
+    /// <summary>Peaks: exponent of the summit falloff. Above 1 gives concave faces over gentle feet.</summary>
+    public double PeakCurve { get; init; } = 1.5;
     /// <summary>Peaks: largest summit offset from the tile centre.</summary>
     public double PeakJitter { get; init; } = 0.22;
     /// <summary>Peaks: fraction of <see cref="PeakRise"/> by which the lowest summit falls short of the highest.</summary>
-    public double PeakVariation { get; init; } = 0.35;
+    public double PeakVariation { get; init; } = 0.4;
     /// <summary>Peaks: how much longer a summit is along its ridge axis than across it. Axes follow a slow world-space
     /// field, so neighbouring summits line up into ranges.</summary>
-    public double PeakStretch { get; init; } = 2.2;
+    public double PeakStretch { get; init; } = 1.5;
     /// <summary>Peaks: relative distortion of the summit distance, which grows spurs and irregular footprints.</summary>
-    public double PeakSpur { get; init; } = 0.3;
+    public double PeakSpur { get; init; } = 0.22;
+    /// <summary>Peaks: how far a summit is a pyramid rather than a cone, in [0, 1]. Each summit has three to five faces of
+    /// unequal width, and straight arêtes run down between them.</summary>
+    public double PeakFacet { get; init; } = 0.85;
+    /// <summary>Peaks: largest height of the lesser spires around the main summit, as a fraction of the main rise.</summary>
+    public double PeakSpires { get; init; } = 0.75;
+    /// <summary>Peaks: ridge height midway between two neighbouring peaks, as a fraction of their summits; each pair
+    /// varies it by ±25%.</summary>
+    public double PeakSaddle { get; init; } = 0.5;
+    /// <summary>Peaks: ridge height where it meets a summit, as a fraction of that summit.</summary>
+    public double PeakRidgeTop { get; init; } = 0.8;
+    /// <summary>Peaks: half width of a ridge's base, in world units.</summary>
+    public double PeakRidgeWidth { get; init; } = 0.75;
+    /// <summary>Peaks: height of the broad massif under the summits, as a fraction of the main rise.</summary>
+    public double PeakMassif { get; init; } = 0.4;
+    /// <summary>Peaks: largest fraction of a face's height that its erosion gullies cut away. Gullies run down the faces,
+    /// leave sharp ribs between them and fade out at the apex and the feet.</summary>
+    public double PeakErosion { get; init; } = 0.5;
+    /// <summary>Peaks: most gullies on one face; each face picks one up to this many.</summary>
+    public int PeakGullies { get; init; } = 4;
+    /// <summary>Peaks: wander of the gullies across a face (in face widths), so they bend instead of running straight.</summary>
+    public double PeakMeander { get; init; } = 0.25;
     /// <summary>Peaks: ridged-noise (crag) amplitude.</summary>
-    public double PeakNoise { get; init; } = 0.36;
+    public double PeakNoise { get; init; } = 0.22;
     /// <summary>Peaks: ridged-noise frequency.</summary>
     public double PeakFrequency { get; init; } = 1.3;
+    /// <summary>Peaks: amplitude of the fine rock relief (ledges, buttresses) on the upper slopes. It needs a fine mesh;
+    /// see <see cref="TerrainMesher.PeakResolution"/>.</summary>
+    public double PeakRoughness { get; init; } = 0.09;
+    /// <summary>Peaks: frequency of the fine rock relief.</summary>
+    public double PeakRoughnessFrequency { get; init; } = 4.5;
 
     /// <summary>Largest river carve depth, under the middle of a full-width river.</summary>
     public double RiverDepth { get; init; } = 0.075;
@@ -99,6 +125,9 @@ public sealed record TerrainTuning
     public double RiverWidth { get; init; } = 0.16;
     /// <summary>Half width of the carved channel and its banks, as a multiple of the local water half width.</summary>
     public double RiverBankRatio { get; init; } = 2.2;
+    /// <summary>Distance beyond a river's banks, in world units, over which the terrain is drawn down to the river's valley floor
+    /// (see <see cref="RiverNetwork.Level"/>).</summary>
+    public double RiverDrawdown { get; init; } = 1.1;
 
     /// <summary>Half step of the central differences in <see cref="TerrainField.NormalAt"/> (chunk meshes difference their
     /// own lattice heights instead).</summary>
@@ -118,8 +147,10 @@ public sealed record TerrainTuning
     {
         get
         {
+            // The drawdown reaches further than the carve, and the valley floor reads the ground at the banks.
             double band = RiverWidth * RiverNetwork.MaxWidthScale * RiverBankRatio;
-            return band + Math.Max(InfluenceRadius, band + RiverNetwork.MaxLinkSpan + 1 + Math.Sqrt(3));
+            double reach = band + RiverDrawdown;
+            return reach + Math.Max(InfluenceRadius + band, band + RiverNetwork.MaxLinkSpan + 1 + Math.Sqrt(3));
         }
     }
 }
@@ -131,6 +162,8 @@ public sealed class TerrainField
 {
     private readonly PeriodicNoise _noise;
     private readonly bool _wrap;
+    /// <summary>Per-tile mountain shapes, built on first use. Racing threads build equal shapes, so either may win.</summary>
+    private readonly Mountain?[] _mountains;
 
     /// <summary>Field for a snapshot; the seed fixes the noise and the warp grid.</summary>
     public TerrainField(TerrainSnapshot snapshot, int seed, TerrainTuning? tuning = null)
@@ -146,11 +179,16 @@ public sealed class TerrainField
         Tuning = tuning;
         _noise = noise;
         Warp = warp;
-        Rivers = new RiverNetwork(snapshot, tuning, noise);
         _wrap = snapshot.Grid.Spec.Wrap;
+        _mountains = new Mountain?[snapshot.Relief.Length];
+        Rivers = new RiverNetwork(snapshot, tuning, noise, (x, z) =>
+        {
+            if (_wrap) x -= Period * Math.Floor(x / Period);
+            return GroundAt(x, z, out _);
+        });
         MaxHeight = new[] { 0, tuning.DeepWater + tuning.WaterNoise, tuning.ShallowWater + tuning.WaterNoise,
             tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsRise + tuning.HillsNoise,
-            tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise }.Max();
+            tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise + tuning.PeakRoughness }.Max();
         MinHeight = new[] { 0, tuning.DeepWater - tuning.WaterNoise, tuning.ShallowWater - tuning.WaterNoise,
             tuning.FlatBase - tuning.FlatNoise, tuning.HillsBase - tuning.HillsNoise, tuning.PeakBase }.Min() - tuning.RiverDepth;
     }
@@ -183,10 +221,19 @@ public sealed class TerrainField
     public double HeightAt(double x, double z)
     {
         if (_wrap) x -= Period * Math.Floor(x / Period);
+        double h = GroundAt(x, z, out double hidden);
+        if (hidden < 1) h += (1 - hidden) * (Rivers.Level(x, z, h) - h - Rivers.Carve(x, z));
+        return h;
+    }
+
+    /// <summary>The blended relief profiles before rivers level and carve them, and the hidden share of the blend.</summary>
+    private double GroundAt(double x, double z, out double hidden)
+    {
         var corners = Corners(x, z);
         var w = HeightWeights(corners);
         var peak = corners.HasPeak ? PeakNoise(x, z) : default;
-        double h = 0, hidden = 0;
+        double h = 0;
+        hidden = 0;
         for (int k = 0; k < 3; k++)
         {
             if (w[k] <= 0) continue;
@@ -196,7 +243,6 @@ public sealed class TerrainField
             else if (relief == ReliefClass.Hills) h += w[k] * HillProfile(corners, k, x, z);
             else h += w[k] * Profile(relief, x, z);
         }
-        if (hidden < 1) h -= (1 - hidden) * Rivers.Carve(x, z);
         return h;
     }
 
@@ -235,8 +281,9 @@ public sealed class TerrainField
         public ReliefClass Relief(int k) => k switch { 0 => A, 1 => B, _ => C };
     }
 
-    /// <summary>Peak noise shared by every peak corner at one point: crag ridges in [0, 1] and spur distortion in [-1, 1].</summary>
-    private readonly record struct PeakDetail(double Crag, double Spur);
+    /// <summary>Peak noise shared by every peak corner at one point: crag ridges in [0, 1], spur distortion in [-1, 1],
+    /// gully wander in [-1, 1] and fine rock relief in [0, 1].</summary>
+    private readonly record struct PeakDetail(double Crag, double Spur, double Wander, double Rough);
 
     /// <summary>Resolve the warped corner triangle and its known relief classes.</summary>
     private CornerSet Corners(double x, double z)
@@ -277,28 +324,212 @@ public sealed class TerrainField
     private PeakDetail PeakNoise(double x, double z)
     {
         var t = Tuning;
-        return new(_noise.Ridged(x, z, t.PeakFrequency, t.Octaves, salt: 4), _noise.Fbm(x, z, 0.9, 2, salt: 5));
+        return new(_noise.Ridged(x, z, t.PeakFrequency, t.Octaves, salt: 4), _noise.Fbm(x, z, 0.9, 2, salt: 5),
+            _noise.Fbm(x, z, 1.7, 2, salt: 7), _noise.Ridged(x, z, t.PeakRoughnessFrequency, 2, salt: 8));
     }
 
-    /// <summary>One peak tile's own mountain: a jittered summit near its centre whose rise falls off with a convex power
-    /// curve (steep pointed top, gentle feet) over a distorted distance, on the <see cref="TerrainTuning.PeakBase"/> saddle level,
-    /// plus crags that are strongest high up. The tile's weight fades this to zero wherever the tile stops shaping the
-    /// height, so a neighbouring peak forms a connected ridge with a saddle between two distinct summits.</summary>
+    /// <summary>One peak tile's own mountain: a jittered main summit near its centre and two or three lesser spires around
+    /// it, mostly along its ridge, all on a low massif at the <see cref="TerrainTuning.PeakBase"/> saddle level. Each summit
+    /// is a pyramid with straight arêtes and gullied faces (<see cref="Summit"/>). Crags are strongest high up, and fine
+    /// rock relief roughens the upper slopes. Footprint, faces, spires, gullies and height all vary per tile, so no two
+    /// mountains look alike. The tile's weight fades this to zero wherever the tile stops shaping the height, so a
+    /// neighbouring peak forms a connected ridge with a saddle between two distinct summits.</summary>
     private double PeakProfile(in CornerSet corners, int k, PeakDetail detail)
     {
         var t = Tuning;
-        int tile = corners.Tile(k);
+        var m = MountainOf(corners.Tile(k));
         var (cx, cz) = corners.Triangle[k].ToPixel(1);
-        double angle = TileHash(tile, 1) * Math.Tau, offset = t.PeakJitter * TileHash(tile, 2);
-        double dx = corners.X - cx - offset * Math.Cos(angle), dz = corners.Z - cz - offset * Math.Sin(angle);
-        // Ridge axis from a slow field at the (canonical) tile centre, so all copies of a tile agree.
-        double axis = Math.PI * _noise.Value(cx - Period * Math.Floor(cx / Period), cz, 0.2, salt: 6) + 0.6 * (TileHash(tile, 4) - 0.5);
-        double along = dx * Math.Cos(axis) + dz * Math.Sin(axis), across = dz * Math.Cos(axis) - dx * Math.Sin(axis);
-        along /= t.PeakStretch;
-        double distance = Math.Sqrt(along * along + across * across) * (1 + t.PeakSpur * detail.Spur);
-        double rise = Math.Pow(Math.Max(0, 1 - distance / t.PeakRadius), t.PeakCurve);
-        double summit = 1 - t.PeakVariation * TileHash(tile, 3);
-        return t.PeakBase + t.PeakRise * summit * rise + t.PeakNoise * detail.Crag * (0.5 + 0.5 * rise);
+        double dx = corners.X - cx - m.OffsetX, dz = corners.Z - cz - m.OffsetZ;
+        double u = (dx * m.AxisCos + dz * m.AxisSin) * m.ScaleAlong, v = (dz * m.AxisCos - dx * m.AxisSin) * m.ScaleAcross;
+        double spur = 1 + t.PeakSpur * detail.Spur;
+        double shape = Summit(m.Main, u, v, spur, detail.Wander);
+        foreach (var spire in m.Spires)
+        {
+            double su = (u - spire.U) / spire.Size, sv = (v - spire.V) / spire.Size;
+            shape = SoftMax(shape, spire.Height * Summit(spire.Faces, su, sv, spur, detail.Wander), 0.05);
+        }
+        // A broad, low massif under the summits fills the tile, so their feet reach the saddles.
+        shape = SoftMax(shape, t.PeakMassif * Cone(Math.Sqrt(u * u + v * v) * spur / 1.4, 1.2), 0.08);
+        // Ridges to neighbouring peaks, in absolute rise units so both tiles of a pair build the same crest.
+        double rise = m.Summit * shape;
+        foreach (var ridge in m.Ridges)
+            rise = SoftMax(rise, RidgeShape(ridge, corners.X - cx, corners.Z - cz, spur, detail.Wander), 0.05);
+        shape = rise / m.Summit;
+        return t.PeakBase + t.PeakRise * rise + t.PeakNoise * detail.Crag * (0.6 + 0.4 * shape)
+            + t.PeakRoughness * detail.Rough * SmoothStep(0.08, 0.45, shape);
+    }
+
+    /// <summary>One pyramid's faces: unit normals of the face directions (unequal widths), the half angle from each face
+    /// centre to its two arêtes, and how many gullies each face carries.</summary>
+    private sealed record Faces(double[] Cos, double[] Sin, double[] Angle, double[] HalfEast, double[] HalfWest, int[] Gullies);
+
+    private sealed record Spire(double U, double V, double Size, double Height, Faces Faces);
+
+    /// <summary>A ridge from this tile's summit (A, relative to the tile centre) to a neighbouring peak's summit (B), with
+    /// their summit heights, the saddle height as a fraction of them and the number of spurs on each flank.</summary>
+    private sealed record Ridge(double AX, double AZ, double BX, double BZ, double HeightA, double HeightB, double Saddle,
+        int Spurs, double Phase);
+
+    /// <summary>Everything about one peak tile's mountain that does not depend on the sample point.</summary>
+    private sealed record Mountain(double OffsetX, double OffsetZ, double AxisCos, double AxisSin, double ScaleAlong,
+        double ScaleAcross, double Summit, Faces Main, Spire[] Spires, Ridge[] Ridges);
+
+    private Mountain MountainOf(int tile) => _mountains[tile] ??= BuildMountain(tile);
+
+    private Mountain BuildMountain(int tile)
+    {
+        var t = Tuning;
+        var hex = Snapshot.Grid.HexOf(new TileId(tile));
+        var (cx, cz) = hex.ToPixel(1);
+        var (ox, oz) = SummitOffset(tile);
+        var neighbours = PeakNeighbours(hex);
+        // Ridge axis: along the line through neighbouring peaks, so a chain of mountains reads as one range; a lone peak
+        // takes a slow field at the canonical tile centre, so all wrap copies of a tile agree.
+        double axis = neighbours.Count > 0
+            ? 0.5 * Math.Atan2(neighbours.Sum(n => Math.Sin(2 * n.Angle)), neighbours.Sum(n => Math.Cos(2 * n.Angle)))
+                + 0.3 * (TileHash(tile, 4) - 0.5)
+            : Math.PI * _noise.Value(cx - Period * Math.Floor(cx / Period), cz, 0.2, salt: 6) + 0.6 * (TileHash(tile, 4) - 0.5);
+        // Normalised footprint coordinates: the main summit's rise reaches zero at radius 1.
+        double radius = t.PeakRadius * (0.85 + 0.3 * TileHash(tile, 5));
+        double stretch = t.PeakStretch * (0.75 + 0.5 * TileHash(tile, 6));
+        // Lesser spires: the first two sit along the ridge on either side, up to two more anywhere around.
+        var spires = new Spire[2 + (int)(TileHash(tile, 7) * 3)];
+        for (int i = 0; i < spires.Length; i++)
+        {
+            uint salt = 30 + 10 * (uint)i;
+            double direction = (i == 0 ? 0 : i == 1 ? Math.PI : Math.Tau * TileHash(tile, salt)) + 0.8 * (TileHash(tile, salt + 1) - 0.5);
+            double reach = 0.42 + 0.3 * TileHash(tile, salt + 2);
+            spires[i] = new(reach * Math.Cos(direction), reach * Math.Sin(direction), 0.42 + 0.25 * TileHash(tile, salt + 3),
+                t.PeakSpires * (0.45 + 0.55 * TileHash(tile, salt + 4)), FacesOf(tile, salt + 5));
+        }
+        double height = SummitHeight(tile);
+        var ridges = neighbours.Select(n =>
+        {
+            var (nx, nz) = SummitOffset(n.Tile);
+            int lo = Math.Min(tile, n.Tile), hi = Math.Max(tile, n.Tile);
+            double pair = TileHash(lo * 7919 + hi, 40);
+            return new Ridge(ox, oz, n.X + nx, n.Z + nz, height, SummitHeight(n.Tile), t.PeakSaddle * (0.75 + 0.5 * pair),
+                3 + (int)(TileHash(lo * 7919 + hi, 41) * 3), TileHash(lo * 7919 + hi, 42));
+        }).ToArray();
+        return new(ox, oz, Math.Cos(axis), Math.Sin(axis), 1 / (stretch * radius), 1 / radius, height, FacesOf(tile, 20),
+            spires, ridges);
+    }
+
+    private (double X, double Z) SummitOffset(int tile)
+    {
+        double angle = TileHash(tile, 1) * Math.Tau, offset = Tuning.PeakJitter * TileHash(tile, 2);
+        return (offset * Math.Cos(angle), offset * Math.Sin(angle));
+    }
+
+    private double SummitHeight(int tile) => 1 - Tuning.PeakVariation * TileHash(tile, 3);
+
+    /// <summary>Peak tiles next to a hex: their tile, centre relative to the hex centre and direction.</summary>
+    private List<(int Tile, double X, double Z, double Angle)> PeakNeighbours(Hex hex)
+    {
+        var result = new List<(int, double, double, double)>();
+        var s = Snapshot;
+        foreach (var direction in Hex.Directions)
+        {
+            var (col, row) = HexGrid.ToOffset(hex + direction);
+            if (row < 0 || row >= s.Height || (!s.Grid.Spec.Wrap && (col < 0 || col >= s.Width))) continue;
+            int tile = s.ClampedTile(hex + direction);
+            if (s.Relief[tile] != ReliefClass.Peak) continue;
+            var (x, z) = direction.ToPixel(1);
+            result.Add((tile, x, z, Math.Atan2(z, x)));
+        }
+        return result;
+    }
+
+    /// <summary>A ridge's height in rise units at (x, z) relative to the tile centre: a sharp crest that dips from just
+    /// under each summit to a saddle midway, with V-shaped spurs and gullies down both flanks. A pure function of the
+    /// pair, so the two tiles that share it agree.</summary>
+    private double RidgeShape(Ridge ridge, double x, double z, double spur, double wander)
+    {
+        var t = Tuning;
+        double vx = ridge.BX - ridge.AX, vz = ridge.BZ - ridge.AZ, length = Math.Sqrt(vx * vx + vz * vz);
+        vx /= length; vz /= length;
+        double along = (x - ridge.AX) * vx + (z - ridge.AZ) * vz, f = Math.Clamp(along / length, 0, 1);
+        double across = (z - ridge.AZ) * vx - (x - ridge.AX) * vz;
+        double fromEnd = along < 0 ? -along : along > length ? along - length : 0;
+        double mid = Math.Abs(2 * f - 1);
+        // The crest wanders sideways a little, most at the saddle.
+        across += 0.12 * wander * (1 - mid * mid);
+        double width = t.PeakRidgeWidth * (0.7 + 0.3 * mid);
+        double distance = Math.Sqrt(across * across + fromEnd * fromEnd) * spur / width;
+        double crest = (ridge.HeightA + (ridge.HeightB - ridge.HeightA) * f)
+            * (ridge.Saddle + (t.PeakRidgeTop - ridge.Saddle) * Math.Pow(mid, 1.6));
+        double height = crest * Cone(distance, t.PeakCurve);
+        if (height <= 0) return 0;
+        double wave = TriangleWave(Math.PI * (ridge.Spurs * f + ridge.Phase) + t.PeakMeander * Math.PI * wander);
+        double ramp = SmoothStep(0.1, 0.35, distance) * (1 - SmoothStep(0.75, 1, distance));
+        return height * (1 - t.PeakErosion * wave * ramp);
+    }
+
+    /// <summary>Three to five faces of unequal width at a random turn, with one to <see cref="TerrainTuning.PeakGullies"/>
+    /// gullies each.</summary>
+    private Faces FacesOf(int tile, uint salt)
+    {
+        int n = 3 + (int)(TileHash(tile, salt) * 3);
+        double theta0 = Math.Tau * TileHash(tile, salt + 1);
+        var angles = new double[n];
+        for (int i = 0; i < n; i++) angles[i] = theta0 + Math.Tau * (i + 0.3 * (TileHash(tile, salt + 2 + (uint)i) - 0.5)) / n;
+        var east = new double[n];
+        var west = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            east[i] = 0.5 * ((i + 1 < n ? angles[i + 1] : angles[0] + Math.Tau) - angles[i]);
+            west[i] = 0.5 * (angles[i] - (i > 0 ? angles[i - 1] : angles[n - 1] - Math.Tau));
+        }
+        var gullies = Enumerable.Range(0, n).Select(i => 1 + (int)(TileHash(tile, salt + 7 + (uint)i) * Tuning.PeakGullies)).ToArray();
+        return new(angles.Select(Math.Cos).ToArray(), angles.Select(Math.Sin).ToArray(), angles, east, west, gullies);
+    }
+
+    /// <summary>One pyramidal summit in [0, 1] at normalised coordinates (u, v): 1 at its apex, 0 from distance 1 outwards.
+    /// The distance blends from round to polygonal (<see cref="TerrainTuning.PeakFacet"/>), so straight arêtes run down
+    /// between the faces. Each face's V-shaped gullies are zero at its arêtes, its apex and its foot.</summary>
+    private double Summit(Faces faces, double u, double v, double spur, double wander)
+    {
+        var t = Tuning;
+        double r = Math.Sqrt(u * u + v * v);
+        if (0.6 * r * spur >= 1) return 0;
+        int n = faces.Cos.Length, best = 0;
+        double reach = double.MinValue;
+        for (int i = 0; i < n; i++)
+        {
+            double d = u * faces.Cos[i] + v * faces.Sin[i];
+            if (d > reach) { reach = d; best = i; }
+        }
+        double polygon = reach / (0.5 * (1 + Math.Cos(Math.PI / n)));
+        // The floor keeps a narrow face's corner from reaching far beyond the footprint.
+        double distance = Math.Max(r + t.PeakFacet * (polygon - r), 0.6 * r) * spur;
+        double height = Cone(distance, t.PeakCurve);
+        if (height <= 0 || r < 1e-9) return height;
+        // Lateral position across the face: -1 and 1 on its two arêtes (the bisectors with the neighbouring faces).
+        double phi = Math.IEEERemainder(Math.Atan2(v, u) - faces.Angle[best], Math.Tau);
+        double s = Math.Clamp(phi / (phi >= 0 ? faces.HalfEast[best] : faces.HalfWest[best]), -1, 1);
+        double wave = TriangleWave(0.5 * Math.PI * faces.Gullies[best] * (s + 1) + t.PeakMeander * Math.PI * wander);
+        double envelope = 1 - SmoothStep(0.7, 1, Math.Abs(s));
+        double ramp = SmoothStep(0.04, 0.3, distance) * (1 - SmoothStep(0.7, 1, distance));
+        return height * (1 - t.PeakErosion * wave * envelope * ramp);
+    }
+
+    /// <summary>Smooth maximum: max(a, b) with a rounded crease of width k.</summary>
+    private static double SoftMax(double a, double b, double k)
+    {
+        double h = Math.Clamp(0.5 + 0.5 * (a - b) / k, 0, 1);
+        return b + (a - b) * h + k * h * (1 - h);
+    }
+
+    /// <summary>Convex summit falloff in [0, 1] over a normalised distance: 1 at the top, 0 from distance 1 outwards.</summary>
+    private static double Cone(double distance, double curve) => Math.Pow(Math.Max(0, 1 - distance), curve);
+
+    /// <summary>Triangle wave with period π in [0, 1]: 0 at multiples of π, 1 halfway between.</summary>
+    private static double TriangleWave(double x) => Math.Asin(Math.Abs(Math.Sin(x))) / (0.5 * Math.PI);
+
+    private static double SmoothStep(double edge0, double edge1, double x)
+    {
+        double s = Math.Clamp((x - edge0) / (edge1 - edge0), 0, 1);
+        return s * s * (3 - 2 * s);
     }
 
     /// <summary>One hill tile's own landform: a rounded main mound near its centre and a smaller shoulder knoll to one side,

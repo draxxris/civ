@@ -124,10 +124,12 @@ internal sealed partial class TerrainRenderer : Node3D
         var meshes = new TerrainMeshData[dirty.Count];
         var rivers = new RiverMeshData?[dirty.Count];
         var field = Field;
+        var resolutions = _chunks.Resolutions(Snapshot);
         Parallel.For(0, dirty.Count, i =>
         {
-            meshes[i] = TerrainMesher.Build(_chunks.Chunks[dirty[i]], field);
-            rivers[i] = RiverMesher.Build(_chunks.Chunks[dirty[i]], field);
+            var chunk = _chunks.Chunks[dirty[i]];
+            meshes[i] = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
+            rivers[i] = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
         });
         long built = clock.ElapsedMilliseconds;
         for (int i = 0; i < dirty.Count; i++)
@@ -205,17 +207,20 @@ internal sealed partial class TerrainRenderer : Node3D
     private static Rgb? WaterTintOf(string layerId) =>
         layerId.Contains("slimy", StringComparison.Ordinal) ? Rgb.Hex(0x5c9a1e) : null;
 
+    /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow.</summary>
     private ArrayMesh GroundMesh(TerrainMeshData data)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
         var normals = new Vector3[n];
+        var cavity = new Vector2[n];
         for (int v = 0; v < n; v++)
         {
             vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
+            cavity[v] = new Vector2(data.Cavity[v], 0);
         }
-        return Build(vertices, normals, null, FrontFaces(data.Indices, _ => true), _terrainMaterial)!;
+        return Build(vertices, normals, cavity, FrontFaces(data.Indices, _ => true), _terrainMaterial)!;
     }
 
     /// <summary>A flat surface at y = 0 over every lattice triangle with a vertex below sea level that a water tile shapes;

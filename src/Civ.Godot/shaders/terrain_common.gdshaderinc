@@ -259,8 +259,13 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 	water_tint = vec4(0.0);
 	fogged = 0.0;
 	hidden = 0.0;
-	vec3 rock = material_sample(cliff_layer, p, linear).rgb;
+	vec4 rock_sample = material_sample(cliff_layer, p, linear);
+	vec3 rock = rock_sample.rgb;
 	vec3 snow = snow_weight > 0.0 ? material_sample(snow_layer, p, linear).rgb : vec3(0.0);
+	// Snow settles in the rock's low crevices first, so thin cover follows the stone. Below it, a frost lightens the bare
+	// rock. Height shifts the coverage rather than thresholding it, so the fade stays broad and survives mipmapping.
+	float snow_mask = smoothstep(0.18, 0.82, snow_weight + (0.5 - rock_sample.a) * 0.55);
+	float frost = 0.2 * smoothstep(0.0, 0.5, snow_weight);
 	for (int k = 0; k < 3; k++) {
 		colours[k] = vec3(0.0);
 		ivec2 t = clamped_texel(corner_hex(base, upper, k));
@@ -280,7 +285,8 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 		vec4 slime = palette_entry(layer, 3, linear);
 		c = mix(c, slime.rgb, slime.a);
 		// Snow caps by altitude cover whatever the summit tile is made of; fog then tones them like the ground.
-		c = mix(c, snow, snow_weight);
+		c = mix(c, mix(c, snow, 0.55), frost);
+		c = mix(c, snow, snow_mask);
 		if (sight == 1) {
 			c = fog_tone(c);
 			fogged += weights[k];

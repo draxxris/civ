@@ -159,7 +159,7 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
         var snapshot = new TerrainSnapshot(new MapSpec(16, 12, true));
         var rng = new Random(6);
         for (int i = 0; i < snapshot.Relief.Length; i++) snapshot.Relief[i] = rng.Next(2) == 0 ? ReliefClass.Hills : ReliefClass.Peak;
-        var tuning = new TerrainTuning { HillsNoise = 0, PeakNoise = 0, PeakRise = 0 };
+        var tuning = new TerrainTuning { HillsNoise = 0, PeakNoise = 0, PeakRoughness = 0, PeakRise = 0 };
         var plain = new TerrainField(snapshot, 1, tuning);
         var mixed = new TerrainField(TerrainTestMaps.Mixed(), 1);
         for (int i = 0; i < 5000; i++)
