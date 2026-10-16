@@ -42,7 +42,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _landIcons, _tokens, _tokenIcons, _path;
+    private readonly WrapMesh _land, _roads, _landIcons, _tokens, _tokenIcons, _path;
     private readonly TerrainRenderer _terrain;
     private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
@@ -60,7 +60,7 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Triangles per baked layer and in all terrain chunks (one world copy each).</summary>
     public Dictionary<string, int> TriangleCounts() => new()
     {
-        ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles,
+        ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles + _roads.Triangles, ["roads"] = _roads.Triangles,
         ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
         ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
     };
@@ -87,6 +87,7 @@ internal sealed partial class MapRenderer : Node3D
         AddChild(_terrain);
         AddChild(_improvements);
         _land = Layer();
+        _roads = Layer();
         _landIcons = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();
