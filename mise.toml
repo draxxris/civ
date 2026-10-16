@@ -37,3 +37,7 @@ dotnet = "10"
 git-lfs = "latest"
 # Godot 4.7.2-stable .NET (mono) build, matching Godot.NET.Sdk/4.7.2 in src/Civ.Godot. Run as `godot-mono`.
 "github:godotengine/godot" = { version = "4.7.2-stable", asset_pattern = "Godot_v4.7.2-stable_mono_linux_x86_64.zip", rename_exe = "godot-mono" }
+
+[env]
+__NV_PRIME_RENDER_OFFLOAD = "1"
+__GLX_VENDOR_LIBRARY_NAME = "nvidia"
