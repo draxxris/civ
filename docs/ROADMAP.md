@@ -46,7 +46,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Foundation & Core Contracts
 - **Phase contract & turn order**: Deterministic phase lifecycle execution (`docs/02-turn-lifecycle.md`) with lockstep handshake and state hash verification.
-- **Setup & configuration**: Game setup selection, world sizes (`WorldSizeDef`), speeds (`GameSpeedDef`), handicaps (`HandicapDef`), eras (`EraDef`), player teams, and initial gold.
+- **Setup & configuration**: Game setup selection, game options checklist (`SimulationSettings.GameOptions`, `Simulation.IsOptionEnabled`, Godot `SetupScreen`), world sizes (`WorldSizeDef`), speeds (`GameSpeedDef`), handicaps (`HandicapDef`), eras (`EraDef`), player teams, and initial gold.
 - **Hex tuning overrides**: `src/Mods/Foundation/data/hex-overrides.json` controls hex-specific balance, including `barbarianUnownedTilesMultiplier` and `aiMinimumCityGarrison`.
 - **Dogfood mod isolation**: All features are standalone mods (`src/Mods/*`). `Civ.Core` and `Civ.Client.Core` hold no hard-coded mod IDs or content kinds. Custom test rulesets run without shipped mods.
 
@@ -57,7 +57,13 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Resource placement**: Physical resource placement respecting latitude, area size, terrain/feature requirements, and cluster rules.
 - **Plot yield ledgers**: Natural and improved plot yields with cross-mod modifiers, river changes, hills/peak adjustments, and route yield additions.
 - **Fresh water & irrigation**: Fresh water propagation from rivers, lakes, and oases; irrigation transit through farms and city plots.
-- **Worker builds & improvements**: Worker assignments, shared build progress, feature removal production credits, improvement construction, route networks, and automated upgrades.
+- **Worker builds & improvements**: Worker assignments, shared build progress, feature removal production credits, improvement construction, route networks, automated upgrades, peak build modifiers, and route upgrade discounts.
+- **Pillage commands & tile repairs**: Unit pillaging of improvements and routes with cargo and domain checks. Enemy pillage awards gold and steps improvements down, while workers prioritize repairing ruins and severed routes.
+- **Dynamic feature growth & decay**: Per-turn feature disappearance rolls and adjacent feature growth and spread rolls scaled by game speed, feature growth modifiers, and route penalties.
+- **Resource discovery & default-off depletion**: Per-turn resource discovery rolls on worked improved bonus-free tiles. Option-gated mine exhaustion creates depleted mines, and deposit depletion uses the reference zero-consumption path.
+- **Global warming environmental changes**: Global warming defense from map features and health civics balances city pollution. Unchecked pollution drives stepped feature and terrain degradation.
+- **Line-of-sight occlusion & hidden-state fog snapshots**: Elevation and feature line-of-sight occlusion with high-ground vantage range and aerial bypass. Per-team fog-of-war plot snapshots preserve last-observed terrain, features, improvements, and ownership.
+- **Foreign trade network transit & vicinity resources**: Physical resource and city networks transit revealed peaceful foreign territory without Open Borders treaties. Naval blockades sever water networks, and vicinity bonus checks enforce local connectivity.
 
 ### Research
 - **Prerequisite graph**: Strict checking of all/any technology prerequisites, obsoleted branches, and era gating.
@@ -117,7 +123,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Advanced Systems (P6 / P7)
 - **Religion**: 13 imported religions, holy city scoring, natural trade spread, international trade route spread across open borders, religion decay and attrition for unprotected minorities, civic-gated inquisitions (purging non-state faiths/temples, hurry anger, holy city relocation/extinction, and diplomatic memories), missionaries, shrine construction, state religion adoption, and religious happiness/commerce.
 - **Great People**: City progress points, class pools, deterministic births, combat Great General emergence from combat experience, warlord attachment (`military:leader` promotions and stack experience sharing), Military Academy/Academy construction, Great Merchant trade missions to foreign cities for gold, settlement (free specialists), flavor-driven tech bulbing, building hurry, and Golden Ages.
-- **Trade**: Domestic and foreign trade routes, slot capacity, connectivity verification, overseas profit bonuses, and shared civic bonuses.
+- **Trade**: Domestic and foreign trade routes, slot capacity, connectivity verification, overseas profit bonuses, and shared civic bonuses. Player naval blockades sever water trade networks and coastal trade, while autonomous AI blockade planning remains absent.
 - **Diplomacy**: Bilateral team contact discovery, attitude ledgers, peace treaties, open borders, defensive pacts, and multi-item trade deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination, Cultural, Space Race, and Time victories with victory resolution screens.
 - **Corporations**: Great Person founding, branch spread (via gold or executives), headquarters protection, branch revenue, resource consumption, and maintenance.
@@ -133,7 +139,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Religious management**: Missionary spread, state religion adoption, and inquisition purging based on city instability and state church policies.
 
 ### Client, Presentation & 3D Art
-- **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load.
+- **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load. Setup screen options and perceived fog snapshots prevent unseen map mutation leaks.
 - **Godot 4.7.2 views (`Civ.Godot`)**: Native 3D viewport, camera controls, hex prism highlights, audio playback, and responsive HUD panels.
 - **Continuous 3D blended terrain**:
   - Seamless 1024×1024 terrain textures with height in alpha.
@@ -153,16 +159,17 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Per-player handicap options**: Allow human and individual AI players to have distinct difficulty levels in the same session.
 - [ ] **Calendar progression**: Add non-turn timeline display (months, seasons, variable years per turn by era/speed).
 - [ ] **Default civics fallback**: Auto-fill missing civic selections for incomplete custom civilization declarations.
-- [ ] **Remaining game options**: Implement the imported options in `src/Mods/Foundation/data/game-option.json` that do not yet have simulation rules. Keep them out of the setup screen until their rules exist.
+- [ ] **Remaining game option flags**: Implement simulation rules for the unimplemented game option definitions in src/Mods/Foundation/data/game-option.json.
 
 ### World & Map Generation
-- [ ] **Dynamic feature growth & decay**: Implement forest expansion and jungle spread onto adjacent plots.
-- [ ] **Resource discovery & depletion**: Random chance for new resources to appear on worked mines or existing deposits to exhaust.
-- [ ] **Pillage command**: Implement unit pillaging of improvements and routes with gold rewards and tile repair builds.
-- [ ] **Route upgrade discounts & peak build modifiers**: Time discounts when replacing roads with railroads; terrain modifiers for peak tunneling.
-- [ ] **Environmental changes & advanced climate scripts**: Implement global warming tile degradation and custom map generator scripts.
-- [ ] **Terrain sight occlusion**: Block unit sight lines behind mountains, peaks, and dense forests; implement hidden-state fog snapshots.
-- [ ] **Foreign trade network transit**: Resource transit through foreign territory without explicit open borders treaties, blockades, and vicinity resource predicates.
+- [x] **Dynamic feature growth & decay**: Implement forest expansion and jungle spread onto adjacent plots.
+- [x] **Resource discovery & depletion**: Random chance for new resources to appear on worked mines or existing deposits to exhaust.
+- [x] **Pillage command**: Implement unit pillaging of improvements and routes with gold rewards and tile repair builds.
+- [x] **Route upgrade discounts & peak build modifiers**: Time discounts when replacing roads with railroads; terrain modifiers for peak tunneling.
+- [x] **Environmental changes**: Implement global warming tile degradation.
+- [x] **Terrain sight occlusion**: Block unit sight lines behind mountains, peaks, and dense forests; implement hidden-state fog snapshots.
+- [x] **Foreign trade network transit**: Resource transit through foreign territory without explicit open borders treaties, blockades, and vicinity resource predicates.
+- [ ] **Custom map generator scripts**: Support external or custom procedural map script definitions.
 
 ### Research
 - [ ] **Tech diffusion / welfare**: Research discounts on technologies already known by multiple contacted civilizations.
@@ -209,7 +216,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [x] **AI Great Person valuation**: Enhanced AI weighting between immediate tech bulbing, city settlement, or Golden Age triggers.
 
 ### Trade & Diplomacy
-- [ ] **Naval blockades**: Military ships blockading coastal cities and severing sea trade routes.
+- [ ] **AI naval blockade planning**: Autonomous AI orders to deploy and maintain naval blockades (player blockade commands, water network severing, coastal city work blocking, and trade route cancellation are implemented).
 - [ ] **AI diplomatic negotiations**: AI-initiated treaty proposals, counter-offers, peace demands, and gift requests.
 - [ ] **Diplomatic vote resolutions**: United Nations and Apostolic Palace voting sessions (world peace, global civics, diplomatic victory).
 - [ ] **Embargoes & sanctions**: Multilateral agreements to prohibit trade with targeted civilizations.
