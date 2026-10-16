@@ -178,6 +178,34 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void Worker_build_time_applies_peak_penalty_and_only_discounts_higher_route_upgrades()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Terrain = "world:grass";
+        plot.Feature = null;
+        plot.Kind = PlotKind.Flat;
+        var builds = Service<IWorkerBuildService>(sim);
+        const string farm = "world:build_build_farm";
+        Assert.Equal(800, builds.RequiredWork(sim, tile, farm));
+        plot.Kind = PlotKind.Peak;
+        Assert.Equal(1600, builds.RequiredWork(sim, tile, farm));
+
+        plot.Kind = PlotKind.Flat;
+        plot.Route = "world:route_route_track";
+        const string road = "world:build_build_road";
+        Assert.Equal(80, builds.RequiredWork(sim, tile, road));
+        var worker = AddWorker(sim, tile);
+        sim.TeamOf(0).Techs.Add("research:the_wheel");
+        sim.State.PlayerById(0).Treasury = 1000;
+        Assert.Null(builds.Validate(sim, 0, worker.Id, road));
+
+        plot.Route = "world:route_route_railroad";
+        Assert.Equal("An equal or better route already exists", builds.Validate(sim, 0, worker.Id, road));
+    }
+
+    [Fact]
     public void Remote_build_preview_is_read_only_and_matches_completed_yields()
     {
         var sim = GameFactory.Scenario(Content);

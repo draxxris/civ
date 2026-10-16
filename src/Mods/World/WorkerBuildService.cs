@@ -48,11 +48,23 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         var plot = sim.State.Plots[tile.Value];
         long time = build.Time;
         if (plot.Feature is { } f) time += build.FeatureEffects.GetValueOrDefault(f)?.Time ?? 0;
+        if (plot.Kind == PlotKind.Peak)
+            time = time * Math.Max(0, 100 + Raw(sim, "PEAK_BUILD_TIME_MODIFIER", 100)) / 100;
+        if (build.RouteType is { } route && plot.Route is { } existingRoute
+            && Raw(sim, "ROUTES_UPGRADE", 1) != 0
+            && sim.Content.Get<S.RouteDef>(route).Value > sim.Content.Get<S.RouteDef>(existingRoute).Value)
+        {
+            var existingBuild = sim.Content.Get<S.BuildDef>().All.FirstOrDefault(b => b.RouteType == existingRoute);
+            if (existingBuild is not null) time = Math.Max(1, time - existingBuild.Time);
+        }
         time = time * Math.Max(0, 100 + sim.Content.Get<S.TerrainDef>(plot.Terrain).BuildModifier) / 100;
         time = time * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).BuildPercent / 100;
         time = time * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).BuildPercent / 100;
         return checked((int)Math.Max(1, time));
     }
+    private static int Raw(Simulation sim, string key, int fallback) =>
+        sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value)
+            && int.TryParse(value, out int parsed) ? parsed : fallback;
     public void Run(Simulation sim, int player)
     {
         foreach (var unit in sim.State.Units.Where(u => u.Owner == player).OrderBy(u => u.Id).ToArray()) Work(sim, unit);
