@@ -52,6 +52,12 @@ public interface ICityConnectionService
 public interface IVisibilityService
 {
     bool IsUnitVisible(Simulation sim, int unit, int observerTeam);
+    /// <summary>Terrain-limited sight, including high-ground outer-ring sight; aircraft bypass occlusion.</summary>
+    bool CanSeePlot(Simulation sim, TileId observer, TileId target, int team, int range, bool aerial = false);
+    /// <summary>Live observed state, last observed state in fog, or null when no observation exists.</summary>
+    RevealedPlotSnapshot? SnapshotOf(Simulation sim, TileId tile, int team);
+    /// <summary>Record an explicit map reveal without granting current sight.</summary>
+    void RevealPlot(Simulation sim, TileId tile, int team);
     /// <summary>Military calls this after movement; founding and turn boundaries also refresh sight.</summary>
     void Recompute(Simulation sim);
 }

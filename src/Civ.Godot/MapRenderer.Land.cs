@@ -20,9 +20,8 @@ internal sealed partial class MapRenderer
         var sites = new List<ImprovementSite>();
         foreach (var tile in sim.State.Grid.Tiles)
         {
-            var plot = sim.State.Plots[tile.Value];
-            var sight = _session.SightOf(plot);
-            if (sight == Sight.Hidden) continue;
+            var sight = _session.SightOf(sim.State.Plots[tile.Value]);
+            if (_session.PerceivedPlot(tile) is not { } plot) continue;
             var centre = PositionOf(sim.State.Grid.HexOf(tile));
             float fog = sight == Sight.Visible ? 1f : 0.55f;
             DrawFeature(marks, centre, tile.Value, plot, fog);
@@ -95,7 +94,7 @@ internal sealed partial class MapRenderer
         b.Tri(baseLeft, top, at + new Vector3(0, YRelief, 0), light);
     }
 
-    private void DrawFeature(MeshBuilder b, Vector3 centre, int tile, Plot plot, float fog)
+    private void DrawFeature(MeshBuilder b, Vector3 centre, int tile, RevealedPlotSnapshot plot, float fog)
     {
         if (plot.Feature is not { } id) return;
         if (_terrain.Palette.ScatterFor(id, plot.Terrain)?.Scatter is not null) return;
@@ -110,7 +109,7 @@ internal sealed partial class MapRenderer
 
     private static float Signed(int hash) => hash % 2001 / 1000f - 1f;
 
-    private void DrawResources(MeshBuilder icons, Vector3 centre, Plot plot, float fog)
+    private void DrawResources(MeshBuilder icons, Vector3 centre, RevealedPlotSnapshot plot, float fog)
     {
         var tint = new Color(fog, fog, fog);
         if (plot.Bonus is { } bonus && _session.BonusVisible(bonus)) DrawIcon(icons, bonus, centre + new Vector3(-0.34f, YIcons, -0.26f), 0.56f, tint, new Color(0.95f, 0.8f, 0.2f));

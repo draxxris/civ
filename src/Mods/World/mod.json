@@ -1,7 +1,7 @@
 {
   "id": "world",
   "name": "World",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "assembly": "Civ.Mods.World.dll",
   "dependencies": [],
   "references": [

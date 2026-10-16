@@ -104,6 +104,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         if (build.TerrainChange is { } terrain) { plot.Terrain = terrain; Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content); }
         if (build.FeatureChange is { } newFeature) plot.Feature = newFeature;
         if (build.Kill) sim.State.RemoveUnit(worker.Id);
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
     }
     private static void FeatureProduction(Simulation sim, int player, TileId tile, int production)
     {

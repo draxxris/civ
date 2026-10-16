@@ -29,7 +29,7 @@ public sealed partial class GameSession
         var marks = new Dictionary<Hex, TileMark>();
         if (City is not { } city) return marks;
         var workable = WorkableTiles(city).ToHashSet();
-        foreach (var hex in WorkArea(city))
+        foreach (var hex in WorkArea(city).Where(h => SightOf(h) == Sight.Visible))
             marks[hex] = hex == city.Position ? TileMark.Selected : city.Worked.Contains(hex) ? TileMark.Worked
                 : workable.Contains(hex) ? TileMark.Workable : TileMark.Locked;
         return marks;
@@ -41,9 +41,9 @@ public sealed partial class GameSession
         return Unit is { } unit && unit.Position == hex ? TileMark.Selected : TileMark.None;
     }
 
-    /// <summary>What a citizen working this tile would produce, as the local player sees it.</summary>
-    public YieldVector YieldsOf(Hex hex) =>
-        Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields;
+    /// <summary>Current yields only in sight; fog cannot query live irrigation or adjacent modifiers.</summary>
+    public YieldVector YieldsOf(Hex hex) => SightOf(hex) == Sight.Visible
+        ? Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields : default;
 
     private long TileScore(Hex hex)
     {

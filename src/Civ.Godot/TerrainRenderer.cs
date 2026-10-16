@@ -155,7 +155,7 @@ internal sealed partial class TerrainRenderer : Node3D
         var state = _session.Sim.State;
         var extras = new int[state.Plots.Length];
         for (int i = 0; i < extras.Length; i++)
-            if (Snapshot.Sight[i] != Sight.Hidden && state.Plots[i].Improvement is { } improvement)
+            if (_session.PerceivedPlot(new TileId(i))?.Improvement is { } improvement)
                 extras[i] = _clearsTile(improvement) ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
         foreach (var city in _session.KnownCities())
         {
