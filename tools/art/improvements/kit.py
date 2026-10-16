@@ -7,7 +7,8 @@ passed to at() are world units (not scaled). +Y is up. The default camera looks 
 Each top-level glTF node is one *part*. The renderer seats every part on the terrain at its own origin, so a
 building on a slope stands upright at its local ground height (sea level, y = 0, on water tiles). A part whose name
 starts with "ground" is tilted to the surface normal instead (garden plots, rails, fields). Buildings carry a
-foundation that reaches below y = 0 (FOOT) so no gap shows on a slope. Geometry is flat shaded with per-face
+foundation that reaches below y = 0 (FOOT) so no gap shows on a slope. The renderer draws a soft earth patch
+under the vertices of every other part that lie at or below y = 0.06; name a part "nodecal..." to skip it. Geometry is flat shaded with per-face
 vertex colours (stored as sRGB; see srgb()) and one white material. Convex pieces orient their faces
 automatically (Part.hull), so build anything solid from convex hulls.
 """

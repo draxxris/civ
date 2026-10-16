@@ -12,6 +12,7 @@ internal readonly record struct ImprovementSite(string Id, Vector3 Centre, float
 /// building stands upright on a slope. A part whose name starts with <c>ground</c> is tilted to the surface instead
 /// (garden plots, rails). Scene extras <c>{"clear": "centre"}</c> keep scatter props on the tile. Scene extras
 /// <c>{"faceRiver": true}</c> ask the map to turn the model so its +X side faces the tile's river (watermill wheel). Parts are batched per model and part into MultiMeshes, with fog as instance colour.
+/// Soft earth patches under the parts that meet the ground are in ImprovementRenderer.Decals.cs.
 /// </summary>
 internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] copies, Func<float, float, float> ground) : Node3D
 {
@@ -20,7 +21,7 @@ internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] c
     private sealed record Piece(ArrayMesh Mesh, Vector3 Offset, Basis Basis, bool Drape);
     /// <summary>A loaded model. ClearsTile is false when the model asks (scene extras <c>"clear": "centre"</c>) to keep
     /// scatter props around it, as camps and lumbermills standing among trees do.</summary>
-    private sealed record Model(Piece[] Pieces, bool ClearsTile, bool FacesRiver, int CityRing);
+    private sealed record Model(Piece[] Pieces, bool ClearsTile, bool FacesRiver, int CityRing, Footprint[] Footprints);
     private readonly Dictionary<string, Model?> _models = new(StringComparer.Ordinal);
     private readonly StandardMaterial3D _material = new()
     {
@@ -90,6 +91,7 @@ internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] c
                     CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
                 });
         }
+        AddDecals(sites);
     }
 
     private Transform3D Seat(Piece piece, Vector3 centre, Basis turn)
@@ -133,18 +135,21 @@ internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] c
             if (error != Error.Ok) throw new InvalidOperationException($"glTF import failed: {error}");
             root = document.GenerateScene(state);
             var pieces = new List<Piece>();
+            var footprints = new List<Footprint>();
             foreach (var child in root.GetChildren())
             {
                 if (child is not Node3D part) continue;
                 var mesh = new ArrayMesh();
                 Extract(part, Transform3D.Identity, mesh);
                 if (mesh.GetSurfaceCount() == 0) continue;
-                pieces.Add(new Piece(mesh, part.Position, part.Basis,
-                    part.Name.ToString().StartsWith("ground", StringComparison.OrdinalIgnoreCase)));
+                string name = part.Name.ToString();
+                pieces.Add(new Piece(mesh, part.Position, part.Basis, name.StartsWith("ground", StringComparison.OrdinalIgnoreCase)));
+                if (FootprintOf(name, mesh, part.Position, part.Basis) is { } footprint) footprints.Add(footprint);
             }
             if (pieces.Count == 0) throw new InvalidOperationException("Model has no renderable parts");
             return new Model(pieces.ToArray(), ExtraOf(state, "clear")?.AsString() != "centre",
-                ExtraOf(state, "faceRiver")?.AsBool() == true, ExtraOf(state, "cityRing")?.AsInt32() ?? 0);
+                ExtraOf(state, "faceRiver")?.AsBool() == true, ExtraOf(state, "cityRing")?.AsInt32() ?? 0,
+                footprints.ToArray());
         }
         catch (Exception e)
         {
