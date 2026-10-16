@@ -75,3 +75,8 @@ public enum PlotKind
 }
 /// <summary>Feature production is a pending city grant; Cities owns the overflow mutation.</summary>
 public sealed record FeatureProduction(int Player, TileId Plot, int? City, int Production) : DomainEvent;
+
+public sealed record FeatureChanged(TileId Plot, string? PreviousFeature, string? NewFeature) : DomainEvent;
+public sealed record BonusDiscovered(TileId Plot, string Bonus, int Player) : DomainEvent;
+public sealed record BonusDepleted(TileId Plot, string Bonus, int Player) : DomainEvent;
+public sealed record MineDepleted(TileId Plot, string PreviousImprovement, string ReplacementImprovement, int Player) : DomainEvent;

@@ -12,6 +12,8 @@ public sealed class Plot
     public bool IsLake { get; set; }
     /// <summary>Worked turns toward the next improvement upgrade.</summary>
     public int ImprovementTurns { get; set; }
+    /// <summary>Blocks mine builds until a resource discovery or reveal permits rebuilding.</summary>
+    public bool DepletedMine { get; set; }
     /// <summary>Shared worker progress by build id.</summary>
     public SortedDictionary<string, long> BuildProgress { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Optional feature content id.</summary>

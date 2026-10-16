@@ -7,7 +7,7 @@ namespace Civ.Mods.Tests;
 
 // Behavioral owners: generation/setup, yield queries, worker commands, network queries and sight.
 // Cases use independent equations or invariants, not production predicates as expected-value helpers.
-public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private ContentDb Content => mods.Content;
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();

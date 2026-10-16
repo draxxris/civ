@@ -124,7 +124,14 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
     public void Run(Simulation sim)
     {
         var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
-        foreach (var tile in sim.State.Grid.Tiles) Upgrade(sim, tile, worked.Contains(tile));
+        var features = new FeatureTurnRules(sim, worked);
+        var resources = new ResourceTurnRules(sim);
+        foreach (var tile in sim.State.Grid.Tiles)
+        {
+            features.Advance(tile);
+            resources.Advance(tile, worked.Contains(tile));
+            Upgrade(sim, tile, worked.Contains(tile));
+        }
     }
     private static void Upgrade(Simulation sim, TileId tile, bool worked)
     {
