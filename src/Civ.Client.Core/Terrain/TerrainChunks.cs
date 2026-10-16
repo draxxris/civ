@@ -19,6 +19,15 @@ public sealed record TerrainChunk(int Id, int Column, int Row, int UnitX0, int U
     public bool Contains(double x, double z) => x >= X0 && x < X1 && z >= Z0 && z < Z1;
 }
 
+/// <summary>A chunk's lattice resolution (<see cref="TerrainMesher"/>) and those of its eight neighbours. A missing
+/// neighbour (beyond the north or south edge, or across the edge of a map that does not wrap) has the chunk's own.</summary>
+public sealed record ChunkResolution(int K, int West, int East, int North, int South, int NorthWest, int NorthEast,
+    int SouthWest, int SouthEast)
+{
+    /// <summary>The same resolution everywhere.</summary>
+    public static ChunkResolution Uniform(int k) => new(k, k, k, k, k, k, k, k, k);
+}
+
 /// <summary>Partition of one map period into chunks of 4 × 4 tiles, plus the per-chunk dirty signatures that let a
 /// renderer rebuild only the chunks whose geometry or scatter inputs changed. Chunks cover x in [0, Period) and z from one
 /// tile row beyond the north edge to one tile row beyond the south edge.</summary>
@@ -41,12 +50,12 @@ public sealed class TerrainChunks
         if (resolution < 1) throw new ArgumentOutOfRangeException(nameof(resolution));
         Map = map;
         var grid = new HexGrid(map);
-        // The field reads tiles within InfluenceRadius of a sample; a lattice row overhangs the east edge by half a step,
-        // and mesh normals also sample the neighbouring lattice vertices, one step away.
+        // The field reads tiles within InfluenceRadius of a sample, and mesh normals and cavity also sample lattice
+        // vertices up to two steps beyond the chunk (at the coarsest resolution).
         double step = Sqrt3 / resolution;
         tuning ??= new TerrainTuning();
-        RingRadius = tuning.InfluenceRadius + step + step / 2;
-        RiverRingRadius = tuning.RiverReach + step + step / 2;
+        RingRadius = tuning.InfluenceRadius + 2 * step;
+        RiverRingRadius = tuning.RiverReach + 2 * step;
         int zEnd = map.Height + 1; // last row centre + 2 tile rows (3 world units)
         Columns = (map.Width + TileColumns - 1) / TileColumns;
         Rows = (zEnd + NorthMarginUnits + TileRows - 1) / TileRows;
@@ -80,8 +89,57 @@ public sealed class TerrainChunks
     /// <summary>Tiles whose data can change a chunk: its own tiles and a ring around them, ascending.</summary>
     public IReadOnlyList<int> TilesOf(TerrainChunk chunk) => _tiles[chunk.Id];
 
+    /// <summary>Lattice resolution of one chunk: <see cref="TerrainMesher.PeakResolution"/> when a peak can shape it,
+    /// otherwise <see cref="TerrainMesher.DefaultResolution"/>.</summary>
+    public int ResolutionOf(TerrainChunk chunk, TerrainSnapshot snapshot) =>
+        _tiles[chunk.Id].Any(t => snapshot.Relief[t] == ReliefClass.Peak) ? TerrainMesher.PeakResolution : TerrainMesher.DefaultResolution;
+
+    /// <summary>Lattice resolution of every chunk, indexed by chunk id.</summary>
+    public int[] Resolutions(TerrainSnapshot snapshot) => Chunks.Select(c => ResolutionOf(c, snapshot)).ToArray();
+
+    /// <summary>A chunk's resolution and its neighbours', from <see cref="Resolutions"/>.</summary>
+    public ChunkResolution Resolution(TerrainChunk chunk, IReadOnlyList<int> resolutions)
+    {
+        int k = resolutions[chunk.Id];
+        int Of(int dc, int dr) => Neighbour(chunk, dc, dr) is int id and >= 0 ? resolutions[id] : k;
+        return new(k, Of(-1, 0), Of(1, 0), Of(0, -1), Of(0, 1), Of(-1, -1), Of(1, -1), Of(-1, 1), Of(1, 1));
+    }
+
+    /// <summary>A chunk's resolution and its neighbours' for a snapshot.</summary>
+    public ChunkResolution Resolution(TerrainChunk chunk, TerrainSnapshot snapshot)
+    {
+        int k = ResolutionOf(chunk, snapshot);
+        int Of(int dc, int dr) => Neighbour(chunk, dc, dr) is int id and >= 0 ? ResolutionOf(Chunks[id], snapshot) : k;
+        return new(k, Of(-1, 0), Of(1, 0), Of(0, -1), Of(0, 1), Of(-1, -1), Of(1, -1), Of(-1, 1), Of(1, 1));
+    }
+
+    /// <summary>Resolution of the chunk that holds world point (x, z) (wrapped on a wrapping map, clamped to the chunk
+    /// rows), from <see cref="Resolutions"/>.</summary>
+    public int ResolutionAt(double x, double z, IReadOnlyList<int> resolutions)
+    {
+        double period = Map.Width * Sqrt3;
+        if (Map.Wrap) x -= period * Math.Floor(x / period);
+        int col = Math.Clamp((int)Math.Floor(x / Sqrt3) / TileColumns, 0, Columns - 1);
+        int row = Math.Clamp((int)Math.Floor((z / 1.5 + NorthMarginUnits) / TileRows), 0, Rows - 1);
+        return resolutions[row * Columns + col];
+    }
+
+    /// <summary>Id of the chunk dc columns and dr rows away, wrapping columns on a wrapping map; -1 when there is none.</summary>
+    private int Neighbour(TerrainChunk chunk, int dc, int dr)
+    {
+        int row = chunk.Row + dr, col = chunk.Column + dc;
+        if (row < 0 || row >= Rows) return -1;
+        if (col < 0 || col >= Columns)
+        {
+            if (!Map.Wrap) return -1;
+            col = (col + Columns) % Columns;
+        }
+        return row * Columns + col;
+    }
+
     /// <summary>64-bit hash of everything that shapes a chunk's geometry and scatter: layer, relief class (which includes
-    /// water and the hidden flag), river bits and feature ground of its tiles and their ring, plus an optional per-tile
+    /// water and the hidden flag), river bits and feature ground of its tiles and their ring, its mesh resolution (and its
+    /// neighbours' when it is finer than the default), plus an optional per-tile
     /// <paramref name="extras"/> value (for example feature id, city or improvement presence) indexed by tile. When any
     /// tile in the wider river ring has river bits, the river bits and relief of that whole ring count too.</summary>
     public ulong Signature(TerrainChunk chunk, TerrainSnapshot snapshot, IReadOnlyList<int>? extras = null)
@@ -97,6 +155,13 @@ public sealed class TerrainChunks
             h = MixString(h, snapshot.Feature[t]);
             if (extras != null) h = Mix(h ^ (uint)extras[t]);
         }
+        // A fine chunk follows the edges of coarser neighbours, so their resolutions shape it too.
+        var resolution = Resolution(chunk, snapshot);
+        h = Mix(h ^ (ulong)resolution.K);
+        if (resolution.K > TerrainMesher.DefaultResolution)
+            foreach (int k in new[] { resolution.West, resolution.East, resolution.North, resolution.South, resolution.NorthWest,
+                resolution.NorthEast, resolution.SouthWest, resolution.SouthEast })
+                h = Mix(h ^ (ulong)k);
         var rivers = _riverTiles[chunk.Id];
         if (!rivers.Any(t => snapshot.Rivers[t] != 0)) return h;
         foreach (int t in rivers)

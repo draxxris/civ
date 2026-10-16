@@ -23,9 +23,17 @@ public static class RiverMesher
     private static readonly float[] LanesAcross = [-BankExtent, -1.3f, -0.65f, 0f, 0.65f, 1.3f, BankExtent];
 
     /// <summary>The chunk's river surface, or null when no river passes through it.</summary>
-    public static RiverMeshData? Build(TerrainChunk chunk, TerrainField field, int k = TerrainMesher.DefaultResolution)
+    public static RiverMeshData? Build(TerrainChunk chunk, TerrainField field, int k = TerrainMesher.DefaultResolution) =>
+        Build(chunk, field, new TerrainLattice(field, k));
+
+    /// <summary>The chunk's river surface over terrain whose resolution varies by chunk (see
+    /// <see cref="TerrainChunks.ResolutionAt"/>), or null when no river passes through it.</summary>
+    public static RiverMeshData? Build(TerrainChunk chunk, TerrainField field, Func<double, double, int> resolutionAt) =>
+        Build(chunk, field, new TerrainLattice(field, resolutionAt));
+
+    private static RiverMeshData? Build(TerrainChunk chunk, TerrainField field, TerrainLattice lattice)
     {
-        var mesh = new Strips(field, new TerrainLattice(field, k));
+        var mesh = new Strips(field, lattice);
         double period = field.Period;
         double[] shifts = field.Snapshot.Grid.Spec.Wrap ? [-period, 0, period] : [0];
         foreach (var curve in field.Rivers.Curves)

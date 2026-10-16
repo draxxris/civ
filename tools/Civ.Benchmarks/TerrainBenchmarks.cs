@@ -9,7 +9,8 @@ internal static class TerrainBenchmarks
 {
     public static void Run(GameCatalog catalog)
     {
-        Console.WriteLine($"Terrain CPU benchmarks; {Environment.ProcessorCount} logical CPUs; k={TerrainMesher.DefaultResolution}; seed=42.");
+        Console.WriteLine($"Terrain CPU benchmarks; {Environment.ProcessorCount} logical CPUs; k={TerrainMesher.DefaultResolution} "
+            + $"(peaks {TerrainMesher.PeakResolution}); seed=42.");
         Console.WriteLine("One warmup, median of five samples (min/max also printed); revealed generated maps; no timing assertions.");
         foreach (string size in new[] { "standard", "huge", "gigantic" })
         {
@@ -25,8 +26,9 @@ internal static class TerrainBenchmarks
             var scatter = new IReadOnlyList<ScatterInstance>[all.Length];
             void Mesh(bool parallel, TerrainChunk[] work)
             {
-                if (parallel) Parallel.ForEach(work, c => meshes[c.Id] = TerrainMesher.Build(c, field));
-                else foreach (var c in work) meshes[c.Id] = TerrainMesher.Build(c, field);
+                var resolutions = chunks.Resolutions(snapshot);
+                if (parallel) Parallel.ForEach(work, c => meshes[c.Id] = TerrainMesher.Build(c, field, chunks.Resolution(c, resolutions)));
+                else foreach (var c in work) meshes[c.Id] = TerrainMesher.Build(c, field, chunks.Resolution(c, resolutions));
             }
             void Scatter(TerrainChunk[] work)
             {
@@ -37,7 +39,8 @@ internal static class TerrainBenchmarks
             Measure("full mesh parallel", () => Mesh(true, all));
             Measure("full scatter sequential", () => Scatter(all));
             Measure("full mesh parallel + scatter sequential", () => { Mesh(true, all); Scatter(all); });
-            Console.WriteLine($"vertices={meshes.Sum(m => m.VertexCount)}, instances={scatter.Sum(s => s.Count)}");
+            Console.WriteLine($"vertices={meshes.Sum(m => m.VertexCount)}, triangles={meshes.Sum(m => m.Indices.Length / 3)}, "
+                + $"fine chunks={chunks.Resolutions(snapshot).Count(k => k == TerrainMesher.PeakResolution)}, instances={scatter.Sum(s => s.Count)}");
             // Change an interior tile, then rebuild four genuinely invalidated chunks using the shared field/warp.
             var previous = chunks.Signatures(snapshot);
             int col = snapshot.Width / 2 / TerrainChunks.TileColumns * TerrainChunks.TileColumns;

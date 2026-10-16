@@ -164,7 +164,8 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
             {
                 Assert.Equal(oldSignatures[chunk.Id], newSignatures[chunk.Id]);
                 EqualScatter(props[chunk.Id], next);
-                EqualMesh(TerrainMesher.Build(chunk, field), TerrainMesher.Build(chunk, nextField));
+                EqualMesh(TerrainMesher.Build(chunk, field, chunks.Resolution(chunk, before)),
+                    TerrainMesher.Build(chunk, nextField, chunks.Resolution(chunk, after)));
                 distantInstances += next.Count;
             }
         }

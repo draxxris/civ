@@ -23,7 +23,6 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly ScatterPlanner _scatterPlanner;
     private readonly ScatterRenderer _scatter;
     private readonly Func<string, bool> _clearsTile;
-    private readonly Func<City, string?> _cityRing;
     private ulong[]? _signatures;
     private int _snapshotRevision = -1;
     private int _hover = -1;
@@ -43,11 +42,10 @@ internal sealed partial class TerrainRenderer : Node3D
 
     /// <param name="clearsTile">True for an improvement whose 3D model fills its whole tile, so no scatter
     /// props grow through it; other improvements only keep the tile centre clear.</param>
-    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile, Func<City, string?> cityRing)
+    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile)
     {
         _session = session;
         _clearsTile = clearsTile;
-        _cityRing = cityRing;
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
@@ -126,10 +124,12 @@ internal sealed partial class TerrainRenderer : Node3D
         var meshes = new TerrainMeshData[dirty.Count];
         var rivers = new RiverMeshData?[dirty.Count];
         var field = Field;
+        var resolutions = _chunks.Resolutions(Snapshot);
         Parallel.For(0, dirty.Count, i =>
         {
-            meshes[i] = TerrainMesher.Build(_chunks.Chunks[dirty[i]], field);
-            rivers[i] = RiverMesher.Build(_chunks.Chunks[dirty[i]], field);
+            var chunk = _chunks.Chunks[dirty[i]];
+            meshes[i] = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
+            rivers[i] = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
         });
         long built = clock.ElapsedMilliseconds;
         for (int i = 0; i < dirty.Count; i++)
@@ -161,8 +161,8 @@ internal sealed partial class TerrainRenderer : Node3D
         {
             int tile = state.Grid.TileAt(city.Position).Value;
             if (Snapshot.Sight[tile] == Sight.Hidden) continue;
-            extras[tile] |= _cityRing(city) is { } ring && _clearsTile(ring)
-                ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
+            // The city's buildings fill its tile.
+            extras[tile] |= ScatterPlanner.ClearTile;
         }
         foreach (var unit in _session.VisibleUnits())
             extras[state.Grid.TileAt(unit.Position).Value] |= ScatterPlanner.ClearCentre;
@@ -207,17 +207,20 @@ internal sealed partial class TerrainRenderer : Node3D
     private static Rgb? WaterTintOf(string layerId) =>
         layerId.Contains("slimy", StringComparison.Ordinal) ? Rgb.Hex(0x5c9a1e) : null;
 
+    /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow.</summary>
     private ArrayMesh GroundMesh(TerrainMeshData data)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
         var normals = new Vector3[n];
+        var cavity = new Vector2[n];
         for (int v = 0; v < n; v++)
         {
             vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
+            cavity[v] = new Vector2(data.Cavity[v], 0);
         }
-        return Build(vertices, normals, null, FrontFaces(data.Indices, _ => true), _terrainMaterial)!;
+        return Build(vertices, normals, cavity, FrontFaces(data.Indices, _ => true), _terrainMaterial)!;
     }
 
     /// <summary>A flat surface at y = 0 over every lattice triangle with a vertex below sea level that a water tile shapes;
