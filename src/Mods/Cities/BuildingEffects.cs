@@ -37,12 +37,22 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var pair in Available(sim, city)) result[pair.Key] = pair.Value;
         foreach (var building in CityData.Active(sim, city))
         {
-            if (building.FreeBonus is { } bonus) result[bonus] = result.GetValueOrDefault(bonus) + Math.Max(1, building.FreeBonusCount);
-            foreach (var extra in building.ExtraFreeBonuses.OrderBy(p => p.Key, StringComparer.Ordinal)) result[extra.Key] = result.GetValueOrDefault(extra.Key) + extra.Value;
+            foreach (var bonus in building.ExtraFreeBonuses.Keys.Append(building.FreeBonus).OfType<string>().Distinct(StringComparer.Ordinal))
+            {
+                int count = FreeBonusCount(sim, building, bonus);
+                if (count > 0) result[bonus] = result.GetValueOrDefault(bonus) + count;
+            }
         }
         foreach (var building in CityData.Active(sim, city))
             if (building.NoBonus is { } bonus) result.Remove(bonus);
         return result;
+    }
+    // A count of -1 uses the world size. Zero grants no copies.
+    internal static int FreeBonusCount(Simulation sim, S.BuildingDef building, string bonus)
+    {
+        int count = building.FreeBonus == bonus ? building.FreeBonusCount : 0;
+        if (count == -1) count = sim.Content.TryGet<S.WorldSizeDef>(sim.Settings.WorldSize ?? "", out var world) ? world.NumFreeBuildingBonuses : 0;
+        return Math.Max(0, count) + Math.Max(0, building.ExtraFreeBonuses.GetValueOrDefault(bonus));
     }
     /// <summary>Connected copies after diplomatic allocations. Only resources named in the owner's live deals need a second lookup.</summary>
     private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city)
@@ -72,7 +82,7 @@ internal sealed class BuildingEffects : IModifierSource
         sink.Add(b.Id, "cities:hurry_anger_percent", b.HurryAngerModifier);
         AddNumbers(b, sink);
         AddMaps(sim, city, b, bonuses, sink);
-        AddVicinity(sim, city, b, sink);
+        AddVicinity(sim, city, b, bonuses, sink);
         foreach (var tech in sim.TeamOf(city.Owner).Techs)
         {
             sink.AddYield(b.Id + ":" + tech, b.TechYieldChanges.GetValueOrDefault(tech));
@@ -114,19 +124,10 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
         foreach (var other in CityData.Active(sim, city)) sink.Add(b.Id, "cities:happiness", b.BuildingHappinessChanges.GetValueOrDefault(other.DefaultBuilding));
     }
-    private static void AddVicinity(Simulation sim, City city, S.BuildingDef b, ModifierSink sink)
+    private static void AddVicinity(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
-        if (b.VicinityBonusYieldChanges.Count == 0) return;
-        var present = new SortedSet<string>(StringComparer.Ordinal);
-        foreach (var tile in sim.Content.Services.Get<ICityWorkService>().Single().WorkArea(sim, city.Id))
-        {
-            var plot = sim.State.Plots[tile.Value];
-            if (plot.Owner != city.Owner || plot.Bonus is not { } id) continue;
-            if (sim.Content.Get<S.BonusDef>(id).RevealTech is { } tech && !sim.KnowsTech(city.Owner, tech)) continue;
-            present.Add(id);
-        }
-        foreach (var id in present)
-            if (b.VicinityBonusYieldChanges.TryGetValue(id, out var delta)) sink.AddYield(b.Id + ":vicinity:" + id, delta);
+        foreach (var pair in b.VicinityBonusYieldChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
+            if (VicinityBonuses.Has(sim, city, pair.Key, bonuses)) sink.AddYield(b.Id + ":vicinity:" + pair.Key, pair.Value);
     }
     private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, ModifierSink sink)
     {

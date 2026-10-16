@@ -42,7 +42,12 @@ public interface ICombatService
     CombatReport RangedStrike(Simulation sim, int unit, Hex target);
     IReadOnlyList<CombatReport> History(Simulation sim);
 }
-public enum UnitActivity { Awake, Fortify, Sleep, Sentry, Intercept }
+/// <summary>Optional naval rules. Queries use current units and wars, with no saved blockade counters.</summary>
+public interface INavalBlockadeService
+{
+    bool IsBlockaded(Simulation sim, TileId tile, int team);
+}
+public enum UnitActivity { Awake, Fortify, Sleep, Sentry, Intercept, Blockade }
 public enum AirMissionKind { Rebase, Recon, AirStrike, AirBomb }
 public sealed record ReconSight(int Team, Hex Center, int Radius);
 public sealed record AirMissionReport(AirMissionKind Kind, int Unit, Hex Target, int? Interceptor,

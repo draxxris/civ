@@ -25,6 +25,7 @@ public sealed class MilitaryMod : IMod
         context.RegisterService<ICombatService>("combat", new CombatService());
         context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
         context.RegisterService<IUnitService>("units", units);
+        context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());
         context.RegisterService<IUnitSupportService>("support", units);
         context.RegisterService<Civ.Content.IModifierSource>("promotions", new PromotionEffects());
 
