@@ -1,7 +1,7 @@
 {
   "id": "ai",
   "name": "Computer Player",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "assembly": "Civ.Mods.Ai.dll",
   "dependencies": [],
   "references": ["foundation", "world", "research", "economy", "cities", "military", "government", "peoples"]

@@ -81,9 +81,18 @@ internal sealed class WorkerPlanner(AiContext ctx)
         var plot = ctx.Sim.State.Plots[tile.Value];
         int priority = worked ? 25 : 8;
         if (VisibleBonus(plot) is not null) priority += 20;
-        if (plot.Improvement is not null) priority -= 18;
+        if (plot.Improvement is { } id)
+            priority += NeedsRepair(plot, id) ? 15 : -18;
         if (plot.BuildProgress.Count > 0) priority += 100; // Finish work before starting another task.
         return priority;
+    }
+
+    private bool NeedsRepair(Plot plot, string id)
+    {
+        if (id is "world:city_ruins" or "world:city_ruins_arcology") return true;
+        var improvement = ctx.Sim.Content.Get<ImprovementDef>(id);
+        var yields = improvement.YieldChanges;
+        return improvement.DepletedMine || yields.Food + yields.Production + yields.Commerce < 0;
     }
 
     private Job? BestBuildAt(Unit worker, TileId tile)
@@ -127,10 +136,16 @@ internal sealed class WorkerPlanner(AiContext ctx)
     {
         var improvement = ctx.Sim.Content.Get<ImprovementDef>(id);
         int value = (ctx.Leader?.ImprovementWeightModifiers.GetValueOrDefault(id) ?? 0) / 5;
-        if (plot.Improvement is not null) return 0;
-        if (VisibleBonus(plot) is { } bonus && improvement.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true)
+        if (VisibleBonus(plot) is { } bonus && ConnectsBonus(improvement, plot, bonus))
             value += 30 + 8 * bonus.Happiness + 6 * bonus.Health;
         return value;
+    }
+
+    private bool ConnectsBonus(ImprovementDef candidate, Plot plot, BonusDef bonus)
+    {
+        bool alreadyConnected = plot.Improvement is { } existingId
+            && ctx.Sim.Content.Get<ImprovementDef>(existingId).BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
+        return !alreadyConnected && candidate.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
     }
 
     private BonusDef? VisibleBonus(Plot plot)
@@ -175,8 +190,18 @@ internal sealed class WorkerPlanner(AiContext ctx)
         foreach (var hex in HexLine.Between(ctx.Grid, from, end))
         {
             if (!ctx.Grid.TryTile(hex, out var tile)) continue;
-            var plot = ctx.Sim.State.Plots[tile.Value];
-            if (plot.Route is null && RoadPlot(tile)) _roads!.Add(tile);
+            if (RoadPlot(tile) && CanBuildRouteHere(tile)) _roads!.Add(tile);
         }
+    }
+
+    private bool CanBuildRouteHere(TileId tile)
+    {
+        var plot = ctx.Sim.State.Plots[tile.Value];
+        if (plot.Route is not { } existing) return true;
+        if (!ctx.Cities.SelectMany(c => c.Worked).Select(ctx.Grid.TileAt)
+            .All(worked => ctx.Sim.State.Plots[worked.Value].Improvement is not null)) return false;
+        int currentValue = ctx.Sim.Content.Get<RouteDef>(existing).Value;
+        return ctx.UnitsWithRole(UnitRole.Worker).Any(worker => AvailableBuilds(worker).Any(build =>
+            build.RouteType is { } route && ctx.Sim.Content.Get<RouteDef>(route).Value > currentValue));
     }
 }

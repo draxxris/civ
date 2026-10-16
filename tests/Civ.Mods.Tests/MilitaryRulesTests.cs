@@ -13,6 +13,60 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Service<IVisibilityService>(sim).Recompute(sim); return unit;
     }
     [Fact]
+    public void Pillaging_an_owned_improvement_is_free_and_publishes_its_step_down()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var def = mods.Content.Get<Civ.Content.Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land");
+        var unit = Add(sim, 0, 39, def.Id);
+        var improvement = mods.Content.Get<Civ.Content.Schema.ImprovementDef>().All
+            .First(i => !i.Permanent && !i.Goody && i.ImprovementPillage is not null && i.PillageGold > 0);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = unit.Owner;
+        plot.Improvement = improvement.Id;
+        plot.BuildProgress["world:build_build_farm"] = 9;
+        long treasury = sim.State.PlayerById(unit.Owner).Treasury;
+        int movesBefore = unit.MovesLeft;
+        int moveDenominator = mods.Content.Get<Civ.Content.Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator;
+
+        Assert.True(sim.TryApply(new PillageCommand { Player = unit.Owner, Unit = unit.Id }, out var error), error);
+
+        Assert.Equal(improvement.ImprovementPillage, plot.Improvement);
+        Assert.Equal(0, plot.ImprovementTurns);
+        Assert.Empty(plot.BuildProgress);
+        Assert.Equal(treasury, sim.State.PlayerById(unit.Owner).Treasury);
+        var message = Assert.Single(sim.Events.Published, e => e.GetType().Name == "PlotPillaged");
+        Assert.Equal(improvement.Id, message.GetType().GetProperty("Improvement")!.GetValue(message));
+        Assert.Equal(improvement.ImprovementPillage, message.GetType().GetProperty("ReplacementImprovement")!.GetValue(message));
+        Assert.Equal(0, (int)message.GetType().GetProperty("Gold")!.GetValue(message)!);
+        Assert.Equal(movesBefore - moveDenominator, unit.MovesLeft);
+    }
+
+    [Fact]
+    public void Pillaging_rejects_loaded_units_permanent_improvements_and_owned_routes()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var units = Service<IUnitService>(sim);
+        var land = mods.Content.Get<Civ.Content.Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land");
+        var unit = Add(sim, 0, 39, land.Id);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = unit.Owner;
+        plot.Route = "world:route_route_road";
+        Assert.NotNull(units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
+
+        plot.Route = null;
+        plot.Improvement = mods.Content.Get<Civ.Content.Schema.ImprovementDef>().All.First(i => i.Permanent && !i.Goody).Id;
+        unit.MovesLeft = units.MaximumMoves(sim, unit.Id);
+        Assert.NotNull(units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
+
+        plot.Improvement = null;
+        sim.State.Plots[40].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog");
+        var cargo = Add(sim, 0, 40, land.Id);
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+        Assert.NotNull(units.Validate(sim, cargo.Owner, cargo.Id, UnitAction.Pillage, ""));
+    }
+
+    [Fact]
     public void Equal_strength_odds_and_combat_save_replay_match()
     {
         var sim = GameFactory.Scenario(mods.Content);

@@ -157,6 +157,26 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     private static IEnumerable<Hex> WorkArea(GameSession s, City city) => s.WorkArea(city).Where(h => h != city.Position);
 
     [Fact]
+    public void Pillage_action_is_available_for_a_valid_military_unit()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var type = mods.Content.Get<Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land").Id;
+        var unit = Add(sim, type);
+        var improvement = mods.Content.Get<Schema.ImprovementDef>().All.First(i => !i.Permanent && !i.Goody && i.ImprovementPillage is not null);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = 1; plot.Improvement = improvement.Id;
+        sim.State.SetWar(0, 1, true);
+        var session = new GameSession(sim);
+        session.SelectUnit(unit.Id);
+
+        var action = session.DescribeUnit(unit)!.Actions.SingleOrDefault(a => a.Id == "pillage");
+        Assert.NotNull(action?.Command);
+        session.RunAction("pillage");
+        Assert.Equal(improvement.ImprovementPillage, plot.Improvement);
+        Assert.Contains(sim.Events.Published, e => e.GetType().Name == "PlotPillaged");
+    }
+
+    [Fact]
     public void Fortify_changes_the_unit_activity()
     {
         var s = NewSession();
