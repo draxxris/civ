@@ -30,6 +30,29 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         if (CityData.Effect(effects, "no_unhappiness") > 0) unhappy = 0;
         return new(happy, unhappy, Math.Clamp(unhappy - happy, 0, city.Population), healthy, unhealthy, Math.Max(0, unhealthy - healthy), ledger);
     }
+    public CityEnvironmentalUnhealth EnvironmentalUnhealth(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var effects = CityData.Effects(sim, city);
+        var buildings = CityData.Active(sim, city).ToArray();
+        bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
+        Int128 populationHealth = (Int128)buildings.Sum(b => (long)b.HealthPercentPerPopulation) * city.Population / 100;
+        Int128 badBuildings = onlyHealthy ? 0 : (Int128)effects.Ledger.Total("cities:building_bad_health") - Int128.Min(0, populationHealth);
+        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), effects.Ledger.Total("cities:bonus_bad_health"), PowerUnhealth(sim, city, buildings));
+    }
+    private static long PowerUnhealth(Simulation sim, City city, S.BuildingDef[] buildings)
+    {
+        var bonuses = BuildingEffects.Bonuses(sim, city);
+        var sources = buildings.Where(b => b.ProducesPower || b.PowerBonus is { } bonus && bonuses.GetValueOrDefault(bonus) > 0).ToArray();
+        bool areaClean = sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(city.Owner).Id
+                && sim.State.PlotAt(c.Position).AreaId == sim.State.PlotAt(city.Position).AreaId)
+            .Any(c => CityData.Active(sim, c).Any(b => b.AreaCleanPower));
+        if (sources.Length == 0 && !areaClean) return 0;
+        var constants = CityData.Constants(sim);
+        long bad = -Math.Min(0L, constants.PowerHealthChange);
+        if (!areaClean && sources.All(b => b.DirtyPower)) bad -= Math.Min(0L, constants.DirtyPowerHealthChange);
+        return bad;
+    }
     private static void Add(List<LedgerLine> lines, string source, string kind, long value)
     {
         if (value != 0) lines.Add(new(source, "cities:" + kind + (value > 0 ? "_good" : "_bad"), Math.Abs(value)));

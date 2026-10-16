@@ -40,6 +40,13 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         sink.AddYield("peoples:yield_threshold", new(Extra("food", flat.Food), Extra("production", flat.Production), Extra("commerce", flat.Commerce)));
     }
     public PlotYieldResult CalculateNature(Simulation sim, int player, TileId tile, bool ignoreFeature = false)
+        => Nature(sim, player, tile, ignoreFeature);
+
+    // Warming uses the best natural food with no team knowledge, not player zero's revealed resources.
+    internal long BestNatureFood(Simulation sim, TileId tile) => Math.Max(
+        Nature(sim, null, tile, false).Yields.Food, Nature(sim, null, tile, true).Yields.Food);
+
+    private static PlotYieldResult Nature(Simulation sim, int? player, TileId tile, bool ignoreFeature)
     {
         var plot = sim.State.Plots[tile.Value];
         var sink = new ModifierSink();
@@ -51,18 +58,18 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         sink.AddYield("world:nature_clamp", Difference(total, sink.FlatYield));
         return new(total, sink.Ledger);
     }
-    private static bool Unworkable(Simulation sim, int player, Plot plot)
+    private static bool Unworkable(Simulation sim, int? player, Plot plot)
     {
-        if (plot.Kind == PlotKind.Peak) return !sim.TeamOf(player).Techs.Any(t => sim.Content.Get<S.TechDef>(t).CanPassPeaks);
+        if (plot.Kind == PlotKind.Peak) return player is { } owner && !sim.TeamOf(owner).Techs.Any(t => sim.Content.Get<S.TechDef>(t).CanPassPeaks);
         return Geography.Impassable(sim.Content, plot);
     }
-    private static void AddNature(Simulation sim, int player, Plot plot, ModifierSink sink)
+    private static void AddNature(Simulation sim, int? player, Plot plot, ModifierSink sink)
     {
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         sink.AddYield(terrain.Id, plot.Kind == PlotKind.Peak ? default : terrain.Yields);
         sink.AddYield("world:elevation", Elevation(sim.Content, plot));
         if (plot.Feature is { } id) sink.AddYield(id, sim.Content.Get<S.FeatureDef>(id).YieldChanges);
-        if (RevealedBonus(sim, player, plot) is { } bonus) sink.AddYield(bonus.Id, bonus.YieldChanges);
+        if (player is { } owner && RevealedBonus(sim, owner, plot) is { } bonus) sink.AddYield(bonus.Id, bonus.YieldChanges);
         if (plot.RiverEdges == 0) return;
         var river = plot.Feature is { } feature ? sim.Content.Get<S.FeatureDef>(feature).RiverYieldChange : terrain.RiverYieldChange;
         // Native route synergy suppresses the river contribution per yield when it is at least as large.
