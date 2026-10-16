@@ -13,7 +13,7 @@ public sealed class ContentDb
     private static readonly ConditionalWeakTable<Type, PropertyInfo[]> RequirementProperties = new();
     private static PropertyInfo[] DescribeRequirementProperties(Type type) => type
         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0).ToArray();
+        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !IsScalarType(p.PropertyType)).ToArray();
     private readonly Dictionary<Type, Entry> _registries = new();
     private bool _frozen;
     /// <summary>Create a registration database with empty shared-schema registries.</summary>
@@ -83,14 +83,17 @@ public sealed class ContentDb
     /// <summary>Validate typed identities after all providers register, before freezing or hashing.</summary>
     public void ValidateReferences(IEnumerable<Modding.ModManifest> manifests)
     {
+        using var trace = Modding.StartupTrace.Phase("content reference validation");
         var declared = manifests.ToDictionary(m => m.Id, m => m.Dependencies.Concat(m.References).ToHashSet(StringComparer.Ordinal), StringComparer.Ordinal);
         var targets = _registries.ToDictionary(e => e.Key, e => e.Value.Items().Select(d => d.Id).ToHashSet(StringComparer.Ordinal));
         targets[typeof(ContentDef)] = _registries.Values.SelectMany(e => e.Items()).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
+        var kinds = Services.Get<IRequirementEvaluator>().OfType<IContentRequirementEvaluator>()
+            .ToDictionary(e => e.Kind, e => e.DefinitionType, StringComparer.Ordinal);
         var errors = new SortedSet<string>(StringComparer.Ordinal);
         foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
         {
             var owner = definition.Id.Split(':')[0];
-            foreach (var reference in ContentReferences.Enumerate(definition, Services.Get<IRequirementEvaluator>()))
+            foreach (var reference in ContentReferences.Enumerate(definition, kinds))
             {
                 if (!targets.TryGetValue(reference.DefinitionType, out var ids) || !ids.Contains(reference.Id))
                     errors.Add($"{reference.Path}: '{reference.Id}' does not resolve to {reference.DefinitionType.FullName}");
@@ -104,9 +107,12 @@ public sealed class ContentDb
 
     internal void Freeze()
     {
+        using var trace = Modding.StartupTrace.Phase("content freeze");
         Requirements = new(Services.Get<IRequirementEvaluator>());
-        foreach (var entry in _registries.Values)
-            foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        using (Modding.StartupTrace.Phase("content requirement validation"))
+            foreach (var entry in _registries.Values)
+                foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        using var hashTrace = Modding.StartupTrace.Phase("content hash and registry freeze");
         var definitions = _registries.OrderBy(kv => kv.Key.FullName, StringComparer.Ordinal)
             .SelectMany(kv => kv.Value.Items().Select(item => new
             {
@@ -135,8 +141,12 @@ public sealed class ContentDb
         foreach (var property in RequirementProperties.GetValue(value.GetType(), DescribeRequirementProperties))
             ValidateRequirements(property.GetValue(value), seen);
     }
-    private static bool IsScalar(object value) => value is string || value is decimal
-        || value.GetType().IsPrimitive || value.GetType().IsEnum;
+    private static bool IsScalar(object value) => IsScalarType(value.GetType());
+    private static bool IsScalarType(Type type)
+    {
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        return type == typeof(string) || type == typeof(decimal) || type.IsPrimitive || type.IsEnum;
+    }
     /// <summary>Highest culture level reached, or null below the first threshold.</summary>
     public CultureLevelDef? CultureLevelFor(long culture)
     {

@@ -29,6 +29,7 @@ public static class ModLoader
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
     public static ModSource FromDirectory(string dir)
     {
+        using var trace = StartupTrace.Phase($"mod load {Path.GetFileName(dir)}");
         var manifest = ReadManifest(dir);
         var alc = new ModLoadContext(Path.Combine(dir, manifest.Assembly));
         var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(Path.Combine(dir, manifest.Assembly)));
@@ -54,11 +55,13 @@ public static class ModLoader
     /// <summary>Order by dependencies, run every mod's Register, freeze. The base game goes through exactly this path too.</summary>
     public static ContentDb Build(IEnumerable<ModSource> mods)
     {
+        using var trace = StartupTrace.Phase("content build");
         var ordered = Sort(mods.ToList());
         var db = new ContentDb();
         db.CommandTypes.Register(new CommandTypeDef("core:end_turn", typeof(Game.EndTurnCommand)), "core");
         foreach (var mod in ordered)
         {
+            using var registration = StartupTrace.Phase($"mod register {mod.Manifest.Id}");
             var ctx = new ModContext(mod.Manifest.Id, new DirectoryModData(mod.Root), db);
             mod.Instance.Register(ctx);
         }

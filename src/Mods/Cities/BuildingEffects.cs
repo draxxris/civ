@@ -58,8 +58,7 @@ internal sealed class BuildingEffects : IModifierSource
     private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city)
     {
         var network = sim.Content.Services.Get<IResourceNetwork>().Single();
-        IReadOnlyDictionary<string, int> physical = sim.State.Plots.Any(p => p.Bonus is not null)
-            ? network.ConnectedCounts(sim, city.Owner, city.Id) : new Dictionary<string, int>();
+        var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
         if (diplomacy is null) return physical;
         var traded = TradedResources(sim, diplomacy, city.Owner);

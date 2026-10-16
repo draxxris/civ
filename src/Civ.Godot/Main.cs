@@ -141,7 +141,7 @@ public partial class Main : Node3D
         _setup = null;
         var session = task.Result;
         PrepareDebugStage(session);
-        MapRenderer.LogTimings = _debug.ScreenshotPath != null || _debug.FpsProbe;
+        MapRenderer.LogTimings = _debug.ScreenshotPath != null || _debug.FpsProbe || OS.GetCmdlineUserArgs().Contains("--trace-performance");
         TerrainRenderer.DebugMode = _debug.ScreenshotPath != null ? _debug.TerrainDebug : 0;
         _game = new GameView(session, _icons!);
         AddChild(_game);

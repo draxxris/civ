@@ -11,25 +11,32 @@ internal sealed class ContinentsGenerator : IMapGenerator
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content) => Generate(spec, plots, rng, content, 2);
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players)
     {
+        using var trace = Civ.Modding.StartupTrace.Phase("world generation");
         var grid = new HexGrid(spec);
         if (plots.Length != grid.Count) throw new ArgumentException("Plot count does not match the grid");
         var tuning = Geography.Tuning(content);
-        var elevation = FractalNoise.Generate(grid, rng, tuning.NoiseScale, tuning.NoiseOctaves);
-        var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
-        var relief = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 4, tuning.NoiseOctaves);
-        foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
-        var land = grid.Tiles.OrderByDescending(t => elevation[t.Value]).ThenBy(t => t.Value)
-            .Take(grid.Count * (100 - tuning.WaterPercent) / 100).Select(t => t.Value).ToHashSet();
-        int hills = Percentile(relief, 100 - tuning.HillsPercent);
-        int peaks = Percentile(relief, 100 - tuning.PeaksPercent);
-        foreach (var tile in grid.Tiles)
-            SetTerrain(grid, plots[tile.Value], tile, land.Contains(tile.Value), moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
-        AddCoasts(grid, plots, content);
-        Geography.AssignAreas(grid, plots, content);
-        RiverGenerator.Generate(grid, plots, elevation, rng, content);
-        Placement.AddFeatures(grid, plots, rng, content);
-        Placement.AddBonuses(grid, plots, rng, content, players);
-        Placement.AddGoodies(grid, plots, rng, content);
+        using (Civ.Modding.StartupTrace.Phase("world terrain and rivers"))
+        {
+            var elevation = FractalNoise.Generate(grid, rng, tuning.NoiseScale, tuning.NoiseOctaves);
+            var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
+            var relief = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 4, tuning.NoiseOctaves);
+            foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
+            var land = grid.Tiles.OrderByDescending(t => elevation[t.Value]).ThenBy(t => t.Value)
+                .Take(grid.Count * (100 - tuning.WaterPercent) / 100).Select(t => t.Value).ToHashSet();
+            int hills = Percentile(relief, 100 - tuning.HillsPercent);
+            int peaks = Percentile(relief, 100 - tuning.PeaksPercent);
+            foreach (var tile in grid.Tiles)
+                SetTerrain(grid, plots[tile.Value], tile, land.Contains(tile.Value), moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
+            AddCoasts(grid, plots, content);
+            Geography.AssignAreas(grid, plots, content);
+            RiverGenerator.Generate(grid, plots, elevation, rng, content);
+        }
+        using (Civ.Modding.StartupTrace.Phase("world features"))
+            Placement.AddFeatures(grid, plots, rng, content);
+        using (Civ.Modding.StartupTrace.Phase("world bonuses"))
+            Placement.AddBonuses(grid, plots, rng, content, players);
+        using (Civ.Modding.StartupTrace.Phase("world goodies"))
+            Placement.AddGoodies(grid, plots, rng, content);
     }
     private static int Percentile(int[] values, int percent) => values.Order().ElementAt(Math.Min(values.Length - 1, values.Length * percent / 100));
     private static void SetTerrain(HexGrid grid, Plot plot, TileId tile, bool land, int moisture, int relief,
