@@ -6,13 +6,18 @@ using Civ.Game;
 namespace Civ.Mods.Government;
 
 /// <summary>Civic adoption, anarchy and derived civic effects.</summary>
-public sealed class GovernmentMod : IMod
+public sealed class GovernmentMod : IPreparableMod
 {
+    private static readonly ModJsonFile<CivicDef[]> Civics = new("data/civic.json");
+    private static readonly ModJsonFile<CivicOptionDef[]> Options = new("data/civic-option.json");
+    private static readonly ModJsonFile<UpkeepDef[]> Upkeep = new("data/upkeep.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Civics, Options, Upkeep];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<CivicDef>(context, "civic.json");
-        ContentRegistration.Load<CivicOptionDef>(context, "civic-option.json");
-        ContentRegistration.Load<UpkeepDef>(context, "upkeep.json");
+        ContentRegistration.Load(context, Civics);
+        ContentRegistration.Load(context, Options);
+        ContentRegistration.Load(context, Upkeep);
         ContentRegistration.Evaluator<CivicDef>(context, "civic", (leaf, subject) =>
             (subject.ProposedCivics ?? subject.Sim.State.PlayerById(subject.Player).Civics).Values.Contains(leaf.Id, StringComparer.Ordinal));
         context.RegisterService<IGovernmentService>("civics", new GovernmentService());

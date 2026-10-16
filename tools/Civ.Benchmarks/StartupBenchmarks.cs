@@ -3,6 +3,7 @@ using Civ;
 using Civ.Client;
 using Civ.Content;
 using Civ.Game;
+using Civ.Modding;
 
 /// <summary>Focused startup and interactive workloads, without multi-turn AI preparation.</summary>
 internal static class StartupBenchmarks
@@ -12,11 +13,52 @@ internal static class StartupBenchmarks
         Console.WriteLine("Startup benchmarks: first load, then one warmup and median of five samples; no timing thresholds.");
         var catalog = MeasureOnce("Catalog first load (discovery, assemblies, content, choices)", () => GameCatalog.Load(root));
         Console.WriteLine($"Content hash: {catalog.Content.ContentHash}");
-        Measure("Catalog rebuild (loaded assemblies, fresh content)", () => new GameCatalog(catalog.Mods),
-            c => c.Content.ContentHash);
+        MeasureCatalogs(catalog);
         foreach (string size in sweep ? new[] { "standard", "gigantic" } : new[] { "standard" })
             foreach (ulong seed in sweep ? new ulong[] { 1, 42, 987654 } : new ulong[] { 42 })
                 RunGame(catalog, size, seed);
+    }
+
+    private static void MeasureCatalogs(GameCatalog catalog)
+    {
+        // Preserve the source order, manifests, roots and registration entry points. Only hide preparation support.
+        var serial = catalog.Mods.Select(mod => new ModSource
+        {
+            Manifest = mod.Manifest, Root = mod.Root, Instance = new SerialMod(mod.Instance)
+        }).ToArray();
+        IReadOnlyList<ModSource>[] sources = [serial, catalog.Mods];
+        string[] names = ["Catalog serial", "Catalog preparation"];
+        double[][] times = [new double[5], new double[5]];
+        long[][] bytes = [new long[5], new long[5]];
+        string expected = catalog.Content.ContentHash;
+        Console.WriteLine("Paired catalog builds: loaded assemblies, fresh content; one warmup each, five pairs, alternating first variant.");
+        foreach (var mods in sources) AssertCatalogHash(new GameCatalog(mods), expected);
+        for (int sample = 0; sample < 5; sample++)
+            for (int offset = 0; offset < 2; offset++)
+            {
+                int variant = (sample + offset) % 2;
+                long allocated = GC.GetTotalAllocatedBytes(true);
+                var clock = Stopwatch.StartNew();
+                var rebuilt = new GameCatalog(sources[variant]);
+                clock.Stop();
+                bytes[variant][sample] = GC.GetTotalAllocatedBytes(true) - allocated;
+                times[variant][sample] = clock.Elapsed.TotalMilliseconds;
+                AssertCatalogHash(rebuilt, expected);
+            }
+        for (int variant = 0; variant < sources.Length; variant++)
+            PrintSamples(names[variant], times[variant], bytes[variant]);
+        Console.WriteLine($"Paired catalog content hash (both warmups and all samples): {expected}");
+    }
+
+    private static void AssertCatalogHash(GameCatalog catalog, string expected)
+    {
+        if (!StringComparer.Ordinal.Equals(catalog.Content.ContentHash, expected))
+            throw new InvalidOperationException("Serial and preparation catalogs must match the first-load content hash");
+    }
+
+    private sealed class SerialMod(IMod original) : IMod
+    {
+        public void Register(IModContext context) => original.Register(context);
     }
 
     private static void RunGame(GameCatalog catalog, string size, ulong seed)
@@ -108,9 +150,15 @@ internal static class StartupBenchmarks
             times[i] = clock.Elapsed.TotalMilliseconds;
             if (fingerprint is not null && fingerprint(value) != expected) throw new InvalidOperationException($"{name}: output changed");
         }
+        PrintSamples(name, times, bytes);
+        return value;
+    }
+
+    private static void PrintSamples(string name, double[] times, long[] bytes)
+    {
         Array.Sort(times);
         Array.Sort(bytes);
-        Console.WriteLine($"{name}: {times[2]:F2} ms (min {times[0]:F2}, max {times[^1]:F2}); {bytes[2] / 1048576.0:F2} MiB allocated");
-        return value;
+        Console.WriteLine($"{name}: {times[2]:F2} ms (min {times[0]:F2}, max {times[^1]:F2}); "
+            + $"{bytes[2] / 1048576.0:F2} MiB allocated (min {bytes[0] / 1048576.0:F2}, max {bytes[^1] / 1048576.0:F2})");
     }
 }

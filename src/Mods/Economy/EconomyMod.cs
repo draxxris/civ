@@ -6,11 +6,14 @@ using Civ.Game;
 namespace Civ.Mods.Economy;
 
 /// <summary>Commerce allocation, treasury, recurring costs, processes and hurry.</summary>
-public sealed class EconomyMod : IMod
+public sealed class EconomyMod : IPreparableMod
 {
+    private static readonly ModJsonFile<ProcessDef[]> Processes = new("data/process.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Processes];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<ProcessDef>(context, "process.json");
+        ContentRegistration.Load(context, Processes);
         var commerce = new CityCommerce();
         var economy = new PlayerEconomy(commerce);
         var hurry = new CityHurry();

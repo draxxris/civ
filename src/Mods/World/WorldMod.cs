@@ -4,18 +4,29 @@ using Civ.Modding;
 namespace Civ.Mods.World;
 
 /// <summary>World definitions and deterministic geography, worker and query rules.</summary>
-public sealed class WorldMod : IMod
+public sealed class WorldMod : IPreparableMod
 {
+    private static readonly ModJsonFile<BonusClassDef[]> BonusClasses = new("data/bonus-class.json");
+    private static readonly ModJsonFile<BonusDef[]> Bonuses = new("data/bonus.json");
+    private static readonly ModJsonFile<BuildDef[]> Builds = new("data/build.json");
+    private static readonly ModJsonFile<FeatureDef[]> Features = new("data/feature.json");
+    private static readonly ModJsonFile<GoodyDef[]> Goodies = new("data/goody.json");
+    private static readonly ModJsonFile<ImprovementDef[]> Improvements = new("data/improvement.json");
+    private static readonly ModJsonFile<RouteDef[]> Routes = new("data/route.json");
+    private static readonly ModJsonFile<TerrainDef[]> Terrains = new("data/terrain.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [BonusClasses, Bonuses, Builds, Features, Goodies, Improvements, Routes, Terrains];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<BonusClassDef>(context, "bonus-class.json");
-        ContentRegistration.Load<BonusDef>(context, "bonus.json");
-        ContentRegistration.Load<BuildDef>(context, "build.json");
-        ContentRegistration.Load<FeatureDef>(context, "feature.json");
-        ContentRegistration.Load<GoodyDef>(context, "goody.json");
-        ContentRegistration.Load<ImprovementDef>(context, "improvement.json");
-        ContentRegistration.Load<RouteDef>(context, "route.json");
-        ContentRegistration.Load<TerrainDef>(context, "terrain.json");
+        ContentRegistration.Load(context, BonusClasses);
+        ContentRegistration.Load(context, Bonuses);
+        ContentRegistration.Load(context, Builds);
+        ContentRegistration.Load(context, Features);
+        ContentRegistration.Load(context, Goodies);
+        ContentRegistration.Load(context, Improvements);
+        ContentRegistration.Load(context, Routes);
+        ContentRegistration.Load(context, Terrains);
         var water = new WaterService();
         var yields = new PlotYieldService(water);
         var network = new ResourceNetwork();

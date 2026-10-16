@@ -57,12 +57,15 @@ public static class ModLoader
     {
         using var trace = StartupTrace.Phase("content build");
         var ordered = Sort(mods.ToList());
+        var data = PreparedModData.Prepare(ordered);
         var db = new ContentDb();
         db.CommandTypes.Register(new CommandTypeDef("core:end_turn", typeof(Game.EndTurnCommand)), "core");
-        foreach (var mod in ordered)
+        for (int i = 0; i < ordered.Count; i++)
         {
+            var mod = ordered[i];
             using var registration = StartupTrace.Phase($"mod register {mod.Manifest.Id}");
-            var ctx = new ModContext(mod.Manifest.Id, new DirectoryModData(mod.Root), db);
+            data[i].ThrowInventoryError();
+            var ctx = new ModContext(mod.Manifest.Id, data[i], db);
             mod.Instance.Register(ctx);
         }
         db.LoadedMods = ordered.Select(m => m.Manifest.Id).ToList();
