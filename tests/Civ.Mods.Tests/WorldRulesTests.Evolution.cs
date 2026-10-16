@@ -347,6 +347,76 @@ public sealed partial class WorldRulesTests
         if (mechanic == "upgrade") Assert.Equal(Evolution + "upgraded", plot.Improvement);
     }
 
+    [Theory]
+    [InlineData(false, false, false, 0)]
+    [InlineData(false, false, false, 1000)]
+    [InlineData(false, false, true, 0)]
+    [InlineData(false, false, true, 1000)]
+    [InlineData(false, true, false, 0)]
+    [InlineData(false, true, false, 1000)]
+    [InlineData(false, true, true, 0)]
+    [InlineData(false, true, true, 1000)]
+    [InlineData(true, false, false, 0)]
+    [InlineData(true, false, false, 1000)]
+    [InlineData(true, false, true, 0)]
+    [InlineData(true, false, true, 1000)]
+    [InlineData(true, true, false, 0)]
+    [InlineData(true, true, false, 1000)]
+    [InlineData(true, true, true, 0)]
+    [InlineData(true, true, true, 1000)]
+    public void Assigned_upgrade_work_stops_in_disorder_regardless_of_outside_borders(
+        bool anarchy, bool center, bool outsideBorders, int initialTurns)
+    {
+        var sim = EvolutionScenario();
+        var tile = EvolutionPlot(sim);
+        var plot = sim.State.Plots[tile.Value];
+        var city = AddCity(sim, center ? tile : sim.State.Grid.TileAt(5, 3));
+        if (!center) city.Worked.Add(sim.State.Grid.HexOf(tile));
+        string source = Evolution + (outsideBorders ? "outside_upgrade" : "inside_upgrade");
+        plot.Improvement = source;
+        plot.ImprovementTurns = initialTurns;
+        city.Extensions.Set(sim.Content, new CityRuleState { Disorder = !anarchy });
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = anarchy ? 2 : 0 });
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        var rng = sim.Rng.State;
+
+        MapTurn(sim);
+        Assert.Equal(source, plot.Improvement);
+        Assert.Equal(initialTurns, plot.ImprovementTurns);
+        Assert.Equal(rng, sim.Rng.State);
+
+        // The same eligible improvement must progress once its city becomes productive.
+        city.Extensions.Set(sim.Content, new CityRuleState());
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState());
+        MapTurn(sim);
+        Assert.Equal(initialTurns == 0 ? source : source + "_target", plot.Improvement);
+        Assert.Equal(initialTurns == 0 ? 1 : 0, plot.ImprovementTurns);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false, 0)]
+    [InlineData(false, 1000)]
+    [InlineData(true, 0)]
+    [InlineData(true, 1000)]
+    public void Genuinely_unworked_upgrades_retain_only_the_outside_borders_exception(bool outsideBorders, int initialTurns)
+    {
+        var sim = EvolutionScenario();
+        var tile = EvolutionPlot(sim);
+        var plot = sim.State.Plots[tile.Value];
+        string source = Evolution + (outsideBorders ? "outside_upgrade" : "inside_upgrade");
+        plot.Improvement = source;
+        plot.ImprovementTurns = initialTurns;
+        AddCity(sim, sim.State.Grid.TileAt(5, 3)); // Nearby city does not assign this tile.
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = 2 });
+        var rng = sim.Rng.State;
+        MapTurn(sim);
+        bool completes = outsideBorders && initialTurns > 0;
+        Assert.Equal(completes ? source + "_target" : source, plot.Improvement);
+        Assert.Equal(outsideBorders ? (completes ? 0 : 1) : initialTurns, plot.ImprovementTurns);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
     [Fact]
     public void Disordered_center_does_not_cancel_productive_work_shared_with_a_healthy_city()
     {
@@ -462,6 +532,15 @@ public sealed partial class WorldRulesTests
                 Id = Evolution + "upgrading", ImprovementUpgrade = Evolution + "upgraded", UpgradeTime = 1,
             });
             context.Content<S.ImprovementDef>().Register(new() { Id = Evolution + "upgraded" });
+            foreach (bool outsideBorders in new[] { false, true })
+            {
+                string id = Evolution + (outsideBorders ? "outside_upgrade" : "inside_upgrade");
+                context.Content<S.ImprovementDef>().Register(new()
+                {
+                    Id = id, ImprovementUpgrade = id + "_target", UpgradeTime = 100,
+                });
+                context.Content<S.ImprovementDef>().Register(new() { Id = id + "_target", OutsideBorders = outsideBorders });
+            }
             foreach (bool extreme in new[] { false, true })
             {
                 string prefix = Evolution + (extreme ? "extreme_" : "");

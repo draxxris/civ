@@ -134,21 +134,27 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
             features.Advance(tile);
             bool productive = productiveWorked.Contains(tile);
             resources.Advance(tile, productive); // Deposit exhaustion remains independent of work.
-            Upgrade(sim, tile, productive);
+            Upgrade(sim, tile, assigned: worked.Contains(tile), productive);
         }
     }
-    private static void Upgrade(Simulation sim, TileId tile, bool worked)
+    private static void Upgrade(Simulation sim, TileId tile, bool assigned, bool productive)
     {
+        // Outside-border targets can grow without assignment, never through a disordered assignment.
+        if (assigned && !productive) return;
         var plot = sim.State.Plots[tile.Value];
         if (plot.Improvement is not { } id || plot.Owner is null) return;
         var improvement = sim.Content.Get<S.ImprovementDef>(id);
         if (improvement.ImprovementUpgrade is not { } next) return;
         var target = sim.Content.Get<S.ImprovementDef>(next);
         if (target.PrereqTech is { } tech && !sim.KnowsTech(plot.Owner.Value, tech)) return;
-        if (!worked && !target.OutsideBorders) return;
+        if (!productive && !target.OutsideBorders) return;
+        AdvanceUpgrade(sim, plot, improvement, next);
+    }
+    private static void AdvanceUpgrade(Simulation sim, Plot plot, S.ImprovementDef improvement, string next)
+    {
         int time = improvement.UpgradeTime * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).ImprovementPercent / 100;
         time = time * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).ImprovementPercent / 100;
-        int modifier = (int)ModifierSink.Collect(new(sim, ModifierScope.Player, plot.Owner.Value)).Ledger.Total("world:improvement_upgrade_percent");
+        int modifier = (int)ModifierSink.Collect(new(sim, ModifierScope.Player, plot.Owner!.Value)).Ledger.Total("world:improvement_upgrade_percent");
         time = time * 100 / Math.Max(1, 100 + modifier);
         plot.ImprovementTurns++;
         if (plot.ImprovementTurns < Math.Max(1, time)) return;
