@@ -27,6 +27,11 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private void Act(Unit worker)
     {
         if (ctx.ThreatAround(worker.Position, 2) > 0) { Retreat(worker); return; }
+        if (ctx.Service<IWorkerBuildService>().IsWorking(ctx.Sim, worker.Id))
+        {
+            _claimed.Add(ctx.Tile(worker.Position));
+            return;
+        }
         var job = ChooseJob(worker);
         if (job is null) { Retreat(worker); return; }
         _claimed.Add(job.Tile);

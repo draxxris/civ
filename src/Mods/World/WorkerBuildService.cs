@@ -35,6 +35,14 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
             Feature = build.FeatureChange ?? (remove ? null : plot.Feature),
         };
     }
+    public bool IsWorking(Simulation sim, int unitId)
+    {
+        var unit = sim.State.FindUnit(unitId);
+        var order = unit?.Extensions.Get<WorkerOrder>(sim.Content);
+        if (unit is null || order?.Build is not { } build) return false;
+        return sim.State.Grid.TileAt(unit.Position) == order.Tile
+            && _eligibility.Validate(sim, unit.Owner, unit.Id, build, continuing: true) is null;
+    }
     public void Start(Simulation sim, int player, int unitId, string buildId)
     {
         var unit = sim.State.UnitById(unitId);

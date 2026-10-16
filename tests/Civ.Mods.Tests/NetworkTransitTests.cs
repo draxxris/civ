@@ -285,9 +285,16 @@ public sealed class NetworkTransitTests(LoadedMods mods) : IClassFixture<LoadedM
     [InlineData("free_two", 2)]
     [InlineData("free_extra", 3)]
     [InlineData("free_world", -1)]
-    public void City_centers_and_active_local_building_grants_use_actual_copy_counts(string source, int copies)
+    [InlineData("free_world", -1, "foundation:worldsize_duel")]
+    [InlineData("free_world", -1, "foundation:worldsize_gigantic")]
+    public void City_centers_and_active_local_building_grants_use_actual_copy_counts(string source, int copies,
+        string worldSize = "foundation:worldsize_standard")
     {
-        var sim = Scenario(); var city = City(sim, 40); city.Buildings.Add("network_probe:vicinity");
+        var sim = Scenario();
+        var save = System.Text.Json.Nodes.JsonNode.Parse(SaveGame.Save(sim))!;
+        save["Settings"]!["WorldSize"] = worldSize;
+        sim = SaveGame.Load(sim.Content, save.ToJsonString());
+        var city = City(sim, 40); city.Buildings.Add("network_probe:vicinity");
         if (source == "center") sim.State.Plots[40].Bonus = Grain;
         else city.Buildings.Add("network_probe:" + source);
         int expected = copies == -1 ? sim.Content.Get<S.WorldSizeDef>(sim.Settings.WorldSize!).NumFreeBuildingBonuses : copies;
