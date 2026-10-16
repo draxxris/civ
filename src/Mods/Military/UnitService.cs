@@ -138,7 +138,10 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
             var improvement = sim.Content.Get<S.ImprovementDef>(id);
             removedCityImprovement = improvement.ActsAsCity;
             if (plot.Owner is not { } owner || sim.TeamOf(owner).Id != sim.TeamOf(unit.Owner).Id)
+            {
                 gold = PillageGold(sim, unit, improvement);
+                sim.State.PlayerById(unit.Owner).Treasury += gold;
+            }
             plot.Improvement = replacement = improvement.ImprovementPillage;
             plot.ImprovementTurns = 0;
         }

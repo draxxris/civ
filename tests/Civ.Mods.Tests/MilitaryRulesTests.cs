@@ -34,10 +34,10 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(0, plot.ImprovementTurns);
         Assert.Empty(plot.BuildProgress);
         Assert.Equal(treasury, sim.State.PlayerById(unit.Owner).Treasury);
-        var message = Assert.Single(sim.Events.Published, e => e.GetType().Name == "PlotPillaged");
-        Assert.Equal(improvement.Id, message.GetType().GetProperty("Improvement")!.GetValue(message));
-        Assert.Equal(improvement.ImprovementPillage, message.GetType().GetProperty("ReplacementImprovement")!.GetValue(message));
-        Assert.Equal(0, (int)message.GetType().GetProperty("Gold")!.GetValue(message)!);
+        var message = Assert.Single(sim.Events.Published.OfType<PlotPillaged>());
+        Assert.Equal(improvement.Id, message.Improvement);
+        Assert.Equal(improvement.ImprovementPillage, message.ReplacementImprovement);
+        Assert.Equal(0, message.Gold);
         Assert.Equal(movesBefore - moveDenominator, unit.MovesLeft);
     }
 
@@ -51,19 +51,52 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var plot = sim.State.PlotAt(unit.Position);
         plot.Owner = unit.Owner;
         plot.Route = "world:route_route_road";
-        Assert.NotNull(units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
+        Assert.Equal("Cannot pillage at peace", units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
 
         plot.Route = null;
         plot.Improvement = mods.Content.Get<Civ.Content.Schema.ImprovementDef>().All.First(i => i.Permanent && !i.Goody).Id;
         unit.MovesLeft = units.MaximumMoves(sim, unit.Id);
-        Assert.NotNull(units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
+        Assert.Equal("Cannot pillage a permanent improvement", units.Validate(sim, unit.Owner, unit.Id, UnitAction.Pillage, ""));
 
         plot.Improvement = null;
         sim.State.Plots[40].Terrain = "world:coast";
         var ship = Add(sim, 0, 40, "military:cog");
         var cargo = Add(sim, 0, 40, land.Id);
         Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
-        Assert.NotNull(units.Validate(sim, cargo.Owner, cargo.Id, UnitAction.Pillage, ""));
+        Assert.Equal("Loaded cargo cannot pillage", units.Validate(sim, cargo.Owner, cargo.Id, UnitAction.Pillage, ""));
+    }
+
+    [Fact]
+    public void Pillaging_a_foreign_improvement_awards_gold_but_route_only_pillage_does_not()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var land = mods.Content.Get<Civ.Content.Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land");
+        var unit = Add(sim, 0, 39, land.Id);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = 1;
+        var improvement = mods.Content.Get<Civ.Content.Schema.ImprovementDef>().All
+            .Where(i => !i.Permanent && !i.Goody && i.PillageGold > 0).MaxBy(i => i.PillageGold)!;
+        plot.Improvement = improvement.Id;
+        sim.State.SetWar(0, 1, true);
+        long treasuryBefore = sim.State.PlayerById(0).Treasury;
+
+        Assert.True(sim.TryApply(new PillageCommand { Player = 0, Unit = unit.Id }, out var error), error);
+        var award = Assert.Single(sim.Events.Published.OfType<PlotPillaged>());
+        Assert.Equal(improvement.Id, award.Improvement);
+        Assert.True(award.Gold > 0);
+        Assert.Equal(award.Gold, sim.State.PlayerById(0).Treasury - treasuryBefore);
+
+        var routeSim = GameFactory.Scenario(mods.Content);
+        var routeUnit = Add(routeSim, 0, 39, land.Id);
+        var routePlot = routeSim.State.PlotAt(routeUnit.Position);
+        routePlot.Owner = 1; routePlot.Route = "world:route_route_road";
+        routeSim.State.SetWar(0, 1, true);
+        Assert.True(routeSim.TryApply(new PillageCommand { Player = 0, Unit = routeUnit.Id }, out error), error);
+        var routeEvent = Assert.Single(routeSim.Events.Published.OfType<PlotPillaged>());
+        Assert.Null(routeEvent.Improvement);
+        Assert.Equal("world:route_route_road", routeEvent.Route);
+        Assert.Equal(0, routeEvent.Gold);
+        Assert.Null(routePlot.Route);
     }
 
     [Fact]

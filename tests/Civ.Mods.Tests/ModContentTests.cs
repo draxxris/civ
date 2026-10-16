@@ -50,6 +50,43 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void Game_option_requirements_have_typed_reference_closure_and_policy_options_stay_unregistered()
+    {
+        var evaluator = mods.Content.Services.Get<IRequirementEvaluator>().Single(e => e.Kind == "game-option");
+        var culture = new Schema.CultureLevelDef
+        {
+            Id = "option_probe:level",
+            Requirements = new Requirement.Leaf("game-option", "foundation:gameoption_realistic_culture_spread"),
+        };
+        var reference = Assert.Single(ContentReferences.Enumerate(culture, [evaluator]));
+        Assert.Equal(typeof(Schema.GameOptionDef), reference.DefinitionType);
+
+        var policyOptions = Civ.Game.SetupPolicies.GameOptions(mods.Content);
+        Assert.Contains(policyOptions, option => option.Id == "foundation:gameoption_multiple_religion_spread");
+        foreach (string id in new[] { "foundation:gameoption_multiple_religion_spread", "foundation:gameoption_resource_depletion" })
+            Assert.False(mods.Content.TryGet<Schema.GameOptionDef>(id, out _));
+
+    }
+
+    [Fact]
+    public void Invalid_game_option_requirement_reference_is_rejected()
+    {
+        var probe = new ModSource { Manifest = new() { Id = "option_probe", Version = "1", Dependencies = ["foundation"] },
+            Root = mods.Root, Instance = new InvalidOptionReferenceProbe() };
+        var error = Assert.Throws<InvalidDataException>(() => ModLoader.Build(mods.Sources.Append(probe)));
+        Assert.Contains("foundation:gameoption_missing", error.Message);
+    }
+
+    private sealed class InvalidOptionReferenceProbe : IMod
+    {
+        public void Register(IModContext context) => context.Content<Schema.CultureLevelDef>().Register(new()
+        {
+            Id = "option_probe:level",
+            Requirements = new Requirement.Leaf("game-option", "foundation:gameoption_missing"),
+        });
+    }
+
+    [Fact]
     public void Golden_records_retain_prerequisite_groups_effects_class_limits_and_module_overrides()
     {
         // Values independently inspected in the source trees. Paths and getter contracts are in golden-records.md.

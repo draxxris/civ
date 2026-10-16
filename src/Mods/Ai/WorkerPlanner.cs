@@ -64,7 +64,15 @@ internal sealed class WorkerPlanner(AiContext ctx)
         foreach (var city in ctx.Cities)
             foreach (var tile in ctx.Service<ICityWorkService>().WorkArea(ctx.Sim, city.Id))
                 if (seen.Add(tile) && Workable(tile)) _tiles.Add(new(tile, TilePriority(tile, worked.Contains(tile))));
-        foreach (var road in RoadTiles().Where(seen.Add)) _tiles.Add(new(road, 14));
+        foreach (var road in RoadTiles())
+        {
+            if (seen.Add(road)) _tiles.Add(new(road, 14));
+            else if (ctx.Sim.State.Plots[road.Value].Route is not null)
+            {
+                int index = _tiles.FindIndex(tile => tile.Tile == road);
+                if (index >= 0) _tiles[index] = _tiles[index] with { Priority = Math.Max(14, _tiles[index].Priority) };
+            }
+        }
         return _tiles;
     }
 
@@ -115,13 +123,16 @@ internal sealed class WorkerPlanner(AiContext ctx)
 
     private BuildDef[] AvailableBuilds(Unit worker)
     {
-        if (_builds.TryGetValue(worker.Type, out var builds)) return builds;
-        var unit = ctx.Def(worker);
-        var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
-        builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id) && b.Cost == 0
-            && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
-        _builds[worker.Type] = builds;
-        return builds;
+        if (!_builds.TryGetValue(worker.Type, out var builds))
+        {
+            var unit = ctx.Def(worker);
+            var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
+            builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id)
+                && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
+            _builds[worker.Type] = builds;
+        }
+        long treasury = ctx.Sim.State.PlayerById(ctx.PlayerId).Treasury;
+        return builds.Where(build => build.Cost <= treasury).ToArray();
     }
 
     private long Gain(BuildDef build, TileId tile, YieldVector before, YieldVector after)
@@ -198,10 +209,14 @@ internal sealed class WorkerPlanner(AiContext ctx)
     {
         var plot = ctx.Sim.State.Plots[tile.Value];
         if (plot.Route is not { } existing) return true;
-        if (!ctx.Cities.SelectMany(c => c.Worked).Select(ctx.Grid.TileAt)
-            .All(worked => ctx.Sim.State.Plots[worked.Value].Improvement is not null)) return false;
+        if (HasUnimprovedWorkedLandTile()) return false;
         int currentValue = ctx.Sim.Content.Get<RouteDef>(existing).Value;
         return ctx.UnitsWithRole(UnitRole.Worker).Any(worker => AvailableBuilds(worker).Any(build =>
             build.RouteType is { } route && ctx.Sim.Content.Get<RouteDef>(route).Value > currentValue));
     }
+
+    // Route upgrades wait for work only on tiles a worker can improve; water and blocked land are not blockers.
+    private bool HasUnimprovedWorkedLandTile() => ctx.Cities.SelectMany(city => city.Worked)
+        .Select(ctx.Grid.TileAt).Where(Workable)
+        .Any(tile => ctx.Sim.State.Plots[tile.Value].Improvement is null);
 }

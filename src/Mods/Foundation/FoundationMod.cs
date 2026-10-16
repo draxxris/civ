@@ -8,9 +8,10 @@ namespace Civ.Mods.Foundation;
 /// <summary>Foundation definitions, shared hex tuning and new-game setup.</summary>
 public sealed class FoundationMod : IMod
 {
-    private sealed class GameOptionRequirements : Civ.Content.IRequirementEvaluator
+    private sealed class GameOptionRequirements : Civ.Content.IContentRequirementEvaluator
     {
         public string Kind => "game-option";
+        public Type DefinitionType => typeof(GameOptionDef);
         public string? Evaluate(Civ.Content.Requirement.Leaf leaf, Civ.Content.RequirementContext context) =>
             context.Sim.IsOptionEnabled(leaf.Id) ? null : $"Required game-option: {leaf.Id}";
     }
