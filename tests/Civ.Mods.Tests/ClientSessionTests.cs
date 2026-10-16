@@ -380,8 +380,16 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var plot = sim.State.Plots[tile.Value];
         plot.Terrain = terrain;
         plot.Kind = kind;
-        plot.Revealed.Add(0);
+        var visibility = sim.Content.Services.Get<IVisibilityService>().Single();
+        // Explicit map observation establishes memory without granting current sight.
+        visibility.RevealPlot(sim, tile, sim.TeamOf(GameSession.Human).Id);
         var session = new GameSession(sim);
+        Assert.Equal(Sight.Fogged, session.SightOf(plot));
+        Assert.Equal(terrain, session.PerceivedPlot(tile)!.Terrain);
+        Assert.Equal(kind, session.PerceivedPlot(tile)!.Kind);
+        Assert.Equal(title, session.DescribeTile(sim.State.Grid.HexOf(tile))!.Title);
+        plot.Terrain = "world:ocean";
+        plot.Kind = PlotKind.Flat;
         Assert.Equal(title, session.DescribeTile(sim.State.Grid.HexOf(tile))!.Title);
     }
 

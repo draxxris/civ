@@ -105,9 +105,12 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
     }
 
     [Fact]
-    public void Removing_a_generated_forest_rebuilds_only_its_neighbourhood_and_preserves_distant_props()
+    public void Removing_a_generated_forest_stays_hidden_until_reobserved_then_rebuilds_only_its_neighbourhood()
     {
-        var session = Generated(reveal: true);
+        var session = Generated();
+        var visibility = session.Sim.Content.Services.Get<IVisibilityService>().Single();
+        foreach (var knownTile in session.Sim.State.Grid.Tiles)
+            visibility.RevealPlot(session.Sim, knownTile, session.Me.TeamId);
         var before = Snapshot(session);
         var chunks = new TerrainChunks(before.Grid.Spec);
         var field = Field(session, before);
@@ -115,13 +118,32 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         var palette = new TerrainPalette(_catalog);
         var props = chunks.Chunks.Select(c => planner.Plan(c, before, field, palette)).ToArray();
         // An isolated forest makes complete tile clearing observable without neighbouring trees blending onto it.
-        int tile = before.Grid.Tiles.First(t => before.Feature[t.Value] == "world:forest"
+        int tile = before.Grid.Tiles.First(t => before.Sight[t.Value] == Sight.Fogged
+            && before.Feature[t.Value] == "world:forest"
             && props.Any(p => p.Any(v => v.Tile == t.Value && v.Set.StartsWith("forest", StringComparison.Ordinal)))
             && Enumerable.Range(0, 6).All(d => !before.TryTile(before.Grid.HexOf(t).Neighbor(d), out int n)
                 || before.Feature[n] is not ("world:forest" or "world:jungle"))).Value;
         var (x, z) = before.Grid.HexOf(new TileId(tile)).ToPixel(1);
         session.Sim.State.Plots[tile].Feature = null;
+        var fogged = Snapshot(session);
+        Assert.Equal(Sight.Fogged, fogged.Sight[tile]);
+        Assert.Equal("world:forest", fogged.Feature[tile]);
+        Assert.Equal(chunks.Signatures(before), chunks.Signatures(fogged));
+        Assert.Empty(TerrainChunks.DirtyChunks(chunks.Signatures(before), chunks.Signatures(fogged)));
+        var foggedField = field.With(fogged);
+        foreach (var chunk in chunks.Chunks)
+        {
+            EqualMesh(TerrainMesher.Build(chunk, field), TerrainMesher.Build(chunk, foggedField));
+            EqualScatter(props[chunk.Id], planner.Plan(chunk, fogged, foggedField, palette));
+        }
+        // An actual observer reacquires sight; do not edit the stored snapshot or visibility masks.
+        var observer = new Unit { Id = session.Sim.State.NextUnitId++, Owner = GameSession.Human,
+            Type = "military:warrior", Position = before.Grid.HexOf(new TileId(tile)) };
+        session.Sim.State.AddUnit(observer);
+        visibility.Recompute(session.Sim);
         var after = Snapshot(session);
+        Assert.Equal(Sight.Visible, after.Sight[tile]);
+        Assert.Null(after.Feature[tile]);
         var nextField = field.With(after);
         var oldSignatures = chunks.Signatures(before);
         var newSignatures = chunks.Signatures(after);
