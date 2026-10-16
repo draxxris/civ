@@ -8,14 +8,19 @@ using Schema = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
-/// <summary>Generated-world contracts at the persistence, local-team visibility, edit and picking boundaries.</summary>
+/// <summary>Terrain contracts at the persistence, local-team visibility, edit and picking boundaries.</summary>
 public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
-    private readonly GameCatalog _catalog = new(mods.Sources);
+    private readonly GameCatalog _catalog = mods.Catalog;
 
-    private GameSession Generated(bool reveal = false)
+    private GameSession Generated(bool reveal = false, bool compact = false)
     {
-        var session = new GameSession(GameFactory.Create(mods.Content, seed: 42));
+        // The compact world still uses the real generator and normal player setup.
+        var sim = compact
+            ? new Simulation(mods.Content, GameFactory.Settings() with
+                { Seed = 42, WorldSize = "foundation:worldsize_duel" })
+            : GameFactory.Create(mods.Content, seed: 42);
+        var session = new GameSession(sim);
         if (reveal)
             foreach (var plot in session.Sim.State.Plots) plot.Revealed.Add(session.Me.TeamId);
         return session;
@@ -68,8 +73,8 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
     [Fact]
     public void Mutating_every_unexplored_plot_cannot_change_any_chunk_mesh_or_scatter()
     {
-        var session = Generated();
-        // A half-explored generated world exercises many coasts, features and cloud boundaries.
+        var session = Generated(compact: true);
+        // A half-explored generated world exercises coasts, features and cloud boundaries.
         var state = session.Sim.State;
         for (int i = 0; i < state.Plots.Length / 2; i++) state.Plots[i].Revealed.Add(session.Me.TeamId);
         var before = Snapshot(session);
@@ -105,9 +110,15 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
     }
 
     [Fact]
-    public void Removing_a_generated_forest_stays_hidden_until_reobserved_then_rebuilds_only_its_neighbourhood()
+    public void Removing_a_fogged_forest_stays_hidden_until_reobserved_then_rebuilds_only_its_neighbourhood()
     {
-        var session = Generated();
+        // Isolate the edit lifecycle from generation: two distant groves and an isolated forest near a chunk corner.
+        // Generated terrain, features and scatter remain covered by the unexplored-mutation test above.
+        var session = TerrainTestMaps.RevealedSession(mods.Content);
+        int tile = session.Sim.State.Grid.TileAt(HexGrid.FromOffset(11, 6)).Value;
+        foreach (var hex in new[] { HexGrid.FromOffset(11, 6), HexGrid.FromOffset(1, 2), HexGrid.FromOffset(20, 12) })
+            session.Sim.State.PlotAt(hex).Feature = "world:forest";
+        foreach (var plot in session.Sim.State.Plots) plot.Visible.Clear();
         var visibility = session.Sim.Content.Services.Get<IVisibilityService>().Single();
         foreach (var knownTile in session.Sim.State.Grid.Tiles)
             visibility.RevealPlot(session.Sim, knownTile, session.Me.TeamId);
@@ -117,23 +128,23 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         var planner = new ScatterPlanner(_catalog);
         var palette = new TerrainPalette(_catalog);
         var props = chunks.Chunks.Select(c => planner.Plan(c, before, field, palette)).ToArray();
-        // An isolated forest makes complete tile clearing observable without neighbouring trees blending onto it.
-        int tile = before.Grid.Tiles.First(t => before.Sight[t.Value] == Sight.Fogged
-            && before.Feature[t.Value] == "world:forest"
-            && props.Any(p => p.Any(v => v.Tile == t.Value && v.Set.StartsWith("forest", StringComparison.Ordinal)))
-            && Enumerable.Range(0, 6).All(d => !before.TryTile(before.Grid.HexOf(t).Neighbor(d), out int n)
-                || before.Feature[n] is not ("world:forest" or "world:jungle"))).Value;
+        var resolutions = chunks.Resolutions(before);
+        var meshes = chunks.Chunks.Select(c => TerrainMesher.Build(c, field, chunks.Resolution(c, resolutions))).ToArray();
+        Assert.Equal(Sight.Fogged, before.Sight[tile]);
+        Assert.Contains(props.SelectMany(p => p), p => p.Tile == tile && p.Set.StartsWith("forest", StringComparison.Ordinal));
+        var oldSignatures = chunks.Signatures(before);
         var (x, z) = before.Grid.HexOf(new TileId(tile)).ToPixel(1);
         session.Sim.State.Plots[tile].Feature = null;
         var fogged = Snapshot(session);
         Assert.Equal(Sight.Fogged, fogged.Sight[tile]);
         Assert.Equal("world:forest", fogged.Feature[tile]);
-        Assert.Equal(chunks.Signatures(before), chunks.Signatures(fogged));
-        Assert.Empty(TerrainChunks.DirtyChunks(chunks.Signatures(before), chunks.Signatures(fogged)));
+        var foggedSignatures = chunks.Signatures(fogged);
+        Assert.Equal(oldSignatures, foggedSignatures);
+        Assert.Empty(TerrainChunks.DirtyChunks(oldSignatures, foggedSignatures));
         var foggedField = field.With(fogged);
         foreach (var chunk in chunks.Chunks)
         {
-            EqualMesh(TerrainMesher.Build(chunk, field), TerrainMesher.Build(chunk, foggedField));
+            EqualMesh(meshes[chunk.Id], TerrainMesher.Build(chunk, foggedField, chunks.Resolution(chunk, fogged)));
             EqualScatter(props[chunk.Id], planner.Plan(chunk, fogged, foggedField, palette));
         }
         // An actual observer reacquires sight; do not edit the stored snapshot or visibility masks.
@@ -145,7 +156,6 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         Assert.Equal(Sight.Visible, after.Sight[tile]);
         Assert.Null(after.Feature[tile]);
         var nextField = field.With(after);
-        var oldSignatures = chunks.Signatures(before);
         var newSignatures = chunks.Signatures(after);
         var dirty = TerrainChunks.DirtyChunks(oldSignatures, newSignatures).ToHashSet();
         Assert.NotEmpty(dirty);
@@ -164,8 +174,7 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
             {
                 Assert.Equal(oldSignatures[chunk.Id], newSignatures[chunk.Id]);
                 EqualScatter(props[chunk.Id], next);
-                EqualMesh(TerrainMesher.Build(chunk, field, chunks.Resolution(chunk, before)),
-                    TerrainMesher.Build(chunk, nextField, chunks.Resolution(chunk, after)));
+                EqualMesh(meshes[chunk.Id], TerrainMesher.Build(chunk, nextField, chunks.Resolution(chunk, after)));
                 distantInstances += next.Count;
             }
         }

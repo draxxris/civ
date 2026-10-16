@@ -25,6 +25,7 @@ internal static class ExtractionLocation
     }
 }
 
+[Trait("Category", "Extractor")]
 public sealed class ExtractionSmokeTests
 {
     private static readonly Lazy<ImportRegistry> Registry = new(() => new ImportRegistry(ExtractionLocation.Find()!));
@@ -62,7 +63,6 @@ public sealed class ExtractionSmokeTests
     }
 
     [SourceFact]
-    [Trait("Category", "Extractor")]
     public void Independent_imports_write_identical_reports_and_brand_free_generic_data()
     {
         using var first = new TemporaryDirectory();

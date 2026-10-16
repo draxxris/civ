@@ -8,7 +8,7 @@ namespace Civ.Mods.Tests;
 
 public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
-    private readonly TerrainPalette _palette = new(new GameCatalog(mods.Sources));
+    private readonly TerrainPalette _palette = new(mods.Catalog);
 
     [Fact]
     public void Layers_keep_ordinal_terrain_order_then_surface_order()
@@ -20,7 +20,7 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal(terrains, terrainLayers);
         Assert.Equal(Enum.GetValues<TerrainSurface>(), surfaceLayers);
         Assert.Equal(_palette.Layers.Select(layer => (layer.Id, layer.Surface)),
-            new TerrainPalette(new GameCatalog(mods.Sources)).Layers.Select(layer => (layer.Id, layer.Surface)));
+            new TerrainPalette(mods.Catalog).Layers.Select(layer => (layer.Id, layer.Surface)));
     }
 
     [Fact]
