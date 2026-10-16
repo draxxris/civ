@@ -305,6 +305,90 @@ public sealed partial class WorldRulesTests
         Assert.True(sim.TryApply(new StartBuildCommand { Player = 0, Unit = worker.Id, Build = mine }, out var error), error);
     }
 
+    [Theory]
+    [InlineData("discovery", false, false)]
+    [InlineData("discovery", true, false)]
+    [InlineData("mine", false, false)]
+    [InlineData("mine", true, false)]
+    [InlineData("upgrade", false, false)]
+    [InlineData("upgrade", true, false)]
+    [InlineData("discovery", false, true)]
+    [InlineData("discovery", true, true)]
+    [InlineData("mine", false, true)]
+    [InlineData("mine", true, true)]
+    [InlineData("upgrade", false, true)]
+    [InlineData("upgrade", true, true)]
+    public void Disorder_blocks_productive_plot_work_then_normal_work_resumes(string mechanic, bool center, bool anarchy)
+    {
+        var sim = EvolutionScenario(true);
+        var tile = EvolutionPlot(sim);
+        var plot = sim.State.Plots[tile.Value];
+        var city = AddCity(sim, center ? tile : sim.State.Grid.TileAt(5, 3));
+        if (!center) city.Worked.Add(sim.State.Grid.HexOf(tile));
+        plot.Improvement = Evolution + (mechanic == "discovery" ? "prospect" : mechanic == "mine" ? "mine" : "upgrading");
+        plot.ImprovementTurns = 100;
+        city.Extensions.Set(sim.Content, new CityRuleState { Disorder = !anarchy });
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = anarchy ? 2 : 0 });
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        var rng = sim.Rng.State;
+        string original = plot.Improvement;
+        MapTurn(sim);
+        Assert.Equal(original, plot.Improvement);
+        Assert.Null(plot.Bonus);
+        Assert.False(plot.DepletedMine);
+        Assert.Equal(100, plot.ImprovementTurns);
+        Assert.Equal(rng, sim.Rng.State);
+
+        city.Extensions.Set(sim.Content, new CityRuleState());
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState());
+        MapTurn(sim);
+        if (mechanic == "discovery") Assert.Equal(Evolution + "ore", plot.Bonus);
+        if (mechanic == "mine") Assert.True(plot.DepletedMine);
+        if (mechanic == "upgrade") Assert.Equal(Evolution + "upgraded", plot.Improvement);
+    }
+
+    [Fact]
+    public void Disordered_center_does_not_cancel_productive_work_shared_with_a_healthy_city()
+    {
+        var sim = EvolutionScenario(true);
+        var tile = EvolutionPlot(sim);
+        sim.State.Plots[tile.Value].Improvement = Evolution + "mine";
+        var disordered = AddCity(sim, sim.State.Grid.TileAt(5, 3));
+        disordered.Worked.Add(sim.State.Grid.HexOf(tile));
+        disordered.Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
+        var center = sim.State.Plots[sim.State.Grid.TileAt(disordered.Position).Value];
+        center.Owner = 0;
+        center.Improvement = Evolution + "mine";
+        var healthy = AddCity(sim, sim.State.Grid.TileAt(4, 4));
+        healthy.Worked.Add(sim.State.Grid.HexOf(tile));
+        MapTurn(sim);
+        Assert.False(center.DepletedMine);
+        Assert.True(sim.State.Plots[tile.Value].DepletedMine);
+        Assert.Single(sim.Events.Published.OfType<MineDepleted>());
+    }
+
+    [Fact]
+    public void Disorder_preserves_worked_overgrowth_protection_but_does_not_stop_deposit_exhaustion()
+    {
+        var sim = EvolutionScenario(true);
+        var tile = EvolutionPlot(sim, "spreading_soil");
+        sim.State.Plots[tile.Value].Improvement = Evolution + "preserve";
+        sim.State.Plots[sim.State.Grid.TileAt(2, 3).Value].Feature = Evolution + "spread";
+        foreach (var plot in sim.State.Plots) plot.Bonus = Evolution + "ore";
+        var depositTile = sim.State.Grid.TileAt(4, 3);
+        var deposit = sim.State.Plots[depositTile.Value];
+        deposit.Owner = 0;
+        deposit.Improvement = Evolution + "deposit"; // 8 * 12 / 96 copies = guaranteed exhaustion.
+        var city = AddCity(sim, sim.State.Grid.TileAt(5, 3));
+        city.Worked.AddRange([sim.State.Grid.HexOf(tile), sim.State.Grid.HexOf(depositTile)]);
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = 2 });
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        MapTurn(sim);
+        Assert.Null(sim.State.Plots[tile.Value].Feature);
+        Assert.Equal(new BonusDepleted(depositTile, Evolution + "ore", 0), Assert.Single(sim.Events.Published.OfType<BonusDepleted>()));
+        Assert.Null(deposit.Bonus);
+    }
+
     private Simulation EvolutionScenario(bool? depletion = null, string world = "foundation:worldsize_duel", string speed = "speed")
     {
         var options = new SortedDictionary<string, bool>(StringComparer.Ordinal);
@@ -373,6 +457,11 @@ public sealed partial class WorldRulesTests
                 Growth = 20000, CanGrowAnywhere = true,
             });
             context.Content<S.ImprovementDef>().Register(new() { Id = Evolution + "preserve", FeatureGrowth = 8000 });
+            context.Content<S.ImprovementDef>().Register(new()
+            {
+                Id = Evolution + "upgrading", ImprovementUpgrade = Evolution + "upgraded", UpgradeTime = 1,
+            });
+            context.Content<S.ImprovementDef>().Register(new() { Id = Evolution + "upgraded" });
             foreach (bool extreme in new[] { false, true })
             {
                 string prefix = Evolution + (extreme ? "extreme_" : "");
