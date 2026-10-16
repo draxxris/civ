@@ -23,7 +23,6 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly ScatterPlanner _scatterPlanner;
     private readonly ScatterRenderer _scatter;
     private readonly Func<string, bool> _clearsTile;
-    private readonly Func<City, string?> _cityRing;
     private ulong[]? _signatures;
     private int _snapshotRevision = -1;
     private int _hover = -1;
@@ -43,11 +42,10 @@ internal sealed partial class TerrainRenderer : Node3D
 
     /// <param name="clearsTile">True for an improvement whose 3D model fills its whole tile, so no scatter
     /// props grow through it; other improvements only keep the tile centre clear.</param>
-    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile, Func<City, string?> cityRing)
+    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile)
     {
         _session = session;
         _clearsTile = clearsTile;
-        _cityRing = cityRing;
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
@@ -161,8 +159,8 @@ internal sealed partial class TerrainRenderer : Node3D
         {
             int tile = state.Grid.TileAt(city.Position).Value;
             if (Snapshot.Sight[tile] == Sight.Hidden) continue;
-            extras[tile] |= _cityRing(city) is { } ring && _clearsTile(ring)
-                ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
+            // The city's buildings fill its tile.
+            extras[tile] |= ScatterPlanner.ClearTile;
         }
         foreach (var unit in _session.VisibleUnits())
             extras[state.Grid.TileAt(unit.Position).Value] |= ScatterPlanner.ClearCentre;

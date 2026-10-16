@@ -15,6 +15,9 @@ namespace Civ.Client;
 /// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner, city.
 /// City example: "city": {"owner":0,"name":"Testburg","population":5,"buildings":["walls"]}.
 /// City requires owner and name; population defaults to 1 and buildings to empty. It clears the plot improvement and sets its owner.
+/// Optional "era" (full id or short name such as "modern") sets the owner's current era, which picks the look of the city's
+/// buildings. The era belongs to the owner, so cities of different eras need different owners (the last one set wins).
+/// The 3D buildings come from <see cref="Civ.Client.Terrain.CityLayout"/>.
 /// Unknown building ids fail with the id in the error. Existing cities on the same tile fail rather than overlap.
 /// Empty strings clear feature, improvement, bonus or route. Improvement, bonus and route accept full ids or short names such as "cottage", "copper" and "road". Positions are (column, row).
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
@@ -94,6 +97,18 @@ internal static class DebugScenario
         });
         state.Plots[tile.Value].Improvement = null;
         state.Plots[tile.Value].Owner = owner;
+        if (e.TryGetProperty("era", out var era)) SetEra(session, owner, era.GetString());
+    }
+
+    /// <summary>Set the owner's current era, which picks the look of all its cities.</summary>
+    private static void SetEra(GameSession session, int owner, string? name)
+    {
+        var content = session.Sim.Content;
+        var id = ContentId<Schema.EraDef>(session, name, "era") ?? throw new ArgumentException("City era must not be empty.");
+        var player = session.Sim.State.PlayerById(owner);
+        var current = player.Extensions.Get<CityPlayerState>(content) ?? new CityPlayerState();
+        current.CurrentEra = id;
+        player.Extensions.Set(content, current);
     }
 
     private static string? Empty(string? s) => string.IsNullOrEmpty(s) ? null : s;
