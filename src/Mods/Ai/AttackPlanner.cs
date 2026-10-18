@@ -11,7 +11,10 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
     public List<Unit> Plan(List<Unit> free, IReadOnlyList<CityView> views)
     {
         var remaining = new List<Unit>();
-        foreach (var theater in free.GroupBy(u => _targets.Area(u.Position)).OrderBy(g => g.Key))
+        var theaters = free.GroupBy(u => _targets.Area(u.Position)).OrderBy(g => g.Key).ToArray();
+        if (theaters.Length > 0 && (ctx.EnemyCities.Count > 0 || AiIntent.Read(ctx).Campaigns.Count > 0))
+            ctx.Issue(new ReviewCampaignGoalsCommand { Player = ctx.PlayerId, Areas = theaters.Select(g => g.Key).ToArray() });
+        foreach (var theater in theaters)
         {
             var force = theater.OrderBy(u => u.Id).ToList();
             if (_targets.SelectPrimaryTargetCity(theater.Key) is not { } target) { remaining.AddRange(force); continue; }

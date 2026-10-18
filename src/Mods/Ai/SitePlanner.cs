@@ -92,6 +92,12 @@ internal sealed class SitePlanner
         return picked;
     }
 
+    /// <summary>Recheck a retained destination without scoring or ranking all settlement sites.</summary>
+    public bool LegalDestination(TileId tile) => AiIntent.OnMap(ctx, tile)
+        && ctx.Sim.State.Plots[tile.Value].Revealed.Contains(ctx.Team.Id) && CanFound(tile)
+        && ctx.Sim.State.Cities.All(c => ctx.Grid.Distance(ctx.Tile(c.Position), tile)
+            > MinRange + (c.Owner == ctx.PlayerId ? 1 : 2));
+
     public bool CanFound(TileId tile)
     {
         var plot = ctx.Sim.State.Plots[tile.Value];

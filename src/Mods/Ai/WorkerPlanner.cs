@@ -8,8 +8,9 @@ namespace Civ.Mods.Ai;
 /// World previews supply legality, yields and work; queries do not move units or consume RNG.</summary>
 internal sealed class WorkerPlanner(AiContext ctx)
 {
-    private const int MaxCandidates = 8, ParallelTiles = 2;
+    private const int CandidateBatchSize = 8, ParallelTiles = 2;
     private readonly HashSet<TileId> _claimed = new();
+    private SortedDictionary<int, UnitMission> _missions = new();
     private List<WorkTile>? _tiles;
     private HashSet<TileId>? _roads;
     private readonly Dictionary<string, BuildDef[]> _builds = new(StringComparer.Ordinal);
@@ -19,10 +20,11 @@ internal sealed class WorkerPlanner(AiContext ctx)
 
     public void Plan()
     {
-        foreach (var worker in ctx.UnitsWithRole(UnitRole.Worker).ToList())
+        ctx.Issue(new PrepareWorkerMissionsCommand { Player = ctx.PlayerId });
+        foreach (var worker in ctx.UnitsWithRole(UnitRole.Worker).OrderBy(u => u.Id).ToList())
         {
             ctx.Done.Add(worker.Id);
-            if (worker.MovesLeft > 0) Act(worker);
+            if (AiIntent.EligibleUnit(ctx, worker) && worker.MovesLeft > 0) Act(worker);
         }
     }
 
@@ -34,18 +36,74 @@ internal sealed class WorkerPlanner(AiContext ctx)
             _claimed.Add(ctx.Tile(worker.Position));
             return;
         }
-        var job = ChooseJob(worker);
-        if (job is null) { Retreat(worker); return; }
-        _claimed.Add(job.Tile);
-        var hex = ctx.Grid.HexOf(job.Tile);
-        if (worker.Position != hex) ctx.MoveToward(worker, hex);
-        if (ctx.Alive(worker) && worker.Position == hex)
-            ctx.Issue(new StartBuildCommand { Player = ctx.PlayerId, Unit = worker.Id, Build = job.Build });
+        var mission = CurrentMission(worker);
+        if (mission is null) { Retreat(worker); return; }
+        var hex = ctx.Grid.HexOf(mission.Target);
+        var before = worker.Position;
+        if (before != hex) ctx.MoveToward(worker, hex);
+        if (before != hex && worker.Position == before) { Forget(worker); Retreat(worker); return; }
+        if (!ctx.Alive(worker)) { Forget(worker); return; }
+        if (worker.Position != hex) return;
+        ctx.Issue(new StartBuildCommand { Player = ctx.PlayerId, Unit = worker.Id, Build = mission.Build! });
+        Forget(worker); // Active builds have their own saved order and no longer need a destination mission.
+    }
+
+    private UnitMission? CurrentMission(Unit worker)
+    {
+        var mission = AiIntent.Read(ctx).Missions.GetValueOrDefault(worker.Id);
+        if (mission is null || Valid(worker, mission)) return mission;
+        // An earlier worker can spend the build budget. Reassign against the live state before acting.
+        ctx.Issue(new PrepareWorkerMissionsCommand { Player = ctx.PlayerId });
+        return AiIntent.Read(ctx).Missions.GetValueOrDefault(worker.Id);
     }
 
     private void Retreat(Unit worker)
     {
         if (ctx.CityAtUnit(worker) is null && ctx.NearestCity(worker.Position) is { } city) ctx.MoveToward(worker, city.Position);
+    }
+
+    private void Forget(Unit worker) => ctx.Issue(new ForgetUnitMissionCommand { Player = ctx.PlayerId, Unit = worker.Id });
+
+    // Command validation evaluates a detached intent value. Active builds reserve before destination assignment.
+    internal SortedDictionary<int, UnitMission> EvaluateMissions()
+    {
+        _missions = AiIntent.CleanMissions(ctx);
+        var workers = ctx.UnitsWithRole(UnitRole.Worker).OrderBy(u => u.Id).ToArray();
+        foreach (var worker in workers.Where(u => AiIntent.EligibleUnit(ctx, u) && Working(u)))
+            _claimed.Add(ctx.Tile(worker.Position));
+        foreach (var worker in workers) Assign(worker);
+        return _missions;
+    }
+
+    private bool Working(Unit worker) => ctx.Service<IWorkerBuildService>().IsWorking(ctx.Sim, worker.Id);
+
+    private void Assign(Unit worker)
+    {
+        var held = _missions.GetValueOrDefault(worker.Id);
+        if (held is not null && Valid(worker, held)) { _claimed.Add(held.Target); return; }
+        _missions.Remove(worker.Id);
+        if (!AiIntent.EligibleUnit(ctx, worker) || worker.MovesLeft <= 0 || Working(worker)) return;
+        if (ctx.ThreatAround(worker.Position, 2) > 0) return;
+        var job = ChooseJob(worker);
+        if (job is null) return;
+        _claimed.Add(job.Tile);
+        _missions[worker.Id] = AiIntent.Create(ctx, worker, AiMissionKind.Improve, job.Tile, job.Build);
+    }
+
+    private bool Valid(Unit worker, UnitMission mission)
+    {
+        if (!AiIntent.Matches(ctx, worker, mission, AiMissionKind.Improve) || Working(worker)) return false;
+        if (ctx.ThreatAround(worker.Position, 2) > 0 || !Available(mission.Target, ctx.Sim.State.PlotAt(worker.Position).AreaId)) return false;
+        return LegalBuild(worker, mission) && AiIntent.Reachable(ctx, worker, mission.Target);
+    }
+
+    private bool LegalBuild(Unit worker, UnitMission mission)
+    {
+        var build = AvailableBuilds(worker).FirstOrDefault(b => b.Id == mission.Build);
+        if (build is null || !Unfinished(build, mission.Target)) return false;
+        if (!ctx.Sim.State.Plots[mission.Target.Value].Revealed.Contains(ctx.Team.Id)) return false;
+        bool legalTile = build.RouteType is null ? Workable(mission.Target) : RoadPlot(mission.Target);
+        return legalTile && ctx.Service<IWorkerBuildService>().Preview(ctx.Sim, ctx.PlayerId, worker.Id, mission.Target, build.Id).Error is null;
     }
 
     private Job? ChooseJob(Unit worker)
@@ -54,13 +112,19 @@ internal sealed class WorkerPlanner(AiContext ctx)
         int area = ctx.Sim.State.Plots[here.Value].AreaId;
         var candidates = Tiles().Where(t => Available(t.Tile, area))
             .OrderByDescending(t => t.Priority - 7 * ctx.Grid.Distance(here, t.Tile)).ThenBy(t => t.Tile.Value)
-            .Take(MaxCandidates).ToArray();
+            .ToArray();
         if (candidates.Length == 0) return null;
         // Resolve the cached build list and road set before tiles are previewed on several threads.
         var builds = AvailableBuilds(worker);
         var roads = RoadTiles();
-        var jobs = ParallelScoring.Select(ctx.Sim, candidates, ParallelTiles, t => BestBuildAt(worker, t.Tile, builds, roads));
-        return jobs.FirstOrDefault(job => job is not null);
+        // Unreachable high-priority jobs must not hide all usable work beyond the first batch.
+        foreach (var batch in candidates.Chunk(CandidateBatchSize))
+        {
+            var jobs = ParallelScoring.Select(ctx.Sim, batch, ParallelTiles, t => BestBuildAt(worker, t.Tile, builds, roads));
+            var reachable = jobs.FirstOrDefault(job => job is not null && AiIntent.Reachable(ctx, worker, job.Tile));
+            if (reachable is not null) return reachable;
+        }
+        return null;
     }
 
     private bool Available(TileId tile, int area) => !_claimed.Contains(tile)
@@ -133,15 +197,18 @@ internal sealed class WorkerPlanner(AiContext ctx)
         return best;
     }
 
-    private bool CanPreview(BuildDef build, TileId tile, HashSet<TileId> roads)
+    private bool CanPreview(BuildDef build, TileId tile, HashSet<TileId> roads) => Unfinished(build, tile)
+        && (build.RouteType is null || roads.Contains(tile));
+
+    private bool Unfinished(BuildDef build, TileId tile)
     {
         var plot = ctx.Sim.State.Plots[tile.Value];
         if (build.ImprovementType is { } improvement && plot.Improvement == improvement) return false;
         if (build.Mine && plot.DepletedMine) return false;
         if (build.ObsoleteTech is { } obsolete && ctx.Sim.KnowsTech(ctx.PlayerId, obsolete)) return false;
         if (build.RouteType is not { } route) return true;
-        return roads.Contains(tile) && (plot.Route is not { } existing
-            || ctx.Sim.Content.Get<RouteDef>(existing).Value < ctx.Sim.Content.Get<RouteDef>(route).Value);
+        return plot.Route is not { } existing
+            || ctx.Sim.Content.Get<RouteDef>(existing).Value < ctx.Sim.Content.Get<RouteDef>(route).Value;
     }
 
     private BuildDef[] AvailableBuilds(Unit worker)

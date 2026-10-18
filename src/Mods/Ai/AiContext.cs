@@ -6,7 +6,7 @@ using Civ.Game;
 namespace Civ.Mods.Ai;
 
 /// <summary>Everything one planner needs for one player's turn: state shortcuts, personality and a command sink.
-/// Built fresh each turn, so the AI itself carries no state between turns.</summary>
+/// Built fresh each turn. Saved intent belongs to player extensions, not to this derived query context.</summary>
 internal sealed class AiContext
 {
     private Segment _segment;
