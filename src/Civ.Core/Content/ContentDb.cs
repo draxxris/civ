@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Civ.Game;
 
@@ -9,6 +10,10 @@ namespace Civ.Content;
 public sealed class ContentDb
 {
     private sealed record Entry(object Registry, Action Freeze, Func<IEnumerable<ContentDef>> Items);
+    private static readonly ConditionalWeakTable<Type, PropertyInfo[]> RequirementProperties = new();
+    private static PropertyInfo[] DescribeRequirementProperties(Type type) => type
+        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0).ToArray();
     private readonly Dictionary<Type, Entry> _registries = new();
     private bool _frozen;
     /// <summary>Create a registration database with empty shared-schema registries.</summary>
@@ -127,8 +132,8 @@ public sealed class ContentDb
         if (IsScalar(value) || !seen.Add(value)) return;
         if (value is Requirement requirement) { Requirements.Validate(requirement); return; }
         if (value is IEnumerable sequence) { foreach (var item in sequence) ValidateRequirements(item, seen); return; }
-        foreach (var property in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            if (property.CanRead && property.GetIndexParameters().Length == 0) ValidateRequirements(property.GetValue(value), seen);
+        foreach (var property in RequirementProperties.GetValue(value.GetType(), DescribeRequirementProperties))
+            ValidateRequirements(property.GetValue(value), seen);
     }
     private static bool IsScalar(object value) => value is string || value is decimal
         || value.GetType().IsPrimitive || value.GetType().IsEnum;

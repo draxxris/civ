@@ -13,6 +13,9 @@ public sealed class LoadedMods
     public string Root { get; } = Path.Combine(AppContext.BaseDirectory, "mods");
     public ModSource[] Sources { get; }
     public ContentDb Content { get; }
+    // One catalog per xUnit class fixture: asset lookup caches are mutable, unlike frozen content.
+    private readonly Lazy<Civ.Client.GameCatalog> _catalog;
+    public Civ.Client.GameCatalog Catalog => _catalog.Value;
     private static readonly Lazy<(ModSource[] Sources, ContentDb Content)> Shared = new(() =>
     {
         var root = Path.Combine(AppContext.BaseDirectory, "mods");
@@ -22,6 +25,7 @@ public sealed class LoadedMods
     public LoadedMods()
     {
         (Sources, Content) = Shared.Value;
+        _catalog = new(() => new(Sources));
     }
 }
 

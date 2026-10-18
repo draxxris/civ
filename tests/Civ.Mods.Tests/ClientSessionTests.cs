@@ -11,6 +11,21 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
 {
     private GameSession NewSession(ulong seed = 3) => new(GameFactory.Create(mods.Content, seed));
 
+    // City panels need real founding and turn systems, not procedural geography or free-unit placement.
+    private GameSession CitySession(params string[] leaders)
+    {
+        var sim = Simulation.CreateScenario(mods.Content, GameFactory.Settings(3, leaders), new(12, 8, true),
+            Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(),
+            game =>
+            {
+                var position = game.State.Grid.HexOf(new TileId(39));
+                game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = 0, Type = "military:settler", Position = position });
+                game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = position });
+                foreach (var unit in game.State.Units) game.Content.Services.Get<IUnitService>().Single().Initialize(game, unit.Id);
+            });
+        return new GameSession(sim);
+    }
+
     private static City Found(GameSession s)
     {
         var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
@@ -343,7 +358,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void Civics_panel_previews_without_mutation_and_adoption_tracks_anarchy_through_session_turns()
     {
-        var s = new GameSession(GameFactory.Create(mods.Content, 3, "peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti"));
+        var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
         var city = Found(s);
         s.MyTeam.Techs.Add("research:code_of_laws");
         var before = s.Sim.ComputeHash();
@@ -416,7 +431,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void City_screen_reports_ledgers_and_the_production_queue_can_be_edited()
     {
-        var s = NewSession();
+        var s = CitySession();
         var city = Found(s);
         var screen = s.DescribeCity(city)!;
         Assert.Equal(1, screen.Population);

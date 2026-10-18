@@ -50,13 +50,8 @@ internal static class TerrainTestMaps
     /// <summary>A small all-grass, fully revealed and visible game on a wrapping map.</summary>
     public static GameSession RevealedSession(ContentDb content, int width = 24, int height = 16)
     {
-        var sim = GameFactory.Create(content);
-        sim.State.Map = new(width, height, true);
-        sim.State.Plots = Enumerable.Range(0, width * height).Select(_ => new Plot { Terrain = "world:grass" }).ToArray();
-        sim.State.Units.Clear();
-        sim.State.Cities.Clear();
-        foreach (var player in sim.State.Players) player.StartingPlot = null;
-        sim.State.RebuildIndexes();
+        var sim = Simulation.CreateScenario(content, GameFactory.Settings(), new(width, height, true),
+            Enumerable.Range(0, width * height).Select(_ => new Plot { Terrain = "world:grass" }).ToArray());
         var session = new GameSession(sim);
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(session.Me.TeamId); plot.Visible.Add(session.Me.TeamId); }
         return session;
@@ -140,13 +135,37 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
         double worst = 0;
         foreach (var (x0, z0, dx, dz) in lines)
         {
-            double previous = field.HeightAt(x0, z0);
+            // Keep the complete path and its fine step. Locate crossings cheaply, then evaluate heights on both sides.
+            // Include both dual-triangle borders (where contributors change) and hex edges/corners (equal weights).
+            (int Q, int R, int Sum, Hex Tile) Region(double x, double z)
+            {
+                var (ox, oz) = field.Warp.Sample(x, z);
+                x += ox * warp;
+                z += oz * warp;
+                double q = x / Sqrt3 - z / 3, r = 2 * z / 3;
+                return ((int)Math.Floor(q), (int)Math.Floor(r), (int)Math.Floor(q + r), Hex.FromPixel(x, z, 1));
+            }
+            var previous = Region(x0, z0);
+            int crossings = 0;
             for (int i = 1; i <= 60_000; i++)
             {
-                double h = field.HeightAt(x0 + dx * i * step, z0 + dz * i * step);
-                worst = Math.Max(worst, Math.Abs(h - previous));
-                previous = h;
+                double x = x0 + dx * i * step, z = z0 + dz * i * step;
+                var current = Region(x, z);
+                if (current != previous)
+                {
+                    // Include the adjacent steps too, so floating-point ties cannot put the crossing just outside the pair.
+                    double a = field.HeightAt(x - 2 * dx * step, z - 2 * dz * step);
+                    for (int offset = -1; offset <= 1; offset++)
+                    {
+                        double b = field.HeightAt(x + offset * dx * step, z + offset * dz * step);
+                        worst = Math.Max(worst, Math.Abs(b - a));
+                        a = b;
+                    }
+                    crossings++;
+                }
+                previous = current;
             }
+            Assert.True(crossings > 0, "Every path must cross tile or blend-triangle boundaries.");
         }
         // The steepest ridged slopes change by well under 0.01 per 2e-4 step; a blend jump between classes is ~0.1 or more.
         Assert.InRange(worst, 0, 0.01);

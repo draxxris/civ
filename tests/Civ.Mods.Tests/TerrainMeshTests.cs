@@ -8,12 +8,35 @@ namespace Civ.Mods.Tests;
 
 /// <summary>Chunk meshing, dirty signatures and terrain picking: no cracks at chunk borders or the wrap, no stale chunk
 /// after a map change or a reveal, and picks that land on the slope under the cursor.</summary>
-public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBaseline baseline)
+    : IClassFixture<LoadedMods>, IClassFixture<TerrainMeshTests.MeshBaseline>
 {
     private static readonly double Sqrt3 = TerrainTestMaps.Sqrt3;
 
-    private static TerrainMeshData[] BuildAll(TerrainChunks chunks, TerrainField field) =>
-        chunks.Chunks.Select(c => TerrainMesher.Build(c, field, chunks.Resolution(c, field.Snapshot))).ToArray();
+    /// <summary>Read-only rendered fixtures; tests must not mutate their snapshots or output arrays.</summary>
+    public sealed class MeshBaseline
+    {
+        private readonly Lazy<RenderedMap> _mixed = new(() => new(TerrainTestMaps.Mixed()));
+        private readonly Lazy<RenderedMap> _mixedResolutions = new(() => new(MixedResolutions()));
+        public RenderedMap Mixed => _mixed.Value;
+        public RenderedMap MixedResolution => _mixedResolutions.Value;
+    }
+
+    public sealed class RenderedMap
+    {
+        public TerrainField Field { get; }
+        public TerrainChunks Chunks { get; }
+        public int[] Resolutions { get; }
+        public TerrainMeshData[] Meshes { get; }
+
+        public RenderedMap(TerrainSnapshot snapshot)
+        {
+            Field = new(snapshot, 8);
+            Chunks = new(snapshot.Grid.Spec);
+            Resolutions = Chunks.Resolutions(snapshot);
+            Meshes = Chunks.Chunks.Select(c => TerrainMesher.Build(c, Field, Chunks.Resolution(c, Resolutions))).ToArray();
+        }
+    }
 
     private static (float X, float Z) Key(float[] p, int v) => (p[v * 3], p[v * 3 + 2]);
 
@@ -31,12 +54,12 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
     [Fact]
     public void Neighbouring_chunks_share_identical_border_vertices()
     {
-        var field = new TerrainField(MixedResolutions(), 8);
-        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        Assert.Equal(2, chunks.Resolutions(field.Snapshot).Distinct().Count());
+        var rendered = baseline.MixedResolution;
+        var chunks = rendered.Chunks;
+        Assert.Equal(2, rendered.Resolutions.Distinct().Count());
         var seen = new Dictionary<(float X, float Z), (float Y, float Nx, float Ny, float Nz, float Cavity)>();
         int shared = 0;
-        foreach (var mesh in BuildAll(chunks, field))
+        foreach (var mesh in rendered.Meshes)
             for (int v = 0; v < mesh.VertexCount; v++)
             {
                 var value = (mesh.Positions[v * 3 + 1], mesh.Normals[v * 3], mesh.Normals[v * 3 + 1], mesh.Normals[v * 3 + 2],
@@ -51,23 +74,19 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
     [Fact]
     public void A_fine_chunk_edge_lies_on_its_coarse_neighbour_without_cracks()
     {
-        var field = new TerrainField(MixedResolutions(), 8);
-        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        var resolutions = chunks.Resolutions(field.Snapshot);
-        var meshes = BuildAll(chunks, field);
+        var rendered = baseline.MixedResolution;
+        var chunks = rendered.Chunks;
+        var resolutions = rendered.Resolutions;
+        var meshes = rendered.Meshes;
         int checkedVertices = 0;
         foreach (var fine in chunks.Chunks.Where(c => resolutions[c.Id] == TerrainMesher.PeakResolution))
             foreach (var coarse in chunks.Chunks.Where(c => resolutions[c.Id] == TerrainMesher.DefaultResolution
-                && (c.Row == fine.Row && (c.X0 == fine.X1 || c.X1 == fine.X0) || c.Column == fine.Column && (c.Z0 == fine.Z1 || c.Z1 == fine.Z0))))
+                && Math.Abs(c.Row - fine.Row) + Math.Abs(c.Column - fine.Column) == 1))
             {
                 var mesh = meshes[fine.Id];
-                for (int v = 0; v < mesh.VertexCount; v++)
+                foreach (int v in SharedEdgeVertices(mesh, fine, coarse))
                 {
                     double x = mesh.Positions[v * 3], z = mesh.Positions[v * 3 + 2];
-                    const double e = 1e-4;
-                    bool onEdge = coarse.Row == fine.Row
-                        ? Math.Abs(x - coarse.X0) < e || Math.Abs(x - coarse.X1) < e : Math.Abs(z - coarse.Z0) < e || Math.Abs(z - coarse.Z1) < e;
-                    if (!onEdge || x < coarse.X0 - e || x > coarse.X1 + e || z < coarse.Z0 - e || z > coarse.Z1 + e) continue;
                     x = Math.Clamp(x, coarse.X0, coarse.X1);
                     z = Math.Clamp(z, coarse.Z0, coarse.Z1);
                     Assert.Equal(MeshHeight(meshes[coarse.Id], x, z), mesh.Positions[v * 3 + 1], 4);
@@ -75,6 +94,16 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
                 }
             }
         Assert.True(checkedVertices > 100);
+    }
+
+    private static IEnumerable<int> SharedEdgeVertices(TerrainMeshData mesh, TerrainChunk a, TerrainChunk b)
+    {
+        const double e = 1e-4;
+        double x0 = Math.Max(a.X0, b.X0), x1 = Math.Min(a.X1, b.X1);
+        double z0 = Math.Max(a.Z0, b.Z0), z1 = Math.Min(a.Z1, b.Z1);
+        return Enumerable.Range(0, mesh.VertexCount).Where(v =>
+            mesh.Positions[v * 3] >= x0 - e && mesh.Positions[v * 3] <= x1 + e
+            && mesh.Positions[v * 3 + 2] >= z0 - e && mesh.Positions[v * 3 + 2] <= z1 + e);
     }
 
     /// <summary>Height of the chunk mesh triangle under (x, z), found by brute force over the mesh.</summary>
@@ -119,11 +148,10 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
     [Fact]
     public void Chunk_triangles_face_up_and_tile_the_chunk_rectangle_exactly_once()
     {
-        var field = new TerrainField(MixedResolutions(), 8);
-        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        foreach (var chunk in chunks.Chunks.Take(6))
+        var rendered = baseline.MixedResolution;
+        foreach (var chunk in rendered.Chunks.Chunks.Take(6))
         {
-            var mesh = TerrainMesher.Build(chunk, field, chunks.Resolution(chunk, field.Snapshot));
+            var mesh = rendered.Meshes[chunk.Id];
             var p = mesh.Positions;
             double area = 0;
             for (int i = 0; i < mesh.Indices.Length; i += 3)
@@ -140,16 +168,16 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
     [Fact]
     public void The_east_edge_chunk_matches_the_first_chunk_shifted_by_the_period()
     {
-        var field = new TerrainField(MixedResolutions(), 8);
-        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        float period = (float)field.Period;
+        var rendered = baseline.MixedResolution;
+        var chunks = rendered.Chunks;
+        float period = (float)rendered.Field.Period;
         int matched = 0;
         for (int row = 0; row < chunks.Rows; row++)
         {
             var westChunk = chunks.Chunks[row * chunks.Columns];
             var eastChunk = chunks.Chunks[row * chunks.Columns + chunks.Columns - 1];
-            var west = TerrainMesher.Build(westChunk, field, chunks.Resolution(westChunk, field.Snapshot));
-            var east = TerrainMesher.Build(eastChunk, field, chunks.Resolution(eastChunk, field.Snapshot));
+            var west = rendered.Meshes[westChunk.Id];
+            var east = rendered.Meshes[eastChunk.Id];
             var westEdge = Enumerable.Range(0, west.VertexCount).Where(v => west.Positions[v * 3] < 0.2f).ToList();
             foreach (int e in Enumerable.Range(0, east.VertexCount).Where(v => east.Positions[v * 3] > period - 0.01f))
             {
@@ -166,15 +194,18 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
     [Fact]
     public void Mesh_anchors_at_every_tile_centre_match_the_field_including_the_seabed()
     {
-        var field = new TerrainField(TerrainTestMaps.Mixed(), 8);
-        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        var vertices = BuildAll(chunks, field).SelectMany(mesh => Enumerable.Range(0, mesh.VertexCount)
-            .Select(v => new Vector3(mesh.Positions[v * 3], mesh.Positions[v * 3 + 1], mesh.Positions[v * 3 + 2]))).ToArray();
+        var rendered = baseline.Mixed;
+        var field = rendered.Field;
+        var vertices = new Dictionary<(float X, float Z), float>();
+        foreach (var mesh in rendered.Meshes)
+            for (int v = 0; v < mesh.VertexCount; v++)
+                vertices.TryAdd(Key(mesh.Positions, v), mesh.Positions[v * 3 + 1]);
         foreach (var tile in field.Snapshot.Grid.Tiles)
         {
             var (x, z) = field.Snapshot.Grid.HexOf(tile).ToPixel(1);
-            var anchor = vertices.First(p => Math.Abs(p.X - x) < 1e-4 && Math.Abs(p.Z - z) < 1e-4);
-            Assert.InRange(Math.Abs(anchor.Y - field.HeightAt(x, z)), 0, 1e-4);
+            // Centres have exact float lattice coordinates; index actual output, not a mesher-derived expected height.
+            Assert.True(vertices.TryGetValue(((float)x, (float)z), out float height));
+            Assert.InRange(Math.Abs(height - field.HeightAt(x, z)), 0, 1e-4);
         }
     }
 
@@ -208,7 +239,11 @@ public sealed class TerrainMeshTests(LoadedMods mods) : IClassFixture<LoadedMods
         foreach (var tile in grid.Tiles)
         {
             var (x, z) = grid.HexOf(tile).ToPixel(1);
-            Assert.Single(chunks.Chunks, c => c.Contains(x, z));
+            int containing = 0;
+            // Visit every chunk so incorrect edge inclusion cannot be hidden by a bounds prefilter.
+            foreach (var chunk in chunks.Chunks)
+                if (chunk.Contains(x, z)) containing++;
+            Assert.Equal(1, containing);
         }
     }
 
