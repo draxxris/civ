@@ -87,6 +87,16 @@ These switches apply only to capture runs and go after `--` on the Godot command
 ### Game setup
 
 - `--world <size>`: world size by id or name, for example `tiny`, `small`, `huge`.
+- `--map-generator <generator>`: registered generator by id, short id, or display name. The default comes from the loaded ruleset.
+  The setup screen also offers a **World layout** selector that discovers registered maps automatically.
+  `continents` selects Continental, the existing fractal layout with several landmasses.
+  `inland_sea` selects land around a central sea.
+  `king_of_the_hill` selects a central land hub, eight spokes, and an outer land rim with water between the spokes.
+  `world:new_world` (`new_world`) starts all players on the western continent. The eastern continent starts unsettled.
+  `world:twin_continents` (`twin_continents`) creates two large continents separated by ocean.
+  `world:great_plains` (`great_plains`) creates broad, flat land with scattered lakes, fewer hills, and no peaks.
+  All layouts reuse the same climate, resource, river, relief, and start-position rules.
+  The new layouts retain east–west wrapping and vary with the seed.
 - `--seed N`: map seed. The default is 1.
 - `--opponents N`: number of opponents. The default is 3.
 - `--turns N`: end this many turns before capture.

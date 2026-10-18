@@ -66,8 +66,10 @@ public sealed class HexGrid
     /// <summary>Distinct neighbors, excluding self on narrow wrapped maps.</summary>
     public IEnumerable<TileId> Neighbors(TileId tile)
     {
-        var seen = new HashSet<TileId> { tile };
-        for (int i = 0; i < 6; i++) if (Neighbor(tile, i) is { } n && seen.Add(n)) yield return n;
+        // Only narrow wrapped maps can map distinct directions to the same tile (or self).
+        HashSet<TileId>? seen = Spec.Wrap && Spec.Width < 3 ? new() { tile } : null;
+        for (int i = 0; i < 6; i++)
+            if (Neighbor(tile, i) is { } n && (seen is null || seen.Add(n))) yield return n;
     }
     /// <summary>Neighbors expressed as canonical axial coordinates.</summary>
     public IEnumerable<Hex> Neighbors(Hex hex) => Neighbors(TileAt(hex)).Select(HexOf);
@@ -107,9 +109,35 @@ public sealed class HexGrid
     public IEnumerable<TileId> Range(TileId center, int radius)
     {
         if (radius < 0) throw new ArgumentOutOfRangeException(nameof(radius));
-        var tiles = new SortedSet<int>();
-        foreach (var h in Hex.Range(HexOf(center), radius)) if (TryTile(h, out var t)) tiles.Add(t.Value);
-        return tiles.Select(i => new TileId(i));
+        return RangeRows(HexOf(center), radius);
+    }
+
+    private IEnumerable<TileId> RangeRows(Hex center, int radius)
+    {
+        // A hex disk intersects each axial row in one interval. Emit canonical columns directly
+        // in tile order, splitting wrapped intervals at the seam instead of sorting a hex disk.
+        int firstRow = (int)Math.Max(0, (long)center.R - radius);
+        int lastRow = (int)Math.Min(Spec.Height - 1, (long)center.R + radius);
+        for (int row = firstRow; row <= lastRow; row++)
+        {
+            long dr = (long)row - center.R;
+            long offset = (long)center.Q + (row - (row & 1)) / 2;
+            long first = offset + Math.Max(-(long)radius, -dr - radius);
+            long last = offset + Math.Min(radius, -dr + radius);
+            var columns = RangeColumns(first, last);
+            for (int col = 0; col <= columns.PrefixLast; col++) yield return new TileId(row * Spec.Width + col);
+            for (int col = columns.First; col <= columns.Last; col++) yield return new TileId(row * Spec.Width + col);
+        }
+    }
+
+    private (int First, int Last, int PrefixLast) RangeColumns(long first, long last)
+    {
+        if (!Spec.Wrap)
+            return ((int)Math.Clamp(first, 0, Spec.Width), (int)Math.Clamp(last, -1, Spec.Width - 1), -1);
+        if (last - first + 1 >= Spec.Width) return (0, Spec.Width - 1, -1);
+        int start = (int)((first % Spec.Width + Spec.Width) % Spec.Width);
+        long end = start + last - first;
+        return end < Spec.Width ? (start, (int)end, -1) : (start, Spec.Width - 1, (int)(end - Spec.Width));
     }
     /// <summary>Clipped shortest-distance ring (not duplicated wrap images), in ascending TileId order.</summary>
     public IEnumerable<TileId> Ring(TileId center, int radius) => Range(center, radius).Where(t => Distance(center, t) == radius);

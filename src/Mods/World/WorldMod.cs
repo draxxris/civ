@@ -33,6 +33,11 @@ public sealed class WorldMod : IPreparableMod
         var visibility = new VisibilityService();
         var workers = new WorkerBuildService(water);
         context.MapGenerators.Register(new ContinentsGenerator());
+        context.MapGenerators.Register(new ContinentsGenerator("world:inland_sea", "Inland Sea", WorldLayout.InlandSea));
+        context.MapGenerators.Register(new ContinentsGenerator("world:king_of_the_hill", "King of the Hill", WorldLayout.KingOfTheHill));
+        context.MapGenerators.Register(new ContinentsGenerator("world:new_world", "New World", WorldLayout.NewWorld));
+        context.MapGenerators.Register(new ContinentsGenerator("world:twin_continents", "Twin Continents", WorldLayout.TwinContinents));
+        context.MapGenerators.Register(new ContinentsGenerator("world:great_plains", "Great Plains", WorldLayout.GreatPlains));
         context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         context.RegisterService<Civ.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
         context.RegisterService<Civ.Game.IWaterService>("water", water);

@@ -22,7 +22,7 @@ namespace Civ.Client;
 /// --terrain-debug mode       0/normal, 1/weights, 2/hidden, 4/relief, 5/bands (height contours), 6/slope, 7/lattice (= --wireframe)
 /// --wireframe                draw the terrain mesh lattice (the compatibility renderer has no wireframe mode)
 /// --stats                    print and save props, triangles and height statistics next to each capture
-/// --world size --seed n --opponents n --reveal --zoom d --frames n --fps-probe
+/// --world size --map-generator id|short-id|name --seed n --opponents n --reveal --zoom d --frames n --fps-probe
 /// </code></summary>
 internal sealed record DebugOptions
 {
@@ -31,6 +31,7 @@ internal sealed record DebugOptions
     public int Frames { get; private init; } = 60;
     public int Turns { get; private init; }
     public string World { get; private init; } = "";
+    public string MapGenerator { get; private init; } = "";
     public int Opponents { get; private init; } = 3;
     public ulong Seed { get; private init; } = 1;
     public bool Reveal { get; private init; }
@@ -71,7 +72,8 @@ internal sealed record DebugOptions
         var options = new DebugOptions
         {
             ScreenshotPath = Value("--screenshot", ""), Stage = Raw("--stage") ?? "setup", Frames = int.Parse(Value("--frames", "60")),
-            Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), Opponents = int.Parse(Value("--opponents", "3")),
+            Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), MapGenerator = Value("--map-generator", ""),
+            Opponents = int.Parse(Value("--opponents", "3")),
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
             TerrainDebug = ParseTerrainDebug(Value("--terrain-debug", "0")), FpsProbe = args.Contains("--fps-probe"),
             OutDir = Raw("--out-dir"), ShotsFile = Raw("--shots"), Focus = Raw("--focus"),

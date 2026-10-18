@@ -12,21 +12,41 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         var tuning = Geography.Tuning(sim.Content);
         // Selection reads an unchanged map. Reuse each tile's potential across overlapping start ranges.
         var potentials = sim.State.Grid.Tiles.Select(t => TilePotential(sim, t, tuning)).ToArray();
-        var candidates = sim.State.Grid.Tiles.Where(t => CanStart(sim, t))
+        // New World reserves the eastern landmass for later colonization. Keep this restriction
+        // inside selection so normalization, unit grants, and initial AI all use the same starts.
+        bool oldWorldOnly = sim.Settings.MapGenerator == "world:new_world";
+        var candidates = sim.State.Grid.Tiles
+            .Where(t => !oldWorldOnly || sim.State.Grid.OffsetOf(t).Col < sim.State.Map.Width / 2)
+            .Where(t => CanStart(sim, t))
             .Select(t => (Tile: t, Score: Score(sim, t, tuning, potentials)))
             .OrderByDescending(c => c.Score).ThenBy(c => c.Tile.Value).ToArray();
         if (candidates.Length == 0) throw new InvalidOperationException("Map has no habitable starts");
 
-        var starts = new List<TileId>();
-        foreach (var candidate in candidates)
-        {
-            if (starts.Any(t => sim.State.Grid.Distance(t, candidate.Tile) < tuning.StartSpacing)) continue;
-            starts.Add(candidate.Tile);
-            if (starts.Count != count) continue;
-            return starts;
-        }
+        var tiles = candidates.Select(c => c.Tile).ToArray();
+        var starts = Separated(sim.State.Grid, tiles, count, tuning.StartSpacing);
+        if (starts is not null) return starts;
+        // On compact New World maps a central first choice can block otherwise viable starts.
+        // Retry deterministic anchors without relaxing spacing or using the reserved continent.
+        if (oldWorldOnly)
+            foreach (var anchor in tiles.Take(64))
+            {
+                starts = Separated(sim.State.Grid, tiles.Prepend(anchor), count, tuning.StartSpacing);
+                if (starts is not null) return starts;
+            }
         throw new InvalidOperationException("Map cannot supply fair separated starts for this player count; use a larger world or another seed");
     }
+    private static List<TileId>? Separated(HexGrid grid, IEnumerable<TileId> candidates, int count, int spacing)
+    {
+        var starts = new List<TileId>();
+        foreach (var tile in candidates)
+        {
+            if (starts.Any(t => grid.Distance(t, tile) < spacing)) continue;
+            starts.Add(tile);
+            if (starts.Count == count) return starts;
+        }
+        return null;
+    }
+
     // CvGame::normalizeStartingPlots: improve weak starts without changing land shape or existing bonuses.
     public void Normalize(Simulation sim, IReadOnlyList<TileId> starts)
     {

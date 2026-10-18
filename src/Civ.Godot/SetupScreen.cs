@@ -6,7 +6,7 @@ namespace Civ.Client;
 internal sealed partial class SetupScreen : Control
 {
     private readonly GameCatalog _catalog;
-    private readonly OptionButton _world = new(), _speed = new(), _handicap = new();
+    private readonly OptionButton _world = new(), _mapGenerator = new(), _speed = new(), _handicap = new();
     private readonly SpinBox _opponents = new() { MinValue = 0, MaxValue = 15, Value = 3, Step = 1 };
     private readonly LineEdit _seed = new() { Text = "1" };
     private readonly LineEdit _search = new() { PlaceholderText = "Search leaders, civilizations or traits" };
@@ -29,6 +29,7 @@ internal sealed partial class SetupScreen : Control
         backdrop.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         AddChild(backdrop);
         Fill(_world, catalog.WorldSizes, defaults.WorldSize);
+        Fill(_mapGenerator, catalog.MapGenerators, defaults.MapGenerator);
         Fill(_speed, catalog.GameSpeeds, defaults.GameSpeed);
         Fill(_handicap, catalog.Handicaps, defaults.Handicap);
         _start = Ui.Button("Start game", OnStart, size: 20);
@@ -68,6 +69,7 @@ internal sealed partial class SetupScreen : Control
         var col = Ui.VBox(8);
         col.CustomMinimumSize = new Vector2(320, 0);
         Add(col, "World size", _world);
+        Add(col, "World layout", _mapGenerator);
         Add(col, "Game speed", _speed);
         Add(col, "Handicap", _handicap);
         Add(col, "AI opponents", _opponents);
@@ -134,7 +136,8 @@ internal sealed partial class SetupScreen : Control
         if (!ulong.TryParse(_seed.Text, out var seed)) throw new ArgumentException("Seed must be an unsigned whole number.");
         var selectedOptions = _gameOptions.ToDictionary(option => option.Key, option => option.Value.ButtonPressed, StringComparer.Ordinal);
         return new NewGameOptions(_catalog.WorldSizes[_world.Selected].Id, _catalog.GameSpeeds[_speed.Selected].Id,
-            _catalog.Handicaps[_handicap.Selected].Id, _leaderId, (int)_opponents.Value, seed, GameOptions: selectedOptions);
+            _catalog.Handicaps[_handicap.Selected].Id, _leaderId, (int)_opponents.Value, seed,
+            MapGenerator: _catalog.MapGenerators[_mapGenerator.Selected].Id, GameOptions: selectedOptions);
     }
 
     private void OnStart()

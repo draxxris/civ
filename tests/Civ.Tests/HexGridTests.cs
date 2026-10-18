@@ -50,6 +50,47 @@ public class HexGridTests
     }
 
     [Theory]
+    [InlineData(1, 1, false)]
+    [InlineData(1, 5, false)]
+    [InlineData(2, 1, false)]
+    [InlineData(2, 5, false)]
+    [InlineData(3, 4, false)]
+    [InlineData(4, 3, false)]
+    [InlineData(1, 1, true)]
+    [InlineData(1, 5, true)]
+    [InlineData(2, 1, true)]
+    [InlineData(2, 5, true)]
+    [InlineData(3, 4, true)]
+    [InlineData(4, 3, true)]
+    public void RangeMatchesBreadthFirstMembershipInAscendingDistinctTileOrder(int width, int height, bool wrap)
+    {
+        var grid = new HexGrid(new(width, height, wrap));
+        foreach (var center in grid.Tiles)
+        {
+            var distances = BreadthFirstDistances(grid, center);
+            int maximumRadius = distances.Values.Max() + 1;
+            for (int radius = 0; radius <= maximumRadius; radius++)
+            {
+                var expected = distances
+                    .Where(pair => pair.Value <= radius)
+                    .Select(pair => pair.Key)
+                    .OrderBy(tile => tile.Value)
+                    .ToArray();
+                Assert.Equal(expected, grid.Range(center, radius));
+            }
+        }
+    }
+
+    [Fact]
+    public void RangeRejectsNegativeRadiusAndInvalidCenterImmediately()
+    {
+        var grid = new HexGrid(new(3, 2, true));
+        Assert.Throws<ArgumentOutOfRangeException>(() => grid.Range(new TileId(0), -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => grid.Range(new TileId(-1), 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => grid.Range(new TileId(grid.Count), 0));
+    }
+
+    [Theory]
     [InlineData(1, 7, true)]
     [InlineData(2, 8, true)]
     [InlineData(4, 12, true)]

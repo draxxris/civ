@@ -1,8 +1,178 @@
 # Performance work log
 
-## Current status
+## World generation optimization
 
-All three requested optimization phases are complete. The changes are uncommitted. The final default test suite passes: 794 passed, 0 failed, 0 skipped.
+### Result
+
+Generation allocates **40–50% fewer managed bytes** across six workloads.
+Standard-world elapsed time decreased by **14.9–24.5%** in the controlled comparison.
+Gigantic-world elapsed time changed from **17.9% slower to 9.4% faster**, depending on the seed.
+These results do not establish a uniform elapsed-time improvement.
+All generated-world and session hashes match the baseline.
+
+### Changes
+
+- `src/Civ.Core/HexGrid.cs`: enumerate range rows directly instead of constructing and sorting a tree of hexes.
+  Each row produces clipped column intervals in ascending tile order.
+  Wrapped intervals split at the seam, and full-width intervals emit each column once.
+  Intermediate arithmetic uses `long` to avoid radius overflow.
+- `HexGrid.Neighbors`: skip the per-query hash set when directions cannot produce duplicate tiles.
+  Wrapped maps with width one or two retain the original deduplication path.
+- `src/Mods/World/ContinentsGenerator.cs`: stop river traversal at an already drawn drainage suffix.
+  Each tile has one parent, so every downstream edge already exists at that point.
+  A generation-local bitmap records completed paths.
+  A bounded direction loop replaces a captured LINQ predicate for each river edge.
+  Source selection and RNG calls retain their original order.
+- `tools/Civ.Benchmarks`: add `--world` for generation and session startup without catalog rebuilds, founding, or production queries.
+  Repeated measurements also report process CPU time.
+- `tests/Civ.Tests/HexGridTests.cs`: add independent breadth-first range checks for bounded, wrapped, narrow, and single-row maps.
+  Checks cover every center, zero radius, partial ranges, over-map ranges, tile order, uniqueness, and immediate argument errors.
+
+The geometry changes also apply to non-generation callers.
+No content, distribution rules, player counts, generator identities, or parallelism settings changed.
+There is no persistent geometry or world cache.
+
+### Method
+
+Baseline revision: `fc7e514df97345fdda5d861be7dacac626e011c3`.
+The initial baseline used the existing `mise run benchmark -- --startup` workload before production edits.
+Opt-in startup tracing identified terrain/rivers, bonuses, and start selection as substantial costs.
+
+The comparison below uses the new focused harness with both baseline and optimized production assemblies.
+A copy of the original Release output preserves the baseline assemblies.
+Only the updated benchmark executable and symbols replace their counterparts in that copy.
+Both variants therefore use identical measurement code and content.
+The six generated-world and session hashes also match the initial, unmodified startup benchmark.
+
+Environment: Fedora 44 x64, Intel Core i7-7700HQ (four cores, eight threads), .NET SDK 10.0.401, runtime 10.0.12.
+Both variants use Release builds and `DOTNET_TieredCompilation=0` to remove tier-transition effects during short samples.
+Startup tracing is disabled for comparisons.
+These results describe that runtime setting, not default tiered-JIT performance.
+
+Three pairs run sequentially in baseline/optimized order, without concurrent benchmark processes.
+Each process loads content once, then uses one warmup and five samples per operation and workload.
+Tables report the median of the three process medians, not a pooled median or confidence interval.
+Each workload uses four players and an east–west wrapped map.
+Generation includes plot allocation, terrain, rivers, features, bonuses, and goodies.
+It excludes catalog loading, start selection, player setup, AI, and fingerprint calculation.
+Session startup includes those setup stages and the initial opponent AI, but excludes catalog loading.
+
+Other desktop and development processes remained active.
+Observed host load exceeded 20 during investigation.
+No unrelated processes were stopped.
+CPU frequency, scheduling, GC, and host contention limit elapsed-time comparisons.
+Allocation reductions are substantially more consistent than timing changes.
+Process CPU includes all process threads, GC, and the adjacent measurement probes.
+It is an approximate supporting metric, not isolated generator CPU time.
+`GC.GetTotalAllocatedBytes(true)` requests a precise allocation counter, not a forced collection.
+
+Reproduction commands:
+
+```sh
+mise run benchmark -- --world
+# Controlled comparison setting used for the tables:
+env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
+# Original baseline snapshot with the same updated harness:
+env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 \
+  dotnet /tmp/civ-world-perf/baseline/Civ.Benchmarks.dll --world
+```
+
+The snapshot path is local evidence, not a required repository dependency.
+For another checkout, build the baseline production revision and use the same benchmark harness with both builds.
+
+### Generation measurements
+
+Positive reduction means faster. Negative reduction means slower.
+Times are milliseconds. Allocations are MiB, not retained or peak memory.
+
+| World | Seed | Before ms | After ms | Time reduction | Before MiB | After MiB | Byte reduction |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Standard 84×52 | 1 | 69.97 | 54.98 | 21.4% | 11.99 | 6.34 | 47.1% |
+| Standard 84×52 | 42 | 63.46 | 54.03 | 14.9% | 11.85 | 6.33 | 46.6% |
+| Standard 84×52 | 987654 | 61.72 | 46.60 | 24.5% | 12.69 | 6.35 | 50.0% |
+| Gigantic 200×120 | 1 | 311.04 | 309.79 | 0.4% | 58.84 | 35.15 | 40.3% |
+| Gigantic 200×120 | 42 | 320.29 | 377.74 | -17.9% | 59.77 | 35.18 | 41.1% |
+| Gigantic 200×120 | 987654 | 402.11 | 364.39 | 9.4% | 60.00 | 35.33 | 41.1% |
+
+Per-process generation medians show the variability:
+
+| World / seed | Before ms, runs 1/2/3 | After ms, runs 1/2/3 | Before CPU ms | After CPU ms |
+| --- | --- | --- | ---: | ---: |
+| Standard / 1 | 48.73 / 94.15 / 69.97 | 33.75 / 54.98 / 82.42 | 69.42 | 54.58 |
+| Standard / 42 | 47.36 / 72.15 / 63.46 | 36.05 / 54.03 / 59.98 | 62.57 | 53.66 |
+| Standard / 987654 | 47.44 / 68.59 / 61.72 | 44.51 / 58.13 / 46.60 | 61.21 | 46.08 |
+| Gigantic / 1 | 305.00 / 311.04 / 313.98 | 284.80 / 377.40 / 309.79 | 317.23 | 343.36 |
+| Gigantic / 42 | 320.29 / 335.40 / 303.36 | 314.59 / 377.74 / 385.49 | 318.35 | 387.80 |
+| Gigantic / 987654 | 312.34 / 430.94 / 402.11 | 268.08 / 364.39 / 376.77 | 404.43 | 361.13 |
+
+The gigantic seed-42 regression remains unresolved.
+CPU time also increases for that case, so scheduling delay alone does not explain the result.
+A quiet-host profile is necessary before any general large-world speed claim.
+
+### Full session startup measurements
+
+| World / seed | Before ms | After ms | Time reduction | Before MiB | After MiB |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Standard / 1 | 244.93 | 322.63 | -31.7% | 100.97 | 91.38 |
+| Standard / 42 | 250.68 | 242.86 | 3.1% | 83.04 | 74.10 |
+| Standard / 987654 | 247.86 | 244.10 | 1.5% | 95.50 | 85.24 |
+| Gigantic / 1 | 1467.85 | 1339.56 | 8.7% | 279.27 | 241.28 |
+| Gigantic / 42 | 1253.19 | 1091.04 | 12.9% | 288.90 | 250.10 |
+| Gigantic / 987654 | 1215.94 | 1127.57 | 7.3% | 294.62 | 255.57 |
+
+Startup allocations decrease by 9.5–13.6%.
+The standard seed-1 startup regression prevents a uniform startup speed claim.
+The shared geometry changes also affect AI queries, so startup deltas are not isolated generation gains.
+
+### Correctness and validation
+
+All warmups and samples match their operation's fingerprint within each process.
+Across all six comparison processes, the content hash, six plot/RNG hashes, and six session hashes match exactly.
+Content hash: `58BF65EEC063C432AF274B66DC6400087BFFED318F955AF7121F89A1010F6008`.
+
+Generated plot/RNG hashes, in standard then gigantic order (seeds 1, 42, 987654):
+
+- `F6436E2BE45A3B35585BA2A6535BF37EEB421AA27533A3CF2C1C19DED6575E68`
+- `2B182D6951E35D73E6AA2731FCB16608EAABA3E8E252E1E8516D74A801AAAD31`
+- `3B64D6B8A97CED32F2C7B34C668C4DE4D4061EB6AE384E0A34039F6B3428F526`
+- `0282F40B80F873E914539A92F63CC3BDAFDB8885C68914DF6650120F66BD599C`
+- `08EA1DAA7B56715204DAFF29AA462308EEFCF9CF0318A8B2F58946422D0B5FBB`
+- `0A63FED13BBADAF6F0818E15DFA17FEE1AB9B78E0E7C44D6BDFC5B5BD43DE5E1`
+
+Session hashes in the same order:
+`46F651468826615C`, `D90B5CF7C47CD23D`, `46DFA66041914FFE`,
+`CDFD92CD292B0C64`, `1AD5F7CBE2AF0F16`, `BD3C3D8FE93FB0FB`.
+
+- Baseline `mise run test`: 1,142 passed, no failures or skips.
+- Added geometry checks pass on the original implementation before the algorithm replacement.
+- Final `mise run test`: 1,155 passed, no failures or skips (148 core, 970 mod, 37 import tests).
+- Final Release benchmark build: zero warnings and errors.
+- `git diff --check`: passed.
+- Read-only `pawn:luna` review found no actionable geometry, river, or test correctness errors.
+- E2E and extractor categories were not run, per the default test boundary.
+- No commits were made. Pre-existing untracked hook files remain untouched.
+
+Lizard complexity measurements use the same analyzer before and after:
+
+| Function | Before | After |
+| --- | ---: | ---: |
+| `HexGrid.Neighbors(TileId)` | 4 | 8 |
+| `HexGrid.Range(TileId, int)` | 3 | 2 |
+| `RangeRows` (new) | — | 4 |
+| `RangeColumns` (new) | — | 4 |
+| `RiverGenerator.Draw` | 3 | 4 |
+| `RiverGenerator.Direction` (new) | — | 3 |
+
+Local evidence is under `/tmp/civ-world-perf/`:
+`before.log` contains the initial startup baseline.
+`before-{1,2,3}.log` and `after-{1,2,3}.log` contain the controlled comparisons, ranges, and hashes.
+`trace-before.log`, `trace-after.log`, `tests-before.log`, `tests-after.log`, and `complexity-*.log` contain supporting checks.
+Intermediate geometry-only runs are exploratory and do not contribute to these tables.
+
+## Previous optimization work
+
+The sections below preserve the earlier work log.
+Its final default test suite passed 794 tests at that time.
 
 ## Goal and order
 Work on these areas one at a time, measure each change, and preserve deterministic game state and rendering:

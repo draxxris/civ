@@ -4,6 +4,11 @@ using Civ.Modding;
 using Civ.Mods.Tests;
 
 var root = Path.Combine(AppContext.BaseDirectory, "mods");
+if (args.Contains("--world"))
+{
+    StartupBenchmarks.RunWorld(root);
+    return;
+}
 if (args.Contains("--quick") || args.Contains("--startup"))
 {
     StartupBenchmarks.Run(root, sweep: args.Contains("--startup"));
