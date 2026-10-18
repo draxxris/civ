@@ -5,5 +5,13 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Build-speed defaults: keep the Roslyn server + parallel project builds on, and only pay for
+         XML docs in Release (Civ.Core previously generated them on every Debug build). -->
+    <UseSharedCompilation>true</UseSharedCompilation>
+    <BuildInParallel>true</BuildInParallel>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <GenerateDocumentationFile Condition="'$(Configuration)' == 'Release'">true</GenerateDocumentationFile>
+    <!-- XML docs are not fully authored; silence missing-comment noise (and its I/O) in Release. -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 </Project>
