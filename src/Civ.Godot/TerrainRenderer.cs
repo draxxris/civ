@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Civ.Client.Terrain;
 using Civ.Game;
 using Godot;
@@ -24,7 +25,7 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly ScatterRenderer _scatter;
     private readonly Func<string, bool> _clearsTile;
     private ulong[]? _signatures;
-    private int _snapshotRevision = -1;
+    private int _worldRevision = -1;
     private int _hover = -1;
 
     /// <summary>Terrain shader debug view for screenshot runs (see <c>debug_mode</c> in terrain.gdshader); 0 is normal.</summary>
@@ -84,18 +85,19 @@ internal sealed partial class TerrainRenderer : Node3D
     /// <summary>The height field the chunks were built from.</summary>
     public TerrainField Field { get; private set; }
 
-    /// <summary>Rebuild dirty chunks and <c>tileA</c> after a world change; re-upload <c>tileB</c> after any change.</summary>
-    public void Refresh(bool worldChanged, bool overlayChanged)
+    /// <summary>Refresh perceived terrain and scatter only after a world revision, before seating map layers.</summary>
+    public void RefreshWorld()
     {
-        if (worldChanged || (overlayChanged && _snapshotRevision != _session.Revision)) RebuildWorld();
-        if (worldChanged || overlayChanged)
-        {
-            _data.WriteTileB(Snapshot, _marks, _hover);
-            _scatter.UpdateVisibility(Snapshot);
-        }
+        if (_worldRevision == _session.WorldRevision) return;
+        RebuildWorld();
+        _scatter.UpdateVisibility(Snapshot);
+        _worldRevision = _session.WorldRevision;
     }
 
-    /// <summary>Set the work-tile overlay marks; uploaded by the next <see cref="Refresh"/>.</summary>
+    /// <summary>Upload sight and overlay data once, after the map writes its current marks.</summary>
+    public void RefreshOverlay() => _data.WriteTileB(Snapshot, _marks, _hover);
+
+    /// <summary>Set the work-tile overlay marks; uploaded by the next <see cref="RefreshOverlay"/>.</summary>
     public void SetMarks(IEnumerable<(Hex Hex, byte Mark)> marks)
     {
         Array.Clear(_marks);
@@ -115,39 +117,64 @@ internal sealed partial class TerrainRenderer : Node3D
 
     private void RebuildWorld()
     {
-        var clock = System.Diagnostics.Stopwatch.StartNew();
+        bool logTimings = MapRenderer.LogTimings;
+        long totalStart = logTimings ? Stopwatch.GetTimestamp() : 0;
         Snapshot = TerrainSnapshot.From(_session, Palette.LayerOf, Palette.FeatureGroundOf);
         Field = Field.With(Snapshot);
         var extras = ScatterClearings();
         var signatures = _chunks.Signatures(Snapshot, extras);
         var dirty = TerrainChunks.DirtyChunks(_signatures, signatures);
-        var meshes = new TerrainMeshData[dirty.Count];
-        var rivers = new RiverMeshData?[dirty.Count];
+        var prepared = new PreparedChunk?[dirty.Count];
         var field = Field;
         var resolutions = _chunks.Resolutions(Snapshot);
+        double inputsMs = logTimings ? Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds : 0;
+        var meshMs = logTimings ? new double[dirty.Count] : null;
+        var prepareMs = logTimings ? new double[dirty.Count] : null;
         Parallel.For(0, dirty.Count, i =>
         {
+            long start = logTimings ? Stopwatch.GetTimestamp() : 0;
             var chunk = _chunks.Chunks[dirty[i]];
-            meshes[i] = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
-            rivers[i] = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
+            var mesh = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
+            var river = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
+            if (logTimings) meshMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+            start = logTimings ? Stopwatch.GetTimestamp() : 0;
+            prepared[i] = new(PrepareGround(mesh), PrepareWater(mesh, field), PrepareRiver(river));
+            if (logTimings) prepareMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         });
-        long built = clock.ElapsedMilliseconds;
+        double built = logTimings ? Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds : 0;
+        double assignMs = 0, planMs = 0, scatterMs = 0;
+        var uploads = logTimings ? new UploadTimings() : null;
         for (int i = 0; i < dirty.Count; i++)
         {
-            var ground = GroundMesh(meshes[i]);
-            var water = WaterMesh(meshes[i]);
+            // The worker join publishes complete packets. Consume them in dirty-chunk order, then release the arrays.
+            var data = prepared[i]!;
+            prepared[i] = null;
+            var ground = Build(data.Ground, _terrainMaterial, uploads)!;
+            var water = Build(data.Water, _waterMaterial, uploads);
+            long start = logTimings ? Stopwatch.GetTimestamp() : 0;
             RenderStats.TerrainTriangles[dirty[i]] = ground.SurfaceGetArrayIndexLen(0) / 3;
             foreach (var copy in _ground[dirty[i]]) copy.Mesh = ground;
             foreach (var copy in _water[dirty[i]]) copy.Mesh = water;
-            var river = RiverMesh(rivers[i]);
+            if (logTimings) assignMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+            var river = Build(data.River, _riverMaterial, uploads);
+            start = logTimings ? Stopwatch.GetTimestamp() : 0;
             foreach (var copy in _rivers[dirty[i]]) copy.Mesh = river;
+            if (logTimings) assignMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+            start = logTimings ? Stopwatch.GetTimestamp() : 0;
             var props = _scatterPlanner.Plan(_chunks.Chunks[dirty[i]], Snapshot, Field, Palette, extras);
+            if (logTimings) planMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+            start = logTimings ? Stopwatch.GetTimestamp() : 0;
             _scatter.Rebuild(dirty[i], props, Snapshot);
+            if (logTimings) scatterMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         }
         _signatures = signatures;
-        _snapshotRevision = _session.Revision;
+        long tileStart = logTimings ? Stopwatch.GetTimestamp() : 0;
         _data.WriteTileA(Snapshot);
-        if (MapRenderer.LogTimings) GD.Print($"terrain: {dirty.Count}/{_chunks.Chunks.Count} chunks, mesh {built} ms, upload {clock.ElapsedMilliseconds - built} ms");
+        double tileMs = logTimings ? Stopwatch.GetElapsedTime(tileStart).TotalMilliseconds : 0;
+        if (logTimings)
+            GD.Print($"terrain: {dirty.Count}/{_chunks.Chunks.Count} chunks, inputs {inputsMs:F2} ms, workers {built - inputsMs:F2} ms, " +
+                $"mesh sum {meshMs!.Sum():F2} ms, prepare sum {prepareMs!.Sum():F2} ms, pack {uploads!.PackMs:F2} ms, surfaces {uploads.SurfaceMs:F2} ms, " +
+                $"assign {assignMs:F2} ms, scatter plan {planMs:F2} ms, scatter rebuild {scatterMs:F2} ms, tileA {tileMs:F2} ms, total {Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds:F2} ms");
     }
 
     private int[] ScatterClearings()
@@ -207,8 +234,20 @@ internal sealed partial class TerrainRenderer : Node3D
     private static Rgb? WaterTintOf(string layerId) =>
         layerId.Contains("slimy", StringComparison.Ordinal) ? Rgb.Hex(0x5c9a1e) : null;
 
+    // Numeric Vector/Color constructors only assign managed fields. Keep Variant packing and all engine calls in Build.
+    // Water preparation only reads the captured field's snapshot and warp grid; it never reads the renderer from a worker.
+    private sealed record SurfaceData(Vector3[] Vertices, Vector3[] Normals, Vector2[] Uv2, int[] Indices,
+        Vector2[]? Uv = null, Color[]? Colors = null);
+
+    private sealed record PreparedChunk(SurfaceData Ground, SurfaceData? Water, SurfaceData? River);
+
+    private sealed class UploadTimings
+    {
+        public double PackMs, SurfaceMs;
+    }
+
     /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow.</summary>
-    private ArrayMesh GroundMesh(TerrainMeshData data)
+    private static SurfaceData PrepareGround(TerrainMeshData data)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
@@ -220,13 +259,13 @@ internal sealed partial class TerrainRenderer : Node3D
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
             cavity[v] = new Vector2(data.Cavity[v], 0);
         }
-        return Build(vertices, normals, cavity, FrontFaces(data.Indices, _ => true), _terrainMaterial)!;
+        return new(vertices, normals, cavity, FrontFaces(data.Indices, _ => true));
     }
 
     /// <summary>A flat surface at y = 0 over every lattice triangle with a vertex below sea level that a water tile shapes;
     /// UV2.x holds the terrain depth (-HeightAt) for the shader's colour and shore foam. River troughs that dip below 0 on
     /// land get no water, so they do not fill into pools.</summary>
-    private ArrayMesh? WaterMesh(TerrainMeshData data)
+    private static SurfaceData? PrepareWater(TerrainMeshData data, TerrainField field)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
@@ -239,14 +278,14 @@ internal sealed partial class TerrainRenderer : Node3D
             normals[v] = Vector3.Up;
         }
         var wet = new bool[n];
-        for (int v = 0; v < n; v++) wet[v] = data.Positions[v * 3 + 1] < 0 && Field.NearWater(data.Positions[v * 3], data.Positions[v * 3 + 2]);
+        for (int v = 0; v < n; v++) wet[v] = data.Positions[v * 3 + 1] < 0 && field.NearWater(data.Positions[v * 3], data.Positions[v * 3 + 2]);
         var indices = FrontFaces(data.Indices, t => wet[data.Indices[t]] || wet[data.Indices[t + 1]] || wet[data.Indices[t + 2]]);
-        return indices.Length == 0 ? null : Build(vertices, normals, depths, indices, _waterMaterial);
+        return indices.Length == 0 ? null : new(vertices, normals, depths, indices);
     }
 
 
     /// <summary>The chunk's river water and wet banks: lanes in UV, downstream flow in UV2, fade and white water in COLOR.</summary>
-    private ArrayMesh? RiverMesh(RiverMeshData? data)
+    private static SurfaceData? PrepareRiver(RiverMeshData? data)
     {
         if (data == null) return null;
         int n = data.VertexCount;
@@ -263,18 +302,7 @@ internal sealed partial class TerrainRenderer : Node3D
             flow[v] = new Vector2(data.Flow[v * 2], data.Flow[v * 2 + 1]);
             info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], 0);
         }
-        var arrays = new Godot.Collections.Array();
-        arrays.Resize((int)Mesh.ArrayType.Max);
-        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
-        arrays[(int)Mesh.ArrayType.Normal] = normals;
-        arrays[(int)Mesh.ArrayType.TexUV] = lanes;
-        arrays[(int)Mesh.ArrayType.TexUV2] = flow;
-        arrays[(int)Mesh.ArrayType.Color] = info;
-        arrays[(int)Mesh.ArrayType.Index] = FrontFaces(data.Indices, _ => true);
-        var mesh = new ArrayMesh();
-        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
-        mesh.SurfaceSetMaterial(0, _riverMaterial);
-        return mesh;
+        return new(vertices, normals, flow, FrontFaces(data.Indices, _ => true), lanes, info);
     }
 
     /// <summary>The mesher winds triangles counter-clockwise seen from above; Godot's front faces are clockwise.</summary>
@@ -289,18 +317,27 @@ internal sealed partial class TerrainRenderer : Node3D
         return result.ToArray();
     }
 
-    private static ArrayMesh? Build(Vector3[] vertices, Vector3[] normals, Vector2[]? uv2, int[] indices, Material material)
+    private static ArrayMesh? Build(SurfaceData? data, Material material, UploadTimings? timings)
     {
-        if (indices.Length == 0) return null;
+        if (data == null || data.Indices.Length == 0) return null;
+        long start = timings != null ? Stopwatch.GetTimestamp() : 0;
         var arrays = new Godot.Collections.Array();
         arrays.Resize((int)Mesh.ArrayType.Max);
-        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
-        arrays[(int)Mesh.ArrayType.Normal] = normals;
-        if (uv2 != null) arrays[(int)Mesh.ArrayType.TexUV2] = uv2;
-        arrays[(int)Mesh.ArrayType.Index] = indices;
+        arrays[(int)Mesh.ArrayType.Vertex] = data.Vertices;
+        arrays[(int)Mesh.ArrayType.Normal] = data.Normals;
+        if (data.Uv != null) arrays[(int)Mesh.ArrayType.TexUV] = data.Uv;
+        arrays[(int)Mesh.ArrayType.TexUV2] = data.Uv2;
+        if (data.Colors != null) arrays[(int)Mesh.ArrayType.Color] = data.Colors;
+        arrays[(int)Mesh.ArrayType.Index] = data.Indices;
+        if (timings != null)
+        {
+            timings.PackMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+            start = Stopwatch.GetTimestamp();
+        }
         var mesh = new ArrayMesh();
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
         mesh.SurfaceSetMaterial(0, material);
+        if (timings != null) timings.SurfaceMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         return mesh;
     }
 }

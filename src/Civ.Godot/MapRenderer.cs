@@ -140,19 +140,19 @@ internal sealed partial class MapRenderer : Node3D
     {
         bool world = _worldRevision != _session.WorldRevision;
         var clock = System.Diagnostics.Stopwatch.StartNew();
-        bool dynamic = world || _revision != _session.Revision;
         // Heights must be current before seating tokens, marks or a newly queued battle.
-        _terrain.Refresh(world, dynamic);
-        long terrain = clock.ElapsedMilliseconds;
+        _terrain.RefreshWorld();
+        double terrain = clock.Elapsed.TotalMilliseconds;
         if (_battle == null) StartNextBattle();
-        dynamic = world || _revision != _session.Revision;
+        bool dynamic = world || _revision != _session.Revision;
         if (world) { BuildLand(); _worldRevision = _session.WorldRevision; }
-        long land = clock.ElapsedMilliseconds - terrain;
+        double land = clock.Elapsed.TotalMilliseconds - terrain;
         if (dynamic) { BuildDynamic(); _revision = _session.Revision; }
-        long tokens = clock.ElapsedMilliseconds - terrain - land;
-        // BuildOverlay writes marks after the height refresh.
-        if (dynamic) _terrain.Refresh(false, true);
-        if (LogTimings && dynamic) GD.Print($"map refresh: land {land} ms, tokens {tokens} ms, terrain {terrain} ms");
+        double tokens = clock.Elapsed.TotalMilliseconds - terrain - land;
+        // BuildOverlay writes marks after the height refresh. Upload only the finished overlay.
+        if (dynamic) _terrain.RefreshOverlay();
+        double overlay = clock.Elapsed.TotalMilliseconds - terrain - land - tokens;
+        if (LogTimings && dynamic) GD.Print($"map refresh: land {land:F2} ms, tokens {tokens:F2} ms, terrain {terrain:F2} ms, overlay {overlay:F2} ms");
     }
 
     private void BuildDynamic()
