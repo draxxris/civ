@@ -44,7 +44,8 @@ internal sealed partial class MapRenderer : Node3D
     private readonly IconAtlas _atlas;
     private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _resources, _yieldBadges, _tokens, _tokenIcons, _path;
     private readonly TerrainRenderer _terrain;
-    private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
+    private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial;
+    private readonly ShaderMaterial _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
@@ -86,7 +87,7 @@ internal sealed partial class MapRenderer : Node3D
         _landIconMaterial = Material(_atlas.Texture, true, 2);
         _tokenMaterial = Material(null, true, 3);
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
-        _pathMaterial = Material(null, true, 5);
+        _pathMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/path.gdshader"), RenderPriority = 5 };
         _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
         _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
         _cities = new CityRenderer(Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);

@@ -99,25 +99,4 @@ internal sealed partial class MapRenderer
         var text = string.Join("  ", new[] { (y.Food, "F"), (y.Production, "P"), (y.Commerce, "C") }.Where(p => p.Item1 != 0).Select(p => $"{p.Item1}{p.Item2}"));
         AddLabel(text.Length == 0 ? "-" : text, at + new Vector3(0, 0.25f, 0.55f), 20, mark == TileMark.Worked ? new Color(1f, 0.95f, 0.6f) : Colors.White);
     }
-
-    // --- path preview ------------------------------------------------------------------------------
-
-    /// <summary>Draw the route a right click would take, with the final step marked red for an attack.</summary>
-    public void ShowPath(Unit? unit, MovePreview? preview)
-    {
-        if (unit == null || preview == null) { _path.Mesh = null; return; }
-        var b = new MeshBuilder { Ground = GroundAt };
-        var colour = preview.Attack != null ? new Color(1f, 0.3f, 0.25f, 0.9f) : new Color(0.4f, 1f, 0.5f, 0.9f);
-        var previous = PositionOf(unit.Position, YPath);
-        foreach (var step in preview.Path)
-        {
-            var next = PositionOf(step, YPath);
-            if (Period > 0) next.X += Mathf.Round((previous.X - next.X) / Period) * Period;
-            b.Line(previous, next, 0.12f, colour);
-            b.Disc(next, 0.1f, colour);
-            previous = next;
-        }
-        b.Ring(previous, 0.42f, 0.07f, colour);
-        _path.Mesh = b.Build(_pathMaterial);
-    }
 }
