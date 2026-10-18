@@ -142,7 +142,7 @@ public sealed class EspionageRulesTests
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; var spy = Spy(sim); Fund(sim);
         const string tech = "research:agriculture";
         sim.TeamOf(1).Techs.Add(tech);
-        city.ProductionQueue.Add(new("military:unit", "military:warrior", 100));
+        city.ProductionQueue.Add(new("cities:unit", "military:warrior", 100));
         // Explicit palace selection takes precedence over the first owned city.
         sim.State.Cities[1].Buildings.Add("cities:palace");
         long ownerGold = sim.State.PlayerById(0).Treasury, victimGold = sim.State.PlayerById(1).Treasury;
