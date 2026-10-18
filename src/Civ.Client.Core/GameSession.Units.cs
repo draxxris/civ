@@ -79,6 +79,7 @@ public sealed partial class GameSession
         foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake, UnitActivity.Intercept })
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
                 new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
+        if (def.Pillage) actions.Add(Action("pillage", "Pillage", new PillageCommand { Player = Human, Unit = unit.Id }));
         actions.AddRange(ArtilleryActions(unit, def));
         actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));
