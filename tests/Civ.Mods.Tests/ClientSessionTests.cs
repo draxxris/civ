@@ -36,6 +36,25 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Resource_depletion_is_a_default_off_catalog_choice_and_survives_setup_and_reload()
+    {
+        const string id = "foundation:gameoption_resource_depletion";
+        var catalog = new GameCatalog(mods.Sources);
+        Assert.False(Assert.Single(catalog.GameOptions, o => o.Id == id).Default);
+        Assert.False(catalog.SettingsFor(catalog.DefaultOptions()).GameOptions[id]);
+        var options = catalog.DefaultOptions() with
+        {
+            WorldSize = "foundation:worldsize_duel", Opponents = 1,
+            GameOptions = new Dictionary<string, bool> { [id] = true },
+        };
+        var sim = GameSession.Start(catalog, options).Sim;
+        Assert.True(sim.IsOptionEnabled(id));
+        var loaded = SaveGame.Load(catalog.Content, SaveGame.Save(sim));
+        Assert.True(loaded.IsOptionEnabled(id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
     public void Start_creates_the_simulation_and_selects_a_starting_unit()
     {
         var catalog = new GameCatalog(mods.Sources);

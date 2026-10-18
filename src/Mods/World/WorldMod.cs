@@ -39,6 +39,7 @@ public sealed class WorldMod : IMod
         context.TurnSystems.Register(visibility);
         context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, _) => visibility.Recompute(sim));
         context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Civ.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
         ContentRegistration.Evaluator<FeatureDef>(context, "feature");
         ContentRegistration.Evaluator<TerrainDef>(context, "terrain");
         ContentRegistration.Evaluator<ImprovementDef>(context, "improvement");
