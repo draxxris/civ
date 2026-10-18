@@ -1,6 +1,7 @@
 using Civ.Client;
 using Civ.Content;
 using Civ.Game;
+using Civ.Modding;
 using Xunit;
 using Schema = Civ.Content.Schema;
 
@@ -11,6 +12,42 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
 {
     private GameSession NewSession(ulong seed = 3) => new(GameFactory.Create(mods.Content, seed));
 
+    [Fact]
+    public void Summary_keeps_the_turn_and_uses_the_calendar_formatted_date()
+    {
+        var session = NewSession();
+        session.Sim.State.Turn = 692;
+
+        var summary = session.Summary();
+
+        Assert.Equal(692, summary.Turn);
+        Assert.Equal("Winter, 1845 CE", summary.CalendarDate?.FormattedDate);
+    }
+
+    [Fact]
+    public void Summary_keeps_the_turn_when_the_calendar_has_no_date()
+    {
+        var content = ModLoader.Build(mods.Sources.Append(new ModSource
+        {
+            Manifest = new() { Id = "client_calendar_probe", Version = "1", Dependencies = ["foundation"] },
+            Root = mods.Root,
+            Instance = new EmptyCalendarSpeed(),
+        }));
+        var sim = Simulation.CreateScenario(content, GameFactory.Settings() with { GameSpeed = "client_calendar_probe:empty" },
+            new(2, 2), Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "world:grass" }).ToArray());
+        var summary = new GameSession(sim).Summary();
+
+        Assert.Equal(1, summary.Turn);
+        Assert.Null(summary.CalendarDate);
+    }
+
+    private sealed class EmptyCalendarSpeed : IMod
+    {
+        public void Register(IModContext context) => context.Content<Schema.GameSpeedDef>().Register(new()
+        {
+            Id = "client_calendar_probe:empty",
+        });
+    }
     // City panels need real founding and turn systems, not procedural geography or free-unit placement.
     private GameSession CitySession(params string[] leaders)
     {
