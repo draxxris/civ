@@ -32,7 +32,7 @@ internal sealed class CorporationService : ICorporationService
         var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total("cities:corporation_maintenance_percent");
         int inflation = InflationRate(sim, cityObj.Owner) + 100;
-        bool realistic = sim.Content.Get<GameOptionDef>("foundation:gameoption_realistic_corporations").Default;
+        bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
         long total = 0;
         foreach (var corporation in Present(sim, city).Where(c => IsActive(sim, city, c)))
         {

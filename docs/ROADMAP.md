@@ -153,6 +153,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Per-player handicap options**: Allow human and individual AI players to have distinct difficulty levels in the same session.
 - [ ] **Calendar progression**: Add non-turn timeline display (months, seasons, variable years per turn by era/speed).
 - [ ] **Default civics fallback**: Auto-fill missing civic selections for incomplete custom civilization declarations.
+- [ ] **Remaining game options**: Implement the imported options in `src/Mods/Foundation/data/game-option.json` that do not yet have simulation rules. Keep them out of the setup screen until their rules exist.
 
 ### World & Map Generation
 - [ ] **Dynamic feature growth & decay**: Implement forest expansion and jungle spread onto adjacent plots.

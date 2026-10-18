@@ -31,6 +31,7 @@ public sealed class GameCatalog
     public IReadOnlyList<SetupChoice> WorldSizes { get; }
     public IReadOnlyList<SetupChoice> GameSpeeds { get; }
     public IReadOnlyList<SetupChoice> Handicaps { get; }
+    public IReadOnlyList<SetupGameOption> GameOptions { get; }
     public IReadOnlyList<LeaderChoice> Leaders { get; }
     /// <summary>The AI service the opponents use, or null until an AI mod exists; then opponents only end their turn.</summary>
     public string? OpponentAi { get; }
@@ -43,6 +44,7 @@ public sealed class GameCatalog
         WorldSizes = Choices(Content.Get<Schema.WorldSizeDef>().All.OrderBy(w => w.GridWidth * w.GridHeight));
         GameSpeeds = Choices(Content.Get<Schema.GameSpeedDef>().All.OrderBy(s => s.GrowthPercent));
         Handicaps = Choices(Content.Get<Schema.HandicapDef>().All.OrderBy(h => SetupPolicies.SortOrder(Content, SetupField.Handicap, h.Id)).ThenBy(h => h.Id, StringComparer.Ordinal));
+        GameOptions = SetupPolicies.GameOptions(Content);
         Leaders = BuildLeaders(Content);
         OpponentAi = Content.PlayerAIs.All.OrderBy(a => a.Id, StringComparer.Ordinal).FirstOrDefault()?.Id;
     }
