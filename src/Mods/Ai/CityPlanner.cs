@@ -8,7 +8,8 @@ namespace Civ.Mods.Ai;
 internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan army)
 {
     private readonly BuildingValuer _valuer = new(ctx);
-    private readonly Lazy<AiOptions> _options = new(() => new AiOptions(ctx));
+    private const int ParallelCities = 3, ParallelBuildings = 8;
+    private readonly Lazy<AiOptions> _options = new(() => new AiOptions(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
     private int _settlersQueued, _workersQueued, _wondersQueued, _soldiersQueued;
     public IReadOnlyList<CityView> Views { get; private set; } = [];
     public AiOptions Options => _options.Value;
@@ -16,7 +17,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     public void Plan()
     {
         AnnexMaturePuppets();
-        Views = ctx.Cities.Select(c => CityView.Build(ctx, c)).ToArray();
+        Views = ParallelScoring.Select(ctx.Cities, ParallelCities, c => CityView.Build(ctx, c));
         CountQueued();
         foreach (var view in Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
@@ -135,9 +136,12 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     private IEnumerable<(string, string)> Scored(CityView v)
     {
         var options = new List<(string Kind, string Id, long Score)>();
-        foreach (var b in Options.Buildings)
-            if (ctx.Service<ICityProductionService>().Validate(ctx.Sim, v.City.Id, "cities:building", b.Id).Success
-                && Rate(b, v) is { } score) options.Add(("cities:building", b.Id, score));
+        var buildings = Options.Buildings;
+        var production = ctx.Service<ICityProductionService>();
+        var rated = ParallelScoring.Select(buildings, ParallelBuildings, b =>
+            production.Validate(ctx.Sim, v.City.Id, "cities:building", b.Id).Success ? Rate(b, v) : null);
+        for (int i = 0; i < buildings.Count; i++)
+            if (rated[i] is { } score) options.Add(("cities:building", buildings[i].Id, score));
         if (army.Soldiers + _soldiersQueued < army.Want(Views) && v.Production >= 2) options.AddRange(ArmyOptions(v));
         options.AddRange(StrategicOptions(v));
         if (InquisitorWanted())

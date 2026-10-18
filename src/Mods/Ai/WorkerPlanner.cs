@@ -8,6 +8,7 @@ namespace Civ.Mods.Ai;
 /// World previews supply legality, yields and work; queries do not move units or consume RNG.</summary>
 internal sealed class WorkerPlanner(AiContext ctx)
 {
+    private const int MaxCandidates = 8, ParallelTiles = 2;
     private readonly HashSet<TileId> _claimed = new();
     private List<WorkTile>? _tiles;
     private HashSet<TileId>? _roads;
@@ -51,10 +52,14 @@ internal sealed class WorkerPlanner(AiContext ctx)
         var here = ctx.Tile(worker.Position);
         int area = ctx.Sim.State.Plots[here.Value].AreaId;
         var candidates = Tiles().Where(t => Available(t.Tile, area))
-            .OrderByDescending(t => t.Priority - 7 * ctx.Grid.Distance(here, t.Tile)).ThenBy(t => t.Tile.Value).Take(8);
-        foreach (var tile in candidates)
-            if (BestBuildAt(worker, tile.Tile) is { } job) return job;
-        return null;
+            .OrderByDescending(t => t.Priority - 7 * ctx.Grid.Distance(here, t.Tile)).ThenBy(t => t.Tile.Value)
+            .Take(MaxCandidates).ToArray();
+        if (candidates.Length == 0) return null;
+        // Resolve the cached build list and road set before tiles are previewed on several threads.
+        var builds = AvailableBuilds(worker);
+        var roads = RoadTiles();
+        var jobs = ParallelScoring.Select(candidates, ParallelTiles, t => BestBuildAt(worker, t.Tile, builds, roads));
+        return jobs.FirstOrDefault(job => job is not null);
     }
 
     private bool Available(TileId tile, int area) => !_claimed.Contains(tile)
@@ -108,14 +113,14 @@ internal sealed class WorkerPlanner(AiContext ctx)
         return improvement.DepletedMine || yields.Food + yields.Production + yields.Commerce < 0;
     }
 
-    private Job? BestBuildAt(Unit worker, TileId tile)
+    private Job? BestBuildAt(Unit worker, TileId tile, BuildDef[] builds, HashSet<TileId> roads)
     {
         var world = ctx.Service<IWorkerBuildService>();
         var before = ctx.Service<IPlotYieldService>().Calculate(ctx.Sim, ctx.PlayerId, tile).Yields;
         Job? best = null;
-        foreach (var build in AvailableBuilds(worker))
+        foreach (var build in builds)
         {
-            if (build.RouteType is not null && !RoadTiles().Contains(tile)) continue;
+            if (build.RouteType is not null && !roads.Contains(tile)) continue;
             var preview = world.Preview(ctx.Sim, ctx.PlayerId, worker.Id, tile, build.Id);
             if (preview.Error is not null) continue;
             long value = Gain(build, tile, before, preview.Yields);

@@ -9,7 +9,7 @@ internal sealed record Site(TileId Tile, int Score, int Area);
 /// <summary>Scores city sites on the hex radius-2/3 neighborhood and decides when more cities are wanted.</summary>
 internal sealed class SitePlanner
 {
-    private const int MinSiteScore = 100, SearchRadius = 9;
+    private const int MinSiteScore = 100, SearchRadius = 9, ParallelPlots = 256, ParallelSites = 8;
     private readonly AiContext ctx;
     private readonly Lazy<int[]> _tileValue;
     private readonly Lazy<bool[]> _claimed;
@@ -18,9 +18,9 @@ internal sealed class SitePlanner
     public SitePlanner(AiContext context)
     {
         ctx = context;
-        _tileValue = new(() => BuildTileValues(ctx));
-        _claimed = new(() => BuildClaimed(ctx));
-        _sites = new(FindSites);
+        _tileValue = new(() => BuildTileValues(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
+        _claimed = new(() => BuildClaimed(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
+        _sites = new(FindSites, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public IReadOnlyList<Site> Sites => _sites.Value;
@@ -82,8 +82,16 @@ internal sealed class SitePlanner
     private bool IsCoastal(TileId tile) => ctx.Grid.Neighbors(tile).Any(n =>
         ctx.Sim.Content.Get<TerrainDef>(ctx.Sim.State.Plots[n.Value].Terrain).IsWater && !ctx.Sim.State.Plots[n.Value].IsLake);
 
-    private IReadOnlyList<Site> FindSites() => CandidateTiles().Select(Score).Where(s => s.Score >= MinSiteScore)
-        .OrderByDescending(s => s.Score).ThenBy(s => s.Tile.Value).ToArray();
+    private IReadOnlyList<Site> FindSites()
+    {
+        var candidates = CandidateTiles().ToArray();
+        if (candidates.Length == 0) return [];
+        // Build the shared tables once before scoring threads read them.
+        _ = _tileValue.Value;
+        _ = _claimed.Value;
+        return ParallelScoring.Select(candidates, ParallelSites, Score).Where(s => s.Score >= MinSiteScore)
+            .OrderByDescending(s => s.Score).ThenBy(s => s.Tile.Value).ToArray();
+    }
 
     private IEnumerable<TileId> CandidateTiles()
     {
@@ -105,13 +113,15 @@ internal sealed class SitePlanner
     private Site Score(TileId tile)
     {
         int score = 0;
+        var values = _tileValue.Value;
+        var claimed = _claimed.Value;
         foreach (var t in ctx.Grid.Range(tile, 3))
         {
             var plot = ctx.Sim.State.Plots[t.Value];
             if (plot.Owner is { } o && o != ctx.PlayerId) continue;
-            int value = _tileValue.Value[t.Value];
+            int value = values[t.Value];
             int dist = ctx.Grid.Distance(tile, t);
-            if (_claimed.Value[t.Value]) value /= 3;
+            if (claimed[t.Value]) value /= 3;
             score += dist <= 2 ? value : value / 2;
         }
         var center = ctx.Sim.State.Plots[tile.Value];
@@ -129,12 +139,8 @@ internal sealed class SitePlanner
         return Math.Max(0, nearest - 6) * 12;
     }
 
-    private static int[] BuildTileValues(AiContext ctx)
-    {
-        var values = new int[ctx.Sim.State.Plots.Length];
-        for (int i = 0; i < values.Length; i++) values[i] = PlotValue(ctx, ctx.Sim.State.Plots[i]);
-        return values;
-    }
+    private static int[] BuildTileValues(AiContext ctx) =>
+        ParallelScoring.Select(ctx.Sim.State.Plots, ParallelPlots, plot => PlotValue(ctx, plot));
 
     private static int PlotValue(AiContext ctx, Plot plot)
     {

@@ -5,6 +5,7 @@ namespace Civ.Mods.Ai;
 /// <summary>One army per landmass. Gather first, advance at the slowest unit's pace, then prepare and assault.</summary>
 internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
 {
+    private const int ParallelTiles = 2;
     private readonly CampaignTargets _targets = new(ctx);
 
     public List<Unit> Plan(List<Unit> free, IReadOnlyList<CityView> views)
@@ -71,13 +72,20 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
 
     private Hex? AssaultTile(List<Unit> force, City target)
     {
-        foreach (var tile in ctx.Grid.Neighbors(ctx.Tile(target.Position)).Where(_targets.Land)
-            .OrderBy(t => force.Sum(u => ctx.Grid.Distance(u.Position, ctx.Grid.HexOf(t)))).ThenBy(t => t.Value))
-        {
-            var hex = ctx.Grid.HexOf(tile);
-            if (force.All(u => CanReachThisTurn(u, hex))) return hex;
-        }
-        return null;
+        var tiles = ctx.Grid.Neighbors(ctx.Tile(target.Position)).Where(_targets.Land)
+            .OrderBy(t => force.Sum(u => ctx.Grid.Distance(u.Position, ctx.Grid.HexOf(t)))).ThenBy(t => t.Value).ToArray();
+        return FirstReachable(tiles, force, CanReachThisTurn);
+    }
+
+    /// <summary>The first tile in the given order that every unit of the force can reach. Tiles are checked in parallel;
+    /// the selection still follows the original order.</summary>
+    private Hex? FirstReachable(TileId[] tiles, List<Unit> force, Func<Unit, Hex, bool> reaches)
+    {
+        var hexes = tiles.Select(ctx.Grid.HexOf).ToArray();
+        int threshold = force.Count > 1 ? ParallelTiles : int.MaxValue;
+        var reachable = ParallelScoring.Select(hexes, threshold, hex => force.All(u => reaches(u, hex)));
+        int index = Array.IndexOf(reachable, true);
+        return index < 0 ? null : hexes[index];
     }
 
     private bool CanReachThisTurn(Unit unit, Hex hex)
@@ -91,13 +99,11 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
     private Hex StagingTile(List<Unit> force, City target)
     {
         var leader = force[0];
-        foreach (var tile in ctx.Grid.Ring(ctx.Tile(target.Position), 2).Where(_targets.Land)
+        var tiles = ctx.Grid.Ring(ctx.Tile(target.Position), 2).Where(_targets.Land)
             .Where(t => ctx.Sim.State.Plots[t.Value].AreaId == _targets.Area(leader.Position))
-            .OrderBy(t => ctx.Grid.Distance(ctx.Tile(leader.Position), t)).ThenBy(t => t.Value))
-        {
-            var hex = ctx.Grid.HexOf(tile);
-            if (force.All(u => u.Position == hex || ctx.Service<IPathfindingService>().FindPath(ctx.Sim, u.Id, hex) is not null)) return hex;
-        }
-        return leader.Position;
+            .OrderBy(t => ctx.Grid.Distance(ctx.Tile(leader.Position), t)).ThenBy(t => t.Value).ToArray();
+        var pathfinding = ctx.Service<IPathfindingService>();
+        return FirstReachable(tiles, force, (u, hex) => u.Position == hex || pathfinding.FindPath(ctx.Sim, u.Id, hex) is not null)
+            ?? leader.Position;
     }
 }
