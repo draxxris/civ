@@ -21,29 +21,34 @@ internal static class CityData
     internal static S.RuleConstants Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Values;
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value) && int.TryParse(value, out var n) ? n : fallback;
     internal static IEnumerable<City> Owned(Simulation sim, int player) => sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id);
-    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city)
-    {
-        bool powered = IsPowered(sim, city);
-        var buildings = city.Buildings.Concat(FreeBuildings(sim, city))
-            .Where(id => powered || !sim.Content.Get<S.BuildingDef>(id).RequiresPower);
-        return CityBuildingRules.Active(sim, city, buildings);
-    }
+    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+        CityReadScope.Memo(scope.Active, city, () =>
+        {
+            bool powered = IsPowered(sim, city);
+            var buildings = city.Buildings.Concat(FreeBuildings(sim, city))
+                .Where(id => powered || !sim.Content.Get<S.BuildingDef>(id).RequiresPower);
+            return CityBuildingRules.Active(sim, city, buildings);
+        }));
     // Power sources do not require power. Exclude consumers before resolving sources and their resources.
-    internal static IReadOnlyList<S.BuildingDef> ActiveWithoutPower(Simulation sim, City city) =>
-        CityBuildingRules.Active(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))
-            .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower));
-    internal static bool IsAreaCleanPower(Simulation sim, City city) => sim.State.Cities
-        .Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(city.Owner).Id
-            && sim.State.PlotAt(c.Position).AreaId == sim.State.PlotAt(city.Position).AreaId)
-        .Any(c => ActiveWithoutPower(sim, c).Any(b => b.AreaCleanPower));
+    internal static IReadOnlyList<S.BuildingDef> ActiveWithoutPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+        CityReadScope.Memo(scope.ActiveWithoutPower, city, () => CityBuildingRules.Active(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))
+            .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower))));
+    internal static bool IsAreaCleanPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+    {
+        int team = sim.TeamOf(city.Owner).Id, area = sim.State.PlotAt(city.Position).AreaId;
+        return CityReadScope.Memo(scope.AreaCleanPower, (team, area), () => sim.State.Cities
+            .Where(c => sim.TeamOf(c.Owner).Id == team && sim.State.PlotAt(c.Position).AreaId == area)
+            .Any(c => ActiveWithoutPower(sim, c).Any(b => b.AreaCleanPower)));
+    });
     internal static bool ProvidesLocalPower(Simulation sim, City city, S.BuildingDef building, IReadOnlyDictionary<string, int> bonuses) =>
         building.ProducesPower || building.PowerBonus is { } bonus && bonuses.GetValueOrDefault(bonus) > 0;
-    private static S.BuildingDef[] LocalPowerSources(Simulation sim, City city)
-    {
-        var buildings = ActiveWithoutPower(sim, city);
-        var bonuses = BuildingEffects.Bonuses(sim, city, buildings);
-        return buildings.Where(b => ProvidesLocalPower(sim, city, b, bonuses)).ToArray();
-    }
+    private static S.BuildingDef[] LocalPowerSources(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+        CityReadScope.Memo(scope.LocalPowerSources, city, () =>
+        {
+            var buildings = ActiveWithoutPower(sim, city);
+            var bonuses = BuildingEffects.Bonuses(sim, city, buildings);
+            return buildings.Where(b => ProvidesLocalPower(sim, city, b, bonuses)).ToArray();
+        }));
     internal static bool IsPowered(Simulation sim, City city) =>
         IsAreaCleanPower(sim, city) || LocalPowerSources(sim, city).Length > 0;
     internal static bool IsDirtyPower(Simulation sim, City city)
@@ -63,20 +68,25 @@ internal static class CityData
         string? resolved = overrides.GetValueOrDefault(category, category);
         return resolved is { Length: > 0 } && sim.Content.TryGet<S.BuildingDef>(resolved, out _) ? resolved : null;
     }
-    internal static IEnumerable<string> FreeBuildings(Simulation sim, City city)
+    internal static IEnumerable<string> FreeBuildings(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+        CityReadScope.Memo(scope.FreeBuildings, city, () => GrantCategories(sim, scope, city.Owner)
+            .Select(category => ResolveBuilding(sim, city, category)).OfType<string>().Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray()));
+    // Grants depend only on the receiving owner: its team's constructed sources and its own scripted wonders.
+    private static SortedSet<string> GrantCategories(Simulation sim, CityReadScope scope, int owner) => CityReadScope.Memo(scope.GrantCategories, owner, () =>
     {
         var categories = new SortedSet<string>(StringComparer.Ordinal);
-        foreach (var source in sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(city.Owner).Id).OrderBy(c => c.Id))
+        int team = sim.TeamOf(owner).Id;
+        foreach (var source in sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == team).OrderBy(c => c.Id))
         {
             // Only constructed sources initiate grants. This keeps grant cycles from creating their own sources.
             foreach (var building in CityBuildingRules.Active(sim, source, source.Buildings))
-                if (building.FreeBuilding is { Length: > 0 } category && (source.Owner == city.Owner || building.TeamShare))
+                if (building.FreeBuilding is { Length: > 0 } category && (source.Owner == owner || building.TeamShare))
                     categories.Add(category);
         }
         if (sim.Content.Services.Get<IScriptedWonderService>().SingleOrDefault() is { } scripted)
-            categories.UnionWith(scripted.EmpireFreeBuildings(sim, city.Owner));
-        return categories.Select(category => ResolveBuilding(sim, city, category)).OfType<string>().Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal);
-    }
+            categories.UnionWith(scripted.EmpireFreeBuildings(sim, owner));
+        return categories;
+    });
     internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(city.Owner)));
     internal static TileId Tile(Simulation sim, City city) => sim.State.Grid.TileAt(city.Position);
     internal static IEnumerable<Player> LivingPlayers(Simulation sim)

@@ -46,6 +46,9 @@ public interface ICombatService
 public interface INavalBlockadeService
 {
     bool IsBlockaded(Simulation sim, TileId tile, int team);
+    /// <summary>Every tile where <see cref="IsBlockaded"/> is true for the team. Whole-map queries use this once instead of once per tile.</summary>
+    IReadOnlySet<TileId> BlockadedTiles(Simulation sim, int team) =>
+        sim.State.Grid.Tiles.Where(t => IsBlockaded(sim, t, team)).ToHashSet();
 }
 public enum UnitActivity { Awake, Fortify, Sleep, Sentry, Intercept, Blockade }
 public enum AirMissionKind { Rebase, Recon, AirStrike, AirBomb }

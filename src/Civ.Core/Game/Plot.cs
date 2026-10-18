@@ -47,6 +47,15 @@ public sealed class Plot
     public SortedDictionary<int, RevealedPlotSnapshot> RevealedSnapshots { get; set; } = new();
     /// <summary>Connected land or water area id, assigned by the world rules.</summary>
     public int AreaId { get; set; }
+    // Revealed snapshots are immutable records, so the memory copy can share them.
+    internal Plot Clone() => new()
+    {
+        Terrain = Terrain, Kind = Kind, IsLake = IsLake, ImprovementTurns = ImprovementTurns, DepletedMine = DepletedMine,
+        BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus, Improvement = Improvement,
+        Route = Route, _riverEdges = _riverEdges, Owner = Owner, Culture = new(Culture, Culture.Comparer),
+        Revealed = TeamMask.FromWords(Revealed.Words), Visible = TeamMask.FromWords(Visible.Words),
+        RevealedSnapshots = new(RevealedSnapshots, RevealedSnapshots.Comparer), AreaId = AreaId,
+    };
 }
 
 /// <summary>Immutable plot memory; rivers and city marks must not use unseen live data either.</summary>
@@ -76,6 +85,11 @@ public sealed class Team
     public SortedSet<int> Wars { get; set; } = new();
     /// <summary>Mod-owned typed state.</summary>
     public ExtensionState Extensions { get; set; } = new();
+    internal Team Clone() => new()
+    {
+        Id = Id, Members = new(Members, Members.Comparer), Techs = new(Techs, Techs.Comparer), Researching = Researching,
+        Research = new(Research, Research.Comparer), Wars = new(Wars, Wars.Comparer), Extensions = GameState.CloneExtensions(Extensions),
+    };
     /// <summary>Progress on the selected technology.</summary>
     [System.Text.Json.Serialization.JsonIgnore]
     public long ResearchProgress

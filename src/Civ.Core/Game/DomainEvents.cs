@@ -44,6 +44,10 @@ public sealed class DomainEventBus
     public IReadOnlyList<DomainEvent> Published => _turnEvents.AsReadOnly();
     /// <summary>Complete previous turn's presentation events, retained until the next turn completes.</summary>
     public IReadOnlyList<DomainEvent> PreviousTurn { get; private set; } = [];
+    /// <summary>Number of presentation events published this turn.</summary>
+    internal int PublishedCount => _turnEvents.Count;
+    /// <summary>Forget presentation events published after a restored state point.</summary>
+    internal void Truncate(int count) => _turnEvents.RemoveRange(count, _turnEvents.Count - count);
     internal void BeginTurn()
     {
         PreviousTurn = Array.AsReadOnly(_turnEvents.ToArray());

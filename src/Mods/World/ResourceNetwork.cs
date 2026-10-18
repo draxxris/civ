@@ -43,7 +43,7 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     }
     private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target, bool peacefulForeign = false)
     {
-        var modes = Modes(sim, player, peacefulForeign);
+        var modes = new Modes(sim, player, peacefulForeign);
         var start = sim.State.Grid.TileAt(target.Position);
         if (modes[start.Value] == NetworkMode.None) yield break;
         var seen = new bool[modes.Length];
@@ -63,17 +63,45 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         }
     }
     [Flags] private enum NetworkMode { None = 0, Route = 1, River = 2, Water = 4, City = 8 }
-    private static NetworkMode[] Modes(Simulation sim, int player, bool peacefulForeign)
+    /// <summary>Plot modes for one query, resolved on first use so a search only pays for the plots it reaches.</summary>
+    private sealed class Modes
     {
-        var techs = sim.TeamOf(player).Techs.Select(t => sim.Content.Get<S.TechDef>(t)).ToArray();
-        bool river = techs.Any(t => t.RiverTrade);
-        var terrainTrade = techs.SelectMany(t => t.TradeTerrains.Where(p => p.Value).Select(p => p.Key)).ToHashSet(StringComparer.Ordinal);
-        return sim.State.Grid.Tiles.Select(t => Mode(sim, player, t, river, terrainTrade, peacefulForeign)).ToArray();
+        private readonly Simulation _sim;
+        private readonly int _player;
+        private readonly bool _river, _peacefulForeign;
+        private readonly HashSet<string> _terrainTrade;
+        private readonly IReadOnlySet<TileId>[] _blockaded;
+        private readonly NetworkMode[] _modes;
+        private readonly bool[] _resolved;
+        public Modes(Simulation sim, int player, bool peacefulForeign)
+        {
+            _sim = sim; _player = player; _peacefulForeign = peacefulForeign;
+            var techs = sim.TeamOf(player).Techs.Select(t => sim.Content.Get<S.TechDef>(t)).ToArray();
+            _river = techs.Any(t => t.RiverTrade);
+            _terrainTrade = techs.SelectMany(t => t.TradeTerrains.Where(p => p.Value).Select(p => p.Key)).ToHashSet(StringComparer.Ordinal);
+            // Resolve blockades once for the whole query instead of scanning every unit for every plot.
+            int team = sim.TeamOf(player).Id;
+            _blockaded = sim.Content.Services.Get<INavalBlockadeService>().Select(s => s.BlockadedTiles(sim, team)).ToArray();
+            _modes = new NetworkMode[sim.State.Grid.Count];
+            _resolved = new bool[_modes.Length];
+        }
+        public int Length => _modes.Length;
+        public NetworkMode this[int tile]
+        {
+            get
+            {
+                if (_resolved[tile]) return _modes[tile];
+                _resolved[tile] = true;
+                return _modes[tile] = Mode(_sim, _player, new TileId(tile), _river, _terrainTrade, _peacefulForeign, _blockaded);
+            }
+        }
     }
-    private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains, bool peacefulForeign)
+    private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains, bool peacefulForeign,
+        IReadOnlySet<TileId>[] blockaded)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (!Access(sim, player, tile, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
+        if (blockaded.Any(b => b.Contains(tile)) || !Access(sim, player, tile, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot))
+            return NetworkMode.None;
 
         if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) || plot.Owner == player ? NetworkMode.Water : NetworkMode.None;
         var mode = NetworkMode.None;
@@ -84,14 +112,13 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     }
     private static bool Access(Simulation sim, int player, TileId tile, Plot plot, bool peacefulForeign)
     {
-        if (sim.Content.Services.Get<INavalBlockadeService>().Any(s => s.IsBlockaded(sim, tile, sim.TeamOf(player).Id))) return false;
         if (plot.Owner is { } owner) return sim.TeamOf(owner).Id == sim.TeamOf(player).Id
             || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id)
             && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId));
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
 
-    private static bool Edge(Simulation sim, TileId from, TileId to, NetworkMode[] modes)
+    private static bool Edge(Simulation sim, TileId from, TileId to, Modes modes)
     {
         var a = modes[from.Value]; var b = modes[to.Value];
         if (a == NetworkMode.None || b == NetworkMode.None) return false;

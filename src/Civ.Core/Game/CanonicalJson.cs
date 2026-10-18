@@ -72,6 +72,20 @@ public sealed class ExtensionState
         content.StateComponents.TryIdOf(typeof(T)) is { } id ? Values.GetValueOrDefault(id) as T : null;
     /// <summary>Remove a registered component.</summary>
     public bool Remove<T>(Content.ContentDb content) where T : class => Values.Remove(content.StateComponents.IdOf(typeof(T)));
+    /// <summary>Deep copy every attached component through its own JSON contract, as a save round trip would,
+    /// without normalizing the whole save.</summary>
+    public ExtensionState Clone()
+    {
+        var copy = new ExtensionState();
+        foreach (var (id, component) in Values)
+        {
+            var type = component.GetType();
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(component, type, CanonicalJson.Options);
+            copy.Values.Add(id, JsonSerializer.Deserialize(bytes, type, CanonicalJson.Options)
+                ?? throw new InvalidDataException($"Empty state component '{id}'"));
+        }
+        return copy;
+    }
 }
 
 /// <summary>Serializes extension state as {component-id: data}. Reads require a content-aware converter.</summary>

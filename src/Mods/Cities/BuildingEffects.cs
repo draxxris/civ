@@ -7,7 +7,9 @@ namespace Civ.Mods.Cities;
 /// <summary>Building effects use the same Core modifier boundary as civic and trait effects.</summary>
 internal sealed class BuildingEffects : IModifierSource
 {
-    public void Contribute(ModifierContext context, ModifierSink sink)
+    public void Contribute(ModifierContext context, ModifierSink sink) =>
+        CityReadScope.Run(context.Sim, _ => { ContributeScoped(context, sink); return true; });
+    private static void ContributeScoped(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope == ModifierScope.Player)
         {
@@ -57,7 +59,9 @@ internal sealed class BuildingEffects : IModifierSource
         return Math.Max(0, count) + Math.Max(0, building.ExtraFreeBonuses.GetValueOrDefault(bonus));
     }
     /// <summary>Connected copies after diplomatic allocations. Only resources named in the owner's live deals need a second lookup.</summary>
-    private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city)
+    private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city) =>
+        CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city, () => AvailableUncached(sim, city)));
+    private static IReadOnlyDictionary<string, int> AvailableUncached(Simulation sim, City city)
     {
         var network = sim.Content.Services.Get<IResourceNetwork>().Single();
         var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
