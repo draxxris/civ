@@ -17,7 +17,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     public void Plan()
     {
         AnnexMaturePuppets();
-        Views = ParallelScoring.Select(ctx.Sim, ctx.Cities, ParallelCities, c => CityView.Build(ctx, c));
+        Views = ParallelScoring.Select(ctx.Sim, ctx.Cities, ParallelCities, ctx.ViewOf);
         CountQueued();
         foreach (var view in Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
@@ -42,6 +42,8 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         return ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold >= 0;
     }
 
+    // These counters reserve this pass's production choices, including replaced heads, as before.
+    // Exact all-queue role counts live in the context segment and reset after each accepted command.
     private void CountQueued()
     {
         foreach (var city in ctx.Cities)
@@ -77,7 +79,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     private bool ReadyToColonize(CityView view, ProductionOrder head) => ctx.Cities.Count < 3 && CanExpand(view)
         && !BuildingValuer.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId));
 
-    private bool SettlerStillWanted(CityView v) => sites.WantsMoreCities(ctx.Units.Count(u => ctx.Role(u) == UnitRole.Settler), 0) && v.Population >= 2;
+    private bool SettlerStillWanted(CityView v) => sites.WantsMoreCities(ctx.CountUnits(UnitRole.Settler), 0) && v.Population >= 2;
 
     private void Choose(CityView v)
     {
@@ -113,14 +115,14 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
             yield return ("cities:unit", defender.Id);
     }
 
-    private bool NeedsEscort() => ctx.UnitsWithRole(UnitRole.Settler).Any()
+    private bool NeedsEscort() => ctx.CountUnits(UnitRole.Settler) > 0
         && army.Soldiers + _soldiersQueued <= Views.Sum(army.DesiredGarrison);
 
     private IEnumerable<(string, string)> Expansion(CityView v)
     {
         if (CanExpand(v) && Options.Best(v.City.Id, UnitRole.Settler, u => -u.Cost) is { } settler)
             yield return ("cities:unit", settler.Id);
-        int workers = ctx.Units.Count(u => ctx.Role(u) == UnitRole.Worker) + _workersQueued;
+        int workers = ctx.CountUnits(UnitRole.Worker) + _workersQueued;
         if (v.Population >= 2 && workers < (ctx.Cities.Count * 3 + 3) / 4
             && Options.Best(v.City.Id, UnitRole.Worker, u => -u.Cost) is { } worker) yield return ("cities:unit", worker.Id);
         if (NeedsExplorer(v) && Options.Best(v.City.Id, UnitRole.Explorer, u => -u.Cost) is { } scout)
@@ -128,9 +130,9 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     }
 
     private bool CanExpand(CityView v) => v.Threat == 0 && v.Population >= 2
-        && sites.WantsMoreCities(ctx.Units.Count(u => ctx.Role(u) == UnitRole.Settler), _settlersQueued);
+        && sites.WantsMoreCities(ctx.CountUnits(UnitRole.Settler), _settlersQueued);
 
-    private bool NeedsExplorer(CityView v) => ctx.Turn < 40 && !ctx.UnitsWithRole(UnitRole.Explorer).Any()
+    private bool NeedsExplorer(CityView v) => ctx.Turn < 40 && ctx.CountUnits(UnitRole.Explorer) == 0
         && v.City.Id == ctx.Cities[0].Id;
 
     private IEnumerable<(string, string)> Scored(CityView v)
@@ -151,17 +153,16 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         return options.OrderByDescending(o => o.Score).ThenBy(o => o.Id, StringComparer.Ordinal).Select(o => (o.Kind, o.Id));
     }
 
-    private int CountRole(UnitRole role) => ctx.Units.Count(u => ctx.Alive(u) && ctx.Role(u) == role)
-        + ctx.Cities.SelectMany(c => c.ProductionQueue).Count(o => o.Kind == "cities:unit" && ctx.Catalog.Roles.GetValueOrDefault(o.ContentId) == role);
+    private int CountRole(UnitRole role) => ctx.CountUnits(role) + ctx.CountQueued(role);
 
     private IEnumerable<(string, string, long)> StrategicOptions(CityView view)
     {
-        var targets = new CampaignTargets(ctx);
+        var targets = ctx.Targets;
         bool war = ctx.Team.Wars.Count > 0;
         if (targets.Coastal(view.City))
             foreach (var option in NavalOptions(view, targets, war)) yield return option;
         if (!war) yield break;
-        int land = ctx.Units.Count(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+        int land = ctx.CountUnits(UnitRole.Melee) + ctx.CountUnits(UnitRole.Siege);
         if (CountRole(UnitRole.Siege) < Math.Max(1, land / 4)
             && Options.Best(view.City.Id, UnitRole.Siege, u => AiOptions.Quality(u) + u.BombardRate + u.BombRange * 10) is { } siege)
             yield return ("cities:unit", siege.Id, 340);
@@ -172,7 +173,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     private IEnumerable<(string, string, long)> NavalOptions(CityView view, CampaignTargets targets, bool war)
     {
-        int land = ctx.Units.Count(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+        int land = ctx.CountUnits(UnitRole.Melee) + ctx.CountUnits(UnitRole.Siege);
         bool overseas = targets.OverseasTarget(targets.Area(view.City.Position)) is not null
             || ctx.Cities.Select(c => targets.Area(c.Position)).Distinct().Count() > 1;
         bool needTransport = war && overseas && CountRole(UnitRole.NavalTransport) < Math.Max(1, land / 4);
@@ -208,7 +209,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         int shortage = army.Want(Views) - army.Soldiers - _soldiersQueued;
         long drive = 80 + Math.Min(4, shortage) * 40 + (ctx.Leader?.BuildUnitProbability ?? 25) + (ctx.AtWarWithPlayers ? 50 : 0);
         if (Options.Best(v.City.Id, UnitRole.Melee, AiOptions.Quality, AiOptions.Attacks) is { } attacker) yield return ("cities:unit", attacker.Id, drive);
-        if (Options.Best(v.City.Id, UnitRole.Siege, AiOptions.Quality) is { } siege && ctx.Units.Count(u => ctx.Role(u) == UnitRole.Siege) < 1 + ctx.Cities.Count / 3)
+        if (Options.Best(v.City.Id, UnitRole.Siege, AiOptions.Quality) is { } siege && ctx.CountUnits(UnitRole.Siege) < 1 + ctx.Cities.Count / 3)
             yield return ("cities:unit", siege.Id, drive + (ctx.Team.Wars.Count > 0 && army.Soldiers >= 5 ? 20 : -5));
     }
 

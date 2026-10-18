@@ -9,14 +9,14 @@ internal sealed class CampaignTargets(AiContext ctx)
     public int Area(Hex hex) => ctx.Sim.State.PlotAt(hex).AreaId;
     public bool Water(TileId tile) => ctx.Sim.Content.Get<TerrainDef>(ctx.Sim.State.Plots[tile.Value].Terrain).IsWater;
     public bool Coastal(City city) => ctx.Grid.Neighbors(ctx.Tile(city.Position)).Any(Water);
-    public IEnumerable<City> Enemies => ctx.Sim.State.Cities.Where(c => ctx.IsEnemy(c.Owner)
-        && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id));
+    public IEnumerable<City> Enemies => ctx.EnemyCities;
 
     public City? SelectPrimaryTargetCity(int area) => Enemies.Where(c => Area(c.Position) == area)
         .OrderBy(c => DistanceFromHome(c)).ThenBy(c => c.Id).FirstOrDefault();
     public City? OverseasTarget(int area) => Enemies.Where(c => Area(c.Position) != area && Beaches(c).Any())
         .OrderBy(c => DistanceFromHome(c)).ThenBy(c => c.Id).FirstOrDefault();
-    private int DistanceFromHome(City city) => ctx.Cities.Count == 0 ? 0 : ctx.Cities.Min(c => ctx.Grid.Distance(c.Position, city.Position));
+    private int DistanceFromHome(City city) => ctx.NearestCity(city.Position) is { } home
+        ? ctx.Grid.Distance(home.Position, city.Position) : 0;
     public City? Port(int area) => ctx.Cities.Where(c => Area(c.Position) == area && Coastal(c))
         .OrderBy(c => Enemies.Select(e => ctx.Grid.Distance(c.Position, e.Position)).DefaultIfEmpty(0).Min()).ThenBy(c => c.Id).FirstOrDefault();
 

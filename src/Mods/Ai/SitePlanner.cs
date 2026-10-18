@@ -11,19 +11,47 @@ internal sealed class SitePlanner
 {
     private const int MinSiteScore = 100, SearchRadius = 9, ParallelPlots = 256, ParallelSites = 8;
     private readonly AiContext ctx;
-    private readonly Lazy<int[]> _tileValue;
-    private readonly Lazy<bool[]> _claimed;
-    private readonly Lazy<IReadOnlyList<Site>> _sites;
+    private readonly object _gate = new();
+    private Segment? _segment;
 
-    public SitePlanner(AiContext context)
+    private sealed record Geography(bool[] Excluded, int[] NearestCity);
+
+    private sealed class Segment
     {
-        ctx = context;
-        _tileValue = new(() => BuildTileValues(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
-        _claimed = new(() => BuildClaimed(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
-        _sites = new(FindSites, LazyThreadSafetyMode.ExecutionAndPublication);
+        public readonly int Revision;
+        public readonly Lazy<int[]> TileValue;
+        public readonly Lazy<bool[]> Claimed;
+        public readonly Lazy<Geography> Geography;
+        public readonly Lazy<IReadOnlyList<Site>> Sites;
+        public readonly Lazy<IReadOnlyList<Site>> Distinct;
+
+        public Segment(SitePlanner planner)
+        {
+            Revision = planner.ctx.Revision;
+            TileValue = new(() => BuildTileValues(planner.ctx));
+            Claimed = new(() => BuildClaimed(planner.ctx));
+            Geography = new(planner.BuildGeography);
+            Sites = new(() => planner.FindSites(this));
+            Distinct = new(() => planner.PickDistinctSites(Sites.Value));
+        }
     }
 
-    public IReadOnlyList<Site> Sites => _sites.Value;
+    public SitePlanner(AiContext context) => ctx = context;
+
+    private Segment Current
+    {
+        get
+        {
+            lock (_gate)
+            {
+                // This planner survives founding and the following city-production pass.
+                if (_segment is null || _segment.Revision != ctx.Revision) _segment = new(this);
+                return _segment;
+            }
+        }
+    }
+
+    public IReadOnlyList<Site> Sites => Current.Sites.Value;
     private int MinRange => ctx.Sim.Content.Get<RuleConstantsDef>().All.Single().Values.MinCityRange;
 
     public bool WantsMoreCities(int settlersInFlight, int queued)
@@ -38,8 +66,8 @@ internal sealed class SitePlanner
     private bool EstablishedCapital()
     {
         // Do not rush free settlers while the capital cannot support growth or replace its defenders.
-        bool worker = ctx.UnitsWithRole(UnitRole.Worker).Any();
-        int soldiers = ctx.Units.Count(u => ctx.Role(u) == UnitRole.Melee);
+        bool worker = ctx.CountUnits(UnitRole.Worker) > 0;
+        int soldiers = ctx.CountUnits(UnitRole.Melee);
         return worker && soldiers >= 2 && ctx.Turn >= 55;
     }
 
@@ -54,10 +82,12 @@ internal sealed class SitePlanner
     }
 
     /// <summary>Greedy non-overlapping best sites.</summary>
-    internal IReadOnlyList<Site> DistinctSites()
+    internal IReadOnlyList<Site> DistinctSites() => Current.Distinct.Value;
+
+    private IReadOnlyList<Site> PickDistinctSites(IReadOnlyList<Site> sites)
     {
         var picked = new List<Site>();
-        foreach (var site in Sites)
+        foreach (var site in sites)
             if (picked.All(p => ctx.Grid.Distance(p.Tile, site.Tile) > MinRange + 1)) picked.Add(site);
         return picked;
     }
@@ -82,39 +112,34 @@ internal sealed class SitePlanner
     private bool IsCoastal(TileId tile) => ctx.Grid.Neighbors(tile).Any(n =>
         ctx.Sim.Content.Get<TerrainDef>(ctx.Sim.State.Plots[n.Value].Terrain).IsWater && !ctx.Sim.State.Plots[n.Value].IsLake);
 
-    private IReadOnlyList<Site> FindSites()
+    private IReadOnlyList<Site> FindSites(Segment segment)
     {
-        var candidates = CandidateTiles().ToArray();
+        var candidates = CandidateTiles(segment.Geography.Value.Excluded).ToArray();
         if (candidates.Length == 0) return [];
         // Build the shared tables once before scoring threads read them.
-        _ = _tileValue.Value;
-        _ = _claimed.Value;
-        return ParallelScoring.Select(ctx.Sim, candidates, ParallelSites, Score).Where(s => s.Score >= MinSiteScore)
+        _ = segment.TileValue.Value;
+        _ = segment.Claimed.Value;
+        return ParallelScoring.Select(ctx.Sim, candidates, ParallelSites, tile => Score(tile, segment)).Where(s => s.Score >= MinSiteScore)
             .OrderByDescending(s => s.Score).ThenBy(s => s.Tile.Value).ToArray();
     }
 
-    private IEnumerable<TileId> CandidateTiles()
+    private IEnumerable<TileId> CandidateTiles(bool[] excluded)
     {
         var seen = new HashSet<TileId>();
         IEnumerable<Hex> anchors = ctx.Cities.Count > 0 ? ctx.Cities.Select(c => c.Position) : ctx.Units.Select(u => u.Position);
         foreach (var anchor in anchors)
             foreach (var tile in ctx.Grid.Range(ctx.Grid.TileAt(anchor), SearchRadius))
-                if (seen.Add(tile) && Eligible(tile)) yield return tile;
+                if (seen.Add(tile) && Eligible(tile, excluded)) yield return tile;
     }
 
-    private bool Eligible(TileId tile)
-    {
-        if (!ctx.Sim.State.Plots[tile.Value].Revealed.Contains(ctx.Team.Id) || !CanFound(tile)) return false;
-        foreach (var city in ctx.Sim.State.Cities)
-            if (ctx.Grid.Distance(ctx.Grid.TileAt(city.Position), tile) <= MinRange + (city.Owner == ctx.PlayerId ? 1 : 2)) return false;
-        return true;
-    }
+    private bool Eligible(TileId tile, bool[] excluded) => !excluded[tile.Value]
+        && ctx.Sim.State.Plots[tile.Value].Revealed.Contains(ctx.Team.Id) && CanFound(tile);
 
-    private Site Score(TileId tile)
+    private Site Score(TileId tile, Segment segment)
     {
         int score = 0;
-        var values = _tileValue.Value;
-        var claimed = _claimed.Value;
+        var values = segment.TileValue.Value;
+        var claimed = segment.Claimed.Value;
         foreach (var t in ctx.Grid.Range(tile, 3))
         {
             var plot = ctx.Sim.State.Plots[t.Value];
@@ -129,14 +154,40 @@ internal sealed class SitePlanner
         if (ctx.Service<IWaterService>().IsFreshWater(ctx.Sim, tile)) score += 12;
         if (center.Kind == PlotKind.Hills) score += 14;
         if (ctx.Sim.State.Plots[tile.Value].Bonus is not null) score -= 6;
-        return new(tile, score - DistancePenalty(tile), center.AreaId);
+        int nearest = segment.Geography.Value.NearestCity[tile.Value];
+        return new(tile, score - Math.Max(0, nearest - 6) * 12, center.AreaId);
     }
 
-    private int DistancePenalty(TileId tile)
+    private Geography BuildGeography()
     {
-        if (ctx.Cities.Count == 0) return 0;
-        int nearest = ctx.Cities.Min(c => ctx.Grid.Distance(ctx.Grid.TileAt(c.Position), tile));
-        return Math.Max(0, nearest - 6) * 12;
+        var excluded = new bool[ctx.Grid.Count];
+        foreach (var city in ctx.Sim.State.Cities)
+            foreach (var tile in ctx.Grid.Range(ctx.Tile(city.Position), MinRange + (city.Owner == ctx.PlayerId ? 1 : 2)))
+                excluded[tile.Value] = true;
+        return new(excluded, NearestCityDistances());
+    }
+
+    private int[] NearestCityDistances()
+    {
+        var distance = new int[ctx.Grid.Count];
+        if (ctx.Cities.Count == 0) return distance;
+        Array.Fill(distance, int.MaxValue);
+        var frontier = new Queue<TileId>();
+        foreach (var city in ctx.Cities)
+        {
+            var tile = ctx.Tile(city.Position);
+            distance[tile.Value] = 0;
+            frontier.Enqueue(tile);
+        }
+        // Multi-source unit-cost search uses the same clipped, wrapped hex geometry as distance queries.
+        while (frontier.TryDequeue(out var tile))
+            foreach (var next in ctx.Grid.Neighbors(tile))
+            {
+                if (distance[next.Value] <= distance[tile.Value] + 1) continue;
+                distance[next.Value] = distance[tile.Value] + 1;
+                frontier.Enqueue(next);
+            }
+        return distance;
     }
 
     private static int[] BuildTileValues(AiContext ctx) =>

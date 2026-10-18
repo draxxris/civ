@@ -79,6 +79,6 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites, ArmyPlan 
     {
         if (ctx.CityAtUnit(soldier) is not { } city) return true;
         int garrison = ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
-        return garrison > army.DesiredGarrison(CityView.Build(ctx, city));
+        return garrison > army.DesiredGarrison(ctx.ViewOf(city));
     }
 }

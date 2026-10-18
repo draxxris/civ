@@ -6,9 +6,7 @@ namespace Civ.Mods.Ai;
 /// <summary>How many soldiers the empire wants, shared by production and unit orders.</summary>
 internal sealed class ArmyPlan(AiContext ctx)
 {
-    private readonly Lazy<int> _soldiers = new(() => ctx.Units.Count(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege));
-
-    public int Soldiers => _soldiers.Value;
+    public int Soldiers => ctx.CountUnits(UnitRole.Melee) + ctx.CountUnits(UnitRole.Siege);
     public int DesiredGarrison(CityView v)
     {
         if (ctx.Turn < 8 && v.Threat == 0) return 0;
