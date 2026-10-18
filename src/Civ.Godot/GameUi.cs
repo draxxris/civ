@@ -6,7 +6,8 @@ namespace Civ.Client;
 /// <summary>Top bar, unit and city lists, end-turn button, research dialog and the city screen. Rebuilt only when the session changes.</summary>
 internal sealed partial class GameUi : CanvasLayer
 {
-    private const float TopBarHeight = 44f, LeftWidth = 320f;
+    internal const float TopBarHeight = 82f;
+    private const float LeftWidth = 320f;
 
     private readonly GameSession _session;
     private readonly IconCache _icons;
@@ -135,7 +136,9 @@ internal sealed partial class GameUi : CanvasLayer
     {
         Ui.Clear(_top);
         var s = _session.Summary();
-        var row = Ui.HBox(10);
+        var row = new HFlowContainer();
+        row.AddThemeConstantOverride("h_separation", 10);
+        row.AddThemeConstantOverride("v_separation", 4);
         string date = s.CalendarDate is { } calendar ? $"  ·  {calendar.FormattedDate}" : "";
         row.AddChild(Ui.Text($"Turn {s.Turn}{date}  ·  {s.Era}", 15, Colors.White, wrap: false));
         int goldenAge = _session.GoldenAgeTurnsRemaining;
@@ -148,7 +151,6 @@ internal sealed partial class GameUi : CanvasLayer
         var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
         row.AddChild(Ui.Button(anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics", ToggleGovernment));
         AddPanelButtons(row);
-        row.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         row.AddChild(Ui.Text($"{s.Cities} cities  ·  {s.Units} units", 14, Ui.Dim, wrap: false));
         _top.AddChild(row);
     }

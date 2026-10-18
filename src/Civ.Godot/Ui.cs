@@ -76,7 +76,9 @@ internal static class Ui
 
     public static VBoxContainer VBox(int separation = 4)
     {
-        var v = new VBoxContainer();
+        // Wrapped labels have almost no minimum width. Nested text columns must
+        // share the available row width rather than collapse to that minimum.
+        var v = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         v.AddThemeConstantOverride("separation", separation);
         return v;
     }

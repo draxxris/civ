@@ -263,6 +263,7 @@ public partial class Main : Node3D
         if (_debug.Stage == "civics") _game!.Ui.ToggleGovernment();
         if (_debug.Stage == "research") _game!.Ui.ToggleResearch();
         _espionageCapture?.Open(_game!.Ui);
+        if (_debug.ScreenshotPath != null && _debug.Stage != "espionage") _game!.Ui.OpenDebugPanel(_debug.Stage);
     }
 
     /// <summary>Screenshot runs can advance turns and open the city screen before the first frame.</summary>
@@ -272,8 +273,13 @@ public partial class Main : Node3D
         if (_debug.ScreenshotPath == null) return;
         PrepareCaptureScene(session);
         Input.WarpMouse(new Vector2(700, 10));
+        if (_debug.Stage is "diplomacy" or "espionage")
+            foreach (var rival in session.Sim.State.Players.Where(p => p.Id != GameSession.Human))
+                session.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.EstablishContact(session.Sim, session.Me.TeamId, rival.TeamId);
         if (_debug.Stage == "espionage") _espionageCapture = new EspionageCapture(session);
-        if (_debug.Stage is "city" or "map-city") FoundScreenshotCity(session);
+        if (_debug.Stage is "city" or "map-city" or "conquest") FoundScreenshotCity(session);
+        if (_debug.Stage == "conquest" && session.Sim.State.Cities.FirstOrDefault() is { } captured)
+            captured.Extensions.Set(session.Sim.Content, new CityRuleState { PendingConquestChoice = true });
         for (int i = 0; i < _debug.Turns; i++) session.EndTurn();
         if (_debug.Stage == "city") OpenScreenshotCity(session);
     }
