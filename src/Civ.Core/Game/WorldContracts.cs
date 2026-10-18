@@ -51,6 +51,7 @@ public interface ICityConnectionService
 /// <summary>Authoritative team sight updates, owned by World.</summary>
 public interface IVisibilityService
 {
+    bool IsUnitVisible(Simulation sim, int unit, int observerTeam);
     /// <summary>Military calls this after movement; founding and turn boundaries also refresh sight.</summary>
     void Recompute(Simulation sim);
 }

@@ -23,6 +23,7 @@ public sealed class MilitaryMod : IMod
         context.RegisterService<IMovementService>("movement", movement);
         context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
         context.RegisterService<ICombatService>("combat", new CombatService());
+        context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
         context.RegisterService<IUnitService>("units", units);
         context.RegisterService<IUnitSupportService>("support", units);
         context.RegisterService<Civ.Content.IModifierSource>("promotions", new PromotionEffects());
@@ -31,6 +32,11 @@ public sealed class MilitaryMod : IMod
         context.RegisterStateComponent<MilitaryPlayerState>("player_state");
         context.RegisterStateComponent<MilitaryGameState>("combat_history");
         context.RegisterCommand<MoveUnitPathCommand>("move_unit");
+        context.RegisterCommand<LoadUnitCommand>("load_unit");
+        context.RegisterCommand<UnloadUnitCommand>("unload_unit");
+        context.RegisterCommand<BombardCityCommand>("bombard_city");
+        context.RegisterCommand<AirMissionCommand>("air_mission");
+        context.RegisterCommand<RangedStrikeCommand>("ranged_strike");
         context.RegisterCommand<PromoteMilitaryUnitCommand>("promote_unit");
         context.RegisterCommand<SetUnitActivityCommand>("set_unit_activity");
         context.RegisterCommand<PillageCommand>("pillage");
@@ -46,6 +52,7 @@ public sealed class MilitaryMod : IMod
             foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);
             foreach (var player in sim.State.Players.Where(p => MilitaryData.Player(sim, p.Id).Barbarian)) player.EndedTurn = true;
             CombatService.HistoryState(sim).Combats.Clear();
+            CombatService.HistoryState(sim).ReconSights.Clear();
             MilitaryData.Sight(sim);
         });
         ContentRegistration.Evaluator<UnitDef>(context, "unit", (leaf, subject) => subject.Unit?.Type == leaf.Id);

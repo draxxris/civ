@@ -27,6 +27,8 @@ public sealed record ReligionConversion(int AnarchyTurns, int CooldownTurns, Led
 public sealed record ReligionSpreadOdds(int Threshold, int RandomRange);
 public sealed record ReligionFounded(string Religion, int City, int Player) : DomainEvent;
 public sealed record ReligionSpread(string Religion, int City) : DomainEvent;
+public sealed record ReligionRemoved(string Religion, int City, string Reason) : DomainEvent;
+public sealed record InquisitionAttempt(int Unit, int City, int Player, bool Success, IReadOnlyList<string> RemovedReligions, long CompensationGold) : DomainEvent;
 public sealed record StateReligionChanged(int Player, string? Religion) : DomainEvent;
 public sealed record MissionaryAttempt(int Unit, int City, string Religion, bool Success) : DomainEvent;
 
@@ -45,6 +47,12 @@ public interface IReligionService
     int MissionaryChance(Simulation sim, int unit, string religion);
     void SpreadMissionary(Simulation sim, int unit, string religion);
     ReligionSpreadOdds NaturalSpreadOdds(Simulation sim, int city, string religion);
+    int DecayChancePermille(Simulation sim, int city, string religion);
+    bool IsInquisitionEnabled(Simulation sim, int player);
+    bool HasInquisitionTargets(Simulation sim, int city);
+    string? ValidateInquisition(Simulation sim, int player, int unit);
+    int InquisitionChance(Simulation sim, int unit);
+    void PerformInquisition(Simulation sim, int unit);
     string? ValidateShrine(Simulation sim, int player, int unit, string building);
     void BuildShrine(Simulation sim, int unit, string building);
     string? EvaluateCondition(Requirement.Leaf leaf, RequirementContext context);
@@ -62,6 +70,12 @@ public sealed class BuildShrineCommand : GameCommand
     public string Building { get; init; } = "";
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateShrine(sim, Player, Unit, Building);
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().BuildShrine(sim, Unit, Building);
+}
+public sealed class PerformInquisitionCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateInquisition(sim, Player, Unit);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().PerformInquisition(sim, Unit);
 }
 public sealed class SpreadReligionCommand : GameCommand
 {

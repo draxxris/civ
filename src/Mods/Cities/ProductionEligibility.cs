@@ -62,6 +62,8 @@ internal static class ProductionEligibility
     {
         if (!sim.Content.TryGet<S.UnitDef>(id, out var unit)) { Fail(failures, "Unknown unit"); return; }
         Requirements(sim, city, unit, failures);
+        if (unit.Inquisitor && sim.Content.Services.Get<IReligionService>().SingleOrDefault() is { } religion && !religion.IsInquisitionEnabled(sim, city.Owner))
+            Fail(failures, "Civics and state religion do not allow inquisitions");
         if (unit.Cost < 0) Fail(failures, "Unit cannot be trained");
         if (unit.ForceObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) Fail(failures, "Unit is obsolete");
         if (unit.Domain == "military:domain_sea" && !CityData.Coastal(sim, city)) Fail(failures, "Requires coast");

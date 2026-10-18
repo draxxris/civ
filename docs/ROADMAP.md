@@ -93,7 +93,14 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Combat odds preview**: Exact integer dynamic programming probability engine without RNG usage.
 - **Promotions & experience**: Experience gain based on strength ratios, promotion prerequisite trees, healing bonuses, and great general point counters.
 - **Unit actions**: Fortify (defense accumulation), sleep, sentry, pillage, upgrade in friendly territory, and disband.
-- **Barbarians**: Fog-of-war unowned-land spawning scaled by hex density tuning, Deficit formula, tech parity adoption, and target-hunting AI.
+- **Barbarians & naval spawns**: Fog-of-war unowned-land spawning scaled by hex density tuning; coastal water area barbarian naval spawns governed by handicap divisors, non-barbarian water unit limits, lake exclusions, and pirate pillaging AI.
+- **Cargo & amphibious warfare**: Unit loading into transports, capacity limits with promotion modifiers, shared ocean transit, cargo loss on ship destruction, and amphibious assaults from sea with combat penalties mitigated by amphibious training.
+- **Air combat missions & interception**: Rebase, recon, air strike (stack damage capped at combat limit), air bomb (city defense reduction and improvement destruction), and combat air patrol (CAP interception with evasion checks and dogfight rounds).
+- **Artillery bombardment & ranged attacks**: Siege bombardment degrading city defenses, and ranged support strikes without mutual melee counterattack damage.
+- **City defense damage & recovery**: City defense damage accumulator reducing defense modifiers, with turn-by-turn recovery for undamaged cities.
+- **Stealth & invisibility**: Submarine/spy invisibility masking presence from enemy vision, avoiding sentry triggers and path blocking until revealed by dedicated detector units.
+- **Flanking strikes & defender withdrawal**: Mounted unit flanking attacks damaging or destroying defending siege stacks; tactical defender withdrawal saving units upon defeat.
+- **Strategic military campaigns**: Multi-theater stack staging partitioned by landmass (`AreaId`), combined arms support fire sequencing before melee assault, air theater management, and threat-differential defensive reinforcement lines.
 
 ### Government & Civics
 - **Civic categories**: Multi-category civic options with one active civic per category.
@@ -108,8 +115,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **AI personality profiles**: Complete personality matrices (flavors, aggression, wonder preferences, civic weights) driving the AI mod.
 
 ### Advanced Systems (P6 / P7)
-- **Religion**: 13 imported religions, holy city scoring, natural trade spread, missionaries, shrine construction, state religion adoption, and religious happiness/commerce.
-- **Great People**: City progress points, class pools, deterministic births, settlement (free specialists), flavor-driven tech bulbing, building hurry, and Golden Ages.
+- **Religion**: 13 imported religions, holy city scoring, natural trade spread, international trade route spread across open borders, religion decay and attrition for unprotected minorities, civic-gated inquisitions (purging non-state faiths/temples, hurry anger, holy city relocation/extinction, and diplomatic memories), missionaries, shrine construction, state religion adoption, and religious happiness/commerce.
+- **Great People**: City progress points, class pools, deterministic births, combat Great General emergence from combat experience, warlord attachment (`military:leader` promotions and stack experience sharing), Military Academy/Academy construction, Great Merchant trade missions to foreign cities for gold, settlement (free specialists), flavor-driven tech bulbing, building hurry, and Golden Ages.
 - **Trade**: Domestic and foreign trade routes, slot capacity, connectivity verification, overseas profit bonuses, and shared civic bonuses.
 - **Diplomacy**: Bilateral team contact discovery, attitude ledgers, peace treaties, open borders, defensive pacts, and multi-item trade deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination, Cultural, Space Race, and Time victories with victory resolution screens.
@@ -121,8 +128,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Computer Players (`ai:standard`)
 - **Deterministic AI**: Operates strictly via validated player commands using simulation RNG; zero hidden game state.
-- **Empire management**: Automated research selection, civic revolutions, commerce slider adjustments, production queue management, and citizen tile allocation.
-- **Expansion & military**: Settler scouting and escorted founding; worker build planning and road corridors; city garrison retention, threat-aware stack movement, and combat odds gating.
+- **Empire management**: Automated research selection, civic revolutions, commerce slider adjustments, production queue management, citizen tile allocation, and Great Person valuation (weighing Golden Ages vs. tech bulbing vs. settlement).
+- **Expansion & military**: Settler scouting and escorted founding; worker build planning and road corridors; city garrison retention, multi-theater campaign staging by `AreaId`, combined arms pre-assault bombardment and ranged support fire, naval amphibious sealift, air rebasing and bombing missions, threat-differential reinforcement corridors, and combat odds gating.
+- **Religious management**: Missionary spread, state religion adoption, and inquisition purging based on city instability and state church policies.
 
 ### Client, Presentation & 3D Art
 - **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load.
@@ -178,13 +186,13 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Hostile culture spread obstruction**: Restrict cultural spread across enemy borders or impassable natural barriers.
 
 ### Military & Combat
-- [ ] **Naval unit spawns & naval AI**: Barbarian galleys/pirates; AI naval pathfinding, exploration, and coastal patrol.
-- [ ] **Cargo transports & amphibious warfare**: Unit loading into naval transports, ocean transit, and amphibious landings.
-- [ ] **Air combat missions**: Aircraft rebasing, aerial reconnaissance, combat air patrol (interception), and air bombardment.
-- [ ] **Artillery bombardment & ranged attacks**: Siege weapons reducing city defense bonuses; ranged fire without mutual melee damage.
-- [ ] **Stealth & invisibility**: Submarine/spy invisibility with anti-submarine detection radius.
-- [ ] **Flanking & defender withdrawal**: Cavalry flanking attacks destroying enemy siege units; defender tactical withdrawal chances.
-- [ ] **Strategic military AI campaigns**: Multi-stack army coordination, targeted theater staging, and defensive reinforcement lines.
+- [x] **Naval unit spawns & naval AI**: Barbarian galleys/pirates; AI naval pathfinding, exploration, and coastal patrol.
+- [x] **Cargo transports & amphibious warfare**: Unit loading into naval transports, ocean transit, and amphibious landings.
+- [x] **Air combat missions**: Aircraft rebasing, aerial reconnaissance, combat air patrol (interception), and air bombardment.
+- [x] **Artillery bombardment & ranged attacks**: Siege weapons reducing city defense bonuses; ranged fire without mutual melee damage.
+- [x] **Stealth & invisibility**: Submarine/spy invisibility with anti-submarine detection radius.
+- [x] **Flanking & defender withdrawal**: Cavalry flanking attacks destroying enemy siege units; defender tactical withdrawal chances.
+- [x] **Strategic military AI campaigns**: Multi-stack army coordination, targeted theater staging, and defensive reinforcement lines.
 
 ### Government & Peoples
 - [x] **Cultural assimilation**: Gradual conversion of foreign nationality in captured cities over time.
@@ -192,12 +200,12 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [x] **Extra culture levels**: Support for civilization-specific or civic-specific maximum cultural tier expansion.
 
 ### Religion & Great People
-- [ ] **Foreign trade religion spread**: Spread religion along international trade routes to contacted foreign cities.
-- [ ] **Religion decay & attrition**: Gradual loss of minority religions in cities with low religious pressure.
-- [ ] **Inquisitions**: Religious units capable of purging non-state religions from friendly cities.
-- [ ] **Combat Great Generals**: Great General emergence driven by earned military combat experience points.
-- [ ] **Trade missions**: Great Merchant mission granting instant treasury gold upon reaching distant foreign capitals.
-- [ ] **AI Great Person valuation**: Enhanced AI weighting between immediate tech bulbing, city settlement, or Golden Age triggers.
+- [x] **Foreign trade religion spread**: Spread religion along international trade routes to contacted foreign cities.
+- [x] **Religion decay & attrition**: Gradual loss of minority religions in cities with low religious pressure.
+- [x] **Inquisitions**: Religious units capable of purging non-state religions from friendly cities.
+- [x] **Combat Great Generals**: Great General emergence driven by earned military combat experience points.
+- [x] **Trade missions**: Great Merchant mission granting instant treasury gold upon reaching distant foreign capitals.
+- [x] **AI Great Person valuation**: Enhanced AI weighting between immediate tech bulbing, city settlement, or Golden Age triggers.
 
 ### Trade & Diplomacy
 - [ ] **Naval blockades**: Military ships blockading coastal cities and severing sea trade routes.

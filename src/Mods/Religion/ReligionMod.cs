@@ -20,6 +20,7 @@ public sealed class ReligionMod : IMod
         context.RegisterCommand<SetStateReligionCommand>("set_state_religion");
         context.RegisterCommand<SpreadReligionCommand>("spread_religion");
         context.RegisterCommand<BuildShrineCommand>("build_shrine");
+        context.RegisterCommand<PerformInquisitionCommand>("perform_inquisition");
         context.Subscribe<TechDiscovered>("founding_discovery", ReligionFoundingRules.Discovered);
         context.Subscribe<CityFounded>("founding_city", ReligionFoundingRules.CityFounded);
         context.TurnSystems.Register(new ReligionTurns(service));

@@ -5,7 +5,7 @@ using Civ.Content.Schema;
 namespace Civ.Mods.Ai;
 
 /// <summary>What the AI uses a unit definition for.</summary>
-internal enum UnitRole { Other, Settler, Worker, Explorer, Melee, Siege }
+internal enum UnitRole { Other, Settler, Worker, Explorer, Melee, Siege, NavalExplorer, NavalCombat, NavalTransport, Air }
 
 /// <summary>Immutable per-ruleset lookups derived from content. Safe to share between games.</summary>
 internal sealed class AiCatalog
@@ -59,6 +59,8 @@ internal sealed class AiCatalog
 
     private static UnitRole Classify(UnitDef u)
     {
+        if (u.Domain == "military:domain_air") return UnitRole.Air;
+        if (u.Domain == "military:domain_sea") return NavalRole(u);
         if (u.Domain != "military:domain_land") return UnitRole.Other;
         if (u.CanFoundCity) return UnitRole.Settler;
         if (u.WorkRate > 0 && u.Builds.Count > 0) return UnitRole.Worker;
@@ -68,6 +70,15 @@ internal sealed class AiCatalog
         return UnitRole.Melee;
     }
 
-    private static bool IsSiege(UnitDef u) => u.CollateralDamage > 0
+    private static UnitRole NavalRole(UnitDef u)
+    {
+        if (u.Cargo > 0 || u.TotalCargo > 0) return UnitRole.NavalTransport;
+        if (u.Strength <= 0) return UnitRole.Other;
+        if (u.UnitAiTypes.GetValueOrDefault("military:unitai_explore_sea")
+            && !u.UnitAiTypes.GetValueOrDefault("military:unitai_attack_sea")) return UnitRole.NavalExplorer;
+        return UnitRole.NavalCombat;
+    }
+
+    private static bool IsSiege(UnitDef u) => u.BombardRate > 0 || u.BombRange > 0 || u.CollateralDamage > 0
         || u.CityAttack >= 40 && u.Strength >= 4 && !u.UnitAiTypes.ContainsKey(CityDefense);
 }

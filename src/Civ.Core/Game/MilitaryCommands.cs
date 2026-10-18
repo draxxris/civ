@@ -7,6 +7,42 @@ public sealed class MoveUnitPathCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<IMovementService>().Single().ValidatePath(sim, Player, Unit, Path);
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IMovementService>().Single().Move(sim, Unit, Path);
 }
+public sealed class LoadUnitCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public int Transport { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IUnitService>().Single().ValidateLoad(sim, Player, Unit, Transport);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IUnitService>().Single().Load(sim, Unit, Transport);
+}
+public sealed class UnloadUnitCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public Hex? Destination { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IUnitService>().Single().ValidateUnload(sim, Player, Unit, Destination);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IUnitService>().Single().Unload(sim, Unit, Destination);
+}
+public sealed class AirMissionCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public AirMissionKind Kind { get; init; }
+    public Hex Target { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IAirMissionService>().Single().Validate(sim, Player, Unit, Kind, Target);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IAirMissionService>().Single().Execute(sim, Unit, Kind, Target);
+}
+public sealed class BombardCityCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public Hex Target { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICombatService>().Single().ValidateBombard(sim, Player, Unit, Target);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICombatService>().Single().BombardCity(sim, Unit, Target);
+}
+public sealed class RangedStrikeCommand : GameCommand
+{
+    public int Unit { get; init; }
+    public Hex Target { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICombatService>().Single().ValidateRangedStrike(sim, Player, Unit, Target);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICombatService>().Single().RangedStrike(sim, Unit, Target);
+}
 /// <summary>Shared command transport for independent unit actions.</summary>
 public abstract class MilitaryUnitCommand : GameCommand
 {

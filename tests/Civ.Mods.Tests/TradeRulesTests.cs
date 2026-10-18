@@ -52,7 +52,7 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Scenario(); var city = sim.State.Cities[0]; city.Buildings.Add("cities:palace");
         var result = Service(sim).Calculate(sim, city.Id);
-        var foreign = Assert.Single(result.Routes.Where(r => r.Foreign));
+        var foreign = Assert.Single(result.Routes, r => r.Foreign);
         long basis = Math.Max(100, Math.Min(500, 5 * sim.Content.Get<S.WorldSizeDef>(sim.Settings.WorldSize!).TradeProfitPercent) * sim.Content.Get<S.RuleConstantsDef>().All.Single().Values.TradeProfitPercent / 100);
         Assert.Equal(basis * 225 / 100, foreign.ProfitHundredths);
         Assert.Equal(foreign.ProfitHundredths, foreign.YieldsHundredths.Commerce);

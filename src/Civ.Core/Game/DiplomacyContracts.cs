@@ -30,6 +30,7 @@ public interface IDiplomacyService
     void EstablishContact(Simulation sim, int teamA, int teamB);
     void DiscoverContacts(Simulation sim);
     AttitudeResult GetAttitude(Simulation sim, int fromPlayer, int towardPlayer);
+    void RecordMemory(Simulation sim, int fromPlayer, int towardPlayer, string memory);
     bool HasOpenBorders(Simulation sim, int teamA, int teamB);
     bool HasDefensivePact(Simulation sim, int teamA, int teamB);
     string? ValidateAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement);

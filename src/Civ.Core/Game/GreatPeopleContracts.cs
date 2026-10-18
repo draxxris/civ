@@ -11,10 +11,13 @@ public interface IGreatPeopleService
 {
     GreatPeopleCityResult Calculate(Simulation sim, int city);
     long Threshold(Simulation sim, int player);
+    long GeneralThreshold(Simulation sim, int player);
+    long GeneralProgress(Simulation sim, int player);
     IReadOnlyDictionary<string, int> SettledSpecialists(Simulation sim, int city);
     int GoldenAgeTurnsRemaining(Simulation sim, int player);
     int GoldenAgeUnitsRequired(Simulation sim, int player);
-    IReadOnlyList<GreatPersonAction> AvailableActions(Simulation sim, int player, int unit);
+    /// <summary>Preview at the current position, or at a proposed destination without moving the unit.</summary>
+    IReadOnlyList<GreatPersonAction> AvailableActions(Simulation sim, int player, int unit, Hex? destination = null);
 }
 /// <summary>Command boundary shared by previews and execution.</summary>
 public interface IGreatPeopleCommandService
@@ -33,6 +36,9 @@ public abstract class GreatPersonCommand : GameCommand
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IGreatPeopleCommandService>().Single()
         .Execute(sim, Player, UnitId, Action, Target, Units);
 }
+public sealed class LeadGreatPersonCommand : GreatPersonCommand { protected override string Action => "lead"; }
+public sealed class ConstructGreatPersonCommand : GreatPersonCommand { protected override string Action => "construct"; }
+public sealed class TradeGreatPersonCommand : GreatPersonCommand { protected override string Action => "trade"; }
 public sealed class JoinGreatPersonCommand : GreatPersonCommand { protected override string Action => "join"; }
 public sealed class DiscoverGreatPersonCommand : GreatPersonCommand { protected override string Action => "discover"; }
 public sealed class HurryGreatPersonCommand : GreatPersonCommand { protected override string Action => "hurry"; }
@@ -52,6 +58,7 @@ public sealed class GreatPeoplePlayerState
     public int UnitGoldenAges { get; set; }
     public int FirstGoldenAgeTurn { get; set; }
 }
+public sealed record GreatGeneralBorn(int Player, int City, int Unit, string UnitType) : DomainEvent;
 public sealed record GreatPersonBorn(int Player, int City, int Unit, string UnitClass) : DomainEvent;
 public sealed record GoldenAgeStarted(int Player, int Turns) : DomainEvent;
 public sealed record GreatPersonUsed(int Player, int Unit, string Action, string? Target, long Amount) : DomainEvent;

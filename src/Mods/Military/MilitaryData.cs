@@ -26,6 +26,8 @@ internal static class MilitaryData
         if (state is not null) return state;
         state = new(); sim.State.PlayerById(player).Extensions.Set(sim.Content, state); return state;
     }
+    internal static bool VisibleEnemy(Simulation sim, int player, Unit other) => Enemy(sim, player, other.Owner)
+        && sim.Content.Services.Get<IVisibilityService>().Single().IsUnitVisible(sim, other.Id, sim.TeamOf(player).Id);
     internal static bool Enemy(Simulation sim, int player, int other) => sim.TeamOf(player).Wars.Contains(sim.TeamOf(other).Id);
     internal static bool Friendly(Simulation sim, int player, int? other) => other is { } owner && sim.TeamOf(player).Id == sim.TeamOf(owner).Id;
     internal static IEnumerable<S.PromotionDef> Promotions(Simulation sim, Unit unit) => unit.Promotions.Select(sim.Content.Get<S.PromotionDef>);
@@ -37,6 +39,16 @@ internal static class MilitaryData
     {
         sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
         sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.DiscoverContacts(sim);
+    }
+    internal static void RemoveUnit(Simulation sim, int unit)
+    {
+        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.RemoveUnit(cargo);
+        sim.State.RemoveUnit(unit);
+    }
+    internal static void MoveUnit(Simulation sim, int unit, Hex target)
+    {
+        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.MoveUnit(cargo, target);
+        sim.State.MoveUnit(unit, target);
     }
     internal static bool CrossesRiver(Simulation sim, TileId from, TileId to)
     {
@@ -81,6 +93,8 @@ internal sealed class PromotionEffects : IModifierSource
             ("friendly_heal", p.FriendlyHealChange), ("neutral_heal", p.NeutralHealChange), ("enemy_heal", p.EnemyHealChange),
             ("same_tile_heal", p.SameTileHealChange), ("adjacent_heal", p.AdjacentTileHealChange), ("upgrade_discount", p.UpgradeDiscount),
             ("experience_percent", p.ExperiencePercent), ("kamikaze", p.KamikazePercent), ("pillage_percent", p.PillageChange),
+            ("bombard_rate", p.BombardRateChange), ("cargo", p.CargoChange),
+            ("air_range", p.AirRangeChange), ("intercept", p.InterceptChange), ("evasion", p.EvasionChange),
             ("first_strike_immune", p.ImmuneToFirstStrikes ? 1 : 0), ("river_attack", p.RiverAttack ? 1 : 0),
             ("amphibious", p.Amphibious ? 1 : 0), ("blitz", p.Blitz ? 1 : 0), ("always_heal", p.AlwaysHeal ? 1 : 0),
             ("enemy_route", p.EnemyRoute ? 1 : 0), ("move_peaks", p.CanMovePeaks ? 1 : 0), ("zone_control", p.ZoneOfControl ? 1 : 0) };

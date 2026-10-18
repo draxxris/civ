@@ -153,7 +153,7 @@ var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "
         var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2); Meet(sim, 0, 3);
         Apply(sim, new SignDefensivePactCommand { Player = 1, Target = 2 }); Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 3 });
         Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
-        Assert.True(sim.TeamOf(2).Wars.Contains(0)); Assert.True(sim.TeamOf(0).Wars.Contains(2)); Assert.False(sim.TeamOf(3).Wars.Contains(1));
+        Assert.Contains(0, sim.TeamOf(2).Wars); Assert.Contains(2, sim.TeamOf(0).Wars); Assert.DoesNotContain(1, sim.TeamOf(3).Wars);
         Assert.False(Service(sim).HasDefensivePact(sim, 0, 3));
         Reject(sim, new DiplomaticMakePeaceCommand { Player = 0, Target = 1 }, "recent");
         sim.State.Turn += 12; Apply(sim, new DiplomaticMakePeaceCommand { Player = 0, Target = 1 });

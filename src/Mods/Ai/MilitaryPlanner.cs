@@ -14,30 +14,36 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
     {
         foreach (var unit in Soldiers().ToList()) Promote(unit);
         AssignGarrisons();
+
+        var navy = new NavalPlanner(ctx, _orders, attack);
+        navy.Support();
         var free = Soldiers().Where(u => !ctx.Done.Contains(u.Id) && u.MovesLeft > 0).ToList();
         free = Hunt(free);
         free = attack.Plan(free, Views);
+        free = navy.Sealift(free);
+        navy.Plan();
         free = ExploreWith(free);
         foreach (var unit in free) Rest(unit);
         foreach (var scout in ctx.UnitsWithRole(UnitRole.Explorer).Where(u => !ctx.Done.Contains(u.Id)).ToList()) Scout(scout);
         Upgrades();
     }
 
-    private IEnumerable<Unit> Soldiers() => ctx.Units.Where(u => ctx.Alive(u) && ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+    private IEnumerable<Unit> Soldiers() => ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0
+        && ctx.MilitaryState(u).TransportId is null && ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
 
     private void AssignGarrisons()
     {
         foreach (var view in Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id))
         {
             int want = army.DesiredGarrison(view);
-            var here = ctx.Sim.State.UnitsAt(view.City.Position).Where(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee)
+            var here = ctx.Sim.State.UnitsAt(view.City.Position).Where(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee && ctx.MilitaryState(u).TransportId is null)
                 .OrderByDescending(u => AiOptions.DefenderQuality(ctx.Def(u)) * u.Health).ThenBy(u => u.Id).ToList();
             foreach (var unit in here.Take(want)) { ctx.Done.Add(unit.Id); _orders.Fortify(unit); }
         }
         // Reserve all existing garrisons before choosing reinforcements: never steal a city's last defender.
         foreach (var view in Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id))
         {
-            int here = ctx.Sim.State.UnitsAt(view.City.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
+            int here = ctx.Sim.State.UnitsAt(view.City.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee && ctx.MilitaryState(u).TransportId is null);
             for (int have = here; have < army.DesiredGarrison(view); have++)
                 if (!Reinforce(view)) break;
         }
@@ -46,11 +52,20 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
     private bool Reinforce(CityView view)
     {
         var pick = Soldiers().Where(u => ctx.Role(u) == UnitRole.Melee && !ctx.Done.Contains(u.Id) && u.MovesLeft > 0 && u.Position != view.City.Position)
-            .OrderBy(u => ctx.Grid.Distance(u.Position, view.City.Position)).ThenBy(u => u.Id).FirstOrDefault();
+            .Where(u => ctx.Sim.State.PlotAt(u.Position).AreaId == ctx.Sim.State.PlotAt(view.City.Position).AreaId)
+            .Where(u => ctx.Service<IPathfindingService>().FindPath(ctx.Sim, u.Id, view.City.Position) is not null)
+            .OrderByDescending(u => ReinforcementValue(u, view)).ThenBy(u => u.Id).FirstOrDefault();
         if (pick is null) return false;
         ctx.Done.Add(pick.Id);
         ctx.MoveToward(pick, view.City.Position);
         return true;
+    }
+
+    private long ReinforcementValue(Unit unit, CityView target)
+    {
+        int sourceThreat = Views.FirstOrDefault(v => v.City.Position == unit.Position)?.Threat ?? 0;
+        long cost = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, target.City.Position)!.Cost;
+        return (target.Threat - sourceThreat) * 1000L - cost;
     }
 
     private void Promote(Unit unit)
@@ -79,13 +94,16 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
 
     private bool HuntOne(Unit unit)
     {
-        var best = ctx.Enemies.Where(e => ctx.Alive(e) && ctx.Grid.Distance(e.Position, unit.Position) <= 3 && OnOurLand(e.Position))
+        var best = ctx.Enemies.Where(e => ctx.Alive(e) && ctx.Grid.Distance(e.Position, unit.Position) <= 3 && OnOurLand(e.Position)
+            && ctx.Sim.State.CityAt(e.Position) is null)
             .Select(e => (Enemy: e, Odds: _orders.Odds(unit, e.Position))).Where(x => x.Odds is { } o && o >= _orders.ThresholdFor(unit))
             .OrderByDescending(x => x.Odds).ThenBy(x => x.Enemy.Id).FirstOrDefault();
         if (best.Enemy is null) return false;
         ctx.Done.Add(unit.Id);
         if (ctx.Grid.Distance(unit.Position, best.Enemy.Position) > 1) _orders.Approach(unit, best.Enemy.Position);
-        if (ctx.Alive(unit) && _orders.Odds(unit, best.Enemy.Position) >= _orders.ThresholdFor(unit)) _orders.Attack(unit, best.Enemy.Position);
+        attack.Prepare(best.Enemy.Position);
+        if (ctx.Alive(unit) && !ctx.MilitaryState(unit).Attacked && _orders.Odds(unit, best.Enemy.Position) >= _orders.ThresholdFor(unit))
+            _orders.Attack(unit, best.Enemy.Position);
         return true;
     }
 
