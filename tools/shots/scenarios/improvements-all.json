@@ -1,0 +1,371 @@
+{
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat"
+ },
+ "tiles": [
+  {
+   "at": [
+    2,
+    2
+   ],
+   "improvement": "world:city_ruins"
+  },
+  {
+   "at": [
+    3,
+    2
+   ],
+   "improvement": "world:city_ruins_arcology"
+  },
+  {
+   "at": [
+    4,
+    2
+   ],
+   "improvement": "world:depleted_mine",
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "at": [
+    5,
+    2
+   ],
+   "improvement": "world:goody_hut"
+  },
+  {
+   "at": [
+    6,
+    2
+   ],
+   "improvement": "world:improvement_improvement_3factory"
+  },
+  {
+   "at": [
+    7,
+    2
+   ],
+   "improvement": "world:improvement_improvement_5factory"
+  },
+  {
+   "at": [
+    8,
+    2
+   ],
+   "improvement": "world:improvement_improvement_apple_farm"
+  },
+  {
+   "at": [
+    9,
+    2
+   ],
+   "improvement": "world:improvement_improvement_bunker"
+  },
+  {
+   "at": [
+    2,
+    4
+   ],
+   "improvement": "world:improvement_improvement_camp",
+   "feature": "world:forest"
+  },
+  {
+   "at": [
+    3,
+    4
+   ],
+   "improvement": "world:improvement_improvement_cottage"
+  },
+  {
+   "at": [
+    4,
+    4
+   ],
+   "improvement": "world:improvement_improvement_desertwindmill"
+  },
+  {
+   "at": [
+    5,
+    4
+   ],
+   "improvement": "world:improvement_improvement_dome_farm"
+  },
+  {
+   "at": [
+    6,
+    4
+   ],
+   "improvement": "world:improvement_improvement_exploretemple"
+  },
+  {
+   "at": [
+    7,
+    4
+   ],
+   "improvement": "world:improvement_improvement_farm"
+  },
+  {
+   "at": [
+    8,
+    4
+   ],
+   "improvement": "world:improvement_improvement_forest_preserve",
+   "feature": "world:forest"
+  },
+  {
+   "at": [
+    9,
+    4
+   ],
+   "improvement": "world:improvement_improvement_fort"
+  },
+  {
+   "at": [
+    2,
+    6
+   ],
+   "improvement": "world:improvement_improvement_future_bunker"
+  },
+  {
+   "at": [
+    3,
+    6
+   ],
+   "improvement": "world:improvement_improvement_geothermal_borehole",
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    4,
+    6
+   ],
+   "improvement": "world:improvement_improvement_groundwater_well"
+  },
+  {
+   "at": [
+    5,
+    6
+   ],
+   "improvement": "world:improvement_improvement_hamlet"
+  },
+  {
+   "at": [
+    6,
+    6
+   ],
+   "improvement": "world:improvement_improvement_hybrid_forest",
+   "feature": "world:forest"
+  },
+  {
+   "at": [
+    7,
+    6
+   ],
+   "improvement": "world:improvement_improvement_jungle_camp",
+   "feature": "world:jungle"
+  },
+  {
+   "at": [
+    8,
+    6
+   ],
+   "improvement": "world:improvement_improvement_lumbermill",
+   "feature": "world:forest"
+  },
+  {
+   "at": [
+    9,
+    6
+   ],
+   "improvement": "world:improvement_improvement_mine",
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "at": [
+    2,
+    8
+   ],
+   "improvement": "world:improvement_improvement_modern_mine",
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "at": [
+    3,
+    8
+   ],
+   "improvement": "world:improvement_improvement_pasture"
+  },
+  {
+   "at": [
+    4,
+    8
+   ],
+   "improvement": "world:improvement_improvement_plantation"
+  },
+  {
+   "at": [
+    5,
+    8
+   ],
+   "improvement": "world:improvement_improvement_quarry",
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "at": [
+    6,
+    8
+   ],
+   "improvement": "world:improvement_improvement_shaft_mine",
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "at": [
+    7,
+    8
+   ],
+   "improvement": "world:improvement_improvement_town"
+  },
+  {
+   "at": [
+    8,
+    8
+   ],
+   "improvement": "world:improvement_improvement_village"
+  },
+  {
+   "at": [
+    9,
+    8
+   ],
+   "improvement": "world:improvement_improvement_watermill",
+   "river": 1
+  },
+  {
+   "at": [
+    2,
+    10
+   ],
+   "improvement": "world:improvement_improvement_well"
+  },
+  {
+   "at": [
+    3,
+    10
+   ],
+   "improvement": "world:improvement_improvement_windmill",
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    4,
+    10
+   ],
+   "improvement": "world:improvement_improvement_windtrap"
+  },
+  {
+   "at": [
+    5,
+    10
+   ],
+   "improvement": "world:improvement_improvement_winery"
+  },
+  {
+   "at": [
+    6,
+    10
+   ],
+   "improvement": "world:improvement_improvement_woodcutter",
+   "feature": "world:forest"
+  },
+  {
+   "at": [
+    7,
+    10
+   ],
+   "improvement": "world:improvement_improvement_workshop"
+  },
+  {
+   "at": [
+    8,
+    10
+   ],
+   "improvement": "world:machu_picchu",
+   "kind": "Peak"
+  },
+  {
+   "rect": [
+    0,
+    12,
+    12,
+    16
+   ],
+   "terrain": "world:ocean",
+   "kind": "Flat"
+  },
+  {
+   "at": [
+    2,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_extraction_facility"
+  },
+  {
+   "at": [
+    3,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_fishing_boats"
+  },
+  {
+   "at": [
+    4,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_offshore_platform"
+  },
+  {
+   "at": [
+    5,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_sea_air_defense"
+  },
+  {
+   "at": [
+    6,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_sea_fort"
+  },
+  {
+   "at": [
+    7,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_submerged_town"
+  },
+  {
+   "at": [
+    8,
+    14
+   ],
+   "terrain": "world:ocean",
+   "improvement": "world:improvement_improvement_whaling_boats"
+  }
+ ],
+ "focus": [
+  5,
+  5
+ ]
+}

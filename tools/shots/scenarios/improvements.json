@@ -1,0 +1,129 @@
+{
+  "// note": "Improvement showcase on a small grassland map. Coordinates are offset (column, row).",
+  "fill": {
+    "terrain": "world:grass",
+    "kind": "Flat"
+  },
+  "tiles": [
+    {
+      "at": [
+        3,
+        5
+      ],
+      "improvement": "world:improvement_improvement_cottage"
+    },
+    {
+      "at": [
+        4,
+        5
+      ],
+      "improvement": "world:improvement_improvement_hamlet"
+    },
+    {
+      "at": [
+        5,
+        5
+      ],
+      "improvement": "world:improvement_improvement_village"
+    },
+    {
+      "at": [
+        6,
+        5
+      ],
+      "improvement": "world:improvement_improvement_town"
+    },
+    {
+      "at": [
+        4,
+        7
+      ],
+      "kind": "Hills",
+      "terrain": "world:plains",
+      "improvement": "world:improvement_improvement_mine"
+    },
+    {
+      "at": [
+        7,
+        7
+      ],
+      "kind": "Hills",
+      "terrain": "world:plains",
+      "improvement": "world:improvement_improvement_mine"
+    },
+    {
+      "at": [
+        5,
+        7
+      ],
+      "kind": "Hills",
+      "terrain": "world:plains",
+      "improvement": "world:improvement_improvement_quarry"
+    },
+    {
+      "at": [
+        6,
+        7
+      ],
+      "improvement": "world:improvement_improvement_pasture",
+      "bonus": "world:horse"
+    },
+    {
+      "at": [
+        4,
+        3
+      ],
+      "improvement": "world:improvement_improvement_farm"
+    },
+    {
+      "at": [
+        6,
+        3
+      ],
+      "improvement": "world:improvement_improvement_farm"
+    },
+    {
+      "at": [
+        8,
+        3
+      ],
+      "improvement": "world:improvement_improvement_farm"
+    }
+  ],
+  "roads": [
+    [
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        8,
+        4
+      ]
+    ]
+  ],
+  "focus": [
+    5,
+    5
+  ]
+}

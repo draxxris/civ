@@ -1,2 +1,4 @@
 src/Mods/World/art/terrain/*.png filter=lfs diff=lfs merge=lfs -text
 src/Mods/World/art/scatter/**/*.glb filter=lfs diff=lfs merge=lfs -text
+src/Mods/World/art/models/*.glb filter=lfs diff=lfs merge=lfs -text
+src/Mods/Cities/art/models/*.glb filter=lfs diff=lfs merge=lfs -text
