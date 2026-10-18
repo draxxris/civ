@@ -182,6 +182,7 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         Assert.NotEmpty(peoples.Leader(sim, 0)!.Flavors);
     }
     [Fact]
+    [Trait("Category", "E2E")]
     public void Headless_150_turn_game_switches_civics_and_replays_from_saves()
     {
         var sim = Create(Caesar);

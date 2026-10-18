@@ -8,8 +8,32 @@ namespace Civ.Mods.Tests;
 /// <summary>The visual river network: generator-style edge chains render as one connected river that keeps every rules
 /// edge and opens into the water; river surfaces lie on the rendered terrain; and river changes dirty every chunk whose
 /// terrain or river surface they reshape.</summary>
-public sealed class RiverNetworkTests
+public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) : IClassFixture<RiverNetworkTests.DirtyBaseline>
 {
+    /// <summary>Share the rendered 20 × 20 map across edits; it retains distant clean chunks and both wrap edges.
+    /// Build only when an edit test runs.</summary>
+    public sealed class DirtyBaseline
+    {
+        private readonly Lazy<RenderedBaseline> _value = new(() => new());
+        public RenderedBaseline Value => _value.Value;
+    }
+
+    public sealed class RenderedBaseline
+    {
+        public TerrainSnapshot Snapshot { get; } = TerrainTestMaps.Mixed(20, 20, seed: 3);
+        public TerrainChunks Chunks { get; }
+        public TerrainField Field { get; }
+        public TerrainMeshData[] Ground { get; }
+        public RiverMeshData?[] Rivers { get; }
+
+        public RenderedBaseline()
+        {
+            Chunks = new(Snapshot.Grid.Spec);
+            Field = new(Snapshot, 2);
+            Ground = Chunks.Chunks.Select(c => TerrainMesher.Build(c, Field)).ToArray();
+            Rivers = Chunks.Chunks.Select(c => RiverMesher.Build(c, Field)).ToArray();
+        }
+    }
     private static readonly double Sqrt3 = TerrainTestMaps.Sqrt3;
 
     /// <summary>The map generator marks the edge crossed by each step of a tile-centre drainage chain. A chain running
@@ -88,33 +112,49 @@ public sealed class RiverNetworkTests
     }
 
     [Theory]
-    [InlineData(14, 0, 0)] // north boundary: the ordinary terrain ring misses a changed chunk
-    [InlineData(2, 15, 2)] // longer connector influence also reaches beyond the ordinary terrain ring
+    [InlineData(10, 0, 0)] // north boundary: the ordinary terrain ring misses a changed chunk
+    [InlineData(2, 3, 2)] // a moved long connector changes terrain beyond the ordinary terrain ring
     [InlineData(0, 3, 2)] // west edge: the wrap image reshapes east chunks
     public void Changing_a_river_edge_dirties_every_chunk_whose_terrain_or_river_surface_changes(int col, int row, int direction)
     {
-        var before = TerrainTestMaps.Mixed(40, 24, seed: 3);
-        var after = TerrainTestMaps.Mixed(40, 24, seed: 3);
+        var rendered = baseline.Value;
+        var before = rendered.Snapshot;
+        var after = TerrainTestMaps.Mixed(20, 20, seed: 3);
         int tile = row * before.Width + col;
         after.Relief[tile] = ReliefClass.Flat;
         after.Sight[tile] = Sight.Visible;
         if ((after.Rivers[tile] & (1 << direction)) != 0) after.Rivers[tile] &= (byte)~(1 << direction);
         else TerrainTestMaps.SetRiver(after, tile, direction);
-        var chunks = new TerrainChunks(before.Grid.Spec);
+        var chunks = rendered.Chunks;
         var dirty = TerrainChunks.DirtyChunks(chunks.Signatures(before), chunks.Signatures(after)).ToHashSet();
-        var oldField = new TerrainField(before, 2);
-        var newField = oldField.With(after);
-        int changed = 0;
+        var newField = rendered.Field.With(after);
+        var changed = new HashSet<int>();
         foreach (var chunk in chunks.Chunks)
         {
-            bool same = Same(TerrainMesher.Build(chunk, oldField), TerrainMesher.Build(chunk, newField))
-                && Same(RiverMesher.Build(chunk, oldField), RiverMesher.Build(chunk, newField));
-            if (same) continue;
-            changed++;
+            bool sameGround = Same(rendered.Ground[chunk.Id], TerrainMesher.Build(chunk, newField));
+            bool sameRiver = Same(rendered.Rivers[chunk.Id], RiverMesher.Build(chunk, newField));
+            if (sameGround && sameRiver) continue;
+            changed.Add(chunk.Id);
             Assert.Contains(chunk.Id, dirty);
         }
-        Assert.True(changed > 0);
+        Assert.NotEmpty(changed);
         Assert.True(dirty.Count < chunks.Chunks.Count);
+        if (col == 0)
+            Assert.Contains(changed, id => chunks.Chunks[id].Column == chunks.Columns - 1);
+        else
+        {
+            // Both the north-boundary edit and the connector edit need more than the ordinary terrain ring.
+            Assert.Contains(changed, id => !chunks.TilesOf(chunks.Chunks[id]).Any(t =>
+                before.Relief[t] != after.Relief[t] || before.Rivers[t] != after.Rivers[t]));
+            if (row != 0)
+            {
+                // Keep this a long-connector regression, not just another isolated river-edge edit.
+                var previousBridges = RiverGraph.Build(before).Links.Where(l => l.Kind == RiverLinkKind.Bridge)
+                    .Select(l => Segment(l.AX, l.AZ, l.BX, l.BZ)).ToHashSet();
+                Assert.Contains(RiverGraph.Build(after).Links, l => l.Kind == RiverLinkKind.Bridge && l.Length > 1.5
+                    && !previousBridges.Contains(Segment(l.AX, l.AZ, l.BX, l.BZ)));
+            }
+        }
     }
 
     private static bool Same(TerrainMeshData a, TerrainMeshData b) =>

@@ -6,24 +6,24 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
-public sealed class DiplomacyRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class DiplomacyRulesTests
 {
-    private ContentDb Content()
+    private static readonly Lazy<ContentDb> Content = new(() =>
     {
+        var mods = new LoadedMods();
         var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
         var civic = mods.Content.Get<S.CivicDef>().All.First(c => c.RequiresStateReligion);
         var constants = mods.Content.Get<S.RuleConstantsDef>().All.Single();
         var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government"] }, Instance = new Probe(civic, constants) };
         return ModLoader.Build(mods.Sources.Append(diplomacy).Append(probe));
-    }
-    private Simulation Scenario()
+    });
+    private static Simulation Scenario()
     {
-var sim = GameFactory.Create(Content(), 19, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar", "peoples:leader_bismarck", "peoples:leader_gandhi");
+        var settings = GameFactory.Settings(19, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar", "peoples:leader_bismarck", "peoples:leader_gandhi");
+        var sim = Simulation.CreateScenario(Content.Value, settings, new(12, 8, true),
+            Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass", Route = "world:route_route_road" }).ToArray());
         sim.State.Players = sim.State.Players.Select(p => new Player { Id = p.Id, TeamId = p.TeamId, Civilization = p.Civilization,
             Leader = p.Id == 0 ? "diplomacy_probe:leader_a" : "diplomacy_probe:leader_b" }).ToList();
-        sim.State.Map = new(12, 8, true);
-        sim.State.Plots = Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass", Route = "world:route_route_road" }).ToArray();
-        sim.State.Units.Clear(); sim.State.Cities.Clear();
         foreach (var team in sim.State.Teams) team.Techs.Clear();
         foreach (var player in sim.State.Players) { player.Treasury = 100; player.StartingPlot = null; }
         sim.State.RebuildIndexes();

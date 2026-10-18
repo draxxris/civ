@@ -7,18 +7,22 @@ using S = Civ.Content.Schema;
 namespace Civ.Mods.Tests;
 
 /// <summary>Loads src/Mods/ProjectsVictory directly from its own build output, so it needs no test project reference.</summary>
-public sealed class ProjectsVictoryRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class ProjectsVictoryRulesTests
 {
     private const string Speed = "foundation:gamespeed_normal";
-    private static readonly Lazy<ModSource> Mine = new(() =>
-        ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "ProjectsVictory")));
+    private static readonly Lazy<ContentDb> Content = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var source = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "ProjectsVictory"));
+        return ModLoader.Build(loaded.Sources.Append(source));
+    });
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static IProjectVictoryService Pv(Simulation sim) => Service<IProjectVictoryService>(sim);
 
     /// <summary>Two teams, one city each, half of the land each. No rule is satisfied at the start.</summary>
     private Simulation Scenario()
     {
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(Mine.Value)));
+        var sim = GameFactory.Scenario(Content.Value);
         GameFactory.NeutralPolitics(sim);
         for (int i = 0; i < sim.State.Plots.Length; i++) sim.State.Plots[i].Owner = i % 2;
         AddCity(sim, 0, 14); AddCity(sim, 1, 57);

@@ -7,17 +7,19 @@ namespace Civ.Mods.Tests;
 
 public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
-    private readonly GameCatalog _catalog = new(mods.Sources);
+    private readonly GameCatalog _catalog = mods.Catalog;
+    private readonly TerrainPalette _palette = new(mods.Catalog);
+    private readonly ScatterPlanner _planner = new(mods.Catalog);
     private static readonly double Sqrt3 = Math.Sqrt(3);
 
-    private TerrainSnapshot Map(string? right = "world:forest")
+    // Local contracts need several chunk rows/columns, not the statistical density fixture's 32 rows.
+    private TerrainSnapshot Map(string? right = "world:forest", int width = 16, int height = 16)
     {
-        var session = TerrainTestMaps.RevealedSession(mods.Content, 24, 32);
-        for (int row = 0; row < 32; row++)
-            for (int col = 0; col < 24; col++)
-                session.Sim.State.Plots[row * 24 + col].Feature = col < 12 ? "world:forest" : right;
-        var palette = new TerrainPalette(_catalog);
-        return TerrainSnapshot.From(session, palette.LayerOf, palette.FeatureGroundOf);
+        var session = TerrainTestMaps.RevealedSession(mods.Content, width, height);
+        for (int row = 0; row < height; row++)
+            for (int col = 0; col < width; col++)
+                session.Sim.State.Plots[row * width + col].Feature = col < width / 2 ? "world:forest" : right;
+        return TerrainSnapshot.From(session, _palette.LayerOf, _palette.FeatureGroundOf);
     }
 
     private static TerrainChunk Whole(TerrainSnapshot s) => new(0, 0, 0, 0, s.Width, -2, s.Height + 1);
@@ -25,7 +27,7 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
     private IReadOnlyList<ScatterInstance> Plan(TerrainSnapshot snapshot, int seed = 17, bool warp = false, int[]? extras = null)
     {
         var field = new TerrainField(snapshot, seed, new TerrainTuning { WarpAmplitude = warp ? 0.3 : 0, FlatNoise = 0 });
-        return new ScatterPlanner(_catalog).Plan(Whole(snapshot), snapshot, field, new TerrainPalette(_catalog), extras);
+        return _planner.Plan(Whole(snapshot), snapshot, field, _palette, extras);
     }
 
     [Fact]
@@ -48,10 +50,19 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
         return false;
     }
 
+    private IReadOnlyList<ScatterInstance> BorderPlan(string? right = "world:forest")
+    {
+        var snapshot = Map(right, width: 24, height: 32);
+        var field = new TerrainField(snapshot, 17, new TerrainTuning { WarpAmplitude = 0, FlatNoise = 0 });
+        // Contains every point in all 14 strips, including both interior controls. Keep the full snapshot
+        // so blend contributors are unchanged; global scatter hashing does not depend on chunk bounds.
+        return _planner.Plan(new(0, 0, 0, 10, 13, 1, 29), snapshot, field, _palette);
+    }
+
     [Fact]
     public void Adjacent_forests_fill_the_shared_edge_at_the_interior_density()
     {
-        var props = Plan(Map());
+        var props = BorderPlan();
         int edge = props.Count(p => InStrip(p, 0));
         int interior = props.Count(p => InStrip(p, -Sqrt3 / 2));
         Assert.True(interior > 40, $"Interior sample too small: {interior}");
@@ -61,7 +72,7 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
     [Fact]
     public void Forest_thins_from_interior_to_border_to_open_plains()
     {
-        var props = Plan(Map(null));
+        var props = BorderPlan(null);
         int interior = props.Count(p => InStrip(p, -Sqrt3 / 2));
         int border = props.Count(p => InStrip(p, 0));
         int plains = props.Count(p => InStrip(p, Sqrt3 / 2));
@@ -72,7 +83,7 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
     [Fact]
     public void Forest_and_jungle_mix_species_within_point_three_of_their_shared_edge()
     {
-        var edge = Plan(Map("world:jungle")).Where(p => InStrip(p, 0, 0.3)).ToArray();
+        var edge = BorderPlan("world:jungle").Where(p => InStrip(p, 0, 0.3)).ToArray();
         Assert.Contains(edge, p => p.Set == "forest");
         Assert.Contains(edge, p => p.Set == "jungle");
     }
@@ -155,7 +166,7 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
         int water = 12 * snapshot.Width + 10;
         snapshot.Relief[water] = ReliefClass.ShallowWater;
         var field = new TerrainField(snapshot, 17, new TerrainTuning { WarpAmplitude = 0 });
-        var props = new ScatterPlanner(_catalog).Plan(Whole(snapshot), snapshot, field, new TerrainPalette(_catalog));
+        var props = _planner.Plan(Whole(snapshot), snapshot, field, _palette);
         Assert.Contains(props, p => p.Set == "forest");
         Assert.DoesNotContain(props, p => p.Set == "rocks");
         Assert.All(props, p =>

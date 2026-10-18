@@ -101,10 +101,16 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(15, result.CityCountHundredths); // 100 * 18 / 18 * 30% * 100%, then 50%.
         Assert.Equal(15, result.Ledger.Total("cities:maintenance_hundredths"));
     }
+    // Only frozen definitions and stateless services are shared; each call creates fresh state and RNG.
+    private static readonly Lazy<ContentDb> ProbeContent = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var source = new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["research", "foundation", "military"] }, Root = loaded.Root, Instance = new ProbeMod() };
+        return ModLoader.Build(loaded.Sources.Append(source));
+    });
     private Simulation ProbeScenario()
     {
-        var source = new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["research", "foundation", "military"] }, Root = mods.Root, Instance = new ProbeMod() };
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(source)));
+        var sim = GameFactory.Scenario(ProbeContent.Value);
         GameFactory.NeutralPolitics(sim);
         sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Name = "Test" });
         sim.State.Cities[0].Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });

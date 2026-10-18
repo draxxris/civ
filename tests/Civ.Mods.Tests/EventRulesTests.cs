@@ -7,7 +7,7 @@ using S = Civ.Content.Schema;
 namespace Civ.Mods.Tests;
 
 /// <summary>Loads src/Mods/Events directly from its own build output.</summary>
-public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class EventRulesTests
 {
     private static readonly Lazy<ModSource> Mine = new(() =>
     {
@@ -17,12 +17,23 @@ public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var built = Directory.GetFiles(root, "mod.json", SearchOption.AllDirectories).OrderByDescending(File.GetLastWriteTimeUtc).First();
         return ModLoader.FromDirectory(Path.GetDirectoryName(built)!);
     });
+    private static readonly Lazy<ContentDb> Content = new(() =>
+        ModLoader.Build(new LoadedMods().Sources.Append(Mine.Value)));
+    private static readonly Lazy<ContentDb> EmpireContent = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var probe = new ModSource
+        {
+            Manifest = new() { Id = "empire_probe", Version = "1", References = ["events"] }, Root = loaded.Root, Instance = new EmpireProbe(),
+        };
+        return ModLoader.Build(loaded.Sources.Append(Mine.Value).Append(probe));
+    });
     private static IEventService Events(Simulation sim) => sim.Content.Services.Get<IEventService>().Single();
     private static void Turn(Simulation sim) => sim.Content.TurnSystems.Get("events:turn").Run(sim);
 
-    private Simulation Scenario(params ModSource[] extra)
+    private static Simulation Scenario(ContentDb? content = null)
     {
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(Mine.Value).Concat(extra)));
+        var sim = GameFactory.Scenario(content ?? Content.Value);
         GameFactory.NeutralPolitics(sim);
         sim.State.Players[0].Treasury = 100;
         return sim;
@@ -168,10 +179,7 @@ public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             });
         }
     }
-    private Simulation EmpireScenario() => Scenario(new ModSource
-    {
-        Manifest = new() { Id = "empire_probe", Version = "1", References = ["events"] }, Root = mods.Root, Instance = new EmpireProbe(),
-    });
+    private static Simulation EmpireScenario() => Scenario(EmpireContent.Value);
     private static long Happiness(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Total("cities:happiness");
     private static long Health(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Total("cities:health");
 

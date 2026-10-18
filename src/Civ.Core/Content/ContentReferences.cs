@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Civ.Content;
@@ -36,6 +37,15 @@ public sealed record ContentRef(string Id, Type DefinitionType, string Path);
 /// <summary>Discovers annotated identities and typed requirement leaves, including nested maps and records.</summary>
 public static class ContentReferences
 {
+    private sealed record ReferenceProperty(PropertyInfo Property, ContentReferenceAttribute[] Attributes);
+    private static readonly ConditionalWeakTable<Type, ReferenceProperty[]> Properties = new();
+
+    private static ReferenceProperty[] DescribeProperties(Type type) => type
+        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+        .OrderBy(p => p.Name, StringComparer.Ordinal)
+        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
+        .Select(p => new ReferenceProperty(p, p.GetCustomAttributes<ContentReferenceAttribute>().ToArray()))
+        .ToArray();
     /// <summary>Find all annotated identities and neutral text links in a definition.</summary>
     public static IEnumerable<ContentRef> Enumerate(ContentDef definition, IEnumerable<IRequirementEvaluator> evaluators)
     {
@@ -47,6 +57,7 @@ public static class ContentReferences
     {
         if (value is string text)
         {
+            if (!text.Contains("{link:", StringComparison.Ordinal)) yield break;
             foreach (Match match in Regex.Matches(text, @"\{link:([^}]+)\}", RegexOptions.CultureInvariant))
                 yield return new(match.Groups[1].Value, typeof(ContentDef), path);
             yield break;
@@ -79,12 +90,11 @@ public static class ContentReferences
 
     private static IEnumerable<ContentRef> WalkProperties(object value, string path, IReadOnlyDictionary<string, Type> kinds, HashSet<object> seen)
     {
-        foreach (var property in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
+        foreach (var metadata in Properties.GetValue(value.GetType(), DescribeProperties))
         {
-            if (!property.CanRead || property.GetIndexParameters().Length != 0) continue;
-            var child = property.GetValue(value);
-            var childPath = path + "." + property.Name;
-            foreach (var attribute in property.GetCustomAttributes<ContentReferenceAttribute>())
+            var child = metadata.Property.GetValue(value);
+            var childPath = path + "." + metadata.Property.Name;
+            foreach (var attribute in metadata.Attributes)
                 foreach (var id in Identities(child, attribute.Part)) yield return new(id, attribute.DefinitionType, childPath);
             foreach (var reference in Walk(child, childPath, kinds, seen)) yield return reference;
         }

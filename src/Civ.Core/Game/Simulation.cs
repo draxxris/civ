@@ -46,7 +46,7 @@ public sealed record SimulationSettings
 }
 
 /// <summary>Headless deterministic simulation. Rules, commands and cross-mod services come from frozen content.</summary>
-public sealed class Simulation
+public sealed partial class Simulation
 {
     /// <summary>Frozen ruleset contract.</summary>
     public ContentDb Content { get; }
@@ -66,26 +66,13 @@ public sealed class Simulation
     {
         settings = Settings;
         State.Map = ResolveMap(content, settings);
-        if (settings.PlayerCount <= 0) throw new ArgumentOutOfRangeException(nameof(settings.PlayerCount));
-        var setup = settings.WorldSize is null ? null : content.Services.Get<INewGameSetup>().Single();
-        if (setup is not null) setup.CreatePlayers(this);
-        else
-        {
-            var civs = content.Civilizations.All.ToList();
-            for (int i = 0; i < settings.PlayerCount; i++) AddPlayer(i, ChooseCivilization(i, civs));
-        }
-        State.Teams.Sort((a, b) => a.Id.CompareTo(b.Id));
+        var setup = InitializePlayers();
         State.Plots = Enumerable.Range(0, State.Grid.Count).Select(_ => new Plot()).ToArray();
         content.MapGenerators.Get(settings.MapGenerator).Generate(State.Map, State.Plots, Rng, content, settings.PlayerCount);
-        foreach (var plot in State.Plots)
-        {
-            if (setup is null) _ = content.Terrains.Get(plot.Terrain);
-            else _ = content.Get<Civ.Content.Schema.TerrainDef>(plot.Terrain);
-        }
+        ValidateTerrains();
         State.RebuildIndexes();
         setup?.Complete(this);
-        Events.Publish(new TurnStarted(State.Turn));
-        RunAi();
+        StartGame();
     }
     internal Simulation(ContentDb content, SimulationSettings settings, GameState state, DeterministicRng rng)
     {
@@ -94,6 +81,32 @@ public sealed class Simulation
         if (_systems.Any(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map && s is not IPlayerTurnSystem))
             throw new InvalidDataException("Player phase systems must implement IPlayerTurnSystem");
         Events = new(this);
+    }
+    private INewGameSetup? InitializePlayers()
+    {
+        if (Settings.PlayerCount <= 0) throw new ArgumentOutOfRangeException(nameof(Settings.PlayerCount));
+        var setup = Settings.WorldSize is null ? null : Content.Services.Get<INewGameSetup>().Single();
+        if (setup is not null) setup.CreatePlayers(this);
+        else
+        {
+            var civs = Content.Civilizations.All.ToList();
+            for (int i = 0; i < Settings.PlayerCount; i++) AddPlayer(i, ChooseCivilization(i, civs));
+        }
+        State.Teams.Sort((a, b) => a.Id.CompareTo(b.Id));
+        return setup;
+    }
+    private void ValidateTerrains()
+    {
+        foreach (var plot in State.Plots)
+        {
+            if (Settings.WorldSize is null) _ = Content.Terrains.Get(plot.Terrain);
+            else _ = Content.Get<Civ.Content.Schema.TerrainDef>(plot.Terrain);
+        }
+    }
+    private void StartGame()
+    {
+        Events.Publish(new TurnStarted(State.Turn));
+        RunAi();
     }
     private static MapSpec ResolveMap(ContentDb content, SimulationSettings settings) => settings.WorldSize is null
         ? settings.Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, settings);

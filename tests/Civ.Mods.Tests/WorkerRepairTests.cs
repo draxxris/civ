@@ -9,6 +9,12 @@ namespace Civ.Mods.Tests;
 
 public sealed class WorkerRepairTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
+    private static readonly Lazy<ContentDb> ProbeContent = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var source = new ModSource { Root = loaded.Root, Manifest = new() { Id = "repair_probe", Version = "1", References = ["world", "military"] }, Instance = new Probe() };
+        return ModLoader.Build(loaded.Sources.Append(source));
+    });
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static void Decide(Simulation sim) => sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
     private static City Home(Simulation sim)
@@ -79,8 +85,7 @@ public sealed class WorkerRepairTests(LoadedMods mods) : IClassFixture<LoadedMod
     [InlineData(true)]
     public void Worker_replaces_a_nonconnecting_improvement_for_a_revealed_bonus_without_a_yield_gain(bool revealed)
     {
-        var source = new ModSource { Root = mods.Root, Manifest = new() { Id = "repair_probe", Version = "1", References = ["world", "military"] }, Instance = new Probe() };
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(source))); var home = Home(sim);
+        var sim = GameFactory.Scenario(ProbeContent.Value); var home = Home(sim);
         var plot = sim.State.Plots[40];
         plot.Improvement = "repair_probe:broken"; plot.Bonus = "repair_probe:bonus";
         plot.Route = "world:route_route_road";
