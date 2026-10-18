@@ -2,6 +2,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Civ.Game;
 
 namespace Civ.Content;
@@ -10,6 +11,18 @@ namespace Civ.Content;
 public sealed class ContentDb
 {
     private sealed record Entry(object Registry, Action Freeze, Func<IEnumerable<ContentDef>> Items);
+
+    // Serialize each runtime type with its own root writer, without retaining a per-item JSON tree.
+    [JsonConverter(typeof(HashDefinitionConverter))]
+    private readonly record struct HashDefinition(ContentDef Value);
+    private sealed class HashDefinitionConverter : JsonConverter<HashDefinition>
+    {
+        public override HashDefinition Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) =>
+            throw new NotSupportedException();
+        public override void Write(Utf8JsonWriter writer, HashDefinition value, JsonSerializerOptions options) =>
+            // Serializer output is validated when Digest parses the aggregate JSON tree.
+            writer.WriteRawValue(JsonSerializer.SerializeToUtf8Bytes(value.Value, value.Value.GetType(), options), skipInputValidation: true);
+    }
     private static readonly ConditionalWeakTable<Type, PropertyInfo[]> RequirementProperties = new();
     private static PropertyInfo[] DescribeRequirementProperties(Type type) => type
         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -116,7 +129,7 @@ public sealed class ContentDb
         var definitions = _registries.OrderBy(kv => kv.Key.FullName, StringComparer.Ordinal)
             .SelectMany(kv => kv.Value.Items().Select(item => new
             {
-                Type = kv.Key.FullName, Definition = JsonSerializer.SerializeToElement(item, item.GetType(), CanonicalJson.Options),
+                Type = kv.Key.FullName, Definition = new HashDefinition(item),
             })).ToArray();
         ContentHash = CanonicalJson.Digest(new
         {

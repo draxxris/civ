@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -43,7 +44,13 @@ public static class CanonicalJson
         }
     }
     /// <summary>SHA-256 of canonical UTF-8 data.</summary>
-    public static string Digest<T>(T value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Serialize(value))));
+    public static string Digest<T>(T value)
+    {
+        var element = JsonSerializer.SerializeToElement(value, Options);
+        var buffer = new ArrayBufferWriter<byte>();
+        using (var writer = new Utf8JsonWriter(buffer)) Write(writer, element);
+        return Convert.ToHexString(SHA256.HashData(buffer.WrittenSpan));
+    }
 }
 
 /// <summary>Typed mod state keyed by registered component id. Mutable instances stay attached by reference.</summary>
