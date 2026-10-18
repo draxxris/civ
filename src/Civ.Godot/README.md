@@ -56,9 +56,10 @@ xvfb-run -a -s "-screen 0 1600x900x24" env LIBGL_ALWAYS_SOFTWARE=1 \
   -- --screenshot /tmp/civ-setup.png --stage setup --frames 60
 ```
 
-Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`, `world`, and `terrain`.
+Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`, `world`, `terrain`, and `rivers`.
 `map-city` founds a city before capture. `city` also opens its city screen and adds three eligible queue entries.
-`terrain` showcases merged mountain ridges, softened ground transitions, and scattered nature props.
+`terrain` showcases a snow-capped mountain range, softened ground transitions, and scattered nature props.
+`rivers` focuses on generated river bends and mouths without changing the map.
 `--screenshots` runs through all stages and captures each screenshot to `docs/screenshots/<stage>.png`.
 `--fps-probe` runs on a rendered display with VSync disabled and reports average FPS over 100 frames.
 `--turns N` advances the game before capture.
@@ -71,8 +72,15 @@ These inspection switches apply only to screenshot runs.
 ## Rendering and limits
 
 The terrain is a lit 3D height field in chunks of 4 × 4 tiles, with a translucent water surface at sea level.
-Its shader blends tile textures with height-modulated blending and draws fog, unexplored clouds, borders, rivers, the hover outline and the work-tile
-overlay from two per-tile data textures, so these changes do not rebuild meshes.
+Each mountain tile has a pointed summit with rocky ridges.
+Neighboring summits connect through saddles, and the slopes descend gradually into surrounding tiles.
+The shader adds snow above a ragged snow line and leaves steep faces as bare rock.
+Scatter foliage textures get a muted olive grade at load time.
+Terrain shaders blend tile textures and draw fog, unexplored clouds, borders, hover outlines, and work-tile overlays from two per-tile data textures.
+Visibility, borders, and hover changes update these textures without rebuilding meshes.
+
+River meshes follow curved channels and use a separate shader for water, ripples, and wet banks.
+Visual connectors join disconnected river marks without changing gameplay river masks.
 A world change rebuilds only the chunks whose tiles changed.
 Feature marks, routes, and icons use batched triangle meshes and an icon atlas.
 The renderer shares each mesh across three horizontal copies for the east-west seam.

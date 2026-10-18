@@ -37,6 +37,13 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         foreach (var tile in sim.State.Grid.Tiles)
         {
             var plot = sim.State.Plots[tile.Value];
+            Assert.Equal(plot.Kind == PlotKind.Peak, plot.Terrain == "world:peak");
+            if (plot.Kind == PlotKind.Peak)
+            {
+                Assert.False(Content.Get<S.TerrainDef>(plot.Terrain).IsWater);
+                Assert.False(plot.IsLake);
+                Assert.Null(plot.Feature);
+            }
             for (int d = 0; d < 6; d++)
                 if (sim.State.Grid.Neighbor(tile, d) is { } neighbor)
                     Assert.Equal((plot.RiverEdges >> d) & 1, (sim.State.Plots[neighbor.Value].RiverEdges >> ((d + 3) % 6)) & 1);
@@ -71,6 +78,32 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         int latitude = Math.Abs(2 * (tile.Value / sim.State.Map.Width) - (sim.State.Map.Height - 1)) * 90 / (sim.State.Map.Height - 1);
         Assert.InRange(latitude, bonus.MinLatitude, bonus.MaxLatitude);
         if (bonus.NoRiverSide) Assert.Equal(0, plot.RiverEdges);
+    }
+
+    [Fact]
+    public void Mountain_is_land_with_peak_capability_gates_and_survives_a_save()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var from = sim.State.Grid.TileAt(2, 3);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Terrain = "world:peak";
+        plot.Kind = PlotKind.Peak;
+        var worker = AddWorker(sim, from);
+        var ship = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:galley", Position = worker.Position };
+        sim.State.AddUnit(ship);
+        var movement = Service<IMovementService>(sim);
+        var yields = Service<IPlotYieldService>(sim);
+        Assert.Equal("Cannot enter peaks", movement.CanEnter(sim, worker.Id, from, tile));
+        Assert.Equal(default(YieldVector), yields.CalculateNature(sim, 0, tile).Yields);
+        sim.TeamOf(0).Techs.Add("research:mountaineering");
+        Assert.Null(movement.CanEnter(sim, worker.Id, from, tile));
+        Assert.Equal("Wrong domain", movement.CanEnter(sim, ship.Id, from, tile));
+        Assert.Equal(new YieldVector(0, 3, 0), yields.CalculateNature(sim, 0, tile).Yields);
+        var loaded = SaveGame.Load(Content, SaveGame.Save(sim));
+        Assert.Equal("world:peak", loaded.State.Plots[tile.Value].Terrain);
+        Assert.Equal(PlotKind.Peak, loaded.State.Plots[tile.Value].Kind);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 
     [Fact]

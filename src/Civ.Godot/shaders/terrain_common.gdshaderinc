@@ -1,4 +1,4 @@
-// Shared by terrain.gdshader and water.gdshader. Repeats the engine-free blend in Civ.Client.Core/Terrain exactly:
+// Shared by terrain.gdshader, water.gdshader and river.gdshader. Repeats the engine-free blend in Civ.Client.Core/Terrain exactly:
 // WarpGrid.Sample, HexBlend.CornerTriangle, HexBlend.Weights and TerrainSnapshot.ClampedTile. Uses only texelFetch on
 // RGBA8 data textures and a mipmapped albedo/height array on the Compatibility renderer (no depth or screen reads).
 
@@ -12,12 +12,13 @@ uniform sampler2D warp_grid : filter_nearest, repeat_disable;
 // Colour table (sRGB bytes): row 0 layer colours, row 1 feature ground tints (A = strength),
 // row 2 owner colours (index = owner + 1), row 3 water tints per layer (A = strength).
 uniform sampler2D palette : filter_nearest, repeat_disable;
-// RGB = sRGB albedo, A = linear height. No source_color hint: convert RGB only, leaving height unchanged.
+// RGB = sRGB albedo, A = linear height. No source_color hint: decode RGB only (see decode_colour), leaving height unchanged.
 uniform sampler2DArray terrain_textures : filter_linear_mipmap, repeat_enable;
 uniform int cliff_layer = 0;
 uniform int seabed_layer = 0;
 uniform int deep_seabed_layer = 0;
 uniform int unexplored_layer = 0;
+uniform int snow_layer = 0;
 uniform float uv_freq = 0.38;
 uniform float height_depth = 0.38;
 // Colour transitions are broader than relief, cloud coverage and scatter density transitions.
@@ -38,13 +39,20 @@ vec3 srgb_to_linear(vec3 c) {
 	return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), c));
 }
 
+// Colour data is stored as sRGB. Pass `!OUTPUT_IS_SRGB` as `linear`: Forward+ and Mobile light in linear space, but the
+// Compatibility renderer lights and outputs in sRGB space, like its source_color textures. Decoding there would show
+// every texture as its linearised value (mid-grey rock nearly black, sand neon orange) and out of step with the props.
+vec3 decode_colour(vec3 c, bool linear) {
+	return linear ? srgb_to_linear(c) : c;
+}
+
 int byte_of(float v) {
 	return int(round(v * 255.0));
 }
 
-vec4 palette_entry(int index, int row) {
+vec4 palette_entry(int index, int row, bool linear) {
 	vec4 c = texelFetch(palette, ivec2(index, row), 0);
-	return vec4(srgb_to_linear(c.rgb), c.a);
+	return vec4(decode_colour(c.rgb, linear), c.a);
 }
 
 // Canonical x in [0, period) on wrapping maps, so all three wrap copies sample identically.
@@ -109,6 +117,86 @@ ivec2 clamped_texel(ivec2 hex) {
 	return ivec2(wrap_col(offset_col(hex)), clamp(hex.y, 0, map_size.y - 1));
 }
 
+// Outward unit normals of the six hex edges, in Hex.Directions order (E, NE, NW, W, SW, SE).
+const vec2 EDGE_NORMAL[6] = vec2[6](
+	vec2(1.0, 0.0), vec2(0.5, -0.8660254), vec2(-0.5, -0.8660254),
+	vec2(-1.0, 0.0), vec2(-0.5, 0.8660254), vec2(0.5, 0.8660254));
+const ivec2 DIRECTION[6] = ivec2[6](
+	ivec2(1, 0), ivec2(1, -1), ivec2(0, -1), ivec2(-1, 0), ivec2(-1, 1), ivec2(0, 1));
+
+// Hex.FromPixel: cube rounding of the unwarped world position (banker's rounding like Math.Round).
+ivec2 containing_hex(vec2 p) {
+	float q = SQRT3 / 3.0 * p.x - p.y / 3.0;
+	float r = 2.0 * p.y / 3.0;
+	float s = -q - r;
+	float rq = roundEven(q), rr = roundEven(r), rs = roundEven(s);
+	float dq = abs(rq - q), dr = abs(rr - r), ds = abs(rs - s);
+	if (dq > dr && dq > ds) rq = -rr - rs;
+	else if (dr > ds) rr = -rq - rs;
+	return ivec2(int(rq), int(rr));
+}
+
+vec2 hex_centre(ivec2 hex) {
+	return vec2(SQRT3 * (float(hex.x) + float(hex.y) * 0.5), 1.5 * float(hex.y));
+}
+
+bool on_map(ivec2 hex) {
+	return hex.y >= 0 && hex.y < map_size.y && (wrap_x || (offset_col(hex) >= 0 && offset_col(hex) < map_size.x));
+}
+
+ivec2 texel_of(ivec2 hex) {
+	return ivec2(wrap_col(offset_col(hex)), hex.y);
+}
+
+int owner_of(ivec2 hex) {
+	return on_map(hex) ? byte_of(texelFetch(tile_a, texel_of(hex), 0).b) : 0;
+}
+
+// Owner border line width, shared by the terrain and the river surface drawn over it.
+uniform float border_width = 0.075;
+
+float band(float distance, float width) {
+	return 1.0 - smoothstep(width * 0.7, width, distance);
+}
+
+
+// Hover outline coverage at offset d from the hovered hex centre.
+float hover_outline(vec2 d) {
+	float edge = 1.0;
+	for (int k = 0; k < 6; k++) edge = min(edge, SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]));
+	return smoothstep(0.02, 0.035, edge) * (1.0 - smoothstep(0.075, 0.09, edge));
+}
+
+// Coverage of the owner border and hover lines the terrain draws at p, so surfaces over the terrain can let them through.
+float tile_lines(vec2 p) {
+	ivec2 hex = containing_hex(p);
+	if (!on_map(hex)) return 0.0;
+	vec4 b = texelFetch(tile_b, texel_of(hex), 0);
+	if (byte_of(b.r) == 0) return 0.0;
+	vec2 d = p - hex_centre(hex);
+	float lines = b.b > 0.5 ? hover_outline(d) : 0.0;
+	int owner = owner_of(hex);
+	if (owner == 0) return lines;
+	for (int k = 0; k < 6; k++)
+		if (owner_of(hex + DIRECTION[k]) != owner) lines = max(lines, band(SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]), border_width));
+	return lines;
+}
+
+// Sight-only version of blend_tiles: the fogged and hidden shares at p, without any material sampling.
+void sight_blend(vec2 p, out float fogged, out float hidden) {
+	ivec2 base;
+	bool upper;
+	vec3 weights = blend_weights(corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper), sharpness);
+	fogged = 0.0;
+	hidden = 0.0;
+	for (int k = 0; k < 3; k++) {
+		int sight = byte_of(texelFetch(tile_b, clamped_texel(corner_hex(base, upper, k)), 0).r);
+		if (sight == 0) hidden += weights[k];
+		else if (sight == 1) fogged += weights[k];
+	}
+	fogged /= max(1.0 - hidden, 1e-8);
+}
+
 vec3 fog_tone(vec3 c) {
 	float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
 	return mix(vec3(l), c, 0.55) * 0.72;
@@ -146,18 +234,18 @@ vec2 terrain_uv(vec2 p, float frequency) {
 	return p * (max(1.0, round(period * frequency)) / period);
 }
 
-vec4 material_sample(int layer, vec2 p) {
+vec4 material_sample(int layer, vec2 p, bool linear) {
 	vec4 first = texture(terrain_textures, vec3(terrain_uv(p, uv_freq), float(layer)));
 	vec4 second = texture(terrain_textures, vec3(terrain_uv(p, uv_freq * 1.47).yx + vec2(0.37, 0.61), float(layer)));
 	float variation = smoothstep(0.2, 0.8, periodic_noise(p, 0.16));
 	vec4 sample_colour = mix(first, second, variation * 0.55);
-	return vec4(srgb_to_linear(sample_colour.rgb), sample_colour.a);
+	return vec4(decode_colour(sample_colour.rgb, linear), sample_colour.a);
 }
 
 // Hidden tiles supply only cloud coverage, never their true material. Sight and water tint retain geometric weights.
 // Along a zero-weight edge, the largest remaining weight is at least 0.5. Keep depth + height scale < 0.5,
 // so the opposite corner contributes exactly zero on either side, even if height_depth changes.
-void blend_tiles(vec2 p, float rock_weight, out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights) {
+void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights) {
 	ivec2 base;
 	bool upper;
 	vec3 lambda = corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper);
@@ -171,7 +259,8 @@ void blend_tiles(vec2 p, float rock_weight, out vec3 land, out vec4 water_tint, 
 	water_tint = vec4(0.0);
 	fogged = 0.0;
 	hidden = 0.0;
-	vec3 rock = material_sample(cliff_layer, p).rgb;
+	vec3 rock = material_sample(cliff_layer, p, linear).rgb;
+	vec3 snow = snow_weight > 0.0 ? material_sample(snow_layer, p, linear).rgb : vec3(0.0);
 	for (int k = 0; k < 3; k++) {
 		colours[k] = vec3(0.0);
 		ivec2 t = clamped_texel(corner_hex(base, upper, k));
@@ -183,13 +272,15 @@ void blend_tiles(vec2 p, float rock_weight, out vec3 land, out vec4 water_tint, 
 		revealed[k] = ground_weights[k];
 		vec4 a = texelFetch(tile_a, t, 0);
 		int layer = byte_of(a.r);
-		vec4 material = material_sample(layer, p);
+		vec4 material = material_sample(layer, p, linear);
 		heights[k] = material.a * height_scale;
 		vec3 c = mix(material.rgb, rock, rock_weight);
-		vec4 tint = palette_entry(byte_of(a.g), 1);
+		vec4 tint = palette_entry(byte_of(a.g), 1, linear);
 		c = mix(c, tint.rgb, tint.a);
-		vec4 slime = palette_entry(layer, 3);
+		vec4 slime = palette_entry(layer, 3, linear);
 		c = mix(c, slime.rgb, slime.a);
+		// Snow caps by altitude cover whatever the summit tile is made of; fog then tones them like the ground.
+		c = mix(c, snow, snow_weight);
 		if (sight == 1) {
 			c = fog_tone(c);
 			fogged += weights[k];
@@ -215,11 +306,11 @@ void blend_tiles(vec2 p, float rock_weight, out vec3 land, out vec4 water_tint, 
 }
 
 // Two wrap-safe scrolling samples of the cloud layer, plus periodic coverage noise. Fully hidden means full cover.
-vec4 clouds(vec2 p, float hidden, float time) {
+vec4 clouds(vec2 p, float hidden, float time, bool linear) {
 	vec2 slow_p = p + vec2(time * 0.05, time * 0.012);
 	vec2 fast_p = p + vec2(-time * 0.11, time * 0.03);
-	vec3 slow = srgb_to_linear(texture(terrain_textures, vec3(terrain_uv(slow_p, 0.12), float(unexplored_layer))).rgb);
-	vec3 fast = srgb_to_linear(texture(terrain_textures, vec3(terrain_uv(fast_p, 0.19).yx + vec2(0.23, 0.49), float(unexplored_layer))).rgb);
+	vec3 slow = decode_colour(texture(terrain_textures, vec3(terrain_uv(slow_p, 0.12), float(unexplored_layer))).rgb, linear);
+	vec3 fast = decode_colour(texture(terrain_textures, vec3(terrain_uv(fast_p, 0.19).yx + vec2(0.23, 0.49), float(unexplored_layer))).rgb, linear);
 	float n = periodic_fbm(slow_p, 0.22) * 0.65 + periodic_fbm(fast_p, 0.55) * 0.35;
 	vec3 colour = mix(slow, fast, 0.35) * mix(0.8, 1.12, n);
 	float cover = smoothstep(0.3, 0.7, hidden + (n - 0.5) * 0.4);

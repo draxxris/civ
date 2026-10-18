@@ -5,8 +5,8 @@ using Godot;
 namespace Civ.Client;
 
 /// <summary>
-/// The 3D terrain: one lit mesh and one water mesh per chunk (three wrap copies on a wrapping map), shaded from the
-/// tile-data textures. A world change rebuilds only the chunks whose dirty signature changed; sight, overlay marks and
+/// The 3D terrain: one lit mesh, one sea/lake water mesh and one river surface per chunk (three wrap copies on a wrapping
+/// map), shaded from the tile-data textures. A world change rebuilds only the chunks whose dirty signature changed; sight, overlay marks and
 /// hover only re-upload <c>tileB</c>.
 /// </summary>
 internal sealed partial class TerrainRenderer : Node3D
@@ -15,8 +15,8 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly TerrainChunks _chunks;
     private readonly TileDataTexture _data;
     private readonly TerrainTextures _textures;
-    private readonly ShaderMaterial _terrainMaterial, _waterMaterial;
-    private readonly MeshInstance3D[][] _ground, _water;
+    private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial;
+    private readonly MeshInstance3D[][] _ground, _water, _rivers;
     private readonly float[] _copies;
     private readonly byte[] _marks;
     private readonly int _seed;
@@ -52,8 +52,10 @@ internal sealed partial class TerrainRenderer : Node3D
         var palette = TileDataTexture.PaletteTexture(Palette, WaterTintOf);
         _terrainMaterial = Material("res://shaders/terrain.gdshader", warp, palette);
         _waterMaterial = Material("res://shaders/water.gdshader", warp, palette);
+        _riverMaterial = Material("res://shaders/river.gdshader", warp, palette);
         _ground = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
+        _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
     }
 
     /// <summary>Material and scatter lookups for the loaded content.</summary>
@@ -101,8 +103,13 @@ internal sealed partial class TerrainRenderer : Node3D
         var signatures = _chunks.Signatures(Snapshot, extras);
         var dirty = TerrainChunks.DirtyChunks(_signatures, signatures);
         var meshes = new TerrainMeshData[dirty.Count];
+        var rivers = new RiverMeshData?[dirty.Count];
         var field = Field;
-        Parallel.For(0, dirty.Count, i => meshes[i] = TerrainMesher.Build(_chunks.Chunks[dirty[i]], field));
+        Parallel.For(0, dirty.Count, i =>
+        {
+            meshes[i] = TerrainMesher.Build(_chunks.Chunks[dirty[i]], field);
+            rivers[i] = RiverMesher.Build(_chunks.Chunks[dirty[i]], field);
+        });
         long built = clock.ElapsedMilliseconds;
         for (int i = 0; i < dirty.Count; i++)
         {
@@ -110,6 +117,8 @@ internal sealed partial class TerrainRenderer : Node3D
             var water = WaterMesh(meshes[i]);
             foreach (var copy in _ground[dirty[i]]) copy.Mesh = ground;
             foreach (var copy in _water[dirty[i]]) copy.Mesh = water;
+            var river = RiverMesh(rivers[i]);
+            foreach (var copy in _rivers[dirty[i]]) copy.Mesh = river;
             var props = _scatterPlanner.Plan(_chunks.Chunks[dirty[i]], Snapshot, Field, Palette, extras);
             _scatter.Rebuild(dirty[i], props, Snapshot);
         }
@@ -154,6 +163,7 @@ internal sealed partial class TerrainRenderer : Node3D
         material.SetShaderParameter("seabed_layer", Palette.SurfaceLayerOf(TerrainSurface.Seabed));
         material.SetShaderParameter("deep_seabed_layer", Palette.SurfaceLayerOf(TerrainSurface.DeepSeabed));
         material.SetShaderParameter("unexplored_layer", Palette.SurfaceLayerOf(TerrainSurface.Unexplored));
+        material.SetShaderParameter("snow_layer", Palette.SurfaceLayerOf(TerrainSurface.Snow));
         material.SetShaderParameter("map_size", new Vector2I(map.Width, map.Height));
         material.SetShaderParameter("wrap_x", map.Wrap);
         material.SetShaderParameter("period", (float)Snapshot.Period);
@@ -205,6 +215,37 @@ internal sealed partial class TerrainRenderer : Node3D
     }
 
 
+    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream flow in UV2, fade and white water in COLOR.</summary>
+    private ArrayMesh? RiverMesh(RiverMeshData? data)
+    {
+        if (data == null) return null;
+        int n = data.VertexCount;
+        var vertices = new Vector3[n];
+        var normals = new Vector3[n];
+        var lanes = new Vector2[n];
+        var flow = new Vector2[n];
+        var info = new Color[n];
+        for (int v = 0; v < n; v++)
+        {
+            vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
+            normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
+            lanes[v] = new Vector2(data.Lanes[v * 2], data.Lanes[v * 2 + 1]);
+            flow[v] = new Vector2(data.Flow[v * 2], data.Flow[v * 2 + 1]);
+            info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], 0);
+        }
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
+        arrays[(int)Mesh.ArrayType.Normal] = normals;
+        arrays[(int)Mesh.ArrayType.TexUV] = lanes;
+        arrays[(int)Mesh.ArrayType.TexUV2] = flow;
+        arrays[(int)Mesh.ArrayType.Color] = info;
+        arrays[(int)Mesh.ArrayType.Index] = FrontFaces(data.Indices, _ => true);
+        var mesh = new ArrayMesh();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+        mesh.SurfaceSetMaterial(0, _riverMaterial);
+        return mesh;
+    }
 
     /// <summary>The mesher winds triangles counter-clockwise seen from above; Godot's front faces are clockwise.</summary>
     private static int[] FrontFaces(int[] indices, Func<int, bool> keep)

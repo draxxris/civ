@@ -39,26 +39,59 @@ public sealed record TerrainTuning
     /// <summary>Hills: fbm frequency.</summary>
     public double HillsFrequency { get; init; } = 2.2;
 
-    /// <summary>Peaks: base height.</summary>
-    public double PeakBase { get; init; } = 0.45;
-    /// <summary>Peaks: ridged-noise amplitude.</summary>
-    public double PeakNoise { get; init; } = 0.75;
+    /// <summary>Peaks: height of a peak's own profile away from its summit; the saddle level of a connected range.
+    /// It stays above the hills so adjacent peaks keep one ridge.</summary>
+    public double PeakBase { get; init; } = 0.38;
+    /// <summary>Peaks: largest summit rise above <see cref="PeakBase"/>; each tile scales it by its own variation.</summary>
+    public double PeakRise { get; init; } = 0.9;
+    /// <summary>Peaks: distance across the ridge axis at which a summit's rise reaches zero (along it, times
+    /// <see cref="PeakStretch"/>).</summary>
+    public double PeakRadius { get; init; } = 1.1;
+    /// <summary>Peaks: exponent of the summit falloff. Above 1 gives steep, pointed tops over gentle feet.</summary>
+    public double PeakCurve { get; init; } = 1.7;
+    /// <summary>Peaks: largest summit offset from the tile centre.</summary>
+    public double PeakJitter { get; init; } = 0.22;
+    /// <summary>Peaks: fraction of <see cref="PeakRise"/> by which the lowest summit falls short of the highest.</summary>
+    public double PeakVariation { get; init; } = 0.35;
+    /// <summary>Peaks: how much longer a summit is along its ridge axis than across it. Axes follow a slow world-space
+    /// field, so neighbouring summits line up into ranges.</summary>
+    public double PeakStretch { get; init; } = 2.2;
+    /// <summary>Peaks: relative distortion of the summit distance, which grows spurs and irregular footprints.</summary>
+    public double PeakSpur { get; init; } = 0.3;
+    /// <summary>Peaks: ridged-noise (crag) amplitude.</summary>
+    public double PeakNoise { get; init; } = 0.36;
     /// <summary>Peaks: ridged-noise frequency.</summary>
-    public double PeakFrequency { get; init; } = 1.4;
+    public double PeakFrequency { get; init; } = 1.3;
 
-    /// <summary>Maximum river carve depth at a river edge.</summary>
-    public double RiverDepth { get; init; } = 0.06;
-    /// <summary>Distance from a river edge over which the carve fades out.</summary>
-    public double RiverBand { get; init; } = 0.12;
+    /// <summary>Largest river carve depth, under the middle of a full-width river.</summary>
+    public double RiverDepth { get; init; } = 0.075;
+    /// <summary>Water half width of a lowland river; sources, hills, peaks and mouths scale it (see <see cref="RiverNetwork"/>).</summary>
+    public double RiverWidth { get; init; } = 0.16;
+    /// <summary>Half width of the carved channel and its banks, as a multiple of the local water half width.</summary>
+    public double RiverBankRatio { get; init; } = 2.2;
 
     /// <summary>Half step of the central differences in <see cref="TerrainField.NormalAt"/> (chunk meshes difference their
     /// own lattice heights instead).</summary>
     public double NormalStep { get; init; } = 0.05;
 
-    /// <summary>Largest distance from a point to the centre of a tile that can affect its height or normal. A tile blends
-    /// into the six corner triangles around it, which reach its neighbours' centres (√3), widened by the warp; its river
-    /// edges (within 1 of its centre) carve within the river band.</summary>
-    public double InfluenceRadius => Math.Max(Math.Sqrt(3) + WarpAmplitude * Math.Sqrt(2), 1 + RiverBand) + NormalStep;
+    /// <summary>Largest distance from a point to the centre of a tile whose relief can affect its height or normal away from
+    /// rivers. A tile blends into the six corner triangles around it, which reach its neighbours' centres (√3), widened by the
+    /// warp. River geometry reaches further; see <see cref="RiverReach"/>.</summary>
+    public double InfluenceRadius => Math.Sqrt(3) + WarpAmplitude * Math.Sqrt(2) + NormalStep;
+
+    /// <summary>Largest distance from a point to the centre of a tile whose river bits or relief can change river geometry
+    /// (carve, banks or water surface) at that point. A point lies within one carve band of a curve sample; the sample lies
+    /// within one link span (a bowed bridge across a tile) of the link's corner nodes; a node depends on the river tiles
+    /// around it (1) and on their bridge choices, which read their own neighbours (√3). River surfaces also overhang their
+    /// chunk by up to one band and read heights there.</summary>
+    public double RiverReach
+    {
+        get
+        {
+            double band = RiverWidth * RiverNetwork.MaxWidthScale * RiverBankRatio;
+            return band + Math.Max(InfluenceRadius, band + RiverNetwork.MaxLinkSpan + 1 + Math.Sqrt(3));
+        }
+    }
 }
 
 /// <summary>The terrain height as one pure function of world (x, z) and a <see cref="TerrainSnapshot"/>. Every chunk
@@ -66,10 +99,6 @@ public sealed record TerrainTuning
 /// Profiles use world-space periodic noise, so adjacent peaks form one continuous range and the wrap has no seam.</summary>
 public sealed class TerrainField
 {
-    private static readonly double Sqrt3 = Math.Sqrt(3);
-    private static readonly (double X, double Z)[] DirectionOffsets =
-        Hex.Directions.Select(d => (Sqrt3 * (d.Q + d.R / 2.0), 1.5 * d.R)).ToArray();
-
     private readonly PeriodicNoise _noise;
     private readonly bool _wrap;
 
@@ -87,9 +116,11 @@ public sealed class TerrainField
         Tuning = tuning;
         _noise = noise;
         Warp = warp;
+        Rivers = new RiverNetwork(snapshot, tuning, noise);
         _wrap = snapshot.Grid.Spec.Wrap;
         MaxHeight = new[] { 0, tuning.DeepWater + tuning.WaterNoise, tuning.ShallowWater + tuning.WaterNoise,
-            tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsNoise, tuning.PeakBase + tuning.PeakNoise }.Max();
+            tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsNoise,
+            tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise }.Max();
         MinHeight = new[] { 0, tuning.DeepWater - tuning.WaterNoise, tuning.ShallowWater - tuning.WaterNoise,
             tuning.FlatBase - tuning.FlatNoise, tuning.HillsBase - tuning.HillsNoise, tuning.PeakBase }.Min() - tuning.RiverDepth;
     }
@@ -100,6 +131,8 @@ public sealed class TerrainField
     public int Seed { get; }
     /// <summary>Height tunables.</summary>
     public TerrainTuning Tuning { get; }
+    /// <summary>River curves derived from the snapshot's known river bits; they carve the height field.</summary>
+    public RiverNetwork Rivers { get; }
     /// <summary>Baked domain warp shared with the terrain shader.</summary>
     public WarpGrid Warp { get; }
     /// <summary>Map period in world units.</summary>
@@ -120,18 +153,20 @@ public sealed class TerrainField
     public double HeightAt(double x, double z)
     {
         if (_wrap) x -= Period * Math.Floor(x / Period);
-        var w = Weights(x, z, out var c);
+        var corners = Corners(x, z);
+        var w = HeightWeights(corners);
+        var peak = corners.HasPeak ? PeakNoise(x, z) : default;
         double h = 0, hidden = 0;
-        Add(w.A, c.A); Add(w.B, c.B); Add(w.C, c.C);
-        if (hidden < 1) h -= (1 - hidden) * RiverCarve(x, z);
-        return h;
-
-        void Add(double weight, ReliefClass relief)
+        for (int k = 0; k < 3; k++)
         {
-            if (weight <= 0) return;
-            if (relief == ReliefClass.Hidden) hidden += weight;
-            else h += weight * Profile(relief, x, z);
+            if (w[k] <= 0) continue;
+            var relief = corners.Relief(k);
+            if (relief == ReliefClass.Hidden) hidden += w[k];
+            else if (relief == ReliefClass.Peak) h += w[k] * PeakProfile(corners, k, peak);
+            else h += w[k] * Profile(relief, x, z);
         }
+        if (hidden < 1) h -= (1 - hidden) * Rivers.Carve(x, z);
+        return h;
     }
 
     /// <summary>Whether a water tile contributes to the blend here. Land-only river troughs stay dry.</summary>
@@ -160,10 +195,20 @@ public sealed class TerrainField
         return Vector3.Normalize(new Vector3((float)-dx, 1f, (float)-dz));
     }
 
-    /// <summary>Height blend weights of the corner triangle at a world position, after domain warp. Non-peak tiles use
-    /// the material sharpness. Peak tiles use the peak sharpness and the non-peak tiles share the remainder in proportion
-    /// to their material weights, so the weights always sum to 1 and stay continuous across triangle borders.</summary>
-    private Blend3 Weights(double x, double z, out (ReliefClass A, ReliefClass B, ReliefClass C) classes)
+    /// <summary>The warped corner triangle at a point, its tiles and relief classes, and the height blend weights.</summary>
+    private readonly record struct CornerSet(TileTriangle Triangle, double X, double Z, int TileA, int TileB, int TileC,
+        ReliefClass A, ReliefClass B, ReliefClass C)
+    {
+        public bool HasPeak => A == ReliefClass.Peak || B == ReliefClass.Peak || C == ReliefClass.Peak;
+        public int Tile(int k) => k switch { 0 => TileA, 1 => TileB, _ => TileC };
+        public ReliefClass Relief(int k) => k switch { 0 => A, 1 => B, _ => C };
+    }
+
+    /// <summary>Peak noise shared by every peak corner at one point: crag ridges in [0, 1] and spur distortion in [-1, 1].</summary>
+    private readonly record struct PeakDetail(double Crag, double Spur);
+
+    /// <summary>Resolve the warped corner triangle and its known relief classes.</summary>
+    private CornerSet Corners(double x, double z)
     {
         double a = Tuning.WarpAmplitude;
         double wx = x, wz = z;
@@ -174,15 +219,69 @@ public sealed class TerrainField
         }
         var tri = HexBlend.CornerTriangle(wx, wz);
         var s = Snapshot;
-        classes = (s.Relief[s.ClampedTile(tri.A)], s.Relief[s.ClampedTile(tri.B)], s.Relief[s.ClampedTile(tri.C)]);
-        bool pa = classes.A == ReliefClass.Peak, pb = classes.B == ReliefClass.Peak, pc = classes.C == ReliefClass.Peak;
-        var w = HexBlend.Weights(tri.Lambda, Tuning.MaterialSharpness);
-        if (!pa && !pb && !pc) return w;
-        var wp = HexBlend.Weights(tri.Lambda, Tuning.PeakSharpness);
-        double peak = (pa ? wp.A : 0) + (pb ? wp.B : 0) + (pc ? wp.C : 0);
-        double rest = (pa ? 0 : w.A) + (pb ? 0 : w.B) + (pc ? 0 : w.C);
+        int ta = s.ClampedTile(tri.A), tb = s.ClampedTile(tri.B), tc = s.ClampedTile(tri.C);
+        var (ra, rb, rc) = (s.Relief[ta], s.Relief[tb], s.Relief[tc]);
+        return new(tri, wx, wz, ta, tb, tc, ra, rb, rc);
+    }
+
+    /// <summary>Peaks use softer height weights. Other profiles share the remaining weight in proportion to their
+    /// material weights, preserving a continuous blend whose weights sum to one.</summary>
+    private Blend3 HeightWeights(in CornerSet corners)
+    {
+        var w = HexBlend.Weights(corners.Triangle.Lambda, Tuning.MaterialSharpness);
+        if (!corners.HasPeak) return w;
+        var wp = HexBlend.Weights(corners.Triangle.Lambda, Tuning.PeakSharpness);
+        double peak = 0, rest = 0;
+        for (int k = 0; k < 3; k++)
+        {
+            if (corners.Relief(k) == ReliefClass.Peak) peak += wp[k];
+            else rest += w[k];
+        }
         double scale = rest > 1e-12 ? (1 - peak) / rest : 0;
-        return new(pa ? wp.A : w.A * scale, pb ? wp.B : w.B * scale, pc ? wp.C : w.C * scale);
+        return new(corners.A == ReliefClass.Peak ? wp.A : w.A * scale,
+            corners.B == ReliefClass.Peak ? wp.B : w.B * scale,
+            corners.C == ReliefClass.Peak ? wp.C : w.C * scale);
+    }
+
+    private PeakDetail PeakNoise(double x, double z)
+    {
+        var t = Tuning;
+        return new(_noise.Ridged(x, z, t.PeakFrequency, t.Octaves, salt: 4), _noise.Fbm(x, z, 0.9, 2, salt: 5));
+    }
+
+    /// <summary>One peak tile's own mountain: a jittered summit near its centre whose rise falls off with a convex power
+    /// curve (steep pointed top, gentle feet) over a distorted distance, on the <see cref="TerrainTuning.PeakBase"/> saddle level,
+    /// plus crags that are strongest high up. The tile's weight fades this to zero wherever the tile stops shaping the
+    /// height, so a neighbouring peak forms a connected ridge with a saddle between two distinct summits.</summary>
+    private double PeakProfile(in CornerSet corners, int k, PeakDetail detail)
+    {
+        var t = Tuning;
+        int tile = corners.Tile(k);
+        var (cx, cz) = corners.Triangle[k].ToPixel(1);
+        double angle = TileHash(tile, 1) * Math.Tau, offset = t.PeakJitter * TileHash(tile, 2);
+        double dx = corners.X - cx - offset * Math.Cos(angle), dz = corners.Z - cz - offset * Math.Sin(angle);
+        // Ridge axis from a slow field at the (canonical) tile centre, so all copies of a tile agree.
+        double axis = Math.PI * _noise.Value(cx - Period * Math.Floor(cx / Period), cz, 0.2, salt: 6) + 0.6 * (TileHash(tile, 4) - 0.5);
+        double along = dx * Math.Cos(axis) + dz * Math.Sin(axis), across = dz * Math.Cos(axis) - dx * Math.Sin(axis);
+        along /= t.PeakStretch;
+        double distance = Math.Sqrt(along * along + across * across) * (1 + t.PeakSpur * detail.Spur);
+        double rise = Math.Pow(Math.Max(0, 1 - distance / t.PeakRadius), t.PeakCurve);
+        double summit = 1 - t.PeakVariation * TileHash(tile, 3);
+        return t.PeakBase + t.PeakRise * summit * rise + t.PeakNoise * detail.Crag * (0.5 + 0.5 * rise);
+    }
+
+    /// <summary>Deterministic per-tile value in [0, 1) for the map seed.</summary>
+    private double TileHash(int tile, uint channel)
+    {
+        uint h = Mix((uint)tile * 0x8da6b343u ^ Mix((uint)Seed ^ channel * 0x9e3779b9u));
+        return Mix(h) / 4294967296.0;
+    }
+
+    private static uint Mix(uint h)
+    {
+        h ^= h >> 16; h *= 0x7feb352du;
+        h ^= h >> 15; h *= 0x846ca68bu;
+        return h ^ (h >> 16);
     }
 
     private double Profile(ReliefClass relief, double x, double z)
@@ -194,53 +293,8 @@ public sealed class TerrainField
             ReliefClass.ShallowWater => t.ShallowWater + t.WaterNoise * _noise.Fbm(x, z, t.WaterFrequency, t.Octaves, salt: 1),
             ReliefClass.Flat => t.FlatBase + t.FlatNoise * _noise.Fbm(x, z, t.FlatFrequency, t.Octaves, salt: 2),
             ReliefClass.Hills => t.HillsBase + t.HillsNoise * _noise.Fbm(x, z, t.HillsFrequency, t.Octaves, salt: 3),
-            ReliefClass.Peak => t.PeakBase + t.PeakNoise * _noise.Ridged(x, z, t.PeakFrequency, t.Octaves, salt: 4),
             _ => 0,
         };
-    }
-
-    /// <summary>River carve: a smooth trough along every river edge, from the distance to the nearest river edge among the
-    /// edges of the containing hex and of its six neighbours (every edge that can lie within the band). An edge counts when
-    /// either side's (mirrored) bit is set, so the carve is continuous across the edge. Hidden tiles carry no river bits.</summary>
-    private double RiverCarve(double x, double z)
-    {
-        double best = RiverDistance(x, z);
-        double band = Tuning.RiverBand;
-        if (best >= band) return 0;
-        double t = 1 - best / band * (best / band);
-        return Tuning.RiverDepth * t * t;
-    }
-
-    /// <summary>Distance to a known river edge, capped at the carve band width.</summary>
-    public double RiverDistance(double x, double z)
-    {
-        var s = Snapshot;
-        var centre = Hex.FromPixel(x, z, 1);
-        double band = Tuning.RiverBand;
-        double best = band;
-        for (int n = -1; n < 6; n++)
-        {
-            var hex = n < 0 ? centre : centre.Neighbor(n);
-            if (!s.TryTile(hex, out int tile)) continue;
-            byte bits = s.Rivers[tile];
-            if (bits == 0) continue;
-            var (cx, cz) = hex.ToPixel(1);
-            for (int d = 0; d < 6; d++)
-                if ((bits & (1 << d)) != 0) best = Math.Min(best, EdgeDistance(cx, cz, d, x, z));
-        }
-        return best;
-    }
-
-    /// <summary>Distance from (x, z) to the edge of the hex centred at (cx, cz) that faces direction d.</summary>
-    private static double EdgeDistance(double cx, double cz, int d, double x, double z)
-    {
-        var (vx, vz) = DirectionOffsets[d];
-        double mx = cx + vx / 2, mz = cz + vz / 2;
-        double ux = -vz / Sqrt3, uz = vx / Sqrt3;
-        double px = x - mx, pz = z - mz;
-        double along = Math.Clamp(px * ux + pz * uz, -0.5, 0.5);
-        double dx = px - along * ux, dz = pz - along * uz;
-        return Math.Sqrt(dx * dx + dz * dz);
     }
 
     private static WarpGrid BakeWarp(TerrainSnapshot snapshot, int seed, TerrainTuning tuning) =>

@@ -13,6 +13,8 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     public const int ClearTile = 2;
     public const double ClearRadius = 0.35;
     private const double Spacing = 0.2;
+    /// <summary>Props keep this far from river banks, so no trunk stands in the water.</summary>
+    private const double RiverMargin = 0.05;
     private readonly Dictionary<(string Feature, string Terrain), (string? Set, double Density)> _appearances = new();
     private readonly Dictionary<string, int> _modelCounts = new(StringComparer.Ordinal);
     private readonly record struct Contributor(string Set, double Weight);
@@ -50,7 +52,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
         var weights = HexBlend.Weights(tri.Lambda, field.Tuning.MaterialSharpness);
         if (CloudCovered(snapshot, tri, weights)) return null;
         double y = field.HeightAt(x, z);
-        if (y <= 0.02 || field.RiverDistance(x, z) < field.Tuning.RiverBand) return null;
+        if (y <= 0.02 || field.Rivers.Near(x, z, RiverMargin)) return null;
         Gather(contributors, snapshot, field, palette, tri, weights, x, y, z);
         double total = contributors.Sum(c => c.Weight);
         if (Hash(col, row, field.Seed, 3) >= total) return null;
@@ -94,7 +96,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     private static double RockDensity(ReliefClass relief, TerrainField field, double x, double y, double z)
     {
         if (relief == ReliefClass.Hills) return 0.18;
-        if (relief != ReliefClass.Peak || y > field.Tuning.PeakBase + field.Tuning.PeakNoise * 0.35) return 0;
+        if (relief != ReliefClass.Peak || y > field.Tuning.PeakBase + field.Tuning.PeakRise * 0.2) return 0;
         return field.NormalAt(x, z).Y >= 0.65f ? 0.18 : 0;
     }
 

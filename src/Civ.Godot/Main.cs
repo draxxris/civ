@@ -33,7 +33,8 @@ internal sealed record DebugOptions
     {
         ScreenshotPath = ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{stage}.png"),
         Stage = stage, Frames = 90, Turns = stage == "city" ? 3 : 0,
-        Reveal = stage is "world" or "path" or "terrain", Zoom = stage == "map" ? -10 : stage == "world" ? 18 : stage == "terrain" ? -7 : 0,
+        Reveal = stage is "world" or "path" or "terrain" or "rivers",
+        Zoom = stage == "map" ? -10 : stage == "world" ? 18 : stage == "terrain" ? -7 : stage == "rivers" ? -8 : 0,
     };
 
     private DebugOptions Normalized() => ScreenshotPath is { Length: 0 } ? this with { ScreenshotPath = null } : this;
@@ -70,7 +71,7 @@ public partial class Main : Node3D
         }
         if (OS.GetCmdlineUserArgs().Contains("--screenshots"))
         {
-            foreach (var stage in new[] { "setup", "map", "city", "civics", "research", "path", "world", "terrain" }) _screenshotStages.Enqueue(stage);
+            foreach (var stage in new[] { "setup", "map", "city", "civics", "research", "path", "world", "terrain", "rivers" }) _screenshotStages.Enqueue(stage);
             _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
             GetWindow().Size = new Vector2I(1600, 900);
             DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
@@ -187,6 +188,10 @@ public partial class Main : Node3D
             // Offset the ridge from the left-hand unit panel and leave the coast in the close-up.
             _game!.DebugFocus(MapRenderer.PositionOf(TerrainShowcase.Focus(session)) + new Vector3(-1.5f, 0, 0.75f));
         }
+        else if (_debug.Stage == "rivers")
+        {
+            _game!.DebugFocus(MapRenderer.PositionOf(TerrainShowcase.RiverFocus(session)));
+        }
         else if (_debug.Stage == "peak")
         {
             int peak = Array.FindIndex(state.Plots, plot => plot.Kind == Civ.Game.PlotKind.Peak);
@@ -211,6 +216,11 @@ public partial class Main : Node3D
         if (_debug.ScreenshotPath == null) return;
         if (_debug.Reveal) RevealEverything(session);
         if (_debug.Stage == "terrain") TerrainShowcase.Prepare(session);
+        if (_debug.Stage == "rivers")
+        {
+            RevealEverything(session);
+            foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
+        }
         Input.WarpMouse(new Vector2(700, 10));
         if (_debug.Stage is "city" or "map-city") FoundScreenshotCity(session);
         for (int i = 0; i < _debug.Turns; i++) session.EndTurn();

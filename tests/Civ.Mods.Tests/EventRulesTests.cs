@@ -138,16 +138,20 @@ public sealed class EventRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Scenario();
         var city = AddCity(sim, 14, 3, "cities:library");
-        sim.TeamOf(0).Techs.Add("research:bronze_working");
         Events(sim); // service registered
         var research = sim.Content.Services.Get<IResearchService>().Single();
         research.SetQueue(sim, 0, ["research:agriculture"]);
         var e = Wait(sim, "events:manuscript");
+        // Other events can spend gold while waiting; isolate this choice's budget.
+        sim.State.Players[0].Treasury = 100;
         Choose(sim, e, "events:manuscript_buy");
         Assert.Equal(50, sim.State.Players[0].Treasury);
         Assert.True(sim.TeamOf(0).Research.GetValueOrDefault("research:agriculture") > 0 || sim.TeamOf(0).Techs.Contains("research:agriculture"));
+        // Enable bandits only now, so an earlier auto-resolution cannot put them on cooldown.
+        sim.TeamOf(0).Techs.Add("research:bronze_working");
         sim.State.Players[0].Treasury = 100;
         var bandits = Wait(sim, "events:bandits");
+        sim.State.Players[0].Treasury = 100;
         Choose(sim, bandits, "events:bandits_guards");
         Assert.Equal(1, ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger.Total("cities:happiness"));
     }

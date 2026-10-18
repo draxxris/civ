@@ -94,11 +94,11 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(before, sim.ComputeHash()); // Preview neither draws RNG nor writes extension state.
         var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
         var phase = sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns");
-        for (int i = 0; i < 100 && religion.Present(sim, connected.Id).Count == 0; i++)
+        // Keep age fixed while sampling enough low-probability attempts to avoid dependence on the map's RNG offset.
+        for (int i = 0; i < 1100 && religion.Present(sim, connected.Id).Count == 0; i++)
         {
             phase.Run(sim); phase.Run(loaded);
             Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-            sim.State.Turn++; loaded.State.Turn++;
         }
         Assert.Contains(Buddhism, religion.Present(sim, connected.Id));
         Assert.Empty(religion.Present(sim, isolated.Id));

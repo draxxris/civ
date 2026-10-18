@@ -29,10 +29,11 @@ void fragment() {
 	vec4 water_tint;
 	float fogged, hidden;
 	vec3 w;
-	blend_tiles(p, 0.0, land, water_tint, fogged, hidden, w);
+	bool linear = !OUTPUT_IS_SRGB;
+	blend_tiles(p, linear, 0.0, 0.0, land, water_tint, fogged, hidden, w);
 
 	float deep = smoothstep(0.0, deep_depth, water_depth);
-	vec3 bed = mix(material_sample(seabed_layer, p).rgb, material_sample(deep_seabed_layer, p).rgb, deep);
+	vec3 bed = mix(material_sample(seabed_layer, p, linear).rgb, material_sample(deep_seabed_layer, p, linear).rgb, deep);
 	vec3 colour = mix(shallow_colour, deep_colour, deep);
 	colour = mix(colour, bed, mix(0.16, 0.06, deep));
 	colour = mix(colour, water_tint.rgb, water_tint.a);
@@ -53,7 +54,7 @@ void fragment() {
 	float fog = mix(1.0, 0.55, fogged);
 	colour = mix(colour, fog_tone(colour) * 1.1, fogged);
 
-	vec4 sky = clouds(p, hidden, TIME);
+	vec4 sky = clouds(p, hidden, TIME, linear);
 	ALBEDO = colour * (1.0 - sky.a);
 	EMISSION = sky.rgb * sky.a;
 	ALPHA = mix(alpha, 1.0, sky.a);

@@ -4,6 +4,8 @@ namespace Civ.Mods.World;
 
 internal sealed class TileAppearanceService : ITileAppearanceService
 {
+    private const int ForestFloor = 0x4a5736;
+
     private static readonly IReadOnlyDictionary<string, TileAppearance> Terrains = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)
     {
         ["world:coast"] = new(0x4a8fd0), ["world:ocean"] = new(0x234f9c),
@@ -15,7 +17,8 @@ internal sealed class TileAppearanceService : ITileAppearanceService
 
     private static readonly IReadOnlyDictionary<string, TileAppearance> Features = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)
     {
-        ["world:forest"] = new(0x1f6b2a, 45, 4, "forest", 70), ["world:jungle"] = new(0x0f7a4c, 55, 5, "jungle", 85),
+        // Muted, earthy forest floors: under the graded foliage they read as shade, not as painted green hexes.
+        ["world:forest"] = new(ForestFloor, 40, 4, "forest", 70), ["world:jungle"] = new(0x3a5236, 45, 5, "jungle", 85),
         ["world:swamp"] = new(0x3f6b55, 40, 3, "swamp", 40), ["world:ice"] = new(0xe8f4ff, 70),
         ["world:flood_plains"] = new(0x8ec26a, 35), ["world:oasis"] = new(0x3fb6c9, 50, 1, "oasis", 25),
         ["world:fallout"] = new(0x9a9a2a, 40, 2),
@@ -30,11 +33,12 @@ internal sealed class TileAppearanceService : ITileAppearanceService
         TerrainSurface.Seabed => "world:seabed",
         TerrainSurface.DeepSeabed => "world:deep_seabed",
         TerrainSurface.Unexplored => "world:unexplored",
+        TerrainSurface.Snow => "world:snow",
         _ => null,
     };
 
     public TileAppearance? Scatter(string feature, string terrain) =>
         feature == "world:forest" && terrain is "world:tundra" or "world:snow"
-            ? new(0x1f6b2a, 45, 4, "forest_snow", 70)
+            ? new(ForestFloor, 40, 4, "forest_snow", 70)
             : null;
 }

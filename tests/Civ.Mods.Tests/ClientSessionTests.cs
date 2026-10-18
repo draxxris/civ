@@ -217,6 +217,22 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Contains(s.VisibleUnits(), u => u.Owner == GameSession.Human);
     }
 
+    [Theory]
+    [InlineData("world:peak", PlotKind.Peak, "Mountain")]
+    [InlineData("world:grass", PlotKind.Hills, "Hills Grassland")]
+    [InlineData("world:plains", PlotKind.Flat, "Plains")]
+    public void Tile_titles_use_standalone_mountains_and_preserve_other_relief(string terrain, PlotKind kind, string title)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Terrain = terrain;
+        plot.Kind = kind;
+        plot.Revealed.Add(0);
+        var session = new GameSession(sim);
+        Assert.Equal(title, session.DescribeTile(sim.State.Grid.HexOf(tile))!.Title);
+    }
+
     [Fact]
     public void Picking_resolves_wrap_images_to_the_canonical_tile()
     {
