@@ -18,7 +18,8 @@ internal sealed class TileAppearanceService : ITileAppearanceService
     private static readonly IReadOnlyDictionary<string, TileAppearance> Features = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)
     {
         // Muted, earthy forest floors: under the graded foliage they read as shade, not as painted green hexes.
-        ["world:forest"] = new(ForestFloor, 40, 4, "forest", 70), ["world:jungle"] = new(0x3a5236, 45, 5, "jungle", 85),
+        // Scatter densities are percent of candidates; forests and jungles run near full so groves read as dense canopy.
+        ["world:forest"] = new(ForestFloor, 40, 4, "forest", 95), ["world:jungle"] = new(0x3a5236, 45, 5, "jungle", 100),
         ["world:swamp"] = new(0x3f6b55, 40, 3, "swamp", 40), ["world:ice"] = new(0xe8f4ff, 70),
         ["world:flood_plains"] = new(0x8ec26a, 35), ["world:oasis"] = new(0x3fb6c9, 50, 1, "oasis", 25),
         ["world:fallout"] = new(0x9a9a2a, 40, 2),
@@ -39,6 +40,6 @@ internal sealed class TileAppearanceService : ITileAppearanceService
 
     public TileAppearance? Scatter(string feature, string terrain) =>
         feature == "world:forest" && terrain is "world:tundra" or "world:snow"
-            ? new(ForestFloor, 40, 4, "forest_snow", 70)
+            ? new(ForestFloor, 40, 4, "forest_snow", 95)
             : null;
 }

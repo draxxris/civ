@@ -19,6 +19,15 @@ run = "dotnet test Civ.slnx --filter 'Category=E2E'"
 description = "Run extractor tests"
 run = "dotnet test Civ.slnx --filter 'Category=Extractor'"
 
+[tasks.shot]
+description = "Build, then capture screenshots. Pass client options after --, e.g. -- --focus hills --clean --out-dir /tmp/shots --screenshot hills (see tools/shots/README.md)"
+depends = ["build:game"]
+run = "tools/shots/shot.sh"
+
+[tasks."shot:compare"]
+description = "Side-by-side and difference image: mise run shot:compare -- before.png after.png out.png"
+run = "tools/shots/compare.sh"
+
 [tasks.benchmark]
 description = "Run operational benchmarks without timing thresholds"
 run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release"

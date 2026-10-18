@@ -7,8 +7,10 @@ render_mode cull_back, diffuse_lambert, specular_schlick_ggx;
 #include "res://shaders/terrain_common.gdshaderinc"
 
 // 0 = normal; 1 = sharpened blend weights as RGB; 2 = hidden weight; 3 = blended colour without lines or clouds;
-// 4 = white ground (lighting and relief only).
+// 4 = white ground (lighting and relief only); 5 = height bands with contour lines every 0.05; 6 = slope (1 - normal.y); 7 = the mesh lattice
+// (triangle edges of the default 9-step lattice) over a white ground.
 uniform int debug_mode = 0;
+uniform float lattice_steps = 9.0;
 // Snow caps: altitude of the snow line, half width of its transition, and the slope (1 - normal.y) above which
 // faces shed their snow. Only mountain summits rise above the line; lowland snow comes from tile terrain instead.
 uniform float snow_line = 0.86;
@@ -90,6 +92,19 @@ void fragment() {
 	if (debug_mode == 1) colour = w;
 	else if (debug_mode == 2) colour = vec3(hidden);
 	else if (debug_mode == 4) colour = vec3(0.8);
+	else if (debug_mode == 5) {
+		float band = fract(world_pos.y / 0.05);
+		float contour = 1.0 - smoothstep(0.0, 0.07, min(band, 1.0 - band));
+		colour = mix(mix(vec3(0.05, 0.25, 0.85), vec3(0.95, 0.2, 0.1), clamp(world_pos.y / 0.9, 0.0, 1.0)), vec3(0.0), contour * 0.85);
+	}
+	else if (debug_mode == 7) {
+		// Triangular lattice: spacing sqrt(3)/k along x, 1.5/k along z; lines are f = integer for three skewed coordinates.
+		float s = 1.7320508 / lattice_steps;
+		vec3 f = vec3(p.x / s - p.y / (s * 1.7320508), p.x / s + p.y / (s * 1.7320508), p.y * lattice_steps / 1.5);
+		vec3 d = abs(fract(f + 0.5) - 0.5) / max(fwidth(f), vec3(1e-5));
+		colour = mix(vec3(0.0), vec3(0.85), clamp(min(d.x, min(d.y, d.z)), 0.0, 1.0));
+	}
+	else if (debug_mode == 6) colour = mix(vec3(0.05, 0.6, 0.15), vec3(0.95, 0.1, 0.05), smoothstep(0.0, 0.4, steep));
 
 	vec3 emission = sky.rgb * cover;
 	if (hover) {

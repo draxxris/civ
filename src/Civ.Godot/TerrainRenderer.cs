@@ -28,6 +28,16 @@ internal sealed partial class TerrainRenderer : Node3D
 
     /// <summary>Terrain shader debug view for screenshot runs (see <c>debug_mode</c> in terrain.gdshader); 0 is normal.</summary>
     public static int DebugMode { get; set; }
+    /// <summary>Height tuning for this run (command-line overrides); the defaults in normal play.</summary>
+    public static TerrainTuning Tuning { get; set; } = new();
+    /// <summary>Scatter density multiplier for this run; 1 in normal play.</summary>
+    public static double ScatterDensityScale { get; set; } = 1;
+
+    /// <summary>Switch the terrain shader's debug view without rebuilding anything.</summary>
+    /// <summary>Draw the mesh lattice (debug view 7): the compatibility renderer has no wireframe mode.</summary>
+    public void SetWireframe(bool on) => SetDebugMode(on ? 7 : 0);
+
+    public void SetDebugMode(int mode) => _terrainMaterial.SetShaderParameter("debug_mode", mode);
 
     public TerrainRenderer(GameSession session, GameCatalog catalog)
     {
@@ -35,16 +45,16 @@ internal sealed partial class TerrainRenderer : Node3D
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
-        _chunks = new TerrainChunks(map);
+        _chunks = new TerrainChunks(map, Tuning);
         _data = new TileDataTexture(map.Width, map.Height);
         _marks = new byte[map.Width * map.Height];
         ulong seed = session.Sim.Settings.Seed;
         _seed = unchecked((int)(seed ^ (seed >> 32)));
         Snapshot = new TerrainSnapshot(map);
-        Field = new TerrainField(Snapshot, _seed);
+        Field = new TerrainField(Snapshot, _seed, Tuning);
         _copies = map.Wrap ? [-(float)Snapshot.Period, 0f, (float)Snapshot.Period] : [0f];
 
-        _scatterPlanner = new ScatterPlanner(catalog);
+        _scatterPlanner = new ScatterPlanner(catalog) { DensityScale = ScatterDensityScale };
         _scatter = new ScatterRenderer(catalog, _copies);
         AddChild(_scatter);
 
@@ -115,6 +125,7 @@ internal sealed partial class TerrainRenderer : Node3D
         {
             var ground = GroundMesh(meshes[i]);
             var water = WaterMesh(meshes[i]);
+            RenderStats.TerrainTriangles[dirty[i]] = ground.SurfaceGetArrayIndexLen(0) / 3;
             foreach (var copy in _ground[dirty[i]]) copy.Mesh = ground;
             foreach (var copy in _water[dirty[i]]) copy.Mesh = water;
             var river = RiverMesh(rivers[i]);
