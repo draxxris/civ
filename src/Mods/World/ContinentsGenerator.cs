@@ -3,11 +3,13 @@ using Civ.Game;
 
 namespace Civ.Mods.World;
 
-/// <summary>Continents.py / FractalWorld: polar fractal land, 75% water, separate relief and moisture fields.
-/// Integer value-noise replaces the native fractal primitive; climate and adjacency use hex topology.</summary>
-internal sealed class ContinentsGenerator : IMapGenerator
+/// <summary>Shared world pipeline with selectable land silhouettes and separate relief and moisture fields.
+/// The default Continental layout retains polar fractal land and the configured water percentage.</summary>
+internal sealed class ContinentsGenerator(string id = "world:continents", string name = "Continental",
+    WorldLayout layout = WorldLayout.Continental) : IMapGenerator
 {
-    public string Id => "world:continents";
+    public string Id => id;
+    public string Name => name;
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content) => Generate(spec, plots, rng, content, 2);
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players)
     {
@@ -21,12 +23,11 @@ internal sealed class ContinentsGenerator : IMapGenerator
             var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
             var relief = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 4, tuning.NoiseOctaves);
             foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
-            var land = grid.Tiles.OrderByDescending(t => elevation[t.Value]).ThenBy(t => t.Value)
-                .Take(grid.Count * (100 - tuning.WaterPercent) / 100).Select(t => t.Value).ToHashSet();
-            int hills = Percentile(relief, 100 - tuning.HillsPercent);
-            int peaks = Percentile(relief, 100 - tuning.PeaksPercent);
+            var land = LandLayouts.Create(grid, elevation, tuning.WaterPercent, layout);
+            int hills = Percentile(relief, layout == WorldLayout.GreatPlains ? 94 : 100 - tuning.HillsPercent);
+            int peaks = layout == WorldLayout.GreatPlains ? int.MaxValue : Percentile(relief, 100 - tuning.PeaksPercent);
             foreach (var tile in grid.Tiles)
-                SetTerrain(grid, plots[tile.Value], tile, land.Contains(tile.Value), moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
+                SetTerrain(grid, plots[tile.Value], tile, land[tile.Value], moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
             AddCoasts(grid, plots, content);
             Geography.AssignAreas(grid, plots, content);
             RiverGenerator.Generate(grid, plots, elevation, rng, content);
@@ -77,11 +78,12 @@ internal static class RiverGenerator
     {
         var parent = Drainage(grid, plots, elevation, content);
         var state = new GameState { Map = grid.Spec, Plots = plots };
+        var drawn = new bool[grid.Count];
         foreach (var tile in grid.Tiles)
         {
             if (Geography.Water(content, plots[tile.Value]) || plots[tile.Value].Kind == PlotKind.Flat) continue;
             if (rng.Next(Geography.Tuning(content).RiverSourceOneIn) != 0) continue;
-            Draw(state, tile, parent, content);
+            Draw(state, tile, parent, drawn, content);
         }
     }
     private static int[] Drainage(HexGrid grid, Plot[] plots, int[] elevation, ContentDb content)
@@ -105,15 +107,24 @@ internal static class RiverGenerator
             }
         return parent;
     }
-    private static void Draw(GameState state, TileId source, int[] parent, ContentDb content)
+    private static void Draw(GameState state, TileId source, int[] parent, bool[] drawn, ContentDb content)
     {
         var tile = source;
-        while (!Geography.Water(content, state.Plots[tile.Value]) && parent[tile.Value] >= 0)
+        // Every tile has one drainage parent. A previously drawn tile already has its entire
+        // downstream path, so tributaries can stop here without changing river bits or RNG.
+        while (!drawn[tile.Value] && !Geography.Water(content, state.Plots[tile.Value]) && parent[tile.Value] >= 0)
         {
             var next = new TileId(parent[tile.Value]);
-            int direction = Enumerable.Range(0, 6).First(d => state.Grid.Neighbor(tile, d) == next);
-            state.SetRiver(tile, direction, true);
+            state.SetRiver(tile, Direction(state.Grid, tile, next), true);
+            drawn[tile.Value] = true;
             tile = next;
         }
+    }
+
+    private static int Direction(HexGrid grid, TileId tile, TileId next)
+    {
+        for (int direction = 0; direction < 6; direction++)
+            if (grid.Neighbor(tile, direction) == next) return direction;
+        throw new InvalidOperationException("Drainage parent is not a neighbor");
     }
 }

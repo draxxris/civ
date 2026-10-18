@@ -113,10 +113,30 @@ public partial class Main : Node3D
     private NewGameOptions DebugGame()
     {
         var defaults = _catalog!.DefaultOptions();
-        if (_debug.FpsProbe) return defaults with { WorldSize = _catalog.WorldSizes.First(w => w.Name.Equals("Huge", StringComparison.OrdinalIgnoreCase)).Id, Seed = _debug.Seed };
+        var mapGenerator = _debug.MapGenerator.Length == 0 ? defaults.MapGenerator : ResolveMapGenerator(_debug.MapGenerator);
+        if (_debug.FpsProbe) return defaults with
+        {
+            WorldSize = _catalog.WorldSizes.First(w => w.Name.Equals("Huge", StringComparison.OrdinalIgnoreCase)).Id,
+            MapGenerator = mapGenerator, Seed = _debug.Seed,
+        };
         var size = _debug.World.Length == 0 ? defaults.WorldSize : _catalog.WorldSizes.First(w =>
             w.Id == _debug.World || w.Name.Equals(_debug.World, StringComparison.OrdinalIgnoreCase)).Id;
-        return defaults with { WorldSize = size, Opponents = _debug.Opponents, Seed = _debug.Seed };
+        return defaults with { WorldSize = size, MapGenerator = mapGenerator, Opponents = _debug.Opponents, Seed = _debug.Seed };
+    }
+
+    private string ResolveMapGenerator(string value)
+    {
+        var generators = _catalog!.MapGenerators;
+        var choice = generators.FirstOrDefault(g => string.Equals(g.Id, value, StringComparison.Ordinal))
+            ?? generators.FirstOrDefault(g => string.Equals(ShortId(g.Id), value, StringComparison.Ordinal))
+            ?? generators.FirstOrDefault(g => string.Equals(g.Name, value, StringComparison.OrdinalIgnoreCase));
+        return choice?.Id ?? throw new ArgumentException($"Unknown map generator '{value}'.");
+    }
+
+    private static string ShortId(string id)
+    {
+        int separator = id.IndexOf(':');
+        return separator < 0 ? id : id[(separator + 1)..];
     }
 
     private void Start(NewGameOptions options)

@@ -173,6 +173,8 @@ public sealed class ContentDb
 /// <summary>Mod-owned deterministic map generation.</summary>
 public interface IMapGenerator : IHasId
 {
+    /// <summary>Display name for map setup choices.</summary>
+    string Name => Id;
     /// <summary>Fill every plot, in tile order, for the given map specification. Array length must equal Width * Height.</summary>
     void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content);
     /// <summary>Setup-aware placement. Legacy generators ignore player-dependent resource density.</summary>
