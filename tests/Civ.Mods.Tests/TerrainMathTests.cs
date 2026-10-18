@@ -184,6 +184,31 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
     }
 
     [Fact]
+    public void Adjacent_hills_have_raised_centres_and_lower_saddles()
+    {
+        var snapshot = TerrainTestMaps.Uniform(ReliefClass.Hills);
+        // Remove surface noise and border warp so the landform itself must supply the rise and fall.
+        var tuning = new TerrainTuning { HillsNoise = 0, WarpAmplitude = 0 };
+        foreach (int seed in new[] { 1, 2, 3 })
+        {
+            var field = new TerrainField(snapshot, seed, tuning);
+            for (int row = 2; row < snapshot.Height - 2; row += 3)
+                for (int col = 0; col < snapshot.Width; col += 4)
+                {
+                    var hill = HexGrid.FromOffset(col, row);
+                    var (x, z) = TerrainTestMaps.Centre(hill);
+                    double crown = field.HeightAt(x, z);
+                    Assert.True(crown > tuning.FlatBase);
+                    for (int direction = 0; direction < 6; direction++)
+                    {
+                        var (nx, nz) = TerrainTestMaps.Centre(hill.Neighbor(direction));
+                        Assert.True(crown > field.HeightAt((x + nx) / 2, (z + nz) / 2));
+                    }
+                }
+        }
+    }
+
+    [Fact]
     public void Adjacent_peaks_keep_their_shared_edge_above_the_hills_level()
     {
         var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat);
