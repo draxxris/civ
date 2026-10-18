@@ -76,15 +76,74 @@ public sealed partial class GameSession
         var actions = new List<UnitActionInfo>();
         if (def.CanFoundCity) actions.Add(Action("found", "Found city", new FoundCityWithSettlerCommand { Player = Human, Settler = unit.Id }));
         actions.AddRange(BuildActions(unit, def));
-        foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake })
+        foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake, UnitActivity.Intercept })
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
                 new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
+        actions.AddRange(ArtilleryActions(unit, def));
+        actions.AddRange(AirActions(unit, def));
+        actions.AddRange(CargoActions(unit));
         actions.AddRange(PromotionActions(unit));
         actions.AddRange(ReligionActions(unit));
         actions.AddRange(GreatPeopleActions(unit));
         actions.AddRange(CorporationActions(unit));
         actions.AddRange(SpyActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
+    }
+
+    private IEnumerable<UnitActionInfo> AirActions(Unit unit, Schema.UnitDef def)
+    {
+        var air = OptionalService<IAirMissionService>();
+        if (air is null || air.AirRange(Sim, unit.Id) <= 0) yield break;
+        var origin = Sim.State.Grid.TileAt(unit.Position);
+        foreach (var tile in Sim.State.Grid.Range(origin, air.AirRange(Sim, unit.Id) * 2).OrderBy(t => t.Value))
+        {
+            var target = Sim.State.Grid.HexOf(tile);
+            foreach (var kind in Enum.GetValues<AirMissionKind>())
+            {
+                string label = kind switch
+                {
+                    AirMissionKind.Rebase => "Rebase",
+                    AirMissionKind.Recon => "Recon",
+                    AirMissionKind.AirStrike => "Air strike",
+                    _ => "Air bomb",
+                };
+                string name = Sim.State.CityAt(target) is { } city && Sim.State.Plots[tile.Value].Revealed.Contains(Me.TeamId)
+                    ? city.Name : target.ToString();
+                var action = Action($"air_mission:{kind}:{tile.Value}", $"{label}: {name}",
+                    new AirMissionCommand { Player = Human, Unit = unit.Id, Kind = kind, Target = target });
+                if (action.Command is not null) yield return action;
+            }
+        }
+    }
+
+    private IEnumerable<UnitActionInfo> CargoActions(Unit unit)
+    {
+        foreach (var transport in Sim.State.UnitsAt(unit.Position).OrderBy(u => u.Id))
+            yield return Action($"load:{transport.Id}", $"Load: {DefOf(transport).Name}",
+                new LoadUnitCommand { Player = Human, Unit = unit.Id, Transport = transport.Id });
+        yield return Action("unload", "Unload", new UnloadUnitCommand { Player = Human, Unit = unit.Id });
+        foreach (var tile in Sim.State.Grid.Neighbors(Sim.State.Grid.TileAt(unit.Position)).OrderBy(t => t.Value))
+        {
+            var target = Sim.State.Grid.HexOf(tile);
+            yield return Action($"unload:{tile.Value}", $"Unload: {target}",
+                new UnloadUnitCommand { Player = Human, Unit = unit.Id, Destination = target });
+        }
+    }
+
+    private IEnumerable<UnitActionInfo> ArtilleryActions(Unit unit, Schema.UnitDef def)
+    {
+        int range = Math.Max(1, def.BombRange);
+        var origin = Sim.State.Grid.TileAt(unit.Position);
+        foreach (var tile in Sim.State.Grid.Range(origin, range).OrderBy(t => t.Value))
+        {
+            var target = Sim.State.Grid.HexOf(tile);
+            string name = Sim.State.CityAt(target)?.Name ?? target.ToString();
+            var bombard = Action($"bombard:{tile.Value}", $"Bombard: {name}", new BombardCityCommand { Player = Human, Unit = unit.Id, Target = target });
+            if (bombard.Command is not null) yield return bombard;
+            if (def.BombRange <= 0) continue;
+            var ranged = Action($"ranged_strike:{tile.Value}", $"Ranged strike: {name}", new RangedStrikeCommand { Player = Human, Unit = unit.Id, Target = target });
+            if (ranged.Command is not null) yield return ranged;
+        }
     }
 
     private IEnumerable<UnitActionInfo> GreatPeopleActions(Unit unit)
@@ -101,6 +160,9 @@ public sealed partial class GameSession
                 "hurry_production" => new HurryGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
                 "culture_bomb" => new CultureGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
                 "golden_age" => new GoldenAgeGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "lead_unit" => new LeadGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "construct_building" => new ConstructGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "trade_mission" => new TradeGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
                 _ => null,
             };
             if (command == null) continue;
@@ -111,6 +173,9 @@ public sealed partial class GameSession
                 "hurry_production" => "Hurry production",
                 "culture_bomb" => "Great work",
                 "golden_age" => "Start golden age",
+                "lead_unit" => "Attach leader",
+                "construct_building" => "Construct building",
+                "trade_mission" => "Trade mission",
                 _ => suffix,
             };
             yield return Action(action.Command, label, command, action.Amount > 0 ? action.Amount.ToString() : "");

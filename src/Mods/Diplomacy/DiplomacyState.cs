@@ -29,4 +29,5 @@ public sealed class AttitudeHistory
     public int SameReligionTurns { get; set; }
     public int DifferentReligionTurns { get; set; }
     public int FavoriteCivicTurns { get; set; }
+    public SortedDictionary<string, int> Memories { get; set; } = new(StringComparer.Ordinal);
 }

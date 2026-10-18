@@ -47,6 +47,7 @@ public sealed class CitiesMod : IMod
         context.RegisterCommand<SetCityProductionCommand>("set_city_production");
         context.RegisterCommand<ConscriptCityCommand>("conscript");
         context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts));
+        context.TurnSystems.Register(new CityPhase("defense_recovery", TurnPhase.PlayerBegin + 1, RecoverDefense));
         context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger));
         context.TurnSystems.Register(new AssignWorkPhase(work));
         context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run));
@@ -61,5 +62,13 @@ public sealed class CitiesMod : IMod
             if (grant.City is { } id && sim.State.FindCity(id) is { } city && city.Owner == grant.Player)
                 CityData.Edit(sim, city).FeatureProduction += grant.Production;
         });
+    }
+
+    private static void RecoverDefense(Simulation sim, City city)
+    {
+        var state = CityData.Edit(sim, city);
+        if (!state.BombardedThisTurn && state.DefenseDamage > 0)
+            state.DefenseDamage = Math.Max(0, state.DefenseDamage - CityData.Constants(sim).CityDefenseDamageHealRate);
+        state.BombardedThisTurn = false;
     }
 }

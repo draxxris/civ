@@ -64,13 +64,13 @@ public sealed partial class GameSession
 
     private void AddUnitLines(Hex hex, List<string> lines)
     {
-        foreach (var unit in Sim.State.UnitsAt(hex).OrderBy(u => u.Id))
+        foreach (var unit in Sim.State.UnitsAt(hex).Where(u => Service<IVisibilityService>().IsUnitVisible(Sim, u.Id, Me.TeamId)).OrderBy(u => u.Id))
             lines.Add($"{Sim.State.PlayerById(unit.Owner).Name}: {DefOf(unit).Name}");
     }
 
-    /// <summary>Units the local player can see: its own, and others standing on currently visible tiles.</summary>
+    /// <summary>Units visible to the local team, including detected stealth units.</summary>
     public IEnumerable<Unit> VisibleUnits() =>
-        Sim.State.Units.Where(u => u.Owner == Human || SightOf(Sim.State.PlotAt(u.Position)) == Sight.Visible);
+        Sim.State.Units.Where(u => Service<IVisibilityService>().IsUnitVisible(Sim, u.Id, Me.TeamId));
 
     /// <summary>Cities on tiles the local team has explored.</summary>
     public IEnumerable<City> KnownCities() =>

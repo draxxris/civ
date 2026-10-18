@@ -56,6 +56,11 @@ var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
             && !sim.TeamOf(source.Owner).Wars.Contains(theirs)
             && (diplomacy is null || diplomacy.HasMet(sim, mine, theirs) && diplomacy.HasOpenBorders(sim, mine, theirs));
     }
+    public TradeRouteResult CalculateProfit(Simulation sim, int city, int partnerCity)
+    {
+        var source = sim.State.CityById(city);
+        return Route(sim, source, sim.State.CityById(partnerCity), TradeData.Effects(sim, source).Ledger);
+    }
     private static TradeRouteResult Route(Simulation sim, City city, City partner, Ledger effects)
     {
         var sink = new ModifierSink();

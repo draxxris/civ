@@ -35,8 +35,20 @@ internal sealed partial class DiplomacyService
             .Select(d => sim.State.Turn - d.StartedTurn).DefaultIfEmpty().Max();
         Add("active_deals", Growth(tradeTurns, leader.BonusTradeAttitudeDivisor, leader.BonusTradeAttitudeChangeLimit));
         AddCivics(sim, fromPlayer, towardPlayer, Add);
+        foreach (var memory in history.Memories)
+        {
+            string key = memory.Key.StartsWith("memory_", StringComparison.Ordinal) ? memory.Key[7..] : memory.Key;
+            Add(memory.Key, (long)memory.Value * leader.MemoryAttitudePercents.GetValueOrDefault(key) / 100);
+        }
         int score = checked((int)sink.Ledger.Total("diplomacy:attitude"));
         return new(score, Tier(score), sink.Ledger);
+    }
+    public void RecordMemory(Simulation sim, int fromPlayer, int towardPlayer, string memory)
+    {
+        var state = Edit(sim);
+        string direction = Direction(fromPlayer, towardPlayer);
+        if (!state.Histories.TryGetValue(direction, out var history)) state.Histories[direction] = history = new();
+        history.Memories[memory] = history.Memories.GetValueOrDefault(memory) + 1;
     }
     private static AttitudeTier Tier(int score) => score switch
     {

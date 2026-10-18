@@ -177,6 +177,173 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 
+    [Theory]
+    [InlineData(7, true)]
+    [InlineData(5, false)]
+    public void Loaded_transport_delivers_an_overseas_assault(int departureX, bool captures)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        GameFactory.NeutralPolitics(sim);
+        foreach (var tile in sim.State.Grid.Tiles)
+        {
+            var hex = sim.State.Grid.HexOf(tile);
+            var plot = sim.State.Plots[tile.Value];
+            int x = tile.Value % 12;
+            plot.Terrain = x is >= 4 and < 8 ? "world:coast" : "world:grass";
+            plot.AreaId = x < 4 ? 0 : x < 8 ? 1 : 2;
+            plot.Owner = x < 4 ? 0 : x >= 8 ? 1 : null;
+            plot.Revealed.Add(0); plot.Visible.Add(0);
+        }
+        var home = new City { Id = 1, Owner = 0, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 3)), Population = 3 };
+        var target = new City { Id = 2, Owner = 1, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(8, 3)) };
+        sim.State.AddCity(home); sim.State.AddCity(target); sim.State.NextCityId = 3;
+        sim.State.SetWar(0, 1, true);
+        sim.State.Turn = 30;
+        var ship = new Unit { Id = 1, Owner = 0, Type = "military:galley", Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(departureX, 3)) };
+        var departure = ship.Position;
+        var cargo = new Unit { Id = 2, Owner = 0, Type = "military:warrior", Position = ship.Position };
+        sim.State.AddUnit(ship); sim.State.AddUnit(cargo); sim.State.NextUnitId = 3;
+        var units = sim.Content.Services.Get<IUnitService>().Single();
+        units.Initialize(sim, ship.Id); units.Initialize(sim, cargo.Id);
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+        sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
+        Assert.Null(cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        if (captures)
+        {
+            Assert.Equal(0, sim.State.CityById(target.Id).Owner); Assert.Equal(target.Position, cargo.Position);
+        }
+        else
+        {
+            Assert.NotEqual(departure, ship.Position); Assert.Equal(1, sim.State.Grid.Distance(target.Position, cargo.Position));
+            Assert.Equal(2, sim.State.PlotAt(cargo.Position).AreaId);
+        }
+    }
+
+    [Fact]
+    public void Idle_fighter_provides_interception_cover()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        GameFactory.NeutralPolitics(sim);
+        var city = new City { Id = 1, Owner = 0, Position = sim.State.Grid.HexOf(new(39)) };
+        sim.State.AddCity(city); sim.State.NextCityId = 2;
+        var fighter = new Unit { Id = 1, Owner = 0, Type = "military:fighter", Position = city.Position };
+        sim.State.AddUnit(fighter); sim.State.NextUnitId = 2;
+        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, fighter.Id);
+        sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
+        Assert.Equal(UnitActivity.Intercept, fighter.Extensions.Get<MilitaryUnitState>(sim.Content)!.Activity);
+    }
+
+    private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
+    private static City City(Simulation sim, int tile = 39, int owner = 0, int population = 3)
+    {
+        var city = new City { Id = sim.State.NextCityId++, Owner = owner, Position = sim.State.Grid.HexOf(new(tile)), Population = population };
+        sim.State.AddCity(city); sim.State.PlotAt(city.Position).Owner = owner; return city;
+    }
+    private static Unit Add(Simulation sim, string type, Hex position, int owner = 0)
+    {
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
+        sim.State.AddUnit(unit); Service<IUnitService>(sim).Initialize(sim, unit.Id); Service<IVisibilityService>(sim).Recompute(sim); return unit;
+    }
+    private static void Decide(Simulation sim) => sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
+
+    [Fact]
+    public void Religious_ai_adopts_a_faith_then_sends_missionaries_and_purges_minorities()
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        var home = City(sim); var target = City(sim, 41);
+        home.Extensions.Set(sim.Content, new ReligionCityState { Religions = ["religion:buddhism"] });
+        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
+        Decide(sim);
+        Assert.Equal("religion:buddhism", Service<IReligionService>(sim).StateReligion(sim, 0));
+        sim.AdvanceTurn(); // Finish conversion anarchy before religious unit orders.
+        var missionary = Add(sim, "military:buddhist_missionary", target.Position);
+        Decide(sim);
+        Assert.Null(sim.State.FindUnit(missionary.Id)); Assert.Contains("religion:buddhism", Service<IReligionService>(sim).Present(sim, target.Id));
+        target.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Add("religion:hinduism");
+        var inquisitor = Add(sim, "military:inquisitor", target.Position);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Decide(sim); Decide(loaded);
+        Assert.Null(sim.State.FindUnit(inquisitor.Id));
+        Assert.Contains(sim.Events.Published.OfType<InquisitionAttempt>(), e => e.Unit == inquisitor.Id && e.City == target.Id);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void General_ai_attaches_to_the_strongest_available_soldier_at_war()
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim); var home = City(sim);
+        var general = Add(sim, "military:great_general", home.Position);
+        var weak = Add(sim, "military:warrior", home.Position); var strong = Add(sim, "military:javelineer", home.Position);
+        sim.State.SetWar(0, 1, true);
+        Decide(sim);
+        Assert.Null(sim.State.FindUnit(general.Id));
+        Assert.Equal("military:great_general", strong.Extensions.Get<MilitaryUnitState>(sim.Content)!.AttachedLeaderUnitType);
+        Assert.Null(weak.Extensions.Get<MilitaryUnitState>(sim.Content)!.AttachedLeaderUnitType);
+        Assert.True(weak.Experience > 0); Assert.True(strong.Experience > 0);
+    }
+
+    [Fact]
+    public void Merchant_ai_executes_a_profitable_foreign_trade_mission()
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        var home = City(sim); home.Buildings.Add("cities:palace"); var foreign = City(sim, 40, 1);
+        var merchant = Add(sim, "military:merchant", foreign.Position);
+        long before = sim.State.PlayerById(0).Treasury;
+        Decide(sim);
+        Assert.Null(sim.State.FindUnit(merchant.Id));
+        Assert.True(sim.State.PlayerById(0).Treasury > before + sim.Content.Get<Civ.Content.Schema.UnitDef>(merchant.Type).BaseTrade);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Scientist_ai_selects_a_bulb_or_golden_age_from_empire_value(bool largeEmpire)
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        var home = City(sim, population: largeEmpire ? 100 : 1);
+        home.Buildings.AddRange(sim.Content.Get<Civ.Content.Schema.UnitDef>("military:scientist").ConstructibleBuildings.Keys);
+        // Special buildings are already present; compare immediate alternatives.
+        var scientist = Add(sim, "military:scientist", home.Position);
+        if (!largeEmpire) sim.State.PlayerById(0).Extensions.Set(sim.Content, new GreatPeoplePlayerState { GoldenAgeTurns = 2 });
+        sim.State.Turn = 100;
+        var techs = sim.TeamOf(0).Techs.ToHashSet();
+        Decide(sim);
+        Assert.Null(sim.State.FindUnit(scientist.Id));
+        if (largeEmpire) Assert.True(Service<IGreatPeopleService>(sim).GoldenAgeTurnsRemaining(sim, 0) > 0);
+        else Assert.Contains(sim.Events.Published.OfType<TechDiscovered>(), e => !techs.Contains(e.Tech));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Combined_arms_ai_uses_support_fire_before_melee(bool defendedCity)
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim); City(sim, 37);
+        var target = sim.State.Grid.HexOf(new(40));
+        if (defendedCity) { var city = City(sim, 40, 1); city.Buildings.Add("cities:walls"); }
+        var siege = Add(sim, "military:catapult", sim.State.Grid.HexOf(new(39)));
+        var plane = Add(sim, "military:bomber", sim.State.Grid.HexOf(new(38)));
+        var defender = Add(sim, "military:warrior", target, 1);
+        for (int i = 0; i < 5; i++) Add(sim, "military:javelineer", siege.Position);
+        sim.State.SetWar(0, 1, true); sim.State.Turn = 30;
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Decide(sim); Decide(loaded);
+        Assert.True(siege.Extensions.Get<MilitaryUnitState>(sim.Content)!.Attacked);
+        Assert.Equal(0, plane.MovesLeft);
+        var events = sim.Events.Published.ToList();
+        Assert.Contains(events.OfType<AirMissionResolved>(), e => e.Report.Kind == (defendedCity ? AirMissionKind.AirBomb : AirMissionKind.AirStrike));
+        if (defendedCity) Assert.Contains(events.OfType<CityBombarded>(), e => e.Unit == siege.Id);
+        else
+        {
+            var reports = Service<ICombatService>(sim).History(sim);
+            Assert.Equal(siege.Id, reports[0].Attacker); Assert.Single(reports[0].Rounds);
+            Assert.Equal(100, reports[0].Rounds[0].AttackerHealth);
+            Assert.Equal(sim.State.Grid.HexOf(new(39)), siege.Position);
+            Assert.Contains(reports.Skip(1), r => r.Attacker != siege.Id);
+        }
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
     private static void CountDevelopment(IEnumerable<DomainEvent> events, Dictionary<int, int> owners, int[] founded, int[] completed)
     {
         foreach (var message in events)

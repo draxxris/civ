@@ -167,6 +167,119 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Aircraft_panel_dispatches_patrol_and_recon_actions()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var plane = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:fighter", Position = sim.State.Grid.HexOf(new(39)) };
+        sim.State.AddUnit(plane);
+        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, plane.Id);
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        var session = new GameSession(sim);
+        session.SelectUnit(plane.Id);
+        Assert.Contains(session.DescribeUnit(plane)!.Actions, a => a.Id == "intercept");
+        session.RunAction("intercept");
+        Assert.Equal(UnitActivity.Intercept, session.ActivityOf(plane));
+        session.SelectUnit(plane.Id);
+        var recon = session.DescribeUnit(plane)!.Actions.First(a => a.Command is AirMissionCommand { Kind: AirMissionKind.Recon });
+        session.RunAction(recon.Id);
+        Assert.Equal("", session.Message); Assert.Equal(0, plane.MovesLeft);
+        Assert.Single(sim.Events.Published.OfType<AirMissionResolved>());
+    }
+
+    private static Unit Add(Simulation sim, string type, int tile = 39, int owner = 0)
+    {
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new(tile)) };
+        sim.State.AddUnit(unit); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim); return unit;
+    }
+    private static City AddCity(Simulation sim, int tile = 39, int owner = 0)
+    {
+        var city = new City { Id = sim.State.NextCityId++, Owner = owner, Position = sim.State.Grid.HexOf(new(tile)) };
+        sim.State.AddCity(city); sim.State.PlotAt(city.Position).Owner = owner; return city;
+    }
+    private static void Dispatch<T>(GameSession session, Unit unit) where T : GameCommand
+    {
+        session.SelectUnit(unit.Id);
+        var action = session.DescribeUnit(unit)!.Actions.First(a => a.Command is T);
+        session.RunAction(action.Id); Assert.Equal("", session.Message);
+    }
+
+    [Theory]
+    [InlineData("lead")]
+    [InlineData("construct")]
+    [InlineData("trade")]
+    [InlineData("inquisition")]
+    public void Person_and_religious_action_buttons_dispatch_the_selected_command(string action)
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        var city = AddCity(sim, owner: action == "trade" ? 1 : 0); var session = new GameSession(sim);
+        string type = action switch { "lead" => "military:great_general", "construct" => "military:scientist", "trade" => "military:merchant", _ => "military:inquisitor" };
+        var person = Add(sim, type);
+        switch (action)
+        {
+            case "lead":
+                var soldier = Add(sim, "military:warrior");
+                Dispatch<LeadGreatPersonCommand>(session, person);
+                Assert.Contains("military:leader", soldier.Promotions);
+                break;
+            case "construct":
+                Dispatch<ConstructGreatPersonCommand>(session, person); Assert.Contains("cities:academy", city.Buildings);
+                break;
+            case "trade":
+                long before = sim.State.PlayerById(0).Treasury;
+                Dispatch<TradeGreatPersonCommand>(session, person); Assert.True(sim.State.PlayerById(0).Treasury > before);
+                break;
+            default:
+                sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
+                sim.State.PlayerById(0).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = "religion:buddhism" });
+                city.Extensions.Set(sim.Content, new ReligionCityState { Religions = ["religion:buddhism", "religion:hinduism"] });
+                Dispatch<PerformInquisitionCommand>(session, person); Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
+                break;
+        }
+        Assert.Null(sim.State.FindUnit(person.Id));
+        Assert.DoesNotContain(session.DescribeUnit(session.Unit)?.Actions ?? [], a => a.Command is GreatPersonCommand c && c.UnitId == person.Id);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Artillery_buttons_dispatch_bombardment_and_ranged_fire(bool bombard)
+    {
+        var sim = GameFactory.Scenario(mods.Content); var siege = Add(sim, "military:catapult");
+        Add(sim, "military:warrior", 40, 1); var city = AddCity(sim, 40, 1); city.Buildings.Add("cities:walls");
+        sim.State.SetWar(0, 1, true); var session = new GameSession(sim);
+        if (bombard) { Dispatch<BombardCityCommand>(session, siege); Assert.Single(sim.Events.Published.OfType<CityBombarded>()); }
+        else { Dispatch<RangedStrikeCommand>(session, siege); Assert.Single(sim.Content.Services.Get<ICombatService>().Single().History(sim)); }
+        Assert.True(siege.Extensions.Get<MilitaryUnitState>(sim.Content)!.Attacked);
+    }
+
+    [Fact]
+    public void Cargo_panel_changes_from_load_to_unload_and_dispatches_both()
+    {
+        var sim = GameFactory.Scenario(mods.Content); AddCity(sim);
+        var ship = Add(sim, "military:cog"); var cargo = Add(sim, "military:warrior"); var session = new GameSession(sim);
+        Dispatch<LoadUnitCommand>(session, cargo);
+        Assert.Equal(ship.Id, cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        Assert.DoesNotContain(session.DescribeUnit(cargo)!.Actions, a => a.Command is LoadUnitCommand);
+        Dispatch<UnloadUnitCommand>(session, cargo); Assert.Null(cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+    }
+
+    [Theory]
+    [InlineData(AirMissionKind.Rebase)]
+    [InlineData(AirMissionKind.AirStrike)]
+    [InlineData(AirMissionKind.AirBomb)]
+    public void Aircraft_panel_dispatches_targeted_missions(AirMissionKind kind)
+    {
+        var sim = GameFactory.Scenario(mods.Content); var plane = Add(sim, "military:bomber");
+        var city = AddCity(sim, 40, kind == AirMissionKind.Rebase ? 0 : 1); city.Buildings.Add("cities:walls");
+        if (kind != AirMissionKind.Rebase) { Add(sim, "military:warrior", 40, 1); sim.State.SetWar(0, 1, true); }
+        var session = new GameSession(sim); session.SelectUnit(plane.Id);
+        var action = session.DescribeUnit(plane)!.Actions.Single(a => a.Command is AirMissionCommand c && c.Kind == kind && c.Target == city.Position);
+        session.RunAction(action.Id); Assert.Equal("", session.Message); Assert.Equal(0, plane.MovesLeft);
+        Assert.Contains(sim.Events.Published.OfType<AirMissionResolved>(), e => e.Report.Kind == kind);
+    }
+
+    [Fact]
     public void Earned_promotions_are_available_actions_and_can_be_applied()
     {
         var s = NewSession();

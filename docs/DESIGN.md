@@ -356,23 +356,42 @@ The imported profile disables inflation. Enabled profiles use the source binomia
 
 ## Military services
 
-Military registers `IMovementService`, `IPathfindingService`, `ICombatService`, `IUnitService`, and `IUnitSupportService` through Core.
+Military registers `IMovementService`, `IPathfindingService`, `ICombatService`, `IUnitService`, `IUnitSupportService`, and `IAirMissionService` through Core, and interacts with World's `IVisibilityService`.
 Movement paths exclude the starting plot. Commands traverse until movement expires or combat interrupts the path.
 A costly destination can consume the remaining sub-moves. A* minimizes total edge cost, not the number of turns.
 Route movement and combat share the hex river-edge policy. Military recomputes World visibility after movement and unit removal.
 
-Command identities are `military:move_unit`, `promote_unit`, `set_unit_activity`, `pillage`, `upgrade_unit`, `disband_unit`, and `raze_city`.
-The promotion command type is `PromoteMilitaryUnitCommand`, distinct from the legacy command.
-Cities supplies the additive `ICityCaptureService`. Other mods need no dependency on the Military assembly.
+Command identities include:
+- `military:move_unit` (`MoveUnitPathCommand`), `military:promote_unit` (`PromoteMilitaryUnitCommand`), `military:set_unit_activity` (`SetUnitActivityCommand`), `military:pillage` (`PillageCommand`), `military:upgrade_unit` (`UpgradeUnitCommand`), `military:disband_unit` (`DisbandUnitCommand`), and `military:raze_city` (`RazeCityCommand`).
+- `military:bombard_city` (`BombardCityCommand`): Siege weapons expend movement to reduce defensive fortification bonuses (`DefenseDamage`) on an adjacent enemy city.
+- `military:ranged_strike` (`RangedStrikeCommand`): Support fire up to `BombRange` hexes against visible enemy units or cities. Rolls against accuracy (`BombAccuracyPercent`), delivering damage to the top defender (capped at `CombatLimit`) plus collateral damage to stack companions, without reciprocal melee damage or risking the firing unit. Also applies city defense damage if targeting an enemy city.
+- `military:load_unit` (`LoadUnitCommand`): Boards an eligible land unit onto a co-located transport ship possessing available `CargoCapacity` and matching cargo categories/domains.
+- `military:unload_unit` (`UnloadUnitCommand`): Disembarks a cargo unit to the current tile (if valid) or an adjacent land tile, expending remaining movement.
+- `military:air_mission` (`AirMissionCommand`): Executes domain-air operations governed by `AirMissionKind` (`Rebase`, `AirStrike`, `AirBomb`, `Recon`).
+- `military:set_unit_activity`: Added `UnitActivity.Intercept` (Combat Air Patrol) for air units stationed to intercept enemy air missions within range.
 
-Combat preview returns strengths, ledgers, firepower, round damage, first strikes, withdrawal, and success odds in millionths.
-The defender strength includes relative attack modifiers, including the reciprocal formula for negative totals.
-Combat is atomic. Saves between commands retain health, moves, experience fractions, activity, RNG, and current-turn combat reports.
-General points are a counter only. No general births occur yet.
+Domain events include:
+- `CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage)`: Published upon successful city defense bombardment.
+- `AirMissionResolved(AirMissionReport Report)`: Details air mission results including interceptor involvement, interception damage, target damage, collateral hits, and suicide consumption.
+- `GreatGeneralBorn(int Player, int Unit, string UnitType, int City)`: Dispatched when combat experience satisfies the general emergence threshold.
 
-`UnitCreated` initializes training and granted units. `TurnStarted` initializes setup units without rerunning initialization after saves.
-The unit phase follows worker work, then applies healing and refreshes moves. Newly created units do not heal or fortify that boundary.
-Barbarian behavior runs at `GameBegin`. Land spawns run at `Spawns`. The barbarian player automatically ends each simultaneous turn.
+Saved extension components:
+- `MilitaryUnitState`: `int? TransportId` (tracking vessel hosting this cargo unit), `string? AttachedLeaderUnitType` (attached warlord promotion identity), and `bool InterceptedThisTurn` (preventing multiple CAP interceptions in the same turn).
+- `MilitaryPlayerState`: `long GeneralPoints` (accumulated combat XP), `int GreatGeneralsCreated` (lifetime count), `long GeneralThresholdModifier` (threshold inflation), and `bool Barbarian` (flag).
+- `MilitaryGameState`: `ReconSights` (temporary turn reconnaissance visibility entries cleared on turn boundaries).
+- `CityRuleState` (Cities): `int DefenseDamage` (accumulated wall/defense reduction) and `bool BombardedThisTurn` (suppressing natural defense healing).
+
+Combat and system mechanics:
+- **Combat resolution & odds preview**: Combat preview returns strengths, ledgers, firepower, round damage, first strikes, withdrawal, and success odds in millionths. The defender strength includes relative attack modifiers, including the reciprocal formula for negative totals. Combat is atomic. Saves between commands retain health, moves, experience fractions, activity, RNG, and current-turn combat reports.
+- **Combat Great General emergence**: Military victories award combat experience to `playerState.GeneralPoints`. Reaching `GeneralThreshold(sim, player)` (scaled by game speed, era, and inflation modifiers) spawns a Great General in the player's best domestic city, increments `GreatGeneralsCreated`, and escalates both personal and team thresholds.
+- **Warlord attachments & leader promotions**: Great Generals attaching via `LeadGreatPersonCommand` grant `military:leader`, record `AttachedLeaderUnitType`, and distribute bonus experience across the plot stack. Units with an attached leader qualify for exclusive `PromotionDef.Leader` promotions (e.g. Morale).
+- **City defense damage & recovery**: City fortifications provide defensive percentage modifiers that are scaled down by accumulated `DefenseDamage` up to `MaximumCityDefenseDamage` (default 100). Cities that avoid enemy bombardment across a full turn cycle heal `CityDefenseDamageHealRate` defense damage during `TurnPhase.PlayerBegin`.
+- **Cargo transports & amphibious warfare**: Transports expose `CargoCapacity` computed from unit definitions plus `cargo` promotion modifiers. Moving a transport simultaneously moves all carried units. If a transport is sunk or disbanded, all loaded cargo units are immediately lost. Land units aboard naval transports may assault adjacent hostile coastal land directly; amphibious attacks suffer `-AmphibAttackModifier` unless the attacking unit holds the `military:amphibious` promotion.
+- **Stealth & invisibility detection**: Units with `Invisibility` (e.g. Submarines, Spies) remain invisible to enemy teams unless an enemy unit possessing a matching `VisibleInvisibilityTypes` category is stationed within detection range. Invisible units do not wake sentry units and do not obstruct peaceful unit movement through their tile.
+- **Flanking strikes & defender withdrawal**: Mounted units with flanking capabilities inflict collateral damage on siege weapons defending in the same tile when the attacker wins or withdraws, provided combat occurs outside a city. Defending units with withdrawal capabilities can trigger `CombatOutcome.DefenderWithdrawn` when surviving lethal combat, retreating to an adjacent safe tile.
+- **Air missions & interception**: Aircraft operate from friendly cities and carriers within `AirUnitCapacity` (default 8 per city). Missions include `Rebase` (up to `2 * AirRange`), `Recon` (revealing fog of war across the target area until next turn), `AirStrike` (bombarding units up to `AirCombatLimit` with collateral damage), and `AirBomb` (reducing city defenses by `BombardRate` or pillaging worked improvements). Defending interceptors on CAP or anti-air ground units roll interception chances; upon interception, 5 rounds of air-to-air combat occur, factoring in attacker evasion. Suicide aircraft are consumed after an uninterrupted attack. An intercepted aircraft survives an aborted mission unless interception damage kills it. Active city buildings scale direct and collateral air-strike damage through their combined `AirModifier`, before damage limits apply.
+- **Barbarian spawns & naval piracy**: Land spawns run at `TurnPhase.Spawns`. `BarbarianSpawns.SpawnArea` also evaluates water areas, applying handicap setting `UnownedWaterTilesPerBarbarianUnit` against unowned coastal water plots. Spawning enforces bounds on the ratio of barbarian to civilized naval units, excludes freshwater lakes and tiles visible to players, and spawns adjacent to land. Barbarian naval raiders hunt visible fishing improvements and vulnerable merchant/transport shipping.
+
 Training modifiers use `military:initial_experience` and `military:free_promotion:<id>`.
 Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate military contributions when they supply full modifier sources.
 
@@ -397,18 +416,26 @@ Newly founded cities inspect this modifier to expand initial plot culture and wo
 `IReligionService` exposes read-only presence, holy cities, adoption choices, missionary definitions, odds, and conversion costs through Core.
 AI and client code can use this service without a reference to the Religion assembly.
 
-Commands are `religion:set_state_religion`, `religion:spread_religion`, and `religion:build_shrine`.
-Discovery events reserve the first discovering team. Founding selects a player and holy city with the source scoring rules.
-A reservation survives saves when that team has no city. Discovery awards the imported free missionaries through `UnitCreated`.
+Command identities are:
+- `religion:set_state_religion`, `religion:spread_religion`, and `religion:build_shrine`.
+- `religion:perform_inquisition` (`PerformInquisitionCommand`): Dispatches an inquisitor unit to purge non-state faiths from an owned or friendly city.
+
+Domain events include:
+- `InquisitionAttempt(int City, int Player, bool Success, IReadOnlyList<string> RemovedReligions, long CompensationGold)`: Published when an inquisition completes.
+- `ReligionRemoved(int City, string Religion, string Reason)`: Published when a minority religion is purged or decays.
 
 City presence, last state choice, conversion cooldown, holy cities, founding turns, and reservations use saved extension components.
 Secular civics suppress the last choice without deleting it. Conversion adds source-scaled anarchy to `GovernmentPlayerState`.
 Natural spread runs immediately before the city post-production phase. All random draws use the simulation RNG.
 
-World supplies `ICityConnectionService` for physical routes, river trade, and unlocked water trade within one team.
-Foreign connections remain deferred. Distance uses hex distance and the hex map diameter.
-Religion age uses elapsed turns. This corrects the source's reversed subtraction rather than preserving its age bug.
-The baseline natural-spread policy stops after the first religion. Missionaries can add more religions.
+World supplies `ICityConnectionService` for physical routes, river trade, and unlocked water trade.
+Distance uses hex distance and the hex map diameter. Religion age uses elapsed turns.
+
+Religion mechanics:
+- **Foreign trade spread**: International trade routes connect cities across open borders and revealed road/water networks. Natural spread evaluates connected foreign trade partners, spreading state religions to foreign cities when allowed by standard spread rules or the `foundation:gameoption_multiple_religion_spread` option.
+- **Religion decay & attrition**: When `foundation:gameoption_religion_decay` is enabled, cities with non-state minority religions lacking religious buildings roll for decay based on elapsed city turns and foreign pressure. Holy cities and the player's active state religion are immune. When decay triggers, minority religions and their associated buildings are purged, emitting `ReligionRemoved`.
+- **Civic-gated Inquisitions**: Inquisitions are enabled when player civics grant `AllowInquisitions` (e.g., State Church) and blocked when any civic has `DisallowInquisitions` (e.g., Liberalism). Inquisitors validate against cities with non-state religions. Success purges minority religions and buildings (temples/monasteries), grants gold compensation (or reduces `RevolutionCityState.InstabilityIndex`), increases `HurryAngerTurns`, and applies negative diplomatic memories (`memory_inquisition`) with leaders following the purged faith.
+- **Holy City relocation & extinction**: When an inquisition purges a holy city, if other cities in the world possess the religion, holy city status relocates to the highest-scoring candidate city; if no other city in the world has the faith, holy city status is extinguished (`-1` / `null`).
 
 Religion contributes happiness, health, direct commerce, shrine commerce, state-building commerce, production modifiers, and training experience.
 Religion requirements distinguish city presence, state choice, and holy-city identity. Queries never consume RNG or change state.
@@ -421,7 +448,17 @@ The existing `ICityGreatPeopleService` delegates to the same calculation. Cities
 Threshold increases include both the personal increase and the team increase for the creator, as in the source.
 Births use one simulation RNG draw, resolve civilization replacements, and publish `UnitCreated` and `GreatPersonBorn`.
 
-Commands use `great_people:join_city`, `discover_tech`, `hurry_production`, `culture_bomb`, and `golden_age`.
+Commands include:
+- `great_people:join_city`, `discover_tech`, `hurry_production`, `culture_bomb`, and `golden_age`.
+- `great_people:lead_unit` (`LeadGreatPersonCommand`): Attaches a Great General to a friendly combat unit on the same tile, granting `military:leader`, setting `AttachedLeaderUnitType`, and distributing experience across the stack. Unlocks `PromotionDef.Leader` promotions (e.g. Morale).
+- `great_people:construct_building` (`ConstructGreatPersonCommand`): Constructs special Great Person buildings (Academies by Scientists, Military Academies by Great Generals).
+- `great_people:trade_mission` (`TradeGreatPersonCommand`): Great Merchants can traverse peaceful foreign borders without open borders agreements. Executing a trade mission in a foreign city awards instant gold calculated from distance and capital trade route profit.
+
+Great People mechanics:
+- **Combat Great General emergence**: Combat experience won in battle contributes to `playerState.GeneralPoints`. Reaching `GeneralThreshold(sim, player)` (scaled by game speed, era, and threshold modifiers) spawns a Great General in the player's best domestic city. Spawning increments `playerState.GreatGeneralsCreated` and increases both personal and team thresholds (`GREAT_GENERALS_THRESHOLD_INCREASE` and `GREAT_GENERALS_THRESHOLD_INCREASE_TEAM`), publishing `GreatGeneralBorn`.
+- **Warlord attachments**: Attaching a Great General to a unit distributes bonus experience evenly across all eligible friendly combat units on the plot and enables elite leadership promotions.
+- **Special building construction**: Allows Great Scientists to build Academies (`cities:academy`) and Great Generals to build Military Academies (`cities:military_academy`), verifying technology prerequisites and existing building instances.
+- **Foreign trade missions**: Great Merchants can enter peaceful foreign territory without open borders treaties. Reaching a foreign city enables `"trade"`, granting instant treasury gold calculated from base trade values, speed settings, and capital trade route distance profit.
 Settlement contributes free-specialist keys, so Cities applies normal specialist yields, commerce, and modifiers.
 Discovery selects the highest eligible flavor score, with ordinal technology ties. `IResearchService.AddProgress` grants unmodified, capped research.
 Hurry adds capped production to the current eligible building. Cities completes it during the normal completion phase.
@@ -484,9 +521,14 @@ The city screen shows corporations, religion, commerce, wellbeing, and ledgers. 
 It also shows espionage rates, pending-event notifications, and corporation details on the city screen.
 
 ## Computer players
+
 `src/Mods/Ai` registers `ai:standard` under `IPlayerAI`. Select it through `SimulationSettings.PlayerAis`.
-Small planners handle citizens, production, workers, research, civics, commerce, settling, exploration and warfare.
-They use Core services, not other mod assemblies. Content supplies weights, flavors, unit roles and leader personality.
+Specialized planners handle empire governance and military campaigns:
+- **Civilian & empire planners**: `CitizenPlanner`, `ProductionPlanner`, `WorkerPlanner`, `ResearchPlanner`, `CivicsPlanner`, `CommercePlanner`, `SettlerPlanner`, and `ExplorerPlanner`.
+- **Multi-theater combined arms campaigns (`AttackPlanner`, `MilitaryPlanner`)**: Partitions free combat units by landmass (`AreaId`), forming separate coordinated task forces per theater. Staging rings form 2 hexes outside target enemy cities. Before melee units attack, the AI sequences support fire: siege weapons execute `BombardCityCommand` against city defenses, and ranged units execute `RangedStrikeCommand` to soften stack defenders. Defensive reinforcement lines score candidate defenders by threat differential, moving surplus garrisons to border cities along road corridors.
+- **Naval warfare & amphibious sealift (`NavalPlanner`)**: Classifies naval vessels into `NavalExplorer`, `NavalCombat`, and `NavalTransport`. Transports coordinate amphibious invasions: gathering at friendly coastal embarkation cities, loading waiting melee/siege troops up to `CargoCapacity`, sailing to enemy beachheads on foreign landmasses, and disembarking or attacking from sea. Warships escort transports, patrol coastal waters, and bombard coastal cities.
+- **Air warfare management (`AirPlanner`)**: Dynamically rebases bombers and fighters forward to theater cities within range of target objectives. Flies aerial reconnaissance (`AirRecon`) to expose enemy stacks and fogged frontier plots. Conducts `AirBomb` missions against city defenses and strategic tile improvements, executes `AirStrike` missions against clustered enemy defenders, and maintains Combat Air Patrol (`UnitActivity.Intercept`) to intercept incoming enemy airstrikes.
+- **Great Person & Religion AI (`GreatPersonPlanner`, `ReligionPlanner`)**: Dynamically scores Great Person actions: evaluates empire-wide value of Golden Ages (scaled by population and revolution instability) versus immediate technology bulbing, special building construction, or trade missions. Dispatches missionaries to unconverted domestic cities, and trains inquisitors to purge minority religions from unstable cities under state church civics.
 
 Decisions use integer scores and ordinal content-id ties. War checks use only `Simulation.Rng`.
 Planners apply ordinary commands through `Simulation.TryApply` during `Decide`, then return an empty command sequence.
@@ -543,14 +585,22 @@ Test-ruleset civilization and civic bonuses are modifier sources, not special ca
 `Simulation.Events.Publish(record)` dispatches handlers synchronously in registration order.
 Nested publications enter a FIFO queue after the current dispatch.
 
-Core event records cover tech discovery, founding, growth, building completion, unit creation, combat and turn boundaries.
-Mods can define additional `DomainEvent` records.
+Core and mod event records cover:
+- Core lifecycle: `TurnStarted`, `TurnEnded`, `TechDiscovered`, `CityFounded`, `CityGrown`, `BuildingCompleted`, `UnitCreated`, and `CombatResolved`.
+- Advanced systems: `GreatPersonBorn`, `GreatGeneralBorn`, `InquisitionAttempt`, `ReligionRemoved`, `CityBombarded`, and `AirMissionResolved`.
+
 `Published` holds current-turn presentation events. `PreviousTurn` retains the last completed turn.
 These lists are neither saved nor hashed. Loading does not republish events or rerun AI.
 
 `ctx.RegisterStateComponent<T>(name)` registers a concrete state type under a stable id.
 Game, player, team, city and unit objects each expose `Extensions.Set<T>(content, instance)` and `Get<T>(content)`.
 Attached instances remain mutable. Saves and hashes include their canonical JSON data.
+
+Registered state components across mods include:
+- Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global espionage points), and `MilitaryGameState` (temporary recon sights).
+- Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState` (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown), `GreatPeoplePlayerState` (Golden Age timers), `MilitaryPlayerState` (combat general points, thresholds, barbarian flag), and `EspionagePlayerState` (point allocations).
+- City: `EconomyCityState` (hurry anger), `ReligionCityState` (city religion list), `RevolutionCityState` (instability indices), and `CityRuleState` (accumulated defense damage, turn bombardment status).
+- Unit: `MilitaryUnitState` (activity, transport vessel reference, attached warlord leader type, air interception exhaustion).
 
 State components use exact registered types, integer numbers and JSON-serializable properties.
 Fields require `JsonInclude`. Runtime state belongs in components, not shared service instances.

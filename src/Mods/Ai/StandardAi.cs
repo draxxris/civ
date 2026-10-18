@@ -30,9 +30,14 @@ public sealed class StandardAi : IPlayerAI
         new SettlerPlanner(ctx, sites, army).Plan();
         ctx.Refresh();
         new CitizenPlanner(ctx, army).Plan();
+        new ReligionPlanner(ctx).Plan();
+        new GreatPersonPlanner(ctx).Plan();
+        ctx.Refresh();
         var cities = new CityPlanner(ctx, sites, army);
         cities.Plan();
         new WorkerPlanner(ctx).Plan();
+        // Resolve air preparation before naval support and ground assaults.
+        new AirPlanner(ctx).Plan();
         var orders = new UnitOrders(ctx);
         new MilitaryPlanner(ctx, army, cities, new AttackPlanner(ctx, orders)).Plan();
         new EconomyPlanner(ctx).Plan();

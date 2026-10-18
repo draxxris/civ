@@ -1,7 +1,7 @@
 {
   "id": "diplomacy",
   "name": "Diplomacy",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "assembly": "Civ.Mods.Diplomacy.dll",
   "dependencies": [],
   "references": []

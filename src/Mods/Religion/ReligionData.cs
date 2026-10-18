@@ -28,6 +28,19 @@ internal static class ReligionData
         if (state is null) { state = new(); city.Extensions.Set(sim.Content, state); }
         if (state.Religions.Add(religion)) sim.Events.Publish(new ReligionSpread(religion, city.Id));
     }
+    internal static void Remove(Simulation sim, City city, string religion, string reason)
+    {
+        if (city.Extensions.Get<ReligionCityState>(sim.Content)?.Religions.Remove(religion) == true)
+            sim.Events.Publish(new ReligionRemoved(religion, city.Id, reason));
+    }
+    internal static BuildingDef[] ReligiousBuildings(Simulation sim, City city, IReadOnlyList<string> religions) =>
+        city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>)
+            .Where(b => b.Limits.World < 0 && b.Limits.Team < 0 && b.Limits.Player < 0)
+            .Where(b => RequiresReligion(b, religions)).ToArray();
+    private static bool RequiresReligion(BuildingDef building, IReadOnlyList<string> religions) =>
+        religions.Contains(building.ReligionType ?? "", StringComparer.Ordinal)
+        || Civ.Content.ContentReferences.Leaves(building.Requirements ?? new Civ.Content.Requirement.All([]))
+            .Any(l => l.Kind == "religion" && religions.Contains(l.Id, StringComparer.Ordinal));
     internal static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
     internal static IEnumerable<BuildingDef> Active(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>).Where(b => Active(sim, city, b));

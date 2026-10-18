@@ -38,12 +38,22 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
         threshold = threshold * GreatPeopleData.Speed(sim).GreatPeoplePercent / 100;
         return Math.Max(1, threshold * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).GreatPeoplePercent / 100);
     }
+    public long GeneralThreshold(Simulation sim, int player)
+    {
+        int modifier = sim.State.PlayerById(player).Extensions.Get<MilitaryPlayerState>(sim.Content)?.GeneralThresholdModifier ?? 0;
+        long threshold = GreatPeopleData.Raw(sim, "GREAT_GENERALS_THRESHOLD", 30) * Math.Max(0L, 100L + modifier) / 100;
+        var speed = GreatPeopleData.Speed(sim);
+        threshold = threshold * speed.GreatPeoplePercent / Math.Max(1, speed.TrainPercent);
+        return Math.Max(1, threshold * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).GreatPeoplePercent / 100);
+    }
+    public long GeneralProgress(Simulation sim, int player) =>
+        sim.State.PlayerById(player).Extensions.Get<MilitaryPlayerState>(sim.Content)?.GeneralPoints ?? 0;
     public IReadOnlyDictionary<string, int> SettledSpecialists(Simulation sim, int city) =>
         new ReadOnlyDictionary<string, int>(new SortedDictionary<string, int>(GreatPeopleData.Read(sim, sim.State.CityById(city)).SettledSpecialists, StringComparer.Ordinal));
     public int GoldenAgeTurnsRemaining(Simulation sim, int player) => GreatPeopleData.Read(sim, player).GoldenAgeTurns;
     public int GoldenAgeUnitsRequired(Simulation sim, int player) => Math.Max(1, GreatPeopleData.Raw(sim, "BASE_GOLDEN_AGE_UNITS", 1)
         + GreatPeopleData.Read(sim, player).UnitGoldenAges * GreatPeopleData.Raw(sim, "GOLDEN_AGE_UNITS_MULTIPLIER", 1));
-    public IReadOnlyList<GreatPersonAction> AvailableActions(Simulation sim, int player, int unit) => GreatPersonActions.Available(sim, player, unit);
+    public IReadOnlyList<GreatPersonAction> AvailableActions(Simulation sim, int player, int unit, Hex? destination = null) => GreatPersonActions.Available(sim, player, unit, destination);
 
     private static SortedDictionary<string, long> SourceRates(Simulation sim, City city, ModifierSink sink)
     {

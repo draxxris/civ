@@ -118,7 +118,64 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         foreach (var b in Options.Buildings)
             if (!v.City.Buildings.Contains(b.Id) && Rate(b, v) is { } score) options.Add(("cities:building", b.Id, score));
         if (army.Soldiers + _soldiersQueued < army.Want(Views) && v.Production >= 2) options.AddRange(ArmyOptions(v));
+        options.AddRange(StrategicOptions(v));
+        if (InquisitorWanted())
+            foreach (var unit in Options.Units.Where(u => u.Inquisitor))
+                if (ctx.Service<ICityProductionService>().Validate(ctx.Sim, v.City.Id, "cities:unit", unit.Id).Success)
+                    options.Add(("cities:unit", unit.Id, 500 + 1000L / Math.Max(1, unit.Cost)));
         return options.OrderByDescending(o => o.Score).ThenBy(o => o.Id, StringComparer.Ordinal).Select(o => (o.Kind, o.Id));
+    }
+
+    private int CountRole(UnitRole role) => ctx.Units.Count(u => ctx.Alive(u) && ctx.Role(u) == role)
+        + ctx.Cities.SelectMany(c => c.ProductionQueue).Count(o => o.Kind == "cities:unit" && ctx.Catalog.Roles.GetValueOrDefault(o.ContentId) == role);
+
+    private IEnumerable<(string, string, long)> StrategicOptions(CityView view)
+    {
+        var targets = new CampaignTargets(ctx);
+        bool war = ctx.Team.Wars.Count > 0;
+        if (targets.Coastal(view.City))
+            foreach (var option in NavalOptions(view, targets, war)) yield return option;
+        if (!war) yield break;
+        int land = ctx.Units.Count(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+        if (CountRole(UnitRole.Siege) < Math.Max(1, land / 4)
+            && Options.Best(view.City.Id, UnitRole.Siege, u => AiOptions.Quality(u) + u.BombardRate + u.BombRange * 10) is { } siege)
+            yield return ("cities:unit", siege.Id, 340);
+        if (CountRole(UnitRole.Air) < Math.Max(1, land / 6)
+            && Options.Best(view.City.Id, UnitRole.Air, u => u.AirCombat * 10 + u.BombRate + u.InterceptionPercent) is { } air)
+            yield return ("cities:unit", air.Id, 360);
+    }
+
+    private IEnumerable<(string, string, long)> NavalOptions(CityView view, CampaignTargets targets, bool war)
+    {
+        int land = ctx.Units.Count(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+        bool overseas = targets.OverseasTarget(targets.Area(view.City.Position)) is not null
+            || ctx.Cities.Select(c => targets.Area(c.Position)).Distinct().Count() > 1;
+        bool needTransport = war && overseas && CountRole(UnitRole.NavalTransport) < Math.Max(1, land / 4);
+        if (needTransport && Options.Best(view.City.Id, UnitRole.NavalTransport, u => Math.Max(u.Cargo, u.TotalCargo) * 100 - u.Cost,
+                u => u.CargoDomain is null or "military:domain_land") is { } transport)
+            yield return ("cities:unit", transport.Id, 390);
+        int escorts = CountRole(UnitRole.NavalCombat) + CountRole(UnitRole.NavalExplorer);
+        if (war && escorts < Math.Max(1, CountRole(UnitRole.NavalTransport))
+            && Options.Best(view.City.Id, UnitRole.NavalCombat, AiOptions.Quality) is { } ship)
+            yield return ("cities:unit", ship.Id, needTransport ? 380 : 300);
+        foreach (var option in NavalExploration(view, targets, escorts)) yield return option;
+    }
+
+    private IEnumerable<(string, string, long)> NavalExploration(CityView view, CampaignTargets targets, int escorts)
+    {
+        if (escorts != 0) yield break;
+        if (!ctx.Grid.Tiles.Any(t => targets.Water(t) && !ctx.Sim.State.Plots[t.Value].Revealed.Contains(ctx.Team.Id))) yield break;
+        if (Options.Best(view.City.Id, UnitRole.NavalExplorer, u => u.Moves * 20 + u.Strength) is { } explorer)
+            yield return ("cities:unit", explorer.Id, 170);
+    }
+
+    private bool InquisitorWanted()
+    {
+        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        if (religion is null || !religion.IsInquisitionEnabled(ctx.Sim, ctx.PlayerId)) return false;
+        if (ctx.Units.Any(u => ctx.Alive(u) && u.Health > 0 && ctx.Def(u).Inquisitor)) return false;
+        if (ctx.Cities.SelectMany(c => c.ProductionQueue).Any(o => o.Kind == "cities:unit" && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Inquisitor)) return false;
+        return ctx.Cities.Any(c => religion.HasInquisitionTargets(ctx.Sim, c.Id));
     }
 
     private IEnumerable<(string, string, long)> ArmyOptions(CityView v)
