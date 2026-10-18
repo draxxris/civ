@@ -13,7 +13,8 @@ internal static class ResearchCosts
         var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
         var constants = sim.Content.Get<RuleConstantsDef>().All.Single().Values;
         var lines = new List<LedgerLine>();
-var definition = sim.Content.Get<TechDef>(tech);
+
+        var definition = sim.Content.Get<TechDef>(tech);
         long cost = definition.Cost;
         lines.Add(new(tech, "research:base_cost", cost));
         Scale("research:global_percent", Math.Max(0, 100L + constants.ResearchCostPercent));

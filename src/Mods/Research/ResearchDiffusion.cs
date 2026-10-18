@@ -37,6 +37,7 @@ internal static class ResearchDiffusion
 
     private static long Weight(Simulation sim, IDiplomacyService? diplomacy, Team team, int other)
     {
+        if (other == team.Id) return 1;
         if (diplomacy?.HasOpenBorders(sim, team.Id, other) == true) return 4;
         return team.Wars.Contains(other) ? 2 : 1;
     }

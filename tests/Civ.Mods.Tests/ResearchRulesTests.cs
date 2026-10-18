@@ -62,6 +62,23 @@ public sealed class ResearchRulesTests
         Assert.Equal(before, SaveGame.Save(sim));
     }
 
+    // Public rate-query contract: self-held repeatable knowledge has one half-unit of weight.
+    // Existing vectors have only rival holders and miss diplomacy's self-open-borders shortcut.
+    // Independent exponents 0.5 and 4.5 give bonuses 4 and 26; no production test seam is needed.
+    [Theory]
+    [InlineData(2, 0, 104)]
+    [InlineData(4, 2, 126)]
+    public void Self_held_repeatable_technology_uses_neutral_diffusion_weight(int players, int rivalHolders, int expected)
+    {
+        const string tech = "research:future_tech";
+        var sim = Scenario(players);
+        sim.TeamOf(0).Techs.Add(tech);
+        var diplomacy = Service<IDiplomacyService>(sim);
+        for (int p = 1; p < players; p++) diplomacy.EstablishContact(sim, 0, p);
+        for (int p = 1; p <= rivalHolders; p++) sim.TeamOf(p).Techs.Add(tech);
+        Assert.Equal(expected, Service<IResearchService>(sim).RateModifier(sim, 0, tech));
+    }
+
     // Lifecycle risk distinct from the formula vectors: eliminated and barbarian holders must not dilute
     // the eligible denominator or supply exposure, including when diffusion is explicitly disabled.
     [Fact]
