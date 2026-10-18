@@ -19,6 +19,16 @@ internal static class StartupBenchmarks
                 RunGame(catalog, size, seed);
     }
 
+    public static void RunWorld(string root)
+    {
+        Console.WriteLine("World benchmarks: one catalog load, then one warmup and five samples; no timing thresholds.");
+        var catalog = GameCatalog.Load(root);
+        Console.WriteLine($"Content hash: {catalog.Content.ContentHash}");
+        foreach (string size in new[] { "standard", "gigantic" })
+            foreach (ulong seed in new ulong[] { 1, 42, 987654 })
+                RunWorldGame(catalog, size, seed);
+    }
+
     private static void MeasureCatalogs(GameCatalog catalog)
     {
         // Preserve the source order, manifests, roots and registration entry points. Only hide preparation support.
@@ -63,15 +73,9 @@ internal static class StartupBenchmarks
 
     private static void RunGame(GameCatalog catalog, string size, ulong seed)
     {
-        var options = catalog.DefaultOptions() with { WorldSize = "foundation:worldsize_" + size, Seed = seed };
-        var settings = options.ToSettings(catalog);
-        var map = catalog.Content.Services.Get<INewGameSetup>().Single().ResolveMap(catalog.Content, settings);
+        var (options, settings, map) = CreateWorldSetup(catalog, size, seed);
         Console.WriteLine($"\n{size}: {map.Width}x{map.Height}; seed={seed}; players={settings.PlayerCount}");
-        var generated = Measure("World generation only", () => Generate(catalog.Content, settings, map), GeneratedHash);
-        Console.WriteLine($"Generated hash (plots + RNG): {GeneratedHash(generated)}");
-        var session = Measure("GameSession.Start (includes initial opponent AI)", () => GameSession.Start(catalog, options),
-            s => s.Sim.ComputeHash().ToString("X16"));
-        Console.WriteLine($"Session hash (state + RNG): {session.Sim.ComputeHash():X16}");
+        var session = MeasureWorld(catalog, options, settings, map);
         // Mutating workload: prepare a fresh session outside every timed founding sample.
         session = Measure("Found city", () =>
         {
@@ -85,6 +89,37 @@ internal static class StartupBenchmarks
         Measure("DescribeCity", () => session.DescribeCity(city) ?? throw new InvalidOperationException("Missing city"));
         var choices = MeasureProductionChoices(session, city);
         Console.WriteLine($"Founded hash: {session.Sim.ComputeHash():X16}; production choices={choices.Count}");
+    }
+
+    private static void RunWorldGame(GameCatalog catalog, string size, ulong seed)
+    {
+        var (options, settings, map) = CreateWorldSetup(catalog, size, seed);
+        Console.WriteLine($"\n{size}: {map.Width}x{map.Height}; seed={seed}; players={settings.PlayerCount}");
+        MeasureWorld(catalog, options, settings, map);
+    }
+
+    private static GameSession MeasureWorld(GameCatalog catalog, NewGameOptions options, SimulationSettings settings, MapSpec map)
+    {
+        var generated = Measure("World generation only", () => Generate(catalog.Content, settings, map), GeneratedHash);
+        Console.WriteLine($"Generated hash (plots + RNG): {GeneratedHash(generated)}");
+        var session = Measure("GameSession.Start (includes initial opponent AI)", () => GameSession.Start(catalog, options),
+            s => s.Sim.ComputeHash().ToString("X16"));
+        Console.WriteLine($"Session hash (state + RNG): {session.Sim.ComputeHash():X16}");
+        return session;
+    }
+
+    private static (NewGameOptions Options, SimulationSettings Settings, MapSpec Map) CreateWorldSetup(
+        GameCatalog catalog, string size, ulong seed)
+    {
+        var options = catalog.DefaultOptions() with
+        {
+            WorldSize = "foundation:worldsize_" + size,
+            Seed = seed,
+            Opponents = 3
+        };
+        var settings = options.ToSettings(catalog);
+        var map = catalog.Content.Services.Get<INewGameSetup>().Single().ResolveMap(catalog.Content, settings);
+        return (options, settings, map);
     }
 
     private static IReadOnlyList<ProductionChoice> MeasureProductionChoices(GameSession session, City city)
@@ -138,27 +173,39 @@ internal static class StartupBenchmarks
         var value = action();
         string? expected = fingerprint?.Invoke(value);
         var times = new double[5];
+        var cpuTimes = new double[5];
         var bytes = new long[5];
+        using var process = Process.GetCurrentProcess();
         for (int i = 0; i < times.Length; i++)
         {
             prepare?.Invoke();
+            process.Refresh();
+            TimeSpan cpuStart = process.TotalProcessorTime;
             long allocated = GC.GetTotalAllocatedBytes(true);
             var clock = Stopwatch.StartNew();
             value = action();
             clock.Stop();
             bytes[i] = GC.GetTotalAllocatedBytes(true) - allocated;
+            process.Refresh();
+            cpuTimes[i] = (process.TotalProcessorTime - cpuStart).TotalMilliseconds;
             times[i] = clock.Elapsed.TotalMilliseconds;
             if (fingerprint is not null && fingerprint(value) != expected) throw new InvalidOperationException($"{name}: output changed");
         }
-        PrintSamples(name, times, bytes);
+        PrintSamples(name, times, bytes, cpuTimes);
         return value;
     }
 
-    private static void PrintSamples(string name, double[] times, long[] bytes)
+    private static void PrintSamples(string name, double[] times, long[] bytes, double[]? cpuTimes = null)
     {
         Array.Sort(times);
         Array.Sort(bytes);
-        Console.WriteLine($"{name}: {times[2]:F2} ms (min {times[0]:F2}, max {times[^1]:F2}); "
-            + $"{bytes[2] / 1048576.0:F2} MiB allocated (min {bytes[0] / 1048576.0:F2}, max {bytes[^1] / 1048576.0:F2})");
+        string cpu = "";
+        if (cpuTimes is not null)
+        {
+            Array.Sort(cpuTimes);
+            cpu = $"; process CPU {cpuTimes[2]:F2} ms (min {cpuTimes[0]:F2}, max {cpuTimes[^1]:F2})";
+        }
+        Console.WriteLine($"{name}: {times[2]:F2} ms wall (min {times[0]:F2}, max {times[^1]:F2}); "
+            + $"{bytes[2] / 1048576.0:F2} MiB allocated (min {bytes[0] / 1048576.0:F2}, max {bytes[^1] / 1048576.0:F2}){cpu}");
     }
 }

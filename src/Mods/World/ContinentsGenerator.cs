@@ -77,11 +77,12 @@ internal static class RiverGenerator
     {
         var parent = Drainage(grid, plots, elevation, content);
         var state = new GameState { Map = grid.Spec, Plots = plots };
+        var drawn = new bool[grid.Count];
         foreach (var tile in grid.Tiles)
         {
             if (Geography.Water(content, plots[tile.Value]) || plots[tile.Value].Kind == PlotKind.Flat) continue;
             if (rng.Next(Geography.Tuning(content).RiverSourceOneIn) != 0) continue;
-            Draw(state, tile, parent, content);
+            Draw(state, tile, parent, drawn, content);
         }
     }
     private static int[] Drainage(HexGrid grid, Plot[] plots, int[] elevation, ContentDb content)
@@ -105,15 +106,24 @@ internal static class RiverGenerator
             }
         return parent;
     }
-    private static void Draw(GameState state, TileId source, int[] parent, ContentDb content)
+    private static void Draw(GameState state, TileId source, int[] parent, bool[] drawn, ContentDb content)
     {
         var tile = source;
-        while (!Geography.Water(content, state.Plots[tile.Value]) && parent[tile.Value] >= 0)
+        // Every tile has one drainage parent. A previously drawn tile already has its entire
+        // downstream path, so tributaries can stop here without changing river bits or RNG.
+        while (!drawn[tile.Value] && !Geography.Water(content, state.Plots[tile.Value]) && parent[tile.Value] >= 0)
         {
             var next = new TileId(parent[tile.Value]);
-            int direction = Enumerable.Range(0, 6).First(d => state.Grid.Neighbor(tile, d) == next);
-            state.SetRiver(tile, direction, true);
+            state.SetRiver(tile, Direction(state.Grid, tile, next), true);
+            drawn[tile.Value] = true;
             tile = next;
         }
+    }
+
+    private static int Direction(HexGrid grid, TileId tile, TileId next)
+    {
+        for (int direction = 0; direction < 6; direction++)
+            if (grid.Neighbor(tile, direction) == next) return direction;
+        throw new InvalidOperationException("Drainage parent is not a neighbor");
     }
 }

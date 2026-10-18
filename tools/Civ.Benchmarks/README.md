@@ -13,9 +13,18 @@ For standard and gigantic worlds with seeds 1, 42, and 987654, run the expanded 
 mise run benchmark -- --startup
 ```
 
-Neither workload runs the old 99-turn AI preparation.
-Without these flags, the tool runs the original turn and AI workloads.
+For world generation and session startup only, run:
+
+```sh
+mise run benchmark -- --world
+```
+
+`--world` loads the catalog once and skips paired catalog rebuilds. It measures standard and gigantic worlds with seeds 1, 42, and 987654. Each world uses four players.
+The workload measures world generation and `GameSession.Start`. It does not measure founding, production choices, or 99-turn AI preparation.
+
+Neither `--quick` nor `--startup` runs the old 99-turn AI preparation.
 `--terrain` selects the terrain workload.
+Without a workload flag, the tool runs the original turn and AI workloads.
 
 The startup workload measures:
 
@@ -33,7 +42,9 @@ Save creation and session preparation run outside the timed samples.
 Cold and warm samples must return identical choices without changes to the authoritative state or RNG.
 
 Repeated measurements use one warmup and five samples.
-The tool reports the median, minimum, and maximum for elapsed time and process-wide allocated bytes.
+`Measure` results report median, minimum, and maximum wall time, process CPU time, and process-wide allocated bytes.
+Process CPU time includes all process threads, garbage collection, and adjacent measurement probes.
+It is an approximate supporting metric, separate from wall time.
 Generation, session, and founding hash calculations run outside the timed samples.
 Catalog measurements include content hashing as part of each build.
 Each repeated generation, session, and founding sample must match its warmup hash.
