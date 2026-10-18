@@ -81,10 +81,9 @@ public sealed class TerrainSnapshot
         var snapshot = new TerrainSnapshot(state.Map);
         for (int i = 0; i < state.Plots.Length; i++)
         {
-            var plot = state.Plots[i];
-            var sight = session.SightOf(plot);
+            var sight = session.SightOf(state.Plots[i]);
             snapshot.Sight[i] = sight;
-            if (sight == Client.Sight.Hidden) continue;
+            if (session.PerceivedPlot(new TileId(i)) is not { } plot) continue;
             snapshot.Terrain[i] = plot.Terrain;
             snapshot.Feature[i] = plot.Feature;
             snapshot.Relief[i] = ReliefOf(session.Sim.Content.Get<Schema.TerrainDef>(plot.Terrain), plot);
@@ -97,7 +96,7 @@ public sealed class TerrainSnapshot
     }
 
     /// <summary>Lakes and coast terrains are shallow water; ocean terrains are deep water.</summary>
-    private static ReliefClass ReliefOf(Schema.TerrainDef terrain, Plot plot)
+    private static ReliefClass ReliefOf(Schema.TerrainDef terrain, RevealedPlotSnapshot plot)
     {
         if (plot.IsLake) return ReliefClass.ShallowWater;
         if (terrain.IsWater) return IsOcean(plot.Terrain) ? ReliefClass.DeepWater : ReliefClass.ShallowWater;

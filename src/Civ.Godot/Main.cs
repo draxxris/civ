@@ -293,7 +293,8 @@ public partial class Main : Node3D
     /// <summary>Screenshot aid: explore the whole map for the human team so terrain rendering can be inspected.</summary>
     private static void RevealEverything(GameSession session)
     {
-        foreach (var plot in session.Sim.State.Plots) plot.Revealed.Add(session.Me.TeamId);
+        var visibility = session.Sim.Content.Services.Get<Civ.Game.IVisibilityService>().Single();
+        foreach (var tile in session.Sim.State.Grid.Tiles) visibility.RevealPlot(session.Sim, tile, session.Me.TeamId);
     }
 
     private void TakeScreenshot()

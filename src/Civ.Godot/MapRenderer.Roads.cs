@@ -18,14 +18,14 @@ internal sealed partial class MapRenderer
     /// zero at the centres. The bend is hashed from the unordered tile pair, so each tile draws its own half and the halves
     /// meet exactly at the shared edge with the same tangent. A round blob at the centre joins the links. Fog is the
     /// shader's job, per pixel, so a half link in fog meets one in sight without a step.</summary>
-    private void DrawRoute(RoadMesh b, TileId tile, Vector3 centre, Plot plot)
+    private void DrawRoute(RoadMesh b, TileId tile, Vector3 centre, RevealedPlotSnapshot plot)
     {
         if (plot.Route == null) return;
         var grid = _session.Sim.State.Grid;
         var hex = grid.HexOf(tile);
         for (int d = 0; d < 6; d++)
         {
-            if (grid.Neighbor(tile, d) is not TileId n || n == tile || _session.Sim.State.Plots[n.Value].Route == null) continue;
+            if (grid.Neighbor(tile, d) is not TileId n || n == tile || _session.PerceivedPlot(n)?.Route == null) continue;
             // Unwrapped neighbour centre, so a link across the wrap seam stays short.
             var other = PositionOf(hex.Neighbor(d));
             bool first = tile.Value < n.Value;
