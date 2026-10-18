@@ -35,7 +35,7 @@ public sealed partial class GameSession
         AddPlotLines(hex, plot, lines);
         AddOwnerLines(hex, plot, lines);
         if (sight == Sight.Visible) AddUnitLines(hex, lines);
-        return new(plot.Kind == PlotKind.Flat ? terrain : $"{plot.Kind} {terrain}", lines);
+        return new(plot.Kind == PlotKind.Hills ? $"{plot.Kind} {terrain}" : terrain, lines);
     }
 
     private void AddPlotLines(Hex hex, Plot plot, List<string> lines)

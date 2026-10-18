@@ -14,6 +14,24 @@ internal static class TerrainShowcase
             .Select(state.Grid.HexOf).FirstOrDefault();
     }
 
+    /// <summary>A generated river worth inspecting: many river edges, bends and a mouth on the coast or a lake nearby.
+    /// Read-only, so the river stage shows the generator's own rivers.</summary>
+    public static Hex RiverFocus(GameSession session)
+    {
+        var state = session.Sim.State;
+        bool Water(Plot plot) => session.Sim.Content.Get<Schema.TerrainDef>(plot.Terrain).IsWater;
+        int Score(Hex centre)
+        {
+            var near = state.Grid.Range(centre, 2).Select(state.PlotAt).ToArray();
+            int edges = near.Sum(p => System.Numerics.BitOperations.PopCount(p.RiverEdges));
+            int mouths = near.Count(p => Water(p) && p.RiverEdges != 0);
+            int land = near.Count(p => !Water(p));
+            return edges * 10 + Math.Min(mouths, 2) * 25 + land * 2;
+        }
+        return state.Grid.Tiles.Select(state.Grid.HexOf).Where(h => state.PlotAt(h).RiverEdges != 0)
+            .OrderByDescending(Score).ThenBy(h => state.Grid.TileAt(h).Value).FirstOrDefault();
+    }
+
     private static int Score(GameSession session, Hex centre)
     {
         var state = session.Sim.State;
@@ -50,6 +68,8 @@ internal static class TerrainShowcase
     {
         var state = session.Sim.State;
         var ridge = ConnectedPeaks(session, centre);
+        // Sculpted peaks take the focus peak's generated mountain terrain, so no biome survives under a summit.
+        string mountain = state.PlotAt(centre).Terrain;
         // Screenshot-only sculpting ensures a compact five-peak range even when the generator separates its peaks.
         while (ridge.Count < 5)
         {
@@ -62,6 +82,7 @@ internal static class TerrainShowcase
         foreach (var h in ridge)
         {
             state.PlotAt(h).Kind = PlotKind.Peak;
+            state.PlotAt(h).Terrain = mountain;
             state.PlotAt(h).Feature = null;
         }
         Godot.GD.Print($"terrain showcase: {ridge.Count} connected peak tiles near {centre}");

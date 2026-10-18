@@ -22,6 +22,7 @@ public sealed class TerrainPalette
             [TerrainSurface.Seabed] = ("surface:seabed", 0x234f9c),
             [TerrainSurface.DeepSeabed] = ("surface:deep_seabed", 0x17366b),
             [TerrainSurface.Unexplored] = ("surface:unexplored", 0x777777),
+            [TerrainSurface.Snow] = ("surface:snow", 0xf0f5fa),
         };
 
     private readonly Dictionary<string, int> _terrainLayers = new(StringComparer.Ordinal);

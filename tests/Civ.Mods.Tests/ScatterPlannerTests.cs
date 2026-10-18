@@ -160,7 +160,7 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.All(props, p =>
         {
             Assert.True(field.HeightAt(p.X, p.Z) > 0.02);
-            Assert.True(field.RiverDistance(p.X, p.Z) >= field.Tuning.RiverBand - 1e-5);
+            Assert.Equal(0, field.Rivers.Carve(p.X, p.Z));
         });
         var (x, z) = snapshot.Grid.HexOf(new TileId(water)).ToPixel(1);
         Assert.DoesNotContain(props, p => Math.Abs(p.X - x) < 0.3 && Math.Abs(p.Z - z) < 0.3);

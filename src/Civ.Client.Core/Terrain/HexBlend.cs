@@ -24,8 +24,9 @@ public static class HexBlend
 {
     /// <summary>Default sharpness for material (texture and scatter) weights.</summary>
     public const double MaterialSharpness = 4;
-    /// <summary>Default sharpness for peak height weights.</summary>
-    public const double PeakSharpness = 6;
+    /// <summary>Default sharpness for peak height weights. Soft, so a peak's flanks slope down across its neighbours
+    /// instead of rising as walls at the hex border.</summary>
+    public const double PeakSharpness = 2;
 
     private static readonly double Sqrt3 = Math.Sqrt(3);
 

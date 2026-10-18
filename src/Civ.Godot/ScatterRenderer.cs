@@ -10,6 +10,7 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
     private static readonly GltfDocumentExtensionConvertImporterMesh MeshConverter = RegisterMeshConverter();
     private readonly Dictionary<string, ArrayMesh?> _meshes = new(StringComparer.Ordinal);
     private readonly Dictionary<TextureKey, Texture2D> _textures = new();
+    private readonly Dictionary<Texture2D, Texture2D> _foliage = new();
     private readonly Dictionary<int, (Node3D Root, List<Batch> Batches)> _chunks = new();
     private readonly record struct TextureKey(int Width, int Height, Image.Format Format, string ContentHash);
     private sealed record Batch(MultiMesh Mesh, ScatterInstance[] Instances, Sight[] Sight);
@@ -124,7 +125,8 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
     }
 
     /// <summary>Bake the complete scene transform, keeping every bark, leaf and plant surface and its UVs.
-    /// The importer preserves glTF MASK as alpha scissor; duplicating the material keeps its cutoff and culling.</summary>
+    /// The importer preserves glTF MASK as alpha scissor; duplicating the material keeps its cutoff and culling.
+    /// Cutout surfaces are the foliage, so they get the shared muted foliage grade and a matte finish.</summary>
     private void Extract(Node node, Transform3D parent, ArrayMesh target)
     {
         var transform = node is Node3D spatial ? parent * spatial.Transform : parent;
@@ -136,6 +138,12 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
                 tool.AppendFrom(instance.Mesh, surface, transform);
                 var material = instance.GetActiveMaterial(surface)?.Duplicate() as StandardMaterial3D ?? new StandardMaterial3D();
                 material.AlbedoTexture = ShareTexture(material.AlbedoTexture);
+                if (material.Transparency == BaseMaterial3D.TransparencyEnum.AlphaScissor)
+                {
+                    material.AlbedoTexture = GradeFoliage(material.AlbedoTexture);
+                    material.Roughness = 1f;
+                    material.MetallicSpecular = 0.25f;
+                }
                 material.NormalEnabled = false;
                 material.NormalTexture = null;
                 material.VertexColorUseAsAlbedo = true;
@@ -144,6 +152,23 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
             }
         }
         foreach (var child in node.GetChildren()) Extract(child, transform, target);
+    }
+
+    /// <summary>One graded copy per shared leaf texture, so batching and texture sharing are unchanged.</summary>
+    private Texture2D? GradeFoliage(Texture2D? texture)
+    {
+        if (texture is null) return null;
+        if (_foliage.TryGetValue(texture, out var graded)) return graded;
+        using var image = texture.GetImage();
+        if (image.IsEmpty()) return _foliage[texture] = texture;
+        if (image.IsCompressed()) image.Decompress();
+        image.ClearMipmaps();
+        image.Convert(Image.Format.Rgba8);
+        var data = image.GetData();
+        FoliageGrade.Apply(data);
+        using var result = Image.CreateFromData(image.GetWidth(), image.GetHeight(), false, Image.Format.Rgba8, data);
+        result.GenerateMipmaps();
+        return _foliage[texture] = ImageTexture.CreateFromImage(result);
     }
 
     private Texture2D? ShareTexture(Texture2D? texture)

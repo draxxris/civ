@@ -35,9 +35,15 @@ internal sealed class ContinentsGenerator : IMapGenerator
     private static void SetTerrain(HexGrid grid, Plot plot, TileId tile, bool land, int moisture, int relief,
         int hills, int peaks, Civ.Content.Schema.HexOverridesDef tuning)
     {
+        plot.Kind = PlotKind.Flat;
         plot.Terrain = land ? Climate(Geography.Latitude(grid, tile), moisture, tuning) : "world:ocean";
         if (!land) return;
-        if (relief >= peaks) plot.Kind = PlotKind.Peak;
+        if (relief >= peaks)
+        {
+            // Keep peak relief for capability/yield rules, but mountains have no underlying biome.
+            plot.Kind = PlotKind.Peak;
+            plot.Terrain = "world:peak";
+        }
         else if (relief >= hills) plot.Kind = PlotKind.Hills;
     }
     private static string Climate(int latitude, int moisture, Civ.Content.Schema.HexOverridesDef tuning)
