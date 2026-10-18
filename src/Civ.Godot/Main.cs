@@ -23,6 +23,7 @@ public partial class Main : Node3D
     private string? _shotPath;
     private string _shotName = "";
     private Hex? _scenarioFocus;
+    private EspionageCapture? _espionageCapture;
 
     public override void _Ready()
     {
@@ -241,6 +242,7 @@ public partial class Main : Node3D
     {
         if (_debug.Stage == "civics") _game!.Ui.ToggleGovernment();
         if (_debug.Stage == "research") _game!.Ui.ToggleResearch();
+        _espionageCapture?.Open(_game!.Ui);
     }
 
     /// <summary>Screenshot runs can advance turns and open the city screen before the first frame.</summary>
@@ -248,6 +250,16 @@ public partial class Main : Node3D
     {
         if (_debug.FpsProbe) { RevealEverything(session); return; }
         if (_debug.ScreenshotPath == null) return;
+        PrepareCaptureScene(session);
+        Input.WarpMouse(new Vector2(700, 10));
+        if (_debug.Stage == "espionage") _espionageCapture = new EspionageCapture(session);
+        if (_debug.Stage is "city" or "map-city") FoundScreenshotCity(session);
+        for (int i = 0; i < _debug.Turns; i++) session.EndTurn();
+        if (_debug.Stage == "city") OpenScreenshotCity(session);
+    }
+
+    private void PrepareCaptureScene(GameSession session)
+    {
         if (_debug.Reveal) RevealEverything(session);
         if (_debug.ScenarioFile != null) _scenarioFocus = DebugScenario.Apply(session, _debug.ScenarioFile);
         else if (_debug.CustomScene) foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
@@ -257,10 +269,6 @@ public partial class Main : Node3D
             RevealEverything(session);
             foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
         }
-        Input.WarpMouse(new Vector2(700, 10));
-        if (_debug.Stage is "city" or "map-city") FoundScreenshotCity(session);
-        for (int i = 0; i < _debug.Turns; i++) session.EndTurn();
-        if (_debug.Stage == "city") OpenScreenshotCity(session);
     }
 
     private static void FoundScreenshotCity(GameSession session)
@@ -297,31 +305,48 @@ public partial class Main : Node3D
         foreach (var tile in session.Sim.State.Grid.Tiles) visibility.RevealPlot(session.Sim, tile, session.Me.TeamId);
     }
 
+    private bool AdvanceEspionageCapture()
+    {
+        if (_espionageCapture is null || !_espionageCapture.Advance(_game!.Ui)) return false;
+        string path = _debug.ScreenshotPath!;
+        _shotPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path) ?? ".",
+            System.IO.Path.GetFileNameWithoutExtension(path) + "-" + _espionageCapture.Stage + ".png");
+        _framesSinceReady = 0;
+        return true;
+    }
+
     private void TakeScreenshot()
     {
         _framesSinceReady = -1;
+        _espionageCapture?.Check(_game!.Ui);
         var image = GetViewport().GetTexture().GetImage();
         var path = System.IO.Path.GetFullPath(_shotPath ?? _debug.ScreenshotPath!);
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
         var error = image.SavePng(path);
         GD.Print($"screenshot {path}: {error}");
         if (error == Error.Ok && _debug.Stats && _game != null) WriteStats(path);
-        if (error == Error.Ok && _shots != null && ++_shotIndex < _shots.Count)
-        {
-            ApplyShot(_game!.Session, _shots[_shotIndex]);
-            _framesSinceReady = 0;
-            return;
-        }
-        if (error == Error.Ok && _screenshotStages.Count > 0)
-        {
-            _game?.QueueFree();
-            _setup?.QueueFree();
-            _game = null;
-            _setup = null;
-            _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
-            ShowSetup();
-            return;
-        }
-        GetTree().Quit(error == Error.Ok ? 0 : 1);
+        if (error != Error.Ok) { GetTree().Quit(1); return; }
+        if (AdvanceEspionageCapture() || AdvanceShotPose() || AdvanceStageTour()) return;
+        GetTree().Quit();
+    }
+
+    private bool AdvanceShotPose()
+    {
+        if (_shots is null || ++_shotIndex >= _shots.Count) return false;
+        ApplyShot(_game!.Session, _shots[_shotIndex]);
+        _framesSinceReady = 0;
+        return true;
+    }
+
+    private bool AdvanceStageTour()
+    {
+        if (_screenshotStages.Count == 0) return false;
+        _game?.QueueFree();
+        _setup?.QueueFree();
+        _game = null;
+        _setup = null;
+        _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
+        ShowSetup();
+        return true;
     }
 }

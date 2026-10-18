@@ -27,6 +27,8 @@ Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in 
 
 - **[docs/DESIGN.md](docs/DESIGN.md)**: Architectural design, core principles ("everything is a mod"), and subsystem contracts.
 - **[docs/ROADMAP.md](docs/ROADMAP.md)**: Single source of truth for project roadmap: what is done (implemented systems and mechanics) and what needs to be done.
+- **[docs/ESPIONAGE.md](docs/ESPIONAGE.md)**: Espionage rules, passive intelligence tiers, counter-espionage, and spy operations.
+- **[docs/RESEARCH.md](docs/RESEARCH.md)**: Research formulas, calendar progression, technology trading gates, and map overlays.
 
 ## Operational benchmarks
 

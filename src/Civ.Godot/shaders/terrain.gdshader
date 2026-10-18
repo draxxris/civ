@@ -106,37 +106,15 @@ void fragment() {
 
 	ivec2 hex = containing_hex(p);
 	bool inside = on_map(hex);
-	int sight = 0, mark = 0, owner = 0;
+	int sight = 0;
 	bool hover = false;
 	if (inside) {
-		vec4 a = texelFetch(tile_a, texel_of(hex), 0);
 		vec4 b = texelFetch(tile_b, texel_of(hex), 0);
 		sight = byte_of(b.r);
-		mark = byte_of(b.g);
 		hover = b.b > 0.5;
-		owner = byte_of(a.b);
 	}
 	vec2 d = p - hex_centre(hex);
-	float fog = sight == 1 ? 0.72 : 1.0;
-
-	if (debug_mode == 0 && sight > 0) {
-		if (mark == 1) colour = mix(colour, vec3(1.0), 0.16);
-		else if (mark == 2) colour = mix(colour, vec3(1.0, 0.32, 0.01), 0.42);
-		else if (mark == 3) colour = mix(colour, vec3(0.0), 0.5);
-		float border = 0.0, glow = 0.0;
-		for (int k = 0; k < 6; k++) {
-			float edge = SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]);
-			if (owner > 0 && owner_of(hex + DIRECTION[k]) != owner) {
-				border = max(border, band(edge, border_width));
-				glow = max(glow, 1.0 - smoothstep(0.0, 0.32, edge));
-			}
-		}
-		if (owner > 0) {
-			vec3 own = palette_entry(owner, 2, linear).rgb * fog;
-			colour = mix(colour, own, glow * 0.3);
-			colour = mix(colour, own, border);
-		}
-	}
+	if (debug_mode == 0 && sight > 0) colour = map_overlays(p, colour, linear);
 
 	float cover = debug_mode == 0 ? sky.a : 0.0;
 	if (debug_mode == 1) colour = w;

@@ -51,7 +51,7 @@ internal sealed partial class GameUi
         }
         row.AddChild(Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world"));
         if (_session.DescribeCorporations().Available) row.AddChild(Ui.Button("Corporations", () => OpenModal(Modal.Corporations), "Corporations and their branches"));
-        if (_session.DescribeEspionage().Available) row.AddChild(Ui.Button("Espionage", () => OpenModal(Modal.Espionage), "Espionage points and weights"));
+        if (_session.DescribeEspionage().Available) row.AddChild(Ui.Button("Espionage", ToggleEspionage, "Rival intelligence, spending and counter-espionage"));
         if (_session.DescribePendingEvents().Count > 0) row.AddChild(Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice"));
         row.AddChild(Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory"));
         row.AddChild(Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more"));
@@ -107,7 +107,9 @@ internal sealed partial class GameUi
         if (!_modal.Visible) return;
         var box = Ui.VBox(6);
         var head = Ui.HBox();
-        head.AddChild(Ui.Heading(_modalKind.ToString()));
+        var title = Ui.Heading(_modalKind.ToString());
+        title.AutowrapMode = TextServer.AutowrapMode.Off;
+        head.AddChild(title);
         head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", CloseModal));
         box.AddChild(head);
@@ -180,27 +182,7 @@ internal sealed partial class GameUi
         box.AddChild(Ui.Scroll(list, 340));
     }
 
-    private void BuildEspionage(VBoxContainer box)
-    {
-        var screen = _session.DescribeEspionage();
-        var list = Ui.VBox(6);
-        if (screen.Rivals.Count == 0) list.AddChild(Ui.Text("You have not met any rival.", 13, Ui.Dim));
-        foreach (var r in screen.Rivals)
-        {
-            var line = Ui.HBox(6);
-            var flags = new[] { (r.Demographics, "demographics"), (r.CityVisibility, "city visibility"), (r.InspectResearch, "research"), (r.InvestigateCity, "investigate city") }
-                .Where(f => f.Item1).Select(f => f.Item2).ToList();
-            var info = Ui.VBox(0);
-            info.AddChild(Ui.Text($"{r.Name} - {r.Points} points, weight {r.Weight}", 15, Colors.White));
-            info.AddChild(Ui.Text(flags.Count == 0 ? "No passive effects yet" : string.Join(", ", flags), 12, Ui.Dim));
-            line.AddChild(info);
-            int team = r.TeamId, weight = r.Weight;
-            line.AddChild(Ui.Button("-", () => _session.SetEspionageWeight(team, weight - 1), "Lower weight", weight > 0));
-            line.AddChild(Ui.Button("+", () => _session.SetEspionageWeight(team, weight + 1), "Raise weight"));
-            list.AddChild(line);
-        }
-        box.AddChild(Ui.Scroll(list, 340));
-    }
+
 
     private void BuildEvents(VBoxContainer box)
     {

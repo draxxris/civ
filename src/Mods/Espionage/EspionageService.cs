@@ -90,9 +90,18 @@ internal sealed partial class EspionageService : IEspionageService
             PassiveEspionageKind.InvestigateCity => 200,
             _ => throw new ArgumentOutOfRangeException(nameof(kind))
         };
-        return baseline * RatioPercent(sim, team, targetTeam) / 100;
+        return checked(baseline * CostModifier(sim, team, targetTeam)) / 100;
     }
+    public CounterEspionageEffect? CounterEspionage(Simulation sim, int defendingTeam, int rivalTeam)
+    {
+        var effect = Read(sim, defendingTeam).CounterEspionage.GetValueOrDefault(rivalTeam);
+        return effect is not null && sim.State.Turn < effect.ExpiresTurn ? effect : null;
+    }
+    private long CostModifier(Simulation sim, int attacker, int defender) =>
+        checked(RatioPercent(sim, attacker, defender) * (CounterEspionage(sim, defender, attacker)?.CostPercent ?? 100)) / 100;
+
     public bool HasPassiveEffect(Simulation sim, int team, int targetTeam, PassiveEspionageKind kind) => team != targetTeam
+        && LivingTeams(sim).Contains(targetTeam)
         && Points(sim, team, targetTeam) >= PassiveThreshold(sim, team, targetTeam, kind);
     public int SuccessChance(Simulation sim, int player, int city)
     {

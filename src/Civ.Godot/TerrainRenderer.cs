@@ -100,6 +100,16 @@ internal sealed partial class TerrainRenderer : Node3D
     /// <summary>Upload sight and overlay data once, after the map writes its current marks.</summary>
     public void RefreshOverlay() => _data.WriteTileB(Snapshot, _marks, _hover);
 
+    /// <summary>Shared surface controls: uniforms only, with no terrain or sight rebuild.</summary>
+    public void SetMapOverlays(MapOverlays overlays)
+    {
+        foreach (var material in new[] { _terrainMaterial, _waterMaterial, _riverMaterial })
+        {
+            material.SetShaderParameter("show_grid", overlays.Grid);
+            material.SetShaderParameter("show_borders", overlays.CulturalBorders);
+        }
+    }
+
     /// <summary>Set the work-tile overlay marks; uploaded by the next <see cref="RefreshOverlay"/>.</summary>
     public void SetMarks(IEnumerable<(Hex Hex, byte Mark)> marks)
     {

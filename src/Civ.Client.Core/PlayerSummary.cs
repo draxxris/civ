@@ -11,7 +11,7 @@ public sealed record ResearchProgress(string Id, string Name, long Progress, lon
 /// <summary>The numbers in the top bar: treasury, income, slider positions, research, turn and era.</summary>
 public sealed record PlayerSummary(
     long Gold, long Net, long Income, long Expenses, CommerceVector Rates, long ResearchPerTurn, ResearchProgress? Research,
-    int Turn, string Era, int Cities, int Units);
+    int Turn, CalendarDate? CalendarDate, string Era, int Cities, int Units);
 
 public sealed record TechChoice(string Id, string Name, string Era, long Cost, int? Turns, string Help);
 
@@ -23,7 +23,7 @@ public sealed partial class GameSession
         var result = economy.Calculate(Sim, Human);
         long research = ResearchBaseRate(result.CommerceHundredths.Research);
         return new(Me.Treasury, result.NetGold, result.Income, result.Expenses, economy.Rates(Sim, Human), research,
-            CurrentResearch(research), Sim.State.Turn, EraName(),
+            CurrentResearch(research), Sim.State.Turn, OptionalService<IGameCalendar>()?.GetDate(Sim), EraName(),
             Sim.State.Cities.Count(c => c.Owner == Human), Sim.State.Units.Count(u => u.Owner == Human));
     }
 

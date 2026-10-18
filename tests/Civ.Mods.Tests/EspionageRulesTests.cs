@@ -174,15 +174,17 @@ public sealed class EspionageRulesTests
             Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Lines, l => l.Source == "espionage:foment_unhappiness");
         }
     }
-    [Fact]
-    public void Detection_consumes_the_spy_and_spends_points_without_applying_the_mission()
+    [Theory]
+    [InlineData(EspionageMissionKind.StealTreasury)]
+    [InlineData(EspionageMissionKind.CounterEspionage)]
+    public void Detection_consumes_the_spy_and_spends_points_without_applying_the_mission(EspionageMissionKind mission)
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
         for (int i = 0; i < 6; i++) P6RulesScenario.AddUnit(sim, 1, city, "military:spy");
         bool caught = false;
         for (int attempt = 0; attempt < 32 && !caught; attempt++)
         {
-            var spy = Spy(sim); var command = Mission(spy, city, EspionageMissionKind.StealTreasury);
+            var spy = Spy(sim); var command = Mission(spy, city, mission);
             long gold = sim.State.PlayerById(1).Treasury, points = Spies(sim).Points(sim, 0, 1);
             long cost = Spies(sim).MissionCost(sim, 0, city.Id, command.Mission);
             var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
@@ -193,5 +195,110 @@ public sealed class EspionageRulesTests
             if (caught) { Assert.Null(sim.State.FindUnit(spy.Id)); Assert.Equal(gold, sim.State.PlayerById(1).Treasury); }
         }
         Assert.True(caught);
+        Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
+    }
+
+    [Theory]
+    [InlineData("foundation:gamespeed_normal", 84, 8)]
+    [InlineData("foundation:gamespeed_quick", 63, 6)]
+    [InlineData("foundation:gamespeed_marathon", 168, 16)]
+    public void Counter_espionage_has_one_team_expiry_and_survives_save_load(string speed, long cost, int duration)
+    {
+        var content = P6RulesScenario.Create().Content;
+        var sim = Simulation.CreateScenario(content, GameFactory.Settings() with { GameSpeed = speed }, new(12, 8, true),
+            Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass" }).ToArray());
+        GameFactory.NeutralPolitics(sim);
+        var home = P6RulesScenario.AddCity(sim, 0, 14);
+        var city = P6RulesScenario.AddCity(sim, 1, 57);
+        P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        Fund(sim); Fund(sim, 1, 0);
+        Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
+        var spy = P6RulesScenario.AddUnit(sim, 0, city, "military:spy");
+        var command = Mission(spy, city, EspionageMissionKind.CounterEspionage);
+        Assert.Equal(cost, Spies(sim).MissionCost(sim, 0, city.Id, command.Mission));
+        int expires = sim.State.Turn + duration;
+        P6RulesScenario.Apply(sim, command);
+        Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
+        Assert.Equal(home.Position, spy.Position); Assert.Equal(0, spy.MovesLeft);
+        Assert.Equal(100000 - cost, Spies(sim).Points(sim, 0, 1));
+        Assert.Equal(new CounterEspionageEffect(expires, 200), Spies(sim).CounterEspionage(sim, 0, 1));
+        Assert.Null(Spies(sim).CounterEspionage(sim, 1, 0));
+        // A second member sees the same team effect, even before that member's turn ends.
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 0, Treasury = 10000 });
+        sim.TeamOf(0).Members.Add(2); sim.State.RebuildIndexes();
+        P6RulesScenario.AddCity(sim, 2, 18);
+        var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "military:spy");
+        var repeat = Mission(teammateSpy, city, command.Mission);
+        Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
+        var loaded = SaveGame.Load(content, SaveGame.Save(sim));
+        Assert.Equal(new CounterEspionageEffect(expires, 200), Spies(loaded).CounterEspionage(loaded, 0, 1));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        TeamState(loaded, 0).CounterEspionage[1] = new(expires + 1, 200);
+        Assert.NotEqual(sim.ComputeHash(), loaded.ComputeHash());
+        TeamState(loaded, 0).CounterEspionage[1] = new(expires, 201);
+        Assert.NotEqual(sim.ComputeHash(), loaded.ComputeHash());
+        TeamState(loaded, 0).CounterEspionage[1] = new(expires, 200);
+        for (int turn = 0; turn < duration - 1; turn++)
+        {
+            sim.AdvanceTurn(); loaded.AdvanceTurn();
+            Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        }
+        Assert.Equal(expires - 1, sim.State.Turn);
+        Assert.NotNull(Spies(sim).CounterEspionage(sim, 0, 1));
+        Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Equal(expires, sim.State.Turn);
+        Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
+        Assert.Null(repeat.Validate(sim));
+        Assert.Equal(50, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.StealTreasury));
+    }
+
+    [Fact]
+    public void Counter_costs_use_defenders_directed_multiplier_and_round_the_modifier_before_the_cost()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; var home = sim.State.Cities[1];
+        Fund(sim, points: 104000); Fund(sim, 1, 0);
+        var spy = Spy(sim); spy.Promotions.Add("military:security1"); spy.Health = 40;
+        int chance = Spies(sim).SuccessChance(sim, 1, home.Id);
+        P6RulesScenario.Apply(sim, Mission(spy, city, EspionageMissionKind.CounterEspionage));
+        Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
+        // A land spy's +10 interception gives 200 + 5*10 = 250%, without a health penalty.
+        Assert.Equal(250, Spies(sim).CounterEspionage(sim, 0, 1)!.CostPercent);
+        // Reverse ratio is floor(200*104050/204100) = 101; floor(101*250/100) = 252.
+        Assert.Equal(201, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.SabotageProduction));
+        Assert.Equal(504, Spies(sim).PassiveThreshold(sim, 1, 0, PassiveEspionageKind.InvestigateCity));
+        Assert.Equal(78, Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.SabotageProduction));
+        Assert.Equal(chance, Spies(sim).SuccessChance(sim, 1, home.Id));
+        // The unrelated team pair has no effect.
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 2 });
+        sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();
+        var third = P6RulesScenario.AddCity(sim, 2, 80);
+        Assert.Equal(80, Spies(sim).MissionCost(sim, 0, third.Id, EspionageMissionKind.SabotageProduction));
+    }
+
+    [Fact]
+    public void Passive_permissions_are_revoked_when_the_target_team_is_eliminated()
+    {
+        var sim = P6RulesScenario.Create(); Fund(sim);
+        Assert.True(Spies(sim).HasPassiveEffect(sim, 0, 1, PassiveEspionageKind.Demographics));
+        foreach (var unit in sim.State.Units.Where(u => u.Owner == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
+        foreach (var city in sim.State.Cities.Where(c => c.Owner == 1).ToArray()) sim.State.RemoveCity(city.Id);
+        Assert.False(Spies(sim).HasPassiveEffect(sim, 0, 1, PassiveEspionageKind.Demographics));
+    }
+
+    [Fact]
+    public void Legacy_team_extension_without_counter_state_loads_with_no_protection()
+    {
+        var sim = P6RulesScenario.Create(); Fund(sim);
+        var save = System.Text.Json.Nodes.JsonNode.Parse(SaveGame.Save(sim))!;
+        var teams = save["State"]!["Teams"]!.AsArray();
+        var state = teams.Single(t => (int)t!["Id"]! == 0)!["Extensions"]!["espionage:team_state"]!;
+        Assert.True(state.AsObject().Remove("CounterEspionage"));
+        var loaded = SaveGame.Load(sim.Content, save.ToJsonString());
+        Assert.Equal(100000, Spies(loaded).Points(loaded, 0, 1));
+        Assert.Null(Spies(loaded).CounterEspionage(loaded, 0, 1));
+        Assert.Equal(4, (int)EspionageMissionKind.StealTech);
+        Assert.Equal(5, (int)EspionageMissionKind.CounterEspionage);
     }
 }

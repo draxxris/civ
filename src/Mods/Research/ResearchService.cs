@@ -58,15 +58,15 @@ internal sealed class ResearchService : IResearchService
         var team = sim.TeamOf(player);
         var state = Edit(sim, team);
         SelectNext(sim, player, team, state);
-        if (team.Researching is not { } tech) { state.Overflow += beakers; return; }
+        if (team.Researching is not { } tech) { state.Overflow = checked(state.Overflow + beakers); return; }
         int modifier = RateModifier(sim, team.Id, tech);
-        long amount = beakers * modifier / 100 + state.Overflow * modifier / 100;
+        long amount = checked((long)((Int128)beakers * modifier / 100 + (Int128)state.Overflow * modifier / 100));
         state.Overflow = 0;
-        long progress = team.Research.GetValueOrDefault(tech) + amount;
+        long progress = checked(team.Research.GetValueOrDefault(tech) + amount);
         long cost = CalculateCost(sim, team.Id, tech).Cost;
         team.Research[tech] = progress;
         if (progress < cost) return;
-        state.Overflow = (progress - cost) * 100 / modifier;
+        state.Overflow = checked((long)((Int128)(progress - cost) * 100 / modifier));
         team.Research[tech] = 0;
         Discover(sim, player, team, tech);
         if (state.Queue.FirstOrDefault() == tech) state.Queue.RemoveAt(0);
@@ -79,7 +79,7 @@ internal sealed class ResearchService : IResearchService
         if (!Validate(sim, player, tech).Success || beakers <= 0) return;
         var team = sim.TeamOf(player);
         long cost = CalculateCost(sim, team.Id, tech).Cost;
-        team.Research[tech] = Math.Min(cost, team.Research.GetValueOrDefault(tech) + beakers);
+        team.Research[tech] = (long)Int128.Min(cost, (Int128)team.Research.GetValueOrDefault(tech) + beakers);
         if (team.Research[tech] < cost) return;
         team.Research[tech] = 0;
         Discover(sim, player, team, tech);

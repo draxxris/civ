@@ -27,6 +27,8 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
             : SaveGame.Load(mods.Content, StandardScenario.Value);
         // Isolate Economy/Research equations from political modifiers. Integration has its own fixture.
         GameFactory.NeutralPolitics(sim);
+        sim.Settings.GameOptions["foundation:gameoption_realistic_timescale"] = false;
+        sim.Settings.GameOptions["foundation:gameoption_no_revolution"] = true;
         var city = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Name = "Test" };
         sim.State.AddCity(city);
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
@@ -35,17 +37,18 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         return sim;
     }
     [Theory]
-    [InlineData("research:agriculture", "normal", "noble", "standard", 20)]
-    [InlineData("research:bronze_working", "normal", "noble", "standard", 64)]
-    [InlineData("research:absolutism", "normal", "noble", "standard", 1633)]
-    [InlineData("research:pottery", "quick", "chieftain", "tiny", 11)]
-    [InlineData("research:bronze_working", "marathon", "deity", "huge", 318)]
+    [InlineData("research:agriculture", "normal", "noble", "standard", 53)]
+    [InlineData("research:bronze_working", "normal", "noble", "standard", 163)]
+    [InlineData("research:absolutism", "normal", "noble", "standard", 5227)]
+    [InlineData("research:pottery", "quick", "chieftain", "tiny", 30)]
+    [InlineData("research:bronze_working", "marathon", "deity", "huge", 796)]
     public void Tech_cost_keeps_each_source_truncation(string tech, string speed, string handicap, string world, long expected)
     {
         var sim = new Simulation(mods.Content, new SimulationSettings { Seed = 17, PlayerCount = 1,
             WorldSize = "foundation:worldsize_" + world, GameSpeed = "foundation:gamespeed_" + speed,
             Handicap = "foundation:handicap_" + handicap, StartingEra = "foundation:era_ancient",
-            MapGenerator = "world:continents", Leaders = ["peoples:leader_julius_caesar"] });
+            MapGenerator = "world:continents", Leaders = ["peoples:leader_julius_caesar"],
+            GameOptions = new() { ["foundation:gameoption_realistic_timescale"] = false, ["foundation:gameoption_no_revolution"] = true } });
         var before = sim.ComputeHash();
         var result = Service<IResearchService>(sim).CalculateCost(sim, 0, tech);
         Assert.Equal(expected, result.Cost);
@@ -75,11 +78,13 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     {
         var sim = Scenario(); var team = sim.TeamOf(0); var service = Service<IResearchService>(sim);
         sim.TeamOf(1).Techs.Add("research:agriculture");
+        sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = 1, Type = "military:warrior", Position = sim.State.Grid.HexOf(new TileId(80)) });
+        sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
         Assert.Equal(100, service.RateModifier(sim, 0, "research:agriculture")); // No contact, no exposure.
         team.Extensions.Set(sim.Content, new ResearchTeamState { MetTeams = [1] });
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = "research:agriculture", Queue = ["research:fishing"] }, out var error), error);
         Assert.Equal(125, service.RateModifier(sim, 0, "research:agriculture"));
-        service.Contribute(sim, 0, 21); // 21 * 125 / 100 = 26; cost 20; normalized overflow 6 * 100 / 125 = 4.
+        service.Contribute(sim, 0, 47); // 47 * 125 / 100 = 58; cost 53; normalized overflow 5 * 100 / 125 = 4.
         Assert.Contains("research:agriculture", team.Techs);
         Assert.Contains(sim.Events.Published, e => e is TechDiscovered { Team: 0, Tech: "research:agriculture" });
         Assert.Equal(4, team.Extensions.Get<ResearchTeamState>(sim.Content)!.Overflow);
@@ -103,12 +108,12 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         var original = sim.State.Players[1];
         sim.State.Players[1] = new Player { Id = 1, TeamId = 0, Civilization = original.Civilization };
         sim.TeamOf(0).Members.Add(1); sim.State.RebuildIndexes();
-        Assert.Equal(30, service.CalculateCost(sim, 0, "research:agriculture").Cost);
+        Assert.Equal(79, service.CalculateCost(sim, 0, "research:agriculture").Cost);
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = "research:agriculture" }, out _));
-        service.Contribute(sim, 0, 15); service.Contribute(sim, 1, 15);
+        service.Contribute(sim, 0, 40); service.Contribute(sim, 1, 39);
         Assert.Single(sim.Events.Published.OfType<TechDiscovered>());
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = "probe:future", Queue = ["probe:future"] }, out _));
-        service.Contribute(sim, 0, 1); service.Contribute(sim, 1, 1);
+        service.Contribute(sim, 0, 3); service.Contribute(sim, 1, 3);
         Assert.Equal(2, sim.TeamOf(0).Extensions.Get<ResearchTeamState>(sim.Content)!.Completions["probe:future"]);
         Assert.Equal("foundation:era_future", sim.State.PlayerById(0).Extensions.Get<CityPlayerState>(sim.Content)!.CurrentEra);
     }

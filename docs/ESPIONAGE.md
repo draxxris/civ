@@ -86,7 +86,7 @@ Where `own` and `rival` represent total invested espionage (`Spent + Points`) ag
 
 ---
 
-## 3. Passive Espionage
+## 3. Passive Espionage and Intelligence View
 
 Accumulating espionage points against a rival team unlocks passive intelligence tiers without consuming stored points. The required threshold for each tier is modulated by the bilateral spending ratio:
 
@@ -94,12 +94,30 @@ $$\text{Threshold} = \frac{\text{Baseline} \times \text{RatioPercent}}{100}$$
 
 | Passive Effect | Baseline Points | Description |
 | :--- | :--- | :--- |
-| **Demographics** | 50 | Grants visibility into the rival's demographic standing and rankings. |
-| **City Visibility** | 100 | Grants passive visibility of rival cities. |
+| **Demographics** | 50 | Grants visibility into rival demographics, rankings, and power scores. |
+| **City Visibility** | 100 | Grants passive visibility of rival cities on the world map. |
 | **Inspect Research** | 150 | Reveals what technology the rival team is actively researching. |
-| **Investigate City** | 200 | Allows viewing detailed production, buildings, and yields inside rival cities. |
+| **Investigate City** | 200 | Allows viewing detailed production queues, buildings, and yields inside rival cities. |
 
 Passive capabilities are checked through `IEspionageService.HasPassiveEffect(sim, team, targetTeam, kind)`.
+
+### Full Intelligence View
+
+When passive thresholds are unlocked, the espionage screen and city interface display detailed rival intelligence:
+
+* **Demographics**: Displays rival demographic standing and comparative rankings.
+* **Treasury Reserves**: Displays the rival civilization's current treasury balance.
+* **City Inspection**: Displays city yields, population health, happiness, and constructed buildings.
+* **Production Queues**: Displays the active production order, progress, and turn estimates.
+
+### Permission Filtering and Immediate Revocation
+
+Intelligence data passes through strict permission filtering before presentation:
+
+* Client data transfer objects (`EspionageScreen`) populate fields only when passive thresholds are met.
+* Locked fields are cleared or omitted before reaching the user interface.
+* If accumulated points drop below a threshold, or if rival spending raises the bilateral ratio, access is immediately revoked.
+* Rival intelligence views are strictly read-only and provide no modification controls.
 
 ---
 
@@ -108,6 +126,14 @@ Passive capabilities are checked through `IEspionageService.HasPassiveEffect(sim
 Active missions require a spy unit stationed inside a rival city with movement points remaining. Missions consume accumulated espionage points upon execution.
 
 ### Mission Types
+* **`CounterEspionage`** (Baseline Cost: 100):
+  * Targets the rival team owning the city.
+  * Creates a directed protection record from the protecting team against the target rival team.
+  * Multiplies rival mission costs against the protecting team by `200 + 5 * InterceptionPercent`.
+  * The baseline multiplier is 200% (doubling costs) and scales higher with supported interception bonuses.
+  * Counter-espionage is a directed cost penalty, not a new success roll penalty.
+  * Lasts for a speed-scaled duration (10 turns on Normal speed).
+  * Repeat missions against the same rival are rejected while protection remains active.
 * **`StealTreasury`** (Baseline Cost: 50):
   * Steals up to 25% of the target civilization's treasury (minimum 1 gold).
   * Stolen gold is transferred directly to the player's treasury.
@@ -122,8 +148,9 @@ Active missions require a spy unit stationed inside a rival city with movement p
 * **`StealTech`** (Baseline Cost: $2 \times \text{CalculateCost}(\text{tech})$):
   * Validates that the rival knows the tech, the player does not, and the player satisfies all tech prerequisites.
   * Awards the technology immediately to the player's team via `IResearchService.AddProgress()` and fires `TechDiscovered`.
+  * Operates under independent theft eligibility: does not require diplomatic peace or the `TechTrading` diplomatic flag.
 
-### Mission Resolution & Counter-Spies
+### Mission Resolution and Counter-Spies
 * **Success Rate**:
   $$\text{SuccessChance} = \text{clamp}\left(85 - 15 \times \text{Defenders} + \frac{100 - \text{RatioPercent}}{5},\, 10,\, 95\right)$$
   Where `Defenders` is the count of units with `UnitDef.CounterSpy == true` owned by the rival team at the city plot.
@@ -168,3 +195,17 @@ Each unit is designated with:
   * **Espionage Panel** (`GameUi.Panels.cs`): Dedicated modal screen listing rival teams, accumulated points, weight increment/decrement controls, and unlocked passive capabilities.
   * **Top Bar** (`GameUi.cs`): Displays and controls the national espionage commerce slider rate.
   * **City Interface** (`CityUi.cs`): Displays per-turn city espionage commerce production.
+
+---
+
+## 7. Residual Notes and Verification
+
+The following observations are recorded for future maintenance:
+
+* **Inert Expired Records**: When counter-espionage protection expires, the directed record remains inert in simulation state.
+  Any future cleanup belongs to a deterministic turn boundary and hash contract, not during serialization.
+  (Severity: Negligible. Reachability: Normal play after mission expiry.)
+* **Unsupported Commander and Ground-Health Interception**: Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
+  (Severity: Low. Reachability: Content relying on commander interception modifiers in espionage calculations.)
+* **Malformed Research Identifiers**: Content definitions referencing non-existent technology identifiers can fail when espionage unlocks evaluate permissions.
+  (Severity: Low. Reachability: Malformed custom content declarations.)

@@ -36,6 +36,7 @@ internal static class P6RulesScenario
         foreach (var plot in sim.State.Plots) plot.Owner = null;
         AddCity(sim, 0, 14); AddCity(sim, 0, 18); AddCity(sim, 1, 57);
         foreach (var player in sim.State.Players) player.Treasury = 10000;
+        sim.TeamOf(0).Techs.Add("research:currency");
         Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
         return sim;
     }

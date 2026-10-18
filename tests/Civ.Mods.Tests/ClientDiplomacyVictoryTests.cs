@@ -97,6 +97,42 @@ public sealed class ClientDiplomacyVictoryTests(LoadedMods mods) : IClassFixture
         Assert.Equal("Active", Assert.Single(session.DescribeDiplomacy().Deals).Status);
     }
 
+    [Theory]
+    [InlineData("option", "technology trading is disabled")]
+    [InlineData("unlock", "no team has researched the technology enabling technology trading")]
+    public void Deal_screen_refreshes_rejection_reasons_and_stale_actions_cannot_bypass_them(string change, string reason)
+    {
+        var session = Session();
+        var sim = session.Sim;
+        var service = sim.Content.Services.Get<IDiplomacyService>().Single();
+        service.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
+        session.MyTeam.Techs.Remove("research:woodworking");
+        sim.TeamOf(1).Techs.Add("research:woodworking");
+        session.Me.Treasury = 100;
+        Assert.True(session.Submit(new ProposeDealCommand { Player = 1, Target = GameSession.Human,
+            Items = [new(1, TradeItemKind.Technology, "research:woodworking"), new(GameSession.Human, TradeItemKind.Gold, Amount: 7)] }));
+        var stale = Assert.Single(session.DescribeDiplomacy().Deals).Accept!;
+        Assert.Null(stale.Blocked);
+        if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = true;
+        else foreach (var team in sim.State.Teams) team.Techs.Remove("research:alphabet");
+        ulong hash = sim.ComputeHash();
+        var rng = sim.Rng.State;
+        Assert.Equal(reason, Assert.Single(session.DescribeDiplomacy().Deals).Accept!.Blocked);
+        Assert.False(session.DoDiplomacy(stale));
+        Assert.Equal("Can't do that: " + reason, session.Message);
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+        Assert.Equal("Proposed", Assert.Single(session.DescribeDiplomacy().Deals).Status);
+        if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = false;
+        else sim.TeamOf(1).Techs.Add("research:alphabet");
+        var allowed = Assert.Single(session.DescribeDiplomacy().Deals).Accept!;
+        Assert.Null(allowed.Blocked);
+        Assert.True(session.DoDiplomacy(allowed));
+        Assert.Empty(session.DescribeDiplomacy().Deals);
+        Assert.True(sim.KnowsTech(GameSession.Human, "research:woodworking"));
+        Assert.Equal(93, session.Me.Treasury);
+    }
+
     [Fact]
     public void Victory_screen_reports_scores_and_the_running_game()
     {

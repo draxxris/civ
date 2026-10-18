@@ -46,6 +46,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Foundation & Core Contracts
 - **Phase contract & turn order**: Deterministic phase lifecycle execution (`docs/02-turn-lifecycle.md`) with lockstep handshake and state hash verification.
+- **Calendar progression**: Deterministic calendar date calculation (`GameCalendar`) driven by mod speed schedules (Normal 1200 turns, Marathon 2400 turns) and start year 6000 BCE (`START_YEAR=-6000`). Top bar displays the calendar date alongside the turn counter.
 - **Setup & configuration**: Game setup selection, game options checklist (`SimulationSettings.GameOptions`, `Simulation.IsOptionEnabled`, Godot `SetupScreen`), world sizes (`WorldSizeDef`), speeds (`GameSpeedDef`), handicaps (`HandicapDef`), eras (`EraDef`), player teams, and initial gold.
 - **Hex tuning overrides**: `src/Mods/Foundation/data/hex-overrides.json` controls hex-specific balance, including `barbarianUnownedTilesMultiplier` and `aiMinimumCityGarrison`.
 - **Dogfood mod isolation**: All features are standalone mods (`src/Mods/*`). `Civ.Core` and `Civ.Client.Core` hold no hard-coded mod IDs or content kinds. Custom test rulesets run without shipped mods.
@@ -67,7 +68,11 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Research
 - **Prerequisite graph**: Strict checking of all/any technology prerequisites, obsoleted branches, and era gating.
-- **Cost scaling**: Cost formulas scaled sequentially by handicap, world size, game speed, starting era, and team size.
+- **Sequential integer cost scaling**: Deterministic integer truncation stages scaling base technology cost sequentially by handicap, world size, game speed, starting era, team size, and timeline multipliers.
+- **Diffusion & welfare rate modifiers**: Contacted teams knowing a technology grant diffusion bonuses using an eligible living non-barbarian team denominator; welfare bonuses evaluate the team leader's player total-score contract. These adjust research output rate (`RateModifier`) rather than base technology cost.
+- **Realistic timescale (timeline scaling)**: Option-gated dynamic cost scaling comparing elapsed turns against expected era transition points and team leader era/technologies, without referencing historical calendar dates.
+- **Tech trading gates & theft eligibility**: Technology trading in diplomacy requires enabling technologies (`TechTrading` unlock flag) and option checks. Espionage tech theft uses separate, independent eligibility rules.
+- **Option defaults & brokering limitation**: Diffusion and tech trading enabled by default; realistic timescale and no-tech-brokering disabled by default. The selected no-tech-brokering option remains unsupported because technology acquisition provenance is not yet tracked.
 - **Queues & overflow**: Team research targets, queues, progress tracking, and normalized carry-over overflow.
 - **Tech discoveries**: `TechDiscovered` domain events, first-discovery free tech credits, free unit grants, and current-era milestone progression.
 
@@ -133,7 +138,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Diplomacy**: Bilateral team contact discovery, attitude ledgers, peace treaties, open borders, defensive pacts, and multi-item trade deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination, Cultural, Space Race, and Time victories with victory resolution screens.
 - **Corporations**: Great Person founding, branch spread (via gold or executives), headquarters protection, branch revenue, resource consumption, and maintenance.
-- **Espionage**: Rival-team point allocation, passive visibility/investigation unlocks, and active missions (treasury theft, production sabotage, city revolt, tech theft).
+- **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios, passive visibility/investigation unlocks, full rival intelligence screen (demographics, city yields/buildings, production queues, treasury reserves) with permission filtering and immediate revocation, and active missions (counter-espionage with directed cost penalties scaling from a 200% baseline by supported interception, treasury theft, production sabotage, city revolt, tech theft).
 - **Events**: Dynamic random event rolls, option choices with yield/gold/culture impacts, cooldown timers, and automated AI choices.
 - **Scripted Wonders**: Special wonder abilities, Great Wall barbarian exclusion, periodic unit grants, and combat bonuses.
 - **Revolution**: City instability ledgers (wellbeing, distance, civics, garrisons, golden age), warning/mutiny/rebellion states, military/gold suppression, and rebel unit spawns.
@@ -147,6 +152,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Client, Presentation & 3D Art
 - **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load. Setup screen options and perceived fog snapshots prevent unseen map mutation leaks.
 - **Godot 4.7.2 views (`Civ.Godot`)**: Native 3D viewport, camera controls, hex prism highlights, audio playback, and responsive HUD panels.
+- **Map overlays & local toggles**: Independent visual toggles for tile yield badges, resource badges, hex grid lines, and cultural borders. Managed locally in `GamePreferences` without affecting simulation state or hashes, strictly respecting fog-of-war perceived snapshots.
 - **Continuous 3D blended terrain**:
   - Seamless 1024×1024 terrain textures with height in alpha.
   - Procedural terrain mesher generating continuous height and relief transitions.
@@ -163,7 +169,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Advanced start mode**: Allow purchasing cities, units, buildings, and technologies before turn 1.
 - [ ] **Era & handicap start scaling**: Implement `StartingUnitMultiplier`, `StartingDefenseUnits`, `StartingWorkerUnits`, and `StartingExploreUnits` for advanced era starts.
 - [ ] **Per-player handicap options**: Allow human and individual AI players to have distinct difficulty levels in the same session.
-- [ ] **Calendar progression**: Add non-turn timeline display (months, seasons, variable years per turn by era/speed).
+- [x] **Calendar progression**: Non-turn timeline display with mod speed schedules (Normal 1200, Marathon 2400) starting at 6000 BCE.
 - [ ] **Default civics fallback**: Auto-fill missing civic selections for incomplete custom civilization declarations.
 - [ ] **Remaining game option flags**: Implement simulation rules for the unimplemented game option definitions in src/Mods/Foundation/data/game-option.json.
 
@@ -178,9 +184,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Custom map generator scripts**: Support external or custom procedural map script definitions.
 
 ### Research
-- [ ] **Tech diffusion / welfare**: Research discounts on technologies already known by multiple contacted civilizations.
-- [ ] **Timeline research cost scaling**: Era-based dynamic cost scaling based on game turn versus historical date.
-- [ ] **Tech trading gates**: Civic or technology restrictions controlling when technology items can be exchanged in diplomacy.
+- [x] **Tech diffusion / welfare**: Contacted-team diffusion and score welfare rate bonuses adjusting science output.
+- [x] **Timeline research cost scaling**: Era-based dynamic cost scaling comparing elapsed turns against expected era progression.
+- [x] **Tech trading gates**: Diplomatic technology trade gates gated by enabling technologies and game options; independent espionage theft.
 - [ ] **Player-specific tech queues**: Separate tech choices within shared multiplayer teams.
 
 ### Economy
@@ -228,12 +234,43 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Embargoes & sanctions**: Multilateral agreements to prohibit trade with targeted civilizations.
 
 ### Espionage & UI
-- [ ] **Full espionage intelligence view**: In-game screens showing rival city demographics, production queues, and treasury reserves.
-- [ ] **Counter-espionage missions**: Active missions reducing foreign spy success chances within domestic borders.
+- [x] **Full espionage intelligence view**: In-game screens showing permission-filtered rival city demographics, production queues, and treasury reserves.
+- [x] **Counter-espionage missions**: Active missions increasing rival mission costs via a directed cost penalty (200% baseline plus 5x interception percent).
 - [ ] **Dedicated status panels**: Global HUD panels for empire-wide Revolution unrest and Scripted Wonder active timers.
-- [ ] **Map overlays**: Toggleable visual layers for tile yields, resource badges, hex grid lines, and cultural borders.
+- [x] **Map overlays**: Toggleable visual layers for tile yields, resource badges, hex grid lines, and cultural borders with fog-safe snapshots.
 
 ### Future Roadmap Milestones (P10+)
 - [ ] **P10 – Multiplayer Lobby & Wire Transport**: Peer-to-peer and dedicated server transport over `Civ.Net` with match setup, lobby chat, and reconnect recovery.
 - [ ] **P11 – Historical Scenarios & Earth Maps**: Pre-scripted historical earth maps, civilization start locations, and custom scenario loaders.
 - [ ] **P12 – Gigantic Map Optimization**: Sparse 64-bit spatial indexing and multi-threaded turn phase processing for smooth play on gigantic (160×100+) maps.
+
+---
+
+## 5. Residual Notes & Verification Status
+
+The following observations and verification records are preserved for future development:
+
+* **Eligible-Team Denominator Difference**:
+  * Severity: Low. Reachability: Normal play.
+  * The research diffusion denominator uses all eligible living non-barbarian teams. The reference mod divides by eligible alive teams (including barbarians). Contacted technology holders form the weighted numerator.
+  * Future fix need: reconcile alive-team and barbarian eligibility with the reference mod if strict parity is desired.
+* **Score Contract in Welfare**:
+  * Severity: Low-to-moderate. Reachability: Late-game play when score disparities widen.
+  * Welfare catch-up evaluates the team leader's player total score contract rather than a native normalized score curve or pooled team scores.
+  * Future fix need: evaluate and implement a normalized score progression curve when score contracts are refined.
+* **Unsupported Commander and Ground-Health Interception**:
+  * Severity: Low. Reachability: Reachable if content relies on commander or ground-health interception inputs.
+  * Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
+  * Future fix need: extend counter-espionage mission interception calculations to query commander attachments and health modifiers.
+* **Malformed-Content Guards**:
+  * Severity: Low. Reachability: Unreachable with shipped content; reachable with invalid custom content declarations.
+  * Missing technology identifiers in unlock tables or missing bonus identifiers in sight memory throw on lookup.
+  * Future fix need: add fallback validation and default placeholders during content loading.
+* **Inert Expired Records**:
+  * Severity: Negligible. Reachability: Normal play after counter-espionage protection expires.
+  * Expired directed counter-espionage records remain inert in saved state.
+  * Future fix need: prune expired records during deterministic turn boundary processing under the state hash contract, not during serialization.
+* **Hardware GPU and Small-Window Verification**:
+  * Severity: Low. Reachability: Arbitrary display dimensions and physical GPU driver quirks.
+  * Verification used headless Mesa llvmpipe software rendering at 1600x900, and Phase 6 verified 1280x720 rendering. Execution on physical GPUs and arbitrary small-window sweeps (<1600x900) remain unverified.
+  * Note: Actual pointer input and multi-rival switching were verified through eight automated X11 pointer events.
