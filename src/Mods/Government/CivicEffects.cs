@@ -56,6 +56,8 @@ internal sealed class CivicEffects : IModifierSource
         var buildings = ActiveBuildings(sim, city).ToArray();
         sink.AddYield(c.Id, c.YieldModifiers, true);
         sink.AddCommerce(c.Id, c.CommerceModifiers, true);
+        sink.Add(c.Id, "cities:foreigner_unhappy_percent", c.ForeignerUnhappyPercent);
+        sink.Add(c.Id, "cities:civic_percent_anger", c.CivicPercentAnger);
         var values = new (string Key, int Value)[] {
             ("happiness", c.CivicHappiness), ("health", c.ExtraHealth), ("free_specialists", c.FreeSpecialist),
             ("great_people_percent", c.GreatPeopleRateModifier), ("military_production_percent", c.MilitaryProductionModifier),

@@ -48,7 +48,7 @@ public sealed class CitiesMod : IMod
         context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread));
         context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
         context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
-
+        context.TurnSystems.Register(new CityCultureDecayPhase());
         context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
         context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
         {

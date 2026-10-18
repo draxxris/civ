@@ -20,6 +20,8 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
             Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
         AddModifiers(sim, effects, lines);
+        AddCultureAnger(sim, city, lines);
+        AddCivicAnger(sim, city, effects, lines);
         AddEnvironment(sim, city, lines);
         AddSpecialists(sim, city, effects, lines);
         var ledger = new Ledger(lines);
@@ -44,6 +46,40 @@ internal sealed class CityWellbeingService : ICityWellbeingService
             if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness",
                 -Math.Max(0, line.Amount) * Math.Max(0, 100 + CityData.Effect(effects, "war_weariness_percent")) / 100);
         }
+    }
+    private static long CulturePercentAnger(Simulation sim, City city)
+    {
+        var plot = sim.State.PlotAt(city.Position);
+        long totalCulture = plot.Culture.Values.Sum();
+        if (totalCulture <= 0) return 0;
+        var ownerTeam = sim.TeamOf(city.Owner);
+        long angryCulture = 0;
+        foreach (var player in CityData.LivingPlayers(sim))
+        {
+            var team = sim.TeamOf(player.Id);
+            long culture = plot.Culture.GetValueOrDefault(player.Id);
+            if (team.Id == ownerTeam.Id || culture <= 0) continue;
+            if (ownerTeam.Wars.Contains(team.Id))
+                culture = culture * Math.Max(0, 100 + CityData.Constants(sim).AtWarCultureAngerModifier) / 100;
+            angryCulture += culture;
+        }
+        return CityData.Constants(sim).CulturePercentAnger * angryCulture / totalCulture;
+    }
+    private static void AddCultureAnger(Simulation sim, City city, List<LedgerLine> lines)
+    {
+        long unhappy = CulturePercentAnger(sim, city) * city.Population / Math.Max(1, CityData.Constants(sim).PercentAngerDivisor);
+        if (unhappy > 0) Add(lines, "cities:culture_anger", "happiness", -unhappy);
+    }
+    private static void AddCivicAnger(Simulation sim, City city, ModifierSink effects, List<LedgerLine> lines)
+    {
+        long civicUnhappy = CityData.Effect(effects, "civic_percent_anger") * city.Population
+            / Math.Max(1, CityData.Constants(sim).PercentAngerDivisor);
+        if (civicUnhappy > 0) Add(lines, "government:civic_anger", "happiness", -civicUnhappy);
+        long foreignAnger = CityData.Effect(effects, "foreigner_unhappy_percent");
+        if (foreignAnger == 0) return;
+        long factor = 100 / foreignAnger;
+        long foreignUnhappy = Math.Max(0, (100 - CityData.OwnerCulturePercent(sim, city)) * factor / 100);
+        if (foreignUnhappy > 0) Add(lines, "government:foreigner_anger", "happiness", -foreignUnhappy);
     }
     private static bool IsBuildingSource(Simulation sim, string source) =>
         sim.Content.TryGet<S.BuildingDef>(source.Split(':', 3) is { Length: >= 2 } p ? p[0] + ":" + p[1] : source, out _);

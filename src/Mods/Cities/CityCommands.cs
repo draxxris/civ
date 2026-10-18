@@ -34,7 +34,7 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         bool first = !CityData.Owned(sim, player).Any();
         var city = new City { Id = sim.State.NextCityId++, Owner = player, Position = unit.Position,
             Name = Name(sim, civilization), Population = CityData.Raw(sim, "INITIAL_CITY_POPULATION", 1) + CityData.Era(sim, player).FreePopulation };
-        CityData.Edit(sim, city);
+        CityData.Edit(sim, city).OriginalCivilization = sim.State.PlayerById(player).Civilization;
         sim.State.AddCity(city); sim.State.RemoveUnit(settler);
         var plot = sim.State.PlotAt(city.Position);
         plot.Improvement = null;
