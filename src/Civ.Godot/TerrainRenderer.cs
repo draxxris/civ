@@ -22,6 +22,8 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly int _seed;
     private readonly ScatterPlanner _scatterPlanner;
     private readonly ScatterRenderer _scatter;
+    private readonly Func<string, bool> _clearsTile;
+    private readonly Func<City, string?> _cityRing;
     private ulong[]? _signatures;
     private int _snapshotRevision = -1;
     private int _hover = -1;
@@ -39,9 +41,13 @@ internal sealed partial class TerrainRenderer : Node3D
 
     public void SetDebugMode(int mode) => _terrainMaterial.SetShaderParameter("debug_mode", mode);
 
-    public TerrainRenderer(GameSession session, GameCatalog catalog)
+    /// <param name="clearsTile">True for an improvement whose 3D model fills its whole tile, so no scatter
+    /// props grow through it; other improvements only keep the tile centre clear.</param>
+    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile, Func<City, string?> cityRing)
     {
         _session = session;
+        _clearsTile = clearsTile;
+        _cityRing = cityRing;
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
@@ -63,11 +69,16 @@ internal sealed partial class TerrainRenderer : Node3D
         _terrainMaterial = Material("res://shaders/terrain.gdshader", warp, palette);
         _waterMaterial = Material("res://shaders/water.gdshader", warp, palette);
         _riverMaterial = Material("res://shaders/river.gdshader", warp, palette);
+        RoadMaterial = Material("res://shaders/road.gdshader", warp, palette);
+        // After the rivers, so a road crossing one stays on top.
+        RoadMaterial.RenderPriority = 1;
         _ground = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
     }
 
+    /// <summary>Draped dirt roads (road.gdshader): lit, fogged and blended with the ground like the terrain.</summary>
+    public ShaderMaterial RoadMaterial { get; }
     /// <summary>Material and scatter lookups for the loaded content.</summary>
     public TerrainPalette Palette { get; }
     /// <summary>The terrain inputs as the local team knows them, as of the last world refresh.</summary>
@@ -144,10 +155,15 @@ internal sealed partial class TerrainRenderer : Node3D
         var state = _session.Sim.State;
         var extras = new int[state.Plots.Length];
         for (int i = 0; i < extras.Length; i++)
-            if (Snapshot.Sight[i] != Sight.Hidden && state.Plots[i].Improvement != null)
-                extras[i] = ScatterPlanner.ClearCentre;
+            if (Snapshot.Sight[i] != Sight.Hidden && state.Plots[i].Improvement is { } improvement)
+                extras[i] = _clearsTile(improvement) ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
         foreach (var city in _session.KnownCities())
-            extras[state.Grid.TileAt(city.Position).Value] |= ScatterPlanner.ClearCentre;
+        {
+            int tile = state.Grid.TileAt(city.Position).Value;
+            if (Snapshot.Sight[tile] == Sight.Hidden) continue;
+            extras[tile] |= _cityRing(city) is { } ring && _clearsTile(ring)
+                ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
+        }
         foreach (var unit in _session.VisibleUnits())
             extras[state.Grid.TileAt(unit.Position).Value] |= ScatterPlanner.ClearCentre;
         return extras;
