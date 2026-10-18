@@ -1,0 +1,38 @@
+[
+  {
+    "path": "src/Mods/Cities/art/icons/zoroastrian_cathedral.png",
+    "catalog_id": "cities:zoroastrian_cathedral",
+    "label": "Zoroastrian Pantheon",
+    "subject": "Zoroastrian pantheon with a broad stone dome, carved columns, flame altar, and a terraced sanctuary"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/zoroastrian_monastery.png",
+    "catalog_id": "cities:zoroastrian_monastery",
+    "label": "Zoroastrian Shrine",
+    "subject": "Zoroastrian shrine courtyard with a small fire temple, cypress trees, carved stone basin, and mountain path"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/zoroastrian_shrine.png",
+    "catalog_id": "cities:zoroastrian_shrine",
+    "label": "Pir-e Sabz",
+    "subject": "Pir-e Sabz mountain shrine set beneath a cliff, with a spring, cypress trees, and pale stone sanctuary"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/zoroastrian_temple.png",
+    "catalog_id": "cities:zoroastrian_temple",
+    "label": "Zoroastrian Fire Temple",
+    "subject": "Zoroastrian fire temple with a central sacred flame, four columns, carved stone walls, and an open courtyard"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/zulu_ikhanda.png",
+    "catalog_id": "cities:zulu_ikhanda",
+    "label": "Ikhanda",
+    "subject": "Zulu ikhanda with a circular cattle enclosure, thatched council huts, timber palisade, and broad central yard"
+  },
+  {
+    "path": "src/Mods/Cities/art/icons/zurich_orbital_uplink.png",
+    "catalog_id": "cities:zurich_orbital_uplink",
+    "label": "Zurich-Orbital Uplink",
+    "subject": "Orbital communications uplink with a rooftop dish, luminous signal beam, glass control tower, and starry sky"
+  }
+]

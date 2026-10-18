@@ -1,0 +1,677 @@
+[
+  {
+    "badge": "c",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "sushi",
+    "visible_size": [
+      20,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "ethanol",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "construction",
+    "visible_size": [
+      19,
+      20
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "mining",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "aluminum",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "diamond",
+    "visible_size": [
+      22,
+      17
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "palm",
+    "visible_size": [
+      21,
+      18
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "beaker",
+    "visible_size": [
+      16,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "music",
+    "visible_size": [
+      20,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "bread",
+    "visible_size": [
+      22,
+      14
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "anvil",
+    "visible_size": [
+      20,
+      12
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "burger",
+    "visible_size": [
+      22,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "bull",
+    "visible_size": [
+      18,
+      17
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "saw",
+    "visible_size": [
+      19,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "quill",
+    "visible_size": [
+      16,
+      17
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "cloth",
+    "visible_size": [
+      22,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "ec",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "horseshoe",
+    "visible_size": [
+      20,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "ewc",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "dress",
+    "visible_size": [
+      16,
+      21
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "fish",
+    "visible_size": [
+      22,
+      13
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "jar",
+    "visible_size": [
+      15,
+      20
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "crown",
+    "visible_size": [
+      20,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "apple",
+    "visible_size": [
+      17,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      -0.5
+    ]
+  },
+  {
+    "badge": "star",
+    "visible_size": [
+      21,
+      20
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "map",
+    "visible_size": [
+      19,
+      14
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "pillar",
+    "visible_size": [
+      19,
+      18
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "textile",
+    "visible_size": [
+      17,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "airplane",
+    "visible_size": [
+      19,
+      14
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "cow",
+    "visible_size": [
+      22,
+      18
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "coffee",
+    "visible_size": [
+      18,
+      18
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "curtain",
+    "visible_size": [
+      20,
+      13
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "paw",
+    "visible_size": [
+      22,
+      21
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "soldier",
+    "visible_size": [
+      16,
+      19
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "confectionery",
+    "visible_size": [
+      19,
+      14
+    ],
+    "optical_offset_px": [
+      0,
+      1
+    ],
+    "center_error_px": [
+      -0.5,
+      1.0
+    ]
+  },
+  {
+    "badge": "briefcase",
+    "visible_size": [
+      17,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "hindu",
+    "visible_size": [
+      20,
+      20
+    ],
+    "optical_offset_px": [
+      0,
+      -1
+    ],
+    "center_error_px": [
+      0.0,
+      -1.0
+    ]
+  },
+  {
+    "badge": "asatru",
+    "visible_size": [
+      19,
+      17
+    ],
+    "optical_offset_px": [
+      0,
+      -1
+    ],
+    "center_error_px": [
+      -0.5,
+      -1.5
+    ]
+  },
+  {
+    "badge": "buddhist",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "badge": "christian",
+    "visible_size": [
+      15,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "islam",
+    "visible_size": [
+      22,
+      21
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      -0.5
+    ]
+  },
+  {
+    "badge": "jewish",
+    "visible_size": [
+      19,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "shinto",
+    "visible_size": [
+      17,
+      16
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      -0.5,
+      0.0
+    ]
+  },
+  {
+    "badge": "taoist",
+    "visible_size": [
+      22,
+      22
+    ],
+    "optical_offset_px": [
+      0,
+      0
+    ],
+    "center_error_px": [
+      0.0,
+      0.0
+    ]
+  }
+]

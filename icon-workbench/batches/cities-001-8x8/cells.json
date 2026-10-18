@@ -1,0 +1,1178 @@
+{
+  "model": "gpt-image-2.5-flare",
+  "rows": 8,
+  "columns": 8,
+  "generation_mode": "direct OpenAI masked edit of procedural blank square layout; no artwork references",
+  "references": [],
+  "geometry": {
+    "size": 816,
+    "icon_size": 90,
+    "gutter": 10,
+    "outer_margin": 13,
+    "gutter_color": "#ff00ff"
+  },
+  "subject_revision_source": "regeneration-masked-003/cells.json; first 64 in order",
+  "status": "awaiting_review",
+  "cells": [
+    {
+      "catalog_id": "cities:abu_simbel",
+      "path": "src/Mods/Cities/art/icons/abu_simbel.png",
+      "label": "Abu Simbel",
+      "subject": "Twin monumental sandstone temples carved into a cliff face, with four seated pharaoh statues flanking the entrance",
+      "row": 1,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        13,
+        103,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:adam_smith",
+      "path": "src/Mods/Cities/art/icons/adam_smith.png",
+      "label": "Adam Smith's Trading Company",
+      "subject": "Georgian trading house with cargo crates and a small balance scale at its entrance",
+      "row": 1,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        13,
+        203,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:admiralty",
+      "path": "src/Mods/Cities/art/icons/admiralty.png",
+      "label": "Admiralty",
+      "subject": "Neoclassical naval headquarters with a columned stone facade, anchor reliefs, and a moored warship nearby",
+      "row": 1,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        13,
+        303,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:advanced_quality_control",
+      "path": "src/Mods/Cities/art/icons/advanced_quality_control.png",
+      "label": "Advanced Quality Control",
+      "subject": "Factory inspection station with a metal gear beneath a magnifying lens and a bright checkmark",
+      "row": 1,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        13,
+        403,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 4
+    },
+    {
+      "catalog_id": "cities:ad_agency",
+      "path": "src/Mods/Cities/art/icons/ad_agency.png",
+      "label": "Advertising Agency",
+      "subject": "Contemporary advertising agency represented by a modern digital billboard with bold abstract colored shapes. No gallery, no classical buildings.",
+      "row": 1,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        13,
+        503,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 5
+    },
+    {
+      "catalog_id": "cities:agora",
+      "path": "src/Mods/Cities/art/icons/agora.png",
+      "label": "Agora",
+      "subject": "Open Greek civic square ringed by pale marble colonnades, market awnings, and a central speaking platform",
+      "row": 1,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        13,
+        603,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 6
+    },
+    {
+      "catalog_id": "cities:ai_surveillance",
+      "path": "src/Mods/Cities/art/icons/ai_surveillance.png",
+      "label": "AI Surveillance",
+      "subject": "Futuristic surveillance center topped by a camera cluster, with glowing monitors visible through broad windows",
+      "row": 1,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        13,
+        703,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 7
+    },
+    {
+      "catalog_id": "cities:airport",
+      "path": "src/Mods/Cities/art/icons/airport.png",
+      "label": "Airfield",
+      "subject": "Grass airfield with a small hangar, windsock, and single early propeller aircraft on the runway",
+      "row": 1,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        13,
+        803,
+        103
+      ],
+      "source_row": 1,
+      "source_column": 8
+    },
+    {
+      "catalog_id": "cities:commercial_airport",
+      "path": "src/Mods/Cities/art/icons/commercial_airport.png",
+      "label": "Airport",
+      "subject": "Modern passenger terminal with glass concourse, control tower, and a commercial jet at the gate",
+      "row": 2,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        113,
+        103,
+        203
+      ],
+      "source_row": 1,
+      "source_column": 9
+    },
+    {
+      "catalog_id": "cities:aluminum_co_r_source_d",
+      "path": "src/Mods/Cities/art/icons/aluminum_co_r_source_d.png",
+      "label": "Aluminum Co. Research and Development",
+      "subject": "Aluminum research laboratory with a gleaming ingot, glass crucible, microscope, and precision testing equipment",
+      "row": 2,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        113,
+        203,
+        203
+      ],
+      "source_row": 1,
+      "source_column": 10
+    },
+    {
+      "catalog_id": "cities:apadana_palace",
+      "path": "src/Mods/Cities/art/icons/apadana_palace.png",
+      "label": "Apadana Palace",
+      "subject": "Persian audience palace with a vast columned portico, carved stairways, and winged bull capitals",
+      "row": 2,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        113,
+        303,
+        203
+      ],
+      "source_row": 1,
+      "source_column": 11
+    },
+    {
+      "catalog_id": "cities:apiary",
+      "path": "src/Mods/Cities/art/icons/apiary.png",
+      "label": "Apiary",
+      "subject": "Sunlit bee yard with wooden hive boxes, flowering clover, and bees circling a honeycomb frame",
+      "row": 2,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        113,
+        403,
+        203
+      ],
+      "source_row": 1,
+      "source_column": 12
+    },
+    {
+      "catalog_id": "cities:apostolic_palace",
+      "path": "src/Mods/Cities/art/icons/apostolic_palace.png",
+      "label": "Apostolic Palace",
+      "subject": "Vatican palace facade with ornate Renaissance windows, a central balcony, and a small domed chapel",
+      "row": 2,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        113,
+        503,
+        203
+      ],
+      "source_row": 2,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:apothecary",
+      "path": "src/Mods/Cities/art/icons/apothecary.png",
+      "label": "Apothecary",
+      "subject": "Medieval apothecary shop with glass medicine bottles, herb bundles, brass scales, and a timber counter",
+      "row": 2,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        113,
+        603,
+        203
+      ],
+      "source_row": 2,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:arcology",
+      "path": "src/Mods/Cities/art/icons/arcology.png",
+      "label": "Arcology",
+      "subject": "Enormous self-contained tower city with stacked gardens, housing terraces, and a central glass atrium",
+      "row": 2,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        113,
+        703,
+        203
+      ],
+      "source_row": 2,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:advanced_shielding",
+      "path": "src/Mods/Cities/art/icons/advanced_shielding.png",
+      "label": "Arcology Shield",
+      "subject": "Arcology protected by a translucent blue energy dome anchored to four compact perimeter emitters",
+      "row": 2,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        113,
+        803,
+        203
+      ],
+      "source_row": 2,
+      "source_column": 4
+    },
+    {
+      "catalog_id": "cities:arena",
+      "path": "src/Mods/Cities/art/icons/arena.png",
+      "label": "Arena",
+      "subject": "Compact square gladiatorial arena with a square sand floor enclosed by four straight stands. No oval Colosseum.",
+      "row": 3,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        213,
+        103,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 5
+    },
+    {
+      "catalog_id": "cities:arsenal",
+      "path": "src/Mods/Cities/art/icons/arsenal.png",
+      "label": "Arsenal",
+      "subject": "Modern military arsenal warehouse with steel doors, orderly ammunition crates and a tank barrel beside the entrance. No medieval shipyard.",
+      "row": 3,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        213,
+        203,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 6
+    },
+    {
+      "catalog_id": "cities:art_gallery",
+      "path": "src/Mods/Cities/art/icons/art_gallery.png",
+      "label": "Art Gallery",
+      "subject": "Elegant art gallery interior with framed landscapes, sculpted busts, and warm skylight illuminating white walls",
+      "row": 3,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        213,
+        303,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 7
+    },
+    {
+      "catalog_id": "cities:art_of_war",
+      "path": "src/Mods/Cities/art/icons/art_of_war.png",
+      "label": "Art of War",
+      "subject": "Ancient military academy with an open strategy scroll beside a miniature wooden battlefield map",
+      "row": 3,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        213,
+        403,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 8
+    },
+    {
+      "catalog_id": "cities:arthub",
+      "path": "src/Mods/Cities/art/icons/arthub.png",
+      "label": "Arthub",
+      "subject": "Futuristic art exhibition center with curved glass architecture and one luminous holographic abstract sculpture. No classical gallery.",
+      "row": 3,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        213,
+        503,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 9
+    },
+    {
+      "catalog_id": "cities:artist_guild",
+      "path": "src/Mods/Cities/art/icons/artist_guild.png",
+      "label": "Artist Guild",
+      "subject": "Artists' guild workshop with easels, pigment jars, canvases, and a carved guildhall doorway",
+      "row": 3,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        213,
+        603,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 10
+    },
+    {
+      "catalog_id": "cities:asatru_cathedral",
+      "path": "src/Mods/Cities/art/icons/asatru_cathedral.png",
+      "label": "Asatru Festhall",
+      "subject": "Norse timber festhall with soaring longhouse roof, carved gables, central hearth, and richly patterned shields",
+      "row": 3,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        213,
+        703,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 11
+    },
+    {
+      "catalog_id": "cities:asatru_temple",
+      "path": "src/Mods/Cities/art/icons/asatru_temple.png",
+      "label": "Asatru Temple",
+      "subject": "Norse timber shrine with a peaked roof, carved posts, an offering bowl, and evergreen wreaths",
+      "row": 3,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        213,
+        803,
+        303
+      ],
+      "source_row": 2,
+      "source_column": 12
+    },
+    {
+      "catalog_id": "cities:german_assembly_plant",
+      "path": "src/Mods/Cities/art/icons/german_assembly_plant.png",
+      "label": "Assembly Plant",
+      "subject": "Industrial assembly plant with a moving conveyor, robotic arms, and unfinished machinery beneath sawtooth roofs",
+      "row": 4,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        313,
+        103,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:augmentation_center",
+      "path": "src/Mods/Cities/art/icons/augmentation_center.png",
+      "label": "Augmentation Center",
+      "subject": "Cybernetic augmentation clinic with a reclining treatment chair, articulated implant arm, and glowing diagnostic screens",
+      "row": 4,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        313,
+        203,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:automated_defenses",
+      "path": "src/Mods/Cities/art/icons/automated_defenses.png",
+      "label": "Automated Defenses",
+      "subject": "Modern automated defense system: angular armored sensor tower and unmanned gun turret on a concrete base. No ancient stone fortress.",
+      "row": 4,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        313,
+        303,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:body_exchange",
+      "path": "src/Mods/Cities/art/icons/body_exchange.png",
+      "label": "Auxiliary Body Exchange",
+      "subject": "Futuristic body-exchange clinic with a translucent medical pod and a lifelike synthetic body silhouette",
+      "row": 4,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        313,
+        403,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 4
+    },
+    {
+      "catalog_id": "cities:maya_ball_court",
+      "path": "src/Mods/Cities/art/icons/maya_ball_court.png",
+      "label": "Ball Court",
+      "subject": "Mesoamerican ball court with sloped stone walls, carved rings, and a bright rubber ball in play",
+      "row": 4,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        313,
+        503,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 5
+    },
+    {
+      "catalog_id": "cities:siege_towers",
+      "path": "src/Mods/Cities/art/icons/siege_towers.png",
+      "label": "Ballista Turret",
+      "subject": "Compact stone turret with a mounted wooden ballista aimed through crenellated battlements",
+      "row": 4,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        313,
+        603,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 6
+    },
+    {
+      "catalog_id": "cities:bank",
+      "path": "src/Mods/Cities/art/icons/bank.png",
+      "label": "Bank",
+      "subject": "Grand neoclassical bank with a columned entrance, bronze doors, and guarded marble steps",
+      "row": 4,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        313,
+        703,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 7
+    },
+    {
+      "catalog_id": "cities:khmer_baray",
+      "path": "src/Mods/Cities/art/icons/khmer_baray.png",
+      "label": "Baray",
+      "subject": "Vast Khmer reservoir framed by stepped stone embankments, lotus-filled water, and a temple island",
+      "row": 4,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        313,
+        803,
+        403
+      ],
+      "source_row": 3,
+      "source_column": 8
+    },
+    {
+      "catalog_id": "cities:barbwire_fence",
+      "path": "src/Mods/Cities/art/icons/barbwire_fence.png",
+      "label": "Barbwire Fence",
+      "subject": "Barbed wire fence stretched between THIN metal posts. Clear wire silhouette, no thick stone pillars.",
+      "row": 5,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        413,
+        103,
+        503
+      ],
+      "source_row": 3,
+      "source_column": 9
+    },
+    {
+      "catalog_id": "cities:barracks",
+      "path": "src/Mods/Cities/art/icons/barracks.png",
+      "label": "Barracks",
+      "subject": "Military barracks with a long timber dormitory, visible bunk beds, and an orderly drill yard",
+      "row": 5,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        413,
+        203,
+        503
+      ],
+      "source_row": 3,
+      "source_column": 10
+    },
+    {
+      "catalog_id": "cities:bauhaus",
+      "path": "src/Mods/Cities/art/icons/bauhaus.png",
+      "label": "Bauhaus School",
+      "subject": "Bauhaus design school with flat-roofed white blocks, steel-framed glass walls, and asymmetrical wings",
+      "row": 5,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        413,
+        303,
+        503
+      ],
+      "source_row": 3,
+      "source_column": 11
+    },
+    {
+      "catalog_id": "cities:beadmaker",
+      "path": "src/Mods/Cities/art/icons/beadmaker.png",
+      "label": "Beadmaker",
+      "subject": "Beadmaker's workshop with colorful glass beads, a hand spindle, thread, and an artisan's workbench",
+      "row": 5,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        413,
+        403,
+        503
+      ],
+      "source_row": 3,
+      "source_column": 12
+    },
+    {
+      "catalog_id": "cities:biological_warfare_lab",
+      "path": "src/Mods/Cities/art/icons/biological_warfare_lab.png",
+      "label": "Biological Warfare Lab",
+      "subject": "Sealed biolab with glass containment vessels, hazard-striped doors, and a glowing sample under a microscope",
+      "row": 5,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        413,
+        503,
+        503
+      ],
+      "source_row": 4,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:bolshoi",
+      "path": "src/Mods/Cities/art/icons/bolshoi.png",
+      "label": "Bolshoi",
+      "subject": "Bolshoi Theatre with grand neoclassical portico, sculpted quadriga, and broad red-carpeted steps",
+      "row": 5,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        413,
+        603,
+        503
+      ],
+      "source_row": 4,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:bomb_shelter",
+      "path": "src/Mods/Cities/art/icons/bomb_shelter.png",
+      "label": "Bomb Shelters",
+      "subject": "Reinforced underground shelter entrance with thick concrete doors, earth-covered roof, and ventilation pipes",
+      "row": 5,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        413,
+        703,
+        503
+      ],
+      "source_row": 4,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:boulevard_circle",
+      "path": "src/Mods/Cities/art/icons/boulevard_circle.png",
+      "label": "Boulevard Circle",
+      "subject": "Circular fortified boulevard with concentric stone walls, watchtowers, and a guarded central gate",
+      "row": 5,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        413,
+        803,
+        503
+      ],
+      "source_row": 4,
+      "source_column": 4
+    },
+    {
+      "catalog_id": "cities:brandenburg_gate",
+      "path": "src/Mods/Cities/art/icons/brandenburg_gate.png",
+      "label": "Brandenburg Gate",
+      "subject": "Brandenburg Gate's neoclassical sandstone arch with five passages, fluted columns, and a chariot quadriga",
+      "row": 6,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        513,
+        103,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 5
+    },
+    {
+      "catalog_id": "cities:brewery",
+      "path": "src/Mods/Cities/art/icons/brewery.png",
+      "label": "Brewery",
+      "subject": "Brewery with copper brewing kettles, timber roof beams, wooden casks, and a squat brick chimney",
+      "row": 6,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        513,
+        203,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 6
+    },
+    {
+      "catalog_id": "cities:hindu_brihadeeswarar",
+      "path": "src/Mods/Cities/art/icons/hindu_brihadeeswarar.png",
+      "label": "Brihadeeswarar Temple",
+      "subject": "Tamil stone temple with a soaring pyramidal vimana, carved granite tiers, and a sacred bull statue",
+      "row": 6,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        513,
+        303,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 7
+    },
+    {
+      "catalog_id": "cities:national_tv_station",
+      "path": "src/Mods/Cities/art/icons/national_tv_station.png",
+      "label": "Broadcast Network",
+      "subject": "National television studio with a glass broadcast booth, camera on tripod, and glowing monitor bank",
+      "row": 6,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        513,
+        403,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 8
+    },
+    {
+      "catalog_id": "cities:broadcast_tower",
+      "path": "src/Mods/Cities/art/icons/broadcast_tower.png",
+      "label": "Broadcast Tower",
+      "subject": "Tall lattice broadcast tower with antenna panels, blinking lights, and concentric signal waves",
+      "row": 6,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        513,
+        503,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 9
+    },
+    {
+      "catalog_id": "cities:broadway",
+      "path": "src/Mods/Cities/art/icons/broadway.png",
+      "label": "Broadway",
+      "subject": "Close-up glowing neon theater sign reading BROADWAY in large unmistakable letters, with a few surrounding light bulbs. No building scene.",
+      "row": 6,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        513,
+        603,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 10
+    },
+    {
+      "catalog_id": "cities:scottish_broch",
+      "path": "src/Mods/Cities/art/icons/scottish_broch.png",
+      "label": "Broch",
+      "subject": "Scottish broch, a round dry-stone tower with thick hollow walls, a narrow doorway, and surrounding turf",
+      "row": 6,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        513,
+        703,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 11
+    },
+    {
+      "catalog_id": "cities:buddhist_cathedral",
+      "path": "src/Mods/Cities/art/icons/buddhist_cathedral.png",
+      "label": "Buddhist Stupa",
+      "subject": "White Buddhist stupa with a golden spire, circular terraces, prayer flags, and a domed reliquary",
+      "row": 6,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        513,
+        803,
+        603
+      ],
+      "source_row": 4,
+      "source_column": 12
+    },
+    {
+      "catalog_id": "cities:buddhist_temple",
+      "path": "src/Mods/Cities/art/icons/buddhist_temple.png",
+      "label": "Buddhist Temple",
+      "subject": "Buddhist temple with curved tiled eaves, a bronze bell, red pillars, and a serene seated Buddha",
+      "row": 7,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        613,
+        103,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:bunker",
+      "path": "src/Mods/Cities/art/icons/bunker.png",
+      "label": "Bunker",
+      "subject": "Low-profile military bunker of reinforced concrete with an armored hatch, firing slit, and camouflage earthwork",
+      "row": 7,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        613,
+        203,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:burningman",
+      "path": "src/Mods/Cities/art/icons/burningman.png",
+      "label": "Burning Man",
+      "subject": "One wooden human-shaped festival effigy with exactly TWO raised arms and TWO legs, visibly ON FIRE: vivid orange-yellow flames engulf its torso, arms and legs, with rising embers. No people, crowd or extra limbs. Not an unlit straw sculpture.",
+      "row": 7,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        613,
+        303,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:butchery",
+      "path": "src/Mods/Cities/art/icons/butchery.png",
+      "label": "Butchery",
+      "subject": "Traditional butcher shop with a stone cutting block, hanging cured meats, cleavers, and tiled workroom",
+      "row": 7,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        613,
+        403,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 4
+    },
+    {
+      "catalog_id": "cities:cabinet",
+      "path": "src/Mods/Cities/art/icons/cabinet.png",
+      "label": "Cabinet",
+      "subject": "Government cabinet chamber with a long polished conference table, high-backed chairs, and circular seal motif",
+      "row": 7,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        613,
+        503,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 5
+    },
+    {
+      "catalog_id": "cities:welsh_caer",
+      "path": "src/Mods/Cities/art/icons/welsh_caer.png",
+      "label": "Caer",
+      "subject": "Welsh hilltop royal residence enclosed by rough stone ramparts, with a timber hall and watchtower",
+      "row": 7,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        613,
+        603,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 6
+    },
+    {
+      "catalog_id": "cities:mesoamerican_monastery",
+      "path": "src/Mods/Cities/art/icons/mesoamerican_monastery.png",
+      "label": "Calmacec",
+      "subject": "Mesoamerican religious school with a stepped stone sanctuary, cloister courtyard, and carved serpent columns",
+      "row": 7,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        613,
+        703,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 7
+    },
+    {
+      "catalog_id": "cities:candlemaker",
+      "path": "src/Mods/Cities/art/icons/candlemaker.png",
+      "label": "Candlemaker",
+      "subject": "Candle workshop with rows of beeswax tapers, a melting pot, cotton wicks, and brass dipping frame",
+      "row": 7,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        613,
+        803,
+        703
+      ],
+      "source_row": 5,
+      "source_column": 8
+    },
+    {
+      "catalog_id": "cities:cannon_turret",
+      "path": "src/Mods/Cities/art/icons/cannon_turret.png",
+      "label": "Cannon Turret",
+      "subject": "Stone fortress turret with a bronze cannon protruding through a crenellated embrasure above the ramparts",
+      "row": 8,
+      "column": 1,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        13,
+        713,
+        103,
+        803
+      ],
+      "source_row": 5,
+      "source_column": 9
+    },
+    {
+      "catalog_id": "cities:capital_administration",
+      "path": "src/Mods/Cities/art/icons/capital_administration.png",
+      "label": "Capital Administration",
+      "subject": "Grand civic administration hall with a broad stair, symmetrical wings, and a council chamber beneath a glass dome",
+      "row": 8,
+      "column": 2,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        113,
+        713,
+        203,
+        803
+      ],
+      "source_row": 5,
+      "source_column": 10
+    },
+    {
+      "catalog_id": "cities:caravanserai",
+      "path": "src/Mods/Cities/art/icons/caravanserai.png",
+      "label": "Caravanserai",
+      "subject": "Desert caravanserai with a fortified square courtyard, vaulted gatehouse, pack camels, and shaded arcades",
+      "row": 8,
+      "column": 3,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        213,
+        713,
+        303,
+        803
+      ],
+      "source_row": 5,
+      "source_column": 11
+    },
+    {
+      "catalog_id": "cities:carhenge",
+      "path": "src/Mods/Cities/art/icons/carhenge.png",
+      "label": "Carhenge",
+      "subject": "Circular monument of upright vintage automobiles arranged like standing stones beneath an open prairie sky",
+      "row": 8,
+      "column": 4,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        313,
+        713,
+        403,
+        803
+      ],
+      "source_row": 5,
+      "source_column": 12
+    },
+    {
+      "catalog_id": "cities:carpenter",
+      "path": "src/Mods/Cities/art/icons/carpenter.png",
+      "label": "Carpenter",
+      "subject": "Carpenter's workshop with a wooden workbench, hand plane, saw, and neatly stacked lumber",
+      "row": 8,
+      "column": 5,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        413,
+        713,
+        503,
+        803
+      ],
+      "source_row": 6,
+      "source_column": 1
+    },
+    {
+      "catalog_id": "cities:huns_cattle",
+      "path": "src/Mods/Cities/art/icons/huns_cattle.png",
+      "label": "Cattle Herd",
+      "subject": "Small herd of long-horned cattle beside a portable felt tent and grazing pasture",
+      "row": 8,
+      "column": 6,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        513,
+        713,
+        603,
+        803
+      ],
+      "source_row": 6,
+      "source_column": 2
+    },
+    {
+      "catalog_id": "cities:cement_mill",
+      "path": "src/Mods/Cities/art/icons/cement_mill.png",
+      "label": "Cement Mill",
+      "subject": "Cement mill with a long rotating kiln, stone aggregate piles, conveyor belts, and a dust-filter tower",
+      "row": 8,
+      "column": 7,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        613,
+        713,
+        703,
+        803
+      ],
+      "source_row": 6,
+      "source_column": 3
+    },
+    {
+      "catalog_id": "cities:cheomseongdae",
+      "path": "src/Mods/Cities/art/icons/cheomseongdae.png",
+      "label": "Cheomseongdae",
+      "subject": "Cheomseongdae's tapered stone observatory tower with narrow openings, square top platform, and moonlit sky",
+      "row": 8,
+      "column": 8,
+      "review_status": "pending",
+      "installed": false,
+      "edit_bounds": [
+        713,
+        713,
+        803,
+        803
+      ],
+      "source_row": 6,
+      "source_column": 4
+    }
+  ],
+  "image": "blank-layout.png",
+  "mask": "mask.png",
+  "borders": "none; applied separately later",
+  "badges": "none; applied separately later",
+  "sheet_file": "sheet.png",
+  "layout_reference": "layout/blank-layout.png",
+  "mask_file": "layout/mask.png",
+  "generation_quality": "low"
+}
