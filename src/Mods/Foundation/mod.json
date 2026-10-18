@@ -1,7 +1,7 @@
 {
   "id": "foundation",
   "name": "Foundation",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "assembly": "Civ.Mods.Foundation.dll",
   "dependencies": [],
   "references": [

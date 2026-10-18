@@ -29,6 +29,8 @@ public interface ICityCultureSource
 public interface ICityCultureService
 {
     void AddCulture(Simulation sim, int city, long culture, int spreadTurns);
+    int LevelIndex(Simulation sim, int city);
+    Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int city);
 }
 public interface ICityWorkService
 {

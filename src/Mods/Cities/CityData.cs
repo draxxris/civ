@@ -44,21 +44,18 @@ internal static class CityData
         return false;
     }
     internal static long Effect(ModifierSink sink, string key) => sink.Ledger.Total("cities:" + key);
-    internal static IReadOnlyList<S.CultureLevelDef> Levels(Simulation sim) => sim.Content.Get<S.CultureLevelDef>().All
-        .Where(l => sim.Content.Requirements.Evaluate(l.Requirements, new(sim, 0)).Success)
+    internal static IReadOnlyList<S.CultureLevelDef> Levels(Simulation sim, int player = 0, City? city = null) => sim.Content.Get<S.CultureLevelDef>().All
+        .Where(l => sim.Content.Requirements.Evaluate(l.Requirements, new RequirementContext(sim, player, city)).Success)
         .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal).ToArray();
-        internal static int LevelIndex(Simulation sim, City city) => LevelIndex(sim, city, Levels(sim));
+    internal static int LevelIndex(Simulation sim, City city) => LevelIndex(sim, city, Levels(sim, city.Owner, city));
     internal static int LevelIndex(Simulation sim, City city, IReadOnlyList<S.CultureLevelDef> levels)
     {
         int result = 0;
         for (int i = 0; i < levels.Count; i++)
             if (city.Culture >= levels[i].SpeedThresholds[sim.Settings.GameSpeed]) result = i;
-        // Read leader traits directly; building the full city modifier ledger per level lookup is too costly.
-        if (sim.Content.TryGet<S.LeaderDef>(sim.State.PlayerById(city.Owner).Leader, out var leader)
-            && leader.Traits.Any(t => t.Value && sim.Content.Get<S.TraitDef>(t.Key).ExtraCultureLevel)) result++;
-        return Math.Clamp(result, 0, levels.Count - 1);
+        return result;
     }
-    internal static S.CultureLevelDef Level(Simulation sim, City city) => Levels(sim)[LevelIndex(sim, city)];
+    internal static S.CultureLevelDef Level(Simulation sim, City city) => Levels(sim, city.Owner, city)[LevelIndex(sim, city)];
 }
 
 /// <summary>Reusable ordered player/city phase adapter; calculations remain in small owning services.</summary>
