@@ -175,7 +175,8 @@ public sealed class AiSpeculationTests
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
         var conflict = Assert.Single(events, e => e.Outcome == SpeculationOutcome.Conflict);
-        Assert.Equal("footprint", conflict.Reason);
+        Assert.Equal(change is "Health" or "Experience" or "Promotion" or "Create" or "Delete" or "DirectCreate" or "DirectDelete"
+            ? "entity aggregates" : "footprint", conflict.Reason);
         Assert.Equal(SpeculationOutcome.Direct, events[^1].Outcome);
         Assert.Equal(2, events[^1].Wave);
     }
@@ -183,7 +184,7 @@ public sealed class AiSpeculationTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Distant_unit_creation_only_conflicts_when_the_later_plan_also_allocates_an_id(bool laterAllocates)
+    public void Distant_unit_creation_conflicts_even_when_the_later_plan_does_not_allocate_an_id(bool laterAllocates)
     {
         var sim = Game(2, (game, player) => player == 0 || laterAllocates
             ? [new MutateUnit { Player = player, Change = "Create" }]
@@ -192,10 +193,98 @@ public sealed class AiSpeculationTests
         var events = Observe(sim);
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
-        Assert.Equal(laterAllocates ? SpeculationOutcome.Conflict : SpeculationOutcome.Committed, events[1].Outcome);
-        Assert.Equal(laterAllocates ? "unit id" : null, events[1].Reason);
-        Assert.Equal(laterAllocates ? 3 : 2, events.Count);
+Assert.Equal(SpeculationOutcome.Conflict, events[1].Outcome);
+        Assert.Equal(laterAllocates ? "unit id" : "entity aggregates", events[1].Reason);
+        Assert.Equal(3, events.Count);
         Assert.Equal(laterAllocates ? new[] { 1, 2, 3, 4 } : new[] { 1, 2, 3 }, sim.State.Units.Select(u => u.Id));
+    }
+
+    [Fact]
+    public void Distant_unit_creation_changing_a_globally_read_aggregate_matches_sequential()
+    {
+        var sim = Game(2, (game, player) => player == 0
+            ? [new MutateUnit { Player = 0, Change = "Create" }]
+            : [new MoveUnitCommand { Player = 1, UnitId = 2,
+                To = game.State.UnitById(2).Position.Neighbor(game.State.Units.Count(u => u.Owner == 0) > 1 ? 0 : 1) }]);
+        AssertGlobalReplan(sim);
+    }
+
+    [Theory]
+    [InlineData("RemoveUnit")]
+    [InlineData("UnitOwner")]
+    [InlineData("UnitType")]
+    [InlineData("Health")]
+    [InlineData("Experience")]
+    [InlineData("Promotion")]
+    [InlineData("CreateCity")]
+    [InlineData("RemoveCity")]
+    [InlineData("CityOwner")]
+    [InlineData("Population")]
+    public void Distant_entity_changes_affecting_global_reads_match_sequential(string change)
+    {
+        static long Read(GameState state) => state.Units.Where(u => u.Owner == 0)
+            .Sum(u => u.Health + u.Experience + u.Promotions.Count + (u.Type == "base:warrior" ? 1 : 0))
+            + state.Cities.Where(c => c.Owner == 0).Sum(c => c.Population * 1000L);
+        long initial = 0;
+        var sim = Game(2, (game, player) => player == 0
+            ? [new ChangeAggregate { Change = change }]
+            : [new MoveUnitCommand { Player = 1, UnitId = 2,
+                To = game.State.UnitById(2).Position.Neighbor(Read(game.State) != initial ? 0 : 1) }]);
+        sim.State.Players.Add(new() { Id = 2, TeamId = 2 });
+        sim.State.Teams.Add(new() { Id = 2, Members = [2] });
+        sim.State.RebuildIndexes();
+        sim.State.AddCity(new() { Id = sim.State.NextCityId++, Owner = 0, Position = new(3, 5), Population = 3 });
+        initial = Read(sim.State);
+        AssertGlobalReplan(sim);
+        Assert.NotEqual(initial, Read(sim.State));
+    }
+
+    private static void AssertGlobalReplan(Simulation sim)
+    {
+        var sequential = Copy(sim); sequential.AiWaveLimit = 1;
+        var events = Observe(sim);
+        sim.RunAi(); sequential.RunAi();
+        Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
+        Assert.Equal("entity aggregates", Assert.Single(events, e => e.Outcome == SpeculationOutcome.Conflict).Reason);
+        Assert.Equal(2, events[^1].Wave);
+        Assert.Equal(SpeculationOutcome.Direct, events[^1].Outcome);
+    }
+
+    private sealed class ChangeAggregate : GameCommand
+    {
+        public string Change { get; init; } = "";
+        public override string? Validate(Simulation sim) => null;
+        public override void Apply(Simulation sim)
+        {
+            var state = sim.State;
+            if (Change is "Health" or "Experience" or "Promotion")
+            {
+                new MutateUnit { Change = Change }.Apply(sim); return;
+            }
+            if (Change is "UnitOwner" or "UnitType")
+            {
+                var old = state.UnitById(1);
+                state.RemoveUnit(1);
+                state.AddUnit(new() { Id = old.Id, Owner = Change == "UnitOwner" ? 2 : 0,
+                    Type = Change == "UnitType" ? "base:settler" : old.Type, Position = old.Position });
+                return;
+            }
+            ChangeCityOrRemoveUnit(state);
+        }
+        private void ChangeCityOrRemoveUnit(GameState state)
+        {
+            switch (Change)
+            {
+                case "RemoveUnit": state.RemoveUnit(1); break;
+                case "CreateCity": state.AddCity(new() { Id = state.NextCityId++, Owner = 0, Position = new(5, 5) }); break;
+                case "RemoveCity": state.RemoveCity(1); break;
+                case "Population": state.CityById(1).Population++; break;
+                case "CityOwner":
+                    var city = state.CityById(1); state.RemoveCity(1);
+                    state.AddCity(new() { Id = city.Id, Owner = 2, Position = city.Position, Population = city.Population }); break;
+                default: throw new ArgumentOutOfRangeException(nameof(Change));
+            }
+        }
     }
 
     private static List<SpeculationEvent> Observe(Simulation sim)

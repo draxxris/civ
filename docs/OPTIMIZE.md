@@ -58,6 +58,38 @@ Phase 1 did not run `mise run test:e2e`, so there is no pre-change E2E duration 
 The complete E2E run took 11.8656 minutes (about 11 minutes 52 seconds) and finished with 3 tests passed and 1 failed. Therefore this run did not verify the full AI gameplay test suite.
 
 The latest default-suite evidence is `/tmp/civ-p4-default.log`: 725 passed and 5 previously documented failures out of 730 tests in `Civ.Mods.Tests`; `Civ.Tests` passed 124/124 and `Civ.ContentImport.Tests` passed 37/37. `mise run test` was not rerun during this measurement task.
+
+#### Known wave-independent gameplay failure
+
+Independent reproductions supplied during review establish that the turn-76 failure predates speculative turns. These reproductions were not rerun for this correction.
+An `onlyDefensive` scout discovers a hostile unit partway through a multi-step movement command.
+`ExplorerPlanner` reaches `MovementService.MoveStep`, then `CombatService.ValidateCombat` rejects the attack with `InvalidOperationException: Unit cannot attack`.
+This gameplay defect remains deferred. Movement, combat, and existing E2E expectations are unchanged.
+
+Reproduction configurations:
+
+- Base `23db29c`: about 1 hour 15 minutes to the failure.
+- `bee661e`, `AiWaveLimit = 1`: the same failure.
+- `c67b88f`, `AiWaveLimit = 1`, `DOTNET_PROCESSOR_COUNT=1`: about 1 minute 41 seconds to the failure.
+- Speculative `c67b88f`: the same failure at turn 76.
+
+The states at turns 26, 51, and 76 were bit-for-bit identical across the compared runs.
+At turn 76, the four players had cities 5/5/5/1, technologies 28/24/25/26, and units 11/11/12/6. The war count was 1.
+The approximate 45× comparison measures time to the same failure. It is not a successful 200-turn E2E speedup or a benchmark ratio.
+This failure is separate from the five pre-existing city-capture failures in the default suite.
+
+#### Global aggregate safety correction
+
+The earlier distant-creation optimization was unsafe. Spatial footprints do not protect global entity reads in war and settlement planning.
+Wave validation now rejects unit or city counter changes, entity membership or ownership changes, and changes to population or power inputs.
+Unit type, health, experience, and promotions participate in this guard. City positions, buildings, and extensions also participate.
+Ordinary unit movement and local activity retain spatial validation instead of forcing global conflicts.
+
+Production completion and growth run in `AdvanceTurn` systems before `RunAi`. Ordinary production selection does not create a unit during a wave.
+However, founding consumes a settler and creates a city during a command. Disbanding, upgrades, combat, capture, and great-person actions also change entities during commands.
+The correction therefore protects global reads regardless of the command that changed an entity.
+The existing measurements describe the earlier commit, not the corrected guard. No new performance ratio follows from this correction.
+
 ## Running log
 
 ### Started

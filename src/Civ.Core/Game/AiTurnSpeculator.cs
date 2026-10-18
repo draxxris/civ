@@ -161,6 +161,7 @@ internal static class AiTurnSpeculator
         public readonly Dictionary<int, string> Players, Teams;
         public readonly Dictionary<int, int[]> Wars;
         public readonly string Global;
+        private readonly string _entityAggregates;
 
         public WaveBaseline(Simulation sim)
         {
@@ -170,7 +171,20 @@ internal static class AiTurnSpeculator
             _units = sim.State.Units.ToDictionary(u => u.Id, u => UnitRecord.Of(sim.State, u));
             Wars = sim.State.Teams.ToDictionary(t => t.Id, t => t.Wars.ToArray());
             (Players, Teams, Global) = Digests(sim.State);
+            _entityAggregates = EntityAggregates(sim.State);
         }
+
+        // Power, settlement, production limits and great-person choices read entities across the whole map.
+        // Keep movement and local activity spatial, but invalidate changes to identity, population and power
+        // even when a later plan allocates no ids. Comparing individual records also catches offsetting changes.
+        private static string EntityAggregates(GameState state) => CanonicalJson.Serialize(new
+        {
+            Units = state.Units.Select(u => new { u.Id, u.Owner, u.Type, u.Health, u.Experience, u.Promotions }),
+            Cities = state.Cities.Select(c => new { c.Id, c.Owner, c.Position, c.Population, c.Buildings, c.Extensions }),
+        });
+
+        public bool EntityAggregatesChanged(GameState state) => state.NextUnitId != NextUnitId
+            || state.NextCityId != NextCityId || _entityAggregates != EntityAggregates(state);
 
         public static (Dictionary<int, string> Players, Dictionary<int, string> Teams, string Global) Digests(GameState state) => (
             state.Players.ToDictionary(p => p.Id, p => CanonicalJson.Digest(new { p.Culture, p.Treasury, p.Civics, p.Extensions, p.StartingPlot })),
@@ -412,7 +426,8 @@ internal static class AiTurnSpeculator
         public string? Conflict(Simulation sim, MutationFootprint mutations, HashSet<int> acted)
         {
             if (_error is not null || Trace is null) return "plan failed";
-            return AllocationConflict(sim) ?? SharedStateConflict(sim, acted)
+            return AllocationConflict(sim) ?? (baseline.EntityAggregatesChanged(sim.State) ? "entity aggregates" : null)
+                ?? SharedStateConflict(sim, acted)
                 ?? (mutations.Touches(Trace.Tiles) ? "footprint" : null);
         }
 

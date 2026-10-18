@@ -80,6 +80,41 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    public void Speculative_and_sequential_turns_match_across_the_war_planning_threshold()
+    {
+        var sim = Simulation.CreateScenario(mods.Content,
+            GameFactory.Settings(71) with { PlayerAis = ["ai:standard", "ai:standard"] }, new(40, 12),
+            Enumerable.Range(0, 480).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), game =>
+            {
+                game.State.Turn = 44;
+                GameFactory.NeutralPolitics(game);
+                foreach (int owner in new[] { 0, 1 })
+                {
+                    var city = new City { Id = game.State.NextCityId++, Owner = owner, Position = new(5 + owner * 12, 5) };
+                    game.State.AddCity(city); game.State.PlotAt(city.Position).Owner = owner;
+                    for (int i = 0; i < (owner == 0 ? 12 : 1); i++)
+                    {
+                        var unit = new Unit { Id = game.State.NextUnitId++, Owner = owner,
+                            Type = owner == 0 ? "military:javelineer" : "military:warrior", Position = city.Position };
+                        game.State.AddUnit(unit); Service<IUnitService>(game).Initialize(game, unit.Id);
+                    }
+                }
+                foreach (var plot in game.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); }
+            });
+        var sequential = SaveGame.Load(mods.Content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
+        Assert.Empty(sim.TeamOf(0).Wars);
+        bool declared = false;
+        for (int i = 0; i < 20; i++)
+        {
+            sim.AdvanceTurn(); sequential.AdvanceTurn();
+            Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
+            declared |= sim.TeamOf(0).Wars.Contains(1);
+            if (i == 9) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+        }
+        Assert.True(declared, "The fixture must exercise war target selection and the declaration roll after turn 45");
+    }
+
+    [Fact]
     public void Peaceful_settlers_contesting_one_site_replan_the_second_founding_like_sequential_turns()
     {
         var probe = new SettlementProbe();
