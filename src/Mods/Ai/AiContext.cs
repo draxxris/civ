@@ -29,8 +29,11 @@ internal sealed class AiContext
         Leader = sim.Content.Services.Get<IPeoplesService>().SingleOrDefault()?.Leader(sim, player);
         Catalog = AiCatalog.For(sim.Content);
         (Cities, Units) = Snapshot();
-        _enemyPlayers = new(() => sim.State.Players.Where(p => IsEnemy(p.Id)).Select(p => p.Id).ToHashSet());
-        _enemies = new(() => sim.State.Units.Where(u => _enemyPlayers.Value.Contains(u.Owner)).ToList());
+        // Read-only planner scoring may touch these from several threads at once.
+        _enemyPlayers = new(() => sim.State.Players.Where(p => IsEnemy(p.Id)).Select(p => p.Id).ToHashSet(),
+            LazyThreadSafetyMode.ExecutionAndPublication);
+        _enemies = new(() => sim.State.Units.Where(u => _enemyPlayers.Value.Contains(u.Owner)).ToList(),
+            LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     private (List<City>, List<Unit>) Snapshot() =>

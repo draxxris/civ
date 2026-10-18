@@ -6,7 +6,8 @@ namespace Civ.Mods.Cities;
 
 internal sealed class CityWellbeingService : ICityWellbeingService
 {
-    public CityWellbeing Calculate(Simulation sim, int cityId)
+    public CityWellbeing Calculate(Simulation sim, int cityId) => CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId));
+    private CityWellbeing CalculateScoped(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);

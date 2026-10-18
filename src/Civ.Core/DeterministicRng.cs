@@ -45,6 +45,14 @@ public sealed class DeterministicRng
     /// <summary>Four words needed to resume the exact random stream.</summary>
     public (ulong, ulong, ulong, ulong) State => (_s0, _s1, _s2, _s3);
 
+    /// <summary>Move this stream to a state captured from an identical stream, in place.</summary>
+    internal void Set((ulong, ulong, ulong, ulong) state)
+    {
+        var (s0, s1, s2, s3) = state;
+        if ((s0 | s1 | s2 | s3) == 0) throw new InvalidDataException("RNG state cannot be all zero");
+        (_s0, _s1, _s2, _s3) = (s0, s1, s2, s3);
+    }
+
     /// <summary>Restore a saved random stream. The all-zero state is invalid.</summary>
     public static DeterministicRng Restore(ulong s0, ulong s1, ulong s2, ulong s3)
     {

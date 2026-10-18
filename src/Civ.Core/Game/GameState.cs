@@ -29,6 +29,12 @@ public sealed class Player
     public bool EndedTurn { get; set; }
     /// <summary>Mod-owned typed state.</summary>
     public ExtensionState Extensions { get; set; } = new();
+    internal Player Clone() => new()
+    {
+        Id = Id, Name = Name, Civilization = Civilization, Leader = Leader, StartingPlot = StartingPlot, Ai = Ai, TeamId = TeamId,
+        Culture = Culture, Treasury = Treasury, Civics = new(Civics, Civics.Comparer), EndedTurn = EndedTurn,
+        Extensions = GameState.CloneExtensions(Extensions),
+    };
 }
 
 /// <summary>City data. Position is canonical axial; indexes resolve it through the grid.</summary>
@@ -68,6 +74,14 @@ public sealed class City
     public long Culture { get; set; }
     /// <summary>Mod-owned typed state.</summary>
     public ExtensionState Extensions { get; set; } = new();
+    // Production orders are immutable records, so the queue copy can share them.
+    internal City Clone() => new()
+    {
+        Id = Id, Owner = Owner, Name = Name, Position = Position, Buildings = new(Buildings), Building = Building,
+        BuildProgress = BuildProgress, Training = Training, TrainProgress = TrainProgress, ProductionQueue = new(ProductionQueue),
+        Population = Population, FoodStored = FoodStored, Worked = new(Worked), Specialists = new(Specialists, Specialists.Comparer),
+        Culture = Culture, Extensions = GameState.CloneExtensions(Extensions),
+    };
 }
 
 /// <summary>Unit data. Use GameState.MoveUnit when changing position.</summary>
@@ -93,6 +107,11 @@ public sealed class Unit
     public SortedSet<string> Promotions { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Mod-owned typed state.</summary>
     public ExtensionState Extensions { get; set; } = new();
+    internal Unit Clone() => new()
+    {
+        Id = Id, Owner = Owner, Type = Type, Position = Position, Experience = Experience, Health = Health, MovesLeft = MovesLeft,
+        Promotions = new(Promotions, Promotions.Comparer), Extensions = GameState.CloneExtensions(Extensions),
+    };
 }
 
 /// <summary>Plain authoritative data with rebuildable, non-serialized lookup caches.
@@ -217,6 +236,43 @@ public sealed class GameState
         Set(tile, direction, present);
         Set(neighbor, (direction + 3) % 6, present);
     }
+    /// <summary>Independent in-memory copy of all authoritative state with rebuilt lookup indexes. It hashes like the
+    /// source; immutable data (map geometry, revealed plot memories, production orders) is shared, everything else is copied.</summary>
+    public GameState Clone()
+    {
+        var copy = new GameState
+        {
+            Turn = Turn, Map = Map, NextCityId = NextCityId, NextUnitId = NextUnitId,
+            Plots = Array.ConvertAll(Plots, p => p.Clone()),
+            Players = Players.ConvertAll(p => p.Clone()),
+            Teams = Teams.ConvertAll(t => t.Clone()),
+            Cities = Cities.ConvertAll(c => c.Clone()),
+            Units = Units.ConvertAll(u => u.Clone()),
+            Extensions = CloneExtensions(Extensions),
+            _grid = Grid,
+        };
+        copy.IndexEntities();
+        return copy;
+    }
+    /// <summary>Take over the contents of an unshared copy made by <see cref="Clone"/>. Entity objects are replaced by
+    /// the copy's objects, so references held from before the call no longer belong to this state.</summary>
+    internal void RestoreFrom(GameState copy)
+    {
+        Turn = copy.Turn; Map = copy.Map; NextCityId = copy.NextCityId; NextUnitId = copy.NextUnitId;
+        Plots = copy.Plots; Players = copy.Players; Teams = copy.Teams; Cities = copy.Cities; Units = copy.Units;
+        Extensions = copy.Extensions;
+        _grid = copy.Grid;
+        IndexEntities();
+    }
+    private void IndexEntities()
+    {
+        _players.Clear(); _teams.Clear(); _units.Clear(); _cities.Clear(); _cityPlots.Clear(); _unitPlots.Clear();
+        foreach (var p in Players) _players.Add(p.Id, p);
+        foreach (var t in Teams) _teams.Add(t.Id, t);
+        foreach (var c in Cities) IndexCity(c);
+        foreach (var u in Units) IndexUnit(u);
+    }
+    internal static ExtensionState CloneExtensions(ExtensionState state) => state.Values.Count == 0 ? new() : state.Clone();
     /// <summary>Rebuild caches after deserialization or setup. Restores ordinal collection comparers.</summary>
     public void RebuildIndexes()
     {

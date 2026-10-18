@@ -6,7 +6,8 @@ namespace Civ.Mods.Cities;
 
 internal sealed class CityYields : ICityYieldService
 {
-    public CityYieldResult Calculate(Simulation sim, int cityId)
+    public CityYieldResult Calculate(Simulation sim, int cityId) => CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId));
+    private CityYieldResult CalculateScoped(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var sink = CityData.Effects(sim, city);

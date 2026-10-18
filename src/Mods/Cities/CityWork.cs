@@ -15,7 +15,9 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         return Math.Clamp(Math.Max(CityData.Level(sim, city).CityRadius, buildingRadius), 2, 3);
     }
     public IReadOnlyList<TileId> WorkArea(Simulation sim, int cityId) => sim.State.Grid.Range(CityData.Tile(sim, sim.State.CityById(cityId)), Radius(sim, cityId)).ToArray();
-    public string? Validate(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
+    public string? Validate(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists) =>
+        CityReadScope.Run(sim, _ => ValidateScoped(sim, cityId, tiles, specialists));
+    private string? ValidateScoped(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);
@@ -55,10 +57,21 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         var state = CityData.Edit(sim, city);
         if (state.ManualWork) { Prune(sim, city); return; }
         city.Worked.Clear(); city.Specialists.Clear();
-        int available = city.Population - wellbeing.Calculate(sim, cityId).Angry;
+        // Choosing the assignment only reads state; the city changes after the choice.
+        var (available, candidates) = CityReadScope.Run(sim, _ => Candidates(sim, city));
+        foreach (var choice in candidates.OrderByDescending(p => p.Score).ThenBy(p => p.Tile).ThenBy(p => p.Specialist, StringComparer.Ordinal).Take(available))
+        {
+            if (choice.Specialist is { } specialist) city.Specialists[specialist] = city.Specialists.GetValueOrDefault(specialist) + 1;
+            else city.Worked.Add(sim.State.Grid.HexOf(new(choice.Tile)));
+        }
+        city.Worked = city.Worked.OrderBy(h => h.Q).ThenBy(h => h.R).ToList();
+    }
+    private (int Available, List<WorkChoice> Candidates) Candidates(Simulation sim, City city)
+    {
+        int available = city.Population - wellbeing.Calculate(sim, city.Id).Angry;
         var yields = sim.Content.Services.Get<IPlotYieldService>().Single();
         var effects = CityData.Effects(sim, city);
-        var candidates = WorkArea(sim, cityId).Where(t => CanWork(sim, city, t))
+        var candidates = WorkArea(sim, city.Id).Where(t => CanWork(sim, city, t))
             .Select(t => new WorkChoice(t.Value, null, Score(sim, yields.Calculate(sim, city.Owner, t).Yields))).ToList();
         foreach (var specialist in sim.Content.Get<S.SpecialistDef>().All)
         {
@@ -66,12 +79,7 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
             long score = Score(sim, specialist.Yields) + 4 * (specialist.Commerces.Gold + specialist.Commerces.Research + specialist.Commerces.Culture + specialist.Commerces.Espionage);
             for (int i = 0; i < slots; i++) candidates.Add(new(int.MaxValue, specialist.Id, score));
         }
-        foreach (var choice in candidates.OrderByDescending(p => p.Score).ThenBy(p => p.Tile).ThenBy(p => p.Specialist, StringComparer.Ordinal).Take(available))
-        {
-            if (choice.Specialist is { } specialist) city.Specialists[specialist] = city.Specialists.GetValueOrDefault(specialist) + 1;
-            else city.Worked.Add(sim.State.Grid.HexOf(new(choice.Tile)));
-        }
-        city.Worked = city.Worked.OrderBy(h => h.Q).ThenBy(h => h.R).ToList();
+        return (available, candidates);
     }
     private sealed record WorkChoice(int Tile, string? Specialist, long Score);
     private static long Score(Simulation sim, YieldVector y)

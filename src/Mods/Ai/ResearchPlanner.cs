@@ -7,6 +7,7 @@ namespace Civ.Mods.Ai;
 /// <summary>Chooses the next technology: AI weight, flavors times personality, and what the technology unlocks.</summary>
 internal sealed class ResearchPlanner(AiContext ctx)
 {
+    private const int ParallelTechs = 6;
     public void Plan()
     {
         var team = ctx.Team;
@@ -14,8 +15,10 @@ internal sealed class ResearchPlanner(AiContext ctx)
         if (team.Researching is { } current && !team.Techs.Contains(current)) return;
         var research = ctx.Service<IResearchService>();
         var owned = OwnedBonuses();
-        var best = ctx.Catalog.Techs.Where(t => !team.Techs.Contains(t.Id) && research.Validate(ctx.Sim, ctx.PlayerId, t.Id).Success)
-            .Select(t => (Tech: t, Score: Score(research, t, owned)))
+        var candidates = ctx.Catalog.Techs.Where(t => !team.Techs.Contains(t.Id)).ToArray();
+        var scores = ParallelScoring.Select(ctx.Sim, candidates, ParallelTechs, t =>
+            research.Validate(ctx.Sim, ctx.PlayerId, t.Id).Success ? Score(research, t, owned) : (long?)null);
+        var best = candidates.Select((t, i) => (Tech: t, Score: scores[i])).Where(x => x.Score is not null)
             .OrderByDescending(x => x.Score).ThenBy(x => x.Tech.Id, StringComparer.Ordinal).FirstOrDefault();
         if (best.Tech is null) return;
         ctx.Issue(new SetTeamResearchCommand { Player = ctx.PlayerId, Tech = best.Tech.Id });

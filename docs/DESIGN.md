@@ -650,6 +650,45 @@ Plot modifier queries accept a proposed plot, so civic and trait improvement eff
 Military path queries reuse modifier ledgers within one search. Their integer heuristic accounts for fractional routes.
 Neither query cache survives a command or enters saves.
 
+### Parallel candidate scoring and intra-planner concurrency
+
+Candidate evaluation within single-player planners parallelizes read-only scoring using `ParallelScoring.Select` across candidate thresholds:
+- `SitePlanner`: candidate city founding plots and full-map tile valuations.
+- `CityPlanner`: city view snapshots and building production candidate options.
+- `ResearchPlanner`: candidate research technologies.
+- `WorkerPlanner`: candidate tile improvement jobs for each worker.
+- `MilitaryPlanner`: pathfinding for defensive reinforcements.
+- `AttackPlanner`: reachability of candidate assault and staging hexes.
+
+Evaluation callbacks must not issue commands, mutate simulation state, or draw from `Simulation.Rng`. Results populate preallocated arrays matching input indices, preserving identical candidate evaluation results regardless of thread scheduling. Candidates are sorted deterministically using descending integer scores with ordinal/entity ID tie-breaking (e.g. `StringComparer.Ordinal` on content IDs, or ascending `Tile.Value` / `Unit.Id`).
+
+To prevent thread-pool oversubscription when multiple players plan concurrently, `ParallelScoring.Select` checks `Simulation.IsParallelAiTurn`. When true (during multi-player speculative waves), intra-planner candidate loops execute serially. Candidate parallelism is reserved for single-player turns.
+
+### Read-only city query optimizations
+
+City and worker planning perform intensive read-only queries against empire state. Several query paths avoid redundant traversal:
+- `CityReadScope`: a `[ThreadStatic]` per-thread memoization scope keyed by simulation instance caches building activity, power status, and modifier grants during read-only city calculations (such as citizen specialist and tile assignments in `CitizenPlanner`). It provides zero-overhead memoization without mutating game state or leaking across threads.
+- Lazy `ResourceNetwork.Modes`: route and transport mode checks are resolved lazily per query on first access rather than traversed upfront.
+- `INavalBlockadeService.BlockadedTiles`: computes and caches the complete set of blockaded water tiles once per query instead of repeating hex-distance checks per candidate plot.
+
+### State cloning and simulation forking
+
+To support concurrent turn planning without full-save canonical JSON serialization overhead:
+- `GameState.Clone()`: performs an in-memory deep copy of the simulation state. `Plot.Clone()` copies plot attributes, culture arrays, team visibility masks, and shallow-copies immutable `RevealedPlotSnapshot` records while sharing the immutable `HexGrid`. Player, unit, team, and city records are cloned directly into pre-allocated collections and reindexed.
+- `ExtensionState.Clone()`: clones attached extension component instances using UTF-8 JSON round-trips (`JsonSerializer.SerializeToUtf8Bytes` and `JsonSerializer.Deserialize`) with `CanonicalJson.Options`, copying only entities that define non-empty extension dictionaries.
+- `Simulation.ForkSpeculative()`: creates an isolated speculative `Simulation` with a cloned `GameState`, restored `DeterministicRng` matching the source RNG state, and top-level command recording enabled.
+
+### Wave-based speculative parallel turns (`AiTurnSpeculator`)
+
+`Simulation.RunAi()` delegates turn execution to `AiTurnSpeculator.Run(this)`:
+- **Speculative waves**: uncommitted AI players are partitioned into waves. Players on the same team or at war with earlier players in the wave are excluded from the same wave to avoid direct interactions. Within each wave, the first remaining player ($p_0$) executes directly against the authoritative `Simulation`, while following independent players ($p_1, \dots, p_{m-1}$) plan concurrently on isolated speculative forks of the wave-start state.
+- **Deterministic commit order**: plans commit strictly in ascending `Player.Id` order. Each committed plan replays its recorded `GameCommand` sequence against the authoritative simulation via `TryApply`, verifying that pre-command and post-command RNG states match the fork execution and that per-player state digests remain identical.
+- **Conflict detection**:
+  - *Active mutation footprint proximity*: a cumulative active mutation footprint tracks tiles where earlier players moved units (including intermediate path steps), founded, captured, or razed cities, or modified plot ownership, improvements, routes, or features. Stationary units (such as fortified garrisons) and unchanged border plots are excluded from the footprint unless their unit state (health, experience, promotions, activity) mutates. A spatial conflict occurs if any tile in a candidate plan's active footprint is within 5 hexes (`ActiveFootprintRadius = 5`) of an earlier player's cumulative active footprint.
+  - *Global entity-aggregate conflicts*: a conflict occurs if an earlier player altered entity counters (`NextCityId`, `NextUnitId`), entity membership or ownership, unit health/experience/promotions/type, city buildings/population/extensions, or power inputs. This prevents stale reads for global evaluations (such as `WarPlanner` military power calculations or world wonder constraints).
+  - *RNG and diplomacy conflicts*: a conflict occurs if an earlier player drew from `Simulation.Rng` and the candidate plan also used RNG, or if team relations (`Team.Wars`) or global extension components changed.
+- **Wave relaunch on conflict**: if a speculative plan encounters any spatial, aggregate, RNG, or diplomatic conflict, or if command replay diverges, the authoritative simulation restores from a pre-commit checkpoint, re-applies already verified plans, and immediately relaunches a new speculative wave for the remaining uncommitted players against the updated authoritative state.
+
 See [ROADMAP.md](ROADMAP.md) for AI limitations and the remaining rule systems.
 
 ## Requirements

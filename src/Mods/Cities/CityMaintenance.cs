@@ -7,7 +7,8 @@ namespace Civ.Mods.Cities;
 internal sealed class CityMaintenance : ICityMaintenanceService
 {
     private const long Scale = 1_000_000_000_000;
-    public CityMaintenanceResult Calculate(Simulation sim, int cityId)
+    public CityMaintenanceResult Calculate(Simulation sim, int cityId) => CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId));
+    private CityMaintenanceResult CalculateScoped(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);

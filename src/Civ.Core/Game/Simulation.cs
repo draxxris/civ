@@ -154,24 +154,64 @@ public sealed partial class Simulation
         var id = State.PlayerById(playerId).Civilization;
         return id.Length == 0 ? null : Content.Civilizations.Get(id);
     }
-    /// <summary>Let each AI act and end its turn, without recursively advancing all-AI games.</summary>
+    /// <summary>Let each AI act and end its turn, without recursively advancing all-AI games. Players act in id order;
+    /// independent players may plan concurrently, but the result is the same on every peer.</summary>
     public void RunAi()
     {
-        foreach (var player in State.Players.OrderBy(p => p.Id))
-        {
-            if (player.Ai == null || player.EndedTurn) continue;
-            foreach (var cmd in Content.PlayerAIs.Get(player.Ai).Decide(this, player.Id).ToList()) TryApply(cmd, out _);
-            player.EndedTurn = true;
-        }
+        // AI commands are the players' own top-level commands, even when an end-turn command advanced the turn.
+        int depth = _commandDepth;
+        _commandDepth = 0;
+        try { AiTurnSpeculator.Run(this); }
+        finally { _commandDepth = depth; }
     }
+    /// <summary>Run one AI player's turn in place: its decisions, then any returned commands. Does not end its turn.</summary>
+    internal void RunAiPlayer(int playerId)
+    {
+        var player = State.PlayerById(playerId);
+        foreach (var cmd in Content.PlayerAIs.Get(player.Ai!).Decide(this, player.Id).ToList()) TryApply(cmd, out _);
+    }
+    /// <summary>Isolated copy of the state and RNG for speculative planning. It records its top-level commands.</summary>
+    internal Simulation ForkSpeculative()
+    {
+        var (a, b, c, d) = Rng.State;
+        return new Simulation(Content, Settings, State.Clone(), DeterministicRng.Restore(a, b, c, d))
+        {
+            _recordedCommands = new(),
+        };
+    }
+    /// <summary>Top-level commands applied since recording started, with the RNG state before validation and after application.</summary>
+    internal List<(GameCommand Command, (ulong, ulong, ulong, ulong) PreRng, (ulong, ulong, ulong, ulong) PostRng)>? _recordedCommands;
+    /// <summary>Optional observer of top-level commands, used to measure what a speculative turn touched.</summary>
+    internal ICommandObserver? CommandObserver { get; set; }
+    private int _commandDepth;
+    /// <summary>Whether this simulation is planning a player in a concurrent AI wave. Read-only planners should
+    /// score serially in this scope to avoid nesting parallel work inside the wave. Not authoritative or saved.</summary>
+    public bool IsParallelAiTurn { get; internal set; }
+    /// <summary>Most AI players planned together in one wave; one runs every AI strictly in turn. Part of the
+    /// deterministic rules, so it must never depend on the machine.</summary>
+    internal int AiWaveLimit { get; set; } = int.MaxValue;
+    /// <summary>Optional diagnostic sink for AI wave decisions.</summary>
+    internal Action<SpeculationEvent>? SpeculationObserver { get; set; }
     /// <summary>Terrain definition on a valid plot, including normalized wrap coordinates.</summary>
     public TerrainDef TerrainAt(Hex hex) => Content.Terrains.Get(State.PlotAt(hex).Terrain);
     /// <summary>Validate and apply; rejected commands must not change state.</summary>
     public bool TryApply(GameCommand cmd, out string? error)
     {
-        error = cmd.Validate(this);
-        if (error != null) return false;
-        cmd.Apply(this);
+        // Only top-level commands are recorded; commands applied from inside another command replay with it.
+        bool top = _commandDepth == 0;
+        var observer = top ? CommandObserver : null;
+        var preRng = Rng.State;
+        _commandDepth++;
+        try
+        {
+            error = cmd.Validate(this);
+            if (error != null) { observer?.Rejected(this, cmd); return false; }
+            observer?.Before(this, cmd);
+            cmd.Apply(this);
+        }
+        finally { _commandDepth--; }
+        if (top) _recordedCommands?.Add((cmd, preRng, Rng.State));
+        observer?.After(this, cmd);
         return true;
     }
     /// <summary>Run ordered rules, end the old turn, clear presentation events, start the new turn, and run AI.</summary>

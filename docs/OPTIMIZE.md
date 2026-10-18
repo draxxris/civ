@@ -25,6 +25,87 @@ Work on these areas one at a time, measure each change, and preserve determinist
 
 `TerrainRenderer.RebuildWorld` now prepares managed surface packets in the existing mesher workers. Godot array packing, resource construction, node assignment, scatter planning, and scatter updates stay on the main thread. The trace separates these stages.
 
+### AI multithreading
+
+#### Architecture
+
+AI turn planning parallelizes computation at two distinct levels while guaranteeing bit-for-bit deterministic simulation state across runs, save/load cycles, and networked peers:
+- **Intra-planner parallel candidate scoring**: `ParallelScoring.Select` in `SitePlanner`, `CityPlanner`, `ResearchPlanner`, `WorkerPlanner`, `MilitaryPlanner`, and `AttackPlanner` evaluates independent read-only candidate items (founding sites, city build options, candidate technologies, worker jobs, defensive reinforcement routes, and attack staging hexes) concurrently across threads above minimum candidate count thresholds. Candidates are evaluated without mutating simulation state or drawing from `Simulation.Rng`, and results are sorted deterministically by descending integer scores with ordinal/entity ID tie-breaking. To avoid threadpool oversubscription when multiple players plan concurrently, candidate evaluation checks `Simulation.IsParallelAiTurn` and runs serially inside multi-player speculative waves.
+- **Read-only city query memoization**: Repeated empire state queries are optimized without mutating simulation state or breaking thread isolation: `[ThreadStatic]` `CityReadScope` caches building activity, power status, and modifier grants during read-only city evaluation (such as citizen allocation); `ResourceNetwork.Modes` evaluates transport and route connections lazily per query; and `INavalBlockadeService.BlockadedTiles` resolves blockaded water plots once per query rather than per plot.
+- **Fast in-memory state cloning**: `GameState.Clone()`, `Plot.Clone()`, and `ExtensionState.Clone()` (using UTF-8 canonical JSON round-trips for non-empty components) produce independent simulation copies for `Simulation.ForkSpeculative()` without full-save canonical normalization, reducing fork creation overhead.
+- **Wave-based speculative parallel turns**: `Simulation.RunAi()` delegates to `AiTurnSpeculator`, partitioning uncommitted AI players into speculative waves. The first player ($p_0$) executes directly against the authoritative simulation, while subsequent independent players ($p_1 \dots p_{m-1}$) plan concurrently on isolated speculative forks of the wave-start state. Non-conflicting plans commit sequentially in ascending `Player.Id` order by replaying their recorded `GameCommand` sequences against the authoritative simulation. If any plan encounters a conflict, the authoritative simulation restores from a pre-commit snapshot, re-applies verified plans, and immediately relaunches a new speculative wave for remaining uncommitted players.
+
+#### Safety invariants
+
+Deterministic equivalence with strictly sequential turn execution is enforced through rigorous conflict checks:
+- **Active mutation footprint proximity**: Conflicts occur if any tile in an earlier player's cumulative active mutation footprint (plots where units moved, cities were founded, captured, or razed, or plot ownership, improvements, routes, or features changed) lies within 5 hexes (`ActiveFootprintRadius = 5`) of a candidate plan's active footprint. Stationary units (such as fortified garrisons) and unchanged border plots do not cause conflicts unless unit contract state (health, experience, promotions, activity) mutates. Moving settlers and explorers expand active footprints by radius 3 to protect visibility-dependent choices.
+- **Global entity-aggregate protection**: Changes to entity counters (`NextCityId`, `NextUnitId`), entity membership or ownership, unit health/experience/promotions/type, city buildings/population/extensions, or power inputs trigger an entity-aggregate conflict for subsequent plans in the wave. This ensures global queries (such as `WarPlanner` power evaluations or world wonder limits) never commit against stale aggregate state.
+- **RNG and diplomacy consistency**: A plan is rejected if an earlier player drew from `Simulation.Rng` and the candidate plan also used RNG, or if team war relations (`Team.Wars`) or global `State.Extensions` changed.
+- **Command replay and fingerprint verification**: Plan commit replays commands via `Simulation.TryApply`, verifying that pre-command and post-command RNG values match the fork execution and that the resulting per-player state digest matches the fork's fingerprint. Any divergence triggers state rollback and wave relaunch.
+
+#### Benchmark measurements
+
+`mise run benchmark` reports single samples without timing thresholds. The Phase 1 run did not finish the 8-player preparation benchmark. It recorded these values before termination:
+
+- World generation/setup, seed 1: 489.66 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 42: 249.24 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 987654: 335.52 ms; 4,368 plots and 2 players.
+- Fifty-city turn: 83,120.65 ms; 50 cities, turn 2.
+- The 8-player preparation (generation, 99 turns, save/load) exceeded 90 minutes of CPU time without finishing. It was terminated as instructed. No turn-100 AI decision result was captured.
+
+After the AI multithreading implementation, one `mise run benchmark` run recorded:
+
+- World generation/setup, seed 1: 482.04 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 42: 238.73 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 987654: 347.23 ms; 4,368 plots and 2 players.
+- Fifty-city turn: 2,139.04 ms; 50 cities, turn 2.
+- 8-player preparation (generation, 99 turns, save/load): 231,096.19 ms (3 minutes 51.10 seconds).
+- 8-player `RunAi()` decisions at turn 100: 1,802.43 ms; 41 cities and 114 units.
+
+The fifty-city turn decreased by 97.43%, or 38.86× against the measured baseline. A valid speedup ratio is not available for 8-player preparation: the baseline was an incomplete CPU-time observation, while the post-change run completed and reported a benchmark duration. There is no turn-100 `RunAi()` baseline for comparison.
+
+#### End-to-end tests
+
+Phase 1 did not run `mise run test:e2e`, so there is no pre-change E2E duration or speedup comparison. The post-change command was `mise run test:e2e -- --logger 'console;verbosity=detailed'`. The two AI tests reported:
+
+- `Four_computer_players_develop_and_fight_over_200_turns`: failed after 1 minute 41 seconds, at turn 76, with `InvalidOperationException: Unit cannot attack` from the explorer/scout movement path.
+- `Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn`: passed in 10 minutes 6 seconds.
+
+The complete E2E run took 11.8656 minutes (about 11 minutes 52 seconds) and finished with 3 tests passed and 1 failed. Therefore this run did not verify the full AI gameplay test suite.
+
+The latest default-suite evidence is `/tmp/civ-p4-default.log`: 725 passed and 5 previously documented failures out of 730 tests in `Civ.Mods.Tests`; `Civ.Tests` passed 124/124 and `Civ.ContentImport.Tests` passed 37/37. `mise run test` was not rerun during this measurement task.
+
+#### Known wave-independent gameplay failure
+
+Independent reproductions supplied during review establish that the turn-76 failure predates speculative turns. These reproductions were not rerun for this correction.
+An `onlyDefensive` scout discovers a hostile unit partway through a multi-step movement command.
+`ExplorerPlanner` reaches `MovementService.MoveStep`, then `CombatService.ValidateCombat` rejects the attack with `InvalidOperationException: Unit cannot attack`.
+This gameplay defect remains deferred. Movement, combat, and existing E2E expectations are unchanged.
+
+Reproduction configurations:
+
+- Base `23db29c`: about 1 hour 15 minutes to the failure.
+- `bee661e`, `AiWaveLimit = 1`: the same failure.
+- `c67b88f`, `AiWaveLimit = 1`, `DOTNET_PROCESSOR_COUNT=1`: about 1 minute 41 seconds to the failure.
+- Speculative `c67b88f`: the same failure at turn 76.
+
+Turns 26, 51, and 76 had identical logged aggregate metrics `cities/techs/units/buildings/wars/gold` across base `23db29c`, sequential `AiWaveLimit=1`, and speculative runs.
+At turn 76, the four players had cities 5/5/5/1, technologies 28/24/25/26, and units 11/11/12/6. The war count was 1.
+The approximate 45× comparison measures time to the same failure. It is not a successful 200-turn E2E speedup or a benchmark ratio.
+This failure is separate from the five pre-existing city-capture failures in the default suite.
+
+#### Global aggregate safety correction
+
+The earlier distant-creation optimization was unsafe. Spatial footprints do not protect global entity reads in war and settlement planning.
+Wave validation now rejects unit or city counter changes, entity membership or ownership changes, and changes to population or power inputs.
+Unit type, health, experience, and promotions participate in this guard. City positions, buildings, and extensions also participate.
+Ordinary unit movement and local activity retain spatial validation instead of forcing global conflicts.
+
+Production completion and growth run in `AdvanceTurn` systems before `RunAi`. Ordinary production selection does not create a unit during a wave.
+However, founding consumes a settler and creates a city during a command. Disbanding, upgrades, combat, capture, and great-person actions also change entities during commands.
+The correction therefore protects global reads regardless of the command that changed an entity.
+The existing measurements describe the earlier commit, not the corrected guard. No new performance ratio follows from this correction.
+
 ## Running log
 
 ### Started

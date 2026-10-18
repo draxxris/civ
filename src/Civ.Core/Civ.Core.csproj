@@ -4,4 +4,9 @@
     <RootNamespace>Civ</RootNamespace>
     <!-- XML docs default lives in Directory.Build.props (Release only) so Debug builds skip it. -->
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Tests observe AI wave decisions and force strictly sequential AI turns for comparison. -->
+    <InternalsVisibleTo Include="Civ.Tests" />
+    <InternalsVisibleTo Include="Civ.Mods.Tests" />
+  </ItemGroup>
 </Project>

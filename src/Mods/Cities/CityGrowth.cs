@@ -6,7 +6,8 @@ namespace Civ.Mods.Cities;
 
 internal sealed class CityGrowth(ICityYieldService yields, ICityWellbeingService wellbeing, ICityWorkService work) : ICityGrowthService
 {
-    public CityGrowthResult Calculate(Simulation sim, int cityId)
+    public CityGrowthResult Calculate(Simulation sim, int cityId) => CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId));
+    private CityGrowthResult CalculateScoped(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);
