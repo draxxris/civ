@@ -305,6 +305,8 @@ Cities registers Core query contracts. All queries are RNG-free and do not chang
 Production calculation additionally takes `(string kind, string content)`.
 `ICityProductionService.Validate` returns structured requirement failures with the same arguments.
 `ICityWorkService` supplies `Radius`, `WorkArea`, assignment validation, and authoritative `Assign`.
+`ICityBuildingService` provides `EffectiveBuildings`, `ActiveBuildings`, `IsPowered`, `IsDirtyPower`, and `ProvidesPower`.
+`ICityCaptureService` provides `Capture`, `ValidateRaze`, and `Raze`.
 
 `CityYieldResult.Yields.Commerce` is raw whole commerce. `DirectCommerceHundredths` bypasses sliders.
 `CommercePercent` contains additive percentage bonuses, not final rates.
@@ -312,10 +314,54 @@ Economy allocates raw commerce, adds direct contributions, and applies each comm
 Economy can register one `ICityCultureSource.CultureHundredths(Simulation, int city)` provider for the final culture rate.
 Without that provider, Cities applies culture modifiers to direct culture only.
 
-Commands use `cities:found_city`, `cities:set_city_work`, `cities:set_city_production`, and `cities:conscript` identities.
-The Core types are `FoundCityWithSettlerCommand`, `SetCityAssignmentsCommand`, `SetCityProductionCommand`, and `ConscriptCityCommand`.
+Commands use `cities:found_city`, `cities:set_city_work`, `cities:set_city_production`, `cities:conscript`, and `cities:resolve_conquest_choice` identities.
+The Core types are `FoundCityWithSettlerCommand`, `SetCityAssignmentsCommand`, `SetCityProductionCommand`, `ConscriptCityCommand`, and `ResolveCityConquestCommand`.
 Queue kinds are `cities:building` and `cities:unit`. Cities completes at most one item per city per turn.
 Growth and culture precede production. Completion effects follow production work in city-id order.
+
+`ICityProductionService` handles order completion and surplus conversion.
+Surplus production above the overflow cap converts into treasury gold.
+The overflow cap is the maximum of item cost and current turn production.
+Surplus production scales back from item-specific modifiers to city base yield production modifiers.
+The system multiplies scaled surplus by unit, building, or project gold percentages.
+Invalid head orders in the queue are removed and refund accumulated progress as gold.
+
+`ICityBuildingService` resolves power states and active building lists.
+`CityData.IsPowered` checks local power plants and area clean power sources.
+Local plants supply power through `ProducesPower` or `PowerBonus` with connected resources.
+Buildings with `AreaCleanPower` grant clean power to all team cities on the landmass (`IsAreaCleanPower`).
+`CityData.IsDirtyPower` is true when all active local power sources have `DirtyPower` and clean power is absent.
+Buildings with `RequiresPower` fail construction validation and deactivate when unpowered.
+Clean area power blocks construction of buildings with `NoPower`.
+Powered cities apply `PowerYieldModifiers` in `BuildingEffects`.
+City wellbeing adds `PowerHealthChange` for power and `DirtyPowerHealthChange` for dirty power.
+
+Free buildings calculate dynamically from team `FreeBuilding` sources and completed `EmpireFreeBuilding` wonders.
+Categories resolve through owner civilization overrides or original civilization under assimilation.
+Grants appear in `CityData.EffectiveBuildings` and `ActiveBuildings` without mutating `city.Buildings`.
+Building replacement is non-destructive.
+Constructed buildings remain in city storage when replaced.
+Active buildings with `ReplaceBuildings` suppress matching lower-tier buildings in `CityBuildingRules.Active`.
+Suppressed buildings reactivate automatically if the replacer becomes obsolete or is removed.
+`ProductionEligibility` blocks construction of replaced buildings and checks `ExtendsBuildingClass` prerequisites.
+
+`ICityCaptureService` executes city conquest during wartime.
+Captures calculate capture gold from population and random rolls, scaled by elapsed ownership turns.
+Building survival strips capitals and non-capturable buildings.
+Surviving buildings check location validity, player class limits, and survival percentage rolls.
+Team culture majority guarantees building survival on recapture.
+Capturing or razing a capital relocates the victim capital automatically via `CityCapital.RelocateIfNeeded`.
+Size-1 cities that never grew auto-raze upon capture.
+Captures with less than 75% team culture suffer civil disorder during `OccupationTurns`.
+
+Human conquests set `PendingConquestChoice` and default to `Puppet` until resolved.
+Players resolve conquests with `CityConquestOption.Annex`, `Puppet`, or `Raze`.
+Puppet cities manage citizen assignments and production automatically via the governor AI.
+Puppet cities reject manual queue, citizen assignment, hurry, and conscription commands.
+Puppet governance reduces city-count maintenance by 50% and city-count unhappiness by 50%.
+Players can annex puppet cities at any time through `ResolveCityConquestCommand`.
+AI conquests evaluate city counts, raze probabilities, and raze protections.
+Capitals, wonders, holy cities, headquarters, and strategic resource cities are protected from razing.
 
 `ICityConscriptService` provides `Calculate`, `Validate`, and `Conscript` operations for drafting.
 The city selects the highest-priority eligible unit with `Conscription > 0` (respecting civilization overrides and assimilation).
@@ -325,6 +371,7 @@ Executing a draft deducts population, spawns the unit with zero moves and halved
 marks `DraftedThisTurn`, and increments `ConscriptAngerTurns` by `flatHurryAngerLength` scaled by world size draft modifiers.
 
 `CityRuleState` and `CityPlayerState` contain saved feature-rule state.
+`CityRuleState` tracks `TurnAcquired`, `HighestPopulation`, `OccupationTurns`, `IsPuppet`, and `PendingConquestChoice`.
 Modifier sources use City scope for local effects and Player scope for player growth/maintenance percentages.
 City keys include `cities:happiness`, `cities:health`, `cities:war_weariness`, `cities:food_kept_percent`, `cities:growth_percent`, and `cities:extra_culture_level`.
 Specialist keys use `cities:slots:<specialist-id>`, `cities:free:<specialist-id>`, and `cities:free_specialists`.
@@ -334,7 +381,13 @@ See the Cities implementation and [ROADMAP.md](ROADMAP.md) for supported effects
 Food waste uses fixed-point recurrence with scale one billion. City-count maintenance uses a fixed-point root with scale one trillion.
 These deterministic adaptations can differ from native floating-point results near integer boundaries.
 Maintenance uses the maximum wrapped hex distance as the map normalization.
-Plot culture uses hex distance without terrain obstacles. Ownership keeps an incumbent on ties, then selects the lowest player id.
+
+Cultural spread uses shortest-path distance search bounded by city cultural radius.
+Pathfinding blocks spread across impassable terrain, peaks, and hostile enemy borders.
+The realistic culture option adds terrain and feature distance penalties plus river crossing costs.
+Founding grants claim unobstructed first-ring plots immediately.
+Plot ownership resolves among living cities whose cultural radius reaches the plot.
+Ownership preserves an incumbent on ties, then selects the lowest player id.
 `DecayPlotCulture` runs at `TurnPhase.Map + 2` on game-speed golden age halving intervals (`CultureDecayTurns`).
 Plots with culture for non-barbarian players above `CityFreeCultureGrowthFactor` and foreign city `CultureHundredths` are halved,
 allowing cultural borders and city nationality to assimilate over time.

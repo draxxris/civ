@@ -43,6 +43,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
+        if (city.Extensions.TryGet<CityRuleState>(sim.Content)?.IsPuppet == true) return "Puppet cities cannot hurry production";
         if (ValidateMethod(sim, player, hurry) is { } methodError) return methodError;
         if (ValidateProduction(sim, city) is { } productionError) return productionError;
         return ValidatePayment(sim, player, city, Calculate(sim, cityId, hurry));
@@ -110,12 +111,9 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         long newFactor = Math.Max(0, 100 + newMod);
         state.HurryAngerTurns = (int)Math.Clamp((long)state.HurryAngerTurns * newFactor / oldFactor, 0, int.MaxValue);
     }
-    private static long HurryAngerModifier(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
-        .Select(sim.Content.Get<BuildingDef>)
-        .Where(b => (b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
-            && (!b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements,
-                new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success))
-        .Sum(b => (long)b.HurryAngerModifier);
+    private static long HurryAngerModifier(Simulation sim, City city) =>
+        (sim.Content.Services.Get<ICityBuildingService>().SingleOrDefault()?.ActiveBuildings(sim, city.Id) ?? city.Buildings)
+        .Select(sim.Content.Get<BuildingDef>).Sum(b => (long)b.HurryAngerModifier);
     internal static void DecayAnger(Simulation sim, int player)
     {
         foreach (var city in EconomyData.Cities(sim, player))

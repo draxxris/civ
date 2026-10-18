@@ -42,6 +42,7 @@ internal sealed class CityConscript(ICityWorkService work, ICityCultureService c
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
+        if (CityData.Read(sim, city).IsPuppet) return "Puppet cities cannot draft";
         if (GovernmentStatus.IsDisorder(sim, city)) return "City is in disorder";
         if (CityData.Read(sim, city).DraftedThisTurn) return "City has already drafted this turn";
         if (Calculate(sim, cityId) is not { } result) return "No eligible unit to draft";

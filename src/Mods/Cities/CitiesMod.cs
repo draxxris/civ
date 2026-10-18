@@ -23,6 +23,7 @@ public sealed class CitiesMod : IPreparableMod
         context.RegisterStateComponent<CityRuleState>("city_state");
         context.RegisterStateComponent<CityPlayerState>("player_state");
         context.RegisterService<ICityAppearanceService>("city_appearance", new CityAppearanceService());
+        context.RegisterService<ICityBuildingService>("building_state", new CityBuildingService());
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
         context.RegisterService<IModifierSource>("military_building_grants", new BuildingMilitaryEffects());
         context.RegisterService<ICityCaptureService>("capture", new CityCapture());
@@ -52,6 +53,9 @@ public sealed class CitiesMod : IPreparableMod
         context.RegisterCommand<SetCityAssignmentsCommand>("set_city_work");
         context.RegisterCommand<SetCityProductionCommand>("set_city_production");
         context.RegisterCommand<ConscriptCityCommand>("conscript");
+        context.RegisterCommand<ResolveCityConquestCommand>("resolve_conquest");
+        context.TurnSystems.Register(new CityPhase("puppet_work", TurnPhase.PlayerBegin, PreparePuppet));
+        context.TurnSystems.Register(new CityPhase("conquest_timers", TurnPhase.PlayerEnd, SettleConquest));
         context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts));
         context.TurnSystems.Register(new CityPhase("defense_recovery", TurnPhase.PlayerBegin + 1, RecoverDefense));
         context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger));
@@ -70,6 +74,18 @@ public sealed class CitiesMod : IPreparableMod
         });
     }
 
+    private static void PreparePuppet(Simulation sim, City city)
+    {
+        var state = CityData.Edit(sim, city);
+        if (state.IsPuppet) state.ManualWork = false;
+    }
+    private static void SettleConquest(Simulation sim, City city)
+    {
+        var state = CityData.Edit(sim, city);
+        state.OccupationTurns = Math.Max(0, state.OccupationTurns - 1);
+        if (!state.PendingConquestChoice) return;
+        sim.Content.Services.Get<ICityCommandService>().Single().ResolveConquestChoice(sim, city.Owner, city.Id, CityConquestOption.Puppet);
+    }
     private static void RecoverDefense(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);

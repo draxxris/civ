@@ -34,7 +34,10 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         bool first = !CityData.Owned(sim, player).Any();
         var city = new City { Id = sim.State.NextCityId++, Owner = player, Position = unit.Position,
             Name = Name(sim, civilization), Population = CityData.Raw(sim, "INITIAL_CITY_POPULATION", 1) + CityData.Era(sim, player).FreePopulation };
-        CityData.Edit(sim, city).OriginalCivilization = sim.State.PlayerById(player).Civilization;
+        var state = CityData.Edit(sim, city);
+        state.OriginalCivilization = sim.State.PlayerById(player).Civilization;
+        state.TurnAcquired = sim.State.Turn;
+        state.HighestPopulation = city.Population;
         sim.State.AddCity(city); sim.State.RemoveUnit(settler);
         var plot = sim.State.PlotAt(city.Position);
         plot.Improvement = null;
@@ -70,6 +73,7 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
+        if (CityData.Read(sim, city).IsPuppet) return "Puppet cities manage their own production";
         if (remove is { } index) return index >= 0 && index < city.ProductionQueue.Count ? null : "Invalid queue index";
         var result = production.Validate(sim, cityId, kind, content);
         return result.Success ? null : string.Join("; ", result.Failures.Select(f => f.Explanation));
@@ -91,6 +95,33 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         long progress = state.PausedProduction.GetValueOrDefault(key);
         state.PausedProduction.Remove(key);
         city.ProductionQueue.Add(new(kind, content, progress));
+    }
+    public string? ValidateConquestChoice(Simulation sim, int player, int cityId, CityConquestOption option)
+    {
+        var city = sim.State.FindCity(cityId);
+        if (city is null || city.Owner != player) return "Not your city";
+        var state = CityData.Read(sim, city);
+        if (option == CityConquestOption.Annex)
+            return state.PendingConquestChoice || state.IsPuppet ? null : "City is already annexed";
+        if (!Enum.IsDefined(option)) return "Unknown conquest option";
+        if (!state.PendingConquestChoice) return "No pending conquest choice";
+        return option == CityConquestOption.Raze
+            ? sim.Content.Services.Get<ICityCaptureService>().Single().ValidateRaze(sim, cityId, player) : null;
+    }
+    public void ResolveConquestChoice(Simulation sim, int player, int cityId, CityConquestOption option)
+    {
+        if (ValidateConquestChoice(sim, player, cityId, option) is not null) return;
+        var city = sim.State.CityById(cityId);
+        var state = CityData.Edit(sim, city);
+        state.PendingConquestChoice = false;
+        if (option == CityConquestOption.Raze)
+        {
+            sim.Content.Services.Get<ICityCaptureService>().Single().Raze(sim, cityId);
+            return;
+        }
+        state.IsPuppet = option == CityConquestOption.Puppet;
+        state.ManualWork = false;
+        work.Assign(sim, cityId);
     }
     private static void Pause(CityRuleState state, ProductionOrder order) => state.PausedProduction[order.Kind + "/" + order.ContentId] = Math.Max(state.PausedProduction.GetValueOrDefault(order.Kind + "/" + order.ContentId), order.Progress);
 }

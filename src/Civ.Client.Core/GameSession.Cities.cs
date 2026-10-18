@@ -155,5 +155,24 @@ public sealed partial class GameSession
 
     public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = Human, CityId = city.Id, HurryId = hurryId });
 
+    public IReadOnlyList<PendingCityConquest> DescribePendingConquests()
+    {
+        var commands = Service<ICityCommandService>();
+        return Sim.State.Cities
+            .Where(city => city.Owner == Human)
+            .Select(city => (City: city, Rules: city.Extensions.Get<CityRuleState>(Sim.Content)))
+            .Where(entry => entry.Rules?.PendingConquestChoice == true)
+            .OrderBy(entry => entry.City.Id)
+            .Select(entry => new PendingCityConquest(
+                entry.City.Id, entry.City.Name, entry.City.Population, entry.Rules!.OccupationTurns,
+                commands.ValidateConquestChoice(Sim, Human, entry.City.Id, CityConquestOption.Raze) is null))
+            .ToList();
+    }
+
+    public bool ResolveCityConquest(int cityId, CityConquestOption option) =>
+        Submit(new ResolveCityConquestCommand { Player = Human, CityId = cityId, Option = option });
+
+    public bool AnnexCity(City city) => ResolveCityConquest(city.Id, CityConquestOption.Annex);
+
     public bool Conscript(City city) => Submit(new ConscriptCityCommand { Player = Human, CityId = city.Id });
 }

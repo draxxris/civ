@@ -14,7 +14,7 @@ internal sealed partial class CityUi
         AddHurry(box, city, c);
         AddConscript(box, city, c);
         box.AddChild(Ui.Heading("Add to queue"));
-        AddChoices(box, city);
+        AddChoices(box, city, c);
         box.AddChild(Ui.Heading($"Citizens ({c.Citizens})"));
         AddCitizens(box, city, c);
         AddTradeRoutes(box, c);
@@ -34,9 +34,9 @@ internal sealed partial class CityUi
             var index = row.Index;
             head.AddChild(Ui.Icon(_icons.TextureOf(row.Id), 28));
             head.AddChild(Ui.Text($"{row.Name}" + (row.Turns is int t ? $"  ({t} turns)" : "  (process)"), 14));
-            head.AddChild(Ui.Button("▲", () => _session.MoveInQueue(city, index, -1), "Earlier", index > 0, 12));
-            head.AddChild(Ui.Button("▼", () => _session.MoveInQueue(city, index, 1), "Later", index < c.Queue.Count - 1, 12));
-            head.AddChild(Ui.Button("✕", () => _session.RemoveFromQueue(city, index), "Remove", size: 12));
+            head.AddChild(Ui.Button("▲", () => _session.MoveInQueue(city, index, -1), "Earlier", !c.IsPuppet && index > 0, 12));
+            head.AddChild(Ui.Button("▼", () => _session.MoveInQueue(city, index, 1), "Later", !c.IsPuppet && index < c.Queue.Count - 1, 12));
+            head.AddChild(Ui.Button("✕", () => _session.RemoveFromQueue(city, index), "Remove", enabled: !c.IsPuppet, size: 12));
             line.AddChild(head);
             if (!row.IsContinuous) line.AddChild(Ui.Bar(row.Progress, row.Cost, Ui.Accent, $"{row.Progress}/{row.Cost}"));
             box.AddChild(line);
@@ -49,7 +49,7 @@ internal sealed partial class CityUi
         {
             var id = option.Id;
             string cost = option.Gold > 0 ? $"{option.Gold} gold" : $"{option.Population} population";
-            box.AddChild(Ui.Button($"Hurry: {cost}", () => _session.Hurry(city, id), option.Blocked ?? option.Name, option.Blocked == null, 13));
+            box.AddChild(Ui.Button($"Hurry: {cost}", () => _session.Hurry(city, id), option.Blocked ?? option.Name, option.Blocked == null && !c.IsPuppet, 13));
         }
     }
 
@@ -59,10 +59,10 @@ internal sealed partial class CityUi
         string details = $"Minimum population: {option.MinPopulation}. Experience: {option.Experience}. "
             + $"Draft anger: {option.AngerTurns} turns. Player limit: {option.MaxPlayerDrafts} per turn.";
         box.AddChild(Ui.Button($"Draft {option.Name}: {option.PopulationCost} population", () => _session.Conscript(city),
-            option.Blocked ?? details, option.Blocked == null, 13));
+            option.Blocked ?? details, option.Blocked == null && !c.IsPuppet, 13));
     }
 
-    private void AddChoices(VBoxContainer box, City city)
+    private void AddChoices(VBoxContainer box, City city, CityScreen screen)
     {
         var tabs = Ui.HBox(4);
         var kinds = _session.ProductionKinds;
@@ -80,17 +80,18 @@ internal sealed partial class CityUi
         if (kinds.Count == 0) return;
         var kind = kinds[Math.Clamp(_tab, 0, kinds.Count - 1)];
         var choices = _session.ProductionChoices(city, kind.Id);
-        foreach (var choice in choices.Where(p => p.Available)) box.AddChild(ChoiceButton(city, choice));
+        foreach (var choice in choices.Where(p => p.Available)) box.AddChild(ChoiceButton(city, choice, !screen.IsPuppet));
         if (!_showBlocked) return;
-        foreach (var choice in choices.Where(p => !p.Available).Take(MaxBlockedShown)) box.AddChild(ChoiceButton(city, choice));
+        foreach (var choice in choices.Where(p => !p.Available).Take(MaxBlockedShown))
+            box.AddChild(ChoiceButton(city, choice, !screen.IsPuppet));
     }
 
-    private Control ChoiceButton(City city, ProductionChoice choice)
+    private Control ChoiceButton(City city, ProductionChoice choice, bool cityCanQueue)
     {
         var row = Ui.HBox(6);
         row.AddChild(Ui.Icon(_icons.TextureOf(choice.Id), 28));
         string detail = choice.IsContinuous ? "converts production" : $"{choice.Cost}" + (choice.Turns is int t ? $" / {t}t" : "");
-        var button = Ui.Button($"{choice.Name}   {detail}", () => _session.Enqueue(city, choice.Kind, choice.Id, append: true), choice.Tooltip, choice.Available, 13);
+        var button = Ui.Button($"{choice.Name}   {detail}", () => _session.Enqueue(city, choice.Kind, choice.Id, append: true), choice.Tooltip, choice.Available && cityCanQueue, 13);
         button.SizeFlagsHorizontal = SizeFlags.ExpandFill;
         button.Alignment = HorizontalAlignment.Left;
         button.ClipText = true;
@@ -127,21 +128,21 @@ internal sealed partial class CityUi
     {
         box.AddChild(Ui.Text($"{c.WorkedTiles.Count} working tiles (click map tiles to move citizens), {c.IdleCitizens} idle.", 13, Ui.Dim));
         var controls = Ui.HBox(4);
-        controls.AddChild(Ui.Button(c.Manual ? "Governor: off" : "Governor: on", () => _session.AutoAssign(city), "Let the governor assign citizens", c.Manual, 13));
-        controls.AddChild(Ui.Button(c.AvoidGrowth ? "Avoid growth: on" : "Avoid growth: off", () => _session.ToggleAvoidGrowth(city), size: 13));
+        controls.AddChild(Ui.Button(c.Manual ? "Governor: off" : "Governor: on", () => _session.AutoAssign(city), "Let the governor assign citizens", !c.IsPuppet && c.Manual, 13));
+        controls.AddChild(Ui.Button(c.AvoidGrowth ? "Avoid growth: on" : "Avoid growth: off", () => _session.ToggleAvoidGrowth(city), enabled: !c.IsPuppet, size: 13));
         box.AddChild(controls);
         foreach (var tile in c.WorkedTiles)
             box.AddChild(Ui.Text($"{tile.Name}: {tile.Food}F {tile.Production}P {tile.Commerce}C", 13, Ui.Dim));
-        foreach (var s in c.Specialists) box.AddChild(SpecialistLine(city, s));
+        foreach (var s in c.Specialists) box.AddChild(SpecialistLine(city, s, !c.IsPuppet));
     }
 
-    private Control SpecialistLine(City city, SpecialistRow s)
+    private Control SpecialistLine(City city, SpecialistRow s, bool canAssign)
     {
         var row = Ui.HBox(4);
         var id = s.Id;
         row.AddChild(Ui.Text($"{s.Name}: {s.Count}/{s.Slots}" + (s.Effects.Length > 0 ? $"  ({s.Effects})" : ""), 13));
-        row.AddChild(Ui.Button("−", () => _session.ChangeSpecialist(city, id, -1), enabled: s.Count > 0 && id != _session.CitizenSpecialist, size: 12));
-        row.AddChild(Ui.Button("+", () => _session.ChangeSpecialist(city, id, 1), enabled: s.Count < s.Slots, size: 12));
+        row.AddChild(Ui.Button("−", () => _session.ChangeSpecialist(city, id, -1), enabled: canAssign && s.Count > 0 && id != _session.CitizenSpecialist, size: 12));
+        row.AddChild(Ui.Button("+", () => _session.ChangeSpecialist(city, id, 1), enabled: canAssign && s.Count < s.Slots, size: 12));
         return row;
     }
 }

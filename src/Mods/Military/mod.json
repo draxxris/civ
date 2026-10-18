@@ -1,7 +1,7 @@
 {
   "id": "military",
   "name": "Military",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "assembly": "Civ.Mods.Military.dll",
   "dependencies": [],
   "references": [

@@ -63,16 +63,16 @@ internal sealed class BuildingRequirement(string kind) : IContentRequirementEval
     public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
     {
         int needed = leaf.Count ?? 1;
-        if (kind == "building") return context.City?.Buildings.Count(b => b == leaf.Id) >= needed ? null : "Requires local building: " + leaf.Id;
         var sim = context.Sim;
+        if (kind == "building") return context.City is { } local && CityData.Active(sim, local).Count(b => b.Id == leaf.Id) >= needed ? null : "Requires local building: " + leaf.Id;
         string category = sim.Content.Get<S.BuildingDef>(leaf.Id).DefaultBuilding;
         if (leaf.Param == 1)
         {
             needed = Math.Max(1, needed * (100 + CityData.World(sim).BuildingClassPrereqModifier) / 100);
-            int count = CityData.Owned(sim, context.Player).Sum(c => Count(sim, c, category));
+            int count = CityData.Owned(sim, context.Player).Sum(c => CityData.EffectiveBuildings(sim, c).Count(b => b.DefaultBuilding == category));
             return count >= needed ? null : $"Requires {needed} empire buildings of class: {category}";
         }
         return context.City is { } city && Count(sim, city, category) >= needed ? null : "Requires local building class: " + category;
     }
-    private static int Count(Simulation sim, City city, string category) => city.Buildings.Count(b => sim.Content.Get<S.BuildingDef>(b).DefaultBuilding == category);
+    private static int Count(Simulation sim, City city, string category) => CityData.Active(sim, city).Count(b => b.DefaultBuilding == category);
 }

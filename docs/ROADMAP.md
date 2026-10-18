@@ -89,9 +89,15 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Growth & food**: Sequential food threshold calculations, consumption, health penalties, fixed-point food waste, starvation prevention, and avoid-growth toggles.
 - **Happiness & health**: Ledgers combining population, handicap base, connected resources, buildings, specialists, features, and military presence.
 - **Production queues**: Append, prepend, remove, and pause commands; normalized capped production overflow; class-limited units, buildings, and world wonders.
-- **Culture borders & assimilation**: Per-plot culture ledgers, hex distance falloff, tie-breaking ownership assignment, periodic culture decay halving on speed-scaled golden age intervals, and original civilization retention (`OriginalCivilization`) for unit/building override assimilation upon capture.
+- **Culture borders & assimilation**: Per-plot culture ledgers, path-based cultural distance falloff, tie-breaking ownership assignment, periodic culture decay halving on speed-scaled golden age intervals, and original civilization retention (`OriginalCivilization`) for unit/building override assimilation upon capture.
 - **Conscription (Draft)**: `ICityConscriptService` and `ConscriptCityCommand` (`cities:conscript`) drafting highest-priority eligible units with population sacrifice, halved city production experience, zero initial movement, world-size-scaled player draft limits, and stacking draft anger.
 - **Nationality anger**: Plot culture anger (`cities:culture_anger`) distinguishing foreign teams and wartime escalation (+50%) with same-team suppression, plus civic foreigner unhappiness (`government:foreigner_anger`).
+- **Building power grid**: `CityPower` tracks local and area sources (`ProducesPower`, `PowerBonus`, `AreaCleanPower`, `DirtyPower`). Power deactivates `RequiresPower` buildings when missing. Clean power blocks `NoPower` construction. Powered cities receive `PowerYieldModifiers` and apply health modifiers.
+- **Dynamic free building propagation**: Dynamic calculation supplies free buildings from team buildings (`FreeBuilding`) and completed wonders (`EmpireFreeBuilding`). Grants map through civilization overrides without mutating constructed city buildings.
+- **Non-destructive building replacement**: Replacement preserves replaced structures in city storage. Active replacers (`ReplaceBuildings`) dynamically suppress lower-tier buildings. Suppressed buildings reactivate if the replacer becomes obsolete or is removed. Construction enforces `ExtendsBuildingClass` prerequisites.
+- **City conquest mechanics**: Capture rolls building survival, awards capture gold, and triggers size-1 auto-raze. Capturing or razing capitals relocates victim capitals automatically. Occupation disorder timers delay productivity. Interactive conquest commands support `Annex`, `Puppet`, and `Raze` choices. Puppet cities reduce maintenance and citizen unhappiness.
+- **Excess production overflow gold conversion**: Production above the overflow cap converts into treasury gold upon order completion. Conversion scales item modifiers back to city base yield modifiers.
+- **Path-based culture spread obstruction**: Shortest-path culture spread blocks propagation across impassable barriers and hostile borders. Optional realistic culture adds movement penalties for rough terrain, features, and river distances.
 
 ### Military & Combat
 - **Hex movement & navigation**: Deterministic A* pathfinding, fractional move points, terrain/feature costs, hill penalties, road/rail bonuses, and river crossing bridges.
@@ -185,13 +191,13 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [x] **Trade deal income in treasury**: Real-time per-turn gold flows directly reflecting bilateral trade deals.
 
 ### Cities
-- [ ] **Building power grid**: Implement power plant requirements, clean energy distribution, and building power deactivation when unpowered.
-- [ ] **Free building propagation**: Mechanics for national wonders or civics that grant free buildings in all cities (e.g., Monument in every city).
-- [ ] **Building replacement effects**: Automatic obsolescence/replacement of lower-tier buildings by higher-tier counterparts.
-- [ ] **City conquest options**: Interactive conquest choice dialog (annex, puppet, raze); capture gold calculations; building survival rolls; capital relocation logic.
-- [ ] **Excess production gold conversion**: Automatically convert surplus production above the overflow cap into treasury gold.
+- [x] **Building power grid**: Implement power plant requirements, clean energy distribution, and building power deactivation when unpowered.
+- [x] **Free building propagation**: Mechanics for national wonders or civics that grant free buildings in all cities (e.g., Monument in every city).
+- [x] **Building replacement effects**: Automatic obsolescence/replacement of lower-tier buildings by higher-tier counterparts.
+- [x] **City conquest options**: Interactive conquest choice dialog (annex, puppet, raze); capture gold calculations; building survival rolls; capital relocation logic.
+- [x] **Excess production gold conversion**: Automatically convert surplus production above the overflow cap into treasury gold.
 - [x] **Conscription (Draft)**: Draft military units from city population under authorized civics with temporary draft anger.
-- [ ] **Hostile culture spread obstruction**: Restrict cultural spread across enemy borders or impassable natural barriers.
+- [x] **Hostile culture spread obstruction**: Restrict cultural spread across enemy borders or impassable natural barriers.
 
 ### Military & Combat
 - [x] **Naval unit spawns & naval AI**: Barbarian galleys/pirates; AI naval pathfinding, exploration, and coastal patrol.

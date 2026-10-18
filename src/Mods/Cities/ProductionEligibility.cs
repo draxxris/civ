@@ -27,7 +27,7 @@ internal static class ProductionEligibility
         if (!sim.Content.TryGet<S.BuildingDef>(id, out var b)) { Fail(failures, "Unknown building"); return; }
         Requirements(sim, city, b, failures);
         if (b.Cost < 0) Fail(failures, "Building cannot be constructed");
-        if (city.Buildings.Contains(id)) Fail(failures, "Building already exists");
+        if (city.Buildings.Contains(id) || CityData.EffectiveBuildings(sim, city).Any(x => x.Id == id)) Fail(failures, "Building already exists");
         if (b.ObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) Fail(failures, "Building is obsolete");
         Substitution(sim, city, b.DefaultBuilding, id, false, failures);
         Limits(sim, city, b.DefaultBuilding, b.Limits, false, failures);
@@ -37,12 +37,20 @@ internal static class ProductionEligibility
         Upgrade(sim, city, b, failures);
         if (b.BonusType is { } bonus && Available(sim, city, bonus) <= 0)
             Fail(failures, "Requires connected resource: " + bonus);
-        if (b.RequiresPower) Fail(failures, "Power state is unavailable");
+        Power(sim, city, b, failures);
+    }
+    private static void Power(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
+    {
+        if (b.RequiresPower && !CityData.IsPowered(sim, city)) Fail(failures, "Requires power");
+        if (b.NoPower && CityData.IsAreaCleanPower(sim, city)) Fail(failures, "Area already has clean power");
     }
     private static void Upgrade(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
-        if (city.Buildings.Any(existing => sim.Content.Get<S.BuildingDef>(existing).ReplaceBuildings.GetValueOrDefault(b.Id)))
+        var active = CityData.Active(sim, city).ToArray();
+        if (active.Any(existing => CityBuildingRules.Replaces(existing, b)))
             Fail(failures, "Replaced by an upgraded building");
+        if (b.ExtendsBuildingClass is { Length: > 0 } category && !active.Any(x => x.DefaultBuilding == category || x.Id == category))
+            Fail(failures, "Requires active building class: " + category);
     }
     /// <summary>Connected copies after diplomatic allocations. Imports count here; exports reduce the count.</summary>
     private static long Available(Simulation sim, City city, string bonus) =>
@@ -74,12 +82,14 @@ internal static class ProductionEligibility
         failures.AddRange(sim.Content.Requirements.Evaluate(def.Requirements, new(sim, city.Owner, city, CityData.Tile(sim, city))).Failures);
     private static void Substitution(Simulation sim, City city, string category, string id, bool unit, List<RequirementFailure> failures)
     {
-        string civilization = sim.State.PlayerById(city.Owner).Civilization;
-        if (sim.IsOptionEnabled("foundation:gameoption_assimilation"))
-            civilization = CityData.Read(sim, city).OriginalCivilization is { Length: > 0 } original ? original : civilization;
-        var civ = sim.Content.Get<S.CivilizationDef>(civilization);
-        var map = unit ? civ.UnitOverrides : civ.BuildingOverrides;
-        string? selected = map.GetValueOrDefault(category, category);
+        string? selected = CityData.ResolveBuilding(sim, city, category);
+        if (unit)
+        {
+            string civilization = sim.State.PlayerById(city.Owner).Civilization;
+            if (sim.IsOptionEnabled("foundation:gameoption_assimilation"))
+                civilization = CityData.Read(sim, city).OriginalCivilization is { Length: > 0 } original ? original : civilization;
+            selected = sim.Content.Get<S.CivilizationDef>(civilization).UnitOverrides.GetValueOrDefault(category, category);
+        }
         if (selected != id) Fail(failures, "Civilization class replacement required");
     }
     private static void Limits(Simulation sim, City city, string category, S.ClassLimits limits, bool units, List<RequirementFailure> failures)

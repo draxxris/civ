@@ -34,6 +34,23 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         return s.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
     }
 
+    private static City CaptureForHuman(GameSession session, int population = 4)
+    {
+        var sim = session.Sim;
+        var city = new City
+        {
+            Id = sim.State.NextCityId++, Owner = 1, Name = "Captured City", Population = population,
+            Position = sim.State.Grid.HexOf(new TileId(70)),
+        };
+        city.Extensions.Set(sim.Content, new CityRuleState { TurnAcquired = sim.State.Turn, HighestPopulation = population });
+        sim.State.AddCity(city);
+        var plot = sim.State.PlotAt(city.Position);
+        plot.Owner = city.Owner;
+        plot.Culture[city.Owner] = 100;
+        sim.State.SetWar(GameSession.Human, city.Owner, true);
+        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, GameSession.Human);
+        return sim.State.CityById(city.Id);
+    }
     [Fact]
     public void Catalog_offers_setup_choices_and_builds_settings_from_them()
     {
@@ -426,6 +443,94 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(hex, s.Pick(x + s.WrapPeriod, z));
         Assert.Equal(hex, s.Pick(x - s.WrapPeriod, z));
         Assert.Null(s.Pick(x, -10));
+    }
+
+    [Fact]
+    public void City_screen_reports_conquest_state_and_annex_availability()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        var rules = city.Extensions.Get<CityRuleState>(s.Sim.Content)!;
+        var ordinary = s.DescribeCity(city)!;
+        Assert.False(ordinary.IsPuppet);
+        Assert.Equal(0, ordinary.OccupationTurns);
+        Assert.False(ordinary.PendingConquestChoice);
+        Assert.False(ordinary.CanAnnex);
+
+        rules.IsPuppet = true;
+        rules.OccupationTurns = 3;
+        var puppet = s.DescribeCity(city)!;
+        Assert.True(puppet.IsPuppet);
+        Assert.Equal(3, puppet.OccupationTurns);
+        Assert.False(puppet.PendingConquestChoice);
+        Assert.True(puppet.CanAnnex);
+
+        rules.IsPuppet = false;
+        rules.PendingConquestChoice = true;
+        Assert.True(s.DescribeCity(city)!.CanAnnex);
+    }
+
+    [Fact]
+    public void Pending_conquests_describe_owned_choices_and_raze_validity()
+    {
+        var s = CitySession();
+        var ordinary = Found(s);
+        var foreign = AddCity(s.Sim, 80, owner: 1);
+        foreign.Extensions.Set(s.Sim.Content, new CityRuleState { IsPuppet = true, PendingConquestChoice = true });
+        var city = CaptureForHuman(s);
+
+        var conquest = Assert.Single(s.DescribePendingConquests());
+
+        Assert.Equal(city.Id, conquest.CityId);
+        Assert.Equal(city.Name, conquest.Name);
+        Assert.Equal(city.Population, conquest.Population);
+        Assert.InRange(conquest.OccupationTurns, 1, 4); // Captured population is three, with no captor culture.
+        Assert.Equal(city.Extensions.Get<CityRuleState>(s.Sim.Content)!.OccupationTurns, conquest.OccupationTurns);
+        Assert.True(conquest.CanRaze);
+        Assert.False(s.DescribeCity(ordinary)!.PendingConquestChoice);
+        Assert.True(s.DescribeCity(city)!.Disorder);
+
+        city.Buildings.Add("cities:palace");
+        Assert.False(Assert.Single(s.DescribePendingConquests()).CanRaze);
+        var before = s.Sim.ComputeHash();
+        Assert.False(s.ResolveCityConquest(city.Id, CityConquestOption.Raze));
+        Assert.Equal(before, s.Sim.ComputeHash());
+    }
+
+    [Theory]
+    [InlineData(CityConquestOption.Annex)]
+    [InlineData(CityConquestOption.Puppet)]
+    [InlineData(CityConquestOption.Raze)]
+    public void Session_resolves_each_pending_city_conquest_choice(CityConquestOption option)
+    {
+        var s = CitySession();
+        var city = CaptureForHuman(s);
+        var rules = city.Extensions.Get<CityRuleState>(s.Sim.Content)!;
+
+        Assert.True(s.ResolveCityConquest(city.Id, option), s.Message);
+        Assert.Empty(s.DescribePendingConquests());
+        Assert.False(rules.PendingConquestChoice);
+        if (option == CityConquestOption.Raze)
+        {
+            Assert.Null(s.Sim.State.FindCity(city.Id));
+            return;
+        }
+        Assert.Equal(option == CityConquestOption.Puppet, rules.IsPuppet);
+        var screen = s.DescribeCity(city)!;
+        Assert.Equal(option == CityConquestOption.Puppet, screen.IsPuppet);
+        Assert.Equal(option == CityConquestOption.Puppet, screen.CanAnnex);
+        Assert.True(screen.Disorder); // The conquest choice does not end occupation.
+    }
+
+    [Fact]
+    public void Session_annexes_an_existing_puppet_city()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        city.Extensions.Get<CityRuleState>(s.Sim.Content)!.IsPuppet = true;
+
+        Assert.True(s.AnnexCity(city));
+        Assert.False(city.Extensions.Get<CityRuleState>(s.Sim.Content)!.IsPuppet);
     }
 
     [Fact]

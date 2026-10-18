@@ -22,8 +22,8 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var building in CityData.Active(sim, city)) Local(sim, city, building, bonuses, sink);
         foreach (var other in CityData.Owned(sim, city.Owner))
             foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, sink);
-        foreach (var id in city.Buildings.Order(StringComparer.Ordinal))
-            sink.AddCommerce(id + ":safe", sim.Content.Get<S.BuildingDef>(id).ObsoleteSafeCommerceChanges);
+        foreach (var building in CityData.EffectiveBuildings(sim, city))
+            sink.AddCommerce(building.Id + ":safe", building.ObsoleteSafeCommerceChanges);
         foreach (var bonus in bonuses.Keys.Order(StringComparer.Ordinal))
         {
             var def = sim.Content.Get<S.BonusDef>(bonus);
@@ -31,11 +31,13 @@ internal sealed class BuildingEffects : IModifierSource
             AddHealth(sink, bonus, def.Health, "bonus");
         }
     }
-    internal static IReadOnlyDictionary<string, int> Bonuses(Simulation sim, City city)
+    internal static IReadOnlyDictionary<string, int> Bonuses(Simulation sim, City city) =>
+        Bonuses(sim, city, CityData.Active(sim, city).ToArray());
+    internal static IReadOnlyDictionary<string, int> Bonuses(Simulation sim, City city, IReadOnlyList<S.BuildingDef> buildings)
     {
         var result = new SortedDictionary<string, int>(StringComparer.Ordinal);
         foreach (var pair in Available(sim, city)) result[pair.Key] = pair.Value;
-        foreach (var building in CityData.Active(sim, city))
+        foreach (var building in buildings)
         {
             foreach (var bonus in building.ExtraFreeBonuses.Keys.Append(building.FreeBonus).OfType<string>().Distinct(StringComparer.Ordinal))
             {
@@ -43,7 +45,7 @@ internal sealed class BuildingEffects : IModifierSource
                 if (count > 0) result[bonus] = result.GetValueOrDefault(bonus) + count;
             }
         }
-        foreach (var building in CityData.Active(sim, city))
+        foreach (var building in buildings)
             if (building.NoBonus is { } bonus) result.Remove(bonus);
         return result;
     }
@@ -77,6 +79,8 @@ internal sealed class BuildingEffects : IModifierSource
     private static void Local(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         sink.AddYield(b.Id, b.YieldChanges); sink.AddYield(b.Id, b.YieldModifiers, true);
+        if (b.PowerYieldModifiers != default && CityData.IsPowered(sim, city))
+            sink.AddYield(b.Id + ":power", b.PowerYieldModifiers, true);
         sink.AddCommerce(b.Id, b.CommerceChanges); sink.AddCommerce(b.Id, b.CommerceModifiers, true);
         sink.Add(b.Id, "cities:hurry_anger_percent", b.HurryAngerModifier);
         AddNumbers(b, sink);

@@ -27,6 +27,7 @@ public sealed record HurryOption(string Id, string Name, long Gold, int Populati
 public sealed record ConscriptOption(string UnitId, string Name, int PopulationCost, int MinPopulation, int Experience,
     int AngerTurns, int MaxPlayerDrafts, string? Blocked);
 
+public sealed record PendingCityConquest(int CityId, string Name, int Population, int OccupationTurns, bool CanRaze);
 /// <summary>What the city screen shows, computed from the services so every renderer (and the tests) agree on the numbers.</summary>
 public sealed record CityScreen(
     int Id, string Name, int Population, long FoodStored, long FoodThreshold, long FoodSurplus, int? TurnsToGrow,
@@ -44,8 +45,11 @@ public sealed record CityScreen(
 {
     public int Citizens => Population;
     public ConscriptOption? Conscript { get; init; }
+    public bool IsPuppet { get; init; }
+    public int OccupationTurns { get; init; }
+    public bool PendingConquestChoice { get; init; }
+    public bool CanAnnex => IsPuppet || PendingConquestChoice;
 }
-
 public sealed partial class GameSession
 {
     public CityScreen? DescribeCity(City? city)
@@ -55,37 +59,66 @@ public sealed partial class GameSession
         var wellbeing = Service<ICityWellbeingService>().Calculate(Sim, city.Id);
         var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
         var commerce = Service<IPlayerEconomyService>().CalculateCity(Sim, city.Id);
-        var rules = city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();
-        var greatPeopleService = OptionalService<IGreatPeopleService>();
-        var greatPeople = greatPeopleService?.Calculate(Sim, city.Id);
-        var cityGreatPeople = OptionalService<ICityGreatPeopleService>()?.Calculate(Sim, city.Id);
-        var tradeService = OptionalService<ITradeRouteService>();
-        var trade = tradeService?.Calculate(Sim, city.Id);
+        var rules = RulesOf(city);
+        var greatPeople = GreatPeopleOf(city);
+        var cityGreatPeople = CityGreatPeopleOf(city);
+        var trade = TradeOf(city);
         long perTurn = yield.Yields.Production;
-        int? grow = growth.Difference > 0 ? (int?)Math.Max(1, (growth.Threshold - city.FoodStored + growth.Difference - 1) / growth.Difference) : null;
+        int? grow = TurnsToGrow(city, growth);
         int idle = Math.Max(0, city.Population - wellbeing.Angry - city.Worked.Count - city.Specialists.Values.Sum());
         return new(city.Id, city.Name, city.Population, city.FoodStored, growth.Threshold, growth.Difference, grow,
             yield.Yields.Food, perTurn, PerTurn(commerce.Hundredths),
             Service<ICityMaintenanceService>().Calculate(Sim, city.Id).TotalHundredths / 100,
             wellbeing.Happy, wellbeing.Unhappy, wellbeing.Angry, wellbeing.Healthy, wellbeing.Unhealthy,
-            CultureOf(city), CultureLevelName(city), greatPeople?.Progress ?? rules.GreatPeopleProgress,
-            greatPeople?.Threshold ?? cityGreatPeople?.Threshold ?? 0,
+            CultureOf(city), CultureLevelName(city), GreatPeopleProgress(greatPeople, rules),
+            GreatPeopleThreshold(greatPeople, cityGreatPeople),
             rules.ManualWork, rules.AvoidGrowth, GovernmentStatus.IsDisorder(Sim, city),
             Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
             city.Worked.Select(h => TileRowOf(h)).ToList(), idle, SpecialistRows(city),
-            QueueRows(city), city.Buildings.Select(b => Sim.Content.Get<Schema.BuildingDef>(b).Name).Order(StringComparer.Ordinal).ToList(),
-            HurryOptions(city), ReligionsIn(city), greatPeople?.Rate ?? 0,
-            greatPeopleService?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>(),
-            greatPeopleService?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0, trade?.Routes ?? [],
-            tradeService?.MaxRoutes(Sim, city.Id) ?? 0, CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city))
+            QueueRows(city), BuildingNames(city), HurryOptions(city), ReligionsIn(city),
+            GreatPeopleRate(greatPeople), SettledSpecialists(city), GoldenAgeTurns(city), TradeRoutes(trade),
+            MaxTradeRoutes(city), CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city))
         {
             Conscript = ConscriptOptionOf(city),
+            IsPuppet = rules.IsPuppet,
+            OccupationTurns = rules.OccupationTurns,
+            PendingConquestChoice = rules.PendingConquestChoice,
         };
     }
 
-    private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
+    private CityRuleState RulesOf(City city) => city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();
 
+    private GreatPeopleCityResult? GreatPeopleOf(City city) => OptionalService<IGreatPeopleService>()?.Calculate(Sim, city.Id);
+
+    private CityGreatPeopleResult? CityGreatPeopleOf(City city) => OptionalService<ICityGreatPeopleService>()?.Calculate(Sim, city.Id);
+
+    private CityTradeResult? TradeOf(City city) => OptionalService<ITradeRouteService>()?.Calculate(Sim, city.Id);
+
+    private static int? TurnsToGrow(City city, CityGrowthResult growth) => growth.Difference > 0
+        ? (int?)Math.Max(1, (growth.Threshold - city.FoodStored + growth.Difference - 1) / growth.Difference) : null;
+
+    private static long GreatPeopleProgress(GreatPeopleCityResult? people, CityRuleState rules) => people?.Progress ?? rules.GreatPeopleProgress;
+
+    private static long GreatPeopleThreshold(GreatPeopleCityResult? people, CityGreatPeopleResult? cityPeople) =>
+        people?.Threshold ?? cityPeople?.Threshold ?? 0;
+
+    private static long GreatPeopleRate(GreatPeopleCityResult? people) => people?.Rate ?? 0;
+
+    private IReadOnlyDictionary<string, int> SettledSpecialists(City city) =>
+        OptionalService<IGreatPeopleService>()?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>();
+
+    private int GoldenAgeTurns(City city) => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0;
+
+    private static IReadOnlyList<TradeRouteResult> TradeRoutes(CityTradeResult? trade) => trade?.Routes ?? [];
+
+    private int MaxTradeRoutes(City city) => OptionalService<ITradeRouteService>()?.MaxRoutes(Sim, city.Id) ?? 0;
+
+    private IReadOnlyList<string> BuildingNames(City city) =>
+        (OptionalService<ICityBuildingService>()?.EffectiveBuildings(Sim, city.Id) ?? city.Buildings)
+            .Select(id => Sim.Content.Get<Schema.BuildingDef>(id).Name).Order(StringComparer.Ordinal).ToList();
+
+    private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
     private string? CultureLevelName(City city) => OptionalService<ICityCultureService>()?.Level(Sim, city.Id).Name;
 
     private long CultureOf(City city) => OptionalService<ICityCultureSource>()?.CultureHundredths(Sim, city.Id) ?? 0;

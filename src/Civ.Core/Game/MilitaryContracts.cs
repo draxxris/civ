@@ -119,7 +119,7 @@ public interface ICityCaptureService
     void Raze(Simulation sim, int city);
 }
 public sealed record CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage) : DomainEvent;
-public sealed record CityCaptured(int City, int PreviousOwner, int Player) : DomainEvent;
+public sealed record CityCaptured(int City, int PreviousOwner, int Player, int CaptureGold = 0, bool AutoRazed = false) : DomainEvent;
 public sealed record CityRazed(int City, int Player, Hex Position) : DomainEvent;
 public sealed record PlotPillaged(int Unit, int Player, TileId Plot, string? Improvement, string? ReplacementImprovement, string? Route, int Gold) : DomainEvent;
 public sealed record GoodyReceived(int Unit, string Goody) : DomainEvent;

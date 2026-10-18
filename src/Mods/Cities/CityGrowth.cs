@@ -86,6 +86,7 @@ internal sealed class CityGrowth(ICityYieldService yields, ICityWellbeingService
                 city.FoodStored -= Math.Max(0, result.Threshold - state.FoodKept);
                 state.FoodKept = 0;
                 city.Population++;
+                state.HighestPopulation = Math.Max(state.HighestPopulation, city.Population);
                 sim.Events.Publish(new CityGrew(city.Id, city.Population));
             }
         }
