@@ -27,7 +27,6 @@ Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in 
 
 - **[docs/DESIGN.md](docs/DESIGN.md)**: Architectural design, core principles ("everything is a mod"), and subsystem contracts.
 - **[docs/ROADMAP.md](docs/ROADMAP.md)**: Single source of truth for project roadmap: what is done (implemented systems and mechanics) and what needs to be done.
-- **[PLAN.md](PLAN.md)**: Source extraction porting plan, product rules, and hex adaptation specifications.
 
 ## Operational benchmarks
 
@@ -53,7 +52,7 @@ Run extractor tests when the source assets or importer change.
 
 ## Content
 
-Rules content is compiled into the mods' `data/` folders by `tools/Civ.ContentImport` from a local extraction. See [PLAN.md](PLAN.md).
+Rules content is compiled into the mods' `data/` folders by `tools/Civ.ContentImport` from a local extraction.
 
 ## 3D terrain and nature art
 
