@@ -193,7 +193,7 @@ public sealed class AiSpeculationTests
         var events = Observe(sim);
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
-Assert.Equal(SpeculationOutcome.Conflict, events[1].Outcome);
+        Assert.Equal(SpeculationOutcome.Conflict, events[1].Outcome);
         Assert.Equal(laterAllocates ? "unit id" : "entity aggregates", events[1].Reason);
         Assert.Equal(3, events.Count);
         Assert.Equal(laterAllocates ? new[] { 1, 2, 3, 4 } : new[] { 1, 2, 3 }, sim.State.Units.Select(u => u.Id));

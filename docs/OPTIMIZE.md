@@ -27,6 +27,22 @@ Work on these areas one at a time, measure each change, and preserve determinist
 
 ### AI multithreading
 
+#### Architecture
+
+AI turn planning parallelizes computation at two distinct levels while guaranteeing bit-for-bit deterministic simulation state across runs, save/load cycles, and networked peers:
+- **Intra-planner parallel candidate scoring**: `ParallelScoring.Select` in `SitePlanner`, `CityPlanner`, `ResearchPlanner`, `WorkerPlanner`, `MilitaryPlanner`, and `AttackPlanner` evaluates independent read-only candidate items (founding sites, city build options, candidate technologies, worker jobs, defensive reinforcement routes, and attack staging hexes) concurrently across threads above minimum candidate count thresholds. Candidates are evaluated without mutating simulation state or drawing from `Simulation.Rng`, and results are sorted deterministically by descending integer scores with ordinal/entity ID tie-breaking. To avoid threadpool oversubscription when multiple players plan concurrently, candidate evaluation checks `Simulation.IsParallelAiTurn` and runs serially inside multi-player speculative waves.
+- **Read-only city query memoization**: Repeated empire state queries are optimized without mutating simulation state or breaking thread isolation: `[ThreadStatic]` `CityReadScope` caches building activity, power status, and modifier grants during read-only city evaluation (such as citizen allocation); `ResourceNetwork.Modes` evaluates transport and route connections lazily per query; and `INavalBlockadeService.BlockadedTiles` resolves blockaded water plots once per query rather than per plot.
+- **Fast in-memory state cloning**: `GameState.Clone()`, `Plot.Clone()`, and `ExtensionState.Clone()` (using UTF-8 canonical JSON round-trips for non-empty components) produce independent simulation copies for `Simulation.ForkSpeculative()` without full-save canonical normalization, reducing fork creation overhead.
+- **Wave-based speculative parallel turns**: `Simulation.RunAi()` delegates to `AiTurnSpeculator`, partitioning uncommitted AI players into speculative waves. The first player ($p_0$) executes directly against the authoritative simulation, while subsequent independent players ($p_1 \dots p_{m-1}$) plan concurrently on isolated speculative forks of the wave-start state. Non-conflicting plans commit sequentially in ascending `Player.Id` order by replaying their recorded `GameCommand` sequences against the authoritative simulation. If any plan encounters a conflict, the authoritative simulation restores from a pre-commit snapshot, re-applies verified plans, and immediately relaunches a new speculative wave for remaining uncommitted players.
+
+#### Safety invariants
+
+Deterministic equivalence with strictly sequential turn execution is enforced through rigorous conflict checks:
+- **Active mutation footprint proximity**: Conflicts occur if any tile in an earlier player's cumulative active mutation footprint (plots where units moved, cities were founded, captured, or razed, or plot ownership, improvements, routes, or features changed) lies within 5 hexes (`ActiveFootprintRadius = 5`) of a candidate plan's active footprint. Stationary units (such as fortified garrisons) and unchanged border plots do not cause conflicts unless unit contract state (health, experience, promotions, activity) mutates. Moving settlers and explorers expand active footprints by radius 3 to protect visibility-dependent choices.
+- **Global entity-aggregate protection**: Changes to entity counters (`NextCityId`, `NextUnitId`), entity membership or ownership, unit health/experience/promotions/type, city buildings/population/extensions, or power inputs trigger an entity-aggregate conflict for subsequent plans in the wave. This ensures global queries (such as `WarPlanner` power evaluations or world wonder limits) never commit against stale aggregate state.
+- **RNG and diplomacy consistency**: A plan is rejected if an earlier player drew from `Simulation.Rng` and the candidate plan also used RNG, or if team war relations (`Team.Wars`) or global `State.Extensions` changed.
+- **Command replay and fingerprint verification**: Plan commit replays commands via `Simulation.TryApply`, verifying that pre-command and post-command RNG values match the fork execution and that the resulting per-player state digest matches the fork's fingerprint. Any divergence triggers state rollback and wave relaunch.
+
 #### Benchmark measurements
 
 `mise run benchmark` reports single samples without timing thresholds. The Phase 1 run did not finish the 8-player preparation benchmark. It recorded these values before termination:
@@ -73,7 +89,7 @@ Reproduction configurations:
 - `c67b88f`, `AiWaveLimit = 1`, `DOTNET_PROCESSOR_COUNT=1`: about 1 minute 41 seconds to the failure.
 - Speculative `c67b88f`: the same failure at turn 76.
 
-The states at turns 26, 51, and 76 were bit-for-bit identical across the compared runs.
+Turns 26, 51, and 76 had identical logged aggregate metrics `cities/techs/units/buildings/wars/gold` across base `23db29c`, sequential `AiWaveLimit=1`, and speculative runs.
 At turn 76, the four players had cities 5/5/5/1, technologies 28/24/25/26, and units 11/11/12/6. The war count was 1.
 The approximate 45× comparison measures time to the same failure. It is not a successful 200-turn E2E speedup or a benchmark ratio.
 This failure is separate from the five pre-existing city-capture failures in the default suite.
