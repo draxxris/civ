@@ -146,17 +146,18 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
-    public void Rivers_and_water_exclude_props_while_hills_add_rocks()
+
+    public void Rivers_and_water_exclude_props_while_hills_keep_trees_without_rocks()
     {
-        var snapshot = Map(null);
-        Array.Fill(snapshot.Feature, null);
+        var snapshot = Map();
         Array.Fill(snapshot.Relief, ReliefClass.Hills);
         TerrainTestMaps.SetRiver(snapshot, 10 * snapshot.Width + 10, 0);
         int water = 12 * snapshot.Width + 10;
         snapshot.Relief[water] = ReliefClass.ShallowWater;
         var field = new TerrainField(snapshot, 17, new TerrainTuning { WarpAmplitude = 0 });
         var props = new ScatterPlanner(_catalog).Plan(Whole(snapshot), snapshot, field, new TerrainPalette(_catalog));
-        Assert.Contains(props, p => p.Set == "rocks");
+        Assert.Contains(props, p => p.Set == "forest");
+        Assert.DoesNotContain(props, p => p.Set == "rocks");
         Assert.All(props, p =>
         {
             Assert.True(field.HeightAt(p.X, p.Z) > 0.02);
