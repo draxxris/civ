@@ -69,10 +69,10 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Research
 - **Prerequisite graph**: Strict checking of all/any technology prerequisites, obsoleted branches, and era gating.
 - **Sequential integer cost scaling**: Deterministic integer truncation stages scaling base technology cost sequentially by handicap, world size, game speed, starting era, team size, and timeline multipliers.
-- **Diffusion & welfare rate modifiers**: Contacted teams knowing a technology grant diffusion bonuses, and trailing teams receive welfare bonuses; these adjust research output rate (`RateModifier`) rather than base technology cost.
+- **Diffusion & welfare rate modifiers**: Contacted teams knowing a technology grant diffusion bonuses using an eligible living non-barbarian team denominator; welfare bonuses evaluate the team leader's player total-score contract. These adjust research output rate (`RateModifier`) rather than base technology cost.
 - **Realistic timescale (timeline scaling)**: Option-gated dynamic cost scaling comparing elapsed turns against expected era transition points and team leader era/technologies, without referencing historical calendar dates.
 - **Tech trading gates & theft eligibility**: Technology trading in diplomacy requires enabling technologies (`TechTrading` unlock flag) and option checks. Espionage tech theft uses separate, independent eligibility rules.
-- **Option defaults & brokering limitation**: Diffusion and tech trading enabled by default; realistic timescale and no-tech-brokering disabled by default. No-tech-brokering remains limited until technology acquisition provenance is tracked.
+- **Option defaults & brokering limitation**: Diffusion and tech trading enabled by default; realistic timescale and no-tech-brokering disabled by default. The selected no-tech-brokering option remains unsupported because technology acquisition provenance is not yet tracked.
 - **Queues & overflow**: Team research targets, queues, progress tracking, and normalized carry-over overflow.
 - **Tech discoveries**: `TechDiscovered` domain events, first-discovery free tech credits, free unit grants, and current-era milestone progression.
 
@@ -138,7 +138,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Diplomacy**: Bilateral team contact discovery, attitude ledgers, peace treaties, open borders, defensive pacts, and multi-item trade deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination, Cultural, Space Race, and Time victories with victory resolution screens.
 - **Corporations**: Great Person founding, branch spread (via gold or executives), headquarters protection, branch revenue, resource consumption, and maintenance.
-- **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios, passive visibility/investigation unlocks, full rival intelligence screen (demographics, city yields/buildings, production queues, treasury reserves) with permission filtering and immediate revocation, and active missions (counter-espionage with directed +100% rival cost penalties, treasury theft, production sabotage, city revolt, tech theft).
+- **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios, passive visibility/investigation unlocks, full rival intelligence screen (demographics, city yields/buildings, production queues, treasury reserves) with permission filtering and immediate revocation, and active missions (counter-espionage with directed cost penalties scaling from a 200% baseline by supported interception, treasury theft, production sabotage, city revolt, tech theft).
 - **Events**: Dynamic random event rolls, option choices with yield/gold/culture impacts, cooldown timers, and automated AI choices.
 - **Scripted Wonders**: Special wonder abilities, Great Wall barbarian exclusion, periodic unit grants, and combat bonuses.
 - **Revolution**: City instability ledgers (wellbeing, distance, civics, garrisons, golden age), warning/mutiny/rebellion states, military/gold suppression, and rebel unit spawns.
@@ -235,7 +235,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Espionage & UI
 - [x] **Full espionage intelligence view**: In-game screens showing permission-filtered rival city demographics, production queues, and treasury reserves.
-- [x] **Counter-espionage missions**: Active missions doubling rival mission costs via a directed 100% penalty.
+- [x] **Counter-espionage missions**: Active missions increasing rival mission costs via a directed cost penalty (200% baseline plus 5x interception percent).
 - [ ] **Dedicated status panels**: Global HUD panels for empire-wide Revolution unrest and Scripted Wonder active timers.
 - [x] **Map overlays**: Toggleable visual layers for tile yields, resource badges, hex grid lines, and cultural borders with fog-safe snapshots.
 
@@ -252,25 +252,25 @@ The following observations and verification records are preserved for future dev
 
 * **Eligible-Team Denominator Difference**:
   * Severity: Low. Reachability: Normal play.
-  * Research diffusion divides by eligible living contacted teams excluding barbarians.
-  * Future fix need: track starting civilization count if strict parity with starting-count formulas is desired.
+  * The research diffusion denominator uses all eligible living non-barbarian teams. The reference mod divides by eligible alive teams (including barbarians). Contacted technology holders form the weighted numerator.
+  * Future fix need: reconcile alive-team and barbarian eligibility with the reference mod if strict parity is desired.
 * **Score Contract in Welfare**:
   * Severity: Low-to-moderate. Reachability: Late-game play when score disparities widen.
-  * Welfare catch-up uses current team scores from the existing score contract rather than a normalized native curve.
-  * Future fix need: evaluate and implement a normalized score progression curve.
+  * Welfare catch-up evaluates the team leader's player total score contract rather than a native normalized score curve or pooled team scores.
+  * Future fix need: evaluate and implement a normalized score progression curve when score contracts are refined.
 * **Unsupported Commander and Ground-Health Interception**:
   * Severity: Low. Reachability: Reachable if content relies on commander or ground-health interception inputs.
-  * Combat air patrol ignores unit commander bonuses and optional ground-unit health scaling.
-  * Future fix need: extend air interception resolution to query commander attachments and health modifiers.
+  * Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
+  * Future fix need: extend counter-espionage mission interception calculations to query commander attachments and health modifiers.
 * **Malformed-Content Guards**:
   * Severity: Low. Reachability: Unreachable with shipped content; reachable with invalid custom content declarations.
   * Missing technology identifiers in unlock tables or missing bonus identifiers in sight memory throw on lookup.
   * Future fix need: add fallback validation and default placeholders during content loading.
 * **Inert Expired Records**:
   * Severity: Negligible. Reachability: Normal play after counter-espionage protection expires.
-  * Expired directed counter-espionage records remain inert in saved state rather than being pruned immediately.
-  * Future fix need: prune expired records during turn-end serialization.
+  * Expired directed counter-espionage records remain inert in saved state.
+  * Future fix need: prune expired records during deterministic turn boundary processing under the state hash contract, not during serialization.
 * **Hardware GPU and Small-Window Verification**:
-  * Severity: Low. Reachability: Non-standard display resolutions and physical GPU driver quirks.
-  * Verification used headless Mesa llvmpipe software rendering at 1600x900. Execution on physical GPUs and arbitrary small windows (<1600x900) remains unverified.
+  * Severity: Low. Reachability: Arbitrary display dimensions and physical GPU driver quirks.
+  * Verification used headless Mesa llvmpipe software rendering at 1600x900, and Phase 6 verified 1280x720 rendering. Execution on physical GPUs and arbitrary small-window sweeps (<1600x900) remain unverified.
   * Note: Actual pointer input and multi-rival switching were verified through eight automated X11 pointer events.

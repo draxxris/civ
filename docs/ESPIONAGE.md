@@ -129,7 +129,8 @@ Active missions require a spy unit stationed inside a rival city with movement p
 * **`CounterEspionage`** (Baseline Cost: 100):
   * Targets the rival team owning the city.
   * Creates a directed protection record from the protecting team against the target rival team.
-  * Doubles all espionage mission costs (+100% cost penalty) for rival spies operating against the protecting team.
+  * Multiplies rival mission costs against the protecting team by `200 + 5 * InterceptionPercent`.
+  * The baseline multiplier is 200% (doubling costs) and scales higher with supported interception bonuses.
   * Counter-espionage is a directed cost penalty, not a new success roll penalty.
   * Lasts for a speed-scaled duration (10 turns on Normal speed).
   * Repeat missions against the same rival are rejected while protection remains active.
@@ -201,9 +202,10 @@ Each unit is designated with:
 
 The following observations are recorded for future maintenance:
 
-* **Inert Expired Records**: When counter-espionage protection expires, the directed record remains inert in simulation state rather than being pruned immediately.
+* **Inert Expired Records**: When counter-espionage protection expires, the directed record remains inert in simulation state.
+  Any future cleanup belongs to a deterministic turn boundary and hash contract, not during serialization.
   (Severity: Negligible. Reachability: Normal play after mission expiry.)
-* **Unsupported Commander and Ground-Health Interception**: Combat air patrol and interception ignore unit commander bonuses and optional ground-unit health scaling.
-  (Severity: Low. Reachability: Content relying on commander interception modifiers.)
+* **Unsupported Commander and Ground-Health Interception**: Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
+  (Severity: Low. Reachability: Content relying on commander interception modifiers in espionage calculations.)
 * **Malformed Research Identifiers**: Content definitions referencing non-existent technology identifiers can fail when espionage unlocks evaluate permissions.
   (Severity: Low. Reachability: Malformed custom content declarations.)

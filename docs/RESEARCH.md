@@ -58,9 +58,11 @@ Instead, they adjust the team research rate modifier (`RateModifier`).
 This rate modifier increases the science points applied to the current technology each turn:
 
 * **Tech Diffusion**: Contacted teams that already know the technology grant a research rate bonus.
-  The bonus scales with the fraction of contacted teams that own the technology.
+  The calculation divides by all eligible living non-barbarian teams.
+  Contacted technology holders form the weighted numerator.
 * **Welfare Scaling**: Teams with lower total scores receive a catch-up research rate bonus.
-  Welfare bonuses help trailing civilizations stay competitive.
+  Welfare compares the team leader's player total score against the highest living player score.
+  It uses the existing score contract rather than a pooled team score or native normalized curve.
 
 ### Realistic Timescale (Timeline Research)
 
@@ -143,12 +145,17 @@ Overlay settings are local presentation preferences managed in `GamePreferences`
 
 The following observations are recorded for future maintenance:
 
-* **Eligible-Team Denominator**: Diffusion calculations divide by living, contacted teams excluding barbarians.
+* **Eligible-Team Denominator**: The research diffusion denominator uses all eligible living non-barbarian teams.
+  The reference mod divides by eligible alive teams (including barbarians).
+  Contacted technology holders form the weighted numerator.
+  Future parity alignment would reconcile alive-team and barbarian eligibility with the reference mod.
   (Severity: Low. Reachability: Normal play.)
-* **Score Contract in Welfare**: Welfare catch-up uses current team scores rather than a normalized native curve.
+* **Score Contract in Welfare**: Welfare catch-up evaluates the team leader's player total score contract.
+  It does not use a native normalized score curve or pooled team scores.
   (Severity: Low-to-moderate. Reachability: Late-game play.)
 * **Malformed Content Guards**: Missing technology identifiers in unlock tables throw exceptions during content lookup.
   (Severity: Low. Reachability: Custom content with invalid identifiers.)
-* **Hardware GPU Verification**: Overlay rendering was verified under headless Mesa llvmpipe at 1600x900.
-  Hardware GPU execution and arbitrary small windows remain unverified.
-  (Severity: Low. Reachability: Non-standard resolutions and specific GPU drivers.)
+* **Hardware GPU and Small Window Sweeps**: Overlay rendering was verified under headless Mesa llvmpipe at 1600x900.
+  Phase 6 verified 1280x720 rendering.
+  Arbitrary small-window control overlap sweeps and physical GPU execution remain unverified.
+  (Severity: Low. Reachability: Arbitrary display dimensions and specific GPU drivers.)
