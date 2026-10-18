@@ -189,10 +189,17 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         session.SelectUnit(unit.Id);
 
         var action = session.DescribeUnit(unit)!.Actions.SingleOrDefault(a => a.Id == "pillage");
-        Assert.NotNull(action?.Command);
+        var command = Assert.IsType<PillageCommand>(action?.Command);
+        Assert.Equal(unit.Id, command.Unit);
+        Assert.Equal(unit.Owner, command.Player);
         session.RunAction("pillage");
         Assert.Equal(improvement.ImprovementPillage, plot.Improvement);
-        Assert.Contains(sim.Events.Published, e => e.GetType().Name == "PlotPillaged");
+        var pillage = Assert.Single(sim.Events.Published.OfType<PlotPillaged>());
+        Assert.Equal(unit.Id, pillage.Unit);
+        Assert.Equal(unit.Owner, pillage.Player);
+        Assert.Equal(sim.State.Grid.TileAt(unit.Position), pillage.Plot);
+        Assert.Equal(improvement.Id, pillage.Improvement);
+        Assert.Equal(improvement.ImprovementPillage, pillage.ReplacementImprovement);
     }
 
     [Fact]
