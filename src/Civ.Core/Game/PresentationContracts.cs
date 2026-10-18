@@ -52,3 +52,18 @@ public interface ITileAppearanceService
     string? Surface(TerrainSurface surface) => null;
     TileAppearance? Scatter(string feature, string terrain) => null;
 }
+
+/// <summary>How a city's 3D buildings look.</summary>
+public enum CityStyle { Huts, Victorian, Modern }
+
+/// <summary>What lies under a city's 3D buildings.</summary>
+public enum CityGround { Dirt, Cobblestone, Concrete }
+
+/// <summary>The look of a city in an era. No renderer types cross the mod contract.</summary>
+public sealed record CityAppearance(CityStyle Style, CityGround Ground);
+
+/// <summary>Maps an era id to the look of its cities. Null leaves the era to other providers.</summary>
+public interface ICityAppearanceService
+{
+    CityAppearance? Era(string era);
+}

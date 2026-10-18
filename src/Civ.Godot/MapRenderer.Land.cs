@@ -38,6 +38,7 @@ internal sealed partial class MapRenderer
             sites.Add(new ImprovementSite(ring, PositionOf(city.Position), 0, sight == Sight.Visible ? 1f : 0.55f));
         }
         _improvements.Rebuild(sites);
+        _cities.Rebuild(CitySites());
         _land.Mesh = marks.Build(_opaque);
         _roads.Mesh = roads.Build(_terrain.RoadMaterial);
         _landIcons.Mesh = icons.Build(_landIconMaterial);

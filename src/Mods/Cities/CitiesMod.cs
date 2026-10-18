@@ -17,6 +17,7 @@ public sealed class CitiesMod : IMod
         context.RegisterService<IRequirementEvaluator>("class_requirements", new BuildingRequirement("building-class"));
         context.RegisterStateComponent<CityRuleState>("city_state");
         context.RegisterStateComponent<CityPlayerState>("player_state");
+        context.RegisterService<ICityAppearanceService>("city_appearance", new CityAppearanceService());
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
         context.RegisterService<IModifierSource>("military_building_grants", new BuildingMilitaryEffects());
         context.RegisterService<ICityCaptureService>("capture", new CityCapture());
