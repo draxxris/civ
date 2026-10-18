@@ -25,6 +25,39 @@ Work on these areas one at a time, measure each change, and preserve determinist
 
 `TerrainRenderer.RebuildWorld` now prepares managed surface packets in the existing mesher workers. Godot array packing, resource construction, node assignment, scatter planning, and scatter updates stay on the main thread. The trace separates these stages.
 
+### AI multithreading
+
+#### Benchmark measurements
+
+`mise run benchmark` reports single samples without timing thresholds. The Phase 1 run did not finish the 8-player preparation benchmark. It recorded these values before termination:
+
+- World generation/setup, seed 1: 489.66 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 42: 249.24 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 987654: 335.52 ms; 4,368 plots and 2 players.
+- Fifty-city turn: 83,120.65 ms; 50 cities, turn 2.
+- The 8-player preparation (generation, 99 turns, save/load) exceeded 90 minutes of CPU time without finishing. It was terminated as instructed. No turn-100 AI decision result was captured.
+
+After the AI multithreading implementation, one `mise run benchmark` run recorded:
+
+- World generation/setup, seed 1: 482.04 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 42: 238.73 ms; 4,368 plots and 2 players.
+- World generation/setup, seed 987654: 347.23 ms; 4,368 plots and 2 players.
+- Fifty-city turn: 2,139.04 ms; 50 cities, turn 2.
+- 8-player preparation (generation, 99 turns, save/load): 231,096.19 ms (3 minutes 51.10 seconds).
+- 8-player `RunAi()` decisions at turn 100: 1,802.43 ms; 41 cities and 114 units.
+
+The fifty-city turn decreased by 97.43%, or 38.86× against the measured baseline. A valid speedup ratio is not available for 8-player preparation: the baseline was an incomplete CPU-time observation, while the post-change run completed and reported a benchmark duration. There is no turn-100 `RunAi()` baseline for comparison.
+
+#### End-to-end tests
+
+Phase 1 did not run `mise run test:e2e`, so there is no pre-change E2E duration or speedup comparison. The post-change command was `mise run test:e2e -- --logger 'console;verbosity=detailed'`. The two AI tests reported:
+
+- `Four_computer_players_develop_and_fight_over_200_turns`: failed after 1 minute 41 seconds, at turn 76, with `InvalidOperationException: Unit cannot attack` from the explorer/scout movement path.
+- `Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn`: passed in 10 minutes 6 seconds.
+
+The complete E2E run took 11.8656 minutes (about 11 minutes 52 seconds) and finished with 3 tests passed and 1 failed. Therefore this run did not verify the full AI gameplay test suite.
+
+The latest default-suite evidence is `/tmp/civ-p4-default.log`: 725 passed and 5 previously documented failures out of 730 tests in `Civ.Mods.Tests`; `Civ.Tests` passed 124/124 and `Civ.ContentImport.Tests` passed 37/37. `mise run test` was not rerun during this measurement task.
 ## Running log
 
 ### Started
