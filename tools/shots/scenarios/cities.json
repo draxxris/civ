@@ -1,0 +1,612 @@
+{
+  "// note": "City buildings by era (rows: ancient, renaissance, industrial, modern) and size (3, 8, 13, 20). Left block walled, right block open. Coordinates are offset (column, row).",
+  "fill": {
+    "terrain": "world:grass",
+    "kind": "Flat"
+  },
+  "tiles": [
+    {
+      "rect": [
+        16,
+        15,
+        20,
+        19
+      ],
+      "kind": "Hills"
+    },
+    {
+      "at": [
+        5,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc3W",
+        "population": 3,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        23,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc3",
+        "population": 3,
+        "buildings": [],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        9,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc8W",
+        "population": 8,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        27,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc8",
+        "population": 8,
+        "buildings": [],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        13,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc13W",
+        "population": 13,
+        "buildings": [
+          "cities:high_walls"
+        ],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        31,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc13",
+        "population": 13,
+        "buildings": [],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        17,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc20W",
+        "population": 20,
+        "buildings": [
+          "cities:high_walls"
+        ],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        35,
+        5
+      ],
+      "city": {
+        "owner": 0,
+        "name": "Anc20",
+        "population": 20,
+        "buildings": [],
+        "era": "ancient"
+      }
+    },
+    {
+      "at": [
+        5,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren3W",
+        "population": 3,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        23,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren3",
+        "population": 3,
+        "buildings": [],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        9,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren8W",
+        "population": 8,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        27,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren8",
+        "population": 8,
+        "buildings": [],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        13,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren13W",
+        "population": 13,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        31,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren13",
+        "population": 13,
+        "buildings": [],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        17,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren20W",
+        "population": 20,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        35,
+        9
+      ],
+      "city": {
+        "owner": 1,
+        "name": "Ren20",
+        "population": 20,
+        "buildings": [],
+        "era": "renaissance"
+      }
+    },
+    {
+      "at": [
+        5,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind3W",
+        "population": 3,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        23,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind3",
+        "population": 3,
+        "buildings": [],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        9,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind8W",
+        "population": 8,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        27,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind8",
+        "population": 8,
+        "buildings": [],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        13,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind13W",
+        "population": 13,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        31,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind13",
+        "population": 13,
+        "buildings": [],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        17,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind20W",
+        "population": 20,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        35,
+        13
+      ],
+      "city": {
+        "owner": 2,
+        "name": "Ind20",
+        "population": 20,
+        "buildings": [],
+        "era": "industrial"
+      }
+    },
+    {
+      "at": [
+        5,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod3W",
+        "population": 3,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        23,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod3",
+        "population": 3,
+        "buildings": [],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        9,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod8W",
+        "population": 8,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        27,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod8",
+        "population": 8,
+        "buildings": [],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        13,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod13W",
+        "population": 13,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        31,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod13",
+        "population": 13,
+        "buildings": [],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        17,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod20W",
+        "population": 20,
+        "buildings": [
+          "cities:walls"
+        ],
+        "era": "modern"
+      }
+    },
+    {
+      "at": [
+        35,
+        17
+      ],
+      "city": {
+        "owner": 3,
+        "name": "Mod20",
+        "population": 20,
+        "buildings": [],
+        "era": "modern"
+      }
+    }
+  ],
+  "roads": [
+    [
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        15,
+        5
+      ],
+      [
+        16,
+        5
+      ],
+      [
+        17,
+        5
+      ],
+      [
+        18,
+        5
+      ],
+      [
+        19,
+        5
+      ]
+    ],
+    [
+      [
+        21,
+        17
+      ],
+      [
+        22,
+        17
+      ],
+      [
+        23,
+        17
+      ],
+      [
+        24,
+        17
+      ],
+      [
+        25,
+        17
+      ],
+      [
+        26,
+        17
+      ],
+      [
+        27,
+        17
+      ],
+      [
+        28,
+        17
+      ],
+      [
+        29,
+        17
+      ],
+      [
+        30,
+        17
+      ],
+      [
+        31,
+        17
+      ],
+      [
+        32,
+        17
+      ],
+      [
+        33,
+        17
+      ],
+      [
+        34,
+        17
+      ],
+      [
+        35,
+        17
+      ],
+      [
+        36,
+        17
+      ],
+      [
+        37,
+        17
+      ]
+    ]
+  ],
+  "focus": [
+    13,
+    11
+  ]
+}

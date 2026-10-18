@@ -5,27 +5,33 @@ namespace Civ.Client;
 /// <summary>Small control factories so the screens stay short and look alike.</summary>
 internal static class Ui
 {
-    private static readonly Theme ButtonTheme = MakeTheme();
-
     public static readonly Color Dim = new(0.66f, 0.69f, 0.75f);
     public static readonly Color Bad = new(0.96f, 0.45f, 0.40f);
     public static readonly Color Good = new(0.55f, 0.88f, 0.52f);
     public static readonly Color Accent = new(1f, 0.82f, 0.30f);
     public static readonly Color PanelFill = new(0.08f, 0.09f, 0.12f, 0.94f);
 
-    /// <summary>Buttons that read as buttons on the dark panels.</summary>
+    // Declared after the colors: MakeTheme reads Accent, and static initializers run in source order.
+    private static readonly Theme ButtonTheme = MakeTheme();
+
+    /// <summary>Steel-lapis buttons (see <see cref="ButtonSkin"/>) with hover, pressed and disabled looks.</summary>
     public static Theme MakeTheme()
     {
         var theme = new Theme();
-        foreach (var (state, fill) in new[] { ("normal", new Color(0.24f, 0.28f, 0.37f)), ("hover", new Color(0.32f, 0.38f, 0.5f)),
-                     ("pressed", new Color(0.34f, 0.4f, 0.52f)), ("disabled", new Color(0.13f, 0.14f, 0.18f)) })
-        {
-            var box = Box(fill, 6, 4);
-            box.BorderColor = new Color(0.36f, 0.4f, 0.5f);
-            box.SetBorderWidthAll(1);
-            theme.SetStylebox(state, "Button", box);
-        }
-        theme.SetColor("font_disabled_color", "Button", new Color(0.5f, 0.52f, 0.58f));
+        var pressed = ButtonSkin.Make(ButtonSkin.State.Pressed);
+        theme.SetStylebox("normal", "Button", ButtonSkin.Make(ButtonSkin.State.Normal));
+        theme.SetStylebox("hover", "Button", ButtonSkin.Make(ButtonSkin.State.Hover));
+        theme.SetStylebox("pressed", "Button", pressed);
+        theme.SetStylebox("hover_pressed", "Button", pressed);
+        theme.SetStylebox("disabled", "Button", ButtonSkin.Make(ButtonSkin.State.Disabled));
+        theme.SetColor("font_color", "Button", new Color(0.91f, 0.93f, 0.96f));
+        theme.SetColor("font_hover_color", "Button", Colors.White);
+        theme.SetColor("font_pressed_color", "Button", Accent);
+        theme.SetColor("font_hover_pressed_color", "Button", Accent);
+        theme.SetColor("font_disabled_color", "Button", new Color(0.66f, 0.67f, 0.68f));
+        // A soft dark outline stands in for the text shadow in the mockup.
+        theme.SetColor("font_outline_color", "Button", new Color(0f, 0f, 0f, 0.55f));
+        theme.SetConstant("outline_size", "Button", 3);
         return theme;
     }
 

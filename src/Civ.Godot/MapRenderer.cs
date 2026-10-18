@@ -49,6 +49,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
     private readonly ImprovementRenderer _improvements;
+    private readonly CityRenderer _cities;
     private int _worldRevision = -1, _revision = -1;
 
     /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
@@ -63,6 +64,7 @@ internal sealed partial class MapRenderer : Node3D
         ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles + _roads.Triangles, ["roads"] = _roads.Triangles,
         ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
         ["improvement_ground"] = _improvements.DecalTriangles,
+        ["city_buildings"] = _cities.Triangles, ["city_ground"] = _cities.GroundTriangles,
         ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
     };
 
@@ -84,9 +86,11 @@ internal sealed partial class MapRenderer : Node3D
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = Material(null, true, 5);
         _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
-        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile, _improvements.CityRing);
+        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
+        _cities = new CityRenderer(Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
         AddChild(_terrain);
         AddChild(_improvements);
+        AddChild(_cities);
         _land = Layer();
         _roads = Layer();
         _landIcons = Layer();

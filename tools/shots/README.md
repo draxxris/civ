@@ -12,7 +12,7 @@ mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /tmp/sh
 - `--focus hills|forest|jungle|road|peak|river|city` centres on the best patch of that kind. `--focus-tile col,row` centres on a tile.
 - `--pitch`, `--yaw`, `--distance` set the camera. The defaults are 62, 0 and 18. A low pitch shows height.
 - `--clean` removes the HUD, tooltips, hover, path preview, units, cities and labels.
-- `--terrain-debug relief|bands|slope|lattice` (or a number) changes the ground view. `--wireframe` is the same as `lattice`.
+- `--terrain-debug relief|bands|slope|lattice|cavity` (or a number) changes the ground view. `--wireframe` is the same as `lattice`.
 - `--stats` writes `<name>.json` next to the PNG: props per set before and after thinning, triangles per layer, height range per relief class, FPS.
 - `--seed`, `--world tiny|...` choose the map.
 
@@ -47,6 +47,15 @@ The city clears the plot improvement and sets its owner. Unknown building ids st
 A second city on the same tile stops the run.
 Use `cities:high_walls` for the higher wall tier. A city with both buildings shows only High Walls.
 Wall models remain visible with `--clean`. Omit `--clean` to inspect the city token, label, and units inside the ring.
+
+## City buildings
+
+A scenario city can set `"era"` (a full id, or a short name such as `"modern"`). This sets the owner's current era, which picks the building style and the ground under the buildings.
+The era belongs to the owner, so cities of different eras need different owners.
+
+`tools/shots/scenarios/cities.json` shows four eras (ancient, renaissance, industrial and modern) at sizes 3, 8, 13 and 20. The left block has walls and the right block has none.
+Capture it with `--shots tools/shots/cities-poses.json --scenario tools/shots/scenarios/cities.json --world tiny --clean --stats`.
+The layout code is `src/Civ.Client.Core/Terrain/CityLayout.cs`. `--stats` reports `city_buildings` and `city_ground` triangles.
 
 ## Improvement models
 
