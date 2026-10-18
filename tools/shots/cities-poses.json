@@ -1,0 +1,342 @@
+[
+ {
+  "name": "overview_walled",
+  "focusTile": [
+   11,
+   11
+  ],
+  "pitch": 62,
+  "yaw": 0,
+  "distance": 18
+ },
+ {
+  "name": "overview_open",
+  "focusTile": [
+   29,
+   11
+  ],
+  "pitch": 62,
+  "yaw": 0,
+  "distance": 18
+ },
+ {
+  "name": "ancient_3_walls",
+  "focusTile": [
+   5,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_3_open",
+  "focusTile": [
+   23,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_8_walls",
+  "focusTile": [
+   9,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_8_open",
+  "focusTile": [
+   27,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_13_walls",
+  "focusTile": [
+   13,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_13_open",
+  "focusTile": [
+   31,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_20_walls",
+  "focusTile": [
+   17,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "ancient_20_open",
+  "focusTile": [
+   35,
+   5
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_3_walls",
+  "focusTile": [
+   5,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_3_open",
+  "focusTile": [
+   23,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_8_walls",
+  "focusTile": [
+   9,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_8_open",
+  "focusTile": [
+   27,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_13_walls",
+  "focusTile": [
+   13,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_13_open",
+  "focusTile": [
+   31,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_20_walls",
+  "focusTile": [
+   17,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "renaissance_20_open",
+  "focusTile": [
+   35,
+   9
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_3_walls",
+  "focusTile": [
+   5,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_3_open",
+  "focusTile": [
+   23,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_8_walls",
+  "focusTile": [
+   9,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_8_open",
+  "focusTile": [
+   27,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_13_walls",
+  "focusTile": [
+   13,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_13_open",
+  "focusTile": [
+   31,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_20_walls",
+  "focusTile": [
+   17,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "industrial_20_open",
+  "focusTile": [
+   35,
+   13
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_3_walls",
+  "focusTile": [
+   5,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_3_open",
+  "focusTile": [
+   23,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_8_walls",
+  "focusTile": [
+   9,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_8_open",
+  "focusTile": [
+   27,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_13_walls",
+  "focusTile": [
+   13,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_13_open",
+  "focusTile": [
+   31,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_20_walls",
+  "focusTile": [
+   17,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ },
+ {
+  "name": "modern_20_open",
+  "focusTile": [
+   35,
+   17
+  ],
+  "pitch": 42,
+  "yaw": 0,
+  "distance": 4.2
+ }
+]

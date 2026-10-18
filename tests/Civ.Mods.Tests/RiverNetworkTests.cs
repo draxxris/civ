@@ -35,6 +35,35 @@ public sealed class RiverNetworkTests
         Assert.Single(Enumerable.Range(0, graph.NodeCount), n => graph.LinksAt(n).Count == 1 && !graph.IsOpen(n));
     }
 
+    /// <summary>Water cannot slope across a river, so a river running along the foot of a mountain range must have its two
+    /// water edges at one height, while the mountain still rises beside it.</summary>
+    [Fact]
+    public void A_river_beside_mountains_is_level_across_and_the_mountain_still_rises_beside_it()
+    {
+        var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat);
+        const int row = 6;
+        for (int col = 2; col < 11; col++)
+        {
+            snapshot.Relief[(row - 1) * snapshot.Width + col] = ReliefClass.Peak;
+            if (col < 10) TerrainTestMaps.SetRiver(snapshot, row * snapshot.Width + col, 0);
+        }
+        var field = new TerrainField(snapshot, 8);
+        int checkedSamples = 0;
+        foreach (var curve in field.Rivers.Curves)
+            for (int i = 3; i < curve.Count - 3; i += 2)
+            {
+                double edge = curve.Width[i], nx = -curve.TZ[i], nz = curve.TX[i];
+                double left = field.HeightAt(curve.X[i] + nx * edge, curve.Z[i] + nz * edge);
+                double right = field.HeightAt(curve.X[i] - nx * edge, curve.Z[i] - nz * edge);
+                // Within 2% of a summit's rise: on a steep bend the inner edge reads a floor a little upstream.
+                Assert.Equal(left, right, 0.02);
+                checkedSamples++;
+            }
+        Assert.True(checkedSamples > 20);
+        var (px, pz) = snapshot.Grid.HexOf(new TileId((row - 1) * snapshot.Width + 6)).ToPixel(1);
+        Assert.True(field.HeightAt(px, pz) > field.Tuning.PeakBase + 0.3);
+    }
+
     [Fact]
     public void River_surfaces_lie_on_the_rendered_terrain_triangles()
     {
@@ -51,7 +80,7 @@ public sealed class RiverNetworkTests
                 double x = river.Positions[v * 3], z = river.Positions[v * 3 + 2];
                 // Odd lattice rows start half a step in, so keep clear of the chunk's east and west edges.
                 if (!chunk.Contains(x - 0.2, z) || !chunk.Contains(x + 0.2, z)) continue;
-                Assert.Equal(GroundHeight(ground, x, z), river.Positions[v * 3 + 1], 3);
+                Assert.Equal(GroundHeight(ground, x, z), river.Positions[v * 3 + 1], 5e-4);
                 checkedVertices++;
             }
         }

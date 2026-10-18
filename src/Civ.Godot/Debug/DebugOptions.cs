@@ -56,7 +56,7 @@ internal sealed record DebugOptions
     /// <summary>A scene option that implies a custom capture: reveal the whole map and open on the map, not the setup screen.</summary>
     public bool CustomScene => Focus != null || FocusTile != null || ShotsFile != null || ScenarioFile != null;
 
-    public static readonly string[] TerrainDebugNames = ["normal", "weights", "hidden", "", "relief", "bands", "slope", "lattice"];
+    public static readonly string[] TerrainDebugNames = ["normal", "weights", "hidden", "", "relief", "bands", "slope", "lattice", "cavity"];
 
     public static DebugOptions Parse(string[] args)
     {
