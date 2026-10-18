@@ -243,7 +243,7 @@ Changed mod versions reject old content identities unless the caller explicitly 
 Hand-authored geometry tuning lives in `src/Mods/Foundation/data/hex-overrides.json` and enters the content hash.
 The importer writes only its declared definition families and rejects that reserved filename.
 
-See [mechanics-status.md](mechanics-status.md) for consumed fields and remaining mechanics.
+See [ROADMAP.md](ROADMAP.md) for consumed fields and remaining mechanics.
 
 ## City services
 
@@ -270,7 +270,7 @@ Modifier sources use City scope for local effects and Player scope for player gr
 City keys include `cities:happiness`, `cities:health`, `cities:war_weariness`, `cities:food_kept_percent`, and `cities:growth_percent`.
 Specialist keys use `cities:slots:<specialist-id>`, `cities:free:<specialist-id>`, and `cities:free_specialists`.
 Other keys cover maintenance percentages, production percentages, experience, and great-person percentages.
-See the Cities implementation and [mechanics-status.md](mechanics-status.md) for supported effects and deferred rules.
+See the Cities implementation and [ROADMAP.md](ROADMAP.md) for supported effects and deferred rules.
 
 Food waste uses fixed-point recurrence with scale one billion. City-count maintenance uses a fixed-point root with scale one trillion.
 These deterministic adaptations can differ from native floating-point results near integer boundaries.
@@ -325,7 +325,7 @@ Barbarian behavior runs at `GameBegin`. Land spawns run at `Spawns`. The barbari
 Training modifiers use `military:initial_experience` and `military:free_promotion:<id>`.
 Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate military contributions when they supply full modifier sources.
 
-See [mechanics-status.md](mechanics-status.md) for partial rules and deferred combat options.
+See [ROADMAP.md](ROADMAP.md) for partial rules and deferred combat options.
 
 ## Government and Peoples services
 
@@ -446,7 +446,7 @@ Plot modifier queries accept a proposed plot, so civic and trait improvement eff
 Military path queries reuse modifier ledgers within one search. Their integer heuristic accounts for fractional routes.
 Neither query cache survives a command or enters saves.
 
-See [mechanics-status.md](mechanics-status.md) for AI limitations and the remaining rule systems.
+See [ROADMAP.md](ROADMAP.md) for AI limitations and the remaining rule systems.
 
 ## Requirements
 `Requirement` supports `All`, `Any`, `Not` and `Leaf(Kind, Id, Count?, Param?)`.
@@ -624,4 +624,4 @@ The presentation contract in `Civ.Core` and client catalog in `Civ.Client.Core` 
 
 ## Remaining feature work
 
-Feature rules continue to expand through mod contracts. Deferred rules and client gaps are listed in [mechanics-status.md](mechanics-status.md).
+Feature rules continue to expand through mod contracts. Deferred rules and client gaps are listed in [ROADMAP.md](ROADMAP.md).
