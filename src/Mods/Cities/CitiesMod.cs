@@ -40,7 +40,7 @@ public sealed class CitiesMod : IMod
         context.RegisterService<ICityProductionService>("production", production);
         context.RegisterService<ICityMaintenanceService>("maintenance", new CityMaintenance());
 
-        context.RegisterService<ICityRequirementService>("requirements", new CityRequirements(work));
+        context.RegisterService<ICityRequirementService>("requirements", new CityRequirements());
         context.RegisterService<ICityCommandService>("commands", new CityCommands(production, work));
         context.RegisterCommand<FoundCityWithSettlerCommand>("found_city");
         context.RegisterCommand<SetCityAssignmentsCommand>("set_city_work");

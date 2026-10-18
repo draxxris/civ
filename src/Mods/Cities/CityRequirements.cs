@@ -4,7 +4,7 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Cities;
 
-internal sealed class CityRequirements(ICityWorkService work) : ICityRequirementService
+internal sealed class CityRequirements : ICityRequirementService
 {
     public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
     {
@@ -53,11 +53,7 @@ internal sealed class CityRequirements(ICityWorkService work) : ICityRequirement
     private bool Vicinity(Requirement.Leaf leaf, RequirementContext context)
     {
         if (context.City is not { } city) return false;
-        var def = context.Sim.Content.Get<S.BonusDef>(leaf.Id);
-        if (def.RevealTech is { } reveal && !context.Sim.KnowsTech(context.Player, reveal)) return false;
-        if (def.ObsoleteTech is { } obsolete && context.Sim.KnowsTech(context.Player, obsolete)) return false;
-        int count = work.WorkArea(context.Sim, city.Id).Count(t => context.Sim.State.Plots[t.Value].Bonus == leaf.Id && context.Sim.State.Plots[t.Value].Owner == context.Player);
-        return count >= (leaf.Count ?? 1);
+        return VicinityBonuses.Has(context.Sim, city, leaf.Id, BuildingEffects.Bonuses(context.Sim, city), leaf.Count ?? 1);
     }
 }
 internal sealed class BuildingRequirement(string kind) : IContentRequirementEvaluator

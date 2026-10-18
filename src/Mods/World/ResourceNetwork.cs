@@ -13,8 +13,7 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return counts;
-        bool transit = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault() is not null;
-        foreach (var tile in Reachable(sim, player, target, transit))
+        foreach (var tile in Reachable(sim, player, target, peacefulForeign: true))
             if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
                 counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
         return counts;
@@ -26,10 +25,25 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         if (sim.TeamOf(first.Owner).Wars.Contains(sim.TeamOf(second.Owner).Id)) return false;
         return Reachable(sim, first.Owner, first, peacefulForeign: true).Contains(sim.State.Grid.TileAt(second.Position));
     }
+    public IReadOnlySet<TileId> ConnectedTiles(Simulation sim, int player, int city)
+    {
+        var target = sim.State.FindCity(city);
+        return target is null || target.Owner != player ? new HashSet<TileId>()
+            : Reachable(sim, player, target, peacefulForeign: true).ToHashSet();
+    }
+    public bool IsTileBlockaded(Simulation sim, TileId tile, int team) =>
+        sim.Content.Services.Get<INavalBlockadeService>().Any(s => s.IsBlockaded(sim, tile, team));
+    public bool IsCityBlockaded(Simulation sim, int city)
+    {
+        var target = sim.State.CityById(city);
+        return sim.State.Grid.Neighbors(sim.State.Grid.TileAt(target.Position))
+            .Any(t => IsTileBlockaded(sim, t, sim.TeamOf(target.Owner).Id));
+    }
     private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target, bool peacefulForeign = false)
     {
         var modes = Modes(sim, player, peacefulForeign);
         var start = sim.State.Grid.TileAt(target.Position);
+        if (modes[start.Value] == NetworkMode.None) yield break;
         var seen = new bool[modes.Length];
         var queue = new Queue<TileId>();
         queue.Enqueue(start);
@@ -57,7 +71,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains, bool peacefulForeign)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (!Access(sim, player, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
+        if (!Access(sim, player, tile, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot)) return NetworkMode.None;
+
         if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) || plot.Owner == player ? NetworkMode.Water : NetworkMode.None;
         var mode = NetworkMode.None;
         if (plot.Route is not null) mode |= NetworkMode.Route;
@@ -65,16 +80,15 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         if (CityNode(sim, player, tile, peacefulForeign)) mode |= NetworkMode.City;
         return mode;
     }
-private static bool Access(Simulation sim, int player, Plot plot, bool peacefulForeign)
+    private static bool Access(Simulation sim, int player, TileId tile, Plot plot, bool peacefulForeign)
     {
+        if (sim.Content.Services.Get<INavalBlockadeService>().Any(s => s.IsBlockaded(sim, tile, sim.TeamOf(player).Id))) return false;
         if (plot.Owner is { } owner) return sim.TeamOf(owner).Id == sim.TeamOf(player).Id
             || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(owner).Id)
-            && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId) && OpenBorders(sim, player, owner));
+            && plot.Revealed.Contains(sim.State.PlayerById(player).TeamId));
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
-    /// <summary>Foreign plots need open borders once Diplomacy is loaded. Without Diplomacy, peaceful access is enough.</summary>
-    private static bool OpenBorders(Simulation sim, int player, int owner) =>
-        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasOpenBorders(sim, sim.TeamOf(player).Id, sim.TeamOf(owner).Id) ?? true;
+
     private static bool Edge(Simulation sim, TileId from, TileId to, NetworkMode[] modes)
     {
         var a = modes[from.Value]; var b = modes[to.Value];
@@ -94,7 +108,7 @@ private static bool Access(Simulation sim, int player, Plot plot, bool peacefulF
             || (fromEdges & ((1 << ((direction + 1) % 6)) | (1 << ((direction + 5) % 6)))) != 0
             || (toEdges & ((1 << ((direction + 2) % 6)) | (1 << ((direction + 4) % 6)))) != 0;
     }
-private static bool CityNode(Simulation sim, int player, TileId tile, bool peacefulForeign = false)
+    private static bool CityNode(Simulation sim, int player, TileId tile, bool peacefulForeign = false)
     {
         if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id
             || (peacefulForeign && !sim.TeamOf(player).Wars.Contains(sim.TeamOf(city.Owner).Id));

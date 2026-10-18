@@ -54,13 +54,15 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     private static string? ValidateActivity(Simulation sim, Unit unit, string argument)
     {
         if (!Enum.TryParse<UnitActivity>(argument, out var activity) || !Enum.IsDefined(activity)) return "Unknown activity";
+        if (activity == UnitActivity.Blockade)
+            return unit.MovesLeft <= 0 ? "No moves left" : NavalBlockades.PositionError(sim, unit);
         if (activity == UnitActivity.Fortify && !CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit))) return "Unit cannot fortify";
-        if (activity == UnitActivity.Intercept)
-        {
-            if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
-            if (MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved) return "Aircraft has moved";
-        }
-        return null;
+        return activity == UnitActivity.Intercept ? ValidateIntercept(sim, unit) : null;
+    }
+    private static string? ValidateIntercept(Simulation sim, Unit unit)
+    {
+        if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
+        return MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved ? "Aircraft has moved" : null;
     }
     private static string? ValidatePillage(Simulation sim, Unit unit)
     {
@@ -116,6 +118,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
         var state = MilitaryData.Edit(sim, unit);
         if (activity != UnitActivity.Fortify) state.FortifyTurns = 0;
         state.Activity = activity;
+        if (activity == UnitActivity.Blockade) { unit.MovesLeft = 0; state.Moved = true; }
     }
     private static void Promote(Simulation sim, Unit unit, string id)
     {
