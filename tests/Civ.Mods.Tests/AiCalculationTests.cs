@@ -3,7 +3,10 @@ using System.Reflection;
 using Civ.Content;
 using Civ.Content.Schema;
 using Civ.Game;
+using Civ.Modding;
 using Xunit;
+
+using UnitDef = Civ.Content.Schema.UnitDef;
 
 namespace Civ.Mods.Tests;
 
@@ -32,6 +35,8 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         if (reload) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
         sim.IsParallelAiTurn = inWave;
         var rng = sim.Rng.State;
+        var log = new PlannerLog();
+        sim.CommandObserver = log;
         var ctx = NewAi(sim, "AiContext", sim, 0);
         var army = NewAi(sim, "ArmyPlan", ctx);
         Call(NewAi(sim, "CitizenPlanner", ctx, army), "Plan");
@@ -40,6 +45,8 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(new[] { "1:cities:unit/military:worker", "2:cities:unit/military:worker",
                 "3:cities:building/cities:elder_council" },
             sim.State.Cities.SelectMany(c => c.ProductionQueue.Select(q => $"{c.Id}:{q.Kind}/{q.ContentId}")));
+        Assert.Equal(new[] { "produce:1:cities:unit/military:worker", "produce:2:cities:unit/military:worker",
+            "produce:3:cities:building/cities:elder_council" }, log.Commands);
         Assert.Equal(501270837889495915UL, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
     }
@@ -258,6 +265,182 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         });
         Assert.Equal(hash, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Existing_garrisons_keep_defender_quality_and_unit_id_order(bool inWave)
+    {
+        var sim = Scenario(new(12, 8, true), game =>
+        {
+            game.State.Turn = 60;
+            GameFactory.NeutralPolitics(game);
+            foreach (int column in new[] { 4, 9 })
+            {
+                var city = AddCity(game, 0, column, 3);
+                city.ProductionQueue.Add(new("cities:unit", "military:warrior"));
+            }
+            AddUnit(game, 0, "military:warrior", 4, 3);
+            AddUnit(game, 0, "military:javelineer", 4, 3).Health = 90;
+            AddUnit(game, 0, "military:javelineer", 4, 3).Health = 90;
+            AddUnit(game, 0, "military:javelineer", 4, 3);
+            AddUnit(game, 0, "military:warrior", 9, 3);
+            AddUnit(game, 0, "military:warrior", 9, 3);
+        });
+        sim.IsParallelAiTurn = inWave;
+        var rng = sim.Rng.State;
+        var log = new PlannerLog();
+        sim.CommandObserver = log;
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var army = NewAi(sim, "ArmyPlan", ctx);
+        var cities = NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), army);
+        Call(cities, "Plan");
+        var attack = NewAi(sim, "AttackPlanner", ctx, NewAi(sim, "UnitOrders", ctx));
+        Call(NewAi(sim, "MilitaryPlanner", ctx, army, cities, attack), "Plan");
+        // Reserve the healthiest strong defender, then the lower ID on the quality/health tie.
+        // Reserve the second city's defenders before resting either remaining soldier.
+        Assert.Equal(new[] { "activity:4:Fortify", "activity:2:Fortify", "activity:5:Fortify",
+            "activity:6:Fortify", "activity:1:Fortify", "activity:3:Fortify" }, log.Commands);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Production_fallbacks_keep_their_order_after_a_city_changes_owner(bool inWave, bool reload)
+    {
+        var sim = Scenario(new(8, 4, true), game =>
+        {
+            game.State.Turn = 60;
+            GameFactory.NeutralPolitics(game);
+            foreach (int column in new[] { 1, 5 })
+            {
+                var city = AddCity(game, 0, column, 2);
+                city.Population = column == 1 ? 4 : 3;
+                city.ProductionQueue.Add(new("economy:process", "economy:process_wealth"));
+                for (int i = 0; i < 6; i++) AddUnit(game, 0, "military:warrior", column, 2);
+                AddUnit(game, 0, "military:worker", column, 2);
+            }
+        });
+        if (reload) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+        sim.IsParallelAiTurn = inWave;
+        var rng = sim.Rng.State;
+        // A synchronous command callback changes ownership after views were captured. The next city's
+        // production service can still rate choices, but its command validator must reject every order.
+        var log = new PlannerLog(transferCity: 2);
+        sim.CommandObserver = log;
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        Call(NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), NewAi(sim, "ArmyPlan", ctx)), "Plan");
+        // Recorded before candidate pruning, including duplicate process fallbacks.
+        Assert.Equal(new[]
+        {
+            "produce:1:cities:building/cities:sacrificial_altar",
+            "rejected:produce:2:cities:building/cities:sacrificial_altar",
+            "rejected:produce:2:cities:building/cities:firepit",
+            "rejected:produce:2:economy:process/economy:process_wealth",
+            "rejected:produce:2:economy:process/economy:process_wealth",
+            "rejected:produce:2:economy:process/economy:process_culture",
+            "rejected:produce:2:economy:process/economy:process_idle",
+        }, log.Commands);
+        Assert.Equal(14432078200561061528UL, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Worker_choices_keep_order_and_budget_after_starting_a_paid_build(bool inWave, bool reload)
+    {
+        var sim = Scenario(new(12, 6, true), game =>
+        {
+            game.State.Turn = 60;
+            GameFactory.NeutralPolitics(game);
+            game.TeamOf(0).Techs.UnionWith(["research:agriculture", "research:the_wheel", "research:railroad"]);
+            game.State.PlayerById(0).Treasury = 10;
+            foreach (var plot in game.State.Plots)
+            {
+                plot.Owner = 0;
+                plot.Improvement = "world:improvement_improvement_farm";
+                plot.Route = "world:route_route_road";
+            }
+            foreach (int column in new[] { 2, 8 })
+            {
+                var city = AddCity(game, 0, column, 3);
+                var worker = AddUnit(game, 0, "military:worker", column == 2 ? 3 : 7, 3);
+                city.Worked.Add(worker.Position);
+                city.Extensions.Set(game.Content, new CityRuleState { ManualWork = true });
+            }
+        });
+        if (reload) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+        sim.IsParallelAiTurn = inWave;
+        var rng = sim.Rng.State;
+        var log = new PlannerLog();
+        sim.CommandObserver = log;
+        Call(NewAi(sim, "WorkerPlanner", NewAi(sim, "AiContext", sim, 0)), "Plan");
+        Assert.Equal(new[] { "build:1:world:build_build_railroad", "move:2:7,3" }, log.Commands);
+        Assert.Equal(17648743727316353587UL, sim.ComputeHash());
+        Assert.Equal(0, sim.State.PlayerById(0).Treasury);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Fact]
+    public void Unit_choices_preserve_legal_score_ties_across_mutations_and_concurrent_forks()
+    {
+        var content = ModLoader.Build(mods.Sources.Append(new ModSource
+        {
+            Manifest = new() { Id = "choice_probe", Dependencies = ["ai", "cities", "military"] },
+            Instance = new ChoiceUnits(), Root = mods.Root,
+        }));
+        var sim = Simulation.CreateScenario(content, GameFactory.Settings(71), new(4, 1),
+            Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), game =>
+            {
+                GameFactory.NeutralPolitics(game);
+                AddCity(game, 0, 0, 0);
+                AddUnit(game, 0, "choice_probe:limited", 0, 0);
+            });
+        var hash = sim.ComputeHash();
+        var rng = sim.Rng.State;
+        var forks = Enumerable.Range(0, 3).Select(_ => sim.ForkSpeculative()).ToArray();
+        Parallel.ForEach(forks, fork =>
+        {
+            var ctx = NewAi(fork, "AiContext", fork, 0);
+            var options = NewAi(fork, "AiOptions", ctx);
+            var role = Enum.Parse(ctx.GetType().Assembly.GetType("Civ.Mods.Ai.UnitRole")!, "Melee");
+            UnitDef? Best(Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null) =>
+                (UnitDef?)Call(options, "Best", 1, role, score,
+                    new Func<UnitDef, bool>(u => u.Id.StartsWith("choice_probe:", StringComparison.Ordinal) && (filter?.Invoke(u) ?? true)));
+            Func<UnitDef, int> score = u => u.Id == "choice_probe:limited" ? 100 : 10;
+            Parallel.For(0, 16, _ => Assert.Equal("choice_probe:alpha", Best(score)!.Id));
+            Assert.Equal("choice_probe:zeta", Best(score, u => u.Id != "choice_probe:alpha")!.Id);
+            Assert.Equal("choice_probe:alpha", Best(_ => int.MinValue)!.Id);
+            Assert.Null(Best(score, _ => false));
+            Assert.Equal(hash, fork.ComputeHash());
+            Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(new DisbandUnitCommand { Player = 0, Unit = 1 }));
+            Assert.Equal("choice_probe:limited", Best(score)!.Id);
+            AddUnit(fork, 0, "choice_probe:limited", 0, 0);
+            Call(ctx, "Refresh");
+            Assert.Equal("choice_probe:alpha", Best(score)!.Id);
+            Assert.Equal(rng, fork.Rng.State);
+        });
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    private sealed class ChoiceUnits : IMod
+    {
+        public void Register(IModContext context)
+        {
+            foreach (string name in new[] { "zeta", "limited", "alpha" })
+                context.Content<UnitDef>().Register(new()
+                {
+                    Id = $"choice_probe:{name}", DefaultUnit = $"choice_probe:{name}",
+                    Domain = "military:domain_land", Cost = 10, Strength = 1,
+                    Limits = new() { Player = name == "limited" ? 1 : -1 },
+                });
+        }
     }
 
     [Theory]
@@ -528,6 +711,35 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.AddUnit(unit);
         sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
         return unit;
+    }
+
+    private sealed class PlannerLog(int? transferCity = null) : ICommandObserver
+    {
+        public List<string> Commands { get; } = [];
+        public void Before(Simulation sim, GameCommand command) => Record(command, "");
+        public void After(Simulation sim, GameCommand command)
+        {
+            if (command is not SetCityProductionCommand || transferCity is not { } city) return;
+            var old = sim.State.CityById(city);
+            sim.State.RemoveCity(city);
+            sim.State.AddCity(new City { Id = city, Owner = 1, Position = old.Position,
+                Population = old.Population, ProductionQueue = old.ProductionQueue });
+            sim.State.PlotAt(old.Position).Owner = 1;
+            transferCity = null;
+        }
+        public void Rejected(Simulation sim, GameCommand command) => Record(command, "rejected:");
+        private void Record(GameCommand command, string prefix)
+        {
+            string? description = command switch
+            {
+                SetCityProductionCommand p => $"produce:{p.CityId}:{p.Kind}/{p.ContentId}",
+                StartBuildCommand b => $"build:{b.Unit}:{b.Build}",
+                SetUnitActivityCommand a => $"activity:{a.Unit}:{a.Activity}",
+                MoveUnitPathCommand m => $"move:{m.Unit}:{string.Join(";", m.Path.Select(h => $"{h.Q},{h.R}"))}",
+                _ => null,
+            };
+            if (description is not null) Commands.Add(prefix + description);
+        }
     }
 
     private sealed class MovementLog : ICommandObserver

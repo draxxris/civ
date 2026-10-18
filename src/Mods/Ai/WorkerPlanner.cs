@@ -13,6 +13,7 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private List<WorkTile>? _tiles;
     private HashSet<TileId>? _roads;
     private readonly Dictionary<string, BuildDef[]> _builds = new(StringComparer.Ordinal);
+    private int _buildRevision = -1;
     private sealed record WorkTile(TileId Tile, int Priority);
     private sealed record Job(TileId Tile, string Build, long Value);
 
@@ -116,14 +117,15 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private Job? BestBuildAt(Unit worker, TileId tile, BuildDef[] builds, HashSet<TileId> roads)
     {
         var world = ctx.Service<IWorkerBuildService>();
-        var before = ctx.Service<IPlotYieldService>().Calculate(ctx.Sim, ctx.PlayerId, tile).Yields;
+        YieldVector? before = null;
         Job? best = null;
         foreach (var build in builds)
         {
-            if (build.RouteType is not null && !roads.Contains(tile)) continue;
+            if (!CanPreview(build, tile, roads)) continue;
             var preview = world.Preview(ctx.Sim, ctx.PlayerId, worker.Id, tile, build.Id);
             if (preview.Error is not null) continue;
-            long value = Gain(build, tile, before, preview.Yields);
+            before ??= ctx.Service<IPlotYieldService>().Calculate(ctx.Sim, ctx.PlayerId, tile).Yields;
+            long value = Gain(build, tile, before.Value, preview.Yields);
             if (value <= 0) continue;
             value = value * 1000 / Math.Max(100, preview.RequiredWork);
             if (best is null || value > best.Value) best = new(tile, build.Id, value);
@@ -131,18 +133,33 @@ internal sealed class WorkerPlanner(AiContext ctx)
         return best;
     }
 
+    private bool CanPreview(BuildDef build, TileId tile, HashSet<TileId> roads)
+    {
+        var plot = ctx.Sim.State.Plots[tile.Value];
+        if (build.ImprovementType is { } improvement && plot.Improvement == improvement) return false;
+        if (build.Mine && plot.DepletedMine) return false;
+        if (build.ObsoleteTech is { } obsolete && ctx.Sim.KnowsTech(ctx.PlayerId, obsolete)) return false;
+        if (build.RouteType is not { } route) return true;
+        return roads.Contains(tile) && (plot.Route is not { } existing
+            || ctx.Sim.Content.Get<RouteDef>(existing).Value < ctx.Sim.Content.Get<RouteDef>(route).Value);
+    }
+
     private BuildDef[] AvailableBuilds(Unit worker)
     {
-        if (!_builds.TryGetValue(worker.Type, out var builds))
+        // Resolve serially before parallel tile previews. Budget and technology are fixed only in this segment.
+        if (_buildRevision != ctx.Revision)
         {
-            var unit = ctx.Def(worker);
-            var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
-            builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id)
-                && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
-            _builds[worker.Type] = builds;
+            _builds.Clear();
+            _buildRevision = ctx.Revision;
         }
-        long treasury = ctx.Sim.State.PlayerById(ctx.PlayerId).Treasury;
-        return builds.Where(build => build.Cost <= treasury).ToArray();
+        if (_builds.TryGetValue(worker.Type, out var builds)) return builds;
+        var unit = ctx.Def(worker);
+        var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
+        long treasury = ctx.Self.Treasury;
+        builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id) && b.Cost <= treasury
+            && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
+        _builds[worker.Type] = builds;
+        return builds;
     }
 
     private long Gain(BuildDef build, TileId tile, YieldVector before, YieldVector after)
@@ -187,7 +204,7 @@ internal sealed class WorkerPlanner(AiContext ctx)
     }
 
     private City? NearestOther(City city) => ctx.Cities.Where(c => c.Id != city.Id)
-        .OrderBy(c => ctx.Grid.Distance(c.Position, city.Position)).ThenBy(c => c.Id).FirstOrDefault();
+        .MinBy(c => (ctx.Grid.Distance(c.Position, city.Position), c.Id));
 
     private bool ConnectsResource(Plot plot)
     {

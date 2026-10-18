@@ -25,6 +25,7 @@ internal sealed class AiContext
         public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Threats = new();
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
         public readonly ConcurrentDictionary<TileId, City?> NearestCities = new();
+        public readonly ConcurrentDictionary<(int City, string Kind, string Id), Lazy<bool>> Production = new();
         private readonly Dictionary<(int Unit, TileId Goal, bool Attack), Lazy<UnitPath?>> _paths = new();
         private readonly object _pathsLock = new();
 
@@ -146,7 +147,12 @@ internal sealed class AiContext
     public bool Alive(Unit unit) => Sim.State.FindUnit(unit.Id) is not null;
     public City? CityAtUnit(Unit unit) => Sim.State.CityAt(unit.Position) is { } c && c.Owner == PlayerId ? c : null;
     public City? NearestCity(Hex from) => _segment.NearestCities.GetOrAdd(Tile(from),
-        tile => Cities.OrderBy(c => Grid.Distance(Tile(c.Position), tile)).ThenBy(c => c.Id).FirstOrDefault());
+        tile => Cities.MinBy(c => (Grid.Distance(Tile(c.Position), tile), c.Id)));
+
+    /// <summary>Reuse read-only production eligibility until a successful command or explicit refresh.
+    /// Issue still validates the command, independently of this scoring cache.</summary>
+    public bool CanProduce(int city, string kind, string id) => _segment.Production.GetOrAdd((city, kind, id),
+        key => new Lazy<bool>(() => Service<ICityProductionService>().Validate(Sim, key.City, key.Kind, key.Id).Success)).Value;
     public MilitaryUnitState MilitaryState(Unit unit) => unit.Extensions.Get<MilitaryUnitState>(Sim.Content) ?? new();
 
     /// <summary>Exact path query in the unchanged segment. Direct mutations require Refresh before the next query.</summary>

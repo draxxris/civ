@@ -34,15 +34,16 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
 
     private void AssignGarrisons()
     {
-        foreach (var view in Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id))
+        var prioritized = Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id).ToArray();
+        foreach (var view in prioritized)
         {
             int want = army.DesiredGarrison(view);
             var here = ctx.Sim.State.UnitsAt(view.City.Position).Where(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee && ctx.MilitaryState(u).TransportId is null)
-                .OrderByDescending(u => AiOptions.DefenderQuality(ctx.Def(u)) * u.Health).ThenBy(u => u.Id).ToList();
-            foreach (var unit in here.Take(want)) { ctx.Done.Add(unit.Id); _orders.Fortify(unit); }
+                .OrderByDescending(u => AiOptions.DefenderQuality(ctx.Def(u)) * u.Health).ThenBy(u => u.Id).Take(want).ToArray();
+            foreach (var unit in here) { ctx.Done.Add(unit.Id); _orders.Fortify(unit); }
         }
         // Reserve all existing garrisons before choosing reinforcements: never steal a city's last defender.
-        foreach (var view in Views.OrderByDescending(v => v.Threat).ThenBy(v => v.City.Id))
+        foreach (var view in prioritized)
         {
             int here = ctx.Sim.State.UnitsAt(view.City.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee && ctx.MilitaryState(u).TransportId is null);
             for (int have = here; have < army.DesiredGarrison(view); have++)
