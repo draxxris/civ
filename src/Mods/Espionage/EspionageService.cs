@@ -39,30 +39,34 @@ internal sealed partial class EspionageService : IEspionageService
         var state = Player(sim, player); sim.State.PlayerById(player).Extensions.Set(sim.Content, state);
         state.Weights[targetTeam] = weight;
     }
-    internal void Allocate(Simulation sim, int player)
+    public IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths)
     {
-        var economy = sim.State.PlayerById(player).Extensions.TryGet<EconomyPlayerState>(sim.Content);
-        long produced = economy?.SettledTurn == sim.State.Turn ? economy.SettledCommerceHundredths.Espionage
-            : sim.Content.Services.Get<IPlayerEconomyService>().SingleOrDefault()?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
-        var state = Player(sim, player);
-        if (produced <= 0 && state.RemainderHundredths == 0) return;
-        sim.State.PlayerById(player).Extensions.Set(sim.Content, state);
-        state.RemainderHundredths += Math.Max(0, produced);
-        var rivals = Rivals(sim, player).Where(t => Weight(sim, player, t) > 0).ToArray();
+        long points = (Player(sim, player).RemainderHundredths + Math.Max(0, espionageHundredths)) / 100;
+        var rivals = Rivals(sim, player).ToArray();
+        var spending = new SortedDictionary<int, long>();
+        foreach (int rival in rivals) spending[rival] = 0;
         long weight = rivals.Sum(t => (long)Weight(sim, player, t));
-        if (weight == 0) return; // Hold unallocated points, including fractions, until a target is available.
-        long points = state.RemainderHundredths / 100; state.RemainderHundredths %= 100;
-        if (points == 0) return;
-        var team = Edit(sim, sim.TeamOf(player).Id);
-        long assigned = 0;
+        if (weight == 0) return spending; // Hold points until a target has positive weight.
         var shares = rivals.Select(t => (Team: t, Share: points * Weight(sim, player, t) / weight,
             Remainder: points * Weight(sim, player, t) % weight)).ToArray();
-        foreach (var share in shares)
-        {
-            team.Points[share.Team] = team.Points.GetValueOrDefault(share.Team) + share.Share;
-            assigned += share.Share;
-        }
-        foreach (var share in shares.OrderByDescending(s => s.Remainder).ThenBy(s => s.Team).Take((int)(points - assigned))) team.Points[share.Team]++;
+        foreach (var share in shares) spending[share.Team] = share.Share;
+        long assigned = spending.Values.Sum();
+        foreach (var share in shares.OrderByDescending(s => s.Remainder).ThenBy(s => s.Team).Take((int)(points - assigned))) spending[share.Team]++;
+        return spending;
+    }
+    internal void Allocate(Simulation sim, int player)
+    {
+        long produced = sim.Content.Services.Get<IPlayerEspionageSource>().SingleOrDefault()?.EspionageHundredths(sim, player)
+            ?? sim.Content.Services.Get<IPlayerEconomyService>().SingleOrDefault()?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
+        var state = Player(sim, player);
+        if (produced <= 0 && state.RemainderHundredths == 0) return;
+        var spending = Spending(sim, player, produced);
+        sim.State.PlayerById(player).Extensions.Set(sim.Content, state);
+        state.RemainderHundredths += Math.Max(0, produced) - spending.Values.Sum() * 100;
+        if (spending.Values.All(p => p == 0)) return;
+        var team = Edit(sim, sim.TeamOf(player).Id);
+        foreach (var share in spending)
+            team.Points[share.Key] = team.Points.GetValueOrDefault(share.Key) + share.Value;
     }
     /// <summary>Bilateral ratio from each side's lifetime spending plus live points against the other side.</summary>
     private static long RatioPercent(Simulation sim, int team, int target)

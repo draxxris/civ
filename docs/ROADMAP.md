@@ -68,9 +68,13 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Economy
 - **Commerce sliders**: Gold, research, culture, and espionage allocation sliders with mod-configurable step increments and maximum percentages.
 - **City commerce ledgers**: Full breakdown of raw commerce, modifier percentages, and direct commerce bonuses.
-- **Maintenance & costs**: City distance and number-of-cities maintenance, civic upkeep, military unit upkeep, outside-border supply, and inflation lines.
+- **Maintenance & costs**: City distance, number-of-cities, and corporate maintenance, civic upkeep, military unit upkeep, outside-border supply, and inflation lines.
 - **Second-order inflation**: Momentum-based inflation accumulator with turn offsets, handicap scaling, and civic modifier support.
-- **Specialized production**: Infinite `economy:process` queue items (converting production directly to commerce/gold/research/culture) and `economy:hurry` payments (both gold and population hurry with angry-citizen timers).
+- **Specialized production & hurry**: Infinite `economy:process` queue items (converting production directly to commerce/gold/research/culture) and `economy:hurry` payments (gold hurry with new-item surcharges and population whip with dynamic building anger modifiers, retroactive timer rescaling upon building completion, and hurry inflation decay).
+- **Corporate maintenance integration**: Full branch maintenance equation factoring headquarter commerce, resources, world size, population, handicap, civic modifiers (`RealCorporationMaintenanceModifier`), pre-inflation division, and realistic corporation scaling.
+- **Bilateral deal gold & trade transfers**: Per-turn trade deal gold integrated into `PlayerEconomy.Calculate` (`dealIncome`, `dealExpenses`, `NetGold`) with automated slider adjustments to prevent bankruptcy and net-payment settlement checks.
+- **Targeted espionage spending**: `IPlayerEspionageSource` integration routing commerce to rival team allocations with read-only ledger forecasts and remainder point distribution.
+- **Deficit strikes & forced disbanding**: Sustained deficits track `StrikeTurns`; multi-turn strikes trigger forced disbanding of lowest-value units via valuation scoring and role multipliers while protecting military happiness garrisons, halted once net gold reaches equilibrium.
 
 ### Cities
 - **Founding & territory**: Settler founding checks, minimum hex spacing, terrain validity, starting buildings, and initial plot culture.
@@ -79,7 +83,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Growth & food**: Sequential food threshold calculations, consumption, health penalties, fixed-point food waste, starvation prevention, and avoid-growth toggles.
 - **Happiness & health**: Ledgers combining population, handicap base, connected resources, buildings, specialists, features, and military presence.
 - **Production queues**: Append, prepend, remove, and pause commands; normalized capped production overflow; class-limited units, buildings, and world wonders.
-- **Culture borders**: Per-plot culture ledgers, hex distance falloff, and tie-breaking ownership assignment.
+- **Culture borders & assimilation**: Per-plot culture ledgers, hex distance falloff, tie-breaking ownership assignment, periodic culture decay halving on speed-scaled golden age intervals, and original civilization retention (`OriginalCivilization`) for unit/building override assimilation upon capture.
+- **Conscription (Draft)**: `ICityConscriptService` and `ConscriptCityCommand` (`cities:conscript`) drafting highest-priority eligible units with population sacrifice, halved city production experience, zero initial movement, world-size-scaled player draft limits, and stacking draft anger.
+- **Nationality anger**: Plot culture anger (`cities:culture_anger`) distinguishing foreign teams and wartime escalation (+50%) with same-team suppression, plus civic foreigner unhappiness (`government:foreigner_anger`).
 
 ### Military & Combat
 - **Hex movement & navigation**: Deterministic A* pathfinding, fractional move points, terrain/feature costs, hill penalties, road/rail bonuses, and river crossing bridges.
@@ -93,10 +99,12 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Civic categories**: Multi-category civic options with one active civic per category.
 - **Revolution & anarchy**: Anarchy duration calculated from base turns, city count, civic weights, trait exemptions (Spiritual), and minimum cooldown timers.
 - **Civic modifier source**: Dynamic modifiers applying to yields, commerce, capital city bonuses, improvement yields, happiness, health, maintenance, and military training.
+- **Draft civics & quotas**: Civic-enabled drafting permissions and per-turn quotas (`cities:max_conscript`) scaled by world size modifier.
 
 ### Peoples, Leaders & Traits
 - **Identities**: Full catalog of leaders, civilizations, unique units, and unique buildings.
 - **Trait modifier source**: City yields, commerce, happiness, health, wonder production bonuses, free promotions by combat type, and maintenance discounts.
+- **Extra culture levels**: Additive culture level modifiers (`cities:extra_culture_level`) from leader traits (`TraitDef.ExtraCultureLevel`), civics, and civilizations boosting initial city founding culture and border range.
 - **AI personality profiles**: Complete personality matrices (flavors, aggression, wonder preferences, civic weights) driving the AI mod.
 
 ### Advanced Systems (P6 / P7)
@@ -154,11 +162,11 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Player-specific tech queues**: Separate tech choices within shared multiplayer teams.
 
 ### Economy
-- [ ] **Forced military disbanding**: Automatically disband farthest military units when treasury drops to zero with sustained deficit.
-- [ ] **Targeted espionage spending**: Direct espionage commerce allocations against specific rival civilizations rather than aggregate pooling.
-- [ ] **Corporate cost integration**: Full unification of corporate branch expenses into overall empire city maintenance ledgers.
-- [ ] **Dynamic hurry anger**: Scale duration and severity of hurry unhappiness based on total population sacrificed.
-- [ ] **Trade deal income in treasury**: Real-time per-turn gold flows directly reflecting bilateral trade deals.
+- [x] **Forced military disbanding**: Automatically disband lowest-value military units when treasury drops to zero with sustained deficit across turn boundaries.
+- [x] **Targeted espionage spending**: Direct espionage commerce allocations against specific rival civilizations rather than aggregate pooling.
+- [x] **Corporate cost integration**: Full unification of corporate branch expenses into overall empire city maintenance ledgers.
+- [x] **Dynamic hurry anger**: Dynamic building hurry anger modifiers, retroactive timer rescaling, and hurry-driven inflation acceleration and decay.
+- [x] **Trade deal income in treasury**: Real-time per-turn gold flows directly reflecting bilateral trade deals.
 
 ### Cities
 - [ ] **Building power grid**: Implement power plant requirements, clean energy distribution, and building power deactivation when unpowered.
@@ -166,7 +174,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Building replacement effects**: Automatic obsolescence/replacement of lower-tier buildings by higher-tier counterparts.
 - [ ] **City conquest options**: Interactive conquest choice dialog (annex, puppet, raze); capture gold calculations; building survival rolls; capital relocation logic.
 - [ ] **Excess production gold conversion**: Automatically convert surplus production above the overflow cap into treasury gold.
-- [ ] **Conscription (Draft)**: Draft military units from city population under authorized civics with temporary draft anger.
+- [x] **Conscription (Draft)**: Draft military units from city population under authorized civics with temporary draft anger.
 - [ ] **Hostile culture spread obstruction**: Restrict cultural spread across enemy borders or impassable natural barriers.
 
 ### Military & Combat
@@ -179,9 +187,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Strategic military AI campaigns**: Multi-stack army coordination, targeted theater staging, and defensive reinforcement lines.
 
 ### Government & Peoples
-- [ ] **Cultural assimilation**: Gradual conversion of foreign nationality in captured cities over time.
-- [ ] **Draft civics**: Full support for civic-enabled conscription.
-- [ ] **Extra culture levels**: Support for civilization-specific or civic-specific maximum cultural tier expansion.
+- [x] **Cultural assimilation**: Gradual conversion of foreign nationality in captured cities over time.
+- [x] **Draft civics**: Full support for civic-enabled conscription.
+- [x] **Extra culture levels**: Support for civilization-specific or civic-specific maximum cultural tier expansion.
 
 ### Religion & Great People
 - [ ] **Foreign trade religion spread**: Spread religion along international trade routes to contacted foreign cities.

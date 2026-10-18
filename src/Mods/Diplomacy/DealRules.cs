@@ -169,16 +169,29 @@ internal sealed partial class DiplomacyService
         }
         return 0;
     }
+    private static bool CanSettle(Simulation sim, DiplomaticDeal deal)
+    {
+        var resources = deal.Items.Where(i => i.Kind == TradeItemKind.Resource).ToArray();
+        if (ValidateAssets(sim, resources, deal.Id) is not null) return false;
+        var gold = deal.Items.Where(i => i.Kind == TradeItemKind.GoldPerTurn).ToArray();
+        // Both sides transfer together. Incoming gold can fund the other side of this deal.
+        foreach (int player in new[] { deal.Proposer, deal.Recipient })
+        {
+            long net = gold.Sum(i => i.FromPlayer == player ? -i.Amount : i.Amount);
+            if (sim.State.PlayerById(player).Treasury + net < 0) return false;
+        }
+        return true;
+    }
     internal void SettleDeals(Simulation sim)
     {
         foreach (var d in Read(sim).Deals.Where(d => d.Status == DiplomaticDealStatus.Active).OrderBy(d => d.Id))
         {
-            if (!Live(sim, d) || ValidateAssets(sim, d.Items.Where(Ongoing).ToArray(), d.Id) is not null)
+            if (d.LastSettledTurn == sim.State.Turn) continue;
+            if (!Live(sim, d) || !CanSettle(sim, d))
             {
                 d.Status = DiplomaticDealStatus.Cancelled;
                 continue;
             }
-            if (d.LastSettledTurn == sim.State.Turn) continue;
             TransferGold(sim, d, TradeItemKind.GoldPerTurn);
             d.LastSettledTurn = sim.State.Turn;
         }

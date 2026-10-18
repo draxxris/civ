@@ -12,6 +12,8 @@ public sealed record CityGrew(int City, int Population) : DomainEvent;
 public sealed record BuildingCompleted(int City, string Building) : DomainEvent;
 /// <summary>A unit entered the game.</summary>
 public sealed record UnitCreated(int Unit, int Player, string Type, Hex Position) : DomainEvent;
+/// <summary>A unit was removed because its owner could not pay recurring costs.</summary>
+public sealed record UnitDisbandedForDeficit(int UnitId, int Player, Hex Position) : DomainEvent;
 /// <summary>A combat finished; the loser was removed. Report is the fight as it resolved, so presentation can replay it after the turn rolls over.</summary>
 public sealed record CombatResolved(int Attacker, int Defender, int Winner, int LoserOwner = -1, CombatReport? Report = null) : DomainEvent;
 /// <summary>A turn began.</summary>

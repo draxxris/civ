@@ -26,6 +26,9 @@ public sealed class CitiesMod : IMod
         var growth = new CityGrowth(yields, wellbeing, work);
         var culture = new CityCulture(yields, work);
         var production = new CityProduction(yields, growth);
+        var conscript = new CityConscript(work, culture, growth);
+        context.RegisterService<ICityConscriptService>("conscript", conscript);
+        context.RegisterService<IModifierSource>("conscript_anger", conscript);
         context.RegisterService<ICityCultureService>("culture_grants", culture);
         context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production));
         context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production));
@@ -42,13 +45,16 @@ public sealed class CitiesMod : IMod
         context.RegisterCommand<FoundCityWithSettlerCommand>("found_city");
         context.RegisterCommand<SetCityAssignmentsCommand>("set_city_work");
         context.RegisterCommand<SetCityProductionCommand>("set_city_production");
+        context.RegisterCommand<ConscriptCityCommand>("conscript");
+        context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts));
+        context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger));
         context.TurnSystems.Register(new AssignWorkPhase(work));
         context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run));
         context.TurnSystems.Register(new CityPhase("culture", TurnPhase.CityCulture, culture.Accumulate));
         context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread));
         context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
         context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
-
+        context.TurnSystems.Register(new CityCultureDecayPhase());
         context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
         context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
         {

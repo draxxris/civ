@@ -24,6 +24,9 @@ public sealed record TileRow(Hex Hex, string Name, long Food, long Production, l
 
 public sealed record HurryOption(string Id, string Name, long Gold, int Population, string? Blocked);
 
+public sealed record ConscriptOption(string UnitId, string Name, int PopulationCost, int MinPopulation, int Experience,
+    int AngerTurns, int MaxPlayerDrafts, string? Blocked);
+
 /// <summary>What the city screen shows, computed from the services so every renderer (and the tests) agree on the numbers.</summary>
 public sealed record CityScreen(
     int Id, string Name, int Population, long FoodStored, long FoodThreshold, long FoodSurplus, int? TurnsToGrow,
@@ -40,6 +43,7 @@ public sealed record CityScreen(
     IReadOnlyList<CityCorporation> Corporations, CityStabilityReport? Stability, IReadOnlyList<CityWonderScript> WonderScripts)
 {
     public int Citizens => Population;
+    public ConscriptOption? Conscript { get; init; }
 }
 
 public sealed partial class GameSession
@@ -74,15 +78,15 @@ public sealed partial class GameSession
             HurryOptions(city), ReligionsIn(city), greatPeople?.Rate ?? 0,
             greatPeopleService?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>(),
             greatPeopleService?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0, trade?.Routes ?? [],
-            tradeService?.MaxRoutes(Sim, city.Id) ?? 0, CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city));
+            tradeService?.MaxRoutes(Sim, city.Id) ?? 0, CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city))
+        {
+            Conscript = ConscriptOptionOf(city),
+        };
     }
 
     private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
 
-    private string? CultureLevelName(City city) => Sim.Content.Get<Schema.CultureLevelDef>().All
-        .Where(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed) <= city.Culture)
-        .Where(l => Sim.Content.Requirements.Evaluate(l.Requirements, new(Sim, city.Owner)).Success)
-        .OrderByDescending(l => l.SpeedThresholds.GetValueOrDefault(Sim.Settings.GameSpeed)).FirstOrDefault()?.Name;
+    private string? CultureLevelName(City city) => OptionalService<ICityCultureService>()?.Level(Sim, city.Id).Name;
 
     private long CultureOf(City city) => OptionalService<ICityCultureSource>()?.CultureHundredths(Sim, city.Id) ?? 0;
 
@@ -152,6 +156,15 @@ public sealed partial class GameSession
     }
 
 
+
+    private ConscriptOption? ConscriptOptionOf(City city)
+    {
+        var service = OptionalService<ICityConscriptService>();
+        if (service?.Calculate(Sim, city.Id) is not { } result) return null;
+        return new(result.UnitId, Sim.Content.Get<Schema.UnitDef>(result.UnitId).Name, result.PopulationCost,
+            result.MinPopulation, result.Experience, result.AngerTurns, result.MaxPlayerDrafts,
+            service.Validate(Sim, Human, city.Id));
+    }
 
     private IReadOnlyList<HurryOption> HurryOptions(City city)
     {

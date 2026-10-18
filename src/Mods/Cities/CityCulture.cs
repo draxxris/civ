@@ -15,6 +15,19 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         state.CultureRemainder = total % 100;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
     }
+    public int LevelIndex(Simulation sim, int cityId) => CityData.LevelIndex(sim, sim.State.CityById(cityId));
+    public Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int cityId) => CityData.Level(sim, sim.State.CityById(cityId));
+    public int OwnerCulturePercent(Simulation sim, int cityId) => CityData.OwnerCulturePercent(sim, sim.State.CityById(cityId));
+    public int TeamCulturePercent(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var plot = sim.State.PlotAt(city.Position);
+        long total = plot.Culture.Values.Sum();
+        if (total == 0) return 100;
+        int team = sim.TeamOf(city.Owner).Id;
+        return CityData.LivingPlayers(sim).Where(p => sim.TeamOf(p.Id).Id == team)
+            .Sum(p => (int)(plot.Culture.GetValueOrDefault(p.Id) * 100 / total));
+    }
     public void AddCulture(Simulation sim, int cityId, long culture, int spreadTurns)
     {
         var city = sim.State.CityById(cityId);
@@ -59,12 +72,78 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     }
     internal static void Initialize(Simulation sim, City city)
     {
-        foreach (var tile in sim.State.Grid.Range(CityData.Tile(sim, city), 1))
+        var center = CityData.Tile(sim, city);
+        foreach (var tile in sim.State.Grid.Range(center, 1))
         {
             var plot = sim.State.Plots[tile.Value];
-            int free = tile == CityData.Tile(sim, city) ? CityData.Constants(sim).FreeCityCulture : CityData.Constants(sim).FreeCityAdjacentCulture;
+            int free = tile == center ? CityData.Constants(sim).FreeCityCulture : CityData.Constants(sim).FreeCityAdjacentCulture;
             plot.Culture[city.Owner] = Math.Max(plot.Culture.GetValueOrDefault(city.Owner), free);
             Resolve(sim, tile);
+        }
+
+        long extraLevels = CityData.Effect(CityData.Effects(sim, city), "extra_culture_level");
+        var levels = CityData.Levels(sim, city.Owner, city);
+        for (long step = 0; step < extraLevels; step++)
+        {
+            var next = levels.FirstOrDefault(l => l.SpeedThresholds[sim.Settings.GameSpeed] > city.Culture);
+            if (next is null) break;
+            long threshold = next.SpeedThresholds[sim.Settings.GameSpeed];
+            city.Culture = threshold;
+            var state = CityData.Edit(sim, city);
+            state.CultureRemainder = 0;
+            state.CultureHundredths[city.Owner] = threshold * 100;
+        }
+
+        if (extraLevels > 0)
+        {
+            int radius = CultureRadius(sim, city);
+            long growth = CityData.Constants(sim).CityFreeCultureGrowthFactor;
+            foreach (var tile in sim.State.Grid.Range(center, radius))
+            {
+                int distance = sim.State.Grid.Distance(center, tile);
+                long amount = (radius - distance + 1) * growth + 1;
+                var plot = sim.State.Plots[tile.Value];
+                plot.Culture[city.Owner] = plot.Culture.GetValueOrDefault(city.Owner) + amount;
+                Resolve(sim, tile);
+            }
+        }
+    }
+    internal static void DecayPlotCulture(Simulation sim)
+    {
+        var constants = CityData.Constants(sim);
+        int halvingTurns = constants.CultureDecayTurns;
+        if (halvingTurns <= 0) return;
+        halvingTurns = Math.Max(10, halvingTurns * CityData.Speed(sim).GoldenAgePercent / 100);
+        if (sim.State.Turn % halvingTurns != 0) return;
+        var barbarians = sim.State.Players.Where(p => IsBarbarian(sim, p.Id))
+            .Select(p => p.Id).ToHashSet();
+        foreach (var tile in sim.State.Grid.Tiles)
+            DecayPlot(sim, tile, constants.CityFreeCultureGrowthFactor, barbarians);
+        foreach (var city in sim.State.Cities)
+            DecayForeignCulture(sim, city, constants.CityFreeCultureGrowthFactor * 100L);
+    }
+    private static void DecayPlot(Simulation sim, TileId tile, int minimum, HashSet<int> barbarians)
+    {
+        var plot = sim.State.Plots[tile.Value];
+        bool changed = false;
+        foreach (int player in plot.Culture.Keys.ToArray())
+        {
+            long culture = plot.Culture[player];
+            if (barbarians.Contains(player) || culture < minimum) continue;
+            long decayed = culture / 2;
+            if (decayed == culture) continue;
+            plot.Culture[player] = decayed;
+            changed = true;
+        }
+        if (changed) Resolve(sim, tile);
+    }
+    private static void DecayForeignCulture(Simulation sim, City city, long minimum)
+    {
+        var state = CityData.Edit(sim, city);
+        foreach (int player in state.CultureHundredths.Keys.ToArray())
+        {
+            if (player == city.Owner || state.CultureHundredths[player] < minimum) continue;
+            state.CultureHundredths[player] /= 2;
         }
     }
     internal static void Resolve(Simulation sim, TileId tile)
@@ -81,16 +160,25 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     }
     private static bool InRange(Simulation sim, int player, TileId tile)
     {
-        IReadOnlyList<Civ.Content.Schema.CultureLevelDef>? levels = null;
+
         foreach (var c in sim.State.Cities)
         {
             if (c.Owner != player) continue;
             int distance = sim.State.Grid.Distance(CityData.Tile(sim, c), tile);
             if (distance <= 1) return true;
-            levels ??= CityData.Levels(sim);
+            var levels = CityData.Levels(sim, c.Owner, c);
             if (distance < levels.Count && distance <= Math.Max(1, CityData.LevelIndex(sim, c, levels))) return true;
         }
         return false;
     }
+    internal static bool IsBarbarian(Simulation sim, int player) =>
+        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     internal static int CultureRadius(Simulation sim, City city) => Math.Max(1, CityData.LevelIndex(sim, city));
+}
+
+internal sealed class CityCultureDecayPhase : ITurnSystem
+{
+    public string Id => "cities:culture_decay";
+    public int Order => TurnPhase.Map + 2;
+    public void Run(Simulation sim) => CityCulture.DecayPlotCulture(sim);
 }

@@ -205,6 +205,98 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.Equal(new CommerceVector(100, 0, 0, 0), state.Rates);
         Assert.Equal(0, player.Treasury); Assert.True(state.UnpaidGold > 0);
         Assert.Equal(1, sim.TeamOf(0).ResearchProgress); // Base research remains, but slider science is gone.
+        Assert.Equal(1, state.StrikeTurns);
+        Assert.Empty(sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>());
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Equal(2, state.StrikeTurns);
+        var disbanded = Assert.Single(sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>());
+        Assert.Equal(0, disbanded.Player);
+        Assert.Null(sim.State.FindUnit(disbanded.UnitId));
+        player.Treasury = 10000;
+        sim.AdvanceTurn();
+        Assert.Equal(0, state.StrikeTurns);
+        Assert.Empty(sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>());
+    }
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Strikes_depend_on_actual_bilateral_deal_payments_not_expected_income(bool canPay)
+    {
+        var sim = P6RulesScenario.Create();
+        var city = sim.State.Cities.First(c => c.Owner == 0);
+        for (int i = 0; i < 60; i++) P6RulesScenario.AddUnit(sim, 0, city, "military:warrior");
+        var player = sim.State.PlayerById(0);
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { Rates = new(100, 0, 0, 0), StrikeTurns = 1 });
+        var economy = Service<IPlayerEconomyService>(sim);
+        Assert.True(economy.Calculate(sim, 0).NetGold < 0);
+        var diplomacy = Service<IDiplomacyService>(sim);
+        int deal = diplomacy.ProposeDeal(sim, 1, 0,
+            [new(1, TradeItemKind.GoldPerTurn, Amount: 200), new(0, TradeItemKind.GoldPerTurn, Amount: 7)]);
+        Assert.Null(diplomacy.ValidateExecution(sim, 0, deal));
+        diplomacy.ExecuteDeal(sim, deal);
+        Assert.True(economy.Calculate(sim, 0).NetGold >= 0);
+        player.Treasury = 0;
+        sim.State.PlayerById(1).Treasury = canPay ? 10000 : 0;
+        sim.AdvanceTurn();
+        var state = player.Extensions.Get<EconomyPlayerState>(sim.Content)!;
+        Assert.Equal(canPay ? 0 : 2, state.StrikeTurns);
+        Assert.Equal(canPay ? DiplomaticDealStatus.Active : DiplomaticDealStatus.Cancelled, diplomacy.Deals(sim).Single().Status);
+        Assert.Equal(canPay ? 0 : 1, sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>().Count());
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Sustained_strikes_rank_units_by_location_and_extra_cost_and_preserve_exempt_units(bool costlyOutside)
+    {
+        var sim = Scenario(true); var city = sim.State.Cities[0];
+        sim.State.PlayerById(0).Civics["probe:garrison_policy"] = "probe:garrison_civic";
+        var home = sim.State.Grid.HexOf(new TileId(40)); var outside = sim.State.Grid.HexOf(new TileId(0));
+        sim.State.PlotAt(home).Owner = 0; sim.State.PlotAt(outside).Owner = null;
+        Unit Add(string type, Hex position, int experience = 0)
+        {
+            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = position, Type = type, Experience = experience };
+            sim.State.AddUnit(unit); return unit;
+        }
+        var domestic = Add("probe:regular", home);
+        var foreign = Add(costlyOutside ? "probe:burden" : "probe:regular", outside);
+        var exempt = new[] { Add("probe:golden", outside), Add("probe:free", outside), Add("probe:garrison", city.Position) };
+        for (int i = 0; i < 40; i++) Add("probe:regular", city.Position, 10000);
+        var player = sim.State.PlayerById(0); player.Treasury = 0;
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 3, Rates = new(100, 0, 0, 0) });
+        Assert.True(Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold < 0);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Equal(4, player.Extensions.Get<EconomyPlayerState>(sim.Content)!.StrikeTurns);
+        var disbanded = sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>().ToArray();
+        Assert.Equal(2, disbanded.Length); // Fourth strike permits two removals, but the deficit remains.
+        // Own territory halves the score. A large extra upkeep cost can outweigh that location preference.
+        Assert.Equal(costlyOutside ? foreign.Id : domestic.Id, disbanded[0].UnitId);
+        Assert.Equal(costlyOutside ? domestic.Id : foreign.Id, disbanded[1].UnitId);
+        Assert.Null(sim.State.FindUnit(domestic.Id)); Assert.Null(sim.State.FindUnit(foreign.Id));
+        Assert.All(exempt, unit => Assert.NotNull(sim.State.FindUnit(unit.Id)));
+        Assert.True(Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold < 0);
+    }
+    [Fact]
+    public void Forced_disbanding_stops_before_its_quota_when_upkeep_becomes_affordable()
+    {
+        var sim = Scenario(true); var city = sim.State.Cities[0]; city.Buildings.Add("cities:palace");
+        var player = sim.State.PlayerById(0); player.Civics.Clear(); player.Treasury = 0;
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 5, Rates = new(100, 0, 0, 0) });
+        var costly = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = city.Position, Type = "probe:burden" };
+        var regular = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = city.Position, Type = "probe:regular" };
+        sim.State.AddUnit(costly); sim.State.AddUnit(regular);
+        var economy = Service<IPlayerEconomyService>(sim);
+        Assert.True(economy.Calculate(sim, 0).NetGold < 0);
+        sim.AdvanceTurn();
+        Assert.Equal(costly.Id, Assert.Single(sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>()).UnitId);
+        Assert.NotNull(sim.State.FindUnit(regular.Id));
+        Assert.True(economy.Calculate(sim, 0).NetGold >= 0);
+        sim.AdvanceTurn();
+        Assert.Equal(0, player.Extensions.Get<EconomyPlayerState>(sim.Content)!.StrikeTurns);
+        Assert.Empty(sim.Events.PreviousTurn.OfType<UnitDisbandedForDeficit>());
     }
     [Fact]
     public void Process_queue_converts_production_after_commerce_modifiers_without_eating_overflow()
@@ -239,7 +331,9 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         sim.State.PlayerById(0).Treasury = 78;
         Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1, HurryId = "cities:hurry_gold" }, out error), error);
         Assert.Equal(0, sim.State.PlayerById(0).Treasury); Assert.Equal(17, city.ProductionQueue[0].Progress);
+        Assert.Equal(1, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount);
         sim.AdvanceTurn(); Assert.Contains("probe:building", city.Buildings);
+        Assert.Equal(0, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount); // Elapsed turn zero is a decay boundary.
         Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = 1, Kind = "cities:building", ContentId = "probe:whip" }, out _));
         city.Population = 20; city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 1 };
         // Happiness is not modelled here: give the city 18 workers, as if it had grown content, so the whip must release them.
@@ -250,9 +344,107 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.Equal(706, hurry.Production); // 3*157*150/100 = 706.
         Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = 1, HurryId = "cities:hurry_population" }, out error), error);
         Assert.Equal(17, city.Population);
+        Assert.Equal(1, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount);
         Assert.True(city.Worked.Count + city.Specialists.Values.Sum() <= city.Population);
         Assert.Equal(20, city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns);
         Assert.Contains(Service<ICityWellbeingService>(sim).Calculate(sim, 1).Ledger.Lines, l => l.Source == "economy:hurry" && l.Amount == 1);
+    }
+    [Theory]
+    [InlineData("probe:calm", 10)]
+    [InlineData("probe:agitation", 30)]
+    [InlineData("probe:no_anger", 1)]
+    [InlineData("probe:obsolete_calm", 20)]
+    [InlineData("probe:inactive_calm", 20)]
+    public void Whip_anger_length_uses_only_active_buildings_and_has_a_one_turn_floor(string building, int turns)
+    {
+        var sim = Scenario(true); var city = sim.State.Cities[0]; city.Population = 20;
+        city.Buildings.Add(building);
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:building", ContentId = "probe:whip" }, out var error), error);
+        Assert.True(sim.TryApply(new HurryCityCommand { Player = 0, CityId = city.Id, HurryId = "cities:hurry_population" }, out error), error);
+        Assert.Equal(turns, city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns);
+        Assert.Equal(1, Service<ICityWellbeingService>(sim).Calculate(sim, city.Id).Ledger.Lines.Single(l => l.Source == "economy:hurry").Amount);
+    }
+    [Theory]
+    [InlineData(null, "probe:calm", 14)]        // 31 * 50/100, then end-turn decay.
+    [InlineData("probe:calm", "probe:agitation", 61)] // 31 * 100/50, then decay.
+    [InlineData("probe:agitation", "probe:calm", 19)] // 31 * 100/150, then decay.
+    [InlineData(null, "probe:no_anger", 0)]
+    [InlineData(null, "probe:building", 30)]
+    public void Completing_a_building_rescales_existing_hurry_anger_and_replays_after_save(string? existing, string completed, int expected)
+    {
+        var sim = Scenario(true); var city = sim.State.Cities[0];
+        if (existing is not null) city.Buildings.Add(existing);
+        city.Extensions.Set(sim.Content, new EconomyCityState { HurryAngerTurns = 31 });
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:building", ContentId = completed }, out var error), error);
+        var cost = Service<ICityProductionService>(sim).Calculate(sim, city.Id, "cities:building", completed).Cost;
+        city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = cost - 1 };
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Contains(completed, city.Buildings);
+        Assert.Contains(sim.Events.PreviousTurn.OfType<BuildingCompleted>(), e => e.City == city.Id && e.Building == completed);
+        Assert.Equal(expected, city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+    [Fact]
+    public void Global_hurry_discount_reaches_other_owned_cities_but_not_rivals_or_obsolete_buildings()
+    {
+        var sim = Scenario(true); var city = sim.State.Cities[0];
+        var other = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(44)) };
+        var rival = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new TileId(80)) };
+        sim.State.AddCity(other); sim.State.AddCity(rival);
+        foreach (var c in new[] { city, rival })
+            c.ProductionQueue.Add(new("cities:building", "probe:building", 0));
+        var hurry = Service<ICityHurryService>(sim);
+        Assert.Equal(78, hurry.Calculate(sim, city.Id, "cities:hurry_gold").Gold);
+        long rivalCost = hurry.Calculate(sim, rival.Id, "cities:hurry_gold").Gold;
+        other.Buildings.Add("probe:global_hurry");
+        Assert.Equal(60, hurry.Calculate(sim, city.Id, "cities:hurry_gold").Gold); // 150% * 75% = 112%; ceil(17 * 112/100) * 3.
+        Assert.Equal(rivalCost, hurry.Calculate(sim, rival.Id, "cities:hurry_gold").Gold);
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        Assert.Equal(78, hurry.Calculate(sim, city.Id, "cities:hurry_gold").Gold);
+    }
+    [Theory]
+    [InlineData(0, 10100)]
+    [InlineData(100, 10200)]
+    public void Hurry_count_scales_inflation_before_equilibrium_rounding(int count, long ratio)
+    {
+        var sim = Scenario(true); sim.State.Turn = 231;
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new EconomyPlayerState { HurriedCount = count });
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(ratio, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.AccruedCostRatioTimes10000);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+    [Theory]
+    [InlineData("probe:civic", 6)]             // 2 * TrainPercent 330/100.
+    [InlineData("probe:slow_decay", 9)]        // 6 * 150/100.
+    [InlineData("probe:fast_decay", 3)]        // 6 * 50/100.
+    [InlineData("probe:instant_decay", 1)]     // Nonpositive intervals clamp to one.
+    public void Hurry_inflation_count_decays_on_elapsed_turn_boundaries_and_stops_at_zero(string civic, int interval)
+    {
+        var sim = Scenario(true); sim.State.Turn = interval;
+        sim.State.PlayerById(0).Civics["probe:option"] = civic;
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, new EconomyPlayerState { HurriedCount = 2 });
+        sim.AdvanceTurn();
+        Assert.Equal(interval == 1 ? 1 : 2, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(interval == 1 ? 0 : 1, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        for (int i = 0; i < interval + 1; i++) sim.AdvanceTurn();
+        Assert.Equal(0, sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!.HurriedCount);
+    }
+    [Fact]
+    public void Hurry_count_still_decays_when_inflation_is_disabled()
+    {
+        var sim = Scenario(); sim.State.Turn = 6;
+        var state = new EconomyPlayerState { HurriedCount = 1 };
+        sim.State.PlayerById(0).Extensions.Set(sim.Content, state);
+        sim.AdvanceTurn(); Assert.Equal(1, state.HurriedCount);
+        sim.AdvanceTurn(); Assert.Equal(0, state.HurriedCount);
+        Assert.Equal(10000, state.AccruedCostRatioTimes10000);
     }
     [Fact]
     [Trait("Category", "E2E")]
@@ -296,6 +488,22 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
                 Hurrys = new Dictionary<string, bool> { ["cities:hurry_gold"] = true, ["cities:hurry_population"] = true }.ToImmutableDictionary() });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:building", DefaultBuilding = "probe:building", Cost = 10 });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:whip", DefaultBuilding = "probe:whip", Cost = 300 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:calm", DefaultBuilding = "probe:calm", Cost = 1, HurryAngerModifier = -50 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:agitation", DefaultBuilding = "probe:agitation", Cost = 1, HurryAngerModifier = 50 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:no_anger", DefaultBuilding = "probe:no_anger", Cost = 1, HurryAngerModifier = -100 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:obsolete_calm", DefaultBuilding = "probe:obsolete_calm", Cost = 1, HurryAngerModifier = -50, ObsoleteTech = "research:agriculture" });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:inactive_calm", DefaultBuilding = "probe:inactive_calm", Cost = 1, HurryAngerModifier = -50,
+                RequiresActiveCivics = true, Requirements = new Requirement.Leaf("civic", "government:slavery") });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:global_hurry", DefaultBuilding = "probe:global_hurry", Cost = 1, GlobalHurryModifier = -25, ObsoleteTech = "research:agriculture" });
+            foreach (var (id, modifier) in new[] { ("slow_decay", 50), ("fast_decay", -50), ("instant_decay", -100) })
+                context.Content<S.CivicDef>().Register(new() { Id = "probe:" + id, Option = "probe:option", HurryInflationModifier = modifier });
+            context.Content<S.CivicOptionDef>().Register(new() { Id = "probe:garrison_policy" });
+            context.Content<S.CivicDef>().Register(new() { Id = "probe:garrison_civic", Option = "probe:garrison_policy", HappyPerMilitaryUnit = 1 });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:regular", DefaultUnit = "probe:regular", Cost = 20, Moves = 1 });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:burden", DefaultUnit = "probe:burden", Cost = 20, Moves = 1, ExtraCost = 100 });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:golden", DefaultUnit = "probe:golden", Cost = 1, Moves = 1, ExtraCost = 1000, GoldenAge = true });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:free", DefaultUnit = "probe:free", Cost = 0, Moves = 1, ExtraCost = 1000 });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:garrison", DefaultUnit = "probe:garrison", Cost = 1, Moves = 1, ExtraCost = 1000, MilitaryHappiness = true });
             context.RegisterService<IModifierSource>("effects", new Effects());
         }
     }

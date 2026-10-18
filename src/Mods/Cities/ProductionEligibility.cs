@@ -72,7 +72,10 @@ internal static class ProductionEligibility
         failures.AddRange(sim.Content.Requirements.Evaluate(def.Requirements, new(sim, city.Owner, city, CityData.Tile(sim, city))).Failures);
     private static void Substitution(Simulation sim, City city, string category, string id, bool unit, List<RequirementFailure> failures)
     {
-        var civ = sim.Content.Get<S.CivilizationDef>(sim.State.PlayerById(city.Owner).Civilization);
+        string civilization = sim.State.PlayerById(city.Owner).Civilization;
+        if (sim.Content.Get<S.GameOptionDef>("foundation:gameoption_assimilation").Default)
+            civilization = CityData.Read(sim, city).OriginalCivilization is { Length: > 0 } original ? original : civilization;
+        var civ = sim.Content.Get<S.CivilizationDef>(civilization);
         var map = unit ? civ.UnitOverrides : civ.BuildingOverrides;
         string? selected = map.GetValueOrDefault(category, category);
         if (selected != id) Fail(failures, "Civilization class replacement required");

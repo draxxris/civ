@@ -6,9 +6,9 @@ namespace Civ.Client;
 
 /// <summary>A hand-made, repeatable scene that overwrites the generated map for captures. JSON:
 /// <code>
-/// { "fill":  { "terrain": "world:grass", "kind": "Flat" },
+/// { "fill":  { "terrain": "example:grass", "kind": "Flat" },
 ///   "tiles": [ { "at": [5, 5], "kind": "Hills" },
-///              { "rect": [3, 3, 7, 5], "terrain": "world:plains", "feature": "world:forest" } ],
+///              { "rect": [3, 3, 7, 5], "terrain": "example:plains", "feature": "example:forest" } ],
 ///   "roads": [ [[2, 2], [3, 2], [4, 3]] ],
 ///   "focus": [5, 5] }
 /// </code>

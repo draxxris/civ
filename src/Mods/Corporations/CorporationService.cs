@@ -1,5 +1,7 @@
+using Civ.Content;
 using Civ.Content.Schema;
 using Civ.Game;
+using CivicDef = Civ.Content.Schema.CivicDef;
 
 namespace Civ.Mods.Corporations;
 
@@ -25,10 +27,36 @@ internal sealed class CorporationService : ICorporationService
     }
     public long MaintenanceHundredths(Simulation sim, int city)
     {
-        long cost = Present(sim, city).Where(c => IsActive(sim, city, c))
-            .Sum(c => sim.Content.Get<CorporationDef>(c).MaintenanceHundredths * ConsumedBonusCount(sim, city, c));
-        int modifier = Civics(sim, sim.State.CityById(city).Owner).Sum(c => c.CorporationMaintenanceModifier);
-        return cost * Math.Max(0, 100L + modifier) / 100;
+        var cityObj = sim.State.CityById(city);
+        var world = sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!);
+        var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
+        long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total("cities:corporation_maintenance_percent");
+        int inflation = InflationRate(sim, cityObj.Owner) + 100;
+        bool realistic = sim.Content.Get<GameOptionDef>("foundation:gameoption_realistic_corporations").Default;
+        long total = 0;
+        foreach (var corporation in Present(sim, city).Where(c => IsActive(sim, city, c)))
+        {
+            var def = sim.Content.Get<CorporationDef>(corporation);
+            var hq = def.HeadquartersCommerce;
+            long maintenance = 100L * (hq.Gold + hq.Research + hq.Culture + hq.Espionage);
+            long bonusMaintenance = (long)def.MaintenanceHundredths * ConsumedBonusCount(sim, city, corporation);
+            maintenance += bonusMaintenance * world.CorporationMaintenancePercent / 100;
+            maintenance = maintenance * (cityObj.Population + 17) / 18;
+            maintenance = maintenance * handicap.CorporationMaintenancePercent / 100;
+            maintenance = maintenance * Math.Max(0, 100 + modifier) / 100;
+            if (inflation > 0) maintenance = maintenance * 100 / inflation;
+            if (realistic && handicap.CorporationMaintenancePercent > 80)
+                maintenance = maintenance * handicap.CorporationMaintenancePercent / 80;
+            total += maintenance;
+        }
+        return total;
+    }
+    private static int InflationRate(Simulation sim, int player)
+    {
+        var raw = sim.Content.Get<RuleConstantsDef>().All.Single().Raw;
+        if (int.TryParse(raw.GetValueOrDefault("DISABLE_INFLATION"), out int disabled) && disabled != 0) return 0;
+        long ratio = sim.State.PlayerById(player).Extensions.TryGet<EconomyPlayerState>(sim.Content)?.AccruedCostRatioTimes10000 ?? 10000;
+        return (int)((ratio - 10000) / 100);
     }
     public string? ValidateFound(Simulation sim, int player, int unitId, string corporation)
     {

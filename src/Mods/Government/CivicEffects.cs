@@ -13,6 +13,8 @@ internal sealed class CivicEffects : IModifierSource
     {
         foreach (var civic in context.Sim.State.PlayerById(context.Player).Civics.Values.Order(StringComparer.Ordinal).Select(context.Sim.Content.Get<CivicDef>))
             Contribute(context, civic, sink);
+        if (context.Scope == ModifierScope.City && context.City is { } affectedCity)
+            CivicAnger(context.Sim, affectedCity, sink);
         if (context.Scope != ModifierScope.Player) return;
         foreach (var city in context.Sim.State.Cities.Where(city => city.Owner == context.Player))
             foreach (var building in ActiveBuildings(context.Sim, city)) sink.Add(building.Id, "government:anarchy_percent", building.AnarchyModifier);
@@ -37,12 +39,20 @@ internal sealed class CivicEffects : IModifierSource
     {
         var values = new (string Key, int Value)[] {
             ("cities:distance_maintenance_percent", c.DistanceMaintenanceModifier), ("cities:count_maintenance_percent", c.CityCountMaintenancePercent),
-            ("cities:corporation_maintenance_percent", c.CorporationMaintenanceModifier), ("cities:growth_percent", c.PopulationGrowthPercent),
+            ("cities:corporation_maintenance_percent", sim.Content.Get<GameOptionDef>("foundation:gameoption_realistic_corporations").Default
+                ? c.RealCorporationMaintenanceModifier : c.CorporationMaintenanceModifier), ("cities:growth_percent", c.PopulationGrowthPercent),
+            ("cities:max_conscript", GetWorldSizeMaxConscript(sim, c)),
             ("world:worker_speed_percent", c.WorkerSpeedModifier), ("world:improvement_upgrade_percent", c.ImprovementUpgradeRateModifier),
             ("military:general_rate_percent", c.GreatGeneralRateModifier), ("military:domestic_general_rate_percent", c.DomesticGreatGeneralRateModifier) };
         foreach (var value in values) sink.Add(c.Id, value.Key, value.Value);
         // Unit support, supply, hurry permissions and civic upkeep already use the active definitions in Economy.
 
+    }
+    private static int GetWorldSizeMaxConscript(Simulation sim, CivicDef civic)
+    {
+        int modifier = string.IsNullOrEmpty(sim.Settings.WorldSize) ? 0
+            : sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize).MaxConscriptModifier;
+        return civic.MaxConscript * Math.Max(0, 100 + modifier) / 100;
     }
     private static IEnumerable<BuildingDef> ActiveBuildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
         .Select(sim.Content.Get<BuildingDef>).Where(b => IsActive(sim, city, b));
@@ -56,6 +66,8 @@ internal sealed class CivicEffects : IModifierSource
         var buildings = ActiveBuildings(sim, city).ToArray();
         sink.AddYield(c.Id, c.YieldModifiers, true);
         sink.AddCommerce(c.Id, c.CommerceModifiers, true);
+        sink.Add(c.Id, "cities:foreigner_unhappy_percent", c.ForeignerUnhappyPercent);
+
         var values = new (string Key, int Value)[] {
             ("happiness", c.CivicHappiness), ("health", c.ExtraHealth), ("free_specialists", c.FreeSpecialist),
             ("great_people_percent", c.GreatPeopleRateModifier), ("military_production_percent", c.MilitaryProductionModifier),
@@ -74,6 +86,23 @@ internal sealed class CivicEffects : IModifierSource
             sink.Add(c.Id, "cities:health", c.BuildingHealthChanges.GetValueOrDefault(b.DefaultBuilding));
         }
     }
+    private static void CivicAnger(Simulation sim, City city, ModifierSink sink)
+    {
+        var others = sim.State.Players.Where(p => p.Id != city.Owner && !IsBarbarian(sim, p.Id)
+            && sim.TeamOf(p.Id).Id != sim.TeamOf(city.Owner).Id)
+            .Select(p => new { Player = p, Cities = sim.State.Cities.Count(c => c.Owner == p.Id) }).ToArray();
+        int possible = others.Sum(p => p.Cities);
+        if (possible == 0) return;
+        var owner = sim.State.PlayerById(city.Owner);
+        foreach (var civic in sim.Content.Get<CivicDef>().All.Where(c => c.CivicPercentAnger != 0 && c.Option is not null))
+        {
+            if (owner.Civics.GetValueOrDefault(civic.Option!) == civic.Id) continue;
+            int count = others.Where(p => p.Player.Civics.GetValueOrDefault(civic.Option!) == civic.Id).Sum(p => p.Cities);
+            sink.Add(civic.Id, "cities:civic_percent_anger", (long)civic.CivicPercentAnger * count / possible);
+        }
+    }
+    private static bool IsBarbarian(Simulation sim, int player) =>
+        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     private static void Capital(City city, CivicDef c, BuildingDef[] buildings, ModifierSink sink)
     {
         if (!buildings.Any(b => b.Capital)) return;
