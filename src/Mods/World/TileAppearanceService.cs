@@ -25,8 +25,17 @@ internal sealed class TileAppearanceService : ITileAppearanceService
         ["world:fallout"] = new(0x9a9a2a, 40, 2),
     };
 
+    private static readonly IReadOnlyDictionary<string, RouteLook> Routes = new Dictionary<string, RouteLook>(StringComparer.Ordinal)
+    {
+        ["world:route_route_track"] = RouteLook.Track, ["world:route_route_road"] = RouteLook.Road,
+        ["world:route_route_paved"] = RouteLook.Paved, ["world:route_route_modern_road"] = RouteLook.Highway,
+        ["world:route_route_railroad"] = RouteLook.Railroad, ["world:route_route_railroad_electric"] = RouteLook.ElectricRailroad,
+        ["world:route_route_gravtube"] = RouteLook.Maglev, ["world:route_route_jumplane"] = RouteLook.Jumplane,
+    };
+
     public TileAppearance? Terrain(string id) => Terrains.GetValueOrDefault(id);
     public TileAppearance? Feature(string id) => Features.GetValueOrDefault(id);
+    public RouteLook? Route(string id) => Routes.TryGetValue(id, out var look) ? look : null;
 
     public string? Surface(TerrainSurface surface) => surface switch
     {

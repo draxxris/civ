@@ -1,0 +1,14 @@
+[
+  {"name": "j_railroad_electric_y", "focusTile": [3, 3], "distance": 2.2, "pitch": 80},
+  {"name": "j_railroad_electric_t", "focusTile": [8, 3], "distance": 2.2, "pitch": 80},
+  {"name": "j_railroad_electric_x", "focusTile": [13, 3], "distance": 2.2, "pitch": 80},
+  {"name": "j_railroad_electric_six", "focusTile": [18, 3], "distance": 2.2, "pitch": 80},
+  {"name": "j_gravtube_y", "focusTile": [3, 9], "distance": 1.8, "pitch": 50},
+  {"name": "j_gravtube_t", "focusTile": [8, 9], "distance": 1.8, "pitch": 50},
+  {"name": "j_gravtube_x", "focusTile": [13, 9], "distance": 1.8, "pitch": 50},
+  {"name": "j_gravtube_six", "focusTile": [18, 9], "distance": 1.8, "pitch": 50},
+  {"name": "j_jumplane_y", "focusTile": [3, 15], "distance": 1.8, "pitch": 50},
+  {"name": "j_jumplane_t", "focusTile": [8, 15], "distance": 1.8, "pitch": 50},
+  {"name": "j_jumplane_x", "focusTile": [13, 15], "distance": 1.8, "pitch": 50},
+  {"name": "j_jumplane_six", "focusTile": [18, 15], "distance": 1.8, "pitch": 50}
+]

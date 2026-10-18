@@ -71,13 +71,16 @@ internal sealed partial class TerrainRenderer : Node3D
         RoadMaterial = Material("res://shaders/road.gdshader", warp, palette);
         // After the rivers, so a road crossing one stays on top.
         RoadMaterial.RenderPriority = 1;
+        RouteStructureMaterial = Material("res://shaders/route_structure.gdshader", warp, palette);
         _ground = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
     }
 
-    /// <summary>Draped dirt roads (road.gdshader): lit, fogged and blended with the ground like the terrain.</summary>
+    /// <summary>Draped route ribbons (road.gdshader): lit, fogged and blended with the ground like the terrain.</summary>
     public ShaderMaterial RoadMaterial { get; }
+    /// <summary>Route decks, supports and masts (route_structure.gdshader), fogged per pixel.</summary>
+    public ShaderMaterial RouteStructureMaterial { get; }
     /// <summary>Material and scatter lookups for the loaded content.</summary>
     public TerrainPalette Palette { get; }
     /// <summary>The terrain inputs as the local team knows them, as of the last world refresh.</summary>

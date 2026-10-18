@@ -17,6 +17,7 @@ internal sealed partial class MapRenderer
         var marks = new MeshBuilder { Ground = GroundAt };
         var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv, Ground = GroundAt };
         var roads = new RoadMesh(TerrainField);
+        var routeParts = new RouteParts(TerrainField);
         var sites = new List<ImprovementSite>();
         foreach (var tile in sim.State.Grid.Tiles)
         {
@@ -25,7 +26,7 @@ internal sealed partial class MapRenderer
             var centre = PositionOf(sim.State.Grid.HexOf(tile));
             float fog = sight == Sight.Visible ? 1f : 0.55f;
             DrawFeature(marks, centre, tile.Value, plot, fog);
-            DrawRoute(roads, tile, centre, plot);
+            DrawRoute(roads, routeParts, tile, centre, plot);
             DrawResources(icons, centre, plot, fog);
             if (plot.Improvement is { } improvement && _improvements.Has(improvement))
                 sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
@@ -40,6 +41,7 @@ internal sealed partial class MapRenderer
         _cities.Rebuild(CitySites());
         _land.Mesh = marks.Build(_opaque);
         _roads.Mesh = roads.Build(_terrain.RoadMaterial);
+        _routeParts.Mesh = routeParts.Build(_terrain.RouteStructureMaterial);
         _landIcons.Mesh = icons.Build(_landIconMaterial);
         _atlas.Flush();
     }

@@ -1,0 +1,18 @@
+[
+  {"name": "transitions_overview", "focusTile": [10, 9], "distance": 17, "pitch": 62},
+  {"name": "transition_track_road", "focusTile": [6, 3], "distance": 3.2, "pitch": 45},
+  {"name": "transition_road_paved", "focusTile": [9, 3], "distance": 3.2, "pitch": 45},
+  {"name": "transition_paved_highway", "focusTile": [12, 3], "distance": 3.2, "pitch": 45},
+  {"name": "transition_highway_railroad", "focusTile": [6, 5], "distance": 3.2, "pitch": 45},
+  {"name": "transition_railroad_electric", "focusTile": [9, 5], "distance": 3.2, "pitch": 45},
+  {"name": "transition_electric_maglev", "focusTile": [12, 5], "distance": 3.2, "pitch": 45},
+  {"name": "transition_maglev_jumplane", "focusTile": [15, 5], "distance": 3.2, "pitch": 45},
+  {"name": "transition_road_maglev", "focusTile": [6, 7], "distance": 3.2, "pitch": 45},
+  {"name": "transition_maglev_highway", "focusTile": [9, 7], "distance": 3.2, "pitch": 45},
+  {"name": "transition_highway_jumplane", "focusTile": [12, 7], "distance": 3.2, "pitch": 45},
+  {"name": "transition_jumplane_railroad", "focusTile": [15, 7], "distance": 3.2, "pitch": 45},
+  {"name": "transition_winding", "focusTile": [7, 11], "distance": 6, "pitch": 60},
+  {"name": "transition_junction_highway", "focusTile": [14, 11], "distance": 4, "pitch": 50},
+  {"name": "transition_junction_railroad", "focusTile": [18, 14], "distance": 4, "pitch": 50},
+  {"name": "transition_hills", "focusTile": [6, 15], "distance": 5, "pitch": 38}
+]

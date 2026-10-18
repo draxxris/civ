@@ -142,6 +142,18 @@ River meshes follow curved channels and use a separate shader for water, ripples
 Visual connectors join disconnected river marks without changing gameplay river masks.
 A world change rebuilds only the chunks whose tiles changed.
 Feature marks, routes, and icons use batched triangle meshes and an icon atlas.
+Each route type has its own look (`RouteLooks` in `src/Civ.Client.Core/Terrain/RoutePlan.cs`).
+Cart paths, roads, paved roads, highways and both railroads are ribbons draped on the terrain (`shaders/road.gdshader`).
+The maglev and the jumplane are 3D decks on piers or legs. Electric railroads get portal masts and a contact wire
+(`MapRenderer.RouteParts.cs`, `shaders/route_structure.gdshader`).
+Cart paths and roads meet at the tile centre, each path drawn only in its own wedge around the centre so the
+translucent paths never stack where they overlap.
+The other types run in one smooth curve through a tile, and at a junction the side links merge into that curve.
+Where the paths of a junction overlap, each point belongs to the path whose centre line is nearest (`RouteJunction`).
+Each path draws only its own points, so the paths join as one surface and edge lines and curbs stop at the mouth of each
+spur. The rails and the through road's centre line are drawn again on top, so they run through the junction.
+Where two types meet, the width eases from one to the other and the surfaces crossfade along a ragged front at the shared edge.
+A deck ramps down into its own tile, so the ground route next to it is at full strength up to the edge.
 An improvement with a `.glb` in its mod's `art/models` folder is drawn as 3D parts seated on the terrain, instead of its icon.
 City building models with a positive `cityRing` scene extra form a ring around the city token.
 Only the highest completed tier appears, with zero yaw and the tile's fog shade. Hidden tiles show no ring.
