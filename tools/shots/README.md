@@ -12,7 +12,7 @@ mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /tmp/sh
 - `--focus hills|forest|jungle|road|peak|river|city` centres on the best patch of that kind. `--focus-tile col,row` centres on a tile.
 - `--pitch`, `--yaw`, `--distance` set the camera. The defaults are 62, 0 and 18. A low pitch shows height.
 - `--clean` removes the HUD, tooltips, hover, path preview, units, cities and labels.
-- `--terrain-debug relief|bands|slope|lattice` (or a number) changes the ground view. `--wireframe` is the same as `lattice`.
+- `--terrain-debug relief|bands|slope|lattice|cavity` (or a number) changes the ground view. `--wireframe` is the same as `lattice`.
 - `--stats` writes `<name>.json` next to the PNG: props per set before and after thinning, triangles per layer, height range per relief class, FPS.
 - `--seed`, `--world tiny|...` choose the map.
 

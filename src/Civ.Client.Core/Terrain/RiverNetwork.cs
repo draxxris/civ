@@ -28,6 +28,8 @@ public sealed class RiverNetwork
     /// <summary>Upper bound on the distance from any sample of a curve to either end of its link.</summary>
     public const double MaxLinkSpan = 2.3;
     private const double Meander = 0.07, CellSize = 0.5;
+    /// <summary>Distance scale over which <see cref="Level"/> blends the floors of nearby segments.</summary>
+    private const double FloorBlend = 0.04;
 
     private readonly TerrainTuning _tuning;
     private readonly bool _wrap;
@@ -38,11 +40,13 @@ public sealed class RiverNetwork
     private readonly double[] _entryShift;
     private readonly Segment[] _segments;
 
-    /// <summary>A straight piece between two samples; carve band and depth interpolate along it.</summary>
-    private readonly record struct Segment(double AX, double AZ, double BX, double BZ, double WA, double WB, double DA, double DB);
+    /// <summary>A straight piece between two samples; carve band, depth and valley floor interpolate along it.</summary>
+    private readonly record struct Segment(double AX, double AZ, double BX, double BZ, double WA, double WB, double DA, double DB,
+        double FA, double FB);
 
-    /// <summary>The network for a snapshot. <paramref name="noise"/> supplies the wrap-safe width variation.</summary>
-    public RiverNetwork(TerrainSnapshot snapshot, TerrainTuning tuning, PeriodicNoise noise)
+    /// <summary>The network for a snapshot. <paramref name="noise"/> supplies the wrap-safe width variation, and
+    /// <paramref name="ground"/> the uncarved terrain height, which sets each sample's valley floor.</summary>
+    public RiverNetwork(TerrainSnapshot snapshot, TerrainTuning tuning, PeriodicNoise noise, Func<double, double, double> ground)
     {
         _tuning = tuning;
         _wrap = snapshot.Grid.Spec.Wrap;
@@ -53,8 +57,12 @@ public sealed class RiverNetwork
         _x0 = _wrap ? 0 : -4;
         _z0 = -6;
         _rows = (int)Math.Ceiling((1.5 * (snapshot.Height - 1) + 12) / CellSize);
-        _segments = Curves.SelectMany(c => Enumerable.Range(0, c.Count - 1).Select(i => new Segment(c.X[i], c.Z[i],
-            c.X[i + 1], c.Z[i + 1], c.Width[i], c.Width[i + 1], c.Depth[i], c.Depth[i + 1]))).ToArray();
+        _segments = Curves.SelectMany(c =>
+        {
+            var floor = Floors(c, ground);
+            return Enumerable.Range(0, c.Count - 1).Select(i => new Segment(c.X[i], c.Z[i], c.X[i + 1], c.Z[i + 1], c.Width[i],
+                c.Width[i + 1], c.Depth[i], c.Depth[i + 1], floor[i], floor[i + 1]));
+        }).ToArray();
         (_cellStart, _entrySegment, _entryShift) = Index();
     }
 
@@ -78,6 +86,56 @@ public sealed class RiverNetwork
             best = Math.Max(best, Lerp(s.DA, s.DB, t) * u * u);
         }
         return best;
+    }
+
+    /// <summary>The terrain drawn down into every river valley. Within <see cref="TerrainTuning.RiverDrawdown"/> beyond a
+    /// curve's banks, the ground's height above the curve's valley floor (the lowest ground at its two banks) shrinks towards the
+    /// river: to nothing at the bank, so the water is level from bank to bank, easing back to full height at the reach.
+    /// A mountain beside a river thus stands lower and slopes more steeply all the way from its summit, rather than
+    /// ending in a cliff. Low ground beside the river rises slightly to the floor; ground below sea level never rises.</summary>
+    public double Level(double x, double z, double ground)
+    {
+        // The floor is a soft nearest-point lookup (floors weighted by how much further than the nearest segment they lie),
+        // and the drawdown follows the nearest bank, so both banks of a river get the same height and the result stays
+        // continuous where rivers meet.
+        // Distances are measured beyond each segment's bank, which stays continuous where the nearest segment changes.
+        double reach = _tuning.RiverDrawdown, nearest = double.MaxValue;
+        var (from, to) = Entries(ref x, z);
+        for (int e = from; e < to; e++)
+        {
+            var (s, t, distance) = Closest(e, x, z);
+            nearest = Math.Min(nearest, Math.Max(0, distance - Lerp(s.WA, s.WB, t) * _tuning.RiverBankRatio));
+        }
+        if (nearest >= reach) return ground;
+        double weights = 0, floors = 0;
+        for (int e = from; e < to; e++)
+        {
+            var (s, t, distance) = Closest(e, x, z);
+            double beyond = Math.Max(0, distance - Lerp(s.WA, s.WB, t) * _tuning.RiverBankRatio), excess = beyond - nearest;
+            if (beyond >= reach || excess >= 4 * FloorBlend) continue;
+            double r = beyond / reach, w = Math.Exp(-excess / FloorBlend) * (1 - r * r) * (1 - r * r);
+            weights += w;
+            floors += w * Lerp(s.FA, s.FB, t);
+        }
+        if (weights <= 0) return ground;
+        double floor = floors / weights;
+        double g = 1 - Math.Pow(1 - nearest / reach, 2.5);
+        double level = floor + (ground - floor) * g;
+        // Lowland a little under the floor rises to it, so both banks match; ground below sea level keeps its height.
+        return level >= ground ? ground + (level - ground) * Math.Clamp(1 + ground / 0.05, 0, 1) : level;
+    }
+
+    /// <summary>Valley floor at each sample of a curve: the lowest uncarved ground at its centre and its two banks.</summary>
+    private double[] Floors(RiverCurve c, Func<double, double, double> ground)
+    {
+        var floor = new double[c.Count];
+        for (int i = 0; i < c.Count; i++)
+        {
+            double valley = c.Width[i] * _tuning.RiverBankRatio;
+            double nx = -c.TZ[i] * valley, nz = c.TX[i] * valley;
+            floor[i] = Math.Min(ground(c.X[i], c.Z[i]), Math.Min(ground(c.X[i] + nx, c.Z[i] + nz), ground(c.X[i] - nx, c.Z[i] - nz)));
+        }
+        return floor;
     }
 
     /// <summary>Whether a point lies in a river channel or within <paramref name="margin"/> (at most 0.1) of its banks.</summary>
@@ -131,7 +189,7 @@ public sealed class RiverNetwork
     {
         var s = _segments[index];
         double width = CellWidth;
-        double reach = Math.Max(s.WA, s.WB) * _tuning.RiverBankRatio + 0.1;
+        double reach = Math.Max(s.WA, s.WB) * _tuning.RiverBankRatio + Math.Max(0.1, _tuning.RiverDrawdown);
         int c0 = (int)Math.Floor((Math.Min(s.AX, s.BX) - reach - _x0) / width);
         int c1 = (int)Math.Floor((Math.Max(s.AX, s.BX) + reach - _x0) / width);
         int r0 = Math.Max(0, (int)Math.Floor((Math.Min(s.AZ, s.BZ) - reach - _z0) / CellSize));

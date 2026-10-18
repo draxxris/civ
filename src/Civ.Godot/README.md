@@ -108,7 +108,8 @@ These switches apply only to capture runs and go after `--` on the Godot command
 
 - `--terrain-debug <mode>`: a number or a name. 0 `normal`, 1 `weights` (blend weights as colour), 2 `hidden` (hidden weight),
   3 colour only, 4 `relief` (white ground, lighting only), 5 `bands` (height colour with contour lines every 0.05),
-  6 `slope` (green flat to red steep), 7 `lattice` (the mesh triangles).
+  6 `slope` (green flat to red steep), 7 `lattice` (the mesh triangles), 8 `cavity` (blue valleys, red ridges).
+  A lattice cavity of ±4 shows full colour.
 - `--wireframe`: the same as `--terrain-debug lattice`. The compatibility renderer has no wireframe mode, so the shader draws the lines.
   It assumes the default lattice of 9 steps per tile column.
 
@@ -124,9 +125,15 @@ These switches apply only to capture runs and go after `--` on the Godot command
 ## Rendering and limits
 
 The terrain is a lit 3D height field in chunks of 4 × 4 tiles, with a translucent water surface at sea level.
-Each mountain tile has a pointed summit with rocky ridges.
-Neighboring summits connect through saddles, and the slopes descend gradually into surrounding tiles.
+Each mountain tile has a pointed summit, a lower shoulder summit and erosion gullies between sharp spurs.
+The height, footprint, flank steepness and gully pattern change from tile to tile, so no two mountains look the same.
+Neighboring mountain tiles join with a sharp ridge that dips to a saddle between their summits, so a line of mountains
+reads as one range.
+Near a river, the terrain is drawn down to the river's valley floor. The water is level from bank to bank, and a
+mountain beside a river stands a little lower and slopes more steeply from its summit to the bank.
 The shader adds snow above a ragged snow line and leaves steep faces as bare rock.
+The snow frays into patches and rills, fills rock crevices first and reaches further down the gullies.
+A per-vertex cavity value from the mesh darkens gullies and lightens ridges on mountains.
 Scatter foliage textures get a muted olive grade at load time.
 Terrain shaders blend tile textures and draw fog, unexplored clouds, borders, hover outlines, and work-tile overlays from two per-tile data textures.
 Visibility, borders, and hover changes update these textures without rebuilding meshes.
