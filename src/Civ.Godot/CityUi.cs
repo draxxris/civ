@@ -8,7 +8,7 @@ internal sealed partial class CityUi : Control
 {
 
 
-    private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = 44f;
+    private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = GameUi.TopBarHeight;
     private const int MaxBlockedShown = 40;
 
     private readonly GameSession _session;

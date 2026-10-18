@@ -37,9 +37,16 @@ internal sealed partial class GameUi
         _modalRevision++;
     }
 
+    internal void OpenDebugPanel(string name)
+    {
+        if (!Enum.TryParse<Modal>(name, true, out var kind) || kind == Modal.None) return;
+        if (kind == Modal.Pedia) _pediaSelected = _session.Pedia.Search(null, "").FirstOrDefault()?.Id;
+        if (_modalKind != kind) OpenModal(kind);
+    }
+
     private void CloseModal() { _modalKind = Modal.None; _modalRevision++; }
 
-    private void AddPanelButtons(HBoxContainer row)
+    private void AddPanelButtons(Container row)
     {
         var conquests = _session.DescribePendingConquests();
         UpdateConquestModal(conquests);

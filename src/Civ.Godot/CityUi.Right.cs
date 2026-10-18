@@ -64,7 +64,9 @@ internal sealed partial class CityUi
 
     private void AddChoices(VBoxContainer box, City city, CityScreen screen)
     {
-        var tabs = Ui.HBox(4);
+        var tabs = new HFlowContainer();
+        tabs.AddThemeConstantOverride("h_separation", 4);
+        tabs.AddThemeConstantOverride("v_separation", 4);
         var kinds = _session.ProductionKinds;
         for (int index = 0; index < kinds.Count; index++)
         {
