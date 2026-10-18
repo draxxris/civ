@@ -137,7 +137,7 @@ public class UnitTests
     }
 
     [Fact]
-    public void UnitCommandsSurviveLockstepAndCodec()
+    public void UnitCommandsRoundTripThroughCodec()
     {
         var sim = TestGame.Sim();
         var codec = new CommandCodec(sim.Content);

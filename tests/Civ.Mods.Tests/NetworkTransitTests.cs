@@ -67,7 +67,17 @@ public sealed class NetworkTransitTests(LoadedMods mods) : IClassFixture<LoadedM
         Check(true);
         sim.State.Plots[42].Revealed.Remove(0); Check(false);
         sim.State.Plots[42].Revealed.Add(0); Check(true);
-        sim.State.SetWar(0, 1, true); Check(false);
+        if (diplomacy)
+        {
+            Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+            sim.TeamOf(0).Techs.Add("research:writing");
+            Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }); Check(true);
+            sim.State.Plots[42].Revealed.Remove(0); Check(false);
+            sim.State.Plots[42].Revealed.Add(0); Check(true);
+            Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        }
+        else sim.State.SetWar(0, 1, true);
+        Check(false);
         sim.State.SetWar(0, 1, false); Check(true);
         sim.State.Plots[42].Route = null; Check(false);
         sim.State.Plots[42].Route = Road; Check(true);
