@@ -4,11 +4,14 @@ using Civ.Modding;
 
 namespace Civ.Mods.ScriptedWonders;
 
-public sealed class ScriptedWondersMod : IMod
+public sealed class ScriptedWondersMod : IPreparableMod
 {
+    private static readonly ModJsonFile<WonderScriptDef[]> Scripts = new("data/wonder-script.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Scripts];
+
     public void Register(IModContext context)
     {
-        foreach (var rule in context.Data.ReadJson<WonderScriptDef[]>("data/wonder-script.json"))
+        foreach (var rule in Scripts.Read(context.Data))
         {
             if (rule.IntervalTurns < 0 || rule.CompletionUnits < 0 || rule.CompletionCulture < 0
                 || ((rule.IntervalTurns > 0 || rule.CompletionUnits > 0) && rule.Unit is null))

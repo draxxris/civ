@@ -5,11 +5,14 @@ using Civ.Game;
 namespace Civ.Mods.Research;
 
 /// <summary>Team research, discoveries, and technology requirements.</summary>
-public sealed class ResearchMod : IMod
+public sealed class ResearchMod : IPreparableMod
 {
+    private static readonly ModJsonFile<TechDef[]> Technologies = new("data/tech.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Technologies];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<TechDef>(context, "tech.json");
+        ContentRegistration.Load(context, Technologies);
         ContentRegistration.Evaluator<TechDef>(context, "tech", (leaf, subject) => subject.Sim.KnowsTech(subject.Player, leaf.Id));
         var research = new ResearchService();
         context.RegisterService<IResearchService>("research", research);

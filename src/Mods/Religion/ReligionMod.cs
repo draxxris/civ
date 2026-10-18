@@ -5,11 +5,14 @@ using Civ.Modding;
 
 namespace Civ.Mods.Religion;
 
-public sealed class ReligionMod : IMod
+public sealed class ReligionMod : IPreparableMod
 {
+    private static readonly ModJsonFile<ReligionDef[]> Religions = new("data/religion.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<ReligionDef>(context, "religion.json");
+        ContentRegistration.Load(context, Religions);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<IModifierSource>("effects", new ReligionEffects());

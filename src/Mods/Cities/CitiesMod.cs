@@ -6,13 +6,18 @@ using Civ.Modding;
 namespace Civ.Mods.Cities;
 
 /// <summary>City rules communicate only through Core services, modifiers, queues and events.</summary>
-public sealed class CitiesMod : IMod
+public sealed class CitiesMod : IPreparableMod
 {
+    private static readonly ModJsonFile<BuildingCategoryDef[]> BuildingCategories = new("data/building-category.json");
+    private static readonly ModJsonFile<Civ.Content.Schema.BuildingDef[]> Buildings = new("data/building.json");
+    private static readonly ModJsonFile<HurryDef[]> Hurry = new("data/hurry.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [BuildingCategories, Buildings, Hurry];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<BuildingCategoryDef>(context, "building-category.json");
-        ContentRegistration.Load<Civ.Content.Schema.BuildingDef>(context, "building.json");
-        ContentRegistration.Load<HurryDef>(context, "hurry.json");
+        ContentRegistration.Load(context, BuildingCategories);
+        ContentRegistration.Load(context, Buildings);
+        ContentRegistration.Load(context, Hurry);
         context.RegisterService<IRequirementEvaluator>("building_requirements", new BuildingRequirement("building"));
         context.RegisterService<IRequirementEvaluator>("class_requirements", new BuildingRequirement("building-class"));
         context.RegisterStateComponent<CityRuleState>("city_state");

@@ -4,11 +4,14 @@ using Civ.Modding;
 
 namespace Civ.Mods.Revolution;
 
-public sealed class RevolutionMod : IMod
+public sealed class RevolutionMod : IPreparableMod
 {
+    private static readonly ModJsonFile<RevolutionRulesDef> Rules = new("data/revolution-rules.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules];
+
     public void Register(IModContext context)
     {
-        var rules = context.Data.ReadJson<RevolutionRulesDef>("data/revolution-rules.json");
+        var rules = Rules.Read(context.Data);
         ValidateThresholds(rules);
         ValidateResponses(rules);
         context.Content<RevolutionRulesDef>().Register(rules);

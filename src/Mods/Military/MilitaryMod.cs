@@ -5,19 +5,31 @@ using Civ.Game;
 namespace Civ.Mods.Military;
 
 /// <summary>Deterministic movement, melee combat, unit lifecycle and barbarian rules.</summary>
-public sealed class MilitaryMod : IMod
+public sealed class MilitaryMod : IPreparableMod
 {
+    private static readonly ModJsonFile<DomainDef[]> Domains = new("data/domain.json");
+    private static readonly ModJsonFile<InvisibilityDef[]> Invisibility = new("data/invisibility.json");
+    private static readonly ModJsonFile<MissionDef[]> Missions = new("data/mission.json");
+    private static readonly ModJsonFile<OutcomeDef[]> Outcomes = new("data/outcome.json");
+    private static readonly ModJsonFile<PromotionDef[]> Promotions = new("data/promotion.json");
+    private static readonly ModJsonFile<UnitAiDef[]> UnitAi = new("data/unit-ai.json");
+    private static readonly ModJsonFile<UnitCategoryDef[]> Categories = new("data/unit-category.json");
+    private static readonly ModJsonFile<UnitCombatDef[]> Combat = new("data/unit-combat.json");
+    private static readonly ModJsonFile<UnitDef[]> Units = new("data/unit.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [Domains, Invisibility, Missions, Outcomes, Promotions, UnitAi, Categories, Combat, Units];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<DomainDef>(context, "domain.json");
-        ContentRegistration.Load<InvisibilityDef>(context, "invisibility.json");
-        ContentRegistration.Load<MissionDef>(context, "mission.json");
-        ContentRegistration.Load<OutcomeDef>(context, "outcome.json");
-        ContentRegistration.Load<PromotionDef>(context, "promotion.json");
-        ContentRegistration.Load<UnitAiDef>(context, "unit-ai.json");
-        ContentRegistration.Load<UnitCategoryDef>(context, "unit-category.json");
-        ContentRegistration.Load<UnitCombatDef>(context, "unit-combat.json");
-        ContentRegistration.Load<UnitDef>(context, "unit.json");
+        ContentRegistration.Load(context, Domains);
+        ContentRegistration.Load(context, Invisibility);
+        ContentRegistration.Load(context, Missions);
+        ContentRegistration.Load(context, Outcomes);
+        ContentRegistration.Load(context, Promotions);
+        ContentRegistration.Load(context, UnitAi);
+        ContentRegistration.Load(context, Categories);
+        ContentRegistration.Load(context, Combat);
+        ContentRegistration.Load(context, Units);
         var movement = new MovementService();
         var units = new UnitService();
         context.RegisterService<IMovementService>("movement", movement);

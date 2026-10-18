@@ -7,12 +7,16 @@ using Civ.Mods;
 namespace Civ.Mods.ProjectsVictory;
 
 /// <summary>Projects as a production kind, plus the executable victory conditions.</summary>
-public sealed class ProjectsVictoryMod : IMod
+public sealed class ProjectsVictoryMod : IPreparableMod
 {
+    private static readonly ModJsonFile<ProjectDef[]> Projects = new("data/project.json");
+    private static readonly ModJsonFile<VictoryDef[]> Victories = new("data/victory.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Projects, Victories];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<ProjectDef>(context, "project.json");
-        ContentRegistration.Load<VictoryDef>(context, "victory.json");
+        ContentRegistration.Load(context, Projects);
+        ContentRegistration.Load(context, Victories);
         var service = new ProjectVictoryService();
         context.RegisterService<IProjectVictoryService>("queries", service);
         context.RegisterService<IProductionKind>("project_kind", new ProjectKind(service));
