@@ -54,28 +54,52 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     private static string? ValidateActivity(Simulation sim, Unit unit, string argument)
     {
         if (!Enum.TryParse<UnitActivity>(argument, out var activity) || !Enum.IsDefined(activity)) return "Unknown activity";
+        if (activity == UnitActivity.Blockade)
+            return unit.MovesLeft <= 0 ? "No moves left" : NavalBlockades.PositionError(sim, unit);
         if (activity == UnitActivity.Fortify && !CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit))) return "Unit cannot fortify";
-        if (activity == UnitActivity.Intercept)
-        {
-            if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
-            if (MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved) return "Aircraft has moved";
-        }
-        return null;
+        return activity == UnitActivity.Intercept ? ValidateIntercept(sim, unit) : null;
+    }
+    private static string? ValidateIntercept(Simulation sim, Unit unit)
+    {
+        if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
+        return MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved ? "Aircraft has moved" : null;
     }
     private static string? ValidatePillage(Simulation sim, Unit unit)
     {
         var def = MilitaryData.Definition(sim, unit); var plot = sim.State.PlotAt(unit.Position);
         if (!def.Pillage) return "Unit cannot pillage";
         if (unit.MovesLeft <= 0) return "No moves left";
+        if (MilitaryData.Read(sim, unit).TransportId is not null) return "Loaded cargo cannot pillage";
         if (sim.State.CityAt(unit.Position) is not null) return "Cannot pillage a city";
-        return ValidatePillagePlot(sim, unit, plot);
+        return ValidatePillagePlot(sim, unit, def, plot);
     }
-    private static string? ValidatePillagePlot(Simulation sim, Unit unit, Plot plot)
+    private static string? ValidatePillagePlot(Simulation sim, Unit unit, S.UnitDef unitDef, Plot plot)
     {
-        if (plot.Owner is { } owner && owner != unit.Owner && !MilitaryData.Enemy(sim, unit.Owner, owner)) return "Cannot pillage at peace";
-        if (plot.Improvement is null && plot.Route is null) return "Nothing to pillage";
-        if (plot.Improvement is { } id && sim.Content.Get<S.ImprovementDef>(id).Goody) return "Cannot pillage a goody hut";
+        if (!ValidPillageDomain(sim, unitDef, plot)) return "Invalid domain for pillaging";
+        if (plot.Improvement is { } id)
+        {
+            var improvement = sim.Content.Get<S.ImprovementDef>(id);
+            if (improvement.Goody) return "Cannot pillage a goody hut";
+            if (improvement.Permanent) return "Cannot pillage a permanent improvement";
+        }
+        else if (plot.Route is null) return "Nothing to pillage";
+
+        if (plot.Owner is { } owner && !MilitaryData.Enemy(sim, unit.Owner, owner)
+            && (owner != unit.Owner || plot.Improvement is null)) return "Cannot pillage at peace";
         return null;
+    }
+    private static bool ValidPillageDomain(Simulation sim, S.UnitDef unit, Plot plot)
+    {
+        if (unit.Domain == "military:domain_air") return false;
+        if (unit.CanMoveAllTerrain) return true;
+        bool water = sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater;
+        return unit.Domain switch
+        {
+            "military:domain_land" => !water,
+            "military:domain_sea" => water,
+            "military:domain_immobile" => !water,
+            _ => false,
+        };
     }
     public void Execute(Simulation sim, int unitId, UnitAction action, string argument)
     {
@@ -94,6 +118,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
         var state = MilitaryData.Edit(sim, unit);
         if (activity != UnitActivity.Fortify) state.FortifyTurns = 0;
         state.Activity = activity;
+        if (activity == UnitActivity.Blockade) { unit.MovesLeft = 0; state.Moved = true; }
     }
     private static void Promote(Simulation sim, Unit unit, string id)
     {
@@ -105,18 +130,37 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     private static void Pillage(Simulation sim, Unit unit)
     {
         var plot = sim.State.PlotAt(unit.Position);
-        if (plot.Improvement is { } id)
+        var tile = sim.State.Grid.TileAt(unit.Position);
+        string? improvementId = plot.Improvement;
+        string? routeId = plot.Route;
+        string? replacement = null;
+        int gold = 0;
+        bool removedCityImprovement = false;
+        if (improvementId is { } id)
         {
-            var def = sim.Content.Get<S.ImprovementDef>(id);
-            int gold = def.PillageGold > 0 ? sim.Rng.Next(def.PillageGold) + sim.Rng.Next(def.PillageGold) : 0;
-            gold = gold * Math.Max(0, 100 + MilitaryData.Effect(MilitaryData.Effects(sim, unit), "pillage_percent")) / 100;
-            sim.State.PlayerById(unit.Owner).Treasury += gold;
-            plot.Improvement = def.ImprovementPillage; plot.ImprovementTurns = 0;
+            var improvement = sim.Content.Get<S.ImprovementDef>(id);
+            removedCityImprovement = improvement.ActsAsCity;
+            if (plot.Owner is not { } owner || sim.TeamOf(owner).Id != sim.TeamOf(unit.Owner).Id)
+            {
+                gold = PillageGold(sim, unit, improvement);
+                sim.State.PlayerById(unit.Owner).Treasury += gold;
+            }
+            plot.Improvement = replacement = improvement.ImprovementPillage;
+            plot.ImprovementTurns = 0;
         }
         else plot.Route = null;
         plot.BuildProgress.Clear();
         unit.MovesLeft = Math.Max(0, unit.MovesLeft - MilitaryData.Constants(sim).MoveDenominator);
         var state = MilitaryData.Edit(sim, unit); state.Moved = true; state.FortifyTurns = 0;
+        sim.Events.Publish(new PlotPillaged(unit.Id, unit.Owner, tile, improvementId, replacement,
+            improvementId is null ? routeId : null, gold));
+        if (removedCityImprovement) MilitaryData.Sight(sim);
+    }
+    private static int PillageGold(Simulation sim, Unit unit, S.ImprovementDef improvement)
+    {
+        if (improvement.PillageGold <= 0) return 0;
+        int gold = sim.Rng.Next(improvement.PillageGold) + sim.Rng.Next(improvement.PillageGold);
+        return gold + gold * MilitaryData.Effect(MilitaryData.Effects(sim, unit), "pillage_percent") / 100;
     }
     public void Initialize(Simulation sim, int unitId)
     {

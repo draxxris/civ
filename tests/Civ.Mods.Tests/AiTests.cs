@@ -90,6 +90,73 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.True(combats > 0);
     }
 
+    [Theory]
+    [InlineData("water", 100, true)]
+    [InlineData("unimproved-land", 100, false)]
+    [InlineData("improved-land", 100, true)]
+    [InlineData("water", 0, false)]
+    public void Route_upgrade_waits_only_for_unimproved_worker_improvable_land(string workedTile, long treasury, bool upgrades)
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        foreach (var plot in sim.State.Plots) plot.Owner = 1;
+        var start = sim.State.Grid.HexOf(new TileId(39));
+        var home = City(sim, 39);
+        var routeHex = start.Neighbor(0);
+        var end = routeHex.Neighbor(0);
+        Assert.True(sim.State.Grid.TryTile(routeHex, out var routeTile));
+        Assert.True(sim.State.Grid.TryTile(end, out var endTile));
+        City(sim, endTile.Value);
+        foreach (var route in new[] { new TileId(39), routeTile, endTile })
+        {
+            var plot = sim.State.Plots[route.Value];
+            plot.Owner = 0; plot.Route = "world:route_route_road"; plot.Revealed.Add(sim.TeamOf(0).Id);
+        }
+        var target = sim.State.Plots[routeTile.Value];
+        target.Improvement = "world:improvement_improvement_farm";
+        home.Worked.Add(sim.State.Grid.HexOf(routeTile));
+        var blocker = new TileId(50);
+        var workedPlot = sim.State.Plots[blocker.Value];
+        workedPlot.Owner = 0;
+        if (workedTile == "water") workedPlot.Terrain = "world:coast";
+        if (workedTile == "improved-land") workedPlot.Improvement = "world:improvement_improvement_farm";
+        home.Worked.Add(sim.State.Grid.HexOf(blocker));
+        home.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        sim.TeamOf(0).Techs.Add("research:railroad");
+        sim.State.PlayerById(0).Treasury = treasury;
+        var worker = Add(sim, "military:worker", sim.State.Grid.HexOf(routeTile));
+        var preview = Service<IWorkerBuildService>(sim).Preview(sim, 0, worker.Id, routeTile, "world:build_build_railroad");
+        Assert.Equal(treasury >= 10 ? null : "Not enough gold", preview.Error);
+
+        Decide(sim);
+
+        Assert.Equal(treasury - (upgrades ? 10 : 0), sim.State.PlayerById(0).Treasury);
+        sim.AdvanceTurn();
+        Assert.Equal(upgrades, sim.State.Plots[routeTile.Value].Route == "world:route_route_railroad"
+            || sim.State.Plots[routeTile.Value].BuildProgress.ContainsKey("world:build_build_railroad"));
+    }
+
+    [Fact]
+    public void Worker_repairs_ruins_with_a_farm_on_a_worked_freshwater_tile()
+    {
+        var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
+        var city = City(sim, 39);
+        var tile = new TileId(40);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Owner = 0;
+        plot.Improvement = "world:city_ruins";
+        sim.State.SetRiver(tile, 0, true);
+        city.Worked.Add(sim.State.Grid.HexOf(tile));
+        city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        var worker = Add(sim, "military:worker", sim.State.Grid.HexOf(tile));
+
+        Decide(sim);
+
+        sim.AdvanceTurn();
+        Assert.True(plot.Improvement == "world:improvement_improvement_farm"
+            || plot.BuildProgress.ContainsKey("world:build_build_farm"));
+    }
+
     [Fact]
     public void Production_emphasis_still_feeds_the_city_at_the_content_consumption_rate()
     {

@@ -36,9 +36,14 @@ public sealed class WorldMod : IMod
         context.RegisterCommand<Civ.Game.StartBuildCommand>("start_build");
         context.TurnSystems.Register(workers);
         context.TurnSystems.Register(new ImprovementTurnSystem());
+        context.TurnSystems.Register(new GlobalWarmingSystem(yields));
         context.TurnSystems.Register(visibility);
         context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, _) => visibility.Recompute(sim));
         context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Civ.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
+        // Refresh at the mutation, not only at turn end: later map events can be out of sight.
+        context.Subscribe<Civ.Game.FeatureChanged>("feature_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Civ.Game.GlobalWarmingOccurred>("terrain_sight", (sim, _) => visibility.Recompute(sim));
         ContentRegistration.Evaluator<FeatureDef>(context, "feature");
         ContentRegistration.Evaluator<TerrainDef>(context, "terrain");
         ContentRegistration.Evaluator<ImprovementDef>(context, "improvement");

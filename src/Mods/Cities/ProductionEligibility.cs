@@ -75,7 +75,7 @@ internal static class ProductionEligibility
     private static void Substitution(Simulation sim, City city, string category, string id, bool unit, List<RequirementFailure> failures)
     {
         string civilization = sim.State.PlayerById(city.Owner).Civilization;
-        if (sim.Content.Get<S.GameOptionDef>("foundation:gameoption_assimilation").Default)
+        if (sim.IsOptionEnabled("foundation:gameoption_assimilation"))
             civilization = CityData.Read(sim, city).OriginalCivilization is { Length: > 0 } original ? original : civilization;
         var civ = sim.Content.Get<S.CivilizationDef>(civilization);
         var map = unit ? civ.UnitOverrides : civ.BuildingOverrides;

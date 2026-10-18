@@ -35,6 +35,14 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
             Feature = build.FeatureChange ?? (remove ? null : plot.Feature),
         };
     }
+    public bool IsWorking(Simulation sim, int unitId)
+    {
+        var unit = sim.State.FindUnit(unitId);
+        var order = unit?.Extensions.Get<WorkerOrder>(sim.Content);
+        if (unit is null || order?.Build is not { } build) return false;
+        return sim.State.Grid.TileAt(unit.Position) == order.Tile
+            && _eligibility.Validate(sim, unit.Owner, unit.Id, build, continuing: true) is null;
+    }
     public void Start(Simulation sim, int player, int unitId, string buildId)
     {
         var unit = sim.State.UnitById(unitId);
@@ -48,11 +56,23 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         var plot = sim.State.Plots[tile.Value];
         long time = build.Time;
         if (plot.Feature is { } f) time += build.FeatureEffects.GetValueOrDefault(f)?.Time ?? 0;
+        if (plot.Kind == PlotKind.Peak)
+            time = time * Math.Max(0, 100 + Raw(sim, "PEAK_BUILD_TIME_MODIFIER", 100)) / 100;
+        if (build.RouteType is { } route && plot.Route is { } existingRoute
+            && Raw(sim, "ROUTES_UPGRADE", 1) != 0
+            && sim.Content.Get<S.RouteDef>(route).Value > sim.Content.Get<S.RouteDef>(existingRoute).Value)
+        {
+            var existingBuild = sim.Content.Get<S.BuildDef>().All.FirstOrDefault(b => b.RouteType == existingRoute);
+            if (existingBuild is not null) time = Math.Max(1, time - existingBuild.Time);
+        }
         time = time * Math.Max(0, 100 + sim.Content.Get<S.TerrainDef>(plot.Terrain).BuildModifier) / 100;
         time = time * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).BuildPercent / 100;
         time = time * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).BuildPercent / 100;
         return checked((int)Math.Max(1, time));
     }
+    private static int Raw(Simulation sim, string key, int fallback) =>
+        sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value)
+            && int.TryParse(value, out int parsed) ? parsed : fallback;
     public void Run(Simulation sim, int player)
     {
         foreach (var unit in sim.State.Units.Where(u => u.Owner == player).OrderBy(u => u.Id).ToArray()) Work(sim, unit);
@@ -92,6 +112,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         if (build.TerrainChange is { } terrain) { plot.Terrain = terrain; Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content); }
         if (build.FeatureChange is { } newFeature) plot.Feature = newFeature;
         if (build.Kill) sim.State.RemoveUnit(worker.Id);
+        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
     }
     private static void FeatureProduction(Simulation sim, int player, TileId tile, int production)
     {
@@ -112,20 +133,37 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
     public void Run(Simulation sim)
     {
         var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
-        foreach (var tile in sim.State.Grid.Tiles) Upgrade(sim, tile, worked.Contains(tile));
+        // Disorder stops productive work, but assigned plots still resist feature overgrowth.
+        var productiveWorked = sim.State.Cities.Where(c => !GovernmentStatus.IsDisorder(sim, c))
+            .SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
+        var features = new FeatureTurnRules(sim, worked);
+        var resources = new ResourceTurnRules(sim);
+        foreach (var tile in sim.State.Grid.Tiles)
+        {
+            features.Advance(tile);
+            bool productive = productiveWorked.Contains(tile);
+            resources.Advance(tile, productive); // Deposit exhaustion remains independent of work.
+            Upgrade(sim, tile, assigned: worked.Contains(tile), productive);
+        }
     }
-    private static void Upgrade(Simulation sim, TileId tile, bool worked)
+    private static void Upgrade(Simulation sim, TileId tile, bool assigned, bool productive)
     {
+        // Outside-border targets can grow without assignment, never through a disordered assignment.
+        if (assigned && !productive) return;
         var plot = sim.State.Plots[tile.Value];
         if (plot.Improvement is not { } id || plot.Owner is null) return;
         var improvement = sim.Content.Get<S.ImprovementDef>(id);
         if (improvement.ImprovementUpgrade is not { } next) return;
         var target = sim.Content.Get<S.ImprovementDef>(next);
         if (target.PrereqTech is { } tech && !sim.KnowsTech(plot.Owner.Value, tech)) return;
-        if (!worked && !target.OutsideBorders) return;
+        if (!productive && !target.OutsideBorders) return;
+        AdvanceUpgrade(sim, plot, improvement, next);
+    }
+    private static void AdvanceUpgrade(Simulation sim, Plot plot, S.ImprovementDef improvement, string next)
+    {
         int time = improvement.UpgradeTime * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).ImprovementPercent / 100;
         time = time * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).ImprovementPercent / 100;
-        int modifier = (int)ModifierSink.Collect(new(sim, ModifierScope.Player, plot.Owner.Value)).Ledger.Total("world:improvement_upgrade_percent");
+        int modifier = (int)ModifierSink.Collect(new(sim, ModifierScope.Player, plot.Owner!.Value)).Ledger.Total("world:improvement_upgrade_percent");
         time = time * 100 / Math.Max(1, 100 + modifier);
         plot.ImprovementTurns++;
         if (plot.ImprovementTurns < Math.Max(1, time)) return;

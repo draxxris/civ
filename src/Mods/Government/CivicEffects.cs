@@ -39,7 +39,7 @@ internal sealed class CivicEffects : IModifierSource
     {
         var values = new (string Key, int Value)[] {
             ("cities:distance_maintenance_percent", c.DistanceMaintenanceModifier), ("cities:count_maintenance_percent", c.CityCountMaintenancePercent),
-            ("cities:corporation_maintenance_percent", sim.Content.Get<GameOptionDef>("foundation:gameoption_realistic_corporations").Default
+            ("cities:corporation_maintenance_percent", sim.IsOptionEnabled("foundation:gameoption_realistic_corporations")
                 ? c.RealCorporationMaintenanceModifier : c.CorporationMaintenanceModifier), ("cities:growth_percent", c.PopulationGrowthPercent),
             ("cities:max_conscript", GetWorldSizeMaxConscript(sim, c)),
             ("world:worker_speed_percent", c.WorkerSpeedModifier), ("world:improvement_upgrade_percent", c.ImprovementUpgradeRateModifier),
@@ -83,7 +83,9 @@ internal sealed class CivicEffects : IModifierSource
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));
             sink.Add(c.Id, "cities:happiness", c.BuildingHappinessChanges.GetValueOrDefault(b.DefaultBuilding));
-            sink.Add(c.Id, "cities:health", c.BuildingHealthChanges.GetValueOrDefault(b.DefaultBuilding));
+            long health = c.BuildingHealthChanges.GetValueOrDefault(b.DefaultBuilding);
+            sink.Add(c.Id, "cities:health", health);
+            sink.Add(c.Id, "cities:building_bad_health", -Math.Min(0, health));
         }
     }
     private static void CivicAnger(Simulation sim, City city, ModifierSink sink)

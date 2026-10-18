@@ -76,9 +76,10 @@ public sealed partial class GameSession
         var actions = new List<UnitActionInfo>();
         if (def.CanFoundCity) actions.Add(Action("found", "Found city", new FoundCityWithSettlerCommand { Player = Human, Settler = unit.Id }));
         actions.AddRange(BuildActions(unit, def));
-        foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake, UnitActivity.Intercept })
+        foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake, UnitActivity.Intercept, UnitActivity.Blockade })
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
                 new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
+        if (def.Pillage) actions.Add(Action("pillage", "Pillage", new PillageCommand { Player = Human, Unit = unit.Id }));
         actions.AddRange(ArtilleryActions(unit, def));
         actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));

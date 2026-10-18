@@ -7,7 +7,7 @@ namespace Civ.Mods.Tests;
 
 // Behavioral owners: generation/setup, yield queries, worker commands, network queries and sight.
 // Cases use independent equations or invariants, not production predicates as expected-value helpers.
-public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private ContentDb Content => mods.Content;
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
@@ -175,6 +175,34 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal("world:improvement_improvement_farm", sim.State.Plots[tile.Value].Improvement);
         Assert.Empty(sim.State.Plots[tile.Value].BuildProgress);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Worker_build_time_applies_peak_penalty_and_only_discounts_higher_route_upgrades()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Terrain = "world:grass";
+        plot.Feature = null;
+        plot.Kind = PlotKind.Flat;
+        var builds = Service<IWorkerBuildService>(sim);
+        const string farm = "world:build_build_farm";
+        Assert.Equal(800, builds.RequiredWork(sim, tile, farm));
+        plot.Kind = PlotKind.Peak;
+        Assert.Equal(1600, builds.RequiredWork(sim, tile, farm));
+
+        plot.Kind = PlotKind.Flat;
+        plot.Route = "world:route_route_track";
+        const string road = "world:build_build_road";
+        Assert.Equal(80, builds.RequiredWork(sim, tile, road));
+        var worker = AddWorker(sim, tile);
+        sim.TeamOf(0).Techs.Add("research:the_wheel");
+        sim.State.PlayerById(0).Treasury = 1000;
+        Assert.Null(builds.Validate(sim, 0, worker.Id, road));
+
+        plot.Route = "world:route_route_railroad";
+        Assert.Equal("An equal or better route already exists", builds.Validate(sim, 0, worker.Id, road));
     }
 
     [Fact]

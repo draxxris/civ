@@ -27,6 +27,7 @@ internal sealed class CityYields : ICityYieldService
     }
     private static void AddPlot(Simulation sim, City city, TileId tile, bool center, IPlotYieldService plots, ModifierSink sink)
     {
+        if (!center && sim.Content.Services.Get<ICityConnectionService>().Single().IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id)) return;
         var yield = plots.Calculate(sim, city.Owner, tile).Yields;
         if (center) yield = Center(sim, city, yield);
         sink.AddYield("cities:plot:" + tile.Value, yield);

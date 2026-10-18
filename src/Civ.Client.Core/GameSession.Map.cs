@@ -13,6 +13,12 @@ public sealed partial class GameSession
 
     public Sight SightOf(Hex hex) => SightOf(Sim.State.PlotAt(hex));
 
+    /// <summary>Observed plot state only. Missing fog memory never falls back to live state.</summary>
+    public RevealedPlotSnapshot? PerceivedPlot(TileId tile) =>
+        Service<IVisibilityService>().SnapshotOf(Sim, tile, Me.TeamId);
+
+    public RevealedPlotSnapshot? PerceivedPlot(Hex hex) => PerceivedPlot(Sim.State.Grid.TileAt(hex));
+
     /// <summary>The canonical tile under a map position (one world unit per hex size), or null off the map. Wrap images resolve to their tile.</summary>
     public Hex? Pick(double x, double z, double hexSize = 1)
     {
@@ -27,26 +33,29 @@ public sealed partial class GameSession
     {
         if (!Sim.State.Grid.TryTile(hex, out _)) return null;
         hex = Sim.State.Grid.Normalize(hex);
-        var plot = Sim.State.PlotAt(hex);
-        var sight = SightOf(plot);
-        if (sight == Sight.Hidden) return new("Unexplored", []);
+        var sight = SightOf(hex);
+        if (PerceivedPlot(hex) is not { } plot) return new("Unexplored", []);
         var terrain = Sim.Content.Get<Schema.TerrainDef>(plot.Terrain).Name;
         var lines = new List<string>();
-        AddPlotLines(hex, plot, lines);
-        AddOwnerLines(hex, plot, lines);
-        if (sight == Sight.Visible) AddUnitLines(hex, lines);
+        AddPlotLines(plot, lines);
+        AddOwnerLines(plot, lines);
+        if (sight == Sight.Visible)
+        {
+            var y = YieldsOf(hex);
+            lines.Add($"Yields: {y.Food} food, {y.Production} production, {y.Commerce} commerce");
+            AddUnitLines(hex, lines);
+        }
         return new(plot.Kind == PlotKind.Hills ? $"{plot.Kind} {terrain}" : terrain, lines);
     }
 
-    private void AddPlotLines(Hex hex, Plot plot, List<string> lines)
+    private void AddPlotLines(RevealedPlotSnapshot plot, List<string> lines)
     {
         if (plot.Feature is { } f) lines.Add(Sim.Content.Get<Schema.FeatureDef>(f).Name);
         if (plot.Bonus is { } b && BonusVisible(b)) lines.Add("Resource: " + Sim.Content.Get<Schema.BonusDef>(b).Name);
         if (plot.Improvement is { } i) lines.Add(Sim.Content.Get<Schema.ImprovementDef>(i).Name);
         if (plot.Route is { } r) lines.Add(Sim.Content.Get<Schema.RouteDef>(r).Name);
         if (plot.RiverEdges != 0) lines.Add("River");
-        var y = Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex));
-        lines.Add($"Yields: {y.Yields.Food} food, {y.Yields.Production} production, {y.Yields.Commerce} commerce");
+
     }
 
     /// <summary>Resources are shown only after their reveal technology is known.</summary>
@@ -56,10 +65,10 @@ public sealed partial class GameSession
         return tech == null || MyTeam.Techs.Contains(tech);
     }
 
-    private void AddOwnerLines(Hex hex, Plot plot, List<string> lines)
+    private void AddOwnerLines(RevealedPlotSnapshot plot, List<string> lines)
     {
         if (plot.Owner is int owner) lines.Add("Territory of " + Sim.State.PlayerById(owner).Name);
-        if (Sim.State.CityAt(hex) is { } city) lines.Add($"City: {city.Name} (size {city.Population})");
+        if (plot.City is { } city) lines.Add($"City: {city.Name} (size {city.Population})");
     }
 
     private void AddUnitLines(Hex hex, List<string> lines)
@@ -72,7 +81,14 @@ public sealed partial class GameSession
     public IEnumerable<Unit> VisibleUnits() =>
         Sim.State.Units.Where(u => Service<IVisibilityService>().IsUnitVisible(Sim, u.Id, Me.TeamId));
 
-    /// <summary>Cities on tiles the local team has explored.</summary>
-    public IEnumerable<City> KnownCities() =>
-        Sim.State.Cities.Where(c => c.Owner == Human || SightOf(Sim.State.PlotAt(c.Position)) != Sight.Hidden);
+    /// <summary>Map-only cities from observations, including remembered cities no longer in live state.</summary>
+    public IEnumerable<City> KnownCities()
+    {
+        foreach (var tile in Sim.State.Grid.Tiles)
+        {
+            if (PerceivedPlot(tile)?.City is not { } city) continue;
+            yield return new City { Id = city.Id, Owner = city.Owner, Name = city.Name,
+                Position = Sim.State.Grid.HexOf(tile), Population = city.Population, Buildings = city.Buildings.ToList() };
+        }
+    }
 }

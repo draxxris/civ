@@ -40,9 +40,14 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         var plot = sim.State.Plots[tile.Value];
         if (tile == CityData.Tile(sim, city) || sim.State.CityAt(sim.State.Grid.HexOf(tile)) is not null) return false;
         if (plot.Owner != city.Owner || sim.State.Grid.Distance(CityData.Tile(sim, city), tile) > Radius(sim, city.Id)) return false;
-        if (sim.Content.Get<S.TerrainDef>(plot.Terrain).Impassable || plot.Kind == PlotKind.Peak) return false;
-        if (plot.Feature is { } f && sim.Content.Get<S.FeatureDef>(f).Impassable) return false;
+        if (BlockedPlot(sim, city, tile, plot)) return false;
         return !sim.State.Cities.Any(c => c.Id != city.Id && c.Worked.Any(h => sim.State.Grid.TileAt(h) == tile));
+    }
+    private static bool BlockedPlot(Simulation sim, City city, TileId tile, Plot plot)
+    {
+        if (sim.Content.Get<S.TerrainDef>(plot.Terrain).Impassable || plot.Kind == PlotKind.Peak) return true;
+        if (plot.Feature is { } f && sim.Content.Get<S.FeatureDef>(f).Impassable) return true;
+        return sim.Content.Services.Get<ICityConnectionService>().Single().IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id);
     }
     public void Assign(Simulation sim, int cityId)
     {

@@ -7,6 +7,8 @@ public interface IWorkerBuildService
     string? Validate(Simulation sim, int player, int unit, string build);
     /// <summary>Read-only build preview at a proposed tile. Includes legality, resulting yields and required work.</summary>
     WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build);
+    /// <summary>Whether a worker has a legal unfinished order on its current plot. Continuation needs no new payment.</summary>
+    bool IsWorking(Simulation sim, int unit);
     /// <summary>Start a validated build and charge its initial gold cost.</summary>
     void Start(Simulation sim, int player, int unit, string build);
     /// <summary>Integer work threshold after terrain, speed and starting-era scaling.</summary>

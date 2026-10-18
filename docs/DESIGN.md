@@ -93,6 +93,12 @@ Mods register these contracts through `ctx.RegisterService<T>()`:
   `SortOrder(SetupField, string id)` supplies an optional display order.
   Each field permits at most one default provider. Each choice permits at most one display-order provider.
   The client selects the first loaded choice when no default exists. Display-order ties use ordinal ids.
+- `ISetupPolicy.GameOptions(ContentDb)` supplies optional setup game options.
+  `GameCatalog.GameOptions` aggregates these options for the setup screen.
+  `SimulationSettings.GameOptions` records enabled option choices.
+  `Simulation.IsOptionEnabled(string id)` checks option state during play.
+  The setup screen displays checkboxes for implemented simulation options.
+  Remaining option definitions in `src/Mods/Foundation/data/game-option.json` remain deferred as a future pending item.
 - `IProductionKind` supplies a queue-kind id, tab label, continuous-production flag, content candidates, and definition lookup.
   It also supplies base costs, eligibility visibility, validation, and production calculations.
   The client builds tabs and choices from all registered kinds in service order.
@@ -200,7 +206,11 @@ Clients and other mods resolve these Core contracts through `ContentDb.Services.
 - `IWorkerBuildService.Validate(Simulation, int player, int unit, string build)` returns a rejection reason or null.
 - `IWorkerBuildService.Start(Simulation, int player, int unit, string build)` applies a validated assignment.
 - `IWorkerBuildService.RequiredWork(Simulation, TileId, string build)` returns the integer work threshold.
+- `IWorkerBuildService.IsWorking(Simulation, int player, int unit)` checks active build orders.
 - `IVisibilityService.Recompute(Simulation)` updates visible and revealed team masks.
+- `IVisibilityService.CanSeePlot(Simulation, TileId observer, TileId target, int team, int range, bool aerial = false)` tests line of sight.
+- `IVisibilityService.SnapshotOf(Simulation, TileId tile, int team)` returns last-observed plot state.
+- `INavalBlockadeService.IsTileBlockaded(Simulation, TileId tile, int team)` and `IsCityBlockaded(Simulation, int city)` query naval blockades.
 - `IStartingPositionService.Select(Simulation, int count)` selects locations without mutation.
 - `IStartingPositionService.Normalize(Simulation, IReadOnlyList<TileId>)` applies setup-only terrain changes.
 
@@ -221,23 +231,65 @@ Starting normalization can replace climate-selected terrain near starts, but nev
 Goody huts use improvement spacing and tiles-per rules. Starting eras can suppress all huts.
 
 Networks use routes, city nodes, shared river edges, and technology-enabled coast/ocean plots.
-Unowned plots require exploration. Foreign territory remains inaccessible until diplomacy rules supply permissions.
-Queries recompute components so ownership, pillage and technology changes take effect immediately.
-The `bonus` evaluator uses connected counts. Vicinity requirements remain unavailable until Cities defines their scope.
+Unowned plots require exploration. Physical resource networks and city connections transit revealed peaceful foreign territory without Open Borders treaties (`CvPlot::isTradeNetwork`).
+International city trade routes still require Open Borders agreements when Diplomacy is active.
+Naval blockades by enemy warships within `SHIP_BLOCKADE_RANGE` (default 3) on non-lake water sever water network tiles.
+Blockades also prevent coastal cities from working water tiles and cancel trade routes.
+Autonomous AI blockade planning is absent.
+Queries recompute components so ownership, pillage, blockade, and technology changes take effect immediately.
+The `bonus` evaluator uses connected counts.
+Vicinity requirements check bonus reveal, obsolescence, city availability, and physical connectivity to local sources.
+Valid sources include city centers, improved local plots, or active building grants.
 
 `world:start_build` serializes the Core `StartBuildCommand`.
-Workers share plot progress by build id. An assignment stores its original tile, so movement cancels the assignment at the next worker phase.
-Build times apply terrain, speed and starting-era multipliers in sequence. Known technologies and AI handicap fields modify work rates.
+Workers share plot progress by build id.
+An assignment stores its original tile, so movement cancels the assignment at the next worker phase.
+`IWorkerBuildService.IsWorking` checks active orders so legal continuing work avoids repeat costs or abandonment.
+Build times apply terrain, speed, and starting-era multipliers in sequence.
+Building on peak tiles applies `PEAK_BUILD_TIME_MODIFIER` (+100%).
+Upgrading an existing route to a superior route subtracts the existing route's base build time under `ROUTES_UPGRADE`, with a minimum floor of one.
+Known technologies and AI handicap fields modify work rates.
 Completion can remove a feature, create an improvement or route, change terrain, or consume a worker.
-A feature effect can permit removal without its production technology. Such removal grants no production.
-`FeatureProduction` names the nearest owned city and the production grant. Cities must subscribe to apply overflow.
+A feature effect can permit removal without its production technology.
+Such removal grants no production.
+`FeatureProduction` names the nearest owned city and the production grant.
+Cities must subscribe to apply overflow.
 Improvement upgrades require worked turns or an outside-borders target, plus the target's technology.
+City disorder or empire anarchy suspends discovery, mine exhaustion, and normal upgrades.
+Genuinely unworked tiles retain the existing outside-borders upgrade exception.
 
-Visibility runs at `TurnPhase.Visibility`, after founding, and after unit creation events.
-Military must call `Recompute` after moves. Sight uses hex distance, team sharing, and promotion visibility changes.
-It does not yet model terrain occlusion or remembered hidden terrain.
+At `TurnPhase.Map`, `ImprovementTurnSystem` processes feature evolution and resource discovery.
+Feature disappearance rolls (`FeatureDef.Disappearance`) can remove temporary features.
+Adjacent feature growth and spread rolls (`FeatureDef.Growth`, `FeatureDef.Spread`, `ImprovementDef.FeatureGrowth` on preserves) scale with game speed, feature growth modifiers, and route penalties.
+Worked improved bonus-free tiles roll for resource discovery, with a 10× boost when `foundation:gameoption_resource_depletion` is active.
+When resource depletion is active, worked mines can exhaust to `world:depleted_mine`, setting `Plot.DepletedMine` and blocking new mines until a bonus is revealed.
+Resource deposit exhaustion removes exhausted bonuses.
+Deposit depletion uses the reference zero-consumption path until a resource-consumption service exists.
 
-`Plot.Kind`, `IsLake`, `ImprovementTurns`, `BuildProgress`, player leader/start ids, and worker components enter saves and state hashes.
+`GlobalWarmingSystem` runs at `TurnPhase.Environment`.
+Global warming defense sums map features (`FeatureDef.WarmingDefense`), doubled for players with active health civics (`TREEHUGGER_DEFENSE_BONUS`), scaled by `GLOBAL_WARMING_FOREST` per land plot.
+City pollution sums building unhealthiness (`GLOBAL_WARMING_UNHEALTH_WEIGHT`), bonus unhealthiness (`GLOBAL_WARMING_BONUS_WEIGHT`), and dirty power (`GLOBAL_WARMING_POWER_WEIGHT`).
+City wellbeing queries derive pollution from active building and resource rules because city power outage state is absent.
+Warming rolls consume probabilities and degrade random non-city plots.
+Degradation steps follow snow to tundra or marsh, grass, plains, desert, and coast.
+Tile degradation clears improvements and emits `GlobalWarmingOccurred`.
+Deterministic port RNG selection uses an ordinal non-city candidate array instead of native random map coordinate retries.
+
+Visibility runs at `TurnPhase.Visibility`, after founding, and after unit movement.
+Line-of-sight elevation and feature occlusion (`TerrainDef.SeeFrom`, `TerrainDef.SeeThrough`, `FeatureDef.SeeThrough`) block sight behind hills, peaks, and dense features.
+High ground grants outer-ring vantage sight across lower terrain.
+Aerial units and recon bypass terrain occlusion.
+Per-team fog-of-war plot snapshots (`plot.RevealedSnapshots[team]`) preserve last-observed terrain, relief, features, bonuses, improvements, routes, and ownership.
+Missing fog memory hides tiles until real observation or explicit map reveal, preventing live state leaks.
+The client reads perceived snapshots for fogged tiles to hide unseen mutations.
+
+`military:pillage` (`PillageCommand`) validates cargo, domain, and improvement permanence.
+During peace, a player can demolish their own non-permanent improvement without a gold award.
+Wartime enemy pillaging awards gold from `ImprovementDef.PillageGold` scaled by `pillage_percent` and steps improvements down along `ImprovementDef.ImprovementPillage`.
+Pillaging routes removes the route and emits `PlotPillaged`.
+`WorkerPlanner` prioritizes repairing ruins, depleted mines, and severed routes, and replacing pillaged improvements to reconnect revealed resources.
+
+`Plot.Kind`, `IsLake`, `DepletedMine`, `ImprovementTurns`, `BuildProgress`, `RevealedSnapshots`, player leader/start ids, and worker components enter saves and state hashes.
 These fields are additive to save schema 1 and have defaults for older JSON.
 Changed mod versions reject old content identities unless the caller explicitly forces loading.
 Hand-authored geometry tuning lives in `src/Mods/Foundation/data/hex-overrides.json` and enters the content hash.
@@ -368,9 +420,10 @@ Command identities include:
 - `military:load_unit` (`LoadUnitCommand`): Boards an eligible land unit onto a co-located transport ship possessing available `CargoCapacity` and matching cargo categories/domains.
 - `military:unload_unit` (`UnloadUnitCommand`): Disembarks a cargo unit to the current tile (if valid) or an adjacent land tile, expending remaining movement.
 - `military:air_mission` (`AirMissionCommand`): Executes domain-air operations governed by `AirMissionKind` (`Rebase`, `AirStrike`, `AirBomb`, `Recon`).
-- `military:set_unit_activity`: Added `UnitActivity.Intercept` (Combat Air Patrol) for air units stationed to intercept enemy air missions within range.
+- `military:set_unit_activity`: Added `UnitActivity.Intercept` (Combat Air Patrol) and `UnitActivity.Blockade` (Naval Blockade). Naval combat units on non-lake water can blockade within `SHIP_BLOCKADE_RANGE` (default 3), severing enemy water trade networks and coastal city sea work. Core exposes `INavalBlockadeService`. Autonomous AI naval blockade planning is absent.
 
 Domain events include:
+- `PlotPillaged(int Unit, int Player, TileId Plot, string? Improvement, string? ReplacementImprovement, string? Route, int Gold)`: Published when an improvement or route is pillaged.
 - `CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage)`: Published upon successful city defense bombardment.
 - `AirMissionResolved(AirMissionReport Report)`: Details air mission results including interceptor involvement, interception damage, target damage, collateral hits, and suicide consumption.
 - `GreatGeneralBorn(int Player, int Unit, string UnitType, int City)`: Dispatched when combat experience satisfies the general emergence threshold.
@@ -473,10 +526,10 @@ Capacity includes initial, technology, civic, local-building, coastal-building, 
 Routes use partner population, wrapped hex distance, world-size scaling, capital connection, overseas, building, civic, and foreign modifiers.
 Profit and route yields retain hundredths. City aggregation truncates once per yield before the ordinary city modifiers and Economy sliders.
 Routes select highest profit, then same-team partners, then city ids. Each city uses a partner at most once.
-The source's empire-wide foreign-partner exclusivity is not implemented.
-World permits peaceful foreign city connections, but resource queries retain their same-team ownership restrictions.
-This interim policy uses peace instead of open-border agreements. Foreign routes receive full peace credit until diplomacy supplies peace counters.
-Blockades, connectedness economics, and forced-trade diplomacy remain deferred.
+Physical resource networks and city connections transit revealed peaceful foreign territory without Open Borders treaties (`CvPlot::isTradeNetwork`). International city trade routes still require Open Borders agreements when Diplomacy is active.
+Player naval blockades by enemy warships within `SHIP_BLOCKADE_RANGE` (default 3) on non-lake water sever water trade networks.
+Blockades also prevent coastal cities from working water tiles and cancel trade routes.
+Autonomous AI naval blockade planning remains absent. Connectedness economics and forced-trade diplomacy remain deferred.
 The imported profile sets `INITIAL_TRADE_ROUTES` and `MAX_TRADE_ROUTES` to zero. Trade remains disabled unless a profile overrides these values.
 External keys are `trade:slots`, `trade:profit_percent`, `trade:foreign_profit_percent`, and `trade:yield_percent:<yield>`.
 GP accepts both the existing `cities:great_people_percent` and `cities:great_people_rate_percent` in city and player scopes.

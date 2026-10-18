@@ -29,9 +29,7 @@ internal sealed partial class ReligionService
         threshold = AgeAdjustment(sim, city, religion, threshold);
         return new(threshold / 4, range);
     }
-    private static bool Option(Simulation sim, City city, string option) =>
-        sim.Content.TryGet<GameOptionDef>(option, out _) && sim.Content.Requirements.Evaluate(
-            new Civ.Content.Requirement.Leaf("game-option", option), new(sim, city.Owner, city)).Success;
+    private static bool Option(Simulation sim, City city, string option) => sim.IsOptionEnabled(option);
 
     private static bool TradeConnected(Simulation sim, City city, City source)
     {

@@ -12,6 +12,7 @@ internal sealed partial class SetupScreen : Control
     private readonly LineEdit _search = new() { PlaceholderText = "Search leaders, civilizations or traits" };
     private readonly ItemList _leaders = new() { SizeFlagsVertical = SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(0, 360) };
     private readonly Label _details = Ui.Text("", 14, Ui.Dim);
+    private readonly Dictionary<string, CheckBox> _gameOptions = new(StringComparer.Ordinal);
     private readonly Button _start;
     private List<LeaderChoice> _shown = new();
     private string _leaderId;
@@ -70,6 +71,14 @@ internal sealed partial class SetupScreen : Control
         Add(col, "Game speed", _speed);
         Add(col, "Handicap", _handicap);
         Add(col, "AI opponents", _opponents);
+        var options = Ui.VBox(4);
+        foreach (var option in _catalog.GameOptions)
+        {
+            var check = new CheckBox { Text = option.Name, ButtonPressed = option.Default, TooltipText = option.Help };
+            _gameOptions.Add(option.Id, check);
+            options.AddChild(check);
+        }
+        Add(col, "Game options", Ui.Scroll(options, 150));
         var seedRow = Ui.HBox(6);
         _seed.SizeFlagsHorizontal = SizeFlags.ExpandFill;
         seedRow.AddChild(_seed);
@@ -123,8 +132,9 @@ internal sealed partial class SetupScreen : Control
     public NewGameOptions Options()
     {
         if (!ulong.TryParse(_seed.Text, out var seed)) throw new ArgumentException("Seed must be an unsigned whole number.");
+        var selectedOptions = _gameOptions.ToDictionary(option => option.Key, option => option.Value.ButtonPressed, StringComparer.Ordinal);
         return new NewGameOptions(_catalog.WorldSizes[_world.Selected].Id, _catalog.GameSpeeds[_speed.Selected].Id,
-            _catalog.Handicaps[_handicap.Selected].Id, _leaderId, (int)_opponents.Value, seed);
+            _catalog.Handicaps[_handicap.Selected].Id, _leaderId, (int)_opponents.Value, seed, GameOptions: selectedOptions);
     }
 
     private void OnStart()

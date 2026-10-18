@@ -36,6 +36,25 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Resource_depletion_is_a_default_off_catalog_choice_and_survives_setup_and_reload()
+    {
+        const string id = "foundation:gameoption_resource_depletion";
+        var catalog = new GameCatalog(mods.Sources);
+        Assert.False(Assert.Single(catalog.GameOptions, o => o.Id == id).Default);
+        Assert.False(catalog.SettingsFor(catalog.DefaultOptions()).GameOptions[id]);
+        var options = catalog.DefaultOptions() with
+        {
+            WorldSize = "foundation:worldsize_duel", Opponents = 1,
+            GameOptions = new Dictionary<string, bool> { [id] = true },
+        };
+        var sim = GameSession.Start(catalog, options).Sim;
+        Assert.True(sim.IsOptionEnabled(id));
+        var loaded = SaveGame.Load(catalog.Content, SaveGame.Save(sim));
+        Assert.True(loaded.IsOptionEnabled(id));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
     public void Start_creates_the_simulation_and_selects_a_starting_unit()
     {
         var catalog = new GameCatalog(mods.Sources);
@@ -155,6 +174,33 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     private static IEnumerable<Hex> WorkArea(GameSession s, City city) => s.WorkArea(city).Where(h => h != city.Position);
+
+    [Fact]
+    public void Pillage_action_is_available_for_a_valid_military_unit()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var type = mods.Content.Get<Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land").Id;
+        var unit = Add(sim, type);
+        var improvement = mods.Content.Get<Schema.ImprovementDef>().All.First(i => !i.Permanent && !i.Goody && i.ImprovementPillage is not null);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = 1; plot.Improvement = improvement.Id;
+        sim.State.SetWar(0, 1, true);
+        var session = new GameSession(sim);
+        session.SelectUnit(unit.Id);
+
+        var action = session.DescribeUnit(unit)!.Actions.SingleOrDefault(a => a.Id == "pillage");
+        var command = Assert.IsType<PillageCommand>(action?.Command);
+        Assert.Equal(unit.Id, command.Unit);
+        Assert.Equal(unit.Owner, command.Player);
+        session.RunAction("pillage");
+        Assert.Equal(improvement.ImprovementPillage, plot.Improvement);
+        var pillage = Assert.Single(sim.Events.Published.OfType<PlotPillaged>());
+        Assert.Equal(unit.Id, pillage.Unit);
+        Assert.Equal(unit.Owner, pillage.Player);
+        Assert.Equal(sim.State.Grid.TileAt(unit.Position), pillage.Plot);
+        Assert.Equal(improvement.Id, pillage.Improvement);
+        Assert.Equal(improvement.ImprovementPillage, pillage.ReplacementImprovement);
+    }
 
     [Fact]
     public void Fortify_changes_the_unit_activity()
@@ -341,8 +387,16 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var plot = sim.State.Plots[tile.Value];
         plot.Terrain = terrain;
         plot.Kind = kind;
-        plot.Revealed.Add(0);
+        var visibility = sim.Content.Services.Get<IVisibilityService>().Single();
+        // Explicit map observation establishes memory without granting current sight.
+        visibility.RevealPlot(sim, tile, sim.TeamOf(GameSession.Human).Id);
         var session = new GameSession(sim);
+        Assert.Equal(Sight.Fogged, session.SightOf(plot));
+        Assert.Equal(terrain, session.PerceivedPlot(tile)!.Terrain);
+        Assert.Equal(kind, session.PerceivedPlot(tile)!.Kind);
+        Assert.Equal(title, session.DescribeTile(sim.State.Grid.HexOf(tile))!.Title);
+        plot.Terrain = "world:ocean";
+        plot.Kind = PlotKind.Flat;
         Assert.Equal(title, session.DescribeTile(sim.State.Grid.HexOf(tile))!.Title);
     }
 

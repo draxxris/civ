@@ -29,8 +29,10 @@ public sealed record SimulationSettings
     public string?[] PlayerAis { get; init; } = [];
     /// <summary>Team id per player; missing entries default to player id.</summary>
     public int[] PlayerTeams { get; init; } = [];
+    /// <summary>Per-session game option overrides. Missing options use their ruleset defaults.</summary>
+    public SortedDictionary<string, bool> GameOptions { get; init; } = new(StringComparer.Ordinal);
 
-    /// <summary>Resolve omitted identities once, before generation. Explicit choices are never replaced.</summary>
+    /// <summary>Resolve omitted identities once, before generation.</summary>
     public SimulationSettings Resolve(ContentDb content) => this with
     {
         MapGenerator = Choose(content, SetupField.MapGenerator, MapGenerator, content.MapGenerators.All.FirstOrDefault()?.Id ?? ""),
@@ -125,6 +127,10 @@ public sealed class Simulation
         State.Teams.Add(team);
         return team;
     }
+    /// <summary>Whether a game option is enabled in this session, using its content default when unset.</summary>
+    public bool IsOptionEnabled(string id) => Settings.GameOptions.TryGetValue(id, out bool enabled)
+        ? enabled
+        : Content.TryGet<Civ.Content.Schema.GameOptionDef>(id, out var definition) && definition.Default;
     /// <summary>Team state for a player, including research and known techs.</summary>
     public Team TeamOf(int playerId) => State.TeamOf(playerId);
     /// <summary>Whether a player's team knows a technology.</summary>

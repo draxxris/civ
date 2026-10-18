@@ -43,6 +43,7 @@ internal sealed class BuildEligibility(IWaterService water)
     {
         var plot = sim.State.Plots[tile.Value];
         if (plot.Owner is { } owner && owner != player) return "Cannot build in foreign territory";
+        if (plot.DepletedMine && build.Mine) return "Mine is depleted on this plot";
         if (Unreachable(sim, player, plot)) return "Plot is impassable";
         if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is not null && build.ImprovementType is not null) return "Cannot improve a city plot";
         return Route(sim, plot, build) ?? _improvements.Validate(sim, player, tile, build) ?? PlotChange(sim, tile, build);

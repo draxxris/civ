@@ -27,6 +27,11 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private void Act(Unit worker)
     {
         if (ctx.ThreatAround(worker.Position, 2) > 0) { Retreat(worker); return; }
+        if (ctx.Service<IWorkerBuildService>().IsWorking(ctx.Sim, worker.Id))
+        {
+            _claimed.Add(ctx.Tile(worker.Position));
+            return;
+        }
         var job = ChooseJob(worker);
         if (job is null) { Retreat(worker); return; }
         _claimed.Add(job.Tile);
@@ -64,7 +69,15 @@ internal sealed class WorkerPlanner(AiContext ctx)
         foreach (var city in ctx.Cities)
             foreach (var tile in ctx.Service<ICityWorkService>().WorkArea(ctx.Sim, city.Id))
                 if (seen.Add(tile) && Workable(tile)) _tiles.Add(new(tile, TilePriority(tile, worked.Contains(tile))));
-        foreach (var road in RoadTiles().Where(seen.Add)) _tiles.Add(new(road, 14));
+        foreach (var road in RoadTiles())
+        {
+            if (seen.Add(road)) _tiles.Add(new(road, 14));
+            else if (ctx.Sim.State.Plots[road.Value].Route is not null)
+            {
+                int index = _tiles.FindIndex(tile => tile.Tile == road);
+                if (index >= 0) _tiles[index] = _tiles[index] with { Priority = Math.Max(14, _tiles[index].Priority) };
+            }
+        }
         return _tiles;
     }
 
@@ -81,9 +94,18 @@ internal sealed class WorkerPlanner(AiContext ctx)
         var plot = ctx.Sim.State.Plots[tile.Value];
         int priority = worked ? 25 : 8;
         if (VisibleBonus(plot) is not null) priority += 20;
-        if (plot.Improvement is not null) priority -= 18;
+        if (plot.Improvement is { } id)
+            priority += NeedsRepair(plot, id) ? 15 : -18;
         if (plot.BuildProgress.Count > 0) priority += 100; // Finish work before starting another task.
         return priority;
+    }
+
+    private bool NeedsRepair(Plot plot, string id)
+    {
+        if (id is "world:city_ruins" or "world:city_ruins_arcology") return true;
+        var improvement = ctx.Sim.Content.Get<ImprovementDef>(id);
+        var yields = improvement.YieldChanges;
+        return improvement.DepletedMine || yields.Food + yields.Production + yields.Commerce < 0;
     }
 
     private Job? BestBuildAt(Unit worker, TileId tile)
@@ -106,13 +128,16 @@ internal sealed class WorkerPlanner(AiContext ctx)
 
     private BuildDef[] AvailableBuilds(Unit worker)
     {
-        if (_builds.TryGetValue(worker.Type, out var builds)) return builds;
-        var unit = ctx.Def(worker);
-        var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
-        builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id) && b.Cost == 0
-            && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
-        _builds[worker.Type] = builds;
-        return builds;
+        if (!_builds.TryGetValue(worker.Type, out var builds))
+        {
+            var unit = ctx.Def(worker);
+            var rc = new RequirementContext(ctx.Sim, ctx.PlayerId);
+            builds = ctx.Catalog.WorkerBuilds.Where(b => unit.Builds.GetValueOrDefault(b.Id)
+                && ctx.Sim.Content.Requirements.EvaluateKind(b.Requirements, rc, "tech").Success).ToArray();
+            _builds[worker.Type] = builds;
+        }
+        long treasury = ctx.Sim.State.PlayerById(ctx.PlayerId).Treasury;
+        return builds.Where(build => build.Cost <= treasury).ToArray();
     }
 
     private long Gain(BuildDef build, TileId tile, YieldVector before, YieldVector after)
@@ -127,10 +152,16 @@ internal sealed class WorkerPlanner(AiContext ctx)
     {
         var improvement = ctx.Sim.Content.Get<ImprovementDef>(id);
         int value = (ctx.Leader?.ImprovementWeightModifiers.GetValueOrDefault(id) ?? 0) / 5;
-        if (plot.Improvement is not null) return 0;
-        if (VisibleBonus(plot) is { } bonus && improvement.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true)
+        if (VisibleBonus(plot) is { } bonus && ConnectsBonus(improvement, plot, bonus))
             value += 30 + 8 * bonus.Happiness + 6 * bonus.Health;
         return value;
+    }
+
+    private bool ConnectsBonus(ImprovementDef candidate, Plot plot, BonusDef bonus)
+    {
+        bool alreadyConnected = plot.Improvement is { } existingId
+            && ctx.Sim.Content.Get<ImprovementDef>(existingId).BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
+        return !alreadyConnected && candidate.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
     }
 
     private BonusDef? VisibleBonus(Plot plot)
@@ -175,8 +206,22 @@ internal sealed class WorkerPlanner(AiContext ctx)
         foreach (var hex in HexLine.Between(ctx.Grid, from, end))
         {
             if (!ctx.Grid.TryTile(hex, out var tile)) continue;
-            var plot = ctx.Sim.State.Plots[tile.Value];
-            if (plot.Route is null && RoadPlot(tile)) _roads!.Add(tile);
+            if (RoadPlot(tile) && CanBuildRouteHere(tile)) _roads!.Add(tile);
         }
     }
+
+    private bool CanBuildRouteHere(TileId tile)
+    {
+        var plot = ctx.Sim.State.Plots[tile.Value];
+        if (plot.Route is not { } existing) return true;
+        if (HasUnimprovedWorkedLandTile()) return false;
+        int currentValue = ctx.Sim.Content.Get<RouteDef>(existing).Value;
+        return ctx.UnitsWithRole(UnitRole.Worker).Any(worker => AvailableBuilds(worker).Any(build =>
+            build.RouteType is { } route && ctx.Sim.Content.Get<RouteDef>(route).Value > currentValue));
+    }
+
+    // Route upgrades wait for work only on tiles a worker can improve; water and blocked land are not blockers.
+    private bool HasUnimprovedWorkedLandTile() => ctx.Cities.SelectMany(city => city.Worked)
+        .Select(ctx.Grid.TileAt).Where(Workable)
+        .Any(tile => ctx.Sim.State.Plots[tile.Value].Improvement is null);
 }
