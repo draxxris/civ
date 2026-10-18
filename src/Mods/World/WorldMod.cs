@@ -36,6 +36,7 @@ public sealed class WorldMod : IMod
         context.RegisterCommand<Civ.Game.StartBuildCommand>("start_build");
         context.TurnSystems.Register(workers);
         context.TurnSystems.Register(new ImprovementTurnSystem());
+        context.TurnSystems.Register(new GlobalWarmingSystem(yields));
         context.TurnSystems.Register(visibility);
         context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, _) => visibility.Recompute(sim));
         context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));

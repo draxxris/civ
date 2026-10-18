@@ -28,7 +28,7 @@ internal sealed class BuildingEffects : IModifierSource
         {
             var def = sim.Content.Get<S.BonusDef>(bonus);
             sink.Add(bonus, "cities:happiness", def.Happiness);
-            sink.Add(bonus, "cities:health", def.Health);
+            AddHealth(sink, bonus, def.Health, "bonus");
         }
     }
     internal static IReadOnlyDictionary<string, int> Bonuses(Simulation sim, City city)
@@ -85,7 +85,7 @@ internal sealed class BuildingEffects : IModifierSource
     private static void AddNumbers(S.BuildingDef b, ModifierSink sink)
     {
         var values = new (string Key, int Value)[] {
-            ("happiness", b.Happiness), ("health", b.Health), ("food_kept_percent", b.FoodKept),
+            ("happiness", b.Happiness), ("food_kept_percent", b.FoodKept),
             ("growth_percent", b.PopulationGrowthPercent), ("free_specialists", b.FreeSpecialist),
             ("maintenance_percent", b.MaintenanceModifier), ("distance_maintenance_percent", b.DistanceMaintenanceModifier),
             ("coastal_maintenance_percent", b.CoastalDistanceMaintenanceModifier), ("count_maintenance_percent", b.CityCountMaintenancePercent),
@@ -93,6 +93,13 @@ internal sealed class BuildingEffects : IModifierSource
             ("military_production_percent", b.MilitaryProductionModifier), ("no_unhappiness", b.NoUnhappiness ? 1 : 0),
             ("no_unhealthy_population", b.NoUnhealthyPopulation ? 1 : 0), ("building_only_healthy", b.BuildingOnlyHealthy ? 1 : 0) };
         foreach (var value in values) sink.Add(b.Id, "cities:" + value.Key, value.Value);
+        AddHealth(sink, b.Id, b.Health, "building");
+    }
+    // Keep the existing wellbeing ledger intact; category keys expose pollution without re-reading definitions.
+    private static void AddHealth(ModifierSink sink, string source, long value, string category)
+    {
+        sink.Add(source, "cities:health", value);
+        sink.Add(source, "cities:" + category + "_bad_health", -Math.Min(0, value));
     }
     private static void AddMaps(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
@@ -101,7 +108,7 @@ internal sealed class BuildingEffects : IModifierSource
             sink.AddYield(b.Id + ":" + bonus, b.BonusYieldChanges.GetValueOrDefault(bonus));
             sink.AddYield(b.Id + ":" + bonus, b.BonusYieldModifiers.GetValueOrDefault(bonus), true);
             sink.Add(b.Id, "cities:happiness", b.BonusHappinessChanges.GetValueOrDefault(bonus));
-            sink.Add(b.Id, "cities:health", b.BonusHealthChanges.GetValueOrDefault(bonus));
+            AddHealth(sink, b.Id, b.BonusHealthChanges.GetValueOrDefault(bonus), "bonus");
         }
         foreach (var slot in b.SpecialistSlots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
         foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
@@ -125,14 +132,14 @@ internal sealed class BuildingEffects : IModifierSource
     {
         sink.AddYield(b.Id + ":global", b.GlobalYieldModifiers, true);
         sink.AddCommerce(b.Id + ":global", b.GlobalCommerceModifiers, true);
-        sink.Add(b.Id, "cities:happiness", b.GlobalHappiness); sink.Add(b.Id, "cities:health", b.GlobalHealth);
+        sink.Add(b.Id, "cities:happiness", b.GlobalHappiness); AddHealth(sink, b.Id, b.GlobalHealth, "building");
         sink.Add(b.Id, "cities:free_specialists", b.GlobalFreeSpecialist);
         sink.Add(b.Id, "cities:great_people_percent", b.GlobalGreatPeopleRateModifier);
         sink.Add(b.Id, "cities:maintenance_percent", b.GlobalMaintenanceModifier);
         sink.Add(b.Id, "cities:experience", b.GlobalExperience);
         foreach (var local in CityData.Active(sim, city)) sink.AddCommerce(b.Id, b.GlobalBuildingExtraCommerces.GetValueOrDefault(local.DefaultBuilding));
         if (sim.State.PlotAt(city.Position).AreaId != sim.State.PlotAt(origin.Position).AreaId) return;
-        sink.Add(b.Id, "cities:happiness", b.AreaHappiness); sink.Add(b.Id, "cities:health", b.AreaHealth);
+        sink.Add(b.Id, "cities:happiness", b.AreaHappiness); AddHealth(sink, b.Id, b.AreaHealth, "building");
         sink.Add(b.Id, "cities:free_specialists", b.AreaFreeSpecialist);
         sink.Add(b.Id, "cities:maintenance_percent", b.AreaMaintenanceModifier);
     }

@@ -1,7 +1,7 @@
 {
   "id": "cities",
   "name": "Cities",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "assembly": "Civ.Mods.Cities.dll",
   "dependencies": [],
   "references": [

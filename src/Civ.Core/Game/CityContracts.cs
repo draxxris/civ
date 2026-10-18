@@ -10,9 +10,13 @@ public interface ICityYieldService
     CityYieldResult Calculate(Simulation sim, int city);
 }
 public sealed record CityWellbeing(int Happy, int Unhappy, int Angry, int Healthy, int Unhealthy, int FoodPenalty, Ledger Ledger);
+/// <summary>Nonnegative pollution penalties, including building population effects but excluding citizen-count and terrain penalties.</summary>
+public sealed record CityEnvironmentalUnhealth(long Buildings, long Bonuses, long Power);
 public interface ICityWellbeingService
 {
     CityWellbeing Calculate(Simulation sim, int city);
+    /// <summary>Source penalties before healthy effects cancel them. Rulesets without pollution may return zero.</summary>
+    CityEnvironmentalUnhealth EnvironmentalUnhealth(Simulation sim, int city) => new(0, 0, 0);
 }
 public sealed record CityGrowthResult(long Threshold, long Consumption, long Difference, int FoodKeptPercent, Ledger Ledger);
 public interface ICityGrowthService
