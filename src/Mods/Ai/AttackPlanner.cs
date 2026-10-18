@@ -83,7 +83,7 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
     {
         var hexes = tiles.Select(ctx.Grid.HexOf).ToArray();
         int threshold = force.Count > 1 ? ParallelTiles : int.MaxValue;
-        var reachable = ParallelScoring.Select(hexes, threshold, hex => force.All(u => reaches(u, hex)));
+        var reachable = ParallelScoring.Select(ctx.Sim, hexes, threshold, hex => force.All(u => reaches(u, hex)));
         int index = Array.IndexOf(reachable, true);
         return index < 0 ? null : hexes[index];
     }

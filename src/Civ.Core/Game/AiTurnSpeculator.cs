@@ -89,15 +89,27 @@ internal static class AiTurnSpeculator
         var baseline = new WaveBaseline(sim);
         // Shared immutable geometry: materialize its lazy cache before threads read it.
         _ = sim.State.Grid.MaximumDistance;
+        var plans = PreparePlans(sim, players, baseline);
+        var first = ExecutePlayers(sim, players, plans, baseline);
+        sim.State.PlayerById(players[0]).EndedTurn = true;
+        Report(sim, wave, players[0], SpeculationOutcome.Direct);
+        return CommitPlans(sim, players, plans, baseline, first, wave);
+    }
+
+    private static SpeculativePlan?[] PreparePlans(Simulation sim, int[] players, WaveBaseline baseline)
+    {
         var plans = new SpeculativePlan?[players.Length];
         // Forks only read the authoritative state, so they can be copied concurrently before the first player acts.
         Parallel.For(1, players.Length, i =>
         {
             if (HasPresence(sim, players[i])) plans[i] = new SpeculativePlan(players[i], sim.ForkSpeculative(), baseline);
         });
+        return plans;
+    }
 
-        // The first player acts on the authoritative state while the others plan on their forks. A fork failure only
-        // ends the wave; the player then runs in place, where any real error surfaces as it would sequentially.
+    // A fork failure ends the wave; the player then runs in place, where real errors surface as in sequential play.
+    private static PlayerTrace ExecutePlayers(Simulation sim, int[] players, SpeculativePlan?[] plans, WaveBaseline baseline)
+    {
         PlayerTrace? first = null;
         ExceptionDispatchInfo? failure = null;
         Parallel.For(0, players.Length, i =>
@@ -107,11 +119,14 @@ internal static class AiTurnSpeculator
             catch (Exception e) { failure = ExceptionDispatchInfo.Capture(e); }
         });
         failure?.Throw();
-        sim.State.PlayerById(players[0]).EndedTurn = true;
-        Report(sim, wave, players[0], SpeculationOutcome.Direct);
+        return first!;
+    }
 
+    private static int CommitPlans(Simulation sim, int[] players, SpeculativePlan?[] plans, WaveBaseline baseline,
+        PlayerTrace first, int wave)
+    {
         var mutations = new MutationFootprint(sim.State.Grid);
-        mutations.Absorb(first!);
+        mutations.Absorb(first);
         var acted = new HashSet<int> { players[0] };
         var commits = new CommitLog(sim);
         for (int i = 1; i < players.Length; i++)
@@ -142,6 +157,7 @@ internal static class AiTurnSpeculator
         public readonly int NextCityId, NextUnitId;
         public readonly PlotRecord[] Plots;
         public readonly Dictionary<int, CityRecord> Cities;
+        private readonly Dictionary<int, UnitRecord> _units;
         public readonly Dictionary<int, string> Players, Teams;
         public readonly Dictionary<int, int[]> Wars;
         public readonly string Global;
@@ -151,6 +167,7 @@ internal static class AiTurnSpeculator
             Rng = sim.Rng.State; NextCityId = sim.State.NextCityId; NextUnitId = sim.State.NextUnitId;
             Plots = Array.ConvertAll(sim.State.Plots, PlotRecord.Of);
             Cities = sim.State.Cities.ToDictionary(c => c.Id, c => CityRecord.Of(sim.State, c));
+            _units = sim.State.Units.ToDictionary(u => u.Id, u => UnitRecord.Of(sim.State, u));
             Wars = sim.State.Teams.ToDictionary(t => t.Id, t => t.Wars.ToArray());
             (Players, Teams, Global) = Digests(sim.State);
         }
@@ -168,6 +185,24 @@ internal static class AiTurnSpeculator
             var changedTeams = teams.Where(t => Teams.GetValueOrDefault(t.Key) != t.Value).Select(t => t.Key).ToHashSet();
             bool wars = state.Teams.Any(t => !t.Wars.SetEquals(Wars.GetValueOrDefault(t.Id) ?? []));
             return (changedPlayers, changedTeams, wars, global != Global);
+        }
+
+        /// <summary>Unit creation, removal and all state changes have spatial effects, even without movement or a
+        /// command target. Compare once per completed plan; command tracing still preserves intermediate movement.</summary>
+        public IEnumerable<int> UnitChanges(GameState state)
+        {
+            foreach (var unit in state.Units)
+            {
+                var now = UnitRecord.Of(state, unit);
+                if (_units.TryGetValue(unit.Id, out var before))
+                {
+                    if (before == now) continue;
+                    yield return before.Tile;
+                }
+                yield return now.Tile;
+            }
+            foreach (var (id, before) in _units)
+                if (state.FindUnit(id) is null) yield return before.Tile;
         }
 
         /// <summary>Tiles whose shared gameplay fields differ from the wave start, and whether any city gained or lost a building.</summary>
@@ -200,6 +235,12 @@ internal static class AiTurnSpeculator
             && BuildProgress == (p.BuildProgress.Count == 0 ? "" : string.Join(';', p.BuildProgress.Select(e => e.Key + "=" + e.Value)));
     }
 
+    // Include the full serialized unit contract, including mod components, rather than maintaining a partial field list.
+    private sealed record UnitRecord(int Tile, string State)
+    {
+        public static UnitRecord Of(GameState state, Unit unit) => new(state.Grid.TileAt(unit.Position).Value, CanonicalJson.Serialize(unit));
+    }
+
     // Citizen assignments are not shared: a city can only work plots its owner controls.
     internal sealed record CityRecord(int Owner, int Tile, string Buildings)
     {
@@ -226,9 +267,11 @@ internal static class AiTurnSpeculator
         {
             var trace = new PlayerTrace(baseline);
             var previous = sim.CommandObserver;
+            bool parallel = sim.IsParallelAiTurn;
             sim.CommandObserver = trace;
+            sim.IsParallelAiTurn = true;
             try { sim.RunAiPlayer(player); }
-            finally { sim.CommandObserver = previous; }
+            finally { sim.CommandObserver = previous; sim.IsParallelAiTurn = parallel; }
             trace.Finish(sim);
             return trace;
         }
@@ -276,6 +319,7 @@ internal static class AiTurnSpeculator
             AllocatedCity = sim.State.NextCityId != _baseline.NextCityId;
             AllocatedUnit = sim.State.NextUnitId != _baseline.NextUnitId;
             _tiles.UnionWith(_baseline.Diff(sim.State).Tiles);
+            _tiles.UnionWith(_baseline.UnitChanges(sim.State));
             (ChangedPlayers, ChangedTeams, _, _) = _baseline.Changes(sim.State);
         }
     }
@@ -368,22 +412,31 @@ internal static class AiTurnSpeculator
         public string? Conflict(Simulation sim, MutationFootprint mutations, HashSet<int> acted)
         {
             if (_error is not null || Trace is null) return "plan failed";
-            var trace = Trace;
-            if (trace.UsedRng && sim.Rng.State != baseline.Rng) return "rng";
-            if (trace.AllocatedCity && sim.State.NextCityId != baseline.NextCityId) return "city id";
-            if (trace.AllocatedUnit && sim.State.NextUnitId != baseline.NextUnitId) return "unit id";
+            return AllocationConflict(sim) ?? SharedStateConflict(sim, acted)
+                ?? (mutations.Touches(Trace.Tiles) ? "footprint" : null);
+        }
+
+        private string? AllocationConflict(Simulation sim)
+        {
+            if (Trace!.UsedRng && sim.Rng.State != baseline.Rng) return "rng";
+            if (Trace.AllocatedCity && sim.State.NextCityId != baseline.NextCityId) return "city id";
+            if (Trace.AllocatedUnit && sim.State.NextUnitId != baseline.NextUnitId) return "unit id";
+            return null;
+        }
+
+        private string? SharedStateConflict(Simulation sim, HashSet<int> acted)
+        {
             var earlier = baseline.Changes(sim.State);
             if (earlier.Wars) return "war";
             if (earlier.Global) return "global state";
             var (_, limits) = baseline.Diff(sim.State);
             if (limits) return "buildings";
-            if (sim.State.NextUnitId != baseline.NextUnitId) return "units created";
+
             // Earlier players may change their own records; a change to anyone else's could be read by this plan.
             if (!earlier.Players.IsSubsetOf(acted)) return "cross-player change";
             var actedTeams = acted.Select(p => sim.State.PlayerById(p).TeamId).ToHashSet();
             if (!earlier.Teams.IsSubsetOf(actedTeams)) return "cross-team change";
-            if (earlier.Players.Overlaps(trace.ChangedPlayers) || earlier.Teams.Overlaps(trace.ChangedTeams)) return "shared record";
-            if (mutations.Touches(trace.Tiles)) return "footprint";
+            if (earlier.Players.Overlaps(Trace!.ChangedPlayers) || earlier.Teams.Overlaps(Trace.ChangedTeams)) return "shared record";
             return null;
         }
 

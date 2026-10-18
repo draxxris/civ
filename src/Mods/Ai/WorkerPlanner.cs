@@ -58,7 +58,7 @@ internal sealed class WorkerPlanner(AiContext ctx)
         // Resolve the cached build list and road set before tiles are previewed on several threads.
         var builds = AvailableBuilds(worker);
         var roads = RoadTiles();
-        var jobs = ParallelScoring.Select(candidates, ParallelTiles, t => BestBuildAt(worker, t.Tile, builds, roads));
+        var jobs = ParallelScoring.Select(ctx.Sim, candidates, ParallelTiles, t => BestBuildAt(worker, t.Tile, builds, roads));
         return jobs.FirstOrDefault(job => job is not null);
     }
 

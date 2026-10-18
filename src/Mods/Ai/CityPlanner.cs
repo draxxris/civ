@@ -17,7 +17,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     public void Plan()
     {
         AnnexMaturePuppets();
-        Views = ParallelScoring.Select(ctx.Cities, ParallelCities, c => CityView.Build(ctx, c));
+        Views = ParallelScoring.Select(ctx.Sim, ctx.Cities, ParallelCities, c => CityView.Build(ctx, c));
         CountQueued();
         foreach (var view in Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
@@ -138,7 +138,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         var options = new List<(string Kind, string Id, long Score)>();
         var buildings = Options.Buildings;
         var production = ctx.Service<ICityProductionService>();
-        var rated = ParallelScoring.Select(buildings, ParallelBuildings, b =>
+        var rated = ParallelScoring.Select(ctx.Sim, buildings, ParallelBuildings, b =>
             production.Validate(ctx.Sim, v.City.Id, "cities:building", b.Id).Success ? Rate(b, v) : null);
         for (int i = 0; i < buildings.Count; i++)
             if (rated[i] is { } score) options.Add(("cities:building", buildings[i].Id, score));

@@ -1,3 +1,6 @@
+using System.Collections.Concurrent;
+using Civ.Content;
+using Civ.Modding;
 using Civ.Game;
 using Xunit;
 using Xunit.Abstractions;
@@ -55,6 +58,143 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             a.AdvanceTurn(); b.AdvanceTurn(); saved?.AdvanceTurn();
         }
         Metrics(a, "determinism turn 151");
+    }
+
+    [Fact]
+    public void Speculative_games_and_midrun_save_match_sequential_hashes_for_twenty_turns()
+    {
+        var a = GameFactory.CreateAi(mods.Content, seed: 23);
+        var b = GameFactory.CreateAi(mods.Content, seed: 23);
+        var sequential = SaveGame.Load(mods.Content, SaveGame.Save(a));
+        sequential.AiWaveLimit = 1;
+        for (int turn = 0; turn <= 20; turn++)
+        {
+            Assert.Equal(sequential.ComputeHash(), a.ComputeHash());
+            Assert.Equal(a.ComputeHash(), b.ComputeHash());
+            if (turn == 10) b = SaveGame.Load(mods.Content, SaveGame.Save(b));
+            Assert.Equal(a.ComputeHash(), b.ComputeHash());
+            if (turn == 20) break;
+            a.AdvanceTurn(); b.AdvanceTurn(); sequential.AdvanceTurn();
+        }
+        Assert.All(a.State.Players.Take(4), p => Assert.NotNull(p.Ai));
+    }
+
+    [Fact]
+    public void Peaceful_settlers_contesting_one_site_replan_the_second_founding_like_sequential_turns()
+    {
+        var probe = new SettlementProbe();
+        var content = ModLoader.Build(mods.Sources.Append(new ModSource
+        {
+            Manifest = new() { Id = "settlement_probe", Dependencies = ["cities", "military"] },
+            Instance = probe, Root = mods.Root,
+        }));
+        var events = new List<SpeculationEvent>();
+        Simulation Create(int width) => Simulation.CreateScenario(content,
+            GameFactory.Settings(71) with { PlayerAis = [probe.Id, probe.Id] }, new(20, 12),
+            Enumerable.Range(0, 240).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), game =>
+            {
+                game.AiWaveLimit = width;
+                game.SpeculationObserver = events.Add;
+                foreach (int owner in new[] { 0, 1 })
+                {
+                    var unit = new Unit { Id = game.State.NextUnitId++, Owner = owner,
+                        Type = "military:settler", Position = new(7, 5) };
+                    game.State.AddUnit(unit); Service<IUnitService>(game).Initialize(game, unit.Id);
+                }
+            });
+        var sim = Create(int.MaxValue);
+        Assert.Contains(probe.Decisions, d => d == (1, true));
+        Assert.Contains(probe.Decisions, d => d == (1, false));
+        var conflict = Assert.Single(events, e => e.Outcome == SpeculationOutcome.Conflict);
+        Assert.Equal(1, conflict.Player); Assert.Equal("city id", conflict.Reason);
+        Assert.Contains(events, e => e.Player == 1 && e.Wave == 2 && e.Outcome == SpeculationOutcome.Direct);
+        var city = Assert.Single(sim.State.Cities);
+        Assert.Equal(0, city.Owner); Assert.Equal(new Hex(7, 5), city.Position);
+        Assert.Equal(UnitActivity.Sleep, sim.State.UnitById(2).Extensions.Get<MilitaryUnitState>(content)!.Activity);
+        Assert.All(sim.State.Teams, t => Assert.Empty(t.Wars));
+        var sequential = Create(1);
+        Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
+    }
+
+    [Fact]
+    public void Concurrent_players_do_not_start_nested_candidate_scoring_tasks()
+    {
+        var probe = new ScoringProbe();
+        var content = ModLoader.Build(mods.Sources.Append(new ModSource
+        {
+            Manifest = new() { Id = "scoring_probe", Dependencies = ["ai", "cities"] }, Instance = probe, Root = mods.Root,
+        }));
+        var sim = Simulation.CreateScenario(content,
+            GameFactory.Settings(71) with { PlayerAis = [probe.Id, probe.Id] }, new(60, 12),
+            Enumerable.Range(0, 720).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), game =>
+            {
+                game.State.Turn = 50;
+                GameFactory.NeutralPolitics(game);
+                foreach (int owner in new[] { 0, 1 })
+                {
+                    var city = new City { Id = game.State.NextCityId++, Owner = owner, Position = new(4 + owner * 30, 5) };
+                    game.State.AddCity(city); game.State.PlotAt(city.Position).Owner = owner;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var unit = new Unit { Id = game.State.NextUnitId++, Owner = owner, Type = "military:warrior", Position = city.Position };
+                        game.State.AddUnit(unit); Service<IUnitService>(game).Initialize(game, unit.Id);
+                    }
+                }
+            });
+        Assert.True(probe.Checked > 0, "The fixture must reach real building candidate scoring");
+        Assert.Empty(probe.NestedTasks);
+        Assert.All(sim.State.Players.Take(2), p => Assert.True(p.EndedTurn));
+    }
+
+    private sealed class ScoringProbe : IMod, IPlayerAI, IRequirementEvaluator
+    {
+        private readonly AsyncLocal<int?> _parent = new();
+        private int _decisions, _checked;
+        public int Checked => _checked;
+        public ConcurrentBag<int?> NestedTasks { get; } = new();
+        public string Id => "scoring_probe:ai";
+        public string Kind => "scoring-task";
+        public void Register(IModContext context)
+        {
+            context.PlayerAIs.Register(this);
+            context.RegisterService<IRequirementEvaluator>("scoring", this);
+            for (int i = 0; i < 16; i++) context.Content<Civ.Content.Schema.BuildingDef>().Register(new()
+            {
+                Id = $"scoring_probe:building{i}", DefaultBuilding = $"scoring_probe:building{i}", Cost = 40,
+                Requirements = new Requirement.Leaf(Kind, "probe"),
+            });
+        }
+        public IEnumerable<GameCommand> Decide(Simulation sim, int playerId)
+        {
+            // Only the initial wave participates; a conflict can later run one player outside a wave.
+            _parent.Value = Interlocked.Increment(ref _decisions) <= 2 ? Task.CurrentId : null;
+            try { return sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, playerId).ToArray(); }
+            finally { _parent.Value = null; }
+        }
+        public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
+        {
+            if (_parent.Value is { } parent)
+            {
+                Interlocked.Increment(ref _checked);
+                if (Task.CurrentId != parent) NestedTasks.Add(Task.CurrentId);
+            }
+            return null;
+        }
+    }
+
+    private sealed class SettlementProbe : IMod, IPlayerAI
+    {
+        public string Id => "settlement_probe:ai";
+        public ConcurrentBag<(int Player, bool CanFound)> Decisions { get; } = new();
+        public void Register(IModContext context) => context.PlayerAIs.Register(this);
+        public IEnumerable<GameCommand> Decide(Simulation sim, int playerId)
+        {
+            var settler = sim.State.Units.Single(u => u.Owner == playerId);
+            var found = new FoundCityWithSettlerCommand { Player = playerId, Settler = settler.Id };
+            bool canFound = found.Validate(sim) is null;
+            Decisions.Add((playerId, canFound));
+            return canFound ? [found] : [new SetUnitActivityCommand { Player = playerId, Unit = settler.Id, Activity = UnitActivity.Sleep }];
+        }
     }
 
     [Fact]

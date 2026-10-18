@@ -56,7 +56,7 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         var candidates = Soldiers().Where(u => ctx.Role(u) == UnitRole.Melee && !ctx.Done.Contains(u.Id) && u.MovesLeft > 0 && u.Position != view.City.Position)
             .Where(u => ctx.Sim.State.PlotAt(u.Position).AreaId == area).ToArray();
         var pathfinding = ctx.Service<IPathfindingService>();
-        var paths = ParallelScoring.Select(candidates, ParallelPaths, u => pathfinding.FindPath(ctx.Sim, u.Id, view.City.Position));
+        var paths = ParallelScoring.Select(ctx.Sim, candidates, ParallelPaths, u => pathfinding.FindPath(ctx.Sim, u.Id, view.City.Position));
         var pick = candidates.Select((u, i) => (Unit: u, Path: paths[i])).Where(x => x.Path is not null)
             .OrderByDescending(x => ReinforcementValue(x.Unit, x.Path!, view)).ThenBy(x => x.Unit.Id).Select(x => x.Unit).FirstOrDefault();
         if (pick is null) return false;

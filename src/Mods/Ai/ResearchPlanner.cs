@@ -16,7 +16,7 @@ internal sealed class ResearchPlanner(AiContext ctx)
         var research = ctx.Service<IResearchService>();
         var owned = OwnedBonuses();
         var candidates = ctx.Catalog.Techs.Where(t => !team.Techs.Contains(t.Id)).ToArray();
-        var scores = ParallelScoring.Select(candidates, ParallelTechs, t =>
+        var scores = ParallelScoring.Select(ctx.Sim, candidates, ParallelTechs, t =>
             research.Validate(ctx.Sim, ctx.PlayerId, t.Id).Success ? Score(research, t, owned) : (long?)null);
         var best = candidates.Select((t, i) => (Tech: t, Score: scores[i])).Where(x => x.Score is not null)
             .OrderByDescending(x => x.Score).ThenBy(x => x.Tech.Id, StringComparer.Ordinal).FirstOrDefault();

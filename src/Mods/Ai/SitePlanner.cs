@@ -89,7 +89,7 @@ internal sealed class SitePlanner
         // Build the shared tables once before scoring threads read them.
         _ = _tileValue.Value;
         _ = _claimed.Value;
-        return ParallelScoring.Select(candidates, ParallelSites, Score).Where(s => s.Score >= MinSiteScore)
+        return ParallelScoring.Select(ctx.Sim, candidates, ParallelSites, Score).Where(s => s.Score >= MinSiteScore)
             .OrderByDescending(s => s.Score).ThenBy(s => s.Tile.Value).ToArray();
     }
 
@@ -140,7 +140,7 @@ internal sealed class SitePlanner
     }
 
     private static int[] BuildTileValues(AiContext ctx) =>
-        ParallelScoring.Select(ctx.Sim.State.Plots, ParallelPlots, plot => PlotValue(ctx, plot));
+        ParallelScoring.Select(ctx.Sim, ctx.Sim.State.Plots, ParallelPlots, plot => PlotValue(ctx, plot));
 
     private static int PlotValue(AiContext ctx, Plot plot)
     {

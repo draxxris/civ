@@ -184,6 +184,9 @@ public sealed partial class Simulation
     /// <summary>Optional observer of top-level commands, used to measure what a speculative turn touched.</summary>
     internal ICommandObserver? CommandObserver { get; set; }
     private int _commandDepth;
+    /// <summary>Whether this simulation is planning a player in a concurrent AI wave. Read-only planners should
+    /// score serially in this scope to avoid nesting parallel work inside the wave. Not authoritative or saved.</summary>
+    public bool IsParallelAiTurn { get; internal set; }
     /// <summary>Most AI players planned together in one wave; one runs every AI strictly in turn. Part of the
     /// deterministic rules, so it must never depend on the machine.</summary>
     internal int AiWaveLimit { get; set; } = int.MaxValue;
