@@ -38,5 +38,7 @@ internal sealed class SetupPolicy : ISetupPolicy
             "Cities with an existing religion can still receive additional religions via natural spread.");
         yield return new("foundation:gameoption_resource_depletion", "Resource Depletion", false,
             "Worked mines and resource deposits can run out. New resources are discovered more often.");
+        yield return new("foundation:gameoption_realistic_timescale", "Realistic Timescale", true,
+            "Adjust research costs to keep technology progress near the expected era.");
     }
 }

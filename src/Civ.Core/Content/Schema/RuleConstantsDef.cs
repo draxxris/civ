@@ -55,6 +55,12 @@ public sealed record RuleConstants
     public int ResearchKnownPrerequisitePercent { get; init; }
     public int ResearchCostPercent { get; init; }
     public int ResearchKnownTeamsPercent { get; init; }
+    public int StartYear { get; init; }
+    public int ResearchDiffusionEnabled { get; init; }
+    public int ResearchDiffusionKnownTeamsPercent { get; init; }
+    public int ResearchDiffusionWelfarePercent { get; init; }
+    public int ResearchDiffusionWelfareThreshold { get; init; }
+    public int RevolutionResearchCostPercent { get; init; } = 100;
     public int BaseCivicAnarchyTurns { get; init; }
     public int BaseReligionAnarchyTurns { get; init; }
     public int MaximumAnarchyTurns { get; init; }

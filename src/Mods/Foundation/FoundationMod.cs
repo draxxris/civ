@@ -68,6 +68,9 @@ public sealed class FoundationMod : IPreparableMod
         ContentRegistration.Load(context, Yields);
         ContentRegistration.Load(context, Conditions);
         ContentRegistration.Load(context, Constants);
+        var calendar = new GameCalendar(Constants.Read(context.Data).Single().Values.StartYear);
+        foreach (var speed in Speeds.Read(context.Data)) calendar.ValidateShipped(speed);
+        context.RegisterService<Civ.Game.IGameCalendar>("calendar", calendar);
         ContentRegistration.Evaluator<EraDef>(context, "era");
         ContentRegistration.Evaluator<CultureLevelDef>(context, "culture-level");
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
