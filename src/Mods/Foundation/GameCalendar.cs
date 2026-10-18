@@ -5,7 +5,7 @@ using Civ.Game;
 namespace Civ.Mods.Foundation;
 
 /// <summary>Month-only CvDate schedules, derived without a mutable simulation clock.</summary>
-internal sealed class GameCalendar(int startYear) : IGameCalendar
+internal sealed class GameCalendar : IGameCalendar
 {
     private sealed record Step(long EndTurn, long EndMonth, int Months);
 
@@ -14,21 +14,24 @@ internal sealed class GameCalendar(int startYear) : IGameCalendar
         int elapsed = elapsedTurns ?? checked(sim.State.Turn - 1);
         ArgumentOutOfRangeException.ThrowIfNegative(elapsed);
         if (!sim.Content.TryGet<GameSpeedDef>(sim.Settings.GameSpeed, out var speed)) return null;
-        var steps = BuildSchedule(speed);
+        int startYear = sim.Content.Get<RuleConstantsDef>().All.SingleOrDefault()?.Values.StartYear ?? 0;
+        var steps = BuildSchedule(speed, startYear);
         if (steps.Length == 0) return null;
         int percent = sim.Content.TryGet<EraDef>(sim.Settings.StartingEra, out var era) ? era.StartPercent : 0;
         if (percent is < 0 or > 100) throw new InvalidDataException("Calendar starting-era percentage must be between 0 and 100");
         long offset = (long)((Int128)steps[^1].EndTurn * percent / 100);
-        return DateAt(steps, checked(offset + elapsed));
+        return DateAt(steps, checked(offset + elapsed), startYear);
     }
 
     internal void ValidateShipped(GameSpeedDef speed)
     {
-        if (BuildSchedule(speed).Length == 0)
+        // Increments are positive, so the largest possible start year gives the strictest upper bound.
+        // Validate without capturing raw constants; queries validate again against effective content.
+        if (BuildSchedule(speed, int.MaxValue).Length == 0)
             throw new InvalidDataException($"Calendar schedule is empty: {speed.Id}");
     }
 
-    private Step[] BuildSchedule(GameSpeedDef speed)
+    private static Step[] BuildSchedule(GameSpeedDef speed, int startYear)
     {
         var steps = new List<Step>();
         long turn = 0, month = (long)startYear * 12 + 1; // CvDate starts in February, with zero-based month 1.
@@ -56,7 +59,7 @@ internal sealed class GameCalendar(int startYear) : IGameCalendar
         return steps.ToArray();
     }
 
-    private CalendarDate DateAt(Step[] steps, long turn)
+    private static CalendarDate DateAt(Step[] steps, long turn, int startYear)
     {
         long previousTurn = 0, previousMonth = (long)startYear * 12 + 1;
         int previousMonths = steps[0].Months;

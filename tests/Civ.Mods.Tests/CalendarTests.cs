@@ -60,6 +60,30 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(sim.ComputeHash(), restored.ComputeHash());
     }
 
+    // Effective-content contract: a mod override must shift every date, not just the initial label.
+    // Existing calendar tests use Foundation's unmodified constants and cannot catch registration-time capture.
+    [Theory]
+    [InlineData(-4000, -3925L, 3845L, 4201L)]
+    [InlineData(0, 75L, 7845L, 8201L)]
+    [InlineData(int.MinValue, -2147483573L, -2147475803L, -2147475447L)]
+    [InlineData(int.MaxValue, 2147483722L, 2147491492L, 2147491848L)]
+    public void Effective_start_year_override_shifts_initial_subyear_and_tail_dates(int startYear, long firstYear, long subyearYear, long tailYear)
+    {
+        var original = mods.Content.Get<RuleConstantsDef>("foundation:rule_constants");
+        var source = new ModSource { Manifest = new() { Id = "startyear_probe", Version = "1", Dependencies = ["foundation"] },
+            Root = mods.Root, Instance = new StartYearProbe(original, startYear) };
+        var content = ModLoader.Build(mods.Sources.Append(source));
+        var sim = Scenario(content);
+        var calendar = content.Services.Get<IGameCalendar>().Single();
+        Assert.Equal(startYear, content.Get<RuleConstantsDef>(original.Id).Values.StartYear);
+        Assert.Equal(startYear, calendar.GetDate(sim)!.Year);
+        Assert.Equal(firstYear, calendar.GetDate(sim, 1)!.Year);
+        var subyear = calendar.GetDate(sim, 692)!;
+        Assert.Equal((subyearYear, 8, CalendarSeason.Summer), (subyear.Year, subyear.Month, subyear.Season));
+        Assert.Equal(tailYear, calendar.GetDate(sim, 1201)!.Year);
+        Assert.Equal(-6000, calendar.GetDate(Scenario(mods.Content))!.Year);
+    }
+
     // Public custom-content boundary: missing schedules are neutral; invalid progress is rejected.
     [Fact]
     public void Custom_calendar_handles_year_zero_negative_months_missing_schedules_and_invalid_durations()
@@ -97,6 +121,14 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private static Simulation Scenario(ContentDb content, string speed = "foundation:gamespeed_normal", string era = "foundation:era_ancient") =>
         Simulation.CreateScenario(content, GameFactory.Settings() with { GameSpeed = speed, StartingEra = era },
             new(2, 2), Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "world:grass" }).ToArray());
+
+    private sealed class StartYearProbe(RuleConstantsDef original, int startYear) : IMod
+    {
+        public void Register(IModContext context) => context.Content<RuleConstantsDef>().Override(new()
+        {
+            Id = original.Id, Name = original.Name, Values = original.Values with { StartYear = startYear }, Raw = original.Raw,
+        });
+    }
 
     private sealed class CalendarProbe : IMod
     {
