@@ -260,14 +260,21 @@ Economy allocates raw commerce, adds direct contributions, and applies each comm
 Economy can register one `ICityCultureSource.CultureHundredths(Simulation, int city)` provider for the final culture rate.
 Without that provider, Cities applies culture modifiers to direct culture only.
 
-Commands use `cities:found_city`, `cities:set_city_work`, and `cities:set_city_production` identities.
-The Core types are `FoundCityWithSettlerCommand`, `SetCityAssignmentsCommand`, and `SetCityProductionCommand`.
+Commands use `cities:found_city`, `cities:set_city_work`, `cities:set_city_production`, and `cities:conscript` identities.
+The Core types are `FoundCityWithSettlerCommand`, `SetCityAssignmentsCommand`, `SetCityProductionCommand`, and `ConscriptCityCommand`.
 Queue kinds are `cities:building` and `cities:unit`. Cities completes at most one item per city per turn.
 Growth and culture precede production. Completion effects follow production work in city-id order.
 
+`ICityConscriptService` provides `Calculate`, `Validate`, and `Conscript` operations for drafting.
+The city selects the highest-priority eligible unit with `Conscription > 0` (respecting civilization overrides and assimilation).
+Conscription validates against minimum nationality team culture on the city plot (`CONSCRIPT_MIN_CULTURE_PERCENT`, default 50%),
+absence of civil disorder, adequate population (`ConscriptMinCityPopulation = baseMin + unit.Cost / perCost`), and remaining player draft quotas (`cities:max_conscript`).
+Executing a draft deducts population, spawns the unit with zero moves and halved accumulated local production experience,
+marks `DraftedThisTurn`, and increments `ConscriptAngerTurns` by `flatHurryAngerLength` scaled by world size draft modifiers.
+
 `CityRuleState` and `CityPlayerState` contain saved feature-rule state.
 Modifier sources use City scope for local effects and Player scope for player growth/maintenance percentages.
-City keys include `cities:happiness`, `cities:health`, `cities:war_weariness`, `cities:food_kept_percent`, and `cities:growth_percent`.
+City keys include `cities:happiness`, `cities:health`, `cities:war_weariness`, `cities:food_kept_percent`, `cities:growth_percent`, and `cities:extra_culture_level`.
 Specialist keys use `cities:slots:<specialist-id>`, `cities:free:<specialist-id>`, and `cities:free_specialists`.
 Other keys cover maintenance percentages, production percentages, experience, and great-person percentages.
 See the Cities implementation and [ROADMAP.md](ROADMAP.md) for supported effects and deferred rules.
@@ -276,6 +283,17 @@ Food waste uses fixed-point recurrence with scale one billion. City-count mainte
 These deterministic adaptations can differ from native floating-point results near integer boundaries.
 Maintenance uses the maximum wrapped hex distance as the map normalization.
 Plot culture uses hex distance without terrain obstacles. Ownership keeps an incumbent on ties, then selects the lowest player id.
+`DecayPlotCulture` runs at `TurnPhase.Map + 2` on game-speed golden age halving intervals (`CultureDecayTurns`).
+Plots with culture for non-barbarian players above `CityFreeCultureGrowthFactor` and foreign city `CultureHundredths` are halved,
+allowing cultural borders and city nationality to assimilate over time.
+When cities are founded or captured, `CityRuleState.OriginalCivilization` records the origin civilization.
+Under the assimilation game option (`foundation:gameoption_assimilation`), production eligibility and conscription resolve unit and building
+class overrides against `OriginalCivilization` rather than current owner civilization.
+
+`ICityWellbeingService` calculates `cities:culture_anger` based on foreign living players' plot culture on the city tile,
+with a +50% multiplier against teams at war and complete suppression for same-team players.
+Foreign nationality unhappiness is further modified by civic `ForeignerUnhappyPercent` under `government:foreigner_anger`.
+Modifiers under `cities:extra_culture_level` (from traits, civics, or civilizations) are additive and expand initial city founding culture and border radius.
 Governor weights live in the hand-authored hex sidecar. The governor orders equal plot scores by tile id.
 No feature mod references a test ruleset assembly. The client loads feature rules through Core contracts.
 ## Research and economy services
@@ -296,11 +314,44 @@ Gold settlement saves a commerce snapshot. `IPlayerResearchSource` supplies that
 Processes use current production. Stored overflow remains available for later finite production.
 `ICityHurryService` supplies payment previews and mutations through `economy:hurry` and `HurryCityCommand`.
 Cities completes hurried items during its normal completion phase.
+Whip anger duration dynamically incorporates building modifiers (`cities:hurry_anger_percent`) with a 1-turn floor.
+When a building with `HurryAngerModifier` completes in a city with active `HurryAngerTurns > 0`,
+the remaining anger turns are retroactively rescaled by `(100 + newModifier) / (100 + oldModifier)`.
+Player-wide building discounts contribute to `economy:hurry_percent`.
+Each hurry increments `EconomyPlayerState.HurriedCount`, multiplying per-turn inflation by `(100 + HurriedCount) / 100`.
+`HurriedCount` decays on elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
+
+`CorporationService.MaintenanceHundredths` calculates city corporate branch expenses:
+base headquarter commerce (100 per gold, research, culture, and espionage), resource consumption scaled by world size,
+population scaling `(population + 17) / 18`, handicap scaling, player civic modifier (`cities:corporation_maintenance_percent`,
+selecting `RealCorporationMaintenanceModifier` when realistic corporations is active),
+inflation pre-division `* 100 / (100 + inflation)` to balance subsequent economy inflation, and realistic handicap scaling.
+`CityMaintenanceResult.CorporateHundredths` exposes the uninflated base corporate cost, while `RecurringCosts` records
+`economy:corporate_maintenance_hundredths` per city and `economy:corporate_maintenance` in empire expenses.
+
+Bilateral diplomatic trade deals (`TradeItemKind.GoldPerTurn`) integrate directly into `PlayerEconomy.Calculate`,
+contributing to `Income` (`economy:deal_income`), `Expenses` (`economy:deal_expenses`), and `NetGold`.
+In `PlayerEconomy.Settle` (`TurnPhase.Gold`), sliders automatically step down flexible allocations to keep `Treasury + NetGold >= 0`.
+Domestic income and expenses apply immediately, while domestic deficit is held in `EconomyPlayerState.UnpaidGold`.
+At `TurnPhase.Map + 1`, `DiplomacyDeals` executes transfers with net-payment participant affordability validation (`CanSettle`).
+
+At `TurnPhase.Map + 2`, `PlayerEconomy.ReconcileGold` reconciles `UnpaidGold` against actual treasury following deal payments.
+If treasury remains negative after deal transfers, `EconomyPlayerState.StrikeTurns` increments;
+when `StrikeTurns > 1`, `DisbandForDeficit` forces removal of up to `StrikeTurns / 2` lowest-value units.
+Unit valuation in `SelectDisbandUnit` scores units based on random seed, cost, experience, level, city defense, extra cost,
+territory ownership (own territory score is divided by 6, prioritizing domestic units unless outweighed by extra cost),
+and AI role multipliers (settlers ×20, workers ×10, explorers ×15, city defense ×6, spies ×12).
+Units with `GoldenAge = true`, free units (`Cost <= 0`), and the sole garrison unit providing military happiness are exempt.
+Disbanding halts early once `NetGold` reaches non-negative equilibrium.
+
+`PlayerEconomy` implements `IPlayerEspionageSource.EspionageHundredths`.
+`EconomyMod` delegates espionage accumulation to `EspionageService` when loaded, preventing duplicate aggregate pooling.
+`PlayerEconomy.Calculate` queries `IEspionageService.Spending` to project per-rival points under `economy:espionage_target:<team>`.
 
 Player modifier keys include `economy:max_rate:<type>`, `economy:upkeep_percent`, `economy:inflation_percent`, and `economy:hurry_percent`.
 Team key `research:cost_percent` changes research costs after the normal scaling steps.
-`EconomyPlayerState` saves sliders, settlement snapshots, unpaid gold, aggregate espionage, and the inflation accumulator.
-`EconomyCityState` saves hurry anger. Bankruptcy adjusts sliders before research, but does not disband units.
+`EconomyPlayerState` saves sliders, settlement snapshots, unpaid gold, strike turns, hurried count, aggregate espionage (when espionage service is absent), and the inflation accumulator.
+`EconomyCityState` saves hurry anger.
 The imported profile disables inflation. Enabled profiles use the source binomial formula and momentum update after research.
 
 ## Military services
@@ -334,6 +385,11 @@ Anarchy and cooldown timers live in `GovernmentPlayerState`. `GovernmentStatus.I
 `IPeoplesService` exposes leader, civilization and trait data. Both mods contribute through `IModifierSource`.
 Civic and trait keys use the owning consumer's namespace: `cities:*`, `economy:*`, `world:*`, `military:*`, and `government:*`.
 `RequirementContext.ProposedCivics` lets civic requirements see a pending cabinet without mutating state.
+
+Civics supply draft permissions and quotas under `cities:max_conscript` at Player scope,
+with base quotas scaled by the active world size modifier (`getWorldSizeMaxConscript`) and integer truncation.
+Leader traits (`TraitDef.ExtraCultureLevel`), civics, and civilizations contribute additive modifiers under `cities:extra_culture_level`.
+Newly founded cities inspect this modifier to expand initial plot culture and work territory immediately upon founding.
 
 ## Religion
 

@@ -12,6 +12,10 @@ public interface IPlayerEconomyService
     CityCommerceResult CalculateCity(Simulation sim, int city);
     PlayerEconomyResult Calculate(Simulation sim, int player);
 }
+public interface IPlayerEspionageSource
+{
+    long EspionageHundredths(Simulation sim, int player);
+}
 /// <summary>Infinite queue items. Conversion uses current production, never stored overflow.</summary>
 public interface ICityProcessService
 {
@@ -30,6 +34,8 @@ public sealed class EconomyPlayerState
     public CommerceVector Rates { get; set; } = new(50, 50, 0, 0);
     public long AccruedCostRatioTimes10000 { get; set; } = 10000;
     public long UnpaidGold { get; set; }
+    public int HurriedCount { get; set; }
+    public int StrikeTurns { get; set; }
     public long EspionageHundredths { get; set; }
     public int SettledTurn { get; set; }
     public CommerceVector SettledCommerceHundredths { get; set; }

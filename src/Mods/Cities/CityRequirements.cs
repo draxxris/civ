@@ -11,7 +11,9 @@ internal sealed class CityRequirements(ICityWorkService work) : ICityRequirement
         bool? success = leaf.Kind switch
         {
             "condition" => Condition(leaf, context),
-            "culture-level" => context.City is { } city && city.Culture >= context.Sim.Content.Get<S.CultureLevelDef>(leaf.Id).SpeedThresholds[context.Sim.Settings.GameSpeed],
+            "culture-level" => context.City is { } city
+                && CityData.Level(context.Sim, city).SpeedThresholds[context.Sim.Settings.GameSpeed]
+                    >= context.Sim.Content.Get<S.CultureLevelDef>(leaf.Id).SpeedThresholds[context.Sim.Settings.GameSpeed],
             "era" => CityData.Era(context.Sim, context.Player).Id == leaf.Id,
             "bonus" => Vicinity(leaf, context),
             _ => null

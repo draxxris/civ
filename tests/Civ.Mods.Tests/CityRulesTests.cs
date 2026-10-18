@@ -1,3 +1,4 @@
+using Civ.Client;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -198,12 +199,99 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Empty(city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.ClassPoints);
     }
 
+    [Fact]
+    public void Draft_costs_population_halves_all_experience_and_preserves_limits_through_save()
+    {
+        var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Population = 20;
+        sim.State.PlayerById(0).Civics["government:civicoption_military"] = "government:conscription1";
+        var service = Service<ICityConscriptService>(sim);
+        var before = sim.ComputeHash();
+        var result = Assert.IsType<ConscriptResult>(service.Calculate(sim, city.Id));
+        Assert.Equal("probe:conscript", result.UnitId);
+        Assert.Equal(3, result.PopulationCost);
+        Assert.Equal(4, result.Experience); // (5 city + 3 unit-scope experience) / 2.
+        Assert.Null(service.Validate(sim, 0, city.Id));
+        Assert.Equal(before, sim.ComputeHash());
+        var session = new GameSession(sim);
+        var option = Assert.IsType<ConscriptOption>(session.DescribeCity(city)!.Conscript);
+        Assert.Equal("probe:conscript", option.UnitId);
+        Assert.Equal(3, option.PopulationCost);
+        Assert.Null(option.Blocked);
+        Assert.True(session.Conscript(city), session.Message);
+        Assert.Equal(17, city.Population);
+        var unit = Assert.Single(sim.State.Units);
+        Assert.Equal(4, unit.Experience);
+        Assert.Equal(0, unit.MovesLeft);
+        Assert.Equal(city.Position, unit.Position);
+        Assert.True(city.Extensions.Get<CityRuleState>(sim.Content)!.DraftedThisTurn);
+        Assert.Equal(1, sim.State.PlayerById(0).Extensions.Get<CityPlayerState>(sim.Content)!.ConscriptCountThisTurn);
+        Assert.Equal(result.AngerTurns, city.Extensions.Get<CityRuleState>(sim.Content)!.ConscriptAngerTurns);
+        Assert.Contains(Service<ICityWellbeingService>(sim).Calculate(sim, city.Id).Ledger.Lines, l => l.Source == "cities:conscript" && l.Amount > 0);
+        before = sim.ComputeHash();
+        Assert.False(sim.TryApply(new ConscriptCityCommand { Player = 0, CityId = city.Id }, out _));
+        Assert.Equal(before, sim.ComputeHash());
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.Equal(before, loaded.ComputeHash());
+        Assert.NotNull(service.Validate(loaded, 0, city.Id));
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.False(city.Extensions.Get<CityRuleState>(sim.Content)!.DraftedThisTurn);
+        Assert.Equal(0, sim.State.PlayerById(0).Extensions.Get<CityPlayerState>(sim.Content)!.ConscriptCountThisTurn);
+        Assert.Equal(result.AngerTurns - 1, city.Extensions.Get<CityRuleState>(sim.Content)!.ConscriptAngerTurns);
+    }
+
+    [Fact]
+    public void Draft_rejections_are_atomic_and_population_and_nationality_thresholds_are_inclusive()
+    {
+        var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Population = 20;
+        var command = new ConscriptCityCommand { Player = 0, CityId = city.Id };
+        void Reject(ConscriptCityCommand request, string expected)
+        {
+            var before = sim.ComputeHash();
+            Assert.False(sim.TryApply(request, out var error));
+            Assert.Contains(expected, error);
+            Assert.Equal(before, sim.ComputeHash());
+        }
+        Reject(command, "civic");
+        sim.State.PlayerById(0).Civics["government:civicoption_military"] = "government:conscription1";
+        Assert.Null(command.Validate(sim));
+        Reject(new ConscriptCityCommand { Player = 1, CityId = city.Id }, "Not your city");
+        var state = city.Extensions.Get<CityRuleState>(sim.Content)!;
+        state.Disorder = true; Reject(command, "disorder"); state.Disorder = false;
+        city.Population = 7; Reject(command, "population");
+        city.Population = 8; Assert.Null(command.Validate(sim)); // Five minimum plus three drafted citizens.
+        var plot = sim.State.PlotAt(city.Position); plot.Culture[0] = 9; plot.Culture[1] = 91;
+        Reject(command, "team culture");
+        plot.Culture[0] = 10; plot.Culture[1] = 90;
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.Equal(5, city.Population);
+    }
+    [Fact]
+    public void Draft_quota_is_shared_across_cities_and_resets_next_turn()
+    {
+        var sim = ProbeScenario(); var first = sim.State.Cities[0]; first.Population = 20;
+        sim.State.PlayerById(0).Civics["government:civicoption_military"] = "government:junta"; // Two drafts at standard size.
+        var cities = new[] { first,
+            new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(44)), Population = 20 },
+            new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(80)), Population = 20 } };
+        foreach (var city in cities.Skip(1)) sim.State.AddCity(city);
+        foreach (var city in cities.Take(2))
+            Assert.True(sim.TryApply(new ConscriptCityCommand { Player = 0, CityId = city.Id }, out var error), error);
+        var third = new ConscriptCityCommand { Player = 0, CityId = cities[2].Id };
+        var before = sim.ComputeHash();
+        Assert.False(sim.TryApply(third, out var reason)); Assert.Contains("Player draft limit", reason);
+        Assert.Equal(before, sim.ComputeHash());
+        sim.AdvanceTurn();
+        Assert.Null(third.Validate(sim));
+        Assert.True(sim.TryApply(third, out reason), reason);
+    }
     private sealed class ProbeMod : IMod
     {
         public void Register(IModContext context)
         {
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:wonder", Name = "Wonder", DefaultBuilding = "probe:wonder", Cost = 1, Limits = new() { World = 1 } });
             context.Content<S.UnitDef>().Register(new() { Id = "probe:colonist", Name = "Colonist", DefaultUnit = "probe:colonist", Cost = 10, FoodProduction = true, CanFoundCity = true });
+            context.Content<S.UnitDef>().Register(new() { Id = "probe:conscript", Name = "Conscript", DefaultUnit = "probe:conscript", Cost = 180, Conscription = 999, Moves = 1 });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:academy", Name = "Academy", DefaultBuilding = "probe:academy", Cost = 10, GreatPeopleRateChange = 160, GreatPersonUnit = "military:scientist" });
             context.RegisterService<IModifierSource>("effects", new Effects());
         }
@@ -212,7 +300,9 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         public void Contribute(ModifierContext context, ModifierSink sink)
         {
+            if (context.Scope == ModifierScope.Unit) sink.Add("probe:training", "military:initial_experience", 3);
             if (context.Scope != ModifierScope.City) return;
+            sink.Add("probe:training", "cities:experience", 5);
             sink.AddYield("probe:flat", new(4, 3, 4)); sink.AddYield("probe:percent", new(0, 50, 0), true);
             sink.AddCommerce("probe:direct", new(0, 0, 2, 0)); sink.AddCommerce("probe:percent", new(0, 25, 0, 0), true);
         }

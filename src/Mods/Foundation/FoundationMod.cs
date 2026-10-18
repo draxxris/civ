@@ -46,7 +46,8 @@ public sealed class FoundationMod : IMod
         ContentRegistration.Evaluator<EraDef>(context, "era");
         ContentRegistration.Evaluator<CultureLevelDef>(context, "culture-level");
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
-        ContentRegistration.Evaluator<GameOptionDef>(context, "game-option");
+        ContentRegistration.Evaluator<GameOptionDef>(context, "game-option",
+            (leaf, ctx) => ctx.Sim.Content.Get<GameOptionDef>(leaf.Id).Default);
 
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation");
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");

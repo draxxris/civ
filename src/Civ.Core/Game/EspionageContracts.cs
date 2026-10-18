@@ -25,6 +25,8 @@ public interface IEspionageService
 {
     long Points(Simulation sim, int team, int targetTeam);
     int Weight(Simulation sim, int player, int targetTeam);
+    /// <summary>Forecast whole points per rival, including held points. Does not change state.</summary>
+    IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths);
     string? ValidateWeight(Simulation sim, int player, int targetTeam, int weight);
     void SetWeight(Simulation sim, int player, int targetTeam, int weight);
     bool HasPassiveEffect(Simulation sim, int team, int targetTeam, PassiveEspionageKind kind);

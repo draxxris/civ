@@ -1,7 +1,7 @@
 {
   "id": "corporations",
   "name": "Corporations",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "assembly": "Civ.Mods.Corporations.dll",
   "dependencies": [],
   "references": [
