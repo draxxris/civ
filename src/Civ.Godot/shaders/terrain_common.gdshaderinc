@@ -154,6 +154,8 @@ int owner_of(ivec2 hex) {
 
 // Owner border line width, shared by the terrain and the river surface drawn over it.
 uniform float border_width = 0.075;
+uniform bool show_borders = true;
+uniform bool show_grid = false;
 
 float band(float distance, float width) {
 	return 1.0 - smoothstep(width * 0.7, width, distance);
@@ -167,16 +169,52 @@ float hover_outline(vec2 d) {
 	return smoothstep(0.02, 0.035, edge) * (1.0 - smoothstep(0.075, 0.09, edge));
 }
 
-// Coverage of the owner border and hover lines the terrain draws at p, so surfaces over the terrain can let them through.
+// Geometry-only grid, clipped by perceived sight. Derivatives keep its thin strokes stable at different zoom levels.
+float grid_outline(vec2 d) {
+	float edge = 1.0;
+	for (int k = 0; k < 6; k++) edge = min(edge, SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]));
+	float aa = max(fwidth(edge), 0.002);
+	return show_grid ? 1.0 - smoothstep(0.018, 0.018 + aa, edge) : 0.0;
+}
+
+// Shared terrain/water shading. The river lets the same underlying lines through via tile_lines.
+vec3 map_overlays(vec2 p, vec3 colour, bool linear) {
+	ivec2 hex = containing_hex(p);
+	if (!on_map(hex)) return colour;
+	vec4 b = texelFetch(tile_b, texel_of(hex), 0);
+	int sight = byte_of(b.r);
+	if (sight == 0) return colour;
+	int mark = byte_of(b.g);
+	if (mark == 1) colour = mix(colour, vec3(1.0), 0.16);
+	else if (mark == 2) colour = mix(colour, vec3(1.0, 0.32, 0.01), 0.42);
+	else if (mark == 3) colour = mix(colour, vec3(0.0), 0.5);
+	vec2 d = p - hex_centre(hex);
+	colour = mix(colour, vec3(0.08), grid_outline(d) * 0.65);
+	int owner = owner_of(hex);
+	if (!show_borders || owner == 0) return colour;
+	float border = 0.0, glow = 0.0;
+	for (int k = 0; k < 6; k++) {
+		float edge = SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]);
+		if (owner_of(hex + DIRECTION[k]) != owner) {
+			border = max(border, band(edge, border_width));
+			glow = max(glow, 1.0 - smoothstep(0.0, 0.32, edge));
+		}
+	}
+	vec3 own = palette_entry(owner, 2, linear).rgb * (sight == 1 ? 0.72 : 1.0);
+	colour = mix(colour, own, glow * 0.3);
+	return mix(colour, own, border);
+}
+
+// Coverage of the owner border, grid and hover lines, so surfaces over the terrain can let them through.
 float tile_lines(vec2 p) {
 	ivec2 hex = containing_hex(p);
 	if (!on_map(hex)) return 0.0;
 	vec4 b = texelFetch(tile_b, texel_of(hex), 0);
 	if (byte_of(b.r) == 0) return 0.0;
 	vec2 d = p - hex_centre(hex);
-	float lines = b.b > 0.5 ? hover_outline(d) : 0.0;
+float lines = max(b.b > 0.5 ? hover_outline(d) : 0.0, grid_outline(d));
 	int owner = owner_of(hex);
-	if (owner == 0) return lines;
+	if (!show_borders || owner == 0) return lines;
 	for (int k = 0; k < 6; k++)
 		if (owner_of(hex + DIRECTION[k]) != owner) lines = max(lines, band(SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]), border_width));
 	return lines;

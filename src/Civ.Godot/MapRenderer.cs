@@ -42,7 +42,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _tokens, _tokenIcons, _path;
+    private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _resources, _yieldBadges, _tokens, _tokenIcons, _path;
     private readonly TerrainRenderer _terrain;
     private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
@@ -50,7 +50,8 @@ internal sealed partial class MapRenderer : Node3D
     private readonly ModelCache _models;
     private readonly ImprovementRenderer _improvements;
     private readonly CityRenderer _cities;
-    private int _worldRevision = -1, _revision = -1;
+    private int _worldRevision = -1, _revision = -1, _yieldRevision = -1;
+    private MapOverlays? _shownOverlays;
 
     /// <summary>Print rebuild timings during captures or with --trace-performance.</summary>
     public static bool LogTimings { get; set; }
@@ -96,6 +97,8 @@ internal sealed partial class MapRenderer : Node3D
         _roads = Layer();
         _routeParts = Layer();
         _landIcons = Layer();
+        _resources = Layer();
+        _yieldBadges = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();
         _path = Layer();
@@ -147,7 +150,8 @@ internal sealed partial class MapRenderer : Node3D
         double terrain = clock.Elapsed.TotalMilliseconds;
         if (_battle == null) StartNextBattle();
         bool dynamic = world || _revision != _session.Revision;
-        if (world) { BuildLand(); _worldRevision = _session.WorldRevision; }
+        if (world) { BuildLand(); BuildResources(); _worldRevision = _session.WorldRevision; }
+        RefreshMapOverlays();
         double land = clock.Elapsed.TotalMilliseconds - terrain;
         if (dynamic) { BuildDynamic(); _revision = _session.Revision; }
         double tokens = clock.Elapsed.TotalMilliseconds - terrain - land;
@@ -155,6 +159,22 @@ internal sealed partial class MapRenderer : Node3D
         if (dynamic) _terrain.RefreshOverlay();
         double overlay = clock.Elapsed.TotalMilliseconds - terrain - land - tokens;
         if (LogTimings && dynamic) GD.Print($"map refresh: land {land:F2} ms, tokens {tokens:F2} ms, terrain {terrain:F2} ms, overlay {overlay:F2} ms");
+    }
+
+    private void RefreshMapOverlays()
+    {
+        var overlays = _session.Overlays;
+        if (_shownOverlays != overlays)
+        {
+            _terrain.SetMapOverlays(overlays);
+            _resources.Visible = overlays.Resources;
+            _shownOverlays = overlays;
+        }
+        // The city screen already has work-tile yield labels. Keep those and its highlights, without duplicate badges.
+        _yieldBadges.Visible = overlays.Yields && _session.City == null;
+        if (!_yieldBadges.Visible || _yieldRevision == _session.WorldRevision) return;
+        BuildYieldBadges();
+        _yieldRevision = _session.WorldRevision;
     }
 
     private void BuildDynamic()

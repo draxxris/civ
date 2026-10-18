@@ -22,6 +22,7 @@ internal sealed partial class GameUi : CanvasLayer
     private bool _researchOpen;
     private bool _shownResearchOpen;
     private int _shownCityState;
+    private readonly List<(CheckBox Button, Func<MapOverlays, bool> Read)> _overlayChecks = new();
 
     public bool PointerOverUi => GetViewport().GuiGetHoveredControl() != null;
     public bool TextInputFocused => GetViewport().GuiGetFocusOwner() is LineEdit;
@@ -51,10 +52,12 @@ internal sealed partial class GameUi : CanvasLayer
         _city = new CityUi(session, icons);
         InitPanels();
         foreach (var node in new Node[] { _top, _left, _feed, _message, _endTurn, _researchDialog, _city, _governmentDialog, _modal, _hoverTip }) AddChild(node);
+        AddChild(MapOverlayControls());
     }
 
     public void Refresh()
     {
+        foreach (var (button, read) in _overlayChecks) button.SetPressedNoSignal(read(_session.Overlays));
         bool cityOpen = _session.City != null;
         _left.Visible = !cityOpen;
         _endTurn.Visible = !cityOpen;
@@ -80,6 +83,32 @@ internal sealed partial class GameUi : CanvasLayer
     private bool NeedsRefresh() => _shownRevision != _session.Revision || _shownResearchOpen != _researchOpen
         || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
         || _shownModalRevision != _modalRevision;
+
+    private Control MapOverlayControls()
+    {
+        var panel = Ui.Panel(margin: 4);
+        panel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
+        panel.OffsetLeft = -215; panel.OffsetRight = 215; panel.OffsetTop = -42; panel.OffsetBottom = -6;
+        var row = Ui.HBox(4);
+        AddOverlayCheck(row, "Yields", o => o.Yields, (o, on) => o with { Yields = on },
+            "Visible tile yields: green F = food, orange P = production, gold C = commerce. City work labels remain available.");
+        AddOverlayCheck(row, "Resources", o => o.Resources, (o, on) => o with { Resources = on }, "Known resource badges");
+        AddOverlayCheck(row, "Grid", o => o.Grid, (o, on) => o with { Grid = on }, "Hex lines on explored tiles");
+        AddOverlayCheck(row, "Borders", o => o.CulturalBorders, (o, on) => o with { CulturalBorders = on }, "Known cultural borders");
+        panel.AddChild(row);
+        return panel;
+    }
+
+    private void AddOverlayCheck(Control row, string text, Func<MapOverlays, bool> read,
+        Func<MapOverlays, bool, MapOverlays> update, string tooltip)
+    {
+        var check = new CheckBox { Text = text, ButtonPressed = read(_session.Overlays), TooltipText = tooltip,
+            FocusMode = Control.FocusModeEnum.None };
+        check.AddThemeFontSizeOverride("font_size", 13);
+        check.Toggled += on => _session.Overlays = update(_session.Overlays, on);
+        _overlayChecks.Add((check, read));
+        row.AddChild(check);
+    }
 
     // --- hover -------------------------------------------------------------------------------------
 

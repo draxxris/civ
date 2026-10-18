@@ -6,8 +6,26 @@ namespace Civ.Client;
 /// <summary>A tooltip for a tile: a title and detail lines, limited to what the local team has seen.</summary>
 public sealed record TileInfo(string Title, IReadOnlyList<string> Lines);
 
+/// <summary>Local map layers. These preferences never enter commands or saves.</summary>
+public sealed record MapOverlays(bool Yields = false, bool Resources = true, bool Grid = false, bool CulturalBorders = true);
+
+/// <summary>Authorized tile overlay inputs. Null yields mean no current observation, not zero production.</summary>
+public sealed record TileOverlay(Sight Sight, string? Resource, int? Owner, Civ.Content.YieldVector? Yields);
+
 public sealed partial class GameSession
 {
+    public MapOverlays Overlays { get; set; } = new();
+
+    /// <summary>Only perceived ownership/resources and visible yields cross the map overlay boundary.</summary>
+    public TileOverlay? OverlayOf(TileId tile)
+    {
+        if (PerceivedPlot(tile) is not { } plot) return null;
+        var sight = SightOf(Sim.State.Plots[tile.Value]);
+        if (sight == Sight.Hidden) return null;
+        string? resource = plot.Bonus is { } bonus && BonusVisible(bonus) ? bonus : null;
+        Civ.Content.YieldVector? yields = sight == Sight.Visible ? YieldsOf(Sim.State.Grid.HexOf(tile)) : null;
+        return new(sight, resource, plot.Owner, yields);
+    }
     public Sight SightOf(Plot plot) =>
         plot.Visible.Contains(Me.TeamId) ? Sight.Visible : plot.Revealed.Contains(Me.TeamId) ? Sight.Fogged : Sight.Hidden;
 

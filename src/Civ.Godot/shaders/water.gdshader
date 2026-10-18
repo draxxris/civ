@@ -54,6 +54,11 @@ void fragment() {
 	float fog = mix(1.0, 0.55, fogged);
 	colour = mix(colour, fog_tone(colour) * 1.1, fogged);
 
+	colour = map_overlays(vec2(wrap_world_x(p.x), p.y), colour, linear);
+	// Keep the hover outline above sea level as well as above the land underneath it.
+	ivec2 hex = containing_hex(p);
+	if (on_map(hex) && texelFetch(tile_b, texel_of(hex), 0).b > 0.5)
+		colour = mix(colour, vec3(0.9), hover_outline(p - hex_centre(hex)));
 	vec4 sky = clouds(p, hidden, TIME, linear);
 	ALBEDO = colour * (1.0 - sky.a);
 	EMISSION = sky.rgb * sky.a;

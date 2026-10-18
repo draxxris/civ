@@ -320,6 +320,79 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         Assert.Equal(default, session.YieldsOf(grid.HexOf(tile)));
     }
 
+    // Overlay boundary: catches live resource/owner leaks, fabricated remembered yields, and reveal-tech bypasses.
+    [Fact]
+    public void Overlay_data_uses_observation_and_reveal_tech_with_yields_only_in_sight()
+    {
+        var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
+        var tile = grid.TileAt(3, 3); var plot = sim.State.Plots[tile.Value];
+        var bonus = sim.Content.Get<Civ.Content.Schema.BonusDef>().All.First(b => b.RevealTech != null);
+        plot.Bonus = bonus.Id;
+        var session = new GameSession(sim);
+        Assert.Null(session.OverlayOf(tile));
+        plot.Revealed.Add(0); // No observation: do not reconstruct older saves from live data.
+        Assert.Null(session.OverlayOf(tile));
+        var observer = Observer(sim, 0, tile); sight.Recompute(sim);
+        var locked = session.OverlayOf(tile)!;
+        Assert.Equal(Civ.Client.Sight.Visible, locked.Sight);
+        Assert.Equal(0, locked.Owner);
+        Assert.Null(locked.Resource);
+        Assert.NotNull(locked.Yields);
+        sim.TeamOf(0).Techs.Add(bonus.RevealTech!);
+        Assert.Equal(bonus.Id, session.OverlayOf(tile)!.Resource);
+        sim.State.MoveUnit(observer.Id, grid.HexOf(grid.TileAt(9, 3))); sight.Recompute(sim);
+        var remembered = session.OverlayOf(tile)!;
+        Assert.Equal(new TileOverlay(Civ.Client.Sight.Fogged, bonus.Id, 0, null), remembered);
+        ulong hash = sim.ComputeHash(); var rng = sim.Rng.State;
+        Assert.Equal(remembered, session.OverlayOf(tile));
+        Assert.Equal(hash, sim.ComputeHash()); Assert.Equal(rng, sim.Rng.State);
+        foreach (var t in grid.Tiles.Where(t => !sim.State.Plots[t.Value].Visible.Contains(0)))
+        {
+            var hidden = sim.State.Plots[t.Value];
+            hidden.Bonus = null; hidden.Owner = 1; hidden.Kind = PlotKind.Peak;
+            hidden.Terrain = "world:ocean"; hidden.Feature = "world:jungle"; hidden.Improvement = "world:city_ruins";
+        }
+        Assert.Equal(remembered, session.OverlayOf(tile));
+        var unseen = grid.TileAt(3, 7);
+        Assert.Null(session.OverlayOf(unseen));
+        sim.TeamOf(0).Techs.Remove(bonus.RevealTech!);
+        Assert.Null(session.OverlayOf(tile)!.Resource); // Even remembered bonuses recheck current knowledge.
+        sim.State.MoveUnit(observer.Id, grid.HexOf(tile)); sight.Recompute(sim);
+        var fresh = session.OverlayOf(tile)!;
+        Assert.Equal(Civ.Client.Sight.Visible, fresh.Sight);
+        Assert.Equal(1, fresh.Owner);
+        Assert.Null(fresh.Resource);
+        Assert.NotNull(fresh.Yields);
+    }
+
+    // Local preference ownership: catches commands, RNG use, state/revision invalidation or reset on UI/turn changes.
+    [Fact]
+    public void All_overlay_combinations_are_session_local_and_do_not_invalidate_the_world()
+    {
+        var sim = Scenario(); var tile = sim.State.Grid.TileAt(3, 3);
+        Observer(sim, 0, tile); Sight(sim).Recompute(sim);
+        var session = new GameSession(sim);
+        Assert.Equal(new MapOverlays(false, true, false, true), session.Overlays);
+        ulong hash = sim.ComputeHash(); var rng = sim.Rng.State;
+        var events = sim.Events.Published.ToArray();
+        int revision = session.Revision, worldRevision = session.WorldRevision;
+        for (int bits = 0; bits < 16; bits++)
+        {
+            session.Overlays = new((bits & 1) != 0, (bits & 2) != 0, (bits & 4) != 0, (bits & 8) != 0);
+            Assert.NotNull(session.OverlayOf(tile)!.Yields);
+            Assert.Equal(hash, sim.ComputeHash()); Assert.Equal(rng, sim.Rng.State);
+            Assert.Equal(events, sim.Events.Published);
+            Assert.Equal(revision, session.Revision); Assert.Equal(worldRevision, session.WorldRevision);
+        }
+        session.SelectAt(sim.State.Grid.HexOf(tile));
+        session.ClearSelection();
+        int turn = sim.State.Turn;
+        session.EndTurn();
+        Assert.Equal(turn + 1, sim.State.Turn);
+        Assert.Equal(new MapOverlays(true, true, true, true), session.Overlays);
+        Assert.Equal(new MapOverlays(false, true, false, true), new GameSession(sim).Overlays);
+    }
+
     [Fact]
     public void Missing_fog_history_is_not_reconstructed_from_live_state()
     {
