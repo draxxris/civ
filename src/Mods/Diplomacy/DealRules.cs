@@ -21,9 +21,20 @@ internal sealed partial class DiplomacyService
         if (!HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id)) return "teams have not met";
         if (sim.TeamOf(player).Wars.Contains(sim.TeamOf(target).Id)) return "teams are at war";
         if (items.Count is 0 or > 64) return "deal requires between one and 64 items";
-        int ta = sim.TeamOf(player).Id, tb = sim.TeamOf(target).Id;
-        if (items.Any(i => i.Kind is TradeItemKind.Gold or TradeItemKind.GoldPerTurn) && TradeTech(sim, ta, tb, t => t.GoldTrading, "gold trading") is { } goldError) return goldError;
-        if (items.Any(i => i.Kind == TradeItemKind.Technology) && TradeTech(sim, ta, tb, t => t.TechTrading, "technology trading") is { } techError) return techError;
+        var unlockError = ValidateTradeUnlocks(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id, items);
+        if (unlockError is not null) return unlockError;
+        return ValidateItems(sim, player, target, items) ?? ValidateAssets(sim, items);
+    }
+    private static string? ValidateTradeUnlocks(Simulation sim, int teamA, int teamB, IReadOnlyList<DiplomaticTradeItem> items)
+    {
+        bool technology = items.Any(i => i.Kind == TradeItemKind.Technology);
+        if (technology && sim.IsOptionEnabled("foundation:gameoption_no_tech_trading")) return "technology trading is disabled";
+        if (items.Any(i => i.Kind is TradeItemKind.Gold or TradeItemKind.GoldPerTurn) &&
+            TradeTech(sim, teamA, teamB, t => t.GoldTrading, "gold trading") is { } goldError) return goldError;
+        return technology ? TradeTech(sim, teamA, teamB, t => t.TechTrading, "technology trading") : null;
+    }
+    private static string? ValidateItems(Simulation sim, int player, int target, IReadOnlyList<DiplomaticTradeItem> items)
+    {
         foreach (var item in items)
         {
             if (item.FromPlayer != player && item.FromPlayer != target) return "item giver is not a participant";
@@ -31,7 +42,7 @@ internal sealed partial class DiplomacyService
             var itemError = ValidateItem(sim, item, item.FromPlayer == player ? target : player);
             if (itemError is not null) return itemError;
         }
-        return ValidateAssets(sim, items);
+        return null;
     }
     private static string? ValidateItem(Simulation sim, DiplomaticTradeItem item, int recipient)
     {

@@ -17,14 +17,18 @@ public sealed class DiplomacyRulesTests
         var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government"] }, Instance = new Probe(civic, constants) };
         return ModLoader.Build(mods.Sources.Append(diplomacy).Append(probe));
     });
-    private static Simulation Scenario()
+    private static Simulation Scenario(bool unlockTrading = true)
     {
         var settings = GameFactory.Settings(19, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar", "peoples:leader_bismarck", "peoples:leader_gandhi");
         var sim = Simulation.CreateScenario(Content.Value, settings, new(12, 8, true),
             Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass", Route = "world:route_route_road" }).ToArray());
         sim.State.Players = sim.State.Players.Select(p => new Player { Id = p.Id, TeamId = p.TeamId, Civilization = p.Civilization,
             Leader = p.Id == 0 ? "diplomacy_probe:leader_a" : "diplomacy_probe:leader_b" }).ToList();
-        foreach (var team in sim.State.Teams) team.Techs.Clear();
+        foreach (var team in sim.State.Teams)
+        {
+            team.Techs.Clear();
+            if (unlockTrading) team.Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
+        }
         foreach (var player in sim.State.Players) { player.Treasury = 100; player.StartingPlot = null; }
         sim.State.RebuildIndexes();
         return sim;
@@ -134,19 +138,110 @@ public sealed class DiplomacyRulesTests
         Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
     }
     [Fact]
-    public void Open_borders_and_technology_trades_need_an_enabling_technology_once_any_team_has_techs()
+    public void Techless_teams_cannot_bypass_content_unlocks()
+    {
+        var sim = Scenario(false); Meet(sim);
+        Reject(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }, "no team has researched the technology enabling open borders");
+        Reject(sim, new SignDefensivePactCommand { Player = 0, Target = 1 }, "no team has researched the technology enabling defensive pacts");
+        Reject(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Gold)] },
+            "no team has researched the technology enabling gold trading");
+    }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void Only_either_participant_can_supply_the_trading_unlocks(int holder)
+    {
+        var sim = Scenario(false); Meet(sim);
+        sim.TeamOf(0).Techs.Add("research:woodworking");
+        var borders = new SignOpenBordersCommand { Player = 0, Target = 1 };
+        var proposal = new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, "research:woodworking")] };
+        Reject(sim, borders, "open borders");
+        Reject(sim, proposal, "technology trading");
+        sim.TeamOf(holder).Techs.UnionWith(["research:writing", "research:alphabet"]);
+        if (holder == 2)
+        {
+            Reject(sim, borders, "open borders");
+            Reject(sim, proposal, "technology trading");
+            return;
+        }
+        Apply(sim, borders);
+        Apply(sim, proposal);
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Single().Id });
+        Assert.True(sim.KnowsTech(1, "research:woodworking"));
+    }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void No_technology_trading_rejects_either_givers_mixed_proposal_but_allows_gold(int giver)
     {
         var sim = Scenario(); Meet(sim);
-        var content = sim.Content.Get<S.TechDef>().All;
-        var other = content.First(t => !t.OpenBordersTrading && !t.TechTrading && !t.GoldTrading);
-        var giver = content.First(t => !t.OpenBordersTrading && !t.TechTrading && t.Id != other.Id);
-        sim.TeamOf(0).Techs.Add(other.Id); sim.TeamOf(0).Techs.Add(giver.Id);
-        Reject(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }, "open borders");
-        Reject(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, giver.Id)] }, "technology trading");
-        sim.TeamOf(1).Techs.Add(content.First(t => t.OpenBordersTrading).Id);
+        sim.TeamOf(giver).Techs.Add("research:woodworking");
+        sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = true;
+        Reject(sim, new ProposeDealCommand { Player = 0, Target = 1,
+            Items = [new(giver, TradeItemKind.Technology, "research:woodworking"), new(1 - giver, TradeItemKind.Gold, Amount: 7)] },
+            "technology trading is disabled");
+        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(giver, TradeItemKind.Gold, Amount: 7)] });
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Single().Id });
+        Assert.Equal(93, sim.State.PlayerById(giver).Treasury);
+        Assert.Equal(107, sim.State.PlayerById(1 - giver).Treasury);
+    }
+    [Theory]
+    [InlineData("option", "technology trading is disabled")]
+    [InlineData("unlock", "no team has researched the technology enabling technology trading")]
+    [InlineData("giver", "giver does not know technology")]
+    [InlineData("recipient", "recipient already knows technology")]
+    public void Technology_deals_recheck_eligibility_before_acceptance(string change, string reason)
+    {
+        var sim = Scenario(); Meet(sim);
+        sim.TeamOf(0).Techs.Add("research:woodworking");
+        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1,
+            Items = [new(0, TradeItemKind.Technology, "research:woodworking"), new(1, TradeItemKind.Gold, Amount: 7)] });
+        int deal = Service(sim).Deals(sim).Single().Id;
+        switch (change)
+        {
+            case "option": sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = true; break;
+            case "unlock":
+                foreach (var team in sim.State.Teams) team.Techs.Remove("research:alphabet");
+                break;
+            case "giver": sim.TeamOf(0).Techs.Remove("research:woodworking"); break;
+            case "recipient": sim.TeamOf(1).Techs.Add("research:woodworking"); break;
+        }
+        Reject(sim, new ExecuteDealCommand { Player = 1, Deal = deal }, reason);
+        Assert.Equal(DiplomaticDealStatus.Proposed, Service(sim).Deals(sim).Single().Status);
+        Assert.Equal(100, sim.State.PlayerById(0).Treasury);
+        Assert.Equal(100, sim.State.PlayerById(1).Treasury);
+        if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = false;
+        if (change == "unlock") sim.TeamOf(1).Techs.Add("research:alphabet");
+        if (change == "giver") sim.TeamOf(0).Techs.Add("research:woodworking");
+        if (change == "recipient") sim.TeamOf(1).Techs.Remove("research:woodworking");
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = deal });
+        Assert.True(sim.KnowsTech(1, "research:woodworking"));
+        Assert.Equal(107, sim.State.PlayerById(0).Treasury);
+        Assert.Equal(93, sim.State.PlayerById(1).Treasury);
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Custom_content_without_unlock_flags_stays_open_but_obeys_the_option_default(bool disabled)
+    {
+        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
+        var custom = new ModSource { Root = AppContext.BaseDirectory, Manifest = new() { Id = "foundation", Version = "1" }, Instance = new CustomTradingContent(disabled) };
+        var content = ModLoader.Build([custom, diplomacy]);
+        var sim = Simulation.CreateScenario(content, new(), new(2, 2),
+            Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "foundation:plain" }).ToArray());
+        Meet(sim);
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
-        sim.TeamOf(0).Techs.Add(content.First(t => t.TechTrading).Id);
-        Apply(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, giver.Id)] });
+        Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 1 });
+        sim.TeamOf(0).Techs.Add("foundation:discovery");
+        var proposal = new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, "foundation:discovery")] };
+        if (disabled) Reject(sim, proposal, "technology trading is disabled");
+        else
+        {
+            Apply(sim, proposal);
+            Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Single().Id });
+            Assert.True(sim.KnowsTech(1, "foundation:discovery"));
+        }
     }
     [Fact]
     public void Defensive_partners_join_against_aggressors_and_offensive_wars_cancel_the_aggressors_pacts()
@@ -329,6 +424,15 @@ public sealed class DiplomacyRulesTests
         public string Id => "diplomacy_probe:income";
         public int Order => TurnPhase.Gold + 1;
         public void Run(Simulation sim, int player) => sim.State.PlayerById(player).Treasury += 5;
+    }
+    private sealed class CustomTradingContent(bool disabled) : IMod
+    {
+        public void Register(IModContext context)
+        {
+            context.Terrains.Register(new() { Id = "foundation:plain" });
+            context.Content<S.TechDef>().Register(new() { Id = "foundation:discovery" });
+            context.Content<S.GameOptionDef>().Register(new() { Id = "foundation:gameoption_no_tech_trading", Default = disabled });
+        }
     }
     private sealed class Probe(S.CivicDef civic, S.RuleConstantsDef constants) : IMod
     {

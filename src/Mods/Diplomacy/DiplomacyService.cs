@@ -70,11 +70,11 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         bool exists = agreement == DiplomaticAgreement.OpenBorders ? HasOpenBorders(sim, a, b) : HasDefensivePact(sim, a, b);
         return exists ? "agreement already active" : null;
     }
-    /// <summary>Enforced only when content defines the enabling flag and some team has researched anything, so tech-less synthetic scenarios stay open.</summary>
+    /// <summary>Either participant can supply the unlock. Content without an enabling flag has no technology gate.</summary>
     internal static string? TradeTech(Simulation sim, int teamA, int teamB, Func<S.TechDef, bool> flag, string what)
     {
         var techs = sim.Content.Get<S.TechDef>().All;
-        if (!techs.Any(flag) || !sim.State.Teams.Any(t => t.Techs.Count > 0)) return null;
+        if (!techs.Any(flag)) return null;
         bool enabled = new[] { teamA, teamB }.Any(t => sim.State.TeamById(t).Techs.Any(id => sim.Content.TryGet<S.TechDef>(id, out var def) && flag(def)));
         return enabled ? null : $"no team has researched the technology enabling {what}";
     }

@@ -80,7 +80,7 @@ public sealed class NetworkTransitTests(LoadedMods mods) : IClassFixture<LoadedM
         var diplomacy = Service<IDiplomacyService>(sim); diplomacy.EstablishContact(sim, 0, 1);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, home.Id, foreign.Id));
         Assert.Empty(Service<ITradeRouteService>(sim).Calculate(sim, home.Id).Routes);
-        sim.TeamOf(0).Techs.Clear(); // Existing diplomacy bootstrap allows treaties before either team has technologies.
+        sim.TeamOf(0).Techs.Add("research:writing");
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
         Assert.Equal(foreign.Id, Assert.Single(Service<ITradeRouteService>(sim).Calculate(sim, home.Id).Routes).PartnerCity);
     }
