@@ -1,0 +1,87 @@
+Fill ONLY the transparent editable squares in the supplied mask with entirely NEW original BORDERLESS strategy-game artwork. The source is a procedural layout of exactly 64 blank charcoal-blue squares on pink, not old artwork. Fill each existing dark square with its assigned subject. Preserve the existing square boundaries exactly. Preserve every unmasked pixel. Do not add pink lines inside a square or continue a subject across a gutter.
+The mask defines exactly EIGHT columns and EIGHT rows, 64 separate equal SQUARE regions. One complete icon per masked square. Use these exact regions, not a replacement grid. On the 816-square canvas each editable region is 90 by 90 pixels, gutters are 10 pixels, and outer margins are 13 pixels. Top-left coordinates: x=13+100*(column-1), y=13+100*(row-1). Do not straddle, merge, split, duplicate or omit squares.
+NO BORDERS: no frames, silver edges, blue rims, bevels, outlines around tiles, decorative corners, inset panels or outer strokes. Frames will be added later. Each charcoal-blue background must fill its entire editable square edge-to-edge. Center each subject with breathing room for a frame to be added later. Pink exists ONLY in protected gutters, never inside editable squares. Keep each subject within its own masked square.
+ART DIRECTION: mature, painterly strategy-game icons, but deliberately VERY SIMPLE. Use one large recognizable subject as a clean silhouette, plus at most one simple supporting shape. Remove the fine details visible in typical detailed game art. No small props, no crowds, no busy scenes, no intricate ornament, no repeated windows or columns, no surface texture, no fine machinery, no tiny background objects. Behind every subject, add a clearly visible radial glow that is bright enough to read at 64 pixels: a luminous ivory or pale-cyan center fading smoothly into the charcoal-blue corners. Make the glow broad and high-contrast, not a faint rim or tiny aura. Keep the glow behind the subject and preserve the simple color shapes and broad shading. Readable at 64 pixels. Preserve the subject identity and general palette, but simplify its form aggressively. Keep corners dark charcoal-blue. People use naturally proportioned torso-up framing. The wooden burning effigy is not a person: exactly two arms and two legs, visibly on fire.
+BASE ARTWORK ONLY. Do not generate overlaid religious, guild or corporate logo badges, corner emblems or medallions. These will be added manually later. Religious architecture should have no added corner symbols. No letters, labels, numbers or watermarks EXCEPT the explicitly requested BROADWAY neon sign. Position identifiers below are instructions, not text to render.
+
+ROW 1, eight masked squares from left to right:
+Column 1: Abu Simbel: Twin monumental sandstone temples carved into a cliff face, with four seated pharaoh statues flanking the entrance
+Column 2: Adam Smith's Trading Company: Georgian trading house with cargo crates and a small balance scale at its entrance
+Column 3: Admiralty: Neoclassical naval headquarters with a columned stone facade, anchor reliefs, and a moored warship nearby
+Column 4: Advanced Quality Control: Factory inspection station with a metal gear beneath a magnifying lens and a bright checkmark
+Column 5: Advertising Agency: Contemporary advertising agency represented by a modern digital billboard with bold abstract colored shapes. No gallery, no classical buildings.
+Column 6: Agora: Open Greek civic square ringed by pale marble colonnades, market awnings, and a central speaking platform
+Column 7: AI Surveillance: Futuristic surveillance center topped by a camera cluster, with glowing monitors visible through broad windows
+Column 8: Airfield: Grass airfield with a small hangar, windsock, and single early propeller aircraft on the runway
+
+ROW 2, eight masked squares from left to right:
+Column 1: Airport: Modern passenger terminal with glass concourse, control tower, and a commercial jet at the gate
+Column 2: Aluminum Co. Research and Development: Aluminum research laboratory with a gleaming ingot, glass crucible, microscope, and precision testing equipment
+Column 3: Apadana Palace: Persian audience palace with a vast columned portico, carved stairways, and winged bull capitals
+Column 4: Apiary: Sunlit bee yard with wooden hive boxes, flowering clover, and bees circling a honeycomb frame
+Column 5: Apostolic Palace: Vatican palace facade with ornate Renaissance windows, a central balcony, and a small domed chapel
+Column 6: Apothecary: Medieval apothecary shop with glass medicine bottles, herb bundles, brass scales, and a timber counter
+Column 7: Arcology: Enormous self-contained tower city with stacked gardens, housing terraces, and a central glass atrium
+Column 8: Arcology Shield: Arcology protected by a translucent blue energy dome anchored to four compact perimeter emitters
+
+ROW 3, eight masked squares from left to right:
+Column 1: Arena: Compact square gladiatorial arena with a square sand floor enclosed by four straight stands. No oval Colosseum.
+Column 2: Arsenal: Modern military arsenal warehouse with steel doors, orderly ammunition crates and a tank barrel beside the entrance. No medieval shipyard.
+Column 3: Art Gallery: Elegant art gallery interior with framed landscapes, sculpted busts, and warm skylight illuminating white walls
+Column 4: Art of War: Ancient military academy with an open strategy scroll beside a miniature wooden battlefield map
+Column 5: Arthub: Futuristic art exhibition center with curved glass architecture and one luminous holographic abstract sculpture. No classical gallery.
+Column 6: Artist Guild: Artists' guild workshop with easels, pigment jars, canvases, and a carved guildhall doorway
+Column 7: Asatru Festhall: Norse timber festhall with soaring longhouse roof, carved gables, central hearth, and richly patterned shields
+Column 8: Asatru Temple: Norse timber shrine with a peaked roof, carved posts, an offering bowl, and evergreen wreaths
+
+ROW 4, eight masked squares from left to right:
+Column 1: Assembly Plant: Industrial assembly plant with a moving conveyor, robotic arms, and unfinished machinery beneath sawtooth roofs
+Column 2: Augmentation Center: Cybernetic augmentation clinic with a reclining treatment chair, articulated implant arm, and glowing diagnostic screens
+Column 3: Automated Defenses: Modern automated defense system: angular armored sensor tower and unmanned gun turret on a concrete base. No ancient stone fortress.
+Column 4: Auxiliary Body Exchange: Futuristic body-exchange clinic with a translucent medical pod and a lifelike synthetic body silhouette
+Column 5: Ball Court: Mesoamerican ball court with sloped stone walls, carved rings, and a bright rubber ball in play
+Column 6: Ballista Turret: Compact stone turret with a mounted wooden ballista aimed through crenellated battlements
+Column 7: Bank: Grand neoclassical bank with a columned entrance, bronze doors, and guarded marble steps
+Column 8: Baray: Vast Khmer reservoir framed by stepped stone embankments, lotus-filled water, and a temple island
+
+ROW 5, eight masked squares from left to right:
+Column 1: Barbwire Fence: Barbed wire fence stretched between THIN metal posts. Clear wire silhouette, no thick stone pillars.
+Column 2: Barracks: Military barracks with a long timber dormitory, visible bunk beds, and an orderly drill yard
+Column 3: Bauhaus School: Bauhaus design school with flat-roofed white blocks, steel-framed glass walls, and asymmetrical wings
+Column 4: Beadmaker: Beadmaker's workshop with colorful glass beads, a hand spindle, thread, and an artisan's workbench
+Column 5: Biological Warfare Lab: Sealed biolab with glass containment vessels, hazard-striped doors, and a glowing sample under a microscope
+Column 6: Bolshoi: Bolshoi Theatre with grand neoclassical portico, sculpted quadriga, and broad red-carpeted steps
+Column 7: Bomb Shelters: Reinforced underground shelter entrance with thick concrete doors, earth-covered roof, and ventilation pipes
+Column 8: Boulevard Circle: Circular fortified boulevard with concentric stone walls, watchtowers, and a guarded central gate
+
+ROW 6, eight masked squares from left to right:
+Column 1: Brandenburg Gate: Brandenburg Gate's neoclassical sandstone arch with five passages, fluted columns, and a chariot quadriga
+Column 2: Brewery: Brewery with copper brewing kettles, timber roof beams, wooden casks, and a squat brick chimney
+Column 3: Brihadeeswarar Temple: Tamil stone temple with a soaring pyramidal vimana, carved granite tiers, and a sacred bull statue
+Column 4: Broadcast Network: National television studio with a glass broadcast booth, camera on tripod, and glowing monitor bank
+Column 5: Broadcast Tower: Tall lattice broadcast tower with antenna panels, blinking lights, and concentric signal waves
+Column 6: Broadway: Close-up glowing neon theater sign reading BROADWAY in large unmistakable letters, with a few surrounding light bulbs. No building scene.
+Column 7: Broch: Scottish broch, a round dry-stone tower with thick hollow walls, a narrow doorway, and surrounding turf
+Column 8: Buddhist Stupa: White Buddhist stupa with a golden spire, circular terraces, prayer flags, and a domed reliquary
+
+ROW 7, eight masked squares from left to right:
+Column 1: Buddhist Temple: Buddhist temple with curved tiled eaves, a bronze bell, red pillars, and a serene seated Buddha
+Column 2: Bunker: Low-profile military bunker of reinforced concrete with an armored hatch, firing slit, and camouflage earthwork
+Column 3: Burning Man: One wooden human-shaped festival effigy with exactly TWO raised arms and TWO legs, visibly ON FIRE: vivid orange-yellow flames engulf its torso, arms and legs, with rising embers. No people, crowd or extra limbs. Not an unlit straw sculpture.
+Column 4: Butchery: Traditional butcher shop with a stone cutting block, hanging cured meats, cleavers, and tiled workroom
+Column 5: Cabinet: Government cabinet chamber with a long polished conference table, high-backed chairs, and circular seal motif
+Column 6: Caer: Welsh hilltop royal residence enclosed by rough stone ramparts, with a timber hall and watchtower
+Column 7: Calmacec: Mesoamerican religious school with a stepped stone sanctuary, cloister courtyard, and carved serpent columns
+Column 8: Candlemaker: Candle workshop with rows of beeswax tapers, a melting pot, cotton wicks, and brass dipping frame
+
+ROW 8, eight masked squares from left to right:
+Column 1: Cannon Turret: Stone fortress turret with a bronze cannon protruding through a crenellated embrasure above the ramparts
+Column 2: Capital Administration: Grand civic administration hall with a broad stair, symmetrical wings, and a council chamber beneath a glass dome
+Column 3: Caravanserai: Desert caravanserai with a fortified square courtyard, vaulted gatehouse, pack camels, and shaded arcades
+Column 4: Carhenge: Circular monument of upright vintage automobiles arranged like standing stones beneath an open prairie sky
+Column 5: Carpenter: Carpenter's workshop with a wooden workbench, hand plane, saw, and neatly stacked lumber
+Column 6: Cattle Herd: Small herd of long-horned cattle beside a portable felt tent and grazing pasture
+Column 7: Cement Mill: Cement mill with a long rotating kiln, stone aggregate piles, conveyor belts, and a dust-filter tower
+Column 8: Cheomseongdae: Cheomseongdae's tapered stone observatory tower with narrow openings, square top platform, and moonlit sky
+
+Final check: exactly 64 borderless illustrations in the exact 8-by-8 masked squares. Charcoal-blue backgrounds extend to every square edge. NO frames, rims, bevels or logo badges. All subjects fit within their own squares. All protected pink pixels unchanged.
