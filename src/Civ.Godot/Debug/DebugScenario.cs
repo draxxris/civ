@@ -9,10 +9,13 @@ namespace Civ.Client;
 /// { "fill":  { "terrain": "grass", "kind": "Flat" },
 ///   "tiles": [ { "at": [5, 5], "kind": "Hills" },
 ///              { "rect": [3, 3, 7, 5], "terrain": "plains", "feature": "forest" } ],
-///   "roads": [ [[2, 2], [3, 2], [4, 3]] ],
+///   "roads": [ [[2, 2], [3, 2], [4, 3]],
+///               { "route": "railroad", "path": [[2, 7], [3, 7]] },
+///               { "routes": ["road", "railroad"], "path": [[4, 7], [5, 7]] } ],
 ///   "focus": [5, 5] }
 /// </code>
-/// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner, city.
+/// Road entries can be point arrays (default road), or objects with a path and optional route; routes assigns one route name per path point.
+/// Route names accept full ids or short names. Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner (null clears it), city.
 /// City example: "city": {"owner":0,"name":"Testburg","population":5,"buildings":["walls"]}.
 /// City requires owner and name; population defaults to 1 and buildings to empty. It clears the plot improvement and sets its owner.
 /// Optional "era" (full id or short name such as "modern") sets the owner's current era, which picks the look of the city's
@@ -40,10 +43,26 @@ internal static class DebugScenario
                 foreach (var tile in Targets(session, entry)) Edit(session, tile, entry);
         if (root.TryGetProperty("roads", out var roads))
         {
-            string route = RouteId(session, "road");
-            foreach (var path in roads.EnumerateArray())
+            foreach (var entry in roads.EnumerateArray())
+            {
+                var path = entry.ValueKind == JsonValueKind.Array ? entry : entry.GetProperty("path");
+                JsonElement routeList = default;
+                var perPointRoutes = entry.ValueKind == JsonValueKind.Object && entry.TryGetProperty("routes", out routeList);
+                if (perPointRoutes && entry.TryGetProperty("route", out _))
+                    throw new ArgumentException("A roads entry cannot contain both 'route' and 'routes'.");
+                if (perPointRoutes && routeList.GetArrayLength() != path.GetArrayLength())
+                    throw new ArgumentException("A roads entry's 'routes' length must match its 'path' length.");
+
+                var defaultRoute = entry.ValueKind == JsonValueKind.Object && entry.TryGetProperty("route", out var route)
+                    ? RouteId(session, route.GetString()!)
+                    : RouteId(session, "road");
+                int index = 0;
                 foreach (var point in path.EnumerateArray())
-                    state.Plots[state.Grid.TileAt(point[0].GetInt32(), point[1].GetInt32()).Value].Route = route;
+                {
+                    var routeId = perPointRoutes ? RouteId(session, routeList[index++].GetString()!) : defaultRoute;
+                    state.Plots[state.Grid.TileAt(point[0].GetInt32(), point[1].GetInt32()).Value].Route = routeId;
+                }
+            }
         }
         foreach (var plot in state.Plots) { plot.Revealed.Add(session.Me.TeamId); plot.Visible.Add(session.Me.TeamId); }
         return root.TryGetProperty("focus", out var f) ? state.Grid.HexOf(state.Grid.TileAt(f[0].GetInt32(), f[1].GetInt32())) : null;
@@ -75,7 +94,7 @@ internal static class DebugScenario
         if (e.TryGetProperty("route", out var route)) plot.Route = Empty(route.GetString()) is { } id ? RouteId(session, id) : null;
         if (e.TryGetProperty("river", out var river)) plot.RiverEdges = (byte)river.GetInt32();
         if (e.TryGetProperty("lake", out var lake)) plot.IsLake = lake.GetBoolean();
-        if (e.TryGetProperty("owner", out var owner)) plot.Owner = owner.GetInt32();
+        if (e.TryGetProperty("owner", out var owner)) plot.Owner = owner.ValueKind == JsonValueKind.Null ? null : owner.GetInt32();
         if (e.TryGetProperty("city", out var city)) AddCity(session, tile, city);
     }
 

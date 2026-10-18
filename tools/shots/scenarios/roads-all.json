@@ -1,0 +1,15 @@
+{
+  "// note": "Every land route type on flat grass, one straight row each from north to south: cart path, road, paved road, highway, railroad, electric railroad, maglev, jumplane. Capture with tools/shots/roads-poses.json.",
+  "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
+  "roads": [
+    {"route": "track", "path": [[2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2]]},
+    {"route": "road", "path": [[2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4], [8, 4], [9, 4], [10, 4]]},
+    {"route": "paved", "path": [[2, 6], [3, 6], [4, 6], [5, 6], [6, 6], [7, 6], [8, 6], [9, 6], [10, 6]]},
+    {"route": "modern_road", "path": [[2, 8], [3, 8], [4, 8], [5, 8], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8]]},
+    {"route": "railroad", "path": [[2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [7, 10], [8, 10], [9, 10], [10, 10]]},
+    {"route": "railroad_electric", "path": [[2, 12], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12]]},
+    {"route": "gravtube", "path": [[2, 14], [3, 14], [4, 14], [5, 14], [6, 14], [7, 14], [8, 14], [9, 14], [10, 14]]},
+    {"route": "jumplane", "path": [[2, 16], [3, 16], [4, 16], [5, 16], [6, 16], [7, 16], [8, 16], [9, 16], [10, 16]]}
+  ],
+  "focus": [6, 9]
+}

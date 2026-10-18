@@ -32,8 +32,8 @@ internal sealed partial class WrapMesh : Node3D
 
 /// <summary>
 /// Draws the map: the 3D terrain and water (<see cref="TerrainRenderer"/>, which also shades fog, borders, rivers, hover and
-/// the city-screen overlay), feature marks, routes and icons as one baked mesh (rebuilt when the simulation changes), plus a
-/// cheap token layer for cities and units.
+/// the city-screen overlay), feature marks, routes (draped ribbons plus 3D decks and masts) and icons as baked meshes
+/// (rebuilt when the simulation changes), plus a cheap token layer for cities and units.
 /// </summary>
 internal sealed partial class MapRenderer : Node3D
 {
@@ -42,7 +42,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _roads, _landIcons, _tokens, _tokenIcons, _path;
+    private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _tokens, _tokenIcons, _path;
     private readonly TerrainRenderer _terrain;
     private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial, _pathMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
@@ -62,6 +62,7 @@ internal sealed partial class MapRenderer : Node3D
     public Dictionary<string, int> TriangleCounts() => new()
     {
         ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles + _roads.Triangles, ["roads"] = _roads.Triangles,
+        ["route_parts"] = _routeParts.Triangles,
         ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
         ["improvement_ground"] = _improvements.DecalTriangles,
         ["city_buildings"] = _cities.Triangles, ["city_ground"] = _cities.GroundTriangles,
@@ -93,6 +94,7 @@ internal sealed partial class MapRenderer : Node3D
         AddChild(_cities);
         _land = Layer();
         _roads = Layer();
+        _routeParts = Layer();
         _landIcons = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();

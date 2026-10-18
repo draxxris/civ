@@ -1,0 +1,11 @@
+[
+  {"name": "roads_overview", "focusTile": [6, 10], "distance": 19, "pitch": 62},
+  {"name": "roads_track", "focusTile": [6, 2], "distance": 3.2, "pitch": 48},
+  {"name": "roads_road", "focusTile": [6, 4], "distance": 3.2, "pitch": 48},
+  {"name": "roads_paved", "focusTile": [6, 6], "distance": 3.2, "pitch": 48},
+  {"name": "roads_highway", "focusTile": [6, 8], "distance": 3.2, "pitch": 48},
+  {"name": "roads_railroad", "focusTile": [6, 10], "distance": 3.2, "pitch": 48},
+  {"name": "roads_electric_railroad", "focusTile": [6, 12], "distance": 3.2, "pitch": 48},
+  {"name": "roads_maglev", "focusTile": [6, 14], "distance": 3.2, "pitch": 48},
+  {"name": "roads_jumplane", "focusTile": [6, 16], "distance": 3.2, "pitch": 48}
+]

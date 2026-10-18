@@ -1,0 +1,20 @@
+{
+  "// note": "Route type transitions: three rows that change type every three tiles, a winding railroad, two junctions of mixed types, and a railroad and a maglev over hills. Capture with tools/shots/roads-transitions-poses.json.",
+  "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
+  "tiles": [
+    {"rect": [3, 13, 10, 17], "kind": "Hills", "terrain": "world:plains"}
+  ],
+  "roads": [
+    {"routes": ["track", "track", "track", "road", "road", "road", "paved", "paved", "paved", "modern_road", "modern_road", "modern_road"], "path": [[3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [11, 3], [12, 3], [13, 3], [14, 3]]},
+    {"routes": ["modern_road", "modern_road", "modern_road", "railroad", "railroad", "railroad", "railroad_electric", "railroad_electric", "railroad_electric", "gravtube", "gravtube", "gravtube", "jumplane", "jumplane", "jumplane"], "path": [[3, 5], [4, 5], [5, 5], [6, 5], [7, 5], [8, 5], [9, 5], [10, 5], [11, 5], [12, 5], [13, 5], [14, 5], [15, 5], [16, 5], [17, 5]]},
+    {"routes": ["road", "road", "road", "gravtube", "gravtube", "gravtube", "modern_road", "modern_road", "modern_road", "jumplane", "jumplane", "jumplane", "railroad", "railroad", "railroad"], "path": [[3, 7], [4, 7], [5, 7], [6, 7], [7, 7], [8, 7], [9, 7], [10, 7], [11, 7], [12, 7], [13, 7], [14, 7], [15, 7], [16, 7], [17, 7]]},
+    {"route": "railroad", "path": [[3, 10], [4, 10], [4, 11], [5, 12], [6, 12], [6, 11], [7, 10], [8, 10], [8, 11], [9, 12], [10, 12], [11, 12]]},
+    {"route": "modern_road", "path": [[14, 11], [15, 11], [16, 11]]},
+    {"route": "road", "path": [[14, 10], [13, 9]]},
+    {"route": "gravtube", "path": [[14, 12], [13, 13]]},
+    {"routes": ["railroad", "railroad", "railroad", "railroad_electric", "railroad_electric", "modern_road", "modern_road"], "path": [[16, 14], [17, 14], [18, 14], [18, 13], [19, 12], [18, 15], [19, 16]]},
+    {"route": "railroad", "path": [[2, 14], [3, 14], [4, 14], [5, 14], [6, 14], [7, 14], [8, 14], [9, 14], [10, 14], [11, 14]]},
+    {"route": "gravtube", "path": [[2, 16], [3, 16], [4, 16], [5, 16], [6, 16], [7, 16], [8, 16], [9, 16], [10, 16], [11, 16]]}
+  ],
+  "focus": [10, 7]
+}

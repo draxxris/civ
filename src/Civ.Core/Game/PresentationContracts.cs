@@ -52,12 +52,35 @@ public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0,
 
 public enum TerrainSurface { Cliff, Seabed, DeepSeabed, Unexplored, Snow }
 
+/// <summary>How a land route is drawn. The client draws an unknown route as a plain road.</summary>
+public enum RouteLook
+{
+    /// <summary>Two narrow wheel ruts that wander over the grass.</summary>
+    Track,
+    /// <summary>A packed earth road with a worn middle and ruts.</summary>
+    Road,
+    /// <summary>Grey stone setts between soft verges.</summary>
+    Paved,
+    /// <summary>Dark asphalt with white edge lines and a dashed yellow centre line.</summary>
+    Highway,
+    /// <summary>Two steel rails on wooden sleepers in a ballast bed.</summary>
+    Railroad,
+    /// <summary>A railroad on concrete sleepers under portal masts and a contact wire.</summary>
+    ElectricRailroad,
+    /// <summary>A concrete guideway beam on piers.</summary>
+    Maglev,
+    /// <summary>A slim steel beam with glowing edges on lattice legs.</summary>
+    Jumplane,
+}
+
 public interface ITileAppearanceService
 {
     TileAppearance? Terrain(string id);
     TileAppearance? Feature(string id);
     string? Surface(TerrainSurface surface) => null;
     TileAppearance? Scatter(string feature, string terrain) => null;
+    /// <summary>The look of a route id, or null to leave it to other providers.</summary>
+    RouteLook? Route(string id) => null;
 }
 
 /// <summary>How a city's 3D buildings look.</summary>

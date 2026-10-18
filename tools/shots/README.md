@@ -35,6 +35,13 @@ Run twice with different values, then `mise run shot:compare -- a.png b.png ab.p
 `--scenario tools/shots/scenarios/hills-forest-roads.json --world tiny` replaces the generated map with a fixed scene.
 Use `tools/shots/scenarios/improvements.json` to preview improvement icons. The format is in `src/Civ.Godot/Debug/DebugScenario.cs`.
 Every tile is revealed and visible. Use `--clean` to hide the starting units.
+Road paths can be point arrays for the default road, or objects with a `path` and optional `route`. Set `routes` instead to assign one route name per point:
+
+```json
+{"roads":[{"routes":["road","railroad"],"path":[[2,7],[3,7]]}]}
+```
+
+The generated start can leave owned land under the scene. Set `"owner": null` in `fill` (or on a tile) to clear it.
 
 A tile can create a city through the `city` field:
 
@@ -56,6 +63,22 @@ The era belongs to the owner, so cities of different eras need different owners.
 `tools/shots/scenarios/cities.json` shows four eras (ancient, renaissance, industrial and modern) at sizes 3, 8, 13 and 20. The left block has walls and the right block has none.
 Capture it with `--shots tools/shots/cities-poses.json --scenario tools/shots/scenarios/cities.json --world tiny --clean --stats`.
 The layout code is `src/Civ.Client.Core/Terrain/CityLayout.cs`. `--stats` reports `city_buildings` and `city_ground` triangles.
+
+## Routes
+
+`tools/shots/scenarios/roads-all.json` lays one straight row of each land route type. `roads-transitions.json` has rows that
+change type every three tiles, a winding railroad, two mixed junctions, and a railroad and a maglev over hills. `roads-junctions-ground.json` and
+`roads-junctions-raised.json` have junctions of three (Y and T), four and six arms for each type from paved road up.
+
+```sh
+mise run shot -- --shots tools/shots/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /tmp/roads
+```
+
+`--stats` reports `roads` (draped ribbons) and `route_parts` (decks, supports and masts) triangles.
+The curves come from `src/Civ.Client.Core/Terrain/RoutePlan.cs`.
 
 ## Improvement models
 
