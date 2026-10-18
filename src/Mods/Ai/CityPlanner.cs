@@ -15,12 +15,30 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     public void Plan()
     {
+        AnnexMaturePuppets();
         Views = ctx.Cities.Select(c => CityView.Build(ctx, c)).ToArray();
         CountQueued();
         foreach (var view in Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
-            if (NeedsChoice(view)) Choose(view);
+            if (!IsPuppet(view.City) && NeedsChoice(view)) Choose(view);
         }
+    }
+
+    private void AnnexMaturePuppets()
+    {
+        var candidates = ctx.Cities.Where(IsMaturePuppet).OrderBy(city => city.Id).ToArray();
+        if (candidates.Length == 0 || !EconomyCanAnnex()) return;
+        foreach (var city in candidates)
+            ctx.Issue(new ResolveCityConquestCommand { Player = ctx.PlayerId, CityId = city.Id, Option = CityConquestOption.Annex });
+    }
+
+    private bool IsMaturePuppet(City city) =>
+        city.Extensions.Get<CityRuleState>(ctx.Sim.Content) is { IsPuppet: true, OccupationTurns: 0 };
+
+    private bool EconomyCanAnnex()
+    {
+        if (ctx.Self.Treasury < EconomyPlanner.Reserve(ctx.Cities.Count)) return false;
+        return ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold >= 0;
     }
 
     private void CountQueued()
@@ -40,6 +58,8 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (city.ProductionQueue.FirstOrDefault() is { Kind: "cities:building" } head
             && BuildingValuer.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId))) _wondersQueued++;
     }
+
+    private bool IsPuppet(City city) => city.Extensions.Get<CityRuleState>(ctx.Sim.Content)?.IsPuppet == true;
 
     private bool NeedsChoice(CityView v)
     {
@@ -116,7 +136,8 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     {
         var options = new List<(string Kind, string Id, long Score)>();
         foreach (var b in Options.Buildings)
-            if (!v.City.Buildings.Contains(b.Id) && Rate(b, v) is { } score) options.Add(("cities:building", b.Id, score));
+            if (ctx.Service<ICityProductionService>().Validate(ctx.Sim, v.City.Id, "cities:building", b.Id).Success
+                && Rate(b, v) is { } score) options.Add(("cities:building", b.Id, score));
         if (army.Soldiers + _soldiersQueued < army.Want(Views) && v.Production >= 2) options.AddRange(ArmyOptions(v));
         options.AddRange(StrategicOptions(v));
         if (InquisitorWanted())

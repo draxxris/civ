@@ -72,7 +72,8 @@ internal sealed class CityMaintenance : ICityMaintenanceService
         value = BigInteger.Min(value, (BigInteger)handicap.MaxNumCitiesMaintenance * 100 * Scale);
         int elapsed = Math.Max(0, sim.State.Turn - 1);
         if (elapsed < 100) value = value * (50 + elapsed / 2) / 100;
-        return (long)BigInteger.Min(value / Scale, long.MaxValue);
+        long result = (long)BigInteger.Min(value / Scale, long.MaxValue);
+        return CityData.Read(sim, city).IsPuppet ? result / 2 : result;
     }
     private static long Root(int value, int degree)
     {

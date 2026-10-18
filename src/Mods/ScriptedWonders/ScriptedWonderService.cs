@@ -11,11 +11,17 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     public bool IsActive(Simulation sim, int cityId, string building)
     {
         var city = sim.State.CityById(cityId);
-        if (!city.Buildings.Contains(building) || !sim.Content.TryGet<S.BuildingDef>(building, out var def)) return false;
-        if (def.ObsoleteTech is { } tech && sim.KnowsTech(city.Owner, tech)) return false;
-        return !def.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(def.Requirements,
-            new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success;
+        return CityBuildingRules.Active(sim, city, city.Buildings).Any(b => b.Id == building);
     }
+
+    public IReadOnlyList<string> EmpireFreeBuildings(Simulation sim, int player) => Rules(sim)
+        .Where(r => r.EmpireFreeBuilding is not null && HasFreeBuildingSource(sim, player, r))
+        .Select(r => r.EmpireFreeBuilding!).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+
+    private bool HasFreeBuildingSource(Simulation sim, int player, WonderScriptDef rule) => sim.State.Cities
+        .Where(c => c.Owner == player || (sim.TeamOf(c.Owner).Id == sim.TeamOf(player).Id
+            && sim.Content.Get<S.BuildingDef>(rule.Building).TeamShare))
+        .Any(c => IsActive(sim, c.Id, rule.Building));
 
     private static int Interval(Simulation sim, WonderScriptDef rule) => rule.IntervalTurns == 0 ? 0
         : Math.Max(1, rule.IntervalTurns * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).TrainPercent / 100);
@@ -67,14 +73,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
 
     private static void GrantBuildings(Simulation sim, City city, WonderScriptDef rule)
     {
-        if (rule.EmpireFreeBuilding is not { } building) return;
-        foreach (var target in sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id).ToArray())
-        {
-            if (target.Buildings.Contains(building)) continue;
-            target.Buildings.Add(building);
-            sim.Events.Publish(new BuildingCompleted(target.Id, building));
-        }
-        Effect(sim, city, rule, "free_building", 1);
+        if (rule.EmpireFreeBuilding is not null) Effect(sim, city, rule, "free_building", 1);
     }
 
     private static bool CompletionPending(Simulation sim, City city, WonderScriptDef rule) =>

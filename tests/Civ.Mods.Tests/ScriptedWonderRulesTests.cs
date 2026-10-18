@@ -1,3 +1,4 @@
+using Civ.Client;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -51,7 +52,7 @@ public sealed class P7ModFixture
     }
 }
 
-public sealed class ScriptedWonderRulesTests(P7ModFixture mods) : IClassFixture<P7ModFixture>
+public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7ModFixture>
 {
     private static IScriptedWonderService Service(Simulation sim) => sim.Content.Services.Get<IScriptedWonderService>().Single();
     private static void Complete(Simulation sim, City city, string building)
@@ -106,15 +107,28 @@ public sealed class ScriptedWonderRulesTests(P7ModFixture mods) : IClassFixture<
         Assert.Equal(3, sim.State.Units.Count);
         Assert.Equal(100, city.Culture);
         Complete(sim, city, "cities:pyramid");
-        Assert.Single(city.Buildings, b => b == "cities:granary");
+        string granary = sim.Content.Get<S.BuildingDef>("cities:granary").Name;
+        Assert.DoesNotContain("cities:granary", city.Buildings);
+        Assert.Contains(granary, new GameSession(sim).DescribeCity(city)!.Buildings);
         Assert.Single(owned.Buildings, b => b == "cities:granary");
+        Assert.Single(new GameSession(sim).DescribeCity(owned)!.Buildings, b => b == granary);
         Assert.DoesNotContain("cities:granary", foreign.Buildings);
+        Assert.DoesNotContain(granary, new GameSession(sim).DescribeCity(foreign)!.Buildings);
+        var later = P7ModFixture.City(sim, 80);
+        Assert.Contains(granary, new GameSession(sim).DescribeCity(later)!.Buildings);
+        Assert.DoesNotContain("cities:granary", later.Buildings);
+        Assert.Single(sim.Events.Published.OfType<ScriptedWonderEffectApplied>(), e => e.Effect == "free_building");
         var loaded = SaveGame.Load(mods.Wonders, SaveGame.Save(sim));
         var before = loaded.ComputeHash();
         loaded.Events.Publish(new BuildingCompleted(city.Id, "cities:terracotta"));
         loaded.Events.Publish(new BuildingCompleted(city.Id, "cities:pyramid"));
         Assert.Equal(before, loaded.ComputeHash());
         Assert.Equal(before, sim.ComputeHash());
+        var loadedCity = loaded.State.CityById(city.Id);
+        loadedCity.Buildings.Remove("cities:pyramid");
+        Assert.DoesNotContain(granary, new GameSession(loaded).DescribeCity(loadedCity)!.Buildings);
+        Assert.DoesNotContain(granary, new GameSession(loaded).DescribeCity(loaded.State.CityById(later.Id))!.Buildings);
+        Assert.Contains(granary, new GameSession(loaded).DescribeCity(loaded.State.CityById(owned.Id))!.Buildings);
     }
 
     [Fact]

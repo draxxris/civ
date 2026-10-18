@@ -34,7 +34,7 @@ internal sealed class AiOptions
     }
 
     private static bool UnavailableMechanic(BuildingDef b) => b.Capital || b.RequiresReligion
-        || b.RequiresStateReligion || b.ReligionType is not null || b.RequiresPower;
+        || b.RequiresStateReligion || b.ReligionType is not null;
 
     /// <summary>Limited classes that already exist elsewhere (world/team) or in this empire.</summary>
     private HashSet<string> LimitedClasses()

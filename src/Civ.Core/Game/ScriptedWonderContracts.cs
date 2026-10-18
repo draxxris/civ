@@ -5,6 +5,8 @@ public interface IScriptedWonderService
 {
     IReadOnlyList<ScriptedWonderStatus> DescribeCity(Simulation sim, int cityId);
     bool IsActive(Simulation sim, int cityId, string building);
+    /// <summary>Building classes granted while an owned or team-shared constructed wonder is active.</summary>
+    IReadOnlyList<string> EmpireFreeBuildings(Simulation sim, int player);
     /// <summary>True when an active wonder bars this barbarian land unit from entering the target hex.</summary>
     bool BlocksBarbarianEntry(Simulation sim, int barbarianUnitId, Hex targetHex) => false;
 }

@@ -31,7 +31,8 @@ public static class GovernmentStatus
     public static bool IsAnarchy(Simulation sim, int player) =>
         sim.State.PlayerById(player).Extensions.TryGet<GovernmentPlayerState>(sim.Content)?.AnarchyTurns > 0;
     public static bool IsDisorder(Simulation sim, City city) =>
-        GovernmentStatus.IsAnarchy(sim, city.Owner) || city.Extensions.TryGet<CityRuleState>(sim.Content)?.Disorder == true;
+        IsAnarchy(sim, city.Owner)
+        || (city.Extensions.TryGet<CityRuleState>(sim.Content) is { } state && (state.Disorder || state.OccupationTurns > 0));
 }
 
 /// <summary>One atomic revolution. Omitted civic options retain their current choice.</summary>

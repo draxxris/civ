@@ -51,6 +51,16 @@ public interface ICityMaintenanceService
 {
     CityMaintenanceResult Calculate(Simulation sim, int city);
 }
+/// <summary>Read-only building views include empire grants without changing a city's constructed buildings.</summary>
+public interface ICityBuildingService
+{
+    IReadOnlyList<string> EffectiveBuildings(Simulation sim, int city);
+    IReadOnlyList<string> ActiveBuildings(Simulation sim, int city);
+    bool IsPowered(Simulation sim, int city);
+    bool IsDirtyPower(Simulation sim, int city);
+    /// <summary>Checks whether a candidate building supplies power with the city's current resources.</summary>
+    bool ProvidesPower(Simulation sim, int city, string building);
+}
 public sealed record CityProductionResult(long Cost, long Production, int ModifierPercent, Ledger Ledger);
 public interface ICityProductionService
 {
@@ -75,16 +85,24 @@ public interface ICityRequirementService
     string? Evaluate(Requirement.Leaf leaf, RequirementContext context);
 }
 /// <summary>Queue and founding mutations owned by Cities. Commands call the same validation as previews.</summary>
+public enum CityConquestOption { Annex, Puppet, Raze }
 public interface ICityCommandService
 {
     string? ValidateFound(Simulation sim, int player, int settler);
     void Found(Simulation sim, int player, int settler);
+    string? ValidateConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
+    void ResolveConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
     string? ValidateQueue(Simulation sim, int player, int city, string kind, string content, int? remove);
     void Queue(Simulation sim, int city, string kind, string content, bool append, int? remove);
 }
 /// <summary>Saved feature-ruleset city state. Culture keeps fractional output separately from the legacy whole value.</summary>
 public sealed class CityRuleState
 {
+    public int TurnAcquired { get; set; }
+    public int HighestPopulation { get; set; } = 1;
+    public int OccupationTurns { get; set; }
+    public bool IsPuppet { get; set; }
+    public bool PendingConquestChoice { get; set; }
     public long FoodKept { get; set; }
     public long Overflow { get; set; }
     public long FeatureProduction { get; set; }
@@ -133,6 +151,7 @@ public sealed class SetCityAssignmentsCommand : GameCommand
     {
         var city = sim.State.FindCity(CityId);
         if (city is null || city.Owner != Player) return "Not your city";
+        if (city.Extensions.TryGet<CityRuleState>(sim.Content)?.IsPuppet == true) return "Puppet cities manage their own citizens";
         return Automatic ? null : sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, Tiles, Specialists);
     }
     public override void Apply(Simulation sim)
@@ -145,6 +164,13 @@ public sealed class SetCityAssignmentsCommand : GameCommand
         city.Specialists = new(Specialists, StringComparer.Ordinal);
         sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, CityId);
     }
+}
+public sealed class ResolveCityConquestCommand : GameCommand
+{
+    public int CityId { get; init; }
+    public CityConquestOption Option { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateConquestChoice(sim, Player, CityId, Option);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ResolveConquestChoice(sim, Player, CityId, Option);
 }
 public sealed class ConscriptCityCommand : GameCommand
 {

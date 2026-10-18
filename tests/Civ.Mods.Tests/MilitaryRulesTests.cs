@@ -210,6 +210,69 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.True(sim.TryApply(new RazeCityCommand { Player = 0, City = city.Id }, out error), error);
         Assert.Null(sim.State.CityAt(position));
     }
+    [Theory]
+    [InlineData(1, 1, 0, true)]
+    [InlineData(2, 1, 0, false)]
+    [InlineData(1, 2, 0, false)]
+    [InlineData(1, 1, 40, false)]
+    public void Military_capture_auto_razes_only_size_one_cities_without_growth_or_cultural_expansion(int population, int highest, long culture, bool autoRazed)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var attacker = Add(sim, 0, 39);
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new(40)), Population = population, Culture = culture };
+        city.Extensions.Set(sim.Content, new CityRuleState { HighestPopulation = highest });
+        city.Buildings.Add("cities:palace"); sim.State.AddCity(city);
+        var remaining = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new(80)) };
+        sim.State.AddCity(remaining); sim.State.SetWar(0, 1, true); sim.State.Turn = 50;
+        long treasury = sim.State.PlayerById(0).Treasury;
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        var command = new MoveUnitPathCommand { Player = 0, Unit = attacker.Id, Path = [city.Position] };
+        Assert.True(sim.TryApply(command, out var error), error);
+        Assert.True(loaded.TryApply(command, out error), error);
+        var message = Assert.Single(sim.Events.Published.OfType<CityCaptured>());
+        Assert.Equal(autoRazed, message.AutoRazed);
+        Assert.Equal(1, message.PreviousOwner); Assert.Equal(0, message.Player);
+        Assert.True(message.CaptureGold > 0);
+        Assert.Equal(message.CaptureGold, sim.State.PlayerById(0).Treasury - treasury);
+        Assert.Equal(autoRazed, sim.State.FindCity(city.Id) is null);
+        Assert.Equal(city.Position, attacker.Position);
+        Assert.Contains("cities:palace", remaining.Buildings);
+        if (autoRazed)
+        {
+            var razed = Assert.Single(sim.Events.Published.OfType<CityRazed>());
+            Assert.Equal(0, razed.Player); Assert.Equal(city.Position, razed.Position);
+            var events = sim.Events.Published.Where(e => e is CityCaptured or CityRazed).ToArray();
+            Assert.IsType<CityCaptured>(events[0]); Assert.IsType<CityRazed>(events[1]);
+        }
+        else
+        {
+            var captured = sim.State.CityById(city.Id);
+            Assert.Equal(0, captured.Owner);
+            Assert.Equal(Math.Max(highest, population), captured.Extensions.Get<CityRuleState>(sim.Content)!.HighestPopulation);
+            Assert.True(captured.Extensions.Get<CityRuleState>(sim.Content)!.PendingConquestChoice);
+        }
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Ai_capture_resolves_immediately_without_a_pending_human_choice()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var old = sim.State.PlayerById(0);
+        sim.State.Turn = 9;
+        sim.State.Players[0] = new Player { Id = 0, TeamId = old.TeamId, Civilization = old.Civilization, Ai = "ai:standard" };
+        sim.State.RebuildIndexes();
+        var attacker = Add(sim, 0, 39);
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new(40)), Population = 3 };
+        sim.State.AddCity(city); sim.State.SetWar(0, 1, true);
+        Assert.True(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = attacker.Id, Path = [city.Position] }, out var error), error);
+        var captured = sim.State.CityById(city.Id);
+        var state = captured.Extensions.Get<CityRuleState>(sim.Content)!;
+        Assert.False(state.PendingConquestChoice); Assert.False(state.IsPuppet);
+        Assert.Equal(9, state.TurnAcquired);
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:unit", ContentId = "military:warrior" }, out error), error);
+    }
+
     [Fact]
     public void Healing_and_upgrade_price_follow_location_and_production_formulas()
     {

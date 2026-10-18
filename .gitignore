@@ -4,6 +4,7 @@ obj/
 *.user
 external/
 TestResults/
+.test-metrics/
 src/Civ.Godot/.godot/
 *.import
 AND-extraction/

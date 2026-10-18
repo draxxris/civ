@@ -14,7 +14,9 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         Add(lines, "cities:handicap", "happiness", CityData.Handicap(sim).HappyBonus);
         Add(lines, "cities:handicap", "health", CityData.Handicap(sim).HealthBonus);
         Add(lines, "cities:population", "happiness", -city.Population * Math.Max(0, 100 + CityData.Effect(effects, "population_anger_percent")) / 100);
-        Add(lines, "cities:city_count", "happiness", -CityData.Owned(sim, city.Owner).Count() / Math.Max(1, CityData.World(sim).NumCitiesUnhappinessDivisor));
+        long countUnhappy = CityData.Owned(sim, city.Owner).Count() / Math.Max(1, CityData.World(sim).NumCitiesUnhappinessDivisor);
+        if (CityData.Read(sim, city).IsPuppet) countUnhappy /= 2;
+        Add(lines, "cities:city_count", "happiness", -countUnhappy);
         bool noPopulation = CityData.Effect(effects, "no_unhealthy_population") > 0;
         if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
         if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
@@ -23,6 +25,7 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         AddCultureAnger(sim, city, lines);
         AddCivicAnger(sim, city, effects, lines);
         AddEnvironment(sim, city, lines);
+        AddPowerHealth(sim, city, lines);
         AddSpecialists(sim, city, effects, lines);
         var ledger = new Ledger(lines);
         int happy = (int)ledger.Total("cities:happiness_good"), unhappy = (int)ledger.Total("cities:happiness_bad");
@@ -38,19 +41,22 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
         Int128 populationHealth = (Int128)buildings.Sum(b => (long)b.HealthPercentPerPopulation) * city.Population / 100;
         Int128 badBuildings = onlyHealthy ? 0 : (Int128)effects.Ledger.Total("cities:building_bad_health") - Int128.Min(0, populationHealth);
-        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), effects.Ledger.Total("cities:bonus_bad_health"), PowerUnhealth(sim, city, buildings));
+        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), effects.Ledger.Total("cities:bonus_bad_health"), PowerUnhealth(sim, city));
     }
-    private static long PowerUnhealth(Simulation sim, City city, S.BuildingDef[] buildings)
+    private static void AddPowerHealth(Simulation sim, City city, List<LedgerLine> lines)
     {
-        var bonuses = BuildingEffects.Bonuses(sim, city);
-        var sources = buildings.Where(b => b.ProducesPower || b.PowerBonus is { } bonus && bonuses.GetValueOrDefault(bonus) > 0).ToArray();
-        bool areaClean = sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(city.Owner).Id
-                && sim.State.PlotAt(c.Position).AreaId == sim.State.PlotAt(city.Position).AreaId)
-            .Any(c => CityData.Active(sim, c).Any(b => b.AreaCleanPower));
-        if (sources.Length == 0 && !areaClean) return 0;
+        if (!CityData.IsPowered(sim, city)) return;
+        var constants = CityData.Constants(sim);
+        Add(lines, "cities:power", "health", constants.PowerHealthChange);
+        if (CityData.IsDirtyPower(sim, city))
+            Add(lines, "cities:dirty_power", "health", constants.DirtyPowerHealthChange);
+    }
+    private static long PowerUnhealth(Simulation sim, City city)
+    {
+        if (!CityData.IsPowered(sim, city)) return 0;
         var constants = CityData.Constants(sim);
         long bad = -Math.Min(0L, constants.PowerHealthChange);
-        if (!areaClean && sources.All(b => b.DirtyPower)) bad -= Math.Min(0L, constants.DirtyPowerHealthChange);
+        if (CityData.IsDirtyPower(sim, city)) bad -= Math.Min(0L, constants.DirtyPowerHealthChange);
         return bad;
     }
     private static void Add(List<LedgerLine> lines, string source, string kind, long value)

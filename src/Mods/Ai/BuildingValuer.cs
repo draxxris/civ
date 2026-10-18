@@ -1,4 +1,6 @@
+using Civ.Content;
 using Civ.Content.Schema;
+using Civ.Game;
 
 namespace Civ.Mods.Ai;
 
@@ -24,7 +26,38 @@ internal sealed class BuildingValuer(AiContext ctx)
         int flat = (int)(b.YieldChanges.Food * 8 + b.YieldChanges.Production * 8 + b.YieldChanges.Commerce * 5);
         int percent = (int)(b.YieldModifiers.Food * v.Food * 8 + b.YieldModifiers.Production * v.Production * 8
             + b.YieldModifiers.Commerce * v.Commerce * 5) / 100;
-        return flat + percent + (int)(b.RiverPlotYieldChanges.Food + b.SeaPlotYieldChanges.Food + b.SeaPlotYieldChanges.Commerce) * 2;
+        var buildings = ctx.Service<ICityBuildingService>();
+        bool powered = buildings.IsPowered(ctx.Sim, v.City.Id);
+        if (powered) percent += YieldPercentValue(b.PowerYieldModifiers, v);
+        return flat + percent + PowerValue(b, v, buildings, powered)
+            + (int)(b.RiverPlotYieldChanges.Food + b.SeaPlotYieldChanges.Food + b.SeaPlotYieldChanges.Commerce) * 2;
+    }
+
+    private static int YieldPercentValue(YieldVector modifiers, CityView v) =>
+        (int)(modifiers.Food * v.Food * 8 + modifiers.Production * v.Production * 8 + modifiers.Commerce * v.Commerce * 5) / 100;
+
+    private int PowerValue(BuildingDef b, CityView v, ICityBuildingService buildings, bool powered)
+    {
+        if (!buildings.ProvidesPower(ctx.Sim, v.City.Id, b.Id)) return 0;
+        int value = PowerHealthValue(b, v, buildings, powered);
+        if (powered) return value;
+        value += YieldPercentValue(b.PowerYieldModifiers, v);
+        var poweredBuildings = CityBuildingRules.Active(ctx.Sim, v.City, buildings.EffectiveBuildings(ctx.Sim, v.City.Id));
+        foreach (var existing in poweredBuildings)
+            value += YieldPercentValue(existing.PowerYieldModifiers, v);
+        return value;
+    }
+
+    private int PowerHealthValue(BuildingDef b, CityView v, ICityBuildingService buildings, bool powered)
+    {
+        var constants = ctx.Sim.Content.Get<RuleConstantsDef>().All.Single().Values;
+        bool dirty = buildings.IsDirtyPower(ctx.Sim, v.City.Id);
+        int current = powered ? constants.PowerHealthChange : 0;
+        if (dirty) current += constants.DirtyPowerHealthChange;
+        int next = constants.PowerHealthChange;
+        if (b.DirtyPower && !b.AreaCleanPower && (!powered || dirty)) next += constants.DirtyPowerHealthChange;
+        int healthWeight = v.HealthMargin <= 0 ? 12 : v.HealthMargin <= 1 ? 5 : 1;
+        return (next - current) * healthWeight;
     }
 
     private int CommerceValue(BuildingDef b, CityView v)

@@ -40,14 +40,14 @@ internal sealed partial class CityUi : Control
         var screen = _session.DescribeCity(city);
         if (screen == null) return;
         long describe = clock.ElapsedMilliseconds;
-        BuildLeft(screen);
+        BuildLeft(city, screen);
         BuildRight(city, screen);
         if (MapRenderer.LogTimings) GD.Print($"city screen: describe {describe} ms, controls {clock.ElapsedMilliseconds - describe} ms");
     }
 
     // --- left: numbers and ledgers ----------------------------------------------------------------
 
-    private void BuildLeft(CityScreen c)
+    private void BuildLeft(City city, CityScreen c)
     {
         Ui.Clear(_left);
         var box = Ui.VBox(6);
@@ -56,7 +56,14 @@ internal sealed partial class CityUi : Control
         head.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", _session.ClearSelection, "Back to the map (Esc)"));
         box.AddChild(head);
-        if (c.Disorder) box.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
+        if (c.OccupationTurns > 0) box.AddChild(Ui.Text($"OCCUPATION DISORDER ({c.OccupationTurns} turns remaining): nothing is produced.", 15, Ui.Bad));
+        else if (c.Disorder) box.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
+        if (c.IsPuppet)
+        {
+            box.AddChild(Ui.Text("PUPPET CITY: autonomous governance (-50% city-count maintenance & unhappiness).", 14, Ui.Accent));
+            box.AddChild(Ui.Button("Annex City", () => _session.AnnexCity(city)));
+        }
+        if (c.PendingConquestChoice) AddConquestChoices(box, c);
         AddReligions(box, c);
         AddCorporations(box, c);
         AddStability(box, c);
@@ -70,6 +77,15 @@ internal sealed partial class CityUi : Control
         AddLedger(box, "Happiness", c.HappinessLedger);
         AddLedger(box, "Health", c.HealthLedger);
         _left.AddChild(Ui.Scroll(box));
+    }
+
+    private void AddConquestChoices(VBoxContainer box, CityScreen city)
+    {
+        var conquest = _session.DescribePendingConquests().FirstOrDefault(item => item.CityId == city.Id);
+        var actions = Ui.HBox(6);
+        actions.AddChild(Ui.Button("Puppet (Keep)", () => _session.ResolveCityConquest(city.Id, CityConquestOption.Puppet)));
+        actions.AddChild(Ui.Button("Raze City", () => _session.ResolveCityConquest(city.Id, CityConquestOption.Raze), enabled: conquest?.CanRaze == true));
+        box.AddChild(actions);
     }
 
     private static Control FoodBox(CityScreen c)
