@@ -124,13 +124,17 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
     public void Run(Simulation sim)
     {
         var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
+        // Disorder stops productive work, but assigned plots still resist feature overgrowth.
+        var productiveWorked = sim.State.Cities.Where(c => !GovernmentStatus.IsDisorder(sim, c))
+            .SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
         var features = new FeatureTurnRules(sim, worked);
         var resources = new ResourceTurnRules(sim);
         foreach (var tile in sim.State.Grid.Tiles)
         {
             features.Advance(tile);
-            resources.Advance(tile, worked.Contains(tile));
-            Upgrade(sim, tile, worked.Contains(tile));
+            bool productive = productiveWorked.Contains(tile);
+            resources.Advance(tile, productive); // Deposit exhaustion remains independent of work.
+            Upgrade(sim, tile, productive);
         }
     }
     private static void Upgrade(Simulation sim, TileId tile, bool worked)
