@@ -37,9 +37,6 @@ public static class MapStyle
 
     public static Rgb PlayerColor(int player) => Players[player % Players.Length];
 
-    /// <summary>Road verge: the darker, wider dirt edge under the worn track.</summary>
-    public static readonly Rgb Road = Rgb.Hex(0x7a5a38);
-    /// <summary>Road track: the lighter, packed-earth centre of the path.</summary>
-    public static readonly Rgb RoadTrack = Rgb.Hex(0xb89a6c);
+
     public static readonly Rgb River = Rgb.Hex(0x2f7be0);
 }
