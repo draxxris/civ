@@ -25,7 +25,7 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
     private static ITradeRouteService Service(Simulation sim) => sim.Content.Services.Get<ITradeRouteService>().Single();
     [Fact]
-    public void Highest_value_routes_are_unique_and_foreign_peace_networks_obey_war_and_pillage()
+    public void Highest_value_routes_are_unique_and_foreign_peace_networks_obey_war_and_removed_routes()
     {
         var sim = Scenario(); var trade = Service(sim); ulong hash = sim.ComputeHash();
         var result = trade.Calculate(sim, 1);

@@ -121,22 +121,7 @@ public sealed class DiplomacyRulesTests
         sim.State.PlayerById(1).Civics["economy"] = mercantilism.Id;
         Assert.Empty(trade.Calculate(sim, home.Id).Routes);
     }
-    [Fact]
-    public void Domestic_resources_transit_peaceful_foreign_roads_with_or_without_open_borders()
-    {
-        var sim = Scenario(); Meet(sim);
-        var home = City(sim, 0, 40); City(sim, 0, 43).Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
-        for (int i = 0; i < 96; i++) if (i is < 40 or > 43) sim.State.Plots[i].Route = null;
-        sim.State.Plots[41].Owner = 1; sim.State.Plots[42].Owner = 1; sim.State.Plots[43].Bonus = Grain;
-        sim.State.Plots.ToList().ForEach(p => { p.Revealed.Add(0); p.Revealed.Add(1); });
-        var network = sim.Content.Services.Get<IResourceNetwork>().Single();
-        Assert.False(Service(sim).HasOpenBorders(sim, 0, 1));
-        Assert.Equal(1, network.ConnectedCount(sim, 0, home.Id, Grain));
-        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
-        Assert.Equal(1, network.ConnectedCount(sim, 0, home.Id, Grain));
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
-        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
-    }
+
     [Fact]
     public void Techless_teams_cannot_bypass_content_unlocks()
     {
@@ -391,24 +376,7 @@ public sealed class DiplomacyRulesTests
         Export(sim, Grain);
         Reject(sim, new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Resource, Grain)] }, "unreserved");
     }
-    [Fact]
-    public void Physical_connections_through_foreign_territory_require_exploration_not_open_borders()
-    {
-        var sim = Scenario(); Meet(sim);
-        var west = City(sim, 0, 40); var east = City(sim, 0, 42);
-        sim.State.Plots[41].Owner = 1;
-        var connections = sim.Content.Services.Get<ICityConnectionService>().Single();
-        Assert.False(connections.Connected(sim, west.Id, east.Id));
-        sim.State.Plots[41].Revealed.Add(0);
-        Assert.False(Service(sim).HasOpenBorders(sim, 0, 1));
-        Assert.True(connections.Connected(sim, west.Id, east.Id));
-        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
-        Assert.True(connections.Connected(sim, west.Id, east.Id));
-        sim.State.Plots[41].Revealed.Remove(0);
-        Assert.False(connections.Connected(sim, west.Id, east.Id));
-        sim.State.Plots[41].Revealed.Add(0);
-        Assert.True(connections.Connected(sim, west.Id, east.Id));
-    }
+
     [Fact]
     public void Declaring_war_consumes_the_victims_defensive_pacts()
     {

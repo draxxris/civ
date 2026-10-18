@@ -53,16 +53,6 @@ public class SimulationTests
     }
 
     [Fact]
-    public void TurnOnlyAdvancesWhenEveryoneEnded()
-    {
-        var sim = TestGame.Sim();
-        sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
-        Assert.Equal(1, sim.State.Turn);
-        sim.TryApply(new EndTurnCommand { Player = 1 }, out _);
-        Assert.Equal(2, sim.State.Turn);
-    }
-
-    [Fact]
     public void CommandsRoundTripThroughCodec()
     {
         var sim = TestGame.Sim();

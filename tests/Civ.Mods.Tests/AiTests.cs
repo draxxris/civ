@@ -61,6 +61,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    [Trait("Category", "E2E")]
     public void Speculative_games_and_midrun_save_match_sequential_hashes_for_twenty_turns()
     {
         var a = GameFactory.CreateAi(mods.Content, seed: 23);
@@ -80,6 +81,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    [Trait("Category", "E2E")]
     public void Speculative_and_sequential_turns_match_across_the_war_planning_threshold()
     {
         var sim = Simulation.CreateScenario(mods.Content,
