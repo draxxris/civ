@@ -20,6 +20,17 @@ internal sealed partial class MapRenderer
     /// <summary>Where a ground ribbon may draw about its tile centre: between the rays Clockwise and Counterclockwise
     /// (unit vectors, turning counterclockwise from the first to the second), or everywhere. Reflex wedges span more than
     /// half a turn.</summary>
+    /// <summary>A ribbon on a deck lies this far over the deck top.</summary>
+    private const float DeckSkin = 0.004f;
+    /// <summary>A shade ribbon's COLOR.a is its strength times this, below the 0.5 that starts the raise of other ribbons.</summary>
+    private const float ShadeScale = 0.45f;
+
+    private enum RibbonMode { Surface, DeckTop, Shadow }
+
+    /// <summary>One row of a ribbon: its point, how far it is raised off the ground, its blend toward the other look, and
+    /// for a shade ribbon its strength.</summary>
+    private readonly record struct Row(RoutePoint Point, float Raise, float Blend, float Shade = 0);
+
     private readonly record struct Wedge(Flat Clockwise, Flat Counterclockwise, WedgeKind Kind);
 
     private enum WedgeKind { Everywhere, Convex, Reflex }
@@ -28,12 +39,10 @@ internal sealed partial class MapRenderer
 
     /// <summary>Plans the routes on a tile (<see cref="RoutePlan"/>): each link to a neighbour with a route is a gently
     /// swerving curve hashed from the unordered tile pair, so each tile draws its own half and the halves meet exactly at the
-    /// shared edge. The ground ribbons go to <paramref name="ground"/> and the decks, supports and masts to
-    /// <paramref name="parts"/>. Fog is the shaders' job, per pixel, so a half link in fog meets one in sight without a
-    /// step.</summary>
-    private void DrawRoute(RoadMesh ground, RouteParts parts, TileId tile, Vector3 centre, RevealedPlotSnapshot plot)
+    /// shared edge. Null when the tile has no route.</summary>
+    private RouteTilePlan? PlanRoute(TileId tile, Vector3 centre, RevealedPlotSnapshot plot)
     {
-        if (plot.Route == null) return;
+        if (plot.Route == null) return null;
         var grid = _session.Sim.State.Grid;
         var hex = grid.HexOf(tile);
         var links = new List<RouteLinkInput>();
@@ -46,9 +55,23 @@ internal sealed partial class MapRenderer
             links.Add(new RouteLinkInput(d, RouteLooks.Of(_session.Sim.Content, route), new Flat(other.X, other.Z),
                 Signed(Hash(low, 2 * high + 1)), Signed(Hash(low, 2 * high + 2)), tile.Value < n.Value));
         }
-        var plan = RoutePlan.Plan(RouteLooks.Of(_session.Sim.Content, plot.Route), new Flat(centre.X, centre.Z), links);
-        ground.Add(plan);
-        parts.Add(plan);
+        return RoutePlan.Plan(RouteLooks.Of(_session.Sim.Content, plot.Route), new Flat(centre.X, centre.Z), links);
+    }
+
+    /// <summary>Lays all planned routes over the terrain (<see cref="RouteProfile"/>), then sends the ground ribbons to
+    /// <paramref name="ground"/> and the decks, bridges, supports and masts to <paramref name="parts"/>. Fog is the shaders'
+    /// job, per pixel, so a half link in fog meets one in sight without a step.</summary>
+    private void DrawRoutes(RoadMesh ground, RouteParts parts, IReadOnlyList<RouteTilePlan> plans)
+    {
+        var field = TerrainField;
+        var profile = new RouteProfile(plans, (x, z) => (float)field.SurfaceHeightAt(x, z), (x, z) => field.Rivers.Near(x, z),
+            (from, to) => field.Rivers.Crosses(from.X, from.Y, to.X, to.Y),
+            field.Snapshot.Grid.Spec.Wrap ? (float)field.Period : 0);
+        foreach (var plan in plans)
+        {
+            ground.Add(plan, profile);
+            parts.Add(plan, profile);
+        }
     }
 
     /// <summary>Route ground ribbons draped on the terrain field, with the ground normal so they are lit like the terrain.
@@ -76,14 +99,15 @@ internal sealed partial class MapRenderer
         /// <summary>Paths that end at a hub run on past the centre into a round cap, and each draws only in its own wedge
         /// about the centre, bounded halfway to the paths on either side. So the hub is covered exactly once, with no
         /// translucent layers stacking where the paths would overlap; on the bisector the distances to both paths match, so
-        /// they meet without a seam. A hub tile without paths gets a disc.</summary>
-        public void Add(RouteTilePlan plan)
+        /// they meet without a seam. A hub tile without paths gets a disc. A raised ground route also casts a shadow, and
+        /// where a deck meets a ground route, the ground look runs on over the deck top, fading out.</summary>
+        public void Add(RouteTilePlan plan, RouteProfile profile)
         {
             _centre = plan.Centre;
             _layer = 0;
             if (RouteJunction.Overlaps(plan))
             {
-                Junction(plan);
+                Junction(plan, profile);
                 return;
             }
             var hubbed = plan.Hub ? plan.Paths.Where(p => p.End is RouteEnd.Centre or RouteEnd.DeadEnd).ToList() : [];
@@ -92,7 +116,14 @@ internal sealed partial class MapRenderer
             {
                 int i = hubbed.IndexOf(path);
                 _wedge = i < 0 ? Everywhere : wedges[i];
-                Ribbon(path, i >= 0);
+                var laid = profile.Of(path);
+                Ribbon(path, laid, i >= 0);
+                _wedge = Everywhere;
+                if (RouteLooks.Elevated(path.Own))
+                {
+                    if (!RouteLooks.Elevated(path.Other)) Overlay(path, laid, RibbonMode.DeckTop);
+                }
+                else if (laid.Raised) Overlay(path, laid, RibbonMode.Shadow);
             }
             _wedge = Everywhere;
             if (plan.Hub && hubbed.Count == 0) Hub(plan.Look, plan.Centre, RouteLooks.Style(plan.Look).Ribbon);
@@ -102,7 +133,7 @@ internal sealed partial class MapRenderer
         /// where its centre line is the nearest, so they join as one surface and edge lines stop at the mouth of each spur;
         /// then all draw their markings on top, so the rails of every path run through a switch. Finely divided, so the
         /// distance to the other paths, interpolated between vertices, stays close to the truth.</summary>
-        private void Junction(RouteTilePlan plan)
+        private void Junction(RouteTilePlan plan, RouteProfile profile)
         {
             foreach (int layer in new[] { 1, 2 })
             {
@@ -113,7 +144,7 @@ internal sealed partial class MapRenderer
                     _own = path.Samples.Select(s => s.Position).ToArray();
                     _yield = RouteJunction.Yield(path);
                     _through = path.End == RouteEnd.Through;
-                    Ribbon(path, false, fine: true);
+                    Ribbon(path, profile.Of(path), false, fine: true);
                 }
             }
             _rivals = null;
@@ -150,41 +181,97 @@ internal sealed partial class MapRenderer
 
         /// <summary>One half path, three vertices across so it follows the ground under its width. The ribbon is as wide as
         /// the wider of the two looks it blends; the shader eases the drawn width. A capped path runs on past its inner end
-        /// by the half width, with the distance past the end in CUSTOM1.z, so the shader rounds it off.</summary>
-        private void Ribbon(RoutePath path, bool cap, bool fine = false)
+        /// by the half width, with the distance past the end in CUSTOM1.z, so the shader rounds it off. A ground route lies
+        /// on its laid-out bed: draped over the ground, or level across where it stands clear of it. An elevated route's
+        /// ribbon is the shade on the ground under its deck.</summary>
+        private void Ribbon(RoutePath path, RoutePathProfile laid, bool cap, bool fine = false)
         {
-            var samples = fine ? RouteJunction.Resample(path, FineStep) : path.Samples;
+            bool high = RouteLooks.Elevated(path.Own);
+            // Under a deck only the shade remains; the ground look of a neighbour runs over the deck top instead.
+            var other = high && !RouteLooks.Elevated(path.Other) ? path.Own : path.Other;
+            var points = fine ? RouteJunction.Resample(path, FineStep).Select(s => laid.At(s.Along)).ToList()
+                : laid.Raised ? laid.Points.ToList() : path.Samples.Select(s => laid.At(s.Along)).ToList();
+            var rows = points.Select(p => new Row(p, high ? 0 : Raise(p.Clearance), other == path.Other ? p.Sample.Blend : 0)).ToList();
+            Strip(path.Own, other, path, rows, fine);
+            if (!cap) return;
+            var end = rows[^1];
+            float halfWidth = HalfWidth(path.Own, other);
+            float across = path.First ? -halfWidth : halfWidth;
+            var looks = Looks(path.Own, other, end.Raise);
+            var tangent = end.Point.Sample.Tangent;
+            var beyond = new Vector3(tangent.X, 0, tangent.Y) * halfWidth;
+            var endSide = new Vector3(-tangent.Y, 0, tangent.X) * halfWidth;
+            var at = end.Point.Sample.Position;
+            var tip = new Vector3(at.X, 0, at.Y) + beyond;
+            var tipExtra = new Vector2(end.Blend, path.Length - end.Point.Sample.Along - halfWidth);
+            int last = Vertex(tip - endSide, end, new Vector2(-across, end.Point.Sample.Along + halfWidth), tipExtra, looks, halfWidth);
+            Vertex(tip, end, new Vector2(0, end.Point.Sample.Along + halfWidth), tipExtra, looks, halfWidth);
+            Vertex(tip + endSide, end, new Vector2(across, end.Point.Sample.Along + halfWidth), tipExtra, looks, halfWidth);
+            Quads(last, 3);
+        }
+
+        /// <summary>A second ribbon along part of a path: the shade under a raised ground route, or the ground look of the
+        /// neighbour fading out over the top of a deck.</summary>
+        private void Overlay(RoutePath path, RoutePathProfile laid, RibbonMode mode)
+        {
+            var points = laid.Points;
+            var rows = new List<Row>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                var p = points[i];
+                bool keep = mode == RibbonMode.DeckTop
+                    ? p.Sample.Blend > 0 || (i > 0 && points[i - 1].Sample.Blend > 0)
+                    : Near(points, i, q => q.Clearance > RouteProfile.RaisedClearance);
+                if (keep)
+                {
+                    rows.Add(mode == RibbonMode.DeckTop ? new Row(p, 1, p.Sample.Blend) : new Row(p, 0, 0, Shade(p.Clearance)));
+                    continue;
+                }
+                if (rows.Count > 1) Strip(path.Own, mode == RibbonMode.DeckTop ? path.Other : path.Own, path, rows, false, mode);
+                rows.Clear();
+            }
+            if (rows.Count > 1) Strip(path.Own, mode == RibbonMode.DeckTop ? path.Other : path.Own, path, rows, false, mode);
+        }
+
+        private static bool Near(IReadOnlyList<RoutePoint> points, int i, Func<RoutePoint, bool> test) =>
+            test(points[i]) || (i > 0 && test(points[i - 1])) || (i < points.Count - 1 && test(points[i + 1]));
+
+        /// <summary>How far a ground route's ribbon has left the ground: 0 draped, 1 level across on a deck.</summary>
+        private static float Raise(float clearance) => Mathf.SmoothStep(0.004f, 0.02f, clearance);
+
+        /// <summary>Strength of the shade under a raised ground route.</summary>
+        private static float Shade(float clearance) => Mathf.SmoothStep(0.02f, 0.1f, clearance);
+
+        private static float HalfWidth(RouteLook own, RouteLook other) =>
+            Math.Max(RouteLooks.Style(own).Ribbon, RouteLooks.Style(other).Ribbon);
+
+        /// <summary>The rows of a ribbon strip.</summary>
+        private void Strip(RouteLook own, RouteLook other, RoutePath path, List<Row> rows, bool fine, RibbonMode mode = RibbonMode.Surface)
+        {
             int columns = fine ? FineColumns : 3;
-            float halfWidth = Math.Max(RouteLooks.Style(path.Own).Ribbon, RouteLooks.Style(path.Other).Ribbon);
-            var looks = Looks(path.Own, path.Other);
+            // The shade is drawn as an elevated look, at the width of a deck's shade.
+            if (mode == RibbonMode.Shadow) (own, other) = (RouteLook.Maglev, RouteLook.Maglev);
+            float halfWidth = HalfWidth(own, other);
             // The samples run toward this tile's centre on both sides of an edge, so flip across on one side to keep its
             // sign over the edge.
             float across = path.First ? -halfWidth : halfWidth;
-            for (int i = 0; i < samples.Count; i++)
+            for (int i = 0; i < rows.Count; i++)
             {
-                var s = samples[i];
+                var row = rows[i];
+                var s = row.Point.Sample;
                 var side = new Vector3(-s.Tangent.Y, 0, s.Tangent.X) * halfWidth;
                 var point = new Vector3(s.Position.X, 0, s.Position.Y);
                 float inner = path.End == RouteEnd.Through ? 9f : path.Length - s.Along;
-                var extra = new Vector2(s.Blend, inner);
-                int row = _vertices.Count;
+                var extra = new Vector2(row.Blend, inner);
+                var looks = mode == RibbonMode.Shadow ? ShadowLooks(row.Shade) : Looks(own, other, mode == RibbonMode.DeckTop ? 1 : row.Raise);
+                int start = _vertices.Count;
                 for (int c = 0; c < columns; c++)
                 {
                     float t = 2f * c / (columns - 1) - 1;
-                    Vertex(point + side * t, new Vector2(across * t, s.Along), extra, looks);
+                    Vertex(point + side * t, row, new Vector2(across * t, s.Along), extra, looks);
                 }
-                if (i > 0) Quads(row, columns);
+                if (i > 0) Quads(start, columns);
             }
-            if (!cap) return;
-            var end = path.Samples[^1];
-            var beyond = new Vector3(end.Tangent.X, 0, end.Tangent.Y) * halfWidth;
-            var endSide = new Vector3(-end.Tangent.Y, 0, end.Tangent.X) * halfWidth;
-            var tip = new Vector3(end.Position.X, 0, end.Position.Y) + beyond;
-            var tipExtra = new Vector2(end.Blend, path.Length - end.Along - halfWidth);
-            int last = Vertex(tip - endSide, new Vector2(-across, end.Along + halfWidth), tipExtra, looks, halfWidth);
-            Vertex(tip, new Vector2(0, end.Along + halfWidth), tipExtra, looks, halfWidth);
-            Vertex(tip + endSide, new Vector2(across, end.Along + halfWidth), tipExtra, looks, halfWidth);
-            Quads(last, 3);
         }
 
         /// <summary>Joins the row of vertices at <paramref name="row"/> to the row before it.</summary>
@@ -201,21 +288,29 @@ internal sealed partial class MapRenderer
         /// <summary>A disc whose UV.x is the distance from its centre, so it ends like a ribbon cross-section.</summary>
         private void Hub(RouteLook look, Flat centre, float radius)
         {
-            var looks = Looks(look, look);
+            var looks = Looks(look, look, 0);
             var at = new Vector3(centre.X, 0, centre.Y);
             var extra = new Vector2(0, -1);
-            int middle = Vertex(at, Vector2.Zero, extra, looks);
+            var row = new Row(default, 0, 0);
+            int middle = Vertex(at, row, Vector2.Zero, extra, looks);
             for (int k = 0; k < HubSegments; k++)
             {
                 float a = Mathf.Tau * k / HubSegments;
-                Vertex(at + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * radius, new Vector2(radius, 0), extra, looks);
+                Vertex(at + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * radius, row, new Vector2(radius, 0), extra, looks);
             }
             for (int k = 0; k < HubSegments; k++) Triangle(middle, middle + 1 + (k + 1) % HubSegments, middle + 1 + k);
         }
 
-        private Color Looks(RouteLook own, RouteLook other) => new((int)own / 15f, (int)other / 15f, _layer / 2f, 1);
+        /// <summary>COLOR: the two looks, the layer and, in alpha, how far the ribbon is raised off the ground (0.5 to 1).</summary>
+        private Color Looks(RouteLook own, RouteLook other, float raise) =>
+            new((int)own / 15f, (int)other / 15f, _layer / 2f, 0.5f + 0.5f * raise);
 
-        private int Vertex(Vector3 p, Vector2 uv, Vector2 uv2, Color looks, float past = 0)
+        /// <summary>COLOR of a shade ribbon: alpha below 0.5 holds the shade's strength.</summary>
+        private Color ShadowLooks(float shade) => new((int)RouteLook.Maglev / 15f, (int)RouteLook.Maglev / 15f, _layer / 2f, ShadeScale * shade);
+
+        /// <summary>A ribbon vertex: draped on the ground under it, or, as far as the row is raised, level with the row's
+        /// top.</summary>
+        private int Vertex(Vector3 p, Row row, Vector2 uv, Vector2 uv2, Color looks, float past = 0)
         {
             if (_rivals != null)
             {
@@ -230,8 +325,10 @@ internal sealed partial class MapRenderer
             double surface = field.SurfaceHeightAt(p.X, p.Z);
             // Over water the surface is flat; elsewhere the field's own normal, as the terrain chunks use.
             var n = surface == field.HeightAt(p.X, p.Z) ? field.NormalAt(p.X, p.Z) : System.Numerics.Vector3.UnitY;
-            _vertices.Add(new Vector3(p.X, (float)surface + YLines, p.Z));
-            _normals.Add(new Vector3(n.X, n.Y, n.Z));
+            float raise = looks.A >= 0.5f ? row.Raise : 0;
+            float y = Mathf.Lerp((float)surface + YLines, row.Point.Top + DeckSkin, raise);
+            _vertices.Add(new Vector3(p.X, y, p.Z));
+            _normals.Add(new Vector3(n.X, n.Y, n.Z).Lerp(Vector3.Up, raise).Normalized());
             _uvs.Add(uv);
             _uv2s.Add(uv2);
             _colors.Add(looks);

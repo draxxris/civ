@@ -40,9 +40,9 @@ public readonly record struct RouteLinkInput(int Direction, RouteLook Neighbour,
 
 /// <summary>A point on a route path. Tangent is a unit vector pointing from the tile edge toward the inner end. Along is
 /// arc length from the edge, scaled so the whole path is a whole number of <see cref="RoutePlan.PatternUnit"/>s and
-/// repeating patterns meet at both ends. Blend is the share of the neighbour's look (0 inside the tile). Lift is the share
-/// of the elevated deck height: 0 where a ramp meets the ground.</summary>
-public readonly record struct RouteSample(Vector2 Position, Vector2 Tangent, float Along, float Blend, float Lift);
+/// repeating patterns meet at both ends. Blend is the share of the neighbour's look (0 inside the tile). Heights are not
+/// planned here: <see cref="RouteProfile"/> lays every path over the terrain.</summary>
+public readonly record struct RouteSample(Vector2 Position, Vector2 Tangent, float Along, float Blend);
 
 /// <summary>How the inner end of a path meets the rest of the tile.</summary>
 public enum RouteEnd
@@ -77,19 +77,18 @@ public sealed record RouteTilePlan(RouteLook Look, Vector2 Centre, IReadOnlyList
 /// link compute the same curve, so their halves meet at the shared edge with the same point and tangent.
 /// Organic looks (track, road) run each half link to the centre and meet at a hub. Engineered looks join two links with
 /// one smooth curve; at a junction the straightest pair forms that curve and the other links merge into its middle, like
-/// a rail switch. Where looks change, Blend crossfades them about the shared edge; an elevated deck ramps down to the
-/// ground inside its own tile, so the ground route next to it runs at full strength up to the edge.
+/// a rail switch. Where looks change, Blend crossfades them about the shared edge: slowly between two ground looks, and
+/// over a shorter stretch where a ground route climbs to meet a descending deck, so the structures merge where they meet.
 /// </summary>
 public static class RoutePlan
 {
     /// <summary>Repeating patterns (sleepers, dashes, masts) have periods that divide this length.</summary>
     public const float PatternUnit = 0.2f;
     /// <summary>Half the length of the crossfade between two ground looks, centred on the shared edge.</summary>
-    public const float BlendHalf = 0.2f;
-    /// <summary>Where an elevated look meets a ground look, the crossfade is centred this far inside the elevated tile.</summary>
-    public const float RampBlendShift = BlendHalf;
-    /// <summary>Distance from the edge over which a deck ramps from the ground to full height.</summary>
-    public const float RampLength = 0.75f;
+    public const float BlendHalf = 0.36f;
+    /// <summary>Half the length of the crossfade where a deck is involved, centred on the shared edge: the deck shapes of
+    /// the two looks morph into each other over this stretch.</summary>
+    public const float MorphHalf = 0.2f;
     private const int HalfSteps = 8, CurveSteps = 10;
 
     public static RouteTilePlan Plan(RouteLook look, Vector2 centre, IReadOnlyList<RouteLinkInput> links)
@@ -112,8 +111,8 @@ public static class RoutePlan
         Vector2 At(float t) => Hermite(ea.Point, -ea.Out * k, eb.Point, eb.Out * k, t);
         var first = Sample(At, 0f, 0.5f, CurveSteps);
         var second = Sample(At, 1f, 0.5f, CurveSteps);
-        paths.Add(Path(look, links[a], first, RouteEnd.Through, true, (links[b].Neighbour, Length(second.Points))));
-        paths.Add(Path(look, links[b], second, RouteEnd.Through, false, (links[a].Neighbour, Length(first.Points))));
+        paths.Add(Path(look, links[a], first, RouteEnd.Through, true));
+        paths.Add(Path(look, links[b], second, RouteEnd.Through, false));
 
         var middle = At(0.5f);
         var heading = Vector2.Normalize(At(0.5f + 1e-3f) - At(0.5f - 1e-3f));
@@ -192,30 +191,17 @@ public static class RoutePlan
         return (points, tangents);
     }
 
-    private static float Length(Vector2[] points)
-    {
-        float length = 0;
-        for (int i = 1; i < points.Length; i++) length += Vector2.Distance(points[i - 1], points[i]);
-        return length;
-    }
-
     private static RoutePath Path(RouteLook own, RouteLinkInput link, (Vector2[] Points, Vector2[] Tangents) curve, RouteEnd end,
-        bool primary, (RouteLook Look, float Length)? far = null)
+        bool primary)
     {
         var points = curve.Points;
         var lengths = new float[points.Length];
         for (int i = 1; i < points.Length; i++) lengths[i] = lengths[i - 1] + Vector2.Distance(points[i - 1], points[i]);
         float length = lengths[^1];
         float scale = length > 0 ? MathF.Max(1, MathF.Round(length / PatternUnit)) * PatternUnit / length : 1;
-        // A through half ends at the middle of the curve; a deck may also ramp up from the far edge, past the other half.
         var samples = new RouteSample[points.Length];
         for (int i = 0; i < points.Length; i++)
-        {
-            float d = lengths[i];
-            float lift = RampLift(own, link.Neighbour, d);
-            if (far is { } f) lift = MathF.Min(lift, RampLift(own, f.Look, f.Length + length - d));
-            samples[i] = new RouteSample(points[i], curve.Tangents[i], d * scale, BlendAt(own, link.Neighbour, d), lift);
-        }
+            samples[i] = new RouteSample(points[i], curve.Tangents[i], lengths[i] * scale, BlendAt(own, link.Neighbour, lengths[i]));
         return new RoutePath(own, link.Neighbour, samples, end, primary, link.First);
     }
 
@@ -224,17 +210,10 @@ public static class RoutePlan
     private static float BlendAt(RouteLook own, RouteLook other, float d)
     {
         if (own == other) return 0;
-        bool high = RouteLooks.Elevated(own), otherHigh = RouteLooks.Elevated(other);
-        // Signed position, positive into the neighbour; the crossfade sits inside the elevated tile.
-        float x = -d - (high == otherHigh ? 0 : high ? -RampBlendShift : RampBlendShift);
+        float half = RouteLooks.Elevated(own) || RouteLooks.Elevated(other) ? MorphHalf : BlendHalf;
         // Linear, so the shader's per-pixel thresholds spread evenly over the whole crossfade.
-        return Math.Clamp(0.5f + x / (2 * BlendHalf), 0, 1);
+        return Math.Clamp(0.5f - d / (2 * half), 0, 1);
     }
-
-    /// <summary>Share of the deck height at distance d inside an elevated tile from an edge toward the neighbour: 1 toward
-    /// another elevated tile, else a ramp from the ground at the edge.</summary>
-    private static float RampLift(RouteLook own, RouteLook other, float d) =>
-        !RouteLooks.Elevated(own) ? 0 : RouteLooks.Elevated(other) ? 1 : SmoothStep(0, RampLength, d);
 
     private static Vector2 Hermite(Vector2 p0, Vector2 m0, Vector2 p1, Vector2 m1, float t)
     {
@@ -243,12 +222,6 @@ public static class RoutePlan
     }
 
     private static float Lerp(float a, float b, float t) => a + (b - a) * t;
-
-    private static float SmoothStep(float e0, float e1, float x)
-    {
-        float t = Math.Clamp((x - e0) / (e1 - e0), 0, 1);
-        return t * t * (3 - 2 * t);
-    }
 }
 
 /// <summary>
@@ -308,7 +281,7 @@ public static class RouteJunction
             {
                 float t = (float)k / n;
                 result.Add(new RouteSample(Vector2.Lerp(a.Position, b.Position, t), Vector2.Normalize(Vector2.Lerp(a.Tangent, b.Tangent, t)),
-                    a.Along + (b.Along - a.Along) * t, a.Blend + (b.Blend - a.Blend) * t, a.Lift + (b.Lift - a.Lift) * t));
+                    a.Along + (b.Along - a.Along) * t, a.Blend + (b.Blend - a.Blend) * t));
             }
         }
         return result;

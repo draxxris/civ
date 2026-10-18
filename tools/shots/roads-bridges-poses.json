@@ -1,0 +1,7 @@
+[
+  {"name": "bridges_overview", "focusTile": [8, 9], "distance": 15, "pitch": 55},
+  {"name": "bridges_wood", "focusTile": [8, 3], "distance": 3.6, "pitch": 40},
+  {"name": "bridges_stone", "focusTile": [8, 7], "distance": 3.6, "pitch": 40},
+  {"name": "bridges_steel", "focusTile": [8, 11], "distance": 3.6, "pitch": 40},
+  {"name": "bridges_elevated", "focusTile": [8, 15], "distance": 3.6, "pitch": 40}
+]

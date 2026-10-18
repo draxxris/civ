@@ -69,16 +69,20 @@ The layout code is `src/Civ.Client.Core/Terrain/CityLayout.cs`. `--stats` report
 `tools/shots/scenarios/roads-all.json` lays one straight row of each land route type. `roads-transitions.json` has rows that
 change type every three tiles, a winding railroad, two mixed junctions, and a railroad and a maglev over hills. `roads-junctions-ground.json` and
 `roads-junctions-raised.json` have junctions of three (Y and T), four and six arms for each type from paved road up.
+`roads-hills.json` has railroads over two and three adjacent hills, over two hills with a valley between them, and over a
+lone hill next to a highway. `roads-bridges.json` has every land route type crossing one river.
 
 ```sh
 mise run shot -- --shots tools/shots/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /tmp/roads
 mise run shot -- --shots tools/shots/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /tmp/roads
 mise run shot -- --shots tools/shots/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /tmp/roads
 mise run shot -- --shots tools/shots/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/roads-hills-poses.json --scenario tools/shots/scenarios/roads-hills.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/roads-bridges-poses.json --scenario tools/shots/scenarios/roads-bridges.json --world tiny --clean --out-dir /tmp/roads
 ```
 
 `--stats` reports `roads` (draped ribbons) and `route_parts` (decks, supports and masts) triangles.
-The curves come from `src/Civ.Client.Core/Terrain/RoutePlan.cs`.
+The curves come from `src/Civ.Client.Core/Terrain/RoutePlan.cs` and the heights from `RouteProfile.cs` in the same folder.
 
 ## Improvement models
 

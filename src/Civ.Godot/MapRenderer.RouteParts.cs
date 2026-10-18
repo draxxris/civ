@@ -9,17 +9,21 @@ internal sealed partial class MapRenderer
 {
     /// <summary>
     /// The 3D parts of routes, one opaque mesh for the whole map (route_structure.gdshader): maglev and jumplane decks swept
-    /// along each half path with their piers or lattice legs, and the portal masts and contact wire of electric railroads.
-    /// A deck stands <see cref="RouteStyle.Lift"/> over the smoothed ground and ramps into it where the route continues on
-    /// the ground (<see cref="RouteSample.Lift"/>). Supports stand at evenly spaced stations whose spacing divides each half
-    /// path, so they never crowd a tile edge; a station on a shared edge belongs to the link's first tile and the middle of a
-    /// through curve to its primary half, so no support is placed twice.
+    /// along each half path with their piers or lattice legs, the viaduct under a ground route that stands clear of the
+    /// ground (a railroad keeping its grade, or a ground route climbing to meet a deck), bridges over rivers, and the portal
+    /// masts and contact wire of electric railroads. Heights come from <see cref="RouteProfile"/>. Where a deck meets
+    /// another look, its outline morphs into the other's over the crossfade, so the two structures merge into one.
+    /// Supports stand at evenly spaced stations whose spacing divides each half path, so they never crowd a tile edge; a
+    /// station on a shared edge belongs to the link's first tile and the middle of a through curve to its primary half, so
+    /// no support is placed twice.
     /// </summary>
     private sealed class RouteParts(TerrainField field)
     {
         private const float PierSpacing = 0.8f, MastSpacing = 0.8f;
-        private const float MastHeight = 0.15f, MastReach = 0.105f, WireHeight = 0.13f, WireStep = 0.1f;
-        private const float Concrete = 1, Glow = 2, Deck = 3, Metal = 4;
+        private const float MastHeight = 0.15f, MastReach = 0.105f, WireHeight = 0.13f;
+        private const float Concrete = 1, Glow = 2, Deck = 3, Metal = 4, Masonry = 5, Planks = 6;
+        /// <summary>A support stands where the underside of a deck is at least this high over the ground.</summary>
+        private const float SupportClearance = 0.05f;
 
         private static readonly Color ConcreteColour = new(0.74f, 0.73f, 0.70f);
         private static readonly Color GuidewayColour = new(0.42f, 0.43f, 0.45f);
@@ -28,21 +32,80 @@ internal sealed partial class MapRenderer
         private static readonly Color GlowColour = new(0.35f, 0.78f, 1.0f);
         private static readonly Color MastColour = new(0.56f, 0.57f, 0.58f);
         private static readonly Color WireColour = new(0.16f, 0.16f, 0.17f);
+        private static readonly Color PlankColour = new(0.55f, 0.40f, 0.25f);
+        private static readonly Color TimberColour = new(0.38f, 0.27f, 0.17f);
+        private static readonly Color StoneColour = new(0.70f, 0.65f, 0.56f);
+        private static readonly Color GirderColour = new(0.36f, 0.40f, 0.44f);
+        private static readonly Color TrussColour = new(0.30f, 0.35f, 0.38f);
 
-        /// <summary>One edge of a deck cross-section: two points (across, height below the deck top), its colour and surface.</summary>
-        private readonly record struct ProfileEdge(Vector2 A, Vector2 B, Color Colour, float Surface);
+        /// <summary>The colour and surface (UV2.x) of a part.</summary>
+        private readonly record struct Paint(Color Colour, float Surface);
+
+        /// <summary>A closed deck cross-section, points (across, height below the deck top) running clockwise from its top
+        /// left; edge k runs from point k to the next and has paint k. Fraction k is how far round the outline point k
+        /// lies, so two outlines can be morphed point for point.</summary>
+        private sealed class Outline
+        {
+            public Outline(Flat[] points, Func<int, Paint> paint)
+            {
+                Points = points;
+                Paints = Enumerable.Range(0, points.Length).Select(paint).ToArray();
+                var lengths = Enumerable.Range(0, points.Length).Select(k => Flat.Distance(points[k], points[(k + 1) % points.Length])).ToArray();
+                Perimeter = lengths.Sum();
+                Fractions = new float[points.Length];
+                for (int k = 1; k < points.Length; k++) Fractions[k] = Fractions[k - 1] + lengths[k - 1] / Perimeter;
+            }
+
+            public Flat[] Points { get; }
+            public Paint[] Paints { get; }
+            public float[] Fractions { get; }
+            public float Perimeter { get; }
+
+            private int EdgeAt(float f)
+            {
+                int k = Points.Length - 1;
+                while (k > 0 && Fractions[k] > f) k--;
+                return k;
+            }
+
+            public Flat At(float f)
+            {
+                int k = EdgeAt(f);
+                float end = k + 1 < Points.Length ? Fractions[k + 1] : 1;
+                float t = end > Fractions[k] ? (f - Fractions[k]) / (end - Fractions[k]) : 0;
+                return Flat.Lerp(Points[k], Points[(k + 1) % Points.Length], Math.Clamp(t, 0, 1));
+            }
+
+            public Paint PaintAt(float f) => Paints[EdgeAt(f)];
+        }
+
+        /// <summary>An outline placed at one frame: its points and the paint of each edge.</summary>
+        private readonly record struct Shape(Flat[] Points, Paint[] Paints);
 
         /// <summary>A concrete box beam with a sunken guideway down its top.</summary>
-        private static readonly ProfileEdge[] MaglevProfile = Loop(
+        private static readonly Outline MaglevOutline = new(
             [new(-0.075f, 0), new(-0.04f, 0), new(-0.04f, -0.016f), new(0.04f, -0.016f), new(0.04f, 0), new(0.075f, 0),
              new(0.075f, -0.05f), new(0.05f, -0.075f), new(-0.05f, -0.075f), new(-0.075f, -0.05f)],
-            k => k == 2 ? (GuidewayColour, Metal) : (ConcreteColour, Concrete));
+            k => k == 2 ? new(GuidewayColour, Metal) : new(ConcreteColour, Concrete));
 
         /// <summary>A slim steel deck with glowing chamfers along both top edges and a keel underneath.</summary>
-        private static readonly ProfileEdge[] JumplaneProfile = Loop(
+        private static readonly Outline JumplaneOutline = new(
             [new(-0.064f, -0.012f), new(-0.05f, 0), new(0.05f, 0), new(0.064f, -0.012f), new(0.064f, -0.03f),
              new(0.022f, -0.05f), new(-0.022f, -0.05f), new(-0.064f, -0.03f)],
-            k => k is 0 or 2 ? (GlowColour, Glow) : k == 1 ? (DeckColour, Deck) : (SteelColour, Metal));
+            k => k is 0 or 2 ? new(GlowColour, Glow) : k == 1 ? new(DeckColour, Deck) : new(SteelColour, Metal));
+
+        /// <summary>The concrete girder under a raised ground route, wide enough for its bed.</summary>
+        private static readonly Outline ViaductOutline = new(
+            [new(-0.1f, 0), new(0.1f, 0), new(0.1f, -0.035f), new(0.075f, -0.055f), new(-0.075f, -0.055f), new(-0.1f, -0.035f)],
+            _ => new(ConcreteColour, Concrete));
+
+        private static readonly Outline WoodOutline = new(
+            [new(-0.096f, 0), new(0.096f, 0), new(0.096f, -0.02f), new(-0.096f, -0.02f)],
+            k => k == 0 ? new(PlankColour, Planks) : new(TimberColour, Planks));
+
+        private static readonly Outline SteelOutline = new(
+            [new(-0.1f, 0), new(0.1f, 0), new(0.1f, -0.032f), new(-0.1f, -0.032f)],
+            _ => new(GirderColour, Metal));
 
         private readonly List<Vector3> _vertices = new();
         private readonly List<Vector3> _normals = new();
@@ -57,50 +120,40 @@ internal sealed partial class MapRenderer
 
         /// <summary>UV2.y (RouteJunction.Margin) of parts that no other deck can cut.</summary>
         private const float NoRival = 9;
-        /// <summary>At a junction, deck samples and profile edges at most this far apart, so the interpolated distance to
+        /// <summary>At a junction, deck samples and outline edges at most this far apart, so the interpolated distance to
         /// the other decks stays close to the truth.</summary>
         private const float FineStep = 0.02f;
-
-        private static ProfileEdge[] Loop(Vector2[] points, Func<int, (Color, float)> paint)
-        {
-            var edges = new ProfileEdge[points.Length];
-            for (int k = 0; k < points.Length; k++)
-            {
-                var (colour, surface) = paint(k);
-                edges[k] = new ProfileEdge(points[k], points[(k + 1) % points.Length], colour, surface);
-            }
-            return edges;
-        }
 
         /// <summary>At a junction the decks overlap. Each keeps only the parts nearer its own centre line than any other
         /// deck's (the shader cuts the rest), so their tops join as one deck with open channels and no curb or glowing edge
         /// across another deck.</summary>
-        public void Add(RouteTilePlan plan)
+        public void Add(RouteTilePlan plan, RouteProfile profile)
         {
             bool junction = RouteJunction.Overlaps(plan);
             foreach (var path in plan.Paths)
             {
-                if (RouteLooks.Elevated(path.Own))
-                {
-                    _rivals = junction ? RouteJunction.Others(plan, path) : null;
-                    _own = path.Samples.Select(s => s.Position).ToArray();
-                    _yield = RouteJunction.Yield(path);
-                    DeckAlong(path);
-                    _rivals = null;
-                }
-                if (path.Own == RouteLook.ElectricRailroad) Catenary(path);
+                var laid = profile.Of(path);
+                _rivals = junction ? RouteJunction.Others(plan, path) : null;
+                _own = path.Samples.Select(s => s.Position).ToArray();
+                _yield = RouteJunction.Yield(path);
+                if (RouteLooks.Elevated(path.Own)) DeckAlong(path, laid, profile);
+                else Viaduct(path, laid, profile);
+                _rivals = null;
+                if (laid.Bridge is { } bridge) Bridge(bridge, path.Own);
+                if (path.Own == RouteLook.ElectricRailroad) Catenary(path, laid);
             }
             // A lone tile of elevated route: one support under a short deck stub.
             if (plan.Paths.Count == 0 && RouteLooks.Elevated(plan.Look))
             {
-                float top = DeckTop(plan.Centre, RouteLooks.Style(plan.Look).Lift);
-                var profile = ProfileOf(plan.Look);
-                Support(plan.Look, plan.Centre, Flat.UnitX, top + profile.Min(e => Math.Min(e.A.Y, e.B.Y)));
+                float top = profile.DeckTop(plan.Centre, RouteLooks.Style(plan.Look).Lift);
+                var outline = OutlineOf(plan.Look);
+                var shape = Place(outline, null, 0, Breaks(outline, null, false));
+                Support(plan.Look, plan.Centre, Flat.UnitX, top + Depth(outline));
                 var a = new Frame(plan.Centre - Flat.UnitX * 0.12f, Flat.UnitX, top, 0);
                 var b = new Frame(plan.Centre + Flat.UnitX * 0.12f, Flat.UnitX, top, 0.24f);
-                Sweep(profile, a, b);
-                Cap(profile, a, -1);
-                Cap(profile, b, 1);
+                Sweep(a, shape, b, shape);
+                Cap(a, shape, -1);
+                Cap(b, shape, 1);
             }
         }
 
@@ -109,60 +162,134 @@ internal sealed partial class MapRenderer
         {
             public Vector3 Side => new(-Tangent.Y, 0, Tangent.X);
             public Vector3 Point(float across, float up) => new Vector3(At.X, Top + up, At.Y) + Side * across;
+            public Vector3 Ground => new(At.X, Top, At.Y);
         }
 
         private float Height(Flat p) => (float)field.SurfaceHeightAt(p.X, p.Y);
 
-        /// <summary>The highest ground under a deck's width about a point.</summary>
-        private float Ground(Flat at)
+        private static Outline OutlineOf(RouteLook look) => look switch
         {
-            float high = Height(at);
-            for (int k = 0; k < 6; k++)
-                high = Math.Max(high, Height(at + new Flat(MathF.Cos(k * MathF.PI / 3), MathF.Sin(k * MathF.PI / 3)) * 0.07f));
-            return high;
+            RouteLook.Maglev => MaglevOutline,
+            RouteLook.Jumplane => JumplaneOutline,
+            _ => ViaductOutline,
+        };
+
+        private static float Depth(Outline outline) => outline.Points.Min(p => p.Y);
+
+        /// <summary>The fractions at which outlines are placed: every corner of both, so each keeps its corners exactly
+        /// while it morphs, and at a junction enough more that no edge is longer than FineStep.</summary>
+        private static float[] Breaks(Outline a, Outline? b, bool fine)
+        {
+            var breaks = a.Fractions.Concat(b?.Fractions ?? []).Order().ToList();
+            var unique = new List<float>();
+            foreach (float f in breaks)
+                if (unique.Count == 0 || f - unique[^1] > 1e-4f) unique.Add(f);
+            if (!fine) return unique.ToArray();
+            float perimeter = Math.Max(a.Perimeter, b?.Perimeter ?? 0);
+            var split = new List<float>();
+            for (int k = 0; k < unique.Count; k++)
+            {
+                float next = k + 1 < unique.Count ? unique[k + 1] : 1;
+                int n = Math.Max(1, (int)MathF.Ceiling((next - unique[k]) * perimeter / FineStep));
+                for (int j = 0; j < n; j++) split.Add(unique[k] + (next - unique[k]) * j / n);
+            }
+            return split.ToArray();
         }
 
-        /// <summary>Deck top over a point at full height: Lift over the ground averaged over a disc about the point, so it
-        /// rides over bumps instead of following them, but never closer than half its Lift to the ground under it. It
-        /// depends on the point alone, so the two tiles of an edge agree and the decks of a junction meet flush.</summary>
-        private float DeckTop(Flat at, float lift)
+        /// <summary>Outline a morphed toward b by t, at the given fractions; each edge takes the paint of the nearer.</summary>
+        private static Shape Place(Outline a, Outline? b, float t, float[] breaks)
         {
-            float sum = Height(at);
-            int count = 1;
-            foreach (float r in new[] { 0.3f, 0.6f })
-                for (int k = 0; k < 6; k++, count++)
-                    sum += Height(at + new Flat(MathF.Cos(k * MathF.PI / 3 + r), MathF.Sin(k * MathF.PI / 3 + r)) * r);
-            return Math.Max(sum / count + lift, Ground(at) + lift * 0.5f);
+            var points = new Flat[breaks.Length];
+            var paints = new Paint[breaks.Length];
+            for (int k = 0; k < breaks.Length; k++)
+            {
+                var p = a.At(breaks[k]);
+                points[k] = b == null ? p : Flat.Lerp(p, b.At(breaks[k]), t);
+                float middle = (breaks[k] + (k + 1 < breaks.Length ? breaks[k + 1] : 1)) / 2;
+                paints[k] = (b != null && t > 0.5f ? b : a).PaintAt(middle);
+            }
+            return new Shape(points, paints);
         }
 
-        private void DeckAlong(RoutePath path)
+        /// <summary>The frames of a path: its laid-out points, or at a junction finer ones.</summary>
+        private List<RoutePoint> Points(RoutePath path, RoutePathProfile laid) =>
+            _rivals != null ? RouteJunction.Resample(path, FineStep).Select(s => laid.At(s.Along)).ToList() : laid.Points.ToList();
+
+        private void DeckAlong(RoutePath path, RoutePathProfile laid, RouteProfile profile)
         {
-            var style = RouteLooks.Style(path.Own);
-            var profile = ProfileOf(path.Own);
+            var own = OutlineOf(path.Own);
+            var other = path.Other == path.Own ? null : OutlineOf(path.Other);
+            var breaks = Breaks(own, other, _rivals != null);
             // Along runs the same way on both sides of every edge (toward +x), so the deck's chevrons all point one way.
             float sign = path.Samples[^1].Position.X >= path.Samples[0].Position.X ? 1 : -1;
-            // The top eases from level with the ground, where a ramp meets it, to full height.
-            Frame FrameOf(RouteSample s)
+            var points = Points(path, laid);
+            Frame? last = null;
+            Shape lastShape = default;
+            foreach (var p in points)
             {
-                float ground = Ground(s.Position);
-                float top = ground + (DeckTop(s.Position, style.Lift) - ground) * s.Lift;
-                return new Frame(s.Position, s.Tangent, top, s.Along * sign);
+                var frame = new Frame(p.Sample.Position, p.Sample.Tangent, p.Top, p.Sample.Along * sign);
+                var shape = Place(own, other, p.Sample.Blend, breaks);
+                if (last is { } from) Sweep(from, lastShape, frame, shape);
+                (last, lastShape) = (frame, shape);
             }
-            var samples = _rivals != null ? RouteJunction.Resample(path, FineStep) : path.Samples;
-            var frames = samples.Select(FrameOf).ToArray();
-            for (int i = 1; i < frames.Length; i++) Sweep(profile, frames[i - 1], frames[i]);
-            // Two different decks meet at the shared edge: close both ends there.
-            if (path.Other != path.Own && RouteLooks.Elevated(path.Other)) Cap(profile, frames[0], -1);
-            if (path.End == RouteEnd.DeadEnd) Cap(profile, frames[^1], 1);
-            float depth = profile.Min(e => Math.Min(e.A.Y, e.B.Y));
-            foreach (var (s, own) in Stations(path, PierSpacing))
+            if (path.End == RouteEnd.DeadEnd && last is { } end) Cap(end, lastShape, 1);
+            float depth = Depth(own);
+            foreach (var (s, owned) in Stations(path, PierSpacing))
             {
-                if (!own) continue;
-                var f = FrameOf(s);
-                // No support where the ramp has nearly reached the ground.
-                if (f.Top + depth - Ground(s.Position) < 0.05f) continue;
-                Support(path.Own, s.Position, s.Tangent, f.Top + depth);
+                if (!owned) continue;
+                var p = laid.At(s.Along);
+                // No support where the deck has come down close to the ground.
+                if (p.Top + depth - profile.GroundUnder(s.Position) < SupportClearance) continue;
+                Support(path.Own, s.Position, s.Tangent, p.Top + depth);
             }
+        }
+
+        /// <summary>The girder under each stretch of a ground route that stands clear of the ground and is not on a bridge,
+        /// morphing into the neighbour's deck where it meets one, on lattice legs where it is high enough.</summary>
+        private void Viaduct(RoutePath path, RoutePathProfile laid, RouteProfile profile)
+        {
+            var other = RouteLooks.Elevated(path.Other) ? OutlineOf(path.Other) : null;
+            var breaks = Breaks(ViaductOutline, other, _rivals != null);
+            var points = Points(path, laid);
+            bool Raised(RoutePoint p) => (p.Clearance > RouteProfile.RaisedClearance || (other != null && p.Sample.Blend > 0))
+                && !laid.OnBridge(p.Distance, -0.02f);
+            var run = new List<RoutePoint>();
+            for (int i = 0; i <= points.Count; i++)
+            {
+                bool keep = i < points.Count && (Raised(points[i]) || (i > 0 && Raised(points[i - 1]))
+                    || (i + 1 < points.Count && Raised(points[i + 1])));
+                if (keep)
+                {
+                    run.Add(points[i]);
+                    continue;
+                }
+                if (run.Count > 1) Girder(run, other, breaks, run[0].Distance > 0, run[^1].Distance < laid.Points[^1].Distance - 1e-3f);
+                run.Clear();
+            }
+            float depth = Depth(ViaductOutline);
+            foreach (var (s, owned) in Stations(path, PierSpacing))
+            {
+                if (!owned) continue;
+                var p = laid.At(s.Along);
+                if (laid.OnBridge(p.Distance, 0.08f) || field.Rivers.Near(s.Position.X, s.Position.Y)) continue;
+                if (p.Top + depth - profile.GroundUnder(s.Position) < SupportClearance) continue;
+                Support(RouteLook.Jumplane, s.Position, s.Tangent, p.Top + depth);
+            }
+        }
+
+        private void Girder(List<RoutePoint> run, Outline? other, float[] breaks, bool capStart, bool capEnd)
+        {
+            Frame? last = null;
+            Shape lastShape = default;
+            foreach (var p in run)
+            {
+                var frame = new Frame(p.Sample.Position, p.Sample.Tangent, p.Top, p.Sample.Along);
+                var shape = Place(ViaductOutline, other, other == null ? 0 : p.Sample.Blend, breaks);
+                if (last is { } from) Sweep(from, lastShape, frame, shape);
+                else if (capStart) Cap(frame, shape, -1);
+                (last, lastShape) = (frame, shape);
+            }
+            if (capEnd && last is { } end) Cap(end, lastShape, 1);
         }
 
         /// <summary>Stations evenly spaced from the edge to the inner end. Own is false where another path or tile places
@@ -188,53 +315,213 @@ internal sealed partial class MapRenderer
                 var (a, b) = (samples[i - 1], samples[i]);
                 float t = b.Along > a.Along ? Math.Clamp((along - a.Along) / (b.Along - a.Along), 0, 1) : 0;
                 return new RouteSample(Flat.Lerp(a.Position, b.Position, t), Flat.Normalize(Flat.Lerp(a.Tangent, b.Tangent, t)),
-                    along, a.Blend + (b.Blend - a.Blend) * t, a.Lift + (b.Lift - a.Lift) * t);
+                    along, a.Blend + (b.Blend - a.Blend) * t);
             }
             return samples[0];
         }
 
-        private static ProfileEdge[] ProfileOf(RouteLook look) => look == RouteLook.Maglev ? MaglevProfile : JumplaneProfile;
-
-        /// <summary>One length of deck between two frames, each profile edge a quad with its own flat normal. At a junction
-        /// the edges are split finely, for the distance to the other decks.</summary>
-        private void Sweep(ProfileEdge[] profile, Frame a, Frame b)
+        /// <summary>Evenly spaced positions over a bridge, including both ends; the spacing is the nearest to the given one
+        /// that divides the span.</summary>
+        private static IEnumerable<float> Spaced(RouteBridge bridge, float spacing)
         {
-            foreach (var e in _rivals != null ? profile.SelectMany(Split) : profile)
+            int n = Math.Max(1, (int)MathF.Round(bridge.Length / spacing));
+            for (int k = 0; k <= n; k++) yield return bridge.Start + bridge.Length * k / n;
+        }
+
+        private static Frame FrameOf(RoutePoint p) => new(p.Sample.Position, p.Sample.Tangent, p.Top, p.Distance);
+
+        /// <summary>The bridge over a river, drawn whole by one tile of the link.</summary>
+        private void Bridge(RouteBridge bridge, RouteLook look)
+        {
+            switch (bridge.Kind)
             {
-                // Profiles run clockwise (across to the right, up), so the outward normal is the edge turned left.
-                var edge = e.B - e.A;
-                var local = new Vector2(-edge.Y, edge.X).Normalized();
-                Vector3 Normal(Frame f) => (f.Side * local.X + Vector3.Up * local.Y).Normalized();
-                int i0 = Vertex(a.Point(e.A.X, e.A.Y), Normal(a), new Vector2(a.Along, e.A.X), e);
-                int i1 = Vertex(a.Point(e.B.X, e.B.Y), Normal(a), new Vector2(a.Along, e.B.X), e);
-                int i2 = Vertex(b.Point(e.B.X, e.B.Y), Normal(b), new Vector2(b.Along, e.B.X), e);
-                int i3 = Vertex(b.Point(e.A.X, e.A.Y), Normal(b), new Vector2(b.Along, e.A.X), e);
-                Quad(i0, i1, i2, i3, Normal(a) + Normal(b));
+                case BridgeKind.Wood: WoodBridge(bridge); break;
+                case BridgeKind.Stone: StoneBridge(bridge); break;
+                default: SteelBridge(bridge); break;
             }
         }
 
-        private static IEnumerable<ProfileEdge> Split(ProfileEdge e)
+        /// <summary>A plank deck on timber trestles, with a post-and-rail fence along both sides.</summary>
+        private void WoodBridge(RouteBridge bridge)
         {
-            int n = Math.Max(1, (int)MathF.Ceiling((e.B - e.A).Length() / FineStep));
-            for (int k = 0; k < n; k++) yield return e with { A = e.A.Lerp(e.B, (float)k / n), B = e.A.Lerp(e.B, (float)(k + 1) / n) };
+            SweepAlong(bridge.Points, WoodOutline);
+            var paint = new Paint(TimberColour, Planks);
+            // Fence posts with a top and a middle rail.
+            foreach (float k in new[] { -1f, 1f })
+            {
+                Vector3? lastTop = null, lastMiddle = null;
+                foreach (float d in Spaced(bridge, 0.07f))
+                {
+                    var f = FrameOf(bridge.At(d));
+                    var foot = f.Point(0.088f * k, -0.012f);
+                    var top = f.Point(0.088f * k, 0.036f);
+                    Box(foot, top, Along(f), f.Side, 0.0055f, 0.0055f, paint);
+                    var rail = f.Point(0.088f * k, 0.032f);
+                    var middle = f.Point(0.088f * k, 0.016f);
+                    if (lastTop is { } a) Strut(a, rail, f.Side, 0.0035f, paint);
+                    if (lastMiddle is { } m) Strut(m, middle, f.Side, 0.0028f, paint);
+                    (lastTop, lastMiddle) = (rail, middle);
+                }
+            }
+            // Trestles: a pair of piles under a cap beam, braced across, between the banks.
+            var inner = Spaced(bridge, 0.17f).ToList();
+            foreach (float d in inner.Skip(1).SkipLast(1))
+            {
+                var f = FrameOf(bridge.At(d));
+                var cap = f.Point(0, -0.02f);
+                Box(cap - new Vector3(0, 0.012f, 0), cap, Along(f), f.Side, 0.01f, 0.085f, paint);
+                var feet = new List<Vector3>();
+                foreach (float k in new[] { -1f, 1f })
+                {
+                    var top = f.Point(0.065f * k, -0.026f);
+                    var foot = top with { Y = Height(new Flat(top.X, top.Z)) - 0.04f };
+                    Strut(foot, top, Along(f), 0.0065f, paint);
+                    feet.Add(foot.Lerp(top, 0.25f));
+                }
+                Strut(feet[0], f.Point(0.065f, -0.03f), Along(f), 0.0035f, paint);
+                Strut(feet[1], f.Point(-0.065f, -0.03f), Along(f), 0.0035f, paint);
+            }
         }
 
-        /// <summary>Closes the deck at a frame: a fan over the profile, facing along the tangent times sign.</summary>
-        private void Cap(ProfileEdge[] profile, Frame f, int sign)
+        /// <summary>A masonry bridge with parapets on round arches. The arches spring from the river bed; between two
+        /// arches their springs meet as a pier, and at the banks they sink into the ground.</summary>
+        private void StoneBridge(RouteBridge bridge)
+        {
+            int arches = Math.Max(1, (int)MathF.Round(bridge.Length / 0.3f));
+            float width = bridge.Length / arches, spring = bridge.Low - 0.03f;
+            float crown = bridge.Points.Max(p => p.Top) - 0.04f;
+            var paint = new Paint(StoneColour, Masonry);
+            Shape ShapeAt(RoutePoint p)
+            {
+                float x = ((p.Distance - bridge.Start) % width) / width * 2 - 1;
+                if (p.Distance >= bridge.End - 1e-4f) x = 1;
+                // Piers a little thicker than the arches' springs.
+                float r = Math.Min(1, Math.Abs(x) * 1.12f);
+                float under = spring + (crown - spring) * MathF.Sqrt(1 - r * r);
+                float bottom = Math.Min(-0.03f, under - p.Top);
+                Flat[] points = [new(-0.1f, 0.028f), new(-0.084f, 0.028f), new(-0.084f, 0), new(0.084f, 0), new(0.084f, 0.028f),
+                    new(0.1f, 0.028f), new(0.1f, bottom), new(-0.1f, bottom)];
+                return new Shape(points, Enumerable.Repeat(paint, points.Length).ToArray());
+            }
+            int steps = Math.Max(8, (int)MathF.Ceiling(bridge.Length / 0.012f));
+            Frame? last = null;
+            Shape lastShape = default;
+            for (int i = 0; i <= steps; i++)
+            {
+                var p = bridge.At(bridge.Start + bridge.Length * i / steps);
+                var frame = FrameOf(p);
+                var shape = ShapeAt(p);
+                if (last is { } from) Sweep(from, lastShape, frame, shape);
+                else Cap(frame, shape, -1);
+                (last, lastShape) = (frame, shape);
+            }
+            Cap(last!.Value, lastShape, 1);
+        }
+
+        /// <summary>A steel deck between two through trusses, on concrete abutments at the banks, with a pier in the
+        /// river under a long span.</summary>
+        private void SteelBridge(RouteBridge bridge)
+        {
+            SweepAlong(bridge.Points, SteelOutline);
+            var concrete = new Paint(ConcreteColour, Concrete);
+            var truss = new Paint(TrussColour, Metal);
+            foreach (float d in new[] { bridge.Start, bridge.End })
+            {
+                var f = FrameOf(bridge.At(d));
+                var top = f.Point(0, -0.03f);
+                Box(top with { Y = Height(f.At) - 0.05f }, top, Along(f), f.Side, 0.035f, 0.11f, concrete);
+            }
+            if (bridge.Length > 0.6f)
+            {
+                var f = FrameOf(bridge.At(bridge.Start + bridge.Length / 2));
+                var top = f.Point(0, -0.03f);
+                Box(top with { Y = bridge.Low - 0.05f }, top, Along(f), f.Side, 0.03f, 0.08f, concrete);
+            }
+            int panels = Math.Max(2, (int)MathF.Round(bridge.Length / 0.085f));
+            const float rise = 0.085f, offset = 0.095f;
+            var lows = new Vector3[2][];
+            var highs = new Vector3[2][];
+            for (int s = 0; s < 2; s++)
+            {
+                float k = s == 0 ? -1 : 1;
+                lows[s] = new Vector3[panels + 1];
+                highs[s] = new Vector3[panels + 1];
+                for (int j = 0; j <= panels; j++)
+                {
+                    var f = FrameOf(bridge.At(bridge.Start + bridge.Length * j / panels));
+                    lows[s][j] = f.Point(offset * k, -0.006f);
+                    highs[s][j] = f.Point(offset * k, rise);
+                }
+                var side = FrameOf(bridge.Points[0]).Side;
+                for (int j = 0; j < panels; j++) Strut(lows[s][j], lows[s][j + 1], Vector3.Up, 0.006f, truss);
+                for (int j = 1; j < panels - 1; j++) Strut(highs[s][j], highs[s][j + 1], Vector3.Up, 0.006f, truss);
+                Strut(lows[s][0], highs[s][1], side, 0.006f, truss);
+                Strut(lows[s][panels], highs[s][panels - 1], side, 0.006f, truss);
+                for (int j = 1; j < panels; j++) Strut(lows[s][j], highs[s][j], side, 0.0035f, truss);
+                // Diagonals slope down toward the middle of the span.
+                for (int j = 1; j < panels - 1; j++)
+                    if (j < panels / 2) Strut(highs[s][j], lows[s][j + 1], side, 0.003f, truss);
+                    else Strut(lows[s][j], highs[s][j + 1], side, 0.003f, truss);
+            }
+            for (int j = 1; j < panels; j++) Strut(highs[0][j], highs[1][j], Vector3.Up, 0.003f, truss);
+        }
+
+        private static Vector3 Along(Frame f) => new(f.Tangent.X, 0, f.Tangent.Y);
+
+        private void SweepAlong(IReadOnlyList<RoutePoint> points, Outline outline)
+        {
+            var shape = Place(outline, null, 0, Breaks(outline, null, false));
+            for (int i = 1; i < points.Count; i++) Sweep(FrameOf(points[i - 1]), shape, FrameOf(points[i]), shape);
+            Cap(FrameOf(points[0]), shape, -1);
+            Cap(FrameOf(points[^1]), shape, 1);
+        }
+
+        /// <summary>One length of deck between two frames, each outline edge a quad with its own flat normal.</summary>
+        private void Sweep(Frame a, Shape sa, Frame b, Shape sb)
+        {
+            int n = sa.Points.Length;
+            for (int k = 0; k < n; k++)
+            {
+                var (a0, a1) = (sa.Points[k], sa.Points[(k + 1) % n]);
+                var (b0, b1) = (sb.Points[k], sb.Points[(k + 1) % n]);
+                if ((a1 - a0).LengthSquared() < 1e-10f && (b1 - b0).LengthSquared() < 1e-10f) continue;
+                // Outlines run clockwise (across to the right, up), so the outward normal is the edge turned left.
+                Vector3 Normal(Frame f, Flat p0, Flat p1)
+                {
+                    var edge = p1 - p0;
+                    if (edge.LengthSquared() < 1e-10f) edge = (b1 - b0) + (a1 - a0);
+                    var local = Flat.Normalize(new Flat(-edge.Y, edge.X));
+                    return (f.Side * local.X + Vector3.Up * local.Y).Normalized();
+                }
+                var na = Normal(a, a0, a1);
+                var nb = Normal(b, b0, b1);
+                var paint = sa.Paints[k];
+                int i0 = Vertex(a.Point(a0.X, a0.Y), na, new Vector2(a.Along, a0.X), paint);
+                int i1 = Vertex(a.Point(a1.X, a1.Y), na, new Vector2(a.Along, a1.X), paint);
+                int i2 = Vertex(b.Point(b1.X, b1.Y), nb, new Vector2(b.Along, b1.X), paint);
+                int i3 = Vertex(b.Point(b0.X, b0.Y), nb, new Vector2(b.Along, b0.X), paint);
+                Quad(i0, i1, i2, i3, na + nb);
+            }
+        }
+
+        /// <summary>Closes a deck at a frame: a fan over the outline, facing along the tangent times sign.</summary>
+        private void Cap(Frame f, Shape shape, int sign)
         {
             var normal = new Vector3(f.Tangent.X, 0, f.Tangent.Y) * sign;
-            var paint = new ProfileEdge(default, default, profile.Any(e => e.Surface == Concrete) ? ConcreteColour : SteelColour,
-                profile.Any(e => e.Surface == Concrete) ? Concrete : Metal);
-            int middle = Vertex(f.Point(0, -0.04f), normal, new Vector2(f.Along, 0), paint);
-            foreach (var e in profile)
+            var paint = shape.Paints.FirstOrDefault(p => p.Surface is Concrete or Masonry or Planks, new Paint(SteelColour, Metal));
+            var centre = shape.Points.Aggregate(Flat.Zero, (sum, p) => sum + p) / shape.Points.Length;
+            int middle = Vertex(f.Point(centre.X, centre.Y), normal, new Vector2(f.Along, 0), paint);
+            for (int k = 0; k < shape.Points.Length; k++)
             {
-                int a = Vertex(f.Point(e.A.X, e.A.Y), normal, new Vector2(f.Along, e.A.X), paint);
-                int b = Vertex(f.Point(e.B.X, e.B.Y), normal, new Vector2(f.Along, e.B.X), paint);
+                var (p0, p1) = (shape.Points[k], shape.Points[(k + 1) % shape.Points.Length]);
+                int a = Vertex(f.Point(p0.X, p0.Y), normal, new Vector2(f.Along, p0.X), paint);
+                int b = Vertex(f.Point(p1.X, p1.Y), normal, new Vector2(f.Along, p1.X), paint);
                 Triangle(middle, a, b, normal);
             }
         }
 
-        /// <summary>The support under a deck whose underside is at height bottom.</summary>
+        /// <summary>The support under a deck whose underside is at height bottom: a concrete column for the maglev,
+        /// splayed steel legs for everything else.</summary>
         private void Support(RouteLook look, Flat at, Flat tangent, float bottom)
         {
             var side = new Vector3(-tangent.Y, 0, tangent.X);
@@ -244,70 +531,76 @@ internal sealed partial class MapRenderer
                 (float)field.SurfaceHeightAt(at.X + side.X * 0.08f, at.Y + side.Z * 0.08f),
                 (float)field.SurfaceHeightAt(at.X - side.X * 0.08f, at.Y - side.Z * 0.08f))) - 0.03f;
             var top = foot with { Y = bottom };
+            var concrete = new Paint(ConcreteColour, Concrete);
             if (look == RouteLook.Maglev)
             {
                 // A square column on a footing, under a cap as wide as the beam.
-                Box(foot with { Y = lowest }, top - new Vector3(0, 0.02f, 0), along, side, 0.024f, 0.03f, ConcreteColour, Concrete);
-                Box(top - new Vector3(0, 0.026f, 0), top, along, side, 0.03f, 0.07f, ConcreteColour, Concrete);
-                Box(foot with { Y = lowest }, foot + new Vector3(0, 0.012f, 0), along, side, 0.045f, 0.05f, ConcreteColour, Concrete);
+                Box(foot with { Y = lowest }, top - new Vector3(0, 0.02f, 0), along, side, 0.024f, 0.03f, concrete);
+                Box(top - new Vector3(0, 0.026f, 0), top, along, side, 0.03f, 0.07f, concrete);
+                Box(foot with { Y = lowest }, foot + new Vector3(0, 0.012f, 0), along, side, 0.045f, 0.05f, concrete);
                 return;
             }
             // Two splayed steel legs with a cross tie and an X brace, on pads.
+            var steel = new Paint(SteelColour, Metal);
             var leftFoot = foot with { Y = lowest } + side * 0.078f;
             var rightFoot = foot with { Y = lowest } - side * 0.078f;
             var leftTop = top + side * 0.026f;
             var rightTop = top - side * 0.026f;
-            Strut(leftFoot, leftTop, along, 0.009f, SteelColour);
-            Strut(rightFoot, rightTop, along, 0.009f, SteelColour);
+            Strut(leftFoot, leftTop, along, 0.009f, steel);
+            Strut(rightFoot, rightTop, along, 0.009f, steel);
             var tieLeft = leftFoot.Lerp(leftTop, 0.62f);
             var tieRight = rightFoot.Lerp(rightTop, 0.62f);
-            Strut(tieLeft, tieRight, along, 0.006f, SteelColour);
-            Strut(leftFoot.Lerp(leftTop, 0.15f), tieRight, along, 0.004f, SteelColour);
-            Strut(rightFoot.Lerp(rightTop, 0.15f), tieLeft, along, 0.004f, SteelColour);
-            Box(top - new Vector3(0, 0.01f, 0), top, along, side, 0.02f, 0.04f, SteelColour, Metal);
+            Strut(tieLeft, tieRight, along, 0.006f, steel);
+            Strut(leftFoot.Lerp(leftTop, 0.15f), tieRight, along, 0.004f, steel);
+            Strut(rightFoot.Lerp(rightTop, 0.15f), tieLeft, along, 0.004f, steel);
+            Box(top - new Vector3(0, 0.01f, 0), top, along, side, 0.02f, 0.04f, steel);
             foreach (var f in new[] { leftFoot, rightFoot })
-                Box(f, f + new Vector3(0, 0.045f, 0), along, side, 0.016f, 0.016f, ConcreteColour, Concrete);
+                Box(f, f + new Vector3(0, 0.045f, 0), along, side, 0.016f, 0.016f, concrete);
         }
 
-        /// <summary>Portal masts over an electric railroad and the contact wire strung between them.</summary>
-        private void Catenary(RoutePath path)
+        /// <summary>Portal masts over an electric railroad and the contact wire strung between them, over the rails
+        /// wherever they run: on the ground, a viaduct or a bridge.</summary>
+        private void Catenary(RoutePath path, RoutePathProfile laid)
         {
-            // The electric line ends at a portal on the edge where it meets plain track.
+            // The electric line ends at a portal on the edge where it meets another look.
             bool edgeAlways = path.Other != RouteLook.ElectricRailroad;
+            var wirePaint = new Paint(WireColour, Metal);
+            var mastPaint = new Paint(MastColour, Metal);
             // The wire follows the track in short spans, so it stays over the rails on a curve.
             Vector3? last = null;
-            foreach (var s in RouteJunction.Resample(path, WireStep))
+            foreach (var p in laid.Points)
             {
-                var wire = WireAt(s.Position);
-                if (last is { } from) Strut(from, wire, new Vector3(-s.Tangent.Y, 0, s.Tangent.X), 0.0028f, WireColour);
+                var wire = WireAt(p);
+                var s = p.Sample;
+                if (last is { } from) Strut(from, wire, new Vector3(-s.Tangent.Y, 0, s.Tangent.X), 0.0028f, wirePaint);
                 last = wire;
             }
             foreach (var (s, own) in Stations(path, MastSpacing, edgeAlways))
             {
+                if (!own) continue;
+                var p = laid.At(s.Along);
                 var side = new Vector3(-s.Tangent.Y, 0, s.Tangent.X);
                 var along = new Vector3(s.Tangent.X, 0, s.Tangent.Y);
                 var at = new Vector3(s.Position.X, 0, s.Position.Y);
-                float y = (float)field.SurfaceHeightAt(at.X, at.Z);
-                var wire = WireAt(s.Position);
-                if (!own) continue;
+                bool raised = p.Clearance > RouteProfile.RaisedClearance;
                 foreach (float k in new[] { -1f, 1f })
                 {
                     var pole = at + side * (MastReach * k);
-                    float g = (float)field.SurfaceHeightAt(pole.X, pole.Z);
-                    Box(pole with { Y = g - 0.02f }, pole with { Y = y + MastHeight }, along, side, 0.0055f, 0.0055f, MastColour, Metal);
+                    // On a deck the masts stand on its edge; on the ground they are sunk into it.
+                    float foot = raised ? p.Top - 0.035f : (float)field.SurfaceHeightAt(pole.X, pole.Z) - 0.02f;
+                    Box(pole with { Y = foot }, pole with { Y = p.Top + MastHeight }, along, side, 0.0055f, 0.0055f, mastPaint);
                 }
-                var beam = at + new Vector3(0, y + MastHeight - 0.006f, 0);
-                Box(beam, beam + new Vector3(0, 0.008f, 0), along, side, 0.004f, MastReach + 0.01f, MastColour, Metal);
-                Strut(beam, wire, along, 0.0025f, WireColour);
+                var beam = at + new Vector3(0, p.Top + MastHeight - 0.006f, 0);
+                Box(beam, beam + new Vector3(0, 0.008f, 0), along, side, 0.004f, MastReach + 0.01f, mastPaint);
+                Strut(beam, WireAt(p), along, 0.0025f, wirePaint);
             }
         }
 
-        private Vector3 WireAt(Flat p) => new(p.X, Height(p) + WireHeight, p.Y);
+        private static Vector3 WireAt(RoutePoint p) => new(p.Sample.Position.X, p.Top + WireHeight, p.Sample.Position.Y);
 
         /// <summary>A box from the middle of its base to the middle of its top, half sizes along and across.</summary>
-        private void Box(Vector3 from, Vector3 to, Vector3 along, Vector3 side, float halfAlong, float halfSide, Color colour, float surface)
+        private void Box(Vector3 from, Vector3 to, Vector3 along, Vector3 side, float halfAlong, float halfSide, Paint paint)
         {
-            var paint = new ProfileEdge(default, default, colour, surface);
             var a = along * halfAlong;
             var s = side * halfSide;
             Vector3[] corners = [-a - s, a - s, a + s, -a + s];
@@ -322,12 +615,12 @@ internal sealed partial class MapRenderer
         }
 
         /// <summary>A thin square bar between two points; flat is any direction across the bar.</summary>
-        private void Strut(Vector3 from, Vector3 to, Vector3 flat, float half, Color colour)
+        private void Strut(Vector3 from, Vector3 to, Vector3 flat, float half, Paint paint)
         {
             var axis = (to - from).Normalized();
+            if (Math.Abs(flat.Normalized().Dot(axis)) > 0.99f) flat = Math.Abs(axis.Y) < 0.9f ? Vector3.Up : Vector3.Right;
             var u = (flat - axis * flat.Dot(axis)).Normalized() * half;
             var v = axis.Cross(u).Normalized() * half;
-            var paint = new ProfileEdge(default, default, colour, Metal);
             Vector3[] corners = [u + v, u - v, -u - v, -u + v];
             for (int k = 0; k < 4; k++)
             {
@@ -337,7 +630,7 @@ internal sealed partial class MapRenderer
             }
         }
 
-        private void Face(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, ProfileEdge paint)
+        private void Face(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Paint paint)
         {
             int i0 = Vertex(a, normal, Vector2.Zero, paint);
             int i1 = Vertex(b, normal, Vector2.Zero, paint);
@@ -346,7 +639,7 @@ internal sealed partial class MapRenderer
             Quad(i0, i1, i2, i3, normal);
         }
 
-        private int Vertex(Vector3 p, Vector3 normal, Vector2 uv, ProfileEdge paint)
+        private int Vertex(Vector3 p, Vector3 normal, Vector2 uv, Paint paint)
         {
             _vertices.Add(p);
             _normals.Add(normal);

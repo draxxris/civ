@@ -50,25 +50,20 @@ public sealed class RoutePlanTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 Assert.Equal(0f, a.Along);
                 Assert.Equal(0f, b.Along);
                 Assert.Equal(west == east ? 0f : 1f, a.Blend + b.Blend, 4);
-                // A deck meeting another deck stays up; one meeting the ground comes down to it at the edge.
-                float lift = RouteLooks.Elevated(west) && RouteLooks.Elevated(east) ? 1 : 0;
-                Assert.Equal(lift, a.Lift, 4);
-                Assert.Equal(lift, b.Lift, 4);
             }
     }
 
     [Fact]
-    public void A_ground_route_reaches_the_edge_of_an_elevated_tile_at_full_strength()
+    public void A_ground_route_and_a_deck_crossfade_about_their_shared_edge()
     {
         var road = Plan(RouteLook.Highway, 0, 0, [(0, RouteLook.Maglev, 1, 0)], []).Paths[0];
         var deck = Plan(RouteLook.Maglev, 1, 0, [(3, RouteLook.Highway, 0, 0)], [(0, RouteLook.Maglev)]).Paths
             .First(p => p.Other == RouteLook.Highway);
 
-        Assert.All(road.Samples, s => Assert.Equal(0f, s.Blend, 3));
-        Assert.Equal(1f, deck.Samples[0].Blend, 3);
+        Assert.Equal(0.5f, road.Samples[0].Blend, 3);
+        Assert.Equal(0.5f, deck.Samples[0].Blend, 3);
+        Assert.Equal(0f, road.Samples[^1].Blend, 3);
         Assert.Equal(0f, deck.Samples[^1].Blend, 3);
-        Assert.True(deck.Samples.Zip(deck.Samples.Skip(1)).All(p => p.Second.Lift >= p.First.Lift), "the ramp only climbs");
-        Assert.Equal(1f, deck.Samples[^1].Lift, 2);
     }
 
     [Theory]

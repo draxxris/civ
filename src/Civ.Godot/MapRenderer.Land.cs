@@ -19,6 +19,7 @@ internal sealed partial class MapRenderer
         var roads = new RoadMesh(TerrainField);
         var routeParts = new RouteParts(TerrainField);
         var sites = new List<ImprovementSite>();
+        var routes = new List<Civ.Client.Terrain.RouteTilePlan>();
         foreach (var tile in sim.State.Grid.Tiles)
         {
             var sight = _session.SightOf(sim.State.Plots[tile.Value]);
@@ -26,11 +27,12 @@ internal sealed partial class MapRenderer
             var centre = PositionOf(sim.State.Grid.HexOf(tile));
             float fog = sight == Sight.Visible ? 1f : 0.55f;
             DrawFeature(marks, centre, tile.Value, plot, fog);
-            DrawRoute(roads, routeParts, tile, centre, plot);
+            if (PlanRoute(tile, centre, plot) is { } route) routes.Add(route);
             DrawImprovementIcon(icons, centre, plot, fog);
             if (plot.Improvement is { } improvement && _improvements.Has(improvement))
                 sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
         }
+        DrawRoutes(roads, routeParts, routes);
         foreach (var city in _session.KnownCities())
         {
             var sight = _session.SightOf(city.Position);

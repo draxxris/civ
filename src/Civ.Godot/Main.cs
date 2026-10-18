@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Civ.Client.Terrain;
+using Civ.Game;
 using Godot;
 
 namespace Civ.Client;

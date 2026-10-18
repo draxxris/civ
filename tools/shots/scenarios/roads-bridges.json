@@ -1,0 +1,40 @@
+{
+  "// note": "Bridges: a river runs north to south and every land route type crosses it, in pairs: cart path and road (wood), paved road and highway (stone), railroad and electric railroad (steel), maglev and jumplane (no bridge). Capture with tools/shots/roads-bridges-poses.json.",
+  "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
+  "tiles": [
+    {"at": [8, 0], "river": 1},
+    {"at": [8, 1], "river": 35},
+    {"at": [8, 2], "river": 1},
+    {"at": [8, 3], "river": 35},
+    {"at": [8, 4], "river": 1},
+    {"at": [8, 5], "river": 35},
+    {"at": [8, 6], "river": 1},
+    {"at": [8, 7], "river": 35},
+    {"at": [8, 8], "river": 1},
+    {"at": [8, 9], "river": 35},
+    {"at": [8, 10], "river": 1},
+    {"at": [8, 11], "river": 35},
+    {"at": [8, 12], "river": 1},
+    {"at": [8, 13], "river": 35},
+    {"at": [8, 14], "river": 1},
+    {"at": [8, 15], "river": 35},
+    {"at": [8, 16], "river": 1},
+    {"at": [8, 17], "river": 35},
+    {"at": [8, 18], "river": 1},
+    {"at": [8, 19], "river": 35}
+  ],
+  "roads": [
+    {"route": "track", "path": [[4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [11, 3], [12, 3], [13, 3]]},
+    {"route": "road", "path": [[4, 4], [5, 4], [6, 4], [7, 4], [8, 4], [9, 4], [10, 4], [11, 4], [12, 4], [13, 4]]},
+    {"route": "paved", "path": [[4, 7], [5, 7], [6, 7], [7, 7], [8, 7], [9, 7], [10, 7], [11, 7], [12, 7], [13, 7]]},
+    {"route": "modern_road", "path": [[4, 8], [5, 8], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8], [11, 8], [12, 8], [13, 8]]},
+    {"route": "railroad", "path": [[4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11]]},
+    {"route": "railroad_electric", "path": [[4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12]]},
+    {"route": "gravtube", "path": [[4, 15], [5, 15], [6, 15], [7, 15], [8, 15], [9, 15], [10, 15], [11, 15], [12, 15], [13, 15]]},
+    {"route": "jumplane", "path": [[4, 16], [5, 16], [6, 16], [7, 16], [8, 16], [9, 16], [10, 16], [11, 16], [12, 16], [13, 16]]}
+  ],
+  "focus": [
+    8,
+    9
+  ]
+}
