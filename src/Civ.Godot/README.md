@@ -168,7 +168,15 @@ Where the paths of a junction overlap, each point belongs to the path whose cent
 Each path draws only its own points, so the paths join as one surface and edge lines and curbs stop at the mouth of each
 spur. The rails and the through road's centre line are drawn again on top, so they run through the junction.
 Where two types meet, the width eases from one to the other and the surfaces crossfade along a ragged front at the shared edge.
-A deck ramps down into its own tile, so the ground route next to it is at full strength up to the edge.
+`RouteProfile` (`src/Civ.Client.Core/Terrain/RouteProfile.cs`) sets the height of every route path over the terrain:
+- Railroads and electric railroads keep a gentle grade (`RailBed.cs`). Before a hill they climb onto a concrete viaduct
+  on steel legs, in one straight ramp up to the hill's apex. Between two neighbouring hills they run in one straight
+  span from apex to apex. Beyond the last hill they come back down in one straight ramp. The bend at the foot of each
+  ramp is rounded.
+- Where a ground route meets a maglev or a jumplane, the ground route climbs and the deck comes down. They meet halfway
+  at the shared edge, and the deck outline changes into the viaduct outline across the crossfade.
+- A ground route that crosses a river goes onto a bridge. Cart paths and roads get a wooden trestle, paved roads and
+  highways a stone arch bridge, and railroads a steel truss bridge. Maglevs and jumplanes need no bridge.
 An improvement with a `.glb` in its mod's `art/models` folder is drawn as 3D parts seated on the terrain, instead of its icon.
 City building models with a positive `cityRing` scene extra form a ring around the city token.
 Only the highest completed tier appears, with zero yaw and the tile's fog shade. Hidden tiles show no ring.

@@ -7,7 +7,11 @@
 // distance from its centre), along is arc length in pattern units from the shared tile edge (RoutePlan.PatternUnit divides
 // every half path, so sleepers and dashes meet at edges and centres). UV2 = (blend, inner): blend is the share of the
 // neighbour's look, inner the distance to a junction or dead end (large on through curves, negative on a hub).
-// COLOR.r and COLOR.g are this tile's look and the neighbour's, each divided by 15; COLOR.b is the layer, divided by 2:
+// COLOR.r and COLOR.g are this tile's look and the neighbour's, each divided by 15. COLOR.a from 0.5 to 1 is how far the
+// ribbon is raised off the ground onto a deck (a viaduct, bridge or the top of an elevated route): there it is cut to the
+// deck's width, its verge takes a neutral deck colour instead of the land's, and elevated looks are not drawn (the deck is
+// its own 3D part), so a ground look fades out over a deck. COLOR.a below 0.5 marks a shade ribbon under a raised ground
+// route, of strength COLOR.a / 0.45. COLOR.b is the layer, divided by 2:
 // 0 the whole look. A junction's paths overlap, so they are drawn as layer 1, the look without markings, only where the
 // path's centre line is the nearest (the union of the paths), then layer 2, just the markings (centre line, rails). A path that ends at a hub draws only in
 // its wedge about the tile centre, so paths that overlap there cover it once: CUSTOM0 holds the wedge's clockwise and
@@ -56,12 +60,17 @@ const vec3 BALLAST_GREY = vec3(0.52, 0.50, 0.47);
 const vec3 SLEEPER_WOOD = vec3(0.37, 0.25, 0.15);
 const vec3 SLEEPER_CONCRETE = vec3(0.66, 0.64, 0.60);
 const vec3 STEEL = vec3(0.80, 0.81, 0.83);
+const vec3 DECK_GREY = vec3(0.62, 0.61, 0.58);
+// Half width of the decks a raised ribbon lies on (MapRenderer.RouteParts.cs), in world units.
+const float DECK_HALF = 0.097;
 
 varying vec3 world_pos;
 varying vec2 lane;
 varying vec2 extra;
 varying vec2 looks;
 varying float draw_layer;
+varying float raise;
+varying float shade_strength;
 varying vec4 wedge;
 varying vec4 hub;
 
@@ -71,6 +80,8 @@ void vertex() {
 	extra = UV2;
 	looks = COLOR.rg;
 	draw_layer = COLOR.b * 2.0;
+	raise = COLOR.a >= 0.5 ? (COLOR.a - 0.5) * 2.0 : 0.0;
+	shade_strength = COLOR.a < 0.5 ? COLOR.a / 0.45 : -1.0;
 	wedge = CUSTOM0;
 	hub = CUSTOM1;
 	vec4 view = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
@@ -96,6 +107,8 @@ struct Surface {
 	int layer;
 	// A spur's centre line stops where another path takes over; the through curve's runs on across the junction.
 	bool centre_line;
+	// On a deck: elevated looks are not drawn.
+	bool raised;
 };
 
 vec3 tone(vec3 c, Surface s) {
@@ -285,7 +298,7 @@ vec4 shadow_look(float a, Surface s) {
 }
 
 vec4 look_colour(int look, float a, float px, Surface s) {
-	if ((s.layer > 0 && look <= ROAD) || (s.layer == 2 && look > ELECTRIC)) return vec4(0.0);
+	if ((s.layer > 0 && look <= ROAD) || (look > ELECTRIC && (s.layer == 2 || s.raised))) return vec4(0.0);
 	if (look == TRACK) return track_look(a, px, s);
 	if (look == ROAD) return road_look(a, px, s);
 	if (look == PAVED) return paved_look(a, px, s);
@@ -314,6 +327,8 @@ void fragment() {
 	float hidden;
 	vec3 weights;
 	blend_tiles(s.p, s.linear, 0.0, 0.0, s.land, water_tint, s.fogged, hidden, weights);
+	s.land = mix(s.land, tone(DECK_GREY, s), raise);
+	s.raised = raise > 0.5;
 	// Broad noise swells and narrows a track; fine noise frays its edge.
 	s.swell = periodic_noise(s.p, 2.3) - 0.5;
 	s.fray = periodic_noise(s.p, 7.0) * 0.6 + periodic_noise(s.p, 19.0) * 0.4 - 0.5;
@@ -331,8 +346,8 @@ void fragment() {
 	// The crossfade follows a ragged front: each pixel switches looks when the blend passes its own threshold, spread by
 	// noise (or, with setts, by stone, so the stones thin out one by one). Both looks are exact at blend 0 and 1.
 	float blend = extra.x;
-	float threshold = 0.5 + ((periodic_noise(s.p, 9.0) - 0.5) + (periodic_noise(s.p, 23.0) - 0.5) * 0.5) * 0.3;
-	float sharp = 2.6;
+	float threshold = 0.5 + ((periodic_noise(s.p, 9.0) - 0.5) + (periodic_noise(s.p, 23.0) - 0.5) * 0.5) * 0.22;
+	float sharp = 1.6;
 	if (own == PAVED || other == PAVED) {
 		threshold = 0.1 + periodic_voronoi(s.p, 24.0).z * 0.8;
 		sharp = 14.0;
@@ -351,6 +366,10 @@ void fragment() {
 	float alpha = mix(first.a, second.a, share);
 	vec3 colour = (first.rgb * first.a * (1.0 - share) + second.rgb * second.a * share) / max(alpha, 1e-4);
 
+	// A shade ribbon (drawn as an elevated look) fades with the height of the route over it.
+	if (shade_strength >= 0.0) alpha *= shade_strength;
+	// On a deck, nothing overhangs its sides.
+	alpha *= mix(1.0, 1.0 - smoothstep(DECK_HALF - max(fwidth(across), 0.002), DECK_HALF, abs(across)), raise);
 	alpha *= 1.0 - tile_lines(s.p);
 	if (hidden > 0.0) alpha *= 1.0 - clouds(s.p, hidden, TIME, s.linear).a;
 	ALBEDO = colour;

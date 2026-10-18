@@ -150,6 +150,29 @@ public sealed class RiverNetwork
         return false;
     }
 
+    /// <summary>Whether the straight step from (x0, z0) to (x1, z1) crosses the centre line of a river. The step must be
+    /// short (well under 0.1), as only the cell of its midpoint is searched.</summary>
+    public bool Crosses(double x0, double z0, double x1, double z1)
+    {
+        double mx = (x0 + x1) / 2, shifted = mx;
+        var (from, to) = Entries(ref shifted, (z0 + z1) / 2);
+        double wrap = shifted - mx;
+        (x0, x1) = (x0 + wrap, x1 + wrap);
+        for (int e = from; e < to; e++)
+        {
+            var s = _segments[_entrySegment[e]];
+            double ax = s.AX + _entryShift[e], bx = s.BX + _entryShift[e];
+            if (Side(ax, s.AZ, bx, s.BZ, x0, z0) * Side(ax, s.AZ, bx, s.BZ, x1, z1) <= 0
+                && Side(x0, z0, x1, z1, ax, s.AZ) * Side(x0, z0, x1, z1, bx, s.BZ) <= 0
+                && (ax != bx || s.AZ != s.BZ))
+                return true;
+        }
+        return false;
+
+        static double Side(double ax, double az, double bx, double bz, double px, double pz) =>
+            Math.Sign((bx - ax) * (pz - az) - (bz - az) * (px - ax));
+    }
+
     /// <summary>The index entries of the cell holding a point; wraps x into the canonical period.</summary>
     private (int From, int To) Entries(ref double x, double z)
     {

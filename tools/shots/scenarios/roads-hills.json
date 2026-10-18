@@ -1,0 +1,23 @@
+{
+  "// note": "Railroads over hills: a railroad over two adjacent hills, an electric railroad over three, a railroad over two hills with a two-tile valley between them, and an electric railroad and a highway over one lone hill. Capture with tools/shots/roads-hills-poses.json.",
+  "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
+  "tiles": [
+    {"rect": [7, 3, 8, 3], "kind": "Hills", "terrain": "world:plains"},
+    {"rect": [6, 7, 8, 7], "kind": "Hills", "terrain": "world:plains"},
+    {"at": [6, 11], "kind": "Hills", "terrain": "world:plains"},
+    {"at": [9, 11], "kind": "Hills", "terrain": "world:plains"},
+    {"at": [7, 15], "kind": "Hills", "terrain": "world:plains"},
+    {"at": [7, 17], "kind": "Hills", "terrain": "world:plains"}
+  ],
+  "roads": [
+    {"route": "railroad", "path": [[2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [11, 3], [12, 3], [13, 3]]},
+    {"route": "railroad_electric", "path": [[2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7], [8, 7], [9, 7], [10, 7], [11, 7], [12, 7], [13, 7]]},
+    {"route": "railroad", "path": [[2, 11], [3, 11], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11]]},
+    {"route": "railroad_electric", "path": [[3, 15], [4, 15], [5, 15], [6, 15], [7, 15], [8, 15], [9, 15], [10, 15], [11, 15]]},
+    {"route": "modern_road", "path": [[3, 17], [4, 17], [5, 17], [6, 17], [7, 17], [8, 17], [9, 17], [10, 17], [11, 17]]}
+  ],
+  "focus": [
+    7,
+    9
+  ]
+}

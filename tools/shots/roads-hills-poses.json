@@ -1,0 +1,7 @@
+[
+  {"name": "hills_overview", "focusTile": [7, 10], "distance": 15, "pitch": 50},
+  {"name": "hills_railroad_two", "focusTile": [7, 3], "distance": 5.5, "pitch": 24},
+  {"name": "hills_electric_three", "focusTile": [7, 7], "distance": 6, "pitch": 24},
+  {"name": "hills_railroad_valley", "focusTile": [7, 11], "distance": 6, "pitch": 24},
+  {"name": "hills_lone", "focusTile": [7, 16], "distance": 5.5, "pitch": 30}
+]

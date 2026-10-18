@@ -1,7 +1,8 @@
-// The 3D parts of routes (MapRenderer.RouteParts.cs): maglev and jumplane decks and their supports, and the portal masts and
-// contact wire over electric railroads. Opaque and lit. COLOR = sRGB albedo. UV = (along, across): along is the path's arc
+// The 3D parts of routes (MapRenderer.RouteParts.cs): maglev and jumplane decks and their supports, viaducts under raised
+// ground routes, bridges, and the portal masts and contact wire over electric railroads. Opaque and lit. COLOR = sRGB albedo. UV = (along, across): along is the path's arc
 // length in pattern units (RoutePlan.PatternUnit), across the position on the deck profile in world units.
-// UV2.x = surface: 0 plain, 1 concrete with expansion joints, 2 glowing strip, 3 jumplane deck with light bars, 4 metal.
+// UV2.x = surface: 0 plain, 1 concrete with expansion joints, 2 glowing strip, 3 jumplane deck with light bars, 4 metal,
+// 5 masonry in courses, 6 timber planks.
 // UV2.y = margin at a junction (large elsewhere): how much nearer the point is to this deck's centre line than to any other
 // deck's, less RouteJunction.Yield. A deck is cut where it is negative, so overlapping decks join as one.
 // Fog tones the parts per pixel, as it does the terrain under them.
@@ -69,6 +70,27 @@ void fragment() {
 		rough = 0.6;
 		metal = 0.3;
 		specular = 0.25;
+	} else if (kind == 5) {
+		// Ashlar courses: rows by height, blocks by distance along, each row offset by half a block.
+		float course = world_pos.y / 0.016;
+		float row = floor(course);
+		float block = pattern.x / 0.034 + row * 0.5;
+		float y_px = fwidth(course), x_px = fwidth(block);
+		float joints = max(stripe(0.5 - abs(fract(course) - 0.5), 0.07, y_px), stripe(0.5 - abs(fract(block) - 0.5), 0.05, x_px));
+		joints *= 1.0 - smoothstep(0.3, 0.6, max(y_px, x_px));
+		float tint = fract(sin(dot(vec2(floor(block), row), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+		albedo *= (0.92 + tint * 0.16 + grain * 0.08) * (1.0 - joints * 0.35);
+		rough = 0.92;
+		specular = 0.12;
+	} else if (kind == 6) {
+		// Planks across the deck, with dark gaps and a fine grain along them.
+		float plank = pattern.x / 0.018;
+		float gap = stripe(0.5 - abs(fract(plank) - 0.5), 0.08, fwidth(plank)) * (1.0 - smoothstep(0.3, 0.6, fwidth(plank)));
+		float tint = fract(sin(floor(plank) * 91.7) * 43758.5453) - 0.5;
+		float fibre = periodic_noise(world_pos.xz, 160.0) - 0.5;
+		albedo *= (0.92 + tint * 0.18 + fibre * 0.12) * (1.0 - gap * 0.5);
+		rough = 0.9;
+		specular = 0.1;
 	}
 	ALBEDO = mix(albedo, fog_tone(albedo), fogged);
 	EMISSION = glow * (1.0 - fogged * 0.8);
