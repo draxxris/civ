@@ -6,6 +6,8 @@ public sealed class Registry<T> where T : class, IHasId
     private readonly SortedDictionary<string, T> _items = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _owners = new(StringComparer.Ordinal);
     private bool _frozen;
+    private Dictionary<string, T>? _lookup;
+    private IReadOnlyList<T>? _ordered;
 
     /// <summary>Human-readable registry kind for error messages.</summary>
     public string Kind { get; }
@@ -15,13 +17,13 @@ public sealed class Registry<T> where T : class, IHasId
     /// <summary>Number of registered entries.</summary>
     public int Count => _items.Count;
     /// <summary>Entries in ordinal id order.</summary>
-    public IEnumerable<T> All => _items.Values;
+    public IEnumerable<T> All => _ordered is not null ? _ordered : _items.Values;
     /// <summary>Whether an id exists.</summary>
-    public bool Contains(string id) => _items.ContainsKey(id);
+    public bool Contains(string id) => _lookup is not null ? _lookup.ContainsKey(id) : _items.ContainsKey(id);
     /// <summary>Resolve an id or throw with a registry-specific error.</summary>
-    public T Get(string id) => _items.TryGetValue(id, out var v) ? v : throw new KeyNotFoundException($"{Kind} '{id}' is not registered");
+    public T Get(string id) => TryGet(id, out var v) ? v : throw new KeyNotFoundException($"{Kind} '{id}' is not registered");
     /// <summary>Resolve an id without throwing.</summary>
-    public bool TryGet(string id, out T item) => _items.TryGetValue(id, out item!);
+    public bool TryGet(string id, out T item) => _lookup is not null ? _lookup.TryGetValue(id, out item!) : _items.TryGetValue(id, out item!);
     /// <summary>Mod that last registered or overrode an entry.</summary>
     public string OwnerOf(string id) => _owners[id];
 
@@ -44,7 +46,12 @@ public sealed class Registry<T> where T : class, IHasId
         _owners[item.Id] = modId;
     }
 
-    internal void Freeze() => _frozen = true;
+    internal void Freeze()
+    {
+        _lookup = new(_items, StringComparer.Ordinal);
+        _ordered = Array.AsReadOnly(_items.Values.ToArray());
+        _frozen = true;
+    }
 
     private void EnsureOpen()
     {

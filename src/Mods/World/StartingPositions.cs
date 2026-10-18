@@ -8,9 +8,12 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
 {
     public IReadOnlyList<TileId> Select(Simulation sim, int count)
     {
+        using var trace = Civ.Modding.StartupTrace.Phase("world starting positions");
         var tuning = Geography.Tuning(sim.Content);
+        // Selection reads an unchanged map. Reuse each tile's potential across overlapping start ranges.
+        var potentials = sim.State.Grid.Tiles.Select(t => TilePotential(sim, t, tuning)).ToArray();
         var candidates = sim.State.Grid.Tiles.Where(t => CanStart(sim, t))
-            .Select(t => (Tile: t, Score: Score(sim, t, tuning)))
+            .Select(t => (Tile: t, Score: Score(sim, t, tuning, potentials)))
             .OrderByDescending(c => c.Score).ThenBy(c => c.Tile.Value).ToArray();
         if (candidates.Length == 0) throw new InvalidOperationException("Map has no habitable starts");
 
@@ -27,6 +30,7 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
     // CvGame::normalizeStartingPlots: improve weak starts without changing land shape or existing bonuses.
     public void Normalize(Simulation sim, IReadOnlyList<TileId> starts)
     {
+        using var trace = Civ.Modding.StartupTrace.Phase("world normalize starts");
         var tuning = Geography.Tuning(sim.Content);
         int minimum = starts.Max(t => Score(sim, t, tuning)) * tuning.StartQualityPercent / 100;
         foreach (var start in starts) NormalizeStart(sim, start, minimum, tuning);
@@ -64,14 +68,12 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
             sim.Content.Get<S.YieldDef>("foundation:yield_production").HillsChange, 0);
         return checked((int)(Math.Max(0, potential.Food) * tuning.StartFoodWeight + Math.Max(0, potential.Production) * tuning.StartProductionWeight));
     }
-    private int Score(Simulation sim, TileId center, S.HexOverridesDef tuning)
+    private int Score(Simulation sim, TileId center, S.HexOverridesDef tuning, int[]? potentials = null)
     {
         int total = 0;
         foreach (var tile in sim.State.Grid.Range(center, tuning.StartOuterRadius))
         {
-
-
-            int score = TilePotential(sim, tile, tuning);
+            int score = potentials is null ? TilePotential(sim, tile, tuning) : potentials[tile.Value];
             total += sim.State.Grid.Distance(center, tile) <= tuning.StartRadius ? score * 2 : score;
         }
         if (Geography.Coast(sim.State.Grid, sim.State.Plots, sim.Content, center)) total += tuning.StartCoastWeight;

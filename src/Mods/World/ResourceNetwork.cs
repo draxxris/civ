@@ -13,6 +13,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return counts;
+        // Foreign plots can carry the network, but ConnectedBonus only counts owned sources.
+        if (!sim.State.Plots.Any(p => p.Owner == player && p.Bonus is not null)) return counts;
         foreach (var tile in Reachable(sim, player, target, peacefulForeign: true))
             if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
                 counts[bonus] = counts.GetValueOrDefault(bonus) + 1;

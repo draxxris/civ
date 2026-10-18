@@ -7,10 +7,16 @@ public sealed class ServiceRegistry
     private readonly Dictionary<Type, List<object>> _items = new();
     private readonly HashSet<(Type, string)> _ids = new();
     private bool _frozen;
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<Type, object> _views = new();
     private readonly List<string> _identities = new();
     internal IEnumerable<string> Identities => _identities;
     /// <summary>All services implementing the registered contract, in registration order.</summary>
-    public IReadOnlyList<T> Get<T>() where T : class => _items.TryGetValue(typeof(T), out var items) ? items.Cast<T>().ToArray() : [];
+    public IReadOnlyList<T> Get<T>() where T : class
+    {
+        if (!_items.TryGetValue(typeof(T), out var items)) return Array.Empty<T>();
+        if (!_frozen) return items.Cast<T>().ToArray();
+        return (IReadOnlyList<T>)_views.GetOrAdd(typeof(T), static (_, values) => Array.AsReadOnly(values.Cast<T>().ToArray()), items);
+    }
     internal void Register<T>(string id, T service, string owner) where T : class
     {
         if (_frozen) throw new InvalidOperationException("Services are frozen");

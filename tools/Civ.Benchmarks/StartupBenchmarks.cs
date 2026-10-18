@@ -1,0 +1,116 @@
+using System.Diagnostics;
+using Civ;
+using Civ.Client;
+using Civ.Content;
+using Civ.Game;
+
+/// <summary>Focused startup and interactive workloads, without multi-turn AI preparation.</summary>
+internal static class StartupBenchmarks
+{
+    public static void Run(string root, bool sweep)
+    {
+        Console.WriteLine("Startup benchmarks: first load, then one warmup and median of five samples; no timing thresholds.");
+        var catalog = MeasureOnce("Catalog first load (discovery, assemblies, content, choices)", () => GameCatalog.Load(root));
+        Console.WriteLine($"Content hash: {catalog.Content.ContentHash}");
+        Measure("Catalog rebuild (loaded assemblies, fresh content)", () => new GameCatalog(catalog.Mods),
+            c => c.Content.ContentHash);
+        foreach (string size in sweep ? new[] { "standard", "gigantic" } : new[] { "standard" })
+            foreach (ulong seed in sweep ? new ulong[] { 1, 42, 987654 } : new ulong[] { 42 })
+                RunGame(catalog, size, seed);
+    }
+
+    private static void RunGame(GameCatalog catalog, string size, ulong seed)
+    {
+        var options = catalog.DefaultOptions() with { WorldSize = "foundation:worldsize_" + size, Seed = seed };
+        var settings = options.ToSettings(catalog);
+        var map = catalog.Content.Services.Get<INewGameSetup>().Single().ResolveMap(catalog.Content, settings);
+        Console.WriteLine($"\n{size}: {map.Width}x{map.Height}; seed={seed}; players={settings.PlayerCount}");
+        var generated = Measure("World generation only", () => Generate(catalog.Content, settings, map), GeneratedHash);
+        Console.WriteLine($"Generated hash (plots + RNG): {GeneratedHash(generated)}");
+        var session = Measure("GameSession.Start (includes initial opponent AI)", () => GameSession.Start(catalog, options),
+            s => s.Sim.ComputeHash().ToString("X16"));
+        Console.WriteLine($"Session hash (state + RNG): {session.Sim.ComputeHash():X16}");
+        // Mutating workload: prepare a fresh session outside every timed founding sample.
+        session = Measure("Found city", () =>
+        {
+            var settler = session.Sim.State.Units.First(u => u.Owner == GameSession.Human
+                && session.Sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type).CanFoundCity);
+            if (!session.Submit(new FoundCityWithSettlerCommand { Player = GameSession.Human, Settler = settler.Id }))
+                throw new InvalidOperationException(session.Message);
+            return session;
+        }, s => s.Sim.ComputeHash().ToString("X16"), prepare: () => session = GameSession.Start(catalog, options));
+        var city = session.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
+        Measure("DescribeCity", () => session.DescribeCity(city) ?? throw new InvalidOperationException("Missing city"));
+        var choices = MeasureProductionChoices(session, city);
+        Console.WriteLine($"Founded hash: {session.Sim.ComputeHash():X16}; production choices={choices.Count}");
+    }
+
+    private static IReadOnlyList<ProductionChoice> MeasureProductionChoices(GameSession session, City city)
+    {
+        var save = SaveGame.Save(session.Sim);
+        ulong expectedHash = session.Sim.ComputeHash();
+        var coldSession = session;
+        var cold = Measure("ProductionChoices cold eligibility (all kinds)",
+            () => coldSession.ProductionChoices(coldSession.Sim.State.CityById(city.Id)),
+            choices => ProductionFingerprint(choices, coldSession, expectedHash),
+            prepare: () => coldSession = new GameSession(SaveGame.Load(session.Sim.Content, save)));
+        var warm = Measure("ProductionChoices warm eligibility (all kinds)", () => session.ProductionChoices(city),
+            choices => ProductionFingerprint(choices, session, expectedHash));
+        if (CanonicalJson.Digest(cold) != CanonicalJson.Digest(warm))
+            throw new InvalidOperationException("Cold and warm production choices differ");
+        return warm;
+    }
+
+    private static string ProductionFingerprint(IReadOnlyList<ProductionChoice> choices, GameSession session, ulong expectedHash)
+    {
+        if (session.Sim.ComputeHash() != expectedHash)
+            throw new InvalidOperationException("Production choices changed simulation state or RNG");
+        return CanonicalJson.Digest(choices);
+    }
+
+    private static (Plot[] Plots, ulong[] Rng) Generate(ContentDb content, SimulationSettings settings, MapSpec map)
+    {
+        var plots = Enumerable.Range(0, map.Width * map.Height).Select(_ => new Plot()).ToArray();
+        var rng = new DeterministicRng(settings.Seed);
+        content.MapGenerators.Get(settings.MapGenerator).Generate(map, plots, rng, content, settings.PlayerCount);
+        var (a, b, c, d) = rng.State;
+        return (plots, new[] { a, b, c, d });
+    }
+
+    private static string GeneratedHash((Plot[] Plots, ulong[] Rng) generated) =>
+        CanonicalJson.Digest(new { generated.Plots, generated.Rng });
+
+    private static T MeasureOnce<T>(string name, Func<T> action)
+    {
+        long allocated = GC.GetTotalAllocatedBytes(true);
+        var clock = Stopwatch.StartNew();
+        var value = action();
+        clock.Stop();
+        Console.WriteLine($"{name}: {clock.Elapsed.TotalMilliseconds:F2} ms; {(GC.GetTotalAllocatedBytes(true) - allocated) / 1048576.0:F2} MiB allocated");
+        return value;
+    }
+
+    private static T Measure<T>(string name, Func<T> action, Func<T, string>? fingerprint = null, Action? prepare = null)
+    {
+        prepare?.Invoke();
+        var value = action();
+        string? expected = fingerprint?.Invoke(value);
+        var times = new double[5];
+        var bytes = new long[5];
+        for (int i = 0; i < times.Length; i++)
+        {
+            prepare?.Invoke();
+            long allocated = GC.GetTotalAllocatedBytes(true);
+            var clock = Stopwatch.StartNew();
+            value = action();
+            clock.Stop();
+            bytes[i] = GC.GetTotalAllocatedBytes(true) - allocated;
+            times[i] = clock.Elapsed.TotalMilliseconds;
+            if (fingerprint is not null && fingerprint(value) != expected) throw new InvalidOperationException($"{name}: output changed");
+        }
+        Array.Sort(times);
+        Array.Sort(bytes);
+        Console.WriteLine($"{name}: {times[2]:F2} ms (min {times[0]:F2}, max {times[^1]:F2}); {bytes[2] / 1048576.0:F2} MiB allocated");
+        return value;
+    }
+}
