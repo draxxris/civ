@@ -32,7 +32,7 @@ public sealed record SimulationSettings
     /// <summary>Per-session game option overrides. Missing options use their ruleset defaults.</summary>
     public SortedDictionary<string, bool> GameOptions { get; init; } = new(StringComparer.Ordinal);
 
-    /// <summary>Resolve omitted identities once, before generation.
+    /// <summary>Resolve omitted identities once, before generation.</summary>
     public SimulationSettings Resolve(ContentDb content) => this with
     {
         MapGenerator = Choose(content, SetupField.MapGenerator, MapGenerator, content.MapGenerators.All.FirstOrDefault()?.Id ?? ""),
