@@ -62,6 +62,11 @@ Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `pa
 `rivers` focuses on generated river bends and mouths without changing the map.
 `peak` focuses on the first mountain, and `wrap` on the east-west seam.
 
+The `espionage` stage runs a ten-capture intelligence tour with real buttons, city selection, a spy mission, and turn advancement.
+Use `--world tiny --opponents 1 --stage espionage --screenshot /tmp/espionage.png`.
+The tour checks locks, separate player treasuries, queues, directed protection, expiry, and stale selections.
+It changes debug state between captures. It does not represent an ordinary saved game.
+
 These switches apply only to capture runs and go after `--` on the Godot command line.
 `mise run shot -- <switches>` builds and runs with them. See also `tools/shots/README.md` for worked examples.
 
