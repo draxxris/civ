@@ -235,11 +235,14 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(rng, sim.Rng.State);
     }
 
-    [Fact]
-    public void Path_queries_stay_isolated_across_concurrent_forks_and_many_destinations()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Path_queries_stay_isolated_across_shared_content_games_and_many_destinations(bool independentGames)
     {
-        var sim = Scenario(new(40, 1), game => AddUnit(game, 0, "military:worker", 0, 0));
-        var forks = Enumerable.Range(0, 3).Select(_ => sim.ForkSpeculative()).ToArray();
+        Simulation Create() => Scenario(new(40, 1), game => AddUnit(game, 0, "military:worker", 0, 0));
+        var sim = Create();
+        var forks = Enumerable.Range(0, 3).Select(_ => independentGames ? Create() : sim.ForkSpeculative()).ToArray();
         forks[1].State.Plots[1].Kind = PlotKind.Peak;
         foreach (var plot in forks[2].State.Plots) plot.Route = "world:route_route_road";
         var hash = sim.ComputeHash();
@@ -481,9 +484,9 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
-    public void Radius_queries_follow_movement_capture_death_war_and_refresh()
+    public void Radius_queries_follow_movement_capture_death_war_and_refresh_without_affecting_another_game()
     {
-        var sim = Scenario(new(14, 8, true), game =>
+        Simulation Create() => Scenario(new(14, 8, true), game =>
         {
             game.State.Turn = 60;
             game.State.SetWar(0, 1, true);
@@ -491,11 +494,23 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             AddUnit(game, 1, "military:warrior", 13, 3);
             AddUnit(game, 1, "military:settler", 1, 3);
         });
+        var sim = Create();
         var ctx = NewAi(sim, "AiContext", sim, 0);
         var threat = Method<Func<Hex, int, int>>(ctx, "ThreatAround");
         var issue = Method<Func<GameCommand, bool>>(ctx, "Issue");
         var position = HexGrid.FromOffset(0, 3);
-        void Check() => Assert.Equal(ScanThreat(sim, position, 1), threat(position, 1));
+        var isolated = Create();
+        var isolatedThreat = Method<Func<Hex, int, int>>(NewAi(isolated, "AiContext", isolated, 0), "ThreatAround");
+        int isolatedExpected = ScanThreat(isolated, position, 1);
+        var isolatedHash = isolated.ComputeHash();
+        var isolatedRng = isolated.Rng.State;
+        void Check()
+        {
+            Assert.Equal(ScanThreat(sim, position, 1), threat(position, 1));
+            Assert.Equal(isolatedExpected, isolatedThreat(position, 1));
+            Assert.Equal(isolatedHash, isolated.ComputeHash());
+            Assert.Equal(isolatedRng, isolated.Rng.State);
+        }
         Check();
         Assert.True(issue(new MoveUnitPathCommand { Player = 1, Unit = 2, Path = [HexGrid.FromOffset(12, 3)] }));
         Check();

@@ -18,10 +18,13 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Review(sim, player);
         Assert.Equal(30, Goal(sim, player, "Civic").GetProperty("EvaluatedTurn").GetInt32());
         Assert.Equal(due, Goal(sim, player, "Civic").GetProperty("ReviewTurn").GetInt32());
+        Assert.Equal(30, Campaign(sim, player).GetProperty("EvaluatedTurn").GetInt32());
+        Assert.Equal(due, Campaign(sim, player).GetProperty("ReviewTurn").GetInt32());
         var rng = sim.Rng.State;
         sim.State.Turn = due - 1;
         Review(sim, player);
         Assert.Equal(30, Goal(sim, player, "Civic").GetProperty("EvaluatedTurn").GetInt32());
+        Assert.Equal(30, Campaign(sim, player).GetProperty("EvaluatedTurn").GetInt32());
         var before = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.State.Turn = before.State.Turn = due;
         Review(sim, player); Review(before, player);
@@ -33,7 +36,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Review(sim, player); Review(before, player); Review(after, player);
         Assert.Equal(sim.ComputeHash(), before.ComputeHash());
         Assert.Equal(sim.ComputeHash(), after.ComputeHash());
-        Assert.Equal(rng, sim.Rng.State);
+        Assert.All(new[] { sim, before, after }, game => Assert.Equal(rng, game.Rng.State));
     }
 
     [Theory]
@@ -423,25 +426,48 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public void Intent_creation_continuation_and_cleanup_replay_top_level_commands_and_survive_load(bool reload, bool settler)
+    public void Intent_creation_continuation_and_cleanup_match_independent_runs_replay_and_load(bool reload, bool settler)
     {
-        var direct = settler ? Settlers() : Workers();
+        Simulation Create() => settler ? Settlers() : Workers();
+        var direct = Create();
+        var repeated = Create();
         if (reload) direct = SaveGame.Load(direct.Content, SaveGame.Save(direct));
-        for (int pass = 0; pass < 3; pass++)
+        var replayed = SaveGame.Load(direct.Content, SaveGame.Save(direct));
+        var codec = new CommandCodec(direct.Content);
+        var rng = direct.Rng.State;
+        for (int pass = 0; pass < 5; pass++)
         {
-            if (pass > 0) direct.State.Turn++;
-            if (pass == 2) direct.State.RemoveUnit(1);
-            else direct.State.UnitById(1).MovesLeft = 120;
-            var fork = direct.ForkSpeculative();
-            Review(fork);
-            Plan(fork, settler ? "SettlerPlanner" : "WorkerPlanner");
-            Apply(fork, "PruneAiIntentCommand");
-            Assert.NotEmpty(fork._recordedCommands!);
-            var codec = new CommandCodec(direct.Content);
-            foreach (var (command, _, _) in fork._recordedCommands!)
-                Assert.True(direct.TryApply(codec.Decode(codec.Encode(command)), out var error), error);
-            Assert.Equal(fork.ComputeHash(), direct.ComputeHash());
-            Assert.Equal(direct.ComputeHash(), SaveGame.Load(direct.Content, SaveGame.Save(direct)).ComputeHash());
+            foreach (var game in new[] { direct, repeated, replayed })
+            {
+                game.State.Turn = 30 + pass;
+                if (game.State.FindUnit(1) is not { } unit) continue;
+                if (pass == 4) game.State.RemoveUnit(1);
+                else unit.MovesLeft = 120;
+            }
+            var fork = replayed.ForkSpeculative();
+            fork.IsParallelAiTurn = true;
+            // Use the engine's existing replay recorder to compare actual command output, not helper calls.
+            direct._recordedCommands = []; repeated._recordedCommands = [];
+            foreach (var game in new[] { direct, repeated, fork })
+            {
+                Review(game);
+                Plan(game, settler ? "SettlerPlanner" : "WorkerPlanner");
+                Apply(game, "PruneAiIntentCommand");
+            }
+            var commands = direct._recordedCommands.Select(c => codec.Encode(c.Command)).ToArray();
+            Assert.NotEmpty(commands);
+            Assert.Equal(commands, repeated._recordedCommands.Select(c => codec.Encode(c.Command)));
+            var planned = fork._recordedCommands!;
+            Assert.Equal(commands, planned.Select(c => codec.Encode(c.Command)));
+            foreach (var (command, _, _) in planned)
+                Assert.True(replayed.TryApply(codec.Decode(codec.Encode(command)), out var error), error);
+            replayed = SaveGame.Load(direct.Content, SaveGame.Save(replayed));
+            foreach (var game in new[] { repeated, fork, replayed })
+            {
+                Assert.Equal(direct.ComputeHash(), game.ComputeHash());
+                Assert.Equal(rng, game.Rng.State);
+            }
+            Assert.Equal(rng, direct.Rng.State);
         }
     }
 
