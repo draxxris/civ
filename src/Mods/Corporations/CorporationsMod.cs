@@ -5,11 +5,14 @@ using Civ.Modding;
 
 namespace Civ.Mods.Corporations;
 
-public sealed class CorporationsMod : IMod
+public sealed class CorporationsMod : IPreparableMod
 {
+    private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations];
+
     public void Register(IModContext context)
     {
-        ContentRegistration.Load<CorporationDef>(context, "corporation.json");
+        ContentRegistration.Load(context, Corporations);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));

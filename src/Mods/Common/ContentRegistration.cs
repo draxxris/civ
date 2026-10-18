@@ -6,10 +6,10 @@ namespace Civ.Mods;
 /// <summary>Shared sidecar registration, linked into each independent mod assembly.</summary>
 internal static class ContentRegistration
 {
-    public static void Load<T>(IModContext context, string file) where T : ContentDef
+    public static void Load<T>(IModContext context, ModJsonFile<T[]> file) where T : ContentDef
     {
         var registry = context.Content<T>();
-        foreach (var definition in context.Data.ReadJson<T[]>("data/" + file)) registry.Register(definition);
+        foreach (var definition in file.Read(context.Data)) registry.Register(definition);
     }
 
     public static void Evaluator<T>(IModContext context, string kind, Func<Requirement.Leaf, RequirementContext, bool>? predicate = null) where T : ContentDef =>
