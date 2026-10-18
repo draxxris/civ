@@ -21,6 +21,7 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
         var root = new Node3D();
         var batches = new List<Batch>();
         AddChild(root);
+        RenderStats.CountScatter(chunk, instances, KeepProp);
         // Keep deterministic spatial thinning without changing the planner's density/blending contract.
         // Measured on the huge-map FPS probe: half density keeps the default camera above 20 FPS. Tree sets keep two
         // thirds so forests read as dense groves; re-check the probe if forest-heavy maps drop frames.
@@ -57,6 +58,11 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
 
     private static readonly HashSet<string> TreeSets = new(StringComparer.Ordinal) { "forest", "forest_snow", "jungle" };
 
+    /// <summary>Fraction of tree-set candidates drawn. The rest are thinned deterministically to protect the frame rate.</summary>
+    public static double TreeKeep { get; set; } = 2.0 / 3.0;
+    /// <summary>Fraction of all other candidates (rocks, ...) drawn.</summary>
+    public static double OtherKeep { get; set; } = 0.5;
+
     private static bool KeepProp(ScatterInstance instance)
     {
         // Explicit integer mixing is stable across processes and independent of candidate order or count.
@@ -68,7 +74,7 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
         hash ^= hash >> 16;
         hash = unchecked(hash * 0x7feb352du);
         hash ^= hash >> 15;
-        return TreeSets.Contains(instance.Set) ? hash % 3 != 0 : (hash & 1) == 0;
+        return hash % 10000 < (TreeSets.Contains(instance.Set) ? TreeKeep : OtherKeep) * 10000;
     }
 
     /// <summary>Fog changes only colours, not candidates, transforms, model loads or wrap copies.</summary>

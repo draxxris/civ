@@ -1,44 +1,8 @@
+using System.Text.Json;
+using Civ.Client.Terrain;
 using Godot;
 
 namespace Civ.Client;
-
-/// <summary>Command-line switches for automated screenshots (after <c>--</c> on the Godot command line).</summary>
-internal sealed record DebugOptions
-{
-    public string? ScreenshotPath { get; private init; }
-    public string Stage { get; private init; } = "setup";
-    public int Frames { get; private init; } = 60;
-    public int Turns { get; private init; }
-    public string World { get; private init; } = "";
-    public int Opponents { get; private init; } = 3;
-    public ulong Seed { get; private init; } = 1;
-    public bool Reveal { get; private init; }
-    public float Zoom { get; private init; }
-    public int TerrainDebug { get; private init; }
-    public bool FpsProbe { get; private init; }
-
-    public static DebugOptions Parse(string[] args)
-    {
-        string Value(string name, string fallback) { int i = Array.IndexOf(args, name); return i >= 0 && i + 1 < args.Length ? args[i + 1] : fallback; }
-        return new DebugOptions
-        {
-            ScreenshotPath = Value("--screenshot", ""), Stage = Value("--stage", "setup"), Frames = int.Parse(Value("--frames", "60")),
-            Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), Opponents = int.Parse(Value("--opponents", "3")),
-            Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
-            TerrainDebug = int.Parse(Value("--terrain-debug", "0")), FpsProbe = args.Contains("--fps-probe"),
-        }.Normalized();
-    }
-
-    public DebugOptions ForScreenshot(string stage) => this with
-    {
-        ScreenshotPath = ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{stage}.png"),
-        Stage = stage, Frames = 90, Turns = stage == "city" ? 3 : 0,
-        Reveal = stage is "world" or "path" or "terrain" or "rivers",
-        Zoom = stage == "map" ? -10 : stage == "world" ? 18 : stage == "terrain" ? -7 : stage == "rivers" ? -8 : 0,
-    };
-
-    private DebugOptions Normalized() => ScreenshotPath is { Length: 0 } ? this with { ScreenshotPath = null } : this;
-}
 
 /// <summary>Godot entry point: loads the mods once, shows the setup screen, then the game. All rules live in the mods and Client.Core.</summary>
 public partial class Main : Node3D
@@ -54,9 +18,18 @@ public partial class Main : Node3D
     private GameView? _game;
     private int _framesSinceReady = -1;
     private FpsProbe? _fpsProbe;
+    private List<ShotSpec>? _shots;
+    private int _shotIndex;
+    private string? _shotPath;
+    private string _shotName = "";
+    private Hex? _scenarioFocus;
 
     public override void _Ready()
     {
+        TerrainRenderer.Tuning = new TerrainTuning().WithOverrides(_debug.Tuning);
+        TerrainRenderer.ScatterDensityScale = _debug.ScatterDensityScale;
+        if (_debug.TreeKeep is { } tree) ScatterRenderer.TreeKeep = tree;
+        if (_debug.OtherKeep is { } other) ScatterRenderer.OtherKeep = other;
         if (_debug.FpsProbe)
         {
             if (DisplayServer.GetName() == "headless")
@@ -166,6 +139,7 @@ public partial class Main : Node3D
         AddChild(_game);
         if (_debug.Zoom != 0) _game.DebugZoom(_debug.Zoom);
         FocusTerrainScreenshot(session);
+        ApplyCaptureOptions(session);
         if (_debug.Stage == "path") _game.ForceHover(PathTarget(session));
         OpenDebugPanel();
         if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
@@ -176,6 +150,58 @@ public partial class Main : Node3D
             GD.Print($"FPS probe focus: {focus}; revealed huge map, seed {_debug.Seed}.");
             _fpsProbe = new FpsProbe(() => _game.DebugZoom(100));
         }
+    }
+
+    /// <summary>Command-line scene options: clean view, focus, camera pose, wireframe and the shot list.</summary>
+    private void ApplyCaptureOptions(GameSession session)
+    {
+        if (_debug.ScreenshotPath == null) return;
+        if (_debug.Clean) _game!.SetClean();
+        if (_scenarioFocus is { } scene) _game!.DebugFocus(MapRenderer.PositionOf(scene));
+        if (FocusHex(session, _debug.Focus, _debug.FocusTile is { } t ? new[] { t.Col, t.Row } : null) is { } focus) _game!.DebugFocus(MapRenderer.PositionOf(focus));
+        _game!.DebugView(_debug.Pitch, _debug.Yaw, _debug.Distance);
+        if (_debug.Wireframe) _game.Terrain.SetWireframe(true);
+        _shotPath = _debug.ScreenshotPath;
+        _shotName = System.IO.Path.GetFileNameWithoutExtension(_shotPath);
+        if (_debug.ShotsFile == null) return;
+        _shots = ShotSpec.Load(_debug.ShotsFile);
+        _shotIndex = 0;
+        ApplyShot(session, _shots[0]);
+    }
+
+    private Hex? FocusHex(GameSession session, string? kind, int[]? tile)
+    {
+        var grid = session.Sim.State.Grid;
+        if (tile is { Length: 2 }) return grid.HexOf(grid.TileAt(tile[0], tile[1]));
+        if (kind == null) return null;
+        var hex = DebugFocusFinder.Find(session, kind);
+        if (hex == null) GD.PushWarning($"--focus {kind}: nothing of that kind on this map; try another --seed or a --scenario.");
+        else GD.Print($"focus {kind}: {hex}");
+        return hex;
+    }
+
+    private void ApplyShot(GameSession session, ShotSpec shot)
+    {
+        _shotName = shot.Name;
+        _shotPath = _debug.PathFor(shot.Name);
+        if (FocusHex(session, shot.Focus, shot.FocusTile) is { } focus) _game!.DebugFocus(MapRenderer.PositionOf(focus));
+        _game!.DebugView(shot.Pitch, shot.Yaw, shot.Distance);
+        if (shot.TerrainDebug != null) _game.Terrain.SetDebugMode(DebugOptions.ParseTerrainDebug(shot.TerrainDebug));
+        if (shot.Wireframe is { } wire) _game.Terrain.SetWireframe(wire);
+    }
+
+    private void WriteStats(string path)
+    {
+        var terrain = _game!.Terrain;
+        var stats = new Dictionary<string, object?>
+        {
+            ["name"] = _shotName, ["seed"] = _debug.Seed, ["fps"] = Engine.GetFramesPerSecond(),
+            ["tuning_overrides"] = _debug.Tuning, ["scatter"] = RenderStats.Scatter(),
+            ["triangles"] = _game.Map.TriangleCounts(), ["heights"] = RenderStats.Heights(terrain.Snapshot, terrain.Field),
+        };
+        var json = JsonSerializer.Serialize(stats, new JsonSerializerOptions { WriteIndented = true });
+        System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, ".json"), json);
+        GD.Print($"stats {_shotName}: {JsonSerializer.Serialize(stats)}");
     }
 
     /// <summary>Terrain inspection views: a mountain close-up or the actual east-west wrap line at x = 0.</summary>
@@ -215,6 +241,8 @@ public partial class Main : Node3D
         if (_debug.FpsProbe) { RevealEverything(session); return; }
         if (_debug.ScreenshotPath == null) return;
         if (_debug.Reveal) RevealEverything(session);
+        if (_debug.ScenarioFile != null) _scenarioFocus = DebugScenario.Apply(session, _debug.ScenarioFile);
+        else if (_debug.CustomScene) foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
         if (_debug.Stage == "terrain") TerrainShowcase.Prepare(session);
         if (_debug.Stage == "rivers")
         {
@@ -264,10 +292,17 @@ public partial class Main : Node3D
     {
         _framesSinceReady = -1;
         var image = GetViewport().GetTexture().GetImage();
-        var path = System.IO.Path.GetFullPath(_debug.ScreenshotPath!);
+        var path = System.IO.Path.GetFullPath(_shotPath ?? _debug.ScreenshotPath!);
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
         var error = image.SavePng(path);
         GD.Print($"screenshot {path}: {error}");
+        if (error == Error.Ok && _debug.Stats && _game != null) WriteStats(path);
+        if (error == Error.Ok && _shots != null && ++_shotIndex < _shots.Count)
+        {
+            ApplyShot(_game!.Session, _shots[_shotIndex]);
+            _framesSinceReady = 0;
+            return;
+        }
         if (error == Error.Ok && _screenshotStages.Count > 0)
         {
             _game?.QueueFree();

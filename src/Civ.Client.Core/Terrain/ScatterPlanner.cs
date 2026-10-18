@@ -15,6 +15,9 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     private const double Spacing = 0.2;
     /// <summary>Props keep this far from river banks, so no trunk stands in the water.</summary>
     private const double RiverMargin = 0.05;
+    /// <summary>Multiplier on every appearance's scatter density (rocks excluded); a debug knob, 1 in normal play.</summary>
+    public double DensityScale { get; init; } = 1;
+
     private readonly Dictionary<(string Feature, string Terrain), (string? Set, double Density)> _appearances = new();
     private readonly Dictionary<string, int> _modelCounts = new(StringComparer.Ordinal);
     private readonly record struct Contributor(string Set, double Weight);
@@ -72,7 +75,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
             if (weights[k] <= 0) continue;
             int tile = snapshot.ClampedTile(tri[k]);
             var (set, density) = Appearance(snapshot.Feature[tile], snapshot.Terrain[tile], palette);
-            if (set != null && ModelCount(set) > 0) contributors.Add(new(set, weights[k] * density));
+            if (set != null && ModelCount(set) > 0) contributors.Add(new(set, weights[k] * density * DensityScale));
             double rocks = RockDensity(snapshot.Relief[tile], field, x, y, z);
             if (rocks > 0 && ModelCount("rocks") > 0) contributors.Add(new("rocks", weights[k] * rocks));
         }

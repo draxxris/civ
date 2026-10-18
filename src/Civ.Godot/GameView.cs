@@ -23,6 +23,23 @@ internal sealed partial class GameView : Node3D
 
     public void DebugFocus(Vector3 world) => _camera.FocusOn(world);
 
+    public void DebugView(float? pitch, float? yaw, float? distance) => _camera.SetView(pitch, yaw, distance);
+
+    public TerrainRenderer Terrain => _map.Terrain;
+    public MapRenderer Map => _map;
+
+    /// <summary>Capture aid: hide the HUD, tooltips, hover and path previews, units, cities and labels.</summary>
+    public void SetClean()
+    {
+        _clean = true;
+        _ui.Visible = false;
+        _map.Clean = true;
+        _map.ShowHover(null);
+        _map.ShowPath(null, null);
+    }
+
+    private bool _clean;
+
     private Hex? _forcedHover;
 
     public void ForceHover(Hex? hex) => _forcedHover = hex;
@@ -87,6 +104,7 @@ internal sealed partial class GameView : Node3D
 
     private void UpdateHover()
     {
+        if (_clean) return;
         var mouse = GetViewport().GetMousePosition();
         Hex? hex = HoveredHex(mouse);
         if (hex == _hover && _hoverRevision == _session.Revision) { _ui.MoveHoverTip(mouse); return; }

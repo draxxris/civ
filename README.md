@@ -13,6 +13,8 @@ dotnet build src/Civ.Godot
 godot-mono --path src/Civ.Godot      # Godot 4.7.2 .NET editor/runtime
 ```
 
+For gameplay and renderer details, see [src/Civ.Godot/README.md](src/Civ.Godot/README.md). For screenshot and visual-debug workflows, see [tools/shots/README.md](tools/shots/README.md).
+
 `godot-mono` is a mise shim for `github:godotengine/godot@4.7.2-stable` (`Godot_v4.7.2-stable_mono_linux_x86_64.zip`, renamed). Mise resolves it only from inside this repo, and mise sets `DOTNET_ROOT` for it. Without `DOTNET_ROOT`, Godot cannot find the .NET host and does not exit.
 
 Smoke test (after `dotnet build src/Civ.Godot`; exits 0 after 200 frames): `xvfb-run -a godot-mono --headless --path src/Civ.Godot --quit-after 200`
