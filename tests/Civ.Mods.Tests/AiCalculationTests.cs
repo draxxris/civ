@@ -45,6 +45,222 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Military_orders_preserve_decisions_hash_and_rng(bool inWave, bool reload)
+    {
+        var sim = Scenario(new(12, 8, true), game =>
+        {
+            game.State.Turn = 60;
+            GameFactory.NeutralPolitics(game);
+            var city = AddCity(game, 0, 6, 3);
+            city.ProductionQueue.Add(new("economy:process", "economy:process_wealth"));
+            AddUnit(game, 0, "military:warrior", 5, 3);
+            AddUnit(game, 0, "military:warrior", 7, 3);
+            AddUnit(game, 0, "military:warrior", 6, 6);
+            var blocked = AddUnit(game, 0, "military:warrior", 0, 0);
+            foreach (var tile in game.State.Grid.Neighbors(game.State.Grid.TileAt(blocked.Position)))
+                game.State.Plots[tile.Value].Kind = PlotKind.Peak;
+        });
+        if (reload) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+        sim.IsParallelAiTurn = inWave;
+        var rng = sim.Rng.State;
+        var log = new MovementLog();
+        sim.CommandObserver = log;
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var army = NewAi(sim, "ArmyPlan", ctx);
+        var cities = NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), army);
+        Call(cities, "Plan");
+        var attack = NewAi(sim, "AttackPlanner", ctx, NewAi(sim, "UnitOrders", ctx));
+        Call(NewAi(sim, "MilitaryPlanner", ctx, army, cities, attack), "Plan");
+        Assert.Equal(new[] { 1, 2, 3 }, log.Units);
+        Assert.Equal(new[] { 1, 2 }, sim.State.UnitsAt(sim.State.CityById(1).Position).Select(u => u.Id));
+        // Recorded on the original implementation, without advancing simulation turns.
+        Assert.Equal(14374588987283294578UL, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void Path_queries_preserve_steps_costs_and_state_at_blocked_wrap_seams(bool wrap, bool blocked)
+    {
+        var sim = Scenario(new(6, 1, wrap), game =>
+        {
+            AddUnit(game, 0, "military:worker", 0, 0);
+            game.State.Plots[2].Kind = PlotKind.Hills;
+            if (blocked) game.State.Plots[3].Kind = PlotKind.Peak;
+        });
+        var unit = sim.State.UnitById(1);
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var query = Method<Func<Unit, Hex, bool, UnitPath?>>(ctx, "FindPath");
+        var hash = sim.ComputeHash();
+        var rng = sim.Rng.State;
+        // First access includes simultaneous identical queries and normalized aliases of the same destination.
+        Parallel.For(0, 24, i =>
+        {
+            var target = new Hex(5 + (wrap ? (i % 3 - 1) * 6 : 0), 0);
+            var path = query(unit, target, false);
+            if (!wrap && blocked) { Assert.Null(path); return; }
+            Assert.NotNull(path);
+            Assert.Equal((wrap ? new[] { 5 } : new[] { 1, 2, 3, 4, 5 }).Select(t => new Hex(t, 0)), path.Steps);
+            Assert.Equal(wrap ? 120 : 720, path.Cost);
+            Assert.Null(sim.Content.Services.Get<IMovementService>().Single().ValidatePath(sim, 0, unit.Id, path.Steps));
+        });
+        Assert.Null(query(unit, new(5, -1), false));
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Fact]
+    public void Path_queries_keep_unit_specific_costs_domains_and_promotions()
+    {
+        var sim = Scenario(new(4, 1), game =>
+        {
+            AddUnit(game, 0, "military:worker", 0, 0);
+            var warrior = AddUnit(game, 0, "military:warrior", 0, 0);
+            warrior.Promotions.Add("military:guerilla1");
+            warrior.Experience = 10;
+            AddUnit(game, 0, "military:galley", 3, 0);
+            game.State.Plots[1].Kind = PlotKind.Hills;
+            game.State.Plots[3].Terrain = "world:coast";
+        });
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var query = Method<Func<Unit, Hex, bool, UnitPath?>>(ctx, "FindPath");
+        var target = new Hex(2, 0);
+        var rng = sim.Rng.State;
+        Parallel.For(0, 24, i =>
+        {
+            var unit = sim.State.UnitById(i % 3 + 1);
+            var path = query(unit, target, false);
+            if (unit.Id == 3) { Assert.Null(path); return; }
+            Assert.NotNull(path);
+            Assert.Equal(new[] { new Hex(1, 0), target }, path.Steps);
+            Assert.Equal(unit.Id == 1 ? 360 : 240, path.Cost);
+        });
+        Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(new PromoteMilitaryUnitCommand
+            { Player = 0, Unit = 2, Promotion = "military:guerilla2" }));
+        Assert.Equal(180, query(sim.State.UnitById(2), target, false)!.Cost);
+        Assert.Equal(360, query(sim.State.UnitById(1), target, false)!.Cost);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Fact]
+    public void Path_queries_refresh_unreachable_results_after_commands_movement_and_direct_changes()
+    {
+        var sim = Scenario(new(7, 1), game =>
+        {
+            game.State.SetWar(0, 1, true);
+            AddUnit(game, 0, "military:worker", 0, 0);
+            AddUnit(game, 1, "military:warrior", 2, 0);
+        });
+        sim.State.Plots[2].Visible.Add(sim.TeamOf(0).Id);
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var query = Method<Func<Unit, Hex, bool, UnitPath?>>(ctx, "FindPath");
+        var issue = Method<Func<GameCommand, bool>>(ctx, "Issue");
+        var worker = sim.State.UnitById(1);
+        var target = new Hex(6, 0);
+        var rng = sim.Rng.State;
+        Assert.Null(query(worker, target, false));
+        Assert.Null(query(worker, target, false));
+        Assert.True(issue(new DisbandUnitCommand { Player = 1, Unit = 2 }));
+        Assert.Equal(720, query(worker, target, false)!.Cost);
+        foreach (int step in new[] { 1, 2 })
+        {
+            Assert.True(issue(new MoveUnitPathCommand { Player = 0, Unit = 1, Path = [new(step, 0)] }));
+            var path = query(worker, target, false);
+            Assert.NotNull(path);
+            Assert.Equal(Enumerable.Range(step + 1, 6 - step).Select(t => new Hex(t, 0)), path.Steps);
+            Assert.Equal((6 - step) * 120, path.Cost);
+        }
+        Assert.Equal(0, worker.MovesLeft);
+        Assert.False(Method<Func<Unit, Hex, bool, bool>>(ctx, "MoveToward")(worker, target, false));
+        sim.State.Plots[3].Kind = PlotKind.Peak;
+        Call(ctx, "Refresh");
+        Assert.Null(query(worker, target, false));
+        sim.State.Plots[3].Kind = PlotKind.Flat;
+        foreach (var plot in sim.State.Plots) plot.Route = "world:route_route_road";
+        Call(ctx, "Refresh");
+        Assert.Equal(240, query(worker, target, false)!.Cost);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Path_queries_distinguish_attack_endpoints_from_ordinary_steps(bool attackFirst)
+    {
+        var sim = Scenario(new(5, 1), game =>
+        {
+            game.State.SetWar(0, 1, true);
+            AddUnit(game, 0, "military:warrior", 0, 0);
+            AddUnit(game, 1, "military:settler", 3, 0);
+        });
+        sim.State.Plots[3].Visible.Add(sim.TeamOf(0).Id);
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var query = Method<Func<Unit, Hex, bool, UnitPath?>>(ctx, "FindPath");
+        var unit = sim.State.UnitById(1);
+        var target = new Hex(3, 0);
+        var rng = sim.Rng.State;
+        foreach (bool attack in new[] { attackFirst, !attackFirst, attackFirst })
+        {
+            var path = query(unit, target, attack);
+            if (!attack) { Assert.Null(path); continue; }
+            Assert.NotNull(path);
+            Assert.Equal(new[] { new Hex(1, 0), new Hex(2, 0), target }, path.Steps);
+            Assert.Equal(360, path.Cost);
+            Assert.Null(sim.Content.Services.Get<IMovementService>().Single().ValidatePath(sim, 0, unit.Id, path.Steps));
+        }
+        // An attack endpoint cannot become an intermediate step on a path beyond the hostile unit.
+        Assert.Null(query(unit, new(4, 0), true));
+        var state = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
+        state.Attacked = true;
+        Call(ctx, "Refresh");
+        Assert.Null(query(unit, target, true));
+        state.Attacked = false;
+        Call(ctx, "Refresh");
+        Assert.True((bool)Call(NewAi(sim, "UnitOrders", ctx), "Approach", unit, target)!);
+        Assert.Equal(new Hex(1, 0), unit.Position);
+        Assert.Equal(1, sim.State.UnitById(2).Owner);
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Fact]
+    public void Path_queries_stay_isolated_across_concurrent_forks_and_many_destinations()
+    {
+        var sim = Scenario(new(40, 1), game => AddUnit(game, 0, "military:worker", 0, 0));
+        var forks = Enumerable.Range(0, 3).Select(_ => sim.ForkSpeculative()).ToArray();
+        forks[1].State.Plots[1].Kind = PlotKind.Peak;
+        foreach (var plot in forks[2].State.Plots) plot.Route = "world:route_route_road";
+        var hash = sim.ComputeHash();
+        var rng = sim.Rng.State;
+        Parallel.For(0, forks.Length, i =>
+        {
+            var fork = forks[i];
+            var before = fork.ComputeHash();
+            var ctx = NewAi(fork, "AiContext", fork, 0);
+            var query = Method<Func<Unit, Hex, bool, UnitPath?>>(ctx, "FindPath");
+            var unit = fork.State.UnitById(1);
+            // More distinct queries than retained entries, then revisit them in reverse order.
+            foreach (int destination in Enumerable.Range(1, 39).Concat(Enumerable.Range(1, 39).Reverse()))
+            {
+                var path = query(unit, new(destination, 0), false);
+                if (i == 1) { Assert.Null(path); continue; }
+                Assert.NotNull(path);
+                Assert.Equal(Enumerable.Range(1, destination).Select(t => new Hex(t, 0)), path.Steps);
+                Assert.Equal(destination * (i == 2 ? 60 : 120), path.Cost);
+            }
+            Assert.Equal(before, fork.ComputeHash());
+            Assert.Equal(rng, fork.Rng.State);
+        });
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+    }
+
+    [Theory]
     [InlineData(11, false)]
     [InlineData(11, true)]
     [InlineData(2, true)]
@@ -312,6 +528,17 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.AddUnit(unit);
         sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
         return unit;
+    }
+
+    private sealed class MovementLog : ICommandObserver
+    {
+        public List<int> Units { get; } = [];
+        public void Before(Simulation sim, GameCommand command)
+        {
+            if (command is MoveUnitPathCommand move) Units.Add(move.Unit);
+        }
+        public void After(Simulation sim, GameCommand command) { }
+        public void Rejected(Simulation sim, GameCommand command) { }
     }
 
     // Mods load from their shipped payloads. Exercise their internal query owners without exporting test hooks.

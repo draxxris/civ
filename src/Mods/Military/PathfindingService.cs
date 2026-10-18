@@ -12,20 +12,20 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
         if (SeparateLandAreas(sim, unit, start, goal)) return null;
         long minimumStep = MinimumStep(sim);
         var query = movement.Query(sim, unit);
-        var costs = new Dictionary<TileId, long> { [start] = 0 };
-        var parents = new Dictionary<TileId, TileId>();
+        // Cost and parent share one per-search table. No mutable buffers live on the shared service.
+        var reached = new Dictionary<TileId, (long Cost, TileId Parent)> { [start] = (0, start) };
         var open = new PriorityQueue<TileId, (long Estimate, long Cost, int Tile)>();
         open.Enqueue(start, (minimumStep * grid.Distance(start, goal), 0, start.Value));
         while (open.TryDequeue(out var current, out var priority))
         {
-            if (priority.Cost != costs[current]) continue;
-            if (current == goal) return Build(grid, start, goal, parents, costs[goal]);
+            if (priority.Cost != reached[current].Cost) continue;
+            if (current == goal) return Build(grid, start, goal, reached, priority.Cost);
             foreach (var next in grid.Neighbors(current))
             {
                 if (query.CanEnter(current, next, attack && next == goal) is not null) continue;
-                long cost = costs[current] + query.StepCost(current, next);
-                if (costs.TryGetValue(next, out var previous) && previous <= cost) continue;
-                costs[next] = cost; parents[next] = current;
+                long cost = priority.Cost + query.StepCost(current, next);
+                if (reached.TryGetValue(next, out var previous) && previous.Cost <= cost) continue;
+                reached[next] = (cost, current);
                 // A lower bound on actual sub-move cost keeps A* admissible without degenerating into Dijkstra.
                 open.Enqueue(next, (cost + minimumStep * grid.Distance(next, goal), cost, next.Value));
             }
@@ -49,10 +49,11 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
         return minimum;
     }
 
-    private static UnitPath Build(HexGrid grid, TileId start, TileId goal, IReadOnlyDictionary<TileId, TileId> parents, long cost)
+    private static UnitPath Build(HexGrid grid, TileId start, TileId goal,
+        IReadOnlyDictionary<TileId, (long Cost, TileId Parent)> reached, long cost)
     {
         var steps = new List<Hex>();
-        for (var tile = goal; tile != start; tile = parents[tile]) steps.Add(grid.HexOf(tile));
+        for (var tile = goal; tile != start; tile = reached[tile].Parent) steps.Add(grid.HexOf(tile));
         steps.Reverse(); return new(steps.AsReadOnly(), cost);
     }
 }

@@ -55,13 +55,13 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         int area = ctx.Sim.State.PlotAt(view.City.Position).AreaId;
         var candidates = Soldiers().Where(u => ctx.Role(u) == UnitRole.Melee && !ctx.Done.Contains(u.Id) && u.MovesLeft > 0 && u.Position != view.City.Position)
             .Where(u => ctx.Sim.State.PlotAt(u.Position).AreaId == area).ToArray();
-        var pathfinding = ctx.Service<IPathfindingService>();
-        var paths = ParallelScoring.Select(ctx.Sim, candidates, ParallelPaths, u => pathfinding.FindPath(ctx.Sim, u.Id, view.City.Position));
+        var paths = ParallelScoring.Select(ctx.Sim, candidates, ParallelPaths, u => ctx.FindPath(u, view.City.Position));
         var pick = candidates.Select((u, i) => (Unit: u, Path: paths[i])).Where(x => x.Path is not null)
-            .OrderByDescending(x => ReinforcementValue(x.Unit, x.Path!, view)).ThenBy(x => x.Unit.Id).Select(x => x.Unit).FirstOrDefault();
-        if (pick is null) return false;
-        ctx.Done.Add(pick.Id);
-        ctx.MoveToward(pick, view.City.Position);
+            .OrderByDescending(x => ReinforcementValue(x.Unit, x.Path!, view)).ThenBy(x => x.Unit.Id).FirstOrDefault();
+        if (pick.Unit is null) return false;
+        ctx.Done.Add(pick.Unit.Id);
+        // No mutation separates reachability, cost selection and this command: carry the selected route too.
+        ctx.Issue(new MoveUnitPathCommand { Player = ctx.PlayerId, Unit = pick.Unit.Id, Path = pick.Path!.Steps.ToArray() });
         return true;
     }
 

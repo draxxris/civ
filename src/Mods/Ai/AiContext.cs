@@ -25,6 +25,8 @@ internal sealed class AiContext
         public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Threats = new();
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
         public readonly ConcurrentDictionary<TileId, City?> NearestCities = new();
+        private readonly Dictionary<(int Unit, TileId Goal, bool Attack), Lazy<UnitPath?>> _paths = new();
+        private readonly object _pathsLock = new();
 
         public Segment(AiContext ctx)
         {
@@ -38,6 +40,26 @@ internal sealed class AiContext
                 .GroupBy(o => ctx.Catalog.Roles.GetValueOrDefault(o.ContentId)).ToDictionary(g => g.Key, g => g.Count()));
             ThreatStrength = new(() => BuildThreatStrength(ctx, Enemies.Value));
             Targets = new(() => new CampaignTargets(ctx));
+        }
+
+        public UnitPath? FindPath(AiContext ctx, Unit unit, TileId goal, bool attack)
+        {
+            // This segment fixes the entire unit and world state, not a partial movement fingerprint.
+            var key = (unit.Id, goal, attack);
+            UnitPath? Search() => ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, ctx.Grid.HexOf(goal), attack);
+            Lazy<UnitPath?>? path;
+            lock (_pathsLock)
+            {
+                // Retain only queried destinations: eight per owned unit, capped at 256 per segment.
+                int limit = (int)Math.Min(256L, Math.Max(1L, Units.Value.Count) * 8);
+                if (!_paths.TryGetValue(key, out path) && _paths.Count < limit)
+                {
+                    path = new(Search);
+                    _paths.Add(key, path);
+                }
+            }
+            // Search outside the lock. Lazy also reuses null results and coalesces concurrent identical queries.
+            return path is null ? Search() : path.Value;
         }
 
         private static int[] BuildThreatStrength(AiContext ctx, IEnumerable<Unit> enemies)
@@ -127,11 +149,15 @@ internal sealed class AiContext
         tile => Cities.OrderBy(c => Grid.Distance(Tile(c.Position), tile)).ThenBy(c => c.Id).FirstOrDefault());
     public MilitaryUnitState MilitaryState(Unit unit) => unit.Extensions.Get<MilitaryUnitState>(Sim.Content) ?? new();
 
+    /// <summary>Exact path query in the unchanged segment. Direct mutations require Refresh before the next query.</summary>
+    public UnitPath? FindPath(Unit unit, Hex target, bool attack = false) => Grid.TryTile(target, out var goal)
+        ? _segment.FindPath(this, unit, goal, attack) : null;
+
     /// <summary>Move along a pathfinder route, truncated to the current turn by the movement rules themselves.</summary>
     public bool MoveToward(Unit unit, Hex target, bool attack = false)
     {
         if (unit.MovesLeft <= 0 || unit.Position == target) return false;
-        var path = Service<IPathfindingService>().FindPath(Sim, unit.Id, target, attack);
+        var path = FindPath(unit, target, attack);
         if (path is null || path.Steps.Count == 0) return false;
         return Issue(new MoveUnitPathCommand { Player = PlayerId, Unit = unit.Id, Path = path.Steps.ToArray() });
     }

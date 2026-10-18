@@ -91,7 +91,7 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
     private bool CanReachThisTurn(Unit unit, Hex hex)
     {
         if (unit.Position == hex) return true;
-        var path = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, hex);
+        var path = ctx.FindPath(unit, hex);
         // A slow unit may finish beside the city; the wave then waits until the next turn.
         return path is not null && path.Cost <= unit.MovesLeft;
     }
@@ -102,8 +102,7 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         var tiles = ctx.Grid.Ring(ctx.Tile(target.Position), 2).Where(_targets.Land)
             .Where(t => ctx.Sim.State.Plots[t.Value].AreaId == _targets.Area(leader.Position))
             .OrderBy(t => ctx.Grid.Distance(ctx.Tile(leader.Position), t)).ThenBy(t => t.Value).ToArray();
-        var pathfinding = ctx.Service<IPathfindingService>();
-        return FirstReachable(tiles, force, (u, hex) => u.Position == hex || pathfinding.FindPath(ctx.Sim, u.Id, hex) is not null)
+        return FirstReachable(tiles, force, (u, hex) => u.Position == hex || ctx.FindPath(u, hex) is not null)
             ?? leader.Position;
     }
 }

@@ -117,7 +117,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
             foreach (var tile in ctx.Grid.Neighbors(ctx.Tile(beach)).Where(_targets.Water))
             {
                 var sea = ctx.Grid.HexOf(tile);
-                var path = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, transport.Id, sea);
+                var path = ctx.FindPath(transport, sea);
                 if (path is not null) options.Add((sea, beach, path.Cost));
             }
         }
