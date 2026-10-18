@@ -12,7 +12,10 @@ namespace Civ.Client;
 ///   "roads": [ [[2, 2], [3, 2], [4, 3]] ],
 ///   "focus": [5, 5] }
 /// </code>
-/// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner.
+/// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner, city.
+/// City example: "city": {"owner":0,"name":"Testburg","population":5,"buildings":["walls"]}.
+/// City requires owner and name; population defaults to 1 and buildings to empty. It clears the plot improvement and sets its owner.
+/// Unknown building ids fail with the id in the error. Existing cities on the same tile fail rather than overlap.
 /// Empty strings clear feature, improvement, bonus or route. Improvement, bonus and route accept full ids or short names such as "cottage", "copper" and "road". Positions are (column, row).
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
@@ -23,14 +26,15 @@ internal static class DebugScenario
         var state = session.Sim.State;
         var root = doc.RootElement;
         if (root.TryGetProperty("fill", out var fill))
-            foreach (var plot in state.Plots)
+            foreach (var tile in state.Grid.Tiles)
             {
+                var plot = state.Plots[tile.Value];
                 plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.IsLake = false;
-                Edit(session, plot, fill);
+                Edit(session, tile, fill);
             }
         if (root.TryGetProperty("tiles", out var tiles))
             foreach (var entry in tiles.EnumerateArray())
-                foreach (var tile in Targets(session, entry)) Edit(session, state.Plots[tile.Value], entry);
+                foreach (var tile in Targets(session, entry)) Edit(session, tile, entry);
         if (root.TryGetProperty("roads", out var roads))
         {
             string route = RouteId(session, "road");
@@ -52,8 +56,9 @@ internal static class DebugScenario
                 if (grid.TryTile(col, row, out var id)) yield return id;
     }
 
-    private static void Edit(GameSession session, Plot plot, JsonElement e)
+    private static void Edit(GameSession session, TileId tile, JsonElement e)
     {
+        var plot = session.Sim.State.Plots[tile.Value];
         if (e.TryGetProperty("terrain", out var terrain))
         {
             // Fail now, with the id, rather than later in the renderer.
@@ -68,9 +73,30 @@ internal static class DebugScenario
         if (e.TryGetProperty("river", out var river)) plot.RiverEdges = (byte)river.GetInt32();
         if (e.TryGetProperty("lake", out var lake)) plot.IsLake = lake.GetBoolean();
         if (e.TryGetProperty("owner", out var owner)) plot.Owner = owner.GetInt32();
+        if (e.TryGetProperty("city", out var city)) AddCity(session, tile, city);
     }
-    private static string? Empty(string? s) => string.IsNullOrEmpty(s) ? null : s;
 
+    private static void AddCity(GameSession session, TileId tile, JsonElement e)
+    {
+        var state = session.Sim.State;
+        int owner = e.GetProperty("owner").GetInt32();
+        state.PlayerById(owner);
+        var buildings = e.TryGetProperty("buildings", out var list)
+            ? list.EnumerateArray().Select(b => ContentId<Schema.BuildingDef>(session, b.GetString(), "building")
+                ?? throw new ArgumentException("City building id must not be empty.")).ToList()
+            : new List<string>();
+        state.AddCity(new City
+        {
+            Id = state.NextCityId++, Owner = owner, Name = e.GetProperty("name").GetString()!,
+            Position = state.Grid.HexOf(tile),
+            Population = e.TryGetProperty("population", out var population) ? population.GetInt32() : 1,
+            Buildings = buildings,
+        });
+        state.Plots[tile.Value].Improvement = null;
+        state.Plots[tile.Value].Owner = owner;
+    }
+
+    private static string? Empty(string? s) => string.IsNullOrEmpty(s) ? null : s;
     private static string? ContentId<T>(GameSession session, string? name, string kind) where T : Civ.Content.ContentDef
     {
         if (name is null) return null;

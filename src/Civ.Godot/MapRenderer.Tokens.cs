@@ -37,8 +37,10 @@ internal sealed partial class MapRenderer
     {
         var selected = stack.FirstOrDefault(u => u.Id == _session.SelectedUnitId);
         var top = selected ?? stack.OrderByDescending(u => _session.DefOf(u).Strength).First();
-        bool inCity = _session.Sim.State.CityAt(top.Position) != null;
-        var at = PositionOf(top.Position, YTokens + 0.01f) + (inCity ? new Vector3(0.42f, 0, 0.36f) : Vector3.Zero);
+        var city = _session.Sim.State.CityAt(top.Position);
+        bool inCity = city != null;
+        var offset = _improvements.CityRing(city) != null ? new Vector3(0.25f, 0, 0.2f) : new Vector3(0.42f, 0, 0.36f);
+        var at = PositionOf(top.Position, YTokens + 0.01f) + (inCity ? offset : Vector3.Zero);
         float radius = inCity ? 0.3f : 0.4f;
         var owner = Ui.ToColor(MapStyle.PlayerColor(top.Owner));
         float shade = top.Owner == GameSession.Human && top.MovesLeft <= 0 ? 0.62f : 1f;

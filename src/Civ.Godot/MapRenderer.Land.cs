@@ -30,6 +30,12 @@ internal sealed partial class MapRenderer
             if (plot.Improvement is { } improvement && _improvements.Has(improvement))
                 sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
         }
+        foreach (var city in _session.KnownCities())
+        {
+            var sight = _session.SightOf(city.Position);
+            if (sight == Sight.Hidden || _improvements.CityRing(city) is not { } ring) continue;
+            sites.Add(new ImprovementSite(ring, PositionOf(city.Position), 0, sight == Sight.Visible ? 1f : 0.55f));
+        }
         _improvements.Rebuild(sites);
         _land.Mesh = marks.Build(_opaque);
         _landIcons.Mesh = icons.Build(_landIconMaterial);

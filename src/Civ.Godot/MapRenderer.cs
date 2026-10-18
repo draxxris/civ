@@ -83,7 +83,7 @@ internal sealed partial class MapRenderer : Node3D
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = Material(null, true, 5);
         _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
-        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
+        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile, _improvements.CityRing);
         AddChild(_terrain);
         AddChild(_improvements);
         _land = Layer();
