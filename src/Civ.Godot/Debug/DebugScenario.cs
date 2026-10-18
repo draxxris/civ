@@ -6,14 +6,14 @@ namespace Civ.Client;
 
 /// <summary>A hand-made, repeatable scene that overwrites the generated map for captures. JSON:
 /// <code>
-/// { "fill":  { "terrain": "world:grass", "kind": "Flat" },
+/// { "fill":  { "terrain": "grass", "kind": "Flat" },
 ///   "tiles": [ { "at": [5, 5], "kind": "Hills" },
-///              { "rect": [3, 3, 7, 5], "terrain": "world:plains", "feature": "world:forest" } ],
+///              { "rect": [3, 3, 7, 5], "terrain": "plains", "feature": "forest" } ],
 ///   "roads": [ [[2, 2], [3, 2], [4, 3]] ],
 ///   "focus": [5, 5] }
 /// </code>
-/// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, route, river (edge bit mask), lake, owner.
-/// An empty string clears feature or route. Positions are (column, row). A route is a full id or a short name such as "road".
+/// Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner.
+/// Empty strings clear feature, improvement, bonus or route. Improvement, bonus and route accept full ids or short names such as "cottage", "copper" and "road". Positions are (column, row).
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
 {
@@ -62,13 +62,41 @@ internal static class DebugScenario
         }
         if (e.TryGetProperty("kind", out var kind)) plot.Kind = Enum.Parse<PlotKind>(kind.GetString()!, ignoreCase: true);
         if (e.TryGetProperty("feature", out var feature)) plot.Feature = Empty(feature.GetString());
+        if (e.TryGetProperty("improvement", out var improvement)) plot.Improvement = ContentId<Schema.ImprovementDef>(session, Empty(improvement.GetString()), "improvement");
+        if (e.TryGetProperty("bonus", out var bonus)) plot.Bonus = ContentId<Schema.BonusDef>(session, Empty(bonus.GetString()), "bonus");
         if (e.TryGetProperty("route", out var route)) plot.Route = Empty(route.GetString()) is { } id ? RouteId(session, id) : null;
         if (e.TryGetProperty("river", out var river)) plot.RiverEdges = (byte)river.GetInt32();
         if (e.TryGetProperty("lake", out var lake)) plot.IsLake = lake.GetBoolean();
         if (e.TryGetProperty("owner", out var owner)) plot.Owner = owner.GetInt32();
     }
-
     private static string? Empty(string? s) => string.IsNullOrEmpty(s) ? null : s;
+
+    private static string? ContentId<T>(GameSession session, string? name, string kind) where T : Civ.Content.ContentDef
+    {
+        if (name is null) return null;
+        if (name.Contains(':')) return session.Sim.Content.Get<T>(name).Id;
+        var definitions = session.Sim.Content.Get<T>().All;
+        var exact = definitions.Where(def =>
+        {
+            var idName = def.Id[(def.Id.LastIndexOf(':') + 1)..];
+            while (idName.StartsWith(kind + "_", StringComparison.Ordinal))
+                idName = idName[(kind.Length + 1)..];
+            return idName == name;
+        }).ToArray();
+        if (exact.Length > 0) return Unique(exact, kind, name);
+        var suffix = definitions.Where(def => def.Id.EndsWith("_" + name, StringComparison.Ordinal)
+                || def.Id.EndsWith(":" + name, StringComparison.Ordinal)).ToArray();
+        return suffix.Length > 0 ? Unique(suffix, kind, name)
+            : throw new ArgumentException($"No {kind} match for name '{name}'.");
+    }
+
+    private static string Unique<T>(T[] matches, string kind, string name) where T : Civ.Content.ContentDef
+    {
+        if (matches.Length == 1) return matches[0].Id;
+        var candidates = matches.Take(10).Select(def => def.Id);
+        var more = matches.Length > 10 ? ", ..." : "";
+        throw new ArgumentException($"Ambiguous {kind} name '{name}'. Candidates: {string.Join(", ", candidates)}{more}.");
+    }
 
     private static string RouteId(GameSession session, string name)
     {

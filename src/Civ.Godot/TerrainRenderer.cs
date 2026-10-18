@@ -22,6 +22,7 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly int _seed;
     private readonly ScatterPlanner _scatterPlanner;
     private readonly ScatterRenderer _scatter;
+    private readonly Func<string, bool> _clearsTile;
     private ulong[]? _signatures;
     private int _snapshotRevision = -1;
     private int _hover = -1;
@@ -39,9 +40,12 @@ internal sealed partial class TerrainRenderer : Node3D
 
     public void SetDebugMode(int mode) => _terrainMaterial.SetShaderParameter("debug_mode", mode);
 
-    public TerrainRenderer(GameSession session, GameCatalog catalog)
+    /// <param name="clearsTile">True for an improvement whose 3D model fills its whole tile, so no scatter
+    /// props grow through it; other improvements only keep the tile centre clear.</param>
+    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile)
     {
         _session = session;
+        _clearsTile = clearsTile;
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
@@ -144,8 +148,8 @@ internal sealed partial class TerrainRenderer : Node3D
         var state = _session.Sim.State;
         var extras = new int[state.Plots.Length];
         for (int i = 0; i < extras.Length; i++)
-            if (Snapshot.Sight[i] != Sight.Hidden && state.Plots[i].Improvement != null)
-                extras[i] = ScatterPlanner.ClearCentre;
+            if (Snapshot.Sight[i] != Sight.Hidden && state.Plots[i].Improvement is { } improvement)
+                extras[i] = _clearsTile(improvement) ? ScatterPlanner.ClearTile : ScatterPlanner.ClearCentre;
         foreach (var city in _session.KnownCities())
             extras[state.Grid.TileAt(city.Position).Value] |= ScatterPlanner.ClearCentre;
         foreach (var unit in _session.VisibleUnits())

@@ -48,6 +48,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
+    private readonly ImprovementRenderer _improvements;
     private int _worldRevision = -1, _revision = -1;
 
     /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
@@ -60,7 +61,8 @@ internal sealed partial class MapRenderer : Node3D
     public Dictionary<string, int> TriangleCounts() => new()
     {
         ["terrain"] = RenderStats.TerrainTriangles.Values.Sum(), ["land_marks_roads"] = _land.Triangles,
-        ["land_icons"] = _landIcons.Triangles, ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
+        ["land_icons"] = _landIcons.Triangles, ["improvements"] = _improvements.Triangles,
+        ["tokens"] = _tokens.Triangles + _tokenIcons.Triangles,
     };
 
     public TerrainRenderer Terrain => _terrain;
@@ -80,8 +82,10 @@ internal sealed partial class MapRenderer : Node3D
         _tokenMaterial = Material(null, true, 3);
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = Material(null, true, 5);
-        _terrain = new TerrainRenderer(session, icons.Catalog);
+        _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
+        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
         AddChild(_terrain);
+        AddChild(_improvements);
         _land = Layer();
         _landIcons = Layer();
         _tokens = Layer();
