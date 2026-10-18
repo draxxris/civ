@@ -56,17 +56,25 @@ xvfb-run -a -s "-screen 0 1600x900x24" env LIBGL_ALWAYS_SOFTWARE=1 \
   -- --screenshot /tmp/civ-setup.png --stage setup --frames 60
 ```
 
-Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, and `path`.
+Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`, `world`, and `terrain`.
 `map-city` founds a city before capture. `city` also opens its city screen and adds three eligible queue entries.
+`terrain` showcases merged mountain ridges, softened ground transitions, and scattered nature props.
+`--screenshots` runs through all stages and captures each screenshot to `docs/screenshots/<stage>.png`.
+`--fps-probe` runs on a rendered display with VSync disabled and reports average FPS over 100 frames.
 `--turns N` advances the game before capture.
 `--world small`, `--opponents 2`, and `--seed 3` override debug game settings.
 `--reveal` explores the map for terrain inspection without making distant units visible.
 `--zoom 14` increases the initial camera distance.
+`--terrain-debug N` sets the terrain shader debug view: 1 blend weights, 2 hidden weight, 3 colour only, 4 lighting only.
 These inspection switches apply only to screenshot runs.
 
 ## Rendering and limits
 
-Terrain, relief, features, rivers, borders, routes, and icons use batched triangle meshes and an icon atlas.
+The terrain is a lit 3D height field in chunks of 4 × 4 tiles, with a translucent water surface at sea level.
+Its shader blends tile textures with height-modulated blending and draws fog, unexplored clouds, borders, rivers, the hover outline and the work-tile
+overlay from two per-tile data textures, so these changes do not rebuild meshes.
+A world change rebuilds only the chunks whose tiles changed.
+Feature marks, routes, and icons use batched triangle meshes and an icon atlas.
 The renderer shares each mesh across three horizontal copies for the east-west seam.
 Camera movement does not rebuild the map. Commands rebuild the changed presentation layers.
 The Standard map contains 84 × 52 hexes without one scene node per hex.

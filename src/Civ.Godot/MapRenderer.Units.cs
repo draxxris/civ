@@ -43,7 +43,7 @@ internal sealed partial class MapRenderer
             wanted.Add(unit.Id);
             if (!_actors.TryGetValue(unit.Id, out var actor))
             {
-                actor = new UnitActor(_models.Instantiate(unit.Type), OwnerColor(unit.Owner));
+                actor = new UnitActor(_models.Instantiate(unit.Type), OwnerColor(unit.Owner)) { Ground = GroundAt };
                 _actors[unit.Id] = actor;
                 AddChild(actor);
             }
@@ -113,11 +113,11 @@ internal sealed partial class MapRenderer
             if (_actors.Remove(id, out var old)) old.QueueFree();
         }
         _revision = -1; // Redraw the flat layer without the two fighters.
-        var from = WorldOf(p.AttackerHex, YTokens);
-        var to = WorldOf(p.DefenderHex, YTokens);
+        var from = WorldOf(p.AttackerHex, 0.015f);
+        var to = WorldOf(p.DefenderHex, 0.015f);
         if (Period > 0) to.X += Mathf.Round((from.X - to.X) / Period) * Period;
-        var attacker = new UnitActor(_models.Instantiate(p.AttackerType), OwnerColor(p.AttackerOwner)) { Anchor = from };
-        var defender = new UnitActor(_models.Instantiate(p.DefenderType), OwnerColor(p.DefenderOwner)) { Anchor = to };
+        var attacker = new UnitActor(_models.Instantiate(p.AttackerType), OwnerColor(p.AttackerOwner)) { Anchor = from, Ground = GroundAt };
+        var defender = new UnitActor(_models.Instantiate(p.DefenderType), OwnerColor(p.DefenderOwner)) { Anchor = to, Ground = GroundAt };
         AddChild(attacker);
         AddChild(defender);
         attacker.FaceToward(to - from);
@@ -172,7 +172,12 @@ internal sealed partial class MapRenderer
             var loser = b.Playback.LoserId == b.Playback.AttackerId ? a : d;
             if (!loser.HasClip("die")) loser.Fall = f;
         }
-        if (b.Slides) a.Anchor = b.From.Lerp(b.To, f * f * (3 - 2 * f));
+        if (b.Slides)
+        {
+            var at = b.From.Lerp(b.To, f * f * (3 - 2 * f));
+            at.Y = GroundAt(at.X, at.Z) + 0.015f;
+            a.Anchor = at;
+        }
         if (b.Time >= strikesEnd + FinaleTime + HoldTime) EndBattle(b);
     }
 

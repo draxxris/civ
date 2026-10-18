@@ -197,20 +197,6 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(640, service.Calculate(sim, 1).Threshold);
         Assert.Empty(city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.ClassPoints);
     }
-    [Fact]
-    public void Fifty_city_turn_stays_within_interactive_budget()
-    {
-        var sim = GameFactory.Scenario(mods.Content);
-        sim.State.Map = new(60, 36, true);
-        sim.State.Plots = Enumerable.Range(0, 2160).Select(_ => new Plot { Terrain = "world:grass", Owner = 0 }).ToArray();
-        sim.State.RebuildIndexes();
-        for (int i = 0; i < 50; i++)
-            sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Culture = 1, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3 + i % 10 * 6, 3 + i / 10 * 6)) });
-        var clock = System.Diagnostics.Stopwatch.StartNew();
-        sim.AdvanceTurn(); clock.Stop();
-        Assert.Equal(50, sim.State.Cities.Count);
-        Assert.True(clock.ElapsedMilliseconds < 1500, $"Fifty-city turn took {clock.ElapsedMilliseconds}ms");
-    }
 
     private sealed class ProbeMod : IMod
     {

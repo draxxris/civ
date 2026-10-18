@@ -300,6 +300,30 @@ Keep this list current. It is the source of truth for where the work is.
 - [x] World-map 3D unit rendering and Civ 4-style combat attack/death animation playback in `Civ.Client.Core` and
   `Civ.Godot` (`aa5e82e`, `3b1b013`).
 - [x] End-to-end Godot 3D unit & battle animation verification and `docs/screenshots/*.png` regeneration.
+- [x] 3D blended terrain (Civ 6 style continuous height & material blending, 3D scatter):
+  - Engine-free terrain math in `Civ.Client.Core/Terrain`: `PeriodicNoise` wrap-safe noise, `WarpGrid` 2D domain warp,
+    `HexBlend` dual-triangle barycentric weights, `TerrainSnapshot`, `TerrainField` (`HeightAt`, `SurfaceHeightAt`,
+    `NormalAt`, relief profiles, river carving), `TerrainChunks` 4×4 tile partitioning with 64-bit dirty signatures over
+    the influence ring, `TerrainMesher` global triangle lattice ($k = 6$), and `TerrainRay` slope ray marching with
+    bisection picking (`ac33652`).
+  - Git LFS for 3D art assets, extended `ITileAppearanceService` presentation contract (`TerrainSurface` enum,
+    `TileAppearance` scatter sets and densities, `Surface` and `Scatter` default methods), and `GameCatalog.TexturePath` /
+    `ScatterModels` asset lookup (`b1a806c`, `ac342bb`).
+  - `Civ.Godot` 3D terrain rendering: `TerrainRenderer` chunk `MeshInstance3D` × 3 wrap copies with parallel meshing,
+    `TileDataTexture` (`tileA`, `tileB`, 16-bit packed domain warp grid, palette strip), and `gl_compatibility`
+    compliant `terrain.gdshader` and `water.gdshader` with vertex-depth shore foam, ripples, and drifting clouds (`c5e136b`).
+  - Height seating for units, tokens, city labels, routes, preview paths, and cursor picking on 3D terrain (`b3a2a73`).
+  - Seamless 1024×1024 terrain textures (`tools/art/terrain_textures.py`), mipmapped `Texture2DArray` with height in
+    alpha, and height-modulated terrain shader blending with slope cliff rock (`7316fc1`).
+  - Quaternius Stylized Nature Blender batch conversion to compact 3D scatter GLBs with strict triangle budgets,
+    albedo-only textures, and snow-tint variants (`tools/art/convert_nature.py`, `nature_sets.json`) (`dff6485`).
+  - `ScatterPlanner` global jittered lattice with edge thinning, species mixing, and clearings; `ScatterRenderer`
+    `MultiMesh` chunk batches with SHA-256 GPU texture deduplication and fog darkening (`99e0e6e`, `000b5ed`).
+  - Full verification suite: `TerrainIntegrationTests` (save/load height fidelity, hidden-tile isolation, local chunk
+    invalidation, camera-pitch slope picking), `TerrainBenchmarks` (Release CPU meshing and scatter scaling),
+    `--fps-probe` measuring 22+ FPS on native GPU, and updated screenshots including `docs/screenshots/terrain.png` (`9e02c70`).
+  - Ground material blend transition softening, mountain range framing showcase in `TerrainShowcase`, and hash-stable
+    per-instance scatter thinning `KeepProp` (`7779eba`).
 
 ### Working conventions
 

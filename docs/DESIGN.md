@@ -102,8 +102,11 @@ Mods register these contracts through `ctx.RegisterService<T>()`:
 - `ILedgerSourceLabel.Label(Simulation, string source)` supplies optional text for mod-owned ledger sources.
   The client uses the first non-null label in service order, then content names or generic text.
 - `ITileAppearanceService` supplies optional terrain and feature metadata by full content id.
-  `TileAppearance` stores integer RGB, tint percent, and mark count.
-  The client uses the first non-null result in service order. Unknown terrain is gray, and unknown features have no marks.
+  `TileAppearance` stores integer RGB, tint percent, mark count, and optional 3D scatter set name and density.
+  `TerrainSurface` enumerates procedural and system surfaces (`Cliff`, `Seabed`, `DeepSeabed`, `Unexplored`).
+  Default interface methods `Surface(TerrainSurface)` and `Scatter(string feature, string terrain)` allow mods to supply
+  surface textures and terrain-specific scatter variants (such as snowy pine trees on tundra/snow forests).
+  The client uses the first non-null result in service order. Unknown terrain is gray, and unknown features have no marks or props.
 
 `ICityWorkService.DefaultSpecialist(Simulation)` identifies the plain citizen role for assignment controls.
 All presentation and setup queries must avoid state changes and RNG use. Service implementations hold no mutable per-game state.
@@ -528,6 +531,96 @@ Definitions retain English text, eras, icon references, and unsupported-field pa
 Corporation and victory identities now have executable definitions. Religion owns playable religion definitions and prerequisites.
 The test ruleset moved to `tests/Civ.Tests/TestRuleset`; `src/Civ.BaseGame` was removed.
 See [content-schema.md](content-schema.md) for definition types, units, scopes, and importer decisions.
+
+## 3D terrain rendering
+
+The client renders continuous 3D blended terrain instead of flat per-hex meshes. Neighbouring tiles blend smoothly in height and material across hex boundaries, mountain peaks merge into continuous ranges, and 3D nature props scatter organically with edge thinning and species mixing across borders.
+
+```mermaid
+flowchart TB
+    subgraph Core["Civ.Client.Core/Terrain (engine-free math)"]
+        Noise["PeriodicNoise / WarpGrid<br/>wrap-safe periodic noise & baked 2D domain warp"]
+        Blend["HexBlend<br/>dual-triangle barycentric weights"]
+        Snap["TerrainSnapshot<br/>per-tile layers, relief, rivers, sight, owner, features"]
+        Field["TerrainField<br/>HeightAt, SurfaceHeightAt, NormalAt"]
+        Chunks["TerrainChunks<br/>4x4 tile partition & 64-bit dirty signatures"]
+        Mesher["TerrainMesher<br/>global triangle lattice (k = 6)"]
+        Ray["TerrainRay<br/>slope ray marching & bisection picking"]
+        Palette["TerrainPalette<br/>layers, surfaces, feature styles, scatter sets"]
+        Planner["ScatterPlanner<br/>global jittered lattice, thinning, mixing, clearings"]
+    end
+    subgraph View["Civ.Godot (presentation)"]
+        TR["TerrainRenderer<br/>chunk MeshInstance3D x3 wrap copies, parallel meshing"]
+        TDT["TileDataTexture<br/>tileA, tileB, packed 16-bit warp grid, palette strip"]
+        TT["TerrainTextures<br/>Texture2DArray with height in alpha"]
+        TS["terrain.gdshader<br/>height blend, slope cliff rock, drifting clouds"]
+        WS["water.gdshader<br/>vertex-depth, ripples, shore foam, drifting clouds"]
+        SR["ScatterRenderer<br/>MultiMesh x3 copies, SHA-256 deduplication, hash thinning"]
+    end
+    Palette --> Snap
+    Noise --> Field
+    Blend --> Field
+    Snap --> Field
+    Field --> Mesher
+    Chunks --> Mesher
+    Field --> Ray
+    Field --> Planner
+    Blend --> Planner
+    Snap --> TDT
+    Mesher --> TR
+    TT --> TS
+    TDT --> TS
+    TDT --> WS
+    TS --> TR
+    WS --> TR
+    Planner --> SR
+```
+
+### Engine-free terrain math (`Civ.Client.Core/Terrain`)
+
+Terrain math is fully decoupled from Godot and deterministically unit-tested in `Civ.Client.Core`:
+
+- `PeriodicNoise` & `WarpGrid`: Periodic value and ridged noise lattices wrap modulo the cylindrical map period ($W \sqrt{3}$). `WarpGrid` precomputes a 2D domain-warp displacement field that is sampled bilinearly on the CPU and as an RGBA8 texture in the shaders, giving tile boundaries an organic appearance without cylindrical wrap seams.
+- `HexBlend`: Dual-triangle barycentric blending. Tile centres form a triangular lattice. Every world point lies within exactly one "corner triangle" formed by three mutually adjacent tile centres. Its barycentric coordinates $\lambda$ are continuous across triangle borders ($\lambda = 0$ on the opposite vertex). Weights are sharpened via $w_k = \lambda_k^s / \sum \lambda_j^s$ ($s = 4$ for materials, $s = 6$ for peak heights).
+- `TerrainSnapshot`: Immutable snapshot of local-team terrain perception containing tile layers, feature ground indices, relief classes (`Hidden`, `DeepWater`, `ShallowWater`, `Flat`, `Hills`, `Peak`), water status, mirrored 6-bit river masks, sight (`Hidden`, `Fogged`, `Visible`), owner, and features.
+- `TerrainField`: Pure deterministic function of world coordinates $(x, z)$ and the `TerrainSnapshot`:
+  - `HeightAt(x, z)`: Blends relief profiles using warped corner-triangle weights. Unexplored tiles stay at flat 0.0 to prevent leaking unseen terrain relief. Deep water is $-0.45 \pm 0.02$ noise, shallow water/lakes are $-0.15 \pm 0.02$ noise, flat land is $0.03 + 0.03 \cdot \text{fbm}$, hills are $0.20 + 0.14 \cdot \text{fbm}$, and peaks are $0.45 + 0.75 \cdot \text{ridged}$, merging adjacent peaks into continuous ridges. Rivers carve down by up to 0.06 within a 0.12 band along mirrored river edges.
+  - `SurfaceHeightAt(x, z)`: Visible ground or water elevation. Submerged terrain ($< 0$) is clamped to 0 near water for seating surface units, tokens, and path previews, while the seabed stays at `HeightAt`.
+  - `NormalAt(x, z)`: Unit surface normal evaluated by central differences of `HeightAt`.
+- `TerrainChunks`: Partitions the map into world-space rectangular chunks of $4 \times 4$ tiles ($4\sqrt{3} \times 6$ world units). Computes a 64-bit dirty signature over each chunk's tiles and an influence ring (accounting for domain warp, blend radius, normal step, and river carving). When world state changes, only chunks with modified signatures are rebuilt.
+- `TerrainMesher`: Generates chunk meshes on a single global equilateral-ish triangle lattice at resolution $k = 6$ (step $\sqrt{3}/k$ in $x$, $1.5/k$ in $z$, alternating row offsets, ~36 vertices per hex). Because lattice vertices are globally indexed and divide chunk bounds exactly, chunk borders and the cylindrical wrap seam share identical vertex positions and normals without cracks.
+- `TerrainRay`: Slope ray marching (step 0.05) with 8 rounds of bisection against `HeightAt` or `SurfaceHeightAt`. Accurately picks the visible 3D slope under the cursor rather than intersecting a flat $y = 0$ plane.
+- `TerrainPalette`: Content-driven layer lookup mapping terrain and surface IDs to texture array indices and fallback RGB colours, plus feature ground tint styles and scatter model configurations.
+- `ScatterPlanner`: Generates 3D prop candidates on a global jittered lattice (spacing ~0.2) dividing the map period. Evaluates the warped corner-triangle weights to sample cumulative density $\sum w_k \cdot \text{density}_k$; features thin smoothly at borders (forest fading into plains) and mix species across boundaries (pines and palms between forest and jungle). Avoids water, river troughs, steep slopes, cloud-covered tiles, and designated clearings (city centres, improvements, unit tokens).
+
+### Godot presentation (`Civ.Godot`)
+
+The Godot view translates the engine-free math into GPU-rendered visuals compliant with `gl_compatibility`:
+
+- `TerrainRenderer`: Manages one lit ground `MeshInstance3D` and one water `MeshInstance3D` per chunk across 3 horizontal wrap copies ($[-P, 0, P]$) for seamless east-west cylindrical wrap. When chunks are invalidated, CPU meshing runs in parallel via `Parallel.For`.
+- `TileDataTexture`: Packs tile state into two RGBA8 textures sampled via `texelFetch`:
+  - `tileA`: R = terrain layer, G = feature ground, B = owner + 1, A = river edge mask (refreshed on world changes).
+  - `tileB`: R = sight, G = overlay mark (workable/worked/locked), B = hover flag, A = reserved (refreshed on selection, sight, or hover changes without rebuilding meshes).
+  - Also generates a 16-bit packed domain-warp texture and a $256 \times 4$ palette strip (layer colours, feature ground tints, owner colours, water tints).
+- `TerrainTextures`: A mipmapped `Texture2DArray` (1024×1024 RGBA8 per slice) storing albedo in RGB and high-frequency surface height in alpha.
+- Shaders (`terrain.gdshader` and `water.gdshader`):
+  - `terrain.gdshader`: Height-modulated corner-triangle texture blending using the alpha height channel; transitions to cliff rock on steep slopes; renders owner borders, territory glow, river channels, work-tile overlay marks, and hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer clouds.
+  - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from vertex `UV2.x = -HeightAt` without depth-texture fetches; renders multi-frequency ripples, shore foam, shallow/deep water gradients, seabed texturing, fog darkening, and drifting cloud cover.
+- `ScatterRenderer`: Batches chunk props into `MultiMesh` instances shared across the three wrap copies:
+  - Deduplicates GPU textures across GLB models via SHA-256 image hashes.
+  - Applies hash-stable per-instance thinning (`KeepProp` using deterministic 32-bit integer mixing of tile, model index, and float coordinates) to sustain high framerates on large maps without prop flickering during chunk updates.
+  - Distance culling with `VisibilityRangeEnd = 34f`.
+  - Modulates instance vertex colours for fog darkening (1.0 for visible, 0.55 for fogged).
+
+### Mod appearance contract & asset discovery
+
+The presentation contract in `Civ.Core` and client catalog in `Civ.Client.Core` provide extension points for 3D art:
+
+- `TileAppearance`: Extended record `TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0)`.
+- `TerrainSurface`: Enum defining system and procedural surfaces (`Cliff`, `Seabed`, `DeepSeabed`, `Unexplored`).
+- `ITileAppearanceService`: Interface offering default methods `string? Surface(TerrainSurface surface) => null;` and `TileAppearance? Scatter(string feature, string terrain) => null;`. Mods override these to specify procedural surface textures and terrain-specific scatter variants (e.g. snowy pine trees on tundra/snow forests).
+- `GameCatalog.TexturePath(string? id)`: Resolves texture PNGs from `<mod>/art/terrain/<name>.png`.
+- `GameCatalog.ScatterModels(string? set)`: Discovers sorted `.glb` models from `<mod>/art/scatter/<suffix>/*.glb`.
 
 ## Remaining feature work
 

@@ -14,6 +14,8 @@ internal sealed record DebugOptions
     public ulong Seed { get; private init; } = 1;
     public bool Reveal { get; private init; }
     public float Zoom { get; private init; }
+    public int TerrainDebug { get; private init; }
+    public bool FpsProbe { get; private init; }
 
     public static DebugOptions Parse(string[] args)
     {
@@ -23,6 +25,7 @@ internal sealed record DebugOptions
             ScreenshotPath = Value("--screenshot", ""), Stage = Value("--stage", "setup"), Frames = int.Parse(Value("--frames", "60")),
             Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), Opponents = int.Parse(Value("--opponents", "3")),
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
+            TerrainDebug = int.Parse(Value("--terrain-debug", "0")), FpsProbe = args.Contains("--fps-probe"),
         }.Normalized();
     }
 
@@ -30,13 +33,10 @@ internal sealed record DebugOptions
     {
         ScreenshotPath = ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{stage}.png"),
         Stage = stage, Frames = 90, Turns = stage == "city" ? 3 : 0,
-        Reveal = stage is "world" or "path", Zoom = stage == "map" ? -10 : stage == "world" ? 18 : 0,
+        Reveal = stage is "world" or "path" or "terrain", Zoom = stage == "map" ? -10 : stage == "world" ? 18 : stage == "terrain" ? -7 : 0,
     };
 
-    private DebugOptions Normalized() => ScreenshotPath is { Length: 0 } ? new DebugOptions
-    {
-        ScreenshotPath = null, Stage = Stage, Frames = Frames, Turns = Turns, World = World, Opponents = Opponents, Seed = Seed, Reveal = Reveal, Zoom = Zoom,
-    } : this;
+    private DebugOptions Normalized() => ScreenshotPath is { Length: 0 } ? this with { ScreenshotPath = null } : this;
 }
 
 /// <summary>Godot entry point: loads the mods once, shows the setup screen, then the game. All rules live in the mods and Client.Core.</summary>
@@ -52,14 +52,28 @@ public partial class Main : Node3D
     private SetupScreen? _setup;
     private GameView? _game;
     private int _framesSinceReady = -1;
+    private FpsProbe? _fpsProbe;
 
     public override void _Ready()
     {
+        if (_debug.FpsProbe)
+        {
+            if (DisplayServer.GetName() == "headless")
+            {
+                GD.PushError("--fps-probe needs a rendered display, not --headless.");
+                GetTree().Quit(2);
+                return;
+            }
+            GetWindow().Size = new Vector2I(1600, 900);
+            DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
+            GD.Print($"FPS probe: 1600x900, {RenderingServer.GetVideoAdapterName()}, VSync disabled.");
+        }
         if (OS.GetCmdlineUserArgs().Contains("--screenshots"))
         {
-            foreach (var stage in new[] { "setup", "map", "city", "civics", "research", "path", "world" }) _screenshotStages.Enqueue(stage);
+            foreach (var stage in new[] { "setup", "map", "city", "civics", "research", "path", "world", "terrain" }) _screenshotStages.Enqueue(stage);
             _debug = _debug.ForScreenshot(_screenshotStages.Dequeue());
             GetWindow().Size = new Vector2I(1600, 900);
+            DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
         }
         var layer = new CanvasLayer();
         _status.AddThemeFontSizeOverride("font_size", 24);
@@ -88,6 +102,7 @@ public partial class Main : Node3D
     {
         PollLoading();
         PollStarting();
+        if (_fpsProbe is not null && _fpsProbe.Tick()) GetTree().Quit();
         if (_framesSinceReady >= 0 && ++_framesSinceReady >= _debug.Frames) TakeScreenshot();
     }
 
@@ -109,12 +124,13 @@ public partial class Main : Node3D
         _setup.StartRequested += Start;
         AddChild(_setup);
         if (_debug.ScreenshotPath != null && _debug.Stage == "setup") _framesSinceReady = 0;
-        else if (_debug.ScreenshotPath != null) Start(DebugGame());
+        else if (_debug.ScreenshotPath != null || _debug.FpsProbe) Start(DebugGame());
     }
 
     private NewGameOptions DebugGame()
     {
         var defaults = _catalog!.DefaultOptions();
+        if (_debug.FpsProbe) return defaults with { WorldSize = _catalog.WorldSizes.First(w => w.Name.Equals("Huge", StringComparison.OrdinalIgnoreCase)).Id, Seed = _debug.Seed };
         var size = _debug.World.Length == 0 ? defaults.WorldSize : _catalog.WorldSizes.First(w =>
             w.Id == _debug.World || w.Name.Equals(_debug.World, StringComparison.OrdinalIgnoreCase)).Id;
         return defaults with { WorldSize = size, Opponents = _debug.Opponents, Seed = _debug.Seed };
@@ -143,13 +159,43 @@ public partial class Main : Node3D
         _setup = null;
         var session = task.Result;
         PrepareDebugStage(session);
-        MapRenderer.LogTimings = _debug.ScreenshotPath != null;
+        MapRenderer.LogTimings = _debug.ScreenshotPath != null || _debug.FpsProbe;
+        TerrainRenderer.DebugMode = _debug.ScreenshotPath != null ? _debug.TerrainDebug : 0;
         _game = new GameView(session, _icons!);
         AddChild(_game);
         if (_debug.Zoom != 0) _game.DebugZoom(_debug.Zoom);
+        FocusTerrainScreenshot(session);
         if (_debug.Stage == "path") _game.ForceHover(PathTarget(session));
         OpenDebugPanel();
         if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
+        if (_debug.FpsProbe)
+        {
+            var focus = TerrainShowcase.Focus(session);
+            _game.DebugFocus(MapRenderer.PositionOf(focus));
+            GD.Print($"FPS probe focus: {focus}; revealed huge map, seed {_debug.Seed}.");
+            _fpsProbe = new FpsProbe(() => _game.DebugZoom(100));
+        }
+    }
+
+    /// <summary>Terrain inspection views: a mountain close-up or the actual east-west wrap line at x = 0.</summary>
+    private void FocusTerrainScreenshot(GameSession session)
+    {
+        if (_debug.ScreenshotPath is null) return;
+        var state = session.Sim.State;
+        if (_debug.Stage == "terrain")
+        {
+            // Offset the ridge from the left-hand unit panel and leave the coast in the close-up.
+            _game!.DebugFocus(MapRenderer.PositionOf(TerrainShowcase.Focus(session)) + new Vector3(-1.5f, 0, 0.75f));
+        }
+        else if (_debug.Stage == "peak")
+        {
+            int peak = Array.FindIndex(state.Plots, plot => plot.Kind == Civ.Game.PlotKind.Peak);
+            if (peak >= 0) _game!.DebugFocus(MapRenderer.PositionOf(state.Grid.HexOf(new TileId(peak))));
+        }
+        else if (_debug.Stage == "wrap")
+        {
+            _game!.DebugFocus(new Vector3(0, 0, (state.Map.Height - 1) * 0.75f));
+        }
     }
 
     private void OpenDebugPanel()
@@ -161,17 +207,31 @@ public partial class Main : Node3D
     /// <summary>Screenshot runs can advance turns and open the city screen before the first frame.</summary>
     private void PrepareDebugStage(GameSession session)
     {
+        if (_debug.FpsProbe) { RevealEverything(session); return; }
         if (_debug.ScreenshotPath == null) return;
         if (_debug.Reveal) RevealEverything(session);
+        if (_debug.Stage == "terrain") TerrainShowcase.Prepare(session);
         Input.WarpMouse(new Vector2(700, 10));
-        var settler = session.Sim.State.Units.FirstOrDefault(u => u.Owner == GameSession.Human && session.DefOf(u).CanFoundCity);
-        if (settler != null && _debug.Stage is "city" or "map-city") { session.SelectUnit(settler.Id); session.RunAction("found"); }
+        if (_debug.Stage is "city" or "map-city") FoundScreenshotCity(session);
         for (int i = 0; i < _debug.Turns; i++) session.EndTurn();
-        if (_debug.Stage == "city" && session.Sim.State.Cities.FirstOrDefault(c => c.Owner == GameSession.Human) is { } city)
-        {
-            session.SelectCity(city.Id);
-            foreach (var choice in session.ProductionChoices(city).Where(p => p.Available).Take(3)) session.Enqueue(city, choice.Kind, choice.Id, append: true);
-        }
+        if (_debug.Stage == "city") OpenScreenshotCity(session);
+    }
+
+    private static void FoundScreenshotCity(GameSession session)
+    {
+        var settler = session.Sim.State.Units.FirstOrDefault(u => u.Owner == GameSession.Human && session.DefOf(u).CanFoundCity);
+        if (settler == null) return;
+        session.SelectUnit(settler.Id);
+        session.RunAction("found");
+    }
+
+    private static void OpenScreenshotCity(GameSession session)
+    {
+        var city = session.Sim.State.Cities.FirstOrDefault(c => c.Owner == GameSession.Human);
+        if (city == null) return;
+        session.SelectCity(city.Id);
+        foreach (var choice in session.ProductionChoices(city).Where(p => p.Available).Take(3))
+            session.Enqueue(city, choice.Kind, choice.Id, append: true);
     }
 
     /// <summary>A tile a few steps from the selected unit, to show the route preview.</summary>
