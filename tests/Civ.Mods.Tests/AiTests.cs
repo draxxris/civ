@@ -237,7 +237,9 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     {
         var sim = GameFactory.Scenario(mods.Content);
         var own = new City { Id = 1, Owner = 0, Position = sim.State.Grid.HexOf(new(39)), Population = 4 };
-        var enemy = new City { Id = 2, Owner = 1, Position = own.Position.Neighbor(0).Neighbor(0).Neighbor(0).Neighbor(0).Neighbor(0) };
+        var enemy = new City { Id = 2, Owner = 1, Position = own.Position.Neighbor(0).Neighbor(0).Neighbor(0).Neighbor(0).Neighbor(0), Population = 3 };
+        // Preserve its growth history if the isolated enemy starves before the army arrives.
+        enemy.Extensions.Set(sim.Content, new CityRuleState { HighestPopulation = enemy.Population });
         sim.State.AddCity(own); sim.State.AddCity(enemy); sim.State.NextCityId = 3;
         sim.State.PlotAt(enemy.Position).Owner = 1;
         sim.State.PlotAt(enemy.Position).Revealed.Add(sim.TeamOf(0).Id);
@@ -437,7 +439,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             plot.Revealed.Add(0); plot.Visible.Add(0);
         }
         var home = new City { Id = 1, Owner = 0, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 3)), Population = 3 };
-        var target = new City { Id = 2, Owner = 1, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(8, 3)) };
+        var target = new City { Id = 2, Owner = 1, Position = sim.State.Grid.HexOf(sim.State.Grid.TileAt(8, 3)), Population = 3 };
         sim.State.AddCity(home); sim.State.AddCity(target); sim.State.NextCityId = 3;
         sim.State.SetWar(0, 1, true);
         sim.State.Turn = 30;

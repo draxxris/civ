@@ -167,6 +167,7 @@ public sealed class CorporationRulesTests
     public void Captured_headquarters_moves_the_mercantilism_boundary_to_the_new_owner()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var branch = sim.State.Cities[1];
+        hq.Population = 3; // The headquarters must survive conquest instead of auto-razing.
         Found(sim, hq);
         P6RulesScenario.Resource(sim, branch, "world:corn");
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });

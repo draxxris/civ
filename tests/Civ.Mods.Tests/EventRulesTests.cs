@@ -199,7 +199,10 @@ public sealed class EventRulesTests
         sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, second.Id, 1);
         var captured = sim.State.CityById(second.Id);
         Assert.Equal(0, Happiness(sim, captured)); Assert.Equal(0, Health(sim, captured));
-        Assert.Equal(1, Happiness(sim, home));
+        // Capital relocation can add building happiness; the decree must still contribute independently.
+        var ledger = ModifierSink.Collect(new(sim, ModifierScope.City, home.Owner, home)).Ledger;
+        Assert.Equal(1, Assert.Single(ledger.Lines,
+            line => line.Source == "empire_probe:decree_accept" && line.Key == "cities:happiness").Amount);
     }
 
     [Fact]
