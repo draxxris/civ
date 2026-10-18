@@ -38,8 +38,10 @@ public sealed class GameCatalog
 
     public GameCatalog(IReadOnlyList<ModSource> mods)
     {
+        using var trace = StartupTrace.Phase("catalog build");
         Mods = mods;
         Content = ModLoader.Build(mods);
+        using var choicesTrace = StartupTrace.Phase("catalog choices");
         _modRoots = mods.ToDictionary(m => m.Manifest.Id, m => m.Root, StringComparer.Ordinal);
         WorldSizes = Choices(Content.Get<Schema.WorldSizeDef>().All.OrderBy(w => w.GridWidth * w.GridHeight));
         GameSpeeds = Choices(Content.Get<Schema.GameSpeedDef>().All.OrderBy(s => s.GrowthPercent));
@@ -49,7 +51,11 @@ public sealed class GameCatalog
         OpponentAi = Content.PlayerAIs.All.OrderBy(a => a.Id, StringComparer.Ordinal).FirstOrDefault()?.Id;
     }
 
-    public static GameCatalog Load(string modsRoot) => new(ModDiscovery.LoadMods(modsRoot));
+    public static GameCatalog Load(string modsRoot)
+    {
+        using var trace = StartupTrace.Phase("catalog load");
+        return new(ModDiscovery.LoadMods(modsRoot));
+    }
 
     private static IReadOnlyList<SetupChoice> Choices<T>(IEnumerable<T> defs) where T : ContentDef =>
         defs.Select(d => new SetupChoice(d.Id, d.Name)).ToList();

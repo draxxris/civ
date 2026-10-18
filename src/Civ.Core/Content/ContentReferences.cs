@@ -45,13 +45,17 @@ public static class ContentReferences
         .OrderBy(p => p.Name, StringComparer.Ordinal)
         .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
         .Select(p => new ReferenceProperty(p, p.GetCustomAttributes<ContentReferenceAttribute>().ToArray()))
+        .Where(p => p.Attributes.Length > 0 || (!p.Property.PropertyType.IsPrimitive && !p.Property.PropertyType.IsEnum))
         .ToArray();
     /// <summary>Find all annotated identities and neutral text links in a definition.</summary>
     public static IEnumerable<ContentRef> Enumerate(ContentDef definition, IEnumerable<IRequirementEvaluator> evaluators)
     {
         var kinds = evaluators.OfType<IContentRequirementEvaluator>().ToDictionary(e => e.Kind, e => e.DefinitionType, StringComparer.Ordinal);
-        return Walk(definition, definition.Id, kinds, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        return Enumerate(definition, kinds);
     }
+
+    internal static IEnumerable<ContentRef> Enumerate(ContentDef definition, IReadOnlyDictionary<string, Type> kinds) =>
+        Walk(definition, definition.Id, kinds, new HashSet<object>(ReferenceEqualityComparer.Instance));
 
     private static IEnumerable<ContentRef> Walk(object? value, string path, IReadOnlyDictionary<string, Type> kinds, HashSet<object> seen)
     {

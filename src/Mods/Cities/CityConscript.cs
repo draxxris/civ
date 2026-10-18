@@ -26,7 +26,17 @@ internal sealed class CityConscript(ICityWorkService work, ICityCultureService c
         .Where(u => u.Conscription > 0)
         .OrderByDescending(u => u.Conscription).ThenBy(u => u.Id, StringComparer.Ordinal)
         // Eligibility resolves civilization replacements, including the city's original civilization under assimilation.
-        .FirstOrDefault(u => ProductionEligibility.Validate(sim, city, "cities:unit", u.Id).Success);
+        .FirstOrDefault(u => !MissingRequiredTechnology(sim, city, u.Requirements)
+            && ProductionEligibility.Validate(sim, city, "cities:unit", u.Id).Success);
+
+    // Reject unmet mandatory tech leaves before eligibility checks build resource networks.
+    // Alternatives and negations still go through full validation; their tech leaves are not mandatory.
+    private static bool MissingRequiredTechnology(Simulation sim, City city, Requirement? requirement) => requirement switch
+    {
+        Requirement.Leaf { Kind: "tech" } leaf => !sim.Content.Requirements.Evaluate(leaf, new(sim, city.Owner, city, CityData.Tile(sim, city))).Success,
+        Requirement.All all => all.Items.Any(r => MissingRequiredTechnology(sim, city, r)),
+        _ => false,
+    };
 
     public string? Validate(Simulation sim, int player, int cityId)
     {

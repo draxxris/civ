@@ -4,13 +4,18 @@ using Civ.Modding;
 using Civ.Mods.Tests;
 
 var root = Path.Combine(AppContext.BaseDirectory, "mods");
-var sources = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
-var content = ModLoader.Build(sources.AsEnumerable().Reverse());
-if (args.Contains("--terrain"))
+if (args.Contains("--quick") || args.Contains("--startup"))
 {
-    TerrainBenchmarks.Run(new Civ.Client.GameCatalog(sources));
+    StartupBenchmarks.Run(root, sweep: args.Contains("--startup"));
     return;
 }
+if (args.Contains("--terrain"))
+{
+    TerrainBenchmarks.Run(Civ.Client.GameCatalog.Load(root));
+    return;
+}
+var sources = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
+var content = ModLoader.Build(sources.AsEnumerable().Reverse());
 Console.WriteLine("Operational benchmarks: single samples, no timing thresholds. Content loading is excluded.");
 
 foreach (ulong seed in new ulong[] { 1, 42, 987654 })

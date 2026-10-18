@@ -126,6 +126,14 @@ internal sealed partial class GameView : Node3D
 
     public override void _UnhandledInput(InputEvent e)
     {
+        long started = System.Diagnostics.Stopwatch.GetTimestamp();
+        HandleInput(e);
+        if (MapRenderer.LogTimings && e is not InputEventMouseMotion)
+            GD.Print($"input {e.GetType().Name}: {System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds:F2} ms");
+    }
+
+    private void HandleInput(InputEvent e)
+    {
         switch (e)
         {
             case InputEventKey { Pressed: true, Echo: false } key: OnKey(key.Keycode); break;

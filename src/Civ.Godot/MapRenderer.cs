@@ -52,7 +52,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly CityRenderer _cities;
     private int _worldRevision = -1, _revision = -1;
 
-    /// <summary>Print mesh rebuild times (set by the screenshot options).</summary>
+    /// <summary>Print rebuild timings during captures or with --trace-performance.</summary>
     public static bool LogTimings { get; set; }
 
     /// <summary>Capture aid: draw no units, cities or labels, only the world.</summary>
