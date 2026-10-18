@@ -17,7 +17,7 @@ internal sealed class CitizenPlanner(AiContext ctx, ArmyPlan army)
             var wellbeing = ctx.Service<ICityWellbeingService>().Calculate(ctx.Sim, city.Id);
             bool avoid = wellbeing.Happy <= wellbeing.Unhappy && city.Population >= 4;
             ctx.Issue(new SetCityAssignmentsCommand { Player = ctx.PlayerId, CityId = city.Id, Automatic = true, AvoidGrowth = avoid });
-            var view = CityView.Build(ctx, city);
+            var view = ctx.ViewOf(city);
             if (view.Garrison < army.DesiredGarrison(view) || TrainingSoldiers(city)) EmphasizeProduction(city, wellbeing, avoid);
         }
     }

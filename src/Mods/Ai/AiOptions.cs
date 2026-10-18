@@ -52,11 +52,22 @@ internal sealed class AiOptions
 
     public UnitDef? Best(int city, UnitRole role, Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null)
     {
-        var production = _ctx.Service<Civ.Game.ICityProductionService>();
-        return Units.Where(u => _ctx.Catalog.Roles[u.Id] == role && (filter?.Invoke(u) ?? true))
-            .OrderByDescending(u => score(u) + PersonalityValue(u)).ThenBy(u => u.Id, StringComparer.Ordinal)
-            .FirstOrDefault(u => production.Validate(_ctx.Sim, city, "cities:unit", u.Id).Success);
+        UnitDef? best = null;
+        int bestScore = int.MinValue;
+        foreach (var unit in Units.Where(u => _ctx.Catalog.Roles[u.Id] == role && (filter?.Invoke(u) ?? true)))
+        {
+            int value = score(unit) + PersonalityValue(unit);
+            // A candidate below a known legal choice cannot win; no validation or ranking buffer is needed.
+            if (best is not null && !Outranks(unit, value, best, bestScore)) continue;
+            if (!_ctx.CanProduce(city, "cities:unit", unit.Id)) continue;
+            best = unit;
+            bestScore = value;
+        }
+        return best;
     }
+
+    private static bool Outranks(UnitDef unit, int score, UnitDef best, int bestScore) => score > bestScore
+        || score == bestScore && StringComparer.Ordinal.Compare(unit.Id, best.Id) < 0;
 
     private int PersonalityValue(UnitDef unit)
     {

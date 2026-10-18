@@ -4,13 +4,20 @@ using Civ.Modding;
 
 namespace Civ.Mods.Ai;
 
-/// <summary>The computer player. Registers <c>ai:standard</c> and the two war/peace commands it issues.</summary>
+/// <summary>The computer player, its saved intent, and its replayable planning and diplomacy commands.</summary>
 public sealed class AiMod : IMod
 {
     public void Register(IModContext context)
     {
         context.PlayerAIs.Register(new StandardAi());
         context.RegisterStateComponent<AiTeamState>("team_state");
+        context.RegisterStateComponent<AiPlayerState>("player_state");
+        context.RegisterCommand<ReviewCivicGoalCommand>("review_civic_goal");
+        context.RegisterCommand<ReviewCampaignGoalsCommand>("review_campaign_goals");
+        context.RegisterCommand<PrepareSettlerMissionsCommand>("prepare_settler_missions");
+        context.RegisterCommand<PrepareWorkerMissionsCommand>("prepare_worker_missions");
+        context.RegisterCommand<ForgetUnitMissionCommand>("forget_unit_mission");
+        context.RegisterCommand<PruneAiIntentCommand>("prune_intent");
         context.RegisterCommand<DeclareWarCommand>("declare_war");
         context.RegisterCommand<MakePeaceCommand>("make_peace");
         context.Subscribe<DiplomaticWarDeclared>("diplomatic_war", (sim, war) =>

@@ -2,16 +2,18 @@ using Civ.Game;
 
 namespace Civ.Mods.Ai;
 
-/// <summary>Found cities at scored sites. Settlers wait for a spare escort under nearby threat;
-/// an escort never strips a reserved city garrison.</summary>
-internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites, ArmyPlan army)
+/// <summary>Found cities at scored sites. Continue safe destinations and retreat immediately from nearby threats.</summary>
+internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)
 {
     private readonly List<TileId> _targets = new();
+    private SortedDictionary<int, UnitMission> _missions = new();
 
     public void Plan()
     {
-        foreach (var settler in ctx.UnitsWithRole(UnitRole.Settler).ToList())
+        ctx.Issue(new PrepareSettlerMissionsCommand { Player = ctx.PlayerId });
+        foreach (var settler in ctx.UnitsWithRole(UnitRole.Settler).OrderBy(u => u.Id).ToList())
         {
+            if (!AiIntent.EligibleUnit(ctx, settler)) continue;
             if (settler.MovesLeft <= 0 && ctx.Cities.Count > 0) continue;
             ctx.Done.Add(settler.Id);
             Act(settler);
@@ -21,30 +23,29 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites, ArmyPlan 
     private void Act(Unit settler)
     {
         if (ctx.Cities.Count == 0) { FoundFirst(settler); return; }
-        var target = ChooseSite(settler);
-        if (target is null) { if (ctx.Turn > 5) TryFound(settler); return; }
-        if (target.Tile == ctx.Tile(settler.Position)) { TryFound(settler); return; }
-        bool danger = Dangerous(settler, target);
-        var escort = danger ? Escort(settler) : null;
-        if (danger && AwaitEscort(settler, escort)) return;
-        MoveAndFound(settler, target, escort);
+        if (ctx.ThreatAround(settler.Position, 3) > 0) { Retreat(settler); return; }
+        var mission = CurrentMission(settler);
+        if (mission is null) { if (ctx.Turn > 5) TryFound(settler); return; }
+        if (mission.Target == ctx.Tile(settler.Position)) { TryFound(settler); return; }
+        MoveAndFound(settler, mission.Target);
     }
 
-    private bool AwaitEscort(Unit settler, Unit? escort)
+    private UnitMission? CurrentMission(Unit settler)
     {
-        if (escort is null) return true;
-        ctx.Done.Add(escort.Id);
-        if (escort.Position == settler.Position) return false;
-        ctx.MoveToward(escort, settler.Position);
-        return true;
+        var mission = AiIntent.Read(ctx).Missions.GetValueOrDefault(settler.Id);
+        if (mission is null || Valid(settler, mission)) return mission;
+        // A previous founding can invalidate spacing in this same pass.
+        ctx.Issue(new PrepareSettlerMissionsCommand { Player = ctx.PlayerId });
+        return AiIntent.Read(ctx).Missions.GetValueOrDefault(settler.Id);
     }
 
-    private void MoveAndFound(Unit settler, Site target, Unit? escort)
+    private void MoveAndFound(Unit settler, TileId target)
     {
-        ctx.MoveToward(settler, ctx.Grid.HexOf(target.Tile));
-        if (!ctx.Alive(settler)) return;
-        if (escort is not null) ctx.MoveToward(escort, settler.Position);
-        if (ctx.Tile(settler.Position) == target.Tile) TryFound(settler);
+        var before = settler.Position;
+        ctx.MoveToward(settler, ctx.Grid.HexOf(target));
+        if (!ctx.Alive(settler)) { Forget(settler); return; }
+        if (settler.Position == before) { Forget(settler); Retreat(settler); return; }
+        if (ctx.Tile(settler.Position) == target) TryFound(settler);
     }
 
     private void FoundFirst(Unit settler)
@@ -54,31 +55,57 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites, ArmyPlan 
         TryFound(settler);
     }
 
-    private bool TryFound(Unit settler) => ctx.Issue(new FoundCityWithSettlerCommand { Player = ctx.PlayerId, Settler = settler.Id });
+    private bool TryFound(Unit settler)
+    {
+        if (!ctx.Issue(new FoundCityWithSettlerCommand { Player = ctx.PlayerId, Settler = settler.Id })) return false;
+        Forget(settler);
+        return true;
+    }
+
+    private void Forget(Unit settler) => ctx.Issue(new ForgetUnitMissionCommand { Player = ctx.PlayerId, Unit = settler.Id });
+
+    private void Retreat(Unit settler)
+    {
+        if (ctx.NearestCity(settler.Position) is { } city) ctx.MoveToward(settler, city.Position);
+    }
+
+    // Command validation evaluates a detached intent value. Routes remain segment-local queries.
+    internal SortedDictionary<int, UnitMission> EvaluateMissions()
+    {
+        _missions = AiIntent.CleanMissions(ctx);
+        if (ctx.Cities.Count == 0) return _missions; // Initial founding keeps its existing one-step policy.
+        foreach (var settler in ctx.UnitsWithRole(UnitRole.Settler).OrderBy(u => u.Id)) Assign(settler);
+        return _missions;
+    }
+
+    private void Assign(Unit settler)
+    {
+        var held = _missions.GetValueOrDefault(settler.Id);
+        if (held is not null && Valid(settler, held)) { _targets.Add(held.Target); return; }
+        _missions.Remove(settler.Id);
+        if (!AiIntent.EligibleUnit(ctx, settler) || settler.MovesLeft <= 0) return;
+        if (ctx.ThreatAround(settler.Position, 3) > 0) return;
+        var site = ChooseSite(settler);
+        if (site is not null)
+            _missions[settler.Id] = AiIntent.Create(ctx, settler, AiMissionKind.Settle, site.Tile);
+    }
+
+    private bool Valid(Unit settler, UnitMission mission) => AiIntent.Matches(ctx, settler, mission, AiMissionKind.Settle)
+        && Destination(settler, mission.Target) && AiIntent.Reachable(ctx, settler, mission.Target);
+
+    private bool Destination(Unit settler, TileId tile) => sites.LegalDestination(tile)
+        && ctx.Sim.State.Plots[tile.Value].AreaId == ctx.Sim.State.PlotAt(settler.Position).AreaId
+        && _targets.All(t => ctx.Grid.Distance(t, tile) > 3)
+        && ctx.ThreatAround(settler.Position, 3) == 0 && ctx.ThreatAround(ctx.Grid.HexOf(tile), 3) == 0;
 
     private Site? ChooseSite(Unit settler)
     {
         int area = ctx.Sim.State.PlotAt(settler.Position).AreaId;
-        var site = sites.DistinctSites().Where(s => s.Area == area && _targets.All(t => ctx.Grid.Distance(t, s.Tile) > 3))
+        var site = sites.DistinctSites().Where(s => s.Area == area && Destination(settler, s.Tile))
             .OrderBy(s => ctx.ThreatAround(ctx.Grid.HexOf(s.Tile), 3))
             .ThenByDescending(s => s.Score - 8 * ctx.Grid.Distance(ctx.Tile(settler.Position), s.Tile))
-            .ThenBy(s => s.Tile.Value).FirstOrDefault();
+            .ThenBy(s => s.Tile.Value).FirstOrDefault(s => AiIntent.Reachable(ctx, settler, s.Tile));
         if (site is not null) _targets.Add(site.Tile);
         return site;
-    }
-
-    private bool Dangerous(Unit settler, Site target) =>
-        ctx.ThreatAround(settler.Position, 3) > 0 || ctx.ThreatAround(ctx.Grid.HexOf(target.Tile), 3) > 0;
-
-    private Unit? Escort(Unit settler) => ctx.UnitsWithRole(UnitRole.Melee)
-        .Where(u => !ctx.Done.Contains(u.Id) && u.MovesLeft > 0 && Spare(u))
-        .OrderBy(u => ctx.Grid.Distance(u.Position, settler.Position)).ThenByDescending(u => ctx.Def(u).Strength)
-        .ThenBy(u => u.Id).FirstOrDefault();
-
-    private bool Spare(Unit soldier)
-    {
-        if (ctx.CityAtUnit(soldier) is not { } city) return true;
-        int garrison = ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
-        return garrison > army.DesiredGarrison(CityView.Build(ctx, city));
     }
 }

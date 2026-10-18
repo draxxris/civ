@@ -27,7 +27,7 @@ internal sealed class UnitOrders(AiContext ctx)
     public bool Approach(Unit unit, Hex target)
     {
         if (unit.MovesLeft <= 0) return false;
-        var path = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, target, attack: true);
+        var path = ctx.FindPath(unit, target, attack: true);
         if (path is null || path.Steps.Count <= 1) return false;
         return ctx.Issue(new MoveUnitPathCommand { Player = ctx.PlayerId, Unit = unit.Id, Path = path.Steps.SkipLast(1).ToArray() });
     }

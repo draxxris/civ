@@ -3,22 +3,60 @@ using Civ.Game;
 
 namespace Civ.Mods.Ai;
 
+internal sealed record CivicReview(CivicGoal? Goal, List<string> Adopt);
+
 /// <summary>Evaluates civic changes with a flavor/effect estimate and adopts them only when the gain outweighs anarchy.</summary>
 internal sealed class CivicPlanner(AiContext ctx)
 {
-    private const int CheckInterval = 6, MinimumTurn = 25, GainThreshold = 45, GainPerAnarchyTurn = 60;
+    private const int MinimumTurn = 25, GainThreshold = 45, GainPerAnarchyTurn = 60;
 
     public void Plan()
     {
-        if (ctx.Turn < MinimumTurn || (ctx.Turn + ctx.PlayerId) % CheckInterval != 0 || ctx.Cities.Count == 0) return;
-        if (GovernmentStatus.IsAnarchy(ctx.Sim, ctx.PlayerId)) return;
+        if (ctx.Turn >= MinimumTurn && ctx.Cities.Count > 0)
+            ctx.Issue(new ReviewCivicGoalCommand { Player = ctx.PlayerId });
+    }
+
+    // Command validation computes a detached decision, including live adoption legality and cost.
+    internal CivicReview Evaluate()
+    {
+        if (ctx.Turn < MinimumTurn || ctx.Cities.Count == 0) return new(null, []);
+        string dependencies = Dependencies();
+        var held = AiIntent.Read(ctx).Civic;
+        if (held is not null && held.Dependencies == dependencies
+            && AiIntent.Reusable(ctx, held.EvaluatedTurn, held.ReviewTurn)) return new(held, []);
         var change = Changes();
-        if (change.Civics.Count == 0) return;
+        var goal = new CivicGoal(ctx.Turn, AiIntent.ReviewTurn(ctx), dependencies, change.Civics);
+        return new(goal, CanAdopt(change) ? change.Civics : []);
+    }
+
+    internal void Commit(CivicReview review)
+    {
+        if (review.Goal is not { } goal) return;
+        if (review.Adopt.Count > 0 && ctx.Issue(new SetCivicsCommand { Player = ctx.PlayerId, Civics = review.Adopt }))
+            goal = goal with { Dependencies = Dependencies() };
+        AiIntent.Write(ctx).Civic = goal;
+    }
+
+    private bool CanAdopt((List<string> Civics, int Gain) change)
+    {
+        if (change.Civics.Count == 0) return false;
         var government = ctx.Service<IGovernmentService>();
-        if (government.Validate(ctx.Sim, ctx.PlayerId, change.Civics) is not null) return;
+        if (government.Validate(ctx.Sim, ctx.PlayerId, change.Civics) is not null) return false;
         var cost = government.Calculate(ctx.Sim, ctx.PlayerId, change.Civics);
-        if (change.Gain < GainPerAnarchyTurn * cost.AnarchyTurns + GainThreshold) return;
-        ctx.Issue(new SetCivicsCommand { Player = ctx.PlayerId, Civics = change.Civics });
+        return change.Gain >= GainPerAnarchyTurn * cost.AnarchyTurns + GainThreshold;
+    }
+
+    private string Dependencies()
+    {
+        var timers = ctx.Self.Extensions.Get<GovernmentPlayerState>(ctx.Sim.Content);
+        var age = ctx.Self.Extensions.Get<CityPlayerState>(ctx.Sim.Content);
+        return CanonicalJson.Digest(new
+        {
+            ctx.Self.Leader, ctx.Self.Civilization, ctx.Self.Civics, ctx.Team.Techs, ctx.Team.Wars,
+            Cities = ctx.Cities.OrderBy(c => c.Id).Select(c => new { c.Id, c.Position, c.Buildings }),
+            Anarchy = timers?.AnarchyTurns > 0, Cooldown = timers?.RevolutionTimer > 0,
+            age?.CurrentEra, age?.GoldenAge, Economy = AiIntent.EconomicStatus(ctx),
+        });
     }
 
     private (List<string> Civics, int Gain) Changes()

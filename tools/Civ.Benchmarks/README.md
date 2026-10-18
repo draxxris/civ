@@ -97,3 +97,45 @@ mise exec -- godot-mono --path src/Civ.Godot -- --trace-performance
 The `--` after the project path separates game arguments from Godot arguments.
 Renderer tracing is separate from `CIV_TRACE_STARTUP`.
 The environment variable measures startup phases, not renderer rebuilds.
+
+## AI performance and serial optimization evidence
+
+### 99-turn default benchmark status
+
+The repository's default benchmark mode (`tools/Civ.Benchmarks/Program.cs` invoked without `--quick`, `--startup`, or `--terrain`) executes an 8-player scenario on a standard map that advances 99 turns of AI preparation before measuring a single turn of AI decisions via `decisions.RunAi()`.
+
+Under current runtime restrictions and testing discipline:
+- The default 99-turn benchmark is not run as a verification prerequisite.
+- No baseline-versus-optimized timing comparison is recorded for the 99-turn workload.
+- No replacement benchmark or multi-turn simulation benchmark was created as an implementation prerequisite.
+
+### Unmeasured runtime gains across optimization areas
+
+Serial work reductions eliminate redundant operations across eight areas in AI decision-making and surrounding simulation systems:
+1. **Calculation reuse**: `AiContext.Segment` memoizes role counts, queued production counts, city views, production eligibility, nearest-city answers, and campaign targets geography across unchanged planning segments.
+2. **Path query reuse and local search tables**: `AiContext.FindPath` caches exact (unit, destination, attack mode) queries up to a segment-bound cap; garrison reachability paths are carried directly into commands; `PathfindingService` merges A* cost and parent maps into a single local table, eliminating a second dictionary and its growth allocations.
+3. **Candidate pruning and allocation reduction**: Early wonder-budget checks and worker build prerequisites skip expensive candidate evaluations and yield previews; `AiOptions.Best` selects top legal candidates without allocating sorted ranking lists; garrison priority is sorted once for both defensive passes.
+4. **Non-AI turn optimization**: `VisibilityService.Recompute` caches directional terrain sight levels once per queried plot and team water-sight capability once per queried team in call-local arrays and dictionaries.
+5. **Spatial indexing**: Tile-bucket threat strength grids (`ThreatStrength`) replace repeated whole-map enemy unit scans; settlement exclusion masks and nearest-city distance fields in `SitePlanner.BuildGeography` replace per-candidate city distance scans.
+6. **Strategic goal retention**: Unchanged civic and primary land campaign evaluations are retained for up to 3 turns, skipping full candidate evaluation and ranking on unchanged turns.
+7. **Continuing civilian missions**: Valid settler and worker travel destinations are retained for up to 12 turns, skipping full destination searches and ranking while the mission remains valid.
+8. **Sorting and allocation reduction**: Nearest-city queries use distance/ID tuple minima, eliminating ordered-iterator allocations.
+
+All performance gains are documented based on code inspection of removed operations (scans, sorts, queries, allocations, and re-evaluations). Elapsed execution times, memory allocation reductions, and wall-clock speedup ratios remain unmeasured; no percentage speedup is claimed.
+
+### Operational trade-offs and performance characteristics
+
+- **Cache invalidation overhead**: Segment caches in `AiContext` are invalidated and discarded after every successful command (`Issue`) and explicit `Refresh`. On very large maps with frequent commands, allocating and populating the spatial threat grid (`int[Grid.Count]`) per querying segment introduces allocation and initialization overhead, representing an unmeasured trade-off against eliminated linear enemy scans.
+- **Worker fallback search overhead**: When candidate improvement tiles in the top batch of 8 are path-blocked, `WorkerPlanner.ChooseJob` evaluates subsequent batches of 8 tiles until reachable work is found or candidates are exhausted. In turns with blocked tiles or high mission invalidation rates, this adds search work relative to the prior static 8-candidate shortlist.
+- **Speculative replay validation overhead**: During speculative parallel waves, replayable `AiPlanningCommand` records recompute detached intent and verify canonical `ExpectedIntent` digests on authoritative state before committing, adding CPU validation overhead to prevent transient intent drift.
+- **Bounded path caching**: Path reuse in `AiContext.FindPath` is capped at $\min(256, \max(1, \text{units}) \times 8)$ entries per segment. Excess queries fall back to uncached deterministic A* search to bound memory consumption.
+- **Deferred shared searches**: Broader path sharing (multi-unit routes, reverse distance fields, multi-goal search modifications) was evaluated and deferred due to directional costs, unit-specific domain/promotion rules, dynamic diplomatic borders, attack combat legality, and A* tie-break preservation. Buffer pooling was deferred pending evidence of allocation benefit.
+
+### Unrun validation checks
+
+To maintain clear verification accounting, the following test workloads were not run during validation:
+- **Broad default test suite**: `mise run test` was not run because its category filters select untagged 20-turn and 100-turn simulation tests. Focused tests used exact-name filters.
+- **E2E test suite**: The full E2E suite (~8 minutes) was not run; pre-existing `Unit cannot attack` issues and five known city-capture test failures remain unassessed.
+- **Extractor test suite**: Not run under repository test conventions.
+- **Long simulation scenarios**: Long-running simulations (`Four_computer_players_develop_and_fight_over_200_turns`, `Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn`, 20-turn speculative tests, and `Strong_army_declares_war_and_captures_a_weak_neighbour`) remain unrun.
+- **99-turn default benchmark preparation**: Unrun as described above.

@@ -21,22 +21,28 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
             plot.Visible.Clear();
         }
         var tuning = Geography.Tuning(sim.Content);
-        foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) RevealUnit(sim, unit, tuning.UnitSight);
+        // Only sight and memory change here; terrain and team technology stay fixed.
+        var levels = new RecomputeLevels(sim);
+        foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) RevealUnit(sim, unit, tuning.UnitSight, levels);
         foreach (var city in sim.State.Cities.OrderBy(c => c.Id))
-            RevealTeam(sim, sim.TeamOf(city.Owner).Id, city.Position, tuning.CitySight);
+            RevealTeam(sim, sim.TeamOf(city.Owner).Id, city.Position, tuning.CitySight, levels);
         if (sim.State.Extensions.Get<MilitaryGameState>(sim.Content) is { } military)
-            foreach (var sight in military.ReconSights) RevealTeam(sim, sight.Team, sight.Center, sight.Radius, aerial: true);
+            foreach (var sight in military.ReconSights) RevealTeam(sim, sight.Team, sight.Center, sight.Radius, levels, aerial: true);
     }
 
-    private void RevealUnit(Simulation sim, Unit unit, int range)
+    private void RevealUnit(Simulation sim, Unit unit, int range, RecomputeLevels levels)
     {
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
         if (def.NoRevealMap || unit.Health <= 0) return;
         int radius = Math.Max(0, range + unit.Promotions.Sum(p => sim.Content.Get<S.PromotionDef>(p).VisibilityChange));
-        RevealTeam(sim, sim.TeamOf(unit.Owner).Id, unit.Position, radius, def.Domain == "military:domain_air");
+        RevealTeam(sim, sim.TeamOf(unit.Owner).Id, unit.Position, radius, levels, def.Domain == "military:domain_air");
     }
 
-    public bool CanSeePlot(Simulation sim, TileId observer, TileId target, int team, int range, bool aerial = false)
+    public bool CanSeePlot(Simulation sim, TileId observer, TileId target, int team, int range, bool aerial = false) =>
+        CanSeePlot(sim, observer, target, team, range, aerial, null);
+
+    private static bool CanSeePlot(Simulation sim, TileId observer, TileId target, int team, int range,
+        bool aerial, RecomputeLevels? levels)
     {
         if (range < 0) return false;
         var grid = sim.State.Grid;
@@ -44,35 +50,65 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         if (aerial) return distance <= range;
         if ((long)distance > (long)range + 1) return false;
         if (distance <= 1) return true;
-        int level = SeeFromLevel(sim, observer, team);
+        int level = SeeFromLevel(sim, observer, team, levels);
         bool outer = distance > range;
         return SightLine.Clear(grid, observer, target, (step, last) =>
         {
-            int through = SeeThroughLevel(sim, step);
+            int through = SeeThroughLevel(sim, step, levels);
             if (level < through) return false;
-            return !outer || !last || level > through || SeeFromLevel(sim, target, team) > level;
+            return !outer || !last || level > through || SeeFromLevel(sim, target, team, levels) > level;
         });
     }
 
-    private static int SeeFromLevel(Simulation sim, TileId tile, int team)
+    private static int SeeFromLevel(Simulation sim, TileId tile, int team, RecomputeLevels? levels)
+    {
+        if (levels is not null) return levels.SeeFrom(tile, team);
+        var (level, water) = SeeFromTerrainLevel(sim, tile);
+        return level + (water && HasWaterSight(sim, team) ? 1 : 0);
+    }
+
+    private static (int Level, bool Water) SeeFromTerrainLevel(Simulation sim, TileId tile)
     {
         var plot = sim.State.Plots[tile.Value];
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         int level = ElevationLevel(sim, plot, terrain.SeeFrom, "FROM");
-        if (!terrain.IsWater) return level;
-        level += WorldTurnMath.Raw(sim, "SEAWATER_SEE_FROM_CHANGE", 0);
-        if (sim.State.TeamById(team).Techs.Any(t => sim.Content.Get<S.TechDef>(t).ExtraWaterSeeFrom)) level++;
-        return level;
+        if (terrain.IsWater) level += WorldTurnMath.Raw(sim, "SEAWATER_SEE_FROM_CHANGE", 0);
+        return (level, terrain.IsWater);
     }
 
-    private static int SeeThroughLevel(Simulation sim, TileId tile)
+    private static bool HasWaterSight(Simulation sim, int team) =>
+        sim.State.TeamById(team).Techs.Any(t => sim.Content.Get<S.TechDef>(t).ExtraWaterSeeFrom);
+
+    private static int SeeThroughLevel(Simulation sim, TileId tile, RecomputeLevels? levels = null)
     {
+        if (levels is not null) return levels.SeeThrough(tile);
         var plot = sim.State.Plots[tile.Value];
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         int level = ElevationLevel(sim, plot, terrain.SeeThrough, "THROUGH");
         if (plot.Feature is { } feature) level += sim.Content.Get<S.FeatureDef>(feature).SeeThrough;
         if (terrain.IsWater) level += WorldTurnMath.Raw(sim, "SEAWATER_SEE_THROUGH_CHANGE", 0);
         return level;
+    }
+
+    private sealed class RecomputeLevels(Simulation sim)
+    {
+        private readonly (int Level, bool Water)?[] _from = new (int, bool)?[sim.State.Plots.Length];
+        private readonly int?[] _through = new int?[sim.State.Plots.Length];
+        private readonly Dictionary<int, bool> _waterSight = new();
+
+        internal int SeeFrom(TileId tile, int team)
+        {
+            var (level, water) = _from[tile.Value] ??= SeeFromTerrainLevel(sim, tile);
+            if (!water) return level;
+            if (!_waterSight.TryGetValue(team, out bool extra))
+            {
+                extra = HasWaterSight(sim, team);
+                _waterSight.Add(team, extra);
+            }
+            return level + (extra ? 1 : 0);
+        }
+
+        internal int SeeThrough(TileId tile) => _through[tile.Value] ??= SeeThroughLevel(sim, tile);
     }
 
     private static int ElevationLevel(Simulation sim, Plot plot, int level, string direction) => plot.Kind switch
@@ -141,12 +177,12 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
             : distance <= 1 && !def.OnlyDefensive;
     }
 
-    private void RevealTeam(Simulation sim, int team, Hex position, int radius, bool aerial = false)
+    private void RevealTeam(Simulation sim, int team, Hex position, int radius, RecomputeLevels levels, bool aerial = false)
     {
         var origin = sim.State.Grid.TileAt(position);
         foreach (var tile in sim.State.Grid.Range(origin, radius + (aerial ? 0 : 1)))
         {
-            if (!CanSeePlot(sim, origin, tile, team, radius, aerial)) continue;
+            if (!CanSeePlot(sim, origin, tile, team, radius, aerial, levels)) continue;
             sim.State.Plots[tile.Value].Visible.Add(team);
             RevealPlot(sim, tile, team);
         }

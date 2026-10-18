@@ -689,6 +689,72 @@ To support concurrent turn planning without full-save canonical JSON serializati
   - *RNG and diplomacy conflicts*: a conflict occurs if an earlier player drew from `Simulation.Rng` and the candidate plan also used RNG, or if team relations (`Team.Wars`) or global extension components changed.
 - **Wave relaunch on conflict**: if a speculative plan encounters any spatial, aggregate, RNG, or diplomatic conflict, or if command replay diverges, the authoritative simulation restores from a pre-commit checkpoint, re-applies already verified plans, and immediately relaunches a new speculative wave for the remaining uncommitted players against the updated authoritative state.
 
+### Serial work reduction and calculation reuse
+
+To minimize serial latency during AI player turns and the surrounding simulation, work is reduced across eight optimization areas:
+- **Calculation reuse within planning segments (`AiContext.Segment`)**: Planners evaluate decisions in a fixed sequence within an unchanged planning segment. A context segment caches role counts, queued production counts, city view snapshots, production eligibility dictionaries, nearest-city queries, and campaign targets geography. Repeated queries within the segment reuse memoized results instead of repeating linear entity scans or service queries.
+- **Path query reuse and local search structures (`AiContext.FindPath`)**: Exact pathfinding queries (keyed by unit ID, destination tile, and attack mode) are cached within the segment. Garrison selection carries its reachability path directly into the resulting movement command, eliminating duplicate searches. Within A* (`PathfindingService`), costs and parent pointers are consolidated into a single local table (`Dictionary<TileId, (int Cost, TileId Parent)>`), removing a second dictionary and its growth allocations per search.
+- **Candidate pruning and allocation reduction**: Cheap legality and budget checks precede expensive evaluations. In `CityPlanner`, unaffordable wonder candidates are rejected before evaluating production eligibility or building values. In `WorkerPlanner`, tile candidates skip improvement previews if the tile already has an identical improvement, depleted mine, obsolete build, or equal/better route. In `AiOptions.Best`, the top legal choice is selected directly via score comparisons and ordinal content-ID ties without allocating a sorted ranking buffer. Garrison selection sorts city priority once for both defensive passes and materializes only requested defenders before commands.
+- **Non-AI turn optimization: call-local visibility recomputation (`VisibilityService.Recompute`)**: During full visibility recalculation, directional terrain levels (`SeeFrom` and `SeeThrough`) are resolved at most once per queried tile, and team water-sight capability is resolved once per queried team. Two plot-sized lazy arrays and a small team dictionary memoize these queries exclusively for the duration of a single `Recompute` call.
+- **Spatial threat indexing and settlement geography**: In `AiContext`, repeated whole-map enemy scans are replaced by a spatial threat grid (`ThreatStrength`). Enemy combat units populate tile-strength buckets once per segment that queries threats, and threat queries sum values within a radius over the grid. In `SitePlanner.BuildGeography`, city exclusion masks and a nearest-owned-city distance field are precomputed, replacing repeated whole-city distance scans during site eligibility scoring.
+- **Strategic goal retention**: Unchanged civic and primary land campaign evaluations are retained rather than re-scored every turn.
+- **Continuing civilian missions**: Valid settler and worker destinations are retained across turns, bypassing destination enumeration, scoring, and candidate ranking.
+- **Sorting and allocation reduction**: Nearest-city queries use distance/ID tuple minima, eliminating ordered-iterator allocations.
+
+### Cache lifetimes and invalidation boundaries
+
+All caching mechanisms adhere to strict lifetime and isolation boundaries:
+- **Segment-local caches (`AiContext.Segment`)**: Segment caches are strictly local to a single planning pass on a specific simulation instance. Caches are invalidated and replaced immediately upon any successful command execution via `AiContext.Issue`, as well as on explicit `Refresh`. Synchronous command callbacks (movement, visibility, promotions, cargo transport, diplomacy, city capture, and tile ownership) finish before the next command or query.
+- **Bounded path cache**: To prevent unbounded memory growth, `AiContext.FindPath` caps cached routes at $\min(256, \max(1, \text{units}) \times 8)$ per unchanged segment. Subsequent queries fall back deterministically to uncached A* search.
+- **Call-local visibility memoization**: The lazy level arrays and team capability dictionary in `VisibilityService.Recompute` belong entirely to that single invocation. They are discarded before `Recompute` returns and are never stored on the service, in state, or across threads.
+- **Mid-turn entity refresh and stale-cache bug fixes**:
+  - *Zero-health enemy filtering*: `AiContext.Enemies` explicitly filters `u.Health > 0`. Because `CombatService.Collateral` can leave zero-health units in `State.Units`, this repairs stale enemy state and prevents dead units from exerting threat or attracting attacks.
+  - *Per-command entity refresh*: Discarding and replacing the segment on successful `Issue` updates `Cities` and `Units` mid-turn. Planners observe live state following captures, civilian captures, and city foundings rather than stale turn-start snapshots.
+
+### Persistent strategic goals and civilian missions
+
+Rather than remaining volatile caches, strategic intent and civilian travel missions are modelled as authoritative game state:
+- **Authoritative state component (`AiPlayerState`)**: Registered under `ai:player_state`, this component stores active civic goals, primary land campaign city targets (or explicit absence) per requested land area, and travelling civilian mission records. It stores no entity references, service results, scores, or path routes. It is cloned, serialized to JSON, canonically hashed, and restored via standard Core extension state contracts. Older saves without the component start with empty intent.
+- **Speculative wave safety and command replay**: Intent changes are executed through replayable `AiPlanningCommand` records (`ReviewCivicGoalCommand`, `ReviewCampaignGoalsCommand`, `PrepareWorkerMissionsCommand`, `PrepareSettlerMissionsCommand`). During validation—both on speculative forks and during authoritative wave commit—the command recomputes detached decision data from current state dependencies and verifies that the canonical `ExpectedIntent` digest matches the command's recorded digest. If authoritative dependencies changed (e.g. from an earlier player's actions in the wave), validation fails with `AI intent changed`, preventing any state write and triggering a speculative wave relaunch.
+- **Periodic strategic review and immediate invalidation**: Civic and primary land campaign goals have a maximum lifetime of 3 turns, staggered by player ID (`turn + 3 - (turn + playerId) % 3`) to distribute re-evaluation across turns without consuming RNG. Immediate invalidation occurs upon relevant state transitions:
+  - War declaration or peace treaty.
+  - City loss, acquisition, capture, or destruction.
+  - Destruction or acquisition of a targeted campaign city.
+  - Technology acquisition.
+  - Economic emergencies: treasury falling below reserve, unpaid unit gold, economic strike, or negative net income.
+  - For civics, anarchy and revolution cooldown are captured as Boolean thresholds (`> 0`) in the dependency digest, preventing countdown turns from prematurely invalidating stable goals.
+- **Civilian mission persistence and live safety checks**:
+  - Settler and worker missions store unit ID, unit type, mission kind, target tile, optional build ID, creation turn, and a fixed 12-turn expiry. Valid continuation does not extend the 12-turn deadline.
+  - Both origin and destination tiles are checked for hostile threat (radius 3 for settlers, 2 for workers). Any detected threat immediately overrides the mission and triggers a retreat step toward a friendly city. Settler destinations must be safe, replacing the former wait-for-escort policy.
+  - Workers recheck build permissions, technology, obsolescence, budget, domain, and reachability each turn. Settlers recheck spacing, founding terrain, ownership, domain, and reachability. Paths are recomputed through live movement validation; routes are never persisted.
+  - Multi-batch worker fallback recovery: `WorkerPlanner.ChooseJob` evaluates candidate tiles in ordered batches of 8. If all candidates in the top batch are path-blocked, subsequent batches are evaluated until reachable work is found or candidates are exhausted, preventing workers from idling or retreating when reachable jobs exist.
+  - Mission cleanup immediately clears records for dead, captured, zero-health, transported, or role-changed units, as well as completed builds or city foundings.
+
+### Policy changes, transparent optimizations, and bug fixes
+
+To maintain clear behavioral accounting, changes are separated into three distinct categories:
+- **Transparent optimizations**: Calculation reuse in `AiContext.Segment`, exact path query caching, local A* table consolidation, early wonder-budget pruning, worker build checks before preview, `AiOptions.Best` selection, once-per-recompute visibility level memoization, spatial threat bucketing, and settlement geography masks. These preserve exact score arithmetic, candidate rankings, ties, RNG consumption, and state hashes.
+- **Stale-cache bug fixes**: Filtering zero-health units in `AiContext.Enemies` and refreshing `Cities`/`Units` after successful commands. These correct stale-state anomalies in collateral damage, capture, and founding turns.
+- **Deliberate policy changes**: Strategic inertia (up to 3-turn retention of civic and land campaign goals), civilian mission persistence (12-turn fixed missions bypassing destination search), safe settler destination requirements (retreating instead of waiting for escort), and multi-batch worker candidate search (evaluating batches of 8 to find reachable jobs when the top 8 are blocked).
+
+### Search compatibility, unmeasured gains, and architecture limits
+
+- **Deferred shared searches and unsuccessful candidates**: Broader path sharing (such as reverse Dijkstra distance fields or multi-unit shared routes) was evaluated and deferred. Movement costs in the simulation are directional (elevation slope, river crossings, bridge technology), depend on unit-specific capabilities (domain, double-move promotions, impassable terrain filters, transport capacity), and are restricted by dynamic diplomatic borders (open borders, wars, zone of control). Furthermore, sharing searches across units or multiple goals alters goal-directed A* tie-breaking and equal-cost parent selection. Priority queue and buffer pooling were also deferred pending demonstrable allocation benefit.
+- **Unmeasured runtime gains**: All performance gains are documented as removed redundant work (scans, sorts, queries, allocations, and re-evaluations). Elapsed execution time, memory allocations, and speedup ratios remain unmeasured; no percentage speedup is claimed.
+- **Operational trade-offs and limits**:
+  - *Threat grid allocation*: In `AiContext.ThreatStrength`, allocating an `int[Grid.Count]` array per segment that queries threats introduces allocation and initialization overhead on large maps with many commands, representing an unmeasured trade-off against eliminated linear scans.
+  - *Worker fallback search*: Evaluating candidate improvement tiles in batches of 8 until reachable work is found, combined with full mission re-evaluation upon invalidation (`PrepareWorkerMissionsCommand`), adds search work on turns where top candidate tiles are blocked.
+  - *Speculative replay validation*: Recomputing detached decision data and verifying `ExpectedIntent` digests during command validation adds CPU verification overhead during speculative wave commits.
+  - *Explorer requirement index*: `CityPlanner.NeedsExplorer` indexes `ctx.Cities[0]`; safe because production planning runs after puppet annexation, but any future command that removes all cities inside the city loop must guard against empty `Cities`.
+  - *Settler destination spacing*: `SitePlanner.LegalDestination` checks distance against cities directly rather than sharing the `BuildGeography` exclusion mask.
+  - *Campaign goal scope*: `ReviewCampaignGoalsCommand` persists goals only for land area IDs requested by active free-soldier theaters in `AttackPlanner`; areas without free soldiers drop saved goals.
+- **Unrun validation checks**:
+  - The broad default test suite (`mise run test`) was not run because its filter selects untagged 20-turn to 100-turn simulation tests.
+  - The full E2E test suite was not run; pre-existing `Unit cannot attack` issues and five known city-capture failures remain unassessed.
+  - The extractor test suite was not run.
+  - Long simulation scenarios (`Four_computer_players_develop_and_fight_over_200_turns`, `Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn`, 20-turn speculative checks, and `Strong_army_declares_war_and_captures_a_weak_neighbour`) remain unrun.
+  - The 99-turn default AI benchmark preparation workload was not run.
+
 See [ROADMAP.md](ROADMAP.md) for AI limitations and the remaining rule systems.
 
 ## Requirements

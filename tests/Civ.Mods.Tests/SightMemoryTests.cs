@@ -10,9 +10,11 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
 {
     private static IVisibilityService Sight(Simulation sim) => sim.Content.Services.Get<IVisibilityService>().Single();
     private Simulation Scenario() => GameFactory.Scenario(mods.Content);
-    private static Unit Observer(Simulation sim, int owner, TileId tile, string type = "military:warrior")
+    private static Unit Observer(Simulation sim, int owner, TileId tile, string type = "military:warrior", bool extendedSight = false)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(tile) };
+        if (extendedSight)
+            unit.Promotions.Add(sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.First(p => p.VisibilityChange == 1).Id);
         sim.State.AddUnit(unit);
         return unit;
     }
@@ -31,8 +33,15 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         var middle = sim.State.Plots[grid.TileAt(0, 3).Value];
         middle.Kind = kind; middle.Feature = feature;
 
-        Assert.Equal(!blocked, Sight(sim).CanSeePlot(sim, a, b, 0, 2));
-        Assert.Equal(!blocked, Sight(sim).CanSeePlot(sim, b, a, 0, 2));
+        var sight = Sight(sim);
+        Assert.Equal(!blocked, sight.CanSeePlot(sim, a, b, 0, 2));
+        Assert.Equal(!blocked, sight.CanSeePlot(sim, b, a, 0, 2));
+        var observer = Observer(sim, 0, a, extendedSight: true);
+        sight.Recompute(sim);
+        Assert.Equal(!blocked, sim.State.Plots[b.Value].Visible.Contains(0));
+        sim.State.MoveUnit(observer.Id, grid.HexOf(b));
+        sight.Recompute(sim);
+        Assert.Equal(!blocked, sim.State.Plots[a.Value].Visible.Contains(0));
     }
 
     [Fact]
@@ -40,11 +49,18 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
         var a = grid.TileAt(3, 3); var b = grid.TileAt(6, 3);
-        Assert.False(sight.CanSeePlot(sim, a, b, 0, 2));
+        Observer(sim, 0, a, extendedSight: true);
+        void Check(bool visible)
+        {
+            Assert.Equal(visible, sight.CanSeePlot(sim, a, b, 0, 2));
+            sight.Recompute(sim);
+            Assert.Equal(visible, sim.State.Plots[b.Value].Visible.Contains(0));
+        }
+        Check(false);
         sim.State.Plots[a.Value].Kind = PlotKind.Hills;
-        Assert.True(sight.CanSeePlot(sim, a, b, 0, 2));
+        Check(true);
         sim.State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
-        Assert.False(sight.CanSeePlot(sim, a, b, 0, 2));
+        Check(false);
         Assert.True(sight.CanSeePlot(sim, a, b, 0, 3, aerial: true));
         Assert.False(sight.CanSeePlot(sim, a, b, 0, 2, aerial: true));
     }
@@ -55,23 +71,31 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
         foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
         var origin = grid.TileAt(3, 3); var target = grid.TileAt(6, 3);
-        var observer = Observer(sim, 0, origin, "military:galley");
-        observer.Promotions.Add(sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.First(p => p.VisibilityChange == 1).Id);
-        Assert.False(sight.CanSeePlot(sim, origin, target, 0, 2));
-        sim.TeamOf(1).Techs.Add("research:optics");
-        Assert.False(sight.CanSeePlot(sim, origin, target, 0, 2));
-        Assert.True(sight.CanSeePlot(sim, origin, target, 1, 2));
-        sim.TeamOf(0).Techs.Add("research:optics");
+        Observer(sim, 0, origin, "military:galley", extendedSight: true);
+        Observer(sim, 1, origin, "military:galley", extendedSight: true);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         foreach (var game in new[] { sim, loaded })
         {
-            sight.Recompute(game);
-            Assert.True(game.State.Plots[target.Value].Visible.Contains(0));
-            Assert.True(sight.CanSeePlot(game, origin, target, 0, 2));
+            void Check(bool first, bool second)
+            {
+                sight.Recompute(game);
+                Assert.Equal(first, game.State.Plots[target.Value].Visible.Contains(0));
+                Assert.Equal(second, game.State.Plots[target.Value].Visible.Contains(1));
+                Assert.Equal(first, sight.CanSeePlot(game, origin, target, 0, 2));
+                Assert.Equal(second, sight.CanSeePlot(game, origin, target, 1, 2));
+            }
+            Check(false, false);
+            game.TeamOf(1).Techs.Add("research:optics");
+            Check(false, true);
+            game.TeamOf(0).Techs.Add("research:optics");
+            Check(true, true);
             Assert.False(sight.CanSeePlot(game, origin, grid.TileAt(7, 3), 0, 2));
-            game.State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
-            sight.Recompute(game);
-            Assert.False(game.State.Plots[target.Value].Visible.Contains(0));
+            var blocker = game.State.Plots[grid.TileAt(4, 3).Value];
+            blocker.Kind = PlotKind.Peak;
+            Check(false, false);
+            blocker.Kind = PlotKind.Flat;
+            game.TeamOf(0).Techs.Remove("research:optics");
+            Check(false, true);
         }
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
@@ -145,36 +169,51 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         aircraft.Promotions.Add(sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.First(p => p.VisibilityChange > 0).Id);
         sight.Recompute(sim);
         Assert.True(sim.State.Plots[b.Value].Visible.Contains(0));
+        Assert.False(sim.State.Plots[grid.TileAt(6, 3).Value].Visible.Contains(0));
         sim.State.Units.Clear(); sim.State.RebuildIndexes();
         var military = sim.State.Extensions.Get<MilitaryGameState>(sim.Content)!;
         military.ReconSights.Add(new(0, grid.HexOf(a), 2));
         sight.Recompute(sim);
         Assert.True(sim.State.Plots[b.Value].Visible.Contains(0));
+        Assert.False(sim.State.Plots[grid.TileAt(6, 3).Value].Visible.Contains(0));
         military.ReconSights.Clear(); sight.Recompute(sim);
         Assert.False(sim.State.Plots[b.Value].Visible.Contains(0));
         Assert.NotNull(sight.SnapshotOf(sim, b, 0));
     }
 
-    [Fact]
-    public void Loss_captures_latest_observation_per_team_and_reload_continues_memory()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Loss_captures_latest_observation_per_team_and_reload_continues_memory(bool removed)
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
         var tile = grid.TileAt(3, 3); var plot = sim.State.Plots[tile.Value];
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = grid.HexOf(tile), Name = "Old Port", Population = 4 };
+        sim.State.AddCity(city);
         var first = Observer(sim, 0, tile); var second = Observer(sim, 1, tile);
+        void Lose(Unit observer)
+        {
+            if (removed) sim.State.RemoveUnit(observer.Id);
+            else sim.State.MoveUnit(observer.Id, grid.HexOf(grid.TileAt(9, 3)));
+            sight.Recompute(sim);
+        }
         sight.Recompute(sim);
-        plot.Feature = "world:forest"; plot.Route = "world:road";
-        sim.State.MoveUnit(first.Id, grid.HexOf(grid.TileAt(9, 3))); sight.Recompute(sim);
+        plot.Feature = "world:forest"; plot.Route = "world:road"; city.Population = 5;
+        Lose(first);
         plot.Feature = "world:jungle"; plot.Kind = PlotKind.Hills; plot.Owner = 1;
-        sim.State.MoveUnit(second.Id, grid.HexOf(grid.TileAt(9, 3))); sight.Recompute(sim);
+        sim.State.RemoveCity(city.Id);
+        Lose(second);
         var before = sight.SnapshotOf(sim, tile, 0)!;
         Assert.Equal("world:forest", before.Feature); Assert.Equal("world:road", before.Route);
+        Assert.Equal(5, before.City!.Population);
         Assert.Equal("world:jungle", sight.SnapshotOf(sim, tile, 1)!.Feature);
+        Assert.Null(sight.SnapshotOf(sim, tile, 1)!.City);
         plot.Feature = null; plot.Route = null; plot.Terrain = "world:ocean";
         var restored = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Assert.Equal(sim.ComputeHash(), restored.ComputeHash());
         sight.Recompute(restored);
         Assert.Equal(before, sight.SnapshotOf(restored, tile, 0));
-        restored.State.MoveUnit(first.Id, grid.HexOf(tile)); sight.Recompute(restored);
+        Observer(restored, 0, tile); sight.Recompute(restored);
         Assert.Equal("world:ocean", sight.SnapshotOf(restored, tile, 0)!.Terrain);
     }
 
@@ -193,6 +232,66 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         sim.State.Plots[target.Value].Feature = "world:jungle";
         sim.Events.Publish(new FeatureChanged(target, "world:forest", "world:jungle"));
         Assert.Equal("world:forest", sight.SnapshotOf(sim, target, 0)!.Feature);
+    }
+
+    [Fact]
+    public void Warming_reveals_sight_after_removing_an_obstructing_feature()
+    {
+        var sim = Scenario(); var grid = sim.State.Grid;
+        var origin = grid.TileAt(3, 3); var target = grid.TileAt(5, 3); var blocker = grid.TileAt(4, 3);
+        sim.State.Plots[target.Value].Kind = PlotKind.Hills;
+        sim.State.Plots[blocker.Value].Feature = "world:forest";
+        Observer(sim, 0, origin);
+        Sight(sim).Recompute(sim);
+        Assert.DoesNotContain(0, sim.State.Plots[target.Value].Visible);
+        sim.State.Plots[blocker.Value].Feature = null;
+        var change = new GlobalWarmingOccurred(blocker, "world:grass", "world:grass", "world:forest", null);
+        var events = sim.Events.Published.Append(change).ToArray();
+        sim.Events.Publish(change);
+        Assert.Equal(events, sim.Events.Published);
+        Assert.Contains(0, sim.State.Plots[target.Value].Visible);
+        Assert.Contains(0, sim.State.Plots[target.Value].Revealed);
+        Assert.Equal(PlotKind.Hills, Sight(sim).SnapshotOf(sim, target, 0)!.Kind);
+    }
+
+    [Fact]
+    public void Recompute_preserves_hash_rng_and_events_across_concurrent_forks_and_reload()
+    {
+        var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
+        foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
+        var origin = grid.TileAt(3, 3); var target = grid.TileAt(6, 3);
+        Observer(sim, 0, origin, "military:galley", extendedSight: true);
+        Observer(sim, 1, origin, "military:galley", extendedSight: true);
+        sim.TeamOf(1).Techs.Add("research:optics");
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 1, Position = grid.HexOf(grid.TileAt(10, 7)),
+            Name = "Watch Port", Population = 4, Buildings = ["cities:granary"] });
+        sim.State.Extensions.Get<MilitaryGameState>(sim.Content)!.ReconSights.Add(new(0, grid.HexOf(grid.TileAt(9, 0)), 1));
+        var forks = Enumerable.Range(0, 3).Select(_ => sim.ForkSpeculative()).ToArray();
+        forks[1].TeamOf(1).Techs.Remove("research:optics");
+        forks[1].TeamOf(0).Techs.Add("research:optics");
+        forks[2].State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
+        // Recorded on the unoptimized implementation; includes sight, memory, city and recon state.
+        ulong[] expectedHashes = [8708711880691781458UL, 5306204240914431874UL, 4663964946626173356UL];
+        ulong parentHash = sim.ComputeHash();
+        var rng = sim.Rng.State;
+        Parallel.For(0, forks.Length, i =>
+        {
+            var fork = forks[i];
+            var events = fork.Events.Published.ToArray();
+            sight.Recompute(fork);
+            sight.Recompute(fork);
+            Assert.Equal(i == 1, fork.State.Plots[target.Value].Visible.Contains(0));
+            Assert.Equal(i == 0, fork.State.Plots[target.Value].Visible.Contains(1));
+            Assert.Equal(rng, fork.Rng.State);
+            Assert.Equal(events, fork.Events.Published);
+            var loaded = SaveGame.Load(sim.Content, SaveGame.Save(fork));
+            sight.Recompute(loaded);
+            Assert.Equal(fork.ComputeHash(), loaded.ComputeHash());
+            Assert.Equal(rng, loaded.Rng.State);
+        });
+        Assert.Equal(parentHash, sim.ComputeHash());
+        Assert.Equal(rng, sim.Rng.State);
+        Assert.Equal(expectedHashes, forks.Select(fork => fork.ComputeHash()).ToArray());
     }
 
     [Fact]
