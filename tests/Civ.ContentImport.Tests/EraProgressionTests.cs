@@ -12,6 +12,7 @@ namespace Civ.ContentImport.Tests;
 public sealed class EraProgressionTests
 {
     [SourceFact]
+    [Trait("Category", "Extractor")]
     public void Every_era_slice_round_trips_through_ModLoader_with_nondecreasing_counts_closed_references_and_neutral_text()
     {
         var registry = new ImportRegistry(ExtractionLocation.Find()!);

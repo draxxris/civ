@@ -1,4 +1,21 @@
+[tasks.test]
+description = "Run default tests, excluding E2E and extractor tests"
+run = "dotnet test Civ.slnx --filter 'Category!=Extractor&Category!=E2E'"
+
+[tasks."test:e2e"]
+description = "Run E2E tests"
+run = "dotnet test Civ.slnx --filter 'Category=E2E'"
+
+[tasks."test:extractor"]
+description = "Run extractor tests"
+run = "dotnet test Civ.slnx --filter 'Category=Extractor'"
+
+[tasks.benchmark]
+description = "Run operational benchmarks without timing thresholds"
+run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release"
+
 [tools]
 dotnet = "10"
+git-lfs = "latest"
 # Godot 4.7.2-stable .NET (mono) build, matching Godot.NET.Sdk/4.7.2 in src/Civ.Godot. Run as `godot-mono`.
 "github:godotengine/godot" = { version = "4.7.2-stable", asset_pattern = "Godot_v4.7.2-stable_mono_linux_x86_64.zip", rename_exe = "godot-mono" }

@@ -1,0 +1,29 @@
+{
+  "forest": [
+    "PineTree_1", "PineTree_2", "PineTree_3", "PineTree_4", "PineTree_5",
+    "NormalTree_1", "NormalTree_2", "NormalTree_3", "NormalTree_4", "NormalTree_5",
+    "BirchTree_1", "BirchTree_2", "BirchTree_3", "BirchTree_4", "BirchTree_5",
+    "MapleTree_1", "MapleTree_2", "MapleTree_3", "MapleTree_4", "MapleTree_5",
+    "Bush", "Bush_Small"
+  ],
+  "forest_snow": [
+    "PineTree_1_Snow", "PineTree_2_Snow", "PineTree_3_Snow", "PineTree_4_Snow", "PineTree_5_Snow",
+    "DeadTree_1", "DeadTree_2", "DeadTree_3"
+  ],
+  "jungle": [
+    "PalmTree_1", "PalmTree_2", "PalmTree_3", "PalmTree_4", "PalmTree_5",
+    "NormalTree_1_Large", "NormalTree_2_Large", "NormalTree_3_Large", "NormalTree_4_Large", "NormalTree_5_Large",
+    "Plant_1", "Plant_2", "Bush_Large"
+  ],
+  "swamp": [
+    "DeadTree_1", "DeadTree_2", "DeadTree_3", "DeadTree_4", "DeadTree_5",
+    "DeadTree_6", "DeadTree_7", "DeadTree_8", "DeadTree_9", "DeadTree_10",
+    "Grass_Large", "Grass_Large_Extruded", "Plant_1"
+  ],
+  "oasis": [
+    "PalmTree_1", "PalmTree_2", "PalmTree_3", "PalmTree_4", "PalmTree_5", "Bush_Large"
+  ],
+  "rocks": [
+    "Rock_1", "Rock_2", "Rock_3", "Rock_4", "Rock_5"
+  ]
+}

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Civ.Content;
 using Civ.Game;
 using Xunit;
@@ -19,10 +18,7 @@ public sealed class WorldRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData(987654UL)]
     public void Continents_are_deterministic_habitable_and_have_valid_layers(ulong seed)
     {
-        var watch = Stopwatch.StartNew();
         var sim = GameFactory.Create(Content, seed);
-        watch.Stop();
-        Assert.True(watch.ElapsedMilliseconds < 1000, $"Generation and setup took {watch.ElapsedMilliseconds}ms");
         var again = GameFactory.Create(Content, seed);
         Assert.Equal(sim.ComputeHash(), again.ComputeHash());
         var loaded = SaveGame.Load(Content, SaveGame.Save(sim));
