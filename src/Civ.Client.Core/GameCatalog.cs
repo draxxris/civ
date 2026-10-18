@@ -29,6 +29,7 @@ public sealed class GameCatalog
     public ContentDb Content { get; }
     public IReadOnlyList<ModSource> Mods { get; }
     public IReadOnlyList<SetupChoice> WorldSizes { get; }
+    public IReadOnlyList<SetupChoice> MapGenerators { get; }
     public IReadOnlyList<SetupChoice> GameSpeeds { get; }
     public IReadOnlyList<SetupChoice> Handicaps { get; }
     public IReadOnlyList<SetupGameOption> GameOptions { get; }
@@ -44,6 +45,8 @@ public sealed class GameCatalog
         using var choicesTrace = StartupTrace.Phase("catalog choices");
         _modRoots = mods.ToDictionary(m => m.Manifest.Id, m => m.Root, StringComparer.Ordinal);
         WorldSizes = Choices(Content.Get<Schema.WorldSizeDef>().All.OrderBy(w => w.GridWidth * w.GridHeight));
+        MapGenerators = Content.MapGenerators.All.OrderBy(g => g.Id, StringComparer.Ordinal)
+            .Select(g => new SetupChoice(g.Id, g.Name)).ToList();
         GameSpeeds = Choices(Content.Get<Schema.GameSpeedDef>().All.OrderBy(s => s.GrowthPercent));
         Handicaps = Choices(Content.Get<Schema.HandicapDef>().All.OrderBy(h => SetupPolicies.SortOrder(Content, SetupField.Handicap, h.Id)).ThenBy(h => h.Id, StringComparer.Ordinal));
         GameOptions = SetupPolicies.GameOptions(Content);
@@ -92,7 +95,8 @@ public sealed class GameCatalog
     }
 
     public NewGameOptions DefaultOptions() => new(
-        Pick(WorldSizes, SetupField.WorldSize), Pick(GameSpeeds, SetupField.GameSpeed), Pick(Handicaps, SetupField.Handicap), Leaders[0].Id, 3, 1);
+        Pick(WorldSizes, SetupField.WorldSize), Pick(GameSpeeds, SetupField.GameSpeed), Pick(Handicaps, SetupField.Handicap),
+        Leaders[0].Id, 3, 1, MapGenerator: MapGenerators.Count == 0 ? "" : Pick(MapGenerators, SetupField.MapGenerator));
 
     private string Pick(IReadOnlyList<SetupChoice> choices, SetupField field) =>
         SetupPolicies.Default(Content, field) is { } id ? choices.FirstOrDefault(c => c.Id == id)?.Id ?? choices[0].Id : choices[0].Id;

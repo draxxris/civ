@@ -3,11 +3,13 @@ using Civ.Game;
 
 namespace Civ.Mods.World;
 
-/// <summary>Continents.py / FractalWorld: polar fractal land, 75% water, separate relief and moisture fields.
-/// Integer value-noise replaces the native fractal primitive; climate and adjacency use hex topology.</summary>
-internal sealed class ContinentsGenerator : IMapGenerator
+/// <summary>Shared world pipeline with selectable land silhouettes and separate relief and moisture fields.
+/// The default Continental layout retains polar fractal land and the configured water percentage.</summary>
+internal sealed class ContinentsGenerator(string id = "world:continents", string name = "Continental",
+    WorldLayout layout = WorldLayout.Continental) : IMapGenerator
 {
-    public string Id => "world:continents";
+    public string Id => id;
+    public string Name => name;
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content) => Generate(spec, plots, rng, content, 2);
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players)
     {
@@ -21,12 +23,11 @@ internal sealed class ContinentsGenerator : IMapGenerator
             var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
             var relief = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 4, tuning.NoiseOctaves);
             foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
-            var land = grid.Tiles.OrderByDescending(t => elevation[t.Value]).ThenBy(t => t.Value)
-                .Take(grid.Count * (100 - tuning.WaterPercent) / 100).Select(t => t.Value).ToHashSet();
-            int hills = Percentile(relief, 100 - tuning.HillsPercent);
-            int peaks = Percentile(relief, 100 - tuning.PeaksPercent);
+            var land = LandLayouts.Create(grid, elevation, tuning.WaterPercent, layout);
+            int hills = Percentile(relief, layout == WorldLayout.GreatPlains ? 94 : 100 - tuning.HillsPercent);
+            int peaks = layout == WorldLayout.GreatPlains ? int.MaxValue : Percentile(relief, 100 - tuning.PeaksPercent);
             foreach (var tile in grid.Tiles)
-                SetTerrain(grid, plots[tile.Value], tile, land.Contains(tile.Value), moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
+                SetTerrain(grid, plots[tile.Value], tile, land[tile.Value], moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
             AddCoasts(grid, plots, content);
             Geography.AssignAreas(grid, plots, content);
             RiverGenerator.Generate(grid, plots, elevation, rng, content);

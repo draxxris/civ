@@ -13,13 +13,29 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
 
     [Theory]
-    [InlineData(1UL)]
-    [InlineData(42UL)]
-    [InlineData(987654UL)]
-    public void Continents_are_deterministic_habitable_and_have_valid_layers(ulong seed)
+    [InlineData(1UL, "world:continents")]
+    [InlineData(42UL, "world:continents")]
+    [InlineData(987654UL, "world:continents")]
+    [InlineData(1UL, "world:inland_sea")]
+    [InlineData(42UL, "world:inland_sea")]
+    [InlineData(987654UL, "world:inland_sea")]
+    [InlineData(1UL, "world:king_of_the_hill")]
+    [InlineData(42UL, "world:king_of_the_hill")]
+    [InlineData(987654UL, "world:king_of_the_hill")]
+    [InlineData(1UL, "world:new_world")]
+    [InlineData(42UL, "world:new_world")]
+    [InlineData(987654UL, "world:new_world")]
+    [InlineData(1UL, "world:twin_continents")]
+    [InlineData(42UL, "world:twin_continents")]
+    [InlineData(987654UL, "world:twin_continents")]
+    [InlineData(1UL, "world:great_plains")]
+    [InlineData(42UL, "world:great_plains")]
+    [InlineData(987654UL, "world:great_plains")]
+    public void Generators_are_deterministic_habitable_and_have_valid_layers(ulong seed, string generator)
     {
-        var sim = GameFactory.Create(Content, seed);
-        var again = GameFactory.Create(Content, seed);
+        var settings = GameFactory.Settings(seed) with { MapGenerator = generator };
+        var sim = new Simulation(Content, settings);
+        var again = new Simulation(Content, settings);
         Assert.Equal(sim.ComputeHash(), again.ComputeHash());
         var loaded = SaveGame.Load(Content, SaveGame.Save(sim));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
@@ -27,11 +43,20 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         Assert.Equal(new MapSpec(84, 52, true), sim.State.Map);
         int land = sim.State.Plots.Count(p => !Content.Get<S.TerrainDef>(p.Terrain).IsWater);
-        Assert.InRange(land * 100 / sim.State.Grid.Count, 24, 26);
+        var bounds = generator switch
+        {
+            "world:inland_sea" => (60, 75),
+            "world:king_of_the_hill" => (35, 65),
+            "world:new_world" => (30, 50),
+            "world:twin_continents" => (35, 55),
+            "world:great_plains" => (90, 99),
+            _ => (24, 26),
+        };
+        Assert.InRange(land * 100 / sim.State.Grid.Count, bounds.Item1, bounds.Item2);
         Assert.Contains(sim.State.Plots, p => p.RiverEdges != 0);
         Assert.Contains(sim.State.Plots, p => p.Bonus is not null);
         Assert.Contains(sim.State.Plots, p => p.Kind == PlotKind.Hills);
-        Assert.Contains(sim.State.Plots, p => p.Kind == PlotKind.Peak);
+        if (generator != "world:great_plains") Assert.Contains(sim.State.Plots, p => p.Kind == PlotKind.Peak);
         Assert.Contains(sim.State.Plots, p => p.Feature == "world:forest");
         Assert.Contains(sim.State.Plots, p => p.Improvement == "world:goody_hut");
         foreach (var tile in sim.State.Grid.Tiles)
