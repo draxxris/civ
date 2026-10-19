@@ -7,7 +7,22 @@ Source: <https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2890
 
 The game does not load this reference image or copy assets from it.
 
-## Buttons
+## Widgets
+
+The user supplied `ui.png` as the target look for all UI widgets: disabled and
+normal buttons, a progress bar, a tab bar, check boxes, radio buttons, a dropdown
+and a scrollable list with a scroll bar. Each widget is brushed slate-blue or
+charcoal paint inside a hand-painted brass rim, lit from the top left. The rims
+are uneven, so no two edges match.
+
+`src/Civ.Godot/Skin/BrassSkin.cs` paints this look at startup. It does not cut
+pixels from the reference. To see every widget, open the gallery scene
+(`mise run start:ui-gallery`).
+
+## Buttons (superseded)
+
+The painted-brass skin from `ui.png` replaces the earlier steel-lapis button.
+The files in this section document that earlier look.
 
 The user supplied `button.png` as the target look for UI buttons: an inner glow,
 a slight chamfer, a crisp bevel, and a slightly chipped, stone-like border.

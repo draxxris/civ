@@ -11,27 +11,49 @@ internal static class Ui
     public static readonly Color Accent = new(1f, 0.82f, 0.30f);
     public static readonly Color PanelFill = new(0.08f, 0.09f, 0.12f, 0.94f);
 
-    // Declared after the colors: MakeTheme reads Accent, and static initializers run in source order.
-    private static readonly Theme ButtonTheme = MakeTheme();
+    private static Theme? _theme;
 
-    /// <summary>Steel-lapis buttons (see <see cref="ButtonSkin"/>) with hover, pressed and disabled looks.</summary>
-    public static Theme MakeTheme()
+    /// <summary>
+    /// The shared painted-brass theme (see <see cref="BrassSkin"/>). The textures are painted on first use,
+    /// so every caller shares one set.
+    /// </summary>
+    public static Theme Theme => _theme ??= MakeTheme();
+
+    /// <summary>
+    /// Makes the brass theme the look of every control in the game. The window's theme only reaches controls
+    /// whose parents are all controls; panels under a CanvasLayer or a 3D node (the game UI, the setup screen)
+    /// would fall back to Godot's default theme. So the brass theme is also merged into that default.
+    /// </summary>
+    public static void InstallTheme(Window window)
+    {
+        window.Theme = Theme;
+        ThemeDB.GetDefaultTheme().MergeWith(Theme);
+        EnableScrollArrows(window.GetTree());
+    }
+
+    /// <summary>
+    /// Makes the scroll bars' arrow buttons scroll. Godot's own theme draws no arrows, so the scroll bars inside
+    /// lists, scroll containers, trees and text areas leave their step at 0 and an arrow click moves nothing.
+    /// Every such bar added to <paramref name="tree"/> gets a step of about one list row, in pixels at
+    /// <paramref name="scale"/>, or one line in a text area, whose vertical bar counts lines.
+    /// </summary>
+    public static void EnableScrollArrows(SceneTree tree, int scale = 1)
+    {
+        foreach (var node in tree.Root.FindChildren("*", nameof(ScrollBar), true, false)) StepArrows(node, scale);
+        tree.NodeAdded += node => StepArrows(node, scale);
+    }
+
+    private static void StepArrows(Node node, int scale)
+    {
+        if (node is not ScrollBar bar || bar.Step > 0 || bar.CustomStep >= 0) return;
+        bar.CustomStep = bar is VScrollBar && bar.GetParent() is TextEdit ? 1 : 30 * scale;
+    }
+
+    /// <summary>A brass theme painted at <paramref name="scale"/> pixels per unit; the game uses <see cref="Theme"/>.</summary>
+    public static Theme MakeTheme(int scale = 1)
     {
         var theme = new Theme();
-        var pressed = ButtonSkin.Make(ButtonSkin.State.Pressed);
-        theme.SetStylebox("normal", "Button", ButtonSkin.Make(ButtonSkin.State.Normal));
-        theme.SetStylebox("hover", "Button", ButtonSkin.Make(ButtonSkin.State.Hover));
-        theme.SetStylebox("pressed", "Button", pressed);
-        theme.SetStylebox("hover_pressed", "Button", pressed);
-        theme.SetStylebox("disabled", "Button", ButtonSkin.Make(ButtonSkin.State.Disabled));
-        theme.SetColor("font_color", "Button", new Color(0.91f, 0.93f, 0.96f));
-        theme.SetColor("font_hover_color", "Button", Colors.White);
-        theme.SetColor("font_pressed_color", "Button", Accent);
-        theme.SetColor("font_hover_pressed_color", "Button", Accent);
-        theme.SetColor("font_disabled_color", "Button", new Color(0.66f, 0.67f, 0.68f));
-        // A soft dark outline stands in for the text shadow in the mockup.
-        theme.SetColor("font_outline_color", "Button", new Color(0f, 0f, 0f, 0.55f));
-        theme.SetConstant("outline_size", "Button", 3);
+        BrassSkin.Apply(theme, scale);
         return theme;
     }
 
@@ -68,7 +90,7 @@ internal static class Ui
 
     public static Button Button(string text, Action onPress, string? tooltip = null, bool enabled = true, int size = 14)
     {
-        var b = new Button { Text = text, Disabled = !enabled, TooltipText = tooltip ?? "", FocusMode = Control.FocusModeEnum.None, Theme = ButtonTheme };
+        var b = new Button { Text = text, Disabled = !enabled, TooltipText = tooltip ?? "", FocusMode = Control.FocusModeEnum.None, Theme = Ui.Theme };
         b.AddThemeFontSizeOverride("font_size", size);
         b.Pressed += onPress;
         return b;
@@ -110,17 +132,23 @@ internal static class Ui
         };
     }
 
-    public static ProgressBar Bar(double value, double max, Color fill, string text = "")
+    /// <summary>
+    /// A progress bar with the text at its right end, as in the brass skin's reference. <paramref name="fill"/>
+    /// tints the fill to give it a meaning (food, damage); null keeps the skin's slate blue.
+    /// </summary>
+    public static ProgressBar Bar(double value, double max, Color? fill, string text = "")
     {
-        var bar = new ProgressBar { MaxValue = Math.Max(1, max), Value = value, CustomMinimumSize = new Vector2(0, 18), ShowPercentage = false, TooltipText = text };
-        var f = Box(fill, 0, 3);
-        bar.AddThemeStyleboxOverride("fill", f);
-        bar.AddThemeStyleboxOverride("background", Box(new Color(0.18f, 0.19f, 0.23f), 0, 3));
+        var bar = new ProgressBar { MaxValue = Math.Max(1, max), Value = value, CustomMinimumSize = new Vector2(0, 20), ShowPercentage = false, TooltipText = text };
+        if (fill is { } tint) bar.AddThemeStyleboxOverride("fill", BrassSkin.BarFill(tint));
         if (text.Length > 0)
         {
-            var label = Text(text, 12, Colors.White, wrap: false);
-            label.HorizontalAlignment = HorizontalAlignment.Center;
+            var label = Text(text, 12, BrassSkin.Text, wrap: false);
+            label.AddThemeColorOverride("font_outline_color", new Color(0f, 0f, 0f, 0.6f));
+            label.AddThemeConstantOverride("outline_size", 3);
+            label.HorizontalAlignment = HorizontalAlignment.Right;
+            label.VerticalAlignment = VerticalAlignment.Center;
             label.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+            label.OffsetRight = -11;
             bar.AddChild(label);
         }
         return bar;
