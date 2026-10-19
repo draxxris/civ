@@ -90,6 +90,23 @@ public sealed partial class WorldRulesTests
     }
 
     [Theory]
+    [InlineData(PlotKind.Peak, "soil", true)]
+    [InlineData(PlotKind.Flat, "soil", false)]
+    [InlineData(PlotKind.Hills, "soil", false)]
+    [InlineData(PlotKind.Peak, "spreading_soil", false)]
+    public void Peak_only_feature_growth_requires_peak_relief_and_valid_terrain(PlotKind kind, string ground, bool grows)
+    {
+        var sim = EvolutionScenario();
+        var tile = EvolutionPlot(sim, ground);
+        var plot = sim.State.Plots[tile.Value];
+        plot.Kind = kind;
+        sim.State.Plots[sim.State.Grid.Neighbors(tile).First().Value].Feature = Evolution + "peak_growth";
+        MapTurn(sim);
+        Assert.Equal(grows ? Evolution + "peak_growth" : null, plot.Feature);
+        Assert.Equal(grows ? 1 : 0, sim.Events.Published.OfType<FeatureChanged>().Count());
+    }
+
+    [Theory]
     [InlineData(false, 10)]
     [InlineData(true, 1)]
     public void Resource_discovery_stays_active_without_depletion_and_is_ten_times_faster_with_it(bool depletion, int odds)
@@ -520,6 +537,10 @@ public sealed partial class WorldRulesTests
             context.Content<S.FeatureDef>().Register(new()
             {
                 Id = Evolution + "spread", Terrains = Valid("spreading_soil"), Spread = 20000, CanGrowAnywhere = true,
+            });
+            context.Content<S.FeatureDef>().Register(new()
+            {
+                Id = Evolution + "peak_growth", Terrains = Valid("soil"), RequiresPeaks = true, Growth = 20000,
             });
             context.Content<S.FeatureDef>().Register(new()
             {

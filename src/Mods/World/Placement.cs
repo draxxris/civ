@@ -10,7 +10,7 @@ internal static class Placement
     internal static bool FeatureValid(HexGrid grid, Plot[] plots, ContentDb db, TileId tile, S.FeatureDef feature)
     {
         var plot = plots[tile.Value];
-        if (plot.Kind == PlotKind.Peak || !feature.Terrains.GetValueOrDefault(plot.Terrain)) return false;
+        if (!feature.Terrains.GetValueOrDefault(plot.Terrain)) return false;
         if (!FeatureGroundValid(plot, feature)) return false;
         if (feature.NoCoast && Geography.Coast(grid, plots, db, tile)) return false;
         return !feature.NoAdjacent || grid.Neighbors(tile).All(n => plots[n.Value].Feature != feature.Id);
@@ -18,6 +18,7 @@ internal static class Placement
 
     private static bool FeatureGroundValid(Plot plot, S.FeatureDef feature)
     {
+        if ((plot.Kind == PlotKind.Peak) != feature.RequiresPeaks) return false;
         if (feature.RequiresFlatlands && plot.Kind != PlotKind.Flat) return false;
         if (feature.RequiresRiver && plot.RiverEdges == 0) return false;
         return !feature.NoRiver || plot.RiverEdges == 0;

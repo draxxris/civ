@@ -588,5 +588,16 @@
       "food": 0,
       "production": 0
     }
+  },
+  {
+    "appearance": 500,
+    "id": "world:volcano",
+    "name": "Volcano",
+    "noCity": true,
+    "noImprovement": true,
+    "requiresPeaks": true,
+    "terrains": {
+      "world:peak": true
+    }
   }
 ]

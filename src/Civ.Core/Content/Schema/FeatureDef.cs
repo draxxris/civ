@@ -20,6 +20,8 @@ public sealed class FeatureDef : GameContentDef
     public bool NoRiver { get; init; } = false;
     public bool NukeImmune { get; init; } = false;
     public bool RequiresFlatlands { get; init; } = false;
+    /// <summary>Restricts placement to peaks. Features without this flag cannot occupy peaks.</summary>
+    public bool RequiresPeaks { get; init; } = false;
     public bool RequiresRiver { get; init; } = false;
     public bool VisibleAlways { get; init; } = false;
     public int AdvancedStartRemoveCost { get; init; } = 0;

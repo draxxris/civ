@@ -57,6 +57,8 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         Assert.Contains(sim.State.Plots, p => p.Bonus is not null);
         Assert.Contains(sim.State.Plots, p => p.Kind == PlotKind.Hills);
         if (generator != "world:great_plains") Assert.Contains(sim.State.Plots, p => p.Kind == PlotKind.Peak);
+        if (generator == "world:continents" && seed == 42)
+            Assert.Contains(sim.State.Plots, p => p.Feature == "world:volcano");
         Assert.Contains(sim.State.Plots, p => p.Feature == "world:forest");
         Assert.Contains(sim.State.Plots, p => p.Improvement == "world:goody_hut");
         foreach (var tile in sim.State.Grid.Tiles)
@@ -67,8 +69,9 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
             {
                 Assert.False(Content.Get<S.TerrainDef>(plot.Terrain).IsWater);
                 Assert.False(plot.IsLake);
-                Assert.Null(plot.Feature);
+                if (plot.Feature is not null) Assert.Equal("world:volcano", plot.Feature);
             }
+            if (plot.Feature == "world:volcano") Assert.Equal(PlotKind.Peak, plot.Kind);
             for (int d = 0; d < 6; d++)
                 if (sim.State.Grid.Neighbor(tile, d) is { } neighbor)
                     Assert.Equal((plot.RiverEdges >> d) & 1, (sim.State.Plots[neighbor.Value].RiverEdges >> ((d + 3) % 6)) & 1);
@@ -107,8 +110,10 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         if (bonus.NoRiverSide) Assert.Equal(0, plot.RiverEdges);
     }
 
-    [Fact]
-    public void Mountain_is_land_with_peak_capability_gates_and_survives_a_save()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("world:volcano")]
+    public void Mountain_is_land_with_peak_capability_gates_and_survives_a_save(string? feature)
     {
         var sim = GameFactory.Scenario(Content);
         var from = sim.State.Grid.TileAt(2, 3);
@@ -116,6 +121,7 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         var plot = sim.State.Plots[tile.Value];
         plot.Terrain = "world:peak";
         plot.Kind = PlotKind.Peak;
+        plot.Feature = feature;
         var worker = AddWorker(sim, from);
         var ship = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:galley", Position = worker.Position };
         sim.State.AddUnit(ship);
@@ -130,6 +136,7 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         var loaded = SaveGame.Load(Content, SaveGame.Save(sim));
         Assert.Equal("world:peak", loaded.State.Plots[tile.Value].Terrain);
         Assert.Equal(PlotKind.Peak, loaded.State.Plots[tile.Value].Kind);
+        Assert.Equal(feature, loaded.State.Plots[tile.Value].Feature);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 
