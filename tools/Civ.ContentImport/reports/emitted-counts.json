@@ -1,5 +1,5 @@
 {
-  "total": 2462,
+  "total": 2463,
   "mods": [
     {
       "id": "cities",
@@ -90,7 +90,7 @@
     },
     {
       "id": "world",
-      "count": 242,
+      "count": 243,
       "references": [
         "foundation",
         "military",
@@ -288,7 +288,7 @@
     {
       "mod": "world",
       "definition": "FeatureDef",
-      "count": 10
+      "count": 11
     },
     {
       "mod": "world",

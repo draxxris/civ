@@ -10,7 +10,7 @@ The counts describe typed v1 content, not the generic archive inventory.
 - peoples: 212. Content providers: cities, government, military, religion, research, world.
 - religion: 13. Content providers: cities, foundation, military, research.
 - research: 252. Content providers: foundation, military, world.
-- world: 242. Content providers: foundation, military, peoples, research.
+- world: 243. Content providers: foundation, military, peoples, research.
 
 ## Definition counts
 
@@ -51,7 +51,7 @@ The counts describe typed v1 content, not the generic archive inventory.
 - world/BonusClassDef: 11.
 - world/BonusDef: 71.
 - world/BuildDef: 63.
-- world/FeatureDef: 10.
+- world/FeatureDef: 11.
 - world/GoodyDef: 12.
 - world/ImprovementDef: 53.
 - world/RouteDef: 9.
