@@ -15,10 +15,21 @@ internal sealed class ResearchService : IResearchService
         if (Availability(sim, player, tech) is { } reason) return Reject(reason);
         return sim.Content.Requirements.Evaluate(sim.Content.Get<TechDef>(tech).Requirements, new(sim, player));
     }
+    public RequirementResult ValidateSelection(Simulation sim, int player, string tech)
+    {
+        var result = Validate(sim, player, tech);
+        if (!result.Success) return result;
+        var error = SelectionError(sim, player, [tech]);
+        return error is null ? result : Reject(error);
+    }
+    private static string? SelectionError(Simulation sim, int player, IReadOnlyList<string> queue) =>
+        sim.Content.Services.Get<IResearchSelectionPolicy>().Select(p => p.ValidateQueue(sim, player, queue)).FirstOrDefault(e => e is not null);
+
     public string? ValidateQueue(Simulation sim, int player, IReadOnlyList<string> queue, bool freeTech = false)
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         if (freeTech && ValidateFreeSelection(sim, player, queue) is { } freeError) return freeError;
+        if (SelectionError(sim, player, queue) is { } selectionError) return selectionError;
         // Future entries may depend on earlier entries. Recheck actual requirements at activation.
         foreach (var id in queue)
         {
@@ -41,12 +52,14 @@ internal sealed class ResearchService : IResearchService
     }
     public void SetQueue(Simulation sim, int player, IReadOnlyList<string> queue, bool freeTech = false)
     {
+        if (ValidateQueue(sim, player, queue, freeTech) is { } error) throw new InvalidOperationException(error);
         var team = sim.TeamOf(player);
         var state = Edit(sim, team);
         if (freeTech)
         {
             state.FreeTechs--;
             Discover(sim, player, team, queue[0]);
+            sim.Events.Publish(new ResearchCompleted(team.Id, queue[0]));
             return;
         }
         state.Queue = queue.ToList();
@@ -56,6 +69,7 @@ internal sealed class ResearchService : IResearchService
     {
         if (GovernmentStatus.IsAnarchy(sim, player)) return;
         var team = sim.TeamOf(player);
+        foreach (var policy in sim.Content.Services.Get<IResearchSelectionPolicy>()) policy.Refresh(sim, team.Id);
         var state = Edit(sim, team);
         SelectNext(sim, player, team, state);
         if (team.Researching is not { } tech) { state.Overflow = checked(state.Overflow + beakers); return; }
@@ -71,8 +85,9 @@ internal sealed class ResearchService : IResearchService
         Discover(sim, player, team, tech);
         if (state.Queue.FirstOrDefault() == tech) state.Queue.RemoveAt(0);
         team.Researching = null;
+        sim.Events.Publish(new ResearchCompleted(team.Id, tech));
         SelectNext(sim, player, team, state);
-        // Like the source player phase, overflow is spent on the next research contribution, not recursively this turn.
+        // Overflow is spent on the next contribution, not recursively this turn.
     }
     public void AddProgress(Simulation sim, int player, string tech, long beakers)
     {
@@ -86,16 +101,17 @@ internal sealed class ResearchService : IResearchService
         var state = Edit(sim, team);
         state.Queue.RemoveAll(t => t == tech);
         if (team.Researching == tech) team.Researching = null;
+        sim.Events.Publish(new ResearchCompleted(team.Id, tech));
         SelectNext(sim, player, team, state);
     }
     private void SelectNext(Simulation sim, int player, Team team, ResearchTeamState state)
     {
-        if (team.Researching is { } active && Validate(sim, player, active).Success) return;
+        if (team.Researching is { } active && ValidateSelection(sim, player, active).Success) return;
         team.Researching = null;
         while (state.Queue.Count > 0)
         {
             string id = state.Queue[0];
-            if (Validate(sim, player, id).Success) { team.Researching = id; return; }
+            if (ValidateSelection(sim, player, id).Success) { team.Researching = id; return; }
             if (!team.Techs.Contains(id)) return; // Retain an unmet prerequisite rather than silently dropping it.
             state.Queue.RemoveAt(0);
         }
@@ -109,7 +125,7 @@ internal sealed class ResearchService : IResearchService
         state.Completions[tech] = state.Completions.GetValueOrDefault(tech) + 1;
         if (first) state.FreeTechs += def.FirstFreeTechs;
 
-        sim.Events.Publish(new TechDiscovered(team.Id, tech));
+        sim.Events.Publish(new TechDiscovered(team.Id, tech, ResearchCompletion: true));
         if (first && def.FirstFreeUnit is { } unit) GrantUnit(sim, player, unit);
     }
 

@@ -3,7 +3,7 @@ namespace Civ.Game;
 /// <summary>Immutable rule notification. Dispatch is synchronous, FIFO, and deterministic.</summary>
 public abstract record DomainEvent;
 /// <summary>A team learned a technology.</summary>
-public sealed record TechDiscovered(int Team, string Tech) : DomainEvent;
+public sealed record TechDiscovered(int Team, string Tech, bool ResearchCompletion = false) : DomainEvent;
 /// <summary>A player founded a city.</summary>
 public sealed record CityFounded(int City, int Player, Hex Position) : DomainEvent;
 /// <summary>A city's population changed through growth.</summary>

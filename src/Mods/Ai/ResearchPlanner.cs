@@ -12,12 +12,12 @@ internal sealed class ResearchPlanner(AiContext ctx)
     {
         var team = ctx.Team;
         SpendFreeCredits();
-        if (team.Researching is { } current && !team.Techs.Contains(current)) return;
         var research = ctx.Service<IResearchService>();
+        if (team.Researching is { } current && research.ValidateSelection(ctx.Sim, ctx.PlayerId, current).Success) return;
         var owned = OwnedBonuses();
-        var candidates = ctx.Catalog.Techs.Where(t => !team.Techs.Contains(t.Id)).ToArray();
+        var candidates = ctx.Catalog.Techs.ToArray();
         var scores = ParallelScoring.Select(ctx.Sim, candidates, ParallelTechs, t =>
-            research.Validate(ctx.Sim, ctx.PlayerId, t.Id).Success ? Score(research, t, owned) : (long?)null);
+            research.ValidateSelection(ctx.Sim, ctx.PlayerId, t.Id).Success ? Score(research, t, owned) : (long?)null);
         var best = candidates.Select((t, i) => (Tech: t, Score: scores[i])).Where(x => x.Score is not null)
             .OrderByDescending(x => x.Score).ThenBy(x => x.Tech.Id, StringComparer.Ordinal).FirstOrDefault();
         if (best.Tech is null) return;
@@ -29,7 +29,7 @@ internal sealed class ResearchPlanner(AiContext ctx)
         var research = ctx.Service<IResearchService>();
         while (ctx.Team.Extensions.Get<ResearchTeamState>(ctx.Sim.Content)?.FreeTechs > 0)
         {
-            var best = ctx.Catalog.Techs.Where(t => research.Validate(ctx.Sim, ctx.PlayerId, t.Id).Success)
+            var best = ctx.Catalog.Techs.Where(t => research.ValidateSelection(ctx.Sim, ctx.PlayerId, t.Id).Success)
                 .OrderByDescending(t => research.CalculateCost(ctx.Sim, ctx.Team.Id, t.Id).Cost + ctx.FlavorScore(t.Flavors))
                 .ThenBy(t => t.Id, StringComparer.Ordinal).FirstOrDefault();
             if (best is null || !ctx.Issue(new SetTeamResearchCommand { Player = ctx.PlayerId, Tech = best.Id, FreeTech = true })) break;

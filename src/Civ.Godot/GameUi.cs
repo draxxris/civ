@@ -200,18 +200,23 @@ internal sealed partial class GameUi : CanvasLayer
         if (!_researchDialog.Visible) return;
         var box = Ui.VBox(6);
         var head = Ui.HBox();
-        head.AddChild(Ui.Heading("Choose research"));
+        var selection = _session.ResearchSelection();
+        head.AddChild(Ui.Heading(selection?.Title ?? "Choose research"));
         head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", () => _researchOpen = false));
         box.AddChild(head);
-        var list = Ui.VBox(3);
-        foreach (var tech in _session.ResearchChoices())
-            list.AddChild(Ui.Button($"{tech.Name}   —   {tech.Cost} beakers" + (tech.Turns is int t ? $", {t} turns" : "") + $"   [{tech.Era}]",
-                () => { if (_session.Research(tech.Id)) _researchOpen = false; }, tech.Help.Length > 0 ? StripMarkup(tech.Help) : tech.Name));
-        box.AddChild(Ui.Scroll(list, 420));
-        _researchDialog.CustomMinimumSize = new Vector2(620, 0);
+        if (_session.DescribeTechTree() is not null)
+            box.AddChild(Ui.Button("Browse tech tree", () => OpenModal(Modal.TechTree)));
+        var choices = _session.ResearchChoices();
+        bool cards = selection?.Layout == Civ.Game.ResearchChoiceLayout.Cards;
+        if (cards) BuildResearchCards(box, choices);
+        else BuildResearchList(box, choices);
+        if (choices.Count == 0) box.AddChild(Ui.Text("No eligible technologies are available.", 14, Ui.Dim));
+        if (_session.FreeResearchCredits > 0) box.AddChild(Ui.Text($"Free technologies: {_session.FreeResearchCredits}", 14, Ui.Accent));
+        float width = cards ? 940 : 620;
+        _researchDialog.CustomMinimumSize = new Vector2(width, 0);
         _researchDialog.AddChild(box);
-        _researchDialog.Position = (GetViewport().GetVisibleRect().Size - new Vector2(620, 520)) / 2;
+        _researchDialog.Position = (GetViewport().GetVisibleRect().Size - new Vector2(width, 520)) / 2;
     }
 
     internal static string StripMarkup(string text) =>

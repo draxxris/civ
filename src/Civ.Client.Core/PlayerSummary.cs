@@ -44,19 +44,24 @@ public sealed partial class GameSession
     public static int? TurnsToFinish(long remaining, long perTurn) =>
         perTurn <= 0 ? null : (int)Math.Max(1, (remaining + perTurn - 1) / perTurn);
 
-    /// <summary>Technologies the team could start now, cheapest first.</summary>
+    public ResearchSelectionView? ResearchSelection() => OptionalService<IResearchSelectionPresentation>()?.Describe(Sim, Human);
+    public TechTreeView? DescribeTechTree() => OptionalService<ITechTreePresentation>()?.Describe(Sim, Human);
+
+    /// <summary>Technologies the team can select now, cheapest first, or in offered order for cards.</summary>
     public IReadOnlyList<TechChoice> ResearchChoices()
     {
         var research = Service<IResearchService>();
         long perTurn = ResearchBaseRate(Service<IPlayerEconomyService>().Calculate(Sim, Human).CommerceHundredths.Research);
         var choices = new List<TechChoice>();
-        foreach (var tech in Sim.Content.Get<Schema.TechDef>().All.Where(t => !MyTeam.Techs.Contains(t.Id)))
+        foreach (var tech in Sim.Content.Get<Schema.TechDef>().All)
         {
-            if (!research.Validate(Sim, Human, tech.Id).Success) continue;
+            if (!research.ValidateSelection(Sim, Human, tech.Id).Success) continue;
             long cost = research.CalculateCost(Sim, MyTeam.Id, tech.Id).Cost;
             var era = tech.Era is { } e && Sim.Content.TryGet<Schema.EraDef>(e, out var def) ? def.Name : "";
             choices.Add(new(tech.Id, tech.Name, era, cost, ResearchTurns(tech.Id, cost - MyTeam.Research.GetValueOrDefault(tech.Id), perTurn), tech.Help));
         }
+        if (ResearchSelection() is { Layout: ResearchChoiceLayout.Cards } selection)
+            return selection.Offered.Select(id => choices.FirstOrDefault(c => c.Id == id)).OfType<TechChoice>().ToList();
         return choices.OrderBy(c => c.Cost).ThenBy(c => c.Name, StringComparer.Ordinal).ToList();
     }
 
@@ -69,7 +74,8 @@ public sealed partial class GameSession
     private int? ResearchTurns(string tech, long remaining, long baseRate) =>
         TurnsToFinish(remaining, baseRate * Service<IResearchService>().RateModifier(Sim, MyTeam.Id, tech) / 100);
 
-    public bool Research(string tech) => Submit(new SetTeamResearchCommand { Player = Human, Tech = tech });
+    public int FreeResearchCredits => MyTeam.Extensions.Get<ResearchTeamState>(Sim.Content)?.FreeTechs ?? 0;
+    public bool Research(string tech, bool free = false) => Submit(new SetTeamResearchCommand { Player = Human, Tech = tech, FreeTech = free });
 
     /// <summary>Move <paramref name="delta"/> percent of commerce into <paramref name="to"/>, paid from gold (or from research when raising gold).</summary>
     public bool ShiftRate(RateKind to, int delta)
