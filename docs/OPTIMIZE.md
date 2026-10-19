@@ -85,6 +85,10 @@ To ensure repeatable and reliable performance comparisons:
        ▼
 [Phase 4: Oct 17, 2026] World Generation Geometry & River Traversal
                         (Commit: 7b12754)
+       │
+       ▼
+[Phase 5: Oct 18, 2026] Idle CPU: Terrain Ray Pick Caching & Unit Height Sampling
+                        (Commit: 47b932f)
 ```
 
 ---
@@ -271,6 +275,48 @@ Controlled comparison settings: Fedora 44 x64, Intel Core i7-7700HQ, .NET SDK 10
 
 ---
 
+### Phase 5: Idle CPU Reduction, Terrain Ray Pick Caching, and Unit Height Sampling
+
+- **Date**: 2026-10-18
+- **Primary Commit**: [`47b932f`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md) (*Reduce idle CPU by caching terrain picks and skipping stationary ground samples*)
+
+#### Root Causes
+- Profiling identified two sources of excessive CPU work during stationary idle gameplay.
+- First, `GameView.HoveredHex` executed terrain ray picking every frame with a stationary pointer.
+- Second, `UnitActor.UpdateGroundPose` evaluated two identical terrain height queries every frame for each stationary unit.
+- A 10-second .NET sampled-thread-time trace before the change attributed about 23% of sampled thread time to the call `TerrainRay.Pick` Below.
+- This trace value measures sampled thread time, not the percentage of total process CPU.
+
+#### Implementation Changes
+1. **Terrain Pick Caching (`src/Civ.Godot/GameView.cs`)**:
+   - The engine now caches the terrain pick result.
+   - The cache key stores pointer coordinates, camera transform, camera FOV, viewport size, world revision, UI interception state, and forced hover.
+   - When one of these input properties changes, the view recomputes the ray pick.
+   - When the session revision changes, hover descriptions and move previews still update.
+2. **Stationary Ground Pose Sampling (`src/Civ.Godot/UnitActor.cs`)**:
+   - In `src/Civ.Godot/UnitActor.cs`, `UpdateGroundPose` inspects procedural motion (`Shake` and `Lunge`).
+   - When procedural motion is zero, the method avoids height difference computation.
+   - Unit animation and the 60 FPS target frame rate remain unchanged.
+
+#### Measurements and Evidence
+- The team collected measurements on Godot Vulkan Forward+ with an NVIDIA GeForce GTX 1050 Ti.
+- The test environment ran a standard map with default seed 1 in a stationary 1280x720 window.
+- Each sample recorded process `utime+stime` from `/proc/PID/stat` over 10 seconds after startup.
+- The values are normalized to one CPU core.
+- Process CPU utilization decreased from 38.8% before the change to 18.8% after the change.
+- The engine maintained approximately 60 FPS in both runs.
+- These values represent single local samples.
+- They do not constitute a controlled benchmark or a guaranteed reduction on other hardware.
+
+#### Validation
+- The command `dotnet build src/Civ.Godot` completed with zero warnings and zero errors.
+- The command `mise run test` passed 1,315 tests (37 Core, 147 Mod, and 1,131 Engine tests).
+- The default test run excludes end-to-end tests and extractor tests.
+- The change added no new automated tests.
+- The team performed no interactive regression tests and no GPU profiling.
+
+---
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization phases:
@@ -296,3 +342,4 @@ The following table aggregates all recorded performance measurements across opti
 | | | Standard session startup (84×52, 3 seeds) | Managed bytes | 83.04–100.97 MiB | 74.10–91.38 MiB | **-9.5% to -10.8%** |
 | | | Gigantic session startup (200×120, 3 seeds) | Managed bytes | 279.27–294.62 MiB | 241.28–255.57 MiB | **-13.3% to -13.6%** |
 | | | Gigantic session startup (200×120, 3 seeds) | Wall time | 1,215–1,468 ms | 1,091–1,340 ms | **-7.3% to -12.9%** |
+| **Phase 5: Idle CPU Reduction** | `47b932f` | Stationary idle (Vulkan Forward+, 1050 Ti) | Process CPU (1 core) | 38.8% | 18.8% | **-51.5% (-20.0 pp)** |
