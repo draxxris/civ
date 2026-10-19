@@ -62,7 +62,7 @@ internal static class TerrainTestMaps
     {
         var terrains = session.Sim.Content.Get<Schema.TerrainDef>().All.Select(t => t.Id).Order(StringComparer.Ordinal).ToList();
         var features = session.Sim.Content.Get<Schema.FeatureDef>().All.Select(f => f.Id).Order(StringComparer.Ordinal).ToList();
-        return TerrainSnapshot.From(session, t => terrains.IndexOf(t), f => f == null ? 0 : features.IndexOf(f) + 1);
+        return TerrainSnapshot.From(session, t => terrains.IndexOf(t), (f, _) => f == null ? 0 : features.IndexOf(f) + 1);
     }
 }
 

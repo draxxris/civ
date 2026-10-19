@@ -1,4 +1,5 @@
 using Civ.Client.Terrain;
+using Civ.Game;
 using Godot;
 
 namespace Civ.Client;
@@ -15,7 +16,7 @@ internal sealed class TileDataTexture
     public const byte MarkNone = 0, MarkWorkable = 1, MarkWorked = 2, MarkLocked = 3;
 
     /// <summary>Colour table rows.</summary>
-    private const int PaletteWidth = 256, LayerRow = 0, FeatureRow = 1, OwnerRow = 2, WaterTintRow = 3, EdgeRow = 4, PaletteRows = 5;
+    private const int PaletteWidth = 256, LayerRow = 0, FeatureRow = 1, OwnerRow = 2, WaterTintRow = 3, EdgeRow = 4, LookRow = 5, HazeRow = 6, PaletteRows = 7;
 
     private readonly int _width, _height;
     private readonly byte[] _a, _b;
@@ -86,8 +87,9 @@ internal sealed class TileDataTexture
     }
 
     /// <summary>Colour table: layer colours (alpha = ground spread), feature ground tints (alpha = strength), owner colours by
-    /// owner + 1, water tints per layer (alpha = strength) and ragged-edge strength per layer (alpha; 0 for water, red = deep ocean), all as
-    /// sRGB bytes.</summary>
+    /// owner + 1, water tints per layer (alpha = strength), ragged-edge strength per layer (alpha; 0 for water, red = deep ocean),
+    /// feature looks (R = <see cref="FeatureGround"/>, G = its strength, B = <see cref="FeatureHaze"/>, A = haze density) and
+    /// feature haze colours, all as sRGB bytes.</summary>
     public static ImageTexture PaletteTexture(TerrainPalette palette, Func<string, Rgb?> waterTintOf)
     {
         var bytes = new byte[PaletteWidth * PaletteRows * 4];
@@ -99,7 +101,14 @@ internal sealed class TileDataTexture
             Put(EdgeRow, i, new Rgb(layer.Ocean ? 1 : 0, 0, 0), layer.Water ? 0 : 1);
         }
         for (int i = 1; i < palette.FeatureGrounds.Count; i++)
-            if (palette.FeatureGrounds[i] is { } style) Put(FeatureRow, i, style.Tint, style.TintStrength);
+            if (palette.FeatureGrounds[i] is { } style)
+            {
+                Put(FeatureRow, i, style.Tint, style.TintStrength);
+                var look = style.Look;
+                Put(LookRow, i, new Rgb((int)look.Ground / 255f, Math.Clamp(look.GroundPercent, 0, 100) / 100f, (int)look.Haze / 255f),
+                    look.Haze == FeatureHaze.None ? 0 : Math.Clamp(look.HazePercent, 0, 100) / 100f);
+                Put(HazeRow, i, Rgb.Hex(look.HazeRgb), 1);
+            }
         for (int i = 1; i < PaletteWidth; i++) Put(OwnerRow, i, MapStyle.PlayerColor(i - 1), 1);
         return ImageTexture.CreateFromImage(Image.CreateFromData(PaletteWidth, PaletteRows, false, Image.Format.Rgba8, bytes));
 

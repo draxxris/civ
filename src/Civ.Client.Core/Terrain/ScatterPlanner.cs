@@ -1,3 +1,5 @@
+using Civ.Game;
+
 namespace Civ.Client.Terrain;
 
 /// <summary>A prop rooted on the terrain. Tile is the containing tile, used for sight updates.</summary>
@@ -28,7 +30,8 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     /// <summary>Multiplier on every appearance's scatter density (rocks excluded); a debug knob, 1 in normal play.</summary>
     public double DensityScale { get; init; } = 1;
 
-    private readonly Dictionary<(string Feature, string Terrain), (string? Set, double Density)> _appearances = new();
+    private readonly Dictionary<(string Feature, string Terrain), (string? Set, double Density, FeatureLook? Look)> _appearances = new();
+    private PeriodicNoise? _noise;
     private readonly Dictionary<string, int> _modelCounts = new(StringComparer.Ordinal);
     private readonly record struct Contributor(string Set, double Weight);
 
@@ -101,7 +104,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
         if (y <= 0.02 || field.Rivers.Near(x, z, RiverMargin)) return null;
         // Nothing grows on a cliff face.
         if (field.CliffAt(x, z) > 0.2 && field.NormalAt(x, z).Y < 0.8f) return null;
-        Gather(contributors, snapshot, field, palette, tri, weights, x, y, z);
+        Gather(contributors, snapshot, field, palette, tri, weights, x, y, z, Grove(field, x, z));
         double total = contributors.Sum(c => c.Weight);
         if (Hash(col, row, field.Seed, 3) >= total) return null;
         string set = Choose(contributors, Hash(col, row, field.Seed, 4) * total);
@@ -111,28 +114,51 @@ public sealed class ScatterPlanner(GameCatalog catalog)
             (float)(0.8 + Hash(col, row, field.Seed, 7) * 0.4), tile);
     }
 
+    /// <summary>Slow noise in [0, 1] that gathers clumping props into groves: low values are glades.</summary>
+    private double Grove(TerrainField field, double x, double z)
+    {
+        if (_noise is null || _noise.Period != field.Period) _noise = new PeriodicNoise(field.Seed ^ 0x5ca7, field.Period);
+        double n = _noise.Fbm(x, z, 1.3, 2, salt: 3);
+        return Math.Clamp((n + 0.18) / 0.36, 0, 1);
+    }
+
     private void Gather(List<Contributor> contributors, TerrainSnapshot snapshot, TerrainField field,
-        TerrainPalette palette, TileTriangle tri, Blend3 weights, double x, double y, double z)
+        TerrainPalette palette, TileTriangle tri, Blend3 weights, double x, double y, double z, double grove)
     {
         contributors.Clear();
         for (int k = 0; k < 3; k++)
         {
             if (weights[k] <= 0) continue;
             int tile = snapshot.ClampedTile(tri[k]);
-            var (set, density) = Appearance(snapshot.Feature[tile], snapshot.Terrain[tile], palette);
+            var (set, density, look) = Appearance(snapshot.Feature[tile], snapshot.Terrain[tile], palette);
+            if (look is not null)
+            {
+                if (!InRing(look, tri[k], x, z)) continue;
+                double clumping = Math.Clamp(look.Clumping, 0, 100) / 100.0;
+                density *= 1 - clumping + clumping * grove * grove * (3 - 2 * grove);
+            }
             if (set != null && ModelCount(set) > 0) contributors.Add(new(set, weights[k] * density * DensityScale));
             double rocks = RockDensity(snapshot.Relief[tile], field, x, y, z);
             if (rocks > 0 && ModelCount("rocks") > 0) contributors.Add(new("rocks", weights[k] * rocks));
         }
     }
 
-    private (string? Set, double Density) Appearance(string? feature, string? terrain, TerrainPalette palette)
+    private (string? Set, double Density, FeatureLook? Look) Appearance(string? feature, string? terrain, TerrainPalette palette)
     {
-        if (feature == null || terrain == null) return (null, 0);
+        if (feature == null || terrain == null) return (null, 0, null);
         var key = (feature, terrain);
         if (_appearances.TryGetValue(key, out var cached)) return cached;
         var appearance = palette.ScatterFor(feature, terrain);
-        return _appearances[key] = (appearance?.Scatter, Math.Clamp(appearance?.ScatterDensity ?? 0, 0, 100) / 100.0);
+        return _appearances[key] = (appearance?.Scatter, Math.Clamp(appearance?.ScatterDensity ?? 0, 0, 100) / 100.0, appearance?.Look);
+    }
+
+    /// <summary>True when (x, z) lies in the look's prop ring around the tile centre (percent of the hex radius).</summary>
+    private static bool InRing(FeatureLook look, Hex hex, double x, double z)
+    {
+        if (look.ScatterInner <= 0 && look.ScatterOuter >= 100) return true;
+        var (cx, cz) = hex.ToPixel(1);
+        double r = Math.Sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz)) * 100;
+        return r >= look.ScatterInner && r <= look.ScatterOuter;
     }
 
     private int ModelCount(string set)

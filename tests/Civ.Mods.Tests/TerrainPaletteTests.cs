@@ -59,12 +59,12 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
         var session = TerrainTestMaps.RevealedSession(mods.Content);
         session.Sim.State.Plots[1].Feature = "world:forest";
 
-        Assert.Equal(0, _palette.FeatureGroundOf(null));
+        Assert.Equal(0, _palette.FeatureGroundOf(null, "world:grass"));
 
         var snapshot = TerrainSnapshot.From(session, _palette.LayerOf, _palette.FeatureGroundOf);
-        int forestGround = _palette.FeatureGroundOf("world:forest");
+        int forestGround = _palette.FeatureGroundOf("world:forest", "world:grass");
 
-        Assert.InRange(forestGround, 1, 15);
+        Assert.InRange(forestGround, 1, 63);
         Assert.Equal(Sight.Visible, snapshot.Sight[0]);
         Assert.Equal(Sight.Visible, snapshot.Sight[1]);
         Assert.Equal((byte)_palette.LayerOf("world:grass"), snapshot.Layer[0]);

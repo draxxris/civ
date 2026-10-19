@@ -51,7 +51,50 @@ public interface ILedgerSourceLabel
 /// <paramref name="Spread"/> (terrains only, 0..100) is how far a terrain's ground reaches into its neighbours: lush
 /// ground at 100 grows past the tile edge into dry ground at 0.</summary>
 public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0,
-    int Spread = 50);
+    int Spread = 50, FeatureLook? Look = null);
+
+/// <summary>How a feature paints the ground (or water) under it. The client draws each pattern procedurally.</summary>
+public enum FeatureGround
+{
+    /// <summary>Only the soft tint: shade under props, such as a forest floor.</summary>
+    Shade,
+    /// <summary>Dark, still pools between tussocks of the ground.</summary>
+    Pools,
+    /// <summary>Lush green growth and dark silt, richest along rivers.</summary>
+    Fertile,
+    /// <summary>A small pool of clear water at the tile centre, ringed by damp ground.</summary>
+    Spring,
+    /// <summary>Scorched, discoloured ground with a faint sickly glow.</summary>
+    Blight,
+    /// <summary>Broken floes of sea ice on the water, packed tight at the shore.</summary>
+    Floes,
+    /// <summary>Dark, wind-torn water with whitecaps under a cloud shadow.</summary>
+    Squall,
+    /// <summary>A summit crater with a glowing floor and dark ash slopes. The height field gains the crater.</summary>
+    Crater,
+}
+
+/// <summary>A translucent layer of air over a feature. The terrain under it stays readable.</summary>
+public enum FeatureHaze
+{
+    None,
+    /// <summary>Low, pale wisps that hug the ground.</summary>
+    Mist,
+    /// <summary>Low, coloured, slowly rolling haze.</summary>
+    Smog,
+    /// <summary>Dark, torn storm clouds high over the tile.</summary>
+    Storm,
+    /// <summary>A plume of smoke rising from the tile's summit.</summary>
+    Smoke,
+}
+
+/// <summary>Extra feature look. <paramref name="GroundPercent"/> is the strength of the ground pattern. The haze has a
+/// colour and a density (0..100). <paramref name="ScatterInner"/> and <paramref name="ScatterOuter"/> limit props to a
+/// ring around the tile centre, in percent of the hex radius. <paramref name="Clumping"/> (0..100) gathers props into
+/// groves with glades between them.</summary>
+public sealed record FeatureLook(FeatureGround Ground = FeatureGround.Shade, int GroundPercent = 100,
+    FeatureHaze Haze = FeatureHaze.None, int HazeRgb = 0, int HazePercent = 0,
+    int ScatterInner = 0, int ScatterOuter = 100, int Clumping = 0);
 
 public enum TerrainSurface { Cliff, Seabed, DeepSeabed, Unexplored, Snow }
 

@@ -118,6 +118,12 @@ public sealed record TerrainTuning
     public double PeakRoughness { get; init; } = 0.09;
     /// <summary>Peaks: frequency of the fine rock relief.</summary>
     public double PeakRoughnessFrequency { get; init; } = 4.5;
+    /// <summary>Volcanoes (peaks with a crater): crater radius at the rim, in the summit's normalised footprint units.</summary>
+    public double CraterRadius { get; init; } = 0.17;
+    /// <summary>Volcanoes: depth of the crater floor below its rim, in summit rise units.</summary>
+    public double CraterDepth { get; init; } = 0.16;
+    /// <summary>Volcanoes: exponent of the cone falloff. Below <see cref="PeakCurve"/>, so the flanks are straighter.</summary>
+    public double VolcanoCurve { get; init; } = 1.25;
 
     /// <summary>Largest river carve depth, under the middle of a full-width river.</summary>
     public double RiverDepth { get; init; } = 0.075;
@@ -188,6 +194,7 @@ public sealed class TerrainField
     private readonly bool _wrap;
     /// <summary>Per-tile mountain shapes, built on first use. Racing threads build equal shapes, so either may win.</summary>
     private readonly Mountain?[] _mountains;
+    private readonly bool _hasCrater;
     /// <summary>Per tile: hex offsets to the plateau tiles (land with a cliff edge) within <see cref="PlateauReach"/>.
     /// Null for most tiles.</summary>
     private readonly Hex[]?[] _plateaus;
@@ -216,6 +223,7 @@ public sealed class TerrainField
         Warp = warp;
         _wrap = snapshot.Grid.Spec.Wrap;
         _mountains = new Mountain?[snapshot.Relief.Length];
+        _hasCrater = Array.IndexOf(snapshot.Crater, true) >= 0;
         _plateaus = BuildPlateaus();
         Rivers = new RiverNetwork(snapshot, tuning, noise, (x, z) =>
         {
@@ -715,7 +723,8 @@ public sealed class TerrainField
         double dx = corners.X - cx - m.OffsetX, dz = corners.Z - cz - m.OffsetZ;
         double u = (dx * m.AxisCos + dz * m.AxisSin) * m.ScaleAlong, v = (dz * m.AxisCos - dx * m.AxisSin) * m.ScaleAcross;
         double spur = 1 + t.PeakSpur * detail.Spur;
-        double shape = Summit(m.Main, u, v, spur, detail.Wander);
+        bool crater = Snapshot.Crater[corners.Tile(k)];
+        double shape = crater ? VolcanoShape(m, u, v, spur, detail.Wander) : Summit(m.Main, u, v, spur, detail.Wander);
         foreach (var spire in m.Spires)
         {
             double su = (u - spire.U) / spire.Size, sv = (v - spire.V) / spire.Size;
@@ -727,9 +736,73 @@ public sealed class TerrainField
         double rise = m.Summit * shape;
         foreach (var ridge in m.Ridges)
             rise = SoftMax(rise, RidgeShape(ridge, corners.X - cx, corners.Z - cz, spur, detail.Wander), 0.05);
+        if (crater && m.Ridges.Length > 0)
+        {
+            // Ridges climb to a volcano's rim but never fill its crater.
+            double inside = Math.Sqrt(u * u + v * v) / t.CraterRadius;
+            double cone = m.Summit * VolcanoShape(m, u, v, spur, detail.Wander);
+            rise += (Math.Min(rise, cone) - rise) * (1 - SmoothStep(1.0, 1.6, inside));
+        }
         shape = rise / m.Summit;
-        return t.PeakBase + t.PeakRise * rise + t.PeakNoise * detail.Crag * (0.6 + 0.4 * shape)
-            + t.PeakRoughness * detail.Rough * SmoothStep(0.08, 0.45, shape);
+        // A volcano's crater rim and floor stay smooth; crags and ledges belong to its lower flanks.
+        double rough = crater ? 1 - SmoothStep(0.6, 0.85, shape) : 1;
+        return t.PeakBase + t.PeakRise * rise + rough * (t.PeakNoise * detail.Crag * (0.6 + 0.4 * shape)
+            + t.PeakRoughness * detail.Rough * SmoothStep(0.08, 0.45, shape));
+    }
+
+    /// <summary>A volcano's cone in [0, 1]: a mostly round, straight-flanked cone (a little of the faceted summit keeps its
+    /// gullies) cut off at the crater rim, with a bowl-shaped crater sunk into the top.</summary>
+    private double VolcanoShape(Mountain m, double u, double v, double spur, double wander)
+    {
+        var t = Tuning;
+        double r = Math.Sqrt(u * u + v * v);
+        double cone = 0.7 * Cone(r * (1 + 0.4 * (spur - 1)), t.VolcanoCurve) + 0.3 * Summit(m.Main, u, v, spur, wander);
+        double rim = Cone(t.CraterRadius, t.VolcanoCurve);
+        double shape = -SoftMax(-cone, -rim, 0.04);
+        double inside = r / t.CraterRadius;
+        if (inside < 1) shape -= t.CraterDepth * (1 - inside * inside) * (1 - inside * inside);
+        return shape;
+    }
+
+    /// <summary>World position of the middle of a crater tile's floor (canonical x), or null for a tile without a crater.
+    /// The crater is shaped in warped space; a few fixed-point steps undo the warp.</summary>
+    public (double X, double Y, double Z)? CraterCentre(int tile)
+    {
+        if (!Snapshot.Crater[tile] || Snapshot.Relief[tile] != ReliefClass.Peak) return null;
+        var m = MountainOf(tile);
+        var (cx, cz) = Snapshot.Grid.HexOf(new TileId(tile)).ToPixel(1);
+        double wx = cx + m.OffsetX, wz = cz + m.OffsetZ, x = wx, z = wz;
+        for (int i = 0; i < 4; i++)
+        {
+            var (ox, oz) = Warp.Sample(x, z);
+            x = wx - ox * Tuning.WarpAmplitude;
+            z = wz - oz * Tuning.WarpAmplitude;
+        }
+        if (_wrap) x -= Period * Math.Floor(x / Period);
+        return (x, HeightAt(x, z), z);
+    }
+
+    /// <summary>How deep into a volcano's crater floor (x, z) lies, in [0, 1]: 1 at the middle of the floor, 0 from the rim
+    /// outwards. The terrain shader draws the lava glow from it. Zero everywhere when no known tile has a crater.</summary>
+    public double CraterAt(double x, double z)
+    {
+        if (!_hasCrater) return 0;
+        if (_wrap) x -= Period * Math.Floor(x / Period);
+        var corners = Corners(x, z);
+        var w = HeightWeights(corners);
+        double glow = 0;
+        for (int k = 0; k < 3; k++)
+        {
+            int tile = corners.Tile(k);
+            if (w[k] <= 0 || !Snapshot.Crater[tile] || corners.Relief(k) != ReliefClass.Peak) continue;
+            var m = MountainOf(tile);
+            var (cx, cz) = corners.Triangle[k].ToPixel(1);
+            double dx = corners.X - cx - m.OffsetX, dz = corners.Z - cz - m.OffsetZ;
+            double u = (dx * m.AxisCos + dz * m.AxisSin) * m.ScaleAlong, v = (dz * m.AxisCos - dx * m.AxisSin) * m.ScaleAcross;
+            double inside = Math.Sqrt(u * u + v * v) / Tuning.CraterRadius;
+            glow = Math.Max(glow, w[k] * (1 - SmoothStep(0.45, 1.0, inside)));
+        }
+        return glow;
     }
 
     /// <summary>One pyramid's faces: unit normals of the face directions (unequal widths), the half angle from each face
@@ -763,10 +836,12 @@ public sealed class TerrainField
                 + 0.3 * (TileHash(tile, 4) - 0.5)
             : Math.PI * _noise.Value(cx - Period * Math.Floor(cx / Period), cz, 0.2, salt: 6) + 0.6 * (TileHash(tile, 4) - 0.5);
         // Normalised footprint coordinates: the main summit's rise reaches zero at radius 1.
-        double radius = t.PeakRadius * (0.85 + 0.3 * TileHash(tile, 5));
-        double stretch = t.PeakStretch * (0.75 + 0.5 * TileHash(tile, 6));
+        bool crater = Snapshot.Crater[tile];
+        double radius = t.PeakRadius * (0.85 + 0.3 * TileHash(tile, 5)) * (crater ? 1.1 : 1);
+        // A volcano is a single round cone: no ridge stretch and no lesser spires.
+        double stretch = crater ? 1 : t.PeakStretch * (0.75 + 0.5 * TileHash(tile, 6));
         // Lesser spires: the first two sit along the ridge on either side, up to two more anywhere around.
-        var spires = new Spire[2 + (int)(TileHash(tile, 7) * 3)];
+        var spires = new Spire[crater ? 0 : 2 + (int)(TileHash(tile, 7) * 3)];
         for (int i = 0; i < spires.Length; i++)
         {
             uint salt = 30 + 10 * (uint)i;
@@ -794,7 +869,8 @@ public sealed class TerrainField
         return (offset * Math.Cos(angle), offset * Math.Sin(angle));
     }
 
-    private double SummitHeight(int tile) => 1 - Tuning.PeakVariation * TileHash(tile, 3);
+    /// <summary>A summit's height in rise units. Volcanoes stand at the full rise, above the peaks around them.</summary>
+    private double SummitHeight(int tile) => Snapshot.Crater[tile] ? 1 : 1 - Tuning.PeakVariation * TileHash(tile, 3);
 
     /// <summary>Peak tiles next to a hex: their tile, centre relative to the hex centre and direction.</summary>
     private List<(int Tile, double X, double Z, double Angle)> PeakNeighbours(Hex hex)

@@ -303,7 +303,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         sim.State.MoveUnit(observer.Id, grid.HexOf(grid.TileAt(9, 3))); sight.Recompute(sim);
         var session = new GameSession(sim);
         var description = session.DescribeTile(grid.HexOf(tile))!;
-        var before = TerrainSnapshot.From(session, _ => 1, _ => 0);
+        var before = TerrainSnapshot.From(session, _ => 1, (_, _) => 0);
         foreach (var t in grid.Tiles.Where(t => !sim.State.Plots[t.Value].Visible.Contains(0)))
         {
             var p = sim.State.Plots[t.Value];
@@ -311,7 +311,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
             p.Feature = "world:jungle"; p.Owner = 1; p.RiverEdges = 63;
             p.Improvement = "world:city_ruins"; p.Route = "world:road";
         }
-        var after = TerrainSnapshot.From(session, _ => 1, _ => 0);
+        var after = TerrainSnapshot.From(session, _ => 1, (_, _) => 0);
         Assert.Equal(before.Relief, after.Relief); Assert.Equal(before.Terrain, after.Terrain);
         Assert.Equal(before.Feature, after.Feature); Assert.Equal(before.Owner, after.Owner);
         Assert.Equal(before.Rivers, after.Rivers);

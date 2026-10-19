@@ -18,6 +18,7 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly TerrainTextures _textures;
     private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial;
     private readonly MeshInstance3D[][] _ground, _water, _rivers;
+    private readonly HazeRenderer _haze;
     private readonly float[] _copies;
     private readonly byte[] _marks;
     private readonly int _seed;
@@ -78,6 +79,8 @@ internal sealed partial class TerrainRenderer : Node3D
         _ground = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
+        _haze = new HazeRenderer(_chunks.Chunks, _copies, Snapshot.Period);
+        AddChild(_haze);
     }
 
     /// <summary>Draped route ribbons (road.gdshader): lit, fogged and blended with the ground like the terrain.</summary>
@@ -100,6 +103,7 @@ internal sealed partial class TerrainRenderer : Node3D
         if (_worldRevision == _session.WorldRevision) return;
         RebuildWorld();
         _scatter.UpdateVisibility(Snapshot);
+        _haze.Rebuild(Field, Palette.FeatureGrounds);
         _worldRevision = _session.WorldRevision;
     }
 
@@ -138,7 +142,7 @@ internal sealed partial class TerrainRenderer : Node3D
     {
         bool logTimings = MapRenderer.LogTimings;
         long totalStart = logTimings ? Stopwatch.GetTimestamp() : 0;
-        Snapshot = TerrainSnapshot.From(_session, Palette.LayerOf, Palette.FeatureGroundOf);
+        Snapshot = TerrainSnapshot.From(_session, Palette.LayerOf, Palette.FeatureGroundOf, Palette.IsCrater);
         Field = Field.With(Snapshot);
         BonusSpots = ResourceSpots();
         var extras = ScatterClearings();
@@ -158,7 +162,7 @@ internal sealed partial class TerrainRenderer : Node3D
             var river = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
             if (logTimings) meshMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
-            prepared[i] = new(PrepareGround(mesh), PrepareWater(mesh, field), PrepareRiver(river));
+            prepared[i] = new(PrepareGround(mesh, field), PrepareWater(mesh, field), PrepareRiver(river));
             if (logTimings) prepareMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         });
         double built = logTimings ? Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds : 0;
@@ -288,8 +292,9 @@ internal sealed partial class TerrainRenderer : Node3D
         public double PackMs, SurfaceMs;
     }
 
-    /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow.</summary>
-    private static SurfaceData PrepareGround(TerrainMeshData data)
+    /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow, UV2.y the
+    /// crater floor share (<see cref="TerrainField.CraterAt"/>) for the lava glow.</summary>
+    private static SurfaceData PrepareGround(TerrainMeshData data, TerrainField field)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
@@ -299,7 +304,7 @@ internal sealed partial class TerrainRenderer : Node3D
         {
             vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
-            cavity[v] = new Vector2(data.Cavity[v], 0);
+            cavity[v] = new Vector2(data.Cavity[v], (float)field.CraterAt(data.Positions[v * 3], data.Positions[v * 3 + 2]));
         }
         return new(vertices, normals, cavity, FrontFaces(data.Indices, _ => true));
     }

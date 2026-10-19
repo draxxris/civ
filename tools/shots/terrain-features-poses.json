@@ -1,0 +1,128 @@
+[
+ {
+  "name": "tf_overview",
+  "focusTile": [
+   24,
+   14
+  ],
+  "distance": 22,
+  "pitch": 60
+ },
+ {
+  "name": "tf_forest",
+  "focusTile": [
+   4,
+   4
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_forest_tundra",
+  "focusTile": [
+   12,
+   4
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_jungle",
+  "focusTile": [
+   20,
+   4
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_jungle_marsh",
+  "focusTile": [
+   28,
+   4
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_swamp",
+  "focusTile": [
+   4,
+   11
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_flood_plains",
+  "focusTile": [
+   12,
+   11
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_oasis",
+  "focusTile": [
+   20,
+   11
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_fallout",
+  "focusTile": [
+   28,
+   11
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_infectious_smog",
+  "focusTile": [
+   4,
+   18
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_plagued_smog",
+  "focusTile": [
+   12,
+   18
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_volcano",
+  "focusTile": [
+   20,
+   18
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_ice",
+  "focusTile": [
+   37,
+   5
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_storm",
+  "focusTile": [
+   37,
+   17
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ }
+]
