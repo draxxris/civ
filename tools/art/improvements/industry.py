@@ -459,11 +459,13 @@ def mill_house(name):
 
 
 def water_wheel(name, r=0.07):
-    """An overshot wheel turning about X, fed by a wooden flume from -Z; the bottom dips into the race."""
+    """An undershot wheel turning about X, so it stands in the YZ plane, along the river. The part's origin is on the
+    water, so the bottom paddles dip into the river. The axle runs from the mill wall (-X) to a timber trestle that
+    stands in the water on the far side (+X)."""
     p = Part(name)
     y = r - 0.016
-    # axle into the mill wall
-    tube(p, (-0.06, y, 0.0), (0.028, y, 0.0), 0.006, IRON, n=6)
+    # axle from the mill wall to the trestle
+    tube(p, (-0.06, y, 0.0), (0.034, y, 0.0), 0.006, IRON, n=6)
     # two rims (thin rings as discs) with paddles between them
     for x0 in (-0.022, 0.012):
         wheel(p, x0, x0 + 0.006, y, 0.0, r, TIMBER, n=12, hub=TIMBER_LIGHT)
@@ -478,22 +480,10 @@ def water_wheel(name, r=0.07):
                 pts.append((x, y + s * rr + c * t, c * rr - s * t))
         p.hull(pts, BOX_FACES, TIMBER_LIGHT)
 
-    # flume from behind onto the top of the wheel, on two trestles
-    fy = y + r + 0.016
-    box(p, -0.016, fy, -0.15, 0.01, fy + 0.012, -0.012, BOARDS, top=WATER)
-    for z in (-0.13, -0.08):
-        for sx in (-0.012, 0.006):
-            box(p, sx - 0.003, DEEP, z - 0.003, sx + 0.003, fy, z + 0.003, TIMBER)
-    return p
-
-
-def mill_race(name, length=0.22):
-    """A stone-lined channel along Z under the wheel; tilts with the ground."""
-    p = Part(name)
-    hl = length / 2
-    box(p, -0.03, FOOT / 2, -hl, 0.03, 0.002, hl, STONE_DARK, top=WATER)
-    for sx in (-1, 1):
-        box(p, sx * 0.03 - 0.007, FOOT / 2, -hl, sx * 0.03 + 0.007, 0.012, hl, STONE, top=STONE)
+    # trestle in the river: two raked legs under a bearing block
+    for sz in (-1, 1):
+        beam(p, (0.03, -0.03, sz * 0.03), (0.03, y - 0.006, sz * 0.006), 0.006, TIMBER)
+    box(p, 0.024, y - 0.01, -0.012, 0.036, y - 0.004, 0.012, TIMBER_LIGHT)
     return p
 
 
@@ -507,16 +497,16 @@ def millstones(name):
 
 
 def watermill():
-    """Convention for faceRiver models: the game turns the model so +X points at the river. The wheel and race are on +X."""
+    """Convention for faceRiver models: the game puts the origin on the near waterline of the river, with +X straight
+    across the water and Z along the river. The wheel stands in the water; everything else stays on the bank (-X)."""
     rng = random.Random(41)
     return [
-        at(mill_house("mill"), 0.3, -0.18),
-        at(water_wheel("wheel"), 0.6, -0.12),
-        at(mill_race("ground_race"), 0.64, -0.12),
-        at(sacks("sacks", 5, rng), 0.28, 0.2),
-        at(handcart("cart", load="sacks"), -0.38, 0.3, 0.4),
-        at(millstones("millstones"), -0.44, -0.26),
-        at(fence("fence", 0.18), -0.14, -0.56, 0.1),
+        at(mill_house("mill"), -0.17, -0.06),
+        at(water_wheel("nodecal_wheel"), 0.05, 0.0),
+        at(sacks("sacks", 5, rng), -0.2, 0.2),
+        at(handcart("cart", load="sacks"), -0.52, 0.2, 0.4),
+        at(millstones("millstones"), -0.5, -0.2),
+        at(fence("fence", 0.18), -0.36, -0.42, 0.1),
     ]
 
 

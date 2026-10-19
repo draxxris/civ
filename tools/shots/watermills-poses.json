@@ -1,0 +1,119 @@
+[
+ {
+  "name": "overview",
+  "focusTile": [
+   8,
+   8
+  ],
+  "distance": 16,
+  "pitch": 55
+ },
+ {
+  "name": "mill_8_2",
+  "focusTile": [
+   8,
+   2
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_8_5",
+  "focusTile": [
+   8,
+   5
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_9_3",
+  "focusTile": [
+   9,
+   3
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_9_6",
+  "focusTile": [
+   9,
+   6
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_8_10",
+  "focusTile": [
+   8,
+   10
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_9_12",
+  "focusTile": [
+   9,
+   12
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_3_2",
+  "focusTile": [
+   3,
+   2
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_3_6",
+  "focusTile": [
+   3,
+   6
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_3_10",
+  "focusTile": [
+   3,
+   10
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_2_9",
+  "focusTile": [
+   2,
+   9
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_13_14",
+  "focusTile": [
+   13,
+   14
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ },
+ {
+  "name": "mill_14_15",
+  "focusTile": [
+   14,
+   15
+  ],
+  "distance": 1.4,
+  "pitch": 32
+ }
+]

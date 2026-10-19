@@ -1,0 +1,609 @@
+{
+ "// note": "Watermills on rivers of every shape: a long river (column 8), a lone edge, a river through a tile, a bend, and a river on hills.",
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat",
+  "owner": null
+ },
+ "tiles": [
+  {
+   "at": [
+    8,
+    0
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    9,
+    0
+   ],
+   "river": 24
+  },
+  {
+   "at": [
+    8,
+    1
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    1
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    2
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    2
+   ],
+   "river": 1,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    8,
+    3
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    3
+   ],
+   "river": 8,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    9,
+    4
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    4
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    5
+   ],
+   "river": 35,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    9,
+    5
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    6
+   ],
+   "river": 28,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    8,
+    6
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    7
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    7
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    8
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    8
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    9
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    9
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    10
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    10
+   ],
+   "river": 1,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    8,
+    11
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    11
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    12
+   ],
+   "river": 28,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    8,
+    12
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    13
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    13
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    14
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    14
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    15
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    15
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    16
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    16
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    17
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    17
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    18
+   ],
+   "river": 28
+  },
+  {
+   "at": [
+    8,
+    18
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    8,
+    19
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    9,
+    19
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    9,
+    20
+   ],
+   "river": 4
+  },
+  {
+   "at": [
+    3,
+    2
+   ],
+   "river": 1,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    4,
+    2
+   ],
+   "river": 8
+  },
+  {
+   "at": [
+    3,
+    6
+   ],
+   "river": 9,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    4,
+    6
+   ],
+   "river": 10
+  },
+  {
+   "at": [
+    2,
+    6
+   ],
+   "river": 17
+  },
+  {
+   "at": [
+    4,
+    5
+   ],
+   "river": 16
+  },
+  {
+   "at": [
+    1,
+    7
+   ],
+   "river": 2
+  },
+  {
+   "at": [
+    3,
+    10
+   ],
+   "river": 14,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    3,
+    9
+   ],
+   "river": 48
+  },
+  {
+   "at": [
+    2,
+    9
+   ],
+   "river": 48,
+   "improvement": "watermill"
+  },
+  {
+   "at": [
+    2,
+    10
+   ],
+   "river": 3
+  },
+  {
+   "at": [
+    4,
+    10
+   ],
+   "river": 6
+  },
+  {
+   "at": [
+    4,
+    9
+   ],
+   "river": 16
+  },
+  {
+   "at": [
+    13,
+    12
+   ],
+   "river": 1,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    12
+   ],
+   "river": 24,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    13
+   ],
+   "river": 35,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    13
+   ],
+   "river": 8,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    14
+   ],
+   "river": 1,
+   "improvement": "watermill",
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    14
+   ],
+   "river": 28,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    15
+   ],
+   "river": 35,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    15
+   ],
+   "river": 8,
+   "improvement": "watermill",
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    16
+   ],
+   "river": 1,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    16
+   ],
+   "river": 28,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    17
+   ],
+   "river": 35,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    17
+   ],
+   "river": 8,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    14,
+    18
+   ],
+   "river": 4,
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    12
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    13
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    14
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    15
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    16
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    17
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    12,
+    18
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    18
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    12
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    13
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    14
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    15
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    16
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    17
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    15,
+    18
+   ],
+   "kind": "Hills"
+  }
+ ]
+}

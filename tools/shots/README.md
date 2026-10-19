@@ -89,3 +89,7 @@ The curves come from `src/Civ.Client.Core/Terrain/RoutePlan.cs` and the heights 
 `tools/shots/scenarios/improvements-all.json` places every improvement that has a 3D model (land models in rows, water models on an ocean strip).
 Capture it with `--shots tools/shots/improvements-all-poses.json --scenario tools/shots/scenarios/improvements-all.json --world tiny --clean`.
 It takes about two minutes. The models come from `python3 tools/art/improvement_models.py`.
+
+`tools/shots/scenarios/watermills.json` puts watermills beside rivers of every shape: a long meandering river, a lone
+edge, a river through a tile, a bend and a river on hills. The wheel must stand in the water, parallel to the river.
+Capture it with `--shots tools/shots/watermills-poses.json --scenario tools/shots/scenarios/watermills.json --world tiny --clean`.

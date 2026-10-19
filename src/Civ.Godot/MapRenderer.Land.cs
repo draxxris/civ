@@ -30,7 +30,7 @@ internal sealed partial class MapRenderer
             if (PlanRoute(tile, centre, plot) is { } route) routes.Add(route);
             DrawImprovementIcon(icons, centre, plot, fog);
             if (plot.Improvement is { } improvement && _improvements.Has(improvement))
-                sites.Add(new ImprovementSite(improvement, centre, ImprovementYaw(improvement, tile.Value, plot.RiverEdges), fog));
+                sites.Add(PlaceImprovement(improvement, centre, tile.Value, plot.RiverEdges, fog));
         }
         DrawRoutes(roads, routeParts, routes);
         foreach (var city in _session.KnownCities())
@@ -48,32 +48,17 @@ internal sealed partial class MapRenderer
         _atlas.Flush();
     }
 
-    /// <summary>Layout turn of an improvement: a model that faces the river (its +X side) is turned toward it, the rest get
-    /// a hashed turn.</summary>
-    private float ImprovementYaw(string improvement, int tile, byte riverEdges)
+    /// <summary>Where an improvement model stands and how it turns. A model that faces the river (scene extras
+    /// <c>"faceRiver": true</c>) stands on the near bank of the drawn river curve closest to the tile centre: its origin on
+    /// the waterline and its +X side straight across the water, so its Z axis runs along the river there. The rest stand
+    /// on the tile centre with a hashed turn.</summary>
+    private ImprovementSite PlaceImprovement(string improvement, Vector3 centre, int tile, byte riverEdges, float fog)
     {
-        if (riverEdges != 0 && _improvements.FacesRiver(improvement)) return RiverYaw(riverEdges);
-        return Signed(Hash(tile, 7)) * ImprovementTurn;
-    }
-
-    /// <summary>Yaw that turns a model's +X side toward the river on a tile. Edge bits follow <c>Hex.Directions</c>. One
-    /// edge: that edge. Several: the mean of their directions, so an adjacent pair faces the bend between them. When the
-    /// directions cancel (opposite edges, three at 120°) the lowest edge is used.</summary>
-    internal static float RiverYaw(byte riverEdges)
-    {
-        double sumX = 0, sumZ = 0;
-        int first = -1;
-        for (int d = 0; d < 6; d++)
-        {
-            if ((riverEdges & (1 << d)) == 0) continue;
-            if (first < 0) first = d;
-            var (x, z) = Hex.Directions[d].ToPixel(1);
-            sumX += x; sumZ += z;
-        }
-        if (first < 0) return 0;
-        if (Math.Abs(sumX) + Math.Abs(sumZ) < 0.01) (sumX, sumZ) = Hex.Directions[first].ToPixel(1);
-        // Basis(Up, yaw) turns +X to (cos yaw, 0, -sin yaw).
-        return (float)Math.Atan2(-sumZ, sumX);
+        if (riverEdges != 0 && _improvements.FacesRiver(improvement) && TerrainField.Rivers.NearBank(centre.X, centre.Z) is { } bank)
+            // Basis(Up, yaw) turns +X to (cos yaw, 0, -sin yaw).
+            return new ImprovementSite(improvement, new Vector3((float)bank.X, centre.Y, (float)bank.Z),
+                (float)Math.Atan2(-bank.AcrossZ, bank.AcrossX), fog);
+        return new ImprovementSite(improvement, centre, Signed(Hash(tile, 7)) * ImprovementTurn, fog);
     }
 
     private static int Hash(int tile, int salt)
