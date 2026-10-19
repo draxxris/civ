@@ -27,10 +27,12 @@ public static class ModLoader
     };
 
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
-    public static ModSource FromDirectory(string dir)
+    public static ModSource FromDirectory(string dir) => FromDirectory(dir, ReadManifest(dir));
+
+    /// <summary>Load using a manifest already read and validated by the host, without reading it again.</summary>
+    public static ModSource FromDirectory(string dir, ModManifest manifest)
     {
         using var trace = StartupTrace.Phase($"mod load {Path.GetFileName(dir)}");
-        var manifest = ReadManifest(dir);
         var alc = new ModLoadContext(Path.Combine(dir, manifest.Assembly));
         var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(Path.Combine(dir, manifest.Assembly)));
         return FromAssembly(manifest, asm, dir);

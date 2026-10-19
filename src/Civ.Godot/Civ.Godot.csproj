@@ -5,7 +5,7 @@
     Run: godot-mono, with the project path set to src/Civ.Godot
     Mods are plain DLLs loaded by Civ.Core; they never contain Godot types. The build copies every feature mod
     (assembly, mod.json, data) to <output>/mods/<Name> and symlinks art/ there, where the client finds them at startup.
-    Set CIV_MODS to use another folder.
+    CIV_MODS adds a root with higher per-ID priority than user-installed and bundled mods.
   -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>

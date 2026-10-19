@@ -60,6 +60,12 @@ public sealed class GameCatalog
         return new(ModDiscovery.LoadMods(modsRoot));
     }
 
+    public static GameCatalog Load(IReadOnlyList<InstalledMod> installed, IEnumerable<string> enabledIds)
+    {
+        using var trace = StartupTrace.Phase("catalog load");
+        return new(ModDiscovery.LoadMods(installed, enabledIds));
+    }
+
     private static IReadOnlyList<SetupChoice> Choices<T>(IEnumerable<T> defs) where T : ContentDef =>
         defs.Select(d => new SetupChoice(d.Id, d.Name)).ToList();
 

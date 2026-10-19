@@ -7,7 +7,11 @@ The game build includes two optional mods. Each mod adds an independent checkbox
 - **Card Research** limits research selection to a saved hand of up to four distinct, eligible technologies.
 - **Tech Tree** adds a scrollable prerequisite graph. It works with ordinary research or Card Research.
 
-To omit either mod from a custom installation, remove its folder from the mods directory. Neither mod depends on the other.
+To omit either mod from the loaded ruleset, disable its stable ID in the startup **Mods** manager.
+Card Research uses `card_research`. Tech Tree uses `tech_tree`. Neither mod depends on the other.
+The manager merges bundled, user-installed, and `CIV_MODS` roots. A separate `CIV_MODS` directory does not hide bundled mods.
+For duplicate IDs, `CIV_MODS` takes priority over user-installed mods, which take priority over bundled mods.
+Each winning copy replaces the entire mod. See [the client guide](../src/Civ.Godot/README.md#mod-manager) for profile behavior.
 
 ## Card Research
 

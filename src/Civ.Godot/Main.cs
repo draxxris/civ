@@ -5,7 +5,7 @@ using Godot;
 
 namespace Civ.Client;
 
-/// <summary>Godot entry point: loads the mods once, shows the setup screen, then the game. All rules live in the mods and Client.Core.</summary>
+/// <summary>Godot entry point: selects mods, loads them once, then shows setup and the game.</summary>
 public partial class Main : Node3D
 {
     private DebugOptions _debug = DebugOptions.Parse(OS.GetCmdlineUserArgs());
@@ -58,21 +58,16 @@ public partial class Main : Node3D
         AddChild(layer);
         GetWindow().Theme = Ui.MakeTheme();
         RenderingServer.SetDefaultClearColor(new Color(0.05f, 0.07f, 0.1f));
-        var root = ModsRoot();
-        if (root == null) { _status.Text = "No mods found. Build with 'dotnet build src/Civ.Godot' or set CIV_MODS."; return; }
-        _loading = Task.Run(() => GameCatalog.Load(root));
-        // A headless frame-limited smoke must load the content before it can quit.
-        if (DisplayServer.GetName() == "headless") _loading.Wait();
+        BeginModStartup();
     }
 
-    /// <summary>Mods sit next to the built client; CIV_MODS overrides.</summary>
-    private static string? ModsRoot() => ModDiscovery.FindModsRoot(new[]
+    /// <summary>Stable bundled candidate order. User installations and CIV_MODS take priority per ID.</summary>
+    private static IEnumerable<string> BundledModsRoots() => new[]
     {
         System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Main).Assembly.Location) ?? "", "mods"),
         System.IO.Path.Combine(AppContext.BaseDirectory, "mods"),
         System.IO.Path.Combine(ProjectSettings.GlobalizePath("res://"), "mods"),
-        System.IO.Path.Combine(OS.GetUserDataDir(), "mods"),
-    });
+    };
 
     public override void _Process(double delta)
     {
@@ -94,8 +89,9 @@ public partial class Main : Node3D
     {
         if (_loading is not { IsCompleted: true } task) return;
         _loading = null;
-        if (task.IsFaulted) { _status.Text = "Could not load mods:\n" + task.Exception?.GetBaseException().Message; GD.PushError(task.Exception?.ToString() ?? ""); return; }
+        if (task.IsFaulted) { ModLoadFailed("Could not load mods:\n" + task.Exception?.GetBaseException().Message); return; }
         _catalog = task.Result;
+        if (SetupError(_catalog) is { } error) { ModLoadFailed(error); return; }
         GD.Print($"Loaded {_catalog.Mods.Count} mods; content frozen.");
         _icons = new IconCache(_catalog);
         _status.Visible = false;
@@ -106,6 +102,7 @@ public partial class Main : Node3D
     {
         _setup = new SetupScreen(_catalog!);
         _setup.StartRequested += Start;
+        _setup.ModsRequested += () => ShowModManager();
         AddChild(_setup);
         if (_debug.ScreenshotPath != null && _debug.Stage == "setup") _framesSinceReady = 0;
         else if (_debug.ScreenshotPath != null || _debug.FpsProbe) Start(DebugGame());
