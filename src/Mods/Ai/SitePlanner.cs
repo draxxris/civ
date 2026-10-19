@@ -59,7 +59,7 @@ internal sealed class SitePlanner
         int pending = settlersInFlight + queued;
         if (ctx.Cities.Count <= 1 && !EstablishedCapital()) return false;
         int cap = Math.Min(14, 4 + ctx.Turn / 15 + ctx.Weight("growth") / 10);
-        if (pending >= 2 || ctx.Cities.Count + pending >= cap || ctx.Self.Treasury < 5 && ctx.Turn > 30) return false;
+        if (pending >= 2 || ctx.Cities.Count + pending >= cap || !ExpansionEconomyReady()) return false;
         return DistinctSites().Count > pending;
     }
 
@@ -69,6 +69,13 @@ internal sealed class SitePlanner
         bool worker = ctx.CountUnits(UnitRole.Worker) > 0;
         int soldiers = ctx.CountUnits(UnitRole.Melee);
         return worker && soldiers >= 2 && ctx.Turn >= 55;
+    }
+
+    private bool ExpansionEconomyReady()
+    {
+        if (ctx.Turn <= 30) return true;
+        if (ctx.Self.Treasury < EconomyPlanner.Reserve(ctx.Cities.Count)) return false;
+        return ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold >= 0;
     }
 
     public Site? FirstSite(Unit settler)

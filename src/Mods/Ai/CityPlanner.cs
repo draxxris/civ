@@ -129,6 +129,8 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
             yield return ("cities:unit", scout.Id);
     }
 
+
+
     private bool CanExpand(CityView v) => v.Threat == 0 && v.Population >= 2
         && sites.WantsMoreCities(ctx.CountUnits(UnitRole.Settler), _settlersQueued);
 

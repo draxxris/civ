@@ -1,5 +1,8 @@
 # Operational benchmarks
 
+For repeatable headless economic measurements, use `mise run ai:eval`.
+See [AI economic evaluation](AiEvaluation/README.md) for metrics, baseline comparisons, and rule limitations.
+This mode records results without AI edits. It is separate from timing benchmarks.
 Run the focused startup workload in Release:
 
 ```sh
