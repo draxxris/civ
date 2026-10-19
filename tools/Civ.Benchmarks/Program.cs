@@ -4,6 +4,11 @@ using Civ.Modding;
 using Civ.Mods.Tests;
 
 var root = Path.Combine(AppContext.BaseDirectory, "mods");
+if (args.FirstOrDefault() == "--ai-eval")
+{
+    Environment.ExitCode = Civ.Benchmarks.AiEvaluation.EvaluationCli.Run(args.Skip(1).ToArray(), root);
+    return;
+}
 if (args.Contains("--world"))
 {
     StartupBenchmarks.RunWorld(root);

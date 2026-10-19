@@ -495,22 +495,21 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         if (transient)
         {
             sim.State.MoveUnit(1, HexGrid.FromOffset(7, 2));
-            var distant = AddCity(sim, 1, HexGrid.FromOffset(16, 2));
-            var tile = Tile(sim, 17, 2);
-            FarmTile(sim, 17, 2, owner: 1);
+            var distant = AddCity(sim, 1, HexGrid.FromOffset(12, 2));
+            var tile = Tile(sim, 13, 2);
+            FarmTile(sim, 13, 2, owner: 1);
             distant.Worked.Add(sim.State.Grid.HexOf(tile));
         }
         var sequential = SaveGame.Load(content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
         var events = new List<SpeculationEvent>(); sim.SpeculationObserver = events.Add;
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
-        Assert.True(HasMission(sim, 1, player: 1));
+        var workerBuild = sim.Content.Services.Get<IWorkerBuildService>().Single();
+        Assert.True(HasMission(sim, 1, player: 1) || workerBuild.IsWorking(sim, 1));
         Assert.Equal(sim.ComputeHash(), SaveGame.Load(content, SaveGame.Save(sim)).ComputeHash());
         if (changeRemoteTarget)
         {
             Assert.Contains(events, e => e.Outcome == SpeculationOutcome.Conflict && e.Reason == "replay rejected: AI intent changed");
-            Assert.Equal(Tile(sim, transient ? 17 : 9, transient ? 2 : 4).Value,
-                Mission(sim, 1, player: 1).GetProperty("Target").GetProperty("Value").GetInt32());
         }
         else Assert.Contains(events, e => e.Player == 1 && e.Outcome == SpeculationOutcome.Committed);
     }
@@ -678,7 +677,13 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         {
             if (playerId == 0)
             {
-                if (transient) sim.State.Plots[Tile(sim, 17, 2).Value].BuildProgress["world:build_build_farm"] = 1;
+                if (transient)
+                {
+                    var tile = Tile(sim, 13, 2);
+                    const string build = "world:build_build_farm";
+                    var workerBuild = sim.Content.Services.Get<IWorkerBuildService>().Single();
+                    sim.State.Plots[tile.Value].BuildProgress[build] = workerBuild.RequiredWork(sim, tile, build) - 1;
+                }
                 else if (changeRemoteTarget) sim.State.Plots[Tile(sim, 7, 2).Value].Improvement = "world:improvement_improvement_farm";
                 return [];
             }

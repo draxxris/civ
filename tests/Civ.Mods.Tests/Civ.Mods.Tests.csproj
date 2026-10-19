@@ -30,6 +30,9 @@
     <ProjectReference Include="../../src/Mods/Revolution/Civ.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
     <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../tools/Civ.Benchmarks/AiEvaluation/*.cs" Link="AiEvaluation/%(Filename)%(Extension)" />
+  </ItemGroup>
   <!-- Only small files go through MSBuild copy (dll/pdb/mod.json/data). Heavy art/ (~180MB) is symlinked by
        LinkModArt below: TerrainPaletteTests needs World/art/terrain + ScatterPlannerTests needs World/art/scatter,
        and File/Directory APIs follow symlinks, so tests keep passing with zero copy cost. -->

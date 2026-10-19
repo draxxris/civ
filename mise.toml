@@ -42,6 +42,10 @@ run = "tools/shots/compare.sh"
 description = "Run operational benchmarks without timing thresholds"
 run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release"
 
+[tasks."ai:eval"]
+description = "Run repeatable headless AI economic evaluation without AI edits"
+run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release -- --ai-eval"
+
 [tools]
 dotnet = "10"
 git-lfs = "latest"

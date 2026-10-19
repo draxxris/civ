@@ -51,6 +51,8 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(rng, sim.Rng.State);
     }
 
+
+
     [Theory]
     [InlineData(false, false)]
     [InlineData(true, false)]
@@ -587,6 +589,25 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(rng, sim.Rng.State);
     }
 
+    [Fact]
+    public void Settlers_require_the_empire_treasury_reserve()
+    {
+        var sim = Scenario(new(20, 12, true), game =>
+        {
+            game.State.Turn = 60;
+            game.State.PlayerById(0).Treasury = 49;
+            AddCity(game, 0, 4, 4);
+            AddUnit(game, 0, "military:worker", 4, 4);
+            AddUnit(game, 0, "military:warrior", 4, 4);
+            AddUnit(game, 0, "military:warrior", 4, 4);
+        });
+        var ctx = NewAi(sim, "AiContext", sim, 0);
+        var sites = NewAi(sim, "SitePlanner", ctx);
+
+        Assert.False((bool)Call(sites, "WantsMoreCities", 0, 0)!);
+        sim.State.PlayerById(0).Treasury = 50;
+        Assert.True((bool)Call(sites, "WantsMoreCities", 0, 0)!);
+    }
     [Fact]
     public void Settlement_sites_refresh_after_two_foundings_and_a_city_capture()
     {
