@@ -23,6 +23,9 @@ namespace Civ.Client;
 /// The 3D buildings come from <see cref="Civ.Client.Terrain.CityLayout"/>.
 /// Unknown building ids fail with the id in the error. Existing cities on the same tile fail rather than overlap.
 /// Empty strings clear feature, improvement, bonus or route. Improvement, bonus and route accept full ids or short names such as "cottage", "copper" and "road". Positions are (column, row).
+/// "clearUnits": true removes every generated unit first. "units" places units:
+/// <c>[{"at":[5,5],"type":"warrior","owner":1,"health":40,"count":2}]</c>. Type accepts a full id or short name; owner
+/// defaults to 0, health to 100 and count to 1. Units are placed after tiles and cities.
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
 {
@@ -64,6 +67,13 @@ internal static class DebugScenario
                 }
             }
         }
+        if (root.TryGetProperty("clearUnits", out var clear) && clear.GetBoolean())
+        {
+            foreach (var unit in state.Units.ToList()) state.RemoveUnit(unit.Id);
+            session.ClearSelection();
+        }
+        if (root.TryGetProperty("units", out var units))
+            foreach (var entry in units.EnumerateArray()) AddUnits(session, entry);
         foreach (var plot in state.Plots) { plot.Revealed.Add(session.Me.TeamId); plot.Visible.Add(session.Me.TeamId); }
         return root.TryGetProperty("focus", out var f) ? state.Grid.HexOf(state.Grid.TileAt(f[0].GetInt32(), f[1].GetInt32())) : null;
     }
@@ -117,6 +127,21 @@ internal static class DebugScenario
         state.Plots[tile.Value].Improvement = null;
         state.Plots[tile.Value].Owner = owner;
         if (e.TryGetProperty("era", out var era)) SetEra(session, owner, era.GetString());
+    }
+
+    private static void AddUnits(GameSession session, JsonElement e)
+    {
+        var state = session.Sim.State;
+        var at = e.GetProperty("at");
+        var position = state.Grid.HexOf(state.Grid.TileAt(at[0].GetInt32(), at[1].GetInt32()));
+        var type = ContentId<Schema.UnitDef>(session, e.GetProperty("type").GetString(), "unit")
+            ?? throw new ArgumentException("Unit type must not be empty.");
+        int owner = e.TryGetProperty("owner", out var o) ? o.GetInt32() : 0;
+        state.PlayerById(owner);
+        int health = e.TryGetProperty("health", out var h) ? h.GetInt32() : 100;
+        int count = e.TryGetProperty("count", out var c) ? c.GetInt32() : 1;
+        for (int i = 0; i < count; i++)
+            state.AddUnit(new Unit { Id = state.NextUnitId++, Owner = owner, Type = type, Position = position, Health = health });
     }
 
     /// <summary>Set the owner's current era, which picks the look of all its cities.</summary>

@@ -26,7 +26,7 @@ internal sealed partial class MapRenderer
     private readonly Dictionary<int, UnitActor> _actors = new();
     private readonly Dictionary<int, Hex> _lastHex = new();
     private readonly Dictionary<int, float> _facing = new();
-    private readonly List<(Unit Unit, Vector3 At)> _standing = new();
+    private readonly List<(Unit Unit, Vector3 At, float? Health)> _standing = new();
     private readonly HashSet<int> _battleIds = new();
     private Battle? _battle;
 
@@ -38,7 +38,7 @@ internal sealed partial class MapRenderer
     private void SyncActors()
     {
         var wanted = new HashSet<int>();
-        foreach (var (unit, at) in _standing)
+        foreach (var (unit, at, health) in _standing)
         {
             wanted.Add(unit.Id);
             if (!_actors.TryGetValue(unit.Id, out var actor))
@@ -50,6 +50,7 @@ internal sealed partial class MapRenderer
             actor.Anchor = at;
             actor.Position = actor.Anchor;
             actor.Rotation = new Vector3(0, FacingOf(unit), 0);
+            actor.SetHealth(health);
             actor.Play(_session.ActivityOf(unit) is UnitActivity.Fortify or UnitActivity.Sentry ? "fortify" : "idle");
         }
         foreach (var id in _actors.Keys.Where(id => !wanted.Contains(id)).ToList())

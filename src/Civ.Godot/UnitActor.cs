@@ -3,7 +3,7 @@ using Godot;
 namespace Civ.Client;
 
 /// <summary>
-/// One unit standing on the map: a 3D model (or a plain figurine when the unit has no .glb) on a team coloured base.
+/// One unit standing on the map: a 3D model (or a plain figurine when the unit has no .glb) under a floating faction banner.
 /// Plays the model's idle/fortify/attack/hurt/die clips, and falls back to simple code-driven motion for any clip it lacks.
 /// </summary>
 internal sealed partial class UnitActor : Node3D
@@ -31,13 +31,9 @@ internal sealed partial class UnitActor : Node3D
     public UnitActor(Node3D? model, Color owner)
     {
         AddChild(_pivot);
-        var baseMesh = new MeshInstance3D
-        {
-            Mesh = new CylinderMesh { TopRadius = 0.36f, BottomRadius = 0.38f, Height = 0.03f, RadialSegments = 20 },
-            Position = new Vector3(0, 0.015f, 0), CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-            MaterialOverride = new StandardMaterial3D { AlbedoColor = owner, Roughness = 0.7f },
-        };
-        AddChild(baseMesh);
+        _banner = Banner(owner);
+        AddChild(_banner);
+        AddChild(_health);
         model ??= Figurine(owner);
         _pivot.AddChild(model);
         _player = FindPlayer(model);
@@ -55,6 +51,7 @@ internal sealed partial class UnitActor : Node3D
     /// <summary>Play a clip by state name (idle, run, fortify, attack, hurt, die); false when the model has none.</summary>
     public bool Play(string state, float duration = 0)
     {
+        if (state == "die") _banner.Visible = false;
         if (!_clips.TryGetValue(state, out var clip) && !(state == "fortify" && _clips.TryGetValue("idle", out clip))) { _state = state; return false; }
         if (_player != null && (_state != state || !_player.IsPlaying() || state is "attack" or "hurt" or "die"))
         {
