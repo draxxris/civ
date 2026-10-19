@@ -170,6 +170,7 @@ public partial class Main : Node3D
         if (_debug.Stage == "path") _game.ForceHover(PathTarget(session));
         OpenDebugPanel();
         if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
+        if (_debug.Stats) RenderingServer.ViewportSetMeasureRenderTime(GetViewport().GetViewportRid(), true);
         if (_debug.FpsProbe)
         {
             var focus = TerrainShowcase.Focus(session);
@@ -223,6 +224,8 @@ public partial class Main : Node3D
         var stats = new Dictionary<string, object?>
         {
             ["name"] = _shotName, ["seed"] = _debug.Seed, ["fps"] = Engine.GetFramesPerSecond(),
+            // GPU time of the last measured frame; steadier than the FPS of a capture run.
+            ["gpu_ms"] = Math.Round(RenderingServer.ViewportGetMeasuredRenderTimeGpu(GetViewport().GetViewportRid()), 2),
             ["tuning_overrides"] = _debug.Tuning, ["scatter"] = RenderStats.Scatter(),
             ["triangles"] = _game.Map.TriangleCounts(), ["heights"] = RenderStats.Heights(terrain.Snapshot, terrain.Field),
         };

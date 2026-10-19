@@ -16,7 +16,7 @@ public sealed class TerrainPalette
 {
     public const int MaxLayers = 32;
     public const int ColorOnlyLayer = -1;
-    private const int MaxFeatureGroundIndex = 15;
+    private const int MaxFeatureGroundIndex = 63;
 
     private static readonly IReadOnlyDictionary<TerrainSurface, (string Id, int Rgb)> SurfaceDefaults =
         new Dictionary<TerrainSurface, (string, int)>
@@ -31,13 +31,14 @@ public sealed class TerrainPalette
     private readonly Dictionary<string, int> _terrainLayers = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Rgb> _terrainColors = new(StringComparer.Ordinal);
     private readonly Dictionary<TerrainSurface, int> _surfaceLayers = new();
-    private readonly Dictionary<string, int> _featureGroundIndices = new(StringComparer.Ordinal);
+    private readonly Dictionary<(string Feature, string Terrain), int> _featureGroundIndices = new();
     private readonly ContentDb _content;
     private readonly IReadOnlyList<TerrainPaletteLayer> _layers;
     private readonly IReadOnlyList<FeatureStyle?> _featureGrounds;
 
     public IReadOnlyList<TerrainPaletteLayer> Layers => _layers;
-    /// <summary>Index zero is the no-tint entry; feature indices range from one through fifteen.</summary>
+    /// <summary>Index zero is the no-tint entry; feature indices range from one through 63. A feature with a
+    /// terrain-specific look (<see cref="ITileAppearanceService.Scatter"/>) gets its own index on that terrain.</summary>
     public IReadOnlyList<FeatureStyle?> FeatureGrounds => _featureGrounds;
 
     public TerrainPalette(GameCatalog catalog)
@@ -84,8 +85,13 @@ public sealed class TerrainPalette
 
     public int SurfaceLayerOf(TerrainSurface surface) => _surfaceLayers.GetValueOrDefault(surface, ColorOnlyLayer);
 
-    /// <summary>Returns a tint-table index in 0..15; zero means no feature ground tint.</summary>
-    public int FeatureGroundOf(string? featureId) => featureId is null ? 0 : _featureGroundIndices.GetValueOrDefault(featureId);
+    /// <summary>Returns a tint-table index in 0..63 for a feature on a terrain; zero means no feature ground.</summary>
+    public int FeatureGroundOf(string? featureId, string terrainId) =>
+        featureId is null ? 0 : _featureGroundIndices.GetValueOrDefault((featureId, terrainId));
+
+    /// <summary>True when the feature ground at this index raises a crater in the height field.</summary>
+    public bool IsCrater(int ground) =>
+        ground > 0 && ground < _featureGrounds.Count && _featureGrounds[ground]?.Look.Ground == FeatureGround.Crater;
 
     /// <summary>Returns a terrain-specific scatter appearance, then the feature's general appearance.</summary>
     public TileAppearance? ScatterFor(string feature, string terrain)
@@ -98,16 +104,30 @@ public sealed class TerrainPalette
     private IReadOnlyList<FeatureStyle?> BuildFeatureGrounds(IReadOnlyList<ITileAppearanceService> appearances)
     {
         var grounds = new List<FeatureStyle?> { null };
+        var indices = new Dictionary<FeatureStyle, int>();
+        var terrains = _content.Get<Schema.TerrainDef>().All.Select(t => t.Id).OrderBy(id => id, StringComparer.Ordinal).ToArray();
         foreach (var feature in _content.Get<Schema.FeatureDef>().All.OrderBy(f => f.Id, StringComparer.Ordinal))
         {
-            var appearance = FirstAppearance(appearances, service => service.Feature(feature.Id));
-            if (appearance is null || grounds.Count > MaxFeatureGroundIndex) continue;
-            int index = grounds.Count;
-            _featureGroundIndices[feature.Id] = index;
-            grounds.Add(new(Rgb.Hex(appearance.Rgb), appearance.TintPercent / 100f, appearance.Marks));
+            if (FirstAppearance(appearances, service => service.Feature(feature.Id)) is null) continue;
+            foreach (var terrain in terrains)
+            {
+                if (ScatterFor(feature.Id, terrain) is not { } appearance) continue;
+                var style = StyleOf(appearance);
+                if (!indices.TryGetValue(style, out int index))
+                {
+                    if (grounds.Count > MaxFeatureGroundIndex) continue;
+                    indices[style] = index = grounds.Count;
+                    grounds.Add(style);
+                }
+                _featureGroundIndices[(feature.Id, terrain)] = index;
+            }
         }
         return Array.AsReadOnly(grounds.ToArray());
     }
+
+    /// <summary>The ground part of an appearance; props and marks do not change the ground.</summary>
+    internal static FeatureStyle StyleOf(TileAppearance appearance) =>
+        new(Rgb.Hex(appearance.Rgb), appearance.TintPercent / 100f, 0, appearance.Look ?? new FeatureLook());
 
     private static TileAppearance? FirstAppearance(
         IReadOnlyList<ITileAppearanceService> services,

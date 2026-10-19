@@ -13,8 +13,9 @@ public readonly record struct Rgb(float R, float G, float B)
 
 public enum Sight { Hidden, Fogged, Visible }
 
-/// <summary>How a feature is drawn on top of its terrain: a tint over the tile plus a number of small marks.</summary>
-public sealed record FeatureStyle(Rgb Tint, float TintStrength, int Marks);
+/// <summary>How a feature is drawn on top of its terrain: a tint over the tile, a number of small marks, and its ground
+/// pattern, haze and prop layout.</summary>
+public sealed record FeatureStyle(Rgb Tint, float TintStrength, int Marks, FeatureLook Look);
 
 /// <summary>Mod-supplied terrain and feature appearance, with generic route and player colours.</summary>
 public static class MapStyle
@@ -32,7 +33,8 @@ public static class MapStyle
     public static FeatureStyle? FeatureOf(ContentDb content, string id)
     {
         var appearance = content.Services.Get<ITileAppearanceService>().Select(s => s.Feature(id)).FirstOrDefault(a => a != null);
-        return appearance == null ? null : new(Rgb.Hex(appearance.Rgb), appearance.TintPercent / 100f, appearance.Marks);
+        return appearance == null ? null : new(Rgb.Hex(appearance.Rgb), appearance.TintPercent / 100f, appearance.Marks,
+            appearance.Look ?? new FeatureLook());
     }
 
     public static Rgb PlayerColor(int player) => Players[player % Players.Length];

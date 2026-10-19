@@ -1,0 +1,405 @@
+{
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat",
+  "owner": null
+ },
+ "tiles": [
+  {
+   "rect": [
+    0,
+    0,
+    35,
+    31
+   ],
+   "terrain": "world:grass",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    36,
+    0,
+    51,
+    31
+   ],
+   "terrain": "world:ocean",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    36,
+    0,
+    38,
+    31
+   ],
+   "terrain": "world:coast",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    30,
+    13,
+    35,
+    22
+   ],
+   "terrain": "world:grass",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    1,
+    1,
+    7,
+    7
+   ],
+   "terrain": "world:grass",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    3,
+    3,
+    5,
+    5
+   ],
+   "feature": "world:forest"
+  },
+  {
+   "rect": [
+    9,
+    1,
+    15,
+    7
+   ],
+   "terrain": "world:tundra",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    11,
+    3,
+    13,
+    5
+   ],
+   "feature": "world:forest"
+  },
+  {
+   "rect": [
+    17,
+    1,
+    23,
+    7
+   ],
+   "terrain": "world:grass",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    19,
+    3,
+    21,
+    5
+   ],
+   "feature": "world:jungle"
+  },
+  {
+   "rect": [
+    25,
+    1,
+    31,
+    7
+   ],
+   "terrain": "world:marsh",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    27,
+    3,
+    29,
+    5
+   ],
+   "feature": "world:jungle"
+  },
+  {
+   "rect": [
+    1,
+    8,
+    7,
+    14
+   ],
+   "terrain": "world:marsh",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    3,
+    10,
+    5,
+    12
+   ],
+   "feature": "world:swamp"
+  },
+  {
+   "rect": [
+    9,
+    8,
+    15,
+    14
+   ],
+   "terrain": "world:desert",
+   "kind": "Flat"
+  },
+  {
+   "at": [
+    11,
+    8
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    11,
+    9
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    11,
+    10
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    11,
+    11
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    11,
+    12
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    11,
+    13
+   ],
+   "river": 35
+  },
+  {
+   "at": [
+    11,
+    14
+   ],
+   "river": 1
+  },
+  {
+   "rect": [
+    11,
+    9,
+    12,
+    13
+   ],
+   "feature": "world:flood_plains"
+  },
+  {
+   "rect": [
+    17,
+    8,
+    23,
+    14
+   ],
+   "terrain": "world:desert",
+   "kind": "Flat"
+  },
+  {
+   "at": [
+    20,
+    11
+   ],
+   "feature": "world:oasis"
+  },
+  {
+   "rect": [
+    25,
+    8,
+    31,
+    14
+   ],
+   "terrain": "world:plains",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    27,
+    10,
+    29,
+    12
+   ],
+   "feature": "world:fallout"
+  },
+  {
+   "rect": [
+    1,
+    15,
+    7,
+    21
+   ],
+   "terrain": "world:grass",
+   "kind": "Flat"
+  },
+  {
+   "at": [
+    5,
+    17
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    3,
+    19
+   ],
+   "kind": "Hills",
+   "terrain": "world:plains"
+  },
+  {
+   "rect": [
+    3,
+    17,
+    5,
+    19
+   ],
+   "feature": "world:biogas"
+  },
+  {
+   "rect": [
+    9,
+    15,
+    15,
+    21
+   ],
+   "terrain": "world:plains",
+   "kind": "Flat"
+  },
+  {
+   "at": [
+    12,
+    17
+   ],
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    13,
+    19
+   ],
+   "kind": "Hills",
+   "terrain": "world:grass"
+  },
+  {
+   "rect": [
+    11,
+    17,
+    13,
+    19
+   ],
+   "feature": "world:plaguegas"
+  },
+  {
+   "rect": [
+    17,
+    15,
+    23,
+    21
+   ],
+   "terrain": "world:plains",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    19,
+    17,
+    21,
+    19
+   ],
+   "terrain": "world:plains",
+   "kind": "Hills"
+  },
+  {
+   "at": [
+    20,
+    18
+   ],
+   "terrain": "world:peak",
+   "kind": "Peak",
+   "feature": "world:volcano"
+  },
+  {
+   "at": [
+    21,
+    17
+   ],
+   "terrain": "world:peak",
+   "kind": "Peak"
+  },
+  {
+   "rect": [
+    32,
+    2,
+    35,
+    9
+   ],
+   "terrain": "world:tundra",
+   "kind": "Flat"
+  },
+  {
+   "rect": [
+    34,
+    3,
+    35,
+    7
+   ],
+   "terrain": "world:snow"
+  },
+  {
+   "rect": [
+    36,
+    3,
+    38,
+    7
+   ],
+   "feature": "world:ice"
+  },
+  {
+   "rect": [
+    39,
+    4,
+    40,
+    6
+   ],
+   "terrain": "world:coast",
+   "feature": "world:ice"
+  },
+  {
+   "rect": [
+    37,
+    15,
+    42,
+    20
+   ],
+   "feature": "world:storm"
+  }
+ ],
+ "clearUnits": true,
+ "focus": [
+  20,
+  11
+ ]
+}

@@ -17,15 +17,31 @@ internal sealed class TileAppearanceService : ITileAppearanceService
         ["world:snow"] = new(0xf0f5fa, Spread: 35), ["world:tundra"] = new(0x9fae9c, Spread: 40),
     };
 
+    // Forest props gather into groves with small glades between them.
+    private static readonly FeatureLook Groves = new(Clumping: 55);
+
     private static readonly IReadOnlyDictionary<string, TileAppearance> Features = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)
     {
         // Muted, earthy forest floors: under the graded foliage they read as shade, not as painted green hexes.
         // Scatter densities are percent of candidates; forests and jungles run near full so groves read as dense canopy.
-        ["world:forest"] = new(ForestFloor, 40, 4, "forest", 95), ["world:jungle"] = new(0x3a5236, 45, 5, "jungle", 100),
-        ["world:swamp"] = new(0x3f6b55, 40, 3, "swamp", 40), ["world:ice"] = new(0xe8f4ff, 70),
-        ["world:flood_plains"] = new(0x8ec26a, 35), ["world:oasis"] = new(0x3fb6c9, 50, 1, "oasis", 25),
-        ["world:fallout"] = new(0x9a9a2a, 40, 2),
+        ["world:forest"] = new(ForestFloor, 40, 4, "forest", 95, Look: Groves), ["world:jungle"] = new(0x3a5236, 45, 5, "jungle", 100),
+        // Dead trees and reeds stand in dark pools under a low mist.
+        ["world:swamp"] = new(0x3f5a45, 35, 3, "swamp", 60,
+            Look: new(FeatureGround.Pools, Haze: FeatureHaze.Mist, HazeRgb: 0xdce4df, HazePercent: 42)),
+        ["world:ice"] = new(0xe8f4ff, Look: new(FeatureGround.Floes)),
+        ["world:flood_plains"] = new(0x6d9a3c, 30, Look: new(FeatureGround.Fertile)),
+        // Palms ring a small pool at the tile centre.
+        ["world:oasis"] = new(0x8a9a50, 15, 1, "oasis", 60, Look: new(FeatureGround.Spring, ScatterInner: 48, ScatterOuter: 85)),
+        ["world:fallout"] = new(0x8c8a3c, 25, Look: new(FeatureGround.Blight)),
+        // Smogs are low, coloured haze only: the ground under them stays as it is.
+        ["world:biogas"] = new(0, Look: new(Haze: FeatureHaze.Smog, HazeRgb: 0xb2bd52, HazePercent: 40)),
+        ["world:plaguegas"] = new(0, Look: new(Haze: FeatureHaze.Smog, HazeRgb: 0x9a6aa0, HazePercent: 45)),
+        ["world:storm"] = new(0, Look: new(FeatureGround.Squall, Haze: FeatureHaze.Storm, HazeRgb: 0x4c5462, HazePercent: 75)),
+        ["world:volcano"] = new(0x3b3532, 45, Look: new(FeatureGround.Crater, Haze: FeatureHaze.Smoke, HazeRgb: 0x6e6862, HazePercent: 75)),
     };
+
+    // Jungle over marsh thins a little and keeps the wet ground visible between its trunks.
+    private static readonly TileAppearance MarshJungle = new(0x3a5236, 30, 5, "jungle", 80, Look: new(FeatureGround.Pools, 75));
 
     private static readonly IReadOnlyDictionary<string, RouteLook> Routes = new Dictionary<string, RouteLook>(StringComparer.Ordinal)
     {
@@ -49,8 +65,10 @@ internal sealed class TileAppearanceService : ITileAppearanceService
         _ => null,
     };
 
-    public TileAppearance? Scatter(string feature, string terrain) =>
-        feature == "world:forest" && terrain is "world:tundra" or "world:snow"
-            ? new(ForestFloor, 40, 4, "forest_snow", 95)
-            : null;
+    public TileAppearance? Scatter(string feature, string terrain) => (feature, terrain) switch
+    {
+        ("world:forest", "world:tundra" or "world:snow") => new(ForestFloor, 40, 4, "forest_snow", 95, Look: Groves),
+        ("world:jungle", "world:marsh") => MarshJungle,
+        _ => null,
+    };
 }

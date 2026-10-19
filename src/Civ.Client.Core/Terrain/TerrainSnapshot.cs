@@ -27,6 +27,7 @@ public sealed class TerrainSnapshot
         Sight = new Sight[n];
         Terrain = new string?[n];
         Feature = new string?[n];
+        Crater = new bool[n];
     }
 
     /// <summary>Map geometry and wrap policy.</summary>
@@ -57,6 +58,8 @@ public sealed class TerrainSnapshot
     public string?[] Terrain { get; }
     /// <summary>Known feature content ids, for terrain-specific scatter lookup.</summary>
     public string?[] Feature { get; }
+    /// <summary>Peak tiles whose feature opens a crater at the summit (see <see cref="FeatureGround.Crater"/>).</summary>
+    public bool[] Crater { get; }
 
     /// <summary>Tile for an axial hex, or false when it is off the map. Wrapping maps resolve every column.</summary>
     public bool TryTile(Hex hex, out int tile)
@@ -78,8 +81,10 @@ public sealed class TerrainSnapshot
     }
 
     /// <summary>Snapshot of the session's map as the local team sees it. <paramref name="layerOf"/> maps a terrain id to
-    /// a palette layer; <paramref name="featureGroundOf"/> maps a feature id (or null) to a feature ground index.</summary>
-    public static TerrainSnapshot From(GameSession session, Func<string, int> layerOf, Func<string?, int> featureGroundOf)
+    /// a palette layer; <paramref name="featureGroundOf"/> maps a feature id (or null) and terrain id to a feature ground
+    /// index, and <paramref name="craterOf"/> tells which feature grounds open a summit crater.</summary>
+    public static TerrainSnapshot From(GameSession session, Func<string, int> layerOf, Func<string?, string, int> featureGroundOf,
+        Func<int, bool>? craterOf = null)
     {
         var state = session.Sim.State;
         var snapshot = new TerrainSnapshot(state.Map);
@@ -92,7 +97,8 @@ public sealed class TerrainSnapshot
             snapshot.Feature[i] = plot.Feature;
             snapshot.Relief[i] = ReliefOf(session.Sim.Content.Get<Schema.TerrainDef>(plot.Terrain), plot);
             snapshot.Layer[i] = checked((byte)layerOf(plot.Terrain));
-            snapshot.FeatureGround[i] = checked((byte)featureGroundOf(plot.Feature));
+            snapshot.FeatureGround[i] = checked((byte)featureGroundOf(plot.Feature, plot.Terrain));
+            snapshot.Crater[i] = snapshot.Relief[i] == ReliefClass.Peak && craterOf?.Invoke(snapshot.FeatureGround[i]) == true;
             snapshot.Rivers[i] = plot.RiverEdges;
             snapshot.Cliffs[i] = plot.CliffEdges;
             snapshot.Owner[i] = plot.Owner is int owner ? checked((byte)(owner + 1)) : (byte)0;

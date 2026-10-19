@@ -32,9 +32,15 @@ uniform vec3 sun_direction = vec3(-0.542, 0.643, -0.542);
 uniform float mountain_shadow = 0.36;
 uniform float mountain_light = 0.12;
 
+// Lava in volcano craters: a crust of dark cinders torn by glowing cracks, brightest at the middle of the floor.
+uniform vec3 lava_colour : source_color = vec3(1.0, 0.36, 0.06);
+uniform float lava_glow = 1.1;
+
 varying vec3 world_pos;
 varying vec3 ground_normal;
 varying float cavity;
+// TerrainField.CraterAt: 1 at the middle of a crater floor, 0 from its rim outwards.
+varying float crater;
 
 // Snow cover in [0, 1]: altitude, wrap-safe drift noise and the gully bonus set how much snow can lie here; the face's
 // steepness then decides how much of it stays. Inside the transition both terms blend smoothly, so the cap thins out over
@@ -73,6 +79,18 @@ void vertex() {
 	world_pos = VERTEX;
 	ground_normal = NORMAL;
 	cavity = UV2.x;
+	crater = UV2.y;
+}
+
+// Lava glow in [0, 1] on a crater floor: slowly shifting cracks in a dark crust, solid melt in the middle.
+float lava(vec2 p, float floor_share, float time) {
+	if (floor_share <= 0.001) return 0.0;
+	float crust = seeded_noise(p + vec2(time * 0.01, 0.0), 22.0, 60u) * 0.6 + seeded_noise(p - vec2(0.0, time * 0.013), 47.0, 61u) * 0.4;
+	float cracks = 1.0 - smoothstep(0.04, 0.12, abs(crust - 0.5));
+	float pulse = 0.85 + 0.15 * sin(time * 1.3 + crust * 6.0);
+	// A small pool of melt in the middle; the rest of the floor is crust split by thin glowing cracks.
+	float melt = smoothstep(0.82, 0.97, floor_share + (crust - 0.5) * 0.2);
+	return clamp(max(cracks * 0.7 * smoothstep(0.0, 0.5, floor_share), melt * (0.6 + 0.4 * crust)), 0.0, 1.0) * pulse;
 }
 
 void fragment() {
@@ -92,9 +110,16 @@ void fragment() {
 		NORMAL = normalize((VIEW_MATRIX * vec4(normal, 0.0)).xyz);
 	}
 	float hollow = clamp(cavity / 4.0, -1.0, 1.0) * mountain;
-	float snow = snow_cover(world_pos.xz, world_pos.y, normal.y, max(hollow, 0.0));
+	vec4 looks_a, looks_b;
+	feature_shares(world_pos.xz, looks_a, looks_b);
+	// Warm ash keeps a volcano's cone bare of snow.
+	float snow = snow_cover(world_pos.xz, world_pos.y, normal.y, max(hollow, 0.0)) * (1.0 - smoothstep(0.1, 0.6, looks_b.z));
+	vec3 glow;
+	float wet;
 	// Keep sample coordinates unwrapped to prevent a mip-derivative jump at the cylinder seam.
-	blend_tiles(world_pos.xz, linear, slope, snow, land, water_tint, fogged, hidden, w);
+	blend_ground(world_pos.xz, linear, slope, snow, looks_a, looks_b, land, water_tint, fogged, hidden, w, glow, wet);
+	float molten = lava(world_pos.xz, crater, TIME) * (1.0 - hidden) * mix(1.0, 0.35, fogged);
+	land = mix(land, land * 0.35, smoothstep(0.0, 0.3, crater));
 	vec3 colour = land * (1.0 - cavity_shade * smoothstep(0.0, 1.0, hollow) + ridge_light * smoothstep(0.0, 1.0, -hollow));
 	float sun = smoothstep(-0.25, 0.75, dot(normal, sun_direction));
 	vec3 shade = mix(vec3(1.0 - mountain_shadow) * vec3(0.94, 0.97, 1.04), vec3(1.0 + mountain_light), sun);
@@ -135,7 +160,10 @@ void fragment() {
 	else if (debug_mode == 8) colour = mix(vec3(0.85), cavity > 0.0 ? vec3(0.1, 0.3, 0.95) : vec3(0.95, 0.15, 0.1), clamp(abs(cavity) / 4.0, 0.0, 1.0));
 	else if (debug_mode == 6) colour = mix(vec3(0.05, 0.6, 0.15), vec3(0.95, 0.1, 0.05), smoothstep(0.0, 0.4, steep));
 
-	vec3 emission = sky.rgb * cover;
+	vec3 lava_light = lava_colour * lava_glow;
+	// The glow spills a little over the crater rim.
+	vec3 emission = (glow + lava_light * (molten + 0.12 * smoothstep(0.0, 0.25, crater))) * (1.0 - cover) + sky.rgb * cover;
+	colour = mix(colour, colour * 0.2, molten);
 	if (hover) {
 		float outline = hover_outline(d);
 		emission = mix(emission, vec3(0.9), outline);
@@ -143,6 +171,7 @@ void fragment() {
 	}
 	ALBEDO = colour * (1.0 - cover);
 	EMISSION = emission;
-	ROUGHNESS = 0.92;
-	SPECULAR = 0.15 * (1.0 - cover);
+	// Standing water (pools, springs) is glossy.
+	ROUGHNESS = mix(0.92, 0.3, wet);
+	SPECULAR = mix(0.15, 0.3, wet) * (1.0 - cover);
 }

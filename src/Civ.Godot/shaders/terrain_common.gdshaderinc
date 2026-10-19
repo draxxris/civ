@@ -11,7 +11,8 @@ uniform sampler2D tile_b : filter_nearest, repeat_disable;
 uniform sampler2D warp_grid : filter_nearest, repeat_disable;
 // Colour table (sRGB bytes): row 0 layer colours, row 1 feature ground tints (A = strength),
 // row 2 owner colours (index = owner + 1), row 3 water tints per layer (A = strength),
-// row 4 ragged-edge strength per layer (A; 0 for water, so seabeds only fade into each other), R = 1 for deep ocean.
+// row 4 ragged-edge strength per layer (A; 0 for water, so seabeds only fade into each other), R = 1 for deep ocean,
+// row 5 feature looks (R = ground pattern, G = its strength, B = haze kind, A = haze density), row 6 feature haze colours.
 uniform sampler2D palette : filter_nearest, repeat_disable;
 // RGB = sRGB albedo, A = linear height. No source_color hint: decode RGB only (see decode_colour), leaving height unchanged.
 uniform sampler2DArray terrain_textures : filter_linear_mipmap, repeat_enable;
@@ -319,10 +320,137 @@ float ground_noise(vec2 p, ivec2 texel) {
 	return clamp((n - 0.5) * 4.5, -1.0, 1.0);
 }
 
+// Feature ground patterns (FeatureGround order) in palette row 5.
+const int GROUND_POOLS = 1;
+const int GROUND_FERTILE = 2;
+const int GROUND_SPRING = 3;
+const int GROUND_BLIGHT = 4;
+const int GROUND_FLOES = 5;
+const int GROUND_SQUALL = 6;
+const int GROUND_CRATER = 7;
+// Broad enough that forest shade and feature patterns have no visible hex outline.
+const float SHADE_SHARPNESS = 2.0;
+
+int ground_pattern(int feature_ground) {
+	return byte_of(texelFetch(palette, ivec2(feature_ground, 5), 0).r);
+}
+
+// Shares of the feature ground patterns at p under the broad shade weights over seen tiles, each times its strength:
+// a = (pools, fertile, spring, blight), b = (floes, squall, crater, unused).
+void feature_shares(vec2 p, out vec4 a, out vec4 b) {
+	ivec2 base;
+	bool upper;
+	vec3 soft = blend_weights(corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper), SHADE_SHARPNESS);
+	a = vec4(0.0);
+	b = vec4(0.0);
+	float seen = 0.0;
+	for (int k = 0; k < 3; k++) {
+		ivec2 t = clamped_texel(corner_hex(base, upper, k));
+		if (byte_of(texelFetch(tile_b, t, 0).r) == 0) continue;
+		seen += soft[k];
+		vec4 look = texelFetch(palette, ivec2(byte_of(texelFetch(tile_a, t, 0).g), 5), 0);
+		int pattern = byte_of(look.r);
+		float w = soft[k] * look.g;
+		if (pattern == GROUND_POOLS) a.x += w;
+		else if (pattern == GROUND_FERTILE) a.y += w;
+		else if (pattern == GROUND_SPRING) a.z += w;
+		else if (pattern == GROUND_BLIGHT) a.w += w;
+		else if (pattern == GROUND_FLOES) b.x += w;
+		else if (pattern == GROUND_SQUALL) b.y += w;
+		else if (pattern == GROUND_CRATER) b.z += w;
+	}
+	a /= max(seen, 1e-8);
+	b /= max(seen, 1e-8);
+}
+
+// Distance from p to the nearest river edge of its own hex, or 2 when the hex has none.
+float river_edge_distance(vec2 p) {
+	ivec2 hex = containing_hex(p);
+	if (!on_map(hex)) return 2.0;
+	int bits = byte_of(texelFetch(tile_a, texel_of(hex), 0).a);
+	vec2 d = p - hex_centre(hex);
+	float best = 2.0;
+	for (int k = 0; k < 6; k++)
+		if ((bits & (1 << k)) != 0) best = min(best, SQRT3 * 0.5 - dot(d, EDGE_NORMAL[k]));
+	return best;
+}
+
+// Feature ground patterns over the blended ground colour. glow is light the ground gives off (fallout specks), wet the
+// share of standing water (glossy) at p.
+vec3 feature_ground(vec2 p, vec3 land, vec4 a, vec4 b, bool linear, out vec3 glow, out float wet) {
+	glow = vec3(0.0);
+	wet = 0.0;
+	float lum = dot(land, vec3(0.2126, 0.7152, 0.0722));
+	if (a.x > 0.001) {
+		// Pools: small, dark, still pools in the hollows of a wandering field, ringed by black mud; tussocks between
+		// stay green. A coarse field decides where pools gather, a fine one gives them ragged shores.
+		float n = seeded_noise(p, 5.5, 41u) * 0.5 + seeded_noise(p, 12.0, 42u) * 0.32 + seeded_noise(p, 27.0, 53u) * 0.18;
+		float gather = smoothstep(0.25, 0.75, seeded_noise(p, 1.6, 54u));
+		float level = 1.0 - 0.5 * a.x * mix(0.55, 1.15, gather);
+		float pool = smoothstep(level, level + 0.025, n);
+		float mud = smoothstep(level - 0.07, level, n) * (1.0 - pool);
+		vec3 water = decode_colour(vec3(0.2, 0.25, 0.22), linear) * mix(0.7, 1.05, seeded_noise(p, 16.0, 43u));
+		vec3 tussock = land * decode_colour(vec3(0.86, 0.95, 0.72), linear);
+		land = mix(land, tussock, 0.5 * a.x);
+		land = mix(land, land * 0.5, mud * 0.85);
+		land = mix(land, water, pool);
+		wet = max(wet, pool * 0.6);
+	}
+	if (a.y > 0.001) {
+		// Fertile: lush green growth and dark wet silt, thickest along the tile's river.
+		float riverside = 1.0 - smoothstep(0.05, 0.75, river_edge_distance(p));
+		float strength = a.y * mix(0.55, 1.0, riverside);
+		float patches = smoothstep(0.3, 0.7, seeded_noise(p, 2.6, 44u) * 0.7 + seeded_noise(p, 9.0, 45u) * 0.3);
+		vec3 lush = decode_colour(vec3(0.33, 0.52, 0.18), linear) * (0.75 + 0.5 * lum);
+		vec3 silt = decode_colour(vec3(0.34, 0.29, 0.2), linear) * (0.8 + 0.4 * lum);
+		vec3 fertile = mix(lush, mix(lush, silt, 0.6), (1.0 - patches) * (0.4 + 0.6 * riverside));
+		land = mix(land, fertile, strength * 0.85);
+	}
+	if (a.z > 0.001) {
+		// Spring: a small pool of clear water at the hex centre in a ring of damp, green ground.
+		ivec2 hex = containing_hex(p);
+		if (on_map(hex) && ground_pattern(byte_of(texelFetch(tile_a, texel_of(hex), 0).g)) == GROUND_SPRING) {
+			vec2 d = p - hex_centre(hex);
+			float wobble = (seeded_noise(p, 5.0, 46u) - 0.5) * 0.1;
+			float r = length(d * vec2(1.0, 1.2)) + wobble;
+			float pool = 1.0 - smoothstep(0.3, 0.315, r);
+			float damp = (1.0 - smoothstep(0.3, 0.62, r)) * (1.0 - pool);
+			vec3 water = mix(decode_colour(vec3(0.12, 0.5, 0.5), linear), decode_colour(vec3(0.04, 0.26, 0.34), linear),
+				1.0 - smoothstep(0.0, 0.3, r));
+			vec3 sand = land * decode_colour(vec3(0.7, 0.62, 0.5), linear);
+			vec3 green = decode_colour(vec3(0.33, 0.45, 0.2), linear) * (0.8 + 0.4 * lum);
+			land = mix(land, mix(sand, green, smoothstep(0.34, 0.42, r) * seeded_noise(p, 9.0, 47u)), damp * a.z);
+			land = mix(land, water, pool);
+			wet = max(wet, pool + damp * 0.3);
+		}
+	}
+	if (a.w > 0.001) {
+		// Blight: bleached, sickly yellow ground with dark scorch blotches and a few faintly glowing specks.
+		vec3 sick = vec3(lum) * decode_colour(vec3(1.08, 1.02, 0.56), linear);
+		float scorch = smoothstep(0.55, 0.8, seeded_noise(p, 3.4, 48u) * 0.65 + seeded_noise(p, 11.0, 49u) * 0.35);
+		vec3 blighted = mix(sick, sick * decode_colour(vec3(0.42, 0.36, 0.26), linear), scorch);
+		land = mix(land, blighted, a.w * 0.8);
+		float speck = smoothstep(0.86, 0.95, seeded_noise(p, 26.0, 50u)) * (1.0 - scorch);
+		glow = decode_colour(vec3(0.55, 0.75, 0.12), linear) * speck * a.w * 0.6;
+	}
+	if (b.y > 0.001) {
+		// Squall: the storm's cloud shadow darkens the shore around it.
+		land *= 1.0 - 0.45 * b.y;
+	}
+	if (b.z > 0.001) {
+		// Crater: dark ash and cinders over the volcano's flanks, in streaks.
+		float streak = seeded_noise(p * vec2(1.0, 0.45), 5.0, 51u) * 0.6 + seeded_noise(p, 13.0, 52u) * 0.4;
+		vec3 ash = decode_colour(vec3(0.2, 0.18, 0.17), linear) * mix(0.7, 1.3, streak);
+		land = mix(land, ash, b.z * mix(0.55, 0.85, smoothstep(0.35, 0.65, streak)));
+	}
+	return land;
+}
+
 // Hidden tiles supply only cloud coverage, never their true material. Sight and water tint retain geometric weights.
 // Ground colour is a softmax of the tiles' claims, ln λ plus a bounded shift. Along a corner-triangle border the opposite
 // vertex has λ = 0, so its claim falls to -∞: it contributes nothing on either side and the colour is continuous.
-void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights) {
+void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec4 looks_a, vec4 looks_b, out vec3 land,
+		out vec4 water_tint, out float fogged, out float hidden, out vec3 weights, out vec3 glow, out float wet) {
 	ivec2 base;
 	bool upper;
 	vec3 lambda = corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper);
@@ -330,8 +458,6 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 	// At an edge midpoint (λ = ½, ½) ln λA - ln λB changes by 4/√3 per world unit, so a claim difference d moves the edge
 	// by d·√3/4. Nearer the hex corners ln λ is steeper and the same claims move edges less.
 	const float CLAIM_PER_UNIT = 4.0 / SQRT3;
-	// Broad enough that forest shade has no visible hex outline.
-	const float SHADE_SHARPNESS = 2.0;
 	vec3 colours[3];
 	vec3 claims = vec3(-1e4);
 	// World size of a pixel. Claims can swap corners at triangle borders, so take derivatives of p, not of the claims.
@@ -377,6 +503,8 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 		water_tint += weights[k] * slime;
 	}
 	land = vec3(0.0);
+	glow = vec3(0.0);
+	wet = 0.0;
 	if (hidden < 1.0 - 1e-5) {
 		float highest = max(claims.x, max(claims.y, claims.z));
 		// At least the edge width, widened to a few pixels far away so the ragged edge does not shimmer.
@@ -391,6 +519,7 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 		// Shade, water tint and fog use smooth geometric weights over the revealed corners, not the ragged ground edge.
 		shade /= max(soft_seen, 1e-8);
 		land = land * (1.0 - shade.a) + shade.rgb;
+		land = feature_ground(p, land, looks_a, looks_b, linear, glow, wet);
 		// Snow caps by altitude cover whatever the summit tile is made of; fog then tones them like the ground.
 		land = mix(land, mix(land, snow, 0.55), frost);
 		land = mix(land, snow, snow_mask);
@@ -398,7 +527,16 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 		water_tint /= geometric_seen;
 		fogged /= geometric_seen;
 		land = mix(land, fog_tone(land), fogged);
+		glow *= (1.0 - fogged) * (1.0 - hidden);
 	}
+}
+
+void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights) {
+	vec4 a, b;
+	feature_shares(p, a, b);
+	vec3 glow;
+	float wet;
+	blend_ground(p, linear, rock_weight, snow_weight, a, b, land, water_tint, fogged, hidden, weights, glow, wet);
 }
 
 // Two wrap-safe scrolling samples of the cloud layer, plus periodic coverage noise. Fully hidden means full cover.
