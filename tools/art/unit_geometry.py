@@ -1,8 +1,9 @@
 """Convert NIF hierarchy, geometry, materials, and skin bindings."""
 import numpy as np
+from PIL import Image
 from pyffi.formats.nif import NifFormat as N
 
-from glb_writer import Glb, decompose, matrix, text, transform_points
+from glb_writer import Glb, compose, decompose, matrix, text, transform_points
 
 
 def vertex_weights(shape):
@@ -56,36 +57,54 @@ def diffuse_source(prop):
     return base, team_color
 
 
+def soft_alpha(path):
+    """True when a noticeable share of the texture is partly transparent, such as a rotor blur."""
+    with Image.open(path) as image:
+        if "A" not in image.getbands():
+            return False
+        alpha = np.asarray(image.getchannel("A"))
+    return float(((alpha > 8) & (alpha < 247)).mean()) > 0.05
+
+
 def material_texture(glb, prop, assets, folders, warnings):
+    """(texture index, team colour flag, texture has soft alpha)."""
     source, team_color = diffuse_source(prop)
     if source is None:
-        return None, team_color
+        return None, team_color, False
     filename = source.file_name
     path = assets.resolve(filename, folders)
     if not path:
         warnings.append("Missing texture: " + text(filename))
-        return None, team_color
+        return None, team_color, False
     try:
-        return glb.texture(path, team_color), team_color
+        return glb.texture(path, team_color), team_color, soft_alpha(path)
     except OSError as error:
         warnings.append("Unreadable diffuse texture: " + text(filename) + ": " + str(error))
-        return None, team_color
+        return None, team_color, False
 
 
 def mesh_material(glb, shape, assets, folders, warnings):
     material = {"name": "Diffuse", "pbrMetallicRoughness": {"metallicFactor": 0, "roughnessFactor": 1},
                 "doubleSided": True}
-    team_color = False
+    team_color = soft = False
+    alpha = None
     for prop in shape.properties:
         if isinstance(prop, N.NiTexturingProperty):
-            texture, team_color = material_texture(glb, prop, assets, folders, warnings)
+            texture, team_color, soft = material_texture(glb, prop, assets, folders, warnings)
             if texture is not None:
                 material["pbrMetallicRoughness"]["baseColorTexture"] = {"index": texture}
         if isinstance(prop, N.NiAlphaProperty):
-            if prop.flags & 512:
-                material.update(alphaMode="MASK", alphaCutoff=prop.threshold / 255)
-            elif prop.flags & 1:
-                material["alphaMode"] = "BLEND"
+            alpha = prop
+    if alpha is not None:
+        blend, test = alpha.flags & 1, alpha.flags & 512
+        if blend and soft:
+            # Blended textures with partial alpha (rotor blurs, smoke) must blend; a zero-threshold test would
+            # otherwise draw them as solid discs.
+            material["alphaMode"] = "BLEND"
+        elif test or blend:
+            # Opaque textures keep cheap cutouts. A zero threshold alongside blending means "skip empty texels".
+            cutoff = alpha.threshold / 255 if alpha.threshold or not blend else 0.5
+            material.update(alphaMode="MASK", alphaCutoff=cutoff)
     if team_color:
         material.pop("alphaMode", None)
         material.pop("alphaCutoff", None)
@@ -119,32 +138,55 @@ def add_hierarchy(glb, data):
 
     def world(obj):
         if obj not in worlds:
-            local = matrix(obj.get_transform())
+            # Use the transform the glTF node will actually carry. Decomposition clamps zero scales (such as a
+            # collapsed head bone replaced by a rigid head) to 1e-6; binding against the unclamped singular matrix
+            # makes rest pose and inverse bind disagree, and partly weighted vertices shoot off as spikes.
+            local = compose(decompose(matrix(obj.get_transform())))
             worlds[obj] = world(parents[obj]) @ local if obj in parents else local
         return worlds[obj]
 
     for obj in objects:
         world(obj)
+    # Some rigs nest an identity node under each bone with the bone's own name. Gamebryo binds an animation track
+    # to one node, the first found from the root; driving every namesake applies the transform twice and folds the
+    # body up. Keep only the shallowest node per name.
+    def depth(index):
+        obj = next(o for o, i in ids.items() if i == index)
+        d = 0
+        while obj in parents:
+            obj, d = parents[obj], d + 1
+        return d
+    names = {name: [min(nodes, key=lambda i: (depth(i), i))] for name, nodes in names.items()}
     return ids, names, worlds, parents
 
 
 def bind_matrices(shape, worlds):
-    """Per-bone matrices taking shape-local vertices to bind-pose world space."""
+    """Per-bone matrices taking shape-local vertices to bind-pose world space.
+
+    Each bone offset already maps shape-local vertices into that bone's space. The skin data transform is the
+    shape-to-skeleton-root offset, and applying it again would shift the mesh off its bones. That is harmless while
+    it is identity, but on models where it is not (the settler and archer move about 70 units), every joint pivots
+    far from the mesh and the limbs swing wildly. Skeleton roots here are the scene root, so bone worlds suffice.
+    """
     instance = shape.skin_instance
-    skin = matrix(instance.data.get_transform())
-    return [worlds[bone] @ matrix(b.get_transform()) @ skin
+    return [worlds[bone] @ matrix(b.get_transform())
             for bone, b in zip(instance.bones, instance.data.bone_list)]
 
 
-def add_skin(glb, shape, ids, worlds, warnings):
+def add_skin(glb, shape, ids, worlds, warnings, vis):
     instance = shape.skin_instance
     if not instance.bones or any(b not in ids for b in instance.bones):
         raise ValueError("Skin references missing bones")
     joints, weights = skin_arrays(shape, warnings)
     if joints.max() >= len(instance.bones):
         raise ValueError("Skin joint index outside bone table")
-    inverse_bind = [np.linalg.pinv(worlds[b]) for b in instance.bones]
-    skin = {"joints": [ids[b] for b in instance.bones],
+    inverse_bind = [np.linalg.inv(worlds[b]) for b in instance.bones]
+    controllers = vis.controllers(shape)
+    joint_nodes = [ids[b] for b in instance.bones]
+    if controllers:
+        # The mesh ignores its own node, so hide it through proxy joints that sit exactly on the real ones.
+        joint_nodes = [vis.proxy(glb, joint, text(shape.name), controllers) for joint in joint_nodes]
+    skin = {"joints": joint_nodes,
             "inverseBindMatrices": glb.accessor([m.T.reshape(16) for m in inverse_bind], "MAT4")}
     glb.doc["skins"].append(skin)
     return len(glb.doc["skins"]) - 1, joints, weights
@@ -198,14 +240,14 @@ def skin_deformer(shape, joints, weights, worlds):
     return deform
 
 
-def add_shape(glb, shape, ids, worlds, assets, folders, warnings):
+def add_shape(glb, shape, ids, worlds, assets, folders, warnings, vis):
     deform = skin = None
     if shape.skin_instance:
-        skin, joints, weights = add_skin(glb, shape, ids, worlds, warnings)
+        skin, joints, weights = add_skin(glb, shape, ids, worlds, warnings, vis)
         deform = skin_deformer(shape, joints, weights, worlds)
     primitive, vertices, triangles = mesh_attributes(glb, shape, deform)
     primitive["material"] = mesh_material(glb, shape, assets, folders, warnings)
-    node = glb.doc["nodes"][ids[shape]]
+    node = glb.doc["nodes"][vis.host(ids[shape])]
     points = transform_points(worlds[shape], vertices)
     if skin is not None:
         primitive["attributes"].update(JOINTS_0=glb.accessor(joints, "VEC4", "<u2", target=34962),
@@ -222,10 +264,63 @@ def add_shape(glb, shape, ids, worlds, assets, folders, warnings):
     return points, triangles
 
 
-def geometry(data, assets, folders, warnings):
+class Visibility:
+    """Visibility nodes for subtrees that animations show and hide; see visibility.py."""
+
+    def __init__(self, glb, ids, parents, controlled, shown):
+        self.parents, self.controlled, self.shown = parents, controlled, shown
+        self.nodes = {}  # glTF node index -> source node names that must all be visible
+        self.hosts = {}  # source node index -> its visibility node, which now holds its children and mesh
+        self.defaults = {}
+        for obj, index in ids.items():
+            name = text(obj.name)
+            if name not in controlled:
+                continue
+            self.defaults[name] = not obj.flags & 1
+            source = glb.doc["nodes"][index]
+            vis = {"name": name + "_Vis", **self.rest([name])}
+            if "children" in source:
+                vis["children"] = source.pop("children")
+            glb.doc["nodes"].append(vis)
+            source["children"] = [len(glb.doc["nodes"]) - 1]
+            self.hosts[index] = len(glb.doc["nodes"]) - 1
+            self.nodes[self.hosts[index]] = [name]
+
+    def rest(self, names):
+        """Rest scale matches the first idle frame, so bounds and rest poses leave hidden props out."""
+        return {} if all(self.shown(n) for n in names) else {"scale": [1e-6] * 3}
+
+    def host(self, index):
+        return self.hosts.get(index, index)
+
+    def controllers(self, obj):
+        """Controlled source nodes on the path from the scene root to obj, inclusive."""
+        names = []
+        while obj is not None:
+            if text(obj.name) in self.controlled:
+                names.append(text(obj.name))
+            obj = self.parents.get(obj)
+        return names
+
+    def hidden(self, obj):
+        return not all(self.shown(n) for n in self.controllers(obj))
+
+    def proxy(self, glb, joint, owner, names):
+        node = {"name": f"{glb.doc['nodes'][joint]['name']}_{owner}_Vis", **self.rest(names)}
+        glb.doc["nodes"].append(node)
+        index = len(glb.doc["nodes"]) - 1
+        parent = glb.doc["nodes"][joint]
+        parent.setdefault("children", []).append(index)
+        self.nodes[index] = names
+        return index
+
+
+def geometry(data, assets, folders, warnings, controlled=frozenset(), shown=lambda name: True):
+    """Convert the NIF scene. Nodes named in controlled get visibility nodes; shown(name) is the idle start state."""
     glb = Glb()
     ids, names, worlds, parents = add_hierarchy(glb, data)
-    all_points, triangle_count = [], 0
+    vis = Visibility(glb, ids, parents, controlled, shown)
+    all_points, visible_points, triangle_count = [], [], 0
     for shape in ids:
         if not isinstance(shape, N.NiGeometry) or not shape.data or not shape.data.num_vertices:
             continue
@@ -236,13 +331,15 @@ def geometry(data, assets, folders, warnings):
         if shape.flags & 1:
             warnings.append("Hidden geometry omitted: " + text(shape.name))
             continue
-        points, triangles = add_shape(glb, shape, ids, worlds, assets, folders, warnings)
+        points, triangles = add_shape(glb, shape, ids, worlds, assets, folders, warnings, vis)
         all_points.append(points)
+        if not vis.hidden(shape):
+            visible_points.append(points)
         triangle_count += triangles
     if not all_points:
         raise ValueError("NIF contains no visible triangle meshes")
-    bounds = normalize(glb, np.concatenate(all_points))
-    return glb, names, triangle_count, bounds
+    bounds = normalize(glb, np.concatenate(visible_points or all_points))
+    return glb, names, triangle_count, bounds, vis
 
 
 def normalize(glb, points):

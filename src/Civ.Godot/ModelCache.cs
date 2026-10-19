@@ -144,7 +144,12 @@ internal sealed class ModelCache(GameCatalog catalog)
     private static void Measure(Node node, Transform3D parent, ref Aabb box, ref bool any)
     {
         var local = parent;
-        if (node is Node3D n3) local = parent * n3.Transform;
+        if (node is Node3D n3)
+        {
+            // Props hidden at the start of idle are collapsed to 1e-6 scale; they must not size the unit.
+            if (Mathf.Abs(n3.Transform.Basis.Determinant()) < 1e-12f) return;
+            local = parent * n3.Transform;
+        }
         if (node is MeshInstance3D { Mesh: not null } mesh)
         {
             var b = Bounds(mesh, local);

@@ -53,6 +53,18 @@ def decompose(m):
             "rotation": rotation_quaternion(u @ vt).tolist(), "scale": scale.tolist()}
 
 
+def compose(trs):
+    """The matrix of a decompose() result: translation @ rotation @ scale."""
+    x, y, z, w = trs["rotation"]
+    r = np.array([[1-2*(y*y+z*z), 2*(x*y-z*w), 2*(x*z+y*w)],
+                  [2*(x*y+z*w), 1-2*(x*x+z*z), 2*(y*z-x*w)],
+                  [2*(x*z-y*w), 2*(y*z+x*w), 1-2*(x*x+y*y)]])
+    m = np.eye(4)
+    m[:3, :3] = r * np.array(trs["scale"])
+    m[:3, 3] = trs["translation"]
+    return m
+
+
 def transform_points(m, points):
     p = np.asarray(points)
     return p @ m[:3, :3].T + m[:3, 3]

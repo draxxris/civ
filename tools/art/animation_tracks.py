@@ -125,10 +125,12 @@ def euler_track(data, start, stop):
                       if keys else np.zeros(len(times)))
     values = []
     for x, y, z in zip(*angles):
+        # Gamebryo XYZ Euler keys rotate about X, then Y, then Z: R = Rz @ Ry @ Rx. The opposite order turns
+        # hulls and limbs driven by these tracks far from their rest orientation (120 degrees on Helgoland).
         cx, cy, cz = np.cos(np.array([x, y, z]) / 2)
         sx, sy, sz = np.sin(np.array([x, y, z]) / 2)
-        q = np.array([sx*cy*cz+cx*sy*sz, cx*sy*cz-sx*cy*sz,
-                      cx*cy*sz+sx*sy*cz, cx*cy*cz-sx*sy*sz])
+        q = np.array([sx*cy*cz-cx*sy*sz, cx*sy*cz+sx*cy*sz,
+                      cx*cy*sz-sx*sy*cz, cx*cy*cz+sx*sy*sz])
         values.append(q / np.linalg.norm(q))
     return times, np.array(values)
 
@@ -186,20 +188,70 @@ def append_channel(glb, animation, node, path, track, start, stop):
     animation["samplers"].append(sampler)
 
 
-def append_block(glb, animation, block, node_names, start, stop):
-    nodes = node_names.get(block.get_node_name(), [])
+def quat_mul(a, b):
+    """Hamilton product of xyzw quaternions; a may be one quaternion and b an array of them."""
+    ax, ay, az, aw = np.moveaxis(np.broadcast_to(a, np.shape(b)), -1, 0)
+    bx, by, bz, bw = np.moveaxis(b, -1, 0)
+    return np.stack([aw*bx + ax*bw + ay*bz - az*by, aw*by - ax*bz + ay*bw + az*bx,
+                     aw*bz + ax*by - ay*bx + az*bw, aw*bw - ax*bx - ay*by - az*bz], -1)
+
+
+def first_rotation(blocks, name, start, stop, rest):
+    """A node's rotation at clip start: its track's first key, else the node's rest rotation."""
+    for block in blocks:
+        if block.get_node_name() == name and block.interpolator is not None and hasattr(block.interpolator, "rotation"):
+            track = interpolator_track(block.interpolator, "rotation", start, stop)
+            if track is not None:
+                times, values = track
+                q = values[np.argmin(times)]
+                return q / np.linalg.norm(q)
+    return np.array(rest.get("rotation", [0, 0, 0, 1]), dtype=float)
+
+
+def accum_correction(glb, blocks, accum_root, node_names, start, stop):
+    """Rotation that re-poses the accumulation root when a clip starts in another rig's orientation.
+
+    Gamebryo splits the root pose between the accumulation root ("MD") and "MD NonAccum"; only their product is
+    meaningful. A model's own clips start with that product equal to the rest pose. A borrowed clip may not: the
+    cow rests turned 120 degrees, and the cavalry clips it uses would lay it on its side. The correction is
+    rest product * inverse(first-key product), applied before the MD keys; it is identity for native clips.
+    """
+    root = node_names.get(accum_root, [None])[0]
+    if root is None:
+        return None
+    nodes = [glb.doc["nodes"][root]]
+    sub = node_names.get(accum_root + b" NonAccum", [None])[0]
+    if sub is not None:
+        nodes.append(glb.doc["nodes"][sub])
+    rest = first = np.array([0, 0, 0, 1.0])
+    for node, name in zip(nodes, [accum_root, accum_root + b" NonAccum"]):
+        rest = quat_mul(rest, np.array(node.get("rotation", [0, 0, 0, 1]), dtype=float))
+        first = quat_mul(first, first_rotation(blocks, name, start, stop, node))
+    x, y, z, w = first
+    correction = quat_mul(rest, np.array([-x, -y, -z, w]))
+    return None if abs(correction[3]) > 1 - 1e-4 else correction
+
+
+def append_block(glb, animation, block, node_names, start, stop, accum_root=None, correction=None):
+    name = block.get_node_name()
+    nodes = node_names.get(name, [])
     interp = block.interpolator
     if not nodes or interp is None or not hasattr(interp, "rotation"):
         return  # Material, alpha, visibility, and particle tracks are not TRS.
     for path in ("translation", "rotation", "scale"):
         track = interpolator_track(interp, path, start, stop)
-        if track is not None:
-            for node in nodes:
-                append_channel(glb, animation, node, path, track, start, stop)
+        if track is None:
+            continue
+        if path == "rotation" and correction is not None and name == accum_root:
+            track = (track[0], quat_mul(correction, track[1]))
+        for node in nodes:
+            append_channel(glb, animation, node, path, track, start, stop)
 
 
-def convert_animation(glb, data, name, node_names, warnings):
+def convert_animation(glb, data, name, node_names, warnings, extra=None):
+    """Append one clip. extra(animation, length) may add more channels, such as visibility."""
     animation = {"name": name, "channels": [], "samplers": []}
+    length = None
     for sequence in data.roots:
         if not hasattr(sequence, "controlled_blocks"):
             continue
@@ -207,8 +259,14 @@ def convert_animation(glb, data, name, node_names, warnings):
         if stop <= start or stop - start > 3600:
             warnings.append(f"{name}: invalid source duration")
             continue
-        for block in sequence.controlled_blocks:
-            append_block(glb, animation, block, node_names, start, stop)
+        length = stop - start if length is None else length
+        accum_root = getattr(sequence, "target_name", None) or None  # pyffi names the accum root "target name"
+        blocks = list(sequence.controlled_blocks)
+        correction = accum_correction(glb, blocks, accum_root, node_names, start, stop) if accum_root else None
+        for block in blocks:
+            append_block(glb, animation, block, node_names, start, stop, accum_root, correction)
+    if animation["channels"] and extra is not None:
+        extra(animation, length)
     if animation["channels"]:
         glb.doc["animations"].append(animation)
         return len(animation["channels"])
