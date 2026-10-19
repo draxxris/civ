@@ -14,6 +14,10 @@ public sealed record RiverCurve(RiverLink Link, double[] X, double[] Z, double[]
     public bool EndsDry { get; init; }
 }
 
+/// <summary>A point on a river's waterline and the unit direction (<see cref="AcrossX"/>, <see cref="AcrossZ"/>) straight
+/// across the water from it, perpendicular to the river's course there.</summary>
+public readonly record struct RiverBank(double X, double Z, double AcrossX, double AcrossZ);
+
 /// <summary>Smooth river curves through a <see cref="RiverGraph"/>, with organic width, plus a spatial index for the
 /// height field's carve. Links are cubic Hermite curves whose tangents agree at shared corners, so connected links form
 /// one smooth river; edge links also meander gently about their rules edge. Widths taper at sources, narrow on hills and
@@ -136,6 +140,29 @@ public sealed class RiverNetwork
             floor[i] = Math.Min(ground(c.X[i], c.Z[i]), Math.Min(ground(c.X[i] + nx, c.Z[i] + nz), ground(c.X[i] - nx, c.Z[i] - nz)));
         }
         return floor;
+    }
+
+    /// <summary>The near bank of the river whose centre line passes closest to (x, z): the waterline point between (x, z)
+    /// and that centre line, with the across direction pointing away from (x, z). Positions are in the frame of (x, z).
+    /// Null when no river reaches (x, z) through its banks and valley drawdown (more than a tile with the default tuning).</summary>
+    public RiverBank? NearBank(double x, double z)
+    {
+        double shift = x;
+        var (from, to) = Entries(ref shift, z);
+        shift -= x;
+        double best = double.MaxValue, px = 0, pz = 0, tx = 0, tz = 0, width = 0;
+        for (int e = from; e < to; e++)
+        {
+            var (s, t, distance) = Closest(e, x + shift, z);
+            if (distance >= best) continue;
+            double ax = s.AX + _entryShift[e] - shift, bx = s.BX + _entryShift[e] - shift;
+            (best, px, pz, width) = (distance, Lerp(ax, bx, t), Lerp(s.AZ, s.BZ, t), Lerp(s.WA, s.WB, t));
+            (tx, tz) = Normalize(bx - ax, s.BZ - s.AZ);
+        }
+        if (best == double.MaxValue) return null;
+        double nx = -tz, nz = tx;
+        if (nx * (px - x) + nz * (pz - z) < 0) (nx, nz) = (-nx, -nz);
+        return new RiverBank(px - nx * width, pz - nz * width, nx, nz);
     }
 
     /// <summary>Whether a point lies in a river channel or within <paramref name="margin"/> (at most 0.1) of its banks.</summary>

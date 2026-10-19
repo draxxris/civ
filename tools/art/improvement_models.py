@@ -7,7 +7,7 @@ Each module in tools/art/improvements/ (besides kit) defines MODELS: a dict from
 after "world:", or after the prefix of the mod named by the "mod" extra below) to a builder that returns a list of
 parts, or to a (builder, clear) tuple where clear is "tile" (the default: no scatter props on the tile) or "centre"
 (props stay, only the middle is cleared). A third tuple item may be a dict of scene extras, e.g. {"faceRiver": True}:
-the game turns the model so its +X side faces the river. The extra "mod" is not written: it names the mod that owns
+the game puts the model's origin on the near waterline of the river, +X straight across the water. The extra "mod" is not written: it names the mod that owns
 the content id (default "World"), so the model goes to that mod's art/models folder, e.g. {"mod": "Cities"} for a
 cities:<suffix> building. Conventions are in improvements/kit.py.
 """

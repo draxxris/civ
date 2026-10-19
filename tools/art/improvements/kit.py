@@ -319,7 +319,8 @@ def at(part, x, z, yaw=0.0):
 def write(path: Path, parts: list[Part], clear: str = "tile", **extras) -> tuple[int, int]:
     """Write one model. clear is "tile" (scatter props removed from the whole tile) or "centre" (only the
     middle kept clear, for improvements that live among trees). It is stored in the scene's extras, as are any
-    further keyword extras; faceRiver=True turns the model so its +X side faces the tile's river."""
+    further keyword extras; faceRiver=True puts the model's origin on the near waterline of the tile's river, with +X
+    straight across the water and Z along the river."""
     glb = Glb()
     glb.doc["asset"]["generator"] = "improvement-models"
     glb.doc["materials"].append({"name": "Painted", "pbrMetallicRoughness": {

@@ -12,7 +12,8 @@ internal readonly record struct ImprovementSite(string Id, Vector3 Centre, float
 /// node of the model is one part, placed at its offset from the tile centre and seated on the ground there, so each
 /// building stands upright on a slope. A part whose name starts with <c>ground</c> is tilted to the surface instead
 /// (garden plots, rails). Scene extras <c>{"clear": "centre"}</c> keep scatter props on the tile. Scene extras
-/// <c>{"faceRiver": true}</c> ask the map to turn the model so its +X side faces the tile's river (watermill wheel). Parts are batched per model and part into MultiMeshes, with fog as instance colour.
+/// <c>{"faceRiver": true}</c> ask the map to stand the model on the river's near waterline, +X straight across the water
+/// (the watermill wheel stands in the river). Parts are batched per model and part into MultiMeshes, with fog as instance colour.
 /// Soft earth patches under the parts that meet the ground are in ImprovementRenderer.Decals.cs.
 /// </summary>
 internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] copies, Func<float, float, float> ground) : Node3D
@@ -42,7 +43,7 @@ internal sealed partial class ImprovementRenderer(GameCatalog catalog, float[] c
     /// <summary>True when the improvement's model fills its tile, so no scatter props may grow through it.</summary>
     public bool ClearsTile(string id) => ModelOf(id)?.ClearsTile == true;
 
-    /// <summary>True when the model asks (scene extras <c>"faceRiver": true</c>) to be turned so its +X side faces the river.</summary>
+    /// <summary>True when the model asks (scene extras <c>"faceRiver": true</c>) to stand on the river bank, +X across the water.</summary>
     public bool FacesRiver(string id) => ModelOf(id)?.FacesRiver == true;
 
     /// <summary>The highest-tier ring among a city's completed buildings. Scene extras <c>cityRing</c> define the tier.</summary>
