@@ -7,7 +7,10 @@ public interface IResearchService
 {
     ResearchCostResult CalculateCost(Simulation sim, int team, string tech);
     int RateModifier(Simulation sim, int team, string tech);
+    /// <summary>Physical eligibility, independent of optional selection rules and random hands.</summary>
     RequirementResult Validate(Simulation sim, int player, string tech);
+    /// <summary>Whether the player can select this technology now. Pure query.</summary>
+    RequirementResult ValidateSelection(Simulation sim, int player, string tech);
     string? ValidateQueue(Simulation sim, int player, IReadOnlyList<string> queue, bool freeTech = false);
     void SetQueue(Simulation sim, int player, IReadOnlyList<string> queue, bool freeTech = false);
     /// <summary>Whole unmodified beakers. Overflow is normalized before moving between technologies.</summary>

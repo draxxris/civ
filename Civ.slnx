@@ -9,6 +9,8 @@
     <Project Path="src/Mods/Foundation/Civ.Mods.Foundation.csproj" />
     <Project Path="src/Mods/World/Civ.Mods.World.csproj" />
     <Project Path="src/Mods/Research/Civ.Mods.Research.csproj" />
+    <Project Path="src/Mods/CardResearch/Civ.Mods.CardResearch.csproj" />
+    <Project Path="src/Mods/TechTree/Civ.Mods.TechTree.csproj" />
     <Project Path="src/Mods/Economy/Civ.Mods.Economy.csproj" />
     <Project Path="src/Mods/Cities/Civ.Mods.Cities.csproj" />
     <Project Path="src/Mods/Military/Civ.Mods.Military.csproj" />

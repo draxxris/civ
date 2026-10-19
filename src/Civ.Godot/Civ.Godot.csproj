@@ -19,6 +19,8 @@
     <ProjectReference Include="..\Mods\Foundation\Civ.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\World\Civ.Mods.World.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Research\Civ.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\CardResearch\Civ.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\TechTree\Civ.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Economy\Civ.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Cities\Civ.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Military\Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
@@ -41,7 +43,7 @@
        stat a dozen files per mod instead of copying/statement-checking ~1,600 art files twice. -->
   <Target Name="CopyModPayloads" AfterTargets="Build">
     <ItemGroup>
-      <ModBin Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Religion;Ai;GreatPeople;Trade;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
+      <ModBin Include="Foundation;World;Research;CardResearch;TechTree;Economy;Cities;Military;Government;Peoples;Religion;Ai;GreatPeople;Trade;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Civ.Mods.*.dll" ModDir="%(ModBin.Identity)" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Civ.Mods.*.pdb" ModDir="%(ModBin.Identity)" />
       <ModMeta Include="..\Mods\%(ModBin.Identity)\mod.json" ModDir="%(ModBin.Identity)" />

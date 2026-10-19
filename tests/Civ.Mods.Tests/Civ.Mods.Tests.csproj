@@ -10,6 +10,8 @@
     <ProjectReference Include="../../src/Mods/Foundation/Civ.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/World/Civ.Mods.World.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Research/Civ.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/CardResearch/Civ.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/TechTree/Civ.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Economy/Civ.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Cities/Civ.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Military/Civ.Mods.Military.csproj" ReferenceOutputAssembly="false" />
@@ -34,7 +36,7 @@
   <Target Name="CopyModPayloads" AfterTargets="Build">
     <ItemGroup>
       <MainMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai;Religion;GreatPeople;Trade" />
-      <OptionalMod Include="Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
+      <OptionalMod Include="Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree" />
       <MainBin Include="../../src/Mods/%(MainMod.Identity)/bin/$(Configuration)/net10.0/Civ.Mods.*.dll" ModDir="%(MainMod.Identity)" />
       <MainBin Include="../../src/Mods/%(MainMod.Identity)/bin/$(Configuration)/net10.0/Civ.Mods.*.pdb" ModDir="%(MainMod.Identity)" />
       <MainMeta Include="../../src/Mods/%(MainMod.Identity)/mod.json" ModDir="%(MainMod.Identity)" />

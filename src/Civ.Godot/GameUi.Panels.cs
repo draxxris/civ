@@ -5,7 +5,7 @@ namespace Civ.Client;
 /// <summary>Religion, pedia and load dialogs, the save button, and the turn notification feed.</summary>
 internal sealed partial class GameUi
 {
-    private enum Modal { None, Religion, Corporations, Espionage, Events, Conquest, Diplomacy, Pedia, Load }
+    private enum Modal { None, Religion, Corporations, Espionage, Events, Conquest, Diplomacy, Pedia, TechTree, Load }
     private const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
 
@@ -62,6 +62,8 @@ internal sealed partial class GameUi
         if (_session.DescribePendingEvents().Count > 0) row.AddChild(Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice"));
         row.AddChild(Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory"));
         row.AddChild(Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more"));
+        if (_session.DescribeTechTree() is not null)
+            row.AddChild(Ui.Button("Tech Tree", () => OpenModal(Modal.TechTree), "Browse technology prerequisites"));
         row.AddChild(Ui.Button("Save", QuickSaveGame, "Quick save (F5)"));
         row.AddChild(Ui.Button("Load", () => OpenModal(Modal.Load), "Load a saved game (F9)"));
     }
@@ -121,9 +123,10 @@ internal sealed partial class GameUi
         head.AddChild(Ui.Button("Close", CloseModal));
         box.AddChild(head);
         BuildModalContent(box);
-        _modal.CustomMinimumSize = new Vector2(720, 0);
+        float width = _modalKind == Modal.TechTree ? 1100 : 720;
+        _modal.CustomMinimumSize = new Vector2(width, 0);
         _modal.AddChild(box);
-        _modal.Position = (GetViewport().GetVisibleRect().Size - new Vector2(720, 560)) / 2;
+        _modal.Position = (GetViewport().GetVisibleRect().Size - new Vector2(width, 560)) / 2;
     }
 
     private void BuildModalContent(VBoxContainer box)
@@ -138,6 +141,7 @@ internal sealed partial class GameUi
             case Modal.Diplomacy: BuildDiplomacy(box); break;
             case Modal.Pedia: BuildPedia(box); break;
             case Modal.Load: BuildLoad(box); break;
+            case Modal.TechTree: BuildTechTree(box); break;
         }
     }
 
