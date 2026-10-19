@@ -55,6 +55,21 @@ A second city on the same tile stops the run.
 Use `cities:high_walls` for the higher wall tier. A city with both buildings shows only High Walls.
 Wall models remain visible with `--clean`. Omit `--clean` to inspect the city token, label, and units inside the ring.
 
+## Units
+
+Set `"clearUnits": true` to remove the generated starting units. Use `units` to place units:
+
+```json
+{"clearUnits":true,"units":[{"at":[7,5],"type":"warrior","owner":2,"health":40,"count":2}]}
+```
+
+`type` accepts a full id or a short name. `owner` defaults to 0, `health` to 100 and `count` to 1. Several entries on one
+tile make a stack. `tools/shots/scenarios/unit-banners.json` shows banners for four owners and damaged stacks:
+
+```sh
+mise run shot -- --stage map --scenario tools/shots/scenarios/unit-banners.json --world tiny --pitch 50 --distance 8 --out-dir /tmp/banners --screenshot banners
+```
+
 ## City buildings
 
 A scenario city can set `"era"` (a full id, or a short name such as `"modern"`). This sets the owner's current era, which picks the building style and the ground under the buildings.

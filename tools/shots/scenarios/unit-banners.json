@@ -1,0 +1,22 @@
+{
+  "// note": "Unit banners and stack health: four owners, full and damaged units, and mixed-health stacks.",
+  "fill": { "terrain": "world:grass", "kind": "Flat", "owner": null },
+  "tiles": [ { "rect": [6, 5, 7, 5], "kind": "Hills" }, { "at": [9, 6], "feature": "world:forest" } ],
+  "clearUnits": true,
+  "units": [
+    { "at": [5, 4], "type": "warrior", "owner": 0 },
+    { "at": [6, 4], "type": "archer", "owner": 0, "health": 70 },
+    { "at": [7, 4], "type": "settler", "owner": 0 },
+    { "at": [8, 4], "type": "warrior", "owner": 1, "health": 40 },
+    { "at": [5, 5], "type": "warrior", "owner": 1 },
+    { "at": [6, 5], "type": "archer", "owner": 2, "health": 15 },
+    { "at": [7, 5], "type": "warrior", "owner": 2, "count": 2 },
+    { "at": [7, 5], "type": "archer", "owner": 2, "health": 40 },
+    { "at": [8, 5], "type": "warrior", "owner": 3, "health": 90 },
+    { "at": [5, 6], "type": "warrior", "owner": 3 },
+    { "at": [6, 6], "type": "settler", "owner": 1 },
+    { "at": [8, 6], "type": "archer", "owner": 0, "health": 55 },
+    { "at": [9, 6], "type": "warrior", "owner": 2 }
+  ],
+  "focus": [7, 5]
+}

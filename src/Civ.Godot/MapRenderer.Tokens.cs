@@ -46,11 +46,11 @@ internal sealed partial class MapRenderer
         float shade = top.Owner == GameSession.Human && top.MovesLeft <= 0 ? 0.62f : 1f;
         if (_models.Has(top.Type))
         {
-            // The 3D model stands on its own team coloured base; the flat layer only adds selection, health and the stack count.
+            // The 3D model carries its own banner and health bar; the flat layer only adds selection and the stack count.
             var anchor = at;
             anchor.Y = GroundAt(anchor.X, anchor.Z) + 0.015f;
-            _standing.Add((top, anchor));
-            shapes.Ring(at, 0.47f, 0.05f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 20);
+            _standing.Add((top, anchor, StackHealth(stack)));
+            if (selected != null) shapes.Ring(at, 0.47f, 0.05f, new Color(1f, 0.9f, 0.3f), 20);
             radius = 0.4f;
         }
         else
@@ -58,15 +58,23 @@ internal sealed partial class MapRenderer
             shapes.Disc(at, radius + 0.06f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 16);
             shapes.Disc(at + Up(0.002f), radius, owner * shade, 16);
             if (_atlas.UvOf(top.Type) is Rect2 uv) icons.Icon(at + Up(0.03f), radius * 1.6f, uv, new Color(shade, shade, shade));
+            DrawHealth(shapes, stack, at + new Vector3(0, 0.004f, radius + 0.16f));
         }
-        DrawHealth(shapes, top, at + new Vector3(0, 0.004f, radius + 0.16f));
         if (stack.Count > 1) AddLabel($"×{stack.Count}", at + Up(GroundAt(at.X, at.Z)) + new Vector3(radius, 0.2f, -radius), 22, Colors.White);
     }
 
-    private static void DrawHealth(MeshBuilder b, Unit unit, Vector3 at)
+    /// <summary>The stack's average health as 0..1, or null while every unit is unhurt.</summary>
+    private static float? StackHealth(List<Unit> stack)
     {
-        if (unit.Health >= 100) return;
-        float w = 0.64f, frac = Mathf.Clamp(unit.Health / 100f, 0, 1);
+        float average = (float)stack.Average(u => u.Health);
+        return average >= 100 ? null : average / 100f;
+    }
+
+    /// <summary>Flat ground bar for tokens without a 3D model; see <see cref="StackHealth"/>.</summary>
+    private static void DrawHealth(MeshBuilder b, List<Unit> stack, Vector3 at)
+    {
+        if (StackHealth(stack) is not { } frac) return;
+        float w = 0.64f;
         b.Quad(at + new Vector3(-w / 2 - 0.03f, 0, -0.07f), at + new Vector3(w / 2 + 0.03f, 0, -0.07f), at + new Vector3(w / 2 + 0.03f, 0, 0.07f), at + new Vector3(-w / 2 - 0.03f, 0, 0.07f), Ink);
         var fill = frac > 0.5f ? new Color(0.35f, 0.85f, 0.35f) : frac > 0.25f ? new Color(0.95f, 0.75f, 0.2f) : new Color(0.9f, 0.25f, 0.2f);
         b.Quad(at + new Vector3(-w / 2, 0.001f, -0.045f), at + new Vector3(-w / 2 + w * frac, 0.001f, -0.045f), at + new Vector3(-w / 2 + w * frac, 0.001f, 0.045f), at + new Vector3(-w / 2, 0.001f, 0.045f), fill);
