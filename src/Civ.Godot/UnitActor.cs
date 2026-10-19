@@ -68,7 +68,8 @@ internal sealed partial class UnitActor : Node3D
     {
         var motion = new Vector3(Shake, 0, Lunge);
         var worldMotion = Basis * motion;
-        float rise = Ground == null ? 0 : Ground(Anchor.X + worldMotion.X, Anchor.Z + worldMotion.Z) - Ground(Anchor.X, Anchor.Z);
+        float rise = Ground == null || motion == Vector3.Zero ? 0
+            : Ground(Anchor.X + worldMotion.X, Anchor.Z + worldMotion.Z) - Ground(Anchor.X, Anchor.Z);
         _pivot.Position = motion + new Vector3(0, rise - Fall * 0.2f, 0);
         _pivot.Rotation = new Vector3(0, 0, HasClip("die") ? 0 : Fall * Mathf.Pi / 2);
     }
