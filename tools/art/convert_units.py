@@ -36,6 +36,7 @@ from pyffi.formats.nif import NifFormat as N
 from animation_tracks import choose_clips, convert_animation
 from source_assets import Assets, definitions, descendants, field, kfm_references
 from unit_geometry import geometry
+import visibility
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -97,10 +98,14 @@ def convert_unit(unit, context):
     warnings = []
     if kfm is None and kfm_name not in ("", "None", "NONE"):
         warnings.append("Missing KFM: " + kfm_name)
-    glb, node_names, triangles, bounds = geometry(read_nif(nif), assets,
-                                                [nif.parent] + ([kfm.parent] if kfm else []), warnings)
-    clips = choose_clips(animation_files(assets, kfm, nif))
-    animation_sources, channels = append_animations(glb, clips, node_names, assets, warnings)
+    clip_data = read_clips(choose_clips(animation_files(assets, kfm, nif)), warnings)
+    tracks = {name: visibility.clip_tracks(data) for name, (_, data) in clip_data.items()}
+    controlled = frozenset(n for clip in tracks.values() for n in clip)
+    idle = tracks.get("idle", {})
+    glb, node_names, triangles, bounds, vis = geometry(
+        read_nif(nif), assets, [nif.parent] + ([kfm.parent] if kfm else []), warnings,
+        controlled, lambda n: visibility.visible_at(idle[n], 0) if n in idle else True)
+    animation_sources, channels = append_animations(glb, clip_data, tracks, node_names, vis, assets, warnings)
     if not glb.doc["images"]:
         warnings.append("No diffuse texture resolved")
     if group_count > 1:
@@ -120,11 +125,23 @@ def convert_unit(unit, context):
             "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "warnings": list(dict.fromkeys(warnings))}
 
 
-def append_animations(glb, clips, node_names, assets, warnings):
-    animation_sources, channels = {}, {}
+def read_clips(clips, warnings):
+    result = {}
     for name, path in clips.items():
         try:
-            count = convert_animation(glb, read_nif(path), name, node_names, warnings)
+            result[name] = (path, read_nif(path))
+        except (ValueError, AttributeError, IndexError, TypeError, ZeroDivisionError) as error:
+            warnings.append(f"{name}: {type(error).__name__}: {error}")
+    return result
+
+
+def append_animations(glb, clip_data, tracks, node_names, vis, assets, warnings):
+    animation_sources, channels = {}, {}
+    for name, (path, data) in clip_data.items():
+        def add_visibility(animation, length, clip=tracks[name]):
+            visibility.append_channels(glb, animation, vis.nodes, clip, vis.defaults, length)
+        try:
+            count = convert_animation(glb, data, name, node_names, warnings, add_visibility)
             if count:
                 channels[name] = count
                 animation_sources[name] = provenance(path, assets)
@@ -168,7 +185,8 @@ def write_report(path, rows, source, selected):
              "- Quadratic vector keys evaluate with Hermite interpolation. TBC and quaternion curves use linear segments.",
              "", "## Limits", "",
              "The converter exports the first early-era art group, not the full multi-figure formation or civilization variants.",
-             "Material, visibility, particle, sound, and effect-controller animations do not become glTF transform tracks.",
+             "Material, particle, sound, and effect-controller animations do not become glTF transform tracks.",
+             "Visibility controllers become STEP scale channels on inserted _Vis nodes and skinned-mesh proxy joints. Hidden subtrees scale to 1e-6.",
              "Hidden geometry does not export. Runtime projectiles and source shaders need separate renderer support.",
              "Team-color decal textures composite over a neutral blue-gray background. This conversion does not implement dynamic team colors.",
              "Zero-scale nodes use a scale of 0.000001 because Godot cannot decompose singular bases.",
