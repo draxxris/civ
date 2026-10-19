@@ -35,6 +35,19 @@ public sealed class Plot
         }
     }
     private byte _riverEdges;
+    /// <summary>Six cliff-edge bits in Hex.Directions order, mirrored on adjacent plots. A cliff stands only on an edge
+    /// between a land plot and a sea (non-lake water) plot, and blocks crossing that edge between land and water.
+    /// Edits must use GameState.SetCliff.</summary>
+    public byte CliffEdges
+    {
+        get => _cliffEdges;
+        set
+        {
+            if (value > 63) throw new ArgumentOutOfRangeException(nameof(value), "Cliff masks use only six bits");
+            _cliffEdges = value;
+        }
+    }
+    private byte _cliffEdges;
     /// <summary>Controlling player, or null.</summary>
     public int? Owner { get; set; }
     /// <summary>Accumulated culture by player id.</summary>
@@ -52,7 +65,7 @@ public sealed class Plot
     {
         Terrain = Terrain, Kind = Kind, IsLake = IsLake, ImprovementTurns = ImprovementTurns, DepletedMine = DepletedMine,
         BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus, Improvement = Improvement,
-        Route = Route, _riverEdges = _riverEdges, Owner = Owner, Culture = new(Culture, Culture.Comparer),
+        Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges, Owner = Owner, Culture = new(Culture, Culture.Comparer),
         Revealed = TeamMask.FromWords(Revealed.Words), Visible = TeamMask.FromWords(Visible.Words),
         RevealedSnapshots = new(RevealedSnapshots, RevealedSnapshots.Comparer), AreaId = AreaId,
     };
@@ -62,7 +75,7 @@ public sealed class Plot
 public sealed record RevealedPlotSnapshot(
     string Terrain, PlotKind Kind, bool IsLake, string? Feature,
     string? Bonus, string? Improvement, string? Route, int? Owner,
-    byte RiverEdges = 0, RevealedCitySnapshot? City = null);
+    byte RiverEdges = 0, RevealedCitySnapshot? City = null, byte CliffEdges = 0);
 
 /// <summary>Only the city fields used by map labels and settlement models.</summary>
 public sealed record RevealedCitySnapshot(int Id, int Owner, string Name, int Population,

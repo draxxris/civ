@@ -68,6 +68,7 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
         if (feature is not null) DegradeFeature(sim, tile, plot);
         else if (!Geography.Water(sim.Content, plot)) DegradeTerrain(sim, tile, plot);
         if (terrain == plot.Terrain && feature == plot.Feature) return;
+        CliffRules.SanitizeTile(sim.State, sim.Content, tile);
         if (plot.Feature is { } remaining && !Placement.FeatureValid(sim.State.Grid, sim.State.Plots, sim.Content, tile, sim.Content.Get<S.FeatureDef>(remaining)))
             plot.Feature = null;
         plot.Improvement = null;

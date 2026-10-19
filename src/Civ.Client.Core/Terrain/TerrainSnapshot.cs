@@ -21,6 +21,7 @@ public sealed class TerrainSnapshot
         Layer = new byte[n];
         Relief = new ReliefClass[n];
         Rivers = new byte[n];
+        Cliffs = new byte[n];
         FeatureGround = new byte[n];
         Owner = new byte[n];
         Sight = new Sight[n];
@@ -43,6 +44,9 @@ public sealed class TerrainSnapshot
     public ReliefClass[] Relief { get; }
     /// <summary>Six river-edge bits in <see cref="Hex.Directions"/> order, mirrored on the neighbour.</summary>
     public byte[] Rivers { get; }
+    /// <summary>Six cliff-edge bits in <see cref="Hex.Directions"/> order, as this tile's memory knows them. A renderer
+    /// trusts a bit only when both tiles are known and one is land, the other water.</summary>
+    public byte[] Cliffs { get; }
     /// <summary>Feature ground index (0 = none).</summary>
     public byte[] FeatureGround { get; }
     /// <summary>Owner player id + 1 (0 = unowned).</summary>
@@ -90,6 +94,7 @@ public sealed class TerrainSnapshot
             snapshot.Layer[i] = checked((byte)layerOf(plot.Terrain));
             snapshot.FeatureGround[i] = checked((byte)featureGroundOf(plot.Feature));
             snapshot.Rivers[i] = plot.RiverEdges;
+            snapshot.Cliffs[i] = plot.CliffEdges;
             snapshot.Owner[i] = plot.Owner is int owner ? checked((byte)(owner + 1)) : (byte)0;
         }
         return snapshot;
@@ -109,5 +114,5 @@ public sealed class TerrainSnapshot
     }
 
     /// <summary>Terrain content has no depth flag; deep-water terrain ids end in "ocean" (plain and slimy oceans).</summary>
-    private static bool IsOcean(string id) => id.EndsWith("ocean", StringComparison.Ordinal);
+    internal static bool IsOcean(string id) => id.EndsWith("ocean", StringComparison.Ordinal);
 }

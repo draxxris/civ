@@ -31,6 +31,7 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
             AddCoasts(grid, plots, content);
             Geography.AssignAreas(grid, plots, content);
             RiverGenerator.Generate(grid, plots, elevation, rng, content);
+            CliffGenerator.Generate(grid, plots, rng, content);
         }
         using (Civ.Modding.StartupTrace.Phase("world features"))
             Placement.AddFeatures(grid, plots, rng, content);

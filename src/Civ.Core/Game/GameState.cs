@@ -236,6 +236,16 @@ public sealed class GameState
         Set(tile, direction, present);
         Set(neighbor, (direction + 3) % 6, present);
     }
+    /// <summary>Set a cliff bit and its opposite on the neighboring plot. Off-map edges never carry a cliff. Whether the
+    /// edge is a land/sea edge is a world rule; callers (the world mod) keep that invariant.</summary>
+    public void SetCliff(TileId tile, int direction, bool present)
+    {
+        if (direction < 0 || direction >= 6) throw new ArgumentOutOfRangeException(nameof(direction));
+        void Set(TileId t, int d, bool on) { var p = Plots[t.Value]; p.CliffEdges = (byte)(on ? p.CliffEdges | (1 << d) : p.CliffEdges & ~(1 << d)); }
+        if (Grid.Neighbor(tile, direction) is not { } neighbor) { Set(tile, direction, false); return; }
+        Set(tile, direction, present);
+        Set(neighbor, (direction + 3) % 6, present);
+    }
     /// <summary>Independent in-memory copy of all authoritative state with rebuilt lookup indexes. It hashes like the
     /// source; immutable data (map geometry, revealed plot memories, production orders) is shared, everything else is copied.</summary>
     public GameState Clone()

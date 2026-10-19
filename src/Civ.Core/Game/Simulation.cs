@@ -72,6 +72,7 @@ public sealed partial class Simulation
         ValidateTerrains();
         State.RebuildIndexes();
         setup?.Complete(this);
+        SanitizeMap();
         StartGame();
     }
     internal Simulation(ContentDb content, SimulationSettings settings, GameState state, DeterministicRng rng)
@@ -102,6 +103,10 @@ public sealed partial class Simulation
             if (Settings.WorldSize is null) _ = Content.Terrains.Get(plot.Terrain);
             else _ = Content.Get<Civ.Content.Schema.TerrainDef>(plot.Terrain);
         }
+    }
+    internal void SanitizeMap()
+    {
+        foreach (var sanitizer in Content.Services.Get<IMapSanitizer>()) sanitizer.Sanitize(this);
     }
     private void StartGame()
     {

@@ -78,7 +78,7 @@ void fragment() {
 		float y_px = fwidth(course), x_px = fwidth(block);
 		float joints = max(stripe(0.5 - abs(fract(course) - 0.5), 0.07, y_px), stripe(0.5 - abs(fract(block) - 0.5), 0.05, x_px));
 		joints *= 1.0 - smoothstep(0.3, 0.6, max(y_px, x_px));
-		float tint = fract(sin(dot(vec2(floor(block), row), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+		float tint = lattice_hash(ivec2(int(floor(block)), int(row)), 31u) - 0.5;
 		albedo *= (0.92 + tint * 0.16 + grain * 0.08) * (1.0 - joints * 0.35);
 		rough = 0.92;
 		specular = 0.12;
@@ -86,7 +86,7 @@ void fragment() {
 		// Planks across the deck, with dark gaps and a fine grain along them.
 		float plank = pattern.x / 0.018;
 		float gap = stripe(0.5 - abs(fract(plank) - 0.5), 0.08, fwidth(plank)) * (1.0 - smoothstep(0.3, 0.6, fwidth(plank)));
-		float tint = fract(sin(floor(plank) * 91.7) * 43758.5453) - 0.5;
+		float tint = lattice_hash(ivec2(int(floor(plank)), 0), 32u) - 0.5;
 		float fibre = periodic_noise(world_pos.xz, 160.0) - 0.5;
 		albedo *= (0.92 + tint * 0.18 + fibre * 0.12) * (1.0 - gap * 0.5);
 		rough = 0.9;

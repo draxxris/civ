@@ -15,7 +15,7 @@ internal sealed class TileDataTexture
     public const byte MarkNone = 0, MarkWorkable = 1, MarkWorked = 2, MarkLocked = 3;
 
     /// <summary>Colour table rows.</summary>
-    private const int PaletteWidth = 256, LayerRow = 0, FeatureRow = 1, OwnerRow = 2, WaterTintRow = 3, PaletteRows = 4;
+    private const int PaletteWidth = 256, LayerRow = 0, FeatureRow = 1, OwnerRow = 2, WaterTintRow = 3, EdgeRow = 4, PaletteRows = 5;
 
     private readonly int _width, _height;
     private readonly byte[] _a, _b;
@@ -85,16 +85,18 @@ internal sealed class TileDataTexture
         }
     }
 
-    /// <summary>Colour table: layer colours, feature ground tints (alpha = strength), owner colours by owner + 1, and water
-    /// tints per layer (alpha = strength), all as sRGB bytes.</summary>
+    /// <summary>Colour table: layer colours (alpha = ground spread), feature ground tints (alpha = strength), owner colours by
+    /// owner + 1, water tints per layer (alpha = strength) and ragged-edge strength per layer (alpha; 0 for water, red = deep ocean), all as
+    /// sRGB bytes.</summary>
     public static ImageTexture PaletteTexture(TerrainPalette palette, Func<string, Rgb?> waterTintOf)
     {
         var bytes = new byte[PaletteWidth * PaletteRows * 4];
         for (int i = 0; i < palette.Layers.Count; i++)
         {
             var layer = palette.Layers[i];
-            Put(LayerRow, i, layer.Fallback, 1);
+            Put(LayerRow, i, layer.Fallback, layer.Spread);
             if (waterTintOf(layer.Id) is Rgb tint) Put(WaterTintRow, i, tint, 0.6f);
+            Put(EdgeRow, i, new Rgb(layer.Ocean ? 1 : 0, 0, 0), layer.Water ? 0 : 1);
         }
         for (int i = 1; i < palette.FeatureGrounds.Count; i++)
             if (palette.FeatureGrounds[i] is { } style) Put(FeatureRow, i, style.Tint, style.TintStrength);

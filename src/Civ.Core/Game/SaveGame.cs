@@ -28,7 +28,9 @@ public static class SaveGame
         _ = CanonicalJson.Serialize(save.State);
         save.State.RebuildIndexes();
         var rng = DeterministicRng.Restore(save.Rng[0], save.Rng[1], save.Rng[2], save.Rng[3]);
-        return new Simulation(content, save.Settings, save.State, rng);
+        var sim = new Simulation(content, save.Settings, save.State, rng);
+        sim.SanitizeMap();
+        return sim;
     }
     private sealed record Snapshot(int SchemaVersion, LoadedMod[] Mods, string ContentHash, SimulationSettings Settings, ulong[] Rng, GameState State);
 }

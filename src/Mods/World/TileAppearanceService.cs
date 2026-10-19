@@ -10,9 +10,11 @@ internal sealed class TileAppearanceService : ITileAppearanceService
     {
         ["world:coast"] = new(0x4a8fd0), ["world:ocean"] = new(0x234f9c),
         ["world:slimy_coast"] = new(0x4a8fd0), ["world:slimy_ocean"] = new(0x234f9c),
-        ["world:desert"] = new(0xdcc37d), ["world:grass"] = new(0x66ad4b), ["world:plains"] = new(0xc4b660),
-        ["world:hill"] = new(0x8a9a58), ["world:marsh"] = new(0x5b8a6a), ["world:peak"] = new(0x8a8a90),
-        ["world:snow"] = new(0xf0f5fa), ["world:tundra"] = new(0x9fae9c),
+        // Spread: lush ground grows past the tile edge into drier ground (grass into plains, plains into desert).
+        ["world:desert"] = new(0xdcc37d, Spread: 15), ["world:grass"] = new(0x66ad4b, Spread: 85),
+        ["world:plains"] = new(0xc4b660, Spread: 55), ["world:hill"] = new(0x8a9a58, Spread: 60),
+        ["world:marsh"] = new(0x5b8a6a, Spread: 75), ["world:peak"] = new(0x8a8a90),
+        ["world:snow"] = new(0xf0f5fa, Spread: 35), ["world:tundra"] = new(0x9fae9c, Spread: 40),
     };
 
     private static readonly IReadOnlyDictionary<string, TileAppearance> Features = new Dictionary<string, TileAppearance>(StringComparer.Ordinal)

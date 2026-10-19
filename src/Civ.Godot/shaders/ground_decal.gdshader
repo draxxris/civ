@@ -10,8 +10,11 @@ uniform float depth_pull = 0.0025;
 
 varying vec2 ground_pos;
 
+#include "res://shaders/hash.gdshaderinc"
+
+// p is always a whole cell coordinate.
 float hash(vec2 p) {
-	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+	return lattice_hash(ivec2(p), 41u);
 }
 
 float value_noise(vec2 p) {

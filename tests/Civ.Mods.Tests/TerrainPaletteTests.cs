@@ -36,6 +36,24 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void Lush_ground_spreads_into_plains_and_plains_into_desert()
+    {
+        float Spread(string id) => Assert.Single(_palette.Layers, layer => layer.Id == id).Spread;
+
+        Assert.True(Spread("world:grass") > Spread("world:plains"));
+        Assert.True(Spread("world:plains") > Spread("world:desert"));
+        Assert.All(_palette.Layers, layer => Assert.InRange(layer.Spread, 0f, 1f));
+    }
+
+    [Fact]
+    public void Water_layers_fade_into_each_other_without_ragged_edges()
+    {
+        Assert.True(Assert.Single(_palette.Layers, layer => layer.Id == "world:ocean").Water);
+        Assert.True(Assert.Single(_palette.Layers, layer => layer.Id == "world:coast").Water);
+        Assert.False(Assert.Single(_palette.Layers, layer => layer.Id == "world:grass").Water);
+    }
+
+    [Fact]
     public void Featureless_revealed_tiles_use_zero_ground_and_featured_tiles_use_the_palette_index()
     {
         var session = TerrainTestMaps.RevealedSession(mods.Content);

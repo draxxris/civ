@@ -50,6 +50,13 @@ internal static class MilitaryData
         foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.MoveUnit(cargo, target);
         sim.State.MoveUnit(unit, target);
     }
+    internal static bool CrossesCliff(Simulation sim, TileId from, TileId to)
+    {
+        for (int direction = 0; direction < 6; direction++)
+            if (sim.State.Grid.Neighbor(from, direction) == to)
+                return (sim.State.Plots[from.Value].CliffEdges & (1 << direction)) != 0;
+        return false;
+    }
     internal static bool CrossesRiver(Simulation sim, TileId from, TileId to)
     {
         for (int direction = 0; direction < 6; direction++)

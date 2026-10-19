@@ -305,7 +305,8 @@ internal sealed partial class TerrainRenderer : Node3D
     }
 
     /// <summary>A flat surface at y = 0 over every lattice triangle with a vertex below sea level that a water tile shapes;
-    /// UV2.x holds the terrain depth (-HeightAt) for the shader's colour and shore foam. River troughs that dip below 0 on
+    /// UV2.x holds the terrain depth (-HeightAt) for the shader's colour and shore foam, UV2.y the cliff share
+    /// (<see cref="TerrainField.CliffAt"/>) for surf at the foot of cliffs. River troughs that dip below 0 on
     /// land get no water, so they do not fill into pools.</summary>
     private static SurfaceData? PrepareWater(TerrainMeshData data, TerrainField field)
     {
@@ -316,7 +317,7 @@ internal sealed partial class TerrainRenderer : Node3D
         for (int v = 0; v < n; v++)
         {
             vertices[v] = new Vector3(data.Positions[v * 3], 0, data.Positions[v * 3 + 2]);
-            depths[v] = new Vector2(-data.Positions[v * 3 + 1], 0);
+            depths[v] = new Vector2(-data.Positions[v * 3 + 1], (float)field.CliffAt(data.Positions[v * 3], data.Positions[v * 3 + 2]));
             normals[v] = Vector3.Up;
         }
         var wet = new bool[n];

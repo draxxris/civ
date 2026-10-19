@@ -39,7 +39,7 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
             for (int i = 0; i < props.Length; i++)
             {
                 var prop = props[i];
-                var basis = new Basis(Vector3.Up, prop.Yaw).Scaled(Vector3.One * prop.Scale);
+                var basis = new Basis(Vector3.Up, prop.Yaw).Scaled(new Vector3(prop.Scale, prop.Scale * prop.Stretch, prop.Scale));
                 multi.SetInstanceTransform(i, new Transform3D(basis, new Vector3(prop.X, prop.Y, prop.Z)));
             }
             var batch = new Batch(multi, props, new Sight[props.Length]);
@@ -63,8 +63,12 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
     /// <summary>Fraction of all other candidates (rocks, ...) drawn.</summary>
     public static double OtherKeep { get; set; } = 0.5;
 
+    private static readonly Color SeaRockTint = new(1.25f, 1.0f, 0.92f);
+
     private static bool KeepProp(ScatterInstance instance)
     {
+        // Sea stacks and cliff walls (rocks rooted below sea level) are placed exactly; thinning would leave gaps in the wall.
+        if (instance.Y < 0) return true;
         // Explicit integer mixing is stable across processes and independent of candidate order or count.
         uint hash = 2166136261u;
         hash = unchecked((hash ^ (uint)instance.Tile) * 16777619u);
@@ -91,7 +95,9 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
             var sight = snapshot.Sight[batch.Instances[i].Tile];
             if (!force && batch.Sight[i] == sight) continue;
             float fog = sight == Sight.Visible ? 1f : 0.55f;
-            batch.Mesh.SetInstanceColor(i, new Color(fog, fog, fog));
+            // Rocks rooted in the sea (cliff walls, sea stacks) are warm, weathered coastal stone.
+            var tint = batch.Instances[i].Y < 0 ? SeaRockTint : new Color(1, 1, 1);
+            batch.Mesh.SetInstanceColor(i, new Color(fog * tint.R, fog * tint.G, fog * tint.B));
             batch.Sight[i] = sight;
         }
     }
