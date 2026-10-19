@@ -59,6 +59,9 @@ internal sealed partial class UnitActor : Node3D
             _player.Stop();
             var length = _player.GetAnimation(clip).Length;
             _player.Play(clip, customSpeed: duration > 0 ? (float)length / duration : 1);
+            // Pose the skeleton now. Otherwise a fresh actor (a selection cycle swaps the shown unit) renders one frame
+            // in its bind pose, arms out, before the player's own process step applies the clip.
+            _player.Advance(0);
         }
         _state = state;
         return true;

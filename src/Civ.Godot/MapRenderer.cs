@@ -42,10 +42,10 @@ internal sealed partial class MapRenderer : Node3D
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly IconAtlas _atlas;
-    private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _resources, _yieldBadges, _tokens, _tokenIcons, _path;
+    private readonly WrapMesh _land, _roads, _routeParts, _landIcons, _resources, _yieldBadges, _tokens, _tokenIcons, _selection, _path, _destination;
     private readonly TerrainRenderer _terrain;
     private readonly StandardMaterial3D _opaque, _landIconMaterial, _tokenIconMaterial, _tokenMaterial;
-    private readonly ShaderMaterial _pathMaterial;
+    private readonly ShaderMaterial _pathMaterial, _selectionMaterial, _destinationMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly ModelCache _models;
@@ -88,6 +88,8 @@ internal sealed partial class MapRenderer : Node3D
         _tokenMaterial = Material(null, true, 3);
         _tokenIconMaterial = Material(_atlas.Texture, true, 4);
         _pathMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/path.gdshader"), RenderPriority = 5 };
+        _selectionMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/selection.gdshader"), RenderPriority = 4 };
+        _destinationMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/destination.gdshader"), RenderPriority = 6 };
         _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
         _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
         _cities = new CityRenderer(Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
@@ -102,7 +104,9 @@ internal sealed partial class MapRenderer : Node3D
         _yieldBadges = Layer();
         _tokens = Layer();
         _tokenIcons = Layer();
+        _selection = Layer();
         _path = Layer();
+        _destination = Layer();
         AddChild(new DirectionalLight3D { RotationDegrees = new Vector3(-40, -135, 0), LightEnergy = 1.0f, ShadowEnabled = false });
     }
 

@@ -11,7 +11,15 @@ public interface IMovementService
     /// <summary>Traverse until moves run out or combat interrupts. Path excludes the starting plot.</summary>
     void Move(Simulation sim, int unit, IReadOnlyList<Hex> path);
 }
-public sealed record UnitPath(IReadOnlyList<Hex> Steps, long Cost);
+/// <summary>
+/// A route excluding the starting tile. StepTurns aligns with Steps: 1 means this turn, 2 means next turn.
+/// Arrival estimates use current moves and a full allowance on later turns, with unchanged movement rules.
+/// An attack's final arrival assumes success; combat and subsequent world changes can interrupt the route.
+/// </summary>
+public sealed record UnitPath(IReadOnlyList<Hex> Steps, long Cost, IReadOnlyList<int> StepTurns)
+{
+    public int Turns => StepTurns.Count == 0 ? 1 : StepTurns[^1];
+}
 /// <summary>Deterministic minimum-cost paths. Queries use no RNG and do not mutate state.</summary>
 public interface IPathfindingService
 {

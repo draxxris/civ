@@ -19,7 +19,7 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
         while (open.TryDequeue(out var current, out var priority))
         {
             if (priority.Cost != reached[current].Cost) continue;
-            if (current == goal) return Build(grid, start, goal, reached, priority.Cost);
+            if (current == goal) return Build(sim, unit, start, goal, reached, priority.Cost);
             foreach (var next in grid.Neighbors(current))
             {
                 if (query.CanEnter(current, next, attack && next == goal) is not null) continue;
@@ -49,11 +49,26 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
         return minimum;
     }
 
-    private static UnitPath Build(HexGrid grid, TileId start, TileId goal,
+    private static UnitPath Build(Simulation sim, int unitId, TileId start, TileId goal,
         IReadOnlyDictionary<TileId, (long Cost, TileId Parent)> reached, long cost)
     {
-        var steps = new List<Hex>();
-        for (var tile = goal; tile != start; tile = reached[tile].Parent) steps.Add(grid.HexOf(tile));
-        steps.Reverse(); return new(steps.AsReadOnly(), cost);
+        var grid = sim.State.Grid;
+        var tiles = new List<TileId>();
+        for (var tile = goal; tile != start; tile = reached[tile].Parent) tiles.Add(tile);
+        tiles.Reverse();
+        var unit = sim.State.UnitById(unitId);
+        long remaining = Math.Max(0, unit.MovesLeft);
+        int maximum = Math.Max(1, sim.Content.Services.Get<IUnitService>().Single().MaximumMoves(sim, unitId));
+        int turn = 1;
+        var turns = new List<int>(tiles.Count);
+        foreach (var tile in tiles)
+        {
+            if (remaining == 0) { turn++; remaining = maximum; }
+            turns.Add(turn);
+            // Like MoveStep, entering a tile can spend more than remains, but never borrows from the next turn.
+            long stepCost = reached[tile].Cost - reached[reached[tile].Parent].Cost;
+            remaining = Math.Max(0, remaining - stepCost);
+        }
+        return new(tiles.Select(grid.HexOf).ToList().AsReadOnly(), cost, turns.AsReadOnly());
     }
 }

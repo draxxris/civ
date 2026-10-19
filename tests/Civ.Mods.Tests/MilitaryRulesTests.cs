@@ -140,8 +140,13 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.Plots[40].Owner = 0;
         Assert.NotNull(Service<IPathfindingService>(sim).FindPath(sim, unit.Id, sim.State.Grid.HexOf(new(42))));
     }
-    [Fact]
-    public void Pathfinding_prefers_a_cheaper_route_detour_over_the_shortest_hex_line()
+    [Theory]
+    [InlineData(0, 2, 2, 2)]
+    [InlineData(1, 1, 2, 2)]
+    [InlineData(6, 1, 2, 2)]
+    [InlineData(7, 1, 1, 2)]
+    [InlineData(120, 1, 1, 1)]
+    public void Pathfinding_prefers_a_cheaper_route_detour_and_reports_arrival_turns(int movesLeft, int first, int second, int third)
     {
         var sim = GameFactory.Scenario(mods.Content);
         var start = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 3));
@@ -149,8 +154,13 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var unit = Add(sim, 0, sim.State.Grid.TileAt(start).Value);
         var detour = new[] { start.Neighbor(1), start.Neighbor(1).Neighbor(0), goal };
         foreach (var hex in detour.Prepend(start)) sim.State.PlotAt(hex).Route = "world:route_route_gravtube";
+        unit.MovesLeft = movesLeft;
+        var hash = sim.ComputeHash();
         var path = Service<IPathfindingService>(sim).FindPath(sim, unit.Id, goal);
         Assert.NotNull(path);
+        Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(new[] { first, second, third }, path.StepTurns);
+        Assert.Equal(third, path.Turns);
         Assert.Equal(18, path.Cost); // Three route edges at six sub-moves each, not two ordinary edges at 120.
         Assert.Equal(detour, path.Steps);
     }

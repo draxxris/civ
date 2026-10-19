@@ -923,6 +923,10 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
 - Shaders (`terrain.gdshader` and `water.gdshader`):
   - `terrain.gdshader`: Height-modulated corner-triangle texture blending using the alpha height channel; transitions to cliff rock on steep slopes; renders owner borders, territory glow, river channels, work-tile overlay marks, and hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer clouds.
   - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from vertex `UV2.x = -HeightAt` without depth-texture fetches; renders multi-frequency ripples, shore foam, shallow/deep water gradients, seabed texturing, fog darkening, and drifting cloud cover.
+- Ground marker shaders, all drawn on terrain-draped meshes and animated with `TIME`:
+  - `selection.gdshader`: The marker under the selected unit: a bevelled gold ring, a dashed inner ring, turning chevrons, glow and a drop shadow.
+  - `path.gdshader`: The go-to route. Ribbon vertices carry UV (across, distance along), which drives a dark-edged core and chevrons that flow toward the destination; black vertices mark waypoint pips with a radial UV.
+  - `destination.gdshader`: The route's end: a ring in the route colour, four inward chevrons, an outward ripple, and a centre dot (a cross for an attack).
 - `ScatterRenderer`: Batches chunk props into `MultiMesh` instances shared across the three wrap copies:
   - Deduplicates GPU textures across GLB models via SHA-256 image hashes.
   - Applies hash-stable per-instance thinning (`KeepProp` using deterministic 32-bit integer mixing of tile, model index, and float coordinates) to sustain high framerates on large maps without prop flickering during chunk updates.

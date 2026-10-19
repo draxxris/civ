@@ -13,12 +13,16 @@ internal sealed partial class MapRenderer
         var icons = new MeshBuilder { DefaultUv = _atlas.WhiteUv, Ground = GroundAt };
         foreach (var city in _session.KnownCities()) DrawCity(shapes, city);
         _standing.Clear();
+        _selectionAt = null;
         foreach (var group in _session.VisibleUnits().Where(u => !_battleIds.Contains(u.Id)).GroupBy(u => u.Position))
             DrawUnitStack(shapes, icons, group.OrderBy(u => u.Id).ToList());
         SyncActors();
         _tokens.Mesh = shapes.Build(_tokenMaterial);
         _tokenIcons.Mesh = icons.Build(_tokenIconMaterial);
+        ShowSelection(_selectionAt?.At, _selectionAt?.Radius ?? 0);
     }
+
+    private (Vector3 At, float Radius)? _selectionAt;
 
     private void DrawCity(MeshBuilder b, City city)
     {
@@ -50,12 +54,13 @@ internal sealed partial class MapRenderer
             var anchor = at;
             anchor.Y = GroundAt(anchor.X, anchor.Z) + 0.015f;
             _standing.Add((top, anchor, StackHealth(stack)));
-            if (selected != null) shapes.Ring(at, 0.47f, 0.05f, new Color(1f, 0.9f, 0.3f), 20);
             radius = 0.4f;
+            if (selected != null) _selectionAt = (at, 0.44f);
         }
         else
         {
-            shapes.Disc(at, radius + 0.06f, selected != null ? new Color(1f, 0.9f, 0.3f) : Ink, 16);
+            shapes.Disc(at, radius + 0.06f, Ink, 16);
+            if (selected != null) _selectionAt = (at, radius + 0.1f);
             shapes.Disc(at + Up(0.002f), radius, owner * shade, 16);
             if (_atlas.UvOf(top.Type) is Rect2 uv) icons.Icon(at + Up(0.03f), radius * 1.6f, uv, new Color(shade, shade, shade));
             DrawHealth(shapes, stack, at + new Vector3(0, 0.004f, radius + 0.16f));
