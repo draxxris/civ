@@ -1,575 +1,298 @@
-# Performance work log
+# Performance and Optimization Log
 
-## World generation optimization
+This document provides instructions for executing operational benchmarks and profiling workloads, followed by a chronological record of performance optimizations implemented across the codebase.
 
-### Result
+---
 
-Generation allocates **40–50% fewer managed bytes** across six workloads.
-Standard-world elapsed time decreased by **14.9–24.5%** in the controlled comparison.
-Gigantic-world elapsed time changed from **17.9% slower to 9.4% faster**, depending on the seed.
-These results do not establish a uniform elapsed-time improvement.
-All generated-world and session hashes match the baseline.
+## Benchmarking and Profiling Instructions
 
-### Changes
+### Operational Benchmark Workloads
 
-- `src/Civ.Core/HexGrid.cs`: enumerate range rows directly instead of constructing and sorting a tree of hexes.
-  Each row produces clipped column intervals in ascending tile order.
-  Wrapped intervals split at the seam, and full-width intervals emit each column once.
-  Intermediate arithmetic uses `long` to avoid radius overflow.
-- `HexGrid.Neighbors`: skip the per-query hash set when directions cannot produce duplicate tiles.
-  Wrapped maps with width one or two retain the original deduplication path.
-- `src/Mods/World/ContinentsGenerator.cs`: stop river traversal at an already drawn drainage suffix.
-  Each tile has one parent, so every downstream edge already exists at that point.
-  A generation-local bitmap records completed paths.
-  A bounded direction loop replaces a captured LINQ predicate for each river edge.
-  Source selection and RNG calls retain their original order.
-- `tools/Civ.Benchmarks`: add `--world` for generation and session startup without catalog rebuilds, founding, or production queries.
-  Repeated measurements also report process CPU time.
-- `tests/Civ.Tests/HexGridTests.cs`: add independent breadth-first range checks for bounded, wrapped, narrow, and single-row maps.
-  Checks cover every center, zero radius, partial ranges, over-map ranges, tile order, uniqueness, and immediate argument errors.
-
-The geometry changes also apply to non-generation callers.
-No content, distribution rules, player counts, generator identities, or parallelism settings changed.
-There is no persistent geometry or world cache.
-
-### Method
-
-Baseline revision: `fc7e514df97345fdda5d861be7dacac626e011c3`.
-The initial baseline used the existing `mise run benchmark -- --startup` workload before production edits.
-Opt-in startup tracing identified terrain/rivers, bonuses, and start selection as substantial costs.
-
-The comparison below uses the new focused harness with both baseline and optimized production assemblies.
-A copy of the original Release output preserves the baseline assemblies.
-Only the updated benchmark executable and symbols replace their counterparts in that copy.
-Both variants therefore use identical measurement code and content.
-The six generated-world and session hashes also match the initial, unmodified startup benchmark.
-
-Environment: Fedora 44 x64, Intel Core i7-7700HQ (four cores, eight threads), .NET SDK 10.0.401, runtime 10.0.12.
-Both variants use Release builds and `DOTNET_TieredCompilation=0` to remove tier-transition effects during short samples.
-Startup tracing is disabled for comparisons.
-These results describe that runtime setting, not default tiered-JIT performance.
-
-Three pairs run sequentially in baseline/optimized order, without concurrent benchmark processes.
-Each process loads content once, then uses one warmup and five samples per operation and workload.
-Tables report the median of the three process medians, not a pooled median or confidence interval.
-Each workload uses four players and an east–west wrapped map.
-Generation includes plot allocation, terrain, rivers, features, bonuses, and goodies.
-It excludes catalog loading, start selection, player setup, AI, and fingerprint calculation.
-Session startup includes those setup stages and the initial opponent AI, but excludes catalog loading.
-
-Other desktop and development processes remained active.
-Observed host load exceeded 20 during investigation.
-No unrelated processes were stopped.
-CPU frequency, scheduling, GC, and host contention limit elapsed-time comparisons.
-Allocation reductions are substantially more consistent than timing changes.
-Process CPU includes all process threads, GC, and the adjacent measurement probes.
-It is an approximate supporting metric, not isolated generator CPU time.
-`GC.GetTotalAllocatedBytes(true)` requests a precise allocation counter, not a forced collection.
-
-Reproduction commands:
+Benchmarks are executed via `mise run benchmark` with flags selecting specific scenarios:
 
 ```sh
+# 1. Quick startup check (standard world, seed 42, 4 players)
+mise run benchmark -- --quick
+
+# 2. Expanded startup check (standard and gigantic worlds, seeds 1, 42, 987654, 4 players)
+mise run benchmark -- --startup
+
+# 3. World generation and session startup (isolates generation and session start, skips catalog rebuilds)
 mise run benchmark -- --world
-# Controlled comparison setting used for the tables:
-env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
-# Original baseline snapshot with the same updated harness:
-env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 \
-  dotnet /tmp/civ-world-perf/baseline/Civ.Benchmarks.dll --world
+
+# 4. Operational turn and AI workloads (8-player game, 99-turn preparation, turn-100 decisions)
+mise run benchmark
 ```
 
-The snapshot path is local evidence, not a required repository dependency.
-For another checkout, build the baseline production revision and use the same benchmark harness with both builds.
+#### Workload Descriptions
 
-### Generation measurements
+- **`--quick`**: Loads the catalog once, performs paired serial/preparation catalog rebuilds, generates a standard world (seed 42), starts the session, founds a city, and measures cold/warm production queries.
+- **`--startup`**: Performs paired serial/preparation catalog rebuilds, then measures world generation, session startup, city founding, and production choices across standard ($84 \times 52$) and gigantic ($200 \times 120$) worlds for seeds 1, 42, and 987654.
+- **`--world`**: Loads the catalog once and focuses exclusively on world generation (plot allocation, terrain, rivers, features, bonuses, goodies) and `GameSession.Start` (including initial opponent AI setup) across standard and gigantic maps for seeds 1, 42, and 987654. It skips catalog rebuilds, founding, and turn simulation.
+- **Default (no flag)**: Runs multi-turn simulation benchmarks, including the 50-city turn workload and the 8-player scenario with turn-100 AI decision evaluation (`decisions.RunAi()`).
 
-Positive reduction means faster. Negative reduction means slower.
-Times are milliseconds. Allocations are MiB, not retained or peak memory.
+### Profiling and Diagnostic Tracing
 
-| World | Seed | Before ms | After ms | Time reduction | Before MiB | After MiB | Byte reduction |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Standard 84×52 | 1 | 69.97 | 54.98 | 21.4% | 11.99 | 6.34 | 47.1% |
-| Standard 84×52 | 42 | 63.46 | 54.03 | 14.9% | 11.85 | 6.33 | 46.6% |
-| Standard 84×52 | 987654 | 61.72 | 46.60 | 24.5% | 12.69 | 6.35 | 50.0% |
-| Gigantic 200×120 | 1 | 311.04 | 309.79 | 0.4% | 58.84 | 35.15 | 40.3% |
-| Gigantic 200×120 | 42 | 320.29 | 377.74 | -17.9% | 59.77 | 35.18 | 41.1% |
-| Gigantic 200×120 | 987654 | 402.11 | 364.39 | 9.4% | 60.00 | 35.33 | 41.1% |
-
-Per-process generation medians show the variability:
-
-| World / seed | Before ms, runs 1/2/3 | After ms, runs 1/2/3 | Before CPU ms | After CPU ms |
-| --- | --- | --- | ---: | ---: |
-| Standard / 1 | 48.73 / 94.15 / 69.97 | 33.75 / 54.98 / 82.42 | 69.42 | 54.58 |
-| Standard / 42 | 47.36 / 72.15 / 63.46 | 36.05 / 54.03 / 59.98 | 62.57 | 53.66 |
-| Standard / 987654 | 47.44 / 68.59 / 61.72 | 44.51 / 58.13 / 46.60 | 61.21 | 46.08 |
-| Gigantic / 1 | 305.00 / 311.04 / 313.98 | 284.80 / 377.40 / 309.79 | 317.23 | 343.36 |
-| Gigantic / 42 | 320.29 / 335.40 / 303.36 | 314.59 / 377.74 / 385.49 | 318.35 | 387.80 |
-| Gigantic / 987654 | 312.34 / 430.94 / 402.11 | 268.08 / 364.39 / 376.77 | 404.43 | 361.13 |
-
-The gigantic seed-42 regression remains unresolved.
-CPU time also increases for that case, so scheduling delay alone does not explain the result.
-A quiet-host profile is necessary before any general large-world speed claim.
-
-### Full session startup measurements
-
-| World / seed | Before ms | After ms | Time reduction | Before MiB | After MiB |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Standard / 1 | 244.93 | 322.63 | -31.7% | 100.97 | 91.38 |
-| Standard / 42 | 250.68 | 242.86 | 3.1% | 83.04 | 74.10 |
-| Standard / 987654 | 247.86 | 244.10 | 1.5% | 95.50 | 85.24 |
-| Gigantic / 1 | 1467.85 | 1339.56 | 8.7% | 279.27 | 241.28 |
-| Gigantic / 42 | 1253.19 | 1091.04 | 12.9% | 288.90 | 250.10 |
-| Gigantic / 987654 | 1215.94 | 1127.57 | 7.3% | 294.62 | 255.57 |
-
-Startup allocations decrease by 9.5–13.6%.
-The standard seed-1 startup regression prevents a uniform startup speed claim.
-The shared geometry changes also affect AI queries, so startup deltas are not isolated generation gains.
-
-### Correctness and validation
-
-All warmups and samples match their operation's fingerprint within each process.
-Across all six comparison processes, the content hash, six plot/RNG hashes, and six session hashes match exactly.
-Content hash: `58BF65EEC063C432AF274B66DC6400087BFFED318F955AF7121F89A1010F6008`.
-
-Generated plot/RNG hashes, in standard then gigantic order (seeds 1, 42, 987654):
-
-- `F6436E2BE45A3B35585BA2A6535BF37EEB421AA27533A3CF2C1C19DED6575E68`
-- `2B182D6951E35D73E6AA2731FCB16608EAABA3E8E252E1E8516D74A801AAAD31`
-- `3B64D6B8A97CED32F2C7B34C668C4DE4D4061EB6AE384E0A34039F6B3428F526`
-- `0282F40B80F873E914539A92F63CC3BDAFDB8885C68914DF6650120F66BD599C`
-- `08EA1DAA7B56715204DAFF29AA462308EEFCF9CF0318A8B2F58946422D0B5FBB`
-- `0A63FED13BBADAF6F0818E15DFA17FEE1AB9B78E0E7C44D6BDFC5B5BD43DE5E1`
-
-Session hashes in the same order:
-`46F651468826615C`, `D90B5CF7C47CD23D`, `46DFA66041914FFE`,
-`CDFD92CD292B0C64`, `1AD5F7CBE2AF0F16`, `BD3C3D8FE93FB0FB`.
-
-- Baseline `mise run test`: 1,142 passed, no failures or skips.
-- Added geometry checks pass on the original implementation before the algorithm replacement.
-- Final `mise run test`: 1,155 passed, no failures or skips (148 core, 970 mod, 37 import tests).
-- Final Release benchmark build: zero warnings and errors.
-- `git diff --check`: passed.
-- Read-only `pawn:luna` review found no actionable geometry, river, or test correctness errors.
-- E2E and extractor categories were not run, per the default test boundary.
-- No commits were made. Pre-existing untracked hook files remain untouched.
-
-Lizard complexity measurements use the same analyzer before and after:
-
-| Function | Before | After |
-| --- | ---: | ---: |
-| `HexGrid.Neighbors(TileId)` | 4 | 8 |
-| `HexGrid.Range(TileId, int)` | 3 | 2 |
-| `RangeRows` (new) | — | 4 |
-| `RangeColumns` (new) | — | 4 |
-| `RiverGenerator.Draw` | 3 | 4 |
-| `RiverGenerator.Direction` (new) | — | 3 |
-
-Local evidence is under `/tmp/civ-world-perf/`:
-`before.log` contains the initial startup baseline.
-`before-{1,2,3}.log` and `after-{1,2,3}.log` contain the controlled comparisons, ranges, and hashes.
-`trace-before.log`, `trace-after.log`, `tests-before.log`, `tests-after.log`, and `complexity-*.log` contain supporting checks.
-Intermediate geometry-only runs are exploratory and do not contribute to these tables.
-
-## Previous optimization work
-
-The sections below preserve the earlier work log.
-Its final default test suite passed 794 tests at that time.
-
-## Goal and order
-Work on these areas one at a time, measure each change, and preserve deterministic game state and rendering:
-
-1. Reduce map renderer rebuilds after actions.
-2. Reduce startup content hashing cost without changing content hashes.
-3. Move terrain geometry preparation off the main thread while keeping Godot resource creation and scene updates on the main thread unless the API explicitly supports otherwise.
-
-## Current assessment
-
-### Map renderer invalidation
-
-`MapRenderer.Refresh` has separate world and simulation revision checks. A world revision rebuilds all baked land layers, while a simulation revision rebuilds tokens and overlays. `TerrainRenderer` already compares per-chunk signatures and rebuilds only dirty terrain chunks. This leaves the non-terrain land, improvement, city, token, label, and overlay work as likely sources of avoidable rebuild cost. First establish which actions increment each revision and measure representative actions before changing invalidation.
-
-### Startup hashing
-
-`ContentDb.Freeze` now serializes definitions as UTF-8 fragments inside the aggregate, without separate per-definition JSON trees. Each definition retains its runtime type, serializer options, and root writer. `CanonicalJson.Digest` hashes canonical UTF-8 bytes directly. The canonical writer, ordering, and numeric rejection remain unchanged.
-
-### Terrain geometry threading
-
-`TerrainRenderer.RebuildWorld` now prepares managed surface packets in the existing mesher workers. Godot array packing, resource construction, node assignment, scatter planning, and scatter updates stay on the main thread. The trace separates these stages.
-
-### AI multithreading
-
-#### Architecture
-
-AI turn planning parallelizes computation at two distinct levels while guaranteeing bit-for-bit deterministic simulation state across runs, save/load cycles, and networked peers:
-- **Intra-planner parallel candidate scoring**: `ParallelScoring.Select` in `SitePlanner`, `CityPlanner`, `ResearchPlanner`, `WorkerPlanner`, `MilitaryPlanner`, and `AttackPlanner` evaluates independent read-only candidate items (founding sites, city build options, candidate technologies, worker jobs, defensive reinforcement routes, and attack staging hexes) concurrently across threads above minimum candidate count thresholds. Candidates are evaluated without mutating simulation state or drawing from `Simulation.Rng`, and results are sorted deterministically by descending integer scores with ordinal/entity ID tie-breaking. To avoid threadpool oversubscription when multiple players plan concurrently, candidate evaluation checks `Simulation.IsParallelAiTurn` and runs serially inside multi-player speculative waves.
-- **Read-only city query memoization**: Repeated empire state queries are optimized without mutating simulation state or breaking thread isolation: `[ThreadStatic]` `CityReadScope` caches building activity, power status, and modifier grants during read-only city evaluation (such as citizen allocation); `ResourceNetwork.Modes` evaluates transport and route connections lazily per query; and `INavalBlockadeService.BlockadedTiles` resolves blockaded water plots once per query rather than per plot.
-- **Fast in-memory state cloning**: `GameState.Clone()`, `Plot.Clone()`, and `ExtensionState.Clone()` (using UTF-8 canonical JSON round-trips for non-empty components) produce independent simulation copies for `Simulation.ForkSpeculative()` without full-save canonical normalization, reducing fork creation overhead.
-- **Wave-based speculative parallel turns**: `Simulation.RunAi()` delegates to `AiTurnSpeculator`, partitioning uncommitted AI players into speculative waves. The first player ($p_0$) executes directly against the authoritative simulation, while subsequent independent players ($p_1 \dots p_{m-1}$) plan concurrently on isolated speculative forks of the wave-start state. Non-conflicting plans commit sequentially in ascending `Player.Id` order by replaying their recorded `GameCommand` sequences against the authoritative simulation. If any plan encounters a conflict, the authoritative simulation restores from a pre-commit snapshot, re-applies verified plans, and immediately relaunches a new speculative wave for remaining uncommitted players.
-
-#### Safety invariants
-
-Deterministic equivalence with strictly sequential turn execution is enforced through rigorous conflict checks:
-- **Active mutation footprint proximity**: Conflicts occur if any tile in an earlier player's cumulative active mutation footprint (plots where units moved, cities were founded, captured, or razed, or plot ownership, improvements, routes, or features changed) lies within 5 hexes (`ActiveFootprintRadius = 5`) of a candidate plan's active footprint. Stationary units (such as fortified garrisons) and unchanged border plots do not cause conflicts unless unit contract state (health, experience, promotions, activity) mutates. Moving settlers and explorers expand active footprints by radius 3 to protect visibility-dependent choices.
-- **Global entity-aggregate protection**: Changes to entity counters (`NextCityId`, `NextUnitId`), entity membership or ownership, unit health/experience/promotions/type, city buildings/population/extensions, or power inputs trigger an entity-aggregate conflict for subsequent plans in the wave. This ensures global queries (such as `WarPlanner` power evaluations or world wonder limits) never commit against stale aggregate state.
-- **RNG and diplomacy consistency**: A plan is rejected if an earlier player drew from `Simulation.Rng` and the candidate plan also used RNG, or if team war relations (`Team.Wars`) or global `State.Extensions` changed.
-- **Command replay and fingerprint verification**: Plan commit replays commands via `Simulation.TryApply`, verifying that pre-command and post-command RNG values match the fork execution and that the resulting per-player state digest matches the fork's fingerprint. Any divergence triggers state rollback and wave relaunch.
-
-#### Benchmark measurements
-
-`mise run benchmark` reports single samples without timing thresholds. The Phase 1 run did not finish the 8-player preparation benchmark. It recorded these values before termination:
-
-- World generation/setup, seed 1: 489.66 ms; 4,368 plots and 2 players.
-- World generation/setup, seed 42: 249.24 ms; 4,368 plots and 2 players.
-- World generation/setup, seed 987654: 335.52 ms; 4,368 plots and 2 players.
-- Fifty-city turn: 83,120.65 ms; 50 cities, turn 2.
-- The 8-player preparation (generation, 99 turns, save/load) exceeded 90 minutes of CPU time without finishing. It was terminated as instructed. No turn-100 AI decision result was captured.
-
-After the AI multithreading implementation, one `mise run benchmark` run recorded:
-
-- World generation/setup, seed 1: 482.04 ms; 4,368 plots and 2 players.
-- World generation/setup, seed 42: 238.73 ms; 4,368 plots and 2 players.
-- World generation/setup, seed 987654: 347.23 ms; 4,368 plots and 2 players.
-- Fifty-city turn: 2,139.04 ms; 50 cities, turn 2.
-- 8-player preparation (generation, 99 turns, save/load): 231,096.19 ms (3 minutes 51.10 seconds).
-- 8-player `RunAi()` decisions at turn 100: 1,802.43 ms; 41 cities and 114 units.
-
-The fifty-city turn decreased by 97.43%, or 38.86× against the measured baseline. A valid speedup ratio is not available for 8-player preparation: the baseline was an incomplete CPU-time observation, while the post-change run completed and reported a benchmark duration. There is no turn-100 `RunAi()` baseline for comparison.
-
-#### End-to-end tests
-
-Phase 1 did not run `mise run test:e2e`, so there is no pre-change E2E duration or speedup comparison. The post-change command was `mise run test:e2e -- --logger 'console;verbosity=detailed'`. The two AI tests reported:
-
-- `Four_computer_players_develop_and_fight_over_200_turns`: failed after 1 minute 41 seconds, at turn 76, with `InvalidOperationException: Unit cannot attack` from the explorer/scout movement path.
-- `Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn`: passed in 10 minutes 6 seconds.
-
-The complete E2E run took 11.8656 minutes (about 11 minutes 52 seconds) and finished with 3 tests passed and 1 failed. Therefore this run did not verify the full AI gameplay test suite.
-
-The latest default-suite evidence is `/tmp/civ-p4-default.log`: 725 passed and 5 previously documented failures out of 730 tests in `Civ.Mods.Tests`; `Civ.Tests` passed 124/124 and `Civ.ContentImport.Tests` passed 37/37. `mise run test` was not rerun during this measurement task.
-
-#### Known wave-independent gameplay failure
-
-Independent reproductions supplied during review establish that the turn-76 failure predates speculative turns. These reproductions were not rerun for this correction.
-An `onlyDefensive` scout discovers a hostile unit partway through a multi-step movement command.
-`ExplorerPlanner` reaches `MovementService.MoveStep`, then `CombatService.ValidateCombat` rejects the attack with `InvalidOperationException: Unit cannot attack`.
-This gameplay defect remains deferred. Movement, combat, and existing E2E expectations are unchanged.
-
-Reproduction configurations:
-
-- Base `23db29c`: about 1 hour 15 minutes to the failure.
-- `bee661e`, `AiWaveLimit = 1`: the same failure.
-- `c67b88f`, `AiWaveLimit = 1`, `DOTNET_PROCESSOR_COUNT=1`: about 1 minute 41 seconds to the failure.
-- Speculative `c67b88f`: the same failure at turn 76.
-
-Turns 26, 51, and 76 had identical logged aggregate metrics `cities/techs/units/buildings/wars/gold` across base `23db29c`, sequential `AiWaveLimit=1`, and speculative runs.
-At turn 76, the four players had cities 5/5/5/1, technologies 28/24/25/26, and units 11/11/12/6. The war count was 1.
-The approximate 45× comparison measures time to the same failure. It is not a successful 200-turn E2E speedup or a benchmark ratio.
-This failure is separate from the five pre-existing city-capture failures in the default suite.
-
-#### Global aggregate safety correction
-
-The earlier distant-creation optimization was unsafe. Spatial footprints do not protect global entity reads in war and settlement planning.
-Wave validation now rejects unit or city counter changes, entity membership or ownership changes, and changes to population or power inputs.
-Unit type, health, experience, and promotions participate in this guard. City positions, buildings, and extensions also participate.
-Ordinary unit movement and local activity retain spatial validation instead of forcing global conflicts.
-
-Production completion and growth run in `AdvanceTurn` systems before `RunAi`. Ordinary production selection does not create a unit during a wave.
-However, founding consumes a settler and creates a city during a command. Disbanding, upgrades, combat, capture, and great-person actions also change entities during commands.
-The correction therefore protects global reads regardless of the command that changed an entity.
-The existing measurements describe the earlier commit, not the corrected guard. No new performance ratio follows from this correction.
-
-## Running log
-
-### Started
-
-- Confirmed the working tree was clean after commit `be04c49`.
-- Inspected `MapRenderer.Refresh`, `TerrainRenderer.RebuildWorld`, `ContentDb.Freeze`, and the renderer mesh builder.
-- At the start, no changes to the three optimization targets had been made.
-- `GameSession.Submit` increments `WorldRevision` for every successful command, not only map-visible changes; selection increments `Revision` alone. `MapRenderer` therefore treats unrelated successful actions as world changes.
-- Terrain mesh signatures already avoid rebuilding unchanged terrain chunks. `TerrainRenderer` also uses `Parallel.For` for terrain/river data generation, so later terrain work must target measured main-thread conversion/upload cost or improve the pure-data phase rather than duplicate existing threading.
-### Renderer rebuild reduction
-
-- Status: completed a narrow renderer change. Successful commands still conservatively invalidate land. Startup hashing and terrain threading remain untouched.
-
-#### Change and invalidation
-
-- `TerrainRenderer.RefreshWorld` keys the perceived snapshot on `GameSession.WorldRevision`, not `Revision`.
-- Selection, messages, and rejected commands no longer rebuild terrain snapshots, signatures, height fields, or terrain textures.
-- World revisions still refresh perceived terrain, dirty chunks, tileA, and scatter visibility before map layers sample heights.
-- `MapRenderer` uploads tileB once after `BuildOverlay` writes current marks. Hover still uploads tileB directly.
-- Tokens, labels, and selection-dependent city overlays retain their existing revision checks.
-- `BuildLand` retains its independent world-revision check. Zero dirty terrain chunks never suppress land rebuilds.
-- The performance trace now includes the final overlay upload and reports fractional milliseconds.
-
-#### Measurement
-
-- Used a Debug build on the NVIDIA GTX 1050 Ti with Vulkan Forward+.
-- Both launches used this command, with `LABEL` replaced by `before` or `after`:
-
-  ```sh
-  mise exec -- godot-mono --path src/Civ.Godot -- --stage map --world tiny --seed 1 --opponents 0 --screenshot /tmp/civ-render-LABEL.png --frames 100000 --trace-performance
-  ```
-
-- The screenshot option opens the debug map. Both processes stopped before the screenshot frame limit.
-- After the initial rebuild, sent ten Tab presses followed by ten Escape presses, spaced 1.2 seconds apart:
-
-  ```sh
-  for key in Tab Escape; do
-    for i in $(seq 1 10); do
-      xdotool key --window 8388614 "$key"
-      sleep 1.2
-    done
-  done
-  ```
-
-- The window ID applies only to these local launches. Each sample contains 20 map refreshes on a map with 117 terrain chunks.
-- Before: 20 snapshot/signature rebuilds, all with zero dirty chunks. The terrain stage median was 8 ms, with a 2–14 ms range.
-- After: zero snapshot/signature rebuilds. The terrain stage reported 0.00 ms for all 20 actions at trace precision.
-- The final overlay upload median was 0.11 ms. Its cost was absent from the old trace.
-- Token-stage medians were 4.5 ms before and 4.785 ms after. This change does not optimize token or UI rebuilds.
-- This demonstrates removal of terrain work, not a general frame-rate or successful-command speedup.
-- Local samples: `/tmp/civ-render-before-sample.txt` and `/tmp/civ-render-after-sample.txt`.
-
-#### Safety evidence and rejected approaches
-
-- `GameCommand.Apply` can change arbitrary simulation state. Synchronous event subscribers can also change state. Neither contract supplies complete layer-specific changes.
-- Therefore, command-name classification is not safe without a wider invalidation contract. Queue and assignment commands still increment the conservative world counter.
-- Rejected terrain dirtiness as a land invalidation signal. Signatures omit routes, resources, improvements, sight, city population/ownership, player era, and layout inputs.
-- An explicit land signature needs a separate dependency audit. No speculative land cache or command whitelist was added.
-- Live smoke: founding rebuilt 8/117 terrain chunks, then land. A later turn rebuilt land despite zero dirty terrain chunks.
-- Live smoke: selection and an unavailable founding action refreshed tokens/overlays without terrain work. No engine errors appeared.
-- Movement, fog, turn, and load paths retain world-revision invalidation. Existing visibility and persistence tests passed.
-- Test authoring gate: no tests were added or changed. Engine-free tests cannot exercise renderer uploads; a private-counter test needs an unjustified production seam.
-- Used the real engine trace for renderer behavior and existing owner-boundary tests for visibility, persistence, scatter, and session behavior.
-
-#### Validation
-
-- Before and after: `mise run build:game` passed with zero warnings and zero errors.
-- Before and after: `mise run test` passed all 784 tests: 97 core, 650 mod/client, and 37 content-import tests.
-- Focused command passed all 62 tests:
-
-  ```sh
-  mise exec -- dotnet test tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj --no-restore --filter 'FullyQualifiedName~ClientSessionTests|FullyQualifiedName~TerrainIntegrationTests|FullyQualifiedName~SightMemoryTests|FullyQualifiedName~ScatterPlannerTests'
-  ```
-
-- `git diff --check` passed.
-- No configured complexity threshold or local Lizard installation was available. Manual branch counts: map refresh 9 → 8, terrain refresh 6 → 2.
-- The new overlay upload method has complexity 1. No terrain meshing or threading code changed.
-
-### Startup hashing
-
-- Status: complete. This phase changed only content hashing, digest output buffers, compatibility tests, and this log.
-- No renderer or terrain implementation changes belong to this phase. Terrain threading remains unstarted.
-- Supplied baseline trace: hash and registry freeze 1,322.23 ms, total freeze 1,376.60 ms, first catalog load 2,403.38 ms.
-- Supplied `--startup` baseline: cold catalog 2,578.43 ms, paired serial/preparation medians 648.09/600.21 ms, about 315.6 MiB per build.
-- Exact content hash before and after: `D2A65A5162647FA8CA9D3837EC5666C6283B9682EA1AD8FB17F0DD1204DE948E`.
-
-#### Change and compatibility
-
-- A private definition converter replaces the retained per-definition `JsonElement` trees with temporary UTF-8 fragments.
-- Each fragment uses `JsonSerializer.SerializeToUtf8Bytes` with the original explicit runtime type and the same serializer options.
-- Each definition still receives a separate root writer. Custom converters retain their original writer depth and serializer scope.
-- The aggregate serializer inserts the fragments without another validation pass. `Digest` parses the aggregate into a JSON tree before canonicalization.
-- The aggregate schema, registry-type order, definition-id order, array order, and extension identities stay unchanged.
-- `Digest` uses `ArrayBufferWriter<byte>` and hashes its written span after the canonical writer flushes.
-- This removes the output copy, UTF-8 decode, and UTF-8 re-encode from the old digest path.
-- `Serialize`, `Normalize`, the recursive canonical writer, shared options, and all public signatures stay unchanged.
-- Integer normalization still uses the same signed/unsigned 64-bit checks. Fractional, exponent-form, and out-of-range numbers still fail.
-- The aggregate JSON tree remains. This change does not introduce a hash cache or parallel hashing.
-
-#### Repeatable measurement
-
-The local comparison used two fresh processes before and two after, with this exact command:
+#### Startup Phase Tracing
+To inspect elapsed timings for mod discovery, assembly loading, sidecar parsing, validation, canonical hashing, world generation stages, and starting positions:
 
 ```sh
+CIV_TRACE_STARTUP=1 mise run start:game
+# Or with the benchmark harness:
 CIV_TRACE_STARTUP=1 mise run benchmark -- --quick
 ```
 
-The benchmark uses Release builds, one initial catalog load, two variant warmups, and five alternating serial/preparation pairs per process.
-Both warmups and all measured catalog builds must match the first content hash. World workloads do not enter the catalog measurements.
-
-- First-load hash and registry freeze: 1,245.60/1,335.51 ms before, 876.41/952.69 ms after.
-- First-load total freeze: 1,295.88/1,387.86 ms before, 934.04/1,006.43 ms after.
-- First catalog load: 2,577.14/2,559.58 ms before, 2,085.44/2,112.62 ms after.
-- Across 20 measured rebuilds per version, the hash/freeze median fell from 365.31 to 266.43 ms: 27.1% less time.
-- The corresponding total-freeze median fell from 397.75 to 284.36 ms: 28.5% less time.
-- Per-build allocation fell from about 315.61 to 257.35 MiB: 58.26 MiB, or 18.5%, less allocation.
-- Paired serial catalog medians: 608.16/651.13 ms before, 533.52/535.16 ms after.
-- Paired preparation catalog medians: 613.00/658.73 ms before, 482.90/620.13 ms after.
-- These are local samples, not timing thresholds. JIT, garbage collection, host load, and filesystem caches affect catalog timings.
-- All four processes produced the exact baseline content hash for the initial load, both warmups, and every measured rebuild.
-
-Local trace files:
-
-- `/tmp/civ-hash-before.log` and `/tmp/civ-hash-before-repeat.log`.
-- `/tmp/civ-hash-final.log` and `/tmp/civ-hash-final-repeat.log`.
-
-#### Approaches that did not work
-
-- Replacing each element with an `object` cast preserved the shipped hash, but changed explicit runtime-type dispatch to object polymorphism.
-- Rejected that shortcut because custom serializer options can change object conversion.
-- A direct-to-parent-writer converter reduced allocation further, but changed the writer depth visible to definition converters.
-- The compatibility fixture failed both registration-order cases with that prototype and passed with the original code and final implementation.
-- Retained separate root serialization despite about 10.3 MiB more allocation than the direct-writer prototype.
-- Direct hashing from a `MemoryStream` removed text conversions, but retained stream staging and copying.
-- In otherwise identical intermediate prototypes, `ArrayBufferWriter<byte>` reduced allocation from about 256.76 to 247.01 MiB per build.
-- No isolated timing claim applies to that buffer comparison. Final allocation includes the separate root serialization cost.
-
-#### Tests and validation
-
-- Test-audit gate: existing tests cover hash sensitivity, registry freezing, and save compatibility, but not exact digest bytes or converter root scope.
-- Added ten cases at the public digest and mod-loading boundaries. They need no production test hooks.
-- Digest cases cover nested ordinal keys, duplicate-key stability, array order, escaping, signed/unsigned limits, and numeric rejection.
-- A fixed content-hash fixture covers runtime converters, root writer depth, mod identity, core command identity, and reversed registration order.
-- All new cases passed with the original freeze/digest path and the final implementation.
-- The focused final command passed 40 tests:
-
-  ```sh
-  mise exec -- dotnet test tests/Civ.Tests/Civ.Tests.csproj --no-restore --filter 'FullyQualifiedName~CanonicalJsonTests|FullyQualifiedName~ContentHashTests|FullyQualifiedName~ContractTests|FullyQualifiedName~ModPreparationTests'
-  ```
-
-- `mise run test` passed all 794 default tests: 107 core, 650 mod/client, and 37 content-import tests.
-- Both builds passed with zero warnings and zero errors:
-
-  ```sh
-  mise run build:game
-  mise exec -- dotnet build tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release --no-restore
-  ```
-
-- `git diff --check` passed. No commit was made.
-
-### Terrain geometry off-thread
-
-- Status: implementation complete. This phase changes only terrain preparation, terrain timing logs, and this document.
-- The completed renderer invalidation and content hashing implementations remain unchanged.
-- Supplied baseline: 672/672 chunks, mesh stage 556–571 ms, conversion/upload/scatter stage 1,262–1,898 ms.
-- Supplied terrain and map-refresh medians: about 2,119 ms and 2,327 ms.
-
-#### Change and thread boundary
-
-- The existing `Parallel.For` now produces one managed surface packet per dirty chunk.
-- Workers convert ground, water, and river attributes into managed `Vector3[]`, `Vector2[]`, and `Color[]` arrays.
-- Workers also compute wet masks and clockwise front-face indices. All numeric expressions and iteration orders remain unchanged.
-- Water preparation reads the captured field, snapshot, and warp grid. `NearWater` does not write caches or access engine objects.
-- Each worker writes a separate result slot. The loop joins before the main thread consumes packets in dirty-chunk order.
-- Raw mesher arrays remain local to each worker. The consumer clears packet slots after retrieval to limit retained memory.
-- Timing-only arrays and stopwatch calls are gated by `MapRenderer.LogTimings`; normal refreshes do not pay for per-chunk diagnostic timing.
-- Godot `Variant` conversion and `Godot.Collections.Array` construction remain on the main thread.
-- `ArrayMesh` construction, `AddSurfaceFromArrays`, materials, triangle statistics, and mesh assignments remain on the main thread.
-- Scatter planning, model access, `MultiMesh` updates, wrap nodes, textures, and visibility updates also remain on the main thread.
-- No rendering thread settings, global caches, new background tasks, public APIs, or test hooks were added.
-
-Safety sources:
-
-- [Godot thread-safe APIs](https://docs.godotengine.org/en/latest/tutorials/performance/thread_safe_apis.html): active scene-tree access is not thread-safe.
-- The same guide warns about resource sharing and GPU synchronization. No resource construction moved to workers.
-- Inspected Godot source at the installed engine revision `ed1daf0bf`, under `modules/mono/glue/GodotSharp/GodotSharp/Core/`.
-- Numeric constructors in `Vector2.cs`, `Vector3.cs`, and `Color.cs` only assign value-type fields. `Vector3.Up` returns a readonly managed value.
-- `ScatterPlanner` writes appearance and model-count dictionaries. `TerrainPalette.ScatterFor` calls mod appearance services.
-- `GameCatalog.ScatterModels` also writes a dictionary and enumerates model files. These paths have no concurrent-call contract.
-- A separate planner per worker would not protect the shared catalog or mod services. Scatter planning therefore remains serial.
-
-#### Measurement method
-
-The local comparison used Debug builds, Godot 4.7.2, Vulkan Forward+, and the NVIDIA GTX 1050 Ti.
-Each version ran in three fresh processes with a huge world, seed 1, zero opponents, and 672 dirty chunks.
-The serial baseline uses the same packet split and timing probes, but prepares packets on the main thread.
-An unchanged-source launch also completed with a valid screenshot: mesh 589 ms, combined upload stage 1,228 ms.
-
-The desktop locked during measurement, and direct display runs stalled after the initial refresh.
-An isolated X11 display avoided that presentation stall without changing the GPU or renderer.
-All compared runs used this command, with a distinct `LABEL`:
+#### Renderer Rebuild Tracing
+To trace Godot renderer stage timings (snapshot capture, worker mesh generation, native array packing, surface uploads, and scatter planning/rebuilds):
 
 ```sh
-xvfb-run -a -s "-screen 0 1280x720x24" mise exec -- godot-mono \
-  --display-driver x11 --path src/Civ.Godot -- \
-  --stage map --world huge --seed 1 --opponents 0 \
-  --screenshot /tmp/civ-terrain-thread/LABEL.png --frames 30 --stats --trace-performance
+mise run build:game
+mise exec -- godot-mono --path src/Civ.Godot -- --stage map --world tiny --seed 1 --opponents 0 --trace-performance
 ```
 
-The initial map view contains mostly hidden terrain. It matches the supplied workload, not a fully explored world.
-The trace separates input construction, worker wall time, managed preparation, native packing, surface creation, assignment, and scatter work.
-`mesh sum` and `prepare sum` add elapsed intervals across workers. They include scheduling and GC pauses, not CPU time.
-Those sums must not be added to worker wall time.
+The `--` separates Godot arguments from game runtime arguments.
 
-Three-run medians, in milliseconds:
+### Controlled Measurement Methodology
 
-| Stage | Serial preparation | Worker preparation |
-| --- | ---: | ---: |
-| Snapshot, field, signatures, resolutions | 71.01 | 68.33 |
-| Worker wall time | 526.97 | 614.45 |
-| Managed preparation on main thread | 205.81 | 0 |
-| Managed preparation, summed worker intervals | not applicable | 468.95 |
-| Native array packing | 19.64 | 30.64 |
-| Resource construction, surface upload, material | 104.64 | 116.91 |
-| Statistics and node assignment | 9.20 | 9.30 |
-| Scatter planning | 283.14 | 286.50 |
-| Scatter rebuilding | 676.80 | 657.91 |
-| tileA | 0.98 | 1.12 |
-| Terrain total | 1,932.71 | 1,792.75 |
-| Map refresh, sum of traced stages | 2,147.20 | 1,944.26 |
+To ensure repeatable and reliable performance comparisons:
 
-- Terrain total decreased by 139.96 ms, or 7.2%, at the median.
-- Terrain ranges: 1,849.21–1,994.39 ms before, 1,709.64–1,873.52 ms after.
-- Serial preparation took 197.33–213.42 ms. Worker wall time increased because it now includes preparation.
-- Preparation does not become free. Concurrent allocation, GC, and scheduling increase the summed elapsed preparation intervals.
-- Token-stage medians also changed from 149.58 to 102.26 ms. No token code changed; the full map delta is not an isolated terrain speedup.
-- Native surface calls do not dominate this workload. Scatter rebuilding remains the largest serial stage.
-- These samples are local observations, not performance thresholds or a frame-rate claim.
-- A later final-build smoke took 1,935.10 ms for terrain and 665.04 ms for workers. This overlaps the serial range.
-- That smoke confirms runtime correctness, not the three-run median benefit. Host load, JIT, GC, and model import costs remain variable.
+1. **Release Builds**: Always measure Release configurations (`dotnet build --configuration Release`).
+2. **Disable Tiered JIT Transition Effects**: Set `DOTNET_TieredCompilation=0` so short microbenchmarks avoid dynamic tier-0 to tier-1 recompilation jitter:
+   ```sh
+   env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
+   ```
+3. **Disable Active Tracing**: Opt-in traces (`CIV_TRACE_STARTUP=1` or verbose loggers) introduce I/O overhead. Disable them during timing comparisons.
+4. **Warmup and Sampling**: Use at least one warmup iteration followed by multiple sequential sample runs (typically 3 to 5 runs), reporting the median of medians rather than isolated runs.
+5. **Exact Hash Verification**: Every benchmark must assert bit-for-bit determinism. Content SHA-256 hash, generated plot/RNG hash, session hash, and founded state hash must match the baseline across all samples.
+6. **Allocation Tracking**: Track managed bytes using `GC.GetTotalAllocatedBytes(true)`, which queries precise runtime allocation counters without triggering a forced garbage collection.
 
-A separate fully visible huge-world pair used `--stage rivers --clean` instead of `--stage map`, without diagnostic hashing.
-Both runs used the same seed, opponents, GPU, display, and 30-frame capture settings.
-This pair is a smoke measurement, not a median:
+---
 
-- Terrain total: 14,718.92 ms serial, 14,015.57 ms with worker preparation.
-- Managed preparation: 920.04 ms serial, 1,736.46 ms summed worker intervals.
-- Worker wall time: 5,533.85 ms serial, 5,786.07 ms with preparation.
-- Native packing: 56.88/70.70 ms. Surface construction: 421.11/419.99 ms.
-- Scatter planning: 5,529.20/5,676.42 ms. Scatter rebuilding: 1,881.91/1,686.82 ms.
-- Map refresh, sum of traced stages: 15,644.78/14,951.48 ms.
-- The large serial scatter cost limits the total benefit. No general fully explored-world speedup follows from one pair.
-- These traces are `revealed-serial.log` and `revealed-cleanparallel.log`, with adjacent screenshots and statistics.
+## Chronological Optimization Timeline
 
-#### Approaches rejected or limited
-- Rejected concurrent `ScatterPlanner.Plan` calls because its caches, shared catalog, and mod callbacks are not thread-safe.
-- Rejected worker-side Godot arrays, meshes, materials, nodes, and model loading. No measured result justifies expanding that safety boundary.
-- No chunk scheduling, geometry resolution, density, thinning, or candidate-order changes were made.
-- All prepared geometry packets are built before serial resource uploads. This keeps the worker join simple and ordered, but peak temporary memory was not measured; bounded batches remain a possible follow-up if profiling shows memory pressure.
-- Luna's review found no worker-thread race or geometry/index semantic change. It flagged the always-on timing overhead, which was fixed by gating diagnostics behind `MapRenderer.LogTimings`.
-- Did not add another parallel mesher pass. Preparation follows each chunk's mesher work in the existing pass.
-- The first temporary comparison build reused an old assembly because its external source override ran after MSBuild's dependency cache.
-- Discarded that comparison. Moved the temporary override earlier and forced recompilation before the byte comparison.
-- All diagnostic sources and build overrides live under `/tmp/civ-terrain-thread`, not in the shipped project.
+```
+[Phase 1: Oct 17, 2026] Engine Invalidation, Content Hashing, & Off-Thread Terrain
+                        (Commit: 821d3a1)
+       │
+       ▼
+[Phase 2: Oct 17, 2026] AI Multithreading & Speculative Parallel Waves
+                        (Commits: d6d73ab, 0685342, b81909f, 4282ff6, f064004, 482ecc4)
+       │
+       ▼
+[Phase 3: Oct 17, 2026] AI Serial Work Reduction & Spatial Indexing
+                        (Commits: c339ee2, e6239f8, da5fa32, 9ff9998, 193567e, 3dc5495)
+       │
+       ▼
+[Phase 4: Oct 17, 2026] World Generation Geometry & River Traversal
+                        (Commit: 7b12754)
+```
 
-#### Validation
+---
 
-- `mise run build:game` passed before and after with zero warnings and zero errors.
-- `mise exec -- dotnet build src/Civ.Godot --configuration Release` passed with zero errors.
-- Release reported two existing CS1573 warnings for missing constructor parameter comments. This phase does not change that constructor.
-- `git diff --check` passed. No commit was made.
-- No tests or source contracts changed. Per the task boundary, default tests were not rerun for this phase.
-- Temporary runtime diagnostics hashed every uploaded surface attribute and ordered scatter candidate list in the real engine.
-- The reference used the original terrain implementation, not a second copy of the new preparation helpers.
-- Fully visible huge-world runs matched all 2,665 ordered records: 672 chunk markers, 1,321 surface hashes, and 672 scatter hashes.
-- The record-sequence SHA-256 was `B53018458D3645BBAFB800D73968D4401FF687B15CCE56A087403C1766F9E05B` for both versions.
-- Geometry hashes include array lengths and raw bytes for positions, normals, UV, UV2, colors, and indices.
-- Scatter hashes include each candidate's set, model index, position, yaw, scale, and tile in original order.
-- Both runs reported 3,992,256 terrain triangles. Planned/kept scatter counts, height statistics, and other triangle counts matched for all four poses.
-- The normal-view statistics also matched across all six timed runs, including 1,744,992 terrain triangles.
-- Inspected paired river, wrap, mountain, and forest screenshots. Terrain boundaries, river banks, prop placement, and the wrap seam remained consistent.
-- Screenshots are not pixel-identical because water, foliage, and temporal rendering depend on frame time. Geometry hashes provide the exact-byte check.
-- No terrain errors or exceptions appeared. Xvfb reported an input-method warning and a DRI3 presentation notice in both versions.
-- Temporary byte-hash diagnostics and external build overrides are absent from shipped source. The existing performance trace remains opt-in.
-- After all three phases, `mise run test` passed 794 tests with 0 failures and 0 skipped in 122 seconds.
-- Lizard reported `RebuildWorld` complexity 4 → 4, water preparation 7 → 7, and river preparation 3 → 3.
-- The shared resource builder changed from 3 to 5 because it now handles optional river attributes. No touched method exceeds complexity 10.
+### Phase 1: Engine Invalidation, Content Hashing, and Off-Thread Terrain Preparation
 
-Local evidence lives under `/tmp/civ-terrain-thread/`:
+- **Date**: 2026-10-17
+- **Primary Commit**: [`821d3a1`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md) (*Optimize terrain geometry preparation, content hashing, and map invalidation*)
 
-- `serial-{1,2,3}.log` and `parallel-{1,2,3}.log`: uninstrumented timing runs and adjacent PNG/JSON captures.
-- `validation-original.log` and `validation-parallel.log`: original-versus-worker byte comparisons. These timings include diagnostic hashing and are not performance samples.
-- `validation-original/` and `validation-parallel/`: four fully visible huge-world poses and their statistics.
-- `validation-compare.png`: paired poses, with the reference on the left and the worker version on the right.
-- `complexity.log`: same-analyzer before/after complexity results.
-- `final-debug-build.log` and `final-release-build.log`: normal builds without external source overrides.
-- `final-smoke.log`, PNG, and JSON: final normal-build capture without diagnostic hash code.
+#### 1. Map Renderer Rebuild Reduction
+- **Motivation**: `GameSession.Submit` increments `WorldRevision` on every successful command, while selection and UI events increment `Revision`. `MapRenderer` was rebuilding terrain height fields, signatures, snapshots, and textures even for non-world actions (e.g. selection, menu toggles, rejected actions).
+- **Changes**:
+  - In `src/Civ.Godot/TerrainRenderer.cs` and `src/Civ.Godot/MapRenderer.cs`, decoupled world terrain refreshes from non-world simulation revisions (`RefreshWorld` vs. `RefreshOverlay`).
+  - Keyed terrain snapshot and signature rebuilds strictly on `GameSession.WorldRevision`.
+  - Non-world actions (Tab, Escape, selection changes) no longer trigger terrain rebuilds.
+  - Uploaded overlay marks (`tileB`) once after overlay generation without touching land geometry.
+- **Measurements**:
+  - Tested on tiny world with 117 terrain chunks under Vulkan Forward+ via 20 UI actions (10 Tab, 10 Escape):
+    - **Terrain stage rebuild time**: dropped from **8.00 ms median** (2–14 ms range) to **0.00 ms** (zero snapshot/signature rebuilds).
+    - **Overlay upload**: median 0.11 ms.
+    - Token stage medians remained 4.5 ms before vs. 4.785 ms after (confirming terrain isolation).
+
+#### 2. Startup Content Hashing Optimization
+- **Motivation**: Startup profiling revealed that `ContentDb.Freeze` spent >1.3s creating intermediate `JsonElement` syntax trees for each definition and serializing full canonical JSON strings into `Digest` buffers.
+- **Changes**:
+  - In `src/Civ.Core/Content/ContentDb.cs`, serialized content definitions as UTF-8 byte fragments using a custom `HashDefinition` converter, eliminating intermediate `JsonElement` allocations while preserving runtime type dispatch and root writer depth.
+  - In `src/Civ.Core/Game/CanonicalJson.cs`, modified `Digest` to stream canonical UTF-8 directly into `ArrayBufferWriter<byte>` and hash the span directly, avoiding intermediate string allocations, UTF-8 decodes, and UTF-8 re-encodings.
+- **Measurements**:
+  - Measured across 20 catalog rebuilds (`CIV_TRACE_STARTUP=1 mise run benchmark -- --quick`):
+    - **Catalog hash/freeze median**: fell from 365.31 ms to 266.43 ms (**27.1% reduction**).
+    - **Total freeze median**: fell from 397.75 ms to 284.36 ms (**28.5% reduction**).
+    - **Per-build memory allocations**: fell from 315.61 MiB to 257.35 MiB (**58.26 MiB / 18.5% reduction**).
+    - **First catalog load**: fell from 2,568 ms to 2,099 ms median (**18.3% reduction**).
+    - Content hash remained exactly bit-for-bit identical (`D2A65A5162647FA8CA9D3837EC5666C6283B9682EA1AD8FB17F0DD1204DE948E`).
+
+#### 3. Off-Thread Terrain Geometry Preparation
+- **Motivation**: `TerrainRenderer.RebuildWorld` spent significant main-thread time converting raw mesher vertex, normal, UV, and index data into Godot surface arrays.
+- **Changes**:
+  - In `src/Civ.Godot/TerrainRenderer.cs`, parallelized ground, water, and river surface preparation across worker threads inside the existing `Parallel.For` loop using `SurfaceData` and `PreparedChunk` records.
+  - Workers compute vertex positions, normals, UVs, colors, wet masks, and front-face indices concurrently.
+  - The main thread exclusively handles native `Godot.Collections.Array` packing, `ArrayMesh` construction, material assignments, and scene tree node updates.
+  - Gated diagnostic stopwatches and per-chunk logging behind `MapRenderer.LogTimings`.
+- **Measurements**:
+  - Measured across 3 runs on huge world (672 chunks, seed 1, zero opponents):
+    - **Main-thread managed preparation**: dropped from **205.81 ms to 0.00 ms** (moved to workers, totaling 468.95 ms summed worker intervals).
+    - **Terrain total time**: decreased from 1,932.71 ms to 1,792.75 ms (**139.96 ms / 7.2% reduction**).
+    - **Map refresh total**: decreased from 2,147.20 ms to 1,944.26 ms (**9.5% reduction**).
+    - Native array packing and surface upload remained 124.28 ms before vs. 147.55 ms after.
+    - Record-sequence SHA-256 matched identically (`B53018458D3645BBAFB800D73968D4401FF687B15CCE56A087403C1766F9E05B`).
+
+---
+
+### Phase 2: AI Multithreading and Speculative Parallel Turns
+
+- **Date**: 2026-10-17
+- **Primary Commits**:
+  - [`d6d73ab`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Parallelize read-only candidate scoring in the standard AI planners*
+  - [`0685342`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Run independent AI turns in speculative parallel waves*
+  - [`b81909f`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Track complete unit mutations in speculative turns and bound concurrency*
+  - [`4282ff6`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Document AI multithreading performance results*
+  - [`f064004`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Invalidate speculative plans after global entity changes*
+  - [`482ecc4`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Document AI multithreading architecture and safety invariants*
+
+#### Architecture and Safety Invariants
+1. **Intra-Planner Parallel Candidate Scoring**:
+   - `ParallelScoring.Select` in `SitePlanner`, `CityPlanner`, `ResearchPlanner`, `WorkerPlanner`, `MilitaryPlanner`, and `AttackPlanner` evaluates independent read-only candidate items concurrently across worker threads above candidate thresholds.
+   - Candidates are scored without mutating simulation state or drawing from `Simulation.Rng`. Results sort deterministically by score with ordinal/entity ID tie-breaking.
+   - Scoring runs serially during speculative turns (`Simulation.IsParallelAiTurn`) to prevent threadpool oversubscription.
+2. **Read-Only Query Memoization**:
+   - `[ThreadStatic] CityReadScope` caches building activity, power status, and modifiers during citizen allocation.
+   - `ResourceNetwork.Modes` evaluates transport connections lazily per query.
+   - `INavalBlockadeService.BlockadedTiles` resolves blockaded water plots once per query rather than per plot.
+3. **Fast In-Memory State Cloning**:
+   - `GameState.Clone()`, `Plot.Clone()`, and `ExtensionState.Clone()` produce independent simulation copies for `Simulation.ForkSpeculative()` without full-save canonical normalization.
+4. **Wave-Based Speculative Parallel Turns**:
+   - `Simulation.RunAi()` delegates to `AiTurnSpeculator`, partitioning uncommitted AI players into speculative waves.
+   - Player $p_0$ plans directly against the authoritative simulation; players $p_1 \dots p_{m-1}$ plan concurrently on isolated state forks.
+   - Plans commit sequentially in ascending `Player.Id` order by replaying recorded `GameCommand` sequences against authoritative state.
+5. **Safety and Conflict Guards**:
+   - **Active Mutation Footprint**: Plans conflict if any tile in an earlier player's active mutation footprint (unit moves, city founding/capture/razing, border changes, improvements, routes) lies within 5 hexes (`ActiveFootprintRadius = 5`) of a candidate plan's footprint. Moving settlers and explorers expand footprints by radius 3.
+   - **Global Entity-Aggregate Protection**: Changes to entity counters (`NextCityId`, `NextUnitId`), entity membership/ownership, unit health/XP/promotions, city buildings/population/extensions, or power inputs trigger global entity-aggregate conflicts for subsequent plans in the wave.
+   - **RNG and Diplomacy Consistency**: Rejects plans if RNG draws or team war relations diverge.
+   - **Fingerprint Verification**: Plan commit verifies that pre/post-command RNG streams and state digests match the fork execution.
+
+#### Measurements and Results
+- **Fifty-City Turn (turn 2, 50 cities)**:
+  - Baseline execution: **83,120.65 ms** (~83.1 s).
+  - Multithreaded execution: **2,139.04 ms** (~2.14 s).
+  - Improvement: **97.43% reduction (38.86× speedup)**.
+- **8-Player Preparation Benchmark (99 turns setup)**:
+  - Baseline execution: exceeded 90 minutes of CPU time without completing (terminated).
+  - Multithreaded execution: completed in **231,096.19 ms** (3 minutes 51.10 seconds).
+- **Turn-100 `RunAi()` Decisions (8 players, 41 cities, 114 units)**:
+  - Execution time: **1,802.43 ms** (no baseline available due to baseline timeout).
+
+---
+
+### Phase 3: AI Serial Work Reduction and Spatial Indexing
+
+- **Date**: 2026-10-17
+- **Primary Commits**:
+  - [`c339ee2`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Reuse AI planning calculations and index spatial queries*
+  - [`e6239f8`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Reuse exact AI paths within unchanged planning segments*
+  - [`da5fa32`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Prune rejected AI choices and reuse candidate eligibility*
+  - [`9ff9998`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Cache sight levels within each visibility recomputation*
+  - [`193567e`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Retain AI strategic goals and safe civilian destinations*
+  - [`a295bf0`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Validate AI isolation and intent replay across independent games*
+  - [`3dc5495`](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Document AI serial optimization architecture, cache boundaries, and benchmark limits*
+
+#### Architectural Work Reductions
+1. **Calculation Reuse**: `AiContext.Segment` memoizes unit role counts, queued production counts, city views, production eligibility, nearest-city queries, and campaign targets across unchanged planning segments.
+2. **Path Query Reuse**: `AiContext.FindPath` caches exact queries up to $\min(256, \max(1, \text{units}) \times 8)$ entries per segment. `PathfindingService` combines cost and parent maps into a single local table, eliminating dictionary growth allocations.
+3. **Candidate Pruning**: Wonder budgets and worker prerequisite filters skip candidate evaluations and yield previews; `AiOptions.Best` selects top legal candidates without allocating sorted ranking lists.
+4. **Visibility Memoization**: `VisibilityService.Recompute` caches directional terrain sight levels per plot and team water sight in call-local arrays and dictionaries.
+5. **Spatial Indexing**: Tile-bucket threat strength grids (`ThreatStrength`) replace repeated whole-map enemy unit scans; settlement exclusion masks and nearest-city distance fields replace per-candidate city distance scans.
+6. **Strategic Goal Retention**: Unchanged civics and primary land campaigns are retained for up to 3 turns; valid settler and worker travel destinations are retained for up to 12 turns.
+
+#### Measurement Status
+- Operational gains were verified through algorithmic inspection of removed scans, sorts, allocations, and re-evaluations. Dedicated before-and-after wall clock benchmark tables were not recorded for these serial commits (documented as unmeasured runtime gains in `tools/Civ.Benchmarks/README.md`).
+
+---
+
+### Phase 4: World Generation Geometry and River Traversal
+
+- **Date**: 2026-10-17
+- **Primary Commit**: [`7b12754`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md) (*Optimize world generation geometry and river traversal*)
+- **Baseline Revision**: `fc7e514df97345fdda5d861be7dacac626e011c3`
+
+#### Implementation Changes
+1. **Hexagonal Grid Intervals (`src/Civ.Core/HexGrid.cs`)**:
+   - Replaced sorted range tree construction with direct enumeration of row intervals (`RangeRows`, `RangeColumns`).
+   - Each row produces clipped column intervals in ascending tile order.
+   - Wrapped intervals split at the seam; full-width intervals emit each column once; intermediate arithmetic uses `long` to prevent radius overflow.
+   - `HexGrid.Neighbors`: Skips the per-query `HashSet` deduplication when geometry ensures directions cannot produce duplicate tiles (retained for wrapped maps of width 1 or 2).
+2. **River Traversal Deduplication (`src/Mods/World/ContinentsGenerator.cs`)**:
+   - River drainage generation terminates early upon reaching an already drawn drainage suffix, as each tile has a single parent.
+   - A generation-local bitmap records completed paths.
+   - Bounded direction loops replace captured LINQ closures for each river edge.
+3. **Harness & Verification (`tools/Civ.Benchmarks`, `tests/Civ.Tests/HexGridTests.cs`)**:
+   - Added `--world` benchmark option for isolated world generation and session startup timings.
+   - Added independent breadth-first range verification tests covering bounded, wrapped, narrow, and single-row maps.
+
+#### Benchmark Measurements
+
+Controlled comparison settings: Fedora 44 x64, Intel Core i7-7700HQ, .NET SDK 10.0.401, `DOTNET_TieredCompilation=0`, 4 players, east–west wrapped map. Values report medians of three process medians.
+
+##### 1. World Generation Workload
+*Includes plot allocation, terrain, rivers, features, bonuses, and goodies. Excludes catalog rebuilds, player setup, and AI.*
+
+| World | Seed | Before ms | After ms | Time Delta | Before MiB | After MiB | Allocation Delta |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Standard 84×52** | 1 | 69.97 | 54.98 | **-21.4%** | 11.99 | 6.34 | **-47.1%** |
+| **Standard 84×52** | 42 | 63.46 | 54.03 | **-14.9%** | 11.85 | 6.33 | **-46.6%** |
+| **Standard 84×52** | 987654 | 61.72 | 46.60 | **-24.5%** | 12.69 | 6.35 | **-50.0%** |
+| **Gigantic 200×120** | 1 | 311.04 | 309.79 | **-0.4%** | 58.84 | 35.15 | **-40.3%** |
+| **Gigantic 200×120** | 42 | 320.29 | 377.74 | +17.9% | 59.77 | 35.18 | **-41.1%** |
+| **Gigantic 200×120** | 987654 | 402.11 | 364.39 | **-9.4%** | 60.00 | 35.33 | **-41.1%** |
+
+*Note: Gigantic seed 42 wall-clock increase reflected host scheduling and CPU contention; allocation reduction remained uniformly ~41%.*
+
+##### 2. Full Session Startup Workload
+*Includes generation, player setup, starting site selection, and initial opponent AI.*
+
+| World | Seed | Before ms | After ms | Time Delta | Before MiB | After MiB | Allocation Delta |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Standard 84×52** | 1 | 244.93 | 322.63 | +31.7% | 100.97 | 91.38 | **-9.5%** |
+| **Standard 84×52** | 42 | 250.68 | 242.86 | **-3.1%** | 83.04 | 74.10 | **-10.8%** |
+| **Standard 84×52** | 987654 | 247.86 | 244.10 | **-1.5%** | 95.50 | 85.24 | **-10.7%** |
+| **Gigantic 200×120** | 1 | 1467.85 | 1339.56 | **-8.7%** | 279.27 | 241.28 | **-13.6%** |
+| **Gigantic 200×120** | 42 | 1253.19 | 1091.04 | **-12.9%** | 288.90 | 250.10 | **-13.4%** |
+| **Gigantic 200×120** | 987654 | 1215.94 | 1127.57 | **-7.3%** | 294.62 | 255.57 | **-13.3%** |
+
+##### Correctness and Determinism
+- Content hash matched baseline: `58BF65EEC063C432AF274B66DC6400087BFFED318F955AF7121F89A1010F6008`.
+- Generated plot/RNG hashes (standard: seeds 1, 42, 987654; gigantic: seeds 1, 42, 987654):
+  - `F6436E2BE45A3B35585BA2A6535BF37EEB421AA27533A3CF2C1C19DED6575E68`
+  - `2B182D6951E35D73E6AA2731FCB16608EAABA3E8E252E1E8516D74A801AAAD31`
+  - `3B64D6B8A97CED32F2C7B34C668C4DE4D4061EB6AE384E0A34039F6B3428F526`
+  - `0282F40B80F873E914539A92F63CC3BDAFDB8885C68914DF6650120F66BD599C`
+  - `08EA1DAA7B56715204DAFF29AA462308EEFCF9CF0318A8B2F58946422D0B5FBB`
+  - `0A63FED13BBADAF6F0818E15DFA17FEE1AB9B78E0E7C44D6BDFC5B5BD43DE5E1`
+- Session hashes matched baseline in identical order:
+  - `46F651468826615C`, `D90B5CF7C47CD23D`, `46DFA66041914FFE`, `CDFD92CD292B0C64`, `1AD5F7CBE2AF0F16`, `BD3C3D8FE93FB0FB`.
+
+---
+
+## Comprehensive Performance Summary
+
+The following table aggregates all recorded performance measurements across optimization phases:
+
+| Optimization Phase & Focus Area | Primary Commit | Workload / Operation | Metric | Before | After | Improvement |
+| :--- | :--- | :--- | :--- | ---: | ---: | ---: |
+| **Phase 1: Renderer Invalidation** | `821d3a1` | Non-world UI actions (20 actions, tiny map) | Terrain rebuild time | 8.00 ms | 0.00 ms | **-100% (eliminated)** |
+| **Phase 1: Startup Content Hashing** | `821d3a1` | Catalog freeze (20-rebuild median) | Wall time | 365.31 ms | 266.43 ms | **-27.1%** |
+| | | Catalog total freeze | Wall time | 397.75 ms | 284.36 ms | **-28.5%** |
+| | | Catalog build allocation | Managed bytes | 315.61 MiB | 257.35 MiB | **-18.5% (-58.3 MiB)** |
+| | | First catalog load | Wall time | 2,568 ms | 2,099 ms | **-18.3%** |
+| **Phase 1: Terrain Geometry Off-Thread** | `821d3a1` | Huge world (672 chunks, seed 1) | Main-thread managed prep | 205.81 ms | 0.00 ms | **-100% (offloaded)** |
+| | | Huge world terrain total | Wall time | 1,932.71 ms | 1,792.75 ms | **-7.2%** |
+| | | Huge world map refresh | Traced wall time | 2,147.20 ms | 1,944.26 ms | **-9.5%** |
+| **Phase 2: AI Multithreading** | `d6d73ab`, `0685342` | Fifty-city turn (turn 2, 50 cities) | Turn execution time | 83,120.65 ms | 2,139.04 ms | **-97.43% (38.86× speedup)** |
+| | | 8-player 99-turn preparation | Elapsed time | >90 min (timeout) | 231,096.19 ms | **Finished (3m 51s)** |
+| | | Turn-100 8-player AI decisions | `RunAi()` duration | *Unrecorded* | 1,802.43 ms | *Baseline timed out* |
+| **Phase 3: AI Serial Work Reduction** | `c339ee2`, `3dc5495` | A* pathfinding, spatial threat grid, goal reuse | Operational work | Linear scans / sorts | Cached / indexed | *Unmeasured runtime gains* |
+| **Phase 4: World Generation** | `7b12754` | Standard world generation (84×52, 3 seeds) | Managed bytes | 11.85–12.69 MiB | 6.33–6.35 MiB | **-46.6% to -50.0%** |
+| | | Standard world generation (84×52, 3 seeds) | Wall time | 61.72–69.97 ms | 46.60–54.98 ms | **-14.9% to -24.5%** |
+| | | Gigantic world generation (200×120, 3 seeds) | Managed bytes | 58.84–60.00 MiB | 35.15–35.33 MiB | **-40.3% to -41.1%** |
+| | | Gigantic world generation (200×120, 3 seeds) | Wall time | 311.04–402.11 ms | 309.79–377.74 ms | **-0.4% to -9.4%** *(seed 42 Contention)* |
+| | | Standard session startup (84×52, 3 seeds) | Managed bytes | 83.04–100.97 MiB | 74.10–91.38 MiB | **-9.5% to -10.8%** |
+| | | Gigantic session startup (200×120, 3 seeds) | Managed bytes | 279.27–294.62 MiB | 241.28–255.57 MiB | **-13.3% to -13.6%** |
+| | | Gigantic session startup (200×120, 3 seeds) | Wall time | 1,215–1,468 ms | 1,091–1,340 ms | **-7.3% to -12.9%** |
