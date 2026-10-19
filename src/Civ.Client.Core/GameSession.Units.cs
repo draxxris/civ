@@ -6,9 +6,14 @@ namespace Civ.Client;
 /// <summary>Odds of the combat a move would start, as shown before committing.</summary>
 public sealed record AttackPreview(int DefenderId, string DefenderName, int WinPercent, int DamageToAttacker, int DamageToDefender);
 
-/// <summary>What a right click on a tile would do: the route, how many turns it takes, and the fight at its end if any.</summary>
-public sealed record MovePreview(IReadOnlyList<Hex> Path, int Turns, AttackPreview? Attack)
+/// <summary>
+/// What a right click would do: the route, per-step arrival turns (1 is this turn), and the fight at its end if any.
+/// StepTurns aligns with Path and uses the pathfinder's estimates.
+/// </summary>
+public sealed record MovePreview(IReadOnlyList<Hex> Path, IReadOnlyList<int> StepTurns, AttackPreview? Attack)
 {
+    /// <summary>The estimated arrival turn at the destination, relative to this turn (1).</summary>
+    public int Turns => StepTurns.Count == 0 ? 1 : StepTurns[^1];
     public string Summary => Attack is { } a
         ? $"Attack {a.DefenderName}: {a.WinPercent}% to win"
         : Turns <= 1 ? "Arrives this turn" : $"{Turns} turns";
@@ -35,14 +40,7 @@ public sealed partial class GameSession
         var defender = Service<ICombatService>().BestDefender(Sim, unit.Id, hex);
         var path = Service<IPathfindingService>().FindPath(Sim, unit.Id, hex, attack: defender != null);
         if (path == null || path.Steps.Count == 0) return null;
-        return new(path.Steps, TurnsFor(unit, path.Cost), defender is int d ? AttackOdds(unit, d) : null);
-    }
-
-    private int TurnsFor(Unit unit, long cost)
-    {
-        long perTurn = Math.Max(1, Service<IUnitService>().MaximumMoves(Sim, unit.Id));
-        long left = Math.Max(0, unit.MovesLeft);
-        return cost <= left ? 1 : 1 + (int)((cost - left + perTurn - 1) / perTurn);
+        return new(path.Steps, path.StepTurns, defender is int d ? AttackOdds(unit, d) : null);
     }
 
     private AttackPreview AttackOdds(Unit attacker, int defenderId)

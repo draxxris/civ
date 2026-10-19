@@ -181,9 +181,13 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var preview = s.PreviewAt(target)!;
         Assert.True(preview.Turns >= 2);
         Assert.Equal(target, preview.Path[^1]);
+        Assert.Equal(preview.Path.Count, preview.StepTurns.Count);
+        Assert.Equal(preview.StepTurns[^1], preview.Turns);
+        var reachableThisTurn = preview.Path.Where((_, i) => preview.StepTurns[i] == 1).Last();
         s.RightClick(target);
         Assert.Equal("", s.Message);
         var after = warrior.Position;
+        Assert.Equal(reachableThisTurn, after);
         Assert.NotEqual(target, after);
         Assert.True(s.HasGoto(warrior.Id));
         s.EndTurn();

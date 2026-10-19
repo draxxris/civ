@@ -5,9 +5,9 @@
 - Registry: `src/Mods/Military/data/unit.json` (359 units in this run).
 - Source: `/home/gordon/workspace/civ/AND-extraction`.
 - Converted: **357**. Failed: **2**.
-- Animated: **351**. Skinned: **333**. Textured: **355**.
+- Animated: **351**. Skinned: **333**. Textured: **357**.
 - Output: `src/Mods/Military/art/models/<unit-id-suffix>.glb`.
-- Total GLB size: 122,712,332 bytes.
+- Total GLB size: 122,761,108 bytes.
 - The report itself is the art registry. Each unit section identifies its source and output status.
 
 ## Reproduction
@@ -811,22 +811,20 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bull
 
-- Model: `src/Mods/Military/art/models/bull.glb` (88,220 bytes).
+- Model: `src/Mods/Military/art/models/bull.glb` (112,608 bytes).
 - Art: `ART_DEF_UNIT_BULL`. Source scale: 0.5.
 - NIF: `art/units/bull/cow.nif`.
 - KFM: `art/units/charlemagne_heavycavalry/heavycavalry.kfm`.
-- Geometry: 1182 triangles, 3 skins, 42 joint bindings, 0 textures.
+- Geometry: 1182 triangles, 3 skins, 42 joint bindings, 1 textures.
 - Bounds: height 0.5807, radius 0.4800, feet Y=0.
 - Clips: idle (6 channels), run (6 channels), fortify (6 channels), attack (6 channels), hurt (6 channels), die (6 channels).
-- SHA-256: `ea6dc199c3adf59e3758d9dd57b0c8b6b4df257e20957ef18786cb1dded47280`.
+- SHA-256: `0690c1055f8ee98f897667713570a1abcc5630595940350091409434e921f92f`.
 - idle: `art/units/charlemagne_heavycavalry/heavycavalry_md_idle.kf`.
 - run: `art/units/charlemagne_heavycavalry/heavycavalry_md_run.kf`.
 - fortify: `art/units/charlemagne_heavycavalry/heavycavalry_md_fortifya.kf`.
 - attack: `art/units/charlemagne_heavycavalry/heavycavalry_md_strikea.kf`.
 - hurt: `art/units/charlemagne_heavycavalry/heavycavalry_md_hurta.kf`.
 - die: `art/units/charlemagne_heavycavalry/heavycavalry_md_diea.kf`.
-- Note: Missing texture: bizon.dds
-- Note: No diffuse texture resolved
 
 ### military:byzantine_cataphract
 
@@ -922,22 +920,20 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_bull
 
-- Model: `src/Mods/Military/art/models/captured_bull.glb` (88,220 bytes).
+- Model: `src/Mods/Military/art/models/captured_bull.glb` (112,608 bytes).
 - Art: `ART_DEF_UNIT_BULL`. Source scale: 0.5.
 - NIF: `art/units/bull/cow.nif`.
 - KFM: `art/units/charlemagne_heavycavalry/heavycavalry.kfm`.
-- Geometry: 1182 triangles, 3 skins, 42 joint bindings, 0 textures.
+- Geometry: 1182 triangles, 3 skins, 42 joint bindings, 1 textures.
 - Bounds: height 0.5807, radius 0.4800, feet Y=0.
 - Clips: idle (6 channels), run (6 channels), fortify (6 channels), attack (6 channels), hurt (6 channels), die (6 channels).
-- SHA-256: `ea6dc199c3adf59e3758d9dd57b0c8b6b4df257e20957ef18786cb1dded47280`.
+- SHA-256: `0690c1055f8ee98f897667713570a1abcc5630595940350091409434e921f92f`.
 - idle: `art/units/charlemagne_heavycavalry/heavycavalry_md_idle.kf`.
 - run: `art/units/charlemagne_heavycavalry/heavycavalry_md_run.kf`.
 - fortify: `art/units/charlemagne_heavycavalry/heavycavalry_md_fortifya.kf`.
 - attack: `art/units/charlemagne_heavycavalry/heavycavalry_md_strikea.kf`.
 - hurt: `art/units/charlemagne_heavycavalry/heavycavalry_md_hurta.kf`.
 - die: `art/units/charlemagne_heavycavalry/heavycavalry_md_diea.kf`.
-- Note: Missing texture: bizon.dds
-- Note: No diffuse texture resolved
 
 ### military:captured_cave_lion
 
