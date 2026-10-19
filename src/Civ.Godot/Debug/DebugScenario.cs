@@ -15,7 +15,7 @@ namespace Civ.Client;
 ///   "focus": [5, 5] }
 /// </code>
 /// Road entries can be point arrays (default road), or objects with a path and optional route; routes assigns one route name per path point.
-/// Route names accept full ids or short names. Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), lake, owner (null clears it), city.
+/// Route names accept full ids or short names. Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), cliff (true, false or a sea-edge bit mask), lake, owner (null clears it), city.
 /// City example: "city": {"owner":0,"name":"Testburg","population":5,"buildings":["walls"]}.
 /// City requires owner and name; population defaults to 1 and buildings to empty. It clears the plot improvement and sets its owner.
 /// Optional "era" (full id or short name such as "modern") sets the owner's current era, which picks the look of the city's
@@ -29,6 +29,19 @@ namespace Civ.Client;
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
 {
+    /// <summary>"cliff": true puts a cliff on every sea edge of a land tile, false clears them, and a number is an edge bit mask
+    /// (Hex.Directions order) of which sea edges get one. Edges to land or lakes never get a cliff.</summary>
+    private static void SetCliffs(GameSession session, TileId tile, JsonElement cliff)
+    {
+        var state = session.Sim.State;
+        int mask = cliff.ValueKind switch { JsonValueKind.True => 63, JsonValueKind.False => 0, _ => cliff.GetInt32() };
+        bool Water(TileId t) => session.Sim.Content.Get<Schema.TerrainDef>(state.Plots[t.Value].Terrain).IsWater;
+        if (Water(tile)) return;
+        for (int d = 0; d < 6; d++)
+            if (state.Grid.Neighbor(tile, d) is { } other && Water(other) && !state.Plots[other.Value].IsLake)
+                state.SetCliff(tile, d, (mask & (1 << d)) != 0);
+    }
+
     public static Hex? Apply(GameSession session, string file)
     {
         using var doc = JsonDocument.Parse(System.IO.File.ReadAllText(file), new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
@@ -38,12 +51,18 @@ internal static class DebugScenario
             foreach (var tile in state.Grid.Tiles)
             {
                 var plot = state.Plots[tile.Value];
-                plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.IsLake = false;
+                plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.CliffEdges = 0; plot.IsLake = false;
                 Edit(session, tile, fill);
             }
         if (root.TryGetProperty("tiles", out var tiles))
+        {
             foreach (var entry in tiles.EnumerateArray())
                 foreach (var tile in Targets(session, entry)) Edit(session, tile, entry);
+            // Cliffs need the final terrain on both sides of an edge, so they go on after every tile is set.
+            foreach (var entry in tiles.EnumerateArray())
+                if (entry.TryGetProperty("cliff", out var cliff))
+                    foreach (var tile in Targets(session, entry)) SetCliffs(session, tile, cliff);
+        }
         if (root.TryGetProperty("roads", out var roads))
         {
             foreach (var entry in roads.EnumerateArray())

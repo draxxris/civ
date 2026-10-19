@@ -207,10 +207,10 @@ vec3 periodic_voronoi(vec2 p, float frequency) {
 	for (int y = -1; y <= 1; y++)
 		for (int x = -1; x <= 1; x++) {
 			vec2 c = i + vec2(float(x), float(y));
-			vec2 key = vec2(mod(c.x, cells), c.y);
-			vec2 jitter = vec2(cloud_hash(key), cloud_hash(key + 17.3)) * 0.8 + 0.1;
+			ivec2 key = ivec2(int(mod(c.x, cells)), int(c.y));
+			vec2 jitter = vec2(lattice_hash(key, 21u), lattice_hash(key, 22u)) * 0.8 + 0.1;
 			float d = length(vec2(float(x), float(y)) + jitter - f);
-			if (d < f1) { f2 = f1; f1 = d; id = cloud_hash(key + 5.1); }
+			if (d < f1) { f2 = f1; f1 = d; id = lattice_hash(key, 23u); }
 			else if (d < f2) f2 = d;
 		}
 	return vec3(f1, f2, id);

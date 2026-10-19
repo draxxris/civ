@@ -41,6 +41,7 @@ public sealed class WorldMod : IPreparableMod
         context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         context.RegisterService<Civ.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
         context.RegisterService<Civ.Game.IWaterService>("water", water);
+        context.RegisterService<Civ.Game.IMapSanitizer>("cliffs", new CliffRules());
         context.RegisterService<Civ.Game.IPlotYieldService>("plot_yields", yields);
         context.RegisterService<Civ.Game.IResourceNetwork>("resource_network", network);
         context.RegisterService<Civ.Game.ICityConnectionService>("city_connections", network);
@@ -54,7 +55,11 @@ public sealed class WorldMod : IPreparableMod
         context.TurnSystems.Register(new ImprovementTurnSystem());
         context.TurnSystems.Register(new GlobalWarmingSystem(yields));
         context.TurnSystems.Register(visibility);
-        context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, e) =>
+        {
+            CliffRules.EnsureBeach(sim.State, sim.Content, sim.State.Grid.TileAt(e.Position));
+            visibility.Recompute(sim);
+        });
         context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
         context.Subscribe<Civ.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
         // Refresh at the mutation, not only at turn end: later map events can be out of sight.

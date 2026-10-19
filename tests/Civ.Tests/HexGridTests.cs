@@ -155,6 +155,36 @@ public class HexGridTests
         Assert.Equal(0, state.Plots[top.Value].RiverEdges);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void CliffEdgesMirrorAcrossNeighborsAndClearStaleOffMapBits(bool wrap)
+    {
+        var state = new GameState { Map = new(4, 3, wrap), Plots = Enumerable.Range(0, 12).Select(_ => new Plot()).ToArray() };
+        foreach (var tile in state.Grid.Tiles)
+            for (int direction = 0; direction < 6; direction++)
+            {
+                state.SetCliff(tile, direction, true);
+                if (state.Grid.Neighbor(tile, direction) is { } next)
+                {
+                    Assert.NotEqual(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
+                    Assert.NotEqual(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
+                    var copy = state.Clone();
+                    state.SetCliff(tile, direction, false);
+                    Assert.NotEqual(0, copy.Plots[tile.Value].CliffEdges & (1 << direction));
+                    Assert.Equal(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
+                }
+                else
+                {
+                    Assert.Equal(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
+                    state.Plots[tile.Value].CliffEdges |= (byte)(1 << direction);
+                    state.SetCliff(tile, direction, true);
+                    Assert.Equal(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
+                }
+            }
+        Assert.All(state.Plots, p => Assert.Equal(0, p.CliffEdges));
+    }
+
     [Fact]
     public void WrappedDistanceMatchesBreadthFirstPathsOnLargerMap()
     {

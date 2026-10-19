@@ -72,10 +72,18 @@ public sealed partial class WorldRulesTests
         var plot = sim.State.Plots[tile.Value]; plot.Terrain = "world:desert"; plot.Kind = kind;
         plot.Route = "world:route_route_road";
         var sea = sim.State.Grid.Neighbors(tile).First(); sim.State.Plots[sea.Value].Terrain = "world:coast";
+        int direction = Enumerable.Range(0, 6).Single(d => sim.State.Grid.Neighbor(tile, d) == sea);
+        sim.State.SetCliff(tile, direction, true);
         WarmingTurn(sim);
         Assert.Equal(floods ? "world:coast" : "world:desert", plot.Terrain);
         Assert.Equal(floods ? null : "world:route_route_road", plot.Route);
-        if (floods) Assert.Equal(plot.AreaId, sim.State.Plots[sea.Value].AreaId);
+        if (floods)
+        {
+            Assert.Equal(plot.AreaId, sim.State.Plots[sea.Value].AreaId);
+            Assert.Equal(0, plot.CliffEdges);
+            Assert.Equal(0, sim.State.Plots[sea.Value].CliffEdges);
+        }
+        else Assert.NotEqual(0, plot.CliffEdges);
         Assert.Equal(floods ? 1 : 0, sim.Events.Published.OfType<GlobalWarmingOccurred>().Count());
     }
 

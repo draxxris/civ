@@ -53,7 +53,11 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         using var trace = Civ.Modding.StartupTrace.Phase("world normalize starts");
         var tuning = Geography.Tuning(sim.Content);
         int minimum = starts.Max(t => Score(sim, t, tuning)) * tuning.StartQualityPercent / 100;
-        foreach (var start in starts) NormalizeStart(sim, start, minimum, tuning);
+        foreach (var start in starts)
+        {
+            NormalizeStart(sim, start, minimum, tuning);
+            CliffRules.EnsureBeach(sim.State, sim.Content, start);
+        }
     }
     private void NormalizeStart(Simulation sim, TileId center, int minimum, S.HexOverridesDef tuning)
     {

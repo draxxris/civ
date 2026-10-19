@@ -10,7 +10,8 @@ uniform sampler2D tile_b : filter_nearest, repeat_disable;
 // Domain warp grid: R,G = dx and B,A = dz, each a 16-bit value mapping [0, 65535] to [-1, 1].
 uniform sampler2D warp_grid : filter_nearest, repeat_disable;
 // Colour table (sRGB bytes): row 0 layer colours, row 1 feature ground tints (A = strength),
-// row 2 owner colours (index = owner + 1), row 3 water tints per layer (A = strength).
+// row 2 owner colours (index = owner + 1), row 3 water tints per layer (A = strength),
+// row 4 ragged-edge strength per layer (A; 0 for water, so seabeds only fade into each other), R = 1 for deep ocean.
 uniform sampler2D palette : filter_nearest, repeat_disable;
 // RGB = sRGB albedo, A = linear height. No source_color hint: decode RGB only (see decode_colour), leaving height unchanged.
 uniform sampler2DArray terrain_textures : filter_linear_mipmap, repeat_enable;
@@ -20,9 +21,19 @@ uniform int deep_seabed_layer = 0;
 uniform int unexplored_layer = 0;
 uniform int snow_layer = 0;
 uniform float uv_freq = 0.38;
-uniform float height_depth = 0.38;
-// Colour transitions are broader than relief, cloud coverage and scatter density transitions.
-uniform float ground_sharpness = 1.6;
+// Ground transitions are soft blends whose centre line wanders, instead of a fade along the straight hex edge. Each tile's
+// claim on a point is its log barycentric weight plus its own wrap-safe noise field, its spread (palette row 0 alpha) and
+// its texture height; a softmax of the claims gives the colour weights. Distances are world units (hex outer radius 1),
+// measured at a hex edge's midpoint.
+// ground_reach: furthest the noise moves a transition from the hex edge.
+// ground_creep: extra distance the most spreading ground (grass) pushes into the least spreading one (desert).
+// ground_detail: how far texture height frays the transition into tufts.
+// ground_blend: width of the transition, from 10% to 90% of the neighbour's colour.
+uniform float ground_reach = 0.4;
+uniform float ground_creep = 0.12;
+uniform float ground_detail = 0.12;
+uniform float ground_blend = 0.35;
+uniform float ground_noise_frequency = 1.4;
 
 uniform ivec2 map_size = ivec2(1, 1);
 uniform bool wrap_x = true;
@@ -32,6 +43,8 @@ uniform float warp_amplitude = 0.3;
 uniform ivec2 warp_size = ivec2(1, 2);
 uniform vec2 warp_step = vec2(1.0, 1.0);
 uniform float warp_z_min = 0.0;
+
+#include "res://shaders/hash.gdshaderinc"
 
 const float SQRT3 = 1.7320508075688772;
 
@@ -235,6 +248,20 @@ void sight_blend(vec2 p, out float fogged, out float hidden) {
 	fogged /= max(1.0 - hidden, 1e-8);
 }
 
+// Share of deep ocean at p under broad blend weights, so open water shades from coast to ocean over a wide band instead of
+// following the seabed's steeper height blend. Weights are continuous across corner-triangle borders for any sharpness.
+float ocean_share(vec2 p, float s) {
+	ivec2 base;
+	bool upper;
+	vec3 weights = blend_weights(corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper), s);
+	float ocean = 0.0;
+	for (int k = 0; k < 3; k++) {
+		int layer = byte_of(texelFetch(tile_a, clamped_texel(corner_hex(base, upper, k)), 0).r);
+		ocean += weights[k] * texelFetch(palette, ivec2(layer, 4), 0).r;
+	}
+	return ocean;
+}
+
 vec3 fog_tone(vec3 c) {
 	float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
 	return mix(vec3(l), c, 0.55) * 0.72;
@@ -242,24 +269,26 @@ vec3 fog_tone(vec3 c) {
 
 
 
-float cloud_hash(vec2 i) {
-	return fract(sin(dot(i, vec2(127.1, 311.7))) * 43758.5453);
+// Value noise in [0, 1] that repeats every period in x. The seed picks an independent field.
+float seeded_noise(vec2 p, float frequency, uint seed) {
+	int cells = max(1, int(round(period * frequency)));
+	vec2 u = p * (float(cells) / period);
+	vec2 f = floor(u);
+	vec2 t = u - f;
+	t = t * t * (3.0 - 2.0 * t);
+	// GLSL leaves % of negative ints undefined, so wrap in float (exact for these small integers).
+	int x0 = int(mod(f.x, float(cells)));
+	if (x0 >= cells) x0 -= cells;
+	int x1 = x0 + 1 == cells ? 0 : x0 + 1;
+	int y = int(f.y);
+	float a = lattice_hash(ivec2(x0, y), seed), b = lattice_hash(ivec2(x1, y), seed);
+	float c = lattice_hash(ivec2(x0, y + 1), seed), d = lattice_hash(ivec2(x1, y + 1), seed);
+	return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
 }
 
 // Value noise in [0, 1] that repeats every period in x (a whole number of cells per period).
 float periodic_noise(vec2 p, float frequency) {
-	float cells = max(1.0, round(period * frequency));
-	vec2 u = p * (cells / period);
-	vec2 i = floor(u);
-	vec2 t = u - i;
-	t = t * t * (3.0 - 2.0 * t);
-	float i0 = mod(i.x, cells);
-	float i1 = mod(i.x + 1.0, cells);
-	if (i0 >= cells) i0 -= cells;
-	if (i1 >= cells) i1 -= cells;
-	float a = cloud_hash(vec2(i0, i.y)), b = cloud_hash(vec2(i1, i.y));
-	float c = cloud_hash(vec2(i0, i.y + 1.0)), d = cloud_hash(vec2(i1, i.y + 1.0));
-	return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
+	return seeded_noise(p, frequency, 0u);
 }
 
 float periodic_fbm(vec2 p, float frequency) {
@@ -280,20 +309,34 @@ vec4 material_sample(int layer, vec2 p, bool linear) {
 	return vec4(decode_colour(sample_colour.rgb, linear), sample_colour.a);
 }
 
+// Noise in [-1, 1] for one tile's ground claim. Each tile has its own field, seeded by its canonical texel so wrap copies
+// agree, so two neighbours disagree and their shared edge wanders.
+float ground_noise(vec2 p, ivec2 texel) {
+	uint seed = uint(texel.x) * 73856093u ^ uint(texel.y) * 19349663u;
+	float f = ground_noise_frequency;
+	float n = seeded_noise(p, f, seed) * 0.53 + seeded_noise(p, f * 2.0, seed ^ 0x9e3779b9u) * 0.29
+		+ seeded_noise(p, f * 4.0, seed ^ 0x85ebca6bu) * 0.18;
+	return clamp((n - 0.5) * 4.5, -1.0, 1.0);
+}
+
 // Hidden tiles supply only cloud coverage, never their true material. Sight and water tint retain geometric weights.
-// Along a zero-weight edge, the largest remaining weight is at least 0.5. Keep depth + height scale < 0.5,
-// so the opposite corner contributes exactly zero on either side, even if height_depth changes.
+// Ground colour is a softmax of the tiles' claims, ln λ plus a bounded shift. Along a corner-triangle border the opposite
+// vertex has λ = 0, so its claim falls to -∞: it contributes nothing on either side and the colour is continuous.
 void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights) {
 	ivec2 base;
 	bool upper;
 	vec3 lambda = corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper);
 	weights = blend_weights(lambda, sharpness);
-	vec3 ground_weights = blend_weights(lambda, ground_sharpness);
-	float depth = clamp(height_depth, 0.01, 0.48);
-	float height_scale = min(0.10, 0.49 - depth);
+	// At an edge midpoint (λ = ½, ½) ln λA - ln λB changes by 4/√3 per world unit, so a claim difference d moves the edge
+	// by d·√3/4. Nearer the hex corners ln λ is steeper and the same claims move edges less.
+	const float CLAIM_PER_UNIT = 4.0 / SQRT3;
+	// Broad enough that forest shade has no visible hex outline.
+	const float SHADE_SHARPNESS = 2.0;
 	vec3 colours[3];
-	vec3 heights = vec3(0.0);
-	vec3 revealed = vec3(0.0);
+	vec3 claims = vec3(-1e4);
+	// World size of a pixel. Claims can swap corners at triangle borders, so take derivatives of p, not of the claims.
+	vec2 fp = fwidth(p);
+	float footprint = 2.0 * max(fp.x, fp.y);
 	water_tint = vec4(0.0);
 	fogged = 0.0;
 	hidden = 0.0;
@@ -304,6 +347,9 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 	// rock. Height shifts the coverage rather than thresholding it, so the fade stays broad and survives mipmapping.
 	float snow_mask = smoothstep(0.18, 0.82, snow_weight + (0.5 - rock_sample.a) * 0.55);
 	float frost = 0.2 * smoothstep(0.0, 0.5, snow_weight);
+	vec3 soft = blend_weights(lambda, SHADE_SHARPNESS);
+	vec4 shade = vec4(0.0);
+	float soft_seen = 0.0;
 	for (int k = 0; k < 3; k++) {
 		colours[k] = vec3(0.0);
 		ivec2 t = clamped_texel(corner_hex(base, upper, k));
@@ -312,40 +358,46 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 			hidden += weights[k];
 			continue;
 		}
-		revealed[k] = ground_weights[k];
+		soft_seen += soft[k];
 		vec4 a = texelFetch(tile_a, t, 0);
 		int layer = byte_of(a.r);
 		vec4 material = material_sample(layer, p, linear);
-		heights[k] = material.a * height_scale;
+		float spread = texelFetch(palette, ivec2(layer, 0), 0).a;
+		// Two noises in [-1, 1] differ by up to 2, the spreads by up to 1: each term's largest edge shift is its uniform.
+		float ragged = texelFetch(palette, ivec2(layer, 4), 0).a;
+		float shift = ragged * (0.5 * ground_reach * ground_noise(p, t) + ground_detail * material.a) + ground_creep * spread;
+		claims[k] = log(max(lambda[k], 1e-6)) + shift * CLAIM_PER_UNIT;
 		vec3 c = mix(material.rgb, rock, rock_weight);
-		vec4 tint = palette_entry(byte_of(a.g), 1, linear);
-		c = mix(c, tint.rgb, tint.a);
 		vec4 slime = palette_entry(layer, 3, linear);
-		c = mix(c, slime.rgb, slime.a);
-		// Snow caps by altitude cover whatever the summit tile is made of; fog then tones them like the ground.
-		c = mix(c, mix(c, snow, 0.55), frost);
-		c = mix(c, snow, snow_mask);
-		if (sight == 1) {
-			c = fog_tone(c);
-			fogged += weights[k];
-		}
-		colours[k] = c;
+		colours[k] = mix(c, slime.rgb, slime.a);
+		// Feature ground (forest floor) is shade under props, not ground: it fades softly instead of following the edge.
+		vec4 tint = palette_entry(byte_of(a.g), 1, linear);
+		shade += soft[k] * vec4(tint.rgb * tint.a, tint.a);
+		if (sight == 1) fogged += weights[k];
 		water_tint += weights[k] * slime;
 	}
-	float seen = revealed.x + revealed.y + revealed.z;
 	land = vec3(0.0);
-	if (seen > 1e-5) {
-		vec3 scores = heights + revealed / seen;
-		float highest = max(scores.x, max(scores.y, scores.z));
-		vec3 adjusted = max(scores - vec3(highest) + vec3(depth), vec3(0.0));
-		// Exclude hidden corners before normalisation, even at the feathered reveal boundary.
-		adjusted *= step(vec3(1e-8), revealed);
-		adjusted /= max(adjusted.x + adjusted.y + adjusted.z, 1e-8);
+	if (hidden < 1.0 - 1e-5) {
+		float highest = max(claims.x, max(claims.y, claims.z));
+		// At least the edge width, widened to a few pixels far away so the ragged edge does not shimmer.
+		// Softmax: exp(s·claim) = λ^s · e^(s·shift), the sharpened blend weights with the noise moving the transition.
+		// Across an edge the claim difference changes by CLAIM_PER_UNIT per world unit, and 10% to 90% is a difference of
+		// 2·ln 9 / s. Far away the width grows to a few pixels so the wandering line does not shimmer.
+		float s = 2.0 * log(9.0) / (max(ground_blend, footprint) * CLAIM_PER_UNIT);
+		// Hidden corners keep a claim of -1e4, so their weight underflows to zero.
+		vec3 adjusted = exp(s * (claims - vec3(highest)));
+		adjusted /= adjusted.x + adjusted.y + adjusted.z;
 		land = colours[0] * adjusted.x + colours[1] * adjusted.y + colours[2] * adjusted.z;
-		// Tint and fog accumulated with the original geometric weights, not the broader colour weights.
+		// Shade, water tint and fog use smooth geometric weights over the revealed corners, not the ragged ground edge.
+		shade /= max(soft_seen, 1e-8);
+		land = land * (1.0 - shade.a) + shade.rgb;
+		// Snow caps by altitude cover whatever the summit tile is made of; fog then tones them like the ground.
+		land = mix(land, mix(land, snow, 0.55), frost);
+		land = mix(land, snow, snow_mask);
 		float geometric_seen = max(1.0 - hidden, 1e-8);
 		water_tint /= geometric_seen;
 		fogged /= geometric_seen;
+		land = mix(land, fog_tone(land), fogged);
 	}
 }
 

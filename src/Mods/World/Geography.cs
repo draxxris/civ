@@ -28,6 +28,7 @@ internal static class Geography
                 && members.All(t => grid.OffsetOf(t).Row > 0 && grid.OffsetOf(t).Row < grid.Spec.Height - 1);
             if (lake) foreach (var member in members) { plots[member.Value].IsLake = true; plots[member.Value].Terrain = "world:coast"; }
         }
+        CliffRules.SanitizeAll(new GameState { Map = grid.Spec, Plots = plots }, db);
     }
 
     private static List<TileId> FillArea(HexGrid grid, Plot[] plots, ContentDb db, TileId start, int area)

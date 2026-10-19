@@ -5,8 +5,11 @@ using Schema = Civ.Content.Schema;
 
 namespace Civ.Client.Terrain;
 
-/// <summary>A terrain or surface material layer with its colour fallback and optional texture.</summary>
-public sealed record TerrainPaletteLayer(string Id, Rgb Fallback, string? TexturePath, TerrainSurface? Surface = null);
+/// <summary>A terrain or surface material layer with its colour fallback and optional texture. <see cref="Spread"/> in
+/// [0, 1] is how far its ground reaches into neighbouring tiles (see <see cref="TileAppearance.Spread"/>). Water layers
+/// fade smoothly into each other instead of the ragged edges of land; <see cref="Ocean"/> marks deep water.</summary>
+public sealed record TerrainPaletteLayer(string Id, Rgb Fallback, string? TexturePath, TerrainSurface? Surface = null,
+    float Spread = 0.5f, bool Water = false, bool Ocean = false);
 
 /// <summary>Deterministic, engine-free material and scatter lookups for the loaded ruleset.</summary>
 public sealed class TerrainPalette
@@ -54,7 +57,9 @@ public sealed class TerrainPalette
 
             int index = layers.Count;
             _terrainLayers.Add(terrain.Id, index);
-            layers.Add(new(terrain.Id, color, catalog.TexturePath(terrain.Id)));
+            float spread = Math.Clamp(appearance?.Spread ?? 50, 0, 100) / 100f;
+            layers.Add(new(terrain.Id, color, catalog.TexturePath(terrain.Id), Spread: spread,
+                Water: terrain.IsWater, Ocean: terrain.IsWater && TerrainSnapshot.IsOcean(terrain.Id)));
         }
 
         foreach (var surface in surfaces)

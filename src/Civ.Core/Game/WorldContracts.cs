@@ -2,6 +2,13 @@ using Civ.Content;
 
 namespace Civ.Game;
 
+/// <summary>Ruleset-owned map repair after generation, scenario configuration or save loading.</summary>
+public interface IMapSanitizer
+{
+    /// <summary>Clear invalid map state without RNG, events, or generation.</summary>
+    void Sanitize(Simulation sim);
+}
+
 /// <summary>Optional ruleset setup. Selected when SimulationSettings.WorldSize is supplied.</summary>
 public interface INewGameSetup
 {

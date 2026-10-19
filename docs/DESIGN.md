@@ -49,11 +49,28 @@ Columns normalize across east–west wrap. Rows never wrap.
 Culture uses sorted player ids. Revealed and visible teams use compact `TeamMask` bitsets, without a fixed team-count limit.
 Bitsets enumerate team ids in ascending order. Dense team ids minimize their storage.
 
-River bits follow the six directions. `GameState.SetRiver` mirrors each shared edge on both plots.
-At a bounded edge, the single plot owns the edge. Map generators must preserve this convention.
+`RiverEdges` and `CliffEdges` store six bits in direction order.
+`GameState.SetRiver` and `SetCliff` mirror shared edges on both plots. Off-map edges never carry either bit.
+World clears cliffs unless the edge joins land to non-lake water.
+`IMapSanitizer` repairs map rules after setup, scenario configuration, and save loading.
 
 `IMapGenerator.Generate(MapSpec, Plot[], DeterministicRng, ContentDb)` fills every plot.
 Cities and units retain canonical axial positions. The client renders one map image, without duplicate wrap plots.
+
+### Coastal cliffs
+
+World places cliffs after terrain, lakes, relief, and rivers, before start selection.
+`CliffGenerator` targets 20% of land/sea edges through ranked smooth noise (scale 6, two octaves, range 0–999).
+Hills and Peak plots receive a 400-point priority bonus. River mouths and sea-edge endpoints with rivers remain beaches.
+Each coastal land area keeps one beach. Islands of at most four tiles keep at least 50% of their sea edges open.
+Coastal starts and new cities keep one beach, with direction order resolving conflicts.
+Terrain changes and lake reassignment clear invalid cliffs without creating new cliffs.
+
+Cliffs block land units from boarding, landing, or attacking across the edge.
+Ships cannot enter or leave a land tile across a cliff, including friendly cities.
+The Amphibious promotion does not bypass cliffs. `CanMoveAllTerrain` units ignore cliffs.
+Ranged attacks, aircraft, and coastal building/yield eligibility do not change.
+Pathfinding uses the same movement rules. Naval AI selects ports and landing edges with beach access.
 
 ## Teams and entity data
 
@@ -108,7 +125,8 @@ Mods register these contracts through `ctx.RegisterService<T>()`:
 - `ILedgerSourceLabel.Label(Simulation, string source)` supplies optional text for mod-owned ledger sources.
   The client uses the first non-null label in service order, then content names or generic text.
 - `ITileAppearanceService` supplies optional terrain and feature metadata by full content id.
-  `TileAppearance` stores integer RGB, tint percent, mark count, and optional 3D scatter set name and density.
+  `TileAppearance` stores integer RGB, tint percent, mark count, optional 3D scatter set name and density, and a terrain's
+  ground spread (0..100, how far its ground reaches into neighbouring tiles).
   `TerrainSurface` enumerates procedural and system surfaces (`Cliff`, `Seabed`, `DeepSeabed`, `Unexplored`).
   Default interface methods `Surface(TerrainSurface)` and `Scatter(string feature, string terrain)` allow mods to supply
   surface textures and terrain-specific scatter variants (such as snowy pine trees on tundra/snow forests).
@@ -921,7 +939,7 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
   - Also generates a 16-bit packed domain-warp texture and a $256 \times 4$ palette strip (layer colours, feature ground tints, owner colours, water tints).
 - `TerrainTextures`: A mipmapped `Texture2DArray` (1024×1024 RGBA8 per slice) storing albedo in RGB and high-frequency surface height in alpha.
 - Shaders (`terrain.gdshader` and `water.gdshader`):
-  - `terrain.gdshader`: Height-modulated corner-triangle texture blending using the alpha height channel; transitions to cliff rock on steep slopes; renders owner borders, territory glow, river channels, work-tile overlay marks, and hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer clouds.
+  - `terrain.gdshader`: Soft corner-triangle ground blends whose centre line wanders. Each tile claims a point with $\ln\lambda$ plus its own seeded noise (up to 0.4 world units of shift), its terrain's spread (lush ground such as grass grows into dry ground such as desert) and its texture height; a softmax of the claims ($\lambda^s e^{s \cdot \text{shift}}$) gives the colour weights over a 0.35-unit band. Water layers get no noise or texture-height term, so seabeds only fade. Forest-floor shade and fog stay soft; transitions to cliff rock on steep slopes; renders owner borders, territory glow, river channels, work-tile overlay marks, and hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer clouds.
   - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from vertex `UV2.x = -HeightAt` without depth-texture fetches; renders multi-frequency ripples, shore foam, shallow/deep water gradients, seabed texturing, fog darkening, and drifting cloud cover.
 - Ground marker shaders, all drawn on terrain-draped meshes and animated with `TIME`:
   - `selection.gdshader`: The marker under the selected unit: a bevelled gold ring, a dashed inner ring, turning chevrons, glow and a drop shadow.
@@ -937,7 +955,7 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
 
 The presentation contract in `Civ.Core` and client catalog in `Civ.Client.Core` provide extension points for 3D art:
 
-- `TileAppearance`: Extended record `TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0)`.
+- `TileAppearance`: Extended record `TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0, int Spread = 50)`.
 - `TerrainSurface`: Enum defining system and procedural surfaces (`Cliff`, `Seabed`, `DeepSeabed`, `Unexplored`).
 - `ITileAppearanceService`: Interface offering default methods `string? Surface(TerrainSurface surface) => null;` and `TileAppearance? Scatter(string feature, string terrain) => null;`. Mods override these to specify procedural surface textures and terrain-specific scatter variants (e.g. snowy pine trees on tundra/snow forests).
 - `GameCatalog.TexturePath(string? id)`: Resolves texture PNGs from `<mod>/art/terrain/<name>.png`.

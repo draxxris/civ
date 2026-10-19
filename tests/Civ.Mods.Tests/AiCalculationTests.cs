@@ -41,13 +41,13 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var army = NewAi(sim, "ArmyPlan", ctx);
         Call(NewAi(sim, "CitizenPlanner", ctx, army), "Plan");
         Call(NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), army), "Plan");
-        // Recorded on the unoptimized implementation, using only these constructed cities and planners.
+        // Canonical hashes include the zero-valued cliff fields in plots and sight memories.
         Assert.Equal(new[] { "1:cities:unit/military:worker", "2:cities:unit/military:worker",
                 "3:cities:building/cities:elder_council" },
             sim.State.Cities.SelectMany(c => c.ProductionQueue.Select(q => $"{c.Id}:{q.Kind}/{q.ContentId}")));
         Assert.Equal(new[] { "produce:1:cities:unit/military:worker", "produce:2:cities:unit/military:worker",
             "produce:3:cities:building/cities:elder_council" }, log.Commands);
-        Assert.Equal(501270837889495915UL, sim.ComputeHash());
+        Assert.Equal(1923593333387501535UL, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
     }
 
@@ -86,7 +86,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(new[] { 1, 2, 3 }, log.Units);
         Assert.Equal(new[] { 1, 2 }, sim.State.UnitsAt(sim.State.CityById(1).Position).Select(u => u.Id));
         // Recorded on the original implementation, without advancing simulation turns.
-        Assert.Equal(14374588987283294578UL, sim.ComputeHash());
+        Assert.Equal(10918347789311971660UL, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
     }
 
@@ -349,7 +349,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             "rejected:produce:2:economy:process/economy:process_culture",
             "rejected:produce:2:economy:process/economy:process_idle",
         }, log.Commands);
-        Assert.Equal(14432078200561061528UL, sim.ComputeHash());
+        Assert.Equal(17868242701743720118UL, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
     }
 
@@ -386,7 +386,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.CommandObserver = log;
         Call(NewAi(sim, "WorkerPlanner", NewAi(sim, "AiContext", sim, 0)), "Plan");
         Assert.Equal(new[] { "build:1:world:build_build_railroad", "move:2:7,3" }, log.Commands);
-        Assert.Equal(17648743727316353587UL, sim.ComputeHash());
+        Assert.Equal(15401993334593986013UL, sim.ComputeHash());
         Assert.Equal(0, sim.State.PlayerById(0).Treasury);
         Assert.Equal(rng, sim.Rng.State);
     }

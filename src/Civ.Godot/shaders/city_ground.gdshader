@@ -11,13 +11,15 @@ uniform float depth_pull = 0.0025;
 
 varying vec2 ground_pos;
 
+#include "res://shaders/hash.gdshaderinc"
+
+// p is always a whole cell coordinate.
 vec2 hash2(vec2 p) {
-	p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-	return fract(sin(p) * 43758.5453);
+	return vec2(lattice_hash(ivec2(p), 51u), lattice_hash(ivec2(p), 52u));
 }
 
 float hash(vec2 p) {
-	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+	return lattice_hash(ivec2(p), 53u);
 }
 
 float value_noise(vec2 p) {
@@ -55,10 +57,13 @@ vec4 straw(vec2 p, float density) {
 		for (int i = -1; i <= 1; i++)
 			for (int k = 0; k < 3; k++) {
 				vec2 c = cell + vec2(float(i), float(j));
-				vec2 h = hash2(c + float(k) * 13.7);
-				if (hash(c + float(k) * 5.1) > density) continue;
+				// One independent stream per straw slot k and per property.
+				ivec2 ic = ivec2(c);
+				uint salt = uint(k) * 8u;
+				vec2 h = vec2(lattice_hash(ic, 60u + salt), lattice_hash(ic, 61u + salt));
+				if (lattice_hash(ic, 62u + salt) > density) continue;
 				vec2 centre = c + h;
-				float a = hash(c * 1.7 + float(k)) * 6.2832;
+				float a = lattice_hash(ic, 63u + salt) * 6.2832;
 				vec2 dir = vec2(cos(a), sin(a));
 				vec2 d = q - centre;
 				float along = dot(d, dir), across = abs(dot(d, vec2(-dir.y, dir.x)));

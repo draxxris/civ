@@ -12,6 +12,10 @@ internal sealed class CampaignTargets(AiContext ctx)
     public int Area(Hex hex) => ctx.Sim.State.PlotAt(hex).AreaId;
     public bool Water(TileId tile) => ctx.Sim.Content.Get<TerrainDef>(ctx.Sim.State.Plots[tile.Value].Terrain).IsWater;
     public bool Coastal(City city) => ctx.Grid.Neighbors(ctx.Tile(city.Position)).Any(Water);
+    public bool PortAccess(City city) => BeachWater(ctx.Tile(city.Position)).Any();
+    public IEnumerable<TileId> BeachWater(TileId land) => Enumerable.Range(0, 6)
+        .Where(d => (ctx.Sim.State.Plots[land.Value].CliffEdges & (1 << d)) == 0)
+        .Select(d => ctx.Grid.Neighbor(land, d)).OfType<TileId>().Where(Water);
     public IEnumerable<City> Enemies => ctx.EnemyCities;
 
     public City? SelectPrimaryTargetCity(int area)
@@ -65,11 +69,11 @@ internal sealed class CampaignTargets(AiContext ctx)
         .OrderBy(c => DistanceFromHome(c)).ThenBy(c => c.Id).FirstOrDefault();
     private int DistanceFromHome(City city) => ctx.NearestCity(city.Position) is { } home
         ? ctx.Grid.Distance(home.Position, city.Position) : 0;
-    public City? Port(int area) => ctx.Cities.Where(c => Area(c.Position) == area && Coastal(c))
+    public City? Port(int area) => ctx.Cities.Where(c => Area(c.Position) == area && PortAccess(c))
         .OrderBy(c => Enemies.Select(e => ctx.Grid.Distance(c.Position, e.Position)).DefaultIfEmpty(0).Min()).ThenBy(c => c.Id).FirstOrDefault();
 
     public IEnumerable<Hex> Beaches(City target) => ctx.Grid.Range(ctx.Tile(target.Position), 3)
-        .Where(t => Land(t) && ctx.Sim.State.Plots[t.Value].AreaId == Area(target.Position) && ctx.Grid.Neighbors(t).Any(Water))
+        .Where(t => Land(t) && ctx.Sim.State.Plots[t.Value].AreaId == Area(target.Position) && BeachWater(t).Any())
         .OrderBy(t => ctx.Grid.Distance(ctx.Grid.HexOf(t), target.Position)).ThenBy(t => t.Value).Select(ctx.Grid.HexOf);
 
     public bool Land(TileId tile)

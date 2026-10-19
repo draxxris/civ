@@ -41,7 +41,7 @@ public sealed class TerrainChunks
     public const int NorthMarginUnits = 2;
 
     private static readonly double Sqrt3 = Math.Sqrt(3);
-    private readonly int[][] _tiles, _riverTiles;
+    private readonly int[][] _tiles, _riverTiles, _cliffTiles;
 
     /// <summary>Partition a map. The ring of tiles hashed per chunk is wide enough for the height field with
     /// <paramref name="tuning"/> sampled on a lattice of resolution <paramref name="resolution"/>.</summary>
@@ -56,6 +56,8 @@ public sealed class TerrainChunks
         tuning ??= new TerrainTuning();
         RingRadius = tuning.InfluenceRadius + 2 * step;
         RiverRingRadius = tuning.RiverReach + 2 * step;
+        // A plateau tile lifts land up to CliffRamp beyond its hexagon, and whether it is a plateau depends on its neighbours.
+        CliffRingRadius = tuning.InfluenceRadius + tuning.CliffRamp + 2 * Sqrt3 + 2 * step;
         int zEnd = map.Height + 1; // last row centre + 2 tile rows (3 world units)
         Columns = (map.Width + TileColumns - 1) / TileColumns;
         Rows = (zEnd + NorthMarginUnits + TileRows - 1) / TileRows;
@@ -70,6 +72,7 @@ public sealed class TerrainChunks
         Chunks = chunks;
         _tiles = chunks.Select(c => InfluenceTiles(c, grid, RingRadius)).ToArray();
         _riverTiles = chunks.Select(c => InfluenceTiles(c, grid, RiverRingRadius)).ToArray();
+        _cliffTiles = chunks.Select(c => InfluenceTiles(c, grid, CliffRingRadius)).ToArray();
     }
 
     /// <summary>Partitioned map.</summary>
@@ -85,14 +88,19 @@ public sealed class TerrainChunks
     /// <summary>Distance beyond a chunk's rectangle within which a tile's river bits or relief can change the chunk's river
     /// geometry (see <see cref="TerrainTuning.RiverReach"/>).</summary>
     public double RiverRingRadius { get; }
+    /// <summary>Distance beyond a chunk's rectangle within which a tile's cliff bits or relief can lift the chunk's ground
+    /// (the plateau ramp, see <see cref="TerrainTuning.CliffRamp"/>).</summary>
+    public double CliffRingRadius { get; }
 
     /// <summary>Tiles whose data can change a chunk: its own tiles and a ring around them, ascending.</summary>
     public IReadOnlyList<int> TilesOf(TerrainChunk chunk) => _tiles[chunk.Id];
 
-    /// <summary>Lattice resolution of one chunk: <see cref="TerrainMesher.PeakResolution"/> when a peak can shape it,
-    /// otherwise <see cref="TerrainMesher.DefaultResolution"/>.</summary>
+    /// <summary>Lattice resolution of one chunk: <see cref="TerrainMesher.PeakResolution"/> when a peak or a cliff can shape
+    /// it (cliff faces and sea-stack shoals are finer than the default lattice), otherwise
+    /// <see cref="TerrainMesher.DefaultResolution"/>.</summary>
     public int ResolutionOf(TerrainChunk chunk, TerrainSnapshot snapshot) =>
-        _tiles[chunk.Id].Any(t => snapshot.Relief[t] == ReliefClass.Peak) ? TerrainMesher.PeakResolution : TerrainMesher.DefaultResolution;
+        _tiles[chunk.Id].Any(t => snapshot.Relief[t] == ReliefClass.Peak || snapshot.Cliffs[t] != 0)
+            ? TerrainMesher.PeakResolution : TerrainMesher.DefaultResolution;
 
     /// <summary>Lattice resolution of every chunk, indexed by chunk id.</summary>
     public int[] Resolutions(TerrainSnapshot snapshot) => Chunks.Select(c => ResolutionOf(c, snapshot)).ToArray();
@@ -138,10 +146,11 @@ public sealed class TerrainChunks
     }
 
     /// <summary>64-bit hash of everything that shapes a chunk's geometry and scatter: layer, relief class (which includes
-    /// water and the hidden flag), river bits and feature ground of its tiles and their ring, its mesh resolution (and its
+    /// water and the hidden flag), river and cliff bits and feature ground of its tiles and their ring, its mesh resolution (and its
     /// neighbours' when it is finer than the default), plus an optional per-tile
     /// <paramref name="extras"/> value (for example feature id, city or improvement presence) indexed by tile. When any
-    /// tile in the wider river ring has river bits, the river bits and relief of that whole ring count too.</summary>
+    /// tile in the wider river ring has river bits, the river bits and relief of that whole ring count too; likewise for cliff
+    /// bits in the wider cliff ring.</summary>
     public ulong Signature(TerrainChunk chunk, TerrainSnapshot snapshot, IReadOnlyList<int>? extras = null)
     {
         if (snapshot.Grid.Spec != Map) throw new ArgumentException("Snapshot is for a different map", nameof(snapshot));
@@ -151,6 +160,7 @@ public sealed class TerrainChunks
             ulong v = (ulong)(uint)t << 32 | (ulong)snapshot.Layer[t] << 24 | (ulong)snapshot.Relief[t] << 16
                 | (ulong)snapshot.Rivers[t] << 8 | snapshot.FeatureGround[t];
             h = Mix(h ^ v);
+            h = Mix(h ^ snapshot.Cliffs[t]);
             h = MixString(h, snapshot.Terrain[t]);
             h = MixString(h, snapshot.Feature[t]);
             if (extras != null) h = Mix(h ^ (uint)extras[t]);
@@ -162,6 +172,10 @@ public sealed class TerrainChunks
             foreach (int k in new[] { resolution.West, resolution.East, resolution.North, resolution.South, resolution.NorthWest,
                 resolution.NorthEast, resolution.SouthWest, resolution.SouthEast })
                 h = Mix(h ^ (ulong)k);
+        var cliffs = _cliffTiles[chunk.Id];
+        if (cliffs.Any(t => snapshot.Cliffs[t] != 0))
+            foreach (int t in cliffs)
+                h = Mix(h ^ ((ulong)(uint)t << 32 | (ulong)snapshot.Relief[t] << 8 | snapshot.Cliffs[t]));
         var rivers = _riverTiles[chunk.Id];
         if (!rivers.Any(t => snapshot.Rivers[t] != 0)) return h;
         foreach (int t in rivers)

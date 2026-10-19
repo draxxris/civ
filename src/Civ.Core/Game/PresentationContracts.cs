@@ -47,8 +47,11 @@ public interface ILedgerSourceLabel
     string? Label(Simulation sim, string source);
 }
 
-/// <summary>Integer RGB and percent tint metadata. No renderer or engine types cross the mod contract.</summary>
-public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0);
+/// <summary>Integer RGB and percent tint metadata. No renderer or engine types cross the mod contract.
+/// <paramref name="Spread"/> (terrains only, 0..100) is how far a terrain's ground reaches into its neighbours: lush
+/// ground at 100 grows past the tile edge into dry ground at 0.</summary>
+public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0,
+    int Spread = 50);
 
 public enum TerrainSurface { Cliff, Seabed, DeepSeabed, Unexplored, Snow }
 

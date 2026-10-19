@@ -11,8 +11,8 @@ internal sealed class MovementService : IMovementService
     private string? CanEnter(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects,
         TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
     {
-        if (!ValidTile(sim, from) || !ValidTile(sim, to)) return "Off map";
-        if (!sim.State.Grid.Neighbors(from).Contains(to)) return "Not adjacent";
+        var edgeError = EdgeEntry(sim, def, from, to);
+        if (edgeError is not null) return edgeError;
         var plot = sim.State.Plots[to.Value];
         var error = TerrainEntry(sim, unit, def, plot, effects);
         if (error is not null && AutoLoadTransport(sim, unit, def, to) is null) return error;
@@ -24,6 +24,13 @@ internal sealed class MovementService : IMovementService
         var targetError = TargetEntry(sim, unit, def, effects, target, attack);
         if (targetError is not null) return targetError;
         return ControlledTransition(sim, unit, from, to, attack, hasControl) ? "Enemy zone of control" : null;
+    }
+    private static string? EdgeEntry(Simulation sim, S.UnitDef def, TileId from, TileId to)
+    {
+        if (!ValidTile(sim, from) || !ValidTile(sim, to)) return "Off map";
+        if (!sim.State.Grid.Neighbors(from).Contains(to)) return "Not adjacent";
+        if (def.CanMoveAllTerrain || def.Domain is not ("military:domain_land" or "military:domain_sea")) return null;
+        return MilitaryData.CrossesCliff(sim, from, to) ? "Cliff" : null;
     }
     private static string? TargetEntry(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, Hex target, bool attack)
     {
@@ -80,7 +87,8 @@ internal sealed class MovementService : IMovementService
         var tile = new TileId(index);
         var city = sim.State.CityAt(sim.State.Grid.HexOf(tile));
         return city is not null && MilitaryData.Friendly(sim, unit.Owner, city.Owner)
-            && sim.State.Grid.Neighbors(tile).Any(n => sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater);
+            && sim.State.Grid.Neighbors(tile).Any(n => sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater
+                && !MilitaryData.CrossesCliff(sim, tile, n));
     }
     private static bool TerritoryEntry(Simulation sim, Unit unit, S.UnitDef def, int? owner) => owner is null
         || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory || def.BaseTrade > 0 || def.TradeMultiplier > 0

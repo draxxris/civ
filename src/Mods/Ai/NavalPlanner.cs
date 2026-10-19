@@ -54,7 +54,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
 
     private bool Pickup(Unit transport)
     {
-        foreach (var port in ctx.Cities.Where(_targets.Coastal).Where(c => _targets.OverseasTarget(_targets.Area(c.Position)) is not null)
+        foreach (var port in ctx.Cities.Where(_targets.PortAccess).Where(c => _targets.OverseasTarget(_targets.Area(c.Position)) is not null)
             .OrderByDescending(c => Waiting(c).Count()).ThenBy(c => ctx.Grid.Distance(transport.Position, c.Position)).ThenBy(c => c.Id))
         {
             if (!Waiting(port).Any()) continue;
@@ -114,9 +114,11 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
         {
             if (ctx.Sim.State.CityAt(beach) is { } city && city.Owner != ctx.PlayerId) continue;
             if (ctx.Sim.State.UnitsAt(beach).Any(u => ctx.IsEnemy(u.Owner))) continue;
-            foreach (var tile in ctx.Grid.Neighbors(ctx.Tile(beach)).Where(_targets.Water))
+            foreach (var tile in _targets.BeachWater(ctx.Tile(beach)))
             {
                 var sea = ctx.Grid.HexOf(tile);
+                if (Units.CargoUnits(ctx.Sim, transport.Id).Any(id =>
+                    ctx.Service<IMovementService>().CanEnter(ctx.Sim, id, tile, ctx.Tile(beach)) is not null)) continue;
                 var path = ctx.FindPath(transport, sea);
                 if (path is not null) options.Add((sea, beach, path.Cost));
             }
@@ -129,7 +131,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
 
     private void ReturnCargo(Unit transport, Unit[] cargo)
     {
-        foreach (var port in ctx.Cities.Where(_targets.Coastal).OrderBy(c => ctx.Grid.Distance(transport.Position, c.Position)).ThenBy(c => c.Id))
+        foreach (var port in ctx.Cities.Where(_targets.PortAccess).OrderBy(c => ctx.Grid.Distance(transport.Position, c.Position)).ThenBy(c => c.Id))
         {
             if (transport.Position != port.Position && !ctx.MoveToward(transport, port.Position)) continue;
             if (transport.Position == port.Position)
@@ -152,7 +154,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
         if (transport is not null) { ctx.MoveToward(ship, transport.Position); return; }
         if (ApproachCoastalTarget(ship)) return;
         if (_explorer.Explore(ship)) return;
-        foreach (var port in ctx.Cities.Where(_targets.Coastal).OrderBy(c => ctx.Grid.Distance(ship.Position, c.Position)).ThenBy(c => c.Id))
+        foreach (var port in ctx.Cities.Where(_targets.PortAccess).OrderBy(c => ctx.Grid.Distance(ship.Position, c.Position)).ThenBy(c => c.Id))
             if (ctx.MoveToward(ship, port.Position)) return;
     }
 
