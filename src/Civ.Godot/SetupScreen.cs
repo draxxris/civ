@@ -10,7 +10,7 @@ internal sealed partial class SetupScreen : Control
     private readonly SpinBox _opponents = new() { MinValue = 0, MaxValue = 15, Value = 3, Step = 1 };
     private readonly LineEdit _seed = new() { Text = "1" };
     private readonly LineEdit _search = new() { PlaceholderText = "Search leaders, civilizations or traits" };
-    private readonly ItemList _leaders = new() { SizeFlagsVertical = SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(0, 360) };
+    private readonly ItemList _leaders = new() { SizeFlagsVertical = SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(0, 320) };
     private readonly Label _details = Ui.Text("", 14, Ui.Dim);
     private readonly Dictionary<string, CheckBox> _gameOptions = new(StringComparer.Ordinal);
     private readonly Button _start;
@@ -18,6 +18,7 @@ internal sealed partial class SetupScreen : Control
     private string _leaderId;
 
     public event Action<NewGameOptions>? StartRequested;
+    public event Action? ModsRequested;
 
     public SetupScreen(GameCatalog catalog)
     {
@@ -53,20 +54,21 @@ internal sealed partial class SetupScreen : Control
         panel.SetAnchorsAndOffsetsPreset(LayoutPreset.Center, LayoutPresetMode.Minsize);
         panel.CustomMinimumSize = new Vector2(980, 600);
         panel.GrowHorizontal = GrowDirection.Both; panel.GrowVertical = GrowDirection.Both;
-        var root = Ui.VBox(12);
+        var root = Ui.VBox(8);
         root.AddChild(Ui.Text("New game", 30, Ui.Accent, wrap: false));
         var columns = Ui.HBox(24);
         columns.AddChild(SettingsColumn());
         columns.AddChild(LeaderColumn());
         root.AddChild(columns);
         root.AddChild(_start);
+        root.AddChild(Ui.Button("Mods (restart required)", () => ModsRequested?.Invoke()));
         panel.AddChild(root);
         AddChild(panel);
     }
 
     private Control SettingsColumn()
     {
-        var col = Ui.VBox(8);
+        var col = Ui.VBox(5);
         col.CustomMinimumSize = new Vector2(320, 0);
         Add(col, "World size", _world);
         Add(col, "World layout", _mapGenerator);

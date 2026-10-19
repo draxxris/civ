@@ -9,14 +9,75 @@ mise exec -- dotnet build src/Civ.Godot
 mise exec -- godot-mono --path src/Civ.Godot
 ```
 
-The build copies the eight feature mods into the client output directory under `mods/<Name>`.
-Each folder contains a DLL, `mod.json`, data, and available PNG icons.
-The build also copies the AI mod if its project exists.
-The client discovers these folders and freezes their content once at startup.
+The build copies the installed mods into the client output directory under `mods/<Name>`.
+Each folder contains a DLL, `mod.json`, data, and available art.
+The client reads these manifests before it loads mod assemblies.
+After selection, the client loads the selected mods and freezes their content once.
 The client does not reference the legacy ruleset assembly.
 
-Set `CIV_MODS` to use a different mods directory.
+The client merges manifests from all available mods directories. Missing directories are harmless.
 Mods must supply compatible manifests and all required content providers.
+
+For each stable manifest ID, the first copy in this priority order wins:
+
+1. The optional `CIV_MODS` directory.
+2. The `mods` directory inside `OS.GetUserDataDir()` (`user://mods`).
+3. Bundled candidates, in this order:
+   - `mods` beside the client assembly.
+   - `mods` inside `AppContext.BaseDirectory`.
+   - The project directory `res://mods`.
+
+Equivalent paths, including directory links, count as one root at their highest priority.
+Within one root, ordinal folder order resolves duplicate IDs. Bundled candidate order resolves ties between bundled roots.
+The output list uses ordinal manifest ID order.
+
+A winning copy replaces the entire mod: its manifest, assembly, data, and art.
+The client never fills missing files from a losing copy.
+Only the winning manifest supplies dependencies and content references.
+Unrelated IDs from lower-priority roots remain available.
+`CIV_MODS` adds or replaces mods by ID. It does not hide other installed mods.
+The engine-free `GameCatalog.Load(string)` API still loads one directory without these host search rules.
+
+## Mod manager
+
+1. Start the client normally to open **Mods** before any mod assembly loads.
+2. Select the mods that you trust.
+3. Select **Continue** to save the profile and open game setup.
+
+Each row shows the mod name, version, stable ID, selection state, chosen source, and full source path.
+For duplicate IDs, the row also lists overridden sources and paths. Those copies do not load.
+Required dependencies and content providers enter the selection automatically.
+The **Required by** text explains each requirement.
+To disable a required mod, first disable the mods that require it.
+Content references can form cycles. Ordered dependencies cannot form cycles.
+Missing providers and dependency cycles block Continue until you correct the selection.
+Invalid manifests appear as diagnostics with their full paths. Other valid mods remain selectable.
+An invalid winning manifest reserves every readable ID, even when metadata after the ID has a syntax error.
+The reserved IDs stay visible as blocked sources. The client does not substitute lower-priority code.
+To continue, repair the manifest or disable those IDs and the mods that require them.
+An invalid lower-priority copy does not block a valid winner.
+If no ID is readable, the client reports the invalid folder but cannot associate it with an installed ID.
+
+The profile is `user://mod-profile.json` in the Godot user-data directory, separate from saved games.
+It stores explicit choices as manifest IDs, not folder names.
+With no profile, all installed mods start selected, as before.
+With a profile, new mods stay disabled unless another selected mod requires them.
+Missing saved IDs remain visible until you disable them or reset the selection.
+A broken profile blocks Continue. Either reset button replaces its choices without silently enabling mod code.
+The client saves the profile before it loads assemblies. A save error leaves the manager open.
+
+Mod selection controls which code loads. Game options control features within the loaded ruleset.
+Card Research and Tech Tree remain default-off game options even when their mods load.
+
+Game setup offers **Mods (restart required)** after the catalog loads.
+This manager saves the next selection and quits. Start the client again to apply that selection.
+It does not unload assemblies or rebuild the active catalog.
+A load error also returns to this restart-only manager because some assemblies can remain in memory.
+A dependency-valid selection can still lack the content for game setup. The client reports this error without starting a game.
+
+Headless runs, screenshot runs, FPS probes, and `--skip-mod-manager` bypass the startup screen but honor the profile.
+They use all installed mods when no profile exists. Invalid profiles or selections make these runs exit with code 1.
+For an isolated smoke run, use a separate Godot user-data directory through `XDG_DATA_HOME` on Linux.
 
 ## Controls
 
