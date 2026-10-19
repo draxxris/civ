@@ -27,6 +27,7 @@ public partial class UiGallery : Control
         {
             Theme = Ui.MakeTheme(ReplicaScale);
             Ui.EnableScrollArrows(GetTree(), ReplicaScale);
+            ListRim.Attach(GetTree());
         }
         else Ui.InstallTheme(GetWindow());
         GD.Print($"Painted the brass theme in {clock.ElapsedMilliseconds} ms.");

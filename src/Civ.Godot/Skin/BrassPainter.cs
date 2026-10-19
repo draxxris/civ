@@ -25,6 +25,17 @@ internal sealed record Plate
     public float TopRim { get; init; } = -1f;
     /// <summary>Brass brightness: below 1 for dull, worn brass.</summary>
     public float Brass { get; init; } = 1f;
+    /// <summary>
+    /// 0 for bright brass; 1 turns the rim to dull grey pewter and flattens the paint's lit lip. Disabled widgets
+    /// use it, so they read as unlit metal rather than only greyed text.
+    /// </summary>
+    public float Tarnish { get; init; }
+    /// <summary>
+    /// Paints only the border: a solid outline, the rim and the lip and groove where the paint meets it
+    /// (<see cref="BrassPainter.BorderDepth"/>), with no drop shadow and nothing inside. A list draws it over its
+    /// rows, so they slide under the whole border rather than over it.
+    /// </summary>
+    public bool Hollow { get; init; }
     public RimFinish Finish { get; init; } = RimFinish.Polished;
     public float Radius { get; init; } = 4f;
     /// <summary>Diagonal cut across each closed corner, in pixels (tabs); 0 for plain rounded corners.</summary>
@@ -91,6 +102,11 @@ internal readonly record struct Glyph(Func<float, float, float> Distance, Color 
 internal static class BrassPainter
 {
     public const int PeriodX = 192, PeriodY = 32;
+    /// <summary>
+    /// How far, in units, the border reaches into the paint past a polished rim: the lit lip, then the dark groove
+    /// (see EdgeOfPaint). A <see cref="Plate.Hollow"/> plate stops here.
+    /// </summary>
+    public const float BorderDepth = 1.5f;
     /// <summary>Width of the margin that holds the drop shadow, on every side.</summary>
     public const int ShadowPad = 6;
     private const int Supersample = 3;
@@ -231,8 +247,12 @@ internal static class BrassPainter
             if (d >= 0f) return Outside(p, d, normal, x, y);
             var rim = RimWidth(p, normal);
             if (handled) rim += 0.22f * _noise.Sample(u + 5.3f, v + 2.1f, 4, 4, 13) + 0.1f * _noise.Sample(u, v, 1, 1, 14);
-            if (-d < rim) return BrassAt(p, u, v, -d / rim, normal);
-            return FillAt(p, x, y, u, v, -d - rim);
+            if (-d < rim) return Tarnished(p, BrassAt(p, u, v, -d / rim, normal));
+            if (!p.Hollow) return FillAt(p, x, y, u, v, -d - rim);
+            // The lip and groove belong to the border; past them the paint is clear, with a soft edge.
+            var depth = -d - rim;
+            var fill = FillAt(p, x, y, u, v, depth);
+            return fill with { A = Mathf.SmoothStep(BorderDepth + 0.2f, BorderDepth - 0.2f, depth) };
         }
 
         /// <summary>
@@ -242,6 +262,9 @@ internal static class BrassPainter
         /// </summary>
         private Color Outside(Plate p, float d, Vector2 normal, float x, float y)
         {
+            // A border drawn over a list's rows must hide them: its outline is solid out to the edge of the control,
+            // measured from the plate's true edge, so the rim's dents leave no gap.
+            if (p.Hollow) return new Color(ShadowColour, Distance(p, x, y) < OutlineWidth(p) + 0.5f ? 1f : 0f);
             var shadow = new Color(ShadowColour, 0f);
             if (p.Shadow > 0f)
             {
@@ -259,6 +282,15 @@ internal static class BrassPainter
         {
             var vertical = n.Y < 0 ? p.TopRimWidth : p.Rim;
             return n.X * n.X * p.Rim + n.Y * n.Y * vertical;
+        }
+
+        /// <summary>Brass turned to dull, cool pewter by <see cref="Plate.Tarnish"/>: no hue, less contrast, darker.</summary>
+        private static Color Tarnished(Plate p, Color c)
+        {
+            if (p.Tarnish <= 0f) return c;
+            var grey = 0.3f * c.R + 0.59f * c.G + 0.11f * c.B;
+            var pewter = new Color(0.97f, 0.99f, 1.02f) * (0.1f + 0.55f * grey);
+            return c.Lerp(pewter, p.Tarnish) with { A = c.A };
         }
 
         private Color BrassAt(Plate p, float u, float v, float t, Vector2 n) =>
@@ -364,7 +396,7 @@ internal static class BrassPainter
             float lx = n.X * p.Light, ly = n.Y * p.Light;
             // Worn off in places along its length, so it never reads as a second frame.
             var worn = Mathf.Clamp(0.55f + 0.6f * _noise.Sample(u + 9.1f, v + 4.3f, 8, 8, 10), 0f, 1f);
-            var lift = 1f + worn * (lx * lx * (lx < 0 ? 0.15f : 0f) + ly * ly * (ly < 0 ? 0.6f : 0.12f));
+            var lift = 1f + worn * (1f - 0.8f * p.Tarnish) * (lx * lx * (lx < 0 ? 0.15f : 0f) + ly * ly * (ly < 0 ? 0.6f : 0.12f));
             var lipColour = c * lift;
             var grey = (lipColour.R + lipColour.G + lipColour.B) / 3f;
             lipColour = lipColour.Lerp(new Color(grey, grey, grey * 0.96f), 0.6f * Mathf.Max(-ly, 0f));

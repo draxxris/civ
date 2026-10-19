@@ -29,6 +29,7 @@ internal static class Ui
         window.Theme = Theme;
         ThemeDB.GetDefaultTheme().MergeWith(Theme);
         EnableScrollArrows(window.GetTree());
+        ListRim.Attach(window.GetTree());
     }
 
     /// <summary>

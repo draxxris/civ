@@ -12,8 +12,10 @@ internal static class BrassSkin
     public static readonly Color Text = Color.Color8(235, 221, 200);
     public static readonly Color TextBright = Color.Color8(255, 247, 230);
     public static readonly Color TextDim = Color.Color8(150, 144, 136);
+    /// <summary>Text on a disabled widget: darker and greyer than <see cref="TextDim"/>, which marks secondary text.</summary>
+    public static readonly Color TextDisabled = Color.Color8(112, 110, 106);
     /// <summary>Warm dark backdrop of the reference sheet; the widgets are tuned to sit on it.</summary>
-    public static readonly Color Backdrop = Color.Color8(50, 45, 38);
+    public static readonly Color Backdrop = Color.Color8(52, 45, 36);
 
     private static readonly Color Slate = Color.Color8(44, 67, 83);
     private static readonly Color FieldSlate = Color.Color8(34, 45, 54);
@@ -63,6 +65,7 @@ internal static class BrassSkin
 
     private static void ApplyAll(Theme theme)
     {
+        theme.DefaultFont = SerifFont();
         if (_scale > 1) theme.DefaultFontSize = Px(14);
         ApplyButtons(theme);
         ApplyChecks(theme);
@@ -74,6 +77,34 @@ internal static class BrassSkin
         ApplyLineEdit(theme);
         ApplySpinBox(theme);
         ApplyBackdrop(theme);
+    }
+
+    /// <summary>Noto Serif, upright and italic, as variable fonts. See src/Civ.Godot/Fonts/README.md.</summary>
+    private const string FontPath = "res://Fonts/NotoSerif-VariableFont.ttf", ItalicFontPath = "res://Fonts/NotoSerif-Italic-VariableFont.ttf";
+
+    private static Font? _font, _italic;
+
+    /// <summary>The UI font, Noto Serif at weight 400 and normal width; the theme's default font.</summary>
+    public static Font SerifFont() => _font ??= LoadSerif(FontPath);
+
+    /// <summary>Noto Serif Italic at weight 400 and normal width, for a control that sets it as its font.</summary>
+    public static Font SerifItalicFont() => _italic ??= LoadSerif(ItalicFontPath);
+
+    /// <summary>
+    /// A variable font file with a font variation that picks weight 400 and width 100; the file holds every weight.
+    /// The TTF is read as a plain file, so the project needs no import step for it.
+    /// </summary>
+    private static Font LoadSerif(string path)
+    {
+        var file = new FontFile { Hinting = TextServer.Hinting.Light, SubpixelPositioning = TextServer.SubpixelPositioning.Auto };
+        var error = file.LoadDynamicFont(path);
+        if (error != Error.Ok) GD.PushError($"Could not load {path}: {error}");
+        var server = TextServerManager.GetPrimaryInterface();
+        return new FontVariation
+        {
+            BaseFont = file,
+            VariationOpentype = new Godot.Collections.Dictionary { [server.NameToTag("wght")] = 400, [server.NameToTag("wdth")] = 100 },
+        };
     }
 
     /// <summary>A progress fill in <paramref name="tint"/>, darkened to sit with the paint; cached per colour.</summary>
@@ -98,9 +129,13 @@ internal static class BrassSkin
             SetButtonFonts(theme, type);
             theme.SetStylebox("focus", type, Focus());
         }
-        theme.SetIcon("arrow", "OptionButton", Icon(12, 8, null, Triangle(new(1.5f, 1.5f), new(10.5f, 1.5f), new(6f, 6.8f)) with { Colour = ChevronBrass, Highlight = ChevronLight }));
+        // The arrow takes the font colour of each state, so it dims with the text when disabled. It is painted that
+        // much brighter, so in the normal state it comes out the chevron brass.
+        Color Unmodulated(Color c) => new(c.R / Text.R, c.G / Text.G, c.B / Text.B);
+        var arrow = Triangle(new(1.5f, 1.5f), new(10.5f, 1.5f), new(6f, 6.8f)) with { Colour = Unmodulated(ChevronBrass), Highlight = Unmodulated(ChevronLight) };
+        theme.SetIcon("arrow", "OptionButton", Icon(12, 8, null, arrow));
         theme.SetConstant("arrow_margin", "OptionButton", Px(9));
-        theme.SetConstant("modulate_arrow", "OptionButton", 0);
+        theme.SetConstant("modulate_arrow", "OptionButton", 1);
     }
 
     /// <summary>Button plates per look. Shared seeds keep the rim pattern still while the colour changes.</summary>
@@ -110,7 +145,7 @@ internal static class BrassSkin
         {
             Look.Hover => new Plate { Fill = Lift(fill, 1.2f), Glow = 0.6f, Brass = 1.1f, Seed = seed },
             Look.Pressed => new Plate { Fill = Lift(fill, 0.8f), Light = -1f, Well = 0.45f, Seed = seed },
-            Look.Disabled => new Plate { Fill = Charcoal, Glow = 0.15f, Brass = 0.85f, Seed = seed },
+            Look.Disabled => Unlit(new Plate { Fill = Charcoal, Seed = seed }),
             _ => new Plate { Fill = fill, Glow = 0.35f, Seed = seed },
         };
         var pressed = look == Look.Pressed;
@@ -124,7 +159,7 @@ internal static class BrassSkin
         theme.SetColor("font_hover_color", type, TextBright);
         theme.SetColor("font_pressed_color", type, Ui.Accent);
         theme.SetColor("font_hover_pressed_color", type, Ui.Accent);
-        theme.SetColor("font_disabled_color", type, TextDim);
+        theme.SetColor("font_disabled_color", type, TextDisabled);
         // A soft dark outline stands in for the engraved text shadow in the reference.
         theme.SetColor("font_outline_color", type, new Color(0f, 0f, 0f, 0.55f));
         theme.SetConstant("outline_size", type, Px(3));
@@ -143,7 +178,7 @@ internal static class BrassSkin
             theme.SetColor("font_hover_color", type, TextBright);
             theme.SetColor("font_pressed_color", type, Text);
             theme.SetColor("font_hover_pressed_color", type, TextBright);
-            theme.SetColor("font_disabled_color", type, TextDim);
+            theme.SetColor("font_disabled_color", type, TextDisabled);
             theme.SetConstant("h_separation", type, Px(7));
         }
         foreach (var (name, round, on, enabled) in CheckIcons())
@@ -173,9 +208,10 @@ internal static class BrassSkin
         var fill = on ? Color.Color8(37, 57, 71) : Color.Color8(39, 40, 40);
         var plate = new Plate
         {
-            Fill = enabled ? fill : Lift(fill, 0.8f), Rim = 2.2f, Radius = round ? CheckSize : 2.5f, Falloff = 3f,
-            Well = 0.35f, Glow = 0f, Brass = enabled ? 0.85f : 0.6f, Finish = RimFinish.Dull, Mottle = 0.05f, Seed = round ? 41 : 43,
+            Fill = fill, Rim = 2.2f, Radius = round ? CheckSize : 2.5f, Falloff = 3f,
+            Well = 0.35f, Glow = 0f, Brass = 0.85f, Finish = RimFinish.Dull, Mottle = 0.05f, Seed = round ? 41 : 43,
         };
+        if (!enabled) plate = Unlit(plate);
         // A soft lift in the middle of the well, as if it were dished.
         var vignette = new Glyph((x, y) => new Vector2(x - c, y - c).Length() - (c - 3f), Colors.White,
             Shade: (x, y) => new Color(0.75f, 0.8f, 0.82f, 0.03f * Mathf.Clamp(1f - new Vector2(x - c, y - c).Length() / (c - 3f), 0f, 1f)),
@@ -183,7 +219,7 @@ internal static class BrassSkin
         if (!on) return Icon(CheckSize, CheckSize, plate, vignette);
         if (round) return Icon(CheckSize, CheckSize, plate, vignette, Bead(c, c, 5f, enabled));
         var tick = new Glyph((x, y) => Polyline(x, y, new(c - 3.5f, c - 0.1f), new(c - 1.2f, c + 2.3f), new(c + 3.4f, c - 2.7f)) - 1.15f,
-            enabled ? Color.Color8(216, 196, 168) : TextDim);
+            enabled ? Color.Color8(216, 196, 168) : TextDisabled);
         return Icon(CheckSize, CheckSize, plate, vignette, tick);
     }
 
@@ -191,7 +227,7 @@ internal static class BrassSkin
     private static Glyph Bead(float cx, float cy, float radius, bool enabled)
     {
         Color top = Color.Color8(62, 106, 138), bottom = Color.Color8(40, 78, 106), shine = Color.Color8(150, 180, 198);
-        if (!enabled) (top, bottom, shine) = (Color.Color8(78, 88, 96), Color.Color8(46, 52, 58), Color.Color8(120, 128, 134));
+        if (!enabled) (top, bottom, shine) = (Color.Color8(74, 74, 74), Color.Color8(48, 48, 48), Color.Color8(108, 108, 108));
         return new Glyph((x, y) => new Vector2(x - cx, y - cy).Length() - radius, top, Shade: (x, y) =>
         {
             var p = new Vector2(x - cx, y - cy) / radius;
@@ -237,19 +273,23 @@ internal static class BrassSkin
         const int tabSeed = 11;
         // The active tab stands taller than the others, as in the reference: inactive tabs leave space at the top
         // (and a pixel at each side) of the rect the tab bar gives them, and push their text down to match.
-        StyleBox Tab(Color fill, float glow, float brass, bool active)
+        static Plate TabPlate(Color fill, float glow, float brass) =>
+            new() { Fill = fill, Glow = glow, Brass = brass, Radius = 1f, Chamfer = 4.5f, Open = Edges.Bottom, Seed = tabSeed };
+        StyleBox Tab(Plate plate, bool active)
         {
-            var box = (BrushedStyleBox)Box(new Plate { Fill = fill, Glow = glow, Brass = brass, Radius = 1f, Chamfer = 4.5f, Open = Edges.Bottom, Seed = tabSeed },
-                active ? 18 : 16, active ? 7 : 9, active ? 18 : 16, 5);
+            var box = Box(plate, active ? 18 : 16, active ? 7 : 9, active ? 18 : 16, 5);
             if (!active) box.Shrink = new Vector4(1, InactiveTabDrop, 1, 0) * _scale;
+            // One tab bar draws every tab, so each takes its scrapes from where it stands.
+            box.VaryByPosition = true;
             return box;
         }
-        var selected = Tab(TabSlate, 0.4f, 1.1f, true);
-        var unselected = Tab(Charcoal, 0.15f, 0.85f, false);
-        var hovered = Tab(Lift(Charcoal, 1.25f), 0.3f, 0.95f, false);
-        var disabled = Tab(Lift(Charcoal, 0.85f), 0.1f, 0.65f, false);
+        var selected = Tab(TabPlate(TabSlate, 0.4f, 1.1f), true);
+        var unselected = Tab(TabPlate(Charcoal, 0.15f, 0.85f), false);
+        var hovered = Tab(TabPlate(Lift(Charcoal, 1.25f), 0.3f, 0.95f), false);
+        var disabled = Tab(Unlit(TabPlate(Charcoal, 0f, 0.85f)), false);
         // The panel's thick top rim is the rail the tabs stand on.
-        var panel = Box(new Plate { Fill = WellCharcoal, TopRim = 3.5f, Well = 0.3f, Strokes = 0.35f, Wear = 0.5f, Seed = 31 }, 12, 12, 12, 12);
+        // The page holds text, so it takes the text areas' softer well; its thick top rim is still the rail.
+        var panel = Box(SoftWellPlate(31) with { TopRim = 3.5f }, 12, 12, 12, 12);
         foreach (var type in new[] { "TabBar", "TabContainer" })
         {
             theme.SetStylebox("tab_selected", type, selected);
@@ -260,7 +300,7 @@ internal static class BrassSkin
             theme.SetColor("font_selected_color", type, TextBright);
             theme.SetColor("font_unselected_color", type, Text.Darkened(0.12f));
             theme.SetColor("font_hovered_color", type, TextBright);
-            theme.SetColor("font_disabled_color", type, TextDim);
+            theme.SetColor("font_disabled_color", type, TextDisabled);
             theme.SetColor("font_outline_color", type, new Color(0f, 0f, 0f, 0.55f));
             theme.SetConstant("outline_size", type, Px(3));
         }
@@ -271,8 +311,13 @@ internal static class BrassSkin
     // ---- Lists ------------------------------------------------------------------------------------
 
     /// <summary>The selected row: slate paint with a thin, dull rim, shared by lists and dropdown popups.</summary>
-    private static StyleBox Row(float lift) =>
-        Box(new Plate { Fill = Lift(Slate, lift), Rim = 1f, Brass = 0.75f, Radius = 3f, Outline = false, Shadow = 0f, Glow = 0.3f, Falloff = 2f, Seed = 13 }, 6, 3, 6, 3);
+    private static StyleBox Row(float lift)
+    {
+        var box = Box(new Plate { Fill = Lift(Slate, lift), Rim = 1f, Brass = 0.75f, Radius = 3f, Outline = false, Shadow = 0f, Glow = 0.3f, Falloff = 2f, Seed = 13 }, 6, 3, 6, 3);
+        // One list draws every row, so each row takes its scrapes from where it stands.
+        box.VaryByPosition = true;
+        return box;
+    }
 
     private static StyleBox RowHover()
     {
@@ -288,7 +333,8 @@ internal static class BrassSkin
     private static void ApplyLists(Theme theme)
     {
         const string type = "ItemList";
-        theme.SetStylebox("panel", type, Box(WellPlate(17), 3, 3, 3, 3));
+        // Rows start just past the border (outline, rim, lip and groove), so at rest none of them hides under it.
+        theme.SetStylebox("panel", type, WithRim(WellPlate(17), 4, 4, 4, 4));
         theme.SetStylebox("focus", type, Empty(0));
         var selected = Row(1f);
         foreach (var name in new[] { "selected", "selected_focus", "hovered_selected", "hovered_selected_focus" })
@@ -318,7 +364,7 @@ internal static class BrassSkin
         theme.SetStylebox("labeled_separator_right", type, line);
         theme.SetColor("font_color", type, Text);
         theme.SetColor("font_hover_color", type, TextBright);
-        theme.SetColor("font_disabled_color", type, TextDim);
+        theme.SetColor("font_disabled_color", type, TextDisabled);
         theme.SetColor("font_accelerator_color", type, TextDim);
         theme.SetColor("font_separator_color", type, TextDim);
         theme.SetConstant("v_separation", type, Px(5));
@@ -346,7 +392,7 @@ internal static class BrassSkin
         }, colour));
         theme.SetIcon("checked", type, Tick(Text));
         theme.SetIcon("unchecked", type, blank);
-        theme.SetIcon("checked_disabled", type, Tick(TextDim));
+        theme.SetIcon("checked_disabled", type, Tick(TextDisabled));
         theme.SetIcon("unchecked_disabled", type, blank);
         theme.SetIcon("submenu", type, Icon(8, 12, null, Triangle(new(1.5f, 1.5f), new(6.8f, 6f), new(1.5f, 10.5f))));
     }
@@ -362,7 +408,7 @@ internal static class BrassSkin
     {
         StyleBox Grabber(bool vertical, float lift, float light, float glow)
         {
-            var box = (BrushedStyleBox)Box(new Plate
+            var box = Box(new Plate
             {
                 Fill = Lift(GrabberBlue, lift), Rim = 0f, Radius = 0.8f, Chamfer = 1.4f, Bevel = 2.2f, Shadow = 0.7f, Falloff = 2f,
                 Light = light, Glow = glow, Well = light < 0 ? 0.3f : 0f, Strokes = 0.8f, Wear = 0f, Seed = 23,
@@ -472,20 +518,17 @@ internal static class BrassSkin
     /// </summary>
     private static Plate SoftWellPlate(int seed) => new() { Fill = WellCharcoal, Well = 0.35f, Strokes = 0.2f, Wear = 0.15f, Mottle = 0.04f, Seed = seed };
 
-    /// <summary>Type variation for a full-screen backdrop panel: the backdrop colour in the soft paint.</summary>
+    /// <summary>Type variation for a full-screen backdrop panel: the painted ground of the reference sheet.</summary>
     public const string BackdropPanel = "BackdropPanel";
 
     /// <summary>
-    /// A plain painted surface behind the widgets, in the soft paint of the text wells: no rim and no wear, so it
-    /// reads as a backdrop rather than a plate.
+    /// The painted ground behind the widgets (see <see cref="BackdropStyleBox"/>): soft clouds, streaks and grain,
+    /// with none of the plates' brushwork, so it reads as a backdrop rather than a plate.
     /// </summary>
     private static void ApplyBackdrop(Theme theme)
     {
         theme.SetTypeVariation(BackdropPanel, "Panel");
-        theme.SetStylebox("panel", BackdropPanel, Box(new Plate
-        {
-            Fill = Backdrop, Rim = 0f, Radius = 0f, Outline = false, Shadow = 0f, Strokes = 0.2f, Wear = 0f, Mottle = 0.04f, Seed = 37,
-        }, 0, 0, 0, 0));
+        theme.SetStylebox("panel", BackdropPanel, BackdropStyleBox.Paint(Backdrop, _scale));
     }
 
     private static void ApplyLineEdit(Theme theme)
@@ -493,11 +536,11 @@ internal static class BrassSkin
         foreach (var (type, side, top) in new[] { ("LineEdit", 9, 5), ("TextEdit", 9, 7) })
         {
             theme.SetStylebox("normal", type, Box(SoftWellPlate(29), side, top, side, top));
-            theme.SetStylebox("read_only", type, Box(SoftWellPlate(29) with { Brass = 0.7f }, side, top, side, top));
+            theme.SetStylebox("read_only", type, Box(Unlit(SoftWellPlate(29)), side, top, side, top));
             theme.SetStylebox("focus", type, Focus());
             theme.SetColor("font_color", type, Text);
-            theme.SetColor("font_readonly_color", type, TextDim);
-            theme.SetColor("font_uneditable_color", type, TextDim);
+            theme.SetColor("font_readonly_color", type, TextDisabled);
+            theme.SetColor("font_uneditable_color", type, TextDisabled);
             theme.SetColor("font_placeholder_color", type, TextDim with { A = 0.7f });
             theme.SetColor("caret_color", type, TextBright);
             theme.SetColor("selection_color", type, Lift(Slate, 1.8f) with { A = 0.8f });
@@ -520,7 +563,7 @@ internal static class BrassSkin
             theme.SetIcon(name, type, Chevron(up, ChevronBrass, ChevronLight));
             theme.SetIcon(name + "_hover", type, Chevron(up, ChevronBrass.Lightened(0.2f), ChevronLight.Lightened(0.25f)));
             theme.SetIcon(name + "_pressed", type, Chevron(up, ChevronBrass.Darkened(0.15f), ChevronBrass));
-            theme.SetIcon(name + "_disabled", type, Chevron(up, TextDim.Darkened(0.3f), TextDim));
+            theme.SetIcon(name + "_disabled", type, Chevron(up, TextDisabled.Darkened(0.3f), TextDisabled));
             foreach (var state in new[] { "", "_hovered", "_pressed", "_disabled" })
                 theme.SetStylebox(name + "_background" + state, type, Empty(0));
         }
@@ -548,17 +591,31 @@ internal static class BrassSkin
     /// shadow is an expand margin, so it does not change the layout. The overlay darkens the paint by
     /// <see cref="ScrapedPaint.MeanShade"/> on average, so the frame paints the fill that much lighter under it.
     /// </summary>
-    private static StyleBox Box(Plate plate, int left, int top, int right, int bottom)
+    private static BrushedStyleBox Box(Plate plate, int left, int top, int right, int bottom)
     {
         plate = plate with { Scale = _scale };
-        var margin = BrassPainter.MarginOf(plate) * _scale;
+        var frame = FrameBox(plate with { FieldLift = 1f / (1f - ScrapedPaint.MeanShade), FieldInset = StrokeInset(plate) });
+        var box = new BrushedStyleBox { Frame = frame, Scrapes = ScrapesFor(plate), Inset = StrokeInset(plate) * _scale, Open = plate.Open };
+        box.SetContentMargin(Side.Left, Px(left));
+        box.SetContentMargin(Side.Top, Px(top));
+        box.SetContentMargin(Side.Right, Px(right));
+        box.SetContentMargin(Side.Bottom, Px(bottom));
+        return box;
+    }
+
+    /// <summary>
+    /// The painted 9-slice frame of <paramref name="plate"/> (already at the current scale) tiled to any size. The drop
+    /// shadow is an expand margin, so it does not change the layout.
+    /// </summary>
+    private static StyleBoxTexture FrameBox(Plate plate)
+    {
         var frame = new StyleBoxTexture
         {
-            Texture = FrameOf(plate with { FieldLift = 1f / (1f - ScrapedPaint.MeanShade), FieldInset = StrokeInset(plate) }),
+            Texture = FrameOf(plate),
             AxisStretchHorizontal = StyleBoxTexture.AxisStretchMode.TileFit,
             AxisStretchVertical = StyleBoxTexture.AxisStretchMode.TileFit,
         };
-        frame.SetTextureMarginAll(margin);
+        frame.SetTextureMarginAll(BrassPainter.MarginOf(plate) * _scale);
         // Open sides carry no shadow: their margin is plain fill, so it stays inside the rect (a tab's foot ends on
         // its rail rather than hanging 6 px below it with no paint texture).
         var shadow = BrassPainter.ShadowMarginOf(plate) * _scale;
@@ -566,11 +623,14 @@ internal static class BrassSkin
         frame.SetExpandMargin(Side.Top, plate.Open.HasFlag(Edges.Top) ? 0 : shadow);
         frame.SetExpandMargin(Side.Right, plate.Open.HasFlag(Edges.Right) ? 0 : shadow);
         frame.SetExpandMargin(Side.Bottom, plate.Open.HasFlag(Edges.Bottom) ? 0 : shadow);
-        var box = new BrushedStyleBox { Frame = frame, Scrapes = ScrapesFor(plate), Inset = StrokeInset(plate) * _scale, Open = plate.Open };
-        box.SetContentMargin(Side.Left, Px(left));
-        box.SetContentMargin(Side.Top, Px(top));
-        box.SetContentMargin(Side.Right, Px(right));
-        box.SetContentMargin(Side.Bottom, Px(bottom));
+        return frame;
+    }
+
+    /// <summary>A plate's box with its rim also painted alone, for <see cref="ListRim"/> to draw over a list's rows.</summary>
+    private static StyleBox WithRim(Plate plate, int left, int top, int right, int bottom)
+    {
+        var box = Box(plate, left, top, right, bottom);
+        box.Rim = FrameBox(plate with { Scale = _scale, Hollow = true });
         return box;
     }
 
@@ -678,4 +738,15 @@ internal static class BrassSkin
     }
 
     private static Color Lift(Color c, float by) => new(c.R * by, c.G * by, c.B * by, c.A);
+
+    /// <summary>
+    /// The disabled look of a plate: unlit. The paint loses its colour and some brightness, the brass tarnishes to
+    /// dull pewter, the glow goes and the shadow fades, so the widget lies flat. Every disabled widget uses it.
+    /// </summary>
+    private static Plate Unlit(Plate plate)
+    {
+        var c = plate.Fill;
+        var grey = 0.8f * (0.3f * c.R + 0.59f * c.G + 0.11f * c.B);
+        return plate with { Fill = new Color(grey, grey, grey * 1.03f, c.A), Glow = 0f, Tarnish = 1f, Shadow = 0.35f * plate.Shadow };
+    }
 }

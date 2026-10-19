@@ -128,9 +128,27 @@ same material with more detail.
   is painted at three or more pixels per unit and averaged down.
 - `BrushedStyleBox` draws the plate, then tiles the overlay at 1:1, so the
   overlay does not stretch. Each control starts the tiles at its own random
-  offset, so no two buttons show the same scrapes.
+  offset, so no two buttons show the same scrapes. List rows and tabs are
+  many boxes on one control. Their offset also comes from the position of the
+  box in the content, so each row and each tab has its own scrapes. A row
+  keeps its scrapes while the list scrolls.
+- `ListRim` draws the border of an ItemList again, on top of the rows: a
+  solid outline, the rim, and the lip and groove where the paint meets it. An
+  ItemList clips its rows at its outer edge, so without it a scrolled row
+  covers the border. With it, rows slide under the border.
+- A disabled widget is unlit: the paint is grey and darker, the brass rim is
+  dull grey pewter, the glow is gone and the shadow is faint. Its text and the
+  dropdown arrow are dark grey (`BrassSkin.TextDisabled`).
+- `BackdropStyleBox` paints the ground behind the widgets. It has soft warm
+  and cool clouds, short streaks that rise to the right, and a fine grain. It
+  has no rim and no brushwork. The three layers tile with different periods,
+  so the pattern does not repeat on screen.
 - The scroll bar is one brass frame. The track is open at both ends, and the
   arrow cells close it. Each cell has a brass chevron and a brass rule.
+- The font is Noto Serif (`Fonts/`), a variable font, at weight 400. It is
+  the default font of the theme. `BrassSkin.SerifItalicFont()` gives the
+  italic.
+- A TabContainer page uses the softer well of the text areas.
 - `BrassSkin` sets the plates, icons and colours for these controls: Button,
   OptionButton and its PopupMenu, CheckBox (check and radio), ProgressBar,
   TabBar and TabContainer, ItemList, the scroll bars and LineEdit.

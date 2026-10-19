@@ -9,7 +9,23 @@ namespace Civ.Client;
 /// </summary>
 internal sealed partial class BrushedStyleBox : StyleBox
 {
+    /// <summary>
+    /// Scroll offsets of controls that draw scrolled boxes on their own canvas item (a list's rows), by canvas
+    /// item. <see cref="VaryByPosition"/> adds the offset back, so a row keeps its scrapes while it scrolls.
+    /// </summary>
+    private static readonly Dictionary<ulong, Func<Vector2>> Scrolls = new();
+
     public StyleBox? Frame { get; set; }
+    /// <summary>
+    /// The outline and rim alone (a <see cref="Plate.Hollow"/> plate), for <see cref="ListRim"/> to draw over a
+    /// list's rows; null when the control does not need it.
+    /// </summary>
+    public StyleBox? Rim { get; set; }
+    /// <summary>
+    /// Seeds the tile phase from the rect's position as well as the canvas item, for boxes that one control draws
+    /// many times (a list's rows, a tab bar's tabs), so each one gets its own scrapes.
+    /// </summary>
+    public bool VaryByPosition { get; set; }
     public ScrapeSet? Scrapes { get; set; }
     /// <summary>Distance from each side (left, top, right, bottom) to where the overlay starts.</summary>
     public Vector4 Inset { get; set; }
@@ -23,11 +39,29 @@ internal sealed partial class BrushedStyleBox : StyleBox
 
     public override void _Draw(Rid toCanvasItem, Rect2 rect)
     {
+        var seed = VaryByPosition ? SeedAt(toCanvasItem.Id, rect.Position) : toCanvasItem.Id;
         rect = rect.GrowIndividual(-Shrink.X, -Shrink.Y, -Shrink.Z, -Shrink.W);
         Frame?.Draw(toCanvasItem, rect);
         if (Scrapes is not { } s) return;
-        foreach (var (texture, area, offset) in Pieces(s, rect, Inset, Open, new Phase(toCanvasItem.Id)))
+        foreach (var (texture, area, offset) in Pieces(s, rect, Inset, Open, new Phase(seed)))
             DrawTiled(toCanvasItem, area, texture, offset);
+    }
+
+    /// <summary>Records how far the control drawing on <paramref name="canvasItem"/> is scrolled; null forgets it.</summary>
+    public static void SetScroll(Rid canvasItem, Func<Vector2>? offset)
+    {
+        if (offset == null) Scrolls.Remove(canvasItem.Id);
+        else Scrolls[canvasItem.Id] = offset;
+    }
+
+    /// <summary>A seed from the canvas item and the box's position in the control's content, before scrolling.</summary>
+    private static ulong SeedAt(ulong canvasItem, Vector2 position)
+    {
+        if (Scrolls.TryGetValue(canvasItem, out var scroll)) position += scroll();
+        unchecked
+        {
+            return canvasItem ^ (ulong)Mathf.RoundToInt(position.X) * 0xC2B2AE3D27D4EB4FUL ^ (ulong)Mathf.RoundToInt(position.Y) * 0x165667B19E3779F9UL;
+        }
     }
 
     /// <summary>
@@ -79,12 +113,12 @@ internal sealed partial class BrushedStyleBox : StyleBox
     }
 
     /// <summary>
-    /// Tiles <paramref name="texture"/> over <paramref name="area"/> at 1:1, with texture pixel
-    /// <paramref name="offset"/> at the area's top-left corner.
+    /// Tiles <paramref name="texture"/> over <paramref name="area"/>, each texel <paramref name="magnify"/> pixels
+    /// across, with the point <paramref name="offset"/> pixels into the tiling at the area's top-left corner.
     /// </summary>
-    private static void DrawTiled(Rid canvasItem, Rect2 area, Texture2D texture, Vector2 offset)
+    public static void DrawTiled(Rid canvasItem, Rect2 area, Texture2D texture, Vector2 offset, int magnify = 1)
     {
-        var tile = texture.GetSize();
+        var tile = texture.GetSize() * magnify;
         offset = new Vector2(Mathf.PosMod(offset.X, tile.X), Mathf.PosMod(offset.Y, tile.Y));
         for (var y = area.Position.Y - offset.Y; y < area.End.Y; y += tile.Y)
         {
@@ -92,7 +126,7 @@ internal sealed partial class BrushedStyleBox : StyleBox
             {
                 var piece = new Rect2(x, y, tile.X, tile.Y).Intersection(area);
                 if (piece.Size.X <= 0 || piece.Size.Y <= 0) continue;
-                var source = new Rect2(piece.Position - new Vector2(x, y), piece.Size);
+                var source = new Rect2((piece.Position - new Vector2(x, y)) / magnify, piece.Size / magnify);
                 RenderingServer.CanvasItemAddTextureRectRegion(canvasItem, piece, texture.GetRid(), source);
             }
         }
