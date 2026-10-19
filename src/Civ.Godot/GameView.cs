@@ -15,6 +15,8 @@ internal sealed partial class GameView : Node3D
     private Hex? _hover;
     private int _hoverRevision = -1;
     private bool _dragging;
+    private (Vector2 Mouse, Transform3D Camera, float Fov, Vector2 ViewSize, int WorldRevision, bool OverUi, Hex? Forced)? _pickInputs;
+    private Hex? _pickedHex;
 
     public GameSession Session => _session;
     public GameUi Ui => _ui;
@@ -116,7 +118,16 @@ internal sealed partial class GameView : Node3D
         _ui.MoveHoverTip(mouse);
     }
 
-    private Hex? HoveredHex(Vector2 mouse) => _forcedHover ?? (_ui.PointerOverUi ? null : PickAt(mouse));
+    private Hex? HoveredHex(Vector2 mouse)
+    {
+        // A stationary pointer still needs a new ray after camera, viewport or terrain changes.
+        var inputs = (Mouse: mouse, Camera: _camera.GlobalTransform, Fov: _camera.Fov,
+            ViewSize: GetViewport().GetVisibleRect().Size, WorldRevision: _session.WorldRevision,
+            OverUi: _ui.PointerOverUi, Forced: _forcedHover);
+        if (_pickInputs == inputs) return _pickedHex;
+        _pickInputs = inputs;
+        return _pickedHex = _forcedHover ?? (inputs.OverUi ? null : PickAt(mouse));
+    }
 
     private MovePreview? HoverPreview(Hex? hex)
     {
