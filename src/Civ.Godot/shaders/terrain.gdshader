@@ -59,17 +59,18 @@ float snow_cover(vec2 p, float height, float flatness, float hollow) {
 	return smoothstep(0.0, 1.0, cover * mix(hold, 1.0, cover * cover * 0.6) + patch * 0.15 * cover);
 }
 
-// Height of the rock texture's first layer at p, the relief that bumps mountain normals.
-float rock_relief(vec2 p) {
-	return texture(terrain_textures, vec3(terrain_uv(p, uv_freq), float(cliff_layer))).a;
+// Height of the rock texture at p, the relief that bumps mountain normals. It is the same hex-tiled sample as the rock
+// colour, so light and paint line up. dp = screen derivatives of p, taken outside any branch.
+float rock_relief(vec2 p, vec4 dp) {
+	return hex_tiled(cliff_layer, p, dp).a;
 }
 
 // Bump the normal of the height field by rock relief of the given depth (world units): recover the field's slope from
 // the normal, add the relief's slope from finite differences over world xz, and renormalise.
-vec3 bump_normal(vec3 n, vec2 p, float depth) {
+vec3 bump_normal(vec3 n, vec2 p, vec4 dp, float depth) {
 	const float e = 0.012;
-	float h = rock_relief(p);
-	vec2 relief = vec2(rock_relief(p + vec2(e, 0.0)) - h, rock_relief(p + vec2(0.0, e)) - h) * (depth / e);
+	float h = rock_relief(p, dp);
+	vec2 relief = vec2(rock_relief(p + vec2(e, 0.0), dp) - h, rock_relief(p + vec2(0.0, e), dp) - h) * (depth / e);
 	vec2 field = -n.xz / max(n.y, 0.05);
 	return normalize(vec3(-(field.x + relief.x), 1.0, -(field.y + relief.y)));
 }
@@ -105,8 +106,9 @@ void fragment() {
 	float slope = smoothstep(0.08, 0.40, steep);
 	slope *= smoothstep(-0.01, 0.04, world_pos.y);
 	float mountain = smoothstep(0.42, 0.72, world_pos.y);
+	vec4 dp = vec4(dFdx(world_pos.xz), dFdy(world_pos.xz));
 	if (mountain > 0.0 && debug_mode != 7) {
-		normal = bump_normal(normal, world_pos.xz, rock_bump * mountain);
+		normal = bump_normal(normal, world_pos.xz, dp, rock_bump * mountain);
 		NORMAL = normalize((VIEW_MATRIX * vec4(normal, 0.0)).xyz);
 	}
 	float hollow = clamp(cavity / 4.0, -1.0, 1.0) * mountain;
