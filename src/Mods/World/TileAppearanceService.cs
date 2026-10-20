@@ -11,10 +11,16 @@ internal sealed class TileAppearanceService : ITileAppearanceService
         ["world:coast"] = new(0x4a8fd0), ["world:ocean"] = new(0x234f9c),
         ["world:slimy_coast"] = new(0x4a8fd0), ["world:slimy_ocean"] = new(0x234f9c),
         // Spread: lush ground grows past the tile edge into drier ground (grass into plains, plains into desert).
-        ["world:desert"] = new(0xdcc37d, Spread: 15), ["world:grass"] = new(0x66ad4b, Spread: 85),
-        ["world:plains"] = new(0xc4b660, Spread: 55), ["world:hill"] = new(0x8a9a58, Spread: 60),
-        ["world:marsh"] = new(0x5b8a6a, Spread: 75), ["world:peak"] = new(0x8a8a90),
-        ["world:snow"] = new(0xf0f5fa, Spread: 35), ["world:tundra"] = new(0x9fae9c, Spread: 40),
+        // Patch: a neighbouring ground shows through in places, so wide areas of one terrain are not uniform.
+        // Desert ripples and grass blades lie with the wind: their textures turn only a little, so the flow stays
+        // roughly parallel.
+        ["world:desert"] = new(0xdcc37d, Spread: 15, Patch: "world:plains", PatchPercent: 10, TurnDegrees: 14),
+        ["world:grass"] = new(0x66ad4b, Spread: 85, Patch: "world:plains", PatchPercent: 14, TurnDegrees: 14),
+        ["world:plains"] = new(0xc4b660, Spread: 55, TurnDegrees: 14),
+        ["world:hill"] = new(0x8a9a58, Spread: 60, Patch: "world:grass", PatchPercent: 15),
+        ["world:marsh"] = new(0x5b8a6a, Spread: 75, Patch: "world:grass", PatchPercent: 15), ["world:peak"] = new(0x8a8a90),
+        ["world:snow"] = new(0xf0f5fa, Spread: 35, Patch: "world:tundra", PatchPercent: 10),
+        ["world:tundra"] = new(0x9fae9c, Spread: 40, Patch: "world:snow", PatchPercent: 8),
     };
 
     // Forest props gather into groves with small glades between them.

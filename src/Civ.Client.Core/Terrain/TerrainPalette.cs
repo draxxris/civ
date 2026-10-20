@@ -7,9 +7,13 @@ namespace Civ.Client.Terrain;
 
 /// <summary>A terrain or surface material layer with its colour fallback and optional texture. <see cref="Spread"/> in
 /// [0, 1] is how far its ground reaches into neighbouring tiles (see <see cref="TileAppearance.Spread"/>). Water layers
-/// fade smoothly into each other instead of the ragged edges of land; <see cref="Ocean"/> marks deep water.</summary>
+/// fade smoothly into each other instead of the ragged edges of land; <see cref="Ocean"/> marks deep water.
+/// <see cref="PatchLayer"/> is the layer whose ground shows through in patches over <see cref="PatchShare"/> (0..1) of
+/// this one (see <see cref="TileAppearance.Patch"/>), or <see cref="TerrainPalette.ColorOnlyLayer"/> for none.
+/// <see cref="Turn"/> (0..1 of 180°) is the largest random turn of its texture (see <see cref="TileAppearance.TurnDegrees"/>).</summary>
 public sealed record TerrainPaletteLayer(string Id, Rgb Fallback, string? TexturePath, TerrainSurface? Surface = null,
-    float Spread = 0.5f, bool Water = false, bool Ocean = false);
+    float Spread = 0.5f, bool Water = false, bool Ocean = false, int PatchLayer = TerrainPalette.ColorOnlyLayer,
+    float PatchShare = 0, float Turn = 1);
 
 /// <summary>Deterministic, engine-free material and scatter lookups for the loaded ruleset.</summary>
 public sealed class TerrainPalette
@@ -60,7 +64,7 @@ public sealed class TerrainPalette
             _terrainLayers.Add(terrain.Id, index);
             float spread = Math.Clamp(appearance?.Spread ?? 50, 0, 100) / 100f;
             layers.Add(new(terrain.Id, color, catalog.TexturePath(terrain.Id), Spread: spread,
-                Water: terrain.IsWater, Ocean: terrain.IsWater && TerrainSnapshot.IsOcean(terrain.Id)));
+                Water: terrain.IsWater, Ocean: terrain.IsWater && TerrainSnapshot.IsOcean(terrain.Id), Turn: TurnOf(appearance)));
         }
 
         foreach (var surface in surfaces)
@@ -70,12 +74,27 @@ public sealed class TerrainPalette
             var id = textureId ?? defaultId;
             int index = layers.Count;
             _surfaceLayers.Add(surface, index);
-            layers.Add(new(id, Rgb.Hex(defaultRgb), textureId is null ? null : catalog.TexturePath(textureId), surface));
+            // A surface textured with a terrain's art turns like that terrain.
+            var turn = TurnOf(textureId is null ? null : FirstAppearance(appearances, service => service.Terrain(textureId)));
+            layers.Add(new(id, Rgb.Hex(defaultRgb), textureId is null ? null : catalog.TexturePath(textureId), surface, Turn: turn));
+        }
+
+        // Patch partners resolve once every terrain has its layer; a partner without a layer (or itself) is ignored.
+        for (int i = 0; i < layers.Count; i++)
+        {
+            if (layers[i].Surface is not null) continue;
+            var appearance = FirstAppearance(appearances, service => service.Terrain(layers[i].Id));
+            if (appearance?.Patch is not { } partner || appearance.PatchPercent <= 0) continue;
+            int patch = LayerOf(partner);
+            if (patch == ColorOnlyLayer || patch == i) continue;
+            layers[i] = layers[i] with { PatchLayer = patch, PatchShare = Math.Clamp(appearance.PatchPercent, 0, 100) / 100f };
         }
 
         _layers = Array.AsReadOnly(layers.ToArray());
         _featureGrounds = BuildFeatureGrounds(appearances);
     }
+
+    private static float TurnOf(TileAppearance? appearance) => Math.Clamp(appearance?.TurnDegrees ?? 180, 0, 180) / 180f;
 
     /// <summary>Returns a material layer index, or <see cref="ColorOnlyLayer"/> when the terrain exceeds the layer budget.</summary>
     public int LayerOf(string terrainId) => _terrainLayers.GetValueOrDefault(terrainId, ColorOnlyLayer);

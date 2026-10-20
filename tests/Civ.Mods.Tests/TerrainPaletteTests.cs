@@ -36,6 +36,25 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void Grassland_shows_patches_of_plains_and_water_shows_none()
+    {
+        var grass = _palette.Layers[_palette.LayerOf("world:grass")];
+        var ocean = _palette.Layers[_palette.LayerOf("world:ocean")];
+
+        Assert.Equal(_palette.LayerOf("world:plains"), grass.PatchLayer);
+        Assert.InRange(grass.PatchShare, 0.05f, 0.5f);
+        Assert.Equal(TerrainPalette.ColorOnlyLayer, ocean.PatchLayer);
+    }
+
+    [Fact]
+    public void Sand_and_grass_keep_their_direction_while_other_ground_turns_freely()
+    {
+        foreach (var terrain in new[] { "world:desert", "world:grass", "world:plains" })
+            Assert.InRange(_palette.Layers[_palette.LayerOf(terrain)].Turn, 0.01f, 0.2f);
+        Assert.Equal(1f, _palette.Layers[_palette.LayerOf("world:tundra")].Turn);
+    }
+
+    [Fact]
     public void Lush_ground_spreads_into_plains_and_plains_into_desert()
     {
         float Spread(string id) => Assert.Single(_palette.Layers, layer => layer.Id == id).Spread;

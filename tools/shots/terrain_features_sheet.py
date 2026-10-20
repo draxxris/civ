@@ -13,7 +13,7 @@ PANELS = [
     ("jungle_marsh", "Jungle (marsh)"), ("swamp", "Swamp (marsh)"), ("flood_plains", "Flood Plains (desert, river)"),
     ("oasis", "Oasis (desert)"), ("fallout", "Fallout (plains)"), ("infectious_smog", "Infectious Smog"),
     ("plagued_smog", "Plagued Smog"), ("volcano", "Volcano (peak)"), ("ice", "Ice (coast)"),
-    ("storm", "Storm (ocean)"), ("overview", "Overview"),
+    ("storm", "Storm (ocean)"), ("overview", "Overview"), ("plains", "Plains"), ("grassland", "Grassland"),
 ]
 COLUMNS, WIDTH = 4, 560
 

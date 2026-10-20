@@ -18,6 +18,8 @@ uniform float foam_depth = 0.022;
 // Surf at the foot of cliffs: churned white water against the rock, and lines of foam that the swell draws out to sea.
 uniform float cliff_churn = 0.8;
 uniform float cliff_streaks = 0.3;
+// Points toward the scene's directional light, as in terrain.gdshader; ice floes cast their shadows away from it.
+uniform vec3 sun_direction = vec3(-0.542, 0.643, -0.542);
 
 varying vec3 world_pos;
 varying float water_depth;
@@ -62,9 +64,9 @@ float ripple(vec2 p, float time, float deep) {
 	return h;
 }
 
-// Sea ice: Voronoi floes over a period-wrapped cell lattice, at two sizes. Returns (floe cover, distance to the floe's
-// edge, the floe's own random value). cover is the share of cells that hold a floe; gap is the open water around each.
-vec3 floe_cells(vec2 p, float frequency, float cover, float gap, uint seed) {
+// Sea ice: Voronoi floes over a period-wrapped cell lattice, at two sizes. Returns (1 if the cell holds a floe, else 0;
+// distance to the cell's edge in world units; the cell's own random value). cover is the share of cells that hold a floe.
+vec3 floe_cells(vec2 p, float frequency, float cover, uint seed) {
 	int cells = max(1, int(round(period * frequency)));
 	vec2 u = p * (float(cells) / period);
 	vec2 f = floor(u);
@@ -83,15 +85,35 @@ vec3 floe_cells(vec2 p, float frequency, float cover, float gap, uint seed) {
 		}
 	// Edge distance in world units, so both sizes share one gap.
 	float edge = (second - best) * 0.5 * period / float(cells);
-	return vec3(step(pick, cover) * smoothstep(gap, gap + 0.006, edge), edge, pick);
+	return vec3(step(pick, cover), edge, pick);
 }
 
+// The floe cell at p: a large one where a large cell holds a floe, otherwise a small one. Returns (holds a floe, edge
+// distance less the open-water gap around the floe, so > 0 on the floe, random value).
 vec3 floes(vec2 p, float cover, float gap) {
 	// A warp rounds the cells into irregular floes.
 	vec2 q = p + (vec2(seeded_noise(p, 4.0, 76u), seeded_noise(p, 4.0, 77u)) - 0.5) * 0.12;
-	vec3 large = floe_cells(q, 2.6, cover * 0.85, gap, 70u);
-	vec3 small = floe_cells(q, 7.0, cover, gap * 0.7, 80u);
-	return large.x > 0.0 ? large : small;
+	vec3 large = floe_cells(q, 2.6, cover * 0.85, 70u);
+	if (large.x > 0.0) return vec3(1.0, large.y - gap, large.z);
+	vec3 small = floe_cells(q, 7.0, cover, 80u);
+	return vec3(small.x, small.y - gap * 0.7, small.z);
+}
+
+// Floe height map, in world units above the water. Each floe is a slab of its own thickness whose sides fall steeply to
+// the water over floe_bevel, with snow drifts on top. 0 in the open water.
+uniform float floe_thickness = 0.03;
+uniform float floe_bevel = 0.008;
+float floe_height(vec3 f, vec2 p) {
+	if (f.x <= 0.0 || f.y <= 0.0) return 0.0;
+	float slab = floe_thickness * mix(0.5, 1.0, f.z);
+	float drifts = seeded_noise(p, 9.0, 81u) * 0.55 + seeded_noise(p, 24.0, 82u) * 0.3 + seeded_noise(p, 60.0, 83u) * 0.15;
+	float side = smoothstep(0.0, floe_bevel, f.y);
+	// The drifts thicken inward from the floe's edge, so its rim stays crisp.
+	return slab * side * (0.7 + 0.6 * drifts * smoothstep(0.0, 0.05, f.y));
+}
+
+float ice_at(vec2 p, float cover, float gap) {
+	return floe_height(floes(p, cover, gap), p);
 }
 
 // Whitecaps: wind-drawn streaks of foam on storm water, in [0, 1].
@@ -117,7 +139,8 @@ void fragment() {
 
 	float shelf = smoothstep(0.0, deep_depth, water_depth);
 	float deep = max(ocean_share(p, ocean_sharpness) * smoothstep(0.0, 0.1, water_depth), shelf * coast_shelf);
-	vec3 bed = mix(material_sample(seabed_layer, p, linear).rgb, material_sample(deep_seabed_layer, p, linear).rgb, deep);
+	vec4 dp = vec4(dFdx(p), dFdy(p));
+	vec3 bed = mix(material_sample(seabed_layer, p, dp, linear).rgb, material_sample(deep_seabed_layer, p, dp, linear).rgb, deep);
 	vec3 colour = mix(shallow_colour, deep_colour, deep);
 	colour = mix(colour, bed, mix(0.08, 0.05, deep));
 	colour = mix(colour, water_tint.rgb, water_tint.a);
@@ -144,15 +167,67 @@ void fragment() {
 	float floe = 0.0;
 	if (ice > 0.001) {
 		float shore = 1.0 - smoothstep(0.02, 0.3, water_depth);
-		vec3 f = floes(p + vec2(TIME * 0.004, 0.0), ice * mix(0.45, 0.95, shore), mix(0.035, 0.008, shore));
-		floe = f.x * smoothstep(0.15, 0.5, ice);
+		float cover = ice * mix(0.45, 0.95, shore), gap = mix(0.035, 0.008, shore);
+		float grow = smoothstep(0.15, 0.5, ice);
+		vec2 drift = vec2(TIME * 0.004, 0.0);
+		vec2 q = p + drift;
 		vec3 slush = mix(colour, vec3(0.62, 0.74, 0.8), 0.45);
 		colour = mix(colour, slush, smoothstep(0.0, 0.6, ice));
-		// Each floe is snow-white on top with a blue-grey rim where its edge dips into the water.
-		vec3 top = mix(vec3(0.86, 0.91, 0.95), vec3(0.95, 0.97, 1.0), f.z) * mix(0.93, 1.03, seeded_noise(p, 18.0, 75u));
-		vec3 rim = vec3(0.58, 0.7, 0.78);
-		colour = mix(colour, mix(rim, top, smoothstep(0.0, 0.02, f.y - mix(0.035, 0.008, shore))), floe);
-		n = normalize(mix(n, vec3(0.0, 1.0, 0.0), floe));
+		// Parallax over the floe height map: step down the view ray from the tallest floe top to the water and stop where
+		// it first meets ice, so floes stand above the sea with their sides showing.
+		vec3 ray = normalize(world_pos - CAMERA_POSITION_WORLD);
+		vec2 run = -ray.xz / max(-ray.y, 0.2);
+		float top_y = floe_thickness * 1.2;
+		const int STEPS = 8;
+		float y_prev = top_y, h_prev = ice_at(q + run * top_y, cover, gap) * grow, hit_y = 0.0;
+		bool hit = h_prev >= top_y;
+		if (hit) hit_y = top_y;
+		for (int i = 1; i <= STEPS && !hit; i++) {
+			float y = top_y * (1.0 - float(i) / float(STEPS));
+			float h = ice_at(q + run * y, cover, gap) * grow;
+			if (h >= y && h > 0.0) {
+				// Bisect between the last step above the ice and the first one inside it, so the sides are smooth.
+				float above = y_prev, inside = y;
+				for (int k = 0; k < 4; k++) {
+					float mid = (above + inside) * 0.5;
+					if (ice_at(q + run * mid, cover, gap) * grow >= mid) inside = mid;
+					else above = mid;
+				}
+				hit_y = inside;
+				hit = true;
+			}
+			y_prev = y;
+			h_prev = h;
+		}
+		vec2 s = q + run * hit_y;
+		// Floe shadows on the water and on lower ice, toward the scene light.
+		vec2 sun_run = sun_direction.xz / sun_direction.y;
+		float shade = 0.0;
+		for (int i = 1; i <= 3; i++) {
+			float y = hit_y + top_y * float(i) / 3.0;
+			shade = max(shade, step(y, ice_at(s + sun_run * (y - hit_y), cover, gap) * grow));
+		}
+		if (hit) {
+			vec3 f = floes(s, cover, gap);
+			float h = floe_height(f, s) * grow;
+			float e = 0.0025;
+			float hx = ice_at(s + vec2(e, 0.0), cover, gap) * grow;
+			float hz = ice_at(s + vec2(0.0, e), cover, gap) * grow;
+			vec3 ni = normalize(vec3(-(hx - h) / e, 1.0, -(hz - h) / e));
+			// Snow-white tops; the sides show wet blue ice, deepening toward the water line.
+			vec3 top = mix(vec3(0.86, 0.91, 0.95), vec3(0.95, 0.97, 1.0), f.z) * mix(0.93, 1.03, seeded_noise(s, 18.0, 75u));
+			vec3 wall = mix(vec3(0.32, 0.56, 0.66), vec3(0.62, 0.78, 0.86), smoothstep(0.0, 0.8, h / floe_thickness));
+			float steep = smoothstep(0.35, 0.75, 1.0 - ni.y);
+			colour = mix(top, wall, steep);
+			n = ni;
+			floe = 1.0;
+		} else {
+			// Open water: the submerged part of nearby floes glows pale turquoise under the surface.
+			vec3 f = floes(q, cover, gap);
+			float near = f.x * grow * (1.0 - smoothstep(0.0, max(gap, 0.012), -f.y));
+			colour = mix(colour, vec3(0.3, 0.62, 0.68), near * 0.55);
+		}
+		colour *= mix(1.0, 0.62, shade);
 		NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	}
 	// Opacity follows the real depth, so shallow coast water does not turn pale over its bright seabed.

@@ -105,7 +105,8 @@ def main():
         with Image.open(source) as candidate:
             images[layer] = height_from_albedo(make_seamless(candidate))
     for alias, layer in ALIASES.items():
-        images[alias] = images[layer]
+        if layer in images:
+            images[alias] = images[layer]
     for layer, image in images.items():
         image.save(args.output / f"{layer}.png")
         contact_sheet(image, args.work / f"{layer}.png")

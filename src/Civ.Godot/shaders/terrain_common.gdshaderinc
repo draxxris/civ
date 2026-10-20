@@ -12,7 +12,8 @@ uniform sampler2D warp_grid : filter_nearest, repeat_disable;
 // Colour table (sRGB bytes): row 0 layer colours, row 1 feature ground tints (A = strength),
 // row 2 owner colours (index = owner + 1), row 3 water tints per layer (A = strength),
 // row 4 ragged-edge strength per layer (A; 0 for water, so seabeds only fade into each other), R = 1 for deep ocean,
-// row 5 feature looks (R = ground pattern, G = its strength, B = haze kind, A = haze density), row 6 feature haze colours.
+// row 5 feature looks (R = ground pattern, G = its strength, B = haze kind, A = haze density), row 6 feature haze colours,
+// row 7 texture turn per layer (R = largest hex-tiling turn, 0..1 of 180°).
 uniform sampler2D palette : filter_nearest, repeat_disable;
 // RGB = sRGB albedo, A = linear height. No source_color hint: decode RGB only (see decode_colour), leaving height unchanged.
 uniform sampler2DArray terrain_textures : filter_linear_mipmap, repeat_enable;
@@ -296,18 +297,100 @@ float periodic_fbm(vec2 p, float frequency) {
 	return periodic_noise(p, frequency) * 0.57 + periodic_noise(p, frequency * 2.0) * 0.29 + periodic_noise(p, frequency * 4.0) * 0.14;
 }
 
-// Both scales have an integer number of repeats across the period. A 90-degree rotation of the second sample
-// swaps the axes, so a period shift in world x is an integer shift in texture v too. Mip derivatives stay unwrapped.
+// The texture scale has an integer number of repeats across the period, so a period shift in world x is an integer
+// shift in texture space.
 vec2 terrain_uv(vec2 p, float frequency) {
 	return p * (max(1.0, round(period * frequency)) / period);
 }
 
-vec4 material_sample(int layer, vec2 p, bool linear) {
-	vec4 first = texture(terrain_textures, vec3(terrain_uv(p, uv_freq), float(layer)));
-	vec4 second = texture(terrain_textures, vec3(terrain_uv(p, uv_freq * 1.47).yx + vec2(0.37, 0.61), float(layer)));
-	float variation = smoothstep(0.2, 0.8, periodic_noise(p, 0.16));
-	vec4 sample_colour = mix(first, second, variation * 0.55);
+// Hex-tiling cells per texture repeat. Each cell shows the texture with its own random offset and rotation, so the
+// repeat of one image does not show. Must be a whole number so the cells also repeat with the map period.
+const float HEX_CELLS = 2.0;
+// How far the hex blend weights are sharpened before texture height decides the seams between cells.
+const float HEX_SHARPEN = 4.0;
+
+// The texture seen from one hex-tiling cell: turned about the cell centre by up to ±turn·180° and offset, both chosen
+// by the cell's wrapped id, so the same cell one map period away looks the same.
+vec4 hex_cell_sample(int layer, vec2 uv, vec2 dx, vec2 dy, ivec2 cell, int cells_x, float turn) {
+	ivec2 id = ivec2(int(mod(float(cell.x), float(cells_x))), cell.y);
+	if (id.x >= cells_x) id.x -= cells_x;
+	uint seed = uint(layer) * 9781u + 17u;
+	float angle = (lattice_hash(id, seed) * 2.0 - 1.0) * turn * PI;
+	vec2 offset = vec2(lattice_hash(id, seed ^ 0x68bc21ebu), lattice_hash(id, seed ^ 0x02e5be93u));
+	vec2 centre = vec2(float(cell.x) + 0.5 * float(cell.y), float(cell.y) * SQRT3 * 0.5) / HEX_CELLS;
+	mat2 r = mat2(vec2(cos(angle), sin(angle)), vec2(-sin(angle), cos(angle)));
+	return textureGrad(terrain_textures, vec3(r * (uv - centre) + centre + offset, float(layer)), r * dx, r * dy);
+}
+
+// Hex-tiled texture sample (after Mikkelsen, "Practical Real-Time Hex-Tiling", 2022): three cells of a triangular
+// lattice blend with sharpened weights, and texture height decides which cell's ground lies on top at the seams.
+// dp = screen derivatives of p (dFdx, dFdy), taken by the caller outside any branch.
+vec4 hex_tiled(int layer, vec2 p, vec4 dp) {
+	float repeats = max(1.0, round(period * uv_freq));
+	vec2 uv = p * (repeats / period);
+	vec2 dx = dp.xy * (repeats / period), dy = dp.zw * (repeats / period);
+	int cells_x = int(repeats * HEX_CELLS);
+	float turn = texelFetch(palette, ivec2(layer, 7), 0).r;
+	// Lattice coordinates on the basis (1, 0), (½, √3/2): a shift in x moves only the first, by whole cells per period.
+	vec2 st = uv * HEX_CELLS;
+	vec2 skew = vec2(st.x - st.y / SQRT3, st.y * 2.0 / SQRT3);
+	vec2 cell = floor(skew);
+	vec2 f = skew - cell;
+	ivec2 c = ivec2(cell);
+	ivec2 v0, v1, v2;
+	vec3 w;
+	if (f.x + f.y < 1.0) {
+		v0 = c; v1 = c + ivec2(1, 0); v2 = c + ivec2(0, 1);
+		w = vec3(1.0 - f.x - f.y, f.x, f.y);
+	} else {
+		v0 = c + ivec2(1, 1); v1 = c + ivec2(0, 1); v2 = c + ivec2(1, 0);
+		w = vec3(f.x + f.y - 1.0, 1.0 - f.x, 1.0 - f.y);
+	}
+	vec4 a = hex_cell_sample(layer, uv, dx, dy, v0, cells_x, turn);
+	vec4 b = hex_cell_sample(layer, uv, dx, dy, v1, cells_x, turn);
+	vec4 e = hex_cell_sample(layer, uv, dx, dy, v2, cells_x, turn);
+	w = pow(w, vec3(HEX_SHARPEN)) * (vec3(a.a, b.a, e.a) + 0.15);
+	w /= max(w.x + w.y + w.z, 1e-6);
+	return a * w.x + b * w.y + e * w.z;
+}
+
+// Most a patch partner covers the base ground: a faint hint of it, not a splotch.
+uniform float patch_opacity = 0.16;
+
+// A layer's ground, with its patch partner (palette row 4: G = patch layer + 1, B = share) showing through in places.
+// The partner's texture height frays the patch edges.
+vec4 material_sample(int layer, vec2 p, vec4 dp, bool linear) {
+	vec4 sample_colour = hex_tiled(layer, p, dp);
+	vec4 edge = texelFetch(palette, ivec2(layer, 4), 0);
+	int partner = byte_of(edge.g) - 1;
+	float share = edge.b;
+	if (partner >= 0 && share > 0.0) {
+		uint seed = uint(layer) * 131u + 900u;
+		float n = seeded_noise(p, 0.6, seed) * 0.65 + seeded_noise(p, 1.8, seed + 1u) * 0.35;
+		// Value noise of this mix is roughly normal around ½; this threshold covers about the share of the ground.
+		float threshold = 0.5 + 0.2 * (1.0 - 2.0 * share);
+		float reach = n - threshold;
+		if (reach > -0.1) {
+			vec4 other = hex_tiled(partner, p, dp);
+			// Fine noise and texture heights fray the edge into tufts; the partner only tints the base ground.
+			float fray = (seeded_noise(p, 5.0, seed + 3u) - 0.5) * 0.35 + (other.a - sample_colour.a) * 0.5;
+			float cover = smoothstep(-0.3, 0.3, reach * 3.0 + fray);
+			sample_colour = mix(sample_colour, other, cover * patch_opacity);
+		}
+	}
 	return vec4(decode_colour(sample_colour.rgb, linear), sample_colour.a);
+}
+
+// Broad, gentle colour drift over the land so wide areas of one ground are not even: brightness, and a shift
+// between drier (warmer) and lusher (greener) tones.
+uniform float macro_strength = 1.0;
+vec3 macro_variation(vec2 p, vec3 colour) {
+	float light = seeded_noise(p, 0.3, 801u);
+	float lush = seeded_noise(p, 0.2, 803u);
+	float l = dot(colour, vec3(0.2126, 0.7152, 0.0722));
+	vec3 tone = mix(colour * vec3(1.03, 1.0, 0.94), colour * vec3(0.96, 1.03, 0.97), smoothstep(0.3, 0.7, lush));
+	vec3 varied = mix(vec3(l), tone, 1.0 + (lush - 0.5) * 0.12) * mix(0.9, 1.08, smoothstep(0.2, 0.8, light));
+	return mix(colour, max(varied, vec3(0.0)), macro_strength);
 }
 
 // Noise in [-1, 1] for one tile's ground claim. Each tile has its own field, seeded by its canonical texel so wrap copies
@@ -462,13 +545,15 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 	vec3 claims = vec3(-1e4);
 	// World size of a pixel. Claims can swap corners at triangle borders, so take derivatives of p, not of the claims.
 	vec2 fp = fwidth(p);
+	vec4 dp = vec4(dFdx(p), dFdy(p));
 	float footprint = 2.0 * max(fp.x, fp.y);
 	water_tint = vec4(0.0);
 	fogged = 0.0;
 	hidden = 0.0;
-	vec4 rock_sample = material_sample(cliff_layer, p, linear);
+	// Rock shows only on cliffs and under snow; skip its texture elsewhere.
+	vec4 rock_sample = rock_weight > 0.0 || snow_weight > 0.0 ? material_sample(cliff_layer, p, dp, linear) : vec4(0.0, 0.0, 0.0, 0.5);
 	vec3 rock = rock_sample.rgb;
-	vec3 snow = snow_weight > 0.0 ? material_sample(snow_layer, p, linear).rgb : vec3(0.0);
+	vec3 snow = snow_weight > 0.0 ? material_sample(snow_layer, p, dp, linear).rgb : vec3(0.0);
 	// Snow settles in the rock's low crevices first, so thin cover follows the stone. Below it, a frost lightens the bare
 	// rock. Height shifts the coverage rather than thresholding it, so the fade stays broad and survives mipmapping.
 	float snow_mask = smoothstep(0.18, 0.82, snow_weight + (0.5 - rock_sample.a) * 0.55);
@@ -476,6 +561,8 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 	vec3 soft = blend_weights(lambda, SHADE_SHARPNESS);
 	vec4 shade = vec4(0.0);
 	float soft_seen = 0.0;
+	int cached_layer = -1;
+	vec4 cached_material = vec4(0.0);
 	for (int k = 0; k < 3; k++) {
 		colours[k] = vec3(0.0);
 		ivec2 t = clamped_texel(corner_hex(base, upper, k));
@@ -487,7 +574,14 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 		soft_seen += soft[k];
 		vec4 a = texelFetch(tile_a, t, 0);
 		int layer = byte_of(a.r);
-		vec4 material = material_sample(layer, p, linear);
+		// Neighbouring corners of the same ground share one sample: inside a region of one terrain that is all three.
+		vec4 material;
+		if (layer == cached_layer) material = cached_material;
+		else {
+			material = material_sample(layer, p, dp, linear);
+			cached_layer = layer;
+			cached_material = material;
+		}
 		float spread = texelFetch(palette, ivec2(layer, 0), 0).a;
 		// Two noises in [-1, 1] differ by up to 2, the spreads by up to 1: each term's largest edge shift is its uniform.
 		float ragged = texelFetch(palette, ivec2(layer, 4), 0).a;
@@ -516,6 +610,7 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 		vec3 adjusted = exp(s * (claims - vec3(highest)));
 		adjusted /= adjusted.x + adjusted.y + adjusted.z;
 		land = colours[0] * adjusted.x + colours[1] * adjusted.y + colours[2] * adjusted.z;
+		land = macro_variation(p, land);
 		// Shade, water tint and fog use smooth geometric weights over the revealed corners, not the ragged ground edge.
 		shade /= max(soft_seen, 1e-8);
 		land = land * (1.0 - shade.a) + shade.rgb;
