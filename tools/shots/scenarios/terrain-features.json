@@ -395,6 +395,16 @@
     20
    ],
    "feature": "world:storm"
+  },
+  {
+   "rect": [
+    1,
+    23,
+    15,
+    30
+   ],
+   "terrain": "world:plains",
+   "kind": "Flat"
   }
  ],
  "clearUnits": true,

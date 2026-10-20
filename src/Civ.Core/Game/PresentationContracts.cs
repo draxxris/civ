@@ -49,9 +49,13 @@ public interface ILedgerSourceLabel
 
 /// <summary>Integer RGB and percent tint metadata. No renderer or engine types cross the mod contract.
 /// <paramref name="Spread"/> (terrains only, 0..100) is how far a terrain's ground reaches into its neighbours: lush
-/// ground at 100 grows past the tile edge into dry ground at 0.</summary>
+/// ground at 100 grows past the tile edge into dry ground at 0. <paramref name="Patch"/> (terrains only) is another terrain
+/// whose ground shows through in scattered patches over <paramref name="PatchPercent"/> (0..100) of the ground, so a
+/// large area of one terrain does not look uniform. <paramref name="TurnDegrees"/> (terrains and surfaces, 0..180) is
+/// the largest random turn the renderer may give the ground texture to hide its repeat; ground with a direction, such
+/// as wind-blown sand ripples, keeps a small value so its pattern stays roughly parallel.</summary>
 public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0,
-    int Spread = 50, FeatureLook? Look = null);
+    int Spread = 50, FeatureLook? Look = null, string? Patch = null, int PatchPercent = 0, int TurnDegrees = 180);
 
 /// <summary>How a feature paints the ground (or water) under it. The client draws each pattern procedurally.</summary>
 public enum FeatureGround

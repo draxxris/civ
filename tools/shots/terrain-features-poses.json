@@ -124,5 +124,23 @@
   ],
   "distance": 4.2,
   "pitch": 42
+ },
+ {
+  "name": "tf_plains",
+  "focusTile": [
+   8,
+   26
+  ],
+  "distance": 4.2,
+  "pitch": 42
+ },
+ {
+  "name": "tf_grassland",
+  "focusTile": [
+   25,
+   26
+  ],
+  "distance": 4.2,
+  "pitch": 42
  }
 ]

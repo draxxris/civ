@@ -43,16 +43,18 @@ Full prompt (identical for both candidates):
 
 ### plains
 
-- Selected model: `meta/muse-image`.
-- Selected output: `plains-20261014-174347-001.webp`.
-- Comparison: Muse has softer dry-earth mottling and finer strokes. Sunburst has conspicuous grass tufts with implied shadows.
+- Selected model: `openai/gpt-image-2.5-sunburst`.
+- Selected output: `plains-20261020-015226-001.png`.
+- Comparison: Plains was made again because the first selection had strong brown blotches. They looked bad in game.
+  The new prompt asks for an even tone. Sunburst gave two even fields of fine dry grass. Muse gave flatter,
+  speckled ground. The first Sunburst candidate matches the painted strokes of the grass layer best.
 - Post-processing: P1, with no layer-specific color adjustment.
 - Final: `src/Mods/World/art/terrain/plains.png`.
-- Contact sheet: `/tmp/p5/contact-sheets/plains.png`, inspected without visible seam lines.
+- Contact sheet: `/tmp/tf/plains_final/plains.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
 
-> Dry prairie ground, warm muted golden ochre and straw beige, tiny painted dry grass strokes, subtle dusty earth mottling. seamless tileable texture, straight top-down orthographic view, flat even lighting with no cast shadows or highlights, stylised hand-painted look like Civilization VI terrain (soft colour variation, painterly strokes, no photographic detail), no objects, no text, no horizon, 1:1
+> Dry prairie ground covered evenly in short dry grass, warm muted golden ochre and straw beige, fine painted dry grass strokes spread uniformly over the whole image, very even tone with only gentle low-contrast colour variation, no dark patches, no brown blotches, no bare soil spots, no clumps. seamless tileable texture, straight top-down orthographic view, flat even lighting with no cast shadows or highlights, stylised hand-painted look like Civilization VI terrain (soft colour variation, painterly strokes, no photographic detail), no objects, no text, no horizon, 1:1
 
 ### desert
 
