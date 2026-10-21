@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build the procedural terrain improvement models into src/Mods/<mod>/art/models/<id suffix>.glb (World by default).
+"""Build the procedural terrain improvement and resource (bonus) models into src/Mods/<mod>/art/models/<id suffix>.glb
+(World by default).
 
 Run: python3 tools/art/improvement_models.py [--only NAME ...]
 
@@ -9,7 +10,8 @@ parts, or to a (builder, clear) tuple where clear is "tile" (the default: no sca
 (props stay, only the middle is cleared). A third tuple item may be a dict of scene extras, e.g. {"faceRiver": True}:
 the game puts the model's origin on the near waterline of the river, +X straight across the water. The extra "mod" is not written: it names the mod that owns
 the content id (default "World"), so the model goes to that mod's art/models folder, e.g. {"mod": "Cities"} for a
-cities:<suffix> building. Conventions are in improvements/kit.py.
+cities:<suffix> building. Conventions are in improvements/kit.py; the bonus_* groups are the map resources
+(world:<bonus>), with their own conventions in improvements/bonus_kit.py.
 """
 from __future__ import annotations
 
@@ -18,7 +20,8 @@ import importlib
 
 from improvements.kit import OUT, REPO_ROOT, write
 
-GROUPS = ["settlements", "extraction", "farming", "industry", "forestry", "military", "landmarks", "water", "walls"]
+GROUPS = ["settlements", "extraction", "farming", "industry", "forestry", "military", "landmarks", "water", "walls",
+          "bonus_plants", "bonus_animals", "bonus_minerals", "bonus_sea"]
 
 
 def models() -> dict:

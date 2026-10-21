@@ -24,6 +24,7 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly ScatterPlanner _scatterPlanner;
     private readonly ScatterRenderer _scatter;
     private readonly Func<string, bool> _clearsTile;
+    private readonly Func<string, bool> _hasModel;
     private ulong[]? _signatures;
     private int _worldRevision = -1;
     private int _hover = -1;
@@ -43,10 +44,12 @@ internal sealed partial class TerrainRenderer : Node3D
 
     /// <param name="clearsTile">True for an improvement whose 3D model fills its whole tile, so no scatter
     /// props grow through it; other improvements only keep the tile centre clear.</param>
-    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile)
+    /// <param name="hasModel">True for a content id (here, a resource) that ships a 3D model.</param>
+    public TerrainRenderer(GameSession session, GameCatalog catalog, Func<string, bool> clearsTile, Func<string, bool> hasModel)
     {
         _session = session;
         _clearsTile = clearsTile;
+        _hasModel = hasModel;
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
@@ -87,6 +90,9 @@ internal sealed partial class TerrainRenderer : Node3D
     public TerrainSnapshot Snapshot { get; private set; }
     /// <summary>The height field the chunks were built from.</summary>
     public TerrainField Field { get; private set; }
+    /// <summary>Per tile, the <see cref="BonusSpot"/> where its resource model stands, or -1 for none, as of the last
+    /// world refresh. The map seats the models there and the scatter keeps the spot clear.</summary>
+    public int[] BonusSpots { get; private set; } = [];
 
     /// <summary>Refresh perceived terrain and scatter only after a world revision, before seating map layers.</summary>
     public void RefreshWorld()
@@ -134,6 +140,7 @@ internal sealed partial class TerrainRenderer : Node3D
         long totalStart = logTimings ? Stopwatch.GetTimestamp() : 0;
         Snapshot = TerrainSnapshot.From(_session, Palette.LayerOf, Palette.FeatureGroundOf);
         Field = Field.With(Snapshot);
+        BonusSpots = ResourceSpots();
         var extras = ScatterClearings();
         var signatures = _chunks.Signatures(Snapshot, extras);
         var dirty = TerrainChunks.DirtyChunks(_signatures, signatures);
@@ -206,7 +213,29 @@ internal sealed partial class TerrainRenderer : Node3D
         }
         foreach (var unit in _session.VisibleUnits())
             extras[state.Grid.TileAt(unit.Position).Value] |= ScatterPlanner.ClearCentre;
+        for (int i = 0; i < extras.Length; i++)
+            if (BonusSpots[i] >= 0) extras[i] |= ScatterPlanner.BonusClearing(BonusSpots[i]);
         return extras;
+    }
+
+    /// <summary>Choose a spot for every known, revealed resource that ships a model. City tiles get none: the city's
+    /// buildings fill the tile, and the resource overlay still shows the icon there.</summary>
+    private int[] ResourceSpots()
+    {
+        var state = _session.Sim.State;
+        var spots = new int[state.Plots.Length];
+        Array.Fill(spots, -1);
+        var cities = _session.KnownCities().Select(c => state.Grid.TileAt(c.Position).Value).ToHashSet();
+        for (int i = 0; i < spots.Length; i++)
+        {
+            if (Snapshot.Sight[i] == Sight.Hidden || cities.Contains(i)) continue;
+            if (_session.PerceivedPlot(new TileId(i))?.Bonus is not { } bonus || !_session.BonusVisible(bonus) || !_hasModel(bonus))
+                continue;
+            var (x, z) = state.Grid.HexOf(new TileId(i)).ToPixel(1);
+            bool water = Snapshot.Relief[i] is ReliefClass.DeepWater or ReliefClass.ShallowWater;
+            spots[i] = BonusSpot.Choose(Field, x, z, water);
+        }
+        return spots;
     }
 
     private MeshInstance3D[] Instances() => _copies.Select(offset =>
