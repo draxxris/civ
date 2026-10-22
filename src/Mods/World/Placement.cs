@@ -41,14 +41,17 @@ internal static class Placement
             }
     }
 
-    internal static bool BonusValid(HexGrid grid, Plot[] plots, TileId tile, S.BonusDef bonus, int areaSize)
+    /// <summary>Whether the bonus may sit on the tile. Water plots are flat plots, but the relief test (flatlands, hills,
+    /// peaks) is for land only, as in CvPlot::canHaveBonus: sea resources allow none of the three.</summary>
+    internal static bool BonusValid(HexGrid grid, Plot[] plots, ContentDb db, TileId tile, S.BonusDef bonus, int areaSize)
     {
         var plot = plots[tile.Value];
         bool terrain = plot.Feature is { } f
             ? bonus.Features.GetValueOrDefault(f) && bonus.FeatureTerrains.GetValueOrDefault(plot.Terrain)
             : bonus.Terrains.GetValueOrDefault(plot.Terrain);
         if (!terrain || areaSize < bonus.MinAreaSize) return false;
-        bool relief = plot.Kind switch { PlotKind.Hills => bonus.Hills, PlotKind.Peak => bonus.Peaks, _ => bonus.Flatlands };
+        bool relief = Geography.Water(db, plot)
+            || plot.Kind switch { PlotKind.Hills => bonus.Hills, PlotKind.Peak => bonus.Peaks, _ => bonus.Flatlands };
         if (!relief || (bonus.NoRiverSide && plot.RiverEdges != 0)) return false;
         int latitude = Geography.Latitude(grid, tile);
         return latitude >= bonus.MinLatitude && latitude <= bonus.MaxLatitude;
@@ -61,7 +64,7 @@ internal static class Placement
         {
             // Manufactured resources have no map appearance.
             if (bonus.ConstAppearance <= 0 && bonus.AppearanceRandomRanges.All(r => r <= 0)) continue;
-            var candidates = grid.Tiles.Where(t => plots[t.Value].Bonus is null && BonusValid(grid, plots, t, bonus, areaSizes[plots[t.Value].AreaId])).ToArray();
+            var candidates = grid.Tiles.Where(t => plots[t.Value].Bonus is null && BonusValid(grid, plots, db, t, bonus, areaSizes[plots[t.Value].AreaId])).ToArray();
             Shuffle(candidates, rng);
             int count = DesiredCount(bonus, candidates.Length, players, rng);
             PlaceBonus(grid, plots, db, bonus, candidates, count, rng);

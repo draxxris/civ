@@ -8,9 +8,11 @@ internal sealed partial class MapRenderer
 {
     /// <summary>Most a settlement layout turns either way from its authored pose, so fronts still face the camera.</summary>
     private const float ImprovementTurn = 0.45f;
+    /// <summary>Most a resource model turns either way, so herds and groves vary from tile to tile.</summary>
+    private const float BonusTurn = 0.7f;
 
-    /// <summary>Feature marks, routes, improvement models and resource/improvement icons. The ground itself, relief, rivers
-    /// and borders are the <see cref="TerrainRenderer"/>'s job.</summary>
+    /// <summary>Feature marks, routes, improvement and resource models and improvement icons. The ground itself, relief,
+    /// rivers and borders are the <see cref="TerrainRenderer"/>'s job.</summary>
     private void BuildLand()
     {
         var sim = _session.Sim;
@@ -31,6 +33,7 @@ internal sealed partial class MapRenderer
             DrawImprovementIcon(icons, centre, plot, fog);
             if (plot.Improvement is { } improvement && _improvements.Has(improvement))
                 sites.Add(PlaceImprovement(improvement, centre, tile.Value, plot.RiverEdges, fog));
+            if (PlaceBonus(plot, centre, tile.Value, fog) is { } bonus) sites.Add(bonus);
         }
         DrawRoutes(roads, routeParts, routes);
         foreach (var city in _session.KnownCities())
@@ -59,6 +62,16 @@ internal sealed partial class MapRenderer
             return new ImprovementSite(improvement, new Vector3((float)bank.X, centre.Y, (float)bank.Z),
                 (float)Math.Atan2(-bank.AcrossZ, bank.AcrossX), fog);
         return new ImprovementSite(improvement, centre, Signed(Hash(tile, 7)) * ImprovementTurn, fog);
+    }
+
+    /// <summary>A resource model on the spot the terrain chose for it (<see cref="TerrainRenderer.BonusSpots"/>): off the
+    /// tile centre, clear of rivers, on the right side of the shore. Spots exist only for revealed resources with a model.</summary>
+    private ImprovementSite? PlaceBonus(RevealedPlotSnapshot plot, Vector3 centre, int tile, float fog)
+    {
+        var spots = _terrain.BonusSpots;
+        if (plot.Bonus is not { } bonus || tile >= spots.Length || spots[tile] < 0) return null;
+        var (x, z) = Civ.Client.Terrain.BonusSpot.Offset(spots[tile]);
+        return new ImprovementSite(bonus, centre + new Vector3((float)x, 0, (float)z), Signed(Hash(tile, 11)) * BonusTurn, fog);
     }
 
     private static int Hash(int tile, int salt)

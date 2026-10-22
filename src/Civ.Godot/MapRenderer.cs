@@ -91,7 +91,7 @@ internal sealed partial class MapRenderer : Node3D
         _selectionMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/selection.gdshader"), RenderPriority = 4 };
         _destinationMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/destination.gdshader"), RenderPriority = 6 };
         _improvements = new ImprovementRenderer(icons.Catalog, Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
-        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile);
+        _terrain = new TerrainRenderer(session, icons.Catalog, _improvements.ClearsTile, _improvements.Has);
         _cities = new CityRenderer(Period > 0 ? [-Period, 0f, Period] : [0f], GroundAt);
         AddChild(_terrain);
         AddChild(_improvements);
