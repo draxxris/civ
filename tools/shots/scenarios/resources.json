@@ -1,0 +1,501 @@
+{
+  "// note": "Resource showcase: every map resource on a tile it may spawn on (terrain, feature, hills), sea resources in the water band at row 17. Use --world small.",
+  "fill": {
+    "terrain": "world:grass",
+    "kind": "Flat"
+  },
+  "tiles": [
+    {
+      "rect": [
+        0,
+        15,
+        63,
+        19
+      ],
+      "terrain": "world:ocean",
+      "kind": "Flat"
+    },
+    {
+      "rect": [
+        0,
+        16,
+        63,
+        18
+      ],
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        3,
+        3
+      ],
+      "bonus": "world:ancienttemple",
+      "terrain": "world:desert",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        5,
+        3
+      ],
+      "bonus": "world:apple",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        7,
+        3
+      ],
+      "bonus": "world:banana",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:jungle"
+    },
+    {
+      "at": [
+        9,
+        3
+      ],
+      "bonus": "world:bauxite",
+      "terrain": "world:grass",
+      "kind": "Hills"
+    },
+    {
+      "at": [
+        11,
+        3
+      ],
+      "bonus": "world:cannabis",
+      "terrain": "world:plains",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        13,
+        3
+      ],
+      "bonus": "world:coal",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        3
+      ],
+      "bonus": "world:coffee",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        17,
+        3
+      ],
+      "bonus": "world:copper",
+      "terrain": "world:grass",
+      "kind": "Hills"
+    },
+    {
+      "at": [
+        19,
+        3
+      ],
+      "bonus": "world:corn",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        3,
+        5
+      ],
+      "bonus": "world:cotton",
+      "terrain": "world:plains",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        5,
+        5
+      ],
+      "bonus": "world:cow",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        7,
+        5
+      ],
+      "bonus": "world:deer",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        9,
+        5
+      ],
+      "bonus": "world:dye",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        11,
+        5
+      ],
+      "bonus": "world:fossils",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        13,
+        5
+      ],
+      "bonus": "world:fur",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        5
+      ],
+      "bonus": "world:gems",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        17,
+        5
+      ],
+      "bonus": "world:gold",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        19,
+        5
+      ],
+      "bonus": "world:horse",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        3,
+        7
+      ],
+      "bonus": "world:incense",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        5,
+        7
+      ],
+      "bonus": "world:iron",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        7,
+        7
+      ],
+      "bonus": "world:ivory",
+      "terrain": "world:plains",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        9,
+        7
+      ],
+      "bonus": "world:lead",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        11,
+        7
+      ],
+      "bonus": "world:lemon",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        13,
+        7
+      ],
+      "bonus": "world:marble",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        7
+      ],
+      "bonus": "world:obsidian",
+      "terrain": "world:grass",
+      "kind": "Hills"
+    },
+    {
+      "at": [
+        17,
+        7
+      ],
+      "bonus": "world:oil",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        19,
+        7
+      ],
+      "bonus": "world:olives",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        3,
+        9
+      ],
+      "bonus": "world:pig",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        5,
+        9
+      ],
+      "bonus": "world:potato",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        7,
+        9
+      ],
+      "bonus": "world:rice",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        9,
+        9
+      ],
+      "bonus": "world:rubber",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        11,
+        9
+      ],
+      "bonus": "world:salt",
+      "terrain": "world:plains",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        13,
+        9
+      ],
+      "bonus": "world:sheep",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        9
+      ],
+      "bonus": "world:silk",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        17,
+        9
+      ],
+      "bonus": "world:silver",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        19,
+        9
+      ],
+      "bonus": "world:spices",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        3,
+        11
+      ],
+      "bonus": "world:stone",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        5,
+        11
+      ],
+      "bonus": "world:sugar",
+      "terrain": "world:marsh",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        7,
+        11
+      ],
+      "bonus": "world:tea",
+      "terrain": "world:grass",
+      "kind": "Flat",
+      "feature": "world:forest"
+    },
+    {
+      "at": [
+        9,
+        11
+      ],
+      "bonus": "world:thermal_vent",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        11,
+        11
+      ],
+      "bonus": "world:tobacco",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        13,
+        11
+      ],
+      "bonus": "world:uranium",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        11
+      ],
+      "bonus": "world:wheat",
+      "terrain": "world:plains",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        17,
+        11
+      ],
+      "bonus": "world:wine",
+      "terrain": "world:grass",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        3,
+        17
+      ],
+      "bonus": "world:clam",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        5,
+        17
+      ],
+      "bonus": "world:crab",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        7,
+        17
+      ],
+      "bonus": "world:fish",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        9,
+        17
+      ],
+      "bonus": "world:methane",
+      "terrain": "world:ocean",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        11,
+        17
+      ],
+      "bonus": "world:pearls",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        13,
+        17
+      ],
+      "bonus": "world:shrimp",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    },
+    {
+      "at": [
+        15,
+        17
+      ],
+      "bonus": "world:whale",
+      "terrain": "world:coast",
+      "kind": "Flat"
+    }
+  ],
+  "focus": [
+    11,
+    9
+  ]
+}

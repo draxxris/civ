@@ -55,7 +55,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Map topology**: Rectangular odd-row hex map (`HexGrid`) with wrap-safe coordinate conversions, shortest-distance calculations, and optional east-west wrapping.
 - **Procedural generation**: Continents, relief (peaks, hills, flatlands), climate zones, areas, lakes, and shared 6-direction river masks.
 - **Features & Goody huts**: Climate-driven feature placement (forest, jungle, ice, floodplains, oasis) and goody huts with configurable densities.
-- **Resource placement**: Physical resource placement respecting latitude, area size, terrain/feature requirements, and cluster rules.
+- **Resource placement**: Physical resource placement respecting latitude, area size, terrain/feature requirements, and cluster rules. The flatlands/hills/peaks test applies to land plots only, so sea resources (fish, clams, crabs, pearls, shrimp, whales, methane, offshore oil) spawn in the water.
 - **Plot yield ledgers**: Natural and improved plot yields with cross-mod modifiers, river changes, hills/peak adjustments, and route yield additions.
 - **Fresh water & irrigation**: Fresh water propagation from rivers, lakes, and oases; irrigation transit through farms and city plots.
 - **Worker builds & improvements**: Worker assignments, shared build progress, feature removal production credits, improvement construction, route networks, automated upgrades, peak build modifiers, and route upgrade discounts.
@@ -152,6 +152,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Client, Presentation & 3D Art
 - **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load. Setup screen options and perceived fog snapshots prevent unseen map mutation leaks.
 - **Godot 4.7.2 views (`Civ.Godot`)**: Native 3D viewport, camera controls, hex prism highlights, audio playback, and responsive HUD panels.
+- **3D resource models**: Every map resource has a procedural low-poly model (`art/models/<id>.glb`, built by `tools/art/improvement_models.py`) standing on a spot off the tile centre that avoids rivers and the wrong side of the shore. Scatter props keep the spot clear. Manufactured goods have no model.
 - **Map overlays & local toggles**: Independent visual toggles for tile yield badges, resource badges, hex grid lines, and cultural borders. Managed locally in `GamePreferences` without affecting simulation state or hashes, strictly respecting fog-of-war perceived snapshots.
 - **Continuous 3D blended terrain**:
   - Seamless 1024×1024 terrain textures with height in alpha.

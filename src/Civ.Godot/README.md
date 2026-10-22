@@ -298,6 +298,8 @@ Where two types meet, the width eases from one to the other and the surfaces cro
 - A ground route that crosses a river goes onto a bridge. Cart paths and roads get a wooden trestle, paved roads and
   highways a stone arch bridge, and railroads a steel truss bridge. Maglevs and jumplanes need no bridge.
 An improvement with a `.glb` in its mod's `art/models` folder is drawn as 3D parts seated on the terrain, instead of its icon.
+A revealed map resource with a `.glb` (named after its id, such as `wheat.glb`) is drawn the same way on a spot off the tile centre
+(`BonusSpot`), clear of rivers and on the right side of the shore. Scatter props keep that spot clear. City tiles show no resource model.
 City building models with a positive `cityRing` scene extra form a ring around the city token.
 Only the highest completed tier appears, with zero yaw and the tile's fog shade. Hidden tiles show no ring.
 The model's `clear` extra controls scatter removal. Units stand closer to the center inside a ring.

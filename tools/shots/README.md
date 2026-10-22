@@ -33,7 +33,7 @@ Run twice with different values, then `mise run shot:compare -- a.png b.png ab.p
 ## Hand-made scenes
 
 `--scenario tools/shots/scenarios/hills-forest-roads.json --world tiny` replaces the generated map with a fixed scene.
-Use `tools/shots/scenarios/improvements.json` to preview improvement icons. The format is in `src/Civ.Godot/Debug/DebugScenario.cs`.
+Use `tools/shots/scenarios/improvements.json` to preview improvement icons, and `tools/shots/scenarios/resources.json --world small` to see every map resource model on a tile it may spawn on. The format is in `src/Civ.Godot/Debug/DebugScenario.cs`.
 Every tile is revealed and visible. Use `--clean` to hide the starting units.
 Road paths can be point arrays for the default road, or objects with a `path` and optional `route`. Set `routes` instead to assign one route name per point:
 

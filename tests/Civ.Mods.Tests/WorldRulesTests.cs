@@ -99,7 +99,9 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
             Assert.True(bonus.FeatureTerrains.GetValueOrDefault(plot.Terrain));
         }
         else Assert.True(bonus.Terrains.GetValueOrDefault(plot.Terrain));
-        Assert.True(plot.Kind switch { PlotKind.Hills => bonus.Hills, PlotKind.Peak => bonus.Peaks, _ => bonus.Flatlands });
+        // Relief applies to land only; sea resources allow neither flatlands nor hills.
+        if (!Content.Get<S.TerrainDef>(plot.Terrain).IsWater)
+            Assert.True(plot.Kind switch { PlotKind.Hills => bonus.Hills, PlotKind.Peak => bonus.Peaks, _ => bonus.Flatlands });
         int latitude = Math.Abs(2 * (tile.Value / sim.State.Map.Width) - (sim.State.Map.Height - 1)) * 90 / (sim.State.Map.Height - 1);
         Assert.InRange(latitude, bonus.MinLatitude, bonus.MaxLatitude);
         if (bonus.NoRiverSide) Assert.Equal(0, plot.RiverEdges);

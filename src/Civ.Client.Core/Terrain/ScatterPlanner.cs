@@ -12,6 +12,13 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     /// <summary>Per-tile extras bit: suppress all props on a cleared tile.</summary>
     public const int ClearTile = 2;
     public const double ClearRadius = 0.35;
+    /// <summary>Per-tile extras bit: keep a disc round the resource model's spot clear; the spot index is in the bits
+    /// from <see cref="BonusShift"/> up (see <see cref="BonusClearing"/>).</summary>
+    public const int ClearBonus = 4;
+    private const int BonusShift = 3;
+
+    /// <summary>The extras bits that clear the resource model's spot (a <see cref="BonusSpot"/> index).</summary>
+    public static int BonusClearing(int spot) => ClearBonus | spot << BonusShift;
     private const double Spacing = 0.2;
     /// <summary>Props keep this far from river banks, so no trunk stands in the water.</summary>
     private const double RiverMargin = 0.05;
@@ -117,9 +124,13 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     {
         int flags = extras?[tile] ?? 0;
         if ((flags & ClearTile) != 0) return true;
-        if ((flags & ClearCentre) == 0) return false;
+        if ((flags & (ClearCentre | ClearBonus)) == 0) return false;
         var (cx, cz) = hex.ToPixel(1);
-        return (x - cx) * (x - cx) + (z - cz) * (z - cz) < ClearRadius * ClearRadius;
+        if ((flags & ClearCentre) != 0 && (x - cx) * (x - cx) + (z - cz) * (z - cz) < ClearRadius * ClearRadius) return true;
+        if ((flags & ClearBonus) == 0) return false;
+        var (ox, oz) = BonusSpot.Offset(flags >> BonusShift);
+        double dx = x - cx - ox, dz = z - cz - oz;
+        return dx * dx + dz * dz < BonusSpot.ClearRadius * BonusSpot.ClearRadius;
     }
 
     private static string Choose(List<Contributor> contributors, double pick)

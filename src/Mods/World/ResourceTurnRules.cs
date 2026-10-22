@@ -48,7 +48,7 @@ internal sealed class ResourceTurnRules
         {
             int range = improvement.BonusEffects.GetValueOrDefault(bonus.Id)?.DiscoveryRandomRange ?? 0;
             if (range <= 0 || !Revealed(owner, bonus)) continue;
-            if (!Placement.BonusValid(_sim.State.Grid, _sim.State.Plots, tile, bonus, _areaSizes[plot.AreaId])) continue;
+            if (!Placement.BonusValid(_sim.State.Grid, _sim.State.Plots, _sim.Content, tile, bonus, _areaSizes[plot.AreaId])) continue;
             Int128 odds = (Int128)range * _constructPercent / 100;
             if (_depletion) odds /= 10;
             if (_sim.Rng.Next(WorldTurnMath.Range(odds)) != 0) continue;

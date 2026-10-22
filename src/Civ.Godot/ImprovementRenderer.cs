@@ -8,7 +8,8 @@ namespace Civ.Client;
 internal readonly record struct ImprovementSite(string Id, Vector3 Centre, float Yaw, float Fog);
 
 /// <summary>
-/// 3D terrain improvements (cottages, mines, ...) from each improvement's <c>art/models/&lt;id&gt;.glb</c>. Every top-level
+/// 3D terrain improvements (cottages, mines, ...) and map resources (wheat, whales, gold, ...) from each content id's
+/// <c>art/models/&lt;id suffix&gt;.glb</c>. Every top-level
 /// node of the model is one part, placed at its offset from the tile centre and seated on the ground there, so each
 /// building stands upright on a slope. A part whose name starts with <c>ground</c> is tilted to the surface instead
 /// (garden plots, rails). Scene extras <c>{"clear": "centre"}</c> keep scatter props on the tile. Scene extras
