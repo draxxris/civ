@@ -5,17 +5,17 @@ namespace Civ.Client;
 /// <summary>The unit's floating badges: the faction banner above it and the health bar at its feet. Both face the camera.</summary>
 internal sealed partial class UnitActor
 {
-    private const float BannerHeight = 1.12f, BannerHalfWidth = 0.12f, BannerHalfHeight = 0.16f;
+    private const float BannerHeight = 1.12f, BannerSideOffset = 0.3f, BannerHalfWidth = 0.12f, BannerHalfHeight = 0.16f;
     private const float BannerEdge = 0.034f, BannerRim = 0.024f, BannerLine = 0.007f, BannerAlpha = 0.82f;
     private const float BarHalfWidth = 0.25f, BarHalfHeight = 0.03f, BarEdge = 0.022f, BarRim = 0.014f, BarLine = 0.005f;
     private const float BarHeight = -0.04f;
-    private static readonly Color BannerInk = new(0.06f, 0.05f, 0.05f, 0.9f);
-    private static readonly Color GoldLight = new(1f, 0.86f, 0.42f, 0.92f), GoldDark = new(0.48f, 0.3f, 0.08f, 0.92f);
+    internal static readonly Color BannerInk = new(0.06f, 0.05f, 0.05f, 0.9f);
+    internal static readonly Color GoldLight = new(1f, 0.86f, 0.42f, 0.92f), GoldDark = new(0.48f, 0.3f, 0.08f, 0.92f);
     private static readonly Color Trough = new(0.08f, 0.07f, 0.07f, 0.72f);
     private static readonly Color Healthy = new(0.36f, 0.86f, 0.3f), Wounded = new(0.98f, 0.78f, 0.2f), Dying = new(0.9f, 0.18f, 0.14f);
 
     /// <summary>Unshaded, camera-facing, drawn over terrain and models; vertex colours are authored in sRGB.</summary>
-    private static readonly StandardMaterial3D OverlayMaterial = new()
+    internal static readonly StandardMaterial3D OverlayMaterial = new()
     {
         BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled, ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
         VertexColorUseAsAlbedo = true, VertexColorIsSrgb = true, Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
@@ -131,7 +131,7 @@ internal sealed partial class UnitActor
     ];
 
     /// <summary>The convex polygon grown outward by <paramref name="d"/>, keeping every edge parallel.</summary>
-    private static Vector2[] Offset(Vector2[] poly, float d)
+    internal static Vector2[] Offset(Vector2[] poly, float d)
     {
         var result = new Vector2[poly.Length];
         for (int i = 0; i < poly.Length; i++)
@@ -146,7 +146,7 @@ internal sealed partial class UnitActor
     private static Vector2 Normal(Vector2 from, Vector2 to) { var e = (to - from).Normalized(); return new Vector2(e.Y, -e.X); }
 
     /// <summary>The ring between two matching polygons.</summary>
-    private static void Band(SurfaceTool st, Vector2[] outer, Vector2[] inner, Func<float, Color> color)
+    internal static void Band(SurfaceTool st, Vector2[] outer, Vector2[] inner, Func<float, Color> color)
     {
         for (int i = 0; i < outer.Length; i++)
         {
@@ -157,7 +157,7 @@ internal sealed partial class UnitActor
     }
 
     /// <summary>A convex polygon as a fan around its centroid.</summary>
-    private static void Fan(SurfaceTool st, Vector2[] poly, Func<float, Color> color)
+    internal static void Fan(SurfaceTool st, Vector2[] poly, Func<float, Color> color)
     {
         var centre = poly.Aggregate(Vector2.Zero, (sum, p) => sum + p) / poly.Length;
         for (int i = 0; i < poly.Length; i++) Tri(st, color, centre, poly[i], poly[(i + 1) % poly.Length]);

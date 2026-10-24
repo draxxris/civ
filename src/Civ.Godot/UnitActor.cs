@@ -80,6 +80,9 @@ internal sealed partial class UnitActor : Node3D
 
     public override void _Process(double delta)
     {
+        // Banners billboard, so "right of the head" is the camera's right, not a fixed world direction.
+        if (GetViewport()?.GetCamera3D() is { } camera)
+            _banner.GlobalPosition = GlobalPosition + new Vector3(0, BannerHeight, 0) + camera.GlobalBasis.X * BannerSideOffset;
         var motion = new Vector3(Shake, 0, Lunge);
         float rise = MotionRise(motion);
         _pivot.Position = motion + new Vector3(0, rise - Fall * 0.2f, 0);

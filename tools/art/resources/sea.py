@@ -1,0 +1,3 @@
+"""sea resources."""
+
+MODELS = {}

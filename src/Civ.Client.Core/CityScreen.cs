@@ -9,6 +9,9 @@ public sealed record LedgerRow(string Label, long Amount, bool Percent = false)
     public string Text => $"{Labels.Signed(Amount)}{(Percent ? "%" : "")}  {Label}";
 }
 
+/// <summary>What a city's map nameplate shows: growth and production fractions (0..1) and the item being built.</summary>
+public sealed record CityPlate(string Name, int Population, float Growth, float? Production, string? ProductionId, int? TurnsToGrow, int? TurnsToFinish);
+
 public sealed record SpecialistRow(string Id, string Name, int Count, int Slots, string Effects);
 
 public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns, bool IsContinuous);
@@ -85,6 +88,21 @@ public sealed partial class GameSession
             OccupationTurns = rules.OccupationTurns,
             PendingConquestChoice = rules.PendingConquestChoice,
         };
+    }
+
+    /// <summary>
+    /// <paramref name="known"/> may be a map-only observation, which carries no food or queue. Own cities show their live
+    /// growth and production; other civilizations' cities show only the name and size.
+    /// </summary>
+    public CityPlate PlateOf(City known)
+    {
+        var city = Sim.State.Cities.FirstOrDefault(c => c.Id == known.Id);
+        if (city == null || city.Owner != Human) return new(known.Name, known.Population, 0f, null, null, null, null);
+        var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
+        float food = growth.Threshold > 0 ? Math.Clamp((float)city.FoodStored / growth.Threshold, 0f, 1f) : 0f;
+        var row = QueueRows(city).FirstOrDefault();
+        float? production = row == null || row.IsContinuous || row.Cost <= 0 ? null : Math.Clamp((float)row.Progress / row.Cost, 0f, 1f);
+        return new(city.Name, city.Population, food, production, row?.Id, TurnsToGrow(city, growth), row?.Turns);
     }
 
     private CityRuleState RulesOf(City city) => city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();

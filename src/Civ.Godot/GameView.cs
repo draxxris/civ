@@ -180,8 +180,8 @@ internal sealed partial class GameView : Node3D
         if (!mouse.Pressed) return;
         switch (mouse.ButtonIndex)
         {
-            case MouseButton.WheelUp: _camera.Zoom(-1.5f); break;
-            case MouseButton.WheelDown: _camera.Zoom(1.5f); break;
+            case MouseButton.WheelUp when !_ui.PointerOverUi: _camera.Zoom(-1.5f); break;
+            case MouseButton.WheelDown when !_ui.PointerOverUi: _camera.Zoom(1.5f); break;
             case MouseButton.Left or MouseButton.Right: Click(mouse); break;
         }
     }

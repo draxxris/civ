@@ -48,6 +48,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly ShaderMaterial _pathMaterial, _selectionMaterial, _destinationMaterial;
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
+    private readonly List<CityNameplate> _plates = new();
     private readonly ModelCache _models;
     private readonly ImprovementRenderer _improvements;
     private readonly CityRenderer _cities;
@@ -188,6 +189,8 @@ internal sealed partial class MapRenderer : Node3D
         _wrappedFocusX = null;
         foreach (var (label, _) in _labels) label.Visible = false;
         _labels.Clear();
+        foreach (var plate in _plates) plate.QueueFree();
+        _plates.Clear();
         if (!Clean) BuildTokens();
         BuildOverlay();
         _atlas.Flush();
@@ -201,6 +204,8 @@ internal sealed partial class MapRenderer : Node3D
         _wrappedFocusX = focusX;
         PlaceActors(focusX);
         if (Period <= 0) return;
+        foreach (var plate in _plates)
+            plate.Position = plate.Anchor + new Vector3(Mathf.Round((focusX - plate.Anchor.X) / Period) * Period, 0, 0);
         foreach (var (label, basePos) in _labels)
             label.Position = basePos + new Vector3(Mathf.Round((focusX - basePos.X) / Period) * Period, 0, 0);
     }

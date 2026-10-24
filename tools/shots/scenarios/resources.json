@@ -1,5 +1,6 @@
 {
   "// note": "Resource showcase: every map resource on a tile it may spawn on (terrain, feature, hills), sea resources in the water band at row 17. Use --world small.",
+  "revealResources": true,
   "fill": {
     "terrain": "world:grass",
     "kind": "Flat"

@@ -28,13 +28,13 @@ internal sealed partial class MapRenderer
     {
         var owner = Ui.ToColor(MapStyle.PlayerColor(city.Owner));
         var at = PositionOf(city.Position, YTokens);
-        b.Disc(at, 0.62f, Ink, 16);
-        b.Disc(at, 0.55f, owner, 16);
-        b.Quad(at + new Vector3(-0.3f, 0.002f, -0.02f), at + new Vector3(0.3f, 0.002f, -0.02f), at + new Vector3(0.3f, 0.002f, 0.3f), at + new Vector3(-0.3f, 0.002f, 0.3f), new Color(0.93f, 0.9f, 0.82f));
-        b.Tri(at + new Vector3(-0.36f, 0.003f, -0.02f), at + new Vector3(0.36f, 0.003f, -0.02f), at + new Vector3(0, 0.003f, -0.4f), owner.Darkened(0.45f));
-        b.Quad(at + new Vector3(-0.07f, 0.004f, 0.14f), at + new Vector3(0.07f, 0.004f, 0.14f), at + new Vector3(0.07f, 0.004f, 0.3f), at + new Vector3(-0.07f, 0.004f, 0.3f), Ink);
+        b.Ring(at, 0.62f, 0.05f, owner, 24);
         if (_session.City?.Id == city.Id) b.Ring(at, 0.8f, 0.07f, new Color(1f, 0.85f, 0.25f), 24);
-        AddLabel($"{city.Name}  {city.Population}", WorldOf(city.Position, YTokens) + new Vector3(0, 0.25f, 0.9f), 24, Colors.White);
+        var info = _session.PlateOf(city);
+        var plate = new CityNameplate(info, owner, _session.City?.Id == city.Id, _icons.TextureOf(info.ProductionId),
+            WorldOf(city.Position, YTokens) + new Vector3(0, 0.3f, 0.95f));
+        AddChild(plate);
+        _plates.Add(plate);
     }
 
     private void DrawUnitStack(MeshBuilder shapes, MeshBuilder icons, List<Unit> stack)

@@ -607,6 +607,29 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Map_nameplate_reads_live_growth_and_production_from_an_observed_city()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        var observed = Assert.Single(s.KnownCities(), c => c.Id == city.Id);
+        var choices = s.ProductionChoices(city).Where(c => c.Available && !c.IsContinuous && c.Cost > 10).Take(2).ToArray();
+        Assert.Equal(2, choices.Length);
+        Assert.True(s.Enqueue(city, choices[0].Kind, choices[0].Id, append: false));
+        city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 1 };
+        city.FoodStored = 7;
+
+        var plate = s.PlateOf(observed);
+
+        Assert.Equal(choices[0].Id, plate.ProductionId);
+        Assert.InRange(plate.Growth, 0.001f, 1f);
+        Assert.InRange(plate.Production!.Value, 0.00001f, 0.99f);
+        Assert.True(s.Enqueue(city, choices[1].Kind, choices[1].Id, append: false));
+        Assert.Equal(choices[1].Id, s.PlateOf(observed).ProductionId);
+        Assert.True(s.RemoveFromQueue(city, 0));
+        Assert.Null(s.PlateOf(observed).ProductionId);
+    }
+
+    [Fact]
     public void Worked_tiles_and_specialists_can_be_reassigned()
     {
         var s = NewSession();

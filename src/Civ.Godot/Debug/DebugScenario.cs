@@ -17,6 +17,7 @@ namespace Civ.Client;
 /// Road entries can be point arrays (default road), or objects with a path and optional route; routes assigns one route name per path point.
 /// Route names accept full ids or short names. Tile fields (all optional): terrain, kind (Flat|Hills|Peak), feature, improvement, bonus, route, river (edge bit mask), cliff (true, false or a sea-edge bit mask), lake, owner (null clears it), city.
 /// City example: "city": {"owner":0,"name":"Testburg","population":5,"buildings":["walls"]}.
+/// Optional "production": {"kind":"mod:kind","id":"mod:item","progress":20} queues one order, and "food" sets the stored food.
 /// City requires owner and name; population defaults to 1 and buildings to empty. It clears the plot improvement and sets its owner.
 /// Optional "era" (full id or short name such as "modern") sets the owner's current era, which picks the look of the city's
 /// buildings. The era belongs to the owner, so cities of different eras need different owners (the last one set wins).
@@ -26,6 +27,7 @@ namespace Civ.Client;
 /// "clearUnits": true removes every generated unit first. "units" places units:
 /// <c>[{"at":[5,5],"type":"warrior","owner":1,"health":40,"count":2}]</c>. Type accepts a full id or short name; owner
 /// defaults to 0, health to 100 and count to 1. Units are placed after tiles and cities.
+/// "revealResources": true gives the local team every resource's reveal technology, so every resource on the map shows.
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
 {
@@ -93,6 +95,9 @@ internal static class DebugScenario
         }
         if (root.TryGetProperty("units", out var units))
             foreach (var entry in units.EnumerateArray()) AddUnits(session, entry);
+        if (root.TryGetProperty("revealResources", out var reveal) && reveal.GetBoolean())
+            foreach (var bonus in session.Sim.Content.Get<Schema.BonusDef>().All)
+                if (bonus.RevealTech is { } tech) session.MyTeam.Techs.Add(tech);
         foreach (var plot in state.Plots) { plot.Revealed.Add(session.Me.TeamId); plot.Visible.Add(session.Me.TeamId); }
         return root.TryGetProperty("focus", out var f) ? state.Grid.HexOf(state.Grid.TileAt(f[0].GetInt32(), f[1].GetInt32())) : null;
     }
@@ -136,8 +141,13 @@ internal static class DebugScenario
             ? list.EnumerateArray().Select(b => ContentId<Schema.BuildingDef>(session, b.GetString(), "building")
                 ?? throw new ArgumentException("City building id must not be empty.")).ToList()
             : new List<string>();
+        var queue = new List<ProductionOrder>();
+        if (e.TryGetProperty("production", out var order))
+            queue.Add(new ProductionOrder(order.GetProperty("kind").GetString()!, order.GetProperty("id").GetString()!,
+                order.TryGetProperty("progress", out var progress) ? progress.GetInt64() : 0));
         state.AddCity(new City
         {
+            ProductionQueue = queue, FoodStored = e.TryGetProperty("food", out var food) ? food.GetInt64() : 0,
             Id = state.NextCityId++, Owner = owner, Name = e.GetProperty("name").GetString()!,
             Position = state.Grid.HexOf(tile),
             Population = e.TryGetProperty("population", out var population) ? population.GetInt32() : 1,
