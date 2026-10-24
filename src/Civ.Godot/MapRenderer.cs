@@ -53,6 +53,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly CityRenderer _cities;
     private int _worldRevision = -1, _revision = -1, _yieldRevision = -1;
     private MapOverlays? _shownOverlays;
+    private float? _wrappedFocusX;
 
     /// <summary>Print rebuild timings during captures or with --trace-performance.</summary>
     public static bool LogTimings { get; set; }
@@ -184,6 +185,7 @@ internal sealed partial class MapRenderer : Node3D
 
     private void BuildDynamic()
     {
+        _wrappedFocusX = null;
         foreach (var (label, _) in _labels) label.Visible = false;
         _labels.Clear();
         if (!Clean) BuildTokens();
@@ -194,6 +196,9 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Keep each label on the world copy nearest the camera so text never sits a map-width away.</summary>
     public void WrapLabels(float focusX)
     {
+        // Battles move anchors between refreshes; stationary actors only need wrapping after a camera move or rebuild.
+        if (_wrappedFocusX == focusX && _battle == null) return;
+        _wrappedFocusX = focusX;
         PlaceActors(focusX);
         if (Period <= 0) return;
         foreach (var (label, basePos) in _labels)

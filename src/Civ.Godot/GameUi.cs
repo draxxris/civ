@@ -23,6 +23,8 @@ internal sealed partial class GameUi : CanvasLayer
     private bool _researchOpen;
     private bool _shownResearchOpen;
     private int _shownCityState;
+    private MapOverlays? _shownOverlays;
+    private (Vector2 Mouse, Vector2 Size, Vector2 View)? _hoverTipInputs;
     private readonly List<(CheckBox Button, Func<MapOverlays, bool> Read)> _overlayChecks = new();
 
     public bool PointerOverUi => GetViewport().GuiGetHoveredControl() != null;
@@ -58,12 +60,12 @@ internal sealed partial class GameUi : CanvasLayer
 
     public void Refresh()
     {
-        foreach (var (button, read) in _overlayChecks) button.SetPressedNoSignal(read(_session.Overlays));
+        RefreshOverlayChecks();
+        if (!NeedsRefresh()) return;
         bool cityOpen = _session.City != null;
         _left.Visible = !cityOpen;
         _endTurn.Visible = !cityOpen;
         _city.Visible = cityOpen;
-        if (!NeedsRefresh()) return;
         _shownRevision = _session.Revision; _shownResearchOpen = _researchOpen; _shownCityState = _city.State;
         var clock = System.Diagnostics.Stopwatch.StartNew();
         BuildTop();
@@ -84,6 +86,13 @@ internal sealed partial class GameUi : CanvasLayer
     private bool NeedsRefresh() => _shownRevision != _session.Revision || _shownResearchOpen != _researchOpen
         || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
         || _shownModalRevision != _modalRevision;
+
+    private void RefreshOverlayChecks()
+    {
+        if (_shownOverlays == _session.Overlays) return;
+        foreach (var (button, read) in _overlayChecks) button.SetPressedNoSignal(read(_session.Overlays));
+        _shownOverlays = _session.Overlays;
+    }
 
     private Control MapOverlayControls()
     {
@@ -121,12 +130,17 @@ internal sealed partial class GameUi : CanvasLayer
         _hoverTip.Visible = lines.Count > 0;
         _hoverText.Text = string.Join("\n", lines);
         _hoverTip.Size = Vector2.Zero;
+        _hoverTipInputs = null;
     }
 
     public void MoveHoverTip(Vector2 mouse)
     {
+        if (!_hoverTip.Visible) return;
         var size = _hoverTip.GetCombinedMinimumSize();
         var view = GetViewport().GetVisibleRect().Size;
+        var inputs = (mouse, size, view);
+        if (_hoverTipInputs == inputs) return;
+        _hoverTipInputs = inputs;
         _hoverTip.Position = new Vector2(Mathf.Min(mouse.X + 18, view.X - size.X - 4), Mathf.Min(mouse.Y + 18, view.Y - size.Y - 4));
     }
 

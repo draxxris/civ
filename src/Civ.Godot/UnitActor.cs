@@ -24,9 +24,20 @@ internal sealed partial class UnitActor : Node3D
     /// <summary>Visible surface height, used to keep procedural lunges and shakes above slopes.</summary>
     public Func<float, float, float>? Ground { get; init; }
     /// <summary>Procedural pose: metres toward the facing, sideways shake, and 0..1 fall.</summary>
-    public float Lunge { get; set; }
-    public float Shake { get; set; }
-    public float Fall { get; set; }
+    public float Lunge { get => _lunge; set => SetMotion(ref _lunge, value); }
+    public float Shake { get => _shake; set => SetMotion(ref _shake, value); }
+    public float Fall { get => _fall; set => SetMotion(ref _fall, value); }
+    private float _lunge, _shake, _fall;
+
+    private void SetMotion(ref float field, float value)
+    {
+        if (field == value) return;
+        field = value;
+        SetProcess(true);
+    }
+
+    // Only the procedural battle pose needs this callback. Child animation players keep processing.
+    public override void _Ready() => SetProcess(Lunge != 0 || Shake != 0 || Fall != 0);
 
     public UnitActor(Node3D? model, Color owner)
     {
@@ -70,11 +81,17 @@ internal sealed partial class UnitActor : Node3D
     public override void _Process(double delta)
     {
         var motion = new Vector3(Shake, 0, Lunge);
-        var worldMotion = Basis * motion;
-        float rise = Ground == null || motion == Vector3.Zero ? 0
-            : Ground(Anchor.X + worldMotion.X, Anchor.Z + worldMotion.Z) - Ground(Anchor.X, Anchor.Z);
+        float rise = MotionRise(motion);
         _pivot.Position = motion + new Vector3(0, rise - Fall * 0.2f, 0);
         _pivot.Rotation = new Vector3(0, 0, HasClip("die") ? 0 : Fall * Mathf.Pi / 2);
+        SetProcess(motion != Vector3.Zero);
+    }
+
+    private float MotionRise(Vector3 motion)
+    {
+        if (Ground == null || motion == Vector3.Zero) return 0;
+        var worldMotion = Basis * motion;
+        return Ground(Anchor.X + worldMotion.X, Anchor.Z + worldMotion.Z) - Ground(Anchor.X, Anchor.Z);
     }
 
     private static AnimationPlayer? FindPlayer(Node node)
