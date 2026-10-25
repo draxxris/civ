@@ -60,18 +60,23 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.NotEmpty(units);
         Assert.True(promoted.Length >= 2, $"Only {promoted.Length} of {units.Length} units were promoted");
 
-        // Every promotion the AI took must be one the rules allow, and no soldier may sit on an unspent one:
-        // a planner that stops promoting leaves experience on the table forever. AiCatalog classifies a land unit
-        // that declares the explore AI and has strength 2 or less as UnitRole.Explorer, and MilitaryPlanner.Promote
-        // walks only Melee and Siege soldiers, so those scouts keep their experience; combat-capable explorers are
-        // still Melee and stay in scope here.
+        // Every promotion the AI took must be one the rules allow, and no unit may sit on an unspent one: a planner
+        // that stops promoting leaves experience on the table forever. AiCatalog classifies a land unit that declares
+        // the explore AI and has strength 2 or less as UnitRole.Explorer; those scouts explore rather than fight, and
+        // they were the one role the promotion loop never asked.
         var service = Service<IUnitService>(sim);
         var promotions = sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.Select(p => p.Id).ToArray();
-        var soldiers = units.Where(u => sim.State.PlayerById(u.Owner).Ai is not null
+        bool IsExplorer(Unit u) => sim.State.PlayerById(u.Owner).Ai is not null
             && sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type) is var def
             && def.Domain == "military:domain_land"
-            && !(def.UnitAiTypes.ContainsKey("military:unitai_explore") && def.Strength <= 2));
-        foreach (var unit in soldiers)
+            && def.UnitAiTypes.ContainsKey("military:unitai_explore") && def.Strength <= 2;
+        var explorers = units.Where(IsExplorer).ToArray();
+        Assert.NotEmpty(explorers);
+        Assert.True(explorers.Any(u => u.Promotions.Count > 0),
+            $"none of {explorers.Length} explorers spent a promotion");
+        var land = units.Where(u => sim.State.PlayerById(u.Owner).Ai is not null
+            && sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type).Domain == "military:domain_land");
+        foreach (var unit in land)
         {
             var state = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
             // Loaded cargo is not walked by the soldier loop, and a unit built during the last advance has not

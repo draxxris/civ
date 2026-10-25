@@ -13,7 +13,7 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
 
     public void Plan()
     {
-        foreach (var unit in Soldiers().ToList()) Promote(unit);
+        foreach (var unit in Promotable().ToList()) Promote(unit);
         AssignGarrisons();
 
         var navy = new NavalPlanner(ctx, _orders, attack);
@@ -29,8 +29,11 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         Upgrades();
     }
 
-    private IEnumerable<Unit> Soldiers() => ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0
-        && ctx.MilitaryState(u).TransportId is null && ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
+    /// <summary>Every unit still in play for this player: alive, not dead on health, and not loaded as cargo.</summary>
+    private IEnumerable<Unit> Promotable() => ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0
+        && ctx.MilitaryState(u).TransportId is null);
+
+    private IEnumerable<Unit> Soldiers() => Promotable().Where(u => ctx.Role(u) is UnitRole.Melee or UnitRole.Siege);
 
     private void AssignGarrisons()
     {
@@ -72,6 +75,8 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         return (target.Threat - sourceThreat) * 1000L - path.Cost;
     }
 
+    /// <summary>Spend any promotion the unit has earned. Every unit is asked, not just soldiers: a scout earns
+    /// experience exploring, and leaving it unspent wastes the level it paid for.</summary>
     private void Promote(Unit unit)
     {
         var service = ctx.Service<IUnitService>();
