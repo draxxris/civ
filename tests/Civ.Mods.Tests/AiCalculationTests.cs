@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Reflection;
 using Civ.Content;
 using Civ.Content.Schema;
 using Civ.Game;
 using Civ.Modding;
 using Xunit;
+using static Civ.Mods.Tests.AiBindings;
 
 using UnitDef = Civ.Content.Schema.UnitDef;
 
@@ -422,7 +422,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         {
             var ctx = NewAi(fork, "AiContext", fork, 0);
             var options = NewAi(fork, "AiOptions", ctx);
-            var role = Enum.Parse(ctx.GetType().Assembly.GetType("Civ.Mods.Ai.UnitRole")!, "Melee");
+            var role = Enum.Parse(AiType(fork, "UnitRole"), "Melee");
             UnitDef? Best(Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null) =>
                 (UnitDef?)Call(options, "Best", 1, role, score,
                     new Func<UnitDef, bool>(u => u.Id.StartsWith("choice_probe:", StringComparison.Ordinal) && (filter?.Invoke(u) ?? true)));
@@ -541,8 +541,8 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Call(ctx, "Refresh");
         Check();
         var peace = (GameCommand)NewAi(sim, "MakePeaceCommand");
-        peace.GetType().GetProperty("Player")!.SetValue(peace, 0);
-        peace.GetType().GetProperty("Target")!.SetValue(peace, 1);
+        Set(peace, "Player", 0);
+        Set(peace, "Target", 1);
         Assert.True(issue(peace));
         Check();
     }
@@ -563,7 +563,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var targets = NewAi(sim, "CampaignTargets", ctx);
         Assert.Null(Call(targets, "SelectPrimaryTargetCity", 0));
         var war = (GameCommand)NewAi(sim, "DeclareWarCommand");
-        war.GetType().GetProperty("Target")!.SetValue(war, 1);
+        Set(war, "Target", 1);
         Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(war));
         Parallel.For(0, 16, _ => Assert.Equal(2, ((City)Call(targets, "SelectPrimaryTargetCity", 0)!).Id));
         sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, 2, 0);
@@ -662,7 +662,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var after = Property<YieldVector>(Call(ctx, "ViewOf", city)!, "Yields");
         Assert.NotEqual(before, after);
         Assert.Equal(sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, 1).Yields, after);
-        var roleType = ctx.GetType().Assembly.GetType("Civ.Mods.Ai.UnitRole")!;
+        var roleType = AiType(sim, "UnitRole");
         int Count(string method, string role) => (int)Call(ctx, method, Enum.Parse(roleType, role))!;
         Assert.Equal(1, Count("CountUnits", "Worker"));
         Assert.Equal(0, Count("CountQueued", "Melee"));
@@ -811,11 +811,4 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         public void Rejected(Simulation sim, GameCommand command) { }
     }
 
-    // Mods load from their shipped payloads. Exercise their internal query owners without exporting test hooks.
-    private static object NewAi(Simulation sim, string name, params object[] args) => Activator.CreateInstance(
-        sim.Content.PlayerAIs.Get("ai:standard").GetType().Assembly.GetType($"Civ.Mods.Ai.{name}")!, args)!;
-    private static object? Call(object target, string name, params object[] args) =>
-        target.GetType().GetMethod(name, BindingFlags.Instance | BindingFlags.Public)!.Invoke(target, args);
-    private static T Property<T>(object target, string name) => (T)target.GetType().GetProperty(name)!.GetValue(target)!;
-    private static T Method<T>(object target, string name) where T : Delegate => target.GetType().GetMethod(name)!.CreateDelegate<T>(target);
 }

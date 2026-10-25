@@ -3,6 +3,7 @@ using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
 using Xunit;
+using static Civ.Mods.Tests.AiBindings;
 
 namespace Civ.Mods.Tests;
 
@@ -371,7 +372,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         ulong withMission = loaded.ComputeHash();
         var clone = loaded.ForkSpeculative();
         Assert.Equal(withMission, clone.ComputeHash());
-        Apply(clone, "ForgetUnitMissionCommand", unit: 1);
+        Apply(clone, "ForgetUnitMissionCommand", member: "Unit", value: 1);
         Assert.False(HasMission(clone, 1));
         Assert.True(HasMission(loaded, 1));
         Assert.NotEqual(withMission, clone.ComputeHash());
@@ -537,10 +538,10 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var ctx = NewAi(sim, "AiContext", sim, 0);
         var army = NewAi(sim, "ArmyPlan", ctx);
         var cities = NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), army);
-        cities.GetType().GetMethod("Plan")!.Invoke(cities, null);
+        Call(cities, "Plan");
         var attack = NewAi(sim, "AttackPlanner", ctx, NewAi(sim, "UnitOrders", ctx));
         var military = NewAi(sim, "MilitaryPlanner", ctx, army, cities, attack);
-        military.GetType().GetMethod("Plan")!.Invoke(military, null);
+        Call(military, "Plan");
         Assert.Contains(sim.Content.Services.Get<ICombatService>().Single().History(sim), r => r.Attacker == attacker.Id);
         if (destroyTargets) Assert.Equal(JsonValueKind.Null, Campaign(sim).GetProperty("City").ValueKind);
         else Assert.Equal(retained, Campaign(sim).GetProperty("City").GetInt32());
@@ -636,15 +637,16 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private static void Review(Simulation sim, int player = 0)
     {
         Apply(sim, "ReviewCivicGoalCommand", player);
-        Apply(sim, "ReviewCampaignGoalsCommand", player);
+        Apply(sim, "ReviewCampaignGoalsCommand", player, "Areas", new[] { 0 });
     }
 
-    private static void Apply(Simulation sim, string name, int player = 0, int unit = 0)
+    /// <summary>Most intent commands are player-scoped; the ones that narrow their work to a target name that
+    /// member here, so a renamed member cannot silently run the command over its default.</summary>
+    private static void Apply(Simulation sim, string name, int player = 0, string? member = null, object? value = null)
     {
         var command = (GameCommand)NewAi(sim, name);
-        command.GetType().GetProperty("Player")!.SetValue(command, player);
-        command.GetType().GetProperty("Unit")?.SetValue(command, unit);
-        command.GetType().GetProperty("Areas")?.SetValue(command, new[] { 0 });
+        Set(command, "Player", player);
+        if (member is not null) Set(command, member, value);
         Assert.True(sim.TryApply(command, out var error), error);
     }
 
@@ -654,11 +656,8 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         object target = planner == "SettlerPlanner"
             ? NewAi(sim, planner, ctx, NewAi(sim, "SitePlanner", ctx))
             : NewAi(sim, planner, ctx);
-        target.GetType().GetMethod("Plan")!.Invoke(target, null);
+        Call(target, "Plan");
     }
-
-    private static object NewAi(Simulation sim, string name, params object[] args) => Activator.CreateInstance(
-        sim.Content.PlayerAIs.Get("ai:standard").GetType().Assembly.GetType($"Civ.Mods.Ai.{name}")!, args)!;
     private static TileId Tile(Simulation sim, int column, int row) => sim.State.Grid.TileAt(HexGrid.FromOffset(column, row));
     private static JsonElement? Intent(Simulation sim, int player = 0) =>
         JsonSerializer.SerializeToElement(sim.State.PlayerById(player).Extensions, CanonicalJson.Options)
