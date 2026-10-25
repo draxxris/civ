@@ -100,6 +100,32 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void A_path_step_that_reveals_a_defender_stops_the_move_instead_of_throwing()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var scout = Add(sim, 0, 39, "military:scout");
+        var start = scout.Position;
+        var middle = start.Neighbor(0);
+        var unseen = middle.Neighbor(0);
+        var defender = Add(sim, 1, sim.State.Grid.TileAt(unseen).Value);
+        sim.State.SetWar(0, 1, true);
+        scout.MovesLeft = 300;
+        // The route is planned while the defender is still in fog, so it validates and runs straight through it.
+        // Walking the first step reveals the defender, and the scout cannot fight: only defensive, strength 1.
+        sim.State.PlotAt(unseen).Visible.Clear();
+        int step = Service<IMovementService>(sim).StepCost(sim, scout.Id, sim.State.Grid.TileAt(start), sim.State.Grid.TileAt(middle));
+        var command = new MoveUnitPathCommand { Player = 0, Unit = scout.Id, Path = [middle, unseen] };
+
+        Assert.True(sim.TryApply(command, out var error), error);
+
+        Assert.Equal(middle, scout.Position);
+        Assert.Equal(300 - step, scout.MovesLeft); // the forbidden step costs nothing
+        Assert.Equal(100, defender.Health);
+        Assert.Empty(sim.Events.Published.OfType<CombatResolved>());
+        Assert.Contains(sim.TeamOf(0).Id, sim.State.PlotAt(unseen).Visible); // the reveal is what stopped the move
+    }
+
+    [Fact]
     public void Equal_strength_odds_and_combat_save_replay_match()
     {
         var sim = GameFactory.Scenario(mods.Content);
