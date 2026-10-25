@@ -191,13 +191,28 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
     {
         var sim = P7ModFixture.Scenario(mods.Wonders);
         var city = P7ModFixture.City(sim);
-        var attacker = P7ModFixture.Unit(sim, city, "military:swordsman");
+        var attacker = P7ModFixture.Unit(sim, city, "military:catapult");
         var defender = P7ModFixture.Unit(sim, city, owner: 1);
+        sim.State.MoveUnit(attacker.Id, sim.State.Grid.HexOf(new TileId(41)));
+        sim.State.SetWar(0, 1, true);
+        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        // A siege unit stops at its combat limit instead of killing, so the defender survives. Starting the
+        // defender one hit short of that limit means the first hit the attacker lands ends the attack in
+        // limited damage, so the attacker has to lose a long run of rounds before it dies instead; the
+        // outcome assertion below fails loudly if that ever happens.
+        var preview = combat.Preview(sim, attacker.Id, defender.Id);
+        int maximum = attacker.Health; // units are created at full health
+        defender.Health = maximum - preview.CombatLimit + preview.DamageToDefender - 1;
+        // The baseline has no wonder, so any experience difference is the wonder's grant, not the attack's own.
+        var baseline = SaveGame.Load(mods.Wonders, SaveGame.Save(sim));
         Complete(sim, city, "cities:art_of_war");
-        int before = attacker.Experience;
-        // A damaging attack leaves the defender alive, so no victory experience is due.
-        sim.Events.Publish(new CombatResolved(attacker.Id, defender.Id, attacker.Id));
-        Assert.Equal(before, attacker.Experience);
+        var outcome = combat.Resolve(sim, attacker.Id, defender.Id);
+        var plain = baseline.Content.Services.Get<ICombatService>().Single().Resolve(baseline, attacker.Id, defender.Id);
+        Assert.Equal(CombatOutcome.LimitedDamage, outcome.Outcome);
+        Assert.Equal(plain.Outcome, outcome.Outcome);
+        Assert.NotNull(sim.State.FindUnit(defender.Id));
+        Assert.Equal(maximum - preview.CombatLimit, defender.Health);
+        Assert.Equal(baseline.State.UnitById(attacker.Id).Experience, attacker.Experience);
         Assert.DoesNotContain(sim.Events.Published.OfType<ScriptedWonderEffectApplied>(), e => e.Effect == "victory_experience");
     }
 
