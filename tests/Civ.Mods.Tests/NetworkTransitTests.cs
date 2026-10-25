@@ -83,6 +83,33 @@ public sealed class NetworkTransitTests(LoadedMods mods) : IClassFixture<LoadedM
         sim.State.Plots[42].Route = Road; Check(true);
     }
     [Fact]
+    public void A_connected_resource_reaches_the_wellbeing_ledger_and_losing_the_route_takes_it_back_out()
+    {
+        var sim = Scenario();
+        var home = City(sim, 40);
+        var source = sim.State.Plots[41];
+        source.Terrain = "world:grass"; source.Owner = 0; source.Bonus = Grain;
+        source.Improvement = "network_probe:farm";
+        var network = Service<IResourceNetwork>(sim);
+        var wellbeing = Service<ICityWellbeingService>(sim);
+        bool Reaches() => wellbeing.Calculate(sim, home.Id).Ledger.Lines.Any(l => l.Source == Grain);
+        // Owned, revealed and improved, but no route reaches the city, so the resource supplies nothing.
+        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
+        Assert.False(Reaches());
+        source.Route = Road;
+        Assert.Equal(1, network.ConnectedCount(sim, 0, home.Id, Grain));
+        var line = Assert.Single(wellbeing.Calculate(sim, home.Id).Ledger.Lines, l => l.Source == Grain);
+        Assert.Equal("cities:health_bad", line.Key);
+        Assert.Equal(-sim.Content.Get<S.BonusDef>(Grain).Health, line.Amount);
+        // A route alone supplies nothing: the improvement is what connects the resource to it.
+        source.Improvement = null;
+        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
+        Assert.False(Reaches());
+        source.Improvement = "network_probe:farm"; source.Route = null;
+        Assert.Equal(0, network.ConnectedCount(sim, 0, home.Id, Grain));
+        Assert.False(Reaches());
+    }
+    [Fact]
     public void Physical_foreign_city_connection_does_not_grant_international_city_trade()
     {
         var sim = Scenario(true); var home = City(sim, 40); var foreign = City(sim, 42, 1);
