@@ -10,9 +10,5 @@
   { "id": "base:cover",   "name": "Cover",      "description": "Ranged: +25% strength when defending",
     "classes": ["ranged"], "defenseBonus": 25, "requiresAny": ["base:combat1"] },
   { "id": "base:flanking","name": "Flanking",   "description": "Mounted: +1 move",
-    "classes": ["mounted"], "movesBonus": 1, "requiresAny": ["base:combat1"] },
-  { "id": "base:medic1",  "name": "Medic I",    "description": "Heals 10 more per turn when resting",
-    "healBonus": 10 },
-  { "id": "base:medic2",  "name": "Medic II",   "description": "Heals 10 more per turn when resting",
-    "healBonus": 10, "requiresAny": ["base:medic1"] }
+    "classes": ["mounted"], "movesBonus": 1, "requiresAny": ["base:combat1"] }
 ]

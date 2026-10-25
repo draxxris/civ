@@ -120,7 +120,7 @@ public sealed class UnitDef : ContentDef
     public string[] Classes { get; init; } = [];
 }
 
-/// <summary>A selectable unit specialization earned through experience.</summary>
+/// <summary>Minimal promotion schema for the test ruleset.</summary>
 public sealed class PromotionDef : ContentDef
 {
     /// <summary>Client help text.</summary>
@@ -137,8 +137,6 @@ public sealed class PromotionDef : ContentDef
     public int DefenseBonus { get; init; }
     /// <summary>Extra movement points.</summary>
     public int MovesBonus { get; init; }
-    /// <summary>Extra health restored per resting turn.</summary>
-    public int HealBonus { get; init; }
 }
 
 /// <summary>Experience threshold earning one promotion.</summary>

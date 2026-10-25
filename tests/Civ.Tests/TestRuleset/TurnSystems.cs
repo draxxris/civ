@@ -102,7 +102,7 @@ public sealed class UnitSystem : ITurnSystem
         {
             int max = UnitRules.MaxMoves(sim, unit);
             if (unit.MovesLeft >= max)
-                unit.Health = Math.Min(100, unit.Health + RestHeal + UnitRules.PromotionsOf(sim, unit).Sum(p => p.HealBonus));
+                unit.Health = Math.Min(100, unit.Health + RestHeal);
             unit.MovesLeft = max;
         }
     }
