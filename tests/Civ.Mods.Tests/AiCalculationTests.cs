@@ -593,6 +593,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sites = NewAi(sim, "SitePlanner", ctx);
         var hash = sim.ComputeHash();
         var rng = sim.Rng.State;
+        AssertRanked(sites);
         Assert.Equal(ScanSites(sim), ReadSites(sites));
         Assert.Equal(hash, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
@@ -729,6 +730,15 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         if (sim.State.Plots[tile.Value].Kind == PlotKind.Hills) score += 14;
         int nearest = own.Select(c => grid.Distance(grid.TileAt(c.Position), tile)).DefaultIfEmpty(0).Min();
         return score - Math.Max(0, nearest - 6) * 12;
+    }
+
+    // The scores themselves are not compared (ScanSiteScore copies SitePlanner.Score's weights), but the order
+    // they produce is a real contract: best site first, tile id breaking ties.
+    private static void AssertRanked(object sites)
+    {
+        var scored = ((IEnumerable)Property<object>(sites, "Sites")).Cast<object>()
+            .Select(s => (Tile: Property<TileId>(s, "Tile").Value, Score: Property<int>(s, "Score"))).ToArray();
+        Assert.Equal(scored.OrderByDescending(s => s.Score).ThenBy(s => s.Tile), scored);
     }
 
     private static (int Tile, int Area)[] ReadSites(object sites) => ((IEnumerable)Property<object>(sites, "Sites"))

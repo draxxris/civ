@@ -61,14 +61,16 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.True(promoted.Length >= 2, $"Only {promoted.Length} of {units.Length} units were promoted");
 
         // Every promotion the AI took must be one the rules allow, and no soldier may sit on an unspent one:
-        // a planner that stops promoting leaves experience on the table forever. Dedicated explorers are
-        // excluded because MilitaryPlanner.Promote only walks melee and siege soldiers; scouts keep their
-        // experience by design of that loop, so this test does not claim otherwise.
+        // a planner that stops promoting leaves experience on the table forever. AiCatalog classifies a land unit
+        // that declares the explore AI and has strength 2 or less as UnitRole.Explorer, and MilitaryPlanner.Promote
+        // walks only Melee and Siege soldiers, so those scouts keep their experience; combat-capable explorers are
+        // still Melee and stay in scope here.
         var service = Service<IUnitService>(sim);
         var promotions = sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.Select(p => p.Id).ToArray();
         var soldiers = units.Where(u => sim.State.PlayerById(u.Owner).Ai is not null
             && sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type) is var def
-            && def.Domain == "military:domain_land" && !def.UnitAiTypes.ContainsKey("military:unitai_explore"));
+            && def.Domain == "military:domain_land"
+            && !(def.UnitAiTypes.ContainsKey("military:unitai_explore") && def.Strength <= 2));
         foreach (var unit in soldiers)
         {
             var state = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
