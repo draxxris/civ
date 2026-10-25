@@ -5,14 +5,10 @@ namespace Civ.BaseGame;
 public sealed class FoundCityCommand : GameCommand
 {
     public Hex Position { get; init; }
-    /// <summary>Optional: a settler standing on <see cref="Position"/> that is consumed. 0 = found for free (setup, AI bootstrap).</summary>
-    public int UnitId { get; init; }
 
     public override string? Validate(Simulation sim)
     {
         if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
-        var settlerError = ValidateSettler(sim);
-        if (settlerError != null) return settlerError;
         if (!sim.State.Grid.Contains(Position)) return "off map";
         var t = sim.TerrainAt(Position);
         if (t.IsWater || !t.Passable) return "cannot found a city on " + t.Name;
@@ -20,18 +16,8 @@ public sealed class FoundCityCommand : GameCommand
         return null;
     }
 
-    private string? ValidateSettler(Simulation sim)
-    {
-        if (UnitId == 0) return null;
-        var unit = sim.State.FindUnit(UnitId);
-        if (unit == null || unit.Owner != Player) return "not your unit";
-        if (!sim.Content.Units.Get(unit.Type).CanFoundCity) return "unit cannot found cities";
-        return unit.Position != Position ? "settler must be on the city site" : null;
-    }
-
     public override void Apply(Simulation sim)
     {
-        if (UnitId != 0) sim.State.RemoveUnit(UnitId);
         int id = sim.State.NextCityId++;
         var city = new City { Id = id, Owner = Player, Name = $"City {id}", Position = Position };
         sim.State.AddCity(city);

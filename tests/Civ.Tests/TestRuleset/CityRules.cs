@@ -38,7 +38,6 @@ public static class CityRules
         return total;
     }
 
-    public static int SpecialistCount(City city) => city.Specialists.Values.Sum();
 
     public static string? ValidateAssignment(Simulation sim, City city, IReadOnlyCollection<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
     {

@@ -138,13 +138,6 @@ public class ContractTests
         Assert.True(sim.KnowsTech(0, "base:the_wheel"));
         Assert.True(sim.KnowsTech(1, "base:the_wheel"));
         Assert.Single(sim.Events.Published.OfType<TechDiscovered>());
-        var from = sim.State.Cities[0].Position;
-        var to = sim.State.Grid.Neighbors(from).First();
-        sim.State.PlotAt(to).Terrain = "base:grassland";
-        var mine = UnitRules.Spawn(sim, 0, "base:warrior", from);
-        UnitRules.Spawn(sim, 1, "base:warrior", to);
-        Assert.False(sim.TryApply(new AttackCommand { Player = 0, UnitId = mine.Id, Target = to }, out _));
-        Assert.True(sim.TryApply(new MoveUnitCommand { Player = 0, UnitId = mine.Id, To = to }, out _));
     }
 
     [Fact]

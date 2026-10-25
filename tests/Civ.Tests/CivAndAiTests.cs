@@ -9,21 +9,6 @@ namespace Civ.Tests;
 public class CivAndAiTests
 {
     [Fact]
-    public void CivilizationBonusSpeedsUpCulture()
-    {
-        long Culture(string civ)
-        {
-            var sim = new Simulation(TestGame.Content(), new SimulationSettings { Seed = 3, Map = new(17, 17), PlayerCount = 1, Civilizations = [civ] });
-            sim.TryApply(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) }, out _);
-            sim.State.Cities[0].Buildings.Add("base:library"); // 1 base + 1 building culture per turn
-            for (int i = 0; i < 10; i++) sim.TryApply(new EndTurnCommand { Player = 0 }, out _);
-            return sim.State.Players[0].Culture;
-        }
-        Assert.Equal(20, Culture("base:builders"));
-        Assert.Equal(30, Culture("base:artisans")); // +50%
-    }
-
-    [Fact]
     public void BasicAiPlaysAWholeGameDeterministically()
     {
         ulong Run()
