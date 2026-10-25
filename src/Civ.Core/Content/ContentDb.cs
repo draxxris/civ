@@ -160,14 +160,6 @@ public sealed class ContentDb
         type = Nullable.GetUnderlyingType(type) ?? type;
         return type == typeof(string) || type == typeof(decimal) || type.IsPrimitive || type.IsEnum;
     }
-    /// <summary>Highest culture level reached, or null below the first threshold.</summary>
-    public CultureLevelDef? CultureLevelFor(long culture)
-    {
-        CultureLevelDef? best = null;
-        foreach (var level in CultureLevels.All)
-            if (culture >= level.Threshold && (best == null || level.Threshold >= best.Threshold)) best = level;
-        return best;
-    }
 }
 
 /// <summary>Mod-owned deterministic map generation.</summary>

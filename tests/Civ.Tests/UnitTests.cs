@@ -9,19 +9,8 @@ public class UnitTests
     private static (Simulation sim, Hex a, Hex b) TwoAdjacentLandHexes()
     {
         var sim = TestGame.Sim(7);
-        var a = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).OrderBy(h => h.Q).ThenBy(h => h.R)
-            .First(h => { var t = sim.TerrainAt(h); return !t.IsWater && t.Passable && h.Neighbors().Any(n => sim.State.Grid.Contains(n) && sim.TerrainAt(n) is { IsWater: false, Passable: true }); });
-        var b = a.Neighbors().First(n => sim.State.Grid.Contains(n) && sim.TerrainAt(n) is { IsWater: false, Passable: true });
-        return (sim, a, b);
-    }
-
-    [Fact]
-    public void UnitDataLoadsFromTheBaseMod()
-    {
-        var db = TestGame.Content();
-        Assert.True(db.Units.Get("base:settler").CanFoundCity);
-        Assert.Equal(5, db.ExperienceLevels.Count);
-        Assert.Contains("base:shock", db.Promotions.All.Select(p => p.Id));
+        var a = TestGame.FindLand(sim, h => h.Neighbors().Any(n => TestGame.IsLand(sim, n)));
+        return (sim, a, a.Neighbors().First(n => TestGame.IsLand(sim, n)));
     }
 
     [Fact]
@@ -134,30 +123,5 @@ public class UnitTests
         Assert.True(sim.TryApply(new FoundCityCommand { Player = 0, Position = hex, UnitId = settler.Id }, out _));
         Assert.Single(sim.State.Cities);
         Assert.DoesNotContain(sim.State.Units, u => u.Id == settler.Id);
-    }
-
-    [Fact]
-    public void UnitCommandsRoundTripThroughCodec()
-    {
-        var sim = TestGame.Sim();
-        var codec = new CommandCodec(sim.Content);
-        Assert.IsType<AttackCommand>(codec.Decode(codec.Encode(new AttackCommand { Player = 0, UnitId = 4, Target = new Hex(1, 1) })));
-        Assert.IsType<PromoteUnitCommand>(codec.Decode(codec.Encode(new PromoteUnitCommand { Player = 0, UnitId = 4, Promotion = "base:shock" })));
-    }
-
-    [Fact]
-    public void AiPromotesItsVeterans()
-    {
-        var sim = new Simulation(TestGame.Content(), new SimulationSettings
-        {
-            Seed = 11, Map = new(17, 17), PlayerCount = 1, Civilizations = ["base:builders"], PlayerAis = ["base:basic"],
-        });
-        for (int i = 0; i < 80; i++)
-        {
-            foreach (var u in sim.State.Units) u.Experience = Math.Max(u.Experience, 5); // fast-forward combat experience
-            sim.AdvanceTurn();
-        }
-        Assert.NotEmpty(sim.State.Units);
-        Assert.All(sim.State.Units, u => Assert.NotEmpty(u.Promotions));
     }
 }

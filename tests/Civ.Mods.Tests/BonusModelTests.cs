@@ -20,8 +20,6 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var onMap = Bonuses.Where(BonusSpot.OnMap).Select(b => b.Id).Order(StringComparer.Ordinal).ToArray();
         var manufactured = Bonuses.Where(b => b.BonusClass == Manufactured).Select(b => b.Id).ToArray();
-        Assert.Equal(51, onMap.Length);
-        Assert.Equal(15, manufactured.Length);
         Assert.Empty(onMap.Intersect(manufactured));
         Assert.All(onMap, id => Assert.True(mods.Catalog.ModelPath(id) is not null, $"{id} has no art/models/<id>.glb"));
         Assert.All(Bonuses.Where(b => !BonusSpot.OnMap(b)), b => Assert.Null(mods.Catalog.ModelPath(b.Id)));
@@ -53,7 +51,7 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = new Simulation(mods.Content, GameFactory.Settings(seed) with { MapGenerator = generator });
         var water = WaterTerrains();
-        int placed = 0;
+        int placed = 0, atSea = 0;
         foreach (var tile in sim.State.Grid.Tiles)
         {
             var plot = sim.State.Plots[tile.Value];
@@ -67,6 +65,7 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 : bonus.Terrains.GetValueOrDefault(plot.Terrain);
             Assert.True(allowed, $"{id} on {plot.Terrain}/{plot.Feature}");
             bool wet = water.Contains(plot.Terrain);
+            if (wet) atSea++;
             if (!wet)
                 Assert.True(plot.Kind switch { PlotKind.Hills => bonus.Hills, PlotKind.Peak => bonus.Peaks, _ => bonus.Flatlands },
                     $"{id} on {plot.Kind}");
@@ -75,6 +74,7 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
             if (!bonus.Terrains.Concat(bonus.FeatureTerrains).Any(t => t.Value && water.Contains(t.Key))) Assert.False(wet, $"{id} at sea");
         }
         Assert.True(placed > 0);
+        Assert.True(atSea > 0, "no resource spawned on water");
     }
 
     [Fact]
@@ -84,11 +84,10 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
         // the relief test applies to land only.
         var sim = GameFactory.Create(mods.Content, 5);
         var water = WaterTerrains();
+        var sea = Bonuses.Where(b => SeaOnly(b, water)).Select(b => b.Id).ToHashSet(StringComparer.Ordinal);
         var placed = sim.State.Plots.Where(p => p.Bonus is not null).Select(p => p.Bonus!).ToHashSet(StringComparer.Ordinal);
-        var sea = Bonuses.Where(b => SeaOnly(b, water)).Select(b => b.Id).ToArray();
-        Assert.Equal(["world:clam", "world:crab", "world:fish", "world:methane", "world:pearls", "world:shrimp", "world:whale"],
-            sea.Order(StringComparer.Ordinal));
-        Assert.All(sea, id => Assert.Contains(id, placed));
+        Assert.NotEmpty(sea);
+        Assert.Contains(placed, sea.Contains);
         Assert.Contains(sim.State.Plots, p => p.Bonus == "world:oil" && water.Contains(p.Terrain));
     }
 

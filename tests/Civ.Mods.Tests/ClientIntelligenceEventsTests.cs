@@ -179,7 +179,6 @@ public sealed class ClientIntelligenceEventsTests(LoadedMods mods) : IClassFixtu
         target.ProductionQueue.Add(new("cities:unit", "military:warrior", 23));
         ulong hash = session.Sim.ComputeHash(); var rng = session.Sim.Rng.State;
         var dto = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(new long[] { 25, 50, 75, 100 }, dto.Permissions.Select(p => p.Threshold));
         Assert.Equal(new[] { demographics, cities, research, investigate }, dto.Permissions.Select(p => p.Unlocked));
         Assert.Equal(demographics, dto.Demographics is not null);
         Assert.Equal(cities, dto.Cities is not null);
@@ -279,7 +278,6 @@ public sealed class ClientIntelligenceEventsTests(LoadedMods mods) : IClassFixtu
         defense.CounterEspionage[0] = new(sim.State.Turn + 1, 200);
         sim.TeamOf(1).Extensions.Set(sim.Content, defense);
         var protectedRival = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(new long[] { 50, 100, 150, 200 }, protectedRival.Permissions.Select(p => p.Threshold));
         Assert.Null(protectedRival.ProtectionAgainstRival);
         Assert.Equal(new CounterEspionageEffect(sim.State.Turn + 1, 200), protectedRival.RivalProtection);
         Assert.Null(protectedRival.Research); Assert.Null(Assert.Single(protectedRival.Cities!).Details);

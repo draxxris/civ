@@ -51,16 +51,4 @@ public class SimulationTests
         Assert.Contains("base:granary", sim.State.Cities[0].Buildings);
         Assert.True(sim.State.PlayerById(0).Culture >= 60);
     }
-
-    [Fact]
-    public void CommandsRoundTripThroughCodec()
-    {
-        var sim = TestGame.Sim();
-        var codec = new CommandCodec(sim.Content);
-        var text = codec.Encode(new FoundCityCommand { Player = 1, Position = new Hex(2, -1) });
-        var back = Assert.IsType<FoundCityCommand>(codec.Decode(text));
-        Assert.Equal(1, back.Player);
-        Assert.Equal(new Hex(2, -1), back.Position);
-        Assert.IsType<EndTurnCommand>(codec.Decode(codec.Encode(new EndTurnCommand { Player = 0 })));
-    }
 }

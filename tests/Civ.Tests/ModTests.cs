@@ -6,17 +6,6 @@ namespace Civ.Tests;
 
 public class ModTests
 {
-    [Fact]
-    public void BaseGameRegistersTerrainTechsBuildingsAndCulture()
-    {
-        var db = TestGame.Content();
-        Assert.True(db.Terrains.Contains("base:grassland"));
-        Assert.Equal("base", db.Terrains.OwnerOf("base:ocean"));
-        Assert.Equal(7, db.Techs.Count);
-        Assert.True(db.Buildings.Contains("base:library"));
-        Assert.Equal("base:fledgling", db.CultureLevelFor(15)!.Id);
-    }
-
     private sealed class TestMod(Action<IModContext> body) : IMod
     {
         public void Register(IModContext ctx) => body(ctx);

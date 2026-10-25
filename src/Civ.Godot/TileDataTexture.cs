@@ -15,9 +15,6 @@ internal sealed class TileDataTexture
     /// <summary>Overlay marks in <c>tileB.G</c>.</summary>
     public const byte MarkNone = 0, MarkWorkable = 1, MarkWorked = 2, MarkLocked = 3;
 
-    /// <summary>Colour table rows.</summary>
-    private const int PaletteWidth = 256, LayerRow = 0, FeatureRow = 1, OwnerRow = 2, WaterTintRow = 3, EdgeRow = 4, LookRow = 5, HazeRow = 6, TurnRow = 7, PaletteRows = 8;
-
     private readonly int _width, _height;
     private readonly byte[] _a, _b;
     private readonly Image _imageA, _imageB;
@@ -86,43 +83,8 @@ internal sealed class TileDataTexture
         }
     }
 
-    /// <summary>Colour table: layer colours (alpha = ground spread), feature ground tints (alpha = strength), owner colours by
-    /// owner + 1, water tints per layer (alpha = strength), ragged-edge strength per layer (alpha; 0 for water, red = deep ocean,
-    /// green = patch layer + 1, blue = patch share),
-    /// feature looks (R = <see cref="FeatureGround"/>, G = its strength, B = <see cref="FeatureHaze"/>, A = haze density) and
-    /// feature haze colours and texture turn per layer (R, 0..1 of 180°), all as sRGB bytes.</summary>
-    public static ImageTexture PaletteTexture(TerrainPalette palette, Func<string, Rgb?> waterTintOf)
-    {
-        var bytes = new byte[PaletteWidth * PaletteRows * 4];
-        for (int i = 0; i < palette.Layers.Count; i++)
-        {
-            var layer = palette.Layers[i];
-            Put(LayerRow, i, layer.Fallback, layer.Spread);
-            if (waterTintOf(layer.Id) is Rgb tint) Put(WaterTintRow, i, tint, 0.6f);
-            Put(TurnRow, i, new Rgb(layer.Turn, 0, 0), 1);
-            Put(EdgeRow, i, new Rgb(layer.Ocean ? 1 : 0, (layer.PatchLayer + 1) / 255f, layer.PatchShare), layer.Water ? 0 : 1);
-        }
-        for (int i = 1; i < palette.FeatureGrounds.Count; i++)
-            if (palette.FeatureGrounds[i] is { } style)
-            {
-                Put(FeatureRow, i, style.Tint, style.TintStrength);
-                var look = style.Look;
-                Put(LookRow, i, new Rgb((int)look.Ground / 255f, Math.Clamp(look.GroundPercent, 0, 100) / 100f, (int)look.Haze / 255f),
-                    look.Haze == FeatureHaze.None ? 0 : Math.Clamp(look.HazePercent, 0, 100) / 100f);
-                Put(HazeRow, i, Rgb.Hex(look.HazeRgb), 1);
-            }
-        for (int i = 1; i < PaletteWidth; i++) Put(OwnerRow, i, MapStyle.PlayerColor(i - 1), 1);
-        return ImageTexture.CreateFromImage(Image.CreateFromData(PaletteWidth, PaletteRows, false, Image.Format.Rgba8, bytes));
-
-        void Put(int row, int index, Rgb colour, float alpha)
-        {
-            int at = (row * PaletteWidth + index) * 4;
-            bytes[at] = ToByte(colour.R);
-            bytes[at + 1] = ToByte(colour.G);
-            bytes[at + 2] = ToByte(colour.B);
-            bytes[at + 3] = ToByte(alpha);
-        }
-    }
-
-    private static byte ToByte(float v) => (byte)Math.Round(Math.Clamp(v, 0f, 1f) * 255);
+    /// <summary>Colour table: the row layout is <see cref="PaletteTable"/>'s, which is where the shader parity is tested.</summary>
+    public static ImageTexture PaletteTexture(TerrainPalette palette, Func<string, Rgb?> waterTintOf) =>
+        ImageTexture.CreateFromImage(Image.CreateFromData(PaletteTable.Width, PaletteTable.Rows, false, Image.Format.Rgba8,
+            PaletteTable.Bytes(palette, waterTintOf)));
 }

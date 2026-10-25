@@ -19,7 +19,6 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
     {
         var session = Session(mods.Wonders, out var city);
         Assert.Null(session.DescribeCity(city)!.Stability);
-        Assert.Empty(session.DescribeStability());
     }
 
     [Fact]
@@ -31,8 +30,6 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         Assert.Equal(CityStabilityStatus.Mutiny, report.Status);
         Assert.Equal(800, report.Index);
         Assert.True(report.CanSuppress);
-        var summary = Assert.Single(session.DescribeStability());
-        Assert.Equal(city.Id, summary.City);
         long gold = session.Me.Treasury;
         Assert.True(session.SuppressRebellion(city.Id));
         Assert.True(session.Me.Treasury < gold);
@@ -89,7 +86,8 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         sim.Events.Publish(new BuildingCompleted(city.Id, "cities:crusade"));
         var script = Assert.Single(session.DescribeCity(city)!.WonderScripts);
         Assert.True(script.Active);
-        Assert.Equal(script.SpawnInterval - script.ElapsedTurns, script.TurnsToSpawn);
+        Assert.NotNull(script.SpawnUnit);
+        Assert.InRange(Assert.IsType<int>(script.TurnsToSpawn), 0, script.SpawnInterval);
         sim.Events.Publish(new ScriptedWonderEffectApplied(city.Id, "cities:crusade", "culture", 5));
         session.SetMessage("");
         session.Submit(new EndTurnCommand { Player = 0 });

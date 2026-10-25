@@ -37,6 +37,16 @@ public sealed class ResearchRulesTests
         return sim;
     }
 
+    // Owner: rules constants. A custom ruleset that omits RevolutionResearchCostPercent must get the neutral
+    // default rather than the shipped 82%, and the shipped realistic-timescale option must stay on.
+    [Fact]
+    public void Research_rule_defaults_stay_neutral_and_realistic_timescale_stays_on()
+    {
+        Assert.Equal(100, new S.RuleConstants().RevolutionResearchCostPercent);
+        var option = SetupPolicies.GameOptions(Content.Value).Single(o => o.Id == "foundation:gameoption_realistic_timescale");
+        Assert.True(option.Default);
+    }
+
     // Owner: rate query. Literal vectors use high-precision independent powers. Existing tests cover
     // only the fallback. These catch stacked bonuses, non-strict prevalence boundaries and wrong weights.
     [Theory]

@@ -79,13 +79,4 @@ public static class Sites
 
     private static int Score(Simulation sim, Hex hex) =>
         sim.State.Grid.Range(hex, CityRules.Radius).Sum(h => CityRules.TileScore(sim, h));
-
-    /// <summary>A settler and warrior at the best site.</summary>
-    public static void PlaceStartingUnits(Simulation sim, int playerId)
-    {
-        var site = Best(sim, playerId);
-        if (site == null) return;
-        UnitRules.Spawn(sim, playerId, "base:settler", site.Value);
-        UnitRules.Spawn(sim, playerId, "base:warrior", site.Value);
-    }
 }

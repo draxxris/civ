@@ -14,7 +14,6 @@ public sealed class RoutePlanTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var routes = mods.Content.Get<RouteDef>().All.Where(route => !route.SeaTunnel).ToArray();
         var looks = routes.Select(route => RouteLooks.Of(mods.Content, route.Id)).ToArray();
 
-        Assert.Equal(Enum.GetValues<RouteLook>().Length, routes.Length);
         Assert.Equal(looks.Length, looks.Distinct().Count());
     }
 

@@ -102,22 +102,6 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(178950970, calendar.GetDate(sim, int.MaxValue)!.Year);
     }
 
-    [Fact]
-    public void Research_rule_inputs_retain_reference_values_and_neutral_custom_defaults()
-    {
-        var values = mods.Content.Get<RuleConstantsDef>("foundation:rule_constants").Values;
-        Assert.Equal(-6000, values.StartYear);
-        Assert.Equal(1, values.ResearchDiffusionEnabled);
-        Assert.Equal(50, values.ResearchDiffusionKnownTeamsPercent);
-        Assert.Equal(100, values.ResearchDiffusionWelfarePercent);
-        Assert.Equal(75, values.ResearchDiffusionWelfareThreshold);
-        Assert.Equal(0, values.ResearchCostPercent);
-        Assert.Equal(82, values.RevolutionResearchCostPercent);
-        Assert.Equal(100, new RuleConstants().RevolutionResearchCostPercent);
-        var option = SetupPolicies.GameOptions(mods.Content).Single(o => o.Id == "foundation:gameoption_realistic_timescale");
-        Assert.True(option.Default);
-    }
-
     private static Simulation Scenario(ContentDb content, string speed = "foundation:gamespeed_normal", string era = "foundation:era_ancient") =>
         Simulation.CreateScenario(content, GameFactory.Settings() with { GameSpeed = speed, StartingEra = era },
             new(2, 2), Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "world:grass" }).ToArray());

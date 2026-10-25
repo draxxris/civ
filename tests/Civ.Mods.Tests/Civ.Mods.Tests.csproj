@@ -28,7 +28,6 @@
     <ProjectReference Include="../../src/Mods/Events/Civ.Mods.Events.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Civ.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Revolution/Civ.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
-    <None Include="../../tools/Civ.ContentImport/reports/emitted-counts.json" Link="emitted-counts.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../tools/Civ.Benchmarks/AiEvaluation/*.cs" Link="AiEvaluation/%(Filename)%(Extension)" />

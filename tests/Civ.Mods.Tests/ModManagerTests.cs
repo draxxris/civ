@@ -93,31 +93,32 @@ public sealed class ModManagerTests
     }
 
     [Theory]
-    [InlineData("null", false)]
-    [InlineData("{", true)]
-    [InlineData("{}", true)]
-    [InlineData("{\"Version\":2,\"EnabledModIds\":[]}", false)]
-    [InlineData("{\"Version\":1,\"EnabledModIds\":null}", false)]
-    [InlineData("{\"Version\":1,\"EnabledModIds\":[\"\"]}", false)]
-    public void Broken_profile_never_falls_back_to_the_all_mod_default(string json, bool jsonError)
+    [InlineData("null", "data")]
+    [InlineData("{", "json")]
+    [InlineData("{}", "json")]
+    [InlineData("{\"Version\":2,\"EnabledModIds\":[]}", "data")]
+    [InlineData("{\"Version\":1,\"EnabledModIds\":null}", "data")]
+    [InlineData("{\"Version\":1,\"EnabledModIds\":[\"\"]}", "data")]
+    [InlineData("directory", "read")]
+    public void Broken_profile_never_falls_back_to_the_all_mod_default(string json, string failure)
     {
         using var directory = new ModDirectory();
         string path = Path.Combine(directory.Root, "profile.json");
-        File.WriteAllText(path, json);
-        if (jsonError) Assert.Throws<JsonException>(() => ModProfile.Load(path));
-        else Assert.Throws<InvalidDataException>(() => ModProfile.Load(path));
+        if (json == "directory") Directory.CreateDirectory(path);
+        else File.WriteAllText(path, json);
+        // A directory at the profile path is a read failure, not a content failure, so it must not be pinned to
+        // the operating system's own exception type: a directory is UnauthorizedAccessException on Unix, not IOException.
+        switch (failure)
+        {
+            case "json": Assert.Throws<JsonException>(() => ModProfile.Load(path)); break;
+            case "read":
+                var thrown = Record.Exception(() => ModProfile.Load(path));
+                Assert.True(thrown is IOException or UnauthorizedAccessException or System.Security.SecurityException,
+                    $"expected a read failure, got {thrown?.GetType().Name ?? "no exception"}");
+                break;
+            default: Assert.Throws<InvalidDataException>(() => ModProfile.Load(path)); break;
+        }
     }
-
-    [Fact]
-    public void Directory_at_profile_path_reports_read_failure_instead_of_using_the_all_mod_default()
-    {
-        using var directory = new ModDirectory();
-        string path = Path.Combine(directory.Root, "profile.json");
-        Directory.CreateDirectory(path);
-
-        Assert.Throws<UnauthorizedAccessException>(() => ModProfile.Load(path));
-    }
-
     [Fact]
     public void Missing_profile_keeps_all_mod_default_and_subset_catalog_uses_real_loader_order_without_enabling_game_options()
     {

@@ -21,18 +21,22 @@ public sealed class AiEvaluationTests : IDisposable
         Assert.Equal(0, Run(repeat, turns: "2", seeds: "1,42", baseline: baseline));
         Assert.Equal(File.ReadAllText(Path.Combine(baseline, "economy.jsonl")), File.ReadAllText(Path.Combine(repeat, "economy.jsonl")));
         var summary = RunFiles.Read<RunSummary>(repeat, "summary.json");
+        // The sample grid is the CLI arguments, not a literal: two seeds, two players, and one checkpoint per
+        // turn plus the initial state.
+        const int players = 2, turns = 2;
+        int seeds = 2, checkpoints = turns + 1;
         Assert.Equal("completed", summary.Status);
-        Assert.Equal(2, summary.CompletedSamples);
-        Assert.Equal(12, summary.SnapshotCount);
-        Assert.Equal(4, summary.FinalSnapshots.Length);
+        Assert.Equal(seeds, summary.CompletedSamples);
+        Assert.Equal(seeds * players * checkpoints, summary.SnapshotCount);
+        Assert.Equal(seeds * players, summary.FinalSnapshots.Length);
         Assert.All(Rows<MetricDelta>(repeat, "deltas.jsonl"), d => Assert.Equal("unchanged", d.Outcome));
         AssertSettlementsAndEvents(baseline);
         var manifest = RunFiles.Read<RunManifest>(baseline, "manifest.json");
         Assert.NotNull(manifest.ContentHash);
         Assert.NotNull(manifest.GitRevision);
         Assert.NotNull(manifest.GitDirty);
-        Assert.Equal(3, manifest.SchemaVersion);
-        Assert.Equal("shipped-noble-ai-subsidies-not-equal-rules", manifest.RulesPolicy);
+        Assert.Equal(RunManifest.CurrentSchema, manifest.SchemaVersion);
+        Assert.Equal(EvaluationConfig.RulesPolicy, manifest.RulesPolicy);
         Assert.All(manifest.SampleSettings, s => Assert.Equal(new[] { "ai:standard", "ai:standard" }, s.PlayerAis));
         foreach (var row in Rows<EconomicSnapshot>(baseline, "economy.jsonl"))
         {
@@ -58,7 +62,7 @@ public sealed class AiEvaluationTests : IDisposable
         string changed = Path.Combine(workspace, "changed");
         Assert.Equal(0, Run(changed, turns: "2", seeds: "1,42", baseline: baseline));
         var deltas = Rows<MetricDelta>(changed, "deltas.jsonl");
-        Assert.Equal(12 * manifest.Metrics.Length, deltas.Length);
+        Assert.Equal(summary.SnapshotCount * manifest.Metrics.Length, deltas.Length);
         Assert.All(deltas.Where(d => d.Metric == "cities"), d => { Assert.Equal(-2, d.Change); Assert.Equal("regressed", d.Outcome); });
         Assert.All(deltas.Where(d => d.Metric == "population"), d => Assert.Equal("improved", d.Outcome));
         Assert.All(deltas.Where(d => d.Metric == "unpaidGold"), d => Assert.Equal("improved", d.Outcome));
@@ -91,9 +95,11 @@ public sealed class AiEvaluationTests : IDisposable
         var events = Rows<JsonElement>(directory, "events.jsonl");
         var eventKeys = events.Select(e => (e.GetProperty("seed").GetUInt64(), e.GetProperty("sourceTurn").GetInt32(), e.GetProperty("ordinal").GetInt32()));
         Assert.Equal(events.Length, eventKeys.Distinct().Count());
-        Assert.Equal(6, events.Count(e => e.GetProperty("eventType").GetString() == "TurnStarted"));
-        Assert.Equal(4, events.Count(e => e.GetProperty("eventType").GetString() == "TurnEnded"));
-        Assert.Equal(4, events.Count(e => e.GetProperty("eventType").GetString() == "CityFounded"));
+        // Two seeds of two turns; the fixture's two players found one city per played turn between them.
+        const int seeds = 2, turns = 2;
+        Assert.Equal(seeds * (turns + 1), events.Count(e => e.GetProperty("eventType").GetString() == "TurnStarted"));
+        Assert.Equal(seeds * turns, events.Count(e => e.GetProperty("eventType").GetString() == "TurnEnded"));
+        Assert.Equal(seeds * turns, events.Count(e => e.GetProperty("eventType").GetString() == "CityFounded"));
     }
 
     [Theory]

@@ -101,11 +101,18 @@ public sealed partial class WorldRulesTests
     [InlineData("regional", 3, 0, 0, 11)] // Area/global health in five cities, plus local health.
     [InlineData("healthy_factory", 0, 0, 0, 0)]
     [InlineData("healthy_bonus", 0, 2, 0, 4)] // Building-only health does not suppress bonus pollution.
+    [InlineData("dirty+clean", 0, 0, 0, 0)] // Local clean power cancels the same city's dirty plant.
+    [InlineData("dirty+area:area_clean", 0, 0, 0, 0)] // Team-area clean power cancels it from another city.
     public void Warming_weights_authoritative_health_sources_not_net_health_or_population(
         string source, long buildings, long bonuses, long power, int attempts)
     {
         var (sim, tile, city) = WarmingScenario();
-        city.Buildings.Add(Warming + source);
+        // A '+' joins buildings, and an 'area:' part is built in a different city of the same area.
+        foreach (var part in source.Split('+'))
+        {
+            if (part.StartsWith("area:")) sim.State.Cities[1].Buildings.Add(Warming + part[5..]);
+            else city.Buildings.Add(Warming + part);
+        }
         city.Population = 1;
         sim.TeamOf(0).Techs.Add("research:agriculture");
         sim.State.Plots[tile.Value].Feature = "world:fallout";
@@ -116,19 +123,6 @@ public sealed partial class WorldRulesTests
         WarmingTurn(sim);
         Assert.Equal(expected.State, sim.Rng.State); // Fallout is immune but still receives the attempts.
         Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
-    }
-
-    [Fact]
-    public void Clean_power_in_the_city_or_team_area_removes_dirty_power_pollution()
-    {
-        foreach (bool regional in new[] { false, true })
-        {
-            var (sim, _, city) = WarmingScenario();
-            city.Buildings.Add(Warming + "dirty");
-            (regional ? sim.State.Cities[1] : city).Buildings.Add(Warming + (regional ? "area_clean" : "clean"));
-            Assert.Equal(0, Service<ICityWellbeingService>(sim).EnvironmentalUnhealth(sim, city.Id).Power);
-            var rng = sim.Rng.State; WarmingTurn(sim); Assert.Equal(rng, sim.Rng.State);
-        }
     }
 
     [Theory]

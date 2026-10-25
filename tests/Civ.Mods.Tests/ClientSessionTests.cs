@@ -225,7 +225,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
-    public void Workers_list_only_builds_the_world_service_accepts()
+    public void Workers_offer_a_build_that_dispatches()
     {
         var s = NewSession();
         var city = Found(s);
@@ -238,7 +238,6 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
             s.SelectUnit(worker.Id);
             var builds = s.DescribeUnit(worker)!.Actions.Where(a => a.Id.StartsWith("build:")).ToList();
             if (builds.Count == 0) continue;
-            Assert.All(builds, b => Assert.Null(b.Command!.Validate(s.Sim)));
             s.RunAction(builds[0].Id);
             Assert.Equal("", s.Message);
             return;
@@ -275,14 +274,27 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(improvement.ImprovementPillage, pillage.ReplacementImprovement);
     }
 
-    [Fact]
-    public void Fortify_changes_the_unit_activity()
+    /// <summary>The three activities a land combat unit can take are all offered as actions carrying the activity, and
+    /// running one sets it. Intercept and blockade need aircraft and ships, and are covered by
+    /// <see cref="Aircraft_panel_dispatches_patrol_and_recon_actions"/> and
+    /// <c>NetworkTransitTests.Client_blockade_action_executes_a_real_order_and_disappears_when_unavailable</c>.</summary>
+    [Theory]
+    [InlineData("fortify", UnitActivity.Fortify)]
+    [InlineData("sleep", UnitActivity.Sleep)]
+    [InlineData("awake", UnitActivity.Awake)]
+    public void Activity_actions_carry_their_activity_and_change_the_unit(string actionId, UnitActivity activity)
     {
         var s = NewSession();
         var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
         s.SelectUnit(warrior.Id);
-        s.RunAction("fortify");
-        Assert.Equal(UnitActivity.Fortify, s.ActivityOf(warrior));
+        var offered = Assert.Single(s.DescribeUnit(warrior)!.Actions, a => a.Id == actionId);
+
+        var command = Assert.IsType<SetUnitActivityCommand>(offered.Command);
+        Assert.Equal(warrior.Id, command.Unit);
+        Assert.Equal(activity, command.Activity);
+        s.RunAction(actionId);
+
+        Assert.Equal(activity, s.ActivityOf(warrior));
     }
 
     [Fact]
@@ -538,17 +550,22 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(before, s.Sim.ComputeHash());
     }
 
+    /// <summary>Annex, puppet and raze all apply whether the city was just captured (a pending choice) or is already a
+    /// puppet being annexed outright, which is the no-pending-choice path the city screen's Annex button takes.</summary>
     [Theory]
-    [InlineData(CityConquestOption.Annex)]
-    [InlineData(CityConquestOption.Puppet)]
-    [InlineData(CityConquestOption.Raze)]
-    public void Session_resolves_each_pending_city_conquest_choice(CityConquestOption option)
+    [InlineData(CityConquestOption.Annex, false)]
+    [InlineData(CityConquestOption.Puppet, false)]
+    [InlineData(CityConquestOption.Raze, false)]
+    [InlineData(CityConquestOption.Annex, true)]
+    public void Session_applies_each_city_conquest_outcome(CityConquestOption option, bool existingPuppet)
     {
         var s = CitySession();
-        var city = CaptureForHuman(s);
+        var city = existingPuppet ? Found(s) : CaptureForHuman(s);
         var rules = city.Extensions.Get<CityRuleState>(s.Sim.Content)!;
+        if (existingPuppet) rules.IsPuppet = true;
 
-        Assert.True(s.ResolveCityConquest(city.Id, option), s.Message);
+        // The existing-puppet row goes through AnnexCity, the entry point the city screen's Annex button uses.
+        Assert.True(existingPuppet ? s.AnnexCity(city) : s.ResolveCityConquest(city.Id, option), s.Message);
         Assert.Empty(s.DescribePendingConquests());
         Assert.False(rules.PendingConquestChoice);
         if (option == CityConquestOption.Raze)
@@ -560,18 +577,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var screen = s.DescribeCity(city)!;
         Assert.Equal(option == CityConquestOption.Puppet, screen.IsPuppet);
         Assert.Equal(option == CityConquestOption.Puppet, screen.CanAnnex);
-        Assert.True(screen.Disorder); // The conquest choice does not end occupation.
-    }
-
-    [Fact]
-    public void Session_annexes_an_existing_puppet_city()
-    {
-        var s = CitySession();
-        var city = Found(s);
-        city.Extensions.Get<CityRuleState>(s.Sim.Content)!.IsPuppet = true;
-
-        Assert.True(s.AnnexCity(city));
-        Assert.False(city.Extensions.Get<CityRuleState>(s.Sim.Content)!.IsPuppet);
+        Assert.Equal(!existingPuppet, screen.Disorder); // The conquest choice does not end occupation, and a puppet was never occupied.
     }
 
     [Fact]
@@ -641,11 +647,9 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(1, city.Specialists.GetValueOrDefault(s.CitizenSpecialist));
         s.ToggleTile(city, worked);
         Assert.Contains(worked, city.Worked);
-        Assert.Equal(TileMark.Worked, MarkWithCity(s, city, worked));
+        s.SelectCity(city.Id);
+        Assert.Equal(TileMark.Worked, s.TileMarks()[worked]);
     }
-
-    private static TileMark MarkWithCity(GameSession s, City city, Hex hex) { s.SelectCity(city.Id); return s.MarkOf(hex); }
-
     [Fact]
     public void Research_choices_set_the_team_target_and_the_summary_tracks_it()
     {

@@ -896,7 +896,15 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var ship = Add(sim, 0, 41, "military:wargalley");
         sim.TeamOf(0).Techs.UnionWith(["research:rudder", "research:seafaring"]);
         sim.State.PlayerById(0).Treasury = 1000;
-        var error = Service<IUnitService>(sim).Validate(sim, 0, ship.Id, UnitAction.Upgrade, "military:cog");
-        Assert.NotEqual("No eligible nearby training city", error);
+        long treasury = sim.State.PlayerById(0).Treasury;
+
+        // The city is on land next to the water area the ship floats in, which is what SameArea's water clause allows.
+        Assert.Null(Service<IUnitService>(sim).Validate(sim, 0, ship.Id, UnitAction.Upgrade, "military:cog"));
+        Assert.True(sim.TryApply(new UpgradeUnitCommand { Player = 0, Unit = ship.Id, Target = "military:cog" }, out var error), error);
+        var upgraded = Assert.Single(sim.State.Units);
+        Assert.Equal("military:cog", upgraded.Type);
+        Assert.Equal(ship.Position, upgraded.Position);
+        Assert.Equal(0, upgraded.MovesLeft);
+        Assert.True(sim.State.PlayerById(0).Treasury < treasury);
     }
 }

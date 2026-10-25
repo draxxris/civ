@@ -19,7 +19,8 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
             ? new ModSource { Manifest = s.Manifest, Root = s.Root, Instance = new ProviderMod(s.Instance) } : s);
         var probe = new ModSource
         {
-            Root = mods.Root, Manifest = new() { Id = "city_query_probe", Version = "1" }, Instance = new ProbeMod(),
+            Root = mods.Root, Manifest = new() { Id = "city_query_probe", Version = "1",
+                References = ["foundation", "cities"] }, Instance = new ProbeMod(),
         };
         var sim = GameFactory.Scenario(ModLoader.Build(sources.Append(probe)));
         GameFactory.NeutralPolitics(sim);
@@ -39,14 +40,22 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
     }
 
     [Fact]
-    public void Draft_selection_uses_the_same_plot_context_as_production_eligibility()
+    public void Draft_selection_honours_a_plot_dependent_requirement_on_the_city_tile()
     {
         var sim = Scenario();
+        sim.TeamOf(0).Techs.Add(Technology);
+        var production = sim.Content.Services.Get<ICityProductionService>().Single();
+        var conscript = sim.Content.Services.Get<ICityConscriptService>().Single();
+        // The probe unit needs a river on the city's own plot, evaluated by the shipped condition leaf, so
+        // this proves the city plot reaches requirement evaluation instead of pinning an evaluator's call shape.
         var before = sim.ComputeHash();
-        Assert.True(sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, 1, "cities:unit", DraftUnit).Success);
-        var draft = sim.Content.Services.Get<ICityConscriptService>().Single().Calculate(sim, 1);
-        Assert.Equal(DraftUnit, Assert.IsType<ConscriptResult>(draft).UnitId);
+        Assert.Contains(production.Validate(sim, 1, "cities:unit", DraftUnit).Failures,
+            f => f.Explanation.Contains("foundation:river"));
+        Assert.NotEqual(DraftUnit, conscript.Calculate(sim, 1)?.UnitId);
         Assert.Equal(before, sim.ComputeHash());
+        sim.State.SetRiver(sim.State.Grid.TileAt(sim.State.CityById(1).Position), 0, true);
+        Assert.True(production.Validate(sim, 1, "cities:unit", DraftUnit).Success);
+        Assert.Equal(DraftUnit, Assert.IsType<ConscriptResult>(conscript.Calculate(sim, 1)).UnitId);
     }
 
     private sealed class ProbeMod : IMod
@@ -58,7 +67,8 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
             context.Content<S.UnitDef>().Register(new()
             {
                 Id = DraftUnit, DefaultUnit = DraftUnit, Cost = 60, Moves = 1, Conscription = int.MaxValue,
-                Requirements = new Requirement.Leaf("tech", Technology),
+                Requirements = new Requirement.All([new Requirement.Leaf("tech", Technology),
+                    new Requirement.Leaf("condition", "foundation:river")]),
             });
         }
     }
@@ -78,7 +88,6 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
         {
             object replacement = service;
             if (typeof(T) == typeof(IResourceNetwork)) replacement = new ResourceProvider((IResourceNetwork)service);
-            if (service is IRequirementEvaluator { Kind: "tech" } tech) replacement = new PlotTechnology(tech);
             inner.RegisterService(name, (T)replacement);
         }
         public ModRegistry<T> Content<T>() where T : ContentDef => inner.Content<T>();
@@ -101,15 +110,6 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
         public ModRegistry<IMapGenerator> MapGenerators => inner.MapGenerators;
         public ModRegistry<ITurnSystem> TurnSystems => inner.TurnSystems;
         public ModRegistry<CommandTypeDef> CommandTypes => inner.CommandTypes;
-    }
-
-    private sealed class PlotTechnology(IRequirementEvaluator original) : IContentRequirementEvaluator
-    {
-        public string Kind => "tech";
-        public Type DefinitionType => typeof(S.TechDef);
-        public string? Evaluate(Requirement.Leaf leaf, RequirementContext context) => leaf.Id != Technology
-            ? original.Evaluate(leaf, context)
-            : context.City is { } city && context.Plot == context.Sim.State.Grid.TileAt(city.Position) ? null : "Requires the city plot";
     }
 
     private sealed class ResourceProvider(IResourceNetwork original) : IResourceNetwork

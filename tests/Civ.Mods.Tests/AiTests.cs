@@ -44,6 +44,46 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
 
     [Fact]
     [Trait("Category", "E2E")]
+    public void Ai_promotes_its_veterans()
+    {
+        var sim = GameFactory.CreateAi(mods.Content, seed: 11);
+        for (int turn = 0; turn < 80; turn++)
+        {
+            // Fast-forward combat experience so promotion eligibility never waits on a lucky battle.
+            foreach (var unit in sim.State.Units) unit.Experience = Math.Max(unit.Experience, 5);
+            sim.AdvanceTurn();
+        }
+        var units = sim.State.Units.ToArray();
+        var promoted = units.Where(u => u.Promotions.Count > 0).ToArray();
+        output.WriteLine($"Units: {units.Length}, promoted: {promoted.Length}, " +
+            $"promotions: {promoted.Sum(u => u.Promotions.Count)}");
+        Assert.NotEmpty(units);
+        Assert.True(promoted.Length >= 2, $"Only {promoted.Length} of {units.Length} units were promoted");
+
+        // Every promotion the AI took must be one the rules allow, and no soldier may sit on an unspent one:
+        // a planner that stops promoting leaves experience on the table forever. Dedicated explorers are
+        // excluded because MilitaryPlanner.Promote only walks melee and siege soldiers; scouts keep their
+        // experience by design of that loop, so this test does not claim otherwise.
+        var service = Service<IUnitService>(sim);
+        var promotions = sim.Content.Get<Civ.Content.Schema.PromotionDef>().All.Select(p => p.Id).ToArray();
+        var soldiers = units.Where(u => sim.State.PlayerById(u.Owner).Ai is not null
+            && sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type) is var def
+            && def.Domain == "military:domain_land" && !def.UnitAiTypes.ContainsKey("military:unitai_explore"));
+        foreach (var unit in soldiers)
+        {
+            var state = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
+            // Loaded cargo is not walked by the soldier loop, and a unit built during the last advance has not
+            // had a planning pass yet, so neither can be held to "promoted every turn".
+            if (state.TransportId is not null || state.CreatedTurn >= sim.State.Turn) continue;
+            var available = promotions.Where(p => service.Validate(sim, unit.Owner, unit.Id, UnitAction.Promote, p) is null).ToArray();
+            Assert.True(available.Length == 0,
+                $"unit {unit.Id} ({unit.Type}, owner {unit.Owner} ai {sim.State.PlayerById(unit.Owner).Ai}, " +
+                $"created turn {state.CreatedTurn}) left promotions unspent: " + string.Join(", ", available));
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "E2E")]
     public void Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn()
     {
         var a = GameFactory.CreateAi(mods.Content, seed: 5);
@@ -332,8 +372,10 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Decide(sim);
 
         sim.AdvanceTurn();
-        Assert.True(plot.Improvement == "world:improvement_improvement_farm"
-            || plot.BuildProgress.ContainsKey("world:build_build_farm"));
+        // Merely accepting the order is not the claim: the worker must have spent this turn on the repair.
+        Assert.Equal("world:city_ruins", plot.Improvement);
+        Assert.True(plot.BuildProgress.GetValueOrDefault("world:build_build_farm") > 0,
+            $"no farm repair progress: {string.Join(", ", plot.BuildProgress.Select(p => $"{p.Key}={p.Value}"))}");
     }
 
     [Fact]

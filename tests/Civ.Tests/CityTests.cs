@@ -129,31 +129,4 @@ public class CityTests
         new CultureSystem().Run(sim);
         Assert.Equal(1 + 6, city.Culture);
     }
-
-    [Fact]
-    public void CitiesCannotWorkEachOthersTiles()
-    {
-        var sim = TestGame.Sim();
-        var a = TestGame.FindLand(sim);
-        var b = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).Where(h => h.DistanceTo(a) == 3 && !sim.TerrainAt(h).IsWater && sim.TerrainAt(h).Passable)
-            .OrderBy(h => h.Q).ThenBy(h => h.R).FirstOrDefault();
-        if (b == default && !sim.State.Grid.Contains(b)) return; // map happens to have no land 3 tiles away
-        sim.TryApply(new FoundCityCommand { Player = 0, Position = a }, out _);
-        sim.TryApply(new FoundCityCommand { Player = 0, Position = b }, out _);
-        var worked = sim.State.Cities[0].Worked.Concat(sim.State.Cities[1].Worked).ToList();
-        Assert.Equal(worked.Count, worked.Distinct().Count());
-        Assert.DoesNotContain(sim.State.Cities[1].Position, CityRules.WorkableTiles(sim, sim.State.Cities[0]));
-    }
-
-    [Fact]
-    public void CityCommandsRoundTripThroughCodec()
-    {
-        var sim = TestGame.Sim();
-        var codec = new CommandCodec(sim.Content);
-        var cmd = new SetCityWorkCommand { Player = 0, CityId = 1, Tiles = [new Hex(1, 0)], Specialists = new() { ["base:priest"] = 1 } };
-        var back = Assert.IsType<SetCityWorkCommand>(codec.Decode(codec.Encode(cmd)));
-        Assert.Equal(cmd.Tiles, back.Tiles);
-        Assert.Equal(1, back.Specialists["base:priest"]);
-        Assert.IsType<SetCivicCommand>(codec.Decode(codec.Encode(new SetCivicCommand { Player = 0, Civic = "base:monarchy" })));
-    }
 }

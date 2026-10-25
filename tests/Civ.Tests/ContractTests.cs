@@ -430,4 +430,31 @@ public class ContractTests
         Assert.Empty(state.UnitsAt(new Hex(1, 0)));
         Assert.Equal(1, Assert.Single(state.UnitsAt(new Hex(1, 1))).Id);
     }
+
+    /// <summary>One row per command payload shape: a command, and the envelope type id the wire must carry for it.</summary>
+    public static TheoryData<GameCommand, string> CommandEnvelopes => new()
+    {
+        { new FoundCityCommand { Player = 1, Position = new Hex(2, -1) }, "base:found_city" },
+        { new EndTurnCommand { Player = 0 }, "core:end_turn" },
+        { new AttackCommand { Player = 0, UnitId = 4, Target = new Hex(1, 1) }, "base:attack" },
+        { new PromoteUnitCommand { Player = 0, UnitId = 4, Promotion = "base:shock" }, "base:promote_unit" },
+        { new SetCityWorkCommand { Player = 0, CityId = 1, Tiles = [new Hex(1, 0)], Specialists = new() { ["base:priest"] = 1 } }, "base:set_city_work" },
+        { new SetCivicCommand { Player = 0, Civic = "base:monarchy" }, "base:set_civic" },
+    };
+
+    /// <summary>Every payload shape survives encode→decode→encode byte for byte, so no field can be silently dropped or
+    /// reordered by the shared JSON settings, and the envelope names the registered command type.</summary>
+    [Theory]
+    [MemberData(nameof(CommandEnvelopes))]
+    public void Command_envelopes_round_trip_without_losing_a_field(GameCommand command, string typeId)
+    {
+        var codec = new CommandCodec(TestGame.Content());
+        var text = codec.Encode(command);
+
+        Assert.Equal(typeId, JsonSerializer.Deserialize<JsonElement>(text, ModLoader.Json).GetProperty("Type").GetString());
+        var decoded = codec.Decode(text);
+
+        Assert.Equal(command.GetType(), decoded.GetType());
+        Assert.Equal(text, codec.Encode(decoded));
+    }
 }

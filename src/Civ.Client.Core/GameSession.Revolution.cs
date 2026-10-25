@@ -7,8 +7,6 @@ namespace Civ.Client;
 public sealed record CityStabilityReport(int City, int Index, CityStabilityStatus Status, int ChangePerTurn, int CooldownTurns,
     int UnrestTurns, IReadOnlyList<LedgerRow> Ledger, bool CanSuppress, string? SuppressBlocked);
 
-public sealed record CityStabilitySummary(int City, string Name, int Index, CityStabilityStatus Status, int ChangePerTurn);
-
 public sealed record CityWonderScript(string Building, string Name, bool Active, int ElapsedTurns, int SpawnInterval,
     string? SpawnUnit, int? TurnsToSpawn);
 
@@ -54,12 +52,4 @@ public sealed partial class GameSession
     /// <summary>Why the player cannot suppress this city now, or null when gold or a garrison can.</summary>
     private string? SuppressionBlocked(IRevolutionService service, City city) =>
         SuppressionGarrison(service, city) is null ? service.ValidateSuppression(Sim, Human, city.Id, null) : null;
-
-    /// <summary>Stability of every city the local player owns; empty when no revolution rules are loaded.</summary>
-    public IReadOnlyList<CityStabilitySummary> DescribeStability()
-    {
-        if (OptionalService<IRevolutionService>() == null) return [];
-        return Sim.State.Cities.Where(c => c.Owner == Human).OrderBy(c => c.Id)
-            .Select(c => StabilityOf(c)!).Select(s => new CityStabilitySummary(s.City, CityName(s.City), s.Index, s.Status, s.ChangePerTurn)).ToList();
-    }
 }

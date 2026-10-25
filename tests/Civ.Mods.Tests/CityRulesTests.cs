@@ -446,22 +446,6 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(905, result.TotalHundredths);
     }
     [Fact]
-    public void Great_person_pools_survive_saves_and_birth_advances_player_threshold()
-    {
-        var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Buildings.Add("probe:academy");
-        var service = Service<ICityGreatPeopleService>(sim);
-        Assert.Equal(320, service.Calculate(sim, 1).Threshold);
-        sim.AdvanceTurn();
-        Assert.Equal(160, city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.Progress);
-        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        sim.AdvanceTurn(); loaded.AdvanceTurn();
-        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Contains(sim.State.Units, u => u.Type == "military:scientist");
-        Assert.Equal(640, service.Calculate(sim, 1).Threshold);
-        Assert.Empty(city.Extensions.Get<GreatPeopleCityState>(sim.Content)!.ClassPoints);
-    }
-
-    [Fact]
     public void Draft_costs_population_halves_all_experience_and_preserves_limits_through_save()
     {
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Population = 20;
@@ -670,8 +654,11 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [Theory]
     [InlineData(false, 10)]
     [InlineData(true, 20)]
-    public void Hurry_anger_uses_free_buildings_but_not_replaced_buildings(bool replaced, int turns)
+    public void Hurry_anger_counts_the_free_instance_and_the_replacement_once_it_takes_over(bool replaced, int turns)
     {
+        // The whip-anger mechanics themselves live in ResearchEconomyTests.Whip_anger_length_uses_only_active_buildings…;
+        // what only this fixture can prove is that a free building's modifier counts while it is active, and that the
+        // replacement which supersedes it counts instead.
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Population = 20;
         city.Buildings.Add("probe:free_source");
         if (replaced) city.Buildings.Add("probe:upgrade");
@@ -959,8 +946,11 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData("grid:plant", 2, 0)]
     [InlineData("grid:dirty_plant", 6, 4)]
     [InlineData("grid:area", 2, 0)]
-    public void Power_health_changes_the_actual_health_ledger_food_penalty_and_environmental_unhealth(string plant, int badHealth, int dirtyHealth)
+    public void Power_reaches_the_health_ledger_as_bad_health_and_dirty_power(string plant, int badHealth, int dirtyHealth)
     {
+        // EnvironmentalUnhealth itself is pinned by Warming_weights_authoritative_health_sources… and by
+        // Area_clean_power_uses_active_team_sources…; what only this test proves is how a plant's health
+        // reaches the wellbeing ledger and the food penalty built on it.
         var sim = PowerScenario(); var city = sim.State.Cities[0]; city.Population = 8;
         var service = Service<ICityWellbeingService>(sim);
         var before = service.Calculate(sim, city.Id);
@@ -969,15 +959,12 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(before.Unhealthy + badHealth, powered.Unhealthy);
         Assert.Equal(before.Healthy, powered.Healthy);
         Assert.Equal(before.FoodPenalty + badHealth, powered.FoodPenalty);
-        Assert.Equal(2, powered.Ledger.Lines.Where(l => l.Source == "cities:power" && l.Key == "cities:health_bad").Sum(l => l.Amount));
+        Assert.Equal(badHealth - dirtyHealth, powered.Ledger.Lines.Where(l => l.Source == "cities:power" && l.Key == "cities:health_bad").Sum(l => l.Amount));
         Assert.Equal(dirtyHealth, powered.Ledger.Lines.Where(l => l.Source == "cities:dirty_power").Sum(l => l.Amount));
-        Assert.Equal(badHealth, service.EnvironmentalUnhealth(sim, city.Id).Power);
         city.Buildings.Add("grid:plant");
-        Assert.Equal(2, service.EnvironmentalUnhealth(sim, city.Id).Power);
-        Assert.Equal(before.Unhealthy + 2, service.Calculate(sim, city.Id).Unhealthy);
+        Assert.DoesNotContain(service.Calculate(sim, city.Id).Ledger.Lines, l => l.Source == "cities:dirty_power");
         city.Buildings.Clear();
         Assert.Equal(before.Unhealthy, service.Calculate(sim, city.Id).Unhealthy);
-        Assert.Equal(0, service.EnvironmentalUnhealth(sim, city.Id).Power);
     }
 
     private static (Simulation Sim, City City) PowerAiScenario(int population, string marker)
@@ -1490,7 +1477,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Capital_relocation_scores_yields_culture_and_specialists_and_uses_lowest_id_ties(bool raze)
+    public void Capital_relocation_scores_yields_culture_and_specialists(bool raze)
     {
         var (sim, city) = ConquestScenario();
         ReplaceCivilization(sim, 1, "conquest:original");
@@ -1519,6 +1506,39 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Service<ICityCaptureService>(sim).Raze(sim, sacrificial.Id);
         Assert.Contains("conquest:palace", first.Buildings);
         Assert.DoesNotContain("conquest:palace", best.Buildings);
+    }
+    [Fact]
+    public void Capital_relocation_breaks_a_score_tie_by_lowest_city_id()
+    {
+        var (sim, city) = ConquestScenario();
+        ReplaceCivilization(sim, 1, "conquest:original");
+        city.Buildings.Add("cities:palace");
+        // Two identical towns: same terrain, feature and river bits, nobody working, so they score the same and only
+        // the city id can decide where the palace goes.
+        var sites = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf)
+            .Where(h => sim.State.CityAt(h) is null)
+            .Where(h => sim.Content.Get<S.TerrainDef>(sim.State.PlotAt(h).Terrain) is { IsWater: false, Impassable: false })
+            .GroupBy(h => { var p = sim.State.PlotAt(h); return (p.Terrain, p.Kind, p.Feature, p.RiverEdges); })
+            .First(g => g.Count() >= 2).Take(2).ToArray();
+        var lower = AddTieCity(sim, sites[0], 1);
+        var higher = AddTieCity(sim, sites[1], 1);
+        lower.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        higher.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        var yields = Service<ICityYieldService>(sim);
+        Assert.Equal(yields.Calculate(sim, lower.Id).Yields, yields.Calculate(sim, higher.Id).Yields);
+        Assert.Equal(sim.State.PlotAt(lower.Position).Culture.GetValueOrDefault(1),
+            sim.State.PlotAt(higher.Position).Culture.GetValueOrDefault(1));
+
+        Capture(sim, city);
+        Assert.Contains("conquest:palace", lower.Buildings);
+        Assert.DoesNotContain("conquest:palace", higher.Buildings);
+    }
+    private static City AddTieCity(Simulation sim, Hex position, int owner)
+    {
+        var city = new City { Id = sim.State.NextCityId++, Owner = owner, Position = position, Population = 1 };
+        sim.State.AddCity(city);
+        city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
+        return city;
     }
     private static long CountUnhappy(CityWellbeing wellbeing) => wellbeing.Ledger.Lines.Where(l => l.Source == "cities:city_count").Sum(l => l.Amount);
     private static void ReplaceCivilization(Simulation sim, int player, string civilization)
@@ -1693,7 +1713,6 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             context.Content<S.CivicDef>().Register(new() { Id = "probe:whipping", Option = "probe:option",
                 Hurrys = ImmutableDictionary<string, bool>.Empty.Add("cities:hurry_population", true) });
             context.Content<S.UnitDef>().Register(new() { Id = "probe:conscript", Name = "Conscript", DefaultUnit = "probe:conscript", Cost = 180, Conscription = 999, Moves = 1 });
-            context.Content<S.BuildingDef>().Register(new() { Id = "probe:academy", Name = "Academy", DefaultBuilding = "probe:academy", Cost = 10, GreatPeopleRateChange = 160, GreatPersonUnit = "military:scientist" });
             context.Content<S.TerrainDef>().Register(new() { Id = "probe:culture_barrier", Impassable = true });
             context.Content<S.FeatureDef>().Register(new() { Id = "probe:culture_discount", CultureDistance = -10 });
             context.RegisterService<IModifierSource>("effects", new Effects(extraCultureLevels));

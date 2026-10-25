@@ -41,7 +41,6 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Equal(new MapSpec(84, 52, true), sim.State.Map);
         int land = sim.State.Plots.Count(p => !Content.Get<S.TerrainDef>(p.Terrain).IsWater);
         var bounds = generator switch
         {

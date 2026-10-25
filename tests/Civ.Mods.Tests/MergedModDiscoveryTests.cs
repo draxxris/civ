@@ -62,48 +62,70 @@ public sealed class MergedModDiscoveryTests
         Assert.Equal(second, Assert.Single(ModDiscovery.DiscoverMerged([tree.Root("second"), tree.Root("first")], null, null).Mods).Root);
     }
 
-    [Fact]
-    public void Equivalent_roots_are_scanned_once_and_keep_the_highest_source_label()
+    /// <summary>One installation reached through several root spellings is discovered once, takes the label of the
+    /// highest-priority root that names it, and reports no overrides or errors — for path spellings and for links.</summary>
+    [Theory]
+    [InlineData("relative and trailing slash", "Bundled 1")]
+    [InlineData("dot segment in the environment root", "CIV_MODS")]
+    [InlineData("linked environment root", "CIV_MODS")]
+    [InlineData("linked user root", "User-installed")]
+    [InlineData("linked user root through a relative target", "User-installed")]
+    public void Equivalent_roots_do_not_repeat_an_installation(string alias, string label)
     {
         using var tree = new ModTree();
         string mod = tree.Add("bundle", "shared");
         string root = tree.Root("bundle");
-        var discovery = ModDiscovery.DiscoverMerged([System.IO.Path.GetRelativePath(Environment.CurrentDirectory, root), root + "/"],
-            System.IO.Path.Combine(root, "."), root);
-        var winner = Assert.Single(discovery.Mods);
-        Assert.Equal(mod, winner.Root);
-        Assert.Equal("CIV_MODS", winner.Source);
-        Assert.Empty(winner.Overridden);
-        Assert.Empty(discovery.Errors);
-    }
-
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(true, true)]
-    public void Linked_parent_paths_do_not_repeat_an_installation(bool linkRoot, bool relativeTarget)
-    {
-        using var tree = new ModTree();
-        tree.Add("bundle", "shared");
-        string parentLink = System.IO.Path.Combine(tree.Path, "linked-parent");
-        string rootLink = System.IO.Path.Combine(tree.Path, "linked-root");
-        Directory.CreateSymbolicLink(parentLink, tree.Path);
-        string linkedRoot = System.IO.Path.Combine(parentLink, "bundle");
-        if (linkRoot)
-            Directory.CreateSymbolicLink(rootLink, relativeTarget ? "linked-parent/bundle" : linkedRoot);
+        var links = new List<string>();
         try
         {
-            var discovery = ModDiscovery.DiscoverMerged([tree.Root("bundle")], null, linkRoot ? rootLink : linkedRoot);
+            string[] bundles = [root];
+            string? user = null, environment = null, expected = mod;
+            switch (alias)
+            {
+                case "relative and trailing slash":
+                    bundles = [System.IO.Path.GetRelativePath(Environment.CurrentDirectory, root), root + "/"];
+                    break;
+                case "dot segment in the environment root":
+                    environment = System.IO.Path.Combine(root, ".");
+                    break;
+                case "linked environment root":
+                    environment = System.IO.Path.Combine(Link(tree.Path, "linked-parent", tree.Path, links), "bundle");
+                    expected = System.IO.Path.Combine(environment, "shared");
+                    break;
+                case "linked user root":
+                    string parent = Link(tree.Path, "linked-parent", tree.Path, links);
+                    user = Link(tree.Path, "linked-root", System.IO.Path.Combine(parent, "bundle"), links);
+                    expected = System.IO.Path.Combine(user, "shared");
+                    break;
+                default:
+                    // A relative link target must resolve against the link's own directory.
+                    Link(tree.Path, "linked-parent", tree.Path, links);
+                    user = Link(tree.Path, "linked-root", "linked-parent/bundle", links);
+                    expected = System.IO.Path.Combine(user, "shared");
+                    break;
+            }
+
+            var discovery = ModDiscovery.DiscoverMerged(bundles, user, environment);
             var winner = Assert.Single(discovery.Mods);
-            Assert.Equal("CIV_MODS", winner.Source);
+
+            Assert.Equal("shared", winner.Manifest.Id);
+            Assert.Equal(label, winner.Source);
+            Assert.Equal(expected, winner.Root);
             Assert.Empty(winner.Overridden);
             Assert.Empty(discovery.Errors);
         }
         finally
         {
-            if (linkRoot) Directory.Delete(rootLink);
-            Directory.Delete(parentLink);
+            for (int i = links.Count - 1; i >= 0; i--) Directory.Delete(links[i]);
         }
+    }
+
+    private static string Link(string dir, string name, string target, List<string> created)
+    {
+        string link = System.IO.Path.Combine(dir, name);
+        Directory.CreateSymbolicLink(link, target);
+        created.Add(link);
+        return link;
     }
 
     [Fact]

@@ -78,8 +78,6 @@ public sealed record CityPlan(IReadOnlyList<CityLot> Lots, double GroundRadius);
 /// </summary>
 public static class CityLayout
 {
-    /// <summary>Hex distance of the tile edge: the inradius of a pointy-top hex with an outer radius of 1.</summary>
-    public const double TileEdge = 0.8660254037844386;
     /// <summary>Hex distance that buildings keep to when the city has no walls.</summary>
     public const double OpenEdge = 0.78;
     /// <summary>Half the width of a street.</summary>

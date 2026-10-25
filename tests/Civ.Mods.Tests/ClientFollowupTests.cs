@@ -234,9 +234,18 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Found(s.Sim);
         s.SetMessage(""); // Founding was driven directly on the simulation; the next command collects its events.
         s.SelectNextUnit();
-        s.Submit(new SetUnitActivityCommand { Player = 0, Unit = AddUnit(s.Sim, s.Sim.State.Cities[0], "military:buddhist_missionary").Id, Activity = UnitActivity.Sleep });
+        var missionary = AddUnit(s.Sim, s.Sim.State.Cities[0], "military:buddhist_missionary");
+        s.Submit(new SetUnitActivityCommand { Player = 0, Unit = missionary.Id, Activity = UnitActivity.Sleep });
         Assert.Contains(s.Notifications, n => n.Kind == "tech");
         Assert.Contains(s.Notifications, n => n.Kind == "religion" && n.Text.Contains("was founded"));
+
+        // "only" needs the negative: the filter is team equality, so a rival team's discovery must stay silent.
+        string rivalTech = "research:bronze_working";
+        string rivalName = s.Sim.Content.Get<S.TechDef>(rivalTech).Name;
+        Assert.DoesNotContain(rivalName, s.Notifications.First(n => n.Kind == "tech").Text);
+        s.Sim.Events.Publish(new TechDiscovered(1, rivalTech));
+        s.Submit(new SetUnitActivityCommand { Player = 0, Unit = missionary.Id, Activity = UnitActivity.Sleep });
+        Assert.DoesNotContain(s.Notifications, n => n.Kind == "tech" && n.Text.Contains(rivalName));
     }
 
     private static Unit AddFighter(Simulation sim, int owner, int tile, string type = "military:warrior")
@@ -272,7 +281,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         s.Sim.Content.Services.Get<ICombatService>().Single().Resolve(s.Sim, a.Id, d.Id);
         s.SetMessage("");
         s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = a.Id, Activity = UnitActivity.Sleep });
-        var battle = Assert.Single(s.PendingBattles);
+        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
         Assert.Equal(attackerHex, battle.AttackerHex);
         Assert.Equal(defenderHex, battle.DefenderHex);
         Assert.Equal("military:warrior", battle.AttackerType);
@@ -289,8 +298,6 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
         Assert.Equal((a.Id, d.Id), (battle.WinnerId, battle.LoserId));
         Assert.True(battle.LoserDied);
-        Assert.Same(battle, s.DequeueBattle());
-        Assert.Empty(s.PendingBattles);
         Assert.Null(s.DequeueBattle());
     }
 
@@ -349,7 +356,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var path = s.PreviewAt(target)!.Path;
         Assert.Equal(2, path.Count);
         s.RightClick(target);
-        var battle = Assert.Single(s.PendingBattles);
+        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
         Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
         Assert.Equal(path[0], battle.AttackerHex);
         Assert.NotEqual(start, battle.AttackerHex);
@@ -379,7 +386,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         int turn = sim.State.Turn;
         s.EndTurn();
         Assert.Equal(turn + 1, sim.State.Turn);
-        var battle = Assert.Single(s.PendingBattles);
+        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
         Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
         Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
         Assert.True(battle.LoserDied);

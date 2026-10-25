@@ -9,18 +9,6 @@ namespace Civ.Tests;
 public class CivAndAiTests
 {
     [Fact]
-    public void BaseCivilizationsLoadAndGrantStartingTechs()
-    {
-        var sim = new Simulation(TestGame.Content(), new SimulationSettings
-        {
-            Seed = 3, Map = new(17, 17), PlayerCount = 2, Civilizations = ["base:scholars", "base:builders"],
-        });
-        Assert.Equal("Scholars", sim.State.Players[0].Name);
-        Assert.Contains("base:agriculture", sim.TeamOf(0).Techs);
-        Assert.Contains("base:mining", sim.TeamOf(1).Techs);
-    }
-
-    [Fact]
     public void CivilizationBonusSpeedsUpCulture()
     {
         long Culture(string civ)

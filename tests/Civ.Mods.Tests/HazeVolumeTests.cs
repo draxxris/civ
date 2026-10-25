@@ -59,6 +59,11 @@ public class HazeVolumeTests
         var dim = HazeVolume.Bake(new TerrainField(fogged, 5), Grounds);
 
         int at = TexelAt(visible, cx, cz);
-        Assert.NotEqual(visible.Look[at..(at + 3)], dim.Look[at..(at + 3)]);
+        // Fog desaturates toward the colour's own luminance and then scales it by 0.72, so the tone must get darker.
+        int seenTone = Luminance(visible.Look, at), foggedTone = Luminance(dim.Look, at);
+        Assert.True(foggedTone < seenTone * 95 / 100, $"fogged haze {foggedTone} is not darker than visible haze {seenTone}");
     }
+
+    private static int Luminance(byte[] look, int at) =>
+        (2126 * look[at] + 7152 * look[at + 1] + 722 * look[at + 2]) / 10000;
 }

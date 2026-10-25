@@ -15,9 +15,6 @@ public sealed partial class GameSession
     private readonly Queue<BattlePlayback> _battles = new();
     private Dictionary<int, (string Type, int Owner, Hex Hex)> _unitSnapshot = [];
 
-    /// <summary>Battles waiting to be animated, oldest first.</summary>
-    public IReadOnlyCollection<BattlePlayback> PendingBattles => _battles;
-
     /// <summary>Take the oldest battle to animate, or null when none is waiting.</summary>
     public BattlePlayback? DequeueBattle() => _battles.Count > 0 ? _battles.Dequeue() : null;
 

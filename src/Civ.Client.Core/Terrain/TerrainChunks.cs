@@ -92,9 +92,6 @@ public sealed class TerrainChunks
     /// (the plateau ramp, see <see cref="TerrainTuning.CliffRamp"/>).</summary>
     public double CliffRingRadius { get; }
 
-    /// <summary>Tiles whose data can change a chunk: its own tiles and a ring around them, ascending.</summary>
-    public IReadOnlyList<int> TilesOf(TerrainChunk chunk) => _tiles[chunk.Id];
-
     /// <summary>Lattice resolution of one chunk: <see cref="TerrainMesher.PeakResolution"/> when a peak or a cliff can shape
     /// it (cliff faces and sea-stack shoals are finer than the default lattice), otherwise
     /// <see cref="TerrainMesher.DefaultResolution"/>.</summary>

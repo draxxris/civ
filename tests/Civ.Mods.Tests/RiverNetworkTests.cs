@@ -138,7 +138,7 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
                 double x = river.Positions[v * 3], z = river.Positions[v * 3 + 2];
                 // Odd lattice rows start half a step in, so keep clear of the chunk's east and west edges.
                 if (!chunk.Contains(x - 0.2, z) || !chunk.Contains(x + 0.2, z)) continue;
-                Assert.Equal(GroundHeight(ground, x, z), river.Positions[v * 3 + 1], 5e-4);
+                Assert.Equal(TerrainTestMaps.HeightAt(ground, x, z), river.Positions[v * 3 + 1], 5e-4);
                 checkedVertices++;
             }
         }
@@ -178,8 +178,8 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
         else
         {
             // Both the north-boundary edit and the connector edit need more than the ordinary terrain ring.
-            Assert.Contains(changed, id => !chunks.TilesOf(chunks.Chunks[id]).Any(t =>
-                before.Relief[t] != after.Relief[t] || before.Rivers[t] != after.Rivers[t]));
+            var (editX, editZ) = before.Grid.HexOf(new TileId(tile)).ToPixel(1);
+            Assert.Contains(changed, id => !InInfluenceRing(chunks.Chunks[id], editX, editZ, before.Period, chunks.RingRadius));
             if (row != 0)
             {
                 // Keep this a long-connector regression, not just another isolated river-edge edit.
@@ -189,6 +189,15 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
                     && !previousBridges.Contains(Segment(l.AX, l.AZ, l.BX, l.BZ)));
             }
         }
+    }
+
+    /// <summary>Whether a tile centre lies in a chunk's influence ring: its rectangle grown by <paramref name="radius"/>,
+    /// across the map wrap. Mirrors how <see cref="TerrainChunks"/> collects the tiles that can change a chunk.</summary>
+    private static bool InInfluenceRing(TerrainChunk chunk, double x, double z, double period, double radius)
+    {
+        double dx = new[] { x - period, x, x + period }.Min(px => Math.Max(Math.Max(chunk.X0 - px, px - chunk.X1), 0));
+        double dz = Math.Max(Math.Max(chunk.Z0 - z, z - chunk.Z1), 0);
+        return Math.Sqrt(dx * dx + dz * dz) <= radius;
     }
 
     private static bool Same(TerrainMeshData a, TerrainMeshData b) =>
@@ -244,21 +253,5 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
                 foreach (int next in new[] { graph.Links[l].A, graph.Links[l].B })
                     if (seen.Add(next)) pending.Push(next);
         return seen.Count;
-    }
-
-    /// <summary>Height of the chunk mesh triangle under (x, z), found by brute force over the mesh.</summary>
-    private static double GroundHeight(TerrainMeshData mesh, double x, double z)
-    {
-        var p = mesh.Positions;
-        for (int t = 0; t < mesh.Indices.Length; t += 3)
-        {
-            int a = mesh.Indices[t] * 3, b = mesh.Indices[t + 1] * 3, c = mesh.Indices[t + 2] * 3;
-            double d = (p[b + 2] - p[c + 2]) * (p[a] - p[c]) + (p[c] - p[b]) * (p[a + 2] - p[c + 2]);
-            double wa = ((p[b + 2] - p[c + 2]) * (x - p[c]) + (p[c] - p[b]) * (z - p[c + 2])) / d;
-            double wb = ((p[c + 2] - p[a + 2]) * (x - p[c]) + (p[a] - p[c]) * (z - p[c + 2])) / d;
-            double wc = 1 - wa - wb;
-            if (wa >= -1e-6 && wb >= -1e-6 && wc >= -1e-6) return wa * p[a + 1] + wb * p[b + 1] + wc * p[c + 1];
-        }
-        throw new InvalidOperationException($"({x}, {z}) is outside the chunk mesh");
     }
 }

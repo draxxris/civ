@@ -98,15 +98,20 @@ public sealed class CultureRulesTests
         Assert.Equal(before, sim.ComputeHash());
     }
     [Fact]
-    public void Cultural_victory_requires_eligible_legendary_tiers_not_just_raw_culture()
+    public void Legendary_tier_requirements_gate_the_cultural_victory_count()
     {
         var sim = Scenario(); AddCity(sim, 0, 80);
         var cities = new[] { AddCity(sim, 1, 14), AddCity(sim, 1, 39), AddCity(sim, 1, 57) };
         foreach (var city in cities) city.Culture = 240000;
-        sim.TeamOf(0).Techs.Add("research:bronze_working");
+        var culture = Service<ICityCultureService>(sim);
         var victory = Service<IProjectVictoryService>(sim);
+        // The probe makes the legendary tier require bronze_working, so raw culture alone cannot reach it: the
+        // victory rule counts eligible tiers, not stored culture. The rule's own counting is proven by
+        // ProjectsVictoryRulesTests.Cultural_victory_needs_three_legendary_cities_in_one_team.
+        Assert.NotEqual("foundation:culturelevel_legendary", culture.Level(sim, cities[0].Id).Id);
         Assert.False(victory.Evaluate(sim, true).IsGameOver);
         sim.TeamOf(1).Techs.Add("research:bronze_working");
+        Assert.All(cities, c => Assert.Equal("foundation:culturelevel_legendary", culture.Level(sim, c.Id).Id));
         var status = victory.Evaluate(sim, true);
         Assert.Equal("projects_victory:cultural", status.VictoryId);
         Assert.Equal(1, status.WinningTeamId);

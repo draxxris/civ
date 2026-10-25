@@ -64,6 +64,23 @@ internal static class TerrainTestMaps
         var features = session.Sim.Content.Get<Schema.FeatureDef>().All.Select(f => f.Id).Order(StringComparer.Ordinal).ToList();
         return TerrainSnapshot.From(session, t => terrains.IndexOf(t), (f, _) => f == null ? 0 : features.IndexOf(f) + 1);
     }
+
+    /// <summary>Height of the chunk mesh triangle under (x, z), found by brute force over the mesh: the oracle the mesh
+    /// and river tests use to check the mesher against the height field rather than against itself.</summary>
+    public static double HeightAt(TerrainMeshData mesh, double x, double z)
+    {
+        var p = mesh.Positions;
+        for (int t = 0; t < mesh.Indices.Length; t += 3)
+        {
+            int a = mesh.Indices[t] * 3, b = mesh.Indices[t + 1] * 3, c = mesh.Indices[t + 2] * 3;
+            double d = (p[b + 2] - p[c + 2]) * (p[a] - p[c]) + (p[c] - p[b]) * (p[a + 2] - p[c + 2]);
+            double wa = ((p[b + 2] - p[c + 2]) * (x - p[c]) + (p[c] - p[b]) * (z - p[c + 2])) / d;
+            double wb = ((p[c + 2] - p[a + 2]) * (x - p[c]) + (p[a] - p[c]) * (z - p[c + 2])) / d;
+            double wc = 1 - wa - wb;
+            if (wa >= -1e-6 && wb >= -1e-6 && wc >= -1e-6) return wa * p[a + 1] + wb * p[b + 1] + wc * p[c + 1];
+        }
+        throw new InvalidOperationException($"({x}, {z}) is outside the chunk mesh");
+    }
 }
 
 /// <summary>Hex blend weights and the terrain height field: the continuity, wrap, fog and determinism contracts that the

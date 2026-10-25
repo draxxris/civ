@@ -102,21 +102,6 @@ public sealed class CityLayoutTests
 
 public sealed class CityAppearanceTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
-    [Theory]
-    [InlineData("foundation:era_ancient", CityStyle.Huts, CityGround.Dirt)]
-    [InlineData("foundation:era_classical", CityStyle.Huts, CityGround.Dirt)]
-    [InlineData("foundation:era_medieval", CityStyle.Huts, CityGround.Dirt)]
-    [InlineData("foundation:era_renaissance", CityStyle.Victorian, CityGround.Dirt)]
-    [InlineData("foundation:era_industrial", CityStyle.Victorian, CityGround.Cobblestone)]
-    [InlineData("foundation:era_modern", CityStyle.Modern, CityGround.Concrete)]
-    [InlineData("foundation:era_transhuman", CityStyle.Modern, CityGround.Concrete)]
-    [InlineData("foundation:era_future", CityStyle.Modern, CityGround.Concrete)]
-    public void Era_picks_style_and_ground(string era, CityStyle style, CityGround ground)
-    {
-        var look = Assert.Single(mods.Content.Services.Get<ICityAppearanceService>().Select(s => s.Era(era)), a => a != null);
-        Assert.Equal(new CityAppearance(style, ground), look);
-    }
-
     [Fact]
     public void Every_shipped_era_has_a_city_look()
     {

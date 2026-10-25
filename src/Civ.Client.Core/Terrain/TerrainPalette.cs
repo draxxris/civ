@@ -33,7 +33,6 @@ public sealed class TerrainPalette
         };
 
     private readonly Dictionary<string, int> _terrainLayers = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, Rgb> _terrainColors = new(StringComparer.Ordinal);
     private readonly Dictionary<TerrainSurface, int> _surfaceLayers = new();
     private readonly Dictionary<(string Feature, string Terrain), int> _featureGroundIndices = new();
     private readonly ContentDb _content;
@@ -57,7 +56,6 @@ public sealed class TerrainPalette
         {
             var appearance = FirstAppearance(appearances, service => service.Terrain(terrain.Id));
             var color = Rgb.Hex(appearance?.Rgb ?? 0x777777);
-            _terrainColors[terrain.Id] = color;
             if (_terrainLayers.Count >= terrainLayerLimit) continue;
 
             int index = layers.Count;
@@ -98,10 +96,6 @@ public sealed class TerrainPalette
 
     /// <summary>Returns a material layer index, or <see cref="ColorOnlyLayer"/> when the terrain exceeds the layer budget.</summary>
     public int LayerOf(string terrainId) => _terrainLayers.GetValueOrDefault(terrainId, ColorOnlyLayer);
-
-    /// <summary>Colour for terrain definitions that use the color-only fallback, or the default gray for unknown ids.</summary>
-    public Rgb TerrainColorOf(string terrainId) => _terrainColors.GetValueOrDefault(terrainId, Rgb.Hex(0x777777));
-
     public int SurfaceLayerOf(TerrainSurface surface) => _surfaceLayers.GetValueOrDefault(surface, ColorOnlyLayer);
 
     /// <summary>Returns a tint-table index in 0..63 for a feature on a terrain; zero means no feature ground.</summary>

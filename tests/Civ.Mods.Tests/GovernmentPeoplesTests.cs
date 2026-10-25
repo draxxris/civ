@@ -1,6 +1,8 @@
 using Civ.Content;
 using Civ.Game;
+using Civ.Modding;
 using Xunit;
+using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
@@ -30,8 +32,26 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
     public void Players_start_with_one_civic_per_option_from_civilization_or_option_default()
     {
         var sim = Create(Caesar);
-        Assert.Equal(8, sim.State.Players[0].Civics.Count);
+        int options = sim.Content.Get<S.CivicOptionDef>().All.Count();
+        Assert.Equal(options, sim.State.Players[0].Civics.Count);
         Assert.Equal("government:barter", sim.State.Players[0].Civics["government:civicoption_economy"]);
+
+        // A civilization that names a starting civic must win over the option default. No shipped civilization
+        // does, so a probe registers one: without it the "from civilization" half of this contract is untestable.
+        var content = ModLoader.Build(mods.Sources.Append(new ModSource
+        {
+            Root = mods.Root,
+            Manifest = new() { Id = "civic_probe", Version = "1", Dependencies = ["government", "peoples"], References = ["research", "foundation"] },
+            Instance = new CivicProbe(),
+        }));
+        var probe = new Simulation(content, new SimulationSettings
+        {
+            Seed = 5, WorldSize = "foundation:worldsize_standard", MapGenerator = "world:continents",
+            GameSpeed = "foundation:gamespeed_normal", Handicap = "foundation:handicap_noble",
+            StartingEra = "foundation:era_ancient", PlayerCount = 1, Leaders = [Caesar],
+            Civilizations = ["civic_probe:civ"],
+        });
+        Assert.Equal("government:coinage", probe.State.Players[0].Civics["government:civicoption_economy"]);
     }
     [Theory]
     [InlineData(Caesar, "normal", 2)]     // (1 base + 1 civic) * 200% speed * 50% era.
@@ -174,12 +194,14 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         Assert.Equal(maximum, result.Ledger.Total("cities:max_conscript"));
     }
     [Fact]
-    public void Leader_personality_is_exposed_through_core_query()
+    public void Leader_query_exposes_the_content_leader_and_their_own_traits()
     {
         var sim = Create(Godwinson); var peoples = Service<IPeoplesService>(sim);
-        Assert.Equal(Godwinson, peoples.Leader(sim, 0)!.Id);
-        Assert.Equal(["peoples:trait_financial", "peoples:trait_protective"], peoples.Traits(sim, 0).Select(t => t.Id));
-        Assert.NotEmpty(peoples.Leader(sim, 0)!.Flavors);
+        var leader = sim.Content.Get<S.LeaderDef>(Godwinson);
+        Assert.Equal(leader, peoples.Leader(sim, 0));
+        Assert.Equal(leader.Traits.Where(t => t.Value).Select(t => t.Key).Order(StringComparer.Ordinal),
+            peoples.Traits(sim, 0).Select(t => t.Id));
+        Assert.Equal(leader.Flavors, peoples.Leader(sim, 0)!.Flavors);
     }
     [Fact]
     [Trait("Category", "E2E")]
@@ -201,5 +223,19 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         Assert.Equal(151, sim.State.Turn);
+    }
+
+    /// <summary>Registers one playable civilization that names a starting civic, which no shipped civilization does.</summary>
+    private sealed class CivicProbe : IMod
+    {
+        public void Register(IModContext context)
+        {
+            var source = context.Content<S.CivilizationDef>().All.Single(c => c.Leaders.ContainsKey(Caesar));
+            context.Content<S.CivilizationDef>().Register(new()
+            {
+                Id = "civic_probe:civ", Name = source.Name, Playable = true, Leaders = source.Leaders,
+                StartingTechs = source.StartingTechs, StartingCivics = ["government:coinage"],
+            });
+        }
     }
 }

@@ -35,12 +35,6 @@ public sealed partial class GameSession
         return marks;
     }
 
-    public TileMark MarkOf(Hex hex)
-    {
-        if (City != null && Sim.State.Grid.TryTile(hex, out _)) return TileMarks().GetValueOrDefault(Sim.State.Grid.Normalize(hex));
-        return Unit is { } unit && unit.Position == hex ? TileMark.Selected : TileMark.None;
-    }
-
     /// <summary>Current yields only in sight; fog cannot query live irrigation or adjacent modifiers.</summary>
     public YieldVector YieldsOf(Hex hex) => SightOf(hex) == Sight.Visible
         ? Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields : default;

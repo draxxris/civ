@@ -21,8 +21,13 @@ internal static class TestGame
             Civilizations = Enumerable.Repeat("base:builders", players).ToArray(),
         });
 
-    public static Hex FindLand(Simulation sim, int skip = 0) =>
+    /// <summary>Land a unit can stand on: on the map, not water, not impassable.</summary>
+    public static bool IsLand(Simulation sim, Hex hex) =>
+        sim.State.Grid.Contains(hex) && sim.TerrainAt(hex) is { IsWater: false, Passable: true };
+
+    /// <summary>First land tile in scan order, optionally one that also satisfies <paramref name="where"/>.</summary>
+    public static Hex FindLand(Simulation sim, Func<Hex, bool>? where = null) =>
         sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf).OrderBy(h => h.Q).ThenBy(h => h.R)
-            .Where(h => sim.TerrainAt(h) is { IsWater: false, Passable: true })
-            .Skip(skip).First();
+            .Where(h => IsLand(sim, h) && (where is null || where(h)))
+            .First();
 }

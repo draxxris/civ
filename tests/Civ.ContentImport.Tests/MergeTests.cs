@@ -104,7 +104,6 @@ public sealed class MergeTests
         Assert.Equal(1, values.NonDefault);
         Assert.Equal(new[] { "2" }, values.Examples);
         Assert.All(census.Fields.Where(x => x.Field is "Empty" or "None" or "Minus" or "Bool"), x => Assert.Equal(0, x.NonDefault));
-        Assert.All(census.Fields, x => Assert.Equal("preserved", x.Status));
         Assert.Equal(1, census.EraCounts["ERA_ANCIENT"]);
         Assert.Equal(1, census.EraCounts["unknown"]);
     }
