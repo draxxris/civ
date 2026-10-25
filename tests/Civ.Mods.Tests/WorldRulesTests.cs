@@ -31,6 +31,7 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
     [InlineData(1UL, "world:great_plains")]
     [InlineData(42UL, "world:great_plains")]
     [InlineData(987654UL, "world:great_plains")]
+    [Trait("Category", "WorldGen")]
     public void Generators_are_deterministic_habitable_and_have_valid_layers(ulong seed, string generator)
     {
         var settings = GameFactory.Settings(seed) with { MapGenerator = generator };

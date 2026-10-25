@@ -13,13 +13,15 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
 {
     private static readonly double Sqrt3 = TerrainTestMaps.Sqrt3;
 
-    /// <summary>Read-only rendered fixtures; tests must not mutate their snapshots or output arrays.</summary>
+    /// <summary>One rendered map serves both fixture calls: the border test needs a resolution boundary between fine and
+    /// default chunks and the anchor test needs a vertex at every tile centre, and neither needs the peak lattice over the
+    /// whole map. Both properties are read-only fixtures, so sharing them neither changes a check nor duplicates the
+    /// meshing; tests must not mutate their snapshot or output arrays.</summary>
     public sealed class MeshBaseline
     {
-        private readonly Lazy<RenderedMap> _mixed = new(() => new(TerrainTestMaps.Mixed()));
-        private readonly Lazy<RenderedMap> _mixedResolutions = new(() => new(MixedResolutions()));
-        public RenderedMap Mixed => _mixed.Value;
-        public RenderedMap MixedResolution => _mixedResolutions.Value;
+        private readonly Lazy<RenderedMap> _rendered = new(() => new RenderedMap(ConcentratedPeaks()));
+        public RenderedMap Mixed => _rendered.Value;
+        public RenderedMap MixedResolution => _rendered.Value;
     }
 
     public sealed class RenderedMap
@@ -40,14 +42,18 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
 
     private static (float X, float Z) Key(float[] p, int v) => (p[v * 3], p[v * 3 + 2]);
 
-    /// <summary>The mixed test map with peaks only in its first six columns, so chunks near them are meshed at the peak
-    /// resolution and the rest at the default one.</summary>
-    private static TerrainSnapshot MixedResolutions()
+    /// <summary>The mixed test map with its peaks kept inside one chunk column and one chunk row, so those chunks mesh at
+    /// the peak resolution and every other chunk at the default one. The fixture asserts vertex identity across that
+    /// resolution boundary and an anchor at every tile centre, not how much of the map is a peak.</summary>
+    private static TerrainSnapshot ConcentratedPeaks()
     {
         var snapshot = TerrainTestMaps.Mixed();
         foreach (var tile in snapshot.Grid.Tiles)
-            if (HexGrid.ToOffset(snapshot.Grid.HexOf(tile)).Col >= 6 && snapshot.Relief[tile.Value] == ReliefClass.Peak)
+        {
+            int col = tile.Value % snapshot.Width, row = tile.Value / snapshot.Width;
+            if (snapshot.Relief[tile.Value] == ReliefClass.Peak && (col < 4 || col >= 8 || row >= 2))
                 snapshot.Relief[tile.Value] = ReliefClass.Hills;
+        }
         return snapshot;
     }
 
@@ -89,7 +95,9 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
                     double x = mesh.Positions[v * 3], z = mesh.Positions[v * 3 + 2];
                     x = Math.Clamp(x, coarse.X0, coarse.X1);
                     z = Math.Clamp(z, coarse.Z0, coarse.Z1);
-                    Assert.Equal(TerrainTestMaps.HeightAt(meshes[coarse.Id], x, z), mesh.Positions[v * 3 + 1], 4);
+                    // Exact lattice agreement is guaranteed; float storage leaves ~1e-7, and a 1e-5 epsilon is tighter
+                    // than rounding both heights to four decimals (which admits 5e-5 and flips on a boundary).
+                    Assert.Equal(TerrainTestMaps.HeightAt(meshes[coarse.Id], x, z), mesh.Positions[v * 3 + 1], 1e-5);
                     checkedVertices++;
                 }
             }

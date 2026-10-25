@@ -29,6 +29,7 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData("world:new_world")]
     [InlineData("world:twin_continents")]
     [InlineData("world:great_plains")]
+    [Trait("Category", "WorldGen")]
     public void Generated_cliffs_have_beaches_and_open_river_mouths(string generator)
     {
         foreach (ulong seed in new ulong[] { 1, 42 })

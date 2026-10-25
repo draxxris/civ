@@ -6,13 +6,19 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
-public sealed class BarbarianRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class BarbarianRulesTests
 {
-    private Simulation Coast()
+    // xunit builds a new test class instance per test, so the probe content must be static to be built once.
+    private static readonly Lazy<ContentDb> NavalContent = new(() =>
     {
+        var loaded = new LoadedMods();
         var probe = new ModSource { Manifest = new() { Id = "naval_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] },
-            Root = mods.Root, Instance = new NavalSpawns() };
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(probe)));
+            Root = loaded.Root, Instance = new NavalSpawns() };
+        return ModLoader.Build(loaded.Sources.Append(probe));
+    });
+    private static Simulation Coast()
+    {
+        var sim = GameFactory.Scenario(NavalContent.Value);
         GameFactory.NeutralPolitics(sim); sim.State.Turn = 100;
         foreach (var tile in sim.State.Grid.Tiles)
         {

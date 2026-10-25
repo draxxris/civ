@@ -9,11 +9,17 @@ namespace Civ.Mods.Tests;
 
 public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
+    // xunit builds a new test class instance per test, so the probe content must be static to be built once.
+    private static readonly Lazy<ContentDb> ProbeContent = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var original = loaded.Content.Get<S.RuleConstantsDef>().All.Single();
+        var source = new ModSource { Manifest = new() { Id = "trade_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] }, Root = loaded.Root, Instance = new Probe(original) };
+        return ModLoader.Build(loaded.Sources.Append(source));
+    });
     private Simulation Scenario()
     {
-        var original = mods.Content.Get<S.RuleConstantsDef>().All.Single();
-        var source = new ModSource { Manifest = new() { Id = "trade_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] }, Root = mods.Root, Instance = new Probe(original) };
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(source))); GameFactory.NeutralPolitics(sim);
+        var sim = GameFactory.Scenario(ProbeContent.Value); GameFactory.NeutralPolitics(sim);
         foreach (var plot in sim.State.Plots) { plot.Route = "world:route_route_road"; plot.Revealed.Add(0); }
         foreach (var (tile, owner, pop) in new[] { (0, 0, 1), (4, 0, 10), (7, 1, 10), (9, 0, 2) })
         {

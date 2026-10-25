@@ -7,10 +7,38 @@ using Xunit;
 
 namespace Civ.Mods.Tests;
 
-public sealed class AiEvaluationTests : IDisposable
+public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : IClassFixture<AiEvaluationTests.ValidBaseline>, IDisposable
 {
     private readonly string workspace = Path.Combine(Path.GetTempPath(), "civ-ai-evaluation-tests-" + Guid.NewGuid().ToString("N"));
-    private static string ModsRoot => Path.Combine(AppContext.BaseDirectory, "mods");
+    internal static string ModsRoot => Path.Combine(AppContext.BaseDirectory, "mods");
+
+    /// <summary>The CLI reloads and rebuilds every mod on each call, so the valid baseline every rejection case compares
+    /// against is produced once per class and copied per case; a case damages only its own copy.</summary>
+    public sealed class ValidBaseline : IDisposable
+    {
+        private readonly string root = Path.Combine(Path.GetTempPath(), "civ-ai-evaluation-baseline-" + Guid.NewGuid().ToString("N"));
+        private readonly Lazy<string> baseline;
+
+        public ValidBaseline() => baseline = new(() =>
+        {
+            string directory = Path.Combine(root, "baseline");
+            Assert.Equal(0, Run(directory));
+            return directory;
+        });
+
+        public string CopyTo(string directory)
+        {
+            Directory.CreateDirectory(directory);
+            foreach (string file in Directory.GetFiles(baseline.Value))
+                File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), overwrite: true);
+            return directory;
+        }
+
+        public void Dispose()
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
+    }
 
     [Fact]
     public void Cli_records_repeatable_games_settlements_events_and_paired_metric_directions()
@@ -110,8 +138,7 @@ public sealed class AiEvaluationTests : IDisposable
     [InlineData("duplicate-row", "Duplicate")]
     public void Cli_rejects_incompatible_or_incomplete_baselines_without_overwriting_them(string fault, string expectedError)
     {
-        string baseline = Path.Combine(workspace, "baseline");
-        Assert.Equal(0, Run(baseline));
+        string baseline = valid.CopyTo(Path.Combine(workspace, "baseline"));
         DamageBaseline(baseline, fault);
         string before = File.ReadAllText(Path.Combine(baseline, "economy.jsonl"));
         string output = Path.Combine(workspace, "comparison");
@@ -166,7 +193,7 @@ public sealed class AiEvaluationTests : IDisposable
         Assert.Contains("Status: failed", File.ReadAllText(Path.Combine(output, "report.md")));
     }
 
-    private static int Run(string output, string turns = "0", string seeds = "1", string? baseline = null, string? modsRoot = null)
+    internal static int Run(string output, string turns = "0", string seeds = "1", string? baseline = null, string? modsRoot = null)
     {
         var args = new List<string> { "--output", output, "--turns", turns, "--players", "2", "--world", "duel", "--seeds", seeds };
         if (baseline is not null) args.AddRange(["--baseline", baseline]);

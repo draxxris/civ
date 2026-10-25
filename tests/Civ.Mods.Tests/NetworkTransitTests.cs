@@ -8,19 +8,22 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
-public sealed class NetworkTransitTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class NetworkTransitTests
 {
     private const string Grain = "network_probe:grain";
     private const string Road = "world:route_route_road";
-    private readonly Dictionary<bool, ContentDb> contents = [];
-    private ContentDb Content(bool diplomacy = false)
+    // xunit builds a new test class instance per test, so the probe content must be static to be built once.
+    private static readonly Lazy<ContentDb> PlainContent = new(() => BuildContent(diplomacy: false));
+    private static readonly Lazy<ContentDb> DiplomacyContent = new(() => BuildContent(diplomacy: true));
+    private static ContentDb BuildContent(bool diplomacy)
     {
-        if (contents.TryGetValue(diplomacy, out var content)) return content;
-        var sources = mods.Sources.AsEnumerable();
+        var loaded = new LoadedMods();
+        var sources = loaded.Sources.AsEnumerable();
         if (diplomacy) sources = sources.Append(ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy")));
-        var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "network_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "world", "military"] }, Instance = new Probe(mods.Content.Get<S.RuleConstantsDef>().All.Single()) };
-        return contents[diplomacy] = ModLoader.Build(sources.Append(probe));
+        var probe = new ModSource { Root = loaded.Root, Manifest = new() { Id = "network_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "world", "military"] }, Instance = new Probe(loaded.Content.Get<S.RuleConstantsDef>().All.Single()) };
+        return ModLoader.Build(sources.Append(probe));
     }
+    private static ContentDb Content(bool diplomacy = false) => diplomacy ? DiplomacyContent.Value : PlainContent.Value;
     private Simulation Scenario(bool diplomacy = false)
     {
         var sim = GameFactory.Scenario(Content(diplomacy));

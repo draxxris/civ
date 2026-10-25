@@ -163,7 +163,15 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
         var dirty = TerrainChunks.DirtyChunks(chunks.Signatures(before), chunks.Signatures(after)).ToHashSet();
         var newField = rendered.Field.With(after);
         var changed = new HashSet<int>();
-        foreach (var chunk in chunks.Chunks)
+        // A one-tile edit can only reshape a chunk that reads the tile: the chunk's terrain ring, its river ring and its
+        // cliff ring are TerrainChunks' documented bounds on every tile that can change its ground, river surface or
+        // cliffs, so a chunk outside all three is provably unchanged. Every chunk in the widest ring (plus every chunk
+        // the signatures already call dirty) is still meshed and compared, so "every changed chunk is dirty" keeps full
+        // coverage instead of assuming the signature it checks.
+        double reaches = Math.Max(chunks.RingRadius, Math.Max(chunks.RiverRingRadius, chunks.CliffRingRadius));
+        var (editX, editZ) = before.Grid.HexOf(new TileId(tile)).ToPixel(1);
+        foreach (var chunk in chunks.Chunks.Where(c => dirty.Contains(c.Id)
+            || InInfluenceRing(c, editX, editZ, before.Period, reaches)))
         {
             bool sameGround = Same(rendered.Ground[chunk.Id], TerrainMesher.Build(chunk, newField));
             bool sameRiver = Same(rendered.Rivers[chunk.Id], RiverMesher.Build(chunk, newField));
@@ -178,7 +186,6 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
         else
         {
             // Both the north-boundary edit and the connector edit need more than the ordinary terrain ring.
-            var (editX, editZ) = before.Grid.HexOf(new TileId(tile)).ToPixel(1);
             Assert.Contains(changed, id => !InInfluenceRing(chunks.Chunks[id], editX, editZ, before.Period, chunks.RingRadius));
             if (row != 0)
             {

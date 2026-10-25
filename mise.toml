@@ -18,8 +18,44 @@ depends = ["build:game"]
 run = "godot-mono --path src/Civ.Godot --resolution 1672x1000 res://UiGallery.tscn -- --replica"
 
 [tasks.test]
-description = "Run default tests, excluding E2E and extractor tests"
-run = "dotnet test Civ.slnx --filter 'Category!=Extractor&Category!=E2E'"
+description = "Build once, then run the default tests (excludes E2E, extractor and world generation tests)"
+env = { DOTNET_gcServer = "1" }
+run = '''
+set -u
+dotnet build Civ.slnx || exit 1
+mise run test:nobuild
+'''
+
+[tasks."test:nobuild"]
+description = "Run the default tests on the current build (excludes E2E, extractor and world generation tests)"
+env = { DOTNET_gcServer = "1" }
+run = '''
+set -u
+filter='Category!=Extractor&Category!=E2E&Category!=WorldGen'
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+# One test host per project, all at once. Each project's output is buffered to its own file so the
+# summaries stay readable, then printed as soon as that project finishes.
+for project in tests/Civ.Tests/Civ.Tests.csproj tests/Civ.Mods.Tests/Civ.Mods.Tests.csproj tests/Civ.ContentImport.Tests/Civ.ContentImport.Tests.csproj; do
+  name=$(basename "$project" .csproj)
+  (
+    dotnet test "$project" --no-build --filter "$filter" > "$tmp/$name.log" 2>&1
+    echo $? > "$tmp/$name.rc"
+    cat "$tmp/$name.log"
+  ) &
+done
+wait
+fail=0
+for rc in "$tmp"/*.rc; do
+  [ "$(cat "$rc")" = 0 ] || { echo "FAILED project: $(basename "$rc" .rc)" >&2; fail=1; }
+done
+exit $fail
+'''
+
+[tasks."test:worldgen"]
+description = "Run world generation tests (run when the work set touches world generation)"
+env = { DOTNET_gcServer = "1" }
+run = "dotnet test Civ.slnx --filter 'Category=WorldGen'"
 
 [tasks."test:e2e"]
 description = "Run E2E tests"

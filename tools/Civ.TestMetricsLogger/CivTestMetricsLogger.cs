@@ -13,7 +13,7 @@ public sealed class CivTestMetricsLogger : ITestLogger
 {
     private const string ExtensionUri = "logger://civ-test-metrics/v1";
     private const string FriendlyName = "CivTestMetrics";
-    private const long MaxFileBytes = 5 * 1024 * 1024;
+    private const long MaxFileBytes = 10 * 1024 * 1024;
     private static readonly string MutexName = "CivTestMetricsLogger";
 
     public void Initialize(TestLoggerEvents events, string testRunDirectory)

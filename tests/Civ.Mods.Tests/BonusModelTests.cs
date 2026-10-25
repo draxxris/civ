@@ -47,6 +47,7 @@ public sealed class BonusModelTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData("world:continents", 3UL)]
     [InlineData("world:inland_sea", 42UL)]
     [InlineData("world:twin_continents", 7UL)]
+    [Trait("Category", "WorldGen")]
     public void Generated_resources_respect_their_terrain_and_shore(string generator, ulong seed)
     {
         var sim = new Simulation(mods.Content, GameFactory.Settings(seed) with { MapGenerator = generator });

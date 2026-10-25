@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Civ.Client;
 using Civ.Content;
 using Civ.Game;
@@ -7,15 +8,24 @@ using Xunit;
 namespace Civ.Mods.Tests;
 
 /// <summary>Client.Core diplomacy, score and victory screens against the optional diplomacy and victory mods.</summary>
-public sealed class ClientDiplomacyVictoryTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class ClientDiplomacyVictoryTests
 {
+    private static readonly ConcurrentDictionary<(bool Diplomacy, bool Victory), Lazy<ContentDb>> Contents = new();
     private static ModSource Optional(string name) => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name));
+
+    /// <summary>One frozen content per optional-mod set; xunit builds a new test class instance for every test.</summary>
+    private static ContentDb Content((bool Diplomacy, bool Victory) optional) => Contents.GetOrAdd(optional, key => new(() =>
+    {
+        var loaded = new LoadedMods();
+        var sources = loaded.Sources.AsEnumerable();
+        if (key.Diplomacy) sources = sources.Append(Optional("Diplomacy"));
+        if (key.Victory) sources = sources.Append(Optional("ProjectsVictory"));
+        return ModLoader.Build(sources);
+    })).Value;
+
     private GameSession Session(bool diplomacy = true, bool victory = true)
     {
-        var sources = mods.Sources.AsEnumerable();
-        if (diplomacy) sources = sources.Append(Optional("Diplomacy"));
-        if (victory) sources = sources.Append(Optional("ProjectsVictory"));
-        var sim = GameFactory.Create(ModLoader.Build(sources), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
+        var sim = GameFactory.Create(Content((diplomacy, victory)), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
         if (diplomacy)
             sim.TeamOf(0).Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
         return new(sim);

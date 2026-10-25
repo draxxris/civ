@@ -21,6 +21,7 @@ public sealed class WorldLayoutTests(LoadedMods mods) : IClassFixture<LoadedMods
     [InlineData("world:twin_continents", "Twin Continents", 42UL)]
     [InlineData("world:great_plains", "Great Plains", 1UL)]
     [InlineData("world:great_plains", "Great Plains", 42UL)]
+    [Trait("Category", "WorldGen")]
     public void Layouts_keep_their_landmarks_and_supply_separated_starts(string generator, string name, ulong seed)
     {
         var catalog = mods.Catalog;

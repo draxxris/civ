@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Civ.Client;
 using Civ.Content;
 using Civ.Game;
@@ -8,13 +9,21 @@ using S = Civ.Content.Schema;
 namespace Civ.Mods.Tests;
 
 /// <summary>Client.Core corporations, espionage and events against the optional P6 mods.</summary>
-public sealed class ClientIntelligenceEventsTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class ClientIntelligenceEventsTests
 {
+    private static readonly ConcurrentDictionary<string, Lazy<ContentDb>> Contents = new(StringComparer.Ordinal);
     private static ModSource Optional(string name) => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name));
 
-    private GameSession Session(params string[] optional)
+    /// <summary>One frozen content per optional-mod set; xunit builds a new test class instance for every test.</summary>
+    private static ContentDb Content(params string[] optional) => Contents.GetOrAdd(string.Join(",", optional), _ => new(() =>
     {
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Concat(optional.Select(Optional))));
+        var loaded = new LoadedMods();
+        return ModLoader.Build(loaded.Sources.Concat(optional.Select(Optional)));
+    })).Value;
+
+    private static GameSession Session(params string[] optional)
+    {
+        var sim = GameFactory.Scenario(Content(optional));
         GameFactory.NeutralPolitics(sim);
         foreach (var plot in sim.State.Plots) plot.Owner = null;
         foreach (var player in sim.State.Players) player.Treasury = 10000;
