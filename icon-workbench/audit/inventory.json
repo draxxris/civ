@@ -23,7 +23,7 @@
       }
     },
     {
-      "path": "docs/screenshots/city.png",
+      "path": "docs/screenshots/gui/city.png",
       "label": "City",
       "subject": "Game interface screenshot showing city view",
       "category": "application screenshot",
@@ -33,7 +33,7 @@
       }
     },
     {
-      "path": "docs/screenshots/civics.png",
+      "path": "docs/screenshots/gui/civics.png",
       "label": "Civics",
       "subject": "Game interface screenshot showing civics view",
       "category": "application screenshot",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "path": "docs/screenshots/map.png",
+      "path": "docs/screenshots/gui/map.png",
       "label": "Map",
       "subject": "Game interface screenshot showing map view",
       "category": "application screenshot",
@@ -63,7 +63,7 @@
       }
     },
     {
-      "path": "docs/screenshots/research.png",
+      "path": "docs/screenshots/gui/research.png",
       "label": "Research",
       "subject": "Game interface screenshot showing research view",
       "category": "application screenshot",
@@ -83,7 +83,7 @@
       }
     },
     {
-      "path": "docs/screenshots/setup.png",
+      "path": "docs/screenshots/gui/setup.png",
       "label": "Setup",
       "subject": "Game interface screenshot showing setup view",
       "category": "application screenshot",

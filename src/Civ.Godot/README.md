@@ -211,10 +211,12 @@ These switches apply only to capture runs and go after `--` on the Godot command
 ### Run and output
 
 - `--screenshot <path|name>`: save one capture, then quit. A bare name (no slash) goes to `--out-dir`. Use an absolute path otherwise.
-- `--screenshots`: run every stage above in turn. Each goes to `docs/screenshots/<stage>.png`, or to `--out-dir`.
+- `--screenshots`: run every stage above in turn. Each goes to `docs/screenshots/<stage>.png`, or to `--out-dir`. Interface stages
+  (`setup`, `map`, `city`, `civics`, `research`, `conquest`, `espionage`) go to `docs/screenshots/gui/<stage>.png` instead.
 - `--shots <file.json>`: take several captures in one launch. Each entry has a `name` and optional `focus`, `focusTile` `[col,row]`,
   `pitch`, `yaw`, `distance`, `terrainDebug` and `wireframe`. A missing camera field keeps the previous shot's value.
-- `--out-dir <dir>`: where captures and stats go. The default is `docs/screenshots`, which holds the committed images, so set this for test captures.
+- `--out-dir <dir>`: where captures and stats go. The default is `docs/screenshots`, which holds the committed images (interface
+  captures in `gui/`, road sheets in `roads/`), so set this for test captures.
 - `--stage <name>`: the stage for `--screenshot`. It defaults to `setup`, or to `map` when a scene switch below is used.
 - `--frames N`: ready frames to wait before each capture. The default is 60, or 30 with a scene switch, and 90 in the stage tour.
 - `--stats`: print and save `<name>.json` beside each capture: props per scatter set before and after thinning, triangles per layer,

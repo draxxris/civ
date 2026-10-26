@@ -7,9 +7,10 @@ namespace Civ.Client;
 /// The reference with examples is in src/Civ.Godot/README.md; keep the two in step.
 /// <code>
 /// --screenshot [path|name]   save one capture (a bare name goes to --out-dir)
-/// --screenshots              the built-in stage tour into docs/screenshots (or --out-dir)
+/// --screenshots              the built-in stage tour into docs/screenshots (interface stages under gui/, or --out-dir)
 /// --shots poses.json         several captures from one launch: [{name, focus, focusTile, pitch, yaw, distance, terrainDebug, wireframe}]
-/// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images)
+/// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images;
+///                            interface stages go to its gui subfolder)
 /// --stage name               setup|map|city|civics|research|path|world|terrain|rivers|peak|wrap
 /// --focus kind               hills|forest|jungle|road|peak|river|city: centre on the best patch of that kind
 /// --focus-tile col,row       centre on a tile
@@ -104,9 +105,12 @@ internal sealed record DebugOptions
         }
     }
 
+    /// <summary>Stages whose capture shows an interface screen. The committed images live in the <c>gui</c> subfolder.</summary>
+    private static readonly HashSet<string> GuiStages = ["setup", "map", "city", "civics", "research", "conquest", "espionage"];
+
     /// <summary>The PNG path for a capture name: in <see cref="OutDir"/> when given, else the committed screenshots folder.</summary>
     public string PathFor(string name) => OutDir != null ? System.IO.Path.Combine(OutDir, name + ".png")
-        : ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{name}.png");
+        : ProjectSettings.GlobalizePath($"res://../../docs/screenshots/{(GuiStages.Contains(name) ? "gui/" : "")}{name}.png");
 
     public DebugOptions ForScreenshot(string stage) => this with
     {
