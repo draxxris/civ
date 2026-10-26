@@ -89,20 +89,35 @@ public sealed class ResearchRulesTests
         Assert.Equal(expected, Service<IResearchService>(sim).RateModifier(sim, 0, tech));
     }
 
-    // Lifecycle risk distinct from the formula vectors: eliminated and barbarian holders must not dilute
-    // the eligible denominator or supply exposure, including when diffusion is explicitly disabled.
+    // Lifecycle risk: a dead team must not dilute the eligible denominator or supply holder exposure.
+    // Team 2 is contacted and holds the technology before it loses its last city.
     [Fact]
-    public void Opt_out_restores_basic_bonus_and_excludes_dead_and_barbarian_teams()
+    public void Diffusion_excludes_dead_teams_from_denominator_and_holder_exposure()
     {
-        var sim = Scenario(4);
+        var sim = Scenario(3);
         var diplomacy = Service<IDiplomacyService>(sim);
-        for (int p = 1; p < 4; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
+        for (int p = 1; p < 3; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
         sim.State.RemoveCity(sim.State.Cities.Single(c => c.Owner == 2).Id);
-        sim.State.PlayerById(3).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
         Assert.Equal(125, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = false;
         Assert.Equal(104, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
+    }
+
+    // Barbarian civs and their cities stay out of the denominator, the contacted set, and holder exposure
+    // even when they keep a city, hold the technology, and were contacted before they turned barbarian.
+    [Fact]
+    public void Diffusion_excludes_barbarian_teams_from_denominator_and_holder_exposure()
+    {
+        var sim = Scenario(4);
+        var diplomacy = Service<IDiplomacyService>(sim);
+        for (int p = 1; p < 4; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
+        sim.State.PlayerById(3).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        Assert.Contains(sim.State.Cities, c => c.Owner == 3);
+        sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
+        Assert.Equal(133, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
+        sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = false;
+        Assert.Equal(107, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
     }
 
     // Welfare owns era-weighted technology score and the existing total-score contract, not raw tech

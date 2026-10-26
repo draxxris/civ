@@ -249,29 +249,23 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ## 5. Residual Notes & Verification Status
 
-The following observations and verification records are preserved for future development:
+The following observations, decisions, and verification records are preserved:
 
-* **Eligible-Team Denominator Difference**:
-  * Severity: Low. Reachability: Normal play.
-  * The research diffusion denominator uses all eligible living non-barbarian teams. The reference mod divides by eligible alive teams (including barbarians). Contacted technology holders form the weighted numerator.
-  * Future fix need: reconcile alive-team and barbarian eligibility with the reference mod if strict parity is desired.
+* **Eligible-Team Denominator (Barbarians Excluded)**:
+  * Severity: None. Reachability: Normal play.
+  * The research diffusion denominator counts eligible living non-barbarian teams only. Barbarian players and their cities join neither the denominator nor the contacted set, the weighted holder numerator, or the welfare baseline. The exclusion holds on the diffusion path and on the no-tech-diffusion fallback, which shares the same team set.
+  * Decision: the reference mod divides by eligible alive teams including barbarians. Exclusion is intentional, because shared barbarian technologies would otherwise dilute every civilization's diffusion rate. No parity reconciliation is planned, and the `Diffusion_excludes_dead_teams_...` and `Diffusion_excludes_barbarian_teams_...` tests lock the behavior.
 * **Score Contract in Welfare**:
-  * Severity: Low-to-moderate. Reachability: Late-game play when score disparities widen.
-  * Welfare catch-up evaluates the team leader's player total score contract rather than a native normalized score curve or pooled team scores.
-  * Future fix need: evaluate and implement a normalized score progression curve when score contracts are refined.
-* **Unsupported Commander and Ground-Health Interception**:
-  * Severity: Low. Reachability: Reachable if content relies on commander or ground-health interception inputs.
-  * Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
-  * Future fix need: extend counter-espionage mission interception calculations to query commander attachments and health modifiers.
+  * Severity: None. Reachability: Late-game play when score disparities widen.
+  * Welfare catch-up compares the team leader's personal score against the highest score of every other living non-barbarian player. A teammate counts as a rival, so a lagging member is helped even inside a strong alliance. The existing score contract is used; no separate normalized curve exists.
+  * Decision: the existing contract is intentional. A normalized curve would make an invisible research modifier disagree with the score the game displays and uses for time victory. Research is pooled per team, so the bonus applies to the whole team, and the team-level technology gate runs before the score ratio, so an alliance cannot farm welfare unless the team is genuinely behind in technology.
+  * Revisit trigger: team play becoming player-facing (P10 lobby), which makes the choice between the lowest-id leader and the weakest living member observable.
+* **Commander and Ground-Health Interception Inputs**:
+  * Severity: None. Reachability: Unreachable with shipped play.
+  * Counter-espionage protection is `200 + 5 x the performing spy's interception percent`. The reference also adds an attached commander unit's interception bonus and, because its "Better Air Interception" mod setting defaults to on, scales every non-air unit's interception by remaining health.
+  * Decision: neither input can change a result here. This engine has no commander unit pool; a great-general style bonus is copied onto the led unit as an ordinary promotion, which the interception modifier already counts. Health scaling applies to aircraft only, and spies have no combat strength, so nothing can wound one and the reference default would produce the same number for every reachable state.
+  * Revisit trigger: a commander unit system, a health-scaling rule for non-air interception, or any damage source that can reach a spy.
 * **Malformed-Content Guards**:
   * Severity: Low. Reachability: Unreachable with shipped content; reachable with invalid custom content declarations.
   * Missing technology identifiers in unlock tables or missing bonus identifiers in sight memory throw on lookup.
   * Future fix need: add fallback validation and default placeholders during content loading.
-* **Inert Expired Records**:
-  * Severity: Negligible. Reachability: Normal play after counter-espionage protection expires.
-  * Expired directed counter-espionage records remain inert in saved state.
-  * Future fix need: prune expired records during deterministic turn boundary processing under the state hash contract, not during serialization.
-* **Hardware GPU and Small-Window Verification**:
-  * Severity: Low. Reachability: Arbitrary display dimensions and physical GPU driver quirks.
-  * Verification used headless Mesa llvmpipe software rendering at 1600x900, and Phase 6 verified 1280x720 rendering. Execution on physical GPUs and arbitrary small-window sweeps (<1600x900) remain unverified.
-  * Note: Actual pointer input and multi-rival switching were verified through eight automated X11 pointer events.

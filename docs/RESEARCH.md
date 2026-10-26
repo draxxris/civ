@@ -61,8 +61,9 @@ This rate modifier increases the science points applied to the current technolog
   The calculation divides by all eligible living non-barbarian teams.
   Contacted technology holders form the weighted numerator.
 * **Welfare Scaling**: Teams with lower total scores receive a catch-up research rate bonus.
-  Welfare compares the team leader's player total score against the highest living player score.
-  It uses the existing score contract rather than a pooled team score or native normalized curve.
+  Welfare compares the team leader's personal score against the highest score of every other living non-barbarian player, so a teammate counts as a rival.
+  It uses the existing score contract rather than a separate normalized curve.
+  The team's era-weighted technology score gates the bonus before the score ratio applies.
 
 ### Realistic Timescale (Timeline Research)
 
@@ -143,19 +144,15 @@ Overlay settings are local presentation preferences managed in `GamePreferences`
 
 ## 5. Residual Notes and Verification
 
-The following observations are recorded for future maintenance:
+The following observations and decisions are recorded:
 
-* **Eligible-Team Denominator**: The research diffusion denominator uses all eligible living non-barbarian teams.
-  The reference mod divides by eligible alive teams (including barbarians).
-  Contacted technology holders form the weighted numerator.
-  Future parity alignment would reconcile alive-team and barbarian eligibility with the reference mod.
-  (Severity: Low. Reachability: Normal play.)
-* **Score Contract in Welfare**: Welfare catch-up evaluates the team leader's player total score contract.
-  It does not use a native normalized score curve or pooled team scores.
-  (Severity: Low-to-moderate. Reachability: Late-game play.)
+* **Eligible-Team Denominator**: The research diffusion denominator counts eligible living non-barbarian teams only.
+  The reference mod divides by eligible alive teams, including barbarians.
+  The exclusion is intentional and no parity alignment is planned.
+  (Severity: None. Reachability: Normal play.)
+* **Score Contract in Welfare**: Welfare catch-up compares the team leader's personal score against every other living non-barbarian player.
+  A teammate therefore counts as a rival, and the bonus applies to the whole team's pooled research.
+  The existing score contract is used; no normalized curve is implemented.
+  (Severity: None. Reachability: Late-game play.)
 * **Malformed Content Guards**: Missing technology identifiers in unlock tables throw exceptions during content lookup.
   (Severity: Low. Reachability: Custom content with invalid identifiers.)
-* **Hardware GPU and Small Window Sweeps**: Overlay rendering was verified under headless Mesa llvmpipe at 1600x900.
-  Phase 6 verified 1280x720 rendering.
-  Arbitrary small-window control overlap sweeps and physical GPU execution remain unverified.
-  (Severity: Low. Reachability: Arbitrary display dimensions and specific GPU drivers.)

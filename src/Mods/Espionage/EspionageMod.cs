@@ -18,6 +18,7 @@ public sealed class EspionageMod : IMod
         context.RegisterCommand<ExecuteEspionageMissionCommand>("execute_mission");
         context.TurnSystems.Register(new SpyAllocation(service));
         context.TurnSystems.Register(new SpyTimers());
+        context.TurnSystems.Register(new SpyExpiry());
     }
 }
 internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSystem
@@ -39,6 +40,22 @@ internal sealed class SpyTimers : IPlayerTurnSystem
             var rules = city.Extensions.Get<CityRuleState>(sim.Content);
             if (rules is not null) rules.Disorder = false;
             state.OwnsDisorder = false;
+        }
+    }
+}
+/// <summary>Drops expired counter-espionage records at the first turn boundary after their expiry so dead entries cannot accumulate in authoritative state.</summary>
+internal sealed class SpyExpiry : ITurnSystem
+{
+    public string Id => "espionage:expiry";
+    public int Order => TurnPhase.GameBegin + 1;
+    public void Run(Simulation sim)
+    {
+        foreach (var team in sim.State.Teams.OrderBy(t => t.Id))
+        {
+            var state = team.Extensions.Get<EspionageTeamState>(sim.Content);
+            if (state is null) continue;
+            foreach (int rival in state.CounterEspionage.Where(p => p.Value.ExpiresTurn <= sim.State.Turn).Select(p => p.Key).ToArray())
+                state.CounterEspionage.Remove(rival);
         }
     }
 }

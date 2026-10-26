@@ -246,10 +246,17 @@ public sealed class EspionageRulesTests
         Assert.Equal(expires - 1, sim.State.Turn);
         Assert.NotNull(Spies(sim).CounterEspionage(sim, 0, 1));
         Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
+        Assert.Single(TeamState(sim, 0).CounterEspionage);
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         Assert.Equal(expires, sim.State.Turn);
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
+        // The record is inert from its expiry turn and is deleted at the next turn boundary.
+        Assert.Single(TeamState(sim, 0).CounterEspionage);
+        sim.AdvanceTurn(); loaded.AdvanceTurn();
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.Empty(TeamState(sim, 0).CounterEspionage);
+        Assert.Empty(TeamState(loaded, 0).CounterEspionage);
         Assert.Null(repeat.Validate(sim));
         Assert.Equal(50, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.StealTreasury));
     }

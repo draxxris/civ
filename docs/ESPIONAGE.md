@@ -56,6 +56,7 @@ The mod entry point is `EspionageMod` (`EspionageMod.cs`). It registers:
 * **Turn Systems**:
   * `SpyAllocation` (`Order = TurnPhase.Espionage + 1`): distributes produced espionage commerce into rival balances each turn.
   * `SpyTimers` (`Order = TurnPhase.PlayerEnd + 1`): cleans up expired disorder and unrest flags at turn end.
+  * `SpyExpiry` (`Order = TurnPhase.GameBegin + 1`): deletes counter-espionage records at the first turn boundary after they expire, so dead protection cannot accumulate in saved state.
 
 ---
 
@@ -202,10 +203,7 @@ Each unit is designated with:
 
 The following observations are recorded for future maintenance:
 
-* **Inert Expired Records**: When counter-espionage protection expires, the directed record remains inert in simulation state.
-  Any future cleanup belongs to a deterministic turn boundary and hash contract, not during serialization.
-  (Severity: Negligible. Reachability: Normal play after mission expiry.)
-* **Unsupported Commander and Ground-Health Interception**: Counter-espionage mission interception calculations omit unit commander bonuses and optional ground-unit health scaling.
-  (Severity: Low. Reachability: Content relying on commander interception modifiers in espionage calculations.)
+* **Commander and Ground-Health Interception**: Counter-espionage protection uses the performing spy's interception percent without an attached commander unit's bonus and without health scaling for ground units. Neither input can change a result here: the engine has no commander unit pool (a leader bonus is copied onto the led unit as an ordinary promotion, which the modifier already counts), and spies have no combat strength, so nothing can wound one.
+  (Severity: None. Reachability: Unreachable with shipped play.)
 * **Malformed Research Identifiers**: Content definitions referencing non-existent technology identifiers can fail when espionage unlocks evaluate permissions.
   (Severity: Low. Reachability: Malformed custom content declarations.)
