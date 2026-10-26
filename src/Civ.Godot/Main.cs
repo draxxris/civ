@@ -56,9 +56,22 @@ public partial class Main : Node3D
         _status.Position = new Vector2(40, 40);
         layer.AddChild(_status);
         AddChild(layer);
-        Ui.InstallTheme(GetWindow());
+        // The automatic paths (--screenshot, --fps-probe, --skip-mod-manager) start the catalog load first and paint
+        // the theme while it runs on its worker threads. Headless takes the same branch but waits for the load
+        // inside BeginModStartup, so it stays serial. The interactive path must install the theme first:
+        // BeginModStartup opens the mod manager, which builds Control nodes immediately.
+        if (AutomaticStartup)
+        {
+            BeginModStartup();
+            // A startup that already failed has queued its own quit; painting the theme would only delay the exit.
+            if (_loading is not null) Ui.InstallTheme(GetWindow());
+        }
+        else
+        {
+            Ui.InstallTheme(GetWindow());
+            BeginModStartup();
+        }
         RenderingServer.SetDefaultClearColor(new Color(0.05f, 0.07f, 0.1f));
-        BeginModStartup();
     }
 
     /// <summary>Stable bundled candidate order. User installations and CIV_MODS take priority per ID.</summary>

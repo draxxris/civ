@@ -14,8 +14,8 @@ internal static class Ui
     private static Theme? _theme;
 
     /// <summary>
-    /// The shared painted-brass theme (see <see cref="BrassSkin"/>). The textures are painted on first use,
-    /// so every caller shares one set.
+    /// The shared painted-brass theme (see <see cref="BrassSkin"/>). The textures are painted on first use, or loaded
+    /// from the disk cache, so every caller shares one set.
     /// </summary>
     public static Theme Theme => _theme ??= MakeTheme();
 
@@ -26,6 +26,7 @@ internal static class Ui
     /// </summary>
     public static void InstallTheme(Window window)
     {
+        using var trace = Civ.Modding.StartupTrace.Phase("ui theme");
         window.Theme = Theme;
         ThemeDB.GetDefaultTheme().MergeWith(Theme);
         EnableScrollArrows(window.GetTree());

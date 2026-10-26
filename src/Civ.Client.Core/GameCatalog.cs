@@ -57,13 +57,18 @@ public sealed class GameCatalog
     public static GameCatalog Load(string modsRoot)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        return new(ModDiscovery.LoadMods(modsRoot));
+        var catalog = new GameCatalog(ModDiscovery.LoadMods(modsRoot));
+        // Content is frozen; start the digest now so it overlaps the setup work instead of blocking the first reader.
+        catalog.Content.PrefetchContentHash();
+        return catalog;
     }
 
     public static GameCatalog Load(IReadOnlyList<InstalledMod> installed, IEnumerable<string> enabledIds)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        return new(ModDiscovery.LoadMods(installed, enabledIds));
+        var catalog = new GameCatalog(ModDiscovery.LoadMods(installed, enabledIds));
+        catalog.Content.PrefetchContentHash();
+        return catalog;
     }
 
     private static IReadOnlyList<SetupChoice> Choices<T>(IEnumerable<T> defs) where T : ContentDef =>

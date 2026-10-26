@@ -89,6 +89,10 @@ To ensure repeatable and reliable performance comparisons:
        ▼
 [Phase 5: Oct 18, 2026] Idle CPU: Terrain Ray Pick Caching & Unit Height Sampling
                         (Commit: 47b932f)
+       │
+       ▼
+[Phase 6: Oct 18, 2026] Startup Latency: Theme Overlap & Lazy Content Hash
+                        (Uncommitted worktree changes)
 ```
 
 ---
@@ -317,6 +321,50 @@ Controlled comparison settings: Fedora 44 x64, Intel Core i7-7700HQ, .NET SDK 10
 
 ---
 
+### Phase 6: Startup Latency through Theme Overlap and a Lazy Content Hash
+
+- **Date**: 2026-10-18
+- **Primary Commit**: uncommitted worktree changes (not yet committed)
+
+#### Implementation Changes
+1. **Theme Painted While the Catalog Loads (`src/Civ.Godot/Main.cs`)**:
+   - The automatic startup paths (headless, `--screenshot`, `--fps-probe`, `--skip-mod-manager`) call `BeginModStartup()` before `Ui.InstallTheme(GetWindow())`.
+   - The 2.3-2.7 s procedural brass-theme painting therefore runs while the catalog loads on the thread pool, instead of strictly after it.
+   - The interactive path keeps the original order because `BeginModStartup()` opens the mod manager, which builds `Control` nodes immediately and needs the theme installed first.
+   - A startup that fails before the load begins (no usable mods, a damaged mod profile, an invalid selection) skips the theme: it has already queued its own quit, and painting would only delay the exit by about 2.7 s.
+2. **Lazy, Prefetched Content Digest (`src/Civ.Core/Content/ContentDb.cs`, `src/Civ.Client.Core/GameCatalog.cs`)**:
+   - `Freeze()` no longer computes the SHA-256 digest inline. It captures the definition array for the digest input under the `content hash input` trace phase, assigns a fresh `Lazy<string>` (`LazyThreadSafetyMode.ExecutionAndPublication`), then freezes the registries under `registry freeze`.
+   - `ContentDb.ContentHash` is computed on first read under its own `content hash` trace phase. Registry enumeration order is ordinal before and after the freeze, so the digest is byte-identical; the content-hash test literals in `tests/Civ.Tests/ContentHashTests.cs` pass unchanged.
+   - `ContentDb.PrefetchContentHash()` starts the digest on the thread pool, and `GameCatalog.Load` calls it once content is frozen. Freezing itself still never spawns background work, so tests and benchmarks that build catalogs directly stay single-threaded.
+
+#### Measurements
+- Machine: Fedora 44 x64, 8 cores, NVIDIA GeForce GTX 1050 Ti, .NET SDK 10.0.402, Debug build.
+- Command: `CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/a-after.png`, timed from process start to the `screenshot ...: Ok` line, one launch at a time with `sleep 20` between launches.
+- **Before**: theme 2,272.73 ms; `catalog load` 2,372.03 ms (content freeze 1,218.14 ms, of which 1,156.39 ms was the inline digest); total **8.60 s**, **8.69 s** (median 8.65 s, traced run 7.50 s).
+- **After**: theme 2,703.18 ms, now overlapping the catalog; `catalog load` 1,454.04-1,557.93 ms (registry freeze 83.86-114.02 ms, digest 1,379.27-1,409.88 ms on the thread pool); total **6.19 s**, **6.38 s**, **6.50 s** (median 6.38 s, traced run 6.23 s).
+- Cold launch is about 2.3 s shorter (-26%). The theme painting is roughly 0.4 s slower while the catalog's worker threads run, which the overlap absorbs.
+- The interactive mod-manager path gains nothing: it still paints the theme serially before the mod manager appears.
+
+#### Validation
+- `dotnet build Civ.slnx -c Debug --no-restore` completed with zero warnings and zero errors.
+- `mise run test` passed 1,297 tests (37 content-import, 122 core, and 1,138 mod tests).
+- Setup-screen screenshots are byte-identical across runs of one build. Between the old and new order, 0.55% of pixels differ, confined to thin plate strokes and glyph edges (maximum channel delta 55); layout, colours and text are unchanged.
+- The changes added no new automated tests, and no E2E, extractor, world-generation, or benchmark runs were performed.
+
+#### Painted Skin Texture Cache
+- All 109 skin textures (27 plate frames, 34 icons, 3 backdrop layers, 45 scrape-overlay layers) are written to `user://skin-cache/v1/x1/` as PNGs by the launch that paints them, and loaded from there by every later launch. Keys are FNV-1a hashes of the paint inputs, and `SkinCache.Version` has to be bumped whenever the painting changes.
+- Measured with `CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`, one launch at a time with `sleep 30` between launches:
+  - **Theme**: cold **2,845.28 ms**, **2,892.56 ms**, **2,907.31 ms** (2,829.6-2,883.9 ms of it inside `SkinCache`); warm **130.69 ms**, **136.67 ms**, **151.64 ms** (115.2-131.9 ms inside `SkinCache`), and **343.01 ms** when the cache files were not in the page cache (immediately after a build).
+  - **Cache on disk**: 524,889 bytes in 109 files.
+- End-to-end launch numbers are only worth reading from an unthrottled display. On this Wayland session a game window that is not in front renders at about 1 fps, so launch-to-screenshot totals from it are frame-quantised and useless: the same build measured 5.5-5.9 s both cold and warm. Measure on a virtual X server instead, which still reaches the real GPU:
+  `Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &` then `DISPLAY=:99 CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`
+  - **Launch to screenshot**, same command on `DISPLAY=:99`: original code **6,390 ms**; this build with an empty `skin-cache` **5,180 ms** (theme 2,757.22 ms painted, `catalog load` 1,299.25 ms); this build with a warm `skin-cache` **3,560 ms** (theme 135.45 ms loaded, `catalog load` 1,158.49 ms). So the whole startup work landed **6.39 s -> 3.56 s (-44%)**, of which the texture cache is the last 1.6 s.
+  - The cache saves less than the 2.62 s it removes from the theme because painting already overlaps the catalog load (see the overlap change above), so part of the 2.9 s was being hidden.
+- Setup-screen screenshots: the painting launch and the pre-cache build are byte-identical. A cached launch is byte-identical to the painting one once the scrape overlays' tile phase is pinned, which shows the textures themselves round-trip exactly: `BrushedStyleBox` seeds that phase from a canvas-item RID, and the cached launch renders loading-screen frames the painting launch hides behind its 2.9 s block (a measured 38 RIDs earlier), so its overlays land at other offsets.
+- A cache that is missing, unreadable, truncated or corrupt is repainted and overwritten: a launch with one corrupt frame, one truncated overlay layer and one unreadable backdrop layer painted 9 textures, loaded 100, and exited 0.
+
+---
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization phases:
@@ -343,3 +391,9 @@ The following table aggregates all recorded performance measurements across opti
 | | | Gigantic session startup (200×120, 3 seeds) | Managed bytes | 279.27–294.62 MiB | 241.28–255.57 MiB | **-13.3% to -13.6%** |
 | | | Gigantic session startup (200×120, 3 seeds) | Wall time | 1,215–1,468 ms | 1,091–1,340 ms | **-7.3% to -12.9%** |
 | **Phase 5: Idle CPU Reduction** | `47b932f` | Stationary idle (Vulkan Forward+, 1050 Ti) | Process CPU (1 core) | 38.8% | 18.8% | **-51.5% (-20.0 pp)** |
+| **Phase 6: Startup Latency** | *uncommitted* | Cold launch to setup screen (8 cores) | Wall time | 8.65 s | 6.38 s | **-26.2%** |
+| | | Theme painting (overlapped with catalog) | Wall time | 2,272.73 ms | 2,703.18 ms | +18.9% *(absorbed by overlap)* |
+| | | Catalog load | Wall time | 2,372.03 ms | 1,454.04 ms | **-38.7%** |
+| | | Content digest (critical path) | Wall time | 1,156.39 ms | 0 ms | **-100% (prefetched off path)** |
+| | | Launch to setup screen (Xvfb, warm skin cache) | Wall time | 6.39 s | 3.56 s | **-44.3%** |
+| | | Launch to setup screen (Xvfb, empty skin cache, first run) | Wall time | 6.39 s | 5.18 s | **-18.9%** |

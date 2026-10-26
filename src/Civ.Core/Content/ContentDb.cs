@@ -29,6 +29,7 @@ public sealed class ContentDb
         .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !IsScalarType(p.PropertyType)).ToArray();
     private readonly Dictionary<Type, Entry> _registries = new();
     private bool _frozen;
+    private Lazy<string>? _hash;
     /// <summary>Create a registration database with empty shared-schema registries.</summary>
     public ContentDb()
     {
@@ -90,8 +91,17 @@ public sealed class ContentDb
     public IReadOnlyList<string> LoadedMods { get; internal set; } = [];
     /// <summary>Loaded mod versions in dependency order.</summary>
     public IReadOnlyList<LoadedMod> Mods { get; internal set; } = [];
-    /// <summary>SHA-256 of frozen definitions, mod versions and serialized contract identities.</summary>
-    public string ContentHash { get; private set; } = "";
+    /// <summary>SHA-256 of frozen definitions, mod versions and serialized contract identities. Computed on first
+    /// read, and prefetched by the client on the thread pool after loading, so a later reader normally does not pay
+    /// for it. Empty before <see cref="Freeze"/>.</summary>
+    public string ContentHash => _hash is null ? "" : _hash.Value;
+
+    /// <summary>Start the content digest on the thread pool once the database is frozen. Fire and forget: the lazy
+    /// itself rethrows a failure on the next read.</summary>
+    public void PrefetchContentHash()
+    {
+        if (_hash is { } hash) _ = Task.Run(() => _ = hash.Value);
+    }
 
     /// <summary>Validate typed identities after all providers register, before freezing or hashing.</summary>
     public void ValidateReferences(IEnumerable<Modding.ModManifest> manifests)
@@ -125,25 +135,36 @@ public sealed class ContentDb
         using (Modding.StartupTrace.Phase("content requirement validation"))
             foreach (var entry in _registries.Values)
                 foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
-        using var hashTrace = Modding.StartupTrace.Phase("content hash and registry freeze");
+        _hash = HashLazy();
+        using var freezeTrace = Modding.StartupTrace.Phase("registry freeze");
+        foreach (var entry in _registries.Values) entry.Freeze();
+        MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
+        _frozen = true;
+    }
+    /// <summary>Capture the digest input now and return the digest to run on first read. Registry enumeration order
+    /// is stable before and after the freeze, so taking the digest later yields the identical value.</summary>
+    private Lazy<string> HashLazy()
+    {
+        using var trace = Modding.StartupTrace.Phase("content hash input");
         var definitions = _registries.OrderBy(kv => kv.Key.FullName, StringComparer.Ordinal)
             .SelectMany(kv => kv.Value.Items().Select(item => new
             {
                 Type = kv.Key.FullName, Definition = new HashDefinition(item),
             })).ToArray();
-        ContentHash = CanonicalJson.Digest(new
+        return new Lazy<string>(() =>
         {
-            Mods, Definitions = definitions,
-            Commands = CommandTypes.All.Select(c => new { c.Id, Type = c.Type.FullName }).ToArray(),
-            Components = StateComponents.Ids.Select(id => new { Id = id, Type = StateComponents.TypeOf(id).FullName }).ToArray(),
-            Services = Services.Identities.ToArray(),
-            MapGenerators = MapGenerators.All.Select(g => new { g.Id, Type = g.GetType().FullName }).ToArray(),
-            PlayerAIs = PlayerAIs.All.Select(ai => new { ai.Id, Type = ai.GetType().FullName }).ToArray(),
-            TurnSystems = TurnSystems.All.Select(s => new { s.Id, s.Order, Type = s.GetType().FullName }).ToArray(),
-        });
-        foreach (var entry in _registries.Values) entry.Freeze();
-        MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
-        _frozen = true;
+            using var hashTrace = Modding.StartupTrace.Phase("content hash");
+            return CanonicalJson.Digest(new
+            {
+                Mods, Definitions = definitions,
+                Commands = CommandTypes.All.Select(c => new { c.Id, Type = c.Type.FullName }).ToArray(),
+                Components = StateComponents.Ids.Select(id => new { Id = id, Type = StateComponents.TypeOf(id).FullName }).ToArray(),
+                Services = Services.Identities.ToArray(),
+                MapGenerators = MapGenerators.All.Select(g => new { g.Id, Type = g.GetType().FullName }).ToArray(),
+                PlayerAIs = PlayerAIs.All.Select(ai => new { ai.Id, Type = ai.GetType().FullName }).ToArray(),
+                TurnSystems = TurnSystems.All.Select(s => new { s.Id, s.Order, Type = s.GetType().FullName }).ToArray(),
+            });
+        }, LazyThreadSafetyMode.ExecutionAndPublication);
     }
     private void ValidateRequirements(object? value, HashSet<object> seen)
     {

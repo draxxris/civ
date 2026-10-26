@@ -43,12 +43,18 @@ internal sealed partial class BackdropStyleBox : StyleBox
     /// <summary>Paints the three layers at <paramref name="scale"/> pixels per unit around <paramref name="colour"/>.</summary>
     public static BackdropStyleBox Paint(Color colour, int scale)
     {
+        var layers = SkinCache.Images(SkinCache.BackdropKey(colour, scale), 3, () =>
+        [
+            Pixels(CloudWidth, CloudHeight, (x, y) => CloudAt(colour, x + 0.5f, y + 0.5f)),
+            Pixels(StreakWidth * scale, StreakHeight * scale, (x, y) => Overlay(StreakAt((x + 0.5f) / scale, (y + 0.5f) / scale))),
+            Pixels(GrainSize * scale, GrainSize * scale, (x, y) => Overlay(GrainAt(x, y, GrainSize * scale))),
+        ]);
         return new BackdropStyleBox
         {
-            Clouds = Texture(CloudWidth, CloudHeight, (x, y) => CloudAt(colour, x + 0.5f, y + 0.5f)),
+            Clouds = ImageTexture.CreateFromImage(layers[0]),
             CloudMagnify = CloudTexel * scale,
-            Streaks = Texture(StreakWidth * scale, StreakHeight * scale, (x, y) => Overlay(StreakAt((x + 0.5f) / scale, (y + 0.5f) / scale))),
-            Grain = Texture(GrainSize * scale, GrainSize * scale, (x, y) => Overlay(GrainAt(x, y, GrainSize * scale))),
+            Streaks = ImageTexture.CreateFromImage(layers[1]),
+            Grain = ImageTexture.CreateFromImage(layers[2]),
         };
     }
 
@@ -100,7 +106,7 @@ internal sealed partial class BackdropStyleBox : StyleBox
     /// </summary>
     private static Color Overlay(float shade) => shade >= 0f ? new Color(1f, 0.96f, 0.88f, 0.016f * shade) : new Color(0f, 0f, 0f, -0.065f * shade);
 
-    private static ImageTexture Texture(int width, int height, Func<int, int, Color> pixel)
+    private static Image Pixels(int width, int height, Func<int, int, Color> pixel)
     {
         var bytes = new byte[width * height * 4];
         Parallel.For(0, height, y =>
@@ -115,6 +121,6 @@ internal sealed partial class BackdropStyleBox : StyleBox
                 bytes[i + 3] = (byte)Mathf.RoundToInt(Mathf.Clamp(c.A, 0f, 1f) * 255f);
             }
         });
-        return ImageTexture.CreateFromImage(Image.CreateFromData(width, height, false, Image.Format.Rgba8, bytes));
+        return Image.CreateFromData(width, height, false, Image.Format.Rgba8, bytes);
     }
 }

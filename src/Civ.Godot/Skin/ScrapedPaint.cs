@@ -51,9 +51,10 @@ internal static class ScrapedPaint
     /// <summary>
     /// <paramref name="strokes"/> scales the paint texture and the open-field scratches; <paramref name="wear"/>
     /// scales the rim bands. Each side gets its own amount, so no two edges match: the left wears most, as in the
-    /// reference, and the right least.
+    /// reference, and the right least. Returns the five layer images in the order <see cref="ScrapeSet.Field"/>, Top,
+    /// Bottom, Left and Right, for <see cref="SkinCache"/> to cache; the caller turns them into textures.
     /// </summary>
-    public static ScrapeSet Paint(int seed, float strokes, float wear, int scale = 1)
+    public static Image[] Layers(int seed, float strokes, float wear, int scale = 1)
     {
         // Each layer has its own seed, drawn up front, so painting them in parallel stays repeatable.
         var rng = new Random(seed);
@@ -65,10 +66,8 @@ internal static class ScrapedPaint
             () => layers[2] = PaintBand(new Random(seeds[2]), Side.Bottom, wear * 0.9f, scale),
             () => layers[3] = PaintBand(new Random(seeds[3]), Side.Left, wear * 1.15f, scale),
             () => layers[4] = PaintBand(new Random(seeds[4]), Side.Right, wear * 0.6f, scale));
-        return new ScrapeSet(Texture(layers[0]), Texture(layers[1]), Texture(layers[2]), Texture(layers[3]), Texture(layers[4]), scale);
+        return layers.Select(layer => layer.ToImage()).ToArray();
     }
-
-    private static Texture2D Texture(Layer layer) => ImageTexture.CreateFromImage(layer.ToImage());
 
     // ---- Field ------------------------------------------------------------------------------------
 
