@@ -6,8 +6,6 @@ For architectural design and core principles ("everything is a mod"), see [docs/
 For the hex adaptation specification and original porting plan, see [PLAN.md](../PLAN.md).  
 For build instructions and test commands, see [README.md](../README.md).
 
----
-
 ## 1. Roadmap & Phase Overview
 
 The project follows a phased roadmap bringing the full content of the source Civ4 extraction onto a deterministic hex grid.
@@ -32,6 +30,20 @@ The project follows a phased roadmap bringing the full content of the source Civ
 
 Per [README.md](../README.md), the repository establishes three separate test suites:
 
+- **`mise run test`**: Default test suite. Fast execution; covers unit, contract, ruleset, client model, determinism, and save/reload tests. **Excludes E2E and Extractor tests.** Always run this by default during development.
+- **`mise run test:e2e`**: Long-running end-to-end whole-game simulations and multi-turn soak runs verifying AI stability, desync-free lockstep, and victory resolution.
+- **`mise run test:extractor`**: Source extraction and generated JSON content tests (`Civ.ContentImport.Tests`). Run when source assets or importer code change.
+- **`dotnet test Civ.slnx`**: Runs all tests across all categories.
+- **Headless smoke test**: `xvfb-run -a godot-mono --headless --path src/Civ.Godot --quit-after 200` verifies engine startup, shader compilation, and 200 frames of gameplay.
+
+---
+
+## 3. What Is Done (Implemented Systems & Mechanics)
+
+Status reflects executable simulation rules, loaded definitions, and engine-free models.
+
+### Foundation & Core Contracts
+- **Phase contract & turn order**: Deterministic phase lifecycle execution (`docs/02-turn-lifecycle.md`) with lockstep handshake and state hash verification.
 - **`mise run test`**: Default test suite. Fast execution; covers unit, contract, ruleset, client model, determinism, and save/reload tests. **Excludes E2E and Extractor tests.** Always run this by default during development.
 - **`mise run test:e2e`**: Long-running end-to-end whole-game simulations and multi-turn soak runs verifying AI stability, desync-free lockstep, and victory resolution.
 - **`mise run test:extractor`**: Source extraction and generated JSON content tests (`Civ.ContentImport.Tests`). Run when source assets or importer code change.
@@ -236,20 +248,6 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - [ ] **Embargoes & sanctions**: Multilateral agreements to prohibit trade with targeted civilizations.
 
 ### Espionage & UI
-- [x] **Full espionage intelligence view**: In-game screens showing permission-filtered rival city demographics, production queues, and treasury reserves.
-- [x] **Counter-espionage missions**: Active missions increasing rival mission costs via a directed cost penalty (200% baseline plus 5x interception percent).
-- [ ] **Dedicated status panels**: Global HUD panels for empire-wide Revolution unrest and Scripted Wonder active timers.
-- [x] **Map overlays**: Toggleable visual layers for tile yields, resource badges, hex grid lines, and cultural borders with fog-safe snapshots.
-
-### Future Roadmap Milestones (P10+)
-- [ ] **P10 – Multiplayer Lobby & Wire Transport**: Peer-to-peer and dedicated server transport over `Civ.Net` with match setup, lobby chat, and reconnect recovery.
-- [ ] **P11 – Historical Scenarios & Earth Maps**: Pre-scripted historical earth maps, civilization start locations, and custom scenario loaders.
-- [ ] **P12 – Gigantic Map Optimization**: Sparse 64-bit spatial indexing and multi-threaded turn phase processing for smooth play on gigantic (160×100+) maps.
-
----
-
-## 5. Residual Notes & Verification Status
-
 The following observations, decisions, and verification records are preserved:
 
 * **Eligible-Team Denominator (Barbarians Excluded)**:
@@ -270,3 +268,30 @@ The following observations, decisions, and verification records are preserved:
   * Severity: Low. Reachability: Unreachable with shipped content; reachable with invalid custom content declarations.
   * Missing technology identifiers in unlock tables or missing bonus identifiers in sight memory throw on lookup.
   * Future fix need: add fallback validation and default placeholders during content loading.
+
+### Miscellaneous UI & Client
+These are the project owner's own observations, kept in their own words.
+
+- [ ] **Terrain bonus icons**: Square icons still appear above terrain bonuses (like Stone) even though we
+  now have 3D meshes; this is fine, but we need better icons (and the Resources overlay should be disabled by
+  default in map view).
+- [ ] **Stacked unit list**: The left pane should show a list of all stacked units instead of forcing repeated
+  left clicks to cycle through them, showing unit icon, name, health, and small rank icons if they have leveled
+  up (the left pane is now built once and refreshed in place, so listing every stacked unit is an extension of
+  `RefreshLeft` rather than a rewrite).
+- [ ] **Research selector tooltips**: The research selector GUI needs tooltips showing what each technology will
+  give you, which probably means tooltip support for rich content such as icons, colored text, etc.
+- [ ] **Active unit designator**: The active unit designator has spinning chevrons around it that spin VERY fast
+  briefly when the game window is restored after being minimized.
+- [ ] **Water-adjacent cliff mountains**: A mountain adjacent to water that is also on a cliff looks very bad,
+  like there is a sharp drop off, and needs to be fixed.
+- [ ] **Production queue categories**: The city building production queue needs Wonders and All categories (like
+  Projects and Units), plus a filter text box.
+- [ ] **Scroll bar margin**: Every scroll view widget needs a margin to the left of the scroll bar (persistent
+  panels make this scroll-margin work easier).
+- [ ] **City view panes**: Clicking most of the GUI panes, like Religion, Corporations, Espionage, etc., does
+  nothing when you are in city view; what should be done instead?
+- [ ] **City view yields checkbox**: The city view GUI yields checkbox at the bottom of the screen does nothing
+  (the yields checkbox does work in map view).
+- [ ] **City view units**: The city view GUI needs the ability to see the units that are in it.
+- [ ] **Production row cap**: City view GUI production has a cap in the number of rows it can display.
