@@ -17,8 +17,14 @@ description = "Open the reference sheet's widgets at full size (skin scale 3) to
 depends = ["build:game"]
 run = "godot-mono --path src/Civ.Godot --resolution 1672x1000 res://UiGallery.tscn -- --replica"
 
+[tasks.cool]
+description = "Wait for the laptop to cool down before a heavy job (thermal gate; the EC hard-powers off when hot)"
+hide = true
+run = "tools/cool-wait.sh"
+
 [tasks.test]
 description = "Build once, then run the default tests (excludes E2E, extractor and world generation tests)"
+depends = ["cool"]
 env = { DOTNET_gcServer = "1" }
 run = '''
 set -u
@@ -28,6 +34,7 @@ mise run test:nobuild
 
 [tasks."test:nobuild"]
 description = "Run the default tests on the current build (excludes E2E, extractor and world generation tests)"
+depends = ["cool"]
 env = { DOTNET_gcServer = "1" }
 run = '''
 set -u
@@ -54,20 +61,23 @@ exit $fail
 
 [tasks."test:worldgen"]
 description = "Run world generation tests (run when the work set touches world generation)"
+depends = ["cool"]
 env = { DOTNET_gcServer = "1" }
 run = "dotnet test Civ.slnx --filter 'Category=WorldGen'"
 
 [tasks."test:e2e"]
 description = "Run E2E tests"
+depends = ["cool"]
 run = "dotnet test Civ.slnx --filter 'Category=E2E'"
 
 [tasks."test:extractor"]
 description = "Run extractor tests"
+depends = ["cool"]
 run = "dotnet test Civ.slnx --filter 'Category=Extractor'"
 
 [tasks.shot]
 description = "Build, then capture screenshots. Pass client options after --, e.g. -- --focus hills --clean --out-dir /tmp/shots --screenshot hills (see tools/shots/README.md)"
-depends = ["build:game"]
+depends = ["build:game", "cool"]
 run = "tools/shots/shot.sh"
 
 [tasks."shot:compare"]
@@ -76,10 +86,12 @@ run = "tools/shots/compare.sh"
 
 [tasks.benchmark]
 description = "Run operational benchmarks without timing thresholds"
+depends = ["cool"]
 run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release"
 
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
+depends = ["cool"]
 run = "dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release -- --ai-eval"
 
 [tools]
