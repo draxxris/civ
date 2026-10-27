@@ -20,8 +20,15 @@ internal sealed partial class CityNameplate : Node3D
     /// <summary>Where the plate stands before any wrap-around shift.</summary>
     public Vector3 Anchor { get; }
 
+    private readonly (CityPlate Plate, Color Owner, bool Selected, Texture2D? Icon) _content;
+
+    /// <summary>True when this plate already shows exactly this content, so it can be reused instead of rebuilt.</summary>
+    public bool Matches(CityPlate plate, Color owner, bool selected, Texture2D? icon, Vector3 anchor) =>
+        _content == (plate, owner, selected, icon) && Anchor == anchor;
+
     public CityNameplate(CityPlate plate, Color owner, bool selected, Texture2D? icon, Vector3 anchor)
     {
+        _content = (plate, owner, selected, icon);
         Anchor = anchor;
         Position = anchor;
         AddChild(new MeshInstance3D

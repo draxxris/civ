@@ -31,9 +31,16 @@ internal sealed partial class MapRenderer
         b.Ring(at, 0.62f, 0.05f, owner, 24);
         if (_session.City?.Id == city.Id) b.Ring(at, 0.8f, 0.07f, new Color(1f, 0.85f, 0.25f), 24);
         var info = _session.PlateOf(city);
-        var plate = new CityNameplate(info, owner, _session.City?.Id == city.Id, _icons.TextureOf(info.ProductionId),
-            WorldOf(city.Position, YTokens) + new Vector3(0, 0.3f, 0.95f));
-        AddChild(plate);
+        bool selected = _session.City?.Id == city.Id;
+        var icon = _icons.TextureOf(info.ProductionId);
+        var anchor = WorldOf(city.Position, YTokens) + new Vector3(0, 0.3f, 0.95f);
+        var plate = _stalePlates.Find(p => p.Matches(info, owner, selected, icon, anchor));
+        if (plate != null) _stalePlates.Remove(plate);
+        else
+        {
+            plate = new CityNameplate(info, owner, selected, icon, anchor);
+            AddChild(plate);
+        }
         _plates.Add(plate);
     }
 
