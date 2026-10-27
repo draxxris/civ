@@ -1,4 +1,19 @@
 #!/bin/sh
 # Warnings are informational and never block the commit.
 python3 "$(git rev-parse --show-toplevel)/tools/test-metrics/check.py"
+
+# Format markdown files included in the commit
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+git diff --cached --name-only --diff-filter=d | while IFS= read -r FILENAME; do
+    case "$FILENAME" in
+        *.md)
+            if [ -f "$REPO_ROOT/$FILENAME" ]; then
+                mdformat --number --wrap 88 "$REPO_ROOT/$FILENAME"
+                git add "$REPO_ROOT/$FILENAME"
+                echo "Formatted $FILENAME"
+            fi
+            ;;
+    esac
+done
+
 exit 0
