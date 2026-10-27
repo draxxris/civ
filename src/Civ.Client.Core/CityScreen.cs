@@ -253,13 +253,15 @@ public sealed partial class GameSession
     private IReadOnlyList<(Content.ContentDef, IReadOnlyList<string>)> CheckEligibility(City city, string kind)
     {
         var production = KindOf(kind);
-        var defs = production.Candidates(Sim.Content);
-        var result = new List<(Content.ContentDef, IReadOnlyList<string>)>();
-        foreach (var def in defs.OrderBy(d => d.Name, StringComparer.Ordinal))
+        var defs = production.Candidates(Sim.Content).OrderBy(d => d.Name, StringComparer.Ordinal).ToArray();
+        // One batch rather than one call per candidate: the mods share the whole-empire building, power and resource
+        // work that every candidate repeats (605 candidates cost 246 ms per id, 97 ms as a batch on a small world).
+        var eligibility = production.ValidateBatch(Sim, city.Id, defs.Select(d => d.Id).ToArray());
+        var result = new List<(Content.ContentDef, IReadOnlyList<string>)>(defs.Length);
+        for (int i = 0; i < defs.Length; i++)
         {
-            var eligibility = production.Validate(Sim, city.Id, def.Id);
-            var blockers = eligibility.Failures.Select(f => f.Explanation).Distinct().ToList();
-            if (production.IsVisible(eligibility)) result.Add((def, blockers));
+            var blockers = eligibility[i].Failures.Select(f => f.Explanation).Distinct().ToList();
+            if (production.IsVisible(eligibility[i])) result.Add((defs[i], blockers));
         }
         return result;
     }

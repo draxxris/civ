@@ -17,6 +17,10 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public long BaseCost(ContentDef definition) => cost((T)definition);
     public bool IsVisible(RequirementResult eligibility) => !eligibility.Failures.Any(f => HiddenBlockers.Contains(f.Explanation));
     public RequirementResult Validate(Simulation sim, int city, string contentId) => production.Validate(sim, city, Id, contentId);
+    /// <summary>One read-only memo scope for the whole batch: every candidate would otherwise repeat the whole-empire
+    /// building, power and resource state that <see cref="CityReadScope"/> memoises.</summary>
+    public IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
+        CityReadScope.Run(sim, _ => ids.Select(id => Validate(sim, city, id)).ToArray());
     public CityProductionResult Calculate(Simulation sim, int city, string contentId) => production.Calculate(sim, city, Id, contentId);
 }
 

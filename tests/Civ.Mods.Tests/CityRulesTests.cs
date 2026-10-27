@@ -69,6 +69,33 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(before, sim.ComputeHash());
     }
     [Fact]
+    public void Batched_eligibility_equals_per_id_validation_for_buildings_and_units()
+    {
+        var sim = Scenario(); var city = sim.State.Cities.Single();
+        // One blocker of each sort in the candidate sets: the firepit is already built, an early building needs a tech
+        // the player lacks, and a resource building has no connection. Leaves every other candidate with several.
+        city.Buildings.Add("cities:firepit");
+        var before = sim.ComputeHash();
+        var seen = new List<string>();
+        foreach (var kind in sim.Content.Services.Get<IProductionKind>().Where(k => k.Id is "cities:building" or "cities:unit"))
+        {
+            var ids = kind.Candidates(sim.Content).Select(d => d.Id).ToArray();
+            var batch = kind.ValidateBatch(sim, city.Id, ids);
+            Assert.Equal(ids.Length, batch.Count);
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var single = kind.Validate(sim, city.Id, ids[i]);
+                Assert.Equal(single.Success, batch[i].Success);
+                Assert.Equal(single.Failures.Select(f => f.Explanation), batch[i].Failures.Select(f => f.Explanation));
+                seen.AddRange(single.Failures.Select(f => f.Explanation));
+            }
+        }
+        Assert.Contains(seen, e => e.StartsWith("Building already exists", StringComparison.Ordinal));
+        Assert.Contains(seen, e => e.StartsWith("Required tech:", StringComparison.Ordinal));
+        Assert.Contains(seen, e => e.StartsWith("Requires connected resource:", StringComparison.Ordinal));
+        Assert.Equal(before, sim.ComputeHash());
+    }
+    [Fact]
     public void Third_ring_unlock_doubles_growth_threshold()
     {
         var sim = Scenario(); var city = sim.State.Cities.Single();

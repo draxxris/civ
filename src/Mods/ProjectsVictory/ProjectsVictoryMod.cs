@@ -55,6 +55,8 @@ internal sealed class ProjectKind(ProjectVictoryService service) : IProductionKi
     public long BaseCost(ContentDef definition) => ((ProjectDef)definition).Cost;
     public bool IsVisible(RequirementResult eligibility) => !eligibility.Failures.Any(f => Hidden.Contains(f.Explanation));
     public RequirementResult Validate(Simulation sim, int city, string id) => service.ValidateProject(sim, city, id);
+    public IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
+        ids.Select(id => Validate(sim, city, id)).ToArray();
     public CityProductionResult Calculate(Simulation sim, int city, string id) =>
         sim.Content.Services.Get<ICityProductionService>().Single().Calculate(sim, city, KindId, id);
 }

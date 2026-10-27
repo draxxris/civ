@@ -38,6 +38,11 @@ public interface IProductionKind : IHasId
     long BaseCost(ContentDef definition);
     bool IsVisible(RequirementResult eligibility);
     RequirementResult Validate(Simulation sim, int city, string id);
+    /// <summary>Validates a batch of ids in one read-only pass and returns the results in the order of <paramref name="ids"/>,
+    /// each equal to <see cref="Validate"/> for that id. Mods that repeat whole-empire work for every id (building, power
+    /// and resource state) override this to share it across the batch.</summary>
+    IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
+        ids.Select(id => Validate(sim, city, id)).ToArray();
     CityProductionResult Calculate(Simulation sim, int city, string id);
 }
 

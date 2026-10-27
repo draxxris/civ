@@ -156,6 +156,17 @@ internal static class Ui
     }
 
     /// <summary>
+    /// Writes a bar built by <see cref="Bar"/> in place: its range, its value and the text at its right end.
+    /// </summary>
+    public static void SetBar(ProgressBar bar, double value, double max, string text)
+    {
+        bar.MaxValue = Math.Max(1, max);
+        if (bar.Value != value) bar.Value = value;
+        if (bar.TooltipText != text) bar.TooltipText = text;
+        if (bar.GetChildCount() > 0 && bar.GetChild(0) is Label label) Set(label, text);
+    }
+
+    /// <summary>
     /// A progress bar with the text at its right end, as in the brass skin's reference. <paramref name="fill"/>
     /// tints the fill to give it a meaning (food, damage); null keeps the skin's slate blue.
     /// </summary>

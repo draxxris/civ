@@ -129,7 +129,7 @@ internal sealed partial class GameUi
     /// <summary>The unit id plus its actions' ids and labels: everything a change of would need different buttons.</summary>
     private static string OrderKey(UnitPanel unit)
     {
-        var key = new StringBuilder(unit.Id);
+        var key = new StringBuilder().Append(unit.Id);
         foreach (var action in unit.Actions) key.Append('\u001f').Append(action.Id).Append('\u001e').Append(action.Label);
         return key.ToString();
     }

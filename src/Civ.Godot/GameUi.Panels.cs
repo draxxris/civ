@@ -18,6 +18,17 @@ internal sealed partial class GameUi
     private string? _pediaCategory;
     private string _pediaQuery = "";
     private string? _pediaSelected;
+    private Modal _shownModalKind;
+    private LineEdit _pediaSearch = null!;
+    private HFlowContainer _pediaTabsRow = null!;
+    private HBoxContainer _pediaSplit = null!;
+    private VBoxContainer _pediaList = null!;
+    private VBoxContainer _pediaArticleBody = null!;
+    private ScrollContainer _pediaArticleScroll = null!;
+    private readonly List<(Button Button, string? Category)> _pediaTabs = new();
+    private string? _shownPediaTabsKey;
+    private string? _shownPediaListKey;
+    private string? _shownPediaArticleKey;
 
     private void InitPanels()
     {
@@ -35,6 +46,7 @@ internal sealed partial class GameUi
         if (_governmentOpen) ToggleGovernment();
         _modalKind = _modalKind == kind ? Modal.None : kind;
         _modalRevision++;
+        if (_modalKind == Modal.Pedia) ResetPediaKeys();
     }
 
     internal void OpenDebugPanel(string name)
@@ -63,6 +75,8 @@ internal sealed partial class GameUi
     {
         _session.SaveGame(ProjectSettings.GlobalizePath(QuickSave));
         _session.SetMessage("Game saved to " + ProjectSettings.GlobalizePath(QuickSave));
+        // The new file belongs in an open Load modal's list, which only re-reads the folder on this counter.
+        _modalRevision++;
     }
 
     public void QuickLoadGame()
@@ -87,11 +101,16 @@ internal sealed partial class GameUi
 
     // --- modal dispatch -----------------------------------------------------------------------------
 
-    /// <summary>Hides the modal without clearing it while it is closed; the caller decides when to rebuild it.</summary>
+    /// <summary>
+    /// Hides the modal without clearing it while it is closed; the caller decides when to rebuild it. The pedia is
+    /// built once per open and then refreshed in place, so clicking a row no longer re-creates its whole body.
+    /// </summary>
     private void BuildModal()
     {
         _modal.Visible = _modalKind != Modal.None && _session.City == null;
         if (!_modal.Visible) return;
+        if (_modalKind == Modal.Pedia && _shownModalKind == Modal.Pedia) { RefreshPedia(); return; }
+        _shownModalKind = _modalKind;
         Ui.Clear(_modal);
         var box = Ui.VBox(6);
         var head = Ui.HBox();
@@ -284,36 +303,98 @@ internal sealed partial class GameUi
 
     private void BuildPedia(VBoxContainer box)
     {
-        var pedia = _session.Pedia;
-        var search = new LineEdit { Text = _pediaQuery, PlaceholderText = "Search (Enter)", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        search.TextSubmitted += text => { _pediaQuery = text; _modalRevision++; };
-        box.AddChild(search);
-        var tabs = new HFlowContainer();
-        tabs.AddChild(Ui.Button("All", () => { _pediaCategory = null; _modalRevision++; }, null, _pediaCategory != null, 12));
-        foreach (var category in pedia.Categories)
-        {
-            var c = category;
-            tabs.AddChild(Ui.Button(c, () => { _pediaCategory = c; _modalRevision++; }, null, _pediaCategory != c, 12));
-        }
-        box.AddChild(tabs);
-        var split = Ui.HBox(8);
-        var list = Ui.VBox(1);
-        foreach (var entry in pedia.Search(_pediaCategory, _pediaQuery).Take(300))
-        {
-            var id = entry.Id;
-            list.AddChild(Ui.Button(entry.Title, () => { _pediaSelected = id; _modalRevision++; }, entry.Category, true, 12));
-        }
-        var left = Ui.Scroll(list, 320);
+        _pediaSearch = new LineEdit { Text = _pediaQuery, PlaceholderText = "Search (Enter)", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        _pediaSearch.TextSubmitted += text => { _pediaQuery = text; _modalRevision++; };
+        box.AddChild(_pediaSearch);
+        _pediaTabsRow = new HFlowContainer();
+        box.AddChild(_pediaTabsRow);
+        _pediaList = Ui.VBox(1);
+        var left = Ui.Scroll(_pediaList, 320);
         left.CustomMinimumSize = new Vector2(250, 320);
         left.SizeFlagsHorizontal = Control.SizeFlags.Fill;
-        split.AddChild(left);
-        split.AddChild(PediaArticle(pedia.Find(_pediaSelected ?? "")));
-        box.AddChild(split);
+        _pediaSplit = Ui.HBox(8);
+        _pediaSplit.AddChild(left);
+        _pediaSplit.AddChild(PediaArticle());
+        box.AddChild(_pediaSplit);
+        ResetPediaKeys();
+        RefreshPedia();
     }
 
-    private Control PediaArticle(PediaEntry? e)
+    private void ResetPediaKeys()
     {
-        var body = Ui.VBox(4);
+        _shownPediaTabsKey = null;
+        _shownPediaListKey = null;
+        _shownPediaArticleKey = null;
+    }
+
+    /// <summary>
+    /// Refreshes the pedia in place: the tabs only when the category list changed (otherwise only their disabled
+    /// state), the list only when the category, the query or the ordered result ids changed, and the article only when
+    /// the selection changed. A row click therefore keeps every list button, its canvas item and its plate pattern.
+    /// The keys are only worked out here, on the modal-revision path, never on the per-frame path.
+    /// </summary>
+    private void RefreshPedia()
+    {
+        var pedia = _session.Pedia;
+        // The field holds what the user is typing; write Text only when it cannot clobber the caret.
+        if (!_pediaSearch.HasFocus() && _pediaSearch.Text != _pediaQuery) _pediaSearch.Text = _pediaQuery;
+
+        string tabsKey = string.Join("\n", pedia.Categories);
+        if (tabsKey != _shownPediaTabsKey)
+        {
+            _shownPediaTabsKey = tabsKey;
+            _pediaTabs.Clear();
+            Ui.Clear(_pediaTabsRow);
+            AddPediaTab("All", null);
+            foreach (var category in pedia.Categories) AddPediaTab(category, category);
+        }
+        // A tab shows "selected" by being disabled, exactly as the old build passed `enabled`.
+        foreach (var (button, category) in _pediaTabs) button.Disabled = _pediaCategory == category;
+
+        var entries = pedia.Search(_pediaCategory, _pediaQuery).Take(300).ToList();
+        string listKey = (_pediaCategory ?? "") + "\n" + _pediaQuery + "\n" + string.Join("\n", entries.Select(e => e.Id));
+        if (listKey != _shownPediaListKey)
+        {
+            _shownPediaListKey = listKey;
+            Ui.Clear(_pediaList);
+            foreach (var entry in entries)
+            {
+                var id = entry.Id;
+                _pediaList.AddChild(Ui.Button(entry.Title, () => { _pediaSelected = id; _modalRevision++; }, entry.Category, true, 12));
+            }
+        }
+
+        // Everything the article renders comes from the static catalog, so the selection is its whole key.
+        if (_pediaSelected != _shownPediaArticleKey)
+        {
+            _shownPediaArticleKey = _pediaSelected;
+            Ui.Clear(_pediaArticleBody);
+            FillPediaArticle(pedia.Find(_pediaSelected ?? ""));
+            // The article scroll is kept alive now, so a new entry has to start at the top as a new scroll did.
+            _pediaArticleScroll.ScrollVertical = 0;
+        }
+    }
+
+    private void AddPediaTab(string text, string? category)
+    {
+        var button = Ui.Button(text, () => { _pediaCategory = category; _modalRevision++; }, null, _pediaCategory != category, 12);
+        _pediaTabs.Add((button, category));
+        _pediaTabsRow.AddChild(button);
+    }
+
+    /// <summary>Builds the article's one scroll container and body; a selection change only refills the body.</summary>
+    private Control PediaArticle()
+    {
+        _pediaArticleBody = Ui.VBox(4);
+        _pediaArticleScroll = Ui.Scroll(_pediaArticleBody, 320);
+        _pediaArticleScroll.CustomMinimumSize = new Vector2(430, 320);
+        return _pediaArticleScroll;
+    }
+
+    /// <summary>Fills the article body with the selected entry, or the placeholder when nothing is selected.</summary>
+    private void FillPediaArticle(PediaEntry? e)
+    {
+        var body = _pediaArticleBody;
         if (e == null) body.AddChild(Ui.Text("Pick an entry.", 14, Ui.Dim));
         else
         {
@@ -326,9 +407,6 @@ internal sealed partial class GameUi
             foreach (var text in new[] { e.Help, e.Strategy, e.Pedia }.Where(t => t.Length > 0))
                 body.AddChild(Ui.Text(StripMarkup(text), 13));
         }
-        var scroll = Ui.Scroll(body, 320);
-        scroll.CustomMinimumSize = new Vector2(430, 320);
-        return scroll;
     }
 
     // --- load ----------------------------------------------------------------------------------------------------

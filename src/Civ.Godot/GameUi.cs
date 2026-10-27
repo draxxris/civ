@@ -4,7 +4,7 @@ using Godot;
 namespace Civ.Client;
 
 /// <summary>Top bar, unit and city lists, end-turn button, research dialog and the city screen. The top bar and the
-/// left panel are built once and updated in place; the rest is rebuilt only when the session changes.</summary>
+/// left panel are built once and updated in place; every other panel is rebuilt only when an input it renders moves.</summary>
 internal sealed partial class GameUi : CanvasLayer
 {
     internal const float TopBarHeight = 82f;
@@ -41,10 +41,11 @@ internal sealed partial class GameUi : CanvasLayer
     private readonly PanelContainer _researchDialog = Ui.Panel(margin: 12);
     private readonly CityUi _city;
     private int _shownRevision = -1;
+    private int _shownWorldRevision = -1;
     private bool _shownCityOpen;
+    private int? _shownCityId;
     private bool _researchOpen;
     private bool _shownResearchOpen;
-    private int _shownResearchRevision = -1;
     private int _shownCityState;
     private MapOverlays? _shownOverlays;
     private (Vector2 Mouse, Vector2 Size, Vector2 View)? _hoverTipInputs;
@@ -79,6 +80,7 @@ internal sealed partial class GameUi : CanvasLayer
         InitPanels();
         InitLeft();
         InitTop();
+        InitResearchDialog();
         foreach (var node in new Node[] { _top, _left, _feed, _message, _endTurn, _researchDialog, _city, _governmentDialog, _modal, _hoverTip }) AddChild(node);
         AddChild(MapOverlayControls());
     }
@@ -87,12 +89,17 @@ internal sealed partial class GameUi : CanvasLayer
     {
         RefreshOverlayChecks();
         if (!NeedsRefresh()) return;
-        bool cityOpen = _session.City != null;
+        var city = _session.City;
+        bool cityOpen = city != null;
         bool revision = _shownRevision != _session.Revision;
+        bool worldRevision = _shownWorldRevision != _session.WorldRevision;
         bool cityOpenChanged = _shownCityOpen != cityOpen;
+        bool cityIdentityChanged = _shownCityId != city?.Id;
         bool cityStateChanged = _shownCityState != _city.State;
         _shownRevision = _session.Revision;
+        _shownWorldRevision = _session.WorldRevision;
         _shownCityOpen = cityOpen;
+        _shownCityId = city?.Id;
         _shownCityState = _city.State;
         _left.Visible = !cityOpen;
         _endTurn.Visible = !cityOpen;
@@ -106,7 +113,7 @@ internal sealed partial class GameUi : CanvasLayer
         double leftMs = 0, cityMs = 0;
         if (cityOpen)
         {
-            if (cityOpenChanged || revision || cityStateChanged) _city.Build(_session.City!);
+            if (cityOpenChanged || cityIdentityChanged || worldRevision || cityStateChanged) _city.Build(city!);
             cityMs = clock.Elapsed.TotalMilliseconds - topMs;
         }
         else if (revision)
@@ -114,15 +121,24 @@ internal sealed partial class GameUi : CanvasLayer
             RefreshLeft();
             leftMs = clock.Elapsed.TotalMilliseconds - topMs;
         }
+        // The espionage modal renders the selected spy, so it keeps following the selection; the pedia and load modals
+        // read only the static pedia and the saves folder, so no session revision rebuilds them. Everything else
+        // renders simulation state, which only WorldRevision moves.
+        bool modalSessionChanged = _modalKind switch
+        {
+            Modal.Pedia or Modal.Load => false,
+            Modal.Espionage => revision,
+            _ => worldRevision,
+        };
         double dialogStart = clock.Elapsed.TotalMilliseconds;
-        if (_shownResearchOpen != _researchOpen || (revision && _researchOpen)) BuildResearchDialog();
-        if (_shownGovernmentRevision != _governmentRevision || (revision && _governmentOpen)) BuildGovernmentDialog();
-        if (_shownModalRevision != _modalRevision || ((revision || cityOpenChanged) && _modalKind != Modal.None)) BuildModal();
+        if (_shownResearchOpen != _researchOpen || ((worldRevision || cityOpenChanged) && _researchOpen)) BuildResearchDialog();
+        if (_shownGovernmentRevision != _governmentRevision || (worldRevision && _governmentOpen)) BuildGovernmentDialog();
+        if (_shownModalRevision != _modalRevision || ((modalSessionChanged || cityOpenChanged) && _modalKind != Modal.None)) BuildModal();
         _shownResearchOpen = _researchOpen;
         _shownGovernmentRevision = _governmentRevision;
         _shownModalRevision = _modalRevision;
         double dialogsMs = clock.Elapsed.TotalMilliseconds - dialogStart;
-        if (revision) BuildFeed();
+        if (worldRevision || cityOpenChanged) BuildFeed();
         double feedMs = clock.Elapsed.TotalMilliseconds - dialogStart - dialogsMs;
         _message.Text = _session.Message;
         int idle = _session.UnitsNeedingOrders;
@@ -132,10 +148,15 @@ internal sealed partial class GameUi : CanvasLayer
                 + $"dialogs {dialogsMs:F2} ms, feed {feedMs:F2} ms (city open: {cityOpen})");
     }
 
-    private bool NeedsRefresh() => _shownRevision != _session.Revision || _shownResearchOpen != _researchOpen
-        || _shownCityOpen != (_session.City != null)
-        || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
-        || _shownModalRevision != _modalRevision;
+    /// <summary>Allocation-free: it runs on every frame before the early-out, so it only compares stored keys.</summary>
+    private bool NeedsRefresh()
+    {
+        var city = _session.City;
+        return _shownRevision != _session.Revision || _shownWorldRevision != _session.WorldRevision
+            || _shownResearchOpen != _researchOpen || _shownCityOpen != (city != null) || _shownCityId != city?.Id
+            || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
+            || _shownModalRevision != _modalRevision;
+    }
 
     private void RefreshOverlayChecks()
     {
@@ -312,31 +333,26 @@ internal sealed partial class GameUi : CanvasLayer
         return wasOpen;
     }
 
-    /// <summary>Hides the dialog without clearing it while it is closed, so only a new revision rebuilds it.</summary>
+    /// <summary>
+    /// Shows the dialog and refreshes it in place: the title, the free-credit line and the browse button are rewritten,
+    /// and the choice widgets rebuild only when their own key moved (see <see cref="RefreshResearchChoices"/>).
+    /// </summary>
     private void BuildResearchDialog()
     {
         if (!_researchOpen || _session.City != null) { _researchDialog.Visible = false; return; }
         _researchDialog.Visible = true;
-        if (_shownResearchRevision == _session.Revision) { CentreResearchDialog(); return; }
-        _shownResearchRevision = _session.Revision;
-        Ui.Clear(_researchDialog);
-        var box = Ui.VBox(6);
-        var head = Ui.HBox();
         var selection = _session.ResearchSelection();
-        head.AddChild(Ui.Heading(selection?.Title ?? "Choose research"));
-        head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
-        head.AddChild(Ui.Button("Close", () => _researchOpen = false));
-        box.AddChild(head);
-        if (_session.DescribeTechTree() is not null)
-            box.AddChild(Ui.Button("Browse tech tree", () => OpenModal(Modal.TechTree)));
         var choices = _session.ResearchChoices();
         bool cards = selection?.Layout == Civ.Game.ResearchChoiceLayout.Cards;
-        if (cards) BuildResearchCards(box, choices);
-        else BuildResearchList(box, choices);
-        if (choices.Count == 0) box.AddChild(Ui.Text("No eligible technologies are available.", 14, Ui.Dim));
-        if (_session.FreeResearchCredits > 0) box.AddChild(Ui.Text($"Free technologies: {_session.FreeResearchCredits}", 14, Ui.Accent));
+        Ui.Set(_researchTitle, selection?.Title ?? "Choose research");
+        bool browsable = _session.DescribeTechTree() is not null;
+        if (_researchBrowse.Visible != browsable) _researchBrowse.Visible = browsable;
+        RefreshResearchChoices(choices, cards);
+        _researchEmpty.Visible = choices.Count == 0;
+        int free = _session.FreeResearchCredits;
+        _researchFree.Visible = free > 0;
+        if (free > 0) Ui.Set(_researchFree, $"Free technologies: {free}");
         _researchDialog.CustomMinimumSize = new Vector2(cards ? 940 : 620, 0);
-        _researchDialog.AddChild(box);
         CentreResearchDialog();
     }
 

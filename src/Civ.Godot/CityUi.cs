@@ -1,15 +1,18 @@
+using System.Text;
 using Civ.Game;
 using Godot;
 
 namespace Civ.Client;
 
-/// <summary>City screen: ledgers on the left, production and citizens on the right, the city's tiles on the map between.</summary>
+/// <summary>City screen: ledgers on the left, production and citizens on the right, the city's tiles on the map between.
+/// Both panels are built once and refreshed in place; each section rebuilds only when the key it renders moved.</summary>
 internal sealed partial class CityUi : Control
 {
 
 
     private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = GameUi.TopBarHeight;
     private const int MaxBlockedShown = 40;
+    private static readonly string[] StatNames = ["Production", "Commerce", "Culture", "Espionage", "Maintenance", "Great people"];
 
     private readonly GameSession _session;
     private readonly IconCache _icons;
@@ -17,6 +20,20 @@ internal sealed partial class CityUi : Control
     private readonly PanelContainer _right = Ui.Panel();
     private int _tab;
     private bool _showBlocked;
+
+    // Left panel skeleton. Every widget here and in InitRightPanel is created once, so the panels keep their canvas
+    // item RIDs (and with them their scrape pattern) and their scroll position across a refresh.
+    private readonly Label _leftTitle = Ui.Text("", 21, Colors.White, wrap: false);
+    private readonly VBoxContainer _statusBox = Ui.VBox(6);
+    private readonly Label _foodText = Ui.Text("", 14);
+    private readonly ProgressBar _foodBar = Ui.Bar(0, 1, Ui.Good);
+    private readonly Label[] _statValues = new Label[StatNames.Length];
+    private readonly Label _happyText = Ui.Text("", 14);
+    private readonly Label _healthText = Ui.Text("", 14);
+    private readonly VBoxContainer[] _ledgers = new VBoxContainer[5];
+    private readonly string?[] _shownLedgerKeys = new string?[5];
+    private string? _shownStatusKey;
+    private Color? _foodFill;
 
     /// <summary>Changes when a local choice (tab, filter) changes, so the owner knows to rebuild.</summary>
     public int State => _tab * 2 + (_showBlocked ? 1 : 0);
@@ -30,99 +47,176 @@ internal sealed partial class CityUi : Control
         _left.OffsetTop = TopBarHeight + 4; _left.OffsetRight = LeftWidth; _left.OffsetBottom = -4;
         _right.SetAnchorsPreset(LayoutPreset.RightWide);
         _right.OffsetTop = TopBarHeight + 4; _right.OffsetLeft = -RightWidth; _right.OffsetBottom = -4;
+        InitLeftPanel();
+        InitRightPanel();
         AddChild(_left);
         AddChild(_right);
     }
 
+    /// <summary>Refreshes both panels in place for the selected city.</summary>
     public void Build(City city)
     {
         var clock = System.Diagnostics.Stopwatch.StartNew();
         var screen = _session.DescribeCity(city);
         if (screen == null) return;
         long describe = clock.ElapsedMilliseconds;
-        BuildLeft(city, screen);
-        BuildRight(city, screen);
+        RefreshLeft(screen);
+        RefreshRight(city, screen);
         if (MapRenderer.LogTimings) GD.Print($"city screen: describe {describe} ms, controls {clock.ElapsedMilliseconds - describe} ms");
+    }
+
+    /// <summary>
+    /// Runs a persistent widget's callback against the city that has this id in the current simulation. The panels keep
+    /// their widgets across refreshes and a game load replaces the whole simulation, so a callback must never act on
+    /// the City object it was built with; it acts on the live one, and does nothing when that city is gone.
+    /// </summary>
+    private void WithCity(int id, Action<City> action)
+    {
+        if (_session.Sim.State.FindCity(id) is { } city) action(city);
     }
 
     // --- left: numbers and ledgers ----------------------------------------------------------------
 
-    private void BuildLeft(City city, CityScreen c)
+    /// <summary>Builds the left panel's one scroll container and its fixed widgets once.</summary>
+    private void InitLeftPanel()
     {
-        Ui.Clear(_left);
-        var box = Ui.VBox(6);
         var head = Ui.HBox();
-        head.AddChild(Ui.Text($"{c.Name}  (size {c.Population})", 21, Colors.White, wrap: false));
+        head.AddChild(_leftTitle);
         head.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", _session.ClearSelection, "Back to the map (Esc)"));
-        box.AddChild(head);
-        if (c.OccupationTurns > 0) box.AddChild(Ui.Text($"OCCUPATION DISORDER ({c.OccupationTurns} turns remaining): nothing is produced.", 15, Ui.Bad));
-        else if (c.Disorder) box.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
-        if (c.IsPuppet)
+        var stats = new GridContainer { Columns = 2 };
+        for (int i = 0; i < StatNames.Length; i++)
         {
-            box.AddChild(Ui.Text("PUPPET CITY: autonomous governance (-50% city-count maintenance & unhappiness).", 14, Ui.Accent));
-            box.AddChild(Ui.Button("Annex City", () => _session.AnnexCity(city)));
+            stats.AddChild(Ui.Text(StatNames[i], 14, Ui.Dim));
+            _statValues[i] = Ui.Text("", 14);
+            stats.AddChild(_statValues[i]);
         }
-        if (c.PendingConquestChoice) AddConquestChoices(box, c);
-        AddReligions(box, c);
-        AddCorporations(box, c);
-        AddStability(box, c);
-        AddWonderScripts(box, c);
-        box.AddChild(FoodBox(c));
-        box.AddChild(Stats(c));
-        box.AddChild(Wellbeing(c));
-        AddLedger(box, "Food", c.FoodLedger);
-        AddLedger(box, "Production", c.ProductionLedger);
-        AddLedger(box, "Commerce", c.CommerceLedger);
-        AddLedger(box, "Happiness", c.HappinessLedger);
-        AddLedger(box, "Health", c.HealthLedger);
+        var food = Ui.VBox(2);
+        food.AddChild(_foodText);
+        food.AddChild(_foodBar);
+        var wellbeing = Ui.VBox(2);
+        wellbeing.AddChild(_happyText);
+        wellbeing.AddChild(_healthText);
+        var box = Ui.VBox(6);
+        box.AddChild(head);
+        _statusBox.Visible = false;
+        box.AddChild(_statusBox);
+        box.AddChild(food);
+        box.AddChild(stats);
+        box.AddChild(wellbeing);
+        for (int i = 0; i < _ledgers.Length; i++) { _ledgers[i] = Ui.VBox(6); _ledgers[i].Visible = false; box.AddChild(_ledgers[i]); }
         _left.AddChild(Ui.Scroll(box));
     }
 
-    private void AddConquestChoices(VBoxContainer box, CityScreen city)
+    /// <summary>
+    /// Updates the left panel in place. The title, food, stats and wellbeing are rewritten, and only the status block
+    /// and the five ledgers rebuild, each when the text it renders changed. The keys are worked out here, which only
+    /// runs on a world revision or a local tab click, never on the 60 Hz frame path.
+    /// </summary>
+    private void RefreshLeft(CityScreen c)
     {
-        var conquest = _session.DescribePendingConquests().FirstOrDefault(item => item.CityId == city.Id);
+        Ui.Set(_leftTitle, $"{c.Name}  (size {c.Population})");
+        RefreshStatus(c);
+        FillFood(c);
+        FillStats(c);
+        FillWellbeing(c);
+        RefreshLedger(0, "Food", c.FoodLedger);
+        RefreshLedger(1, "Production", c.ProductionLedger);
+        RefreshLedger(2, "Commerce", c.CommerceLedger);
+        RefreshLedger(3, "Happiness", c.HappinessLedger);
+        RefreshLedger(4, "Health", c.HealthLedger);
+    }
+
+    /// <summary>Rebuilds the status block only when something it renders moved, then adds it in its original order.</summary>
+    private void RefreshStatus(CityScreen c)
+    {
+        // The city id leads the key because some of these widgets act on the city they were built for.
+        var key = new StringBuilder().Append(c.Id);
+        key.Append('|').Append(c.OccupationTurns).Append('|').Append(c.Disorder).Append('|').Append(c.IsPuppet).Append('|').Append(c.PendingConquestChoice);
+        PendingCityConquest? conquest = null;
+        if (c.PendingConquestChoice)
+        {
+            conquest = _session.DescribePendingConquests().FirstOrDefault(item => item.CityId == c.Id);
+            key.Append('|').Append(conquest?.CanRaze);
+        }
+        foreach (var r in c.Religions) key.Append('|').Append(r.Id).Append('~').Append(r.Name).Append(r.Holy).Append(r.State);
+        foreach (var corp in c.Corporations) key.Append('|').Append(corp.Id).Append('~').Append(corp.Name).Append(corp.Headquarters).Append(corp.Active);
+        if (c.Stability is { } s)
+        {
+            key.Append('|').Append(s.Status).Append(s.Index).Append(s.ChangePerTurn).Append(s.CooldownTurns).Append(s.CanSuppress);
+            foreach (var row in s.Ledger) key.Append('~').Append(row.Text);
+        }
+        foreach (var w in c.WonderScripts) key.Append('|').Append(w.Name).Append(w.Active).Append(w.TurnsToSpawn).Append(w.SpawnUnit);
+        string identity = key.ToString();
+        if (identity == _shownStatusKey) return;
+        _shownStatusKey = identity;
+        Ui.Clear(_statusBox);
+        if (c.OccupationTurns > 0) _statusBox.AddChild(Ui.Text($"OCCUPATION DISORDER ({c.OccupationTurns} turns remaining): nothing is produced.", 15, Ui.Bad));
+        else if (c.Disorder) _statusBox.AddChild(Ui.Text("CIVIL DISORDER: nothing is produced.", 15, Ui.Bad));
+        if (c.IsPuppet)
+        {
+            _statusBox.AddChild(Ui.Text("PUPPET CITY: autonomous governance (-50% city-count maintenance & unhappiness).", 14, Ui.Accent));
+            _statusBox.AddChild(Ui.Button("Annex City", () => WithCity(c.Id, city => _session.AnnexCity(city))));
+        }
+        if (c.PendingConquestChoice) AddConquestChoices(_statusBox, c, conquest);
+        AddReligions(_statusBox, c);
+        AddCorporations(_statusBox, c);
+        AddStability(_statusBox, c);
+        AddWonderScripts(_statusBox, c);
+        _statusBox.Visible = _statusBox.GetChildCount() > 0;
+    }
+
+    private void AddConquestChoices(VBoxContainer box, CityScreen screen, PendingCityConquest? conquest)
+    {
         var actions = Ui.HBox(6);
-        actions.AddChild(Ui.Button("Puppet (Keep)", () => _session.ResolveCityConquest(city.Id, CityConquestOption.Puppet)));
-        actions.AddChild(Ui.Button("Raze City", () => _session.ResolveCityConquest(city.Id, CityConquestOption.Raze), enabled: conquest?.CanRaze == true));
+        actions.AddChild(Ui.Button("Puppet (Keep)", () => _session.ResolveCityConquest(screen.Id, CityConquestOption.Puppet)));
+        actions.AddChild(Ui.Button("Raze City", () => _session.ResolveCityConquest(screen.Id, CityConquestOption.Raze), enabled: conquest?.CanRaze == true));
         box.AddChild(actions);
     }
 
-    private static Control FoodBox(CityScreen c)
+    private void FillFood(CityScreen c)
     {
-        var box = Ui.VBox(2);
         string grow = c.FoodSurplus > 0 ? (c.TurnsToGrow is int t ? $"grows in {t} turns" : "") : c.FoodSurplus < 0 ? "starving" : "no growth";
-        box.AddChild(Ui.Text($"Food {c.FoodStored}/{c.FoodThreshold}   ({Labels.Signed(c.FoodSurplus)} per turn, {grow})", 14));
-        box.AddChild(Ui.Bar(c.FoodStored, c.FoodThreshold, c.FoodSurplus < 0 ? Ui.Bad : Ui.Good, $"{c.FoodStored}/{c.FoodThreshold}"));
-        return box;
+        Ui.Set(_foodText, $"Food {c.FoodStored}/{c.FoodThreshold}   ({Labels.Signed(c.FoodSurplus)} per turn, {grow})");
+        Ui.SetBar(_foodBar, c.FoodStored, c.FoodThreshold, $"{c.FoodStored}/{c.FoodThreshold}");
+        var tint = c.FoodSurplus < 0 ? Ui.Bad : Ui.Good;
+        if (_foodFill != tint)
+        {
+            _foodBar.AddThemeStyleboxOverride("fill", BrassSkin.BarFill(tint));
+            _foodFill = tint;
+        }
     }
 
-    private static Control Stats(CityScreen c)
+    private void FillStats(CityScreen c)
     {
-        var grid = new GridContainer { Columns = 2 };
-        void Row(string name, string value) { grid.AddChild(Ui.Text(name, 14, Ui.Dim)); grid.AddChild(Ui.Text(value, 14)); }
-        Row("Production", $"{c.Production} per turn");
-        Row("Commerce", $"{c.CommercePerTurn.Gold} gold, {c.CommercePerTurn.Research} research");
-        Row("Culture", $"{c.CommercePerTurn.Culture} per turn" + (c.CultureLevel is { } l ? $"  ({l})" : ""));
-        Row("Espionage", $"{c.CommercePerTurn.Espionage} per turn");
-        Row("Maintenance", $"{c.Maintenance} gold");
-        Row("Great people", c.GreatPeopleThreshold > 0 ? $"{c.GreatPeopleProgress}/{c.GreatPeopleThreshold}  ·  +{c.GreatPeopleRate}/turn" : "—");
-        return grid;
+        Ui.Set(_statValues[0], $"{c.Production} per turn");
+        Ui.Set(_statValues[1], $"{c.CommercePerTurn.Gold} gold, {c.CommercePerTurn.Research} research");
+        Ui.Set(_statValues[2], $"{c.CommercePerTurn.Culture} per turn" + (c.CultureLevel is { } l ? $"  ({l})" : ""));
+        Ui.Set(_statValues[3], $"{c.CommercePerTurn.Espionage} per turn");
+        Ui.Set(_statValues[4], $"{c.Maintenance} gold");
+        Ui.Set(_statValues[5], c.GreatPeopleThreshold > 0 ? $"{c.GreatPeopleProgress}/{c.GreatPeopleThreshold}  ·  +{c.GreatPeopleRate}/turn" : "—");
     }
 
-    private static Control Wellbeing(CityScreen c)
+    private void FillWellbeing(CityScreen c)
     {
-        var box = Ui.VBox(2);
-        box.AddChild(Ui.Text($"Happy {c.Happy}  ·  Unhappy {c.Unhappy}" + (c.Angry > 0 ? $"  ·  Angry {c.Angry}" : ""), 14, c.Unhappy > c.Happy ? Ui.Bad : Ui.Good));
-        box.AddChild(Ui.Text($"Healthy {c.Healthy}  ·  Unhealthy {c.Unhealthy}", 14, c.Unhealthy > c.Healthy ? Ui.Bad : Ui.Good));
-        return box;
+        Ui.Set(_happyText, $"Happy {c.Happy}  ·  Unhappy {c.Unhappy}" + (c.Angry > 0 ? $"  ·  Angry {c.Angry}" : ""));
+        Ui.Tint(_happyText, c.Unhappy > c.Happy ? Ui.Bad : Ui.Good);
+        Ui.Set(_healthText, $"Healthy {c.Healthy}  ·  Unhealthy {c.Unhealthy}");
+        Ui.Tint(_healthText, c.Unhealthy > c.Healthy ? Ui.Bad : Ui.Good);
     }
 
-    private static void AddLedger(VBoxContainer box, string title, IReadOnlyList<LedgerRow> rows)
+    private void RefreshLedger(int slot, string title, IReadOnlyList<LedgerRow> rows)
     {
+        var key = new StringBuilder(title);
+        foreach (var row in rows) key.Append('\n').Append(row.Amount < 0 ? '-' : '+').Append(row.Text);
+        string identity = key.ToString();
+        if (identity == _shownLedgerKeys[slot]) return;
+        _shownLedgerKeys[slot] = identity;
+        Ui.Clear(_ledgers[slot]);
+        _ledgers[slot].Visible = rows.Count > 0;
         if (rows.Count == 0) return;
-        box.AddChild(Ui.Text(title, 15, Ui.Accent));
-        foreach (var row in rows) box.AddChild(Ui.Text(row.Text, 13, row.Amount < 0 ? Ui.Bad : Ui.Dim));
+        _ledgers[slot].AddChild(Ui.Text(title, 15, Ui.Accent));
+        foreach (var row in rows) _ledgers[slot].AddChild(Ui.Text(row.Text, 13, row.Amount < 0 ? Ui.Bad : Ui.Dim));
     }
 
     private void AddReligions(VBoxContainer box, CityScreen c)

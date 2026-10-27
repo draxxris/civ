@@ -5,9 +5,9 @@
 Every click on the map bumps `GameSession.Revision`, and `GameUi.Refresh` treats any
 revision change as "destroy and rebuild the whole HUD":
 
-- `GameView.Click` -> `GameSession.LeftClick` -> `SelectAt`, which does
-  `Revision++` unconditionally (`src/Civ.Client.Core/GameSession.cs:92-104`). The same
-  happens in `SelectUnit` (`:106`), `SelectCity` (`:112`), `ClearSelection` (`:118`),
+- `GameView.Click` -> `GameSession.LeftClick` -> `SelectAt`, which does `Revision++`
+  unconditionally (`src/Civ.Client.Core/GameSession.cs:92-104`). The same happens in
+  `SelectUnit` (`:106`), `SelectCity` (`:112`), `ClearSelection` (`:118`),
   `SelectNextUnit` (`:121`) and `SetMessage` (`:45`).
 - `GameUi.NeedsRefresh` compares that counter (`src/Civ.Godot/GameUi.cs:86`), and
   `GameUi.Refresh` then calls `BuildTop`, `BuildLeft` or `_city.Build`,
@@ -18,14 +18,14 @@ revision change as "destroy and rebuild the whole HUD":
 Measured on this tree with a throwaway probe (Debug build, small world, headless, warm
 skin cache, `--trace-performance`), one rebuild costs:
 
-| Work | Cost |
-| :--- | :--- |
-| Whole HUD rebuild | 13-21 ms warm (99 ms cold, first paint) |
-| of which top bar | 5-7 ms |
-| of which left panel | 8-14 ms |
-| dialogs and feed | ~0.02 ms |
-| one `Ui.Button` created | ~45 us (200 in 9.03 ms) |
-| one `Ui.Label` created | ~15 us (200 in 2.95 ms) |
+| Work                    | Cost                                    |
+| :---------------------- | :-------------------------------------- |
+| Whole HUD rebuild       | 13-21 ms warm (99 ms cold, first paint) |
+| of which top bar        | 5-7 ms                                  |
+| of which left panel     | 8-14 ms                                 |
+| dialogs and feed        | ~0.02 ms                                |
+| one `Ui.Button` created | ~45 us (200 in 9.03 ms)                 |
+| one `Ui.Label` created  | ~15 us (200 in 2.95 ms)                 |
 
 The same click also re-runs `MapRenderer.BuildDynamic` (about 1.7-2 ms on a small map),
 which is out of scope here.
@@ -49,8 +49,8 @@ construction, stylebox lookup, text sizing and canvas items, not for painting.
 - The city screen (`CityUi.Build`) keeps rebuilding on a revision change while it is
   open, because its content is a whole screen of numbers that change together.
 - The paint phase being derived from a canvas item RID stays as it is. Persistent
-  widgets keep their RID, so the symptom disappears for the panels converted here.
-  Do not change the seed formula.
+  widgets keep their RID, so the symptom disappears for the panels converted here. Do
+  not change the seed formula.
 - New features from the open list in `docs/ROADMAP.md` (for example a stacked-unit list
   in the left pane) are not implemented. The left panel refactor must leave the panel
   easy to extend, nothing more.
@@ -80,14 +80,15 @@ Progress (verified state, with the commits and the agent sessions):
   `01a179ec-b02a-7306-826b-ac2c3c55ccb8`; ask-antigravity conversation
   `0c815c92-17f1-4cf9-bf47-17fe9fe6ec37` (report at `/tmp/r-b-agy-report.md`).
 - Phase 5: `d39ed44`, ask-antigravity conversation
-  `be5ba714-5816-4d88-8895-aa9756e633e2`. OPTIMIZE.md gained Phase 7 (timeline,
-  section, summary table) and lost the stale startup markers; ROADMAP items 2 and 7
-  annotated in place.
+  `be5ba714-5816-4d88-8895-aa9756e633e2`. OPTIMIZE.md gained Phase 7 (timeline, section,
+  summary table) and lost the stale startup markers; ROADMAP items 2 and 7 annotated in
+  place.
+
 ## Parallelism
 
 None. Phases 1-4 all edit `GameUi.cs` or the session counters that gate it, so they run
-serially in the current checkout. Within a checkpoint, the two reviewers run in
-parallel against the same frozen commit.
+serially in the current checkout. Within a checkpoint, the two reviewers run in parallel
+against the same frozen commit.
 
 ## Commit Boundaries
 
@@ -105,11 +106,12 @@ Two checkpoints, each a dual adversarial review: a `pawn:muse` sub-agent and an
   the session correct and complete, does any caller depend on an unconditional bump, are
   the guards covered by the tests added in Phase 1, and does the per-panel gating in
   `GameUi.Refresh` rebuild everything it must and nothing it need not. Both reviewers
-  also apply the `test-audit` skill to `tests/Civ.Mods.Tests/SessionInvalidationTests.cs`:
-  the authoring gate's four questions and the junk-pattern checklist, with a per-test
-  keep / consolidate / delete verdict. A dozen near-identical single-assertion tests for
-  one guard family is exactly what a table-driven theory should replace, so a DEMAND to
-  collapse them is in scope for this checkpoint.
+  also apply the `test-audit` skill to
+  `tests/Civ.Mods.Tests/SessionInvalidationTests.cs`: the authoring gate's four
+  questions and the junk-pattern checklist, with a per-test keep / consolidate / delete
+  verdict. A dozen near-identical single-assertion tests for one guard family is exactly
+  what a table-driven theory should replace, so a DEMAND to collapse them is in scope
+  for this checkpoint.
 - **Checkpoint B** after Phase 4 reviews the persistent panels end to end: every widget
   that `BuildTop` and `BuildLeft` used to create must still exist, still be reachable
   and still show the same text, colour, tooltip, disabled state and order; plus the
@@ -128,9 +130,9 @@ three facts. Round 2 reviewed `003cd30` and both closed it.
 - Individually verified by both reviewers in a `/tmp` worktree at `8c483aa` that the
   consolidated file still fails there: six cases, each by exactly one extra bump.
 - Production code was verified by inspection, not only by the tests: every `Revision`
-  consumer (`MapRenderer`, `GameView`'s hover cache, `CityScreen`, `LockstepSession`) was
-  checked against the new guards, and a mutation probe was used to prove that guarding
-  `Submit` on message equality is wrong (it breaks `EndTurn`'s bump and skips
+  consumer (`MapRenderer`, `GameView`'s hover cache, `CityScreen`, `LockstepSession`)
+  was checked against the new guards, and a mutation probe was used to prove that
+  guarding `Submit` on message equality is wrong (it breaks `EndTurn`'s bump and skips
   `CollectNotifications` and dead-selection pruning).
 
 Carried NOTEs, none requiring action:
@@ -194,7 +196,8 @@ revision-change path (not on the per-frame path).
 
 Not acceptable: any lost widget, label, colour or tooltip; a per-frame allocation added
 to `GameUi.Refresh` or `MapRenderer.Refresh`; or a `Revision` bump removed where another
-consumer needs it (`MapRenderer`, `GameView`'s hover cache, the lockstep and audit paths).
+consumer needs it (`MapRenderer`, `GameView`'s hover cache, the lockstep and audit
+paths).
 
 ## Test Strategy
 
@@ -293,7 +296,7 @@ Carried NOTEs, none requiring action:
   plain `Label` rather than a row `Button`, which is how Phase 4 proved scroll retention
   (`scroll 115` kept, `cityrebuild 0`) after Phase 2 recorded it as unreachable.
 
----
+______________________________________________________________________
 
 ## Phase 1: Guard the session's invalidation bumps
 
@@ -329,10 +332,10 @@ assumption.
 
 **Test Strategy.** New `SessionInvalidationTests` in `tests/Civ.Mods.Tests`, using the
 `LoadedMods` fixture and `new GameSession(GameFactory.Create(mods.Content, seed))`.
-Prefer one table-driven theory per guard family (`[Theory]` with `[InlineData]` naming the
-case) over a separate method per case: the guards are one invariant, "a call that does
-not change the selection or the message must not move `Revision`", so each assertion is a
-row, not a test. Add:
+Prefer one table-driven theory per guard family (`[Theory]` with `[InlineData]` naming
+the case) over a separate method per case: the guards are one invariant, "a call that
+does not change the selection or the message must not move `Revision`", so each
+assertion is a row, not a test. Add:
 
 - no-bump rows for: `SetMessage` with the same text, `ClearSelection` with nothing
   selected, `SelectUnit` of the current unit, `SelectCity` of the current city, a second
@@ -340,11 +343,12 @@ row, not a test. Add:
 - bump rows for: a different unit, a different city, clearing an active selection, a new
   message, `Submit` of a rejected command;
 - one stack-cycling test (two human units on a tile cycle and bump on each click);
-- one `EndTurn` test (still leaves `Revision` changed when the selection ends unchanged).
+- one `EndTurn` test (still leaves `Revision` changed when the selection ends
+  unchanged).
 
-Gate: `dotnet test tests/Civ.Mods.Tests --filter
-FullyQualifiedName~SessionInvalidation`, then `mise run test`. Quote the new test count in
-the commit message.
+Gate:
+`dotnet test tests/Civ.Mods.Tests --filter FullyQualifiedName~SessionInvalidation`, then
+`mise run test`. Quote the new test count in the commit message.
 
 **Exit criteria.**
 
@@ -359,7 +363,7 @@ worked. Leave "None" when there are none.)_
 
 None.
 
----
+______________________________________________________________________
 
 ## Phase 2: Give each HUD panel its own refresh gate
 
@@ -376,17 +380,18 @@ stops the hidden dialogs from being emptied and rebuilt on every click.
    and do nothing when `NeedsRefresh()` is false (`GameUi.cs:61-88`). Add the dialog
    flags and the selection identity to `NeedsRefresh` only if they are not already
    covered by the revision.
+
 2. Split the body into named refreshers, and gate each one on the cheap key it needs:
 
-   | Panel | Gate |
-   | :--- | :--- |
-   | top bar | `Revision` changed |
-   | left panel | `Revision` changed |
-   | city screen | city open changed, `Revision`, or `_city.State` |
-   | research dialog | research open changed, or (`Revision` and open) |
+   | Panel             | Gate                                            |
+   | :---------------- | :---------------------------------------------- |
+   | top bar           | `Revision` changed                              |
+   | left panel        | `Revision` changed                              |
+   | city screen       | city open changed, `Revision`, or `_city.State` |
+   | research dialog   | research open changed, or (`Revision` and open) |
    | government dialog | `_governmentRevision`, or (`Revision` and open) |
-   | modal | `_modalRevision`, or (`Revision` and open) |
-   | feed | `Revision` changed (content compared inside) |
+   | modal             | `_modalRevision`, or (`Revision` and open)      |
+   | feed              | `Revision` changed (content compared inside)    |
 
 3. For the three dialogs, only `Ui.Clear` them when they are visible and their gate
    fired. When a dialog is closed, hide it and keep its children, so reopening does not
@@ -404,22 +409,25 @@ stops the hidden dialogs from being emptied and rebuilt on every click.
        ...
    }
    ```
+
    Reset the shown revision to -1 when the dialog opens, so it rebuilds on first show.
    Remove `Ui.Clear` from the closed path in `BuildResearchDialog`
    (`GameUi.cs:210-214`), `BuildGovernmentDialog` (`GameUi.Government.cs:22-25`) and
    `BuildModal` (`GameUi.Panels.cs:112-116`); keep their visibility rules, including
    `_session.City == null`.
+
 4. Extend the existing timing line (`GameUi.cs:83`) to report the panels separately so
    the measurement procedure has a surface to read:
-   `ui update: top 0.4 ms, left 0.2 ms, city 0 ms, dialogs 0 ms, feed 0 ms`.
-   Keep it on `MapRenderer.LogTimings`, matching the existing style.
-5. Leave `BuildFeed`'s content rule alone; only stop it from being called when `Revision`
-   did not change.
+   `ui update: top 0.4 ms, left 0.2 ms, city 0 ms, dialogs 0 ms, feed 0 ms`. Keep it on
+   `MapRenderer.LogTimings`, matching the existing style.
+
+5. Leave `BuildFeed`'s content rule alone; only stop it from being called when
+   `Revision` did not change.
 
 **Watch out.** `AddPanelButtons` (`GameUi.Panels.cs:49`) calls `UpdateConquestModal`,
-which mutates `_pendingConquests` and can close the modal
-(`GameUi.Panels.cs:47-75`). That side effect must keep running whenever the top bar
-refreshes; it is not pure rendering.
+which mutates `_pendingConquests` and can close the modal (`GameUi.Panels.cs:47-75`).
+That side effect must keep running whenever the top bar refreshes; it is not pure
+rendering.
 
 **Test Strategy.** This phase changes no `Civ.Client.Core` code, so there is no xunit
 test to add. The gate is the probe plus the screenshot comparison, both recorded in the
@@ -446,7 +454,7 @@ commit message:
 
 None.
 
----
+______________________________________________________________________
 
 ## Phase 3: Keep the top bar's widgets and update them in place
 
@@ -484,8 +492,8 @@ change their text, colour, tooltip and visibility.
    writing:
    - turn/date/era text; golden age text and visibility; gold text and tint
      (`s.Net < 0 ? Ui.Bad : Ui.Accent`);
-   - research text (`{Name} {Progress}/{Cost} ({Turns}t)`, or `Choose research!`) and its
-     font colour override when there is no research;
+   - research text (`{Name} {Progress}/{Cost} ({Turns}t)`, or `Choose research!`) and
+     its font colour override when there is no research;
    - each rate label `{name} {percent}%`;
    - civics text (`Civics` or `Civics · {n}t anarchy`);
    - `UpdateConquestModal(...)` with its side effects, then the conquest button's text,
@@ -528,7 +536,7 @@ test to add. Gates, all recorded in the commit message:
 
 None.
 
----
+______________________________________________________________________
 
 ## Phase 4: Keep the left panel's widgets and update them in place
 
@@ -557,8 +565,8 @@ and the city list when the set of them changes.
      call `AddThemeStyleboxOverride("fill", BrassSkin.BarFill(tint))` only on a change
      (`Ui.Bar`, `Ui.cs:144`);
    - the order buttons: rebuild `_ordersGrid` only when the identity key changes
-     (`unit.Id` plus the joined `Actions[].Id` and `Label`), otherwise update
-     `Disabled` and `TooltipText` on the existing buttons, comparing first;
+     (`unit.Id` plus the joined `Actions[].Id` and `Label`), otherwise update `Disabled`
+     and `TooltipText` on the existing buttons, comparing first;
    - the city buttons: rebuild `_cityList` only when the identity key changes: the
      ordered list of `(Id, Name, Population, ReligionBadge)` for
      `Sim.State.Cities.Where(c => c.Owner == GameSession.Human)`, joined into a string.
@@ -603,7 +611,7 @@ test to add. Gates, all recorded in the commit message:
 
 None.
 
----
+______________________________________________________________________
 
 ## Phase 5: Record the work in OPTIMIZE.md and ROADMAP.md (`ask-antigravity`, no review)
 
@@ -615,8 +623,8 @@ documents that already track it.
 **Change.**
 
 1. `docs/OPTIMIZE.md`:
-   - Fix the stale "uncommitted" markers for the startup work, which landed in
-     `7f865e4` (merged by `8c483aa`): the mermaid timeline entry
+   - Fix the stale "uncommitted" markers for the startup work, which landed in `7f865e4`
+     (merged by `8c483aa`): the mermaid timeline entry
      `[Phase 6 ...] (Uncommitted worktree changes)` (around line 95), the
      `**Primary Commit**: uncommitted worktree changes` line (around line 327) and the
      summary table row `**Phase 6: Startup Latency** | *uncommitted*` (around line 394).
@@ -634,9 +642,9 @@ documents that already track it.
      numbering and the "-- needs to be reformatted later" heading, no reordering and no
      entries dropped. The one exception is item 2 (the stacked-unit list in the left
      pane), which Phase 4 is groundwork for: annotate that entry in place to say the
-     left pane is now built once and refreshed in place, so listing every stacked unit is
-     an extension of `RefreshLeft` rather than a rewrite. Do not mark it done, and do not
-     implement the feature in the docs phase.
+     left pane is now built once and refreshed in place, so listing every stacked unit
+     is an extension of `RefreshLeft` rather than a rewrite. Do not mark it done, and do
+     not implement the feature in the docs phase.
    - Note where else the completed work touches that list: persistent panels make item
      7's scroll-margin work easier. Do not mark that item done either.
    - If the roadmap has a section for engine or UI work, add one line recording that the
@@ -656,3 +664,193 @@ documents that already track it.
 **Encountered Serious Issues.**
 
 None.
+
+______________________________________________________________________
+
+# Plan Addendum: every panel, not just the top bar and the left pane
+
+## Why this addendum exists
+
+The plan closed with a residual it judged acceptable: "the city screen (`CityUi.Build`)
+keeps rebuilding on a revision change while it is open, because its content is a whole
+screen of numbers that change together", and a carried NOTE that "the modal and the feed
+rebuild on any `Revision` change while open, including a selection click". For a player,
+that residual is not a performance detail. It is the bug the plan claimed to fix, still
+visible in every panel the plan did not convert:
+
+- With the Pedia open, changing the Science budget re-randomised the scratch pattern on
+  every Pedia button.
+- Reordering a city production queue re-randomised every plate in both city panels and
+  stalled the frame.
+
+Both follow from the same two facts the plan already recorded, but only applied to the
+two panels it converted. `Revision` moves on every command, selection change and
+message, so any `Revision`-keyed panel rebuilds on unrelated actions (`Ui.Clear` frees
+every child and builds new ones), and `BrushedStyleBox._Draw` seeds each plate's scrape
+phase from its canvas item RID, so a rebuilt control is a new pattern. The plan's own
+"Why" section promised that consequence away ("every plate changes its scratch pattern
+on every click"), and it did not hold outside the top bar and the left pane. The
+stopping rule was met as written and the player-visible defect was not, so the invariant
+needed to be completed rather than deferred again.
+
+## What was reproduced before the change
+
+Xvfb `:99`, 1600x900 with the game at 1280x720 and +160,+90, Debug build, warm skin
+cache, `--trace-performance`, `--world small`, baseline `7ae3717`. Pixel counts are
+text-free crops of a single plate.
+
+- Pedia open, Science `+` once: `ui update: … dialogs 87.34 ms`; one plate changed 702
+  px (idle to idle: 0 px). Repeated: 80.25 ms / 701 px, 85.79 ms / 704 px.
+- Pedia row click: `dialogs 123.79 ms`, plate 703 px.
+- Research dialog open, Science `+`: `dialogs 12.66 ms`, plate crop 2.9 differing px.
+- City screen open: `city screen: describe 87 ms, controls 400 ms` (`city 487.88 ms`).
+- Queue reorder: `city screen: describe 20-64 ms, controls 219-267 ms`
+  (`city 284-302 ms`), and the left panel's `Close` plate changed though nothing about
+  it changed.
+- `CityScreen.CheckEligibility` (from the city rebuild's `ProductionChoices`): 246 ms
+  warm for 605 building candidates, 0.37 ms per `Validate`, repeated on every
+  `WorldRevision` bump - which a queue reorder causes.
+
+## Changes
+
+Commits `60c8419` (the fix) and `922cbcd` (what the two reviews found).
+
+### 1. Each panel is gated on the inputs it renders
+
+`GameUi.Refresh` now tracks `WorldRevision` (simulation changes only: `Submit` and
+`ContinueOrders`) and the open city's identity next to `Revision`. A panel is rebuilt
+only when something it reads moved.
+
+| Panel               | Gate                                                    |
+| :------------------ | :------------------------------------------------------ |
+| Top bar, left panel | `Revision` (they render the selection and message)      |
+| City screen         | open, city identity, `WorldRevision`, or its tab state  |
+| Research dialog     | open, or `WorldRevision`/city change while open         |
+| Government dialog   | own revision, or `WorldRevision` while open             |
+| Espionage           | own revision, or `Revision` (renders the selected spy)  |
+| Data modals         | own revision, or `WorldRevision`/city change while open |
+| Pedia, Load         | own revision only (catalog and saves folder)            |
+| Feed                | `WorldRevision` or city change                          |
+
+The data modals are religion, corporations, events, conquest, diplomacy and the tech
+tree.
+
+The city identity clause is not optional: `SelectCity` and `SelectAt` bump only
+`Revision`, so switching between two open cities would otherwise go stale once the city
+gate stops following `Revision`. `NeedsRefresh` still compares stored primitives and a
+dictionary lookup, so the 60 Hz path stays allocation-free and early-outs.
+
+### 2. Pedia updates in place
+
+The search field, category tabs, list scroll and article scroll are built once per open.
+Tabs update their disabled state, the list rebuilds only when the category, the query or
+the ordered result ids change, and the article refills only when the selection changes
+(returning to the top). A row click no longer touches the 300 list buttons or their
+plates.
+
+### 3. Both city panels update in place
+
+`CityUi` builds one skeleton per panel and refreshes it. The production queue keeps one
+row per position, rewritten in place (icon, caption, bar value, button states), and its
+callbacks read the row's current index, so a reorder recreates nothing. Hurry,
+conscript, choices, citizens, trade routes, settled specialists, the status block and
+each ledger rebuild only when the text they render changed; the kind tabs and "Show
+unavailable" stay and only their pressed state moves.
+
+### 4. The research dialog updates in place
+
+Its skeleton is built once and each choice's captions are rewritten when costs or turn
+counts move; only a change in the choice set, layout or free-credit state recreates
+widgets.
+
+### 5. One eligibility pass per candidate list
+
+`IProductionKind.ValidateBatch` validates a list in one call. The Cities mod runs it
+inside the existing `CityReadScope` memo, so the whole-empire building, power and
+resource work is shared instead of repeated 605 times; the project and process kinds
+keep a trivial override and the interface member has a default implementation, so
+out-of-tree kinds stay source compatible. `cities:building` eligibility for 605
+candidates falls from 246 ms to 101 ms.
+
+### 6. The two wrong-city defects the reviewers found
+
+Persistence introduced a defect class the rebuild never had, and both reviews caught a
+different half of it:
+
+- Section keys were built with `new StringBuilder(city.Id)`, the capacity constructor,
+  so the city id never entered the key. Two cities with the same visible choices or the
+  same citizen layout shared a key, the section was not rebuilt, and its buttons still
+  acted on the previous city.
+- Click callbacks captured the `City` object they were built with. A game load replaces
+  `Sim`, so after a load the reused rows held a discarded city: a reorder read the old
+  queue and re-enqueued it into the new game. Callbacks now capture the city id and
+  resolve the live city when they run.
+
+The same capacity-constructor mistake in the left panel's order key was fixed too.
+
+## Measurements after the change
+
+Same setup, after `922cbcd`.
+
+| Gesture                                       | Before                             | After                                                |
+| :-------------------------------------------- | :--------------------------------- | :--------------------------------------------------- |
+| Science `+` with the Pedia open               | 80-99 ms, plate 701-704 px changed | 0.00 ms, 0 px                                        |
+| Pedia row click                               | 123.79 ms                          | 3.4-44.5 ms (article text shaping), list plates 0 px |
+| Science `+` with the Research dialog open     | 12.66 ms, plate 2.9 px             | 2.5-3.8 ms, plate 0 px                               |
+| Opening the city screen                       | 488 ms                             | 270-313 ms                                           |
+| Queue reorder, steady state                   | 284-302 ms                         | 65-69 ms                                             |
+| Queue reorder, first after opening            | 302 ms                             | 138-150 ms (cold)                                    |
+| `cities:building` eligibility, 605 candidates | 246 ms                             | 101 ms                                               |
+| Selection click with the city screen open     | screens closes, no city work       | unchanged                                            |
+
+Plate crops that must not move after a queue reorder (left `Close` plate, a
+production-choice plate, an untouched queue row's arrow plate, its progress-bar plate,
+the conscript plate) all measure 0 differing px, against an idle-to-idle control of 0.
+Screenshot regression across the `city`, `research`, `civics`, `map` and `world` stages
+leaves only map animation and scrape phases, which differ between any two builds.
+`mise run test` passes 1,299 tests with zero-warning builds.
+
+## Review record
+
+Two independent reviewers on the frozen commit, then a second round on the follow-up.
+
+- In-family reviewer (`opencode-go/muse-spark-1.3-contributor`) reviewed `60c8419`:
+  gate-by-gate input enumeration, key coverage, old-versus-new rendering walk, and live
+  probes. Verdict: blocked by one DEMAND (callbacks captured `City`, so a load left them
+  acting on a discarded city), with NOTEs on the missing default interface
+  implementation and the Load modal going stale after a quicksave.
+- `ask-antigravity` reviewer reviewed the same commit: blocked by one DEMAND (the
+  capacity-constructor keys), and NOTEs on the trade/specialist keys, the pedia article
+  keeping its scroll offset, and the wording of the "selection click does no city work"
+  claim.
+- Round two, on `922cbcd`: the in-family reviewer accepted both blocking causes as fixed
+  and returned "shippable with NOTEs"; the `ask-antigravity` reviewer returned
+  "shippable as-is". No DEMAND remained.
+
+The new test,
+`CityRulesTests.Batched_eligibility_equals_per_id_validation_for_buildings_and_units`,
+holds the batch to the per-id results for every building and unit candidate, asserts
+that the three blocker families it relies on are actually present, and that the batch
+leaves the simulation hash unchanged.
+
+## Residuals carried forward
+
+- `DescribeCity` still runs on every city refresh (17-90 ms) and is now the largest part
+  of a reorder; a queue add or remove also recomputes hurry costs and choice turn
+  counts, so those sections legitimately rebuild (73-113 ms).
+- Eligibility still costs 101 ms warm; inside the batch, `CityData.Level` and
+  `EffectiveBuildings` are recomputed per candidate.
+- The first refresh after opening the city screen, and the research dialog's first
+  build, are cold paths (138-150 ms and 19-21 ms).
+- The city screen still rebuilds wholesale on any `WorldRevision` while open, and every
+  section key is recomputed there; the keys allocate strings on the revision path only,
+  never per frame.
+- A pedia row click still refills the article body (3-45 ms, Godot's wrapped-text
+  shaping), and a category or query change still recreates up to 300 list buttons.
+- Dither on translucent panel edges means whole-region captures differ by a few pixels
+  between any two captures; the plate interiors are the stable measurement.
+- `MapRenderer`'s dynamic layer still rebuilds per `Revision`, and the feed still
+  rebuilds per `WorldRevision` change (both unchanged residuals).
+- `docs/OPTIMIZE.md` Phase 7 named the top bar and left panel files as `GameUiTop.cs`
+  and `GameUiLeft.cs`; neither file exists. The section now names `GameUi.cs` and
+  `GameUi.Left.cs`.
