@@ -104,8 +104,85 @@ The queue buttons add, remove, or move entries.
 Unavailable production choices show requirement failures in tooltips.
 The civics panel stages one choice per option and previews the complete revolution before adoption.
 
-## Screenshots and smoke checks
+## Widget skin and gallery
 
+All stock controls use the painted-brass skin in `Skin/`. The reference is
+`docs/references/ui.png`. `Ui.Theme` holds the shared theme. `Ui.InstallTheme`
+sets it on the window and merges it into Godot's default theme. The merge is
+necessary because panels under a CanvasLayer or a 3D node do not get the
+window's theme. New controls get the skin with no extra code.
+
+All skin sizes are in units (game pixels). `BrassSkin.Apply` and `Ui.MakeTheme`
+take a scale in pixels per unit. The game uses 1. A larger scale paints the
+same material with more detail.
+
+- `BrassPainter` paints each plate. The rim is a polished bevel that slopes
+  outwards, so it is bright on the top and left and dark bronze at the bottom.
+  Inside the rim, the paint ends in a lip that catches the light, then a dark
+  groove. A soft drop shadow falls down and to the right. A plate is a 9-slice
+  texture. Its middle tiles without seams.
+- `ScrapedPaint` paints the overlay: matte paint on cast metal. It has a fine
+  pitted relief lit from the top left, darker and thinner patches with
+  irregular edges, and scuffs of fine brown scratches. Bands along the rim add
+  worn zones at the ends and scratches along the top and bottom. The overlay
+  is painted at three or more pixels per unit and averaged down.
+- `BrushedStyleBox` draws the plate, then tiles the overlay at 1:1, so the
+  overlay does not stretch. Each control starts the tiles at its own random
+  offset, so no two buttons show the same scrapes. List rows and tabs are
+  many boxes on one control. Their offset also comes from the position of the
+  box in the content, so each row and each tab has its own scrapes. A row
+  keeps its scrapes while the list scrolls.
+- `ListRim` draws the border of an ItemList again, on top of the rows: a
+  solid outline, the rim, and the lip and groove where the paint meets it. An
+  ItemList clips its rows at its outer edge, so without it a scrolled row
+  covers the border. With it, rows slide under the border.
+- A disabled widget is unlit: the paint is grey and darker, the brass rim is
+  dull grey pewter, the glow is gone and the shadow is faint. Its text and the
+  dropdown arrow are dark grey (`BrassSkin.TextDisabled`).
+- `BackdropStyleBox` paints the ground behind the widgets. It has soft warm
+  and cool clouds, short streaks that rise to the right, and a fine grain. It
+  has no rim and no brushwork. The three layers tile with different periods,
+  so the pattern does not repeat on screen.
+- The scroll bar is one brass frame. The track is open at both ends, and the
+  arrow cells close it. Each cell has a brass chevron and a brass rule.
+- The font is Noto Serif (`Fonts/`), a variable font, at weight 400. It is
+  the default font of the theme. `BrassSkin.SerifItalicFont()` gives the
+  italic.
+- A TabContainer page uses the softer well of the text areas.
+- `BrassSkin` sets the plates, icons and colours for these controls: Button,
+  OptionButton and its PopupMenu, CheckBox (check and radio), ProgressBar,
+  TabBar and TabContainer, ItemList, the scroll bars and LineEdit.
+- `Ui.Bar` keeps its colour as a meaning (for example, food or damage). It gets
+  a darker painted fill in that colour.
+
+The widget gallery shows every skinned control in each of its states. It loads
+no mods:
+
+```sh
+mise run start:ui-gallery
+
+xvfb-run -a godot-mono --rendering-driver opengl3 --path src/Civ.Godot --resolution 1180x760 \
+  res://UiGallery.tscn -- --screenshot /tmp/gallery.png --popup
+```
+
+`--popup` opens the dropdown before the capture. `--frames N` sets the frame
+wait (default 30).
+
+`--replica` shows the widgets of `docs/references/ui.png` at their positions and
+sizes in the reference, skinned at scale 3. Use a 1672x1000 window. The top
+1672x757 is the size of the reference, so crops of it compare one to one. Below
+it are widgets that the reference does not show (a text area, a text field and
+a horizontal scroll bar), at the same scale:
+
+```sh
+mise run start:ui-replica
+```
+
+An ItemList with `AutoHeight` is a plain list. With a fixed height, it scrolls.
+The dropdown popup uses the same panel, row highlight and scroll bar as the
+list.
+
+## Screenshots and smoke checks
 The screenshot option saves a viewport capture after the requested number of ready frames, then quits.
 Use an absolute output path. The client creates its parent directory.
 

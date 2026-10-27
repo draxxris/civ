@@ -7,6 +7,16 @@ description = "Build and start the Godot game"
 depends = ["build:game"]
 run = "godot-mono --path src/Civ.Godot"
 
+[tasks."start:ui-gallery"]
+description = "Build and open the widget gallery for the brass UI skin (no mods load)"
+depends = ["build:game"]
+run = "godot-mono --path src/Civ.Godot res://UiGallery.tscn"
+
+[tasks."start:ui-replica"]
+description = "Open the reference sheet's widgets at full size (skin scale 3) to compare with docs/references/ui.png"
+depends = ["build:game"]
+run = "godot-mono --path src/Civ.Godot --resolution 1672x1000 res://UiGallery.tscn -- --replica"
+
 [tasks.test]
 description = "Run default tests, excluding E2E and extractor tests"
 run = "dotnet test Civ.slnx --filter 'Category!=Extractor&Category!=E2E'"

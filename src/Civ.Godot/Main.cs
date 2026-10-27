@@ -56,7 +56,7 @@ public partial class Main : Node3D
         _status.Position = new Vector2(40, 40);
         layer.AddChild(_status);
         AddChild(layer);
-        GetWindow().Theme = Ui.MakeTheme();
+        Ui.InstallTheme(GetWindow());
         RenderingServer.SetDefaultClearColor(new Color(0.05f, 0.07f, 0.1f));
         BeginModStartup();
     }
