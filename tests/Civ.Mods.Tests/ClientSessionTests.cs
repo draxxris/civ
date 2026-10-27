@@ -581,6 +581,83 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void City_choices_split_wonders_out_of_the_building_tab_and_the_all_tab_gathers_everything()
+    {
+        var s = CitySession();
+        var city = Found(s);
+
+        var tabs = s.ProductionTabs;
+        Assert.Equal(["All", "Buildings", "Wonders", "Units", "Processes"], tabs.Select(t => t.Label));
+        ProductionTab Tab(string label) => tabs.Single(t => t.Label == label);
+        // A kind's categories sit right after it, so the two building lists read as one group.
+        Assert.Equal(tabs.ToList().IndexOf(Tab("Buildings")) + 1, tabs.ToList().IndexOf(Tab("Wonders")));
+
+        var all = s.ProductionChoices(city, Tab("All"));
+        var buildings = s.ProductionChoices(city, Tab("Buildings"));
+        var wonders = s.ProductionChoices(city, Tab("Wonders"));
+        string[] BuildingIds(string kind) => all.Where(c => c.Kind == kind).Select(c => c.Id).ToArray();
+
+        // Every building has one home tab: the two tabs hold the whole kind, and no building is in both.
+        Assert.Equal(BuildingIds("cities:building").Order(StringComparer.Ordinal),
+            buildings.Concat(wonders).Select(c => c.Id).Order(StringComparer.Ordinal));
+        Assert.Empty(buildings.Select(c => c.Id).Intersect(wonders.Select(c => c.Id), StringComparer.Ordinal));
+
+        // A world wonder and a national wonder land in the wonder tab; a building whose limits declare NoLimit keeps its
+        // own copies (the corporation buildings) and stays an ordinary building.
+        Assert.Contains(wonders, c => c.Id == "cities:abu_simbel");
+        Assert.Contains(wonders, c => c.Id == "cities:amusement_park");
+        Assert.Contains(buildings, c => c.Id == "cities:aluminum_factory");
+        Assert.DoesNotContain(buildings, c => c.Id == "cities:abu_simbel");
+        Assert.DoesNotContain(wonders, c => c.Id == "cities:aluminum_factory");
+
+        // The other kinds keep one tab each, so the wonder split never empties them.
+        Assert.Equal(BuildingIds("cities:unit").Order(StringComparer.Ordinal),
+            s.ProductionChoices(city, Tab("Units")).Select(c => c.Id).Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void Filtered_rows_keep_an_available_match_ahead_of_the_blocked_cap_and_report_what_matched()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        var tab = s.ProductionTabs.Single(t => t.Label == "Buildings");
+        var choices = s.ProductionChoices(city, tab);
+
+        // A name-filtered row is offered even when it is blocked and hundreds of other blocked rows come first: the
+        // cap applies to what survives the filter, never to the tab.
+        var hidden = choices.Where(c => !c.Available).Skip(60).First(c => c.Matches(c.Name));
+        var filtered = s.ProductionRows(city, tab, hidden.Name, showBlocked: true);
+        Assert.Contains(filtered.Rows, c => c.Id == hidden.Id);
+
+        // The screen shows blocked rows only when asked, but the match count still reports them, so it can say that
+        // something matched and is merely unavailable.
+        var available = s.ProductionRows(city, tab, hidden.Name, showBlocked: false);
+        Assert.DoesNotContain(available.Rows, c => c.Id == hidden.Id);
+        Assert.Equal(filtered.Matches, available.Matches);
+        Assert.True(available.Matches > available.Rows.Count);
+
+        // A blank filter matches every choice in the tab, and a name no content has matches none.
+        Assert.Equal(choices.Count, s.ProductionRows(city, tab, "", showBlocked: false).Matches);
+        Assert.Equal(0, s.ProductionRows(city, tab, "zzzz no such building", showBlocked: true).Matches);
+    }
+
+    [Fact]
+    public void Production_choice_name_filter_ignores_case_and_a_blank_filter_matches_every_choice()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        var choices = s.ProductionChoices(city, s.ProductionTabs[1]);
+
+        foreach (var choice in choices)
+        {
+            Assert.True(choice.Matches(choice.Name.ToUpperInvariant()));
+            Assert.True(choice.Matches(choice.Name[1..]));
+            Assert.True(choice.Matches(""));
+            Assert.False(choice.Matches(choice.Name + " no such name"));
+        }
+    }
+
+    [Fact]
     public void A_queued_building_leaves_the_choices_while_units_stay_repeatable()
     {
         var s = CitySession();

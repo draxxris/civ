@@ -285,8 +285,9 @@ These are the project owner's own observations, kept in their own words.
   briefly when the game window is restored after being minimized.
 - [ ] **Water-adjacent cliff mountains**: A mountain adjacent to water that is also on a cliff looks very bad,
   like there is a sharp drop off, and needs to be fixed.
-- [ ] **Production queue categories**: The city building production queue needs Wonders and All categories (like
-  Projects and Units), plus a filter text box.
+- [x] **Production queue categories**: The city building production queue has Wonders and All categories (like
+  Projects and Units), plus a filter text box. A kind declares its own extra categories, so the wonder split is content
+  knowledge rather than a client special case.
 - [ ] **Scroll bar margin**: Every scroll view widget needs a margin to the left of the scroll bar (persistent
   panels make this scroll-margin work easier).
 - [ ] **City view panes**: Clicking most of the GUI panes, like Religion, Corporations, Espionage, etc., does

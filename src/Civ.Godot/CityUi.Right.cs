@@ -14,7 +14,13 @@ internal sealed partial class CityUi
     private readonly VBoxContainer _hurryBox = Ui.VBox(6);
     private readonly VBoxContainer _conscriptBox = Ui.VBox(6);
     private readonly HFlowContainer _choiceTabs = new();
+    private readonly ButtonGroup _tabGroup = new();
     private readonly List<Button> _choiceTabButtons = new();
+    private readonly LineEdit _filterBox = new()
+    {
+        PlaceholderText = "Filter by name", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClearButtonEnabled = true,
+    };
+    private readonly Label _noMatches = Ui.Text("", 13, Ui.Dim);
     private readonly CheckBox _showBlockedCheck = new();
     private readonly VBoxContainer _choicesBox = Ui.VBox(6);
     private readonly Label _citizensHeading = Ui.Heading("");
@@ -54,14 +60,19 @@ internal sealed partial class CityUi
         _conscriptBox.Visible = false;
         box.AddChild(_conscriptBox);
         box.AddChild(Ui.Heading("Add to queue"));
+        _filterBox.Text = _filter;
+        _filterBox.TextChanged += text => { _filter = text; LocalStateChanged(); };
+        box.AddChild(_filterBox);
         _choiceTabs.AddThemeConstantOverride("h_separation", 4);
         _choiceTabs.AddThemeConstantOverride("v_separation", 4);
         _showBlockedCheck.Text = "Show unavailable";
         _showBlockedCheck.ButtonPressed = _showBlocked;
         _showBlockedCheck.FocusMode = FocusModeEnum.None;
-        _showBlockedCheck.Toggled += on => _showBlocked = on;
+        _showBlockedCheck.Toggled += on => { _showBlocked = on; LocalStateChanged(); };
         _choiceTabs.AddChild(_showBlockedCheck);
         box.AddChild(_choiceTabs);
+        _noMatches.Visible = false;
+        box.AddChild(_noMatches);
         _choicesBox.Visible = false;
         box.AddChild(_choicesBox);
         box.AddChild(_citizensHeading);
@@ -187,32 +198,36 @@ internal sealed partial class CityUi
 
     private void RefreshChoices(City city, CityScreen screen)
     {
-        var kinds = _session.ProductionKinds;
-        string tabsKey = string.Join("\u001f", kinds.Select(k => k.Label));
+        var tabs = _session.ProductionTabs;
+        string tabsKey = string.Join("\u001f", tabs.Select(t => t.Id + "|" + t.Label));
         if (tabsKey != _shownTabsKey)
         {
             _shownTabsKey = tabsKey;
             foreach (var button in _choiceTabButtons) { _choiceTabs.RemoveChild(button); button.QueueFree(); }
             _choiceTabButtons.Clear();
-            for (int index = 0; index < kinds.Count; index++)
+            for (int index = 0; index < tabs.Count; index++)
             {
-                var t = index;
-                var button = Ui.Button(kinds[index].Label, () => _tab = t, size: 13);
+                var id = tabs[index].Id;
+                var button = Ui.Button(tabs[index].Label, () => SelectTab(id), size: 13);
                 button.ToggleMode = true;
+                button.ButtonGroup = _tabGroup;
                 _choiceTabs.AddChild(button);
                 _choiceTabs.MoveChild(button, index);
                 _choiceTabButtons.Add(button);
             }
         }
-        for (int index = 0; index < _choiceTabButtons.Count; index++)
-            if (_choiceTabButtons[index].ButtonPressed != (_tab == index)) _choiceTabButtons[index].ButtonPressed = _tab == index;
-        if (kinds.Count == 0) { _choicesBox.Visible = false; return; }
-        var kind = kinds[Math.Clamp(_tab, 0, kinds.Count - 1)];
-        var choices = _session.ProductionChoices(city, kind.Id);
-        var shown = new List<ProductionChoice>();
-        shown.AddRange(choices.Where(p => p.Available));
-        if (_showBlocked) shown.AddRange(choices.Where(p => !p.Available).Take(MaxBlockedShown));
-        var key = new StringBuilder().Append(screen.Id).Append('|').Append(kind.Id).Append('|').Append(screen.IsPuppet);
+        // The group keeps one tab pressed, so a click on the open tab leaves it open and never clears the list.
+        for (int index = 0; index < _choiceTabButtons.Count && index < tabs.Count; index++)
+            if (_choiceTabButtons[index].ButtonPressed != (tabs[index].Id == _tabId))
+                _choiceTabButtons[index].ButtonPressed = tabs[index].Id == _tabId;
+        if (tabs.Count == 0) { _choicesBox.Visible = false; _noMatches.Visible = false; return; }
+        var tab = tabs.FirstOrDefault(t => t.Id == _tabId) ?? tabs[0];
+        // Trimming once keeps a stray space from hiding every row.
+        string filter = _filter.Trim();
+        var list = _session.ProductionRows(city, tab, filter, _showBlocked);
+        var shown = list.Rows;
+        var key = new StringBuilder().Append(screen.Id).Append('|').Append(tab.Id).Append('\u001f').Append(filter)
+            .Append('|').Append(screen.IsPuppet);
         foreach (var choice in shown)
             key.Append('\n').Append(choice.Id).Append('|').Append(choice.Name).Append('|').Append(choice.Cost).Append('|')
                 .Append(choice.Turns).Append('|').Append(choice.Available).Append('|').Append(choice.IsContinuous).Append('|').Append(choice.Tooltip);
@@ -224,6 +239,20 @@ internal sealed partial class CityUi
             foreach (var choice in shown) _choicesBox.AddChild(ChoiceButton(screen.Id, choice, !screen.IsPuppet));
         }
         _choicesBox.Visible = shown.Count > 0;
+        // A filter that matches only blocked rows still needs an answer, or the section reads as if nothing exists.
+        bool hint = shown.Count == 0 && filter.Length > 0;
+        _noMatches.Visible = hint;
+        if (hint) Ui.Set(_noMatches, list.Matches > 0
+            ? $"Nothing available matches \u201c{filter}\u201d."
+            : $"Nothing matches \u201c{filter}\u201d.");
+    }
+
+    /// <summary>Opens a tab. A click on the open tab is not a state change, so nothing rebuilds.</summary>
+    private void SelectTab(string id)
+    {
+        if (_tabId == id) return;
+        _tabId = id;
+        LocalStateChanged();
     }
 
     private Control ChoiceButton(int cityId, ProductionChoice choice, bool cityCanQueue)

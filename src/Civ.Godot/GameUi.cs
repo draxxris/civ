@@ -105,7 +105,8 @@ internal sealed partial class GameUi : CanvasLayer
         _endTurn.Visible = !cityOpen;
         _city.Visible = cityOpen;
 
-        // One gate per panel: a panel is rebuilt only when the key it depends on moved. The dialog gates are read
+        // One gate per panel: a panel is rebuilt only when the key it depends on moved, or redrawn from the cached
+        // description when only a local input moved. The dialog gates are read
         // after the top bar, because RefreshTop can open or close the conquest modal as a side effect.
         var clock = System.Diagnostics.Stopwatch.StartNew();
         if (revision) RefreshTop();
@@ -113,7 +114,10 @@ internal sealed partial class GameUi : CanvasLayer
         double leftMs = 0, cityMs = 0;
         if (cityOpen)
         {
-            if (cityOpenChanged || cityIdentityChanged || worldRevision || cityStateChanged) _city.Build(city!);
+            // A local input (tab, filter, unavailable toggle) redraws only the queue's choice list. Describing the city
+            // again for it would cost tens of milliseconds on a developed one and cannot have changed.
+            if (cityOpenChanged || cityIdentityChanged || worldRevision) _city.Build(city!);
+            else if (cityStateChanged) _city.RefreshForLocalInput();
             cityMs = clock.Elapsed.TotalMilliseconds - topMs;
         }
         else if (revision)

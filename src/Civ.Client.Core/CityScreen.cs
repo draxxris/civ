@@ -21,8 +21,23 @@ public sealed record ProductionChoice(string Kind, string Id, string Name, long 
 {
     public bool Available => Blockers.Count == 0;
     public string Tooltip => Available ? $"{Name}: {Cost} production" : string.Join("\n", Blockers);
+    /// <summary>Whether the choice belongs in a list filtered by <paramref name="query"/>. A blank query matches
+    /// everything, and case is ignored so a player need not match the content's capitals.</summary>
+    public bool Matches(string query) => Name.Contains(query, StringComparison.OrdinalIgnoreCase);
 }
 
+/// <summary>One tab of the city screen's production list. A null <see cref="Kind"/> is the tab that gathers every kind;
+/// a null <see cref="Category"/> is a kind's own tab, and otherwise the tab holds one of the kind's categories.</summary>
+public sealed record ProductionTab(string? Kind, string? Category, string Label)
+{
+    public static readonly ProductionTab All = new(null, null, "All");
+    /// <summary>Identity for the renderer's selection: stable while the content stands, and unique per tab.</summary>
+    public string Id => Kind is null ? "" : Kind + "/" + Category;
+}
+
+/// <summary>The rows a tab draws and how many candidates the name filter matched. <see cref="Matches"/> counts the hidden
+/// ones too, so the screen can tell "nothing matches" apart from "nothing available matches".</summary>
+public sealed record ProductionList(IReadOnlyList<ProductionChoice> Rows, int Matches);
 public sealed record TileRow(Hex Hex, string Name, long Food, long Production, long Commerce);
 
 public sealed record HurryOption(string Id, string Name, long Gold, int Population, string? Blocked);
@@ -278,6 +293,58 @@ public sealed partial class GameSession
     /// <summary>All registered kinds together.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city) =>
         ProductionKinds.SelectMany(k => ProductionChoices(city, k.Id)).ToList();
+
+    /// <summary>The city screen's tabs, in display order: the "all" tab first, then each kind with the categories it
+    /// declares after it, so a kind's own tab and its categories sit together. Built from the registered kinds, which are
+    /// fixed for the content, so a renderer never names a kind or a category itself.</summary>
+    public IReadOnlyList<ProductionTab> ProductionTabs
+    {
+        get
+        {
+            var tabs = new List<ProductionTab> { ProductionTab.All };
+            foreach (var kind in ProductionKinds)
+            {
+                tabs.Add(new(kind.Id, null, kind.Label));
+                foreach (var category in kind.Categories) tabs.Add(new(kind.Id, category.Id, category.Label));
+            }
+            return tabs;
+        }
+    }
+
+    /// <summary>What one tab offers. The "all" tab gathers every kind; a kind's own tab leaves out the candidates its
+    /// categories claim, so each candidate appears in one tab rather than two; a category tab holds only its own. The
+    /// queued-copy blockers are worked out per kind, so a candidate reads the same under every tab.</summary>
+    public IReadOnlyList<ProductionChoice> ProductionChoices(City city, ProductionTab tab)
+    {
+        if (tab.Kind is not { } kindId) return ProductionChoices(city);
+        var choices = ProductionChoices(city, kindId);
+        var kind = KindOf(kindId);
+        var categories = kind.Categories;
+        if (categories.Count == 0) return choices;
+        if (tab.Category is { } categoryId)
+            return categories.FirstOrDefault(c => c.Id == categoryId) is { } category
+                ? choices.Where(c => category.Contains(kind.Definition(Sim.Content, c.Id))).ToList()
+                : [];
+        return choices.Where(c => !InAnyCategory(kind, categories, c.Id)).ToList();
+    }
+
+    /// <summary>How many unavailable choices a tab shows behind the available ones.</summary>
+    private const int MaxBlockedShown = 40;
+
+    /// <summary>The rows a tab draws under a name filter: every available match, then at most <see cref="MaxBlockedShown"/>
+    /// blocked matches when the screen offers them. The filter is applied before that cap, so the blocked row a player
+    /// searched for is never crowded out by unrelated blocked rows.</summary>
+    public ProductionList ProductionRows(City city, ProductionTab tab, string filter, bool showBlocked)
+    {
+        var matching = ProductionChoices(city, tab).Where(c => c.Matches(filter)).ToList();
+        var rows = new List<ProductionChoice>(matching.Count);
+        rows.AddRange(matching.Where(c => c.Available));
+        if (showBlocked) rows.AddRange(matching.Where(c => !c.Available).Take(MaxBlockedShown));
+        return new(rows, matching.Count);
+    }
+
+    private bool InAnyCategory(IProductionKind kind, IReadOnlyList<ProductionCategory> categories, string id) =>
+        categories.Any(category => category.Contains(kind.Definition(Sim.Content, id)));
 
     private IReadOnlyList<(Content.ContentDef, IReadOnlyList<string>)> CheckEligibility(City city, string kind)
     {

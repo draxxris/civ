@@ -19,8 +19,6 @@ internal sealed class BuildingValuer(AiContext ctx)
         return value;
     }
 
-    public static bool IsWonder(BuildingDef b) => b.Limits.World >= 0 || b.Limits.Team >= 0 || b.Limits.Player >= 0 && !b.Limits.NoLimit;
-
     private int YieldValue(BuildingDef b, CityView v)
     {
         int flat = (int)(b.YieldChanges.Food * 8 + b.YieldChanges.Production * 8 + b.YieldChanges.Commerce * 5);

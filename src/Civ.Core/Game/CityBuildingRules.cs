@@ -16,6 +16,12 @@ public static class CityBuildingRules
         && (replacer.ReplaceBuildings.GetValueOrDefault(building.DefaultBuilding)
             || replacer.ReplaceBuildings.GetValueOrDefault(building.Id));
 
+    /// <summary>A wonder is a building the world, a team or a player may hold only so many of. A building that declares
+    /// no limit of its own covers its copies with `ClassLimits.NoLimit` (corporation buildings, the palace) and is not a
+    /// wonder however tight its unused limit is, which is also why such a building never uses wonder capacity.</summary>
+    public static bool IsWonder(B building) => !building.Limits.NoLimit
+        && (building.Limits.World >= 0 || building.Limits.Team >= 0 || building.Limits.Player >= 0);
+
     private sealed class Selection(Simulation sim, City city, IEnumerable<string> ids)
     {
         private readonly B[] _buildings = ids.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).Select(sim.Content.Get<B>).ToArray();

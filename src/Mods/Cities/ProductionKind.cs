@@ -4,7 +4,7 @@ using Civ.Game;
 namespace Civ.Mods.Cities;
 
 internal sealed class ProductionKind<T>(string id, string label, Func<T, long> cost, ICityProductionService production,
-    Func<T, QueueScope> scope) : IProductionKind
+    Func<T, QueueScope> scope, IReadOnlyList<ProductionCategory>? categories = null) : IProductionKind
     where T : ContentDef
 {
     private static readonly string[] HiddenBlockers =
@@ -13,6 +13,7 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public string Id => id;
     public string Label => label;
     public bool IsContinuous => false;
+    public IReadOnlyList<ProductionCategory> Categories { get; } = categories ?? [];
     public QueueScope QueuedScope(Simulation sim, int city, string id) => scope((T)Definition(sim.Content, id));
     public IEnumerable<ContentDef> Candidates(ContentDb content) => content.Get<T>().All.Where(d => cost(d) >= 0);
     public ContentDef Definition(ContentDb content, string contentId) => content.Get<T>(contentId);
@@ -24,6 +25,16 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
         CityReadScope.Run(sim, _ => ids.Select(id => Validate(sim, city, id)).ToArray());
     public CityProductionResult Calculate(Simulation sim, int city, string contentId) => production.Calculate(sim, city, Id, contentId);
+}
+
+/// <summary>The extra tab the building kind feeds. The kinds of content a city can build are few, so a category is what
+/// keeps the wonders of a 600-building catalog from being buried among the ordinary buildings.</summary>
+internal static class BuildingProductionCategories
+{
+    internal static readonly ProductionCategory Wonders = new("cities:wonder", "Wonders",
+        definition => CityBuildingRules.IsWonder((Civ.Content.Schema.BuildingDef)definition));
+
+    internal static readonly IReadOnlyList<ProductionCategory> All = [Wonders];
 }
 
 /// <summary>How far a queued copy of a building reaches, read from the building limits the eligibility checks enforce.</summary>

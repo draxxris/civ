@@ -59,7 +59,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     private void CountWonder(City city)
     {
         if (city.ProductionQueue.FirstOrDefault() is { Kind: "cities:building" } head
-            && BuildingValuer.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId))) _wondersQueued++;
+            && CityBuildingRules.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId))) _wondersQueued++;
     }
 
     private bool IsPuppet(City city) => city.Extensions.Get<CityRuleState>(ctx.Sim.Content)?.IsPuppet == true;
@@ -77,7 +77,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     }
 
     private bool ReadyToColonize(CityView view, ProductionOrder head) => ctx.Cities.Count < 3 && CanExpand(view)
-        && !BuildingValuer.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId));
+        && !CityBuildingRules.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId));
 
     private bool SettlerStillWanted(CityView v) => sites.WantsMoreCities(ctx.CountUnits(UnitRole.Settler), 0) && v.Population >= 2;
 
@@ -89,7 +89,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     private void Note(string kind, string id)
     {
-        if (kind == "cities:building") { if (BuildingValuer.IsWonder(ctx.Sim.Content.Get<BuildingDef>(id))) _wondersQueued++; return; }
+        if (kind == "cities:building") { if (CityBuildingRules.IsWonder(ctx.Sim.Content.Get<BuildingDef>(id))) _wondersQueued++; return; }
         if (kind != "cities:unit") return;
         var role = ctx.Catalog.Roles.GetValueOrDefault(id);
         if (role == UnitRole.Settler) _settlersQueued++;
@@ -215,7 +215,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     private long? Rate(BuildingDef b, CityView v)
     {
-        bool wonder = BuildingValuer.IsWonder(b);
+        bool wonder = CityBuildingRules.IsWonder(b);
         if (wonder && !WonderAffordable(b, v)) return null;
         if (!ctx.CanProduce(v.City.Id, "cities:building", b.Id)) return null;
         int value = _valuer.Value(b, v);

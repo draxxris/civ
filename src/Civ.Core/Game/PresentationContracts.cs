@@ -40,11 +40,19 @@ public enum QueueScope
     Player,
 }
 
+/// <summary>A second heading a kind's candidates fall under, such as the wonders among the buildings. The client draws
+/// one tab per category, so a player reaches a large group without scrolling past the rest of the kind.</summary>
+public sealed record ProductionCategory(string Id, string Label, Func<ContentDef, bool> Contains);
+
 /// <summary>A mod-owned queue kind and its read-only catalog and query behavior.</summary>
 public interface IProductionKind : IHasId
 {
     string Label { get; }
     bool IsContinuous { get; }
+    /// <summary>Extra headings this kind's candidates fall under. A category claims its candidates for its own tab and
+    /// the kind's own tab leaves them out, so each candidate sits in one tab; the client's "all" tab still gathers
+    /// everything. Empty by default, which keeps a kind to one tab.</summary>
+    IReadOnlyList<ProductionCategory> Categories => [];
     /// <summary>Where a queued copy already covers this content id, so the choice list must stop offering it.</summary>
     QueueScope QueuedScope(Simulation sim, int city, string id) => QueueScope.None;
     IEnumerable<ContentDef> Candidates(ContentDb content);

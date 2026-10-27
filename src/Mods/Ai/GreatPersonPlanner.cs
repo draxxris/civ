@@ -95,7 +95,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         if (order is null || order.Kind != "cities:building") return 0;
         var building = ctx.Sim.Content.Get<BuildingDef>(order.ContentId);
         long cost = ctx.Service<ICityProductionService>().Calculate(ctx.Sim, city.Id, order.Kind, order.ContentId).Cost;
-        if (action.Amount < cost / 2 || !BuildingValuer.IsWonder(building) && cost < 200) return 0;
+        if (action.Amount < cost / 2 || !CityBuildingRules.IsWonder(building) && cost < 200) return 0;
         return 7000 + Math.Min(500, action.Amount / 10);
     }
 

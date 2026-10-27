@@ -11,15 +11,18 @@ internal sealed partial class CityUi : Control
 
 
     private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = GameUi.TopBarHeight;
-    private const int MaxBlockedShown = 40;
     private static readonly string[] StatNames = ["Production", "Commerce", "Culture", "Espionage", "Maintenance", "Great people"];
 
     private readonly GameSession _session;
     private readonly IconCache _icons;
     private readonly PanelContainer _left = Ui.Panel();
     private readonly PanelContainer _right = Ui.Panel();
-    private int _tab;
+    private string _tabId = ProductionTab.All.Id;
+    private string _filter = "";
     private bool _showBlocked;
+    private int _localState;
+    private CityScreen? _screen;
+    private int _screenCity = -1;
 
     // Left panel skeleton. Every widget here and in InitRightPanel is created once, so the panels keep their canvas
     // item RIDs (and with them their scrape pattern) and their scroll position across a refresh.
@@ -35,8 +38,12 @@ internal sealed partial class CityUi : Control
     private string? _shownStatusKey;
     private Color? _foodFill;
 
-    /// <summary>Changes when a local choice (tab, filter) changes, so the owner knows to rebuild.</summary>
-    public int State => _tab * 2 + (_showBlocked ? 1 : 0);
+    /// <summary>Changes when a local choice (tab, filter, unavailable toggle) changes, so the owner knows to rebuild.
+    /// Only the click and keystroke handlers write it, so the per-frame check stays one integer comparison, and a counter
+    /// cannot repeat an earlier value the way a derived hash could.</summary>
+    public int State => _localState;
+
+    private void LocalStateChanged() => _localState++;
 
     public CityUi(GameSession session, IconCache icons)
     {
@@ -60,9 +67,22 @@ internal sealed partial class CityUi : Control
         var screen = _session.DescribeCity(city);
         if (screen == null) return;
         long describe = clock.ElapsedMilliseconds;
+        _screen = screen;
+        _screenCity = city.Id;
         RefreshLeft(screen);
         RefreshRight(city, screen);
         if (MapRenderer.LogTimings) GD.Print($"city screen: describe {describe} ms, controls {clock.ElapsedMilliseconds - describe} ms");
+    }
+
+    /// <summary>
+    /// Redraws only the parts a local input (tab, filter, unavailable toggle) changes. Such an input touches no simulation
+    /// state, and describing the city costs tens of milliseconds on a developed one, so the cached description is reused:
+    /// an open city screen needs one choice list per keystroke rather than a whole screen.
+    /// </summary>
+    public void RefreshForLocalInput()
+    {
+        if (_screen is not { } screen || _session.Sim.State.FindCity(_screenCity) is not { } city) return;
+        RefreshChoices(city, screen);
     }
 
     /// <summary>

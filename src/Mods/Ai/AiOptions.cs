@@ -1,5 +1,6 @@
 using Civ.Content;
 using Civ.Content.Schema;
+using Civ.Game;
 
 namespace Civ.Mods.Ai;
 
@@ -29,7 +30,7 @@ internal sealed class AiOptions
         if (UnavailableMechanic(b)) return false;
         if (civ.BuildingOverrides.GetValueOrDefault(b.DefaultBuilding, b.DefaultBuilding) != b.Id) return false;
         if (b.ObsoleteTech is { } o && _ctx.Sim.KnowsTech(_ctx.PlayerId, o)) return false;
-        if ((BuildingValuer.IsWonder(b) || b.Limits.Player >= 0) && limited.Contains(b.DefaultBuilding)) return false;
+        if ((CityBuildingRules.IsWonder(b) || b.Limits.Player >= 0) && limited.Contains(b.DefaultBuilding)) return false;
         return TechOk(b, rc);
     }
 
