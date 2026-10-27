@@ -135,13 +135,36 @@ internal static class Ui
         return h;
     }
 
+    /// <summary>
+    /// Clear space between a scroll view's content and its vertical scroll bar. Godot already keeps the content out
+    /// of the bar's own column, but the content then ends against the bar's frame; this gutter holds it back so rows
+    /// and wrapped text do not run into the bar. The gutter is reserved whether or not the bar is showing, so a list
+    /// that starts or stops scrolling does not reflow its rows.
+    /// </summary>
+    public const int ScrollGutter = 8;
+
     public static ScrollContainer Scroll(Control content, int minHeight = 0)
     {
         var s = new ScrollContainer { HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled, SizeFlagsVertical = Control.SizeFlags.ExpandFill };
         if (minHeight > 0) s.CustomMinimumSize = new Vector2(0, minHeight);
-        content.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        s.AddChild(content);
+        s.AddChild(Guttered(content));
         return s;
+    }
+
+    /// <summary>
+    /// Wraps scrolled <paramref name="content"/> in a margin container that leaves <see cref="ScrollGutter"/> pixels
+    /// clear of the scroll bar on its right. A <see cref="ScrollContainer"/> sizes its child to the viewport minus the
+    /// bar, so the margin is the only way to keep the content off the bar's frame.
+    /// </summary>
+    private static MarginContainer Guttered(Control content)
+    {
+        content.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        // A ScrollContainer only stretches a child to the viewport when the child expands; without the flag the
+        // margin would shrink to the content's minimum width and every wrapped label would collapse to one word.
+        var margin = new MarginContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, SizeFlagsVertical = content.SizeFlagsVertical };
+        margin.AddThemeConstantOverride("margin_right", ScrollGutter);
+        margin.AddChild(content);
+        return margin;
     }
 
     public static Color ToColor(Rgb c, float a = 1f) => new(c.R, c.G, c.B, a);

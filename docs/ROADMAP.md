@@ -586,8 +586,12 @@ These are the project owner's own observations, kept in their own words.
   and All categories (like Projects and Units), plus a filter text box. A kind declares
   its own extra categories, so the wonder split is content knowledge rather than a
   client special case.
-- [ ] **Scroll bar margin**: Every scroll view widget needs a margin to the left of the
-  scroll bar (persistent panels make this scroll-margin work easier).
+- [x] **Scroll bar margin**: Every scroll view widget has a margin to the left of the
+  scroll bar (persistent panels make this scroll-margin work easier). The gutter is
+  reserved whether or not the bar is showing, so a list that starts or stops scrolling
+  does not reflow its rows. The tech tree canvas keeps its own clearance instead: its
+  child minimum size is the graph's pixel map, so a gutter there would add scroll range
+  to a view that already ends 50 pixels short of the bar.
 - [ ] **City view panes**: Clicking most of the GUI panes, like Religion, Corporations,
   Espionage, etc., does nothing when you are in city view; what should be done instead?
 - [ ] **City view yields checkbox**: The city view GUI yields checkbox at the bottom of
