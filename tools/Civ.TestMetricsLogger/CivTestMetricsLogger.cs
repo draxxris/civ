@@ -28,10 +28,16 @@ public sealed class CivTestMetricsLogger : ITestLogger
     private static void Record(TestResult result)
     {
         var path = Path.Combine(FindRepositoryRoot(), ".test-metrics", "test-runtimes.jsonl");
+        var traits = result.TestCase.Traits;
+        var category = traits is null
+            ? string.Empty
+            : string.Join(",", traits.Where(t => t.Name == "Category").Select(t => t.Value)
+                .Order(StringComparer.Ordinal));
         var record = JsonSerializer.Serialize(new RuntimeRecord(
             DateTimeOffset.UtcNow,
             result.TestCase.FullyQualifiedName,
             result.TestCase.DisplayName,
+            category,
             result.Duration.TotalMilliseconds,
             result.Outcome.ToString()));
         var line = Encoding.UTF8.GetBytes(record + "\n");
@@ -84,5 +90,5 @@ public sealed class CivTestMetricsLogger : ITestLogger
     }
 
     private sealed record RuntimeRecord(
-        DateTimeOffset Timestamp, string Test, string Name, double DurationMs, string Outcome);
+        DateTimeOffset Timestamp, string Test, string Name, string Category, double DurationMs, string Outcome);
 }
