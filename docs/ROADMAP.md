@@ -152,6 +152,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 ### Client, Presentation & 3D Art
 - **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city management, research tree, civics, diplomacy, victory, corporations, espionage, events, pedia, and save/load. Setup screen options and perceived fog snapshots prevent unseen map mutation leaks.
 - **Godot 4.7.2 views (`Civ.Godot`)**: Native 3D viewport, camera controls, hex prism highlights, audio playback, and responsive HUD panels.
+- **HUD in-place invalidation (`Civ.Godot`)**: The top bar and left panel are built once and updated in place instead of rebuilding the widget tree on every map click; see [docs/OPTIMIZE.md](OPTIMIZE.md#phase-7-hud-invalidation-on-clicks).
 - **3D resource models**: Every map resource has a procedural low-poly model (`art/models/<id>.glb`, built by `tools/art/improvement_models.py`) standing on a spot off the tile centre that avoids rivers and the wrong side of the shore. Scatter props keep the spot clear. Manufactured goods have no model.
 - **Map overlays & local toggles**: Independent visual toggles for tile yield badges, resource badges, hex grid lines, and cultural borders. Managed locally in `GamePreferences` without affecting simulation state or hashes, strictly respecting fog-of-war perceived snapshots.
 - **Continuous 3D blended terrain**:

@@ -92,7 +92,11 @@ To ensure repeatable and reliable performance comparisons:
        │
        ▼
 [Phase 6: Oct 18, 2026] Startup Latency: Theme Overlap & Lazy Content Hash
-                        (Uncommitted worktree changes)
+                        (Commit: 7f865e4)
+       │
+       ▼
+[Phase 7: Oct 26, 2026] HUD Invalidation on Clicks & In-Place Panel Updates
+                        (Commits: 877fb7a, 70ab679, 003cd30, 1ad1904, 4b6fd9d)
 ```
 
 ---
@@ -324,7 +328,7 @@ Controlled comparison settings: Fedora 44 x64, Intel Core i7-7700HQ, .NET SDK 10
 ### Phase 6: Startup Latency through Theme Overlap and a Lazy Content Hash
 
 - **Date**: 2026-10-18
-- **Primary Commit**: uncommitted worktree changes (not yet committed)
+- **Primary Commit**: [`7f865e4`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md) (*Cut cold startup to 3.6 s by overlapping the catalog and caching the skin*)
 
 #### Implementation Changes
 1. **Theme Painted While the Catalog Loads (`src/Civ.Godot/Main.cs`)**:
@@ -365,6 +369,107 @@ Controlled comparison settings: Fedora 44 x64, Intel Core i7-7700HQ, .NET SDK 10
 
 ---
 
+### Phase 7: HUD Invalidation on Clicks
+
+- **Date**: 2026-10-26
+- **Primary Commits**:
+  - [`877fb7a`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Stop bumping the session revision when a click changes nothing*
+  - [`70ab679`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Give each HUD panel its own refresh gate instead of one rebuild switch*
+  - [`003cd30`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Make the session invalidation tests table-driven*
+  - [`1ad1904`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Keep the top bar's widgets and update them in place*
+  - [`4b6fd9d`](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Keep the left panel's widgets and update them in place*
+
+#### Implementation Changes
+1. **Guarded Session Revision Bumps (`src/Civ.Client.Core/GameSession.cs`)**:
+   - `GameSession.Revision` was previously incremented unconditionally on every selection and message call, causing whole-HUD rebuilds even when clicking an already-selected unit or empty tile.
+   - Guarded every mutation point so `Revision` only increments when session state actually changes:
+     - `SetMessage`: requires different text.
+     - `SelectAt`: compares the picked unit and city against current selection; still bumps when cycling multi-unit stacks.
+     - `SelectUnit` and `SelectCity`: compare requested ID and require the other half of the selection to be empty.
+     - `ClearSelection`: returns immediately when nothing is selected.
+     - `SelectNextUnit`: computes the next candidate unit before comparing.
+     - `Submit`: left deliberately unguarded so rejected commands still record error messages, prune dead selections, and collect notifications; `EndTurn` continues to bump unconditionally through `Submit` and `ContinueOrders`.
+
+2. **Per-Panel Refresh Gates (`src/Civ.Godot/GameUi.cs`)**:
+   - `GameUi.Refresh` previously treated any `Revision` change as an instruction to clear and rebuild the entire HUD tree (top bar, left panel or city screen, feed, and all three dialogs).
+   - Dialogs were emptied on every revision change even while closed, destroying scroll offsets, widget instances, and canvas item RIDs.
+   - Replaced the single monolithic rebuild pass with independent refresh gates per panel:
+     - **Top bar**: `Revision` changed.
+     - **Left panel**: `Revision` changed (while city screen is closed).
+     - **City screen**: city open state changed, `Revision` changed, or `CityUi.State` changed.
+     - **Research dialog**: research dialog open state changed, or (`Revision` changed and dialog is open).
+     - **Government dialog**: `_governmentRevision` changed, or (`Revision` changed and dialog is open).
+     - **Modal**: `_modalRevision` changed, or (`Revision` changed, modal is open, and city screen is closed).
+     - **Feed**: `Revision` changed.
+   - Dialog gates are evaluated after the top bar because `AddPanelButtons` executes `UpdateConquestModal`, which manages pending conquest states and may toggle the modal.
+   - Closed dialogs hide rather than clearing their children. Reopening the research dialog with an unchanged session reuses existing child controls, preserving scroll position and geometry.
+   - `NeedsRefresh` only checks whether the city-open flag changed, keeping the 60 Hz frame path allocation-free.
+
+3. **Persistent Top Bar Updated In Place (`src/Civ.Godot/GameUiTop.cs`)**:
+   - The top bar flow container and all 19 constituent widgets are constructed once in `InitTop` and retained as persistent fields: turn/date/era, golden age, gold, research button, three commerce rate groups (label and callback buttons), civics button, and ten panel buttons (Conquest, Religion, Corporations, Espionage, Events, Diplomacy, Pedia, Tech Tree, Save, Load).
+   - `RefreshTop` updates properties in place: `Ui.Set` writes label/button text only when differing; `Ui.Tint` overrides theme colour only when differing; research button removes font colour override once a technology is chosen.
+   - The ten panel buttons are created once in canonical order; `RefreshTop` toggles `Visible`, maintaining flow row child order and layout stability without recreating nodes.
+   - Conquest bookkeeping runs once per refresh before dialog gates are evaluated. Availability checks for corporations, espionage, events, and tech tree run once per refresh to drive button visibility.
+
+4. **Persistent Left Panel Skeleton Updated In Place (`src/Civ.Godot/GameUiLeft.cs`)**:
+   - The left panel skeleton is constructed once in `InitLeft` and retained as fields: scroll container, VBox, empty-selection label, unit section (48 px icon, name/stats, moves/health, health bar, XP line, promotions label, Orders heading, order grid, and hint), separator, Cities heading, and city list container.
+   - `RefreshLeft` writes properties in place: `Ui.Set` updates text, icon texture updates only when differing, health bar value updates only when differing, and fill tint stylebox override updates only when tint changes (cached in a field to avoid per-click allocations).
+   - `FillUnitRow` encapsulates the unit row update in a single helper to support future stacked unit lists.
+   - Dynamic sub-panels rebuild only when their structural identity keys change:
+     - **Order grid**: keyed on selected unit ID plus action IDs and labels. When key matches, existing buttons update `Disabled` and `TooltipText` in place without recreating nodes.
+     - **City list**: keyed on ordered ID, name, population, and religion badge of human cities. When key matches, existing buttons and canvas item RIDs remain untouched.
+   - Key strings are computed only inside `RefreshLeft` on revision changes, never on the 60 Hz frame path.
+
+#### Measurements
+
+- End-to-end and per-click HUD numbers are only meaningful from an unthrottled display. A Wayland session throttles unfocused game windows to ~1 fps, quantising frame timings. Measure on a virtual X server with GPU access instead:
+  `Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &`
+  `DISPLAY=:99 godot-mono --path src/Civ.Godot -- --trace-performance --stage map --world small`
+- Test workload: Xvfb :99, 1600x900 (1280x720 window), Debug build, warm skin cache, `--trace-performance --stage map --world small`. Ten map clicks alternating between the initial unit stack and empty tiles (so every click alters selection), followed by two repeat clicks on the final tile.
+- **HUD Update per Selection Click (top + left)**:
+  - Base commit (`70ab679` / pre-refactor baseline): **6.38–41.08 ms** (median **16.06 ms**, n=10; earlier full-HUD rebuilds measured 6–48 ms, median 16.5 ms).
+  - After (`4b6fd9d`): **0.34–18.60 ms** (median **2.40 ms**, **-85.1%** median reduction).
+- **Top Bar Refresh Alone**:
+  - Base commit: **4.95–9.88 ms** (median **6.08 ms** across 20 refreshes; up to 27.72 ms during selection toggles).
+  - After (`1ad1904` / `4b6fd9d`): **0.27–0.95 ms** (median **0.42 ms**, **-93.1%** median reduction across 20 refreshes).
+- **Left Panel Component Split**:
+  - Total left panel time dropped from **1.40–26.30 ms** to **0.03–17.59 ms**.
+  - A timing probe isolated the cost: `GameSession.DescribeUnit` (untouched by this work) takes **0.13–6.16 ms** when a unit is selected and 0 ms with empty selection.
+  - Excluding `DescribeUnit`, the left panel's own UI work:
+    - Empty selection: dropped from **1.23–1.69 ms** to **0.11–0.38 ms** (**-77.5%**).
+    - Unit selected: dropped from **3.30–3.94 ms** to **0.08–0.18 ms** (**-95.4%**); rebuilt order buttons on stack selection changes took 1.87–1.90 ms.
+- **Repeat Clicks & Dialogs**:
+  - Repeat clicks on the same tile or empty ground produce no `ui update:` line at all, as `Revision` does not bump.
+  - Closed dialogs are never cleared or rebuilt on selection clicks (`dialogs 0.00 ms`).
+  - Opening the research dialog costs 18.74 ms (top and left 0.00 ms), closing costs 0.05 ms, and reopening with an unchanged session costs **0.07 ms** (reusing existing child nodes, down from 14–23 ms full rebuilds).
+- **Scrape Texture & Scroll Retention**:
+  - The top bar retains 19 persistent children across clicks; the left panel retains its scroll container and 23 descendants.
+  - Preserving canvas item RIDs prevents `BrushedStyleBox` scrape overlay re-seeding:
+    - Religion button plate: differing pixels across selection clicks dropped from **594 px** on base to **0 px**.
+    - Top bar total: differing pixels dropped from **10,246 px** (of 104,960) to **15 px**.
+    - Left panel: differing pixels across clear and re-selection of the same unit dropped from **123 px** to **0 px**.
+  - Scroll retention: in a 20-city scenario scrolled to offset 115, a map click on the base rebuild recreated `ScrollContainer` and reset scroll to 0.0; the persistent panel preserves the `ScrollContainer` instance, keeps scroll at **115**, and skips city list rebuilds (`cityrebuild 0`).
+
+#### Residuals (Stopping Rule)
+
+The following items were deliberately kept out of scope per the plan's stopping rule:
+1. **Map dynamic layer**: Still rebuilds per `Revision` bump.
+2. **City screen**: Still rebuilds while open on any revision change.
+3. **Session summary**: `Summary()` still recomputes on every revision change.
+4. **Panel identity keys**: String formatting for `OrderKey` and city list identity keys allocates on revision-change paths (never on the 60 Hz frame path).
+5. **End turn invalidation**: `ContinueOrders` unconditionally bumps `Revision` and `WorldRevision` on every end turn, even if no units moved.
+6. **Government and modal dialogs**: Still rebuild on every reopen (unlike the research dialog).
+
+#### Validation
+
+- `dotnet build Civ.slnx` completed with zero warnings and zero errors.
+- `mise run test` passed 1,309 tests (37 content-import, 122 core, 1,150 mod tests), 0 failed.
+- Session invalidation test suite (`tests/Civ.Mods.Tests/SessionInvalidationTests.cs`): 12 table-driven cases (silent theory with 5 rows, bumping theory with 4 rows, and 3 dedicated facts for rejected submit, stack cycling, and end turn). Verified on pre-fix baseline (`8c483aa`) that all 6 silent/end-turn cases fail by exactly one extra revision bump.
+- Visual regressions verified via `mise run shot:compare` across tour stages; pixel differences between base and refactored builds match the magnitude of same-build runs and are confined to procedural scrape phases seeded by canvas item RIDs. Text, colours, tooltips, and layouts remain identical.
+- States verified unreachable with current capture tooling: golden age, anarchy, pending events, ruleset without corporations/espionage, unit with no actions (Sleep/Wake always validate), and unit with promotions (requires combat experience or `IUnitService.Create` free promotions).
+
+---
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization phases:
@@ -391,9 +496,16 @@ The following table aggregates all recorded performance measurements across opti
 | | | Gigantic session startup (200×120, 3 seeds) | Managed bytes | 279.27–294.62 MiB | 241.28–255.57 MiB | **-13.3% to -13.6%** |
 | | | Gigantic session startup (200×120, 3 seeds) | Wall time | 1,215–1,468 ms | 1,091–1,340 ms | **-7.3% to -12.9%** |
 | **Phase 5: Idle CPU Reduction** | `47b932f` | Stationary idle (Vulkan Forward+, 1050 Ti) | Process CPU (1 core) | 38.8% | 18.8% | **-51.5% (-20.0 pp)** |
-| **Phase 6: Startup Latency** | *uncommitted* | Cold launch to setup screen (8 cores) | Wall time | 8.65 s | 6.38 s | **-26.2%** |
+| **Phase 6: Startup Latency** | `7f865e4` | Cold launch to setup screen (8 cores) | Wall time | 8.65 s | 6.38 s | **-26.2%** |
 | | | Theme painting (overlapped with catalog) | Wall time | 2,272.73 ms | 2,703.18 ms | +18.9% *(absorbed by overlap)* |
 | | | Catalog load | Wall time | 2,372.03 ms | 1,454.04 ms | **-38.7%** |
 | | | Content digest (critical path) | Wall time | 1,156.39 ms | 0 ms | **-100% (prefetched off path)** |
 | | | Launch to setup screen (Xvfb, warm skin cache) | Wall time | 6.39 s | 3.56 s | **-44.3%** |
 | | | Launch to setup screen (Xvfb, empty skin cache, first run) | Wall time | 6.39 s | 5.18 s | **-18.9%** |
+| **Phase 7: HUD Invalidation** | `4b6fd9d` | Selection click (HUD) | Median time | 16.06 ms | 2.40 ms | **-85.1%** |
+| | | Top bar refresh alone | Median time | 6.08 ms | 0.42 ms | **-93.1%** |
+| | | Left panel (unit selected, excl. DescribeUnit) | Wall time | 3.30–3.94 ms | 0.08–0.18 ms | **-95.4%** |
+| | | Left panel (no selection, excl. DescribeUnit) | Wall time | 1.23–1.69 ms | 0.11–0.38 ms | **-77.5%** |
+| | | Unchanged selection click (repeat click) | UI update lines | 1 line | 0 lines | **-100% (eliminated)** |
+| | | Research dialog reopen (unchanged session) | Wall time | 14.00 ms | 0.07 ms | **-99.5%** |
+| | | Religion plate scrape pattern delta on click | Differing pixels | 594 px | 0 px | **-100% (stable)** |

@@ -19,11 +19,12 @@ internal sealed partial class GameUi
         _governmentRevision++;
     }
 
+    /// <summary>Hides the dialog without clearing it while it is closed; the caller decides when to rebuild it.</summary>
     private void BuildGovernmentDialog()
     {
         _governmentDialog.Visible = _governmentOpen;
-        Ui.Clear(_governmentDialog);
         if (!_governmentOpen) return;
+        Ui.Clear(_governmentDialog);
         var proposed = _proposedCivics.Values.ToArray();
         var government = _session.Government(proposed);
         var box = Ui.VBox(8);

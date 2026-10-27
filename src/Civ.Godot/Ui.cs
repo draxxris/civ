@@ -90,6 +90,27 @@ internal static class Ui
 
     public static Label Heading(string text) => Text(text, 17, Accent);
 
+    /// <summary>Sets a label only when the text differs, so a refresh of unchanged content reshapes nothing.</summary>
+    public static void Set(Label label, string text)
+    {
+        if (label.Text != text) label.Text = text;
+    }
+
+    public static void Set(Button button, string text)
+    {
+        if (button.Text != text) button.Text = text;
+    }
+
+    /// <summary>
+    /// Overrides a theme colour only when it differs, so a persistent widget neither frees nor re-creates the override
+    /// on every refresh. <see cref="Control.GetThemeColor"/> reads the override back once it is set.
+    /// </summary>
+    public static void Tint(Control control, Color colour, string name = "font_color")
+    {
+        if (control.HasThemeColorOverride(name) && control.GetThemeColor(name) == colour) return;
+        control.AddThemeColorOverride(name, colour);
+    }
+
     public static Button Button(string text, Action onPress, string? tooltip = null, bool enabled = true, int size = 14)
     {
         var b = new Button { Text = text, Disabled = !enabled, TooltipText = tooltip ?? "", FocusMode = Control.FocusModeEnum.None, Theme = Ui.Theme };

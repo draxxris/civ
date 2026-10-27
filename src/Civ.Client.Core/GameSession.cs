@@ -43,7 +43,13 @@ public sealed partial class GameSession
     internal T? OptionalService<T>() where T : class => Sim.Content.Services.Get<T>().SingleOrDefault();
     internal int MoveDenominator => Math.Max(1, Sim.Content.Get<Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator);
 
-    public void SetMessage(string message) { Message = message; Revision++; }
+    /// <summary>Publish a message; an unchanged message is not a change, so it does not bump the revision.</summary>
+    public void SetMessage(string message)
+    {
+        if (Message == message) return;
+        Message = message;
+        Revision++;
+    }
 
     /// <summary>Apply a command for the local player; a rejection becomes <see cref="Message"/>.</summary>
     public bool Submit(GameCommand command)
@@ -98,30 +104,42 @@ public sealed partial class GameSession
 
         int current = stack.FindIndex(e => e.IsCity ? e.Id == SelectedCityId : e.Id == SelectedUnitId);
         var pick = stack[(current + 1) % stack.Count];
-        SelectedCityId = pick.IsCity ? pick.Id : null;
-        SelectedUnitId = pick.IsCity ? null : pick.Id;
+        int? unitId = pick.IsCity ? null : pick.Id;
+        int? cityId = pick.IsCity ? pick.Id : null;
+        if (unitId == SelectedUnitId && cityId == SelectedCityId) return;
+        SelectedCityId = cityId;
+        SelectedUnitId = unitId;
         Revision++;
     }
 
     public void SelectUnit(int id)
     {
         if (Sim.State.FindUnit(id)?.Owner != Human) return;
+        if (id == SelectedUnitId && SelectedCityId == null) return;
         SelectedUnitId = id; SelectedCityId = null; Revision++;
     }
 
     public void SelectCity(int id)
     {
         if (Sim.State.FindCity(id)?.Owner != Human) return;
+        if (id == SelectedCityId && SelectedUnitId == null) return;
         SelectedCityId = id; SelectedUnitId = null; Revision++;
     }
 
-    public void ClearSelection() { SelectedCityId = null; SelectedUnitId = null; Revision++; }
+    public void ClearSelection()
+    {
+        if (SelectedCityId == null && SelectedUnitId == null) return;
+        SelectedCityId = null;
+        SelectedUnitId = null;
+        Revision++;
+    }
 
     /// <summary>Select the next of my units that still has moves and is awake; clears the selection when none is left.</summary>
     public void SelectNextUnit()
     {
         var waiting = Sim.State.Units.Where(u => u.Owner == Human && NeedsOrders(u)).OrderBy(u => u.Id).ToList();
         var next = waiting.FirstOrDefault(u => u.Id > (SelectedUnitId ?? 0)) ?? waiting.FirstOrDefault();
+        if (next?.Id == SelectedUnitId && SelectedCityId == null) return;
         SelectedCityId = null;
         SelectedUnitId = next?.Id;
         Revision++;

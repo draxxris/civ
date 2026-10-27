@@ -2,7 +2,7 @@ using Civ.Game;
 using Godot;
 namespace Civ.Client;
 
-/// <summary>Religion, pedia and load dialogs, the save button, and the turn notification feed.</summary>
+/// <summary>Religion, pedia and load dialogs, quick save and load, and the turn notification feed.</summary>
 internal sealed partial class GameUi
 {
     private enum Modal { None, Religion, Corporations, Espionage, Events, Conquest, Diplomacy, Pedia, TechTree, Load }
@@ -46,28 +46,6 @@ internal sealed partial class GameUi
 
     private void CloseModal() { _modalKind = Modal.None; _modalRevision++; }
 
-    private void AddPanelButtons(Container row)
-    {
-        var conquests = _session.DescribePendingConquests();
-        UpdateConquestModal(conquests);
-        if (conquests.Count > 0)
-        {
-            var button = Ui.Button("Conquest!", () => OpenModal(Modal.Conquest), $"{conquests.Count} city conquest choice(s) need your decision");
-            button.AddThemeColorOverride("font_color", Ui.Bad);
-            row.AddChild(button);
-        }
-        row.AddChild(Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world"));
-        if (_session.DescribeCorporations().Available) row.AddChild(Ui.Button("Corporations", () => OpenModal(Modal.Corporations), "Corporations and their branches"));
-        if (_session.DescribeEspionage().Available) row.AddChild(Ui.Button("Espionage", ToggleEspionage, "Rival intelligence, spending and counter-espionage"));
-        if (_session.DescribePendingEvents().Count > 0) row.AddChild(Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice"));
-        row.AddChild(Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory"));
-        row.AddChild(Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more"));
-        if (_session.DescribeTechTree() is not null)
-            row.AddChild(Ui.Button("Tech Tree", () => OpenModal(Modal.TechTree), "Browse technology prerequisites"));
-        row.AddChild(Ui.Button("Save", QuickSaveGame, "Quick save (F5)"));
-        row.AddChild(Ui.Button("Load", () => OpenModal(Modal.Load), "Load a saved game (F9)"));
-    }
-
     private void UpdateConquestModal(IReadOnlyList<PendingCityConquest> conquests)
     {
         bool isNew = conquests.Any(conquest => !_pendingConquests.Contains(conquest.CityId));
@@ -109,11 +87,12 @@ internal sealed partial class GameUi
 
     // --- modal dispatch -----------------------------------------------------------------------------
 
+    /// <summary>Hides the modal without clearing it while it is closed; the caller decides when to rebuild it.</summary>
     private void BuildModal()
     {
         _modal.Visible = _modalKind != Modal.None && _session.City == null;
-        Ui.Clear(_modal);
         if (!_modal.Visible) return;
+        Ui.Clear(_modal);
         var box = Ui.VBox(6);
         var head = Ui.HBox();
         var title = Ui.Heading(_modalKind.ToString());
