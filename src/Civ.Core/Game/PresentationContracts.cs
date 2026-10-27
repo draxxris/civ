@@ -28,11 +28,25 @@ public static class SetupPolicies
             .OrderBy(option => option.Name, StringComparer.Ordinal).ThenBy(option => option.Id, StringComparer.Ordinal).ToList();
 }
 
+/// <summary>How far a queued copy of a candidate reaches. Entries for kinds that can be built repeatedly never cover
+/// each other and use <see cref="None"/>.</summary>
+public enum QueueScope
+{
+    /// <summary>Every entry is a separate build, as for units and processes.</summary>
+    None,
+    /// <summary>The city's queue holds at most one copy; another city may queue its own.</summary>
+    City,
+    /// <summary>The player's cities share one copy: another of the player's cities blocks it, another player races for it.</summary>
+    Player,
+}
+
 /// <summary>A mod-owned queue kind and its read-only catalog and query behavior.</summary>
 public interface IProductionKind : IHasId
 {
     string Label { get; }
     bool IsContinuous { get; }
+    /// <summary>Where a queued copy already covers this content id, so the choice list must stop offering it.</summary>
+    QueueScope QueuedScope(Simulation sim, int city, string id) => QueueScope.None;
     IEnumerable<ContentDef> Candidates(ContentDb content);
     ContentDef Definition(ContentDb content, string id);
     long BaseCost(ContentDef definition);

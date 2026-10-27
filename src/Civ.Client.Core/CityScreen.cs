@@ -232,19 +232,48 @@ public sealed partial class GameSession
 
     private readonly Dictionary<string, IReadOnlyList<(Content.ContentDef Def, IReadOnlyList<string> Blockers)>> _eligibility = new();
     private (int Revision, int City) _eligibilityKey = (-1, -1);
+    private const string AlreadyQueued = "Already in queue";
+    private const string AlreadyQueuedElsewhere = "Already queued in another city";
 
     /// <summary>Every building, unit or process (by <paramref name="kind"/>) the city could ever queue, with the reasons it cannot be queued now;
-    /// structural impossibilities are left out. Requirement checks are reused until the simulation changes; costs and turns are always current.</summary>
+    /// structural impossibilities are left out. Requirement checks are reused until the simulation changes; costs and turns are always current.
+    /// A candidate a queued copy already covers reports <see cref="AlreadyQueued"/>, or <see cref="AlreadyQueuedElsewhere"/> when
+    /// the copy waits in another city of the same player.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city, string kind)
     {
         var key = (WorldRevision, city.Id);
         if (key != _eligibilityKey) { _eligibility.Clear(); _eligibilityKey = key; }
         if (!_eligibility.TryGetValue(kind, out var eligible)) _eligibility[kind] = eligible = CheckEligibility(city, kind);
         var production = KindOf(kind);
-        return eligible.Select(e => e.Blockers.Count > 0
-            ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, production.BaseCost(e.Def), null, e.Blockers, production.IsContinuous)
-            : Priced(city, production, e.Def)).ToList();
+        // The queues are checked on every call rather than cached with the requirements: they are cheap, and the caller
+        // sees the list change the moment an entry is removed or finished anywhere it reaches.
+        var here = QueuedContent(city, kind);
+        var elsewhere = Sim.State.Cities.Where(c => c.Id != city.Id && c.Owner == city.Owner)
+            .SelectMany(c => QueuedContent(c, kind)).ToHashSet(StringComparer.Ordinal);
+        return eligible.Select(e =>
+        {
+            // Requirements take priority: they explain why it is still unbuildable even with a copy queued.
+            var blockers = e.Blockers;
+            if (blockers.Count == 0 && QueueBlocker(production, city, e.Def.Id, here, elsewhere) is { } queued) blockers = [queued];
+            return blockers.Count > 0
+                ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, production.BaseCost(e.Def), null, blockers, production.IsContinuous)
+                : Priced(city, production, e.Def);
+        }).ToList();
     }
+
+    private static HashSet<string> QueuedContent(City city, string kind) =>
+        city.ProductionQueue.Where(o => o.Kind == kind).Select(o => o.ContentId).ToHashSet(StringComparer.Ordinal);
+
+    /// <summary>The note that a queued copy covers this candidate, or null when the kind can be built repeatedly or no
+    /// copy reaches this far: another player's queue never blocks it, because the players race for it.</summary>
+    private string? QueueBlocker(IProductionKind production, City city, string id, IReadOnlySet<string> here, IReadOnlySet<string> elsewhere) =>
+        production.QueuedScope(Sim, city.Id, id) switch
+        {
+            QueueScope.None => null,
+            _ when here.Contains(id) => AlreadyQueued,
+            QueueScope.Player when elsewhere.Contains(id) => AlreadyQueuedElsewhere,
+            _ => null,
+        };
 
     /// <summary>All registered kinds together.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city) =>

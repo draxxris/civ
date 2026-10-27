@@ -7,7 +7,10 @@ internal static class PuppetProduction
 {
     internal static void Choose(Simulation sim, City city, ICityProductionService production)
     {
+        // A puppet cannot build wonders: the player cannot edit its queue, so a wonder here would block the same one in
+        // a city the player does control.
         var building = sim.Content.Get<S.BuildingDef>().All
+            .Where(b => BuildingScope.Of(b) != QueueScope.Player)
             .Where(b => production.Validate(sim, city.Id, "cities:building", b.Id).Success)
             .OrderByDescending(Value).ThenBy(b => b.Id, StringComparer.Ordinal).FirstOrDefault();
         if (building is not null)

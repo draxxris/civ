@@ -203,6 +203,35 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void A_wonder_queued_in_one_city_blocks_the_same_player_but_not_a_rival()
+    {
+        var sim = ProbeScenario();
+        var session = new GameSession(sim);
+        var first = sim.State.Cities[0];
+        var samePlayer = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(44)) };
+        var rival = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new TileId(50)) };
+        sim.State.AddCity(samePlayer); sim.State.AddCity(rival);
+        Assert.True(session.Enqueue(first, "cities:building", "probe:wonder", append: true));
+        Assert.True(session.Enqueue(first, "cities:building", "probe:national_wonder", append: true));
+        Assert.True(session.Enqueue(first, "cities:building", "probe:enhanced_building", append: true));
+        Assert.True(session.Enqueue(first, "cities:building", "probe:parallel_building", append: true));
+
+        // A wonder and a national wonder are one per player, so a second city of the same player may not queue them;
+        // the rival still races, and a building the limits allow three of stays per city.
+        var neighbour = session.ProductionChoices(samePlayer, "cities:building");
+        Assert.Equal(["Already queued in another city"], Assert.Single(neighbour, c => c.Id == "probe:wonder").Blockers);
+        Assert.Equal(["Already queued in another city"], Assert.Single(neighbour, c => c.Id == "probe:national_wonder").Blockers);
+        Assert.True(Assert.Single(session.ProductionChoices(rival, "cities:building"), c => c.Id == "probe:enhanced_building").Available);
+        Assert.True(Assert.Single(session.ProductionChoices(rival, "cities:building"), c => c.Id == "probe:wonder").Available);
+        Assert.True(Assert.Single(neighbour, c => c.Id == "probe:enhanced_building").Available);
+        Assert.True(Assert.Single(neighbour, c => c.Id == "probe:parallel_building").Available);
+
+        // Dropping the entry from the first city's queue offers it again to the neighbour.
+        Assert.True(session.RemoveFromQueue(first, 0));
+        Assert.True(Assert.Single(session.ProductionChoices(samePlayer, "cities:building"), c => c.Id == "probe:wonder").Available);
+    }
+
+    [Fact]
     public void Production_modifiers_normalize_overflow_and_wonders_are_globally_unique()
     {
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Culture = 1;
@@ -1714,6 +1743,9 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             if (buildingGoldPercent is { } percent)
                 context.Content<S.RuleConstantsDef>().Override(new() { Id = constants.Id, Name = constants.Name, Era = constants.Era, Help = constants.Help, Pedia = constants.Pedia, Strategy = constants.Strategy, Icon = constants.Icon, Unsupported = constants.Unsupported, Values = constants.Values, Raw = constants.Raw.SetItem("MAXED_BUILDING_GOLD_PERCENT", percent.ToString()) });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:wonder", Name = "Wonder", DefaultBuilding = "probe:wonder", Cost = 1, Limits = new() { World = 1 } });
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:national_wonder", Name = "National Wonder", DefaultBuilding = "probe:national_wonder", Cost = 1, Limits = new() { Player = 1 } });
+            // Three copies per player, like corporation buildings: two cities may build it at the same time.
+            context.Content<S.BuildingDef>().Register(new() { Id = "probe:parallel_building", Name = "Parallel Building", DefaultBuilding = "probe:parallel_building", Cost = 1, Limits = new() { Player = 3 } });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:enhanced_building", Name = "Enhanced Building", DefaultBuilding = "probe:enhanced_building", Cost = 1 });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:obsolete_building", Name = "Obsolete Building", DefaultBuilding = "probe:obsolete_building", Cost = 1, ObsoleteTech = "research:pottery" });
             context.Content<S.UnitDef>().Register(new() { Id = "probe:colonist", Name = "Colonist", DefaultUnit = "probe:colonist", Cost = 10, FoodProduction = true, CanFoundCity = true });

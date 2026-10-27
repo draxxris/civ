@@ -3,7 +3,8 @@ using Civ.Game;
 
 namespace Civ.Mods.Cities;
 
-internal sealed class ProductionKind<T>(string id, string label, Func<T, long> cost, ICityProductionService production) : IProductionKind
+internal sealed class ProductionKind<T>(string id, string label, Func<T, long> cost, ICityProductionService production,
+    Func<T, QueueScope> scope) : IProductionKind
     where T : ContentDef
 {
     private static readonly string[] HiddenBlockers =
@@ -12,6 +13,7 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public string Id => id;
     public string Label => label;
     public bool IsContinuous => false;
+    public QueueScope QueuedScope(Simulation sim, int city, string id) => scope((T)Definition(sim.Content, id));
     public IEnumerable<ContentDef> Candidates(ContentDb content) => content.Get<T>().All.Where(d => cost(d) >= 0);
     public ContentDef Definition(ContentDb content, string contentId) => content.Get<T>(contentId);
     public long BaseCost(ContentDef definition) => cost((T)definition);
@@ -22,6 +24,26 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
         CityReadScope.Run(sim, _ => ids.Select(id => Validate(sim, city, id)).ToArray());
     public CityProductionResult Calculate(Simulation sim, int city, string contentId) => production.Calculate(sim, city, Id, contentId);
+}
+
+/// <summary>How far a queued copy of a building reaches, read from the building limits the eligibility checks enforce.</summary>
+internal static class BuildingScope
+{
+    /// <summary>A building is unique within its city. One whose tightest limit allows a single copy is also one per
+    /// player, so a second city of the same player cannot queue it; different players still race for the same one.
+    /// A limit that allows several copies (corporation buildings, for example) stays per city.</summary>
+    public static QueueScope Of(Civ.Content.Schema.BuildingDef b) =>
+        SmallestAllowance(b.Limits) <= 1 ? QueueScope.Player : QueueScope.City;
+
+    /// <summary>The tightest finite number of copies the limits allow, or <see cref="int.MaxValue"/> when unlimited.</summary>
+    private static int SmallestAllowance(Civ.Content.Schema.ClassLimits limits)
+    {
+        int allowance = int.MaxValue;
+        if (limits.World >= 0) allowance = Math.Min(allowance, limits.World);
+        if (limits.Team >= 0) allowance = Math.Min(allowance, limits.Team);
+        if (limits.Player >= 0) allowance = Math.Min(allowance, limits.Player + limits.ExtraPlayer);
+        return allowance;
+    }
 }
 
 internal sealed class PlotSourceLabel : ILedgerSourceLabel

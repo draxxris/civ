@@ -581,6 +581,32 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void A_queued_building_leaves_the_choices_while_units_stay_repeatable()
+    {
+        var s = CitySession();
+        var city = Found(s);
+        var building = s.ProductionChoices(city, "cities:building").First(c => c.Available);
+        Assert.True(s.Enqueue(city, building.Kind, building.Id, append: true));
+        var afterEnqueue = Assert.Single(s.ProductionChoices(city, "cities:building"), c => c.Id == building.Id);
+        Assert.False(afterEnqueue.Available);
+        Assert.Equal(["Already in queue"], afterEnqueue.Blockers);
+
+        // A unit is trained again and again: having one queued does not use up the choice.
+        var unit = s.ProductionChoices(city, "cities:unit").First(c => c.Available);
+        Assert.True(s.Enqueue(city, unit.Kind, unit.Id, append: true));
+        Assert.True(Assert.Single(s.ProductionChoices(city, "cities:unit"), c => c.Id == unit.Id).Available);
+
+        // Removing the entry puts the building back on offer.
+        Assert.True(s.RemoveFromQueue(city, 0));
+        Assert.True(Assert.Single(s.ProductionChoices(city, "cities:building"), c => c.Id == building.Id).Available);
+
+        // A continuous process converts production and stays on offer however often it is queued.
+        var process = s.ProductionChoices(city, "economy:process").First(c => c.Available);
+        Assert.True(s.Enqueue(city, process.Kind, process.Id, append: true));
+        Assert.True(Assert.Single(s.ProductionChoices(city, "economy:process"), c => c.Id == process.Id).Available);
+    }
+
+    [Fact]
     public void City_screen_reports_ledgers_and_the_production_queue_can_be_edited()
     {
         var s = CitySession();

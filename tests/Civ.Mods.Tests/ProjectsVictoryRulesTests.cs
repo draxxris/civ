@@ -1,3 +1,4 @@
+using Civ.Client;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -36,6 +37,39 @@ public sealed class ProjectsVictoryRulesTests
     }
     private static void Learn(Simulation sim, int player, params string[] techs) { foreach (var t in techs) sim.TeamOf(player).Techs.Add(t); }
     private static VictoryStatus Status(Simulation sim) => Pv(sim).GetVictoryStatus(sim);
+
+    [Fact]
+    public void A_single_copy_project_leaves_the_choices_while_a_multi_copy_one_does_not()
+    {
+        var sim = Scenario();
+        var session = new GameSession(sim);
+        var city = sim.State.Cities[0];
+        Learn(sim, 0, "research:fission", "research:composites");
+        Learn(sim, 1, "research:fission");
+        Pv(sim).CompleteProject(sim, city.Id, "projects_victory:apollo_program");
+        const string kind = "projects_victory:project";
+
+        // The Manhattan Project can be built once in the world, so a queued copy uses up the choice.
+        Assert.True(session.Enqueue(city, kind, "projects_victory:manhattan_project", append: true));
+        Assert.Equal(["Already in queue"], Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:manhattan_project").Blockers);
+
+        // Space Casing allows five copies per team, so a queued copy leaves the choice on offer.
+        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.Equal(2, city.ProductionQueue.Count(o => o.ContentId == "projects_victory:ss_casing"));
+        Assert.True(Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:ss_casing").Available);
+
+        // The fifth Space Casing is the last the team may build, so from then on a queued copy uses up the choice.
+        for (int i = 0; i < 4; i++) Pv(sim).CompleteProject(sim, city.Id, "projects_victory:ss_casing");
+        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.Equal(["Already in queue"], Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:ss_casing").Blockers);
+
+        // A single-copy project queued in one city also covers the player's other cities; another player still races.
+        var samePlayer = AddCity(sim, 0, 40); var rival = AddCity(sim, 1, 20);
+        Assert.Equal(["Already queued in another city"],
+            Assert.Single(session.ProductionChoices(samePlayer, kind), c => c.Id == "projects_victory:manhattan_project").Blockers);
+        Assert.True(Assert.Single(session.ProductionChoices(rival, kind), c => c.Id == "projects_victory:manhattan_project").Available);
+    }
 
     [Fact]
     public void Project_eligibility_follows_tech_prerequisites_and_team_and_world_limits()

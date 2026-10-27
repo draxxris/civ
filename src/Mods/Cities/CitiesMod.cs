@@ -37,8 +37,12 @@ public sealed class CitiesMod : IPreparableMod
         context.RegisterService<ICityConscriptService>("conscript", conscript);
         context.RegisterService<IModifierSource>("conscript_anger", conscript);
         context.RegisterService<ICityCultureService>("culture_grants", culture);
-        context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production));
-        context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production));
+        // A building is unique within its city; one whose limit allows a single copy is also one per player, so a second
+        // city of the same player cannot queue it. Different players still race to finish the same wonder.
+        context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production,
+            BuildingScope.Of));
+        context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production,
+            _ => QueueScope.None));
         context.RegisterService<ILedgerSourceLabel>("plot_labels", new PlotSourceLabel());
         context.RegisterService<ICityYieldService>("yields", yields);
         context.RegisterService<ICityWellbeingService>("wellbeing", wellbeing);

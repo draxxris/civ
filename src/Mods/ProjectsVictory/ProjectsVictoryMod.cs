@@ -50,6 +50,11 @@ internal sealed class ProjectKind(ProjectVictoryService service) : IProductionKi
     public string Id => KindId;
     public string Label => "Projects";
     public bool IsContinuous => false;
+    /// <summary>A project the team can build only once more is covered by the queued copy, in any of the player's cities;
+    /// one with copies to spare stays repeatable. Queued copies are not counted towards that room: a team may queue the
+    /// last few copies at once.</summary>
+    public QueueScope QueuedScope(Simulation sim, int city, string id) =>
+        service.RemainingCopies(sim, city, id) <= 1 ? QueueScope.Player : QueueScope.None;
     public IEnumerable<ContentDef> Candidates(ContentDb content) => content.Get<ProjectDef>().All.Where(p => p.Cost >= 0);
     public ContentDef Definition(ContentDb content, string id) => content.Get<ProjectDef>(id);
     public long BaseCost(ContentDef definition) => ((ProjectDef)definition).Cost;

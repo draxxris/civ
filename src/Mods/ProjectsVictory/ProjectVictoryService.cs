@@ -66,6 +66,19 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         return new(failures.Count == 0, failures);
     }
 
+    /// <summary>Copies of the project the team may still build, capped by every limit <see cref="ValidateProject"/> enforces.
+    /// <see cref="int.MaxValue"/> when nothing caps it.</summary>
+    internal int RemainingCopies(Simulation sim, int cityId, string id)
+    {
+        var def = sim.Content.Get<ProjectDef>(id);
+        int team = sim.State.PlayerById(sim.State.CityById(cityId).Owner).TeamId;
+        int remaining = int.MaxValue;
+        if (def.MaxGlobalInstances >= 0) remaining = Math.Min(remaining, def.MaxGlobalInstances - WorldCount(sim, id));
+        if (def.MaxTeamInstances >= 0) remaining = Math.Min(remaining, def.MaxTeamInstances - TeamCount(sim, team, id));
+        foreach (var limit in def.VictoryThresholds.Values) remaining = Math.Min(remaining, limit - TeamCount(sim, team, id));
+        return remaining;
+    }
+
     public void CompleteProject(Simulation sim, int cityId, string project)
     {
         var city = sim.State.CityById(cityId);
