@@ -7,12 +7,20 @@ using S = Civ.Content.Schema;
 
 namespace Civ.Mods.Tests;
 
-public sealed class GreatPeopleRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
+public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
 {
-    private Simulation Scenario()
+    /// <summary>One frozen content for the probe mod; xunit builds a new test class instance for every test, so a
+    /// build inside <see cref="Scenario"/> would run once per case.</summary>
+    private static readonly Lazy<ContentDb> Content = new(() =>
     {
-        var source = new ModSource { Manifest = new() { Id = "gp_probe", Version = "1", References = ["foundation", "military"] }, Root = mods.Root, Instance = new Probe() };
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Append(source)));
+        var loaded = new LoadedMods();
+        var source = new ModSource { Manifest = new() { Id = "gp_probe", Version = "1", References = ["foundation", "military"] }, Root = loaded.Root, Instance = new Probe() };
+        return ModLoader.Build(loaded.Sources.Append(source));
+    });
+
+    private static Simulation Scenario()
+    {
+        var sim = GameFactory.Scenario(Content.Value);
         GameFactory.NeutralPolitics(sim);
         var city = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(39)), Culture = 1 };
         sim.State.AddCity(city);

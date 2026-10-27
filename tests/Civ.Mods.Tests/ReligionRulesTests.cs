@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Civ.Content;
 using Civ.Game;
 using Civ.Modding;
@@ -9,6 +10,19 @@ namespace Civ.Mods.Tests;
 public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private const string Buddhism = "religion:buddhism";
+
+    /// <summary>One frozen content per optional-mod set; xunit builds a new test class instance for every test, so
+    /// the inquisition theory's cases would otherwise rebuild the ruleset once each.</summary>
+    private static readonly ConcurrentDictionary<bool, Lazy<ContentDb>> InquisitionContents = new();
+
+    private static ContentDb InquisitionContent(bool revolution) => InquisitionContents.GetOrAdd(revolution, key =>
+        new(() =>
+        {
+            var loaded = new LoadedMods();
+            var optional = (key ? new[] { "Diplomacy", "Revolution" } : ["Diplomacy"]).Select(name =>
+                ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
+            return ModLoader.Build(loaded.Sources.Concat(optional));
+        })).Value;
     private static readonly Lazy<string> ScenarioSave = new(() =>
     {
         var sim = GameFactory.Scenario(new LoadedMods().Content);
@@ -174,9 +188,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
 
     private (Simulation Sim, City City, City Refuge, Unit Inquisitor) InquisitionScenario(bool holy, bool relocate, bool revolution)
     {
-        var optional = (revolution ? new[] { "Diplomacy", "Revolution" } : ["Diplomacy"]).Select(name =>
-            ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Concat(optional)));
+        var sim = GameFactory.Scenario(InquisitionContent(revolution));
         foreach (var player in sim.State.Players) player.Civics.Clear(); // Keep personalities for diplomatic memory effects.
         var city = City(sim, 39); var refuge = City(sim, 44, 1);
         const string minority = "religion:hinduism";

@@ -14,6 +14,10 @@ public sealed class CivTestMetricsLogger : ITestLogger
     private const string ExtensionUri = "logger://civ-test-metrics/v1";
     private const string FriendlyName = "CivTestMetrics";
     private const long MaxFileBytes = 10 * 1024 * 1024;
+    // A trim rewrites the whole log, so it must not run per result. Once the log passes MaxFileBytes it is cut
+    // back to this low-water mark, which pays for one rewrite per ~10k results instead of one per result.
+    // Trimming to the cap instead cost ~110 ms per result and tripled the default suite's wall time.
+    private const long TrimTargetBytes = MaxFileBytes * 3 / 4;
     private static readonly string MutexName = "CivTestMetricsLogger";
 
     public void Initialize(TestLoggerEvents events, string testRunDirectory)
@@ -27,6 +31,7 @@ public sealed class CivTestMetricsLogger : ITestLogger
         var record = JsonSerializer.Serialize(new RuntimeRecord(
             DateTimeOffset.UtcNow,
             result.TestCase.FullyQualifiedName,
+            result.TestCase.DisplayName,
             result.Duration.TotalMilliseconds,
             result.Outcome.ToString()));
         var line = Encoding.UTF8.GetBytes(record + "\n");
@@ -59,7 +64,7 @@ public sealed class CivTestMetricsLogger : ITestLogger
         foreach (var line in File.ReadLines(path).Reverse())
         {
             var bytes = Encoding.UTF8.GetBytes(line + "\n");
-            if (retainedBytes + bytes.Length > MaxFileBytes)
+            if (retainedBytes + bytes.Length > TrimTargetBytes)
                 break;
             retained.Enqueue(bytes);
             retainedBytes += bytes.Length;
@@ -78,5 +83,6 @@ public sealed class CivTestMetricsLogger : ITestLogger
         return directory?.FullName ?? Environment.CurrentDirectory;
     }
 
-    private sealed record RuntimeRecord(DateTimeOffset Timestamp, string Test, double DurationMs, string Outcome);
+    private sealed record RuntimeRecord(
+        DateTimeOffset Timestamp, string Test, string Name, double DurationMs, string Outcome);
 }

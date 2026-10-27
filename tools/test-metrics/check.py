@@ -8,6 +8,11 @@ from pathlib import Path
 LOG = Path(__file__).resolve().parents[2] / ".test-metrics" / "test-runtimes.jsonl"
 
 
+def field(record: dict, name: str):
+    """Read a field whatever casing the logger wrote it in."""
+    return record.get(name, record.get(name.lower()))
+
+
 def main() -> None:
     if not LOG.exists():
         return
@@ -16,8 +21,8 @@ def main() -> None:
     for line in LOG.read_text(encoding="utf-8").splitlines():
         try:
             record = json.loads(line)
-            if record.get("outcome") == "Passed":
-                runs[record["test"]].append(float(record["durationMs"]))
+            if field(record, "Outcome") == "Passed":
+                runs[field(record, "Test")].append(float(field(record, "DurationMs")))
         except (ValueError, KeyError, TypeError):
             continue
 

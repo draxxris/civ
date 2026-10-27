@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Civ.Content.Schema;
 using Civ.Modding;
 
@@ -63,6 +64,11 @@ public static class EvaluationCli
 
 internal sealed class EvaluationRun(RunFiles files, RunManifest manifest)
 {
+    /// <summary>The CLI performs one evaluation per process, so this only serves repeated in-process runs (the test
+    /// suite drives the CLI directly). Content is frozen once built, which is the same assumption the fixtures and
+    /// <c>GameFactory</c> already rely on, and each run still gets its own simulations.</summary>
+    private static readonly ConcurrentDictionary<string, (ModSource[] Sources, Civ.Content.ContentDb Content)> Contents = new(StringComparer.Ordinal);
+
     private int completed;
     private int snapshotCount;
     private readonly List<EconomicSnapshot> finals = [];
@@ -76,8 +82,11 @@ internal sealed class EvaluationRun(RunFiles files, RunManifest manifest)
         manifest.Config = config;
         files.Save("manifest.json", manifest);
         files.Progress("content_load_started");
-        var sources = Directory.GetDirectories(modsRoot).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
-        var content = ModLoader.Build(sources);
+        var (sources, content) = Contents.GetOrAdd(Path.GetFullPath(modsRoot), root =>
+        {
+            var found = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
+            return (found, ModLoader.Build(found));
+        });
         RecordContent(sources, content);
         foreach (ulong seed in config.Seeds) RunSample(content, config, seed, cancellation);
         cancellation.ThrowIfCancellationRequested();
