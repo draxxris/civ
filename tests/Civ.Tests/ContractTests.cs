@@ -312,6 +312,7 @@ public class ContractTests
     [InlineData(1)]
     [InlineData(17)]
     [InlineData(41)]
+    [Trait("Category", "E2E")]
     public void AiSaveReloadResumesWithoutRerunningSetupOrAiAndMatchesEveryFollowingTurn(int checkpoint)
     {
         var sim = new Simulation(TestGame.Content(), new SimulationSettings

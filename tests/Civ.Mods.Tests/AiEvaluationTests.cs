@@ -41,6 +41,7 @@ public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : I
     }
 
     [Fact]
+    [Trait("Category", "E2E")]
     public void Cli_records_repeatable_games_settlements_events_and_paired_metric_directions()
     {
         string baseline = Path.Combine(workspace, "baseline");
@@ -136,6 +137,7 @@ public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : I
     [InlineData("failed", "did not complete")]
     [InlineData("missing-row", "coverage")]
     [InlineData("duplicate-row", "Duplicate")]
+    [Trait("Category", "E2E")]
     public void Cli_rejects_incompatible_or_incomplete_baselines_without_overwriting_them(string fault, string expectedError)
     {
         string baseline = valid.CopyTo(Path.Combine(workspace, "baseline"));

@@ -282,6 +282,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    [Trait("Category", "E2E")]
     public void Strong_army_declares_war_and_captures_a_weak_neighbour()
     {
         var sim = GameFactory.Scenario(mods.Content);

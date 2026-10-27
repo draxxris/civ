@@ -9,6 +9,7 @@ namespace Civ.Tests;
 public class CivAndAiTests
 {
     [Fact]
+    [Trait("Category", "E2E")]
     public void BasicAiPlaysAWholeGameDeterministically()
     {
         ulong Run()
