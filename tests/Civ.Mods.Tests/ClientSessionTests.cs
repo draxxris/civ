@@ -161,6 +161,44 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Stacked_units_lists_my_units_on_the_tile_in_the_order_clicks_cycle_through_them()
+    {
+        var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
+        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        s.Sim.State.AddUnit(new Unit { Id = s.Sim.State.NextUnitId++, Owner = 1, Type = "military:warrior", Position = warrior.Position });
+        warrior.Experience = 20;
+        warrior.Health = 70;
+        s.SelectUnit(warrior.Id);
+        var promotion = Assert.Single(s.DescribeUnit(warrior)!.Actions, a => a.Id == "promote:military:city_raider1");
+        s.RunAction(promotion.Id);
+
+        var stack = s.UnitStack();
+
+        Assert.Equal([settler.Id, warrior.Id], stack.Select(u => u.Id));
+        var row = stack[^1];
+        Assert.Equal(warrior.Health, row.Health);
+        var rank = Assert.Single(row.Ranks);
+        Assert.Equal("military:city_raider1", rank.Id);
+        Assert.Equal("City Raider I", rank.Name);
+        // The list agrees with the map: cycling on past the last row wraps to the first.
+        s.SelectUnit(stack[^1].Id);
+        s.SelectAt(warrior.Position);
+        Assert.Equal(stack[0].Id, s.SelectedUnitId);
+    }
+
+    [Fact]
+    public void Stacked_units_is_empty_when_the_tile_holds_a_single_unit()
+    {
+        var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
+        Assert.Equal(2, s.UnitStack().Count);
+        Found(s);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human);
+        s.SelectUnit(warrior.Id);
+        Assert.Empty(s.UnitStack());
+    }
+
+    [Fact]
     public void End_turn_advances_even_though_no_AI_plays_the_other_players()
     {
         var s = NewSession();

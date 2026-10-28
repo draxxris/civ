@@ -337,6 +337,11 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Scroll bar margins**: Every scroll view widget has a margin to the left of the
   scroll bar so lists starting or stopping scrolling do not reflow rows. The tech tree
   canvas keeps its own clearance.
+- **Stacked unit list**: When the selected unit shares its tile with another of the
+  player's units, the left panel lists every one of them above the unit detail, with
+  unit art, name, health and a small icon or badge per earned promotion whose name is
+  its tooltip. Clicking a row selects that unit, and the rows follow the same id order
+  that repeated map clicks cycle through, so the list and the cycling always agree.
 - **Uncapped production list**: The city screen's production list draws every row its
   tab and filter match, available first and unavailable after them, and the panel's
   scroll container reaches all of them. The `Show unavailable` checkbox still decides
@@ -390,9 +395,6 @@ ______________________________________________________________________
 - [ ] **Terrain bonus icons**: Square icons still appear above terrain bonuses (like
   Stone) even though we now have 3D meshes; provide cleaner icons and disable the
   Resources overlay by default in map view.
-- [ ] **Stacked unit list**: The left pane should show a list of all stacked units
-  instead of forcing repeated left clicks to cycle through them, showing unit icon,
-  name, health, and small rank icons if they have leveled up.
 - [ ] **Research selector tooltips**: The research selector GUI needs tooltips showing
   what each technology will give you, including rich content support (icons, colored
   text, etc.).

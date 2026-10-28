@@ -26,6 +26,12 @@ public sealed record UnitPanel(
     int Id, string Name, string Stats, string Moves, int Health, string Experience, string Activity,
     IReadOnlyList<string> Promotions, IReadOnlyList<UnitActionInfo> Actions);
 
+/// <summary>An earned promotion as the stacked-unit list draws it: the id names the art, the name is the tooltip.</summary>
+public sealed record UnitRank(string Id, string Name);
+
+/// <summary>One row of the left pane's stacked-unit list: the art id, the name, the health and the ranks earned so far.</summary>
+public sealed record StackedUnit(int Id, string Type, string Name, int Health, IReadOnlyList<UnitRank> Ranks);
+
 public sealed partial class GameSession
 {
     public int GoldenAgeTurnsRemaining => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, Human) ?? 0;
@@ -61,6 +67,20 @@ public sealed partial class GameSession
         var promotions = unit.Promotions.Select(p => Sim.Content.Get<Schema.PromotionDef>(p).Name).ToList();
         return new(unit.Id, def.Name, stats, MovesText(unit, units.MaximumMoves(Sim, unit.Id)), unit.Health, xp,
             (state?.Activity ?? UnitActivity.Awake).ToString(), promotions, UnitActions(unit, def));
+    }
+
+    /// <summary>
+    /// The stack on the selected unit's tile: my units there in the id order <see cref="SelectAt"/> cycles through them,
+    /// or nothing when the tile holds a single one, which needs no list beside its detail. A row carries the little a
+    /// stack row draws rather than a whole <see cref="UnitPanel"/>, whose actions would scan the map once per unit.
+    /// </summary>
+    public IReadOnlyList<StackedUnit> UnitStack()
+    {
+        if (Unit is not { } selected) return [];
+        var units = Sim.State.UnitsAt(selected.Position).Where(u => u.Owner == Human).OrderBy(u => u.Id).ToList();
+        if (units.Count < 2) return [];
+        return units.Select(unit => new StackedUnit(unit.Id, unit.Type, DefOf(unit).Name, unit.Health,
+            unit.Promotions.Select(p => new UnitRank(p, Sim.Content.Get<Schema.PromotionDef>(p).Name)).ToList())).ToList();
     }
 
     private string MovesText(Unit unit, int maximum)
