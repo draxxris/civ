@@ -1,4 +1,4 @@
-# Civ
+# Ariel
 
 A super-moddable, hex-grid Civilization 4 clone. Everything, including base terrain, is
 a mod. See [docs/DESIGN.md](docs/DESIGN.md).
@@ -9,13 +9,13 @@ mise install                         # once per clone: .NET 10 SDK and Godot 4.7
 mise run test                        # default suite; excludes E2E and extractor tests
 mise run test:e2e                    # E2E simulation tests
 mise run test:extractor              # source extraction and emitted-content tests
-dotnet test Civ.slnx                 # all tests, including E2E and extractor tests
-dotnet build src/Civ.Godot
-godot-mono --path src/Civ.Godot      # Godot 4.7.2 .NET editor/runtime
+dotnet test Ariel.slnx                 # all tests, including E2E and extractor tests
+dotnet build src/Ariel.Godot
+godot-mono --path src/Ariel.Godot      # Godot 4.7.2 .NET editor/runtime
 ```
 
 For gameplay and renderer details, see
-[src/Civ.Godot/README.md](src/Civ.Godot/README.md). For screenshot and visual-debug
+[src/Ariel.Godot/README.md](src/Ariel.Godot/README.md). For screenshot and visual-debug
 workflows, see [tools/shots/README.md](tools/shots/README.md).
 
 `godot-mono` is a mise shim for `github:godotengine/godot@4.7.2-stable`
@@ -23,15 +23,15 @@ workflows, see [tools/shots/README.md](tools/shots/README.md).
 inside this repo, and mise sets `DOTNET_ROOT` for it. Without `DOTNET_ROOT`, Godot
 cannot find the .NET host and does not exit.
 
-Smoke test (after `dotnet build src/Civ.Godot`; exits 0 after 200 frames):
-`xvfb-run -a godot-mono --headless --path src/Civ.Godot --quit-after 200`
+Smoke test (after `dotnet build src/Ariel.Godot`; exits 0 after 200 frames):
+`xvfb-run -a godot-mono --headless --path src/Ariel.Godot --quit-after 200`
 
 Headless on Linux: `xvfb-run` plus software GL
-(`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Civ.Godot`).
+(`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Ariel.Godot`).
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user
-data folder. Mod DLLs reference only `Civ.Core`, never Godot types; visuals ship as data
-(`.pck` packs, plain assets). AI players implement `IPlayerAI`.
+data folder. Mod DLLs reference only `Ariel.Core`, never Godot types; visuals ship as
+data (`.pck` packs, plain assets). AI players implement `IPlayerAI`.
 
 ## Documentation
 
@@ -48,14 +48,14 @@ data folder. Mod DLLs reference only `Civ.Core`, never Godot types; visuals ship
 
 Run `mise run benchmark` to measure world generation/setup, a fifty-city turn, and
 eight-player AI decisions at turn 100. Run
-`dotnet run --project tools/Civ.Benchmarks/Civ.Benchmarks.csproj --configuration Release -- --terrain`
+`dotnet run --project tools/Ariel.Benchmarks/Ariel.Benchmarks.csproj --configuration Release -- --terrain`
 to benchmark CPU terrain meshing and scatter planning across standard, huge, and
 gigantic maps. The console suite prints single-sample timings and result counts without
 pass/fail thresholds. It reports AI preparation separately from decision time. Content
 loading is outside the measurements. The first sample includes JIT costs. Compare
 results on the same machine and build configuration.
 
-The benchmark project is outside `Civ.slnx` and has no test-framework dependency.
+The benchmark project is outside `Ariel.slnx` and has no test-framework dependency.
 Regular `dotnet test` runs retain world correctness and AI simulation assertions,
 without timing budgets.
 
@@ -72,7 +72,7 @@ suite. Run extractor tests when the source assets or importer change.
 
 ## Content
 
-Rules content is compiled into the mods' `data/` folders by `tools/Civ.ContentImport`
+Rules content is compiled into the mods' `data/` folders by `tools/Ariel.ContentImport`
 from a local extraction.
 
 ## 3D terrain and nature art
@@ -109,10 +109,10 @@ and scattered 3D nature props:
   bonus that some terrain or feature may carry; manufactured goods have none) gets a
   compact, vertex-coloured GLB at `src/Mods/World/art/models/<bonus id suffix>.glb`, for
   example `wheat.glb` for `world:wheat`. The client stands it on one of six spots toward
-  the tile corners (`BonusSpot` in `src/Civ.Client.Core/Terrain/BonusSpot.cs`), skipping
-  spots near a river, across the shore or on a steep face, and keeps that spot clear of
-  scatter props. Sea resources float at sea level. The resource icons remain as the
-  resource overlay. Preview them with
+  the tile corners (`BonusSpot` in `src/Ariel.Client.Core/Terrain/BonusSpot.cs`),
+  skipping spots near a river, across the shore or on a steep face, and keeps that spot
+  clear of scatter props. Sea resources float at sea level. The resource icons remain as
+  the resource overlay. Preview them with
   `--scenario tools/shots/scenarios/resources.json --world small`.
 - **Attribution:** 3D nature scatter models (trees, palms, rocks, bushes) are based on
   the *Ultimate Stylized Nature* pack by Quaternius, dedicated to the public domain

@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Production choice for every city: emergencies, expansion, then flavor-weighted value.</summary>
 internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan army)

@@ -1,9 +1,9 @@
 using System.Globalization;
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using SpecialistDef = Civ.Content.Schema.SpecialistDef;
-namespace Civ.Mods.Ai;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using SpecialistDef = Ariel.Content.Schema.SpecialistDef;
+namespace Ariel.Mods.Ai;
 
 internal sealed class GreatPersonPlanner(AiContext ctx)
 {

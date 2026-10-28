@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Game;
+using Ariel.Modding;
 
-namespace Civ.Mods.ScriptedWonders;
+namespace Ariel.Mods.ScriptedWonders;
 
 public sealed class ScriptedWondersMod : IPreparableMod
 {

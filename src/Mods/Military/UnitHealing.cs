@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 internal static class UnitHealing
 {

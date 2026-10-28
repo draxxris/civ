@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Small shared unit actions: fortify, attack with an odds threshold, retreat.</summary>
 internal sealed class UnitOrders(AiContext ctx)

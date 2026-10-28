@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Spends surplus gold on finishing production, never dipping below a reserve.</summary>
 internal sealed class HurryPlanner(AiContext ctx, CityPlanner cities)

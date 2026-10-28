@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Espionage;
+namespace Ariel.Mods.Espionage;
 
 internal sealed partial class EspionageService : IEspionageService
 {
@@ -106,7 +106,7 @@ internal sealed partial class EspionageService : IEspionageService
     public int SuccessChance(Simulation sim, int player, int city)
     {
         var target = sim.State.CityById(city);
-        int defenders = sim.State.UnitsAt(target.Position).Count(u => sim.TeamOf(u.Owner).Id == sim.TeamOf(target.Owner).Id && sim.Content.Get<Civ.Content.Schema.UnitDef>(u.Type).CounterSpy);
+        int defenders = sim.State.UnitsAt(target.Position).Count(u => sim.TeamOf(u.Owner).Id == sim.TeamOf(target.Owner).Id && sim.Content.Get<Ariel.Content.Schema.UnitDef>(u.Type).CounterSpy);
         return (int)Math.Clamp(85 - defenders * 15 + (100 - RatioPercent(sim, sim.TeamOf(player).Id, sim.TeamOf(target.Owner).Id)) / 5, 10, 95);
     }
 }

@@ -1,9 +1,9 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using CivicDef = Civ.Content.Schema.CivicDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using CivicDef = Ariel.Content.Schema.CivicDef;
 
-namespace Civ.Mods.Corporations;
+namespace Ariel.Mods.Corporations;
 
 internal sealed class CorporationService : ICorporationService
 {
@@ -64,7 +64,7 @@ internal sealed class CorporationService : ICorporationService
         var unit = sim.State.FindUnit(unitId);
         if (unit is null || unit.Owner != player) return "Not your Great Person";
         if (unit.MovesLeft <= 0) return "No moves left";
-        if (sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).DefaultUnit != def.RequiredGreatPersonClass) return "Requires the correct Great Person class";
+        if (sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit != def.RequiredGreatPersonClass) return "Requires the correct Great Person class";
         var city = sim.State.CityAt(unit.Position);
         if (city is null || city.Owner != player) return "Great Person must be in your city";
         if (Read(sim).Founded.ContainsKey(corporation)) return "Corporation is already founded";
@@ -109,7 +109,7 @@ internal sealed class CorporationService : ICorporationService
         var unit = sim.State.FindUnit(id);
         if (unit is null || unit.Owner != player || unit.Position != city.Position) return "Executive must be in the target city";
         if (unit.MovesLeft <= 0) return "No moves left";
-        return sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).CorporationSpreads.GetValueOrDefault(def.Identity) > 0 ? null : "Unit cannot spread this corporation";
+        return sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).CorporationSpreads.GetValueOrDefault(def.Identity) > 0 ? null : "Unit cannot spread this corporation";
     }
     public void Spread(Simulation sim, int player, int city, string corporation, int? unit = null)
     {

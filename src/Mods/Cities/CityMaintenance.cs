@@ -1,8 +1,8 @@
 using System.Numerics;
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 internal sealed class CityMaintenance : ICityMaintenanceService
 {

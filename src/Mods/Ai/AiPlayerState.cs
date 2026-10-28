@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Saved strategic intent. Missing components mean that nothing has been evaluated or assigned.</summary>
 public sealed class AiPlayerState
@@ -74,7 +74,7 @@ internal static class AiIntent
         var path = ctx.FindPath(unit, ctx.Grid.HexOf(target));
         // Civilian intent never adds transport coordination.
         return path is { Steps.Count: > 0 } && path.Steps.All(h =>
-            !ctx.Sim.Content.Get<Civ.Content.Schema.TerrainDef>(ctx.Sim.State.PlotAt(h).Terrain).IsWater);
+            !ctx.Sim.Content.Get<Ariel.Content.Schema.TerrainDef>(ctx.Sim.State.PlotAt(h).Terrain).IsWater);
     }
 
     internal static UnitMission Create(AiContext ctx, Unit unit, AiMissionKind kind, TileId tile, string? build = null) =>

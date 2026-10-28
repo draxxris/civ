@@ -26,7 +26,7 @@ Launch example:
 
 ```sh
 Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &
-DISPLAY=:99 CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup \
+DISPLAY=:99 ARIEL_TRACE_STARTUP=1 godot-mono --path src/Ariel.Godot -- --stage setup \
     --screenshot /tmp/shots/s.png --frames 3
 pkill -f "Xvfb :99"
 ```
@@ -98,7 +98,7 @@ Important rules:
 
 - **Version bumps**: If you change painting or rendering logic in `BrassSkin`,
   `BrassPainter`, `ScrapedPaint`, `BackdropStyleBox`, or `BrushedStyleBox`, you **must**
-  bump `SkinCache.Version` in `src/Civ.Godot/Skin/SkinCache.cs`. The cache does not
+  bump `SkinCache.Version` in `src/Ariel.Godot/Skin/SkinCache.cs`. The cache does not
   invalidate automatically; without a version bump, the game will load old cached
   textures.
 - **Deterministic cache keys**: Texture cache keys are FNV-1a hashes based on the paint

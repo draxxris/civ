@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 internal sealed class TileAppearanceService : ITileAppearanceService
 {

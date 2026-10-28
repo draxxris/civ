@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Ariel.Core</AssemblyName>
+    <RootNamespace>Ariel</RootNamespace>
+    <!-- XML docs default lives in Directory.Build.props (Release only) so Debug builds skip it. -->
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Tests observe AI wave decisions and force strictly sequential AI turns for comparison. -->
+    <InternalsVisibleTo Include="Ariel.Tests" />
+    <InternalsVisibleTo Include="Ariel.Mods.Tests" />
+  </ItemGroup>
+</Project>

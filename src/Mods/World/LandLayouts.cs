@@ -1,4 +1,4 @@
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 internal enum WorldLayout { Continental, InlandSea, KingOfTheHill, NewWorld, TwinContinents, GreatPlains }
 

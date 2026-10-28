@@ -2,7 +2,7 @@
   "id": "ai",
   "name": "Computer Player",
   "version": "1.6.0",
-  "assembly": "Civ.Mods.Ai.dll",
+  "assembly": "Ariel.Mods.Ai.dll",
   "dependencies": [],
   "references": ["foundation", "world", "research", "economy", "cities", "military", "government", "peoples"]
 }

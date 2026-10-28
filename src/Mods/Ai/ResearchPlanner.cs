@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Chooses the next technology: AI weight, flavors times personality, and what the technology unlocks.</summary>
 internal sealed class ResearchPlanner(AiContext ctx)

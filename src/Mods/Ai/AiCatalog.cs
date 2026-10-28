@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
-using Civ.Content;
-using Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Content.Schema;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>What the AI uses a unit definition for.</summary>
 internal enum UnitRole { Other, Settler, Worker, Explorer, Melee, Siege, NavalExplorer, NavalCombat, NavalTransport, Air }

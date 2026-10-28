@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>Single-feature disappearance and adjacent growth, in tile then ordinal feature order.</summary>
 internal sealed class FeatureTurnRules(Simulation sim, HashSet<TileId> worked)

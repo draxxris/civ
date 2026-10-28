@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Religion;
+namespace Ariel.Mods.Religion;
 
 internal static class ReligionData
 {
@@ -39,7 +39,7 @@ internal static class ReligionData
             .Where(b => RequiresReligion(b, religions)).ToArray();
     private static bool RequiresReligion(BuildingDef building, IReadOnlyList<string> religions) =>
         religions.Contains(building.ReligionType ?? "", StringComparer.Ordinal)
-        || Civ.Content.ContentReferences.Leaves(building.Requirements ?? new Civ.Content.Requirement.All([]))
+        || Ariel.Content.ContentReferences.Leaves(building.Requirements ?? new Ariel.Content.Requirement.All([]))
             .Any(l => l.Kind == "religion" && religions.Contains(l.Id, StringComparer.Ordinal));
     internal static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;

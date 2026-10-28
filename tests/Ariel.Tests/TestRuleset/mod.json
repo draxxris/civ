@@ -1,0 +1,7 @@
+{
+  "id": "base",
+  "name": "Base Game",
+  "version": "0.2.1",
+  "assembly": "Ariel.Tests.dll",
+  "dependencies": []
+}

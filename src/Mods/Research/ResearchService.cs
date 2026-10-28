@@ -1,10 +1,10 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using TechDef = Civ.Content.Schema.TechDef;
-using UnitDef = Civ.Content.Schema.UnitDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using TechDef = Ariel.Content.Schema.TechDef;
+using UnitDef = Ariel.Content.Schema.UnitDef;
 
-namespace Civ.Mods.Research;
+namespace Ariel.Mods.Research;
 
 internal sealed class ResearchService : IResearchService
 {

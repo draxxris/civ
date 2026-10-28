@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Found cities at scored sites. Continue safe destinations and retreat immediately from nearby threats.</summary>
 internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)

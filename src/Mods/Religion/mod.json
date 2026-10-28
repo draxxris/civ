@@ -2,7 +2,7 @@
   "id": "religion",
   "name": "Religion",
   "version": "1.1.1",
-  "assembly": "Civ.Mods.Religion.dll",
+  "assembly": "Ariel.Mods.Religion.dll",
   "dependencies": [],
   "references": [
     "cities",

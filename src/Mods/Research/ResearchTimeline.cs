@@ -1,10 +1,10 @@
 using System.Numerics;
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using TechDef = Civ.Content.Schema.TechDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using TechDef = Ariel.Content.Schema.TechDef;
 
-namespace Civ.Mods.Research;
+namespace Ariel.Mods.Research;
 
 internal static class ResearchTimeline
 {

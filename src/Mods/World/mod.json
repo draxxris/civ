@@ -2,7 +2,7 @@
   "id": "world",
   "name": "World",
   "version": "1.13.0",
-  "assembly": "Civ.Mods.World.dll",
+  "assembly": "Ariel.Mods.World.dll",
   "dependencies": [],
   "references": [
     "foundation",

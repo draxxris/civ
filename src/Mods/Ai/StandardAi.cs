@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>The standard computer player (<c>ai:standard</c>).
 /// Planning is sequential, so each decision sees the effect of the previous one: commands go through

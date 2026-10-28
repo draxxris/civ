@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Events;
+namespace Ariel.Mods.Events;
 
 internal sealed class EventModifiers : IModifierSource
 {

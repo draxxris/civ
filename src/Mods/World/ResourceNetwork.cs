@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>CvPlotGroup connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
 internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService

@@ -1,9 +1,9 @@
-using Civ.Content;
-using Civ.Game;
-using Civ.Modding;
-using TechDef = Civ.Content.Schema.TechDef;
+using Ariel.Content;
+using Ariel.Game;
+using Ariel.Modding;
+using TechDef = Ariel.Content.Schema.TechDef;
 
-namespace Civ.Mods.CardResearch;
+namespace Ariel.Mods.CardResearch;
 
 public sealed class CardResearchMod : IMod
 {

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Civ.Mods.Research;
+namespace Ariel.Mods.Research;
 
 /// <summary>Integer fixed-point powers for the three reference research curves.</summary>
 internal static class ResearchPower

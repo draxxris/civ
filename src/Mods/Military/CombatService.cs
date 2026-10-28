@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 internal sealed partial class CombatService : ICombatService
 {
@@ -168,7 +168,7 @@ internal sealed partial class CombatService : ICombatService
     }
     private static void AwardGeneralPoints(Simulation sim, Unit winner, Unit opponent, Hex combatPlot, int amount)
     {
-        var ledger = Civ.Content.ModifierSink.Collect(new(sim, Civ.Content.ModifierScope.Player, winner.Owner)).Ledger;
+        var ledger = Ariel.Content.ModifierSink.Collect(new(sim, Ariel.Content.ModifierScope.Player, winner.Owner)).Ledger;
         long percent = 100 + ledger.Total("military:general_rate_percent");
         if (sim.State.PlotAt(combatPlot).Owner == winner.Owner) percent += ledger.Total("military:domestic_general_rate_percent");
         MilitaryData.EditPlayer(sim, winner.Owner).GeneralPoints += amount * Math.Max(0, percent) / 100;

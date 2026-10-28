@@ -1,8 +1,8 @@
 using System.Globalization;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.GreatPeople;
+namespace Ariel.Mods.GreatPeople;
 
 internal static partial class GreatPersonActions
 {

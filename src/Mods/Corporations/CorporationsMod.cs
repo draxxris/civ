@@ -1,9 +1,9 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using Ariel.Modding;
 
-namespace Civ.Mods.Corporations;
+namespace Ariel.Mods.Corporations;
 
 public sealed class CorporationsMod : IPreparableMod
 {

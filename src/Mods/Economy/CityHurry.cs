@@ -1,10 +1,10 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using UnitDef = Civ.Content.Schema.UnitDef;
-using BuildingDef = Civ.Content.Schema.BuildingDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using UnitDef = Ariel.Content.Schema.UnitDef;
+using BuildingDef = Ariel.Content.Schema.BuildingDef;
 
-namespace Civ.Mods.Economy;
+namespace Ariel.Mods.Economy;
 
 internal sealed class CityHurry : ICityHurryService, IModifierSource
 {

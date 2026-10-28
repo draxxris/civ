@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 internal sealed class CityCulture(ICityYieldService yields, ICityWorkService work) : ICityCultureService
 {
@@ -17,7 +17,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
     }
     public int LevelIndex(Simulation sim, int cityId) => CityData.LevelIndex(sim, sim.State.CityById(cityId));
-    public Civ.Content.Schema.CultureLevelDef Level(Simulation sim, int cityId) => CityData.Level(sim, sim.State.CityById(cityId));
+    public Ariel.Content.Schema.CultureLevelDef Level(Simulation sim, int cityId) => CityData.Level(sim, sim.State.CityById(cityId));
     public int OwnerCulturePercent(Simulation sim, int cityId) => CityData.OwnerCulturePercent(sim, sim.State.CityById(cityId));
     public int TeamCulturePercent(Simulation sim, int cityId)
     {

@@ -1,6 +1,6 @@
 """Shared pieces for the resource (bonus) models in bonus_plants, bonus_animals, bonus_minerals and bonus_sea.
 
-A resource model stands on a spot off the tile centre (BonusSpot in src/Civ.Client.Core/Terrain/BonusSpot.cs), so a
+A resource model stands on a spot off the tile centre (BonusSpot in src/Ariel.Client.Core/Terrain/BonusSpot.cs), so a
 unit token, a city or an improvement model can share the tile. Keep every model compact: all geometry within about
 0.25 world units of the origin (at() offsets up to ~0.16, piece radius up to ~0.045 authored). Each top-level part is
 seated on the ground under its own origin, so split a cluster into several small parts and it follows hills and

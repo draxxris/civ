@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 /// <summary>Per-thread memo for one read-only city query. Building activity, power and grants depend on every city
 /// of the team, so nested queries would otherwise repeat whole-empire work for each city they visit. A scope only

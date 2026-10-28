@@ -1,9 +1,9 @@
-using Civ.Content.Schema;
-using Civ.Modding;
-using IModifierSource = Civ.Content.IModifierSource;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Modding;
+using IModifierSource = Ariel.Content.IModifierSource;
+using Ariel.Game;
 
-namespace Civ.Mods.Peoples;
+namespace Ariel.Mods.Peoples;
 
 /// <summary>Identity, AI personality queries and leader trait contributions.</summary>
 public sealed class PeoplesMod : IPreparableMod

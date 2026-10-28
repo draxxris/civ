@@ -52,9 +52,9 @@ To inspect elapsed timings for mod discovery, assembly loading, sidecar parsing,
 validation, canonical hashing, world generation stages, and starting positions:
 
 ```sh
-CIV_TRACE_STARTUP=1 mise run start:game
+ARIEL_TRACE_STARTUP=1 mise run start:game
 # Or with the benchmark harness:
-CIV_TRACE_STARTUP=1 mise run benchmark -- --quick
+ARIEL_TRACE_STARTUP=1 mise run benchmark -- --quick
 ```
 
 #### Renderer Rebuild Tracing
@@ -64,7 +64,7 @@ array packing, surface uploads, and scatter planning/rebuilds):
 
 ```sh
 mise run build:game
-mise exec -- godot-mono --path src/Civ.Godot -- --stage map --world tiny --seed 1 --opponents 0 --trace-performance
+mise exec -- godot-mono --path src/Ariel.Godot -- --stage map --world tiny --seed 1 --opponents 0 --trace-performance
 ```
 
 The `--` separates Godot arguments from game runtime arguments.
@@ -78,10 +78,10 @@ To ensure repeatable and reliable performance comparisons:
 2. **Disable Tiered JIT Transition Effects**: Set `DOTNET_TieredCompilation=0` so short
    microbenchmarks avoid dynamic tier-0 to tier-1 recompilation jitter:
    ```sh
-   env -u CIV_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
+   env -u ARIEL_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
    ```
-3. **Disable Active Tracing**: Opt-in traces (`CIV_TRACE_STARTUP=1` or verbose loggers)
-   introduce I/O overhead. Disable them during timing comparisons.
+3. **Disable Active Tracing**: Opt-in traces (`ARIEL_TRACE_STARTUP=1` or verbose
+   loggers) introduce I/O overhead. Disable them during timing comparisons.
 4. **Warmup and Sampling**: Use at least one warmup iteration followed by multiple
    sequential sample runs (typically 3 to 5 runs), reporting the median of medians
    rather than isolated runs.
@@ -140,9 +140,9 @@ ______________________________________________________________________
   rebuilding terrain height fields, signatures, snapshots, and textures even for
   non-world actions (e.g. selection, menu toggles, rejected actions).
 - **Changes**:
-  - In `src/Civ.Godot/TerrainRenderer.cs` and `src/Civ.Godot/MapRenderer.cs`, decoupled
-    world terrain refreshes from non-world simulation revisions (`RefreshWorld` vs.
-    `RefreshOverlay`).
+  - In `src/Ariel.Godot/TerrainRenderer.cs` and `src/Ariel.Godot/MapRenderer.cs`,
+    decoupled world terrain refreshes from non-world simulation revisions
+    (`RefreshWorld` vs. `RefreshOverlay`).
   - Keyed terrain snapshot and signature rebuilds strictly on
     `GameSession.WorldRevision`.
   - Non-world actions (Tab, Escape, selection changes) no longer trigger terrain
@@ -164,16 +164,16 @@ ______________________________________________________________________
   creating intermediate `JsonElement` syntax trees for each definition and serializing
   full canonical JSON strings into `Digest` buffers.
 - **Changes**:
-  - In `src/Civ.Core/Content/ContentDb.cs`, serialized content definitions as UTF-8 byte
-    fragments using a custom `HashDefinition` converter, eliminating intermediate
+  - In `src/Ariel.Core/Content/ContentDb.cs`, serialized content definitions as UTF-8
+    byte fragments using a custom `HashDefinition` converter, eliminating intermediate
     `JsonElement` allocations while preserving runtime type dispatch and root writer
     depth.
-  - In `src/Civ.Core/Game/CanonicalJson.cs`, modified `Digest` to stream canonical UTF-8
-    directly into `ArrayBufferWriter<byte>` and hash the span directly, avoiding
+  - In `src/Ariel.Core/Game/CanonicalJson.cs`, modified `Digest` to stream canonical
+    UTF-8 directly into `ArrayBufferWriter<byte>` and hash the span directly, avoiding
     intermediate string allocations, UTF-8 decodes, and UTF-8 re-encodings.
 - **Measurements**:
   - Measured across 20 catalog rebuilds
-    (`CIV_TRACE_STARTUP=1 mise run benchmark -- --quick`):
+    (`ARIEL_TRACE_STARTUP=1 mise run benchmark -- --quick`):
     - **Catalog hash/freeze median**: fell from 365.31 ms to 266.43 ms (**27.1%
       reduction**).
     - **Total freeze median**: fell from 397.75 ms to 284.36 ms (**28.5% reduction**).
@@ -189,9 +189,9 @@ ______________________________________________________________________
 - **Motivation**: `TerrainRenderer.RebuildWorld` spent significant main-thread time
   converting raw mesher vertex, normal, UV, and index data into Godot surface arrays.
 - **Changes**:
-  - In `src/Civ.Godot/TerrainRenderer.cs`, parallelized ground, water, and river surface
-    preparation across worker threads inside the existing `Parallel.For` loop using
-    `SurfaceData` and `PreparedChunk` records.
+  - In `src/Ariel.Godot/TerrainRenderer.cs`, parallelized ground, water, and river
+    surface preparation across worker threads inside the existing `Parallel.For` loop
+    using `SurfaceData` and `PreparedChunk` records.
   - Workers compute vertex positions, normals, UVs, colors, wet masks, and front-face
     indices concurrently.
   - The main thread exclusively handles native `Godot.Collections.Array` packing,
@@ -321,7 +321,7 @@ ______________________________________________________________________
 - Operational gains were verified through algorithmic inspection of removed scans,
   sorts, allocations, and re-evaluations. Dedicated before-and-after wall clock
   benchmark tables were not recorded for these serial commits (documented as unmeasured
-  runtime gains in `tools/Civ.Benchmarks/README.md`).
+  runtime gains in `tools/Ariel.Benchmarks/README.md`).
 
 ______________________________________________________________________
 
@@ -334,7 +334,7 @@ ______________________________________________________________________
 
 #### Implementation Changes
 
-1. **Hexagonal Grid Intervals (`src/Civ.Core/HexGrid.cs`)**:
+1. **Hexagonal Grid Intervals (`src/Ariel.Core/HexGrid.cs`)**:
    - Replaced sorted range tree construction with direct enumeration of row intervals
      (`RangeRows`, `RangeColumns`).
    - Each row produces clipped column intervals in ascending tile order.
@@ -348,8 +348,8 @@ ______________________________________________________________________
      suffix, as each tile has a single parent.
    - A generation-local bitmap records completed paths.
    - Bounded direction loops replace captured LINQ closures for each river edge.
-3. **Harness & Verification (`tools/Civ.Benchmarks`,
-   `tests/Civ.Tests/HexGridTests.cs`)**:
+3. **Harness & Verification (`tools/Ariel.Benchmarks`,
+   `tests/Ariel.Tests/HexGridTests.cs`)**:
    - Added `--world` benchmark option for isolated world generation and session startup
      timings.
    - Added independent breadth-first range verification tests covering bounded, wrapped,
@@ -430,15 +430,15 @@ ______________________________________________________________________
 
 #### Implementation Changes
 
-1. **Terrain Pick Caching (`src/Civ.Godot/GameView.cs`)**:
+1. **Terrain Pick Caching (`src/Ariel.Godot/GameView.cs`)**:
    - The engine now caches the terrain pick result.
    - The cache key stores pointer coordinates, camera transform, camera FOV, viewport
      size, world revision, UI interception state, and forced hover.
    - When one of these input properties changes, the view recomputes the ray pick.
    - When the session revision changes, hover descriptions and move previews still
      update.
-2. **Stationary Ground Pose Sampling (`src/Civ.Godot/UnitActor.cs`)**:
-   - In `src/Civ.Godot/UnitActor.cs`, `UpdateGroundPose` inspects procedural motion
+2. **Stationary Ground Pose Sampling (`src/Ariel.Godot/UnitActor.cs`)**:
+   - In `src/Ariel.Godot/UnitActor.cs`, `UpdateGroundPose` inspects procedural motion
      (`Shake` and `Lunge`).
    - When procedural motion is zero, the method avoids height difference computation.
    - Unit animation and the 60 FPS target frame rate remain unchanged.
@@ -461,7 +461,8 @@ ______________________________________________________________________
 
 #### Validation
 
-- The command `dotnet build src/Civ.Godot` completed with zero warnings and zero errors.
+- The command `dotnet build src/Ariel.Godot` completed with zero warnings and zero
+  errors.
 - The command `mise run test` passed 1,315 tests (37 Core, 147 Mod, and 1,131 Engine
   tests).
 - The default test run excludes end-to-end tests and extractor tests.
@@ -478,7 +479,7 @@ ______________________________________________________________________
 
 #### Implementation Changes
 
-1. **Theme Painted While the Catalog Loads (`src/Civ.Godot/Main.cs`)**:
+1. **Theme Painted While the Catalog Loads (`src/Ariel.Godot/Main.cs`)**:
    - The automatic startup paths (headless, `--screenshot`, `--fps-probe`,
      `--skip-mod-manager`) call `BeginModStartup()` before
      `Ui.InstallTheme(GetWindow())`.
@@ -490,8 +491,8 @@ ______________________________________________________________________
    - A startup that fails before the load begins (no usable mods, a damaged mod profile,
      an invalid selection) skips the theme: it has already queued its own quit, and
      painting would only delay the exit by about 2.7 s.
-2. **Lazy, Prefetched Content Digest (`src/Civ.Core/Content/ContentDb.cs`,
-   `src/Civ.Client.Core/GameCatalog.cs`)**:
+2. **Lazy, Prefetched Content Digest (`src/Ariel.Core/Content/ContentDb.cs`,
+   `src/Ariel.Client.Core/GameCatalog.cs`)**:
    - `Freeze()` no longer computes the SHA-256 digest inline. It captures the definition
      array for the digest input under the `content hash input` trace phase, assigns a
      fresh `Lazy<string>` (`LazyThreadSafetyMode.ExecutionAndPublication`), then freezes
@@ -499,7 +500,7 @@ ______________________________________________________________________
    - `ContentDb.ContentHash` is computed on first read under its own `content hash`
      trace phase. Registry enumeration order is ordinal before and after the freeze, so
      the digest is byte-identical; the content-hash test literals in
-     `tests/Civ.Tests/ContentHashTests.cs` pass unchanged.
+     `tests/Ariel.Tests/ContentHashTests.cs` pass unchanged.
    - `ContentDb.PrefetchContentHash()` starts the digest on the thread pool, and
      `GameCatalog.Load` calls it once content is frozen. Freezing itself still never
      spawns background work, so tests and benchmarks that build catalogs directly stay
@@ -510,7 +511,7 @@ ______________________________________________________________________
 - Machine: Fedora 44 x64, 8 cores, NVIDIA GeForce GTX 1050 Ti, .NET SDK 10.0.402, Debug
   build.
 - Command:
-  `CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/a-after.png`,
+  `ARIEL_TRACE_STARTUP=1 godot-mono --path src/Ariel.Godot -- --stage setup --screenshot /tmp/shots/a-after.png`,
   timed from process start to the `screenshot ...: Ok` line, one launch at a time with
   `sleep 20` between launches.
 - **Before**: theme 2,272.73 ms; `catalog load` 2,372.03 ms (content freeze 1,218.14 ms,
@@ -527,7 +528,7 @@ ______________________________________________________________________
 
 #### Validation
 
-- `dotnet build Civ.slnx -c Debug --no-restore` completed with zero warnings and zero
+- `dotnet build Ariel.slnx -c Debug --no-restore` completed with zero warnings and zero
   errors.
 - `mise run test` passed 1,297 tests (37 content-import, 122 core, and 1,138 mod tests).
 - Setup-screen screenshots are byte-identical across runs of one build. Between the old
@@ -543,7 +544,7 @@ ______________________________________________________________________
   them, and loaded from there by every later launch. Keys are FNV-1a hashes of the paint
   inputs, and `SkinCache.Version` has to be bumped whenever the painting changes.
 - Measured with
-  `CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`,
+  `ARIEL_TRACE_STARTUP=1 godot-mono --path src/Ariel.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`,
   one launch at a time with `sleep 30` between launches:
   - **Theme**: cold **2,845.28 ms**, **2,892.56 ms**, **2,907.31 ms** (2,829.6-2,883.9
     ms of it inside `SkinCache`); warm **130.69 ms**, **136.67 ms**, **151.64 ms**
@@ -555,7 +556,7 @@ ______________________________________________________________________
   launch-to-screenshot totals from it are frame-quantised and useless: the same build
   measured 5.5-5.9 s both cold and warm. Measure on a virtual X server instead, which
   still reaches the real GPU: `Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &` then
-  `DISPLAY=:99 CIV_TRACE_STARTUP=1 godot-mono --path src/Civ.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`
+  `DISPLAY=:99 ARIEL_TRACE_STARTUP=1 godot-mono --path src/Ariel.Godot -- --stage setup --screenshot /tmp/shots/s.png --frames 3`
   - **Launch to screenshot**, same command on `DISPLAY=:99`: original code **6,390 ms**;
     this build with an empty `skin-cache` **5,180 ms** (theme 2,757.22 ms painted,
     `catalog load` 1,299.25 ms); this build with a warm `skin-cache` **3,560 ms** (theme
@@ -588,7 +589,7 @@ ______________________________________________________________________
 
 #### Implementation Changes
 
-1. **Guarded Session Revision Bumps (`src/Civ.Client.Core/GameSession.cs`)**:
+1. **Guarded Session Revision Bumps (`src/Ariel.Client.Core/GameSession.cs`)**:
 
    - `GameSession.Revision` was previously incremented unconditionally on every
      selection and message call, causing whole-HUD rebuilds even when clicking an
@@ -606,7 +607,7 @@ ______________________________________________________________________
        messages, prune dead selections, and collect notifications; `EndTurn` continues
        to bump unconditionally through `Submit` and `ContinueOrders`.
 
-2. **Per-Panel Refresh Gates (`src/Civ.Godot/GameUi.cs`)**:
+2. **Per-Panel Refresh Gates (`src/Ariel.Godot/GameUi.cs`)**:
 
    - `GameUi.Refresh` previously treated any `Revision` change as an instruction to
      clear and rebuild the entire HUD tree (top bar, left panel or city screen, feed,
@@ -641,7 +642,7 @@ ______________________________________________________________________
    - `NeedsRefresh` only compares stored keys, keeping the 60 Hz frame path
      allocation-free.
 
-3. **Persistent Top Bar Updated In Place (`src/Civ.Godot/GameUi.cs`)**:
+3. **Persistent Top Bar Updated In Place (`src/Ariel.Godot/GameUi.cs`)**:
 
    - The top bar flow container and all 19 constituent widgets are constructed once in
      `InitTop` and retained as persistent fields: turn/date/era, golden age, gold,
@@ -660,7 +661,8 @@ ______________________________________________________________________
      once per world change to drive button visibility, because none of them renders
      anything a selection changes.
 
-4. **Persistent Left Panel Skeleton Updated In Place (`src/Civ.Godot/GameUi.Left.cs`)**:
+4. **Persistent Left Panel Skeleton Updated In Place
+   (`src/Ariel.Godot/GameUi.Left.cs`)**:
 
    - The left panel skeleton is constructed once in `InitLeft` and retained as fields:
      scroll container, VBox, empty-selection label, unit section (48 px icon,
@@ -687,7 +689,7 @@ ______________________________________________________________________
   A Wayland session throttles unfocused game windows to ~1 fps, quantising frame
   timings. Measure on a virtual X server with GPU access instead:
   `Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &`
-  `DISPLAY=:99 godot-mono --path src/Civ.Godot -- --trace-performance --stage map --world small`
+  `DISPLAY=:99 godot-mono --path src/Ariel.Godot -- --trace-performance --stage map --world small`
 - Test workload: Xvfb :99, 1600x900 (1280x720 window), Debug build, warm skin cache,
   `--trace-performance --stage map --world small`. Ten map clicks alternating between
   the initial unit stack and empty tiles (so every click alters selection), followed by
@@ -750,16 +752,16 @@ open:
 
 #### Validation
 
-- `dotnet build Civ.slnx` completed with zero warnings and zero errors.
+- `dotnet build Ariel.slnx` completed with zero warnings and zero errors.
 - `mise run test` passed 1,309 tests (37 content-import, 122 core, 1,150 mod tests), 0
   failed.
-- Session invalidation test suite (`tests/Civ.Mods.Tests/SessionInvalidationTests.cs`):
-  12 table-driven cases (silent theory with 5 rows, bumping theory with 4 rows, and 3
-  dedicated facts for rejected submit, stack cycling, and end turn). Verified on pre-fix
-  baseline (`8c483aa`) that all 6 silent/end-turn cases fail by exactly one extra
-  revision bump. The later review pass replaced the two theories with shared-session
-  facts, so the file now holds six facts that assert the same cases without a string
-  switch.
+- Session invalidation test suite
+  (`tests/Ariel.Mods.Tests/SessionInvalidationTests.cs`): 12 table-driven cases (silent
+  theory with 5 rows, bumping theory with 4 rows, and 3 dedicated facts for rejected
+  submit, stack cycling, and end turn). Verified on pre-fix baseline (`8c483aa`) that
+  all 6 silent/end-turn cases fail by exactly one extra revision bump. The later review
+  pass replaced the two theories with shared-session facts, so the file now holds six
+  facts that assert the same cases without a string switch.
 - Visual regressions verified via `mise run shot:compare` across tour stages; pixel
   differences between base and refactored builds match the magnitude of same-build runs
   and are confined to procedural scrape phases seeded by canvas item RIDs. Text,

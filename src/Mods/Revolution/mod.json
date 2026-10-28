@@ -2,7 +2,7 @@
   "id": "revolution",
   "name": "Revolution",
   "version": "1.0.0",
-  "assembly": "Civ.Mods.Revolution.dll",
+  "assembly": "Ariel.Mods.Revolution.dll",
   "dependencies": ["cities", "foundation", "government", "military"],
   "references": ["great_people", "peoples", "religion", "research", "world"]
 }

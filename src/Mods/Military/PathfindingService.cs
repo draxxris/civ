@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 internal sealed class PathfindingService(MovementService movement) : IPathfindingService
 {
@@ -34,17 +34,17 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
     }
     private static bool SeparateLandAreas(Simulation sim, int unit, TileId start, TileId goal)
     {
-        var def = sim.Content.Get<Civ.Content.Schema.UnitDef>(sim.State.UnitById(unit).Type);
+        var def = sim.Content.Get<Ariel.Content.Schema.UnitDef>(sim.State.UnitById(unit).Type);
         return def.Domain == "military:domain_land" && !def.CanMoveAllTerrain
             && sim.State.Plots[start.Value].AreaId != sim.State.Plots[goal.Value].AreaId;
     }
 
     private static int MinimumStep(Simulation sim)
     {
-        int minimum = Math.Max(1, sim.Content.Get<Civ.Content.Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator / 2);
+        int minimum = Math.Max(1, sim.Content.Get<Ariel.Content.Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator / 2);
         // Regular movement can be halved once. Routes can be cheaper. The minimum over every route definition is never
         // above the cheapest route on the map, so it stays a valid lower bound without scanning every plot per search.
-        foreach (var route in sim.Content.Get<Civ.Content.Schema.RouteDef>().All)
+        foreach (var route in sim.Content.Get<Ariel.Content.Schema.RouteDef>().All)
             minimum = Math.Min(minimum, Math.Max(1, Math.Min(route.MovementCost, route.FlatMovement)));
         return minimum;
     }

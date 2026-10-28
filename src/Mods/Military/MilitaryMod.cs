@@ -1,8 +1,8 @@
-using Civ.Content.Schema;
-using Civ.Modding;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Modding;
+using Ariel.Game;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 /// <summary>Deterministic movement, melee combat, unit lifecycle and barbarian rules.</summary>
 public sealed class MilitaryMod : IPreparableMod
@@ -39,7 +39,7 @@ public sealed class MilitaryMod : IPreparableMod
         context.RegisterService<IUnitService>("units", units);
         context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());
         context.RegisterService<IUnitSupportService>("support", units);
-        context.RegisterService<Civ.Content.IModifierSource>("promotions", new PromotionEffects());
+        context.RegisterService<Ariel.Content.IModifierSource>("promotions", new PromotionEffects());
 
         context.RegisterStateComponent<MilitaryUnitState>("unit_state");
         context.RegisterStateComponent<MilitaryPlayerState>("player_state");

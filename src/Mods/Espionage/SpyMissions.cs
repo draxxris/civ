@@ -1,9 +1,9 @@
-using Civ.Content.Schema;
-using ModifierSink = Civ.Content.ModifierSink;
-using ModifierScope = Civ.Content.ModifierScope;
-using Civ.Game;
+using Ariel.Content.Schema;
+using ModifierSink = Ariel.Content.ModifierSink;
+using ModifierScope = Ariel.Content.ModifierScope;
+using Ariel.Game;
 
-namespace Civ.Mods.Espionage;
+namespace Ariel.Mods.Espionage;
 
 internal sealed partial class EspionageService
 {
@@ -34,7 +34,7 @@ internal sealed partial class EspionageService
     private static string? ValidateSpyLocation(Simulation sim, int player, int unitId, int cityId)
     {
         var unit = sim.State.FindUnit(unitId);
-        if (unit is null || unit.Owner != player || !sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).Spy) return "Requires your spy unit";
+        if (unit is null || unit.Owner != player || !sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Spy) return "Requires your spy unit";
         if (unit.MovesLeft <= 0) return "No moves left";
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Position != unit.Position) return "Spy must be in the target city";

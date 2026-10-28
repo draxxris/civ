@@ -1,7 +1,7 @@
 using System.Numerics;
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 /// <summary>Dynamic probability calculation uses integer fixed point with 24 decimal places.
 /// Only the final display result rounds to millionths. No floating point or simulation RNG.</summary>

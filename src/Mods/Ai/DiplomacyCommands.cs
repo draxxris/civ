@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Saved per-team war bookkeeping: the turn each current war started and the turn each peace treaty was signed.</summary>
 public sealed class AiTeamState

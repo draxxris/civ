@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../Ariel.Core/Ariel.Core.csproj" />
+    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

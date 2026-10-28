@@ -145,13 +145,13 @@ To omit either mod from the loaded ruleset, disable its stable ID in the startup
 - Card Research uses stable ID `card_research`.
 - Tech Tree uses stable ID `tech_tree`.
 
-The mod manager merges bundled, user-installed, and `CIV_MODS` roots:
+The mod manager merges bundled, user-installed, and `ARIEL_MODS` roots:
 
-- A separate `CIV_MODS` directory does not hide bundled mods.
-- For duplicate IDs, `CIV_MODS` takes priority over user-installed mods, which take
+- A separate `ARIEL_MODS` directory does not hide bundled mods.
+- For duplicate IDs, `ARIEL_MODS` takes priority over user-installed mods, which take
   priority over bundled mods.
 - Each winning copy replaces the entire mod (manifest, assembly, data, and assets).
-- See [the client guide](../src/Civ.Godot/README.md#mod-manager) for mod profile
+- See [the client guide](../src/Ariel.Godot/README.md#mod-manager) for mod profile
   behavior.
 
 ### Card Research

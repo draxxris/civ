@@ -1,8 +1,8 @@
-using Civ.Content.Schema;
-using Civ.Modding;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Modding;
+using Ariel.Game;
 
-namespace Civ.Mods.Research;
+namespace Ariel.Mods.Research;
 
 /// <summary>Team research, discoveries, and technology requirements.</summary>
 public sealed class ResearchMod : IPreparableMod

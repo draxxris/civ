@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Foundation;
+namespace Ariel.Mods.Foundation;
 
 internal sealed class SetupPolicy : ISetupPolicy
 {
@@ -18,7 +18,7 @@ internal sealed class SetupPolicy : ISetupPolicy
     public int? SortOrder(SetupField field, string id) => field == SetupField.Handicap
         ? Array.IndexOf(Handicaps, id.Split('_').Last()) : null;
 
-    public IEnumerable<SetupGameOption> GameOptions(Civ.Content.ContentDb content)
+    public IEnumerable<SetupGameOption> GameOptions(Ariel.Content.ContentDb content)
     {
         string[] implemented =
         [
@@ -31,7 +31,7 @@ internal sealed class SetupPolicy : ISetupPolicy
         ];
         foreach (string id in implemented)
         {
-            if (!content.TryGet<Civ.Content.Schema.GameOptionDef>(id, out var option)) continue;
+            if (!content.TryGet<Ariel.Content.Schema.GameOptionDef>(id, out var option)) continue;
             yield return new(option.Id, option.Name, option.Default, option.Help);
         }
         yield return new("foundation:gameoption_multiple_religion_spread", "Multiple Religion Spread", false,

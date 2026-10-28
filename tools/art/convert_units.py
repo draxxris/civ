@@ -49,7 +49,7 @@ def read_nif(path):
 
 
 def source_symbols(root):
-    path = root / "tools/Civ.ContentImport/reports/id-map.json"
+    path = root / "tools/Ariel.ContentImport/reports/id-map.json"
     if not path.exists():
         return {}
     return {r["id"]: r["sourceType"] for r in json.loads(path.read_text())["records"]

@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>A scored city location.</summary>
 internal sealed record Site(TileId Tile, int Score, int Area);

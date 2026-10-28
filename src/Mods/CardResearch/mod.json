@@ -2,7 +2,7 @@
   "id": "card_research",
   "name": "Card Research",
   "version": "1.0.0",
-  "assembly": "Civ.Mods.CardResearch.dll",
+  "assembly": "Ariel.Mods.CardResearch.dll",
   "dependencies": ["research"],
   "references": []
 }

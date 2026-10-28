@@ -1,9 +1,9 @@
-using Civ.Content.Schema;
-using Civ.Modding;
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Modding;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Economy;
+namespace Ariel.Mods.Economy;
 
 /// <summary>Commerce allocation, treasury, recurring costs, processes and hurry.</summary>
 public sealed class EconomyMod : IPreparableMod

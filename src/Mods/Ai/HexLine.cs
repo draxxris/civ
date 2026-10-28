@@ -1,4 +1,4 @@
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Integer cube-coordinate line across the closest horizontal wrap image.</summary>
 internal static class HexLine

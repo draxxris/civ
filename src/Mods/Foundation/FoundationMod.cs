@@ -1,9 +1,9 @@
-using Civ.Content.Schema;
+using Ariel.Content.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Civ.Modding;
+using Ariel.Modding;
 
-namespace Civ.Mods.Foundation;
+namespace Ariel.Mods.Foundation;
 
 /// <summary>Foundation definitions, shared hex tuning and new-game setup.</summary>
 public sealed class FoundationMod : IPreparableMod
@@ -26,11 +26,11 @@ public sealed class FoundationMod : IPreparableMod
         [HexOverrides, Commerce, Corporations, CultureLevels, Eras, Options, Speeds, Handicaps,
             Specialists, Victories, WorldSizes, Yields, Conditions, Constants];
 
-    private sealed class GameOptionRequirements : Civ.Content.IContentRequirementEvaluator
+    private sealed class GameOptionRequirements : Ariel.Content.IContentRequirementEvaluator
     {
         public string Kind => "game-option";
         public Type DefinitionType => typeof(GameOptionDef);
-        public string? Evaluate(Civ.Content.Requirement.Leaf leaf, Civ.Content.RequirementContext context) =>
+        public string? Evaluate(Ariel.Content.Requirement.Leaf leaf, Ariel.Content.RequirementContext context) =>
             context.Sim.IsOptionEnabled(leaf.Id) ? null : $"Required game-option: {leaf.Id}";
     }
     private static void LoadHexHandicaps(IModContext context)
@@ -51,9 +51,9 @@ public sealed class FoundationMod : IPreparableMod
 
     public void Register(IModContext context)
     {
-        context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
+        context.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         ContentRegistration.Load(context, HexOverrides);
-        context.RegisterService<Civ.Game.INewGameSetup>("new_game", new NewGameSetup());
+        context.RegisterService<Ariel.Game.INewGameSetup>("new_game", new NewGameSetup());
         ContentRegistration.Load(context, Commerce);
         ContentRegistration.Load(context, Corporations);
         ContentRegistration.Load(context, CultureLevels);
@@ -70,11 +70,11 @@ public sealed class FoundationMod : IPreparableMod
         ContentRegistration.Load(context, Constants);
         var calendar = new GameCalendar();
         foreach (var speed in Speeds.Read(context.Data)) calendar.ValidateShipped(speed);
-        context.RegisterService<Civ.Game.IGameCalendar>("calendar", calendar);
+        context.RegisterService<Ariel.Game.IGameCalendar>("calendar", calendar);
         ContentRegistration.Evaluator<EraDef>(context, "era");
         ContentRegistration.Evaluator<CultureLevelDef>(context, "culture-level");
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
-        context.RegisterService<Civ.Content.IRequirementEvaluator>("game-option_requirements", new GameOptionRequirements());
+        context.RegisterService<Ariel.Content.IRequirementEvaluator>("game-option_requirements", new GameOptionRequirements());
 
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation");
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");

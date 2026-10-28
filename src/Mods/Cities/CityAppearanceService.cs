@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 /// <summary>Huts on dirt up to the medieval era, Victorian houses for the renaissance (dirt) and industrial
 /// (cobblestone) eras, and modern buildings on concrete from the modern era on.</summary>

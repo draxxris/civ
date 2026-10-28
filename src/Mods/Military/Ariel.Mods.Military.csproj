@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../Ariel.Core/Ariel.Core.csproj" />
+    <Compile Include="../Common/ContentRegistration.cs" Link="ContentRegistration.cs" />
+    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Art is linked, not copied: CopyModPayloads in Ariel.Godot / tests symlinks art/ to the output mods folder.
+         Copying ~180MB (Military models, World scatter/terrain) twice per build dominated compile time. -->
+    <None Update="art/**/*" CopyToOutputDirectory="Never" />
+  </ItemGroup>
+</Project>

@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Index-preserving map for read-only planner scoring. Each result lands at its source index, so callers see
 /// the same deterministic order whether the work ran on one thread or many. Callbacks must not issue commands,

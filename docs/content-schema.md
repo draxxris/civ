@@ -1,12 +1,12 @@
 # Content schema
 
-Feature definitions reside in `Civ.Content.Schema`. The common base class for imported
-content records is `GameContentDef`, which inherits from `ContentDef` in `Civ.Content`.
-Minimal definition types in `Civ.Content` remain for legacy contracts and test rulesets.
-Feature mods load immutable definitions from their `data/` directories. Foundation
-registers setup policies, baseline calendars, and tuning, while feature mods register
-gameplay services and systems. The mechanics status and development roadmap are in
-[ROADMAP.md](ROADMAP.md).
+Feature definitions reside in `Ariel.Content.Schema`. The common base class for imported
+content records is `GameContentDef`, which inherits from `ContentDef` in
+`Ariel.Content`. Minimal definition types in `Ariel.Content` remain for legacy contracts
+and test rulesets. Feature mods load immutable definitions from their `data/`
+directories. Foundation registers setup policies, baseline calendars, and tuning, while
+feature mods register gameplay services and systems. The mechanics status and
+development roadmap are in [ROADMAP.md](ROADMAP.md).
 
 ## Definitions
 

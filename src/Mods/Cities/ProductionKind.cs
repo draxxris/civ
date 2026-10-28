@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 internal sealed class ProductionKind<T>(string id, string label, Func<T, long> cost, ICityProductionService production,
     Func<T, QueueScope> scope, IReadOnlyList<ProductionCategory>? categories = null) : IProductionKind
@@ -32,7 +32,7 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
 internal static class BuildingProductionCategories
 {
     internal static readonly ProductionCategory Wonders = new("cities:wonder", "Wonders",
-        definition => CityBuildingRules.IsWonder((Civ.Content.Schema.BuildingDef)definition));
+        definition => CityBuildingRules.IsWonder((Ariel.Content.Schema.BuildingDef)definition));
 
     internal static readonly IReadOnlyList<ProductionCategory> All = [Wonders];
 }
@@ -43,16 +43,16 @@ internal static class BuildingScope
     /// <summary>A building is unique within its city. One whose tightest limit allows a single copy is also one per
     /// player, so a second city of the same player cannot queue it; different players still race for the same one.
     /// A limit that allows several copies (corporation buildings, for example) stays per city.
-    /// <para><see cref="Civ.Content.Schema.ClassLimits.NoLimit"/> is deliberately not consulted here: it exempts a
+    /// <para><see cref="Ariel.Content.Schema.ClassLimits.NoLimit"/> is deliberately not consulted here: it exempts a
     /// building from the wonder counters (<see cref="CityBuildingRules.IsWonder"/>), not from the copy caps that
     /// <c>ProductionEligibility.Limits</c> enforces, so the queue scope must follow the caps. The palace declares
     /// <c>Player: 1, ExtraPlayer: 1</c> and therefore stays per city, which is what lets a civilization build its
     /// replacement palaces in parallel.</para></summary>
-    public static QueueScope Of(Civ.Content.Schema.BuildingDef b) =>
+    public static QueueScope Of(Ariel.Content.Schema.BuildingDef b) =>
         SmallestAllowance(b.Limits) <= 1 ? QueueScope.Player : QueueScope.City;
 
     /// <summary>The tightest finite number of copies the limits allow, or <see cref="int.MaxValue"/> when unlimited.</summary>
-    private static int SmallestAllowance(Civ.Content.Schema.ClassLimits limits)
+    private static int SmallestAllowance(Ariel.Content.Schema.ClassLimits limits)
     {
         int allowance = int.MaxValue;
         if (limits.World >= 0) allowance = Math.Min(allowance, limits.World);
@@ -69,6 +69,6 @@ internal sealed class PlotSourceLabel : ILedgerSourceLabel
         const string prefix = "cities:plot:";
         if (!source.StartsWith(prefix, StringComparison.Ordinal) || !int.TryParse(source[prefix.Length..], out var tile)
             || tile < 0 || tile >= sim.State.Plots.Length) return null;
-        return sim.Content.Get<Civ.Content.Schema.TerrainDef>(sim.State.Plots[tile].Terrain).Name;
+        return sim.Content.Get<Ariel.Content.Schema.TerrainDef>(sim.State.Plots[tile].Terrain).Name;
     }
 }

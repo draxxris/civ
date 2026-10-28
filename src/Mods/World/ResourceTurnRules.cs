@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>Worked improvement discovery and optional mine/deposit exhaustion.</summary>
 internal sealed class ResourceTurnRules

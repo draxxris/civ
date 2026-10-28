@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 /// <summary>Shared requirement and yield predicate. The caller supplies the nonrecursive city bonus ledger.</summary>
 internal static class VicinityBonuses

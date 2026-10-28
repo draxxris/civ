@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>Integer center-to-center hex rays. Tied edge rays may pass on either side.
 /// Every shortest wrap image is considered, including ties on narrow maps.</summary>

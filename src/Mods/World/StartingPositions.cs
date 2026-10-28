@@ -1,14 +1,14 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>CvPlayer::findStartingPlot / foundValue: food, production, coast, fresh water and distance pressure.</summary>
 internal sealed class StartingPositions(IWaterService water) : IStartingPositionService
 {
     public IReadOnlyList<TileId> Select(Simulation sim, int count)
     {
-        using var trace = Civ.Modding.StartupTrace.Phase("world starting positions");
+        using var trace = Ariel.Modding.StartupTrace.Phase("world starting positions");
         var tuning = Geography.Tuning(sim.Content);
         // Selection reads an unchanged map. Reuse each tile's potential across overlapping start ranges.
         var potentials = sim.State.Grid.Tiles.Select(t => TilePotential(sim, t, tuning)).ToArray();
@@ -50,7 +50,7 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
     // CvGame::normalizeStartingPlots: improve weak starts without changing land shape or existing bonuses.
     public void Normalize(Simulation sim, IReadOnlyList<TileId> starts)
     {
-        using var trace = Civ.Modding.StartupTrace.Phase("world normalize starts");
+        using var trace = Ariel.Modding.StartupTrace.Phase("world normalize starts");
         var tuning = Geography.Tuning(sim.Content);
         int minimum = starts.Max(t => Score(sim, t, tuning)) * tuning.StartQualityPercent / 100;
         foreach (var start in starts)
@@ -88,7 +88,7 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         if (Geography.Impassable(sim.Content, plot)) return 0;
         var potential = sim.Content.Get<S.TerrainDef>(plot.Terrain).Yields;
         if (plot.Feature is { } feature) potential += sim.Content.Get<S.FeatureDef>(feature).YieldChanges;
-        if (plot.Kind == PlotKind.Hills) potential += new Civ.Content.YieldVector(sim.Content.Get<S.YieldDef>("foundation:yield_food").HillsChange,
+        if (plot.Kind == PlotKind.Hills) potential += new Ariel.Content.YieldVector(sim.Content.Get<S.YieldDef>("foundation:yield_food").HillsChange,
             sim.Content.Get<S.YieldDef>("foundation:yield_production").HillsChange, 0);
         return checked((int)(Math.Max(0, potential.Food) * tuning.StartFoodWeight + Math.Max(0, potential.Production) * tuning.StartProductionWeight));
     }

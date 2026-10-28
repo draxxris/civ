@@ -2,7 +2,7 @@
   "id": "trade",
   "name": "Trade",
   "version": "1.2.0",
-  "assembly": "Civ.Mods.Trade.dll",
+  "assembly": "Ariel.Mods.Trade.dll",
   "dependencies": [],
   "references": ["cities", "foundation", "government", "peoples", "research", "world"]
 }

@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Exploration: reveal the map from the nearest frontier, and walk onto goody huts.</summary>
 internal sealed class ExplorerPlanner(AiContext ctx)

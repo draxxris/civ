@@ -2,7 +2,7 @@
   "id": "projects_victory",
   "name": "Projects and Victory",
   "version": "1.0.1",
-  "assembly": "Civ.Mods.ProjectsVictory.dll",
+  "assembly": "Ariel.Mods.ProjectsVictory.dll",
   "dependencies": [],
   "references": ["cities", "foundation", "military", "research", "world"]
 }

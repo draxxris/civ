@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 internal sealed class BuildEligibility(IWaterService water)
 {
@@ -31,7 +31,7 @@ internal sealed class BuildEligibility(IWaterService water)
     }
     private static string? Prerequisites(Simulation sim, Unit unit, TileId tile, S.BuildDef build)
     {
-        var context = new Civ.Content.RequirementContext(sim, unit.Owner, Plot: tile, Unit: unit);
+        var context = new Ariel.Content.RequirementContext(sim, unit.Owner, Plot: tile, Unit: unit);
         if (!sim.Content.Requirements.Evaluate(build.Requirements, context).Success) return "Build requirements are not satisfied";
         if (build.ObsoleteTech is { } obsolete && sim.KnowsTech(unit.Owner, obsolete)) return "Build is obsolete";
         var plot = sim.State.Plots[tile.Value];

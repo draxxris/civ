@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Bomb defenses first, strike defenders second, then reposition or provide air cover.</summary>
 internal sealed class AirPlanner(AiContext ctx)

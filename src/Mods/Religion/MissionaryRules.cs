@@ -1,7 +1,7 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService
 {

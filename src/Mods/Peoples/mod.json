@@ -2,7 +2,7 @@
   "id": "peoples",
   "name": "Peoples",
   "version": "1.0.0",
-  "assembly": "Civ.Mods.Peoples.dll",
+  "assembly": "Ariel.Mods.Peoples.dll",
   "dependencies": [],
   "references": [
     "cities",

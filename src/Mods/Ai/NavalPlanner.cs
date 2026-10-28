@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Coastal reconnaissance, warship support and transport pickup/delivery through normal commands.</summary>
 internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlanner attack)

@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Declares limited wars against clearly weaker neighbours when the leader's personality allows,
 /// and ends wars that go badly.</summary>

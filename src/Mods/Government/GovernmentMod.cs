@@ -1,9 +1,9 @@
-using Civ.Content.Schema;
-using Civ.Modding;
-using IModifierSource = Civ.Content.IModifierSource;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Modding;
+using IModifierSource = Ariel.Content.IModifierSource;
+using Ariel.Game;
 
-namespace Civ.Mods.Government;
+namespace Ariel.Mods.Government;
 
 /// <summary>Civic adoption, anarchy and derived civic effects.</summary>
 public sealed class GovernmentMod : IPreparableMod

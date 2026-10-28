@@ -1,8 +1,8 @@
 using System.Numerics;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Research;
+namespace Ariel.Mods.Research;
 
 internal static class ResearchDiffusion
 {

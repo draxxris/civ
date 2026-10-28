@@ -1,8 +1,8 @@
-using ContentDb = Civ.Content.ContentDb;
-using Civ.Content.Schema;
-using Civ.Game;
+using ContentDb = Ariel.Content.ContentDb;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Foundation;
+namespace Ariel.Mods.Foundation;
 
 /// <summary>Feature ruleset setup, using CvPlayer::initFreeUnits class grants and role selection.</summary>
 internal sealed class NewGameSetup : INewGameSetup
@@ -100,7 +100,7 @@ internal sealed class NewGameSetup : INewGameSetup
         if (count <= 0) return;
         var civ = sim.Content.Get<CivilizationDef>(player.Civilization);
         // Only the civilization's resolved classes can supply a role. Tech prerequisites apply to role grants.
-        var candidate = sim.Content.Get<Civ.Content.Schema.UnitDef>().All
+        var candidate = sim.Content.Get<Ariel.Content.Schema.UnitDef>().All
             .Where(u => civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id)
             .Where(u => u.Cost >= 0 && u.Domain == "military:domain_land" && RoleEligible(u, role))
             .Where(u => sim.Content.Requirements.Evaluate(u.Requirements, new(sim, player.Id)).Success)
@@ -124,7 +124,7 @@ internal sealed class NewGameSetup : INewGameSetup
 
     private static void AddUnits(Simulation sim, int owner, TileId tile, string type, int count)
     {
-        var definition = sim.Content.Get<Civ.Content.Schema.UnitDef>(type);
+        var definition = sim.Content.Get<Ariel.Content.Schema.UnitDef>(type);
         for (int i = 0; i < count; i++)
             sim.State.AddUnit(new() { Id = sim.State.NextUnitId++, Owner = owner, Type = type,
                 Position = sim.State.Grid.HexOf(tile), MovesLeft = definition.Moves });

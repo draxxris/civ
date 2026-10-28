@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Game;
+using Ariel.Modding;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>The computer player, its saved intent, and its replayable planning and diplomacy commands.</summary>
 public sealed class AiMod : IMod

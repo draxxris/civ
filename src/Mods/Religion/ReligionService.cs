@@ -1,9 +1,9 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using BuildingDef = Civ.Content.Schema.BuildingDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using BuildingDef = Ariel.Content.Schema.BuildingDef;
 
-namespace Civ.Mods.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService : IReligionService
 {
@@ -17,7 +17,7 @@ internal sealed partial class ReligionService : IReligionService
     public IReadOnlyList<ReligionDef> Choices(Simulation sim, int player) => sim.Content.Get<ReligionDef>().All
         .Where(r => sim.State.Cities.Any(c => c.Owner == player && ReligionData.Has(sim, c, r.Id)))
         .OrderBy(r => r.Id, StringComparer.Ordinal).ToArray();
-    public IReadOnlyList<Civ.Content.Schema.UnitDef> Missionaries(Simulation sim, string religion) => sim.Content.Get<Civ.Content.Schema.UnitDef>().All
+    public IReadOnlyList<Ariel.Content.Schema.UnitDef> Missionaries(Simulation sim, string religion) => sim.Content.Get<Ariel.Content.Schema.UnitDef>().All
         .Where(u => u.ReligionSpreads.GetValueOrDefault(religion) > 0 && u.DefaultUnitAi == "military:unitai_missionary")
         .OrderBy(u => u.Id, StringComparer.Ordinal).ToArray();
     public string? EvaluateCondition(Requirement.Leaf leaf, RequirementContext context)

@@ -1,9 +1,9 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using CivicDef = Civ.Content.Schema.CivicDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using CivicDef = Ariel.Content.Schema.CivicDef;
 
-namespace Civ.Mods.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed class ReligionEffects : IModifierSource
 {

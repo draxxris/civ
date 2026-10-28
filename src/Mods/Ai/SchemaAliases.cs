@@ -1,5 +1,5 @@
-global using BuildingDef = Civ.Content.Schema.BuildingDef;
-global using UnitDef = Civ.Content.Schema.UnitDef;
-global using TechDef = Civ.Content.Schema.TechDef;
-global using TerrainDef = Civ.Content.Schema.TerrainDef;
-global using CivilizationDef = Civ.Content.Schema.CivilizationDef;
+global using BuildingDef = Ariel.Content.Schema.BuildingDef;
+global using UnitDef = Ariel.Content.Schema.UnitDef;
+global using TechDef = Ariel.Content.Schema.TechDef;
+global using TerrainDef = Ariel.Content.Schema.TerrainDef;
+global using CivilizationDef = Ariel.Content.Schema.CivilizationDef;

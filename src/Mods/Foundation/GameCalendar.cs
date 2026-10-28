@@ -1,8 +1,8 @@
 using System.Globalization;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Foundation;
+namespace Ariel.Mods.Foundation;
 
 /// <summary>Month-only CvDate schedules, derived without a mutable simulation clock.</summary>
 internal sealed class GameCalendar : IGameCalendar

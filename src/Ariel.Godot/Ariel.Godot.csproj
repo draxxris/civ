@@ -1,0 +1,67 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <!--
+    Godot 4 .NET front end. Not part of Ariel.slnx so the headless game builds and tests without the engine.
+    Build:  dotnet build src/Ariel.Godot
+    Run: godot-mono, with the project path set to src/Ariel.Godot
+    Mods are plain DLLs loaded by Ariel.Core; they never contain Godot types. The build copies every feature mod
+    (assembly, mod.json, data) to <output>/mods/<Name> and symlinks art/ there, where the client finds them at startup.
+    ARIEL_MODS adds a root with higher per-ID priority than user-installed and bundled mods.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <AssemblyName>Ariel.Godot</AssemblyName>
+    <RootNamespace>Ariel.Client</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ariel.Core\Ariel.Core.csproj" />
+    <ProjectReference Include="..\Ariel.Client.Core\Ariel.Client.Core.csproj" />
+    <ProjectReference Include="..\Mods\Foundation\Ariel.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\World\Ariel.Mods.World.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Research\Ariel.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\CardResearch\Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\TechTree\Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Economy\Ariel.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Cities\Ariel.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Military\Ariel.Mods.Military.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Government\Ariel.Mods.Government.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Peoples\Ariel.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Religion\Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Ai\Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\GreatPeople\Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Trade\Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Diplomacy\Ariel.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\ProjectsVictory\Ariel.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Corporations\Ariel.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Espionage\Ariel.Mods.Espionage.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Events\Ariel.Mods.Events.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\ScriptedWonders\Ariel.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Revolution\Ariel.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <!-- Only small files go through MSBuild copy (dll/pdb/mod.json/data). Heavy art/ (~180MB:
+       Military models, World scatter/terrain) is symlinked by LinkModArt below, so incremental builds
+       stat a dozen files per mod instead of copying/statement-checking ~1,600 art files twice. -->
+  <Target Name="CopyModPayloads" AfterTargets="Build">
+    <ItemGroup>
+      <ModBin Include="Foundation;World;Research;CardResearch;TechTree;Economy;Cities;Military;Government;Peoples;Religion;Ai;GreatPeople;Trade;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
+      <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.dll" ModDir="%(ModBin.Identity)" />
+      <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.pdb" ModDir="%(ModBin.Identity)" />
+      <ModMeta Include="..\Mods\%(ModBin.Identity)\mod.json" ModDir="%(ModBin.Identity)" />
+      <ModData Include="..\Mods\%(ModBin.Identity)\data\**\*.json" ModDir="%(ModBin.Identity)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModDll)" DestinationFiles="@(ModDll->'$(OutDir)mods/%(ModDir)/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ModMeta)" DestinationFiles="@(ModMeta->'$(OutDir)mods/%(ModDir)/mod.json')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ModData)" DestinationFiles="@(ModData->'$(OutDir)mods/%(ModDir)/data/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <!-- Runtime resolves art via mod Root + art/... (GameCatalog.IconPath/ModelPath/TexturePath/ScatterModels),
+       so each output mods/<Name>/art must exist. A symlink keeps it working with zero copy cost.
+       Removes stale real art dirs left by pre-symlink builds, then links source art/ (Unix) or junctions (Windows). -->
+  <Target Name="LinkModArt" AfterTargets="CopyModPayloads">
+    <ItemGroup>
+      <ModWithArt Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples" />
+    </ItemGroup>
+    <!-- Batched once per mod (no shell loop vars): rm any stale real art dir, then symlink source art/. -->
+    <Exec Condition="'$(OS)' != 'Windows_NT' AND Exists('../Mods/%(ModWithArt.Identity)/art')" Command="rm -rf &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)/art'))&quot; &amp;&amp; mkdir -p &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)'))&quot; &amp;&amp; ln -sfn &quot;$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/../Mods/%(ModWithArt.Identity)/art'))&quot; &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)/art'))&quot;" />
+    <Exec Condition="'$(OS)' == 'Windows_NT' AND Exists('../Mods/%(ModWithArt.Identity)/art')" Command="rmdir /s /q &quot;$(OutDir)mods\%(ModWithArt.Identity)\art&quot; 2&gt;nul &amp; mkdir &quot;$(OutDir)mods\%(ModWithArt.Identity)&quot; 2&gt;nul &amp; mklink /D &quot;$(OutDir)mods\%(ModWithArt.Identity)\art&quot; &quot;$(MSBuildProjectDirectory)\..\Mods\%(ModWithArt.Identity)\art&quot;" />
+  </Target>
+</Project>

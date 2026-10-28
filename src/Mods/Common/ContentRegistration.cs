@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Modding;
 
-namespace Civ.Mods;
+namespace Ariel.Mods;
 
 /// <summary>Shared sidecar registration, linked into each independent mod assembly.</summary>
 internal static class ContentRegistration
@@ -26,7 +26,7 @@ internal static class ContentRegistration
             {
                 if (kind is "condition" or "culture-level" or "era")
                 {
-                    var service = context.Sim.Content.Services.Get<Civ.Game.ICityRequirementService>().SingleOrDefault();
+                    var service = context.Sim.Content.Services.Get<Ariel.Game.ICityRequirementService>().SingleOrDefault();
                     if (service is not null) return service.Evaluate(leaf, context);
                 }
                 return $"Requirement '{kind}' is unavailable until its owning rules implement runtime state";

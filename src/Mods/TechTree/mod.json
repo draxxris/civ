@@ -2,7 +2,7 @@
   "id": "tech_tree",
   "name": "Tech Tree",
   "version": "1.0.0",
-  "assembly": "Civ.Mods.TechTree.dll",
+  "assembly": "Ariel.Mods.TechTree.dll",
   "dependencies": ["research"],
   "references": []
 }

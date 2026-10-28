@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
-namespace Civ.Mods.Cities;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
+namespace Ariel.Mods.Cities;
 
 /// <summary>Capture preserves historical culture. Conquest rules replace queues and citizen orders.</summary>
 internal sealed class CityCapture : ICityCaptureService

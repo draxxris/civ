@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="../../Civ.Core/Civ.Core.csproj" />
-    <Compile Include="../Common/ContentRegistration.cs" Link="ContentRegistration.cs" />
-    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-</Project>

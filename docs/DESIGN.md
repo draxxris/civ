@@ -10,11 +10,11 @@ Core defines the contract. Mods implement the rules.
    They get no private hooks. If a shipped mod needs something, the mod API grows to
    offer it to every mod. Terrain, techs, buildings, units, civics, map generators,
    commands, turn systems and the AI are all registered through `IModContext`.
-2. **No mod knowledge outside mods.** `Civ.Core`, `Civ.Client.Core` and `Civ.Godot`
-   never hard-code a mod's content ids or kinds. Defaults and choices come from loaded
-   content or from mod-registered services, so a different mod set can replace any
-   shipped mod.
-3. **Headless deterministic core.** `Civ.Core` has no engine dependency, no floats in
+2. **No mod knowledge outside mods.** `Ariel.Core`, `Ariel.Client.Core` and
+   `Ariel.Godot` never hard-code a mod's content ids or kinds. Defaults and choices come
+   from loaded content or from mod-registered services, so a different mod set can
+   replace any shipped mod.
+3. **Headless deterministic core.** `Ariel.Core` has no engine dependency, no floats in
    game state, no wall clock and no unordered iteration affecting state. The renderer is
    a view.
 4. **Commands over the wire.** Multiplayer is lockstep: only player commands are
@@ -22,15 +22,15 @@ Core defines the contract. Mods implement the rules.
 
 ## Projects
 
-- `Civ.Core`: geometry, shared data, content registries, extension contracts,
+- `Ariel.Core`: geometry, shared data, content registries, extension contracts,
   simulation, commands, saves and hashes.
-- `Civ.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
+- `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
-- `tests/Civ.Tests/TestRuleset`: test-only ruleset loaded through the same mod API as
+- `tests/Ariel.Tests/TestRuleset`: test-only ruleset loaded through the same mod API as
   feature rulesets.
-- `Civ.Client.Core`: engine-free selection, picking, commands and city screen data.
-- `Civ.Godot`: Godot view. Build separately with `dotnet build src/Civ.Godot`.
-- `Civ.Tests`: contract, rule, client, save/replay and lockstep tests.
+- `Ariel.Client.Core`: engine-free selection, picking, commands and city screen data.
+- `Ariel.Godot`: Godot view. Build separately with `dotnet build src/Ariel.Godot`.
+- `Ariel.Tests`: contract, rule, client, save/replay and lockstep tests.
 
 The client uses Core query contracts. It has no reference to a feature-mod or
 test-ruleset assembly.
@@ -102,7 +102,7 @@ war matrix symmetric.
 Cities include a generic `ProductionQueue` of
 `ProductionOrder(Kind, ContentId, Progress)` entries. Cities owns feature queues, paused
 item progress, completion snapshots, and normalized overflow. Test rules live in
-`tests/Civ.Tests/TestRuleset`. `GameState` contains plain data and rebuildable lookup
+`tests/Ariel.Tests/TestRuleset`. `GameState` contains plain data and rebuildable lookup
 caches. Caches do not enter saves or hashes. `UnitById`, `UnitsAt`, `CityById` and
 `CityAt` use indexes. Runtime edits use `AddCity`, `RemoveCity`, `AddUnit`, `RemoveUnit`
 and `MoveUnit`. After bulk data edits, `RebuildIndexes` restores the caches.
@@ -170,8 +170,8 @@ the content hash. Mods must change their manifest version when service behavior 
 
 ## Turn phases
 
-`Civ.Game.TurnPhase` defines shared order slots. Systems use these constants instead of
-private numeric priorities. Systems with equal orders run by ordinal `Id`. Additional
+`Ariel.Game.TurnPhase` defines shared order slots. Systems use these constants instead
+of private numeric priorities. Systems with equal orders run by ordinal `Id`. Additional
 orders can use the gaps between slots.
 
 Orders from `PlayerBegin` through `Map - 1` require
@@ -256,7 +256,7 @@ World scores radius-two and radius-three food and production, with coast and fre
 weights. It selects habitable starts with minimum wrapped spacing, then improves weak
 starts with grass and forest near the center. Normalization never changes water, peaks,
 or resource plots. Impossible spacing produces a setup error, not overlapping starts.
-The harness `tests/Civ.Mods.Tests/GameFactory.cs` creates full headless games through
+The harness `tests/Ariel.Mods.Tests/GameFactory.cs` creates full headless games through
 this API.
 
 ## World services
@@ -926,10 +926,10 @@ with gold or a military garrison.
 
 ## Client presentation
 
-`Civ.Client.Core` supplies screen models and validated commands for diplomacy, score and
-victory, corporations, espionage, and pending events. The city screen shows
+`Ariel.Client.Core` supplies screen models and validated commands for diplomacy, score
+and victory, corporations, espionage, and pending events. The city screen shows
 corporations, religion, commerce, wellbeing, and ledgers. Unit actions expose
-corporation and spy commands when valid. `Civ.Godot` presents diplomacy and victory,
+corporation and spy commands when valid. `Ariel.Godot` presents diplomacy and victory,
 corporation, espionage, event, religion, pedia, save, and load panels. It also shows
 espionage rates, pending-event notifications, and corporation details on the city
 screen.
@@ -1383,12 +1383,12 @@ provider presence before registration and typed references after all mods regist
 post-registration pass runs before freeze and content hashing. Unknown sidecar
 properties fail load.
 
-`Civ.Content.Schema` holds immutable definitions. The schema includes costs, grouped
+`Ariel.Content.Schema` holds immutable definitions. The schema includes costs, grouped
 requirements, vectors, indexed effects, class limits, civilization overrides, and AI
 weights. Definitions retain English text, eras, icon references, and unsupported-field
 paths. Corporation and victory identities now have executable definitions. Religion owns
 playable religion definitions and prerequisites. The test ruleset moved to
-`tests/Civ.Tests/TestRuleset`; `src/Civ.BaseGame` was removed. See
+`tests/Ariel.Tests/TestRuleset`; `src/Ariel.BaseGame` was removed. See
 [content-schema.md](content-schema.md) for definition types, units, scopes, and importer
 decisions.
 
@@ -1401,7 +1401,7 @@ thinning and species mixing across borders.
 
 ```mermaid
 flowchart TB
-    subgraph Core["Civ.Client.Core/Terrain (engine-free math)"]
+    subgraph Core["Ariel.Client.Core/Terrain (engine-free math)"]
         Noise["PeriodicNoise / WarpGrid<br/>wrap-safe periodic noise & baked 2D domain warp"]
         Blend["HexBlend<br/>dual-triangle barycentric weights"]
         Snap["TerrainSnapshot<br/>per-tile layers, relief, rivers, sight, owner, features"]
@@ -1412,7 +1412,7 @@ flowchart TB
         Palette["TerrainPalette<br/>layers, surfaces, feature styles, scatter sets"]
         Planner["ScatterPlanner<br/>global jittered lattice, thinning, mixing, clearings"]
     end
-    subgraph View["Civ.Godot (presentation)"]
+    subgraph View["Ariel.Godot (presentation)"]
         TR["TerrainRenderer<br/>chunk MeshInstance3D x3 wrap copies, parallel meshing"]
         TDT["TileDataTexture<br/>tileA, tileB, packed 16-bit warp grid, palette strip"]
         TT["TerrainTextures<br/>Texture2DArray with height in alpha"]
@@ -1439,10 +1439,10 @@ flowchart TB
     Planner --> SR
 ```
 
-### Engine-free terrain math (`Civ.Client.Core/Terrain`)
+### Engine-free terrain math (`Ariel.Client.Core/Terrain`)
 
 Terrain math is fully decoupled from Godot and deterministically unit-tested in
-`Civ.Client.Core`:
+`Ariel.Client.Core`:
 
 - `PeriodicNoise` & `WarpGrid`: Periodic value and ridged noise lattices wrap modulo the
   cylindrical map period ($W \\sqrt{3}$). `WarpGrid` precomputes a 2D domain-warp
@@ -1496,7 +1496,7 @@ Terrain math is fully decoupled from Godot and deterministically unit-tested in
   between forest and jungle). Avoids water, river troughs, steep slopes, cloud-covered
   tiles, and designated clearings (city centres, improvements, unit tokens).
 
-### Godot presentation (`Civ.Godot`)
+### Godot presentation (`Ariel.Godot`)
 
 The Godot view translates the engine-free math into GPU-rendered visuals compliant with
 `gl_compatibility`:
@@ -1550,8 +1550,8 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
 
 ### Mod appearance contract & asset discovery
 
-The presentation contract in `Civ.Core` and client catalog in `Civ.Client.Core` provide
-extension points for 3D art:
+The presentation contract in `Ariel.Core` and client catalog in `Ariel.Client.Core`
+provide extension points for 3D art:
 
 - `TileAppearance`: Extended record
   `TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0, int Spread = 50)`.

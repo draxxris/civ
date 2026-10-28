@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Shared geography for production, land campaigns and sealift.</summary>
 internal sealed class CampaignTargets(AiContext ctx)

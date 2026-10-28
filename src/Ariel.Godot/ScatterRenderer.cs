@@ -1,0 +1,201 @@
+using System.Security.Cryptography;
+using Ariel.Client.Terrain;
+using Godot;
+
+namespace Ariel.Client;
+
+/// <summary>Chunk-local prop batches. Wrap copies share instance transforms and colours in one MultiMesh.</summary>
+internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copies) : Node3D
+{
+    private static readonly GltfDocumentExtensionConvertImporterMesh MeshConverter = RegisterMeshConverter();
+    private readonly Dictionary<string, ArrayMesh?> _meshes = new(StringComparer.Ordinal);
+    private readonly Dictionary<TextureKey, Texture2D> _textures = new();
+    private readonly Dictionary<Texture2D, Texture2D> _foliage = new();
+    private readonly Dictionary<int, (Node3D Root, List<Batch> Batches)> _chunks = new();
+    private readonly record struct TextureKey(int Width, int Height, Image.Format Format, string ContentHash);
+    private sealed record Batch(MultiMesh Mesh, ScatterInstance[] Instances, Sight[] Sight);
+
+    public void Rebuild(int chunk, IReadOnlyList<ScatterInstance> instances, TerrainSnapshot snapshot)
+    {
+        if (_chunks.Remove(chunk, out var old)) old.Root.Free();
+        var root = new Node3D();
+        var batches = new List<Batch>();
+        AddChild(root);
+        RenderStats.CountScatter(chunk, instances, KeepProp);
+        // Keep deterministic spatial thinning without changing the planner's density/blending contract.
+        // Measured on the huge-map FPS probe: half density keeps the default camera above 20 FPS. Tree sets keep two
+        // thirds so forests read as dense groves; re-check the probe if forest-heavy maps drop frames.
+        foreach (var group in instances.Where(KeepProp).GroupBy(instance => (instance.Set, instance.ModelIndex)))
+        {
+            var paths = catalog.ScatterModels(group.Key.Set);
+            var mesh = Model(paths[group.Key.ModelIndex]);
+            if (mesh == null) continue;
+            var props = group.ToArray();
+            var multi = new MultiMesh
+            {
+                TransformFormat = MultiMesh.TransformFormatEnum.Transform3D, UseColors = true,
+                Mesh = mesh, InstanceCount = props.Length,
+            };
+            for (int i = 0; i < props.Length; i++)
+            {
+                var prop = props[i];
+                var basis = new Basis(Vector3.Up, prop.Yaw).Scaled(new Vector3(prop.Scale, prop.Scale * prop.Stretch, prop.Scale));
+                multi.SetInstanceTransform(i, new Transform3D(basis, new Vector3(prop.X, prop.Y, prop.Z)));
+            }
+            var batch = new Batch(multi, props, new Sight[props.Length]);
+            UpdateColours(batch, snapshot, force: true);
+            batches.Add(batch);
+            foreach (float offset in copies)
+                root.AddChild(new MultiMeshInstance3D
+                {
+                    Multimesh = multi, Position = new Vector3(offset, 0, 0),
+                    VisibilityRangeEnd = 34f,
+                    CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+                });
+        }
+        _chunks[chunk] = (root, batches);
+    }
+
+    private static readonly HashSet<string> TreeSets = new(StringComparer.Ordinal) { "forest", "forest_snow", "jungle" };
+
+    /// <summary>Fraction of tree-set candidates drawn. The rest are thinned deterministically to protect the frame rate.</summary>
+    public static double TreeKeep { get; set; } = 2.0 / 3.0;
+    /// <summary>Fraction of all other candidates (rocks, ...) drawn.</summary>
+    public static double OtherKeep { get; set; } = 0.5;
+
+    private static readonly Color SeaRockTint = new(1.25f, 1.0f, 0.92f);
+
+    private static bool KeepProp(ScatterInstance instance)
+    {
+        // Sea stacks and cliff walls (rocks rooted below sea level) are placed exactly; thinning would leave gaps in the wall.
+        if (instance.Y < 0) return true;
+        // Explicit integer mixing is stable across processes and independent of candidate order or count.
+        uint hash = 2166136261u;
+        hash = unchecked((hash ^ (uint)instance.Tile) * 16777619u);
+        hash = unchecked((hash ^ (uint)instance.ModelIndex) * 16777619u);
+        hash = unchecked((hash ^ (uint)BitConverter.SingleToInt32Bits(instance.X)) * 16777619u);
+        hash = unchecked((hash ^ (uint)BitConverter.SingleToInt32Bits(instance.Z)) * 16777619u);
+        hash ^= hash >> 16;
+        hash = unchecked(hash * 0x7feb352du);
+        hash ^= hash >> 15;
+        return hash % 10000 < (TreeSets.Contains(instance.Set) ? TreeKeep : OtherKeep) * 10000;
+    }
+
+    /// <summary>Fog changes only colours, not candidates, transforms, model loads or wrap copies.</summary>
+    public void UpdateVisibility(TerrainSnapshot snapshot)
+    {
+        foreach (var chunk in _chunks.Values)
+            foreach (var batch in chunk.Batches) UpdateColours(batch, snapshot, force: false);
+    }
+
+    private static void UpdateColours(Batch batch, TerrainSnapshot snapshot, bool force)
+    {
+        for (int i = 0; i < batch.Instances.Length; i++)
+        {
+            var sight = snapshot.Sight[batch.Instances[i].Tile];
+            if (!force && batch.Sight[i] == sight) continue;
+            float fog = sight == Sight.Visible ? 1f : 0.55f;
+            // Rocks rooted in the sea (cliff walls, sea stacks) are warm, weathered coastal stone.
+            var tint = batch.Instances[i].Y < 0 ? SeaRockTint : new Color(1, 1, 1);
+            batch.Mesh.SetInstanceColor(i, new Color(fog * tint.R, fog * tint.G, fog * tint.B));
+            batch.Sight[i] = sight;
+        }
+    }
+
+    private ArrayMesh? Model(string path)
+    {
+        if (_meshes.TryGetValue(path, out var cached)) return cached;
+        return _meshes[path] = Load(path);
+    }
+
+    private static GltfDocumentExtensionConvertImporterMesh RegisterMeshConverter()
+    {
+        var converter = new GltfDocumentExtensionConvertImporterMesh();
+        GltfDocument.RegisterGltfDocumentExtension(converter);
+        return converter;
+    }
+
+    private ArrayMesh? Load(string path)
+    {
+        Node? root = null;
+        try
+        {
+            _ = MeshConverter;
+            using var document = new GltfDocument();
+            using var state = new GltfState();
+            var error = document.AppendFromFile(path, state);
+            if (error != Error.Ok) throw new InvalidOperationException($"glTF import failed: {error}");
+            root = document.GenerateScene(state);
+            var mesh = new ArrayMesh();
+            Extract(root, Transform3D.Identity, mesh);
+            if (mesh.GetSurfaceCount() == 0) throw new InvalidOperationException("Model has no renderable surfaces");
+            return mesh;
+        }
+        catch (Exception e)
+        {
+            GD.PushWarning($"Could not load scatter model {path}: {e.Message}");
+            return null;
+        }
+        finally { root?.Free(); }
+    }
+
+    /// <summary>Bake the complete scene transform, keeping every bark, leaf and plant surface and its UVs.
+    /// The importer preserves glTF MASK as alpha scissor; duplicating the material keeps its cutoff and culling.
+    /// Cutout surfaces are the foliage, so they get the shared muted foliage grade and a matte finish.</summary>
+    private void Extract(Node node, Transform3D parent, ArrayMesh target)
+    {
+        var transform = node is Node3D spatial ? parent * spatial.Transform : parent;
+        if (node is MeshInstance3D { Mesh: not null } instance)
+        {
+            for (int surface = 0; surface < instance.Mesh.GetSurfaceCount(); surface++)
+            {
+                using var tool = new SurfaceTool();
+                tool.AppendFrom(instance.Mesh, surface, transform);
+                var material = instance.GetActiveMaterial(surface)?.Duplicate() as StandardMaterial3D ?? new StandardMaterial3D();
+                material.AlbedoTexture = ShareTexture(material.AlbedoTexture);
+                if (material.Transparency == BaseMaterial3D.TransparencyEnum.AlphaScissor)
+                {
+                    material.AlbedoTexture = GradeFoliage(material.AlbedoTexture);
+                    material.Roughness = 1f;
+                    material.MetallicSpecular = 0.25f;
+                }
+                material.NormalEnabled = false;
+                material.NormalTexture = null;
+                material.VertexColorUseAsAlbedo = true;
+                tool.SetMaterial(material);
+                tool.Commit(target);
+            }
+        }
+        foreach (var child in node.GetChildren()) Extract(child, transform, target);
+    }
+
+    /// <summary>One graded copy per shared leaf texture, so batching and texture sharing are unchanged.</summary>
+    private Texture2D? GradeFoliage(Texture2D? texture)
+    {
+        if (texture is null) return null;
+        if (_foliage.TryGetValue(texture, out var graded)) return graded;
+        using var image = texture.GetImage();
+        if (image.IsEmpty()) return _foliage[texture] = texture;
+        if (image.IsCompressed()) image.Decompress();
+        image.ClearMipmaps();
+        image.Convert(Image.Format.Rgba8);
+        var data = image.GetData();
+        FoliageGrade.Apply(data);
+        using var result = Image.CreateFromData(image.GetWidth(), image.GetHeight(), false, Image.Format.Rgba8, data);
+        result.GenerateMipmaps();
+        return _foliage[texture] = ImageTexture.CreateFromImage(result);
+    }
+
+    private Texture2D? ShareTexture(Texture2D? texture)
+    {
+        if (texture is null) return null;
+        using var image = texture.GetImage();
+        if (image.IsEmpty()) return texture;
+
+        var key = new TextureKey(image.GetWidth(), image.GetHeight(), image.GetFormat(),
+            Convert.ToHexString(SHA256.HashData(image.GetData())));
+        if (_textures.TryGetValue(key, out var shared)) return shared;
+        _textures.Add(key, texture);
+        return texture;
+    }
+}

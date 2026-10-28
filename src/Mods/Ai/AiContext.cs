@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Everything one planner needs for one player's turn: state shortcuts, personality and a command sink.
 /// Built fresh each turn. Saved intent belongs to player extensions, not to this derived query context.</summary>

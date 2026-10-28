@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>One army per landmass. Gather first, advance at the slowest unit's pace, then prepare and assault.</summary>
 internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)

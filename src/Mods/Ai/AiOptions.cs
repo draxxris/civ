@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>What the player can plausibly build right now (technology, civilization and class-limit prefilters).
 /// Final legality always comes from the production validator.</summary>

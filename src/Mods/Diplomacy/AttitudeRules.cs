@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Diplomacy;
+namespace Ariel.Mods.Diplomacy;
 
 internal sealed partial class DiplomacyService
 {

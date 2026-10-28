@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>Shared world pipeline with selectable land silhouettes and separate relief and moisture fields.
 /// The default Continental layout retains polar fractal land and the configured water percentage.</summary>
@@ -13,11 +13,11 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content) => Generate(spec, plots, rng, content, 2);
     public void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players)
     {
-        using var trace = Civ.Modding.StartupTrace.Phase("world generation");
+        using var trace = Ariel.Modding.StartupTrace.Phase("world generation");
         var grid = new HexGrid(spec);
         if (plots.Length != grid.Count) throw new ArgumentException("Plot count does not match the grid");
         var tuning = Geography.Tuning(content);
-        using (Civ.Modding.StartupTrace.Phase("world terrain and rivers"))
+        using (Ariel.Modding.StartupTrace.Phase("world terrain and rivers"))
         {
             var elevation = FractalNoise.Generate(grid, rng, tuning.NoiseScale, tuning.NoiseOctaves);
             var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
@@ -33,16 +33,16 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
             RiverGenerator.Generate(grid, plots, elevation, rng, content);
             CliffGenerator.Generate(grid, plots, rng, content);
         }
-        using (Civ.Modding.StartupTrace.Phase("world features"))
+        using (Ariel.Modding.StartupTrace.Phase("world features"))
             Placement.AddFeatures(grid, plots, rng, content);
-        using (Civ.Modding.StartupTrace.Phase("world bonuses"))
+        using (Ariel.Modding.StartupTrace.Phase("world bonuses"))
             Placement.AddBonuses(grid, plots, rng, content, players);
-        using (Civ.Modding.StartupTrace.Phase("world goodies"))
+        using (Ariel.Modding.StartupTrace.Phase("world goodies"))
             Placement.AddGoodies(grid, plots, rng, content);
     }
     private static int Percentile(int[] values, int percent) => values.Order().ElementAt(Math.Min(values.Length - 1, values.Length * percent / 100));
     private static void SetTerrain(HexGrid grid, Plot plot, TileId tile, bool land, int moisture, int relief,
-        int hills, int peaks, Civ.Content.Schema.HexOverridesDef tuning)
+        int hills, int peaks, Ariel.Content.Schema.HexOverridesDef tuning)
     {
         plot.Kind = PlotKind.Flat;
         plot.Terrain = land ? Climate(Geography.Latitude(grid, tile), moisture, tuning) : "world:ocean";
@@ -55,7 +55,7 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
         }
         else if (relief >= hills) plot.Kind = PlotKind.Hills;
     }
-    private static string Climate(int latitude, int moisture, Civ.Content.Schema.HexOverridesDef tuning)
+    private static string Climate(int latitude, int moisture, Ariel.Content.Schema.HexOverridesDef tuning)
     {
         if (latitude >= tuning.SnowLatitude) return "world:snow";
         if (latitude >= tuning.TundraLatitude) return "world:tundra";

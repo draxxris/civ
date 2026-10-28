@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 internal sealed class CityBuildingService : ICityBuildingService
 {
@@ -13,7 +13,7 @@ internal sealed class CityBuildingService : ICityBuildingService
     public bool ProvidesPower(Simulation sim, int cityId, string building)
     {
         var city = sim.State.CityById(cityId);
-        var definition = sim.Content.Get<Civ.Content.Schema.BuildingDef>(building);
+        var definition = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(building);
         var bonuses = BuildingEffects.Bonuses(sim, city, CityData.ActiveWithoutPower(sim, city));
         return definition.AreaCleanPower || CityData.ProvidesLocalPower(sim, city, definition, bonuses);
     }

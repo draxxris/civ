@@ -1,11 +1,11 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using BuildingDef = Civ.Content.Schema.BuildingDef;
-using TerrainDef = Civ.Content.Schema.TerrainDef;
-using CultureLevelDef = Civ.Content.Schema.CultureLevelDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using BuildingDef = Ariel.Content.Schema.BuildingDef;
+using TerrainDef = Ariel.Content.Schema.TerrainDef;
+using CultureLevelDef = Ariel.Content.Schema.CultureLevelDef;
 
-namespace Civ.Mods.ProjectsVictory;
+namespace Ariel.Mods.ProjectsVictory;
 
 internal sealed class ProjectVictoryService : IProjectVictoryService
 {

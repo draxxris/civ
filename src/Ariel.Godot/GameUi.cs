@@ -1,0 +1,415 @@
+using Ariel.Game;
+using Godot;
+
+namespace Ariel.Client;
+
+/// <summary>Top bar, unit and city lists, end-turn button, research dialog and the city screen. The top bar and the
+/// left panel are built once and updated in place; every other panel is rebuilt only when an input it renders moves.</summary>
+internal sealed partial class GameUi : CanvasLayer
+{
+    internal const float TopBarHeight = 82f;
+    private const float LeftWidth = 320f;
+
+    private readonly GameSession _session;
+    private readonly IconCache _icons;
+    private readonly PanelContainer _top = Ui.Panel(margin: 6);
+    private readonly PanelContainer _left = Ui.Panel();
+    private readonly PanelContainer _hoverTip = Ui.Panel(new Color(0.05f, 0.06f, 0.08f, 0.92f), 6);
+    private readonly Label _hoverText = Ui.Text("", 13, wrap: false);
+    private readonly Label _message = Ui.Text("", 16, Ui.Accent);
+    private readonly Button _endTurn;
+    private readonly HFlowContainer _topRow = new();
+    private Label _turnText = null!;
+    private Label _goldenAgeText = null!;
+    private Label _goldText = null!;
+    private Button _researchButton = null!;
+    private (Label Label, Button Minus, Button Plus) _scienceRate;
+    private (Label Label, Button Minus, Button Plus) _cultureRate;
+    private (Label Label, Button Minus, Button Plus) _espionageRate;
+    private Button _civicsButton = null!;
+    private Button _conquestButton = null!;
+    private Button _religionButton = null!;
+    private Button _corporationsButton = null!;
+    private Button _espionageButton = null!;
+    private Button _eventsButton = null!;
+    private Button _diplomacyButton = null!;
+    private Button _pediaButton = null!;
+    private Button _techTreeButton = null!;
+    private Button _saveButton = null!;
+    private Button _loadButton = null!;
+    private Label _citiesText = null!;
+    private readonly PanelContainer _researchDialog = Ui.Panel(margin: 12);
+    private readonly CityUi _city;
+    private int _shownRevision = -1;
+    private int _shownWorldRevision = -1;
+    private bool _shownCityOpen;
+    private int? _shownCityId;
+    private bool _researchOpen;
+    private bool _shownResearchOpen;
+    private int _shownCityState;
+    private Simulation? _shownSim;
+    private MapOverlays? _shownOverlays;
+    private (Vector2 Mouse, Vector2 Size, Vector2 View)? _hoverTipInputs;
+    private readonly List<(CheckBox Button, Func<MapOverlays, bool> Read)> _overlayChecks = new();
+
+    public bool PointerOverUi => GetViewport().GuiGetHoveredControl() != null;
+    public bool TextInputFocused => GetViewport().GuiGetFocusOwner() is LineEdit;
+
+    /// <summary>True when a dialog owns the keyboard. The map's shortcuts must not fire into a dialog the player is
+    /// reading, and the city screen is not a dialog: it leaves the end-turn and camera keys alone.</summary>
+    public bool DialogsOpen => _researchOpen || _governmentOpen || _modalKind != Modal.None;
+
+    /// <summary>True when the key closes a dialog the player already has open. The shortcut gate must let those through,
+    /// or the hotkey that opened a dialog could not close it again.</summary>
+    public bool ClosesOpenDialog(Key key) => key switch { Key.R => _researchOpen, Key.C => _governmentOpen, _ => false };
+
+    /// <summary>
+    /// Gives the keyboard back when a click lands anywhere but the text field that holds it. Buttons take no focus, so
+    /// without this a click on a queue row or a pedia entry left the search field focused, and it then swallowed the
+    /// map's keys (camera panning, Esc) after the player had visibly left the field.
+    /// </summary>
+    public void ReleaseTextFocus()
+    {
+        if (GetViewport().GuiGetFocusOwner() is not LineEdit field) return;
+        var hovered = GetViewport().GuiGetHoveredControl();
+        if (hovered == field || (hovered != null && field.IsAncestorOf(hovered))) return;
+        field.ReleaseFocus();
+    }
+    public GameUi(GameSession session, IconCache icons)
+    {
+        _session = session; _icons = icons;
+        _top.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopWide);
+        _top.OffsetBottom = TopBarHeight;
+        _left.SetAnchorsPreset(Control.LayoutPreset.LeftWide);
+        _left.OffsetTop = TopBarHeight + 4; _left.OffsetRight = LeftWidth; _left.OffsetBottom = -4;
+        _left.GrowVertical = Control.GrowDirection.Both;
+        _hoverTip.MouseFilter = Control.MouseFilterEnum.Ignore;
+        _hoverTip.Visible = false;
+        _hoverTip.AddChild(_hoverText);
+        _message.HorizontalAlignment = HorizontalAlignment.Center;
+        _message.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomWide);
+        _message.OffsetTop = -96; _message.OffsetBottom = -66;
+        _message.MouseFilter = Control.MouseFilterEnum.Ignore;
+        _endTurn = Ui.Button("End turn", session.EndTurn, size: 18);
+        _endTurn.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomRight);
+        _endTurn.OffsetLeft = -220; _endTurn.OffsetTop = -64; _endTurn.OffsetRight = -12; _endTurn.OffsetBottom = -12;
+        _researchDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
+        _researchDialog.Visible = false;
+        _governmentDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
+        _governmentDialog.Visible = false;
+        _city = new CityUi(session, icons);
+        InitPanels();
+        InitLeft();
+        InitTop();
+        InitResearchDialog();
+        foreach (var node in new Node[] { _top, _left, _feed, _message, _endTurn, _researchDialog, _city, _governmentDialog, _modal, _hoverTip }) AddChild(node);
+        AddChild(MapOverlayControls());
+    }
+
+    public void Refresh()
+    {
+        RefreshOverlayChecks();
+        // A loaded game replaces the whole simulation, so anything the front end remembered about the old one (the open
+        // modal's tree, the proposed civics, the pedia's query keys) is stale. Bumping both dialog revisions rebuilds
+        // them against the new game instead of leaving the previous turn's values on screen.
+        if (!ReferenceEquals(_shownSim, _session.Sim))
+        {
+            _shownSim = _session.Sim;
+            _proposedCivics.Clear();
+            ResetPediaKeys();
+            _shownModalKind = Modal.None;
+            _modalRevision++;
+            _governmentRevision++;
+        }
+        if (!NeedsRefresh()) return;
+        var city = _session.City;
+        bool cityOpen = city != null;
+        bool revision = _shownRevision != _session.Revision;
+        bool worldRevision = _shownWorldRevision != _session.WorldRevision;
+        bool cityOpenChanged = _shownCityOpen != cityOpen;
+        bool cityIdentityChanged = _shownCityId != city?.Id;
+        bool cityStateChanged = _shownCityState != _city.State;
+        // Closing the screen resets its local choices, so the next city opens unfiltered; do it before the state snapshot
+        // is stored, or the reset alone would ask for one more pass.
+        if (cityOpenChanged && !cityOpen) _city.Close();
+        _shownRevision = _session.Revision;
+        _shownWorldRevision = _session.WorldRevision;
+        _shownCityOpen = cityOpen;
+        _shownCityId = city?.Id;
+        _shownCityState = _city.State;
+        _left.Visible = !cityOpen;
+        _endTurn.Visible = !cityOpen;
+        _city.Visible = cityOpen;
+
+        // One gate per panel: a panel is rebuilt only when the key it depends on moved, or redrawn from the cached
+        // description when only a local input moved. The conquest modal is settled first, because opening or closing it
+        // moves the modal gate that is read below.
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var conquests = worldRevision ? _session.DescribePendingConquests() : null;
+        if (conquests != null)
+        {
+            UpdateConquestModal(conquests);
+            RefreshTop(conquests);
+        }
+        double topMs = clock.Elapsed.TotalMilliseconds;
+        double leftMs = 0, cityMs = 0;
+        if (cityOpen)
+        {
+            // A local input (tab, filter, unavailable toggle) redraws only the queue's choice list. Describing the city
+            // again for it would cost tens of milliseconds on a developed one and cannot have changed.
+            if (cityOpenChanged || cityIdentityChanged || worldRevision) _city.Build(city!);
+            else if (cityStateChanged) _city.RefreshForLocalInput();
+            cityMs = clock.Elapsed.TotalMilliseconds - topMs;
+        }
+        else if (revision)
+        {
+            RefreshLeft();
+            leftMs = clock.Elapsed.TotalMilliseconds - topMs;
+        }
+        // The espionage modal renders the selected spy, so it keeps following the selection; the pedia and load modals
+        // read only the static pedia and the saves folder, so no session revision rebuilds them. Everything else
+        // renders simulation state, which only WorldRevision moves.
+        bool modalSessionChanged = _modalKind switch
+        {
+            Modal.Pedia or Modal.Load => false,
+            Modal.Espionage => revision,
+            _ => worldRevision,
+        };
+        double dialogStart = clock.Elapsed.TotalMilliseconds;
+        if (_shownResearchOpen != _researchOpen || ((worldRevision || cityOpenChanged) && _researchOpen)) BuildResearchDialog();
+        if (_shownGovernmentRevision != _governmentRevision || (worldRevision && _governmentOpen)) BuildGovernmentDialog();
+        if (_shownModalRevision != _modalRevision || ((modalSessionChanged || cityOpenChanged) && _modalKind != Modal.None)) BuildModal();
+        _shownResearchOpen = _researchOpen;
+        _shownGovernmentRevision = _governmentRevision;
+        _shownModalRevision = _modalRevision;
+        double dialogsMs = clock.Elapsed.TotalMilliseconds - dialogStart;
+        if (worldRevision || cityOpenChanged) BuildFeed();
+        double feedMs = clock.Elapsed.TotalMilliseconds - dialogStart - dialogsMs;
+        _message.Text = _session.Message;
+        // The count is a scan over every unit of the player, and it can only move when the simulation or the selection
+        // does; a keystroke in the city filter or the pedia search is neither.
+        if (revision || worldRevision)
+        {
+            int idle = _session.UnitsNeedingOrders;
+            _endTurn.Text = idle > 0 ? $"End turn ({idle} waiting)" : "End turn";
+        }
+        if (MapRenderer.LogTimings)
+            GD.Print($"ui update: top {topMs:F2} ms, left {leftMs:F2} ms, city {cityMs:F2} ms, "
+                + $"dialogs {dialogsMs:F2} ms, feed {feedMs:F2} ms (city open: {cityOpen})");
+    }
+
+    /// <summary>Allocation-free: it runs on every frame before the early-out, so it only compares stored keys.</summary>
+    private bool NeedsRefresh()
+    {
+        var city = _session.City;
+        return !ReferenceEquals(_shownSim, _session.Sim)
+            || _shownRevision != _session.Revision || _shownWorldRevision != _session.WorldRevision
+            || _shownResearchOpen != _researchOpen || _shownCityOpen != (city != null) || _shownCityId != city?.Id
+            || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
+            || _shownModalRevision != _modalRevision;
+    }
+
+    private void RefreshOverlayChecks()
+    {
+        if (_shownOverlays == _session.Overlays) return;
+        foreach (var (button, read) in _overlayChecks) button.SetPressedNoSignal(read(_session.Overlays));
+        _shownOverlays = _session.Overlays;
+    }
+
+    private Control MapOverlayControls()
+    {
+        var panel = Ui.Panel(margin: 4);
+        panel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
+        panel.OffsetLeft = -215; panel.OffsetRight = 215; panel.OffsetTop = -42; panel.OffsetBottom = -6;
+        var row = Ui.HBox(4);
+        AddOverlayCheck(row, "Yields", o => o.Yields, (o, on) => o with { Yields = on },
+            "Visible tile yields: green F = food, orange P = production, gold C = commerce. City work labels remain available.");
+        AddOverlayCheck(row, "Resources", o => o.Resources, (o, on) => o with { Resources = on }, "Known resource badges");
+        AddOverlayCheck(row, "Grid", o => o.Grid, (o, on) => o with { Grid = on }, "Hex lines on explored tiles");
+        AddOverlayCheck(row, "Borders", o => o.CulturalBorders, (o, on) => o with { CulturalBorders = on }, "Known cultural borders");
+        panel.AddChild(row);
+        return panel;
+    }
+
+    private void AddOverlayCheck(Control row, string text, Func<MapOverlays, bool> read,
+        Func<MapOverlays, bool, MapOverlays> update, string tooltip)
+    {
+        var check = new CheckBox { Text = text, ButtonPressed = read(_session.Overlays), TooltipText = tooltip,
+            FocusMode = Control.FocusModeEnum.None };
+        check.AddThemeFontSizeOverride("font_size", 13);
+        check.Toggled += on => _session.Overlays = update(_session.Overlays, on);
+        _overlayChecks.Add((check, read));
+        row.AddChild(check);
+    }
+
+    // --- hover -------------------------------------------------------------------------------------
+
+    public void SetHover(TileInfo? tile, string? preview)
+    {
+        var lines = new List<string>();
+        if (preview != null) lines.Add(preview);
+        if (tile != null) { lines.Add(tile.Title); lines.AddRange(tile.Lines); }
+        _hoverTip.Visible = lines.Count > 0;
+        _hoverText.Text = string.Join("\n", lines);
+        _hoverTip.Size = Vector2.Zero;
+        _hoverTipInputs = null;
+    }
+
+    public void MoveHoverTip(Vector2 mouse)
+    {
+        if (!_hoverTip.Visible) return;
+        var size = _hoverTip.GetCombinedMinimumSize();
+        var view = GetViewport().GetVisibleRect().Size;
+        var inputs = (mouse, size, view);
+        if (_hoverTipInputs == inputs) return;
+        _hoverTipInputs = inputs;
+        _hoverTip.Position = new Vector2(Mathf.Min(mouse.X + 18, view.X - size.X - 4), Mathf.Min(mouse.Y + 18, view.Y - size.Y - 4));
+    }
+
+    // --- top bar -----------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Builds the top bar's one row of widgets once. <see cref="RefreshTop"/> only changes their text, colour, tooltip
+    /// and visibility, so the controls keep their canvas items and the flow layout keeps a stable child order for the
+    /// conditional buttons.
+    /// </summary>
+    private void InitTop()
+    {
+        _topRow.AddThemeConstantOverride("h_separation", 10);
+        _topRow.AddThemeConstantOverride("v_separation", 4);
+        _turnText = Ui.Text("", 15, Colors.White, wrap: false);
+        _goldenAgeText = Ui.Text("", 14, Ui.Accent, wrap: false);
+        _goldenAgeText.Visible = false;
+        _goldText = Ui.Text("", 15, Ui.Accent, wrap: false);
+        _researchButton = Ui.Button("", ToggleResearch, "Open the research list (R)");
+        _researchButton.ClipText = true;
+        _researchButton.CustomMinimumSize = new Vector2(170, 0);
+        _civicsButton = Ui.Button("Civics", ToggleGovernment);
+        _conquestButton = Ui.Button("Conquest!", () => OpenModal(Modal.Conquest));
+        _conquestButton.AddThemeColorOverride("font_color", Ui.Bad);
+        _religionButton = Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world");
+        _corporationsButton = Ui.Button("Corporations", () => OpenModal(Modal.Corporations), "Corporations and their branches");
+        _espionageButton = Ui.Button("Espionage", ToggleEspionage, "Rival intelligence, spending and counter-espionage");
+        _eventsButton = Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice");
+        _diplomacyButton = Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory");
+        _pediaButton = Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more");
+        _techTreeButton = Ui.Button("Tech Tree", () => OpenModal(Modal.TechTree), "Browse technology prerequisites");
+        _saveButton = Ui.Button("Save", QuickSaveGame, "Quick save (F5)");
+        _loadButton = Ui.Button("Load", () => OpenModal(Modal.Load), "Load a saved game (F9)");
+        _citiesText = Ui.Text("", 14, Ui.Dim, wrap: false);
+        _topRow.AddChild(_turnText);
+        _topRow.AddChild(_goldenAgeText);
+        _topRow.AddChild(_goldText);
+        _topRow.AddChild(_researchButton);
+        _scienceRate = RateBox("Science", RateKind.Research);
+        _cultureRate = RateBox("Culture", RateKind.Culture);
+        _espionageRate = RateBox("Espionage", RateKind.Espionage);
+        _topRow.AddChild(_civicsButton);
+        // Every optional button exists from the start and RefreshTop toggles Visible, so the flow layout never sees a
+        // child appear or disappear in a different position.
+        _conquestButton.Visible = false;
+        _corporationsButton.Visible = false;
+        _espionageButton.Visible = false;
+        _eventsButton.Visible = false;
+        _techTreeButton.Visible = false;
+        foreach (var button in new[] { _conquestButton, _religionButton, _corporationsButton, _espionageButton, _eventsButton,
+            _diplomacyButton, _pediaButton, _techTreeButton, _saveButton, _loadButton }) _topRow.AddChild(button);
+        _topRow.AddChild(_citiesText);
+        _top.AddChild(_topRow);
+    }
+
+    /// <summary>Updates the top bar in place; nothing is freed, and a value that did not change is not written again.
+    /// Everything it renders is a function of the simulation, so it only redraws on <see cref="GameSession.WorldRevision"/>:
+    /// selecting a unit or setting a message rebuilds nothing here.</summary>
+    private void RefreshTop(IReadOnlyList<PendingCityConquest> conquests)
+    {
+        var s = _session.Summary();
+        string date = s.CalendarDate is { } calendar ? $"  ·  {calendar.FormattedDate}" : "";
+        Ui.Set(_turnText, $"Turn {s.Turn}{date}  ·  {s.Era}");
+        int goldenAge = _session.GoldenAgeTurnsRemaining;
+        _goldenAgeText.Visible = goldenAge > 0;
+        if (goldenAge > 0) Ui.Set(_goldenAgeText, $"Golden Age · {goldenAge} turns");
+        Ui.Set(_goldText, $"Gold {_session.Me.Treasury} ({Labels.Signed(s.Net)})");
+        Ui.Tint(_goldText, s.Net < 0 ? Ui.Bad : Ui.Accent);
+        var r = s.Research;
+        Ui.Set(_researchButton, r == null ? "Choose research!" : $"{r.Name} {r.Progress}/{r.Cost}" + (r.Turns is int t ? $" ({t}t)" : ""));
+        if (r == null) Ui.Tint(_researchButton, Ui.Bad);
+        else if (_researchButton.HasThemeColorOverride("font_color")) _researchButton.RemoveThemeColorOverride("font_color");
+        Ui.Set(_scienceRate.Label, $"Science {s.Rates.Research}%");
+        Ui.Set(_cultureRate.Label, $"Culture {s.Rates.Culture}%");
+        Ui.Set(_espionageRate.Label, $"Espionage {s.Rates.Espionage}%");
+        var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
+        Ui.Set(_civicsButton, anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics");
+
+        // Each availability call runs once per refresh and its result drives the button's visibility. The conquest list
+        // is settled by the caller, which has to know about it before the modal gate is read.
+        _conquestButton.Visible = conquests.Count > 0;
+        if (conquests.Count > 0) _conquestButton.TooltipText = $"{conquests.Count} city conquest choice(s) need your decision";
+        _corporationsButton.Visible = _session.DescribeCorporations().Available;
+        _espionageButton.Visible = _session.DescribeEspionage().Available;
+        _eventsButton.Visible = _session.DescribePendingEvents().Count > 0;
+        _techTreeButton.Visible = _session.DescribeTechTree() is not null;
+        Ui.Set(_citiesText, $"{s.Cities} cities  ·  {s.Units} units");
+    }
+
+    private (Label Label, Button Minus, Button Plus) RateBox(string name, RateKind kind)
+    {
+        var box = Ui.HBox(2);
+        var label = Ui.Text("", 14, Colors.White, wrap: false);
+        var minus = Ui.Button("−", () => _session.ShiftRate(kind, -10), $"10% less {name}");
+        var plus = Ui.Button("+", () => _session.ShiftRate(kind, 10), $"10% more {name}");
+        box.AddChild(label);
+        box.AddChild(minus);
+        box.AddChild(plus);
+        _topRow.AddChild(box);
+        return (label, minus, plus);
+    }
+
+    // --- research dialog ------------------------------------------------------------------------
+
+    public void ToggleResearch()
+    {
+        if (_governmentOpen) ToggleGovernment();
+        if (_modalKind != Modal.None) CloseModal();
+        _researchOpen = !_researchOpen;
+    }
+
+    public bool CloseDialogs()
+    {
+        bool wasOpen = _researchOpen || _governmentOpen || _modalKind != Modal.None;
+        if (_modalKind != Modal.None) CloseModal();
+        if (_governmentOpen) ToggleGovernment();
+        _researchOpen = false;
+        return wasOpen;
+    }
+
+    /// <summary>
+    /// Shows the dialog and refreshes it in place: the title, the free-credit line and the browse button are rewritten,
+    /// and the choice widgets rebuild only when their own key moved (see <see cref="RefreshResearchChoices"/>).
+    /// </summary>
+    private void BuildResearchDialog()
+    {
+        if (!_researchOpen || _session.City != null) { _researchDialog.Visible = false; return; }
+        _researchDialog.Visible = true;
+        var selection = _session.ResearchSelection();
+        var choices = _session.ResearchChoices();
+        bool cards = selection?.Layout == Ariel.Game.ResearchChoiceLayout.Cards;
+        Ui.Set(_researchTitle, selection?.Title ?? "Choose research");
+        bool browsable = _session.DescribeTechTree() is not null;
+        if (_researchBrowse.Visible != browsable) _researchBrowse.Visible = browsable;
+        RefreshResearchChoices(choices, cards);
+        _researchEmpty.Visible = choices.Count == 0;
+        int free = _session.FreeResearchCredits;
+        _researchFree.Visible = free > 0;
+        if (free > 0) Ui.Set(_researchFree, $"Free technologies: {free}");
+        _researchDialog.CustomMinimumSize = new Vector2(cards ? 940 : 620, 0);
+        CentreResearchDialog();
+    }
+
+    /// <summary>Keeps a reused dialog in the middle of the current window without rebuilding it.</summary>
+    private void CentreResearchDialog() => _researchDialog.Position =
+        (GetViewport().GetVisibleRect().Size - new Vector2(_researchDialog.CustomMinimumSize.X, 520)) / 2;
+
+    internal static string StripMarkup(string text) =>
+        System.Text.RegularExpressions.Regex.Replace(text, @"\{[^}]*\}|\[[^\]]*\]", "");
+}

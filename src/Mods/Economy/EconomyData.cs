@@ -1,10 +1,10 @@
 using System.Globalization;
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using CivicDef = Civ.Content.Schema.CivicDef;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using CivicDef = Ariel.Content.Schema.CivicDef;
 
-namespace Civ.Mods.Economy;
+namespace Ariel.Mods.Economy;
 
 internal static class EconomyData
 {

@@ -1,7 +1,7 @@
-using Civ.Content;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.ScriptedWonders;
+namespace Ariel.Mods.ScriptedWonders;
 
 /// <summary>Hex adaptations of completion, city-turn and victory callbacks.</summary>
 public sealed class WonderScriptDef : ContentDef

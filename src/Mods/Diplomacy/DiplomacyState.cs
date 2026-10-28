@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Diplomacy;
+namespace Ariel.Mods.Diplomacy;
 
 /// <summary>Authoritative contracts and counters. No derived caches or RNG are stored here.</summary>
 public sealed class DiplomacyState

@@ -1,7 +1,7 @@
-using Civ.Game;
-using Civ.Content.Schema;
+using Ariel.Game;
+using Ariel.Content.Schema;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>How many soldiers the empire wants, shared by production and unit orders.</summary>
 internal sealed class ArmyPlan(AiContext ctx)

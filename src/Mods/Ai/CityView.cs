@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Per-turn read-only snapshot of one city's economy, used to value what it should build.</summary>
 internal sealed record CityView(City City, YieldVector Yields, int HappyMargin, int HealthMargin, int Threat, int Garrison)

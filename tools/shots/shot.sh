@@ -13,4 +13,4 @@ for arg in "$@"; do
   esac
   args+=("$arg"); prev="$arg"
 done
-exec godot-mono --path src/Civ.Godot -- "${args[@]}"
+exec godot-mono --path src/Ariel.Godot -- "${args[@]}"

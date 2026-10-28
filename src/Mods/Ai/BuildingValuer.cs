@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Flavor-weighted integer value of a building in a specific city.
 /// Happiness and health count heavily only when the city is at its limit.</summary>

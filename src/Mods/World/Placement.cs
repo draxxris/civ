@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>CvPlot::canHaveFeature / canHaveBonus and CvMapGenerator::calculateNumBonusesToAdd.</summary>
 internal static class Placement

@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\tools\Ariel.TestMetricsLogger\Ariel.TestMetricsLogger.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
+    <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
+    <ProjectReference Include="../../src/Mods/Foundation/Ariel.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/World/Ariel.Mods.World.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Research/Ariel.Mods.Research.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/TechTree/Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Economy/Ariel.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Cities/Ariel.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Military/Ariel.Mods.Military.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Government/Ariel.Mods.Government.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Peoples/Ariel.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Religion/Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Corporations/Ariel.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Espionage/Ariel.Mods.Espionage.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Events/Ariel.Mods.Events.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Revolution/Ariel.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../tools/Ariel.Benchmarks/AiEvaluation/*.cs" Link="AiEvaluation/%(Filename)%(Extension)" />
+  </ItemGroup>
+  <!-- Only small files go through MSBuild copy (dll/pdb/mod.json/data). Heavy art/ (~180MB) is symlinked by
+       LinkModArt below: TerrainPaletteTests needs World/art/terrain + ScatterPlannerTests needs World/art/scatter,
+       and File/Directory APIs follow symlinks, so tests keep passing with zero copy cost. -->
+  <Target Name="CopyModPayloads" AfterTargets="Build">
+    <ItemGroup>
+      <MainMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai;Religion;GreatPeople;Trade" />
+      <OptionalMod Include="Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree" />
+      <MainBin Include="../../src/Mods/%(MainMod.Identity)/bin/$(Configuration)/net10.0/Ariel.Mods.*.dll" ModDir="%(MainMod.Identity)" />
+      <MainBin Include="../../src/Mods/%(MainMod.Identity)/bin/$(Configuration)/net10.0/Ariel.Mods.*.pdb" ModDir="%(MainMod.Identity)" />
+      <MainMeta Include="../../src/Mods/%(MainMod.Identity)/mod.json" ModDir="%(MainMod.Identity)" />
+      <MainData Include="../../src/Mods/%(MainMod.Identity)/data/**/*.json" ModDir="%(MainMod.Identity)" />
+      <OptionalBin Include="../../src/Mods/%(OptionalMod.Identity)/bin/$(Configuration)/net10.0/Ariel.Mods.*.dll" ModDir="%(OptionalMod.Identity)" />
+      <OptionalBin Include="../../src/Mods/%(OptionalMod.Identity)/bin/$(Configuration)/net10.0/Ariel.Mods.*.pdb" ModDir="%(OptionalMod.Identity)" />
+      <OptionalMeta Include="../../src/Mods/%(OptionalMod.Identity)/mod.json" ModDir="%(OptionalMod.Identity)" />
+      <OptionalData Include="../../src/Mods/%(OptionalMod.Identity)/data/**/*.json" ModDir="%(OptionalMod.Identity)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MainBin)" DestinationFiles="@(MainBin->'$(OutDir)mods/%(ModDir)/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(MainMeta)" DestinationFiles="@(MainMeta->'$(OutDir)mods/%(ModDir)/mod.json')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(MainData)" DestinationFiles="@(MainData->'$(OutDir)mods/%(ModDir)/data/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(OptionalBin)" DestinationFiles="@(OptionalBin->'$(OutDir)optional-mods/%(ModDir)/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(OptionalMeta)" DestinationFiles="@(OptionalMeta->'$(OutDir)optional-mods/%(ModDir)/mod.json')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(OptionalData)" DestinationFiles="@(OptionalData->'$(OutDir)optional-mods/%(ModDir)/data/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="LinkModArt" AfterTargets="CopyModPayloads">
+    <ItemGroup>
+      <ModWithArt Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples" />
+    </ItemGroup>
+    <!-- Batched once per mod (no shell loop vars): rm any stale real art dir, then symlink source art/. -->
+    <Exec Condition="'$(OS)' != 'Windows_NT' AND Exists('../../src/Mods/%(ModWithArt.Identity)/art')" Command="rm -rf &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)/art'))&quot; &amp;&amp; mkdir -p &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)'))&quot; &amp;&amp; ln -sfn &quot;$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/../../src/Mods/%(ModWithArt.Identity)/art'))&quot; &quot;$([System.IO.Path]::GetFullPath('$(OutDir)mods/%(ModWithArt.Identity)/art'))&quot;" />
+    <Exec Condition="'$(OS)' == 'Windows_NT' AND Exists('../../src/Mods/%(ModWithArt.Identity)/art')" Command="rmdir /s /q &quot;$(OutDir)mods\%(ModWithArt.Identity)\art&quot; 2&gt;nul &amp; mkdir &quot;$(OutDir)mods\%(ModWithArt.Identity)&quot; 2&gt;nul &amp; mklink /D &quot;$(OutDir)mods\%(ModWithArt.Identity)\art&quot; &quot;$(MSBuildProjectDirectory)\..\..\src\Mods\%(ModWithArt.Identity)\art&quot;" />
+  </Target>
+</Project>

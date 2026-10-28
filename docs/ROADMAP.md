@@ -42,9 +42,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Hex tuning overrides**: `src/Mods/Foundation/data/hex-overrides.json` controls
   hex-specific balance, including `barbarianUnownedTilesMultiplier` and
   `aiMinimumCityGarrison`.
-- **Dogfood mod isolation**: All features are standalone mods (`src/Mods/*`). `Civ.Core`
-  and `Civ.Client.Core` hold no hard-coded mod IDs or content kinds. Custom test
-  rulesets run without shipped mods.
+- **Dogfood mod isolation**: All features are standalone mods (`src/Mods/*`).
+  `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or content kinds.
+  Custom test rulesets run without shipped mods.
 
 ### World & Map Generation
 
@@ -303,15 +303,15 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 
 ### Client, Presentation & 3D Art
 
-- **Engine-free client (`Civ.Client.Core`)**: Complete screen models for setup, city
+- **Engine-free client (`Ariel.Client.Core`)**: Complete screen models for setup, city
   management, research tree, civics, diplomacy, victory, corporations, espionage,
   events, pedia, and save/load. Setup screen options and perceived fog snapshots prevent
   unseen map mutation leaks.
-- **Godot 4.7.2 views (`Civ.Godot`)**: Native 3D viewport, camera controls, hex prism
+- **Godot 4.7.2 views (`Ariel.Godot`)**: Native 3D viewport, camera controls, hex prism
   highlights, audio playback, and responsive HUD panels.
-- **HUD in-place invalidation (`Civ.Godot`)**: The top bar and left panel are built once
-  and updated in place instead of rebuilding the widget tree on every map click; see
-  [docs/OPTIMIZE.md](OPTIMIZE.md#pass-7-hud-invalidation-on-clicks).
+- **HUD in-place invalidation (`Ariel.Godot`)**: The top bar and left panel are built
+  once and updated in place instead of rebuilding the widget tree on every map click;
+  see [docs/OPTIMIZE.md](OPTIMIZE.md#pass-7-hud-invalidation-on-clicks).
 - **3D resource models**: Every map resource has a procedural low-poly model
   (`art/models/<id>.glb`, built by `tools/art/improvement_models.py`) standing on a spot
   off the tile centre that avoids rivers and the wrong side of the shore. Scatter props

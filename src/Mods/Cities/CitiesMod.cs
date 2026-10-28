@@ -1,15 +1,15 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using Ariel.Modding;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 /// <summary>City rules communicate only through Core services, modifiers, queues and events.</summary>
 public sealed class CitiesMod : IPreparableMod
 {
     private static readonly ModJsonFile<BuildingCategoryDef[]> BuildingCategories = new("data/building-category.json");
-    private static readonly ModJsonFile<Civ.Content.Schema.BuildingDef[]> Buildings = new("data/building.json");
+    private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> Buildings = new("data/building.json");
     private static readonly ModJsonFile<HurryDef[]> Hurry = new("data/hurry.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles => [BuildingCategories, Buildings, Hurry];
 
@@ -39,9 +39,9 @@ public sealed class CitiesMod : IPreparableMod
         context.RegisterService<ICityCultureService>("culture_grants", culture);
         // A building is unique within its city; one whose limit allows a single copy is also one per player, so a second
         // city of the same player cannot queue it. Different players still race to finish the same wonder.
-        context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Civ.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production,
+        context.RegisterService<IProductionKind>("building_kind", new ProductionKind<Ariel.Content.Schema.BuildingDef>("cities:building", "Buildings", b => b.Cost, production,
             BuildingScope.Of, BuildingProductionCategories.All));
-        context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Civ.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production,
+        context.RegisterService<IProductionKind>("unit_kind", new ProductionKind<Ariel.Content.Schema.UnitDef>("cities:unit", "Units", u => u.Cost, production,
             _ => QueueScope.None));
         context.RegisterService<ILedgerSourceLabel>("plot_labels", new PlotSourceLabel());
         context.RegisterService<ICityYieldService>("yields", yields);

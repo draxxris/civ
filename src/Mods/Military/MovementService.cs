@@ -1,14 +1,14 @@
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 internal sealed class MovementService : IMovementService
 {
     public string? CanEnter(Simulation sim, int unitId, TileId from, TileId to, bool attack = false) => Query(sim, unitId).CanEnter(from, to, attack);
     internal MovementQuery Query(Simulation sim, int unit) => new(this, sim, sim.State.UnitById(unit));
 
-    private string? CanEnter(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects,
+    private string? CanEnter(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects,
         TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
     {
         var edgeError = EdgeEntry(sim, def, from, to);
@@ -32,7 +32,7 @@ internal sealed class MovementService : IMovementService
         if (def.CanMoveAllTerrain || def.Domain is not ("military:domain_land" or "military:domain_sea")) return null;
         return MilitaryData.CrossesCliff(sim, from, to) ? "Cliff" : null;
     }
-    private static string? TargetEntry(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, Hex target, bool attack)
+    private static string? TargetEntry(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects, Hex target, bool attack)
     {
         if (!HostilePlot(sim, unit, target)) return null;
         if (!attack) return "Enemy occupies plot";
@@ -43,7 +43,7 @@ internal sealed class MovementService : IMovementService
         return null;
     }
     private static bool ValidTile(Simulation sim, TileId tile) => tile.Value >= 0 && tile.Value < sim.State.Grid.Count;
-    internal static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Civ.Content.ModifierSink effects)
+    internal static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Ariel.Content.ModifierSink effects)
     {
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         if (!DomainEntry(sim, unit, def, terrain.IsWater, plot)) return "Wrong domain";
@@ -61,7 +61,7 @@ internal sealed class MovementService : IMovementService
     }
     private static bool TerrainTechnology(Simulation sim, Unit unit, S.UnitDef def, string terrain) =>
         def.TerrainPassableTechs.TryGetValue(terrain, out var tech) && tech is not null && sim.KnowsTech(unit.Owner, tech);
-    private static bool PeakEntry(Simulation sim, Unit unit, Civ.Content.ModifierSink effects) =>
+    private static bool PeakEntry(Simulation sim, Unit unit, Ariel.Content.ModifierSink effects) =>
         MilitaryData.Effect(effects, "move_peaks") > 0 || MilitaryData.Techs(sim, unit.Owner).Any(t => t.CanPassPeaks);
     private static bool DomainEntry(Simulation sim, Unit unit, S.UnitDef def, bool water, Plot plot)
     {
@@ -96,7 +96,7 @@ internal sealed class MovementService : IMovementService
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
         sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
-    private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects) =>
+    private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects) =>
         def.Strength > 0 && !def.OnlyDefensive && (!MilitaryData.Read(sim, unit).Attacked || MilitaryData.Effect(effects, "blitz") > 0);
     private static bool ControlledTransition(Simulation sim, Unit unit, TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
     {
@@ -112,14 +112,14 @@ internal sealed class MovementService : IMovementService
     private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.VisibleEnemy(sim, unit.Owner, other)
         && MilitaryData.Effect(MilitaryData.Effects(sim, other), "zone_control") > 0;
     public int StepCost(Simulation sim, int unitId, TileId from, TileId to) => Query(sim, unitId).StepCost(from, to);
-    private int StepCost(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects, TileId from, TileId to)
+    private int StepCost(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects, TileId from, TileId to)
     {
         int denominator = MilitaryData.Constants(sim).MoveDenominator;
         if (def.FlatMovementCost || def.Domain == "military:domain_air") return denominator;
         int regular = RegularCost(sim, unit, def, sim.State.Plots[to.Value], effects);
         return Math.Max(1, Math.Min(regular, RouteCost(sim, unit, def, from, to, effects)));
     }
-    private static int RegularCost(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Civ.Content.ModifierSink effects)
+    private static int RegularCost(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Ariel.Content.ModifierSink effects)
     {
         int denominator = MilitaryData.Constants(sim).MoveDenominator;
         if (def.IgnoreTerrainCost) return denominator;
@@ -130,11 +130,11 @@ internal sealed class MovementService : IMovementService
         if (DoubleMove(sim, unit, plot)) cost /= 2;
         return cost;
     }
-    internal static int BaseMoves(Simulation sim, Unit unit, S.UnitDef def, Civ.Content.ModifierSink effects) => Math.Max(1,
+    internal static int BaseMoves(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects) => Math.Max(1,
         def.Moves + MilitaryData.Effect(effects, "moves") + MilitaryData.Techs(sim, unit.Owner).Sum(t => t.DomainExtraMoves.GetValueOrDefault(def.Domain ?? "")));
     private static bool DoubleMove(Simulation sim, Unit unit, Plot plot) => MilitaryData.Promotions(sim, unit).Any(p =>
         plot.Kind == PlotKind.Hills && p.HillsDoubleMove || (plot.Feature is { } f ? p.FeatureDoubleMoves.GetValueOrDefault(f) : p.TerrainDoubleMoves.GetValueOrDefault(plot.Terrain)));
-    private static int RouteCost(Simulation sim, Unit unit, S.UnitDef def, TileId from, TileId to, Civ.Content.ModifierSink effects)
+    private static int RouteCost(Simulation sim, Unit unit, S.UnitDef def, TileId from, TileId to, Ariel.Content.ModifierSink effects)
     {
         var a = sim.State.Plots[from.Value]; var b = sim.State.Plots[to.Value];
         if (!ValidRoute(sim, unit, a, effects) || !ValidRoute(sim, unit, b, effects)) return int.MaxValue;
@@ -144,7 +144,7 @@ internal sealed class MovementService : IMovementService
         int flat = Math.Max(x.FlatMovement, y.FlatMovement) * BaseMoves(sim, unit, def, effects);
         return Math.Min(cost, flat);
     }
-    private static bool ValidRoute(Simulation sim, Unit unit, Plot plot, Civ.Content.ModifierSink effects) => plot.Route is not null
+    private static bool ValidRoute(Simulation sim, Unit unit, Plot plot, Ariel.Content.ModifierSink effects) => plot.Route is not null
         && (plot.Owner is null || !MilitaryData.Enemy(sim, unit.Owner, plot.Owner.Value) || MilitaryData.Effect(effects, "enemy_route") > 0);
     public string? ValidatePath(Simulation sim, int player, int unitId, IReadOnlyList<Hex> path)
     {
@@ -229,7 +229,7 @@ internal sealed class MovementService : IMovementService
         private readonly Simulation sim;
         private readonly Unit unit;
         private readonly S.UnitDef def;
-        private readonly Civ.Content.ModifierSink effects;
+        private readonly Ariel.Content.ModifierSink effects;
         private readonly Dictionary<int, bool> control = new();
         internal MovementQuery(MovementService movement, Simulation sim, Unit unit)
         {

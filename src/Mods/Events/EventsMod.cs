@@ -1,10 +1,10 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
-using Civ.Modding;
-using Civ.Mods;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
+using Ariel.Modding;
+using Ariel.Mods;
 
-namespace Civ.Mods.Events;
+namespace Ariel.Mods.Events;
 
 /// <summary>Deterministic random events with player choices.</summary>
 public sealed class EventsMod : IPreparableMod

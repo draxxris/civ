@@ -7,11 +7,11 @@ external/
 TestResults/
 .test-metrics/
 .ai-eval/
-src/Civ.Godot/.godot/
+src/Ariel.Godot/.godot/
 *.import
 AND-extraction/
 and-extraction/
 assets/converted/
-tools/Civ.ContentImport/out/
+tools/Ariel.ContentImport/out/
 .pi/
 /plans

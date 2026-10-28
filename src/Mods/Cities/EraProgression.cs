@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 internal static class EraProgression
 {

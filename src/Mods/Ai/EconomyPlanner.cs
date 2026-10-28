@@ -1,14 +1,14 @@
 using System.Globalization;
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Commerce sliders: keep income non-negative with a treasury buffer, otherwise maximize research.</summary>
 internal sealed class EconomyPlanner(AiContext ctx)
 {
     private const int MaxIterations = 100;
-    private int Step => Math.Max(1, int.TryParse(ctx.Sim.Content.Get<Civ.Content.Schema.RuleConstantsDef>().All.Single()
+    private int Step => Math.Max(1, int.TryParse(ctx.Sim.Content.Get<Ariel.Content.Schema.RuleConstantsDef>().All.Single()
         .Raw.GetValueOrDefault("COMMERCE_PERCENT_CHANGE_INCREMENTS", "5"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 5);
 
     public static long Reserve(int cities) => 40 + 10L * cities;

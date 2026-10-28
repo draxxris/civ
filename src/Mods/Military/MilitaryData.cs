@@ -1,9 +1,9 @@
 using System.Globalization;
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Military;
+namespace Ariel.Mods.Military;
 
 internal static class MilitaryData
 {

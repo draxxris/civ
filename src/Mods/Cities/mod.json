@@ -2,7 +2,7 @@
   "id": "cities",
   "name": "Cities",
   "version": "1.16.0",
-  "assembly": "Civ.Mods.Cities.dll",
+  "assembly": "Ariel.Mods.Cities.dll",
   "dependencies": [],
   "references": [
     "foundation",

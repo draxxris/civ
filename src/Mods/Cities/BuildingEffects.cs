@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Cities;
+namespace Ariel.Mods.Cities;
 
 /// <summary>Building effects use the same Core modifier boundary as civic and trait effects.</summary>
 internal sealed class BuildingEffects : IModifierSource

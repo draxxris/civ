@@ -11,7 +11,7 @@ every other part where its vertices come within 0.06 of its origin's height; nam
 (animals). Parts reach below z = 0 (FOOT, DEEP) so no gap shows on a slope. Sea resources stand at sea level (z = 0):
 parts reach a little below the translucent surface and stand above it.
 
-Resource models stand on a spot off the tile centre (BonusSpot in src/Civ.Client.Core/Terrain/BonusSpot.cs), so a
+Resource models stand on a spot off the tile centre (BonusSpot in src/Ariel.Client.Core/Terrain/BonusSpot.cs), so a
 unit, a city or an improvement can share the tile. Keep land models within R of the origin and sea models a little
 wider (BonusModelTests checks the reach). With no icon on the map, the model alone must say what the resource is from
 the default camera: one bold silhouette and a clear colour signature beat fine detail.

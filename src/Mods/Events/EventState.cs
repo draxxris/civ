@@ -1,6 +1,6 @@
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Events;
+namespace Ariel.Mods.Events;
 
 /// <summary>Saved game-wide event state. No derived data is stored.</summary>
 public sealed class EventState

@@ -1,7 +1,7 @@
-using Civ.Content;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Game;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>Cliff invariants and deterministic beach access. Only clears existing cliffs.</summary>
 internal sealed class CliffRules : IMapSanitizer

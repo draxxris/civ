@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Civ.Game;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 internal static class IntentCommandRules
 {

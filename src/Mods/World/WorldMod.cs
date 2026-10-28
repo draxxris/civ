@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Modding;
+using Ariel.Content.Schema;
+using Ariel.Modding;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 /// <summary>World definitions and deterministic geography, worker and query rules.</summary>
 public sealed class WorldMod : IPreparableMod
@@ -38,33 +38,33 @@ public sealed class WorldMod : IPreparableMod
         context.MapGenerators.Register(new ContinentsGenerator("world:new_world", "New World", WorldLayout.NewWorld));
         context.MapGenerators.Register(new ContinentsGenerator("world:twin_continents", "Twin Continents", WorldLayout.TwinContinents));
         context.MapGenerators.Register(new ContinentsGenerator("world:great_plains", "Great Plains", WorldLayout.GreatPlains));
-        context.RegisterService<Civ.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
-        context.RegisterService<Civ.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
-        context.RegisterService<Civ.Game.IWaterService>("water", water);
-        context.RegisterService<Civ.Game.IMapSanitizer>("cliffs", new CliffRules());
-        context.RegisterService<Civ.Game.IPlotYieldService>("plot_yields", yields);
-        context.RegisterService<Civ.Game.IResourceNetwork>("resource_network", network);
-        context.RegisterService<Civ.Game.ICityConnectionService>("city_connections", network);
-        context.RegisterService<Civ.Game.IStartingPositionService>("starts", new StartingPositions(water));
-        context.RegisterService<Civ.Game.IVisibilityService>("visibility", visibility);
-        context.RegisterService<Civ.Game.IWorkerBuildService>("workers", workers);
-        context.RegisterService<Civ.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator(network));
+        context.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
+        context.RegisterService<Ariel.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
+        context.RegisterService<Ariel.Game.IWaterService>("water", water);
+        context.RegisterService<Ariel.Game.IMapSanitizer>("cliffs", new CliffRules());
+        context.RegisterService<Ariel.Game.IPlotYieldService>("plot_yields", yields);
+        context.RegisterService<Ariel.Game.IResourceNetwork>("resource_network", network);
+        context.RegisterService<Ariel.Game.ICityConnectionService>("city_connections", network);
+        context.RegisterService<Ariel.Game.IStartingPositionService>("starts", new StartingPositions(water));
+        context.RegisterService<Ariel.Game.IVisibilityService>("visibility", visibility);
+        context.RegisterService<Ariel.Game.IWorkerBuildService>("workers", workers);
+        context.RegisterService<Ariel.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator(network));
         context.RegisterStateComponent<WorkerOrder>("worker_order");
-        context.RegisterCommand<Civ.Game.StartBuildCommand>("start_build");
+        context.RegisterCommand<Ariel.Game.StartBuildCommand>("start_build");
         context.TurnSystems.Register(workers);
         context.TurnSystems.Register(new ImprovementTurnSystem());
         context.TurnSystems.Register(new GlobalWarmingSystem(yields));
         context.TurnSystems.Register(visibility);
-        context.Subscribe<Civ.Game.CityFounded>("city_sight", (sim, e) =>
+        context.Subscribe<Ariel.Game.CityFounded>("city_sight", (sim, e) =>
         {
             CliffRules.EnsureBeach(sim.State, sim.Content, sim.State.Grid.TileAt(e.Position));
             visibility.Recompute(sim);
         });
-        context.Subscribe<Civ.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
-        context.Subscribe<Civ.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
+        context.Subscribe<Ariel.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Ariel.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
         // Refresh at the mutation, not only at turn end: later map events can be out of sight.
-        context.Subscribe<Civ.Game.FeatureChanged>("feature_sight", (sim, _) => visibility.Recompute(sim));
-        context.Subscribe<Civ.Game.GlobalWarmingOccurred>("terrain_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Ariel.Game.FeatureChanged>("feature_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Ariel.Game.GlobalWarmingOccurred>("terrain_sight", (sim, _) => visibility.Recompute(sim));
         ContentRegistration.Evaluator<FeatureDef>(context, "feature");
         ContentRegistration.Evaluator<TerrainDef>(context, "terrain");
         ContentRegistration.Evaluator<ImprovementDef>(context, "improvement");

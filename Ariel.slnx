@@ -1,0 +1,39 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ariel.Core/Ariel.Core.csproj" />
+    <Project Path="src/Ariel.Net/Ariel.Net.csproj" />
+
+    <Project Path="src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Mods/">
+    <Project Path="src/Mods/Foundation/Ariel.Mods.Foundation.csproj" />
+    <Project Path="src/Mods/World/Ariel.Mods.World.csproj" />
+    <Project Path="src/Mods/Research/Ariel.Mods.Research.csproj" />
+    <Project Path="src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" />
+    <Project Path="src/Mods/TechTree/Ariel.Mods.TechTree.csproj" />
+    <Project Path="src/Mods/Economy/Ariel.Mods.Economy.csproj" />
+    <Project Path="src/Mods/Cities/Ariel.Mods.Cities.csproj" />
+    <Project Path="src/Mods/Military/Ariel.Mods.Military.csproj" />
+    <Project Path="src/Mods/Government/Ariel.Mods.Government.csproj" />
+    <Project Path="src/Mods/Peoples/Ariel.Mods.Peoples.csproj" />
+    <Project Path="src/Mods/Religion/Ariel.Mods.Religion.csproj" />
+    <Project Path="src/Mods/Ai/Ariel.Mods.Ai.csproj" />
+    <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
+    <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />
+    <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
+    <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
+    <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />
+    <Project Path="src/Mods/Espionage/Ariel.Mods.Espionage.csproj" />
+    <Project Path="src/Mods/Events/Ariel.Mods.Events.csproj" />
+    <Project Path="src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" />
+    <Project Path="src/Mods/Revolution/Ariel.Mods.Revolution.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ariel.Tests/Ariel.Tests.csproj" />
+    <Project Path="tests/Ariel.Mods.Tests/Ariel.Mods.Tests.csproj" />
+    <Project Path="tests/Ariel.ContentImport.Tests/Ariel.ContentImport.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />
+  </Folder>
+</Solution>

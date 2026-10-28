@@ -2,7 +2,7 @@
   "id": "foundation",
   "name": "Foundation",
   "version": "1.3.0",
-  "assembly": "Civ.Mods.Foundation.dll",
+  "assembly": "Ariel.Mods.Foundation.dll",
   "dependencies": [],
   "references": [
     "cities",

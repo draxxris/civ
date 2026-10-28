@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using UnitDef = Civ.Content.Schema.UnitDef;
+using Ariel.Content;
+using Ariel.Game;
+using UnitDef = Ariel.Content.Schema.UnitDef;
 
-namespace Civ.Mods.Economy;
+namespace Ariel.Mods.Economy;
 
 internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyService, IPlayerResearchSource, IPlayerEspionageSource
 {

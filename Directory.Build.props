@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <!-- Build-speed defaults: keep the Roslyn server + parallel project builds on, and only pay for
-         XML docs in Release (Civ.Core previously generated them on every Debug build). -->
+         XML docs in Release (Ariel.Core previously generated them on every Debug build). -->
     <UseSharedCompilation>true</UseSharedCompilation>
     <BuildInParallel>true</BuildInParallel>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>

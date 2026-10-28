@@ -1,10 +1,10 @@
-using Civ.Content;
-using Civ.Game;
-using Civ.Modding;
-using TechDef = Civ.Content.Schema.TechDef;
-using EraDef = Civ.Content.Schema.EraDef;
+using Ariel.Content;
+using Ariel.Game;
+using Ariel.Modding;
+using TechDef = Ariel.Content.Schema.TechDef;
+using EraDef = Ariel.Content.Schema.EraDef;
 
-namespace Civ.Mods.TechTree;
+namespace Ariel.Mods.TechTree;
 
 public sealed class TechTreeMod : IMod
 {

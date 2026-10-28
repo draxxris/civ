@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Game;
-using Civ.Modding;
+using Ariel.Content;
+using Ariel.Game;
+using Ariel.Modding;
 
-namespace Civ.Mods.GreatPeople;
+namespace Ariel.Mods.GreatPeople;
 
 public sealed class GreatPeopleMod : IMod
 {

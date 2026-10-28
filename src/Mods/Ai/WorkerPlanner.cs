@@ -1,8 +1,8 @@
-using Civ.Content;
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Workers improve worked/planned tiles, connect resources, then link cities with roads.
 /// World previews supply legality, yields and work; queries do not move units or consume RNG.</summary>

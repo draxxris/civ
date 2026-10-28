@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="../../Civ.Core/Civ.Core.csproj" />
-    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-</Project>

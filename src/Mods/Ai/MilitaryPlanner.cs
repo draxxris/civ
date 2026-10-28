@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Ai;
+namespace Ariel.Mods.Ai;
 
 /// <summary>Soldier orders in priority order: garrisons, hunting nearby enemies, the war effort, exploring, then resting in cities.</summary>
 internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner cities, AttackPlanner attack)

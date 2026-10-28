@@ -1,7 +1,7 @@
-using Civ.Content.Schema;
-using Civ.Game;
+using Ariel.Content.Schema;
+using Ariel.Game;
 
-namespace Civ.Mods.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService
 {
@@ -21,7 +21,7 @@ internal sealed partial class ReligionService
     {
         var unit = sim.State.FindUnit(unitId);
         if (unit is null || unit.Owner != player || unit.Health <= 0) return "Not your inquisitor";
-        if (!sim.Content.Get<Civ.Content.Schema.UnitDef>(unit.Type).Inquisitor) return "Unit cannot perform an inquisition";
+        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Inquisitor) return "Unit cannot perform an inquisition";
         if (unit.MovesLeft <= 0) return "No moves left";
         if (!IsInquisitionEnabled(sim, player)) return "Civics and state religion do not allow inquisitions";
         var city = sim.State.CityAt(unit.Position);

@@ -2,7 +2,7 @@
   "id": "government",
   "name": "Government",
   "version": "1.2.3",
-  "assembly": "Civ.Mods.Government.dll",
+  "assembly": "Ariel.Mods.Government.dll",
   "dependencies": [],
   "references": [
     "cities",

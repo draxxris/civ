@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
-using Civ.Content;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.Revolution;
+namespace Ariel.Mods.Revolution;
 
 public sealed class RevolutionRulesDef : ContentDef
 {

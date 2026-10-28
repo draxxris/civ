@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.World;
+namespace Ariel.Mods.World;
 
 internal sealed class VisibilityService : IVisibilityService, ITurnSystem
 {

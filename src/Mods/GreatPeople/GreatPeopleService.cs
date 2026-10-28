@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
-using Civ.Content;
-using Civ.Game;
-using S = Civ.Content.Schema;
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
 
-namespace Civ.Mods.GreatPeople;
+namespace Ariel.Mods.GreatPeople;
 
 internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeopleService
 {
