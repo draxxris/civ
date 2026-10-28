@@ -1,0 +1,16 @@
+{
+  "// note": "Water-adjacent cliff mountains scenario: layout matching /tmp/cliffs.png with both bottom sides of left mountain cliffed",
+  "fill": { "terrain": "world:grass", "kind": "Flat" },
+  "tiles": [
+    { "at": [10, 10], "terrain": "world:plains", "kind": "Flat", "cliff": 48 },
+    { "at": [9, 10], "terrain": "world:peak", "kind": "Peak", "cliff": 48 },
+    { "at": [11, 10], "terrain": "world:peak", "kind": "Peak", "cliff": 0 },
+    { "at": [8, 11], "terrain": "world:ocean", "kind": "Flat" },
+    { "at": [9, 11], "terrain": "world:ocean", "kind": "Flat" },
+    { "at": [10, 11], "terrain": "world:ocean", "kind": "Flat" },
+    { "at": [9, 9], "terrain": "world:grass", "kind": "Flat" },
+    { "at": [10, 9], "terrain": "world:grass", "kind": "Flat" }
+  ],
+  "clearUnits": true,
+  "focus": [10, 10]
+}

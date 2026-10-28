@@ -106,6 +106,7 @@ void fragment() {
 	float slope = smoothstep(0.08, 0.40, steep);
 	slope *= smoothstep(-0.01, 0.04, world_pos.y);
 	float mountain = smoothstep(0.42, 0.72, world_pos.y);
+	slope = max(slope, smoothstep(0.32, 0.52, world_pos.y));
 	vec4 dp = vec4(dFdx(world_pos.xz), dFdy(world_pos.xz));
 	if (mountain > 0.0 && debug_mode != 7) {
 		normal = bump_normal(normal, world_pos.xz, dp, rock_bump * mountain);

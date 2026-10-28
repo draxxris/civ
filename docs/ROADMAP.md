@@ -322,7 +322,9 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   fog-of-war perceived snapshots.
 - **Continuous 3D blended terrain**:
   - Seamless 1024×1024 terrain textures with height in alpha.
-  - Procedural terrain mesher generating continuous height and relief transitions.
+  - Procedural terrain mesher generating continuous height and relief transitions,
+    tapering coastal cliff mountains down to the coastal bluff before the sea drop-off
+    so cliff rock columns cover the face without a sheared vertical mountain wall.
   - `terrain.gdshader` and `water.gdshader` with shore foam, depth transparency, and
     slope cliff rock.
   - Slope ray-marching bisection cursor picking.
@@ -401,8 +403,6 @@ ______________________________________________________________________
 - [ ] **Active unit designator**: The active unit designator has spinning chevrons
   around it that spin very fast briefly when the game window is restored after being
   minimized.
-- [ ] **Water-adjacent cliff mountains**: A mountain adjacent to water that is also on a
-  cliff looks very bad, like there is a sharp drop off, and needs to be fixed.
 - [ ] **City view panes**: Clicking most GUI panes (Religion, Corporations, Espionage,
   etc.) currently does nothing when you are in city view; handle transitions or modal
   displays cleanly.

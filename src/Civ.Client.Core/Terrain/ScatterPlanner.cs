@@ -138,8 +138,6 @@ public sealed class ScatterPlanner(GameCatalog catalog)
                 density *= 1 - clumping + clumping * grove * grove * (3 - 2 * grove);
             }
             if (set != null && ModelCount(set) > 0) contributors.Add(new(set, weights[k] * density * DensityScale));
-            double rocks = RockDensity(snapshot.Relief[tile], field, x, y, z);
-            if (rocks > 0 && ModelCount("rocks") > 0) contributors.Add(new("rocks", weights[k] * rocks));
         }
     }
 
@@ -165,13 +163,6 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     {
         if (_modelCounts.TryGetValue(set, out int count)) return count;
         return _modelCounts[set] = catalog.ScatterModels(set).Count;
-    }
-
-    private static double RockDensity(ReliefClass relief, TerrainField field, double x, double y, double z)
-    {
-        // Hills read from their raised mounds alone; only low, gentle mountain feet get rocks.
-        if (relief != ReliefClass.Peak || y > field.Tuning.PeakBase + field.Tuning.PeakRise * 0.2) return 0;
-        return field.NormalAt(x, z).Y >= 0.65f ? 0.18 : 0;
     }
 
     private static bool CloudCovered(TerrainSnapshot snapshot, TileTriangle tri, Blend3 weights)

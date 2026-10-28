@@ -27,8 +27,18 @@ internal static class TerrainTestMaps
         }
         for (int i = 0; i < s.Relief.Length; i++)
             for (int d = 0; d < 3; d++)
+            {
                 if (rng.Next(4) == 0 && s.Relief[i] != ReliefClass.Hidden) SetRiver(s, i, d);
+                if (rng.Next(2) == 0 && s.Relief[i] != ReliefClass.Hidden) SetCliff(s, i, d);
+            }
         return s;
+    }
+
+    public static void SetCliff(TerrainSnapshot s, int tile, int direction)
+    {
+        s.Cliffs[tile] |= (byte)(1 << direction);
+        if (s.TryTile(s.Grid.HexOf(new TileId(tile)).Neighbor(direction), out int other))
+            s.Cliffs[other] |= (byte)(1 << ((direction + 3) % 6));
     }
 
     /// <summary>A wrapping map where every tile has one relief class.</summary>
@@ -245,7 +255,7 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
     }
 
     [Fact]
-    public void Adjacent_peaks_keep_their_shared_edge_above_the_hills_level()
+    public void Adjacent_peaks_keep_their_shared_edge_above_the_hills_level_and_cliff_peaks_taper_to_the_bluff_at_sea()
     {
         var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat);
         var pairs = new List<(Hex A, Hex B)>();
@@ -258,16 +268,31 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
                 snapshot.Relief[snapshot.ClampedTile(b)] = ReliefClass.Peak;
                 pairs.Add((a, b));
             }
+        var cliffPeak = HexGrid.FromOffset(6, 6);
+        var sea = cliffPeak.Neighbor(5);
+        int peakTile = snapshot.ClampedTile(cliffPeak), seaTile = snapshot.ClampedTile(sea);
+        snapshot.Relief[peakTile] = ReliefClass.Peak;
+        snapshot.Relief[seaTile] = ReliefClass.ShallowWater;
+        snapshot.Cliffs[peakTile] |= 1 << 5;
+        snapshot.Cliffs[seaTile] |= 1 << 2;
         var tuning = new TerrainTuning();
         foreach (int seed in new[] { 1, 2, 3 })
         {
             var field = new TerrainField(snapshot, seed, tuning);
             foreach (var (a, b) in pairs)
             {
+                if (a == cliffPeak || b == cliffPeak || a == sea || b == sea) continue;
                 var (ax, az) = TerrainTestMaps.Centre(a);
                 var (bx, bz) = TerrainTestMaps.Centre(b);
                 Assert.True(field.HeightAt((ax + bx) / 2, (az + bz) / 2) > tuning.HillsBase + tuning.HillsNoise);
             }
+            var (px, pz) = TerrainTestMaps.Centre(cliffPeak);
+            var (sx, sz) = TerrainTestMaps.Centre(sea);
+            Assert.True(field.HeightAt(px, pz) > tuning.PeakBase + tuning.CliffRise);
+            Assert.InRange(field.HeightAt((px + sx) / 2, (pz + sz) / 2), tuning.ShallowWater - 0.05, tuning.FlatBase + tuning.CliffRise + 0.08);
+            var rocks = field.CliffRocks(px - 2, px + 2, pz - 2, pz + 2).Where(r => r.Tile == peakTile).ToArray();
+            Assert.NotEmpty(rocks);
+            Assert.All(rocks, r => Assert.InRange(r.Scale, 0.4, 2.75));
         }
     }
 

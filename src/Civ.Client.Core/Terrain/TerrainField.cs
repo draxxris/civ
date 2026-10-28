@@ -143,7 +143,7 @@ public sealed record TerrainTuning
     public double CliffRamp { get; init; } = 1.6;
     /// <summary>Cliffs: blend sharpness across a cliff edge. Far above <see cref="MaterialSharpness"/>, so land drops to
     /// the seabed within about a lattice step.</summary>
-    public double CliffSharpness { get; init; } = 14;
+    public double CliffSharpness { get; init; } = 18;
     /// <summary>Cliffs: distance from the edge (world units) over which the cliff shape is full.</summary>
     public double CliffInner { get; init; } = 0.16;
     /// <summary>Cliffs: distance at which the cliff shape has faded out. With <see cref="CliffNoise"/> it stays within half
@@ -291,7 +291,8 @@ public sealed class TerrainField
                 ReliefClass.Hills => w[k] > 0 || corners.HasCliff ? HillProfile(corners, k, x, z) : 0,
                 _ => Profile(relief, x, z),
             };
-            if (rise > 0 && relief != ReliefClass.Hidden && !IsWater(relief)) p += rise;
+            if (rise > 0 && relief != ReliefClass.Hidden && !IsWater(relief))
+                p += rise;
             if (k == 0) pa = p; else if (k == 1) pb = p; else pc = p;
             if (w[k] <= 0) continue;
             if (relief == ReliefClass.Hidden) hidden += w[k];
@@ -306,18 +307,28 @@ public sealed class TerrainField
     private double CliffGround(in CornerSet corners, double h, Blend3 profiles, double x, double z)
     {
         var t = Tuning;
-        var (cliff, _) = CliffShares(corners, x, z);
-        if (cliff > 0)
+        var (cliff, near) = CliffShares(corners, x, z);
+        if (near > 0)
         {
             var sharp = CliffWeights(corners, x, z);
-            double hc = 0;
+            double hc = 0, flat = t.FlatBase + t.CliffRise + t.FlatNoise * _noise.Fbm(x, z, t.FlatFrequency, t.Octaves, salt: 2);
+            double peakShare = 0, peakLambda = 0;
             for (int k = 0; k < 3; k++)
             {
                 var relief = corners.Relief(k);
                 if (relief == ReliefClass.Hidden) continue;
-                hc += sharp[k] * profiles[k];
+                if (relief == ReliefClass.Peak)
+                {
+                    peakShare += sharp[k];
+                    peakLambda += corners.Triangle.Lambda[k];
+                    hc += sharp[k] * Math.Min(profiles[k], flat);
+                }
+                else hc += sharp[k] * profiles[k];
             }
-            h += (hc - h) * cliff;
+            double blend = cliff + (near - cliff) * peakShare;
+            double delta = (hc - h) * blend;
+            if (delta > 0) delta *= 1 - SmoothStep(0.05, 0.3, peakLambda);
+            h += delta;
         }
         foreach (var (land, water) in CliffPairs(corners))
             foreach (var stack in StacksOf(corners, land, water))
@@ -339,7 +350,7 @@ public sealed class TerrainField
         var t = Tuning;
         var lambda = corners.Triangle.Lambda;
         double n = Math.Clamp(3.2 * (_noise.Fbm(x, z, 1.4, 3, salt: 10) - 0.5), -1, 1);
-        double b = t.CliffWander * n * 2 / Math.Sqrt(3);
+        double b = (0.075 + t.CliffWander * n) * 2 / Math.Sqrt(3);
         double wa = 0, wb = 0, wc = 0, sum = 0;
         for (int k = 0; k < 3; k++)
         {
@@ -368,6 +379,7 @@ public sealed class TerrainField
     private (double Cliff, double Near) CliffShares(in CornerSet corners, double x, double z)
     {
         var t = Tuning;
+        var lambda = corners.Triangle.Lambda;
         double cliff = 0, near = 0, noise = double.NaN;
         foreach (var (land, water) in CliffPairs(corners))
         {
@@ -522,7 +534,7 @@ public sealed class TerrainField
     public readonly record struct CliffRock(double X, double Y, double Z, int Tile, double Model, double Yaw, double Scale, double Stretch);
 
     /// <summary>Rock columns per cliff edge. The wall reads as a rampart of separate pillars, not a smooth face.</summary>
-    public const int CliffRocksPerEdge = 13;
+    public const int CliffRocksPerEdge = 16;
 
     /// <summary>The rock wall of every known cliff edge whose land tile centre lies within 1.5 of the rectangle (x0..x1,
     /// z0..z1), canonical x. Each column stands on the seabed at the cliff line and reaches a little above the bluff top,
@@ -576,19 +588,20 @@ public sealed class TerrainField
             for (double o = -0.35; o <= 0.4; o += 0.015)
             {
                 double h = HeightAt(px + nx * o, pz + nz * o);
-                if (h >= 0) { top = Math.Max(top, h); continue; }
+                if (h >= 0) { top = h; continue; }
                 line = o;
                 foot = HeightAt(px + nx * (o + 0.05), pz + nz * (o + 0.05));
                 break;
             }
+            if (!double.IsNaN(line)) top = Math.Max(top, HeightAt(px + nx * (line - 0.1), pz + nz * (line - 0.1)));
             // Columns only where the bluff really stands (its ends fade where a beach takes over).
             if (double.IsNaN(line) || top < 0.05) continue;
-            double cx = px + nx * (line - 0.015), cz = pz + nz * (line - 0.015);
+            double cx = px + nx * (line - 0.025), cz = pz + nz * (line - 0.025);
             if (_wrap) cx -= Period * Math.Floor(cx / Period);
             // Chunky columns about flush with the bluff top: a few stand a little proud, a few a little short.
-            double stretch = 1.1 + 0.6 * TileHash(tile, r + 1);
-            double height = top - 0.01 + 0.035 * TileHash(tile, r + 2) - foot;
-            double scale = Math.Clamp(height / (0.16 * stretch), 0.4, 2.8);
+            double stretch = 0.85 + 0.35 * TileHash(tile, r + 1);
+            double height = top + 0.03 + 0.04 * TileHash(tile, r + 2) - foot;
+            double scale = Math.Clamp(height / (0.14 * stretch), 0.4, 3.2);
             yield return new(cx, foot, cz, tile, TileHash(tile, r + 3), Math.Tau * TileHash(tile, r + 4), scale, stretch);
         }
     }
@@ -728,7 +741,7 @@ public sealed class TerrainField
         foreach (var spire in m.Spires)
         {
             double su = (u - spire.U) / spire.Size, sv = (v - spire.V) / spire.Size;
-            shape = SoftMax(shape, spire.Height * Summit(spire.Faces, su, sv, spur, detail.Wander), 0.05);
+            shape = SoftMax(shape, spire.Height * Summit(spire.Faces, su, sv, spur, detail.Wander), 0.14);
         }
         // A broad, low massif under the summits fills the tile, so their feet reach the saddles.
         shape = SoftMax(shape, t.PeakMassif * Cone(Math.Sqrt(u * u + v * v) * spur / 1.4, 1.2), 0.08);
@@ -846,9 +859,9 @@ public sealed class TerrainField
         {
             uint salt = 30 + 10 * (uint)i;
             double direction = (i == 0 ? 0 : i == 1 ? Math.PI : Math.Tau * TileHash(tile, salt)) + 0.8 * (TileHash(tile, salt + 1) - 0.5);
-            double reach = 0.42 + 0.3 * TileHash(tile, salt + 2);
-            spires[i] = new(reach * Math.Cos(direction), reach * Math.Sin(direction), 0.42 + 0.25 * TileHash(tile, salt + 3),
-                t.PeakSpires * (0.45 + 0.55 * TileHash(tile, salt + 4)), FacesOf(tile, salt + 5));
+            double reach = 0.25 + 0.2 * TileHash(tile, salt + 2);
+            spires[i] = new(reach * Math.Cos(direction), reach * Math.Sin(direction), 0.5 + 0.25 * TileHash(tile, salt + 3),
+                t.PeakSpires * (0.45 + 0.45 * TileHash(tile, salt + 4)), FacesOf(tile, salt + 5));
         }
         double height = SummitHeight(tile);
         var ridges = neighbours.Select(n =>
