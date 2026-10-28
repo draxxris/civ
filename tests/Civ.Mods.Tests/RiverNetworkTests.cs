@@ -20,7 +20,7 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
 
     public sealed class RenderedBaseline
     {
-        public TerrainSnapshot Snapshot { get; } = TerrainTestMaps.Mixed(20, 20, seed: 3);
+        public TerrainSnapshot Snapshot { get; } = TerrainTestMaps.Mixed(20, 20, seed: 3, cliffs: false);
         public TerrainChunks Chunks { get; }
         public TerrainField Field { get; }
         public TerrainMeshData[] Ground { get; }
@@ -153,7 +153,7 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
     {
         var rendered = baseline.Value;
         var before = rendered.Snapshot;
-        var after = TerrainTestMaps.Mixed(20, 20, seed: 3);
+        var after = TerrainTestMaps.Mixed(20, 20, seed: 3, cliffs: false);
         int tile = row * before.Width + col;
         after.Relief[tile] = ReliefClass.Flat;
         after.Sight[tile] = Sight.Visible;

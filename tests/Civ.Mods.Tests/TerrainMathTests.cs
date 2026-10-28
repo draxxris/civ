@@ -14,8 +14,10 @@ internal static class TerrainTestMaps
 
     public static (double X, double Z) Centre(Hex hex) => hex.ToPixel(1);
 
-    /// <summary>A wrapping map of every relief class, with river edges on known tiles (mirrored like the game does).</summary>
-    public static TerrainSnapshot Mixed(int width = 16, int height = 12, int seed = 5)
+    /// <summary>A wrapping map of every relief class, with river edges on known tiles (mirrored like the game does).
+    /// Cliffs are mirrored the same way; pass <paramref name="cliffs"/> false for a fixture whose edits must move the
+    /// ground freely, since a cliff profile caps the height a relief edit can raise.</summary>
+    public static TerrainSnapshot Mixed(int width = 16, int height = 12, int seed = 5, bool cliffs = true)
     {
         var s = new TerrainSnapshot(new MapSpec(width, height, true));
         var rng = new Random(seed);
@@ -29,7 +31,7 @@ internal static class TerrainTestMaps
             for (int d = 0; d < 3; d++)
             {
                 if (rng.Next(4) == 0 && s.Relief[i] != ReliefClass.Hidden) SetRiver(s, i, d);
-                if (rng.Next(2) == 0 && s.Relief[i] != ReliefClass.Hidden) SetCliff(s, i, d);
+                if (cliffs && rng.Next(2) == 0 && s.Relief[i] != ReliefClass.Hidden) SetCliff(s, i, d);
             }
         return s;
     }

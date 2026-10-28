@@ -44,15 +44,17 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
 
     /// <summary>The mixed test map with its peaks kept inside one chunk column and one chunk row, so those chunks mesh at
     /// the peak resolution and every other chunk at the default one. The fixture asserts vertex identity across that
-    /// resolution boundary and an anchor at every tile centre, not how much of the map is a peak.</summary>
+    /// resolution boundary and an anchor at every tile centre, not how much of the map is a peak. Cliff bits outside the
+    /// same window are dropped for the same reason: a cliff forces its chunk to the peak resolution too.</summary>
     private static TerrainSnapshot ConcentratedPeaks()
     {
         var snapshot = TerrainTestMaps.Mixed();
         foreach (var tile in snapshot.Grid.Tiles)
         {
             int col = tile.Value % snapshot.Width, row = tile.Value / snapshot.Width;
-            if (snapshot.Relief[tile.Value] == ReliefClass.Peak && (col < 4 || col >= 8 || row >= 2))
-                snapshot.Relief[tile.Value] = ReliefClass.Hills;
+            if (col >= 4 && col < 8 && row < 2) continue;
+            if (snapshot.Relief[tile.Value] == ReliefClass.Peak) snapshot.Relief[tile.Value] = ReliefClass.Hills;
+            snapshot.Cliffs[tile.Value] = 0;
         }
         return snapshot;
     }
