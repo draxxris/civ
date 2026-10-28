@@ -831,4 +831,30 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.False(s.ShiftRate(RateKind.Research, 7));
         Assert.NotEqual("", s.Message);
     }
+
+    [Fact]
+    public void Unlocks_of_a_tech_name_only_content_that_lists_it_as_a_requirement()
+    {
+        var s = NewSession();
+        var all = s.ResearchChoices().SelectMany(c => s.UnlocksOf(c.Id)).ToList();
+        Assert.NotEmpty(all);
+        Assert.All(all, u => Assert.False(string.IsNullOrEmpty(u.Name)));
+        Assert.Empty(s.UnlocksOf("no:such-tech"));
+
+        var fishingUnlocks = s.UnlocksOf("research:fishing");
+        Assert.NotEmpty(fishingUnlocks);
+        Assert.Contains(fishingUnlocks, u => u.Category == "Buildings" && u.Name == "Fish Traps");
+        Assert.Contains(fishingUnlocks, u => u.Category == "Resources" && u.Name == "Clam");
+        Assert.Contains(fishingUnlocks, u => u.Category == "Technologies" && u.Name == "Pottery");
+
+        // Verify sorting order: category then name
+        for (int i = 1; i < fishingUnlocks.Count; i++)
+        {
+            var prev = fishingUnlocks[i - 1];
+            var curr = fishingUnlocks[i];
+            int cmp = string.CompareOrdinal(prev.Category, curr.Category);
+            if (cmp == 0) cmp = string.CompareOrdinal(prev.Name, curr.Name);
+            Assert.True(cmp <= 0, $"Expected {prev.Category}/{prev.Name} <= {curr.Category}/{curr.Name}");
+        }
+    }
 }

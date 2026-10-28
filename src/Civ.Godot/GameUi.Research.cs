@@ -23,11 +23,13 @@ internal sealed partial class GameUi
     private sealed class ResearchChoiceUi
     {
         public Button? Row;
+        public TechChoice? Choice;
         public Label? Name, Era, Cost, Help;
 
         /// <summary>Writes the captions of an already-built choice, which move when costs or turn counts do.</summary>
         public void Set(TechChoice choice, bool cards)
         {
+            Choice = choice;
             if (!cards) { Ui.Set(Row!, $"{choice.Name} — {choice.Cost} beakers [{choice.Era}]"); return; }
             Ui.Set(Name!, choice.Name);
             Ui.Set(Era!, choice.Era);
@@ -87,7 +89,11 @@ internal sealed partial class GameUi
 
     private ResearchChoiceUi AddResearchRow(TechChoice tech)
     {
-        var ui = new ResearchChoiceUi { Row = Ui.Button("", () => ChooseResearch(tech.Id), StripMarkup(tech.Help)) };
+        ResearchChoiceUi? ui = null;
+        var rowButton = new RichTipButton { FocusMode = Control.FocusModeEnum.None, Theme = Ui.Theme, TooltipText = ResearchTipFallback(tech), Build = () => TechTip.Build(ui!.Choice ?? tech, _session.UnlocksOf(tech.Id), _icons) };
+        rowButton.AddThemeFontSizeOverride("font_size", 14);
+        rowButton.Pressed += () => ChooseResearch(tech.Id);
+        ui = new ResearchChoiceUi { Row = rowButton };
         var row = Ui.VBox(2);
         row.AddChild(ui.Row);
         if (_session.FreeResearchCredits > 0) row.AddChild(Ui.Button("Use free technology", () => ChooseResearch(tech.Id, true)));
@@ -97,11 +103,14 @@ internal sealed partial class GameUi
 
     private ResearchChoiceUi AddResearchCard(TechChoice tech)
     {
-        var card = Ui.Panel(margin: 12);
+        ResearchChoiceUi? ui = null;
+        var card = new RichTipPanel { TooltipText = ResearchTipFallback(tech), Build = () => TechTip.Build(ui!.Choice ?? tech, _session.UnlocksOf(tech.Id), _icons) };
+        card.AddThemeStyleboxOverride("panel", Ui.Box(Ui.PanelFill, 12));
         card.CustomMinimumSize = new Vector2(220, 320);
         var content = Ui.VBox(10);
-        content.AddChild(Ui.Icon(_icons.TextureOf(tech.Id), 48));
-        var ui = new ResearchChoiceUi { Name = Ui.Heading(""), Era = Ui.Text("", 13, Ui.Dim), Cost = Ui.Text("", 14), Help = Ui.Text("", 12) };
+        var cardTexture = _icons.TextureOf(tech.Id);
+        if (cardTexture != null) content.AddChild(Ui.Icon(cardTexture, 48));
+        ui = new ResearchChoiceUi { Name = Ui.Heading(""), Era = Ui.Text("", 13, Ui.Dim), Cost = Ui.Text("", 14), Help = Ui.Text("", 12) };
         content.AddChild(ui.Name);
         content.AddChild(ui.Era);
         content.AddChild(ui.Cost);
@@ -115,9 +124,25 @@ internal sealed partial class GameUi
         return ui;
     }
 
+    /// <summary>Plain tooltip text: shown by nothing, but Godot only opens a tooltip for a control whose text is not empty.</summary>
+    private static string ResearchTipFallback(TechChoice tech) => StripMarkup(tech.Help) is { Length: > 0 } help ? help : tech.Name;
+
     private void ChooseResearch(string id, bool free = false)
     {
         if (_session.Research(id, free)) _researchOpen = false;
+    }
+
+    internal void DebugShowResearchTooltip()
+    {
+        var choices = _session.ResearchChoices();
+        if (choices.Count == 0) return;
+        var choice = choices[0];
+        var tip = TechTip.Build(choice, _session.UnlocksOf(choice.Id), _icons);
+        var container = new PanelContainer { ThemeTypeVariation = "TooltipPanel", CustomMinimumSize = new Vector2(380, 0) };
+        container.AddThemeStyleboxOverride("panel", Ui.Theme.GetStylebox("panel", "TooltipPanel"));
+        container.AddChild(tip);
+        container.Position = new Vector2(1010, 190);
+        AddChild(container);
     }
 
     private void BuildTechTree(VBoxContainer box)

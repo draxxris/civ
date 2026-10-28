@@ -89,7 +89,14 @@ public partial class Main : Node3D
             PollLoading();
             PollStarting();
             if (_fpsProbe is not null && _fpsProbe.Tick()) GetTree().Quit();
-            if (_framesSinceReady >= 0 && ++_framesSinceReady >= _debug.Frames) TakeScreenshot();
+            if (_framesSinceReady >= 0)
+            {
+                if (++_framesSinceReady == 2 && _debug.Stage == "research")
+                {
+                    _game!.Ui.DebugShowResearchTooltip();
+                }
+                if (_framesSinceReady >= _debug.Frames) TakeScreenshot();
+            }
         }
         catch (Exception error) when (_debug.ScreenshotPath != null || _debug.FpsProbe)
         {

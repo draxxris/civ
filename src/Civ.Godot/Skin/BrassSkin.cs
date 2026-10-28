@@ -402,6 +402,12 @@ internal static class BrassSkin
         theme.SetIcon("checked_disabled", type, Tick(TextDisabled));
         theme.SetIcon("unchecked_disabled", type, blank);
         theme.SetIcon("submenu", type, Icon("popup-submenu", 8, 12, null, Triangle(new(1.5f, 1.5f), new(6.8f, 6f), new(1.5f, 10.5f))));
+
+        theme.SetStylebox("panel", "TooltipPanel", Box(new Plate { Fill = Color.Color8(28, 29, 32), Glow = 0.2f, Brass = 1.05f, Strokes = 0.4f, Wear = 0.4f, Seed = 27 }, 10, 10, 10, 10));
+        theme.SetColor("font_color", "TooltipLabel", TextBright);
+        theme.SetColor("font_shadow_color", "TooltipLabel", new Color(0, 0, 0, 0.8f));
+        theme.SetConstant("shadow_offset_x", "TooltipLabel", 1);
+        theme.SetConstant("shadow_offset_y", "TooltipLabel", 1);
     }
 
     // ---- Scroll bars ------------------------------------------------------------------------------

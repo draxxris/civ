@@ -25,7 +25,7 @@ internal static class SkinCache
     /// <see cref="ScrapedPaint"/>, <see cref="BackdropStyleBox"/> or <see cref="BrushedStyleBox"/>. Nothing else
     /// invalidates the cache, so without a bump a launch serves yesterday's texture.
     /// </summary>
-    internal const int Version = 1;
+    internal const int Version = 2;
 
     /// <summary>Cache directory for the install in progress; null when the cache cannot be used and every call paints.</summary>
     private static string? _root;

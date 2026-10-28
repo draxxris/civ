@@ -397,7 +397,7 @@ ______________________________________________________________________
 - [ ] **Terrain bonus icons**: Square icons still appear above terrain bonuses (like
   Stone) even though we now have 3D meshes; provide cleaner icons and disable the
   Resources overlay by default in map view.
-- [ ] **Research selector tooltips**: The research selector GUI needs tooltips showing
+- [x] **Research selector tooltips**: The research selector GUI needs tooltips showing
   what each technology will give you, including rich content support (icons, colored
   text, etc.).
 - [ ] **Active unit designator**: The active unit designator has spinning chevrons
