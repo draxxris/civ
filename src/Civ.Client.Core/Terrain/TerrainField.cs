@@ -534,7 +534,11 @@ public sealed class TerrainField
     public readonly record struct CliffRock(double X, double Y, double Z, int Tile, double Model, double Yaw, double Scale, double Stretch);
 
     /// <summary>Rock columns per cliff edge. The wall reads as a rampart of separate pillars, not a smooth face.</summary>
-    public const int CliffRocksPerEdge = 16;
+    public const int CliffRocksPerEdge = 22;
+
+    /// <summary>Height of the rock model geometry at scale 1, in world units: the column placement solves the scale from
+    /// the height it must span so its thick body, not just its pointed tip, reaches the bluff.</summary>
+    public const double CliffRockHeight = 0.16;
 
     /// <summary>The rock wall of every known cliff edge whose land tile centre lies within 1.5 of the rectangle (x0..x1,
     /// z0..z1), canonical x. Each column stands on the seabed at the cliff line and reaches a little above the bluff top,
@@ -583,25 +587,38 @@ public sealed class TerrainField
                 px = qx - ox * Tuning.WarpAmplitude;
                 pz = qz - oz * Tuning.WarpAmplitude;
             }
-            // March out to sea across the edge: the last ground above the water is the cliff top, the first below it the foot.
-            double top = double.MinValue, foot = 0, line = double.NaN;
-            for (double o = -0.35; o <= 0.4; o += 0.015)
+            // March out to sea across the edge: the first wet sample marks the waterline. A coarse march brackets it and a
+            // short bisection pins it, which costs about two dozen height samples per column instead of the fifty a fine
+            // march would take; every cliff edge carries a wall of columns, so that difference is map load time.
+            double line = double.NaN;
+            for (double o = -0.35; o < 0.4; o += 0.05)
             {
-                double h = HeightAt(px + nx * o, pz + nz * o);
-                if (h >= 0) { top = h; continue; }
-                line = o;
-                foot = HeightAt(px + nx * (o + 0.05), pz + nz * (o + 0.05));
-                break;
+                if (HeightAt(px + nx * o, pz + nz * o) < 0) { line = o; break; }
             }
-            if (!double.IsNaN(line)) top = Math.Max(top, HeightAt(px + nx * (line - 0.1), pz + nz * (line - 0.1)));
-            // Columns only where the bluff really stands (its ends fade where a beach takes over).
-            if (double.IsNaN(line) || top < 0.05) continue;
-            double cx = px + nx * (line - 0.025), cz = pz + nz * (line - 0.025);
+            if (double.IsNaN(line)) continue;
+            double lo = line - 0.05, hi = line;
+            while (hi - lo > 1e-3)
+            {
+                double mid = 0.5 * (lo + hi);
+                if (HeightAt(px + nx * mid, pz + nz * mid) < 0) hi = mid; else lo = mid;
+            }
+            line = hi;
+            // Just beyond the waterline the seabed the column stands on. Marching only 0.05 out keeps the foot on the
+            // cliff's own shelf instead of far out on the deep floor, which would make every column a tower.
+            double foot = HeightAt(px + nx * (line + 0.05), pz + nz * (line + 0.05));
+            // The brink is the top of the rock face, not the highest ground inland: it is the bluff the land material
+            // crests, sampled just inside the waterline, and never below the plateau a cliff tile stands on. A hex corner
+            // where two water tiles meet dips under the plateau, so a local sample alone can fall short of the face.
+            double top = Math.Max(HeightAt(px + nx * (line - 0.1), pz + nz * (line - 0.1)), Tuning.FlatBase + Tuning.CliffRise +
+                Tuning.FlatNoise * _noise.Fbm(px, pz, Tuning.FlatFrequency, Tuning.Octaves, salt: 2));
+            double cx = px + nx * (line - 0.04), cz = pz + nz * (line - 0.04);
             if (_wrap) cx -= Period * Math.Floor(cx / Period);
-            // Chunky columns about flush with the bluff top: a few stand a little proud, a few a little short.
-            double stretch = 0.85 + 0.35 * TileHash(tile, r + 1);
-            double height = top + 0.03 + 0.04 * TileHash(tile, r + 2) - foot;
-            double scale = Math.Clamp(height / (0.14 * stretch), 0.4, 3.2);
+            // A tall slender column from the seabed to just above the brink: its thick body hides the mesh face and its
+            // pointed tip crests the bluff. The stretch, not the uniform scale, carries the height, so the columns stay
+            // pillars instead of growing into boulders.
+            double stretch = 2.1 + 0.7 * TileHash(tile, r + 1);
+            double height = top + 0.07 + 0.07 * TileHash(tile, r + 2) - foot;
+            double scale = Math.Max(0.4, height / (CliffRockHeight * stretch));
             yield return new(cx, foot, cz, tile, TileHash(tile, r + 3), Math.Tau * TileHash(tile, r + 4), scale, stretch);
         }
     }

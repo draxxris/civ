@@ -293,8 +293,16 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
             Assert.True(field.HeightAt(px, pz) > tuning.PeakBase + tuning.CliffRise);
             Assert.InRange(field.HeightAt((px + sx) / 2, (pz + sz) / 2), tuning.ShallowWater - 0.05, tuning.FlatBase + tuning.CliffRise + 0.08);
             var rocks = field.CliffRocks(px - 2, px + 2, pz - 2, pz + 2).Where(r => r.Tile == peakTile).ToArray();
-            Assert.NotEmpty(rocks);
-            Assert.All(rocks, r => Assert.InRange(r.Scale, 0.4, 2.75));
+            // One column per slot covers the whole edge: gaps in the wall show the bare mesh behind it.
+            Assert.Equal(TerrainField.CliffRocksPerEdge, rocks.Length);
+            double bluff = tuning.FlatBase + tuning.CliffRise;
+            Assert.All(rocks, r =>
+            {
+                double tip = r.Y + TerrainField.CliffRockHeight * r.Scale * r.Stretch;
+                Assert.True(r.Y < 0, "a cliff column stands below the water surface");
+                Assert.InRange(tip, bluff, tuning.PeakBase + tuning.CliffRise);
+                Assert.True(tip > field.HeightAt(r.X, r.Z), "a cliff column rises out of the face it stands against");
+            });
         }
     }
 
