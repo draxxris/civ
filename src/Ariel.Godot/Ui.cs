@@ -7,6 +7,7 @@ internal static class Ui
 {
     public static readonly Color Dim = new(0.66f, 0.69f, 0.75f);
     public static readonly Color Bad = new(0.96f, 0.45f, 0.40f);
+    public static readonly Color Warn = new(0.98f, 0.75f, 0.35f);
     public static readonly Color Good = new(0.55f, 0.88f, 0.52f);
     public static readonly Color Accent = new(1f, 0.82f, 0.30f);
     public static readonly Color PanelFill = new(0.08f, 0.09f, 0.12f, 0.94f);

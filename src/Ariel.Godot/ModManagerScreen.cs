@@ -17,7 +17,7 @@ internal sealed partial class ModManagerScreen : Control
 
     public event Action<IReadOnlyList<string>>? ApplyRequested;
 
-    public ModManagerScreen(ModDiscoveryResult discovery, IEnumerable<string> enabled, bool restartRequired, string? profileError, Action? cancel)
+    public ModManagerScreen(ModDiscoveryResult discovery, IEnumerable<string> enabled, bool restartRequired, string? profileError, string? notice, Action? cancel)
     {
         _installed = discovery.Mods;
         _enabled = new(enabled, StringComparer.Ordinal);
@@ -51,6 +51,7 @@ internal sealed partial class ModManagerScreen : Control
         root.AddChild(_errorScroll);
         root.AddChild(_failure);
         _failure.Text = profileError ?? "";
+        root.AddChild(Ui.Text(notice ?? "", 14, Ui.Warn));
         _apply = Ui.Button(restartRequired ? "Save profile and quit" : "Continue", () => ApplyRequested?.Invoke(_enabled.Order(StringComparer.Ordinal).ToArray()), size: 20);
         root.AddChild(_apply);
         if (cancel != null) root.AddChild(Ui.Button("Back to game setup", cancel));
