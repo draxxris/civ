@@ -616,34 +616,46 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
-    public void Filtered_rows_keep_an_available_match_ahead_of_the_blocked_cap_and_report_what_matched()
+    public void Rows_show_every_matching_blocked_row_after_the_available_ones_when_asked()
     {
         var s = CitySession();
         var city = Found(s);
         var tab = s.ProductionTabs.Single(t => t.Label == "Buildings");
         var choices = s.ProductionChoices(city, tab);
+        Assert.True(choices.Count(c => !c.Available) > 60);
 
-        // A name-filtered row is offered even when it is blocked and hundreds of other blocked rows come first: the
-        // cap applies to what survives the filter, never to the tab.
-        var hidden = choices.Where(c => !c.Available).Skip(60).First(c => c.Matches(c.Name));
-        var filtered = s.ProductionRows(city, tab, hidden.Name, showBlocked: true);
-        Assert.Contains(filtered.Rows, c => c.Id == hidden.Id);
+        // Asking for the unavailable rows draws the whole tab: every available row first, then every blocked one, with
+        // content order kept inside each group and no row left behind.
+        var shown = s.ProductionRows(city, tab, "", showBlocked: true);
+        Assert.Equal(choices.Count, shown.Matches);
+        Assert.Equal(choices.Where(c => c.Available).Concat(choices.Where(c => !c.Available)).Select(c => c.Id),
+            shown.Rows.Select(c => c.Id));
 
-        // The screen shows blocked rows only when asked, but the match count still reports them, so it can say that
-        // something matched and is merely unavailable.
-        var available = s.ProductionRows(city, tab, hidden.Name, showBlocked: false);
-        Assert.DoesNotContain(available.Rows, c => c.Id == hidden.Id);
-        Assert.Equal(filtered.Matches, available.Matches);
+        // Without that tick the screen hides the blocked rows, but the match count still reports them, so it can say
+        // that something matched and is merely unavailable.
+        var available = s.ProductionRows(city, tab, "", showBlocked: false);
+        Assert.Equal(choices.Where(c => c.Available).Select(c => c.Id), available.Rows.Select(c => c.Id));
+        Assert.Equal(shown.Matches, available.Matches);
         Assert.True(available.Matches > available.Rows.Count);
 
-        // A blank filter matches every choice in the tab, and a name no content has matches none.
-        Assert.Equal(choices.Count, s.ProductionRows(city, tab, "", showBlocked: false).Matches);
+        // A name narrows both lists to the rows that carry it, and the blocked row it names is among them when the
+        // screen offers unavailable rows.
+        var blocked = choices.First(c => !c.Available);
+        var filtered = s.ProductionRows(city, tab, blocked.Name, showBlocked: true);
+        Assert.Contains(filtered.Rows, c => c.Id == blocked.Id);
+        Assert.All(filtered.Rows, c => Assert.Contains(blocked.Name, c.Name, StringComparison.OrdinalIgnoreCase));
+        var filteredAvailable = s.ProductionRows(city, tab, blocked.Name, showBlocked: false);
+        Assert.DoesNotContain(filteredAvailable.Rows, c => c.Id == blocked.Id);
+        Assert.Equal(filtered.Matches, filteredAvailable.Matches);
+
+        // A name no content has matches none.
         Assert.Equal(0, s.ProductionRows(city, tab, "zzzz no such building", showBlocked: true).Matches);
 
         // Case is ignored, so a player need not match the content's capitals.
-        Assert.Equal(filtered.Matches, s.ProductionRows(city, tab, hidden.Name.ToUpperInvariant(), showBlocked: true).Matches);
+        var shouted = s.ProductionRows(city, tab, blocked.Name.ToUpperInvariant(), showBlocked: true);
+        Assert.Equal(filtered.Matches, shouted.Matches);
+        Assert.Contains(shouted.Rows, c => c.Id == blocked.Id);
     }
-
 
     [Fact]
     public void A_queued_building_leaves_the_choices_while_units_stay_repeatable()

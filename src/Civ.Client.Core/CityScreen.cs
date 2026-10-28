@@ -329,18 +329,15 @@ public sealed partial class GameSession
         return picked;
     }
 
-    /// <summary>How many unavailable choices a tab shows behind the available ones.</summary>
-    private const int MaxBlockedShown = 40;
-
-    /// <summary>The rows a tab draws under a name filter: every available match, then at most <see cref="MaxBlockedShown"/>
-    /// blocked matches when the screen offers them. The filter is applied before that cap, so the blocked row a player
-    /// searched for is never crowded out by unrelated blocked rows.</summary>
+    /// <summary>The rows a tab draws under a name filter: every available match, then every blocked match when the
+    /// screen offers them. The filter is applied first, so a blocked row a player searched for is never crowded out by
+    /// unrelated blocked rows.</summary>
     public ProductionList ProductionRows(City city, ProductionTab tab, string filter, bool showBlocked)
     {
         var matching = ProductionChoices(city, tab).Where(c => c.Matches(filter)).ToList();
         var rows = new List<ProductionChoice>(matching.Count);
         rows.AddRange(matching.Where(c => c.Available));
-        if (showBlocked) rows.AddRange(matching.Where(c => !c.Available).Take(MaxBlockedShown));
+        if (showBlocked) rows.AddRange(matching.Where(c => !c.Available));
         return new(rows, matching.Count);
     }
 

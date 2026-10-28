@@ -337,6 +337,10 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Scroll bar margins**: Every scroll view widget has a margin to the left of the
   scroll bar so lists starting or stopping scrolling do not reflow rows. The tech tree
   canvas keeps its own clearance.
+- **Uncapped production list**: The city screen's production list draws every row its
+  tab and filter match, available first and unavailable after them, and the panel's
+  scroll container reaches all of them. The `Show unavailable` checkbox still decides
+  whether the blocked rows are drawn at all.
 
 ______________________________________________________________________
 
@@ -404,5 +408,3 @@ ______________________________________________________________________
   bottom of the screen (the yields checkbox currently works in map view only).
 - [ ] **City view units**: Provide the ability to view and select units located inside
   the city within the city view GUI.
-- [ ] **Production row cap**: City view GUI production list currently has a cap on the
-  number of rows it can display; add scrolling or pagination.
