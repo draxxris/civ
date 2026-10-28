@@ -97,37 +97,37 @@ ______________________________________________________________________
 ## Chronological Optimization Timeline
 
 ```
-[Phase 1: Oct 17, 2026] Engine Invalidation, Content Hashing, & Off-Thread Terrain
-                        (Commit: 821d3a1)
+[Pass 1: Oct 17, 2026] Engine Invalidation, Content Hashing, & Off-Thread Terrain
+                       (Commit: 821d3a1)
        │
        ▼
-[Phase 2: Oct 17, 2026] AI Multithreading & Speculative Parallel Waves
-                        (Commits: d6d73ab, 0685342, b81909f, 4282ff6, f064004, 482ecc4)
+[Pass 2: Oct 17, 2026] AI Multithreading & Speculative Parallel Waves
+                       (Commits: d6d73ab, 0685342, b81909f, 4282ff6, f064004, 482ecc4)
        │
        ▼
-[Phase 3: Oct 17, 2026] AI Serial Work Reduction & Spatial Indexing
-                        (Commits: c339ee2, e6239f8, da5fa32, 9ff9998, 193567e, 3dc5495)
+[Pass 3: Oct 17, 2026] AI Serial Work Reduction & Spatial Indexing
+                       (Commits: c339ee2, e6239f8, da5fa32, 9ff9998, 193567e, 3dc5495)
        │
        ▼
-[Phase 4: Oct 17, 2026] World Generation Geometry & River Traversal
-                        (Commit: 7b12754)
+[Pass 4: Oct 17, 2026] World Generation Geometry & River Traversal
+                       (Commit: 7b12754)
        │
        ▼
-[Phase 5: Oct 18, 2026] Idle CPU: Terrain Ray Pick Caching & Unit Height Sampling
-                        (Commit: 47b932f)
+[Pass 5: Oct 18, 2026] Idle CPU: Terrain Ray Pick Caching & Unit Height Sampling
+                       (Commit: 47b932f)
        │
        ▼
-[Phase 6: Oct 18, 2026] Startup Latency: Theme Overlap & Lazy Content Hash
-                        (Commit: 7f865e4)
+[Pass 6: Oct 18, 2026] Startup Latency: Theme Overlap & Lazy Content Hash
+                       (Commit: 7f865e4)
        │
        ▼
-[Phase 7: Oct 26, 2026] HUD Invalidation on Clicks & In-Place Panel Updates
-                        (Commits: 877fb7a, 70ab679, 003cd30, 1ad1904, 4b6fd9d)
+[Pass 7: Oct 26, 2026] HUD Invalidation on Clicks & In-Place Panel Updates
+                       (Commits: 877fb7a, 70ab679, 003cd30, 1ad1904, 4b6fd9d)
 ```
 
 ______________________________________________________________________
 
-### Phase 1: Engine Invalidation, Content Hashing, and Off-Thread Terrain Preparation
+### Pass 1: Engine Invalidation, Content Hashing, and Off-Thread Terrain Preparation
 
 - **Date**: 2026-10-17
 - **Primary Commit**: `821d3a1` (*Optimize terrain geometry preparation, content
@@ -212,7 +212,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Phase 2: AI Multithreading and Speculative Parallel Turns
+### Pass 2: AI Multithreading and Speculative Parallel Turns
 
 - **Date**: 2026-10-17
 - **Primary Commits**:
@@ -282,7 +282,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Phase 3: AI Serial Work Reduction and Spatial Indexing
+### Pass 3: AI Serial Work Reduction and Spatial Indexing
 
 - **Date**: 2026-10-17
 - **Primary Commits**:
@@ -325,7 +325,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Phase 4: World Generation Geometry and River Traversal
+### Pass 4: World Generation Geometry and River Traversal
 
 - **Date**: 2026-10-17
 - **Primary Commit**: `7b12754` (*Optimize world generation geometry and river
@@ -409,7 +409,7 @@ contention; allocation reduction remained uniformly ~41%.*
 
 ______________________________________________________________________
 
-### Phase 5: Idle CPU Reduction, Terrain Ray Pick Caching, and Unit Height Sampling
+### Pass 5: Idle CPU Reduction, Terrain Ray Pick Caching, and Unit Height Sampling
 
 - **Date**: 2026-10-18
 - **Primary Commit**: `47b932f` (*Reduce idle CPU by caching terrain picks and skipping
@@ -470,7 +470,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Phase 6: Startup Latency through Theme Overlap and a Lazy Content Hash
+### Pass 6: Startup Latency through Theme Overlap and a Lazy Content Hash
 
 - **Date**: 2026-10-18
 - **Primary Commit**: `7f865e4` (*Cut cold startup to 3.6 s by overlapping the catalog
@@ -576,7 +576,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Phase 7: HUD Invalidation on Clicks
+### Pass 7: HUD Invalidation on Clicks
 
 - **Date**: 2026-10-26
 - **Primary Commits**:
@@ -614,7 +614,7 @@ ______________________________________________________________________
    - Dialogs were emptied on every revision change even while closed, destroying scroll
      offsets, widget instances, and canvas item RIDs.
    - Replaced the single monolithic rebuild pass with independent refresh gates per
-     panel. The gates below describe the version this phase shipped; the follow-up pass
+     panel. The gates below describe the version this pass shipped; the follow-up pass
      that removed the last two residuals gated every simulation-reading panel on
      `WorldRevision` instead of `Revision`, which moves on a mere selection or message.
      That pass is recorded in `docs/completed-plans/2026-10-26-hud-invalidation.md`, and
@@ -774,40 +774,40 @@ ______________________________________________________________________
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
-phases:
+passes:
 
-| Optimization Phase & Focus Area          | Primary Commit       | Workload / Operation                                       | Metric                   |               Before |             After |                               Improvement |
-| :--------------------------------------- | :------------------- | :--------------------------------------------------------- | :----------------------- | -------------------: | ----------------: | ----------------------------------------: |
-| **Phase 1: Renderer Invalidation**       | `821d3a1`            | Non-world UI actions (20 actions, tiny map)                | Terrain rebuild time     |              8.00 ms |           0.00 ms |                    **-100% (eliminated)** |
-| **Phase 1: Startup Content Hashing**     | `821d3a1`            | Catalog freeze (20-rebuild median)                         | Wall time                |            365.31 ms |         266.43 ms |                                **-27.1%** |
-|                                          |                      | Catalog total freeze                                       | Wall time                |            397.75 ms |         284.36 ms |                                **-28.5%** |
-|                                          |                      | Catalog build allocation                                   | Managed bytes            |           315.61 MiB |        257.35 MiB |                    **-18.5% (-58.3 MiB)** |
-|                                          |                      | First catalog load                                         | Wall time                |             2,568 ms |          2,099 ms |                                **-18.3%** |
-| **Phase 1: Terrain Geometry Off-Thread** | `821d3a1`            | Huge world (672 chunks, seed 1)                            | Main-thread managed prep |            205.81 ms |           0.00 ms |                     **-100% (offloaded)** |
-|                                          |                      | Huge world terrain total                                   | Wall time                |          1,932.71 ms |       1,792.75 ms |                                 **-7.2%** |
-|                                          |                      | Huge world map refresh                                     | Traced wall time         |          2,147.20 ms |       1,944.26 ms |                                 **-9.5%** |
-| **Phase 2: AI Multithreading**           | `d6d73ab`, `0685342` | Fifty-city turn (turn 2, 50 cities)                        | Turn execution time      |         83,120.65 ms |       2,139.04 ms |              **-97.43% (38.86× speedup)** |
-|                                          |                      | 8-player 99-turn preparation                               | Elapsed time             |    >90 min (timeout) |     231,096.19 ms |                     **Finished (3m 51s)** |
-|                                          |                      | Turn-100 8-player AI decisions                             | `RunAi()` duration       |         *Unrecorded* |       1,802.43 ms |                      *Baseline timed out* |
-| **Phase 3: AI Serial Work Reduction**    | `c339ee2`, `3dc5495` | A\* pathfinding, spatial threat grid, goal reuse           | Operational work         | Linear scans / sorts |  Cached / indexed |                *Unmeasured runtime gains* |
-| **Phase 4: World Generation**            | `7b12754`            | Standard world generation (84×52, 3 seeds)                 | Managed bytes            |      11.85–12.69 MiB |     6.33–6.35 MiB |                      **-46.6% to -50.0%** |
-|                                          |                      | Standard world generation (84×52, 3 seeds)                 | Wall time                |       61.72–69.97 ms |    46.60–54.98 ms |                      **-14.9% to -24.5%** |
-|                                          |                      | Gigantic world generation (200×120, 3 seeds)               | Managed bytes            |      58.84–60.00 MiB |   35.15–35.33 MiB |                      **-40.3% to -41.1%** |
-|                                          |                      | Gigantic world generation (200×120, 3 seeds)               | Wall time                |     311.04–402.11 ms |  309.79–377.74 ms | **-0.4% to -9.4%** *(seed 42 Contention)* |
-|                                          |                      | Standard session startup (84×52, 3 seeds)                  | Managed bytes            |     83.04–100.97 MiB |   74.10–91.38 MiB |                       **-9.5% to -10.8%** |
-|                                          |                      | Gigantic session startup (200×120, 3 seeds)                | Managed bytes            |    279.27–294.62 MiB | 241.28–255.57 MiB |                      **-13.3% to -13.6%** |
-|                                          |                      | Gigantic session startup (200×120, 3 seeds)                | Wall time                |       1,215–1,468 ms |    1,091–1,340 ms |                       **-7.3% to -12.9%** |
-| **Phase 5: Idle CPU Reduction**          | `47b932f`            | Stationary idle (Vulkan Forward+, 1050 Ti)                 | Process CPU (1 core)     |                38.8% |             18.8% |                     **-51.5% (-20.0 pp)** |
-| **Phase 6: Startup Latency**             | `7f865e4`            | Cold launch to setup screen (8 cores)                      | Wall time                |               8.65 s |            6.38 s |                                **-26.2%** |
-|                                          |                      | Theme painting (overlapped with catalog)                   | Wall time                |          2,272.73 ms |       2,703.18 ms |            +18.9% *(absorbed by overlap)* |
-|                                          |                      | Catalog load                                               | Wall time                |          2,372.03 ms |       1,454.04 ms |                                **-38.7%** |
-|                                          |                      | Content digest (critical path)                             | Wall time                |          1,156.39 ms |              0 ms |           **-100% (prefetched off path)** |
-|                                          |                      | Launch to setup screen (Xvfb, warm skin cache)             | Wall time                |               6.39 s |            3.56 s |                                **-44.3%** |
-|                                          |                      | Launch to setup screen (Xvfb, empty skin cache, first run) | Wall time                |               6.39 s |            5.18 s |                                **-18.9%** |
-| **Phase 7: HUD Invalidation**            | `4b6fd9d`            | Selection click (HUD)                                      | Median time              |             16.06 ms |           2.40 ms |                                **-85.1%** |
-|                                          |                      | Top bar refresh alone                                      | Median time              |              6.08 ms |           0.42 ms |                                **-93.1%** |
-|                                          |                      | Left panel (unit selected, excl. DescribeUnit)             | Wall time                |         3.30–3.94 ms |      0.08–0.18 ms |                                **-95.4%** |
-|                                          |                      | Left panel (no selection, excl. DescribeUnit)              | Wall time                |         1.23–1.69 ms |      0.11–0.38 ms |                                **-77.5%** |
-|                                          |                      | Unchanged selection click (repeat click)                   | UI update lines          |               1 line |           0 lines |                    **-100% (eliminated)** |
-|                                          |                      | Research dialog reopen (unchanged session)                 | Wall time                |             14.00 ms |           0.07 ms |                                **-99.5%** |
-|                                          |                      | Religion plate scrape pattern delta on click               | Differing pixels         |               594 px |              0 px |                        **-100% (stable)** |
+| Optimization Pass & Focus Area          | Primary Commit       | Workload / Operation                                       | Metric                   |               Before |             After |                               Improvement |
+| :-------------------------------------- | :------------------- | :--------------------------------------------------------- | :----------------------- | -------------------: | ----------------: | ----------------------------------------: |
+| **Pass 1: Renderer Invalidation**       | `821d3a1`            | Non-world UI actions (20 actions, tiny map)                | Terrain rebuild time     |              8.00 ms |           0.00 ms |                    **-100% (eliminated)** |
+| **Pass 1: Startup Content Hashing**     | `821d3a1`            | Catalog freeze (20-rebuild median)                         | Wall time                |            365.31 ms |         266.43 ms |                                **-27.1%** |
+|                                         |                      | Catalog total freeze                                       | Wall time                |            397.75 ms |         284.36 ms |                                **-28.5%** |
+|                                         |                      | Catalog build allocation                                   | Managed bytes            |           315.61 MiB |        257.35 MiB |                    **-18.5% (-58.3 MiB)** |
+|                                         |                      | First catalog load                                         | Wall time                |             2,568 ms |          2,099 ms |                                **-18.3%** |
+| **Pass 1: Terrain Geometry Off-Thread** | `821d3a1`            | Huge world (672 chunks, seed 1)                            | Main-thread managed prep |            205.81 ms |           0.00 ms |                     **-100% (offloaded)** |
+|                                         |                      | Huge world terrain total                                   | Wall time                |          1,932.71 ms |       1,792.75 ms |                                 **-7.2%** |
+|                                         |                      | Huge world map refresh                                     | Traced wall time         |          2,147.20 ms |       1,944.26 ms |                                 **-9.5%** |
+| **Pass 2: AI Multithreading**           | `d6d73ab`, `0685342` | Fifty-city turn (turn 2, 50 cities)                        | Turn execution time      |         83,120.65 ms |       2,139.04 ms |              **-97.43% (38.86× speedup)** |
+|                                         |                      | 8-player 99-turn preparation                               | Elapsed time             |    >90 min (timeout) |     231,096.19 ms |                     **Finished (3m 51s)** |
+|                                         |                      | Turn-100 8-player AI decisions                             | `RunAi()` duration       |         *Unrecorded* |       1,802.43 ms |                      *Baseline timed out* |
+| **Pass 3: AI Serial Work Reduction**    | `c339ee2`, `3dc5495` | A\* pathfinding, spatial threat grid, goal reuse           | Operational work         | Linear scans / sorts |  Cached / indexed |                *Unmeasured runtime gains* |
+| **Pass 4: World Generation**            | `7b12754`            | Standard world generation (84×52, 3 seeds)                 | Managed bytes            |      11.85–12.69 MiB |     6.33–6.35 MiB |                      **-46.6% to -50.0%** |
+|                                         |                      | Standard world generation (84×52, 3 seeds)                 | Wall time                |       61.72–69.97 ms |    46.60–54.98 ms |                      **-14.9% to -24.5%** |
+|                                         |                      | Gigantic world generation (200×120, 3 seeds)               | Managed bytes            |      58.84–60.00 MiB |   35.15–35.33 MiB |                      **-40.3% to -41.1%** |
+|                                         |                      | Gigantic world generation (200×120, 3 seeds)               | Wall time                |     311.04–402.11 ms |  309.79–377.74 ms | **-0.4% to -9.4%** *(seed 42 Contention)* |
+|                                         |                      | Standard session startup (84×52, 3 seeds)                  | Managed bytes            |     83.04–100.97 MiB |   74.10–91.38 MiB |                       **-9.5% to -10.8%** |
+|                                         |                      | Gigantic session startup (200×120, 3 seeds)                | Managed bytes            |    279.27–294.62 MiB | 241.28–255.57 MiB |                      **-13.3% to -13.6%** |
+|                                         |                      | Gigantic session startup (200×120, 3 seeds)                | Wall time                |       1,215–1,468 ms |    1,091–1,340 ms |                       **-7.3% to -12.9%** |
+| **Pass 5: Idle CPU Reduction**          | `47b932f`            | Stationary idle (Vulkan Forward+, 1050 Ti)                 | Process CPU (1 core)     |                38.8% |             18.8% |                     **-51.5% (-20.0 pp)** |
+| **Pass 6: Startup Latency**             | `7f865e4`            | Cold launch to setup screen (8 cores)                      | Wall time                |               8.65 s |            6.38 s |                                **-26.2%** |
+|                                         |                      | Theme painting (overlapped with catalog)                   | Wall time                |          2,272.73 ms |       2,703.18 ms |            +18.9% *(absorbed by overlap)* |
+|                                         |                      | Catalog load                                               | Wall time                |          2,372.03 ms |       1,454.04 ms |                                **-38.7%** |
+|                                         |                      | Content digest (critical path)                             | Wall time                |          1,156.39 ms |              0 ms |           **-100% (prefetched off path)** |
+|                                         |                      | Launch to setup screen (Xvfb, warm skin cache)             | Wall time                |               6.39 s |            3.56 s |                                **-44.3%** |
+|                                         |                      | Launch to setup screen (Xvfb, empty skin cache, first run) | Wall time                |               6.39 s |            5.18 s |                                **-18.9%** |
+| **Pass 7: HUD Invalidation**            | `4b6fd9d`            | Selection click (HUD)                                      | Median time              |             16.06 ms |           2.40 ms |                                **-85.1%** |
+|                                         |                      | Top bar refresh alone                                      | Median time              |              6.08 ms |           0.42 ms |                                **-93.1%** |
+|                                         |                      | Left panel (unit selected, excl. DescribeUnit)             | Wall time                |         3.30–3.94 ms |      0.08–0.18 ms |                                **-95.4%** |
+|                                         |                      | Left panel (no selection, excl. DescribeUnit)              | Wall time                |         1.23–1.69 ms |      0.11–0.38 ms |                                **-77.5%** |
+|                                         |                      | Unchanged selection click (repeat click)                   | UI update lines          |               1 line |           0 lines |                    **-100% (eliminated)** |
+|                                         |                      | Research dialog reopen (unchanged session)                 | Wall time                |             14.00 ms |           0.07 ms |                                **-99.5%** |
+|                                         |                      | Religion plate scrape pattern delta on click               | Differing pixels         |               594 px |              0 px |                        **-100% (stable)** |

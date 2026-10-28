@@ -2,8 +2,7 @@
 
 This document is the single canonical source of truth for project status: tracking what
 is done (implemented systems and mechanics) and what needs to be done (partial
-mechanics, deferred systems, and future milestones) across all game phases and modular
-subsystems.
+mechanics, deferred systems, and future milestones) across all modular subsystems.
 
 For architectural design and core principles ("everything is a mod"), see
 [docs/DESIGN.md](DESIGN.md).\
@@ -11,68 +10,20 @@ For the hex adaptation specification and original porting plan, see
 [PLAN.md](../PLAN.md).\
 For build instructions and test commands, see [README.md](../README.md).
 
-## 1. Roadmap & Phase Overview
+## 1. Roadmap & Milestone Overview
 
-The project follows a phased roadmap bringing the full content of the source Civ4
-extraction onto a deterministic hex grid.
+The project brings the full content of the source extraction onto a deterministic hex
+grid. Core simulation rules, modular systems, 3D presentation, and unit art (Phases
+P0–P9) are fully implemented.
 
-| Phase    | Focus                               | Status      | Deliverables                                                                                               |
-| :------- | :---------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------- |
-| **P0**   | Toolchain & Housekeeping            | **Done**    | .NET 10 SDK, Godot 4.7.2 .NET (`godot-mono`), Git LFS art assets, clean headless test loop.                |
-| **P1**   | Content Importer                    | **Done**    | `tools/Civ.ContentImport` tree parser, effective registry merge, branding scrub, data sidecars.            |
-| **P2**   | Core Contract & Foundations         | **Done**    | `HexGrid`, `Plot[]`, teams, generic registries, modifiers, ledgers, events, save/load, lockstep.           |
-| **P3**   | Ancient Rules Slice                 | **Done**    | Core feature mods: World, Cities, Research, Economy, Military, Government, Peoples.                        |
-| **P4**   | Godot Client & Presentation         | **Done**    | Engine-free client models (`Civ.Client.Core`), wrapped hex map, city/tech/civic UI, sound, icons.          |
-| **P5**   | Deterministic AI                    | **Done**    | `ai:standard` utility AI for research, civics, sliders, production, settlement, workers, and war.          |
-| **P6**   | Full Content & Advanced Systems     | **Done**    | Multi-era closure, Religion, Great People, Trade, Diplomacy, Projects/Victory, Corporations, Espionage.    |
-| **P7**   | Scripted Features & Revolution      | **Done**    | Events engine, Scripted Wonders, and Revolution/city instability simulation.                               |
-| **P8**   | Unit 3D Art & Animation             | **Done**    | 357 animated GLB models (`tools/art/convert_units.py`) with combat attack/death playback in engine.        |
-| **P9**   | Hex Balance & Continuous 3D Terrain | **Done**    | Civ 6-style continuous 3D blended terrain, seamless 1024×1024 textures, 3D nature scatter, balance tuning. |
-| **P10+** | Polish, Multiplayer & Expansion     | **Planned** | Networking lobby, historical scenarios, full naval/air AI, expanded diplomatic negotiations.               |
+| Milestone | Focus                           | Status      | Deliverables                                                                                 |
+| :-------- | :------------------------------ | :---------- | :------------------------------------------------------------------------------------------- |
+| **P0–P9** | Core Port, Rules & Engine       | **Done**    | Complete rules simulation, deterministic AI, 3D terrain/art, and modular feature services.   |
+| **P10+**  | Polish, Multiplayer & Expansion | **Planned** | Networking lobby, historical scenarios, full naval/air AI, expanded diplomatic negotiations. |
 
 ______________________________________________________________________
 
-## 2. Verification & Testing Standards
-
-Per [README.md](../README.md), the repository establishes three separate test suites:
-
-- **`mise run test`**: Default test suite. Fast execution; covers unit, contract,
-  ruleset, client model, determinism, and save/reload tests. **Excludes E2E and
-  Extractor tests.** Always run this by default during development.
-- **`mise run test:e2e`**: Long-running end-to-end whole-game simulations and multi-turn
-  soak runs verifying AI stability, desync-free lockstep, and victory resolution.
-- **`mise run test:extractor`**: Source extraction and generated JSON content tests
-  (`Civ.ContentImport.Tests`). Run when source assets or importer code change.
-- **`dotnet test Civ.slnx`**: Runs all tests across all categories.
-- **Headless smoke test**:
-  `xvfb-run -a godot-mono --headless --path src/Civ.Godot --quit-after 200` verifies
-  engine startup, shader compilation, and 200 frames of gameplay.
-
-______________________________________________________________________
-
-## 3. What Is Done (Implemented Systems & Mechanics)
-
-Status reflects executable simulation rules, loaded definitions, and engine-free models.
-
-### Foundation & Core Contracts
-
-- **Phase contract & turn order**: Deterministic phase lifecycle execution
-  (`docs/02-turn-lifecycle.md`) with lockstep handshake and state hash verification.
-- **`mise run test`**: Default test suite. Fast execution; covers unit, contract,
-  ruleset, client model, determinism, and save/reload tests. **Excludes E2E and
-  Extractor tests.** Always run this by default during development.
-- **`mise run test:e2e`**: Long-running end-to-end whole-game simulations and multi-turn
-  soak runs verifying AI stability, desync-free lockstep, and victory resolution.
-- **`mise run test:extractor`**: Source extraction and generated JSON content tests
-  (`Civ.ContentImport.Tests`). Run when source assets or importer code change.
-- **`dotnet test Civ.slnx`**: Runs all tests across all categories.
-- **Headless smoke test**:
-  `xvfb-run -a godot-mono --headless --path src/Civ.Godot --quit-after 200` verifies
-  engine startup, shader compilation, and 200 frames of gameplay.
-
-______________________________________________________________________
-
-## 3. What Is Done (Implemented Systems & Mechanics)
+## 2. What Is Done (Implemented Systems & Mechanics)
 
 Status reflects executable simulation rules, loaded definitions, and engine-free models.
 
@@ -298,7 +249,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **AI personality profiles**: Complete personality matrices (flavors, aggression,
   wonder preferences, civic weights) driving the AI mod.
 
-### Advanced Systems (P6 / P7)
+### Advanced Modular Systems
 
 - **Religion**: 13 imported religions, holy city scoring, natural trade spread,
   international trade route spread across open borders, religion decay and attrition for
@@ -360,7 +311,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   highlights, audio playback, and responsive HUD panels.
 - **HUD in-place invalidation (`Civ.Godot`)**: The top bar and left panel are built once
   and updated in place instead of rebuilding the widget tree on every map click; see
-  [docs/OPTIMIZE.md](OPTIMIZE.md#phase-7-hud-invalidation-on-clicks).
+  [docs/OPTIMIZE.md](OPTIMIZE.md#pass-7-hud-invalidation-on-clicks).
 - **3D resource models**: Every map resource has a procedural low-poly model
   (`art/models/<id>.glb`, built by `tools/art/improvement_models.py`) standing on a spot
   off the tile centre that avoids rivers and the wrong side of the shore. Scatter props
@@ -379,10 +330,17 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   Poisson-like lattice planning, and GPU MultiMesh instancing.
 - **3D unit art & combat animations**: 357 converted unit models with `idle`, `run`,
   `fortify`, `attack`, `hurt`, and `die` animations rendered on the world map.
+- **Production queue categories**: The city building production queue has Wonders and
+  All categories (like Projects and Units), plus a filter text box. A kind declares its
+  own extra categories, so the wonder split is content knowledge rather than a client
+  special case.
+- **Scroll bar margins**: Every scroll view widget has a margin to the left of the
+  scroll bar so lists starting or stopping scrolling do not reflow rows. The tech tree
+  canvas keeps its own clearance.
 
 ______________________________________________________________________
 
-## 4. What Needs to Be Done (Pending & Deferred Work)
+## 3. What Needs to Be Done (Pending & Deferred Work)
 
 ### Foundation & Setup
 
@@ -393,111 +351,23 @@ ______________________________________________________________________
   era starts.
 - [ ] **Per-player handicap options**: Allow human and individual AI players to have
   distinct difficulty levels in the same session.
-- [x] **Calendar progression**: Non-turn timeline display with mod speed schedules
-  (Normal 1200, Marathon 2400) starting at 6000 BCE.
 - [ ] **Default civics fallback**: Auto-fill missing civic selections for incomplete
   custom civilization declarations.
 - [ ] **Remaining game option flags**: Implement simulation rules for the unimplemented
-  game option definitions in src/Mods/Foundation/data/game-option.json.
+  game option definitions in `src/Mods/Foundation/data/game-option.json`.
+- [ ] **Malformed-content guards**: Add fallback validation and default placeholders
+  during content loading for missing technology identifiers in unlock tables or missing
+  bonus identifiers in sight memory.
 
 ### World & Map Generation
 
-- [x] **Dynamic feature growth & decay**: Implement forest expansion and jungle spread
-  onto adjacent plots.
-- [x] **Resource discovery & depletion**: Random chance for new resources to appear on
-  worked mines or existing deposits to exhaust.
-- [x] **Pillage command**: Implement unit pillaging of improvements and routes with gold
-  rewards and tile repair builds.
-- [x] **Route upgrade discounts & peak build modifiers**: Time discounts when replacing
-  roads with railroads; terrain modifiers for peak tunneling.
-- [x] **Environmental changes**: Implement global warming tile degradation.
-- [x] **Terrain sight occlusion**: Block unit sight lines behind mountains, peaks, and
-  dense forests; implement hidden-state fog snapshots.
-- [x] **Foreign trade network transit**: Resource transit through foreign territory
-  without explicit open borders treaties, blockades, and vicinity resource predicates.
 - [ ] **Custom map generator scripts**: Support external or custom procedural map script
   definitions.
 
 ### Research
 
-- [x] **Tech diffusion / welfare**: Contacted-team diffusion and score welfare rate
-  bonuses adjusting science output.
-- [x] **Timeline research cost scaling**: Era-based dynamic cost scaling comparing
-  elapsed turns against expected era progression.
-- [x] **Tech trading gates**: Diplomatic technology trade gates gated by enabling
-  technologies and game options; independent espionage theft.
 - [ ] **Player-specific tech queues**: Separate tech choices within shared multiplayer
   teams.
-
-### Economy
-
-- [x] **Forced military disbanding**: Automatically disband lowest-value military units
-  when treasury drops to zero with sustained deficit across turn boundaries.
-- [x] **Targeted espionage spending**: Direct espionage commerce allocations against
-  specific rival civilizations rather than aggregate pooling.
-- [x] **Corporate cost integration**: Full unification of corporate branch expenses into
-  overall empire city maintenance ledgers.
-- [x] **Dynamic hurry anger**: Dynamic building hurry anger modifiers, retroactive timer
-  rescaling, and hurry-driven inflation acceleration and decay.
-- [x] **Trade deal income in treasury**: Real-time per-turn gold flows directly
-  reflecting bilateral trade deals.
-
-### Cities
-
-- [x] **Building power grid**: Implement power plant requirements, clean energy
-  distribution, and building power deactivation when unpowered.
-- [x] **Free building propagation**: Mechanics for national wonders or civics that grant
-  free buildings in all cities (e.g., Monument in every city).
-- [x] **Building replacement effects**: Automatic obsolescence/replacement of lower-tier
-  buildings by higher-tier counterparts.
-- [x] **City conquest options**: Interactive conquest choice dialog (annex, puppet,
-  raze); capture gold calculations; building survival rolls; capital relocation logic.
-- [x] **Excess production gold conversion**: Automatically convert surplus production
-  above the overflow cap into treasury gold.
-- [x] **Conscription (Draft)**: Draft military units from city population under
-  authorized civics with temporary draft anger.
-- [x] **Hostile culture spread obstruction**: Restrict cultural spread across enemy
-  borders or impassable natural barriers.
-
-### Military & Combat
-
-- [x] **Naval unit spawns & naval AI**: Barbarian galleys/pirates; AI naval pathfinding,
-  exploration, and coastal patrol.
-- [x] **Cargo transports & amphibious warfare**: Unit loading into naval transports,
-  ocean transit, and amphibious landings.
-- [x] **Air combat missions**: Aircraft rebasing, aerial reconnaissance, combat air
-  patrol (interception), and air bombardment.
-- [x] **Artillery bombardment & ranged attacks**: Siege weapons reducing city defense
-  bonuses; ranged fire without mutual melee damage.
-- [x] **Stealth & invisibility**: Submarine/spy invisibility with anti-submarine
-  detection radius.
-- [x] **Flanking & defender withdrawal**: Cavalry flanking attacks destroying enemy
-  siege units; defender tactical withdrawal chances.
-- [x] **Strategic military AI campaigns**: Multi-stack army coordination, targeted
-  theater staging, and defensive reinforcement lines.
-
-### Government & Peoples
-
-- [x] **Cultural assimilation**: Gradual conversion of foreign nationality in captured
-  cities over time.
-- [x] **Draft civics**: Full support for civic-enabled conscription.
-- [x] **Extra culture levels**: Support for civilization-specific or civic-specific
-  maximum cultural tier expansion.
-
-### Religion & Great People
-
-- [x] **Foreign trade religion spread**: Spread religion along international trade
-  routes to contacted foreign cities.
-- [x] **Religion decay & attrition**: Gradual loss of minority religions in cities with
-  low religious pressure.
-- [x] **Inquisitions**: Religious units capable of purging non-state religions from
-  friendly cities.
-- [x] **Combat Great Generals**: Great General emergence driven by earned military
-  combat experience points.
-- [x] **Trade missions**: Great Merchant mission granting instant treasury gold upon
-  reaching distant foreign capitals.
-- [x] **AI Great Person valuation**: Enhanced AI weighting between immediate tech
-  bulbing, city settlement, or Golden Age triggers.
 
 ### Trade & Diplomacy
 
@@ -511,92 +381,28 @@ ______________________________________________________________________
 - [ ] **Embargoes & sanctions**: Multilateral agreements to prohibit trade with targeted
   civilizations.
 
-### Espionage & UI
-
-The following observations, decisions, and verification records are preserved:
-
-- **Eligible-Team Denominator (Barbarians Excluded)**:
-  - Severity: None. Reachability: Normal play.
-  - The research diffusion denominator counts eligible living non-barbarian teams only.
-    Barbarian players and their cities join neither the denominator nor the contacted
-    set, the weighted holder numerator, or the welfare baseline. The exclusion holds on
-    the diffusion path and on the no-tech-diffusion fallback, which shares the same team
-    set.
-  - Decision: the reference mod divides by eligible alive teams including barbarians.
-    Exclusion is intentional, because shared barbarian technologies would otherwise
-    dilute every civilization's diffusion rate. No parity reconciliation is planned, and
-    the `Diffusion_excludes_dead_teams_...` and `Diffusion_excludes_barbarian_teams_...`
-    tests lock the behavior.
-- **Score Contract in Welfare**:
-  - Severity: None. Reachability: Late-game play when score disparities widen.
-  - Welfare catch-up compares the team leader's personal score against the highest score
-    of every other living non-barbarian player. A teammate counts as a rival, so a
-    lagging member is helped even inside a strong alliance. The existing score contract
-    is used; no separate normalized curve exists.
-  - Decision: the existing contract is intentional. A normalized curve would make an
-    invisible research modifier disagree with the score the game displays and uses for
-    time victory. Research is pooled per team, so the bonus applies to the whole team,
-    and the team-level technology gate runs before the score ratio, so an alliance
-    cannot farm welfare unless the team is genuinely behind in technology.
-  - Revisit trigger: team play becoming player-facing (P10 lobby), which makes the
-    choice between the lowest-id leader and the weakest living member observable.
-- **Commander and Ground-Health Interception Inputs**:
-  - Severity: None. Reachability: Unreachable with shipped play.
-  - Counter-espionage protection is
-    `200 + 5 x the performing spy's interception percent`. The reference also adds an
-    attached commander unit's interception bonus and, because its "Better Air
-    Interception" mod setting defaults to on, scales every non-air unit's interception
-    by remaining health.
-  - Decision: neither input can change a result here. This engine has no commander unit
-    pool; a great-general style bonus is copied onto the led unit as an ordinary
-    promotion, which the interception modifier already counts. Health scaling applies to
-    aircraft only, and spies have no combat strength, so nothing can wound one and the
-    reference default would produce the same number for every reachable state.
-  - Revisit trigger: a commander unit system, a health-scaling rule for non-air
-    interception, or any damage source that can reach a spy.
-- **Malformed-Content Guards**:
-  - Severity: Low. Reachability: Unreachable with shipped content; reachable with
-    invalid custom content declarations.
-  - Missing technology identifiers in unlock tables or missing bonus identifiers in
-    sight memory throw on lookup.
-  - Future fix need: add fallback validation and default placeholders during content
-    loading.
-
-### Miscellaneous UI & Client
-
-These are the project owner's own observations, kept in their own words.
+### UI & Client
 
 - [ ] **Terrain bonus icons**: Square icons still appear above terrain bonuses (like
-  Stone) even though we now have 3D meshes; this is fine, but we need better icons (and
-  the Resources overlay should be disabled by default in map view).
+  Stone) even though we now have 3D meshes; provide cleaner icons and disable the
+  Resources overlay by default in map view.
 - [ ] **Stacked unit list**: The left pane should show a list of all stacked units
   instead of forcing repeated left clicks to cycle through them, showing unit icon,
-  name, health, and small rank icons if they have leveled up (the left pane is now built
-  once and refreshed in place, so listing every stacked unit is an extension of
-  `RefreshLeft` rather than a rewrite).
+  name, health, and small rank icons if they have leveled up.
 - [ ] **Research selector tooltips**: The research selector GUI needs tooltips showing
-  what each technology will give you, which probably means tooltip support for rich
-  content such as icons, colored text, etc.
+  what each technology will give you, including rich content support (icons, colored
+  text, etc.).
 - [ ] **Active unit designator**: The active unit designator has spinning chevrons
-  around it that spin VERY fast briefly when the game window is restored after being
+  around it that spin very fast briefly when the game window is restored after being
   minimized.
 - [ ] **Water-adjacent cliff mountains**: A mountain adjacent to water that is also on a
   cliff looks very bad, like there is a sharp drop off, and needs to be fixed.
-- [x] **Production queue categories**: The city building production queue has Wonders
-  and All categories (like Projects and Units), plus a filter text box. A kind declares
-  its own extra categories, so the wonder split is content knowledge rather than a
-  client special case.
-- [x] **Scroll bar margin**: Every scroll view widget has a margin to the left of the
-  scroll bar (persistent panels make this scroll-margin work easier). The gutter is
-  reserved whether or not the bar is showing, so a list that starts or stops scrolling
-  does not reflow its rows. The tech tree canvas keeps its own clearance instead: its
-  child minimum size is the graph's pixel map, so a gutter there would add scroll range
-  to a view that already ends 50 pixels short of the bar.
-- [ ] **City view panes**: Clicking most of the GUI panes, like Religion, Corporations,
-  Espionage, etc., does nothing when you are in city view; what should be done instead?
-- [ ] **City view yields checkbox**: The city view GUI yields checkbox at the bottom of
-  the screen does nothing (the yields checkbox does work in map view).
-- [ ] **City view units**: The city view GUI needs the ability to see the units that are
-  in it.
-- [ ] **Production row cap**: City view GUI production has a cap in the number of rows
-  it can display.
+- [ ] **City view panes**: Clicking most GUI panes (Religion, Corporations, Espionage,
+  etc.) currently does nothing when you are in city view; handle transitions or modal
+  displays cleanly.
+- [ ] **City view yields checkbox**: Wire up the city view GUI yields checkbox at the
+  bottom of the screen (the yields checkbox currently works in map view only).
+- [ ] **City view units**: Provide the ability to view and select units located inside
+  the city within the city view GUI.
+- [ ] **Production row cap**: City view GUI production list currently has a cap on the
+  number of rows it can display; add scrolling or pagination.
