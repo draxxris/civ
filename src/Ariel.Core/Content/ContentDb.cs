@@ -230,6 +230,12 @@ public interface IMapGenerator : IHasId
     void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content);
     /// <summary>Setup-aware placement. Legacy generators ignore player-dependent resource density.</summary>
     void Generate(MapSpec spec, Plot[] plots, DeterministicRng rng, ContentDb content, int players) => Generate(spec, plots, rng, content);
+    /// <summary>Land/water silhouette of the world <paramref name="seed"/> produces, in tile order, true where the plot is
+    /// land. It must equal the mask <see cref="Generate"/> leaves for the same seed. Generation therefore has to draw
+    /// its land first, before any other draw from the stream; a generator that rerolls anything ahead of the land breaks
+    /// the match silently. Read the land step from a fresh <see cref="DeterministicRng"/> so previewing consumes no game
+    /// RNG. Setup screens call it off the UI thread on every seed or size change, so it must not mutate state.</summary>
+    bool[] PreviewLand(MapSpec spec, ulong seed, ContentDb content);
 }
 /// <summary>Deterministic player AI; called on every peer, returning ordinary validated commands.</summary>
 public interface IPlayerAI : IHasId

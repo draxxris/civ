@@ -114,5 +114,7 @@ public sealed class ScenarioTests
         }
         public void Generate(MapSpec map, Plot[] plots, DeterministicRng rng, ContentDb content) =>
             throw new InvalidOperationException("Scenario creation must not generate a world");
+        public bool[] PreviewLand(MapSpec map, ulong seed, ContentDb content) =>
+            throw new InvalidOperationException("Scenario creation must not generate a world");
     }
 }

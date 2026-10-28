@@ -107,6 +107,8 @@ public sealed class DogfoodContractTests
         {
             foreach (var plot in plots) plot.Terrain = terrain;
         }
+        public bool[] PreviewLand(MapSpec spec, ulong seed, ContentDb content) =>
+            Enumerable.Repeat(!content.Get<S.TerrainDef>(terrain).IsWater, spec.Width * spec.Height).ToArray();
     }
 
     private sealed class Policy : ISetupPolicy

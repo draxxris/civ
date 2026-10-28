@@ -19,11 +19,9 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
         var tuning = Geography.Tuning(content);
         using (Ariel.Modding.StartupTrace.Phase("world terrain and rivers"))
         {
-            var elevation = FractalNoise.Generate(grid, rng, tuning.NoiseScale, tuning.NoiseOctaves);
+            var (elevation, land) = BuildLand(grid, rng, tuning, layout);
             var moisture = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 2, tuning.NoiseOctaves);
             var relief = FractalNoise.Generate(grid, rng, tuning.NoiseScale / 4, tuning.NoiseOctaves);
-            foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
-            var land = LandLayouts.Create(grid, elevation, tuning.WaterPercent, layout);
             int hills = Percentile(relief, layout == WorldLayout.GreatPlains ? 94 : 100 - tuning.HillsPercent);
             int peaks = layout == WorldLayout.GreatPlains ? int.MaxValue : Percentile(relief, 100 - tuning.PeaksPercent);
             foreach (var tile in grid.Tiles)
@@ -39,6 +37,17 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
             Placement.AddBonuses(grid, plots, rng, content, players);
         using (Ariel.Modding.StartupTrace.Phase("world goodies"))
             Placement.AddGoodies(grid, plots, rng, content);
+    }
+    public bool[] PreviewLand(MapSpec spec, ulong seed, ContentDb content) =>
+        BuildLand(new HexGrid(spec), new DeterministicRng(seed), Geography.Tuning(content), layout).Land;
+    /// <summary>The land step of generation: the elevation field, its high-latitude penalty and the layout silhouette.
+    /// It draws exactly what <see cref="Generate"/> draws first, so a preview of a seed is that seed's coastline.</summary>
+    private static (int[] Elevation, bool[] Land) BuildLand(HexGrid grid, DeterministicRng rng,
+        Ariel.Content.Schema.HexOverridesDef tuning, WorldLayout layout)
+    {
+        var elevation = FractalNoise.Generate(grid, rng, tuning.NoiseScale, tuning.NoiseOctaves);
+        foreach (var tile in grid.Tiles) elevation[tile.Value] -= Geography.Latitude(grid, tile) * tuning.PolarPenalty / 90;
+        return (elevation, LandLayouts.Create(grid, elevation, tuning.WaterPercent, layout));
     }
     private static int Percentile(int[] values, int percent) => values.Order().ElementAt(Math.Min(values.Length - 1, values.Length * percent / 100));
     private static void SetTerrain(HexGrid grid, Plot plot, TileId tile, bool land, int moisture, int relief,

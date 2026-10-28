@@ -25,7 +25,7 @@ public sealed class TraitDef : GameContentDef
     public int Happiness { get; init; } = 0;
     public int Health { get; init; } = 0;
     public int ExperienceThresholdPercent { get; init; } = 0;
-    public int MaximumAnarchyTurns { get; init; } = 0;
+    public int MaximumAnarchyTurns { get; init; } = -1;
     public int WorldWonderProductionPercent { get; init; } = 0;
     public int NationalWonderProductionPercent { get; init; } = 0;
     public int TeamWonderProductionPercent { get; init; } = 0;

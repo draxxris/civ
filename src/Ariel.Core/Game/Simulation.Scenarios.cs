@@ -30,7 +30,7 @@ public sealed partial class Simulation
         var sim = new Simulation(content, (settings with { Map = map }).Resolve(content),
             new GameState { Map = map, Plots = plots }, new DeterministicRng(settings.Seed));
         // Validate ruleset setup ids, but never use world-size dimensions for authored maps.
-        _ = ResolveMap(content, sim.Settings);
+        _ = sim.Settings.ResolveMap(content);
         sim.InitializePlayers();
         sim.ValidateTerrains();
         foreach (var plot in plots)

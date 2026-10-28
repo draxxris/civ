@@ -41,6 +41,11 @@ public sealed record SimulationSettings
         StartingEra = Choose(content, SetupField.StartingEra, StartingEra),
     };
 
+    /// <summary>Map dimensions and wrapping. A ruleset world size resolves through its own setup; without one the
+    /// literal <see cref="Map"/> is used.</summary>
+    public MapSpec ResolveMap(ContentDb content) => WorldSize is null
+        ? Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, this);
+
     private static string Choose(ContentDb content, SetupField field, string value, string fallback = "") =>
         value.Length > 0 ? value : SetupPolicies.Default(content, field) ?? fallback;
 }
@@ -65,7 +70,7 @@ public sealed partial class Simulation
         : this(content, settings.Resolve(content), new GameState(), new DeterministicRng(settings.Seed))
     {
         settings = Settings;
-        State.Map = ResolveMap(content, settings);
+        State.Map = settings.ResolveMap(content);
         var setup = InitializePlayers();
         State.Plots = Enumerable.Range(0, State.Grid.Count).Select(_ => new Plot()).ToArray();
         content.MapGenerators.Get(settings.MapGenerator).Generate(State.Map, State.Plots, Rng, content, settings.PlayerCount);
@@ -113,8 +118,6 @@ public sealed partial class Simulation
         Events.Publish(new TurnStarted(State.Turn));
         RunAi();
     }
-    private static MapSpec ResolveMap(ContentDb content, SimulationSettings settings) => settings.WorldSize is null
-        ? settings.Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, settings);
     private CivilizationDef? ChooseCivilization(int player, IReadOnlyList<CivilizationDef> civs)
     {
         if (player < Settings.Civilizations.Length) return Content.Civilizations.Get(Settings.Civilizations[player]);

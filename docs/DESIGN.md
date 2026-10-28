@@ -71,8 +71,12 @@ World clears cliffs unless the edge joins land to non-lake water. `IMapSanitizer
 repairs map rules after setup, scenario configuration, and save loading.
 
 `IMapGenerator.Generate(MapSpec, Plot[], DeterministicRng, ContentDb)` fills every plot.
-Cities and units retain canonical axial positions. The client renders one map image,
-without duplicate wrap plots.
+`IMapGenerator.PreviewLand(MapSpec, seed, ContentDb)` is the land step of that
+generation and must return the same land/water mask for the same seed. It reads a fresh
+stream, so a setup screen can draw a world's coastline without advancing the game's RNG;
+the new-game screen does exactly that, on a worker thread, before the player commits to
+a map. Cities and units retain canonical axial positions. The client renders one map
+image, without duplicate wrap plots.
 
 ### Coastal cliffs
 
