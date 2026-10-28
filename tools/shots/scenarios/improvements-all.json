@@ -294,6 +294,7 @@
     8,
     10
    ],
+   "terrain": "world:peak",
    "improvement": "world:machu_picchu",
    "kind": "Peak"
   },

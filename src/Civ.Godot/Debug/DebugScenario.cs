@@ -121,12 +121,7 @@ internal static class DebugScenario
             session.Sim.Content.Get<Schema.TerrainDef>(terrain.GetString()!);
             plot.Terrain = terrain.GetString()!;
         }
-        if (e.TryGetProperty("kind", out var kind))
-        {
-            plot.Kind = Enum.Parse<PlotKind>(kind.GetString()!, ignoreCase: true);
-            if (plot.Kind == PlotKind.Peak && !e.TryGetProperty("terrain", out _) && session.Sim.Content.TryGet<Schema.TerrainDef>("world:peak", out _))
-                plot.Terrain = "world:peak";
-        }
+        if (e.TryGetProperty("kind", out var kind)) plot.Kind = Enum.Parse<PlotKind>(kind.GetString()!, ignoreCase: true);
         if (e.TryGetProperty("feature", out var feature)) plot.Feature = Empty(feature.GetString());
         if (e.TryGetProperty("improvement", out var improvement)) plot.Improvement = ContentId<Schema.ImprovementDef>(session, Empty(improvement.GetString()), "improvement");
         if (e.TryGetProperty("bonus", out var bonus)) plot.Bonus = ContentId<Schema.BonusDef>(session, Empty(bonus.GetString()), "bonus");
