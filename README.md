@@ -33,6 +33,28 @@ Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in 
 data folder. Mod DLLs reference only `Ariel.Core`, never Godot types; visuals ship as
 data (`.pck` packs, plain assets). AI players implement `IPlayerAI`.
 
+### User data migration and compatibility
+
+The Godot application name is `Ariel`, which moved the user-data folder from `Civ` to
+`Ariel`. On first launch, the game performs a one-time, restart-safe migration copying
+`saves/`, installed `mods/`, and `mod-profile.json` from the old folder into the new
+one. If a file exists in both locations with different contents, neither file is
+overwritten: both copies are kept, the new `Ariel` folder wins for the session, and the
+conflict is reported once. When migration completes, a marker file
+`user-data-migration.json` is written so subsequent launches do not re-report conflicts.
+
+Third-party mods compiled against pre-rename assemblies (`Civ.*`, including `Civ.Core`)
+cannot bind to the new runtime and are excluded at startup with a message instructing
+the player to update, disable, or remove them.
+
+Environment variables use the `ARIEL_` prefix:
+
+- `ARIEL_MODS` (formerly `CIV_MODS`): path to an additional mods directory.
+- `ARIEL_TRACE_STARTUP` (formerly `CIV_TRACE_STARTUP`): set to `1` for startup phase
+  timings.
+- `ARIEL_CONTENT_SOURCE` (formerly `CIV_CONTENT_SOURCE`): path to source extraction data
+  for extractor tests.
+
 ## Documentation
 
 - **[docs/DESIGN.md](docs/DESIGN.md)**: Architectural design, core principles

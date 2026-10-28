@@ -1358,7 +1358,30 @@ state and four RNG words. `SaveGame.Load(ContentDb, json, force: false)` checks 
 schema and content identity, restores state, and rebuilds indexes. Forced loading
 bypasses content mismatch only. It cannot restore unknown component types or unsupported
 schemas. Schema changes need explicit migrations. Component authors must version and
-migrate their own data contracts.
+migrate their own data contracts. To support pre-rename saves across namespace renames
+(`Civ.*` to `Ariel.*`), `ContentDb` computes both canonical and legacy content hashes so
+pre-rename saves with identical definitions load successfully without `force: true`.
+
+### User-data migration and compatibility
+
+When the application name changed to `Ariel`, the Godot user-data folder changed from
+`Civ` to `Ariel`. `UserDataMigration` (`src/Ariel.Client.Core/UserDataMigration.cs`)
+performs an engine-free, restart-safe one-time copy of `saves/`, `mods/`, and
+`mod-profile.json` on first launch. If a file exists in both folders with differing
+contents, neither is overwritten (both are kept, the new `Ariel` folder wins, and a
+conflict is reported once). Upon successful verification of all copied files,
+`user-data-migration.json` is written to mark completion.
+
+Third-party mod binaries compiled against the old `Civ.*` assemblies cannot bind to the
+renamed runtime; `LegacyModuleCheck` (`src/Ariel.Client.Core/LegacyModuleCheck.cs`)
+detects these assemblies and excludes them from loading with an actionable message.
+
+Runtime environment variables use the `ARIEL_` prefix:
+
+- `ARIEL_MODS` (formerly `CIV_MODS`): optional additional mod search root.
+- `ARIEL_TRACE_STARTUP` (formerly `CIV_TRACE_STARTUP`): enables startup phase timings.
+- `ARIEL_CONTENT_SOURCE` (formerly `CIV_CONTENT_SOURCE`): specifies the root of the
+  source extraction for extractor test suites.
 
 `StateHasher` hashes canonical state JSON and RNG words with FNV-1a. Canonical JSON
 sorts object properties ordinally, preserves array order and rejects non-integer

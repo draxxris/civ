@@ -58,6 +58,13 @@ Always prefer background mode when launching sub-agents.
 Never write "AND", "A New Dawn", "Rise of Mankind", or "RoM" in shipped code,
 identifiers, text, or documentation.
 
+## Nomenclature
+
+- **Ariel** is the codename used in code, IDs, paths, and developer prose.
+- **Testamenta** is the shipped name and the only user-visible product name at release.
+  Changing the release name must not require touching the codename.
+- No other product name appears in shipped code, identifiers, text, or documentation.
+
 ## Git Commits
 
 Follow the commit standards described in the `verbose-commits` skill for all git
