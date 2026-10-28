@@ -161,11 +161,18 @@ public sealed class ContentDb
     /// read because a save from that era is rare.</summary>
     public string LegacyContentHash => _legacyHash?.Value ?? "";
 
-    private Lazy<string> LegacyHashLazy() => new(() =>
+    private Lazy<string> LegacyHashLazy()
     {
-        using var trace = Modding.StartupTrace.Phase("legacy content hash");
-        return CanonicalJson.Digest(Input(Definitions(PreRenameName), PreRenameName));
-    }, LazyThreadSafetyMode.ExecutionAndPublication);
+        using var trace = Modding.StartupTrace.Phase("legacy content hash input");
+        // Capture the definitions now, exactly like the canonical digest, so the two paths never disagree about
+        // which registries were present when the database froze.
+        var definitions = Definitions(PreRenameName);
+        return new Lazy<string>(() =>
+        {
+            using var digestTrace = Modding.StartupTrace.Phase("legacy content hash");
+            return CanonicalJson.Digest(Input(definitions, PreRenameName));
+        }, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
 
     /// <summary>Undo the namespace part of the project rename for digest input, so a digest of current content
     /// reproduces the digest the pre-rename build computed.</summary>

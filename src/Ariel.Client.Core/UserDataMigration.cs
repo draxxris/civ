@@ -101,13 +101,9 @@ public static class UserDataMigration
         var temporary = destination + ".migrating";
         if (File.Exists(destination))
         {
-            if (!SameContent(source, destination))
-            {
-                conflicts.Add(relative);
-                return;
-            }
-            // An identical destination means an earlier run finished this file; drop any debris from the interrupted one.
+            // Whatever this run decides, the temporary file of an earlier interrupted run is debris, not data.
             if (File.Exists(temporary)) File.Delete(temporary);
+            if (!SameContent(source, destination)) conflicts.Add(relative);
             return;
         }
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);

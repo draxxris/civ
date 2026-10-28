@@ -77,6 +77,7 @@ public sealed class TempUserDataMigrationTests
         tree.Write("Civ", "saves/game.json", "old");
         tree.Write("Civ", "mod-profile.json", "old profile");
         tree.Write("Ariel", "saves/game.json", "new");
+        tree.Write("Ariel", "saves/game.json.migrating", "new");
         tree.Write("Ariel", "mod-profile.json", "new profile");
 
         var report = UserDataMigration.Migrate(tree.Legacy, tree.Current);
@@ -86,6 +87,7 @@ public sealed class TempUserDataMigrationTests
         Assert.Equal("new", tree.Read("Ariel", "saves/game.json"));
         Assert.Equal("old", tree.Read("Civ", "saves/game.json"));
         Assert.Equal("new profile", tree.Read("Ariel", "mod-profile.json"));
+        Assert.False(File.Exists(Path.Combine(tree.Current, "saves", "game.json.migrating")));
         Assert.Equal("old profile", tree.Read("Civ", "mod-profile.json"));
 
         var rerun = UserDataMigration.Migrate(tree.Legacy, tree.Current);

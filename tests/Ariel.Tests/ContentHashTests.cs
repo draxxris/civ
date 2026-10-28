@@ -29,6 +29,10 @@ public sealed class ContentHashTests
         // The probe type's namespace is part of the digest, so the probe's own name appears here; the value below was
         // the pre-rename one and was recomputed once when the namespaces became Ariel.
         Assert.Equal("5B7DBC7A0C35382B87131E9367E9D253F65BEA742E6E07618CFC3ABCC9F0CAA5", content.ContentHash);
+        // The same fixture's digest as the pre-rename build computed it. Pinning the legacy digest here, rather
+        // than only comparing it with the current one, is what catches a digest input that was not mapped back:
+        // a forgotten mapping still yields a different, self-consistent legacy digest that no old save matches.
+        Assert.Equal("AD81C9ADE53FC52F78D67E786535F318B96645AE685AF538A020DC2F1CD0B5E0", content.LegacyContentHash);
     }
 
     private sealed class ProbeMod(ContentDef[] definitions) : IMod
