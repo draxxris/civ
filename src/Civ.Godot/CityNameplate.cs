@@ -20,15 +20,37 @@ internal sealed partial class CityNameplate : Node3D
     /// <summary>Where the plate stands before any wrap-around shift.</summary>
     public Vector3 Anchor { get; }
 
-    private readonly (CityPlate Plate, Color Owner, bool Selected, Texture2D? Icon) _content;
+    /// <summary>The city this plate belongs to, so the renderer can find it again without scanning every plate.</summary>
+    public int CityId { get; }
 
-    /// <summary>True when this plate already shows exactly this content, so it can be reused instead of rebuilt.</summary>
+    private readonly CityPlate _plate;
+    private readonly Color _owner;
+    private readonly bool _selected;
+    private readonly Texture2D? _icon;
+
+    /// <summary>The bar is 0.7 world units wide, and its fraction is all the plate draws of growth and production: a
+    /// change smaller than this is under a screen pixel, so rebuilding the plate for it would only cost a frame of work.
+    /// The turn counts in the plate are not drawn here, so they never force a rebuild either.</summary>
+    private const float BarTolerance = 0.005f;
+
+    /// <summary>True when this plate already shows exactly what would be drawn again, so it can be reused instead of
+    /// rebuilt.</summary>
     public bool Matches(CityPlate plate, Color owner, bool selected, Texture2D? icon, Vector3 anchor) =>
-        _content == (plate, owner, selected, icon) && Anchor == anchor;
+        Anchor == anchor && _owner == owner && _selected == selected && _icon == icon
+        && _plate.Name == plate.Name && _plate.Population == plate.Population
+        && _plate.ProductionId == plate.ProductionId
+        && Mathf.Abs(_plate.Growth - plate.Growth) < BarTolerance && SameBar(_plate.Production, plate.Production);
 
-    public CityNameplate(CityPlate plate, Color owner, bool selected, Texture2D? icon, Vector3 anchor)
+    private static bool SameBar(float? was, float? now) =>
+        was is { } a && now is { } b ? Mathf.Abs(a - b) < BarTolerance : was is null && now is null;
+
+    public CityNameplate(int cityId, CityPlate plate, Color owner, bool selected, Texture2D? icon, Vector3 anchor)
     {
-        _content = (plate, owner, selected, icon);
+        CityId = cityId;
+        _plate = plate;
+        _owner = owner;
+        _selected = selected;
+        _icon = icon;
         Anchor = anchor;
         Position = anchor;
         AddChild(new MeshInstance3D
@@ -46,10 +68,14 @@ internal sealed partial class CityNameplate : Node3D
             });
     }
 
-    public override void _Process(double delta)
+    /// <summary>Faces the plate at the camera immediately. A plate is added between two frames, before its own first
+    /// process runs, so without this it would be drawn flat for one frame and then snap into place.</summary>
+    public void OrientTo(Camera3D? camera)
     {
-        if (GetViewport()?.GetCamera3D() is { } camera) GlobalBasis = camera.GlobalBasis;
+        if (camera != null) GlobalBasis = camera.GlobalBasis;
     }
+
+    public override void _Process(double delta) => OrientTo(GetViewport()?.GetCamera3D());
 
     private static Label3D Text(string text, int size, Vector3 at, float pixel, int priority, bool outline) => new()
     {

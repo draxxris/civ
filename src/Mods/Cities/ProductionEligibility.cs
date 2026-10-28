@@ -46,7 +46,7 @@ internal static class ProductionEligibility
     }
     private static void Upgrade(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
-        var active = CityData.Active(sim, city).ToArray();
+        var active = CityData.Active(sim, city);
         if (active.Any(existing => CityBuildingRules.Replaces(existing, b)))
             Fail(failures, "Replaced by an upgraded building");
         if (b.ExtendsBuildingClass is { Length: > 0 } category && !active.Any(x => x.DefaultBuilding == category || x.Id == category))
@@ -94,6 +94,9 @@ internal static class ProductionEligibility
     }
     private static void Limits(Simulation sim, City city, string category, S.ClassLimits limits, bool units, List<RequirementFailure> failures)
     {
+        // An unlimited class costs nothing to check, and most of the catalog declares no limit at all. Without this an
+        // eligibility pass walked every unit and every city's buildings for each of them.
+        if (limits.World < 0 && limits.Team < 0 && limits.Player < 0) return;
         var owners = units ? sim.State.Units.Where(u => sim.Content.Get<S.UnitDef>(u.Type).DefaultUnit == category).Select(u => u.Owner)
             : sim.State.Cities.SelectMany(c => c.Buildings.Where(b => sim.Content.Get<S.BuildingDef>(b).DefaultBuilding == category).Select(_ => c.Owner));
         var all = owners.ToArray();
@@ -108,7 +111,9 @@ internal static class ProductionEligibility
     }
     private static void Location(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
-        bool coast = CityData.Coastal(sim, city, b.MinAreaSize);
+        // A coastal check scans the neighbouring plots, and its area size the whole map, so it is only worth making when
+        // the building asks for a coast at all.
+        bool coast = b.CoastalLocation && CityData.Coastal(sim, city, b.MinAreaSize);
         bool river = sim.State.PlotAt(city.Position).RiverEdges != 0;
         bool location = (b.CoastalLocation && coast) || (b.RiverLocation && river);
         if ((b.CoastalLocation || b.RiverLocation) && !location) Fail(failures, "Requires coast or river location");

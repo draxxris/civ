@@ -34,12 +34,14 @@ internal sealed partial class MapRenderer
         bool selected = _session.City?.Id == city.Id;
         var icon = _icons.TextureOf(info.ProductionId);
         var anchor = WorldOf(city.Position, YTokens) + new Vector3(0, 0.3f, 0.95f);
-        var plate = _stalePlates.Find(p => p.Matches(info, owner, selected, icon, anchor));
-        if (plate != null) _stalePlates.Remove(plate);
-        else
+        if (!_stalePlates.Remove(city.Id, out var plate) || !plate.Matches(info, owner, selected, icon, anchor))
         {
-            plate = new CityNameplate(info, owner, selected, icon, anchor);
+            // The old plate no longer shows what this city is now: free it and build the replacement facing the camera,
+            // so the frame it is first drawn in is already oriented like every frame after it.
+            plate?.QueueFree();
+            plate = new CityNameplate(city.Id, info, owner, selected, icon, anchor);
             AddChild(plate);
+            plate.OrientTo(GetViewport()?.GetCamera3D());
         }
         _plates.Add(plate);
     }

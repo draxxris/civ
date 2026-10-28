@@ -130,22 +130,10 @@ public sealed partial class GameSession
     public bool RemoveFromQueue(City city, int index) =>
         Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveIndex = index });
 
-    /// <summary>Swap a queue entry with its neighbour (-1 earlier, +1 later) by rebuilding the queue; stored progress is kept.</summary>
-    public bool MoveInQueue(City city, int index, int delta)
-    {
-        int to = index + delta;
-        var order = city.ProductionQueue.ToList();
-        if (index < 0 || index >= order.Count || to < 0 || to >= order.Count) return false;
-        (order[index], order[to]) = (order[to], order[index]);
-        // Validate before clearing anything: obsolete entries can stay queued, but cannot be re-added through the command service.
-        foreach (var item in order)
-        {
-            var error = new SetCityProductionCommand { Player = Human, CityId = city.Id, Kind = item.Kind, ContentId = item.ContentId }.Validate(Sim);
-            if (error != null) { SetMessage($"Can't reorder: {error}"); return false; }
-        }
-        for (int i = 0; i < order.Count; i++) Enqueue(city, order[i].Kind, order[i].ContentId, append: i > 0);
-        return true;
-    }
+    /// <summary>Swap a queue entry with its neighbour (-1 earlier, +1 later) in one command, so the queue changes once,
+    /// every entry keeps its stored progress, and the move costs a single revision bump.</summary>
+    public bool MoveInQueue(City city, int index, int delta) =>
+        Submit(new MoveCityQueueCommand { Player = Human, CityId = city.Id, From = index, To = index + delta });
 
     public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = Human, CityId = city.Id, HurryId = hurryId });
 

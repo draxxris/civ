@@ -639,23 +639,11 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         // A blank filter matches every choice in the tab, and a name no content has matches none.
         Assert.Equal(choices.Count, s.ProductionRows(city, tab, "", showBlocked: false).Matches);
         Assert.Equal(0, s.ProductionRows(city, tab, "zzzz no such building", showBlocked: true).Matches);
+
+        // Case is ignored, so a player need not match the content's capitals.
+        Assert.Equal(filtered.Matches, s.ProductionRows(city, tab, hidden.Name.ToUpperInvariant(), showBlocked: true).Matches);
     }
 
-    [Fact]
-    public void Production_choice_name_filter_ignores_case_and_a_blank_filter_matches_every_choice()
-    {
-        var s = CitySession();
-        var city = Found(s);
-        var choices = s.ProductionChoices(city, s.ProductionTabs[1]);
-
-        foreach (var choice in choices)
-        {
-            Assert.True(choice.Matches(choice.Name.ToUpperInvariant()));
-            Assert.True(choice.Matches(choice.Name[1..]));
-            Assert.True(choice.Matches(""));
-            Assert.False(choice.Matches(choice.Name + " no such name"));
-        }
-    }
 
     [Fact]
     public void A_queued_building_leaves_the_choices_while_units_stay_repeatable()
@@ -698,21 +686,37 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Contains(choices, c => !c.Available && c.Blockers.Count > 0 && c.Tooltip.Length > 0);
 
         var first = available[0]; var second = available[1]; var third = available[2];
+        // The row picked first is a building, which is what makes the duplicate check below meaningful.
+        Assert.Equal("cities:building", first.Kind);
         Assert.True(s.Enqueue(city, first.Kind, first.Id, append: false));
         Assert.True(s.Enqueue(city, second.Kind, second.Id, append: true));
         Assert.True(s.Enqueue(city, third.Kind, third.Id, append: true));
         Assert.Equal([first.Id, second.Id, third.Id], city.ProductionQueue.Select(o => o.ContentId));
+
+        // A copy that is already queued is refused by the command, so a caller that never drew the city screen cannot
+        // queue a second one either.
+        Assert.False(s.Enqueue(city, first.Kind, first.Id, append: true));
+        Assert.Contains("Already in queue", s.Message);
+
         s.EndTurn();
         long progress = city.ProductionQueue[0].Progress;
         Assert.True(progress > 0);
+        int settled = s.Revision;
         Assert.True(s.MoveInQueue(city, 0, 1));
         Assert.Equal(progress, city.ProductionQueue[1].Progress);
+        // A move is one command, so it bumps once: the old clear-and-re-enqueue loop bumped for every entry.
+        Assert.Equal(settled + 1, s.Revision);
         Assert.True(s.MoveInQueue(city, 1, -1));
         Assert.True(s.MoveInQueue(city, 2, -1));
         Assert.Equal([first.Id, third.Id, second.Id], city.ProductionQueue.Select(o => o.ContentId));
         Assert.True(s.RemoveFromQueue(city, 0));
         Assert.Equal([third.Id, second.Id], city.ProductionQueue.Select(o => o.ContentId));
         Assert.Equal(2, s.DescribeCity(city)!.Queue.Count);
+
+        // Replacing the queue with an entry it already holds is allowed: a replacement clears the queue first, so the
+        // copies it counts against the content's room are gone by the time it adds.
+        Assert.True(s.Enqueue(city, third.Kind, third.Id, append: false));
+        Assert.Equal([third.Id], city.ProductionQueue.Select(o => o.ContentId));
     }
 
     [Fact]

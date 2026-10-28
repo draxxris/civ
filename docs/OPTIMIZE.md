@@ -130,8 +130,8 @@ ______________________________________________________________________
 ### Phase 1: Engine Invalidation, Content Hashing, and Off-Thread Terrain Preparation
 
 - **Date**: 2026-10-17
-- **Primary Commit**: \[`821d3a1`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md)
-  (*Optimize terrain geometry preparation, content hashing, and map invalidation*)
+- **Primary Commit**: `821d3a1` (*Optimize terrain geometry preparation, content
+  hashing, and map invalidation*)
 
 #### 1. Map Renderer Rebuild Reduction
 
@@ -216,18 +216,13 @@ ______________________________________________________________________
 
 - **Date**: 2026-10-17
 - **Primary Commits**:
-  - \[`d6d73ab`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Parallelize
-    read-only candidate scoring in the standard AI planners*
-  - \[`0685342`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Run independent
-    AI turns in speculative parallel waves*
-  - \[`b81909f`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Track complete
-    unit mutations in speculative turns and bound concurrency*
-  - \[`4282ff6`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Document AI
-    multithreading performance results*
-  - \[`f064004`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Invalidate
-    speculative plans after global entity changes*
-  - \[`482ecc4`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Document AI
-    multithreading architecture and safety invariants*
+  - `d6d73ab`: *Parallelize read-only candidate scoring in the standard AI planners*
+  - `0685342`: *Run independent AI turns in speculative parallel waves*
+  - `b81909f`: *Track complete unit mutations in speculative turns and bound
+    concurrency*
+  - `4282ff6`: *Document AI multithreading performance results*
+  - `f064004`: *Invalidate speculative plans after global entity changes*
+  - `482ecc4`: *Document AI multithreading architecture and safety invariants*
 
 #### Architecture and Safety Invariants
 
@@ -291,20 +286,14 @@ ______________________________________________________________________
 
 - **Date**: 2026-10-17
 - **Primary Commits**:
-  - \[`c339ee2`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Reuse AI planning
-    calculations and index spatial queries*
-  - \[`e6239f8`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Reuse exact AI
-    paths within unchanged planning segments*
-  - \[`da5fa32`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Prune rejected AI
-    choices and reuse candidate eligibility*
-  - \[`9ff9998`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Cache sight levels
-    within each visibility recomputation*
-  - \[`193567e`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Retain AI
-    strategic goals and safe civilian destinations*
-  - \[`a295bf0`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Validate AI
-    isolation and intent replay across independent games*
-  - \[`3dc5495`\](file:///home/gordon/workspace/civ/docs/DESIGN.md): *Document AI serial
-    optimization architecture, cache boundaries, and benchmark limits*
+  - `c339ee2`: *Reuse AI planning calculations and index spatial queries*
+  - `e6239f8`: *Reuse exact AI paths within unchanged planning segments*
+  - `da5fa32`: *Prune rejected AI choices and reuse candidate eligibility*
+  - `9ff9998`: *Cache sight levels within each visibility recomputation*
+  - `193567e`: *Retain AI strategic goals and safe civilian destinations*
+  - `a295bf0`: *Validate AI isolation and intent replay across independent games*
+  - `3dc5495`: *Document AI serial optimization architecture, cache boundaries, and
+    benchmark limits*
 
 #### Architectural Work Reductions
 
@@ -339,8 +328,8 @@ ______________________________________________________________________
 ### Phase 4: World Generation Geometry and River Traversal
 
 - **Date**: 2026-10-17
-- **Primary Commit**: \[`7b12754`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md)
-  (*Optimize world generation geometry and river traversal*)
+- **Primary Commit**: `7b12754` (*Optimize world generation geometry and river
+  traversal*)
 - **Baseline Revision**: `fc7e514df97345fdda5d861be7dacac626e011c3`
 
 #### Implementation Changes
@@ -423,8 +412,8 @@ ______________________________________________________________________
 ### Phase 5: Idle CPU Reduction, Terrain Ray Pick Caching, and Unit Height Sampling
 
 - **Date**: 2026-10-18
-- **Primary Commit**: \[`47b932f`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md)
-  (*Reduce idle CPU by caching terrain picks and skipping stationary ground samples*)
+- **Primary Commit**: `47b932f` (*Reduce idle CPU by caching terrain picks and skipping
+  stationary ground samples*)
 
 #### Root Causes
 
@@ -484,8 +473,8 @@ ______________________________________________________________________
 ### Phase 6: Startup Latency through Theme Overlap and a Lazy Content Hash
 
 - **Date**: 2026-10-18
-- **Primary Commit**: \[`7f865e4`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md)
-  (*Cut cold startup to 3.6 s by overlapping the catalog and caching the skin*)
+- **Primary Commit**: `7f865e4` (*Cut cold startup to 3.6 s by overlapping the catalog
+  and caching the skin*)
 
 #### Implementation Changes
 
@@ -591,16 +580,11 @@ ______________________________________________________________________
 
 - **Date**: 2026-10-26
 - **Primary Commits**:
-  - \[`877fb7a`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Stop bumping the
-    session revision when a click changes nothing*
-  - \[`70ab679`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Give each HUD
-    panel its own refresh gate instead of one rebuild switch*
-  - \[`003cd30`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Make the session
-    invalidation tests table-driven*
-  - \[`1ad1904`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Keep the top
-    bar's widgets and update them in place*
-  - \[`4b6fd9d`\](file:///home/gordon/workspace/civ/docs/OPTIMIZE.md): *Keep the left
-    panel's widgets and update them in place*
+  - `877fb7a`: *Stop bumping the session revision when a click changes nothing*
+  - `70ab679`: *Give each HUD panel its own refresh gate instead of one rebuild switch*
+  - `003cd30`: *Make the session invalidation tests table-driven*
+  - `1ad1904`: *Keep the top bar's widgets and update them in place*
+  - `4b6fd9d`: *Keep the left panel's widgets and update them in place*
 
 #### Implementation Changes
 
@@ -630,26 +614,32 @@ ______________________________________________________________________
    - Dialogs were emptied on every revision change even while closed, destroying scroll
      offsets, widget instances, and canvas item RIDs.
    - Replaced the single monolithic rebuild pass with independent refresh gates per
-     panel:
-     - **Top bar**: `Revision` changed.
+     panel. The gates below describe the version this phase shipped; the follow-up pass
+     that removed the last two residuals gated every simulation-reading panel on
+     `WorldRevision` instead of `Revision`, which moves on a mere selection or message.
+     That pass is recorded in `docs/completed-plans/2026-10-26-hud-invalidation.md`, and
+     the gates it left in place are:
+     - **Top bar**: `WorldRevision` changed. It renders nothing a selection touches.
      - **Left panel**: `Revision` changed (while city screen is closed).
-     - **City screen**: city open state changed, `Revision` changed, or `CityUi.State`
-       changed.
-     - **Research dialog**: research dialog open state changed, or (`Revision` changed
+     - **City screen**: city open state or identity changed, or `WorldRevision` changed;
+       a local input (tab, filter, unavailable toggle) redraws only the choice list from
+       the cached description.
+     - **Research dialog**: research dialog open state changed, or (`WorldRevision`
+       changed and dialog is open).
+     - **Government dialog**: `_governmentRevision` changed, or (`WorldRevision` changed
        and dialog is open).
-     - **Government dialog**: `_governmentRevision` changed, or (`Revision` changed and
-       dialog is open).
-     - **Modal**: `_modalRevision` changed, or (`Revision` changed, modal is open, and
-       city screen is closed).
-     - **Feed**: `Revision` changed.
-   - Dialog gates are evaluated after the top bar because `AddPanelButtons` executes
-     `UpdateConquestModal`, which manages pending conquest states and may toggle the
-     modal.
+     - **Modal**: `_modalRevision` changed, or (the modal renders what moved and the
+       city screen is closed). The espionage modal follows the selection, so it still
+       reads `Revision`; the pedia and load modals read no session state at all.
+     - **Feed**: `WorldRevision` changed.
+   - The conquest modal is settled before the dialog gates are read, because
+     `UpdateConquestModal` manages pending conquest states and may toggle the modal; the
+     top bar then renders the conquest list the same call worked out.
    - Closed dialogs hide rather than clearing their children. Reopening the research
      dialog with an unchanged session reuses existing child controls, preserving scroll
      position and geometry.
-   - `NeedsRefresh` only checks whether the city-open flag changed, keeping the 60 Hz
-     frame path allocation-free.
+   - `NeedsRefresh` only compares stored keys, keeping the 60 Hz frame path
+     allocation-free.
 
 3. **Persistent Top Bar Updated In Place (`src/Civ.Godot/GameUi.cs`)**:
 
@@ -664,9 +654,11 @@ ______________________________________________________________________
    - The ten panel buttons are created once in canonical order; `RefreshTop` toggles
      `Visible`, maintaining flow row child order and layout stability without recreating
      nodes.
-   - Conquest bookkeeping runs once per refresh before dialog gates are evaluated.
-     Availability checks for corporations, espionage, events, and tech tree run once per
-     refresh to drive button visibility.
+   - Conquest bookkeeping runs once per world change before the dialog gates are
+     evaluated, and the same call's conquest list drives the button's visibility and
+     tooltip. Availability checks for corporations, espionage, events, and tech tree run
+     once per world change to drive button visibility, because none of them renders
+     anything a selection changes.
 
 4. **Persistent Left Panel Skeleton Updated In Place (`src/Civ.Godot/GameUi.Left.cs`)**:
 
@@ -742,17 +734,19 @@ ______________________________________________________________________
 
 #### Residuals (Stopping Rule)
 
-The following items were deliberately kept out of scope per the plan's stopping rule:
+The following items were deliberately kept out of scope per the plan's stopping rule.
+Items 2 and 3 were removed by the follow-up pass recorded in
+`docs/completed-plans/2026-10-26-hud-invalidation.md`; the list below is what is still
+open:
 
 1. **Map dynamic layer**: Still rebuilds per `Revision` bump.
-2. **City screen**: Still rebuilds while open on any revision change.
-3. **Session summary**: `Summary()` still recomputes on every revision change.
-4. **Panel identity keys**: String formatting for `OrderKey` and city list identity keys
+2. **Panel identity keys**: String formatting for `OrderKey` and city list identity keys
    allocates on revision-change paths (never on the 60 Hz frame path).
-5. **End turn invalidation**: `ContinueOrders` unconditionally bumps `Revision` and
+3. **End turn invalidation**: `ContinueOrders` unconditionally bumps `Revision` and
    `WorldRevision` on every end turn, even if no units moved.
-6. **Government and modal dialogs**: Still rebuild on every reopen (unlike the research
-   dialog).
+4. **Government and modal dialogs**: The government dialog still rebuilds on every open
+   and on every world change while open; the pedia builds once per open and then updates
+   its tabs, list and article in place.
 
 #### Validation
 
@@ -763,7 +757,9 @@ The following items were deliberately kept out of scope per the plan's stopping 
   12 table-driven cases (silent theory with 5 rows, bumping theory with 4 rows, and 3
   dedicated facts for rejected submit, stack cycling, and end turn). Verified on pre-fix
   baseline (`8c483aa`) that all 6 silent/end-turn cases fail by exactly one extra
-  revision bump.
+  revision bump. The later review pass replaced the two theories with shared-session
+  facts, so the file now holds six facts that assert the same cases without a string
+  switch.
 - Visual regressions verified via `mise run shot:compare` across tour stages; pixel
   differences between base and refactored builds match the magnitude of same-build runs
   and are confined to procedural scrape phases seeded by canvas item RIDs. Text,

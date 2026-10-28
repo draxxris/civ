@@ -143,6 +143,15 @@ internal sealed partial class GameView : Node3D
             GD.Print($"input {e.GetType().Name}: {System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds:F2} ms");
     }
 
+    /// <summary>
+    /// Runs before the GUI, so it can give the keyboard back when a click leaves a text field without the field noticing.
+    /// Nothing else here consumes input: every map action still goes through <see cref="HandleInput"/>.
+    /// </summary>
+    public override void _Input(InputEvent e)
+    {
+        if (e is InputEventMouseButton { Pressed: true }) _ui.ReleaseTextFocus();
+    }
+
     private void HandleInput(InputEvent e)
     {
         switch (e)
@@ -155,6 +164,10 @@ internal sealed partial class GameView : Node3D
 
     private void OnKey(Key key)
     {
+        // A dialog owns the keyboard while it is open: Enter would end the turn behind the player's back, and Tab would
+        // swap the unit whose details the dialog is showing. Esc closes the dialog itself, the save and load keys stay
+        // useful there, and the hotkey that opened a dialog still closes it.
+        if (_ui.DialogsOpen && key is not (Key.Escape or Key.F5 or Key.F9) && !_ui.ClosesOpenDialog(key)) return;
         switch (key)
         {
             case Key.Enter or Key.KpEnter or Key.Space: _session.EndTurn(); break;

@@ -56,6 +56,7 @@ public sealed class CitiesMod : IPreparableMod
         context.RegisterCommand<FoundCityWithSettlerCommand>("found_city");
         context.RegisterCommand<SetCityAssignmentsCommand>("set_city_work");
         context.RegisterCommand<SetCityProductionCommand>("set_city_production");
+        context.RegisterCommand<MoveCityQueueCommand>("move_city_queue");
         context.RegisterCommand<ConscriptCityCommand>("conscript");
         context.RegisterCommand<ResolveCityConquestCommand>("resolve_conquest");
         context.TurnSystems.Register(new CityPhase("puppet_work", TurnPhase.PlayerBegin, PreparePuppet));

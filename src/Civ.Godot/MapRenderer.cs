@@ -49,7 +49,7 @@ internal sealed partial class MapRenderer : Node3D
     private readonly List<(Label3D Label, Vector3 Base)> _labels = new();
     private readonly List<Label3D> _labelPool = new();
     private readonly List<CityNameplate> _plates = new();
-    private readonly List<CityNameplate> _stalePlates = new();
+    private readonly Dictionary<int, CityNameplate> _stalePlates = new();
     private readonly ModelCache _models;
     private readonly ImprovementRenderer _improvements;
     private readonly CityRenderer _cities;
@@ -190,11 +190,13 @@ internal sealed partial class MapRenderer : Node3D
         _wrappedFocusX = null;
         foreach (var (label, _) in _labels) label.Visible = false;
         _labels.Clear();
-        // Keep plates whose content is unchanged: recreating them shows an unoriented, unwrapped plate for a frame (flicker).
-        _stalePlates.AddRange(_plates);
+        // Keep plates whose content is unchanged: recreating them rebuilds their meshes and labels for nothing. They are
+        // filed by city, so looking one up never scans the previous refresh's plates.
+        _stalePlates.Clear();
+        foreach (var plate in _plates) _stalePlates[plate.CityId] = plate;
         _plates.Clear();
         if (!Clean) BuildTokens();
-        foreach (var plate in _stalePlates) plate.QueueFree();
+        foreach (var plate in _stalePlates.Values) plate.QueueFree();
         _stalePlates.Clear();
         BuildOverlay();
         _atlas.Flush();

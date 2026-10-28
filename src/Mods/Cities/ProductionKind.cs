@@ -14,7 +14,7 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     public string Label => label;
     public bool IsContinuous => false;
     public IReadOnlyList<ProductionCategory> Categories { get; } = categories ?? [];
-    public QueueScope QueuedScope(Simulation sim, int city, string id) => scope((T)Definition(sim.Content, id));
+    public QueueScope QueuedScope(Simulation sim, int city, ContentDef definition) => scope((T)definition);
     public IEnumerable<ContentDef> Candidates(ContentDb content) => content.Get<T>().All.Where(d => cost(d) >= 0);
     public ContentDef Definition(ContentDb content, string contentId) => content.Get<T>(contentId);
     public long BaseCost(ContentDef definition) => cost((T)definition);
@@ -42,7 +42,12 @@ internal static class BuildingScope
 {
     /// <summary>A building is unique within its city. One whose tightest limit allows a single copy is also one per
     /// player, so a second city of the same player cannot queue it; different players still race for the same one.
-    /// A limit that allows several copies (corporation buildings, for example) stays per city.</summary>
+    /// A limit that allows several copies (corporation buildings, for example) stays per city.
+    /// <para><see cref="Civ.Content.Schema.ClassLimits.NoLimit"/> is deliberately not consulted here: it exempts a
+    /// building from the wonder counters (<see cref="CityBuildingRules.IsWonder"/>), not from the copy caps that
+    /// <c>ProductionEligibility.Limits</c> enforces, so the queue scope must follow the caps. The palace declares
+    /// <c>Player: 1, ExtraPlayer: 1</c> and therefore stays per city, which is what lets a civilization build its
+    /// replacement palaces in parallel.</para></summary>
     public static QueueScope Of(Civ.Content.Schema.BuildingDef b) =>
         SmallestAllowance(b.Limits) <= 1 ? QueueScope.Player : QueueScope.City;
 

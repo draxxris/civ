@@ -34,10 +34,13 @@ public enum QueueScope
 {
     /// <summary>Every entry is a separate build, as for units and processes.</summary>
     None,
-    /// <summary>The city's queue holds at most one copy; another city may queue its own.</summary>
+    /// <summary>The city's queue holds its copies; another city may queue its own.</summary>
     City,
-    /// <summary>The player's cities share one copy: another of the player's cities blocks it, another player races for it.</summary>
+    /// <summary>The player's cities share the copies: another of the player's cities blocks it, another player races for it.</summary>
     Player,
+    /// <summary>The team's cities share the copies, because the cap they spend is the team's, as for projects. Another team
+    /// still races for the same content.</summary>
+    Team,
 }
 
 /// <summary>A second heading a kind's candidates fall under, such as the wonders among the buildings. The client draws
@@ -53,8 +56,13 @@ public interface IProductionKind : IHasId
     /// the kind's own tab leaves them out, so each candidate sits in one tab; the client's "all" tab still gathers
     /// everything. Empty by default, which keeps a kind to one tab.</summary>
     IReadOnlyList<ProductionCategory> Categories => [];
-    /// <summary>Where a queued copy already covers this content id, so the choice list must stop offering it.</summary>
-    QueueScope QueuedScope(Simulation sim, int city, string id) => QueueScope.None;
+    /// <summary>How far a queued copy of this candidate reaches, so the choice list stops offering it once its queues
+    /// hold as many copies as the scope allows.</summary>
+    QueueScope QueuedScope(Simulation sim, int city, ContentDef definition) => QueueScope.None;
+    /// <summary>How many queued copies the scope holds before the candidate is covered: the city's own queue for
+    /// <see cref="QueueScope.City"/>, the player's queues together for <see cref="QueueScope.Player"/>. Ignored for
+    /// <see cref="QueueScope.None"/>. The default is one copy, which is what a wonder or a unique building may hold.</summary>
+    int QueuedCopies(Simulation sim, int city, ContentDef definition) => 1;
     IEnumerable<ContentDef> Candidates(ContentDb content);
     ContentDef Definition(ContentDb content, string id);
     long BaseCost(ContentDef definition);
@@ -66,6 +74,65 @@ public interface IProductionKind : IHasId
     IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
         ids.Select(id => Validate(sim, city, id)).ToArray();
     CityProductionResult Calculate(Simulation sim, int city, string id);
+}
+
+/// <summary>Why a queued copy stops a candidate from being offered again. The simulation's queue validation and the
+/// choice list both read it, so a click and a command agree on what "already queued" means.</summary>
+public static class QueueBlocker
+{
+    public const string InCity = "Already in queue";
+    public const string InOtherCity = "Already queued in another city";
+    public const string InEveryQueue = "All copies are already queued";
+
+    /// <summary>The covering copy's note, or null when the queues still have room for one more. <paramref name="replace"/>
+    /// says the command clears this city's queue before it adds, so the city's own entries do not count.</summary>
+    public static string? Of(Simulation sim, IProductionKind kind, City city, ContentDef definition, bool replace = false) =>
+        Of(sim, kind, city, definition, Count(sim, kind, city, replace));
+
+    /// <summary>The same answer for a caller that already counted the queues, so a choice list makes one pass over the
+    /// queues per kind instead of one pass per candidate.</summary>
+    public static string? Of(Simulation sim, IProductionKind kind, City city, ContentDef definition, Queues queues)
+    {
+        QueueScope scope = kind.QueuedScope(sim, city.Id, definition);
+        if (scope == QueueScope.None) return null;
+        int room = Math.Max(1, kind.QueuedCopies(sim, city.Id, definition));
+        int mine = queues.Here.GetValueOrDefault(definition.Id);
+        if (mine >= room) return InCity;
+        // A city-scoped copy reaches no further than this queue, so nothing else can fill the room.
+        if (scope == QueueScope.City) return null;
+        int elsewhere = queues.Own.GetValueOrDefault(definition.Id)
+            + (scope == QueueScope.Team ? queues.Team.GetValueOrDefault(definition.Id) : 0);
+        if (mine + elsewhere < room) return null;
+        // The copies may be split: this city holds some and other cities hold the rest, so neither note alone is true.
+        return mine > 0 ? InEveryQueue : InOtherCity;
+    }
+
+    /// <summary>Queued copies of each content id, in this city and in the cities the shared scopes reach: the same
+    /// player's others, and the same team's others. One pass answers both, and a candidate only reads dictionaries.</summary>
+    public readonly record struct Queues(
+        Dictionary<string, int> Here, Dictionary<string, int> Own, Dictionary<string, int> Team);
+
+    public static Queues Count(Simulation sim, IProductionKind kind, City city, bool replace = false)
+    {
+        var here = new Dictionary<string, int>(StringComparer.Ordinal);
+        if (!replace) Add(here, city, kind.Id);
+        var own = new Dictionary<string, int>(StringComparer.Ordinal);
+        var team = new Dictionary<string, int>(StringComparer.Ordinal);
+        int teamId = sim.State.PlayerById(city.Owner).TeamId;
+        foreach (var other in sim.State.Cities)
+        {
+            if (other.Id == city.Id) continue;
+            if (other.Owner == city.Owner) Add(own, other, kind.Id);
+            else if (sim.State.PlayerById(other.Owner).TeamId == teamId) Add(team, other, kind.Id);
+        }
+        return new(here, own, team);
+    }
+
+    private static void Add(Dictionary<string, int> counts, City city, string kind)
+    {
+        foreach (var order in city.ProductionQueue)
+            if (order.Kind == kind) counts[order.ContentId] = counts.GetValueOrDefault(order.ContentId) + 1;
+    }
 }
 
 /// <summary>Optional labels for mod-owned ledger source identities. Null leaves the source to other providers.</summary>

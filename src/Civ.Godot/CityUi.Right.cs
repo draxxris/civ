@@ -32,7 +32,8 @@ internal sealed partial class CityUi
     private readonly VBoxContainer _specialistsBox = Ui.VBox(6);
     private readonly Label _buildingsText = Ui.Text("", 13, Ui.Dim);
     private int _queueCity = -1;
-    private string? _shownTabsKey, _shownHurryKey, _shownConscriptKey, _shownChoicesKey, _shownCitizensKey;
+    private IReadOnlyList<ProductionTab> _shownTabs = [];
+    private string? _shownHurryKey, _shownConscriptKey, _shownChoicesKey, _shownCitizensKey;
     private string? _shownTradeKey, _shownSpecialistsKey;
 
     /// <summary>One production-queue row: created once per position and updated in place, so a reorder keeps its
@@ -164,7 +165,7 @@ internal sealed partial class CityUi
 
     private void RefreshHurry(CityScreen c)
     {
-        var key = new StringBuilder().Append(c.Id).Append(c.IsPuppet ? '1' : '0');
+        var key = new StringBuilder().Append(c.Id).Append('|').Append(c.IsPuppet);
         foreach (var option in c.Hurry)
             key.Append('\n').Append(option.Id).Append('|').Append(option.Name).Append('|').Append(option.Gold)
                 .Append('|').Append(option.Population).Append('|').Append(option.Blocked);
@@ -199,16 +200,17 @@ internal sealed partial class CityUi
     private void RefreshChoices(City city, CityScreen screen)
     {
         var tabs = _session.ProductionTabs;
-        string tabsKey = string.Join("\u001f", tabs.Select(t => t.Id + "|" + t.Label));
-        if (tabsKey != _shownTabsKey)
+        // The tabs are a record list, so the list itself is the identity: no string encoding of kind and category is
+        // needed, and a new tab in the content is one comparison away from being drawn.
+        if (!_shownTabs.SequenceEqual(tabs))
         {
-            _shownTabsKey = tabsKey;
+            _shownTabs = tabs.ToArray();
             foreach (var button in _choiceTabButtons) { _choiceTabs.RemoveChild(button); button.QueueFree(); }
             _choiceTabButtons.Clear();
             for (int index = 0; index < tabs.Count; index++)
             {
-                var id = tabs[index].Id;
-                var button = Ui.Button(tabs[index].Label, () => SelectTab(id), size: 13);
+                var open = tabs[index];
+                var button = Ui.Button(open.Label, () => SelectTab(open), size: 13);
                 button.ToggleMode = true;
                 button.ButtonGroup = _tabGroup;
                 _choiceTabs.AddChild(button);
@@ -218,16 +220,16 @@ internal sealed partial class CityUi
         }
         // The group keeps one tab pressed, so a click on the open tab leaves it open and never clears the list.
         for (int index = 0; index < _choiceTabButtons.Count && index < tabs.Count; index++)
-            if (_choiceTabButtons[index].ButtonPressed != (tabs[index].Id == _tabId))
-                _choiceTabButtons[index].ButtonPressed = tabs[index].Id == _tabId;
+            if (_choiceTabButtons[index].ButtonPressed != (tabs[index] == _tab))
+                _choiceTabButtons[index].ButtonPressed = tabs[index] == _tab;
         if (tabs.Count == 0) { _choicesBox.Visible = false; _noMatches.Visible = false; return; }
-        var tab = tabs.FirstOrDefault(t => t.Id == _tabId) ?? tabs[0];
+        var tab = tabs.FirstOrDefault(t => t == _tab) ?? tabs[0];
         // Trimming once keeps a stray space from hiding every row.
         string filter = _filter.Trim();
         var list = _session.ProductionRows(city, tab, filter, _showBlocked);
         var shown = list.Rows;
-        var key = new StringBuilder().Append(screen.Id).Append('|').Append(tab.Id).Append('\u001f').Append(filter)
-            .Append('|').Append(screen.IsPuppet);
+        var key = new StringBuilder().Append(screen.Id).Append('\u001f').Append(tab.Kind).Append('\u001f').Append(tab.Category)
+            .Append('\u001f').Append(tab.Label).Append('\u001f').Append(filter).Append('\u001e').Append(screen.IsPuppet);
         foreach (var choice in shown)
             key.Append('\n').Append(choice.Id).Append('|').Append(choice.Name).Append('|').Append(choice.Cost).Append('|')
                 .Append(choice.Turns).Append('|').Append(choice.Available).Append('|').Append(choice.IsContinuous).Append('|').Append(choice.Tooltip);
@@ -248,10 +250,10 @@ internal sealed partial class CityUi
     }
 
     /// <summary>Opens a tab. A click on the open tab is not a state change, so nothing rebuilds.</summary>
-    private void SelectTab(string id)
+    private void SelectTab(ProductionTab tab)
     {
-        if (_tabId == id) return;
-        _tabId = id;
+        if (_tab == tab) return;
+        _tab = tab;
         LocalStateChanged();
     }
 
@@ -272,9 +274,12 @@ internal sealed partial class CityUi
     private void RefreshCitizens(CityScreen c)
     {
         Ui.Set(_citizensHeading, $"Citizens ({c.Citizens})");
-        var key = new StringBuilder().Append(c.Id).Append(c.IsPuppet ? '1' : '0').Append(c.Manual).Append(c.AvoidGrowth).Append(c.IdleCitizens);
-        foreach (var tile in c.WorkedTiles) key.Append('|').Append(tile.Name).Append(tile.Food).Append(tile.Production).Append(tile.Commerce);
-        foreach (var s in c.Specialists) key.Append('|').Append(s.Id).Append(s.Name).Append(s.Count).Append(s.Slots).Append(s.Effects);
+        var key = new StringBuilder().Append(c.Id).Append('|').Append(c.IsPuppet).Append('|').Append(c.Manual).Append('|')
+            .Append(c.AvoidGrowth).Append('|').Append(c.IdleCitizens);
+        foreach (var tile in c.WorkedTiles)
+            key.Append('\n').Append(tile.Name).Append('|').Append(tile.Food).Append('|').Append(tile.Production).Append('|').Append(tile.Commerce);
+        foreach (var s in c.Specialists)
+            key.Append('\n').Append(s.Id).Append('|').Append(s.Name).Append('|').Append(s.Count).Append('|').Append(s.Slots).Append('|').Append(s.Effects);
         string identity = key.ToString();
         if (identity == _shownCitizensKey) return;
         _shownCitizensKey = identity;
@@ -306,7 +311,8 @@ internal sealed partial class CityUi
         foreach (var route in c.TradeRoutes)
         {
             var partner = _session.Sim.State.FindCity(route.PartnerCity);
-            key.Append('|').Append(route.PartnerCity).Append(partner?.Name).Append(route.Foreign).Append(route.Overseas).Append(route.ProfitHundredths);
+            key.Append('|').Append(route.PartnerCity).Append('~').Append(partner?.Name).Append('~').Append(route.Foreign)
+                .Append('~').Append(route.Overseas).Append('~').Append(route.ProfitHundredths);
         }
         string identity = key.ToString();
         if (identity == _shownTradeKey) return;
@@ -327,7 +333,7 @@ internal sealed partial class CityUi
     {
         var key = new StringBuilder().Append(c.Id);
         foreach (var (id, count) in c.SettledSpecialists.OrderBy(p => p.Key, StringComparer.Ordinal))
-            key.Append('|').Append(id).Append(count).Append(SpecialistName(id));
+            key.Append('|').Append(id).Append('~').Append(count).Append('~').Append(SpecialistName(id));
         string identity = key.ToString();
         if (identity == _shownSpecialistsKey) return;
         _shownSpecialistsKey = identity;

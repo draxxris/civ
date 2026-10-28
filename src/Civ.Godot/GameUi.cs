@@ -47,6 +47,7 @@ internal sealed partial class GameUi : CanvasLayer
     private bool _researchOpen;
     private bool _shownResearchOpen;
     private int _shownCityState;
+    private Simulation? _shownSim;
     private MapOverlays? _shownOverlays;
     private (Vector2 Mouse, Vector2 Size, Vector2 View)? _hoverTipInputs;
     private readonly List<(CheckBox Button, Func<MapOverlays, bool> Read)> _overlayChecks = new();
@@ -54,6 +55,26 @@ internal sealed partial class GameUi : CanvasLayer
     public bool PointerOverUi => GetViewport().GuiGetHoveredControl() != null;
     public bool TextInputFocused => GetViewport().GuiGetFocusOwner() is LineEdit;
 
+    /// <summary>True when a dialog owns the keyboard. The map's shortcuts must not fire into a dialog the player is
+    /// reading, and the city screen is not a dialog: it leaves the end-turn and camera keys alone.</summary>
+    public bool DialogsOpen => _researchOpen || _governmentOpen || _modalKind != Modal.None;
+
+    /// <summary>True when the key closes a dialog the player already has open. The shortcut gate must let those through,
+    /// or the hotkey that opened a dialog could not close it again.</summary>
+    public bool ClosesOpenDialog(Key key) => key switch { Key.R => _researchOpen, Key.C => _governmentOpen, _ => false };
+
+    /// <summary>
+    /// Gives the keyboard back when a click lands anywhere but the text field that holds it. Buttons take no focus, so
+    /// without this a click on a queue row or a pedia entry left the search field focused, and it then swallowed the
+    /// map's keys (camera panning, Esc) after the player had visibly left the field.
+    /// </summary>
+    public void ReleaseTextFocus()
+    {
+        if (GetViewport().GuiGetFocusOwner() is not LineEdit field) return;
+        var hovered = GetViewport().GuiGetHoveredControl();
+        if (hovered == field || (hovered != null && field.IsAncestorOf(hovered))) return;
+        field.ReleaseFocus();
+    }
     public GameUi(GameSession session, IconCache icons)
     {
         _session = session; _icons = icons;
@@ -88,6 +109,18 @@ internal sealed partial class GameUi : CanvasLayer
     public void Refresh()
     {
         RefreshOverlayChecks();
+        // A loaded game replaces the whole simulation, so anything the front end remembered about the old one (the open
+        // modal's tree, the proposed civics, the pedia's query keys) is stale. Bumping both dialog revisions rebuilds
+        // them against the new game instead of leaving the previous turn's values on screen.
+        if (!ReferenceEquals(_shownSim, _session.Sim))
+        {
+            _shownSim = _session.Sim;
+            _proposedCivics.Clear();
+            ResetPediaKeys();
+            _shownModalKind = Modal.None;
+            _modalRevision++;
+            _governmentRevision++;
+        }
         if (!NeedsRefresh()) return;
         var city = _session.City;
         bool cityOpen = city != null;
@@ -96,6 +129,9 @@ internal sealed partial class GameUi : CanvasLayer
         bool cityOpenChanged = _shownCityOpen != cityOpen;
         bool cityIdentityChanged = _shownCityId != city?.Id;
         bool cityStateChanged = _shownCityState != _city.State;
+        // Closing the screen resets its local choices, so the next city opens unfiltered; do it before the state snapshot
+        // is stored, or the reset alone would ask for one more pass.
+        if (cityOpenChanged && !cityOpen) _city.Close();
         _shownRevision = _session.Revision;
         _shownWorldRevision = _session.WorldRevision;
         _shownCityOpen = cityOpen;
@@ -106,10 +142,15 @@ internal sealed partial class GameUi : CanvasLayer
         _city.Visible = cityOpen;
 
         // One gate per panel: a panel is rebuilt only when the key it depends on moved, or redrawn from the cached
-        // description when only a local input moved. The dialog gates are read
-        // after the top bar, because RefreshTop can open or close the conquest modal as a side effect.
+        // description when only a local input moved. The conquest modal is settled first, because opening or closing it
+        // moves the modal gate that is read below.
         var clock = System.Diagnostics.Stopwatch.StartNew();
-        if (revision) RefreshTop();
+        var conquests = worldRevision ? _session.DescribePendingConquests() : null;
+        if (conquests != null)
+        {
+            UpdateConquestModal(conquests);
+            RefreshTop(conquests);
+        }
         double topMs = clock.Elapsed.TotalMilliseconds;
         double leftMs = 0, cityMs = 0;
         if (cityOpen)
@@ -145,8 +186,13 @@ internal sealed partial class GameUi : CanvasLayer
         if (worldRevision || cityOpenChanged) BuildFeed();
         double feedMs = clock.Elapsed.TotalMilliseconds - dialogStart - dialogsMs;
         _message.Text = _session.Message;
-        int idle = _session.UnitsNeedingOrders;
-        _endTurn.Text = idle > 0 ? $"End turn ({idle} waiting)" : "End turn";
+        // The count is a scan over every unit of the player, and it can only move when the simulation or the selection
+        // does; a keystroke in the city filter or the pedia search is neither.
+        if (revision || worldRevision)
+        {
+            int idle = _session.UnitsNeedingOrders;
+            _endTurn.Text = idle > 0 ? $"End turn ({idle} waiting)" : "End turn";
+        }
         if (MapRenderer.LogTimings)
             GD.Print($"ui update: top {topMs:F2} ms, left {leftMs:F2} ms, city {cityMs:F2} ms, "
                 + $"dialogs {dialogsMs:F2} ms, feed {feedMs:F2} ms (city open: {cityOpen})");
@@ -156,7 +202,8 @@ internal sealed partial class GameUi : CanvasLayer
     private bool NeedsRefresh()
     {
         var city = _session.City;
-        return _shownRevision != _session.Revision || _shownWorldRevision != _session.WorldRevision
+        return !ReferenceEquals(_shownSim, _session.Sim)
+            || _shownRevision != _session.Revision || _shownWorldRevision != _session.WorldRevision
             || _shownResearchOpen != _researchOpen || _shownCityOpen != (city != null) || _shownCityId != city?.Id
             || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
             || _shownModalRevision != _modalRevision;
@@ -271,8 +318,10 @@ internal sealed partial class GameUi : CanvasLayer
         _top.AddChild(_topRow);
     }
 
-    /// <summary>Updates the top bar in place; nothing is freed, and a value that did not change is not written again.</summary>
-    private void RefreshTop()
+    /// <summary>Updates the top bar in place; nothing is freed, and a value that did not change is not written again.
+    /// Everything it renders is a function of the simulation, so it only redraws on <see cref="GameSession.WorldRevision"/>:
+    /// selecting a unit or setting a message rebuilds nothing here.</summary>
+    private void RefreshTop(IReadOnlyList<PendingCityConquest> conquests)
     {
         var s = _session.Summary();
         string date = s.CalendarDate is { } calendar ? $"  ·  {calendar.FormattedDate}" : "";
@@ -292,11 +341,8 @@ internal sealed partial class GameUi : CanvasLayer
         var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
         Ui.Set(_civicsButton, anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics");
 
-        // Not pure rendering: UpdateConquestModal records the pending conquests and can open or close the modal, so it
-        // runs whenever the top bar refreshes, even when the buttons themselves look unchanged. Each availability call
-        // runs exactly once per refresh and its result drives the button's visibility.
-        var conquests = _session.DescribePendingConquests();
-        UpdateConquestModal(conquests);
+        // Each availability call runs once per refresh and its result drives the button's visibility. The conquest list
+        // is settled by the caller, which has to know about it before the modal gate is read.
         _conquestButton.Visible = conquests.Count > 0;
         if (conquests.Count > 0) _conquestButton.TooltipText = $"{conquests.Count} city conquest choice(s) need your decision";
         _corporationsButton.Visible = _session.DescribeCorporations().Available;

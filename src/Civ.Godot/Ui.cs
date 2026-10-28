@@ -154,14 +154,16 @@ internal static class Ui
     /// <summary>
     /// Wraps scrolled <paramref name="content"/> in a margin container that leaves <see cref="ScrollGutter"/> pixels
     /// clear of the scroll bar on its right. A <see cref="ScrollContainer"/> sizes its child to the viewport minus the
-    /// bar, so the margin is the only way to keep the content off the bar's frame.
+    /// bar, so the margin is the only way to keep the content off the bar's frame. The wrapper owns the content's size
+    /// flags from here on: a caller that wants the content to grow asks the returned scroll container, because the
+    /// wrapped control is no longer the scroll's child.
     /// </summary>
     private static MarginContainer Guttered(Control content)
     {
         content.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
         // A ScrollContainer only stretches a child to the viewport when the child expands; without the flag the
         // margin would shrink to the content's minimum width and every wrapped label would collapse to one word.
-        var margin = new MarginContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, SizeFlagsVertical = content.SizeFlagsVertical };
+        var margin = new MarginContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         margin.AddThemeConstantOverride("margin_right", ScrollGutter);
         margin.AddChild(content);
         return margin;

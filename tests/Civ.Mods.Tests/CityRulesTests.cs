@@ -232,6 +232,24 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void A_move_swaps_two_queued_entries_without_revalidating_them()
+    {
+        var sim = ProbeScenario(RefundProbeContent.Value); var city = sim.State.Cities[0];
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:building", ContentId = "probe:obsolete_building" }, out var error), error);
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:building", ContentId = "probe:enhanced_building", Append = true }, out error), error);
+        city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 40 };
+        // The head goes obsolete. A move neither adds an entry nor prices one, so it must still work: re-checking the
+        // entries would refuse every reorder in a city that holds anything the player has since out-teched.
+        sim.State.TeamById(0).Techs.Add("research:pottery");
+        Assert.False(Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", "probe:obsolete_building").Success);
+
+        Assert.True(sim.TryApply(new MoveCityQueueCommand { Player = 0, CityId = city.Id, From = 0, To = 1 }, out error), error);
+
+        Assert.Equal(["probe:enhanced_building", "probe:obsolete_building"], city.ProductionQueue.Select(o => o.ContentId));
+        Assert.Equal(40, city.ProductionQueue[1].Progress);
+    }
+
+    [Fact]
     public void Production_modifiers_normalize_overflow_and_wonders_are_globally_unique()
     {
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Culture = 1;

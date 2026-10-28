@@ -53,22 +53,28 @@ public sealed class ProjectsVictoryRulesTests
         Assert.True(session.Enqueue(city, kind, "projects_victory:manhattan_project", append: true));
         Assert.Equal(["Already in queue"], Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:manhattan_project").Blockers);
 
-        // Space Casing allows five copies per team, so a queued copy leaves the choice on offer.
-        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
-        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
-        Assert.Equal(2, city.ProductionQueue.Count(o => o.ContentId == "projects_victory:ss_casing"));
-        Assert.True(Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:ss_casing").Available);
-
-        // The fifth Space Casing is the last the team may build, so from then on a queued copy uses up the choice.
-        for (int i = 0; i < 4; i++) Pv(sim).CompleteProject(sim, city.Id, "projects_victory:ss_casing");
-        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
-        Assert.Equal(["Already in queue"], Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:ss_casing").Blockers);
+        // Space Casing allows five copies per team, so copies may be queued in parallel; the team may queue every copy
+        // it still has room for, and not one more.
+        for (int i = 0; i < 5; i++) Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.Equal(5, city.ProductionQueue.Count(o => o.ContentId == "projects_victory:ss_casing"));
+        Assert.False(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.Equal(["Already in queue"], Choice("projects_victory:ss_casing").Blockers);
 
         // A single-copy project queued in one city also covers the player's other cities; another player still races.
         var samePlayer = AddCity(sim, 0, 40); var rival = AddCity(sim, 1, 20);
         Assert.Equal(["Already queued in another city"],
             Assert.Single(session.ProductionChoices(samePlayer, kind), c => c.Id == "projects_victory:manhattan_project").Blockers);
         Assert.True(Assert.Single(session.ProductionChoices(rival, kind), c => c.Id == "projects_victory:manhattan_project").Available);
+
+        // Four completed copies leave room for the fifth only, so an empty queue offers it again and a queued copy uses
+        // that last room up.
+        for (int i = 0; i < 4; i++) Pv(sim).CompleteProject(sim, city.Id, "projects_victory:ss_casing");
+        while (city.ProductionQueue.Count > 0) Assert.True(session.RemoveFromQueue(city, 0));
+        Assert.True(Assert.Single(session.ProductionChoices(city, kind), c => c.Id == "projects_victory:ss_casing").Available);
+        Assert.True(session.Enqueue(city, kind, "projects_victory:ss_casing", append: true));
+        Assert.Equal(["Already in queue"], Choice("projects_victory:ss_casing").Blockers);
+
+        ProductionChoice Choice(string id) => Assert.Single(session.ProductionChoices(city, kind), c => c.Id == id);
     }
 
     [Fact]

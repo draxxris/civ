@@ -108,7 +108,14 @@ internal sealed partial class GameUi
     private void BuildModal()
     {
         _modal.Visible = _modalKind != Modal.None && _session.City == null;
-        if (!_modal.Visible) return;
+        if (!_modal.Visible)
+        {
+            // The tree is kept for the next showing, but it no longer stands for the selected kind: the city screen can
+            // hide the modal while another kind is picked, and the pedia's in-place path must not mistake that old tree
+            // for its own.
+            _shownModalKind = Modal.None;
+            return;
+        }
         if (_modalKind == Modal.Pedia && _shownModalKind == Modal.Pedia) { RefreshPedia(); return; }
         _shownModalKind = _modalKind;
         Ui.Clear(_modal);

@@ -105,7 +105,8 @@ internal sealed partial class GameUi
         content.AddChild(ui.Name);
         content.AddChild(ui.Era);
         content.AddChild(ui.Cost);
-        ui.Help.CustomMinimumSize = new Vector2(190, 0);
+        // The card body is 190 px wide plus the scroll's reserved gutter, which the 220 px card leaves room for.
+        ui.Help.CustomMinimumSize = new Vector2(190 - Ui.ScrollGutter, 0);
         content.AddChild(Ui.Scroll(ui.Help, 100));
         content.AddChild(Ui.Button("Research", () => ChooseResearch(tech.Id)));
         if (_session.FreeResearchCredits > 0) content.AddChild(Ui.Button("Use free technology", () => ChooseResearch(tech.Id, true)));

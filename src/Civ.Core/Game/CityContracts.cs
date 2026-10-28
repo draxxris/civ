@@ -92,8 +92,10 @@ public interface ICityCommandService
     void Found(Simulation sim, int player, int settler);
     string? ValidateConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
     void ResolveConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
-    string? ValidateQueue(Simulation sim, int player, int city, string kind, string content, int? remove);
+    string? ValidateQueue(Simulation sim, int player, int city, string kind, string content, bool append, int? remove);
     void Queue(Simulation sim, int city, string kind, string content, bool append, int? remove);
+    string? ValidateQueueMove(Simulation sim, int player, int city, int from, int to);
+    void MoveQueue(Simulation sim, int city, int from, int to);
 }
 /// <summary>Saved feature-ruleset city state. Culture keeps fractional output separately from the legacy whole value.</summary>
 public sealed class CityRuleState
@@ -165,6 +167,14 @@ public sealed class SetCityAssignmentsCommand : GameCommand
         sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, CityId);
     }
 }
+public sealed class MoveCityQueueCommand : GameCommand
+{
+    public int CityId { get; init; }
+    public int From { get; init; }
+    public int To { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueueMove(sim, Player, CityId, From, To);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().MoveQueue(sim, CityId, From, To);
+}
 public sealed class ResolveCityConquestCommand : GameCommand
 {
     public int CityId { get; init; }
@@ -185,6 +195,6 @@ public sealed class SetCityProductionCommand : GameCommand
     public string ContentId { get; init; } = "";
     public bool Append { get; init; }
     public int? RemoveIndex { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueue(sim, Player, CityId, Kind, ContentId, RemoveIndex);
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueue(sim, Player, CityId, Kind, ContentId, Append, RemoveIndex);
     public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().Queue(sim, CityId, Kind, ContentId, Append, RemoveIndex);
 }

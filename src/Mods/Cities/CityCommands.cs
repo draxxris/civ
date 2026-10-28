@@ -69,15 +69,44 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
             if (id is not null && !city.Buildings.Contains(id)) city.Buildings.Add(id);
         }
     }
-    public string? ValidateQueue(Simulation sim, int player, int cityId, string kind, string content, int? remove)
+    public string? ValidateQueue(Simulation sim, int player, int cityId, string kind, string content, bool append, int? remove)
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
         if (CityData.Read(sim, city).IsPuppet) return "Puppet cities manage their own production";
         if (remove is { } index) return index >= 0 && index < city.ProductionQueue.Count ? null : "Invalid queue index";
         var result = production.Validate(sim, cityId, kind, content);
-        return result.Success ? null : string.Join("; ", result.Failures.Select(f => f.Explanation));
+        if (!result.Success) return string.Join("; ", result.Failures.Select(f => f.Explanation));
+        // The queued-copy rule is enforced here as well as in the choice list, so a caller that bypasses the screen
+        // cannot queue more copies than the content allows. Reordering has its own command, so an entry already in the
+        // queue never has to pass this check again, and a replacement drops this city's queue first, so its entries do
+        // not count against the room.
+        if (KindOf(sim, kind) is not { } owner) return null;
+        return QueueBlocker.Of(sim, owner, city, owner.Definition(sim.Content, content), replace: !append);
     }
+    public string? ValidateQueueMove(Simulation sim, int player, int cityId, int from, int to)
+    {
+        var city = sim.State.FindCity(cityId);
+        if (city is null || city.Owner != player) return "Not your city";
+        if (CityData.Read(sim, city).IsPuppet) return "Puppet cities manage their own production";
+        if (from < 0 || from >= city.ProductionQueue.Count || to < 0 || to >= city.ProductionQueue.Count || from == to)
+            return "Invalid queue index";
+        // Nothing else is checked: a swap moves two entries the queue already holds, so it can neither add an entry nor
+        // make one less buildable. Re-checking the entries would refuse every reorder in a city whose queue still holds
+        // an entry that has since gone obsolete, which is exactly the entry a player wants to move out of the way.
+        return null;
+    }
+
+    public void MoveQueue(Simulation sim, int cityId, int from, int to)
+    {
+        // Swapping the entries keeps each one's progress where it is: a move never changes what is being built.
+        var queue = sim.State.CityById(cityId).ProductionQueue;
+        (queue[from], queue[to]) = (queue[to], queue[from]);
+    }
+
+    private static IProductionKind? KindOf(Simulation sim, string kind) =>
+        sim.Content.Services.Get<IProductionKind>().FirstOrDefault(k => k.Id == kind);
+
     public void Queue(Simulation sim, int cityId, string kind, string content, bool append, int? remove)
     {
         var city = sim.State.CityById(cityId);

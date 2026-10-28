@@ -36,8 +36,8 @@ public sealed partial class GameSession
         }
         Sim = loaded;
         _gotos.Clear();
-        _eligibility.Clear();
-        _eligibilityKey = (-1, -1);
+        _choices.Clear();
+        _choicesKey = (-1, -1);
         ResetNotifications();
         SelectedCityId = null;
         SelectedUnitId = null;

@@ -57,8 +57,11 @@ internal static class CityData
         var sources = LocalPowerSources(sim, city);
         return sources.Length > 0 && sources.All(b => b.DirtyPower);
     }
-    internal static IEnumerable<S.BuildingDef> EffectiveBuildings(Simulation sim, City city) =>
-        CityBuildingRules.Effective(sim, city, city.Buildings.Concat(FreeBuildings(sim, city)));
+    /// <summary>Every building the city runs, free grants included. The whole-empire building, grant and power work is
+    /// shared by the scope: an eligibility pass asks this once per candidate and would otherwise repeat it 600 times.</summary>
+    internal static IReadOnlyList<S.BuildingDef> EffectiveBuildings(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
+        CityReadScope.Memo(scope.Effective, city,
+            () => CityBuildingRules.Effective(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))).ToArray()));
     internal static string? ResolveBuilding(Simulation sim, City city, string category)
     {
         string civilization = sim.State.PlayerById(city.Owner).Civilization;
@@ -125,7 +128,8 @@ internal static class CityData
             if (city.Culture >= levels[i].SpeedThresholds[sim.Settings.GameSpeed]) result = i;
         return result;
     }
-    internal static S.CultureLevelDef Level(Simulation sim, City city) => Levels(sim, city.Owner, city)[LevelIndex(sim, city)];
+    internal static S.CultureLevelDef Level(Simulation sim, City city) => CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Level, city,
+        () => Levels(sim, city.Owner, city)[LevelIndex(sim, city)]));
 }
 
 /// <summary>Reusable ordered player/city phase adapter; calculations remain in small owning services.</summary>

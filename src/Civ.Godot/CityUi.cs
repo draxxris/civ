@@ -17,7 +17,7 @@ internal sealed partial class CityUi : Control
     private readonly IconCache _icons;
     private readonly PanelContainer _left = Ui.Panel();
     private readonly PanelContainer _right = Ui.Panel();
-    private string _tabId = ProductionTab.All.Id;
+    private ProductionTab _tab = ProductionTab.All;
     private string _filter = "";
     private bool _showBlocked;
     private int _localState;
@@ -58,6 +58,23 @@ internal sealed partial class CityUi : Control
         InitRightPanel();
         AddChild(_left);
         AddChild(_right);
+    }
+
+    /// <summary>
+    /// Drops the local choices and the cached description when the city screen closes. Without this the next city opened
+    /// ten turns later still started under the previous city's name filter, and the last description (with its ledger and
+    /// tile lists) stayed reachable from the closed panel.
+    /// </summary>
+    public void Close()
+    {
+        _screen = null;
+        _screenCity = -1;
+        _tab = ProductionTab.All;
+        _filter = "";
+        _showBlocked = false;
+        // The widgets persist, so the reset has to reach them too; their handlers write the same values back.
+        if (_filterBox.Text.Length > 0) _filterBox.Text = "";
+        if (_showBlockedCheck.ButtonPressed) _showBlockedCheck.ButtonPressed = false;
     }
 
     /// <summary>Refreshes both panels in place for the selected city.</summary>
@@ -150,23 +167,26 @@ internal sealed partial class CityUi : Control
     /// <summary>Rebuilds the status block only when something it renders moved, then adds it in its original order.</summary>
     private void RefreshStatus(CityScreen c)
     {
-        // The city id leads the key because some of these widgets act on the city they were built for.
+        // The city id leads the key because some of these widgets act on the city they were built for. Every field is
+        // separated, so two different tuples can never format to the same text.
         var key = new StringBuilder().Append(c.Id);
-        key.Append('|').Append(c.OccupationTurns).Append('|').Append(c.Disorder).Append('|').Append(c.IsPuppet).Append('|').Append(c.PendingConquestChoice);
+        key.Append('|').Append(c.OccupationTurns).Append('|').Append(c.Disorder).Append('|').Append(c.IsPuppet)
+            .Append('|').Append(c.PendingConquestChoice);
         PendingCityConquest? conquest = null;
         if (c.PendingConquestChoice)
         {
             conquest = _session.DescribePendingConquests().FirstOrDefault(item => item.CityId == c.Id);
             key.Append('|').Append(conquest?.CanRaze);
         }
-        foreach (var r in c.Religions) key.Append('|').Append(r.Id).Append('~').Append(r.Name).Append(r.Holy).Append(r.State);
-        foreach (var corp in c.Corporations) key.Append('|').Append(corp.Id).Append('~').Append(corp.Name).Append(corp.Headquarters).Append(corp.Active);
+        foreach (var r in c.Religions) key.Append('|').Append(r.Id).Append('~').Append(r.Name).Append('~').Append(r.Holy).Append('~').Append(r.State);
+        foreach (var corp in c.Corporations) key.Append('|').Append(corp.Id).Append('~').Append(corp.Name).Append('~').Append(corp.Headquarters).Append('~').Append(corp.Active);
         if (c.Stability is { } s)
         {
-            key.Append('|').Append(s.Status).Append(s.Index).Append(s.ChangePerTurn).Append(s.CooldownTurns).Append(s.CanSuppress);
+            key.Append('|').Append(s.Status).Append('~').Append(s.Index).Append('~').Append(s.ChangePerTurn).Append('~')
+                .Append(s.CooldownTurns).Append('~').Append(s.CanSuppress);
             foreach (var row in s.Ledger) key.Append('~').Append(row.Text);
         }
-        foreach (var w in c.WonderScripts) key.Append('|').Append(w.Name).Append(w.Active).Append(w.TurnsToSpawn).Append(w.SpawnUnit);
+        foreach (var w in c.WonderScripts) key.Append('|').Append(w.Name).Append('~').Append(w.Active).Append('~').Append(w.TurnsToSpawn).Append('~').Append(w.SpawnUnit);
         string identity = key.ToString();
         if (identity == _shownStatusKey) return;
         _shownStatusKey = identity;

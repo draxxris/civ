@@ -11,6 +11,8 @@ internal sealed class CityReadScope
     [ThreadStatic] private static CityReadScope? t_current;
     private readonly Simulation _sim;
     public readonly Dictionary<City, IReadOnlyList<S.BuildingDef>> Active = new(ReferenceEqualityComparer.Instance);
+    public readonly Dictionary<City, IReadOnlyList<S.BuildingDef>> Effective = new(ReferenceEqualityComparer.Instance);
+    public readonly Dictionary<City, S.CultureLevelDef> Level = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, IReadOnlyList<S.BuildingDef>> ActiveWithoutPower = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, S.BuildingDef[]> LocalPowerSources = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, string[]> FreeBuildings = new(ReferenceEqualityComparer.Instance);

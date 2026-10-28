@@ -33,106 +33,88 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
         return s.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
     }
 
-    /// <summary>Each row repeats the action it has just performed, so the revision must not move on the repeat.</summary>
-    [Theory]
-    [InlineData("set the same message")]
-    [InlineData("clear an empty selection")]
-    [InlineData("select the current unit")]
-    [InlineData("select the current city")]
-    [InlineData("click the same single-unit tile twice")]
-    public void An_action_that_changes_nothing_leaves_the_revision_alone(string action)
+    /// <summary>
+    /// The silent half of the counter: an action that writes the value the session already holds must leave the
+    /// revision alone. Each step repeats what the step before it settled, so one shared session proves the whole set
+    /// instead of building a simulation per case.
+    /// </summary>
+    [Fact]
+    public void Actions_that_repeat_state_the_session_already_holds_leave_the_revision_alone()
     {
-        var s = action is "set the same message" or "click the same single-unit tile twice"
-            ? NewSession("military:warrior")
-            : StackedSession();
-        int revision;
-        switch (action)
-        {
-            case "set the same message":
-                s.SetMessage("Hold the line");
-                revision = s.Revision;
-                s.SetMessage("Hold the line");
-                Assert.Equal("Hold the line", s.Message);
-                break;
-            case "clear an empty selection":
-                s.ClearSelection();
-                revision = s.Revision;
-                s.ClearSelection();
-                Assert.Null(s.Unit);
-                Assert.Null(s.City);
-                break;
-            case "select the current unit":
-                var unit = s.Unit!;
-                s.SelectUnit(unit.Id);
-                revision = s.Revision;
-                s.SelectUnit(unit.Id);
-                Assert.Equal(unit.Id, s.SelectedUnitId);
-                break;
-            case "select the current city":
-                var city = Found(s);
-                s.SelectCity(city.Id);
-                revision = s.Revision;
-                s.SelectCity(city.Id);
-                Assert.Equal(city.Id, s.SelectedCityId);
-                break;
-            case "click the same single-unit tile twice":
-                var clicked = s.Unit!;
-                s.SelectAt(clicked.Position);
-                revision = s.Revision;
-                s.SelectAt(clicked.Position);
-                Assert.Equal(clicked.Id, s.SelectedUnitId);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, "unknown case");
-        }
+        var s = StackedSession();
+        var unit = s.Unit!;
 
-        Assert.Equal(revision, s.Revision);
+        s.SetMessage("Hold the line");
+        int settled = s.Revision;
+        s.SetMessage("Hold the line");
+        Assert.Equal("Hold the line", s.Message);
+        Assert.Equal(settled, s.Revision);
+
+        s.SelectUnit(unit.Id);
+        settled = s.Revision;
+        s.SelectUnit(unit.Id);
+        Assert.Equal(unit.Id, s.SelectedUnitId);
+        Assert.Equal(settled, s.Revision);
+
+        var city = Found(s);
+        s.SelectCity(city.Id);
+        settled = s.Revision;
+        s.SelectCity(city.Id);
+        Assert.Equal(city.Id, s.SelectedCityId);
+        Assert.Equal(settled, s.Revision);
+
+        s.ClearSelection();
+        settled = s.Revision;
+        s.ClearSelection();
+        Assert.Null(s.Unit);
+        Assert.Null(s.City);
+        Assert.Equal(settled, s.Revision);
     }
 
-    /// <summary>Each row changes the selection or the message once, which is exactly one revision.</summary>
-    [Theory]
-    [InlineData("select a different unit")]
-    [InlineData("select a different city")]
-    [InlineData("clear an active selection")]
-    [InlineData("set a new message")]
-    public void An_action_that_changes_something_bumps_once(string action)
+    /// <summary>A click on the only unit of a tile selects what is already selected, so it is silent as well.</summary>
+    [Fact]
+    public void Clicking_the_same_single_unit_tile_twice_leaves_the_revision_alone()
     {
-        var s = action == "set a new message" ? NewSession("military:warrior") : StackedSession();
-        int revision;
-        switch (action)
-        {
-            case "select a different unit":
-                var current = s.SelectedUnitId!.Value;
-                var other = s.Sim.State.Units.First(u => u.Id != current);
-                revision = s.Revision;
-                s.SelectUnit(other.Id);
-                Assert.Equal(other.Id, s.SelectedUnitId);
-                break;
-            case "select a different city":
-                var found = Found(s);
-                var otherCity = new City { Id = s.Sim.State.NextCityId++, Owner = GameSession.Human, Position = s.Sim.State.Grid.HexOf(new TileId(41)) };
-                s.Sim.State.AddCity(otherCity);
-                s.SelectCity(found.Id);
-                revision = s.Revision;
-                s.SelectCity(otherCity.Id);
-                Assert.Equal(otherCity.Id, s.SelectedCityId);
-                break;
-            case "clear an active selection":
-                s.SelectUnit(s.Unit!.Id);
-                revision = s.Revision;
-                s.ClearSelection();
-                Assert.Null(s.Unit);
-                break;
-            case "set a new message":
-                revision = s.Revision;
-                s.SetMessage("No path there");
-                Assert.Equal("No path there", s.Message);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, "unknown case");
-        }
+        var s = NewSession("military:warrior");
+        var clicked = s.Unit!;
+        s.SelectAt(clicked.Position);
+        int settled = s.Revision;
+        s.SelectAt(clicked.Position);
+        Assert.Equal(clicked.Id, s.SelectedUnitId);
+        Assert.Equal(settled, s.Revision);
+    }
 
-        Assert.Equal(revision + 1, s.Revision);
+    /// <summary>The other half: an action that really changes the session bumps exactly once, in one shared session.</summary>
+    [Fact]
+    public void Actions_that_change_the_selection_or_the_message_bump_exactly_once()
+    {
+        var s = StackedSession();
+        int settled = s.Revision;
+        s.SetMessage("No path there");
+        Assert.Equal("No path there", s.Message);
+        Assert.Equal(settled + 1, s.Revision);
+
+        var current = s.SelectedUnitId!.Value;
+        var other = s.Sim.State.Units.First(u => u.Id != current);
+        settled = s.Revision;
+        s.SelectUnit(other.Id);
+        Assert.Equal(other.Id, s.SelectedUnitId);
+        Assert.Equal(settled + 1, s.Revision);
+
+        var found = Found(s);
+        var otherCity = new City { Id = s.Sim.State.NextCityId++, Owner = GameSession.Human, Position = s.Sim.State.Grid.HexOf(new TileId(41)) };
+        s.Sim.State.AddCity(otherCity);
+        s.SelectCity(found.Id);
+        settled = s.Revision;
+        s.SelectCity(otherCity.Id);
+        Assert.Equal(otherCity.Id, s.SelectedCityId);
+        Assert.Equal(settled + 1, s.Revision);
+
+        s.SelectUnit(s.Sim.State.Units.First(u => u.Owner == GameSession.Human).Id);
+        settled = s.Revision;
+        s.ClearSelection();
+        Assert.Null(s.Unit);
+        Assert.Equal(settled + 1, s.Revision);
     }
 
     // --- Submit is the exception, and a click that cycles or a turn that advances always bumps ---

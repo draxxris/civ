@@ -67,17 +67,24 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     }
 
     /// <summary>Copies of the project the team may still build, capped by every limit <see cref="ValidateProject"/> enforces.
-    /// <see cref="int.MaxValue"/> when nothing caps it.</summary>
-    internal int RemainingCopies(Simulation sim, int cityId, string id)
+    /// <see cref="int.MaxValue"/> when nothing caps it. <c>Shared</c> is true when the tightest cap binds the whole team
+    /// rather than only this player, because a copy a teammate queues spends the same room.</summary>
+    internal (int Copies, bool Shared) ProjectRoom(Simulation sim, int cityId, string id)
     {
         var def = sim.Content.Get<ProjectDef>(id);
         int team = sim.State.PlayerById(sim.State.CityById(cityId).Owner).TeamId;
-        int remaining = int.MaxValue;
+        int remaining = int.MaxValue, teamRemaining = int.MaxValue;
         if (def.MaxGlobalInstances >= 0) remaining = Math.Min(remaining, def.MaxGlobalInstances - WorldCount(sim, id));
-        if (def.MaxTeamInstances >= 0) remaining = Math.Min(remaining, def.MaxTeamInstances - TeamCount(sim, team, id));
-        foreach (var limit in def.VictoryThresholds.Values) remaining = Math.Min(remaining, limit - TeamCount(sim, team, id));
-        return remaining;
+        if (def.MaxTeamInstances >= 0) teamRemaining = Math.Min(teamRemaining, def.MaxTeamInstances - TeamCount(sim, team, id));
+        foreach (var limit in def.VictoryThresholds.Values) teamRemaining = Math.Min(teamRemaining, limit - TeamCount(sim, team, id));
+        remaining = Math.Min(remaining, teamRemaining);
+        // A world cap is spent by whoever finishes first, so another player's queue never spends this team's room; a team
+        // cap is spent by every queue on the team, so a teammate's queued copy does.
+        return (remaining, teamRemaining <= remaining);
     }
+
+    /// <summary>Copies of the project the team may still build.</summary>
+    internal int RemainingCopies(Simulation sim, int cityId, string id) => ProjectRoom(sim, cityId, id).Copies;
 
     public void CompleteProject(Simulation sim, int cityId, string project)
     {

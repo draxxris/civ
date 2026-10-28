@@ -27,12 +27,11 @@ public sealed record ProductionChoice(string Kind, string Id, string Name, long 
 }
 
 /// <summary>One tab of the city screen's production list. A null <see cref="Kind"/> is the tab that gathers every kind;
-/// a null <see cref="Category"/> is a kind's own tab, and otherwise the tab holds one of the kind's categories.</summary>
+/// a null <see cref="Category"/> is a kind's own tab, and otherwise the tab holds one of the kind's categories. The record
+/// itself is the tab's identity for the renderer, so nothing encodes it into a string.</summary>
 public sealed record ProductionTab(string? Kind, string? Category, string Label)
 {
     public static readonly ProductionTab All = new(null, null, "All");
-    /// <summary>Identity for the renderer's selection: stable while the content stands, and unique per tab.</summary>
-    public string Id => Kind is null ? "" : Kind + "/" + Category;
 }
 
 /// <summary>The rows a tab draws and how many candidates the name filter matched. <see cref="Matches"/> counts the hidden
@@ -245,50 +244,39 @@ public sealed partial class GameSession
 
 
 
-    private readonly Dictionary<string, IReadOnlyList<(Content.ContentDef Def, IReadOnlyList<string> Blockers)>> _eligibility = new();
-    private (int Revision, int City) _eligibilityKey = (-1, -1);
-    private const string AlreadyQueued = "Already in queue";
-    private const string AlreadyQueuedElsewhere = "Already queued in another city";
+    /// <summary>One candidate's requirement check, its price, and the content definition both were worked out from. A
+    /// requirement failure leaves the price unset, because a blocked candidate cannot be queued and its cost is not
+    /// drawn anywhere but the tooltip.</summary>
+    private readonly record struct Candidate(Content.ContentDef Def, ProductionChoice Choice);
+
+    /// <summary>Requirement checks and prices, keyed by the kind they belong to. Both are functions of the simulation
+    /// alone, so the cache lives exactly as long as <see cref="WorldRevision"/>: a queue edit does not touch it, and
+    /// the queued-copy notes are overlaid on every call because a queue can change without a price changing.</summary>
+    private readonly Dictionary<string, IReadOnlyList<Candidate>> _choices = new();
+    private (int Revision, int City) _choicesKey = (-1, -1);
 
     /// <summary>Every building, unit or process (by <paramref name="kind"/>) the city could ever queue, with the reasons it cannot be queued now;
-    /// structural impossibilities are left out. Requirement checks are reused until the simulation changes; costs and turns are always current.
-    /// A candidate a queued copy already covers reports <see cref="AlreadyQueued"/>, or <see cref="AlreadyQueuedElsewhere"/> when
-    /// the copy waits in another city of the same player.</summary>
+    /// structural impossibilities are left out. A candidate a queued copy already covers reports
+    /// <see cref="QueueBlocker.InCity"/>, or <see cref="QueueBlocker.InOtherCity"/> when the copy waits in another city of
+    /// the same player.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city, string kind)
     {
         var key = (WorldRevision, city.Id);
-        if (key != _eligibilityKey) { _eligibility.Clear(); _eligibilityKey = key; }
-        if (!_eligibility.TryGetValue(kind, out var eligible)) _eligibility[kind] = eligible = CheckEligibility(city, kind);
+        if (key != _choicesKey) { _choices.Clear(); _choicesKey = key; }
+        if (!_choices.TryGetValue(kind, out var candidates)) _choices[kind] = candidates = CheckChoices(city, kind);
         var production = KindOf(kind);
-        // The queues are checked on every call rather than cached with the requirements: they are cheap, and the caller
-        // sees the list change the moment an entry is removed or finished anywhere it reaches.
-        var here = QueuedContent(city, kind);
-        var elsewhere = Sim.State.Cities.Where(c => c.Id != city.Id && c.Owner == city.Owner)
-            .SelectMany(c => QueuedContent(c, kind)).ToHashSet(StringComparer.Ordinal);
-        return eligible.Select(e =>
+        // One pass over the queues per kind; the notes themselves are then a dictionary read per candidate.
+        var queues = QueueBlocker.Count(Sim, production, city);
+        var result = new List<ProductionChoice>(candidates.Count);
+        foreach (var candidate in candidates)
         {
             // Requirements take priority: they explain why it is still unbuildable even with a copy queued.
-            var blockers = e.Blockers;
-            if (blockers.Count == 0 && QueueBlocker(production, city, e.Def.Id, here, elsewhere) is { } queued) blockers = [queued];
-            return blockers.Count > 0
-                ? new ProductionChoice(kind, e.Def.Id, e.Def.Name, production.BaseCost(e.Def), null, blockers, production.IsContinuous)
-                : Priced(city, production, e.Def);
-        }).ToList();
+            if (candidate.Choice.Available && QueueBlocker.Of(Sim, production, city, candidate.Def, queues) is { } queued)
+                result.Add(candidate.Choice with { Blockers = [queued] });
+            else result.Add(candidate.Choice);
+        }
+        return result;
     }
-
-    private static HashSet<string> QueuedContent(City city, string kind) =>
-        city.ProductionQueue.Where(o => o.Kind == kind).Select(o => o.ContentId).ToHashSet(StringComparer.Ordinal);
-
-    /// <summary>The note that a queued copy covers this candidate, or null when the kind can be built repeatedly or no
-    /// copy reaches this far: another player's queue never blocks it, because the players race for it.</summary>
-    private string? QueueBlocker(IProductionKind production, City city, string id, IReadOnlySet<string> here, IReadOnlySet<string> elsewhere) =>
-        production.QueuedScope(Sim, city.Id, id) switch
-        {
-            QueueScope.None => null,
-            _ when here.Contains(id) => AlreadyQueued,
-            QueueScope.Player when elsewhere.Contains(id) => AlreadyQueuedElsewhere,
-            _ => null,
-        };
 
     /// <summary>All registered kinds together.</summary>
     public IReadOnlyList<ProductionChoice> ProductionChoices(City city) =>
@@ -321,11 +309,24 @@ public sealed partial class GameSession
         var kind = KindOf(kindId);
         var categories = kind.Categories;
         if (categories.Count == 0) return choices;
+        // The definitions are already in hand and sit in the same order as the choices, so the tab filter never resolves
+        // a content id a second time.
+        if (!_choices.TryGetValue(kindId, out var candidates) || candidates.Count != choices.Count) return choices;
         if (tab.Category is { } categoryId)
-            return categories.FirstOrDefault(c => c.Id == categoryId) is { } category
-                ? choices.Where(c => category.Contains(kind.Definition(Sim.Content, c.Id))).ToList()
-                : [];
-        return choices.Where(c => !InAnyCategory(kind, categories, c.Id)).ToList();
+        {
+            if (categories.FirstOrDefault(c => c.Id == categoryId) is not { } category) return [];
+            return Picked(choices, candidates, category.Contains);
+        }
+        return Picked(choices, candidates, def => !categories.Any(category => category.Contains(def)));
+    }
+
+    /// <summary>The choices whose definition passes <paramref name="keep"/>, in list order.</summary>
+    private static List<ProductionChoice> Picked(IReadOnlyList<ProductionChoice> choices, IReadOnlyList<Candidate> candidates,
+        Func<Content.ContentDef, bool> keep)
+    {
+        var picked = new List<ProductionChoice>(choices.Count);
+        for (int i = 0; i < choices.Count; i++) if (keep(candidates[i].Def)) picked.Add(choices[i]);
+        return picked;
     }
 
     /// <summary>How many unavailable choices a tab shows behind the available ones.</summary>
@@ -343,21 +344,22 @@ public sealed partial class GameSession
         return new(rows, matching.Count);
     }
 
-    private bool InAnyCategory(IProductionKind kind, IReadOnlyList<ProductionCategory> categories, string id) =>
-        categories.Any(category => category.Contains(kind.Definition(Sim.Content, id)));
-
-    private IReadOnlyList<(Content.ContentDef, IReadOnlyList<string>)> CheckEligibility(City city, string kind)
+    private IReadOnlyList<Candidate> CheckChoices(City city, string kind)
     {
         var production = KindOf(kind);
         var defs = production.Candidates(Sim.Content).OrderBy(d => d.Name, StringComparer.Ordinal).ToArray();
         // One batch rather than one call per candidate: the mods share the whole-empire building, power and resource
         // work that every candidate repeats (605 candidates cost 246 ms per id, 97 ms as a batch on a small world).
         var eligibility = production.ValidateBatch(Sim, city.Id, defs.Select(d => d.Id).ToArray());
-        var result = new List<(Content.ContentDef, IReadOnlyList<string>)>(defs.Length);
+        var result = new List<Candidate>(defs.Length);
         for (int i = 0; i < defs.Length; i++)
         {
+            if (!production.IsVisible(eligibility[i])) continue;
             var blockers = eligibility[i].Failures.Select(f => f.Explanation).Distinct().ToList();
-            if (production.IsVisible(eligibility[i])) result.Add((defs[i], blockers));
+            var def = defs[i];
+            result.Add(new(def, blockers.Count > 0
+                ? new ProductionChoice(kind, def.Id, def.Name, production.BaseCost(def), null, blockers, production.IsContinuous)
+                : Priced(city, production, def)));
         }
         return result;
     }

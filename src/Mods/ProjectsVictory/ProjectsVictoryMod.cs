@@ -50,11 +50,19 @@ internal sealed class ProjectKind(ProjectVictoryService service) : IProductionKi
     public string Id => KindId;
     public string Label => "Projects";
     public bool IsContinuous => false;
-    /// <summary>A project the team can build only once more is covered by the queued copy, in any of the player's cities;
-    /// one with copies to spare stays repeatable. Queued copies are not counted towards that room: a team may queue the
-    /// last few copies at once.</summary>
-    public QueueScope QueuedScope(Simulation sim, int city, string id) =>
-        service.RemainingCopies(sim, city, id) <= 1 ? QueueScope.Player : QueueScope.None;
+    /// <summary>A project the team can build only a few more times is covered by the copies already queued: by this
+    /// player's cities when a world cap is the tightest limit, or by the whole team's when the team's own cap is. One
+    /// with copies to spare keeps the room it has left, so the last few copies can be queued at once without letting the
+    /// queues hold more than the team may ever finish.</summary>
+    public QueueScope QueuedScope(Simulation sim, int city, ContentDef definition)
+    {
+        var (copies, shared) = service.ProjectRoom(sim, city, definition.Id);
+        return copies == int.MaxValue ? QueueScope.None : shared ? QueueScope.Team : QueueScope.Player;
+    }
+    /// <summary>The copies the team may still build, capped by every limit <see cref="Validate"/> enforces: a team may
+    /// queue its last few copies in parallel, but never more than it can complete.</summary>
+    public int QueuedCopies(Simulation sim, int city, ContentDef definition) =>
+        service.ProjectRoom(sim, city, definition.Id).Copies;
     public IEnumerable<ContentDef> Candidates(ContentDb content) => content.Get<ProjectDef>().All.Where(p => p.Cost >= 0);
     public ContentDef Definition(ContentDb content, string id) => content.Get<ProjectDef>(id);
     public long BaseCost(ContentDef definition) => ((ProjectDef)definition).Cost;
