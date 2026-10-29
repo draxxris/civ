@@ -39,9 +39,11 @@ while a capture pose can reach 1, so set `--distance` for close work.
 
 ## Many captures, one launch
 
-`--shots tools/shots/poses.json` takes a list of poses. A missing camera field keeps the
-previous shot's value. Each shot has a `name` and optional `focus`, `focusTile`
-`[col,row]`, `pitch`, `yaw`, `distance`, `terrainDebug` and `wireframe`.
+`--shots tools/shots/poses/poses.json` takes a list of poses. A missing camera field
+keeps the previous shot's value. Each shot has a `name` and optional `focus`,
+`focusTile` `[col,row]`, `pitch`, `yaw`, `distance`, `terrainDebug` and `wireframe`. The
+camera lists live in `tools/shots/poses/`; the scenes they frame live in
+`tools/shots/scenarios/`.
 
 ## Tuning without rebuilding
 
@@ -101,11 +103,11 @@ python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /tmp/maps
 ```
 
 Each file becomes a PNG named after the scenario. Files that are not scenarios, such as
-the `*-poses.json` camera lists, are skipped so a wildcard run still exits clean. The
-map is the content's Tiny size, 52 by 32 tiles, unless `--world` or `--size` says
-otherwise. The picture is trimmed to the tiles the scenario changes; `--full-map` keeps
-the whole grid. Hexes are labelled with their column,row unless `--no-coords` is given,
-and `--hex` sets the hex radius in pixels.
+the camera lists in `tools/shots/poses/`, are skipped so a wildcard run still exits
+clean. The map is the content's Tiny size, 52 by 32 tiles, unless `--world` or `--size`
+says otherwise. The picture is trimmed to the tiles the scenario changes; `--full-map`
+keeps the whole grid. Hexes are labelled with their column,row unless `--no-coords` is
+given, and `--hex` sets the hex radius in pixels.
 
 Grassland is green, plains yellow, desert pale yellow, tundra light grey, snow light
 blue, marsh blue-green, every water tile the same blue and peaks very dark grey. `T`
@@ -146,7 +148,7 @@ owners.
 `tools/shots/scenarios/cities.json` shows four eras (ancient, renaissance, industrial
 and modern) at sizes 3, 8, 13 and 20. The left block has walls and the right block has
 none. Capture it with
-`--shots tools/shots/cities-poses.json --scenario tools/shots/scenarios/cities.json --world tiny --clean --stats`.
+`--shots tools/shots/poses/cities-poses.json --scenario tools/shots/scenarios/cities.json --world tiny --clean --stats`.
 The layout code is `src/Ariel.Client.Core/Terrain/CityLayout.cs`. `--stats` reports
 `city_buildings` and `city_ground` triangles.
 
@@ -162,12 +164,12 @@ and over a lone hill next to a highway. `roads-bridges.json` has every land rout
 crossing one river.
 
 ```sh
-mise run shot -- --shots tools/shots/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/roads-hills-poses.json --scenario tools/shots/scenarios/roads-hills.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/roads-bridges-poses.json --scenario tools/shots/scenarios/roads-bridges.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-hills-poses.json --scenario tools/shots/scenarios/roads-hills.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-bridges-poses.json --scenario tools/shots/scenarios/roads-bridges.json --world tiny --clean --out-dir /tmp/roads
 ```
 
 `--stats` reports `roads` (draped ribbons) and `route_parts` (decks, supports and masts)
@@ -178,11 +180,11 @@ heights from `RouteProfile.cs` in the same folder.
 
 `tools/shots/scenarios/improvements-all.json` places every improvement that has a 3D
 model (land models in rows, water models on an ocean strip). Capture it with
-`--shots tools/shots/improvements-all-poses.json --scenario tools/shots/scenarios/improvements-all.json --world tiny --clean`.
+`--shots tools/shots/poses/improvements-all-poses.json --scenario tools/shots/scenarios/improvements-all.json --world tiny --clean`.
 It takes about two minutes. The models come from
 `python3 tools/art/improvement_models.py`.
 
 `tools/shots/scenarios/watermills.json` puts watermills beside rivers of every shape: a
 long meandering river, a lone edge, a river through a tile, a bend and a river on hills.
 The wheel must stand in the water, parallel to the river. Capture it with
-`--shots tools/shots/watermills-poses.json --scenario tools/shots/scenarios/watermills.json --world tiny --clean`.
+`--shots tools/shots/poses/watermills-poses.json --scenario tools/shots/scenarios/watermills.json --world tiny --clean`.

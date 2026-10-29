@@ -1,5 +1,5 @@
 {
-  "// note": "Bridges: a river runs north to south and every land route type crosses it, in pairs: cart path and road (wood), paved road and highway (stone), railroad and electric railroad (steel), maglev and jumplane (no bridge). Capture with tools/shots/roads-bridges-poses.json.",
+  "// note": "Bridges: a river runs north to south and every land route type crosses it, in pairs: cart path and road (wood), paved road and highway (stone), railroad and electric railroad (steel), maglev and jumplane (no bridge). Capture with tools/shots/poses/roads-bridges-poses.json.",
   "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
   "tiles": [
     {"at": [8, 0], "river": 1},

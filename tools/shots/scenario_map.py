@@ -188,7 +188,7 @@ def set_edge(grid: Grid, tiles: list[Tile], tile: int, direction: int, present: 
 def parse_scenario(path: Path, width: int, height: int, water: dict[str, bool]) -> Scenario | None:
     doc = json.loads(path.read_text())
     if isinstance(doc, list):
-        return None  # a shots pose list (tools/shots/scenarios/*-poses.json), not a scenario
+        return None  # a shots pose list (tools/shots/poses/*.json), not a scenario
     if not isinstance(doc, dict):
         raise ValueError("not a scenario: a scenario is a JSON object with fill and tiles")
     grid, warnings = Grid(width, height), []

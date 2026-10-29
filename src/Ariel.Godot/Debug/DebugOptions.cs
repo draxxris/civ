@@ -9,7 +9,7 @@ namespace Ariel.Client;
 /// --screenshot [path|name]   save one capture (a bare name goes to --out-dir)
 /// --screenshots              the built-in stage tour into docs/screenshots (interface stages under gui/, or --out-dir)
 /// --inspect                  start straight into the game and stay open for the camera, with every other switch applied
-/// --shots poses.json         several captures from one launch: [{name, focus, focusTile, pitch, yaw, distance, terrainDebug, wireframe}]
+/// --shots tools/shots/poses/poses.json   several captures from one launch: [{name, focus, focusTile, pitch, yaw, distance, terrainDebug, wireframe}]
 /// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images;
 ///                            interface stages go to its gui subfolder)
 /// --stage name               setup|map|city|civics|research|path|world|terrain|rivers|peak|wrap

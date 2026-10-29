@@ -1,5 +1,5 @@
 {
-  "// note": "Route type transitions: three rows that change type every three tiles, a winding railroad, two junctions of mixed types, and a railroad and a maglev over hills. Capture with tools/shots/roads-transitions-poses.json.",
+  "// note": "Route type transitions: three rows that change type every three tiles, a winding railroad, two junctions of mixed types, and a railroad and a maglev over hills. Capture with tools/shots/poses/roads-transitions-poses.json.",
   "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
   "tiles": [
     {"rect": [3, 13, 10, 17], "kind": "Hills", "terrain": "world:plains"}

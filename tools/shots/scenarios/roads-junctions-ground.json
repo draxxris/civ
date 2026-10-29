@@ -1,4 +1,4 @@
-{"// note": "Junctions of 3 (Y), 3 (T), 4 and 6 arms for paved road, highway and railroad, one row each. Capture with tools/shots/roads-junctions-ground-poses.json.", "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null}, "focus": [10, 9],
+{"// note": "Junctions of 3 (Y), 3 (T), 4 and 6 arms for paved road, highway and railroad, one row each. Capture with tools/shots/poses/roads-junctions-ground-poses.json.", "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null}, "focus": [10, 9],
  "roads": [
   {"route": "paved", "path": [[3, 3], [4, 3], [5, 3]]},
   {"route": "paved", "path": [[3, 3], [3, 2], [2, 1]]},

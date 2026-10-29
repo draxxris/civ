@@ -1,5 +1,5 @@
 {
-  "// note": "Every land route type on flat grass, one straight row each from north to south: cart path, road, paved road, highway, railroad, electric railroad, maglev, jumplane. Capture with tools/shots/roads-poses.json.",
+  "// note": "Every land route type on flat grass, one straight row each from north to south: cart path, road, paved road, highway, railroad, electric railroad, maglev, jumplane. Capture with tools/shots/poses/roads-poses.json.",
   "fill": {"terrain": "world:grass", "kind": "Flat", "owner": null},
   "roads": [
     {"route": "track", "path": [[2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2]]},
