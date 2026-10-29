@@ -1,5 +1,9 @@
 # Agent Guidelines
 
+## Temporary Files
+
+Write temporary files to `/tmp/ariel`.
+
 ## Testing
 
 Run tests using `mise`:
