@@ -1,0 +1,23 @@
+{
+  "fill": { "terrain": "world:grass", "kind": "Flat", "owner": null },
+  "tiles": [
+    { "at": [13, 10], "terrain": "world:plains", "cliff": 28 },
+    { "at": [13, 11], "terrain": "world:plains", "cliff": 24 },
+    { "at": [14, 12], "terrain": "world:plains", "cliff": 56 },
+    { "at": [13, 9], "terrain": "world:plains", "cliff": 12 },
+    { "at": [15, 12], "terrain": "world:plains", "cliff": 48 },
+    { "at": [14, 8], "terrain": "world:plains", "cliff": 14 },
+    { "at": [16, 12], "terrain": "world:plains", "cliff": 49 },
+    { "at": [15, 8], "terrain": "world:plains", "cliff": 6 },
+    { "at": [16, 11], "terrain": "world:plains", "cliff": 33 },
+    { "at": [16, 8], "terrain": "world:plains", "cliff": 7 },
+    { "at": [16, 9], "terrain": "world:plains", "cliff": 3 },
+    { "at": [17, 10], "terrain": "world:plains", "cliff": 35 },
+    { "at": [15, 10], "river": 1 },
+    { "at": [16, 10], "river": 9 },
+    { "at": [17, 10], "river": 9 },
+    { "at": [18, 10], "river": 8 }
+  ],
+  "clearUnits": true,
+  "focus": [18, 10]
+}

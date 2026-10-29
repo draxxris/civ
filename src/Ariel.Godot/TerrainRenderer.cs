@@ -333,7 +333,7 @@ internal sealed partial class TerrainRenderer : Node3D
     }
 
 
-    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream flow in UV2, fade and white water in COLOR.</summary>
+    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream or downhill flow in UV2, fade, white water and fall share in COLOR.</summary>
     private static SurfaceData? PrepareRiver(RiverMeshData? data)
     {
         if (data == null) return null;
@@ -349,7 +349,7 @@ internal sealed partial class TerrainRenderer : Node3D
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
             lanes[v] = new Vector2(data.Lanes[v * 2], data.Lanes[v * 2 + 1]);
             flow[v] = new Vector2(data.Flow[v * 2], data.Flow[v * 2 + 1]);
-            info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], 0);
+            info[v] = new Color(data.Info[v * 3], data.Info[v * 3 + 1], data.Info[v * 3 + 2]);
         }
         return new(vertices, normals, flow, FrontFaces(data.Indices, _ => true), lanes, info);
     }

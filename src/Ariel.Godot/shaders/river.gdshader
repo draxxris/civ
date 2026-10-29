@@ -1,6 +1,7 @@
 // River water and wet banks: strips along each river curve (RiverMesher), draped over the carved terrain channel.
 // UV.x runs across the strip (|x| = 1 at the waterline, 2 at the outer edge of the wet bank), UV2 is the downstream flow
-// (x, z) times speed, COLOR.r fades the river where sea or lake water covers it and COLOR.g marks steep white water.
+// (x, z) times speed, COLOR.r fades the river where sea or lake water covers it, COLOR.g marks steep white water and
+// COLOR.b marks the sheet that spills over a cliff: a cascade is all water, churned white and streaked down its face.
 // Only sight, owner borders and hover are read from the tile data; no terrain materials are sampled.
 shader_type spatial;
 render_mode blend_mix, cull_disabled, depth_draw_never, diffuse_lambert, specular_schlick_ggx;
@@ -21,13 +22,13 @@ const vec3 BANK_SILT = vec3(0.68, 0.65, 0.54);
 varying vec3 world_pos;
 varying vec2 lane;
 varying vec2 flow;
-varying vec2 info;
+varying vec3 info;
 
 void vertex() {
 	world_pos = VERTEX;
 	lane = UV;
 	flow = UV2;
-	info = COLOR.rg;
+	info = COLOR.rgb;
 	vec4 view = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
 	view.xyz += normalize(-view.xyz) * depth_bias;
 	POSITION = PROJECTION_MATRIX * view;
@@ -51,21 +52,28 @@ void fragment() {
 	sight_blend(p, fogged, hidden);
 
 	float across = abs(lane.x);
+	float fall = info.b;
 	float wobble = periodic_noise(p, 5.0) - 0.5;
 	float shoreline = across + wobble * 0.22;
-	float water = 1.0 - smoothstep(0.82, 1.0, shoreline);
-	float silt = smoothstep(0.78, 0.95, shoreline) * (1.0 - smoothstep(1.0, 1.25, shoreline));
-	float damp = 1.0 - smoothstep(1.1, 2.0, across + wobble * 0.5);
+	// A fall covers its whole strip, banks included, so it overrides the shore masks.
+	float water = mix(1.0 - smoothstep(0.82, 1.0, shoreline), 1.0, fall);
+	float silt = smoothstep(0.78, 0.95, shoreline) * (1.0 - smoothstep(1.0, 1.25, shoreline)) * (1.0 - fall);
+	float damp = (1.0 - smoothstep(1.1, 2.0, across + wobble * 0.5)) * (1.0 - fall);
 
 	float ripples = flowing_ripples(p, flow, TIME);
-	float centre = 1.0 - smoothstep(0.1, 0.95, across);
+	// Foam on a fall follows the same advected ripple field, so it streams down the face instead of crawling.
+	float churn = fall * smoothstep(0.38, 0.82, ripples + 0.18 * (periodic_noise(p, 7.0) - 0.5));
+	float centre = (1.0 - smoothstep(0.1, 0.95, across)) * (1.0 - fall);
 	vec3 river = mix(decode_colour(RIVER_SHALLOW, linear), decode_colour(RIVER_DEEP, linear), centre);
 	river = mix(river, decode_colour(RIVER_LIGHT, linear), smoothstep(0.58, 0.85, ripples) * 0.3);
 	river = mix(river, vec3(0.9, 0.93, 0.94), info.g * smoothstep(0.4, 0.75, ripples) * 0.7);
+	// Falling water keeps its steel-blue body so it reads against bare rock, with white churn dragged down the face.
+	vec3 cascade = mix(decode_colour(RIVER_SHALLOW, linear) * 0.55, vec3(0.86, 0.91, 0.93), churn);
+	river = mix(river, cascade, fall);
 	vec3 bank = mix(decode_colour(BANK_WET, linear), decode_colour(BANK_SILT, linear), silt);
 	vec3 colour = mix(bank, river, water * (1.0 - silt * 0.7));
 
-	float alpha = max(water * 0.88, max(silt * 0.55, damp * 0.16));
+	float alpha = max(max(water * 0.88, max(silt * 0.55, damp * 0.16)), fall * info.r * 0.82);
 	alpha *= info.r * (1.0 - tile_lines(p));
 	colour = mix(colour, fog_tone(colour) * 1.1, fogged);
 	if (hidden > 0.0) alpha *= 1.0 - clouds(p, hidden, TIME, linear).a;
@@ -76,6 +84,7 @@ void fragment() {
 	NORMAL = normalize(mix(NORMAL, rippled, water));
 	ALBEDO = colour;
 	ALPHA = alpha;
-	ROUGHNESS = mix(0.9, 0.3, water);
-	SPECULAR = mix(0.1, 0.4, water) * (1.0 - fogged * 0.6);
+	// Falling water is churned and matte, so it does not read as a sheet of glass.
+	ROUGHNESS = mix(mix(0.9, 0.3, water), 0.92, fall);
+	SPECULAR = mix(0.1, 0.4, water) * (1.0 - fogged * 0.6) * (1.0 - 0.8 * fall);
 }

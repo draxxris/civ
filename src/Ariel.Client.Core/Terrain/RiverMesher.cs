@@ -3,8 +3,10 @@ namespace Ariel.Client.Terrain;
 /// <summary>Engine-free river surface arrays for one chunk, wound like <see cref="TerrainMeshData"/>. Per vertex:
 /// <see cref="Lanes"/> = (across, along): across is ±1 at the waterline and ±<see cref="RiverMesher.BankExtent"/> at the
 /// outer edge of the wet bank, along is arc length; <see cref="Flow"/> = downstream direction (x, z) times speed;
-/// <see cref="Info"/> = (fade, white water): fade drops to 0 where sea or lake water covers the river and toward dead ends.
-/// Flow slows to zero at both ends of every curve, so neighbouring curves never disagree about the ripple drift.</summary>
+/// <see cref="Info"/> = (fade, white water, fall): fade drops to 0 where sea or lake water covers the river and toward dead
+/// ends; white water rises on steep reaches; fall is 1 on the sheet that spills over a cliff and 0 elsewhere.
+/// Flow slows to zero at both ends of every curve, so neighbouring curves never disagree about the ripple drift. On a
+/// fall it points down the face instead of along the curve.</summary>
 public sealed record RiverMeshData(float[] Positions, float[] Normals, float[] Lanes, float[] Flow, float[] Info, int[] Indices)
 {
     /// <summary>Number of vertices.</summary>
@@ -13,8 +15,9 @@ public sealed record RiverMeshData(float[] Positions, float[] Normals, float[] L
 
 /// <summary>Builds the river water and wet-bank strips of one chunk from <see cref="TerrainField.Rivers"/>. Strips follow
 /// each curve with lanes across its width and drape over the rendered terrain (<see cref="TerrainLattice"/>), so the water
-/// lies in the carved channel. A strip piece belongs to the chunk holding its midpoint, which shares wrap copies and dirty
-/// signatures with the chunk meshes.</summary>
+/// lies in the carved channel. Where a river edge also carries a cliff, the low side of the strip is stretched down the
+/// face to the foot of the ramp and its flow is turned downhill, so the river pours over the cliff as a cascade. A strip
+/// piece belongs to the chunk holding its midpoint, which shares wrap copies and dirty signatures with the chunk meshes.</summary>
 public static class RiverMesher
 {
     /// <summary>Outer edge of the wet bank, in water half widths.</summary>
@@ -77,7 +80,8 @@ public static class RiverMesher
         {
             int lanes = LanesAcross.Length;
             int start = _positions.Count / 3;
-            for (int i = first; i <= last; i++) Section(c, i, shift, sign);
+            var fall = FallOf(c);
+            for (int i = first; i <= last; i++) Section(c, i, shift, sign, fall);
             for (int s = 0; s < last - first; s++)
                 for (int l = 0; l < lanes - 1; l++)
                 {
@@ -87,9 +91,13 @@ public static class RiverMesher
                 }
         }
 
-        private void Section(RiverCurve c, int i, double shift, int sign)
+        private void Section(RiverCurve c, int i, double shift, int sign, Fall fall)
         {
             double tx = c.TX[i], tz = c.TZ[i];
+            // The fall tapers into the nodes at both ends of the edge, so the strip stays continuous with its neighbours.
+            double taper = Math.Min(0.25, c.Arc[^1] * 0.3);
+            double fallShare = fall.AcrossSign == 0 ? 0
+                : SmoothStep(0, taper, c.Arc[i]) * SmoothStep(0, taper, c.Arc[^1] - c.Arc[i]);
             double cx = c.X[i] + shift, cz = c.Z[i];
             // Slope along the exact tangent, so curves meeting at a node agree there.
             double slope = Math.Abs(field.HeightAt(cx + tx * SlopeSpan, cz + tz * SlopeSpan)
@@ -104,18 +112,70 @@ public static class RiverMesher
                 // Lanes on the inside of a tight bend stop short of its centre of curvature, so the strip never folds.
                 double lateral = across * c.Width[i];
                 if (lateral * bend > 0) lateral = Math.Sign(lateral) * Math.Min(Math.Abs(lateral), 0.85 / Math.Abs(bend));
+                bool falls = fallShare > 0 && across * fall.AcrossSign > 0;
                 double x = cx - tz * lateral, z = cz + tx * lateral;
                 var (y, nx, ny, nz) = lattice.Sample(x, z);
-                // Water lanes face straight up; bank lanes keep the ground's shading.
-                double flat = Math.Clamp((1.5 - Math.Abs(across)) / 0.85, 0, 1);
+                // Water lanes face straight up; bank lanes keep the ground's shading. A fall keeps the face's shading.
+                double flat = Math.Clamp((1.5 - Math.Abs(across)) / 0.85, 0, 1) * (falls ? 1 - fallShare : 1);
                 nx *= 1 - flat; nz *= 1 - flat; ny += (1 - ny) * flat;
+                double fx = tx * sign * speed, fz = tz * sign * speed;
+                float fallInfo = 0;
+                if (falls)
+                {
+                    // The shoulder is steep and its lattice samples can sit above the drawn triangles, so hold the sheet
+                    // clear of the face instead of letting it sink into the rock.
+                    y += 0.07 * fallShare;
+                    // A falling sheet is a wall of water: it faces the low side rather than the ground it hangs over.
+                    double wall = 0.85 * fallShare;
+                    nx = nx * (1 - wall) + fall.DirectionX * wall;
+                    nz = nz * (1 - wall) + fall.DirectionZ * wall;
+                    ny = ny * (1 - wall) + 0.15 * wall;
+                    double down = speed + 1.6 * fallShare;
+                    fx = fx * (1 - fallShare) + fall.DirectionX * down * fallShare;
+                    fz = fz * (1 - fallShare) + fall.DirectionZ * down * fallShare;
+                    foam = (float)Math.Max(foam, 0.45 * fallShare);
+                    fallInfo = (float)fallShare;
+                }
                 double n = Math.Sqrt(nx * nx + ny * ny + nz * nz);
                 _positions.AddRange([(float)x, (float)y, (float)z]);
                 _normals.AddRange([(float)(nx / n), (float)(ny / n), (float)(nz / n)]);
                 _lanes.AddRange([across, (float)c.Arc[i]]);
-                _flow.AddRange([(float)(tx * sign * speed), (float)(tz * sign * speed)]);
-                _info.AddRange([(float)(Fade(x, y, z) * dry), foam]);
+                _flow.AddRange([(float)fx, (float)fz]);
+                _info.AddRange([(float)(Fade(x, y, z) * dry), foam, fallInfo]);
             }
+        }
+
+        /// <summary>A river edge that also carries a cliff: the water leaves the lip and runs down the face to the foot of
+        /// the ramp instead of along the edge. <see cref="AcrossSign"/> is +1 when the ribbon's +across side (-tz, tx) is
+        /// the low side, and <see cref="Foot"/> is how far the low side stretches, in world units (the short fall ramp).</summary>
+        private readonly record struct Fall(double DirectionX, double DirectionZ, double AcrossSign, double Foot);
+
+        /// <summary>The waterfall on a curve's edge, or a zero fall when the edge carries no cliff or no known lifted side.</summary>
+        private Fall FallOf(RiverCurve c)
+        {
+            if (c.Link.Kind != RiverLinkKind.Edge) return default;
+            var s = field.Snapshot;
+            int mid = c.Count / 2;
+            double tx = c.TX[mid], tz = c.TZ[mid];
+            // The ribbon's +across side is (-tz, tx); step a little way into each tile of the edge.
+            if (!s.TryTile(Hex.FromPixel(c.X[mid] - tz * 0.25, c.Z[mid] + tx * 0.25, 1), out int plus) ||
+                !s.TryTile(Hex.FromPixel(c.X[mid] + tz * 0.25, c.Z[mid] - tx * 0.25, 1), out int minus) ||
+                plus == minus) return default;
+            int direction = -1;
+            for (int d = 0; d < 6; d++)
+                if (s.Grid.Neighbor(new TileId(plus), d) is { } n && n.Value == minus) { direction = d; break; }
+            if (direction < 0) return default;
+            int mirror = (direction + 3) % 6;
+            if ((s.Cliffs[plus] & (1 << direction)) == 0 && (s.Cliffs[minus] & (1 << mirror)) == 0) return default;
+            bool plusLifted = (s.CliffLifts[plus] & (1 << direction)) != 0;
+            bool minusLifted = (s.CliffLifts[minus] & (1 << mirror)) != 0;
+            if (plusLifted == minusLifted) return default;
+            int low = plusLifted ? minus : plus, high = plusLifted ? plus : minus;
+            var (hx, hz) = s.Grid.HexOf(new TileId(high)).ToPixel(1);
+            var (lx, lz) = s.Grid.HexOf(new TileId(low)).ToPixel(1);
+            double dx = lx - hx, dz = lz - hz, length = Math.Sqrt(dx * dx + dz * dz);
+            if (length < 1e-6) return default;
+            return new Fall(dx / length, dz / length, low == plus ? 1 : -1, field.Tuning.CliffRamp);
         }
 
         /// <summary>Signed curvature at sample i: positive when the curve turns toward its +across side (-tz, tx).</summary>

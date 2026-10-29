@@ -219,6 +219,8 @@ internal static class CliffGenerator
     internal const int TerracePercent = 8;
     internal const int TerraceNoiseScale = 9;
     internal const int TerraceNoiseOctaves = 2;
+    /// <summary>Score bonus for a candidate edge that also carries a river, so some rivers cross a cliff as waterfalls.</summary>
+    internal const int RiverFallBonus = 70;
 
     internal static void Generate(HexGrid grid, Plot[] plots, DeterministicRng rng, ContentDb content)
     {
@@ -279,14 +281,14 @@ internal static class CliffGenerator
                 if (grid.Neighbor(tile, direction) is not { } next || next.Value <= tile.Value) continue;
                 var other = plots[next.Value];
                 if (Geography.Water(content, other) || other.AreaId != plot.AreaId) continue;
-                // A river needs a waterfall to cross a cliff; until it has one, keep cliff edges off rivers.
-                if ((plot.RiverEdges & (1 << direction)) != 0 || (other.RiverEdges & (1 << ((direction + 3) % 6))) != 0) continue;
+                // A river edge may also be a cliff: the river then pours over the face as a waterfall.
+                bool river = (plot.RiverEdges & (1 << direction)) != 0 || (other.RiverEdges & (1 << ((direction + 3) % 6))) != 0;
                 bool liftTile = Higher(plot, other, noise[tile.Value], noise[next.Value], tile.Value, next.Value);
                 var lifted = liftTile ? tile : next;
                 var below = liftTile ? next : tile;
                 int liftedDirection = liftTile ? direction : (direction + 3) % 6;
                 candidates.Add((lifted, below, liftedDirection,
-                    noise[tile.Value] + noise[next.Value] + 120 * ReliefRank(plots[lifted.Value].Kind)));
+                    noise[tile.Value] + noise[next.Value] + 120 * ReliefRank(plots[lifted.Value].Kind) + (river ? RiverFallBonus : 0)));
             }
         }
         int remaining = candidates.Count * TerracePercent / 100;
