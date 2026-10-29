@@ -125,7 +125,7 @@ public partial class Main : Node3D
         _setup.ModsRequested += () => ShowModManager();
         AddChild(_setup);
         if (_debug.ScreenshotPath != null && _debug.Stage == "setup") _framesSinceReady = 0;
-        else if (_debug.ScreenshotPath != null || _debug.FpsProbe) Start(DebugGame());
+        else if (_debug.Unattended) Start(DebugGame());
     }
 
     private NewGameOptions DebugGame()
@@ -180,8 +180,8 @@ public partial class Main : Node3D
         _setup = null;
         var session = task.Result;
         PrepareDebugStage(session);
-        MapRenderer.LogTimings = _debug.ScreenshotPath != null || _debug.FpsProbe || OS.GetCmdlineUserArgs().Contains("--trace-performance");
-        TerrainRenderer.DebugMode = _debug.ScreenshotPath != null ? _debug.TerrainDebug : 0;
+        MapRenderer.LogTimings = _debug.Unattended || OS.GetCmdlineUserArgs().Contains("--trace-performance");
+        TerrainRenderer.DebugMode = _debug.Unattended ? _debug.TerrainDebug : 0;
         _game = new GameView(session, _icons!);
         AddChild(_game);
         if (_debug.Zoom != 0) _game.DebugZoom(_debug.Zoom);
@@ -203,12 +203,13 @@ public partial class Main : Node3D
     /// <summary>Command-line scene options: clean view, focus, camera pose, wireframe and the shot list.</summary>
     private void ApplyCaptureOptions(GameSession session)
     {
-        if (_debug.ScreenshotPath == null) return;
+        if (!_debug.Unattended) return;
         if (_debug.Clean) _game!.SetClean();
         if (_scenarioFocus is { } scene) _game!.DebugFocus(MapRenderer.PositionOf(scene));
         if (FocusHex(session, _debug.Focus, _debug.FocusTile is { } t ? new[] { t.Col, t.Row } : null) is { } focus) _game!.DebugFocus(MapRenderer.PositionOf(focus));
         _game!.DebugView(_debug.Pitch, _debug.Yaw, _debug.Distance);
         if (_debug.Wireframe) _game.Terrain.SetWireframe(true);
+        if (_debug.ScreenshotPath == null) return;
         _shotPath = _debug.ScreenshotPath;
         _shotName = System.IO.Path.GetFileNameWithoutExtension(_shotPath);
         if (_debug.ShotsFile == null) return;
@@ -257,7 +258,7 @@ public partial class Main : Node3D
     /// <summary>Terrain inspection views: a mountain close-up or the actual east-west wrap line at x = 0.</summary>
     private void FocusTerrainScreenshot(GameSession session)
     {
-        if (_debug.ScreenshotPath is null) return;
+        if (!_debug.Unattended) return;
         var state = session.Sim.State;
         if (_debug.Stage == "terrain")
         {
@@ -291,8 +292,9 @@ public partial class Main : Node3D
     private void PrepareDebugStage(GameSession session)
     {
         if (_debug.FpsProbe) { RevealEverything(session); return; }
-        if (_debug.ScreenshotPath == null) return;
+        if (!_debug.Unattended) return;
         PrepareCaptureScene(session);
+        if (_debug.ScreenshotPath == null) return;
         Input.WarpMouse(new Vector2(700, 10));
         if (_debug.Stage is "diplomacy" or "espionage")
             foreach (var rival in session.Sim.State.Players.Where(p => p.Id != GameSession.Human))

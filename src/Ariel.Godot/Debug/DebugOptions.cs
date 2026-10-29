@@ -8,6 +8,7 @@ namespace Ariel.Client;
 /// <code>
 /// --screenshot [path|name]   save one capture (a bare name goes to --out-dir)
 /// --screenshots              the built-in stage tour into docs/screenshots (interface stages under gui/, or --out-dir)
+/// --inspect                  start straight into the game and stay open for the camera, with every other switch applied
 /// --shots poses.json         several captures from one launch: [{name, focus, focusTile, pitch, yaw, distance, terrainDebug, wireframe}]
 /// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images;
 ///                            interface stages go to its gui subfolder)
@@ -39,6 +40,8 @@ internal sealed record DebugOptions
     public float Zoom { get; private init; }
     public int TerrainDebug { get; private init; }
     public bool FpsProbe { get; private init; }
+    /// <summary>Start the game and stay open: no capture, so the run is a live window to inspect with the camera.</summary>
+    public bool Inspect { get; private init; }
     public string? OutDir { get; private init; }
     public string? ShotsFile { get; private init; }
     public string? Focus { get; private init; }
@@ -57,6 +60,10 @@ internal sealed record DebugOptions
 
     /// <summary>A scene option that implies a custom capture: reveal the whole map and open on the map, not the setup screen.</summary>
     public bool CustomScene => Focus != null || FocusTile != null || ShotsFile != null || ScenarioFile != null;
+
+    /// <summary>Whether the run drives itself: a capture, an FPS probe or a live inspection window. Anything else opens on
+    /// the mod manager and the setup screen, as a player sees it.</summary>
+    public bool Unattended => ScreenshotPath != null || FpsProbe || Inspect;
 
     public static readonly string[] TerrainDebugNames = ["normal", "weights", "hidden", "", "relief", "bands", "slope", "lattice", "cavity"];
 
@@ -77,6 +84,7 @@ internal sealed record DebugOptions
             Opponents = int.Parse(Value("--opponents", "3")),
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
             TerrainDebug = ParseTerrainDebug(Value("--terrain-debug", "0")), FpsProbe = args.Contains("--fps-probe"),
+            Inspect = args.Contains("--inspect"),
             OutDir = Raw("--out-dir"), ShotsFile = Raw("--shots"), Focus = Raw("--focus"),
             FocusTile = Raw("--focus-tile") is { } t && t.Split(',') is [var c, var r] ? (int.Parse(c), int.Parse(r)) : null,
             Pitch = Float("--pitch"), Yaw = Float("--yaw"), Distance = Float("--distance"), Clean = args.Contains("--clean"),
@@ -130,7 +138,7 @@ internal sealed record DebugOptions
         // --shots alone is a capture run; the per-shot names decide the files.
         if (o.ShotsFile != null && o.ScreenshotPath == null) o = o with { ScreenshotPath = PathFor("shot") };
         // A custom scene opens on the revealed map rather than the setup screen.
-        if (o.CustomScene && defaultStage && o.ScreenshotPath != null) o = o with { Stage = "map", Reveal = true };
+        if (o.CustomScene && defaultStage && o.Unattended) o = o with { Stage = "map", Reveal = true };
         if (o.CustomScene && o.Frames == 60) o = o with { Frames = 30 };
         return o;
     }

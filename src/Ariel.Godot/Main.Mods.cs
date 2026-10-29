@@ -11,7 +11,7 @@ public partial class Main
     private string? _profileError;
     private string? _migrationNotice;
     private string ProfilePath => System.IO.Path.Combine(OS.GetUserDataDir(), "mod-profile.json");
-    private bool AutomaticStartup => DisplayServer.GetName() == "headless" || _debug.ScreenshotPath != null || _debug.FpsProbe
+    private bool AutomaticStartup => DisplayServer.GetName() == "headless" || _debug.Unattended
         || OS.GetCmdlineUserArgs().Contains("--skip-mod-manager");
 
     private void BeginModStartup()

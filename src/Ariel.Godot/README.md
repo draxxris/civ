@@ -111,9 +111,14 @@ Environment variables:
 
 ## Controls
 
-- WASD or arrow keys: move the camera.
-- Mouse wheel: change the zoom.
-- Middle-button drag: move the camera.
+- WASD or arrow keys: move the camera across the ground, relative to the view. W moves
+  away from the camera whichever way it faces, D to the right of the screen, and so on.
+- Mouse wheel: change the zoom, between a distance of 6 and 44.
+- Middle-button drag: move the camera; the ground follows the cursor, in the view's
+  frame.
+- Q and E: turn the camera left and right (70° per second while held).
+- Z and X: tilt the camera towards the horizon and towards straight down (45° per
+  second, stopping at 5° and 89°).
 - Left click: select a unit or city. Repeated clicks cycle through a stack.
 - Right click: move the selected unit along the preview path, or attack an enemy at war.
 - Tab: select the next awake unit with movement remaining.
@@ -237,9 +242,14 @@ checks locks, separate player treasuries, queues, directed protection, expiry, a
 selections. It changes debug state between captures. It does not represent an ordinary
 saved game.
 
-These switches apply only to capture runs and go after `--` on the Godot command line.
-`mise run shot -- <switches>` builds and runs with them. See also
+These switches apply only to unattended runs and go after `--` on the Godot command
+line. `mise run shot -- <switches>` builds and runs with them. See also
 `tools/shots/README.md` for worked examples.
+
+An unattended run is a capture (`--screenshot`, `--shots`), an FPS probe, or
+`--inspect`. Anything else starts as a player does: the mod manager appears, then the
+setup screen, and every switch below is ignored. A capture run also skips the mod
+manager, because it cannot answer a prompt.
 
 ### Run and output
 
@@ -249,6 +259,13 @@ These switches apply only to capture runs and go after `--` on the Godot command
   `docs/screenshots/<stage>.png`, or to `--out-dir`. Interface stages (`setup`, `map`,
   `city`, `civics`, `research`, `conquest`, `espionage`) go to
   `docs/screenshots/gui/<stage>.png` instead.
+- `--inspect`: start the game and stay open, with every other switch applied, so the
+  camera and the terrain debug views can be driven by hand. No capture is taken and the
+  window closes only when you close it. Use it to look at a scene before capturing it:
+  `mise run shot -- --inspect --stage world --clean --scenario <abs path> --focus-tile 10,10 --yaw 0 --pitch 20 --distance 6`.
+  Relative `--scenario`, `--tuning-file`, `--out-dir` and `--shots` paths resolve
+  against the project folder that `mise run shot` uses, so pass absolute paths when
+  calling `godot-mono` directly.
 - `--shots <file.json>`: take several captures in one launch. Each entry has a `name`
   and optional `focus`, `focusTile` `[col,row]`, `pitch`, `yaw`, `distance`,
   `terrainDebug` and `wireframe`. A missing camera field keeps the previous shot's
@@ -305,8 +322,9 @@ These switches apply only to capture runs and go after `--` on the Godot command
   within two steps. Ties go to the lowest tile id.
 - `--focus-tile col,row`: centre on a tile, in offset coordinates.
 - `--pitch DEG`, `--yaw DEG`, `--distance N`: camera pose. The defaults are 62, 0
-  (looking north) and 18. Pitch is clamped to 5–89 and distance to 1–120, which is wider
-  than the player's zoom limits.
+  (looking north) and 18. Pitch is clamped to 5–89 and distance to 1–120. The player's
+  wheel is narrower, 6–44, so a capture can stand closer than play allows; the first
+  wheel notch in an `--inspect` run pulls such a pose back to 6.
 - `--zoom D`: change the initial camera distance by D, for example `--zoom -8` to move
   closer. `--distance` is applied after it.
 - `--clean`: hide the HUD, tooltips, hover outline, path preview, units, cities and

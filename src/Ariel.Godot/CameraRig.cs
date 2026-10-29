@@ -34,21 +34,40 @@ internal sealed partial class CameraRig : Camera3D
         Apply();
     }
 
+    /// <summary>Turn the camera by a yaw step and tilt it by a pitch step, in degrees. Pitch keeps to the same 5–89 range a
+    /// capture pose does, so the camera never flattens to nothing or tips past straight down.</summary>
+    public void Rotate(float yawDegrees, float pitchDegrees)
+    {
+        _yaw += yawDegrees;
+        _pitch = Mathf.Clamp(_pitch + pitchDegrees, 5f, 89f);
+        Apply();
+    }
+
     public void Zoom(float delta) { _distance = Mathf.Clamp(_distance + delta, MinDistance, MaxDistance); Apply(); }
 
     /// <summary>Pan by a mouse drag measured in screen pixels.</summary>
     public void Drag(Vector2 pixels)
     {
         float perPixel = 2f * _distance * Mathf.Tan(Mathf.DegToRad(Fov / 2)) / GetViewport().GetVisibleRect().Size.Y;
-        Focus += new Vector3(-pixels.X * perPixel, 0, -pixels.Y * perPixel / Mathf.Sin(Mathf.DegToRad(_pitch)));
+        // The ground follows the cursor, so the focus moves the other way, in the camera's frame.
+        Focus += GroundPan(-pixels.X * perPixel, pixels.Y * perPixel / Mathf.Sin(Mathf.DegToRad(_pitch)));
         Clamp(); Apply();
     }
 
     public void Move(Vector2 direction, double delta)
     {
         if (direction == Vector2.Zero) return;
-        Focus += new Vector3(direction.X, 0, direction.Y) * _distance * 0.9f * (float)delta;
+        Focus += GroundPan(direction.X, -direction.Y) * _distance * 0.9f * (float)delta;
         Clamp(); Apply();
+    }
+
+    /// <summary>A ground offset of <paramref name="right"/> screen-right and <paramref name="away"/> away from the camera,
+    /// at the current yaw: panning and dragging both follow the view, so the keys keep their meaning after a turn instead
+    /// of sliding the map along axes the player can no longer see. With no turn this is the world's own axes.</summary>
+    private Vector3 GroundPan(float right, float away)
+    {
+        float yaw = Mathf.DegToRad(_yaw);
+        return new Vector3(Mathf.Cos(yaw) * right - Mathf.Sin(yaw) * away, 0, -Mathf.Sin(yaw) * right - Mathf.Cos(yaw) * away);
     }
 
     /// <summary>Opening a city centres and zooms on it; closing restores the previous zoom.</summary>

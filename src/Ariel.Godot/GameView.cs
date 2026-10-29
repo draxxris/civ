@@ -67,7 +67,12 @@ internal sealed partial class GameView : Node3D
 
     public override void _Process(double delta)
     {
-        if (!_ui.TextInputFocused) _camera.Move(PanDirection(), delta);
+        if (!_ui.TextInputFocused)
+        {
+            _camera.Move(PanDirection(), delta);
+            var turn = TurnDirection();
+            _camera.Rotate(turn.X * TurnRate * (float)delta, turn.Y * TiltRate * (float)delta);
+        }
         var city = _session.City;
         _camera.FollowCity(city?.Id, city == null ? Vector3.Zero : MapRenderer.PositionOf(city.Position));
         _map.Refresh();
@@ -83,6 +88,23 @@ internal sealed partial class GameView : Node3D
         if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) d.Y += 1;
         if (Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left)) d.X -= 1;
         if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right)) d.X += 1;
+        return d;
+    }
+
+    /// <summary>Degrees per second the camera turns while a key is held.</summary>
+    private const float TurnRate = 70f;
+    /// <summary>Degrees per second the camera tilts while a key is held.</summary>
+    private const float TiltRate = 45f;
+
+    /// <summary>Camera turn and tilt for this frame: Q and E swing the view left and right, Z and X tilt it towards the
+    /// horizon and towards straight down.</summary>
+    private static Vector2 TurnDirection()
+    {
+        var d = Vector2.Zero;
+        if (Input.IsKeyPressed(Key.Q)) d.X += 1;
+        if (Input.IsKeyPressed(Key.E)) d.X -= 1;
+        if (Input.IsKeyPressed(Key.Z)) d.Y -= 1;
+        if (Input.IsKeyPressed(Key.X)) d.Y += 1;
         return d;
     }
 

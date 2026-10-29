@@ -16,7 +16,10 @@ godot-mono --path src/Ariel.Godot      # Godot 4.7.2 .NET editor/runtime
 
 For gameplay and renderer details, see
 [src/Ariel.Godot/README.md](src/Ariel.Godot/README.md). For screenshot and visual-debug
-workflows, see [tools/shots/README.md](tools/shots/README.md).
+workflows, see [tools/shots/README.md](tools/shots/README.md). To look at terrain by
+hand instead of capturing it, start an inspection window with
+`mise run shot -- --inspect --stage world --clean --scenario <absolute path>`, then pan
+with WASD, turn with Q and E, and tilt with Z and X.
 
 `godot-mono` is a mise shim for `github:godotengine/godot@4.7.2-stable`
 (`Godot_v4.7.2-stable_mono_linux_x86_64.zip`, renamed). Mise resolves it only from

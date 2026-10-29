@@ -21,6 +21,22 @@ mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /tmp/sh
   thinning, triangles per layer, height range per relief class, FPS.
 - `--seed`, `--world tiny|...` choose the map.
 
+## Looking around by hand
+
+Drop `--screenshot` and add `--inspect` to start on the same scene with the same pose
+and no capture, then drive the camera: WASD or arrows to pan, Q and E to turn, Z and X
+to tilt, the wheel to zoom.
+
+```sh
+mise run shot -- --inspect --stage world --clean \
+  --scenario tools/shots/scenarios/cliffs-land-ramp.json --focus-tile 10,10 \
+  --yaw 0 --pitch 20 --distance 6
+```
+
+Without `--inspect` (or a capture switch) the run opens the mod manager and the setup
+screen as a player sees them. Note that the wheel cannot go closer than a distance of 6,
+while a capture pose can reach 1, so set `--distance` for close work.
+
 ## Many captures, one launch
 
 `--shots tools/shots/poses.json` takes a list of poses. A missing camera field keeps the
@@ -67,6 +83,31 @@ the run and appear in the error. A second city on the same tile stops the run. U
 `cities:high_walls` for the higher wall tier. A city with both buildings shows only High
 Walls. Wall models remain visible with `--clean`. Omit `--clean` to inspect the city
 token, label, and units inside the ring.
+
+## Scenario maps as PNGs
+
+`tools/shots/scenario_map.py` draws a scenario as a plan view, so a layout can be
+checked without launching the client. It needs Python 3 and Pillow, like the scripts in
+`tools/art`.
+
+```sh
+python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /tmp/maps
+```
+
+Each file becomes a PNG named after the scenario. The map is the content's Tiny size, 52
+by 32 tiles, unless `--world` or `--size` says otherwise. The picture is trimmed to the
+tiles the scenario changes; `--full-map` keeps the whole grid. Hexes are labelled with
+their column,row unless `--no-coords` is given, and `--hex` sets the hex radius in
+pixels.
+
+Grassland is green, plains yellow, desert pale yellow, tundra light grey, snow light
+blue, marsh blue-green, every water tile the same blue and peaks very dark grey. `T`
+marks forest or jungle, `C` a city, and `H` heightened ground: a tile that is the raised
+side of a cliff. Heightening is independent of hills and peaks, so a hill on flat ground
+has no `H` and a raised grass tile does. Rivers are blue hex borders, roads dark brown
+lines through the tile centres, and cliff rock a thick grey line on the shared edge. A
+cliffed edge always drops towards water, and every heightened tile shows rock on its
+water edges.
 
 ## Units
 

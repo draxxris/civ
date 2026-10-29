@@ -1,0 +1,66 @@
+{
+ "// note": "One row of six lifted tiles, cliffed on its south-facing edges only, so the south side is a sheer rock face and the north side climbs to it over the lift ramp.",
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat",
+  "owner": null
+ },
+ "tiles": [
+  {
+   "rect": [
+    0,
+    0,
+    200,
+    200
+   ],
+   "cliff": false
+  },
+  {
+   "at": [
+    8,
+    10
+   ],
+   "cliff": 48
+  },
+  {
+   "at": [
+    9,
+    10
+   ],
+   "cliff": 48
+  },
+  {
+   "at": [
+    10,
+    10
+   ],
+   "cliff": 48
+  },
+  {
+   "at": [
+    11,
+    10
+   ],
+   "cliff": 48
+  },
+  {
+   "at": [
+    12,
+    10
+   ],
+   "cliff": 48
+  },
+  {
+   "at": [
+    13,
+    10
+   ],
+   "cliff": 48
+  }
+ ],
+ "clearUnits": true,
+ "focus": [
+  10,
+  11
+ ]
+}
