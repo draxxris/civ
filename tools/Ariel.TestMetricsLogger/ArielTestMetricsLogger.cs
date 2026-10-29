@@ -81,10 +81,13 @@ public sealed class ArielTestMetricsLogger : ITestLogger
             output.Write(line);
     }
 
+    /// <summary>Repository root, found by the solution file so it also works inside a worktree, where .git is a
+    /// file rather than a directory. Without this the search fell through to the test project directory and the
+    /// slow-test report never saw the results.</summary>
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(Environment.CurrentDirectory);
-        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Ariel.slnx")))
             directory = directory.Parent;
         return directory?.FullName ?? Environment.CurrentDirectory;
     }

@@ -46,8 +46,11 @@ trap 'rm -rf "$tmp"' EXIT
 for project in tests/Ariel.Tests/Ariel.Tests.csproj tests/Ariel.Mods.Tests/Ariel.Mods.Tests.csproj tests/Ariel.ContentImport.Tests/Ariel.ContentImport.Tests.csproj; do
   name=$(basename "$project" .csproj)
   (
-    dotnet test "$project" --no-build --filter "$filter" > "$tmp/$name.log" 2>&1
-    echo $? > "$tmp/$name.rc"
+    # mise runs task scripts with errexit, so a bare `dotnet test` would kill this subshell before the
+    # exit code and log are captured, and the task would report success while a project failed.
+    rc=0
+    dotnet test "$project" --no-build --filter "$filter" > "$tmp/$name.log" 2>&1 || rc=$?
+    echo "$rc" > "$tmp/$name.rc"
     cat "$tmp/$name.log"
   ) &
 done
