@@ -7,7 +7,7 @@ namespace Ariel.Game;
 public static class SaveGame
 {
     /// <summary>Supported schema version; incompatible versions require an explicit migration.</summary>
-    public const int SchemaVersion = 1;
+    public const int SchemaVersion = 3;
     /// <summary>Serialize setup, loaded mod versions, content identity, state and RNG words.</summary>
     public static string Save(Simulation sim)
     {

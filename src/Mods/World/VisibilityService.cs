@@ -144,7 +144,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         if (bonus is { } id && sim.Content.Get<S.BonusDef>(id).RevealTech is { } tech
             && !sim.State.TeamById(team).Techs.Contains(tech)) bonus = null;
         return new(plot.Terrain, plot.Kind, plot.IsLake, plot.Feature, bonus,
-            plot.Improvement, plot.Route, plot.Owner, plot.RiverEdges, memory, plot.CliffEdges);
+            plot.Improvement, plot.Route, plot.Owner, plot.RiverEdges, memory, plot.CliffEdges, plot.CliffLiftEdges);
     }
 
     public bool IsUnitVisible(Simulation sim, int unitId, int observerTeam)

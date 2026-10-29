@@ -31,8 +31,8 @@ namespace Ariel.Client;
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
 internal static class DebugScenario
 {
-    /// <summary>"cliff": true puts a cliff on every sea edge of a land tile, false clears them, and a number is an edge bit mask
-    /// (Hex.Directions order) of which sea edges get one. Edges to land or lakes never get a cliff.</summary>
+    /// <summary>"cliff": true puts a cliff on every edge of a land tile, false clears them, and a number is an edge bit mask
+    /// (Hex.Directions order) of which edges get one, lifted on the named tile. Edges to lakes never get a cliff.</summary>
     private static void SetCliffs(GameSession session, TileId tile, JsonElement cliff)
     {
         var state = session.Sim.State;
@@ -40,7 +40,7 @@ internal static class DebugScenario
         bool Water(TileId t) => session.Sim.Content.Get<Schema.TerrainDef>(state.Plots[t.Value].Terrain).IsWater;
         if (Water(tile)) return;
         for (int d = 0; d < 6; d++)
-            if (state.Grid.Neighbor(tile, d) is { } other && Water(other) && !state.Plots[other.Value].IsLake)
+            if (state.Grid.Neighbor(tile, d) is { } other && !(Water(other) && state.Plots[other.Value].IsLake))
                 state.SetCliff(tile, d, (mask & (1 << d)) != 0);
     }
 
@@ -53,7 +53,7 @@ internal static class DebugScenario
             foreach (var tile in state.Grid.Tiles)
             {
                 var plot = state.Plots[tile.Value];
-                plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.CliffEdges = 0; plot.IsLake = false;
+                plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.IsLake = false;
                 Edit(session, tile, fill);
             }
         if (root.TryGetProperty("tiles", out var tiles))

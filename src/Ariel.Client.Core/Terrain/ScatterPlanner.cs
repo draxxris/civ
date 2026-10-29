@@ -2,11 +2,11 @@ using Ariel.Game;
 
 namespace Ariel.Client.Terrain;
 
-/// <summary>A prop rooted on the terrain. Tile is the containing tile, used for sight updates.</summary>
 /// <summary>A prop rooted on the terrain. Tile is the containing tile, used for sight updates. Stretch scales height on top
-/// of Scale (cliff rock columns).</summary>
+/// of Scale (cliff rock columns). Exact props are placed as given: the renderer neither thins them nor drops them, because a
+/// wall of columns with holes is worse than no wall.</summary>
 public readonly record struct ScatterInstance(string Set, int ModelIndex, float X, float Y, float Z, float Yaw, float Scale, int Tile,
-    float Stretch = 1);
+    float Stretch = 1, bool Exact = false);
 
 /// <summary>Deterministic global scatter, blended with the same warped corner triangle as the terrain.
 /// Reuse one planner on the rendering thread; asset and appearance lookups are cached across chunks.</summary>
@@ -29,7 +29,6 @@ public sealed class ScatterPlanner(GameCatalog catalog)
     private const double RiverMargin = 0.05;
     /// <summary>Multiplier on every appearance's scatter density (rocks excluded); a debug knob, 1 in normal play.</summary>
     public double DensityScale { get; init; } = 1;
-
     private readonly Dictionary<(string Feature, string Terrain), (string? Set, double Density, FeatureLook? Look)> _appearances = new();
     private PeriodicNoise? _noise;
     private readonly Dictionary<string, int> _modelCounts = new(StringComparer.Ordinal);
@@ -59,8 +58,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
         return result;
     }
 
-    /// <summary>Lone rocks off the foot of known cliffs, standing on their shoals with the base just under the surface.
-    /// Their foot is below sea level, which the renderer uses to keep them all (see ScatterRenderer).</summary>
+    /// <summary>Lone rocks off the foot of known cliffs, standing on their shoals with the base just under the surface.</summary>
     private void AddSeaStacks(TerrainChunk chunk, TerrainSnapshot snapshot, TerrainField field, List<ScatterInstance> result)
     {
         int models = ModelCount(SeaStackSet);
@@ -70,11 +68,12 @@ public sealed class ScatterPlanner(GameCatalog catalog)
             if (!chunk.Contains(stack.X, stack.Z) || Hidden(snapshot, stack.Tile)) continue;
             result.Add(new(SeaStackSet, Math.Min(models - 1, (int)(stack.Model * models)), (float)stack.X,
                 (float)Math.Min(stack.Y - 0.01, -0.005), (float)stack.Z, (float)(stack.Yaw * Math.Tau),
-                (float)(1.1 + 0.8 * stack.Scale), stack.Tile));
+                (float)(1.1 + 0.8 * stack.Scale), stack.Tile, Exact: true));
         }
     }
 
-    /// <summary>The rock walls of known cliffs: stretched rock columns from the seabed to just above the bluff.</summary>
+    /// <summary>The rock walls of known cliffs, coastal and inland: stretched rock columns from the ground to just above the
+    /// bluff.</summary>
     private void AddCliffRocks(TerrainChunk chunk, TerrainSnapshot snapshot, TerrainField field, List<ScatterInstance> result)
     {
         int models = ModelCount(SeaStackSet);
@@ -83,11 +82,11 @@ public sealed class ScatterPlanner(GameCatalog catalog)
         {
             if (!chunk.Contains(rock.X, rock.Z) || Hidden(snapshot, rock.Tile)) continue;
             result.Add(new(SeaStackSet, Math.Min(models - 1, (int)(rock.Model * models)), (float)rock.X, (float)rock.Y,
-                (float)rock.Z, (float)rock.Yaw, (float)rock.Scale, rock.Tile, (float)rock.Stretch));
+                (float)rock.Z, (float)rock.Yaw, (float)rock.Scale, rock.Tile, (float)rock.Stretch, Exact: true));
         }
     }
 
-    /// <summary>Models of sea stacks: the same rocks that lie at mountain feet, standing taller out of the sea.</summary>
+    /// <summary>Default models of sea stacks: the same rocks that lie at mountain feet, standing taller out of the sea.</summary>
     public const string SeaStackSet = "rocks";
 
     private ScatterInstance? Candidate(double x, double z, int col, int row, TerrainSnapshot snapshot,

@@ -200,6 +200,82 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
         Assert.InRange(worst, 0, 0.01);
     }
 
+    /// <summary>A copy that can carry its own cliffs, since the field caches its cliff tables when it is built.</summary>
+    private static TerrainSnapshot Copy(TerrainSnapshot source)
+    {
+        var copy = new TerrainSnapshot(source.Grid.Spec);
+        Array.Copy(source.Relief, copy.Relief, source.Relief.Length);
+        Array.Copy(source.Rivers, copy.Rivers, source.Rivers.Length);
+        Array.Copy(source.Cliffs, copy.Cliffs, source.Cliffs.Length);
+        Array.Copy(source.CliffLifts, copy.CliffLifts, source.CliffLifts.Length);
+        Array.Copy(source.Crater, copy.Crater, source.Crater.Length);
+        Array.Copy(source.Sight, copy.Sight, source.Sight.Length);
+        return copy;
+    }
+
+    [Fact]
+    public void Land_cliff_lifts_its_high_side_and_the_ramp_returns_to_the_normal_ground()
+    {
+        var s = new TerrainSnapshot(new MapSpec(9, 7, false));
+        Array.Fill(s.Relief, ReliefClass.Flat);
+        Array.Fill(s.Sight, Sight.Visible);
+        var plain = Copy(s);
+        var tuning = new TerrainTuning { WarpAmplitude = 0, FlatNoise = 0 };
+        int tile = s.Grid.TileAt(4, 3).Value;
+        var hex = s.Grid.HexOf(new TileId(tile));
+        for (int direction = 0; direction < 6; direction++)
+        {
+            if (!s.TryTile(hex + Hex.Directions[direction], out int other)) continue;
+            s.Cliffs[tile] |= (byte)(1 << direction);
+            s.Cliffs[other] |= (byte)(1 << ((direction + 3) % 6));
+            s.CliffLifts[tile] |= (byte)(1 << direction);
+        }
+        var lifted = new TerrainField(s, 2, tuning);
+        var flat = new TerrainField(plain, 2, tuning);
+        var (cx, cz) = hex.ToPixel(1);
+        double rise = tuning.CliffRise;
+        Assert.InRange(lifted.HeightAt(cx, cz) - flat.HeightAt(cx, cz), rise * 0.9, rise * 1.1);
+        // Well past the ramp the ground is back to its normal height.
+        Assert.InRange(Math.Abs(lifted.HeightAt(cx + 3.2, cz) - flat.HeightAt(cx + 3.2, cz)), 0, 1e-6);
+    }
+
+    [Fact]
+    public void Cliff_lift_never_stacks_above_one_rise_however_densely_the_cliffs_are_set()
+    {
+        // Flat land with no relief variation, so the sharpened edge blend cannot move the height: the difference between
+        // the same world with and without cliffs is the lift alone, and a second cliff must never add to a first one's.
+        var plain = TerrainTestMaps.Uniform(ReliefClass.Flat, 20, 16);
+        var ledged = Copy(plain);
+        var random = new Random(7);
+        for (int tile = 0; tile < ledged.Relief.Length; tile++)
+        {
+            var relief = ledged.Relief[tile];
+            if (relief is ReliefClass.Hidden or ReliefClass.DeepWater or ReliefClass.ShallowWater) continue;
+            var hex = ledged.Grid.HexOf(new TileId(tile));
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (!ledged.TryTile(hex + Hex.Directions[direction], out int other) || other <= tile) continue;
+                var otherRelief = ledged.Relief[other];
+                if (otherRelief == ReliefClass.Hidden) continue;
+                bool otherWater = otherRelief is ReliefClass.DeepWater or ReliefClass.ShallowWater;
+                ledged.Cliffs[tile] |= (byte)(1 << direction);
+                ledged.Cliffs[other] |= (byte)(1 << ((direction + 3) % 6));
+                if (otherWater || random.Next(2) == 0) ledged.CliffLifts[tile] |= (byte)(1 << direction);
+                else ledged.CliffLifts[other] |= (byte)(1 << ((direction + 3) % 6));
+            }
+        }
+        var field = new TerrainField(ledged, 5);
+        var reference = new TerrainField(plain, 5);
+        double rise = field.Tuning.CliffRise, worst = 0;
+        for (int i = 0; i < 80; i++)
+            for (int j = 0; j < 80; j++)
+            {
+                double x = field.Period * i / 80, z = -3 + 22.0 * j / 80;
+                worst = Math.Max(worst, field.HeightAt(x, z) - reference.HeightAt(x, z));
+            }
+        Assert.InRange(worst, 0, rise + 1e-9);
+    }
+
     [Fact]
     public void Height_blends_profiles_convexly_and_stays_within_the_field_bounds()
     {

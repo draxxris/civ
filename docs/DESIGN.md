@@ -66,9 +66,12 @@ teams use compact `TeamMask` bitsets, without a fixed team-count limit. Bitsets
 enumerate team ids in ascending order. Dense team ids minimize their storage.
 
 `RiverEdges` and `CliffEdges` store six bits in direction order. `GameState.SetRiver`
-and `SetCliff` mirror shared edges on both plots. Off-map edges never carry either bit.
-World clears cliffs unless the edge joins land to non-lake water. `IMapSanitizer`
-repairs map rules after setup, scenario configuration, and save loading.
+and `SetCliff` mirror shared edges on both plots, and off-map edges never carry either
+bit. `CliffLiftEdges` is not mirrored: bit d says this plot is the raised side of the
+cliff on edge d, so exactly one side of an edge carries it and a memory that knows one
+plot knows which way the step drops. World clears cliffs unless the edge has land on at
+least one side. `IMapSanitizer` repairs map rules after setup, scenario configuration,
+and save loading.
 
 `IMapGenerator.Generate(MapSpec, Plot[], DeterministicRng, ContentDb)` fills every plot.
 `IMapGenerator.PreviewLand(MapSpec, seed, ContentDb)` is the land step of that
@@ -78,22 +81,66 @@ the new-game screen does exactly that, on a worker thread, before the player com
 a map. Cities and units retain canonical axial positions. The client renders one map
 image, without duplicate wrap plots.
 
-### Coastal cliffs
+### Cliffs
 
-World places cliffs after terrain, lakes, relief, and rivers, before start selection.
-`CliffGenerator` targets 20% of land/sea edges through ranked smooth noise (scale 6, two
-octaves, range 0–999). Hills and Peak plots receive a 400-point priority bonus. River
-mouths and sea-edge endpoints with rivers remain beaches. Each coastal land area keeps
-one beach. Islands of at most four tiles keep at least 50% of their sea edges open.
-Coastal starts and new cities keep one beach, with direction order resolving conflicts.
-Terrain changes and lake reassignment clear invalid cliffs without creating new cliffs.
+A cliff is a step in the ground on the edge between two plots, at least one of them
+land. `World` places and polices them; movement and the client read the plot fields.
 
-Cliffs block land units from boarding, landing, or attacking across the edge. Ships
-cannot enter or leave a land tile across a cliff, including friendly cities. The
-Amphibious promotion does not bypass cliffs. `CanMoveAllTerrain` units ignore cliffs.
-Ranged attacks, aircraft, and coastal building/yield eligibility do not change.
-Pathfinding uses the same movement rules. Naval AI selects ports and landing edges with
-beach access.
+- State. `Plot.CliffEdges` is the six-bit presence mask in direction order, mirrored on
+  the neighbour. `Plot.CliffLiftEdges` names the raised side: bit d says this plot
+  stands above its neighbour across edge d, exactly one side of an edge carries it, and
+  water is never raised. `GameState.SetCliff(lifted, direction, present)` writes both
+  masks and clears the lift on the far side. Both masks are part of the save, the state
+  hash and the clone. The sanitizer repairs a land/water cliff whose lift is missing or
+  on the water side, and removes a land/land cliff that carries no lift.
+- Generation. `ContinentsGenerator` calls `CliffGenerator.Generate` after rivers and
+  before features. It draws its noise from a restored copy of the RNG state, so cliff
+  generation leaves every other random stream unchanged. It fills 20% of land/sea edges
+  through ranked smooth noise (scale 6, two octaves, range 0–999), with a 400-point
+  bonus for Hills and Peak. River mouths and sea-edge river endpoints stay beaches. Each
+  coastal area keeps one beach, and islands of at most four tiles keep half their sea
+  edges open. It then ranks land/land edges (scale 9, two octaves) with the same bonus,
+  lifts the higher side (Peak above Hills above Flat, then noise, then tile id) and
+  fills 8% of the candidates.
+- Spacing. Two land/land cliffs in line may not stand too close, or their ramps would
+  meet and the second cliff would start from raised ground. The gap is
+  `ceil((1 + ramp) / √3) + 2` lifted tiles when the raised sides face the same way (4
+  with the renderer's 1.6 ramp), one less when they face each other (3). The ramp is a
+  client tuning value, so `CliffRules.SpacingRamp` restates it; a world-generation test
+  recomputes the expected gap from `TerrainTuning.CliffRamp` and fails if the two drift.
+  Neighbouring lifted tiles count as one raised mass, so a plateau of any shape is
+  allowed.
+- Walkability. A cliff may not cut a land area in two. The sanitizer reconnects a
+  severed area by opening the cliffs on its first cut edge, so `Plot.AreaId` still means
+  "reachable on foot"; pathfinding, cities, barbarians and naval blockades need no
+  special case. A start or city tile keeps one open sea edge (the beach rule) and, when
+  every edge is walled, one land edge.
+- Movement. Cliffs block land units from boarding, landing, attacking, or walking across
+  the edge. Ships cannot enter or leave a land tile across a cliff, including friendly
+  cities. The Amphibious promotion does not bypass cliffs. `CanMoveAllTerrain` units and
+  aircraft ignore them. Ranged attacks, aircraft, and coastal building/yield eligibility
+  do not change. Pathfinding uses the same rules, and naval AI selects ports and landing
+  edges with beach access. `VisibilityService` keeps both masks in a plot's memory.
+- Look. `TerrainSnapshot` carries `Cliffs` and `CliffLifts`. `TerrainField` raises the
+  lifted side by `CliffRise` over its whole tile and eases neighbouring ground up to it
+  over `CliffRamp`, but a ramp never crosses a cliff: the ground below a land/land cliff
+  takes none of the rise, so its edge is a step rather than a shoulder. The blend is
+  sharpened across the edge, and overlapping lifts combine with a soft maximum, so the
+  ground never rises more than one rise above its normal height. Every known cliff
+  carries a rock wall, and its stored `CliffLifts` side tells the renderer where: a
+  coastal cliff stands its columns on the waterline, a land/land cliff just outside the
+  steepest step across its edge, each from the ground at the foot up to just above the
+  bluff. A land/land wall carries `LandRocksPerEdge` columns per edge, over twice the
+  coast's, because nothing else hides the pale stone the shader tints steep ground with:
+  the wall itself has to cover the face from the ground up. An edge that carries no step
+  at all — broken data, such as an edge marked between two lifted tiles — gets no wall,
+  so no rock ever stands on flat ground. A cliff whose lifted side is unknown stays
+  bare, because the wall would stand in the open instead of against the face. Sea stacks
+  and surf appear only where the lower side is water.
+- Rivers. Rivers run along hex edges in this ruleset, so a river edge may also carry a
+  cliff: `RiverMesher` turns the channel downhill over the face, and the shader foams
+  where it does. The generator therefore no longer withholds cliffs from river edges,
+  and scores them higher so some rivers do pour over a cliff.
 
 ## Teams and entity data
 
@@ -1554,9 +1601,10 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
     hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer
     clouds.
   - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from
-    vertex `UV2.x = -HeightAt` without depth-texture fetches; renders multi-frequency
-    ripples, shore foam, shallow/deep water gradients, seabed texturing, fog darkening,
-    and drifting cloud cover.
+    vertex `UV2.x = -HeightAt` and the cliff share from `UV2.y = CliffAt` without
+    depth-texture fetches; renders multi-frequency ripples, shore foam, surf and foam
+    streaks at the foot of a cliff, shallow/deep water gradients, seabed texturing, fog
+    darkening, and drifting cloud cover.
 - Ground marker shaders, all drawn on terrain-draped meshes and animated with `TIME`:
   - `selection.gdshader`: The marker under the selected unit: a bevelled gold ring, a
     dashed inner ring, turning chevrons, glow and a drop shadow.

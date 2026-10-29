@@ -236,15 +236,33 @@ public sealed class GameState
         Set(tile, direction, present);
         Set(neighbor, (direction + 3) % 6, present);
     }
-    /// <summary>Set a cliff bit and its opposite on the neighboring plot. Off-map edges never carry a cliff. Whether the
-    /// edge is a land/sea edge is a world rule; callers (the world mod) keep that invariant.</summary>
-    public void SetCliff(TileId tile, int direction, bool present)
+    /// <summary>Set a cliff on one edge and its mirror on the neighboring plot, lifting the named plot. Off-map edges
+    /// never carry a cliff. Whether the edge is legal (a cliff needs land on one side at least) is a world rule; callers
+    /// keep that invariant.</summary>
+    public void SetCliff(TileId lifted, int direction, bool present)
     {
         if (direction < 0 || direction >= 6) throw new ArgumentOutOfRangeException(nameof(direction));
-        void Set(TileId t, int d, bool on) { var p = Plots[t.Value]; p.CliffEdges = (byte)(on ? p.CliffEdges | (1 << d) : p.CliffEdges & ~(1 << d)); }
-        if (Grid.Neighbor(tile, direction) is not { } neighbor) { Set(tile, direction, false); return; }
-        Set(tile, direction, present);
-        Set(neighbor, (direction + 3) % 6, present);
+        void Set(TileId t, int d, bool on)
+        {
+            var p = Plots[t.Value];
+            p.CliffEdges = (byte)(on ? p.CliffEdges | (1 << d) : p.CliffEdges & ~(1 << d));
+        }
+        void Lift(TileId t, int d, bool on)
+        {
+            var p = Plots[t.Value];
+            p.CliffLiftEdges = (byte)(on ? p.CliffLiftEdges | (1 << d) : p.CliffLiftEdges & ~(1 << d));
+        }
+        if (Grid.Neighbor(lifted, direction) is not { } below)
+        {
+            Set(lifted, direction, false);
+            Lift(lifted, direction, false);
+            return;
+        }
+        int mirror = (direction + 3) % 6;
+        Set(lifted, direction, present);
+        Set(below, mirror, present);
+        Lift(lifted, direction, present);
+        Lift(below, mirror, false);
     }
     /// <summary>Independent in-memory copy of all authoritative state with rebuilt lookup indexes. It hashes like the
     /// source; immutable data (map geometry, revealed plot memories, production orders) is shared, everything else is copied.</summary>

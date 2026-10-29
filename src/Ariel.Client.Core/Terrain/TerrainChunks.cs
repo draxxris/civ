@@ -56,7 +56,7 @@ public sealed class TerrainChunks
         tuning ??= new TerrainTuning();
         RingRadius = tuning.InfluenceRadius + 2 * step;
         RiverRingRadius = tuning.RiverReach + 2 * step;
-        // A plateau tile lifts land up to CliffRamp beyond its hexagon, and whether it is a plateau depends on its neighbours.
+        // A cliff tile lifts land up to CliffRamp beyond its hexagon, and whether it is a cliff depends on its neighbours.
         CliffRingRadius = tuning.InfluenceRadius + tuning.CliffRamp + 2 * Sqrt3 + 2 * step;
         int zEnd = map.Height + 1; // last row centre + 2 tile rows (3 world units)
         Columns = (map.Width + TileColumns - 1) / TileColumns;
@@ -89,7 +89,7 @@ public sealed class TerrainChunks
     /// geometry (see <see cref="TerrainTuning.RiverReach"/>).</summary>
     public double RiverRingRadius { get; }
     /// <summary>Distance beyond a chunk's rectangle within which a tile's cliff bits or relief can lift the chunk's ground
-    /// (the plateau ramp, see <see cref="TerrainTuning.CliffRamp"/>).</summary>
+    /// (the cliff ramp, see <see cref="TerrainTuning.CliffRamp"/>).</summary>
     public double CliffRingRadius { get; }
 
     /// <summary>Lattice resolution of one chunk: <see cref="TerrainMesher.PeakResolution"/> when a peak or a cliff can shape
@@ -158,6 +158,7 @@ public sealed class TerrainChunks
                 | (ulong)snapshot.Rivers[t] << 8 | snapshot.FeatureGround[t];
             h = Mix(h ^ v);
             h = Mix(h ^ snapshot.Cliffs[t]);
+            h = Mix(h ^ snapshot.CliffLifts[t]);
             h = MixString(h, snapshot.Terrain[t]);
             h = MixString(h, snapshot.Feature[t]);
             if (extras != null) h = Mix(h ^ (uint)extras[t]);

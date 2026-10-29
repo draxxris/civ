@@ -54,13 +54,14 @@ internal sealed partial class TerrainRenderer : Node3D
         var map = session.Sim.State.Map;
         Palette = new TerrainPalette(catalog);
         _textures = new TerrainTextures(Palette);
-        _chunks = new TerrainChunks(map, Tuning);
+        var tuning = Tuning;
+        _chunks = new TerrainChunks(map, tuning);
         _data = new TileDataTexture(map.Width, map.Height);
         _marks = new byte[map.Width * map.Height];
         ulong seed = session.Sim.Settings.Seed;
         _seed = unchecked((int)(seed ^ (seed >> 32)));
         Snapshot = new TerrainSnapshot(map);
-        Field = new TerrainField(Snapshot, _seed, Tuning);
+        Field = new TerrainField(Snapshot, _seed, tuning);
         _copies = map.Wrap ? [-(float)Snapshot.Period, 0f, (float)Snapshot.Period] : [0f];
 
         _scatterPlanner = new ScatterPlanner(catalog) { DensityScale = ScatterDensityScale };

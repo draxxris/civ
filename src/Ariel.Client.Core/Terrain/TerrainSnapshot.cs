@@ -22,6 +22,7 @@ public sealed class TerrainSnapshot
         Relief = new ReliefClass[n];
         Rivers = new byte[n];
         Cliffs = new byte[n];
+        CliffLifts = new byte[n];
         FeatureGround = new byte[n];
         Owner = new byte[n];
         Sight = new Sight[n];
@@ -46,8 +47,11 @@ public sealed class TerrainSnapshot
     /// <summary>Six river-edge bits in <see cref="Hex.Directions"/> order, mirrored on the neighbour.</summary>
     public byte[] Rivers { get; }
     /// <summary>Six cliff-edge bits in <see cref="Hex.Directions"/> order, as this tile's memory knows them. A renderer
-    /// trusts a bit only when both tiles are known and one is land, the other water.</summary>
+    /// trusts a bit only when both tiles are known.</summary>
     public byte[] Cliffs { get; }
+    /// <summary>Six bits in <see cref="Hex.Directions"/> order, bit d set when this tile is the raised side of the cliff
+    /// on edge d. Not mirrored, so at most one side of an edge sets it.</summary>
+    public byte[] CliffLifts { get; }
     /// <summary>Feature ground index (0 = none).</summary>
     public byte[] FeatureGround { get; }
     /// <summary>Owner player id + 1 (0 = unowned).</summary>
@@ -101,6 +105,7 @@ public sealed class TerrainSnapshot
             snapshot.Crater[i] = snapshot.Relief[i] == ReliefClass.Peak && craterOf?.Invoke(snapshot.FeatureGround[i]) == true;
             snapshot.Rivers[i] = plot.RiverEdges;
             snapshot.Cliffs[i] = plot.CliffEdges;
+            snapshot.CliffLifts[i] = plot.CliffLiftEdges;
             snapshot.Owner[i] = plot.Owner is int owner ? checked((byte)(owner + 1)) : (byte)0;
         }
         return snapshot;

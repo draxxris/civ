@@ -96,7 +96,7 @@ public sealed class RiverNetwork
     /// curve's banks, the ground's height above the curve's valley floor (the lowest ground at its two banks) shrinks towards the
     /// river: to nothing at the bank, so the water is level from bank to bank, easing back to full height at the reach.
     /// A mountain beside a river thus stands lower and slopes more steeply all the way from its summit, rather than
-    /// ending in a cliff. Low ground beside the river rises slightly to the floor; ground below sea level never rises.</summary>
+    /// ending in a sheer drop. Low ground beside the river rises slightly to the floor; ground below sea level never rises.</summary>
     public double Level(double x, double z, double ground)
     {
         // The floor is a soft nearest-point lookup (floors weighted by how much further than the nearest segment they lie),

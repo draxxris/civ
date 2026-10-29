@@ -57,7 +57,7 @@ public sealed class WorldMod : IPreparableMod
         context.TurnSystems.Register(visibility);
         context.Subscribe<Ariel.Game.CityFounded>("city_sight", (sim, e) =>
         {
-            CliffRules.EnsureBeach(sim.State, sim.Content, sim.State.Grid.TileAt(e.Position));
+            CliffRules.EnsureAccess(sim.State, sim.Content, sim.State.Grid.TileAt(e.Position));
             visibility.Recompute(sim);
         });
         context.Subscribe<Ariel.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));

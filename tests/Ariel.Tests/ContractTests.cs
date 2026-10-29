@@ -339,7 +339,7 @@ public class ContractTests
         string save = SaveGame.Save(sim);
         Assert.Contains("content mismatch", Assert.Throws<InvalidDataException>(() => SaveGame.Load(b, save)).Message);
         Assert.Equal(sim.ComputeHash(), SaveGame.Load(b, save, force: true).ComputeHash());
-        string future = save.Replace("\"SchemaVersion\":1", "\"SchemaVersion\":99", StringComparison.Ordinal);
+        string future = save.Replace($"\"SchemaVersion\":{SaveGame.SchemaVersion}", "\"SchemaVersion\":99", StringComparison.Ordinal);
         Assert.Contains("schema", Assert.Throws<InvalidDataException>(() => SaveGame.Load(a, future, force: true)).Message);
     }
 

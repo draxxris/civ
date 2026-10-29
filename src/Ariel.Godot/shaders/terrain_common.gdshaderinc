@@ -550,7 +550,7 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 	water_tint = vec4(0.0);
 	fogged = 0.0;
 	hidden = 0.0;
-	// Rock shows only on cliffs and under snow; skip its texture elsewhere.
+	// Rock shows only on steep faces and under snow; skip its texture elsewhere.
 	vec4 rock_sample = rock_weight > 0.0 || snow_weight > 0.0 ? material_sample(cliff_layer, p, dp, linear) : vec4(0.0, 0.0, 0.0, 0.5);
 	vec3 rock = rock_sample.rgb;
 	vec3 snow = snow_weight > 0.0 ? material_sample(snow_layer, p, dp, linear).rgb : vec3(0.0);

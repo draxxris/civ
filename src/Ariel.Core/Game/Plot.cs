@@ -35,9 +35,9 @@ public sealed class Plot
         }
     }
     private byte _riverEdges;
-    /// <summary>Six cliff-edge bits in Hex.Directions order, mirrored on adjacent plots. A cliff stands only on an edge
-    /// between a land plot and a sea (non-lake water) plot, and blocks crossing that edge between land and water.
-    /// Edits must use GameState.SetCliff.</summary>
+    /// <summary>Six cliff-edge bits in Hex.Directions order, mirrored on adjacent plots. A cliff stands on the edge
+    /// between two on-map plots, at least one of them land, and names one side as lifted. Edits must use
+    /// GameState.SetCliff. The world rules own which edges are legal.</summary>
     public byte CliffEdges
     {
         get => _cliffEdges;
@@ -48,6 +48,19 @@ public sealed class Plot
         }
     }
     private byte _cliffEdges;
+    /// <summary>Six bits in Hex.Directions order, bit d set when this plot is the lifted side of the cliff on edge d.
+    /// Not mirrored: exactly one side of an edge sets it, so a memory that knows one plot knows which way the step drops.
+    /// Edits must use GameState.SetCliff.</summary>
+    public byte CliffLiftEdges
+    {
+        get => _cliffLiftEdges;
+        set
+        {
+            if (value > 63) throw new ArgumentOutOfRangeException(nameof(value), "Cliff masks use only six bits");
+            _cliffLiftEdges = value;
+        }
+    }
+    private byte _cliffLiftEdges;
     /// <summary>Controlling player, or null.</summary>
     public int? Owner { get; set; }
     /// <summary>Accumulated culture by player id.</summary>
@@ -65,17 +78,18 @@ public sealed class Plot
     {
         Terrain = Terrain, Kind = Kind, IsLake = IsLake, ImprovementTurns = ImprovementTurns, DepletedMine = DepletedMine,
         BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus, Improvement = Improvement,
-        Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges, Owner = Owner, Culture = new(Culture, Culture.Comparer),
+        Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges, _cliffLiftEdges = _cliffLiftEdges,
+        Owner = Owner, Culture = new(Culture, Culture.Comparer),
         Revealed = TeamMask.FromWords(Revealed.Words), Visible = TeamMask.FromWords(Visible.Words),
         RevealedSnapshots = new(RevealedSnapshots, RevealedSnapshots.Comparer), AreaId = AreaId,
     };
 }
 
-/// <summary>Immutable plot memory; rivers and city marks must not use unseen live data either.</summary>
+/// <summary>Immutable plot memory; rivers, cliffs and city marks must not use unseen live data either.</summary>
 public sealed record RevealedPlotSnapshot(
     string Terrain, PlotKind Kind, bool IsLake, string? Feature,
     string? Bonus, string? Improvement, string? Route, int? Owner,
-    byte RiverEdges = 0, RevealedCitySnapshot? City = null, byte CliffEdges = 0);
+    byte RiverEdges = 0, RevealedCitySnapshot? City = null, byte CliffEdges = 0, byte CliffLiftEdges = 0);
 
 /// <summary>Only the city fields used by map labels and settlement models.</summary>
 public sealed record RevealedCitySnapshot(int Id, int Owner, string Name, int Population,

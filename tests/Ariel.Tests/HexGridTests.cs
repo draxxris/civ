@@ -158,7 +158,7 @@ public class HexGridTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void CliffEdgesMirrorAcrossNeighborsAndClearStaleOffMapBits(bool wrap)
+    public void CliffEdgesMirrorAcrossNeighborsAndOnlyTheNamedSideIsLifted(bool wrap)
     {
         var state = new GameState { Map = new(4, 3, wrap), Plots = Enumerable.Range(0, 12).Select(_ => new Plot()).ToArray() };
         foreach (var tile in state.Grid.Tiles)
@@ -169,13 +169,19 @@ public class HexGridTests
                 {
                     Assert.NotEqual(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
                     Assert.NotEqual(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
+                    Assert.NotEqual(0, state.Plots[tile.Value].CliffLiftEdges & (1 << direction));
+                    Assert.Equal(0, state.Plots[next.Value].CliffLiftEdges & (1 << ((direction + 3) % 6)));
                     var copy = state.Clone();
                     state.SetCliff(tile, direction, false);
                     Assert.NotEqual(0, copy.Plots[tile.Value].CliffEdges & (1 << direction));
+                    Assert.NotEqual(0, copy.Plots[tile.Value].CliffLiftEdges & (1 << direction));
+                    Assert.Equal(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
                     Assert.Equal(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
+                    Assert.Equal(0, state.Plots[next.Value].CliffLiftEdges & (1 << ((direction + 3) % 6)));
                 }
                 else
                 {
+                    // Off-map edges never carry a cliff, and a stale bit is cleared by either setting or clearing.
                     Assert.Equal(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
                     state.Plots[tile.Value].CliffEdges |= (byte)(1 << direction);
                     state.SetCliff(tile, direction, true);
@@ -183,6 +189,7 @@ public class HexGridTests
                 }
             }
         Assert.All(state.Plots, p => Assert.Equal(0, p.CliffEdges));
+        Assert.All(state.Plots, p => Assert.Equal(0, p.CliffLiftEdges));
     }
 
     [Fact]

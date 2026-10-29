@@ -67,8 +67,8 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
 
     private static bool KeepProp(ScatterInstance instance)
     {
-        // Sea stacks and cliff walls (rocks rooted below sea level) are placed exactly; thinning would leave gaps in the wall.
-        if (instance.Y < 0) return true;
+        // Cliff walls and sea stacks are placed exactly; thinning a wall would leave gaps in it.
+        if (instance.Exact) return true;
         // Explicit integer mixing is stable across processes and independent of candidate order or count.
         uint hash = 2166136261u;
         hash = unchecked((hash ^ (uint)instance.Tile) * 16777619u);

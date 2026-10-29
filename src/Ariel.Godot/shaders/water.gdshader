@@ -23,7 +23,7 @@ uniform vec3 sun_direction = vec3(-0.542, 0.643, -0.542);
 
 varying vec3 world_pos;
 varying float water_depth;
-// TerrainField.CliffAt: 1 at a cliff edge, falling linearly to 0 about 0.42 world units out.
+// TerrainField.LedgeAt: 1 at a cliff edge, falling linearly to 0 about 0.42 world units out.
 varying float cliff;
 
 void vertex() {

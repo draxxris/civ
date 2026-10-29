@@ -13,7 +13,7 @@ uniform int debug_mode = 0;
 uniform float lattice_steps = 9.0;
 // Snow caps: altitude of the snow line and half width of its transition. Only mountain summits rise above the line;
 // lowland snow comes from tile terrain instead. Snow sticks to faces flatter than snow_shed (normal.y, after rock
-// relief) and slides off steeper ones, so the cap breaks up into ledges and gullies as it fades out.
+// relief) and slides off steeper ones, so the cap breaks up into cliffs and gullies as it fades out.
 uniform float snow_line = 0.95;
 uniform float snow_fade = 0.22;
 uniform float snow_shed = 0.62;
@@ -54,7 +54,7 @@ float snow_cover(vec2 p, float height, float flatness, float hollow) {
 	float patch = periodic_fbm(p, 5.0) - 0.5;
 	float altitude = (height + drift * drift_height - snow_line) / snow_fade;
 	float hold = smoothstep(snow_shed - 0.3, snow_shed + 0.12, flatness + patch * 0.25);
-	// High up, snow clings even to steep faces; near the line only ledges and hollows keep it.
+	// High up, snow clings even to steep faces; near the line only cliffs and hollows keep it.
 	float cover = clamp(0.5 + 0.5 * altitude, 0.0, 1.0);
 	return smoothstep(0.0, 1.0, cover * mix(hold, 1.0, cover * cover * 0.6) + patch * 0.15 * cover);
 }

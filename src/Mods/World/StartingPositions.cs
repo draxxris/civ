@@ -56,7 +56,7 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         foreach (var start in starts)
         {
             NormalizeStart(sim, start, minimum, tuning);
-            CliffRules.EnsureBeach(sim.State, sim.Content, start);
+            CliffRules.EnsureAccess(sim.State, sim.Content, start);
         }
     }
     private void NormalizeStart(Simulation sim, TileId center, int minimum, S.HexOverridesDef tuning)
