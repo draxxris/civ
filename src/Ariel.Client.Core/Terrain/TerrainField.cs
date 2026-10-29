@@ -154,8 +154,8 @@ public sealed record TerrainTuning
     /// <summary>Cliffs: how far edge noise moves the cliff line from the hex edge, either way. It stays inside
     /// <see cref="CliffInner"/>, where the cliff shape is full.</summary>
     public double CliffWander { get; init; } = 0.1;
-    /// <summary>Sea stacks: chance that a cliff edge has a lone rock off its foot (and a fifth of that for a second).
-    /// Only a cliff whose lower side is water carries stacks.</summary>
+    /// <summary>Sea stacks: chance that a coastal cliff edge carries a second lone rock off its foot. Every cliff whose
+    /// lower side is water always carries at least one, so no stretch of coast is left bare.</summary>
     public double StackChance { get; init; } = 0.2;
     /// <summary>Sea stacks: height of the shoal top each rock stands on. Just under the surface, so shore foam rings it.</summary>
     public double StackShoal { get; init; } = -0.012;
@@ -541,7 +541,8 @@ public sealed class TerrainField
     {
         uint salt = 50 + 10 * (uint)direction;
         double roll = TileHash(highTile, salt);
-        int count = roll < Tuning.StackChance * 0.2 ? 2 : roll < Tuning.StackChance ? 1 : 0;
+        // A cliff that meets water always stands on rock; the roll only adds a second column for body.
+        int count = roll < Tuning.StackChance ? 2 : 1;
         double nx = bx - ax, nz = bz - az, len = Math.Sqrt(nx * nx + nz * nz);
         nx /= len; nz /= len;
         double mx = 0.5 * (ax + bx), mz = 0.5 * (az + bz);
@@ -624,32 +625,26 @@ public sealed class TerrainField
             uint r = salt + 5 * (uint)i;
             double along = -0.5 + (i + 0.5 + 0.6 * (TileHash(tile, r) - 0.5)) / CliffRocksPerEdge;
             var (px, pz) = Unwarp(mx - nz * along, mz + nx * along);
-            // March out to sea across the edge: the first wet sample marks the waterline. A coarse march brackets it and a
-            // short bisection pins it, which costs about two dozen height samples per column instead of the fifty a fine
-            // march would take; every cliff edge carries a wall of columns, so that difference is map load time.
-            double line = double.NaN;
-            for (double o = -0.35; o < 0.4; o += 0.05)
+            // The waterline across the edge: the first wet sample on the way out from just inland of it. A column stands
+            // there, so the wall follows the shore. The offset is clamped, because the blended terrain can push the
+            // waterline a long way inland or out to sea, and the wall must stay one column thick along its own edge
+            // rather than scattering into a bay or a shoal and leaving the edge looking bare.
+            double off = double.NaN;
+            for (double o = -0.15; o <= 0.45; o += 0.03)
             {
-                if (HeightAt(px + nx * o, pz + nz * o) < 0) { line = o; break; }
+                if (HeightAt(px + nx * o, pz + nz * o) >= 0) continue;
+                off = o;
+                break;
             }
-            if (double.IsNaN(line)) continue;
-            double lo = line - 0.05, hi = line;
-            while (hi - lo > 1e-3)
-            {
-                double mid = 0.5 * (lo + hi);
-                if (HeightAt(px + nx * mid, pz + nz * mid) < 0) hi = mid; else lo = mid;
-            }
-            line = hi;
-            // Just beyond the waterline the seabed the column stands on. Marching only 0.05 out keeps the foot on the
-            // cliff's own shelf instead of far out on the deep floor, which would make every column a tower.
-            double foot = HeightAt(px + nx * (line + 0.05), pz + nz * (line + 0.05));
-            // The brink is the top of the rock face, not the highest ground inland: it is the bluff the land material
-            // crests, sampled just inside the waterline, and never below the cliff a cliff tile stands on. A hex corner
-            // where two water tiles meet dips under the cliff, so a local sample alone can fall short of the face.
-            double top = Math.Max(HeightAt(px + nx * (line - 0.1), pz + nz * (line - 0.1)), Tuning.FlatBase + Tuning.CliffRise +
-                Tuning.FlatNoise * _noise.Fbm(px, pz, Tuning.FlatFrequency, Tuning.Octaves, salt: 2));
-            double cx = px + nx * (line - 0.04), cz = pz + nz * (line - 0.04);
-            yield return Column(tile, r, cx, cz, foot, top, lip: 0.07);
+            if (double.IsNaN(off)) off = 0.05;
+            off = Math.Clamp(off, -0.05, 0.3);
+            double sx = px + nx * off, sz = pz + nz * off;
+            double foot = Math.Min(HeightAt(px + nx * (off + 0.04), pz + nz * (off + 0.04)), -0.005);
+            // The brink is the top of the rock face: the bluff just inland of the waterline, never below the cliff the
+            // tile stands on.
+            double top = Math.Max(HeightAt(px + nx * (off - 0.12), pz + nz * (off - 0.12)), Tuning.FlatBase + Tuning.CliffRise +
+                Tuning.FlatNoise * _noise.Fbm(sx, sz, Tuning.FlatFrequency, Tuning.Octaves, salt: 2));
+            yield return Column(tile, r, sx, sz, foot, top, lip: 0.07);
         }
     }
 

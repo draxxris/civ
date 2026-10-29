@@ -214,6 +214,41 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
     }
 
     [Fact]
+    public void Every_cliff_between_land_and_water_carries_sea_rocks()
+    {
+        var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat, 14, 12);
+        var grid = snapshot.Grid;
+        var edges = new List<(int Land, int Water)>();
+        for (int row = 4; row <= 6; row++)
+        {
+            int land = grid.TileAt(6, row).Value, water = grid.TileAt(7, row).Value;
+            snapshot.Relief[water] = ReliefClass.ShallowWater;
+            snapshot.Cliffs[land] |= 1;
+            snapshot.Cliffs[water] |= 1 << 3;
+            snapshot.CliffLifts[land] |= 1;
+            edges.Add((land, water));
+        }
+        var field = new TerrainField(snapshot, 3);
+        double x0 = double.MaxValue, x1 = double.MinValue, z0 = double.MaxValue, z1 = double.MinValue;
+        foreach (var (land, water) in edges)
+            foreach (int tile in new[] { land, water })
+            {
+                var (x, z) = grid.HexOf(new TileId(tile)).ToPixel(1);
+                x0 = Math.Min(x0, x - 2); x1 = Math.Max(x1, x + 2);
+                z0 = Math.Min(z0, z - 2); z1 = Math.Max(z1, z + 2);
+            }
+        var rocks = field.CliffRocks(x0, x1, z0, z1).ToArray();
+        var stacks = field.SeaStacks;
+        Assert.Equal(edges.Count * TerrainField.CliffRocksPerEdge, rocks.Length);
+        foreach (var (land, water) in edges)
+        {
+            // A cliff that meets water always carries its wall and at least one lone rock.
+            Assert.Equal(TerrainField.CliffRocksPerEdge, rocks.Count(r => r.Tile == land));
+            Assert.Contains(stacks, s => s.Tile == water);
+        }
+    }
+
+    [Fact]
     public void Land_cliff_lifts_its_high_side_and_the_ramp_returns_to_the_normal_ground()
     {
         var s = new TerrainSnapshot(new MapSpec(9, 7, false));

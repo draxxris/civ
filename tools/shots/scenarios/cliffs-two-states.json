@@ -1,0 +1,144 @@
+{
+ "// note": "Two cliff states at the shipped heights. Land-to-land: four east edges (right). Land-to-ocean: the water-facing edges of four land tiles on one side of a small lake, mask 35 = east, north-east and south-east (left). Only the raised side of each cliff is plains; no other tile is lifted.",
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat",
+  "owner": null
+ },
+ "tiles": [
+  {
+   "rect": [
+    0,
+    0,
+    200,
+    200
+   ],
+   "cliff": false
+  },
+  {
+   "at": [
+    10,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 1
+  },
+  {
+   "at": [
+    10,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 1
+  },
+  {
+   "at": [
+    10,
+    9
+   ],
+   "terrain": "world:plains",
+   "cliff": 1
+  },
+  {
+   "at": [
+    10,
+    10
+   ],
+   "terrain": "world:plains",
+   "cliff": 1
+  },
+  {
+   "at": [
+    11,
+    12
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    12
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    13
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    13
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    14
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    14
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    15
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    15
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    10,
+    12
+   ],
+   "terrain": "world:plains",
+   "cliff": 35
+  },
+  {
+   "at": [
+    10,
+    13
+   ],
+   "terrain": "world:plains",
+   "cliff": 35
+  },
+  {
+   "at": [
+    10,
+    14
+   ],
+   "terrain": "world:plains",
+   "cliff": 35
+  },
+  {
+   "at": [
+    10,
+    15
+   ],
+   "terrain": "world:plains",
+   "cliff": 35
+  }
+ ],
+ "clearUnits": true,
+ "focus": [
+  10,
+  13
+ ]
+}
