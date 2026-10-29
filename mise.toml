@@ -35,7 +35,9 @@ mise run test:nobuild
 [tasks."test:nobuild"]
 description = "Run the default tests on the current build (excludes E2E, extractor and world generation tests)"
 depends = ["cool"]
-env = { DOTNET_gcServer = "1" }
+# Server GC is the single biggest GC win; disabling tiered compilation stops the suite from spending its first
+# seconds in tier-0 code and re-JITting hot paths it only reaches a few times.
+env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
 run = '''
 set -u
 filter='Category!=Extractor&Category!=E2E&Category!=WorldGen'
@@ -65,7 +67,7 @@ exit $fail
 [tasks."test:worldgen"]
 description = "Run world generation tests (run when the work set touches world generation)"
 depends = ["cool"]
-env = { DOTNET_gcServer = "1" }
+env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
 run = "dotnet test Ariel.slnx --filter 'Category=WorldGen'"
 
 [tasks."test:e2e"]

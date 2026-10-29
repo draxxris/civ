@@ -24,8 +24,9 @@ public static class SaveGame
         if (!force && !MatchesContent(content, save))
             throw new InvalidDataException($"Save content mismatch: expected {content.ContentHash}, got {save.ContentHash}");
         if (save.Rng.Length != 4) throw new InvalidDataException("Save must contain four RNG words");
-        // Normalization also rejects floats before accepting any mod state.
-        _ = CanonicalJson.Serialize(save.State);
+        // Rejects floats - in practice a hand-edited save - before accepting any mod state, without paying for
+        // a second canonical write of the whole document.
+        CanonicalJson.ValidateIntegers(json);
         save.State.RebuildIndexes();
         var rng = DeterministicRng.Restore(save.Rng[0], save.Rng[1], save.Rng[2], save.Rng[3]);
         var sim = new Simulation(content, save.Settings, save.State, rng);

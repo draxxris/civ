@@ -22,6 +22,20 @@ public sealed class CanonicalJsonTests
             CanonicalJson.Digest(document.RootElement));
     }
 
+    /// <summary>The serializer path canonicalizes its own UTF-8 output, so keys that the encoder escapes must sort by
+    /// their decoded text, exactly as a parsed document does.</summary>
+    [Fact]
+    public void SerializerOutputOrdersEscapedAndNonAsciiKeysByTheirDecodedText()
+    {
+        var values = new SortedDictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["z"] = 1, ["é"] = 2, ["a"] = 3, ["Z"] = 4, ["\\"] = 5, ["𝄞"] = 6,
+        };
+        const string canonical = "{\"Z\":4,\"\\\\\":5,\"a\":3,\"z\":1,\"\\u00E9\":2,\"\\uD834\\uDD1E\":6}";
+        Assert.Equal(canonical, CanonicalJson.Serialize(values));
+        Assert.Equal(Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))), CanonicalJson.Digest(values));
+    }
+
     [Theory]
     [InlineData("1.0")]
     [InlineData("1e0")]
