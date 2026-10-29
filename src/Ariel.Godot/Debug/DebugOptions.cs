@@ -61,9 +61,9 @@ internal sealed record DebugOptions
     /// <summary>A scene option that implies a custom capture: reveal the whole map and open on the map, not the setup screen.</summary>
     public bool CustomScene => Focus != null || FocusTile != null || ShotsFile != null || ScenarioFile != null;
 
-    /// <summary>Whether the run drives itself: a capture, an FPS probe or a live inspection window. Anything else opens on
-    /// the mod manager and the setup screen, as a player sees it.</summary>
-    public bool Unattended => ScreenshotPath != null || FpsProbe || Inspect;
+    /// <summary>Whether the run drives itself: a capture, an FPS probe, a live inspection window, or a hand-made scene, none
+    /// of which can answer a mod prompt or a setup screen. Anything else opens both, as a player sees it.</summary>
+    public bool Unattended => ScreenshotPath != null || FpsProbe || Inspect || ScenarioFile != null;
 
     public static readonly string[] TerrainDebugNames = ["normal", "weights", "hidden", "", "relief", "bands", "slope", "lattice", "cavity"];
 

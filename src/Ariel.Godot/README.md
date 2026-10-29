@@ -308,12 +308,23 @@ manager, because it cannot answer a prompt.
   is described in `src/Ariel.Godot/Debug/DebugScenario.cs` and examples are
   `tools/shots/scenarios/hills-forest-roads.json` and
   `tools/shots/scenarios/improvements.json`. It reveals every tile and makes every tile
-  visible. A tile can contain
-  `"city":{"owner":0,"name":"Testburg","population":5,"buildings":["cities:walls"]}`.
-  Owner and name are required. Population defaults to 1, and buildings default to an
-  empty list. The city clears the plot improvement and sets its owner. Unknown building
-  ids stop the run and appear in the error. A second city on the same tile stops the
-  run. Without `--clean`, city tokens, labels, and units remain visible.
+  visible. A scene is an unattended run: it starts straight into the world, with no mod
+  manager and no setup screen.
+  - **The scene gets a world of its own.** Unless `--world` names one, the map is the
+    scene's bounding box plus two tiles of margin (at least 8 × 6, never wrapping), with
+    no opponents, and every tile is cleared to flat ground before the scene lands: no
+    generated relief, river, resource, feature, cliff or unit survives. Every pair of
+    numbers in the file is read as a column and row — tile `at`, `focus`, unit positions
+    and road points — and those coordinates are shifted so the scene sits two tiles in
+    from the corner. `--focus-tile` keeps taking the coordinates as written in the file.
+    Rects are not read as positions: they clear a whole map, so a 200 × 200 rect does
+    not stretch the world. A file with no positions at all keeps the generated map. A
+    tile can contain
+    `"city":{"owner":0,"name":"Testburg","population":5,"buildings":["cities:walls"]}`.
+    Owner and name are required. Population defaults to 1, and buildings default to an
+    empty list. The city clears the plot improvement and sets its owner. Unknown
+    building ids stop the run and appear in the error. A second city on the same tile
+    stops the run. Without `--clean`, city tokens, labels, and units remain visible.
 
 ### Camera and view
 

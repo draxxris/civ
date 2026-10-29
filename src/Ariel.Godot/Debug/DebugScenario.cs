@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
 
@@ -28,7 +29,9 @@ namespace Ariel.Client;
 /// <c>[{"at":[5,5],"type":"warrior","owner":1,"health":40,"count":2}]</c>. Type accepts a full id or short name; owner
 /// defaults to 0, health to 100 and count to 1. Units are placed after tiles and cities.
 /// "revealResources": true gives the local team every resource's reveal technology, so every resource on the map shows.
-/// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.</summary>
+/// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.
+/// A run without <c>--world</c> sizes the map to the scene (see <see cref="Frame"/>), clears every tile to flat ground
+/// first and shifts the scene's coordinates to fit it; a run with <c>--world</c> lays the scene over the generated map.</summary>
 internal static class DebugScenario
 {
     /// <summary>"cliff": true puts a cliff on every edge of a land tile, false clears them, and a number is an edge bit mask
@@ -44,18 +47,106 @@ internal static class DebugScenario
                 state.SetCliff(tile, d, (mask & (1 << d)) != 0);
     }
 
-    public static Hex? Apply(GameSession session, string file)
+    /// <summary>A scene laid out in a world of its own: the file with every position shifted so the scene starts
+    /// <see cref="SceneMargin"/> tiles from the map edge, and the map size that leaves.</summary>
+    internal sealed record SceneWorld(string Json, int Width, int Height, int ShiftCol, int ShiftRow);
+
+    /// <summary>Tiles kept around the scene, so the camera can look along its edge without leaving the map.</summary>
+    private const int SceneMargin = 2;
+
+    /// <summary>Ground a scene gets when it names no <c>fill</c> of its own.</summary>
+    private const string BareFill = """{"terrain":"world:grass","kind":"Flat","owner":null}""";
+
+    /// <summary>The world a scene file asks for, or null when it names no position. Every pair of numbers in the file counts
+    /// as a column and row — tile <c>at</c> lists, <c>focus</c>, unit positions and road points — and none of them are
+    /// shifted by the frame itself, so the JSON still reads the way it was written. Rects are left alone: a scene uses them
+    /// to clear a whole map, not to say where it is, so a 200 × 200 rect must not stretch the world to 200 tiles.</summary>
+    public static SceneWorld? Frame(string file)
     {
-        using var doc = JsonDocument.Parse(System.IO.File.ReadAllText(file), new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
+        var root = JsonNode.Parse(System.IO.File.ReadAllText(file), documentOptions: new JsonDocumentOptions
+            { CommentHandling = JsonCommentHandling.Skip });
+        if (root is null) return null;
+        int col0 = int.MaxValue, row0 = int.MaxValue, col1 = int.MinValue, row1 = int.MinValue;
+        Walk(root, (c, r) =>
+        {
+            col0 = Math.Min(col0, c); row0 = Math.Min(row0, r);
+            col1 = Math.Max(col1, c); row1 = Math.Max(row1, r);
+        });
+        if (col0 > col1) return null;
+        int dc = SceneMargin - col0, dr = SceneMargin - row0;
+        Shift(root, dc, dr);
+        int width = Math.Max(8, col1 - col0 + 1 + 2 * SceneMargin), height = Math.Max(6, row1 - row0 + 1 + 2 * SceneMargin);
+        return new(root.ToJsonString(), width, height, dc, dr);
+    }
+
+    /// <summary>Call <paramref name="visit"/> with the column and row of every two-number array in the document.</summary>
+    private static void Walk(JsonNode node, Action<int, int> visit)
+    {
+        if (Point(node) is var (c, r) && c is not null) { visit(c.Value, r!.Value); return; }
+        if (node is JsonArray array)
+        {
+            foreach (var child in array)
+                if (child is not null) Walk(child, visit);
+        }
+        else if (node is JsonObject obj)
+        {
+            foreach (var pair in obj)
+                if (pair.Value is not null) Walk(pair.Value, visit);
+        }
+    }
+
+    /// <summary>Shift every two-number array in the document by the given column and row offset.</summary>
+    private static void Shift(JsonNode node, int dc, int dr)
+    {
+        if (Point(node) is var (c, r) && c is not null)
+        {
+            node.AsArray()[0] = c.Value + dc;
+            node.AsArray()[1] = r!.Value + dr;
+            return;
+        }
+        if (node is JsonArray array)
+        {
+            foreach (var child in array)
+                if (child is not null) Shift(child, dc, dr);
+        }
+        else if (node is JsonObject obj)
+        {
+            foreach (var pair in obj)
+                if (pair.Value is not null) Shift(pair.Value, dc, dr);
+        }
+    }
+
+    /// <summary>The column and row an array holds when it is exactly two whole numbers, else (null, null).</summary>
+    private static (int? Col, int? Row) Point(JsonNode node) =>
+        node is JsonArray { Count: 2 } array && array[0] is JsonValue c && array[1] is JsonValue r
+            && c.TryGetValue<int>(out int col) && r.TryGetValue<int>(out int row)
+            ? (col, row) : (null, null);
+
+    /// <summary>Lay the scene on the session. With <paramref name="sceneWorld"/> the map was sized to the scene, so the
+    /// generated world is cleared first and the scene's own coordinates are shifted to match.</summary>
+    public static Hex? Apply(GameSession session, string file, bool sceneWorld = false)
+    {
+        var text = System.IO.File.ReadAllText(file);
+        if (sceneWorld) text = Frame(file)?.Json ?? text;
+        using var doc = JsonDocument.Parse(text, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
+        using var bare = sceneWorld ? JsonDocument.Parse(BareFill) : null;
         var state = session.Sim.State;
         var root = doc.RootElement;
-        if (root.TryGetProperty("fill", out var fill))
+        JsonElement? ground = root.TryGetProperty("fill", out var declared) ? declared : sceneWorld ? bare!.RootElement : null;
+        if (ground is { } fill)
             foreach (var tile in state.Grid.Tiles)
             {
                 var plot = state.Plots[tile.Value];
                 plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.IsLake = false;
+                if (sceneWorld)
+                {
+                    // The map is the scene, so nothing the generator made may show through it.
+                    plot.CliffEdges = 0; plot.CliffLiftEdges = 0; plot.Owner = null;
+                }
                 Edit(session, tile, fill);
             }
+        if (sceneWorld)
+            foreach (var unit in state.Units.ToList()) state.RemoveUnit(unit.Id);
         if (root.TryGetProperty("tiles", out var tiles))
         {
             foreach (var entry in tiles.EnumerateArray())

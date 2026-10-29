@@ -9,6 +9,9 @@ public sealed record SimulationSettings
     public ulong Seed { get; init; } = 1;
     /// <summary>Map dimensions and wrapping.</summary>
     public MapSpec Map { get; init; } = new(21, 21);
+    /// <summary>Explicit map dimensions that override the world size's own, with wrapping taken from the world size. Debug
+    /// scenes use it to draw a map exactly as large as the hand-made scene they place.</summary>
+    public MapSpec? MapOverride { get; init; }
     /// <summary>Registered generator id. Empty selects the loaded ruleset default.</summary>
     public string MapGenerator { get; init; } = "";
     /// <summary>Player count.</summary>
@@ -43,8 +46,11 @@ public sealed record SimulationSettings
 
     /// <summary>Map dimensions and wrapping. A ruleset world size resolves through its own setup; without one the
     /// literal <see cref="Map"/> is used.</summary>
-    public MapSpec ResolveMap(ContentDb content) => WorldSize is null
-        ? Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, this);
+    public MapSpec ResolveMap(ContentDb content)
+    {
+        var map = WorldSize is null ? Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, this);
+        return MapOverride ?? map;
+    }
 
     private static string Choose(ContentDb content, SetupField field, string value, string fallback = "") =>
         value.Length > 0 ? value : SetupPolicies.Default(content, field) ?? fallback;

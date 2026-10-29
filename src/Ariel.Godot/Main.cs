@@ -24,6 +24,11 @@ public partial class Main : Node3D
     private string? _shotPath;
     private string _shotName = "";
     private Hex? _scenarioFocus;
+    /// <summary>Whether the map was sized to the scenario file, so the scene is the whole world and starts blank.</summary>
+    private bool _sceneWorld;
+    /// <summary>How far a scene's own coordinates moved to fit the map it was sized to, so <c>--focus-tile</c> can keep
+    /// using the numbers the file was written with.</summary>
+    private (int Col, int Row) _sceneShift;
     private EspionageCapture? _espionageCapture;
 
     public override void _Ready()
@@ -98,7 +103,7 @@ public partial class Main : Node3D
                 if (_framesSinceReady >= _debug.Frames) TakeScreenshot();
             }
         }
-        catch (Exception error) when (_debug.ScreenshotPath != null || _debug.FpsProbe)
+        catch (Exception error) when (_debug.Unattended)
         {
             GD.PrintErr(error.ToString());
             GetTree().Quit(1);
@@ -139,7 +144,17 @@ public partial class Main : Node3D
         };
         var size = _debug.World.Length == 0 ? defaults.WorldSize : _catalog.WorldSizes.First(w =>
             w.Id == _debug.World || w.Name.Equals(_debug.World, StringComparison.OrdinalIgnoreCase)).Id;
-        return defaults with { WorldSize = size, MapGenerator = mapGenerator, Opponents = _debug.Opponents, Seed = _debug.Seed };
+        var options = defaults with { WorldSize = size, MapGenerator = mapGenerator, Opponents = _debug.Opponents, Seed = _debug.Seed };
+        if (_debug.ScenarioFile is { } file && _debug.World.Length == 0 && DebugScenario.Frame(file) is { } scene)
+        {
+            // A hand-made scene gets a world of its own: the map is the scene plus a margin and does not wrap, and there is
+            // nobody to play against, because the tiles outside the scene are cleared before it lands.
+            _sceneWorld = true;
+            _sceneShift = (scene.ShiftCol, scene.ShiftRow);
+            GD.Print($"scene world {scene.Width} x {scene.Height} tiles, scene shifted by ({scene.ShiftCol}, {scene.ShiftRow})");
+            options = options with { MapOverride = new MapSpec(scene.Width, scene.Height), Opponents = 0 };
+        }
+        return options;
     }
 
     private string ResolveMapGenerator(string value)
@@ -221,7 +236,14 @@ public partial class Main : Node3D
     private Hex? FocusHex(GameSession session, string? kind, int[]? tile)
     {
         var grid = session.Sim.State.Grid;
-        if (tile is { Length: 2 }) return grid.HexOf(grid.TileAt(tile[0], tile[1]));
+        if (tile is { Length: 2 })
+        {
+            // A scene-sized world moved the scene, so the flag keeps the coordinates the file was written with.
+            int col = tile[0] + _sceneShift.Col, row = tile[1] + _sceneShift.Row;
+            if (grid.TryTile(col, row, out var id)) return grid.HexOf(id);
+            GD.PushWarning($"--focus-tile {tile[0]},{tile[1]} is off this {grid.Spec.Width} x {grid.Spec.Height} map; keeping the scene's own focus.");
+            return null;
+        }
         if (kind == null) return null;
         var hex = DebugFocusFinder.Find(session, kind);
         if (hex == null) GD.PushWarning($"--focus {kind}: nothing of that kind on this map; try another --seed or a --scenario.");
@@ -310,7 +332,7 @@ public partial class Main : Node3D
     private void PrepareCaptureScene(GameSession session)
     {
         if (_debug.Reveal) RevealEverything(session);
-        if (_debug.ScenarioFile != null) _scenarioFocus = DebugScenario.Apply(session, _debug.ScenarioFile);
+        if (_debug.ScenarioFile != null) _scenarioFocus = DebugScenario.Apply(session, _debug.ScenarioFile, _sceneWorld);
         else if (_debug.CustomScene) foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
         if (_debug.Stage == "terrain") TerrainShowcase.Prepare(session);
         if (_debug.Stage == "rivers")
