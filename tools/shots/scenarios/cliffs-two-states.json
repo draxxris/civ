@@ -1,5 +1,5 @@
 {
- "// note": "Two cliff states at the shipped heights. Land-to-land: four east edges (right). Land-to-ocean: the water-facing edges of four land tiles on one side of a small lake, mask 35 = east, north-east and south-east (left). Only the raised side of each cliff is plains; no other tile is lifted.",
+ "// note": "Two cliff states at the shipped heights. Land-to-land (right): four lifted plains tiles with one wall down their east side. An odd row reaches one column further east than an even row, so it takes south-east as well as east (33), and the middle odd row also reaches back north-east into the same tile (35). Land-to-ocean (left): four lifted plains tiles against a bay. Odd rows take mask 35 = east, north-east and south-east; the even row takes 1 = east only, because its other edges face the lifted tiles above and below it, and a cliff between two lifted tiles is illegal. An entry clears every direction it does not name, and clearing an edge clears the neighbour's mirror, so the bottom water tile is listed before the even row above it. Only the raised side of each cliff is plains; no other tile is lifted.",
  "fill": {
   "terrain": "world:grass",
   "kind": "Flat",
@@ -21,7 +21,7 @@
     7
    ],
    "terrain": "world:plains",
-   "cliff": 1
+   "cliff": 33
   },
   {
    "at": [
@@ -37,7 +37,7 @@
     9
    ],
    "terrain": "world:plains",
-   "cliff": 1
+   "cliff": 35
   },
   {
    "at": [
@@ -122,7 +122,7 @@
   {
    "at": [
     10,
-    14
+    15
    ],
    "terrain": "world:plains",
    "cliff": 35
@@ -130,10 +130,10 @@
   {
    "at": [
     10,
-    15
+    14
    ],
    "terrain": "world:plains",
-   "cliff": 35
+   "cliff": 1
   }
  ],
  "clearUnits": true,

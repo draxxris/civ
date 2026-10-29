@@ -94,18 +94,21 @@ checked without launching the client. It needs Python 3 and Pillow, like the scr
 python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /tmp/maps
 ```
 
-Each file becomes a PNG named after the scenario. The map is the content's Tiny size, 52
-by 32 tiles, unless `--world` or `--size` says otherwise. The picture is trimmed to the
-tiles the scenario changes; `--full-map` keeps the whole grid. Hexes are labelled with
-their column,row unless `--no-coords` is given, and `--hex` sets the hex radius in
-pixels.
+Each file becomes a PNG named after the scenario. Files that are not scenarios, such as
+the `*-poses.json` camera lists, are skipped so a wildcard run still exits clean. The
+map is the content's Tiny size, 52 by 32 tiles, unless `--world` or `--size` says
+otherwise. The picture is trimmed to the tiles the scenario changes; `--full-map` keeps
+the whole grid. Hexes are labelled with their column,row unless `--no-coords` is given,
+and `--hex` sets the hex radius in pixels.
 
 Grassland is green, plains yellow, desert pale yellow, tundra light grey, snow light
 blue, marsh blue-green, every water tile the same blue and peaks very dark grey. `T`
 marks forest or jungle, `C` a city, and `H` heightened ground: a tile that is the raised
 side of a cliff. Heightening is independent of hills and peaks, so a hill on flat ground
-has no `H` and a raised grass tile does. Rivers are blue hex borders, roads dark brown
-lines through the tile centres, and cliff rock a thick grey line on the shared edge. A
+has no `H` and a raised grass tile does. Rivers are blue hex borders, and cliff rock a
+thick grey line on the shared edge. Roads are dark brown lines between the centres of
+neighbouring tiles that both carry a route, which is how the client links them, so
+junctions and tile-by-tile chains come out right. Route types are not distinguished. A
 cliffed edge always drops towards water, and every heightened tile shows rock on its
 water edges.
 
