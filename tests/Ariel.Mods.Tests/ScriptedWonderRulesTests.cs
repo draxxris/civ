@@ -10,17 +10,20 @@ namespace Ariel.Mods.Tests;
 /// <summary>P7 payloads are built separately, never copied into the shared test mod directory.</summary>
 public sealed class P7ModFixture
 {
-    public ContentDb Wonders { get; }
-    public ContentDb Revolution { get; }
-    public ContentDb Combined { get; }
+    // Built on first use: each test class reads only the combinations it exercises, and content is frozen, so a
+    // class that never touches a combination must not pay for building it.
+    private readonly Lazy<ContentDb> _wonders;
+    private readonly Lazy<ContentDb> _revolution;
+    private readonly Lazy<ContentDb> _combined;
+    public ContentDb Wonders => _wonders.Value;
+    public ContentDb Revolution => _revolution.Value;
+    public ContentDb Combined => _combined.Value;
     public P7ModFixture()
     {
         var sources = new LoadedMods().Sources;
-        var wonders = Output("ScriptedWonders");
-        var revolution = Output("Revolution");
-        Wonders = ModLoader.Build(sources.Append(wonders));
-        Revolution = ModLoader.Build(sources.Append(revolution));
-        Combined = ModLoader.Build(sources.Append(wonders).Append(revolution));
+        _wonders = new(() => ModLoader.Build(sources.Append(Output("ScriptedWonders"))));
+        _revolution = new(() => ModLoader.Build(sources.Append(Output("Revolution"))));
+        _combined = new(() => ModLoader.Build(sources.Append(Output("ScriptedWonders")).Append(Output("Revolution"))));
     }
     private static ModSource Output(string name)
     {

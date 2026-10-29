@@ -548,3 +548,103 @@ Two long-game tests and two AI-evaluation CLI methods were also re-tagged
   and a generated game.
 - `Cli_durably_records_failure...` stays in the default lane (no game, ~0.2 s), and it
   no longer materialises the class fixture's shared baseline run.
+
+## Follow-up: harness failure masking, tiered compilation, canonical JSON (2026-10-29)
+
+Re-measured on the same box. Standalone per-test numbers below come from a sequential
+run (`xunit.runner.json` with `maxParallelThreads: 1` in each test project's `bin`
+directory): 1330 tests, 111-113 s of in-test work, split 109.2 s `Ariel.Mods.Tests`, 9.3
+s `Ariel.Tests`, 0.4 s `Ariel.ContentImport.Tests`. Slowest 30 cases are 35.9 s (32 % of
+all test work) and the slowest 100 are 68.2 s (61 %), so only trimming that tail moves
+the wall clock.
+
+### `mise run test` could not fail
+
+mise runs task scripts with `errexit` on. Each project ran as
+`( dotnet test ... > log; echo $? > rc; cat log ) &`, so a failing `dotnet test` aborted
+that subshell before the exit code and the log were captured: the project was never
+checked, its output was never printed, and the task exited 0. It was hiding a real
+failure (`RiverFallTests.A_river_on_a_cliff_edge_falls_to_the_foot_of_the_ramp`, "the
+fall only spans 0.03", from the waterfall commit) and would have hidden any other. The
+subshell now captures the code with `|| rc=$?`.
+
+The metrics logger looked for a `.git` *directory* to find the repository root. In a
+worktree `.git` is a file, so the search fell through to the test project directory and
+each project wrote `tests/<project>/.test-metrics/`, which `tools/test-metrics/check.py`
+never reads. It now walks up to `Ariel.slnx` and writes the one repo-root log.
+
+### Tiered compilation
+
+`DOTNET_TieredCompilation=0` on `test`, `test:nobuild` and `test:worldgen`. Interleaved
+A/B, four runs each: baseline 52.0 / 55.4 / 71.3 / 56.5 s against 37.9 / 37.9 / 45.8 /
+52.2 s, medians 55.9 s -> 45.8 s. `DOTNET_TieredPGO=0` alone measured 41.7 s once, so
+PGO may be the actual culprit. `DOTNET_gcConcurrent=0` is worse (45.3 s in a pairing
+where tiering alone was 37.9 s). The world generation lane is unaffected (153.1 s with
+tiering, 153.2 s without).
+
+### Canonical JSON
+
+`CanonicalJson.Serialize` and `Digest` also drive state hashing and AI speculation, not
+just saves, so their cost is spread across the suite. For a 1.36 MB standard-world
+state: `SerializeToElement` 30 ms, the normalize rewrite 105 ms, and `SaveGame.Load`
+spent a second full canonical write as its float guard.
+
+`Serialize`/`Digest` now canonicalize the serializer's own UTF-8 output in one pass:
+property names are ordered with a packed `ulong` prefix (ties fall back to the full
+ordinal comparison, and non-ASCII names to `string.CompareOrdinal`), scalars are copied
+verbatim because the serializer and the writer share one encoder, and values are
+buffered per nesting level so arrays reuse the level below. `Load` validates integers
+with a `Utf8JsonReader` scan instead of reserializing. `Normalize(JsonElement)` keeps
+the old element path, because a parsed document's escapes were not produced by this
+serializer.
+
+| Measure (1.36 MB state)            | Before |  After |
+| :--------------------------------- | -----: | -----: |
+| `SaveGame.Save`                    | 137 ms |  82 ms |
+| `SaveGame.Load`                    | 244 ms |  78 ms |
+| Save + Load round trip             | 381 ms | 160 ms |
+| `SaveGame.Save` (96-plot scenario) | 2.9 ms | 1.5 ms |
+
+Byte stability was checked against a golden set (scenario, standard world, four-player
+AI world and both reloads, plus two digests) and against 159 saves captured from eight
+test classes: every length, hash and byte matched.
+
+One contract had to be added while writing it: the byte path sees the serializer's
+*escaped* keys, whose text order differs from the decoded order (`\u00E9` sorts before
+`a`, the character does not). Keys that contain a backslash or a non-ASCII byte are
+therefore decoded and compared with `string.CompareOrdinal`, and
+`SerializerOutputOrdersEscapedAndNonAsciiKeysByTheirDecodedText` pins that against the
+parsed-document path, which was right all along.
+
+### What the remaining time is, and what not to try
+
+- **Content builds: 96 calls, 24.3 s.** Sharing built content by source *set* finds no
+  duplicates that matter: the repeat builds differ by a probe `ModSource` each, and
+  those probes carry per-case constructor data. Caching prepared data per `ModSource`
+  cuts the builds to 2.9 s but changed content - registration consumes the parsed
+  objects - and broke 480 tests, so it is not safe. Raising preparation's worker count
+  from 2 to 4 or 8 measured 338-523 ms per build against 338-523 ms, so that knob is
+  dead too.
+- **Save/load tail: 645 calls, 18 s**. The tail is not world size. A 32 KB save costs
+  1.2 s the first time a process serializes a given state graph and 1-2 ms afterwards;
+  every probe content build loads mod assemblies into a fresh context, so the reflection
+  metadata for its types is rebuilt. Shrinking fixture worlds (the original plan for
+  this item) would not have helped.
+- **Terrain and world generation: ~16 s and ~9 s.** `TerrainMeshTests` (7.9 s),
+  `RiverNetworkTests` (4.4 s) and `TerrainIntegrationTests` (3.6 s) each need their own
+  map, and `Simulation` has no way to replay a generated world: `CreateScenario` skips
+  generation and start normalisation. Sharing them needs a state clone first.
+
+`WorldRulesTests.Deposit_exhaustion_scales_by_world_size...` moved to
+`Category=WorldGen` (it generates duel, standard and gigantic worlds), taking three
+cases out of the default lane. `P7ModFixture` now builds its three content combinations
+lazily, so a class that reads one no longer pays for the other two.
+
+### Result
+
+`mise run test`, interleaved A/B, two runs each: 62.6 s and 63.0 s before, 41.2 s and
+46.8 s after. A final run on the finished tree took 40.0 s. `Ariel.Tests` alone went
+from 9 s to 4 s. The default lane is 1328 tests (1331 minus the three world generation
+cases, plus one new canonical JSON case), and `mise run test` now exits non-zero and
+prints the failing project summary while
+`RiverFallTests.A_river_on_a_cliff_edge_falls_to_the_foot_of_the_ramp` stays red.
