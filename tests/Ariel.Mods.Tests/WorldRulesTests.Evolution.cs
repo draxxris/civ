@@ -206,7 +206,10 @@ public sealed partial class WorldRulesTests
         Assert.Equal(Evolution + "ore", plot.Bonus);
     }
 
+    // Generates one duel, standard and gigantic world per case to read their map copy counts, so it belongs to
+    // the world generation lane instead of the default lane.
     [Theory]
+    [Trait("Category", "WorldGen")]
     [InlineData("foundation:worldsize_duel", 1)]
     [InlineData("foundation:worldsize_standard", 4)]
     [InlineData("foundation:worldsize_gigantic", 8)]
