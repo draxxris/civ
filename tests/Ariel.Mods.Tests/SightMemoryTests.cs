@@ -69,7 +69,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     public void Water_vantage_requires_the_observers_team_technology_and_survives_reload()
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
-        foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
+        foreach (var plot in sim.State.Plots) { plot.Terrain = "world:coast"; plot.Height = Levels.ShallowWater; }
         var origin = grid.TileAt(3, 3); var target = grid.TileAt(6, 3);
         Observer(sim, 0, origin, "military:galley", extendedSight: true);
         Observer(sim, 1, origin, "military:galley", extendedSight: true);
@@ -259,7 +259,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     public void Recompute_preserves_hash_rng_and_events_across_concurrent_forks_and_reload()
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
-        foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
+        foreach (var plot in sim.State.Plots) { plot.Terrain = "world:coast"; plot.Height = Levels.ShallowWater; }
         var origin = grid.TileAt(3, 3); var target = grid.TileAt(6, 3);
         Observer(sim, 0, origin, "military:galley", extendedSight: true);
         Observer(sim, 1, origin, "military:galley", extendedSight: true);
@@ -270,9 +270,11 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         var forks = Enumerable.Range(0, 3).Select(_ => sim.ForkSpeculative()).ToArray();
         forks[1].TeamOf(1).Techs.Remove("research:optics");
         forks[1].TeamOf(0).Techs.Add("research:optics");
+        forks[2].State.Plots[grid.TileAt(4, 3).Value].Terrain = "world:peak";
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
+        forks[2].State.Plots[grid.TileAt(4, 3).Value].Height = Levels.Peak;
 // Canonical hashes include zero-valued cliff fields, sight, memory, city and recon state.
-        ulong[] expectedHashes = [5985486210270297408UL, 16979967656531552894UL, 16161436678724005328UL];
+        ulong[] expectedHashes = [684383467510343478UL, 7340780370639032280UL, 4211214635590121083UL];
         ulong parentHash = sim.ComputeHash();
         var rng = sim.Rng.State;
         Parallel.For(0, forks.Length, i =>
@@ -308,7 +310,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         foreach (var t in grid.Tiles.Where(t => !sim.State.Plots[t.Value].Visible.Contains(0)))
         {
             var p = sim.State.Plots[t.Value];
-            p.Terrain = "world:ocean"; p.Kind = PlotKind.Peak; p.IsLake = true;
+            p.Terrain = "world:ocean"; p.Kind = PlotKind.Peak; p.Height = Levels.ShallowWater; p.IsLake = true;
             p.Feature = "world:jungle"; p.Owner = 1; p.RiverEdges = 63;
             p.Improvement = "world:city_ruins"; p.Route = "world:road";
         }

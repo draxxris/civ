@@ -461,6 +461,7 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var sim = GameFactory.Scenario(mods.Content);
         sim.State.Plots[40].Terrain = "world:coast"; sim.State.Plots[41].Terrain = "world:coast";
+        sim.State.Plots[40].Height = Levels.ShallowWater; sim.State.Plots[41].Height = Levels.ShallowWater;
         var ship = Add(sim, 0, 40, "military:cog"); var cargo = Add(sim, 0, 39);
         Add(sim, 1, 42);
         var units = Service<IUnitService>(sim);
@@ -583,7 +584,7 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.NotNull(new SetUnitActivityCommand { Player = 0, Unit = plane.Id, Activity = UnitActivity.Intercept }.Validate(sim));
         Assert.Null(plane.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
         sim.AdvanceTurn();
-        sim.State.Plots[42].Terrain = "world:coast";
+        sim.State.Plots[42].Terrain = "world:coast"; sim.State.Plots[42].Height = Levels.ShallowWater;
         var carrier = Add(sim, 0, 42, "military:carrier");
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         command = new AirMissionCommand { Player = 0, Unit = plane.Id, Kind = AirMissionKind.Rebase, Target = carrier.Position };

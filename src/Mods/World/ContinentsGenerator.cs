@@ -28,6 +28,7 @@ internal sealed class ContinentsGenerator(string id = "world:continents", string
                 SetTerrain(grid, plots[tile.Value], tile, land[tile.Value], moisture[tile.Value], relief[tile.Value], hills, peaks, tuning);
             AddCoasts(grid, plots, content);
             Geography.AssignAreas(grid, plots, content);
+            Geography.AssignHeights(content, plots);
             RiverGenerator.Generate(grid, plots, elevation, rng, content);
             CliffGenerator.Generate(grid, plots, rng, content);
         }

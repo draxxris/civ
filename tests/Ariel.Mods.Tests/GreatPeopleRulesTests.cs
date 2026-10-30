@@ -118,7 +118,8 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     public void Golden_age_requires_distinct_classes_bonuses_expire_and_timers_survive_saves()
     {
         var sim = Scenario(); var gp = Service<IGreatPeopleService>(sim); var city = sim.State.Cities[0]; city.Buildings.Add("gp_probe:academy");
-        var tile = sim.State.Grid.TileAt(city.Position); sim.State.Plots[tile.Value].Kind = PlotKind.Hills;
+        var tile = sim.State.Grid.TileAt(city.Position);
+        sim.State.Plots[tile.Value].Kind = PlotKind.Hills; sim.State.Plots[tile.Value].Height = Levels.Hills;
         var before = Service<IPlotYieldService>(sim).Calculate(sim, 0, tile).Yields;
         Apply(sim, new GoldenAgeGreatPersonCommand { Player = 0, UnitId = Unit(sim).Id });
         int turns = gp.GoldenAgeTurnsRemaining(sim, 0); Assert.True(turns > 0);

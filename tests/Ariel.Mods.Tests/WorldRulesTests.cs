@@ -120,7 +120,7 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         var tile = sim.State.Grid.TileAt(3, 3);
         var plot = sim.State.Plots[tile.Value];
         plot.Terrain = "world:peak";
-        plot.Kind = PlotKind.Peak;
+        plot.Kind = PlotKind.Peak; plot.Height = Levels.Peak;
         plot.Feature = feature;
         var worker = AddWorker(sim, from);
         var ship = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:galley", Position = worker.Position };

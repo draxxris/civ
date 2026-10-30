@@ -68,6 +68,10 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                     }
                     // A terrace joins two tiles of one walkable area and lifts exactly the higher side.
                     Assert.Equal(sim.State.Plots[tile.Value].AreaId, sim.State.Plots[next.Value.Value].AreaId);
+                    int step = Math.Abs(sim.State.Plots[tile.Value].Height - sim.State.Plots[next.Value.Value].Height);
+                    var highPlot = sim.State.Plots[(lifted ? tile : next.Value).Value];
+                    Assert.True(highPlot.Kind == PlotKind.Peak ? step <= 2 : step == 1,
+                        "A terrace steps one tier, or two below a peak, and a peak is never the low side.");
                     if (lifted) terraces.Add((tile, direction));
                 }
             // Every land area stays connected without crossing a cliff, so the area id still means walkable.
@@ -90,19 +94,17 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 }
                 Assert.Equal(members.Count, reached.Count);
             }
-            // Terraces in line stay far enough apart for the ground between them to fall back to its normal height; the
-            // gap grows with the style's ramp, so retuning the ramp cannot silently break the spacing.
-            double ramp = new Ariel.Client.Terrain.TerrainTuning().CliffRamp;
-            int sameFacing = (int)Math.Ceiling((1 + ramp) / Math.Sqrt(3)) + 2, facing = Math.Max(2, sameFacing - 1);
+            // Separate terraces leave two tiles of raised ground between them, or one tile of low ground that both drop
+            // onto. Neighbouring raised tiles are one raised mass, so a plateau of any shape is allowed.
             for (int i = 0; i < terraces.Count; i++)
                 for (int j = i + 1; j < terraces.Count; j++)
                 {
-                    int steps = Math.Abs(terraces[i].Direction - terraces[j].Direction);
-                    steps = Math.Min(steps, 6 - steps);
-                    int gap = steps <= 1 ? sameFacing : steps == 3 ? facing : 0;
-                    int distance = sim.State.Grid.Distance(terraces[i].High, terraces[j].High);
-                    // Neighbouring lifted tiles are one raised mass; only separate terraces in line need the gap.
-                    if (gap > 0 && distance > 1) Assert.True(distance >= gap);
+                    int high = sim.State.Grid.Distance(terraces[i].High, terraces[j].High);
+                    if (high <= 1) continue;
+                    var lowA = sim.State.Grid.Neighbor(terraces[i].High, terraces[i].Direction)!.Value;
+                    var lowB = sim.State.Grid.Neighbor(terraces[j].High, terraces[j].Direction)!.Value;
+                    Assert.True(high >= 3 || lowA == lowB,
+                        "Separate terraces need two tiles of raised ground or one shared low tile between them.");
                 }
             foreach (var area in coast.GroupBy(c => sim.State.Plots[c.Tile.Value].AreaId))
             {

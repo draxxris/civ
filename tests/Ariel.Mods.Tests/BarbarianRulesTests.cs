@@ -25,6 +25,7 @@ public sealed class BarbarianRulesTests
             var plot = sim.State.Plots[tile.Value];
             plot.Owner = null; plot.Visible.Clear();
             plot.Terrain = tile.Value % 12 % 3 == 0 ? "world:grass" : "world:coast";
+            plot.Height = plot.Terrain == "world:coast" ? Levels.ShallowWater : Levels.Flat;
             plot.AreaId = plot.Terrain == "world:coast" ? 1 : 0;
         }
         foreach (int tile in new[] { 0, 3, 6 }) sim.State.AddCity(new City

@@ -147,7 +147,11 @@ public sealed class NetworkTransitTests
     {
         var sim = Scenario(); var home = City(sim, 40); var colony = City(sim, 44);
         home.Buildings.Add("network_probe:vicinity");
-        for (int i = 41; i <= 43; i++) { sim.State.Plots[i].Terrain = "world:coast"; sim.State.Plots[i].Owner = 0; sim.State.Plots[i].AreaId = 2; }
+        for (int i = 41; i <= 43; i++)
+        {
+            sim.State.Plots[i].Terrain = "world:coast"; sim.State.Plots[i].Height = Levels.ShallowWater;
+            sim.State.Plots[i].Owner = 0; sim.State.Plots[i].AreaId = 2;
+        }
         sim.State.Plots[44].Bonus = Grain;
         sim.State.Plots[41].Bonus = Grain; sim.State.Plots[41].Improvement = "network_probe:farm";
         sim.State.Plots[42].Owner = null;

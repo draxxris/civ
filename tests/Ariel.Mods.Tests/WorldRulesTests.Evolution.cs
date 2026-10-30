@@ -489,7 +489,8 @@ public sealed partial class WorldRulesTests
             Leaders = ["peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar"],
         });
         sim.State.Map = new(12, 8, true);
-        sim.State.Plots = Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:peak", Kind = PlotKind.Peak }).ToArray();
+        sim.State.Plots = Enumerable.Range(0, 96)
+            .Select(_ => new Plot { Terrain = "world:peak", Kind = PlotKind.Peak, Height = Levels.Peak }).ToArray();
         sim.State.Units.Clear();
         foreach (var player in sim.State.Players) player.StartingPlot = null;
         foreach (var team in sim.State.Teams) team.Techs.Clear();

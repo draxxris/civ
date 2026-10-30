@@ -3,23 +3,18 @@ using Ariel.Game;
 
 namespace Ariel.Mods.World;
 
-/// <summary>Cliff invariants and deterministic access rules. A cliff stands on the edge between two on-map plots with at
-/// least one land side, is mirrored on both plots, and names one side as lifted (water is never lifted). Only clears
-/// existing cliffs and reconnects an area a cliff had severed.</summary>
+/// <summary>Cliff invariants and deterministic access rules. A cliff stands on the edge between two on-map plots, at
+/// least one of them land, is mirrored on both plots, and drops from the higher height to the lower one; water is never
+/// the high side. Heights follow terrain and relief, so the pass also drops a raise that no cliff still justifies. Only
+/// clears what is illegal and reconnects an area a cliff had severed.</summary>
 internal sealed class CliffRules : IMapSanitizer
 {
-    /// <summary>The distance beyond a cliff tile over which the client eases neighbouring ground up to the lift, in world
-    /// units. The generator's spacing rule is derived from it, so the two must agree; a world-generation test ties them.</summary>
-    internal const double SpacingRamp = 1.6;
-
-    /// <summary>Minimum distance in tiles between the lifted tiles of two cliffs that face the same way. The lift covers
-    /// the lifted tile and then ramps down, so the ground between two cliffs must return to its normal height before the
-    /// next one starts: the lift and ramp in tiles, rounded up, plus a tile of margin and the lifted tile at the far end.</summary>
-    internal static int SameFacingGap => (int)Math.Ceiling((1 + SpacingRamp) / Math.Sqrt(3)) + 2;
-
-    /// <summary>Minimum distance between two cliffs whose raised sides face each other: their lifts lean apart, so only the
-    /// valley width matters.</summary>
-    internal static int FacingGap => Math.Max(2, SameFacingGap - 1);
+    /// <summary>Distance in tiles between the raised sides of two separate cliffs, counting the tiles between them. Two
+    /// cliffs need two tiles of raised ground between them so each reads on its own. One tile of low ground between them
+    /// is the one exception: two cliffs that drop onto the same low tile face each other across it, which is exactly the
+    /// single tile that allowance asks for. Neighbouring raised tiles are one raised mass, so anything closer than two is
+    /// the same cliff.</summary>
+    internal const int HighGap = 3;
 
     private static bool Present(GameState state, TileId tile, int direction) =>
         (state.Plots[tile.Value].CliffEdges & (1 << direction)) != 0;
@@ -29,6 +24,7 @@ internal sealed class CliffRules : IMapSanitizer
 
     public void Sanitize(Simulation sim)
     {
+        using var trace = Ariel.Modding.StartupTrace.Phase("map sanitize");
         SanitizeAll(sim.State, sim.Content);
         foreach (var player in sim.State.Players)
             if (player.StartingPlot is { } start) EnsureAccess(sim.State, sim.Content, start);
@@ -38,42 +34,109 @@ internal sealed class CliffRules : IMapSanitizer
 
     internal static void SanitizeAll(GameState state, ContentDb content)
     {
-        foreach (var tile in state.Grid.Tiles) ClearInvalidEdges(state, content, tile);
-        PruneAllAreas(state, content);
+        // Clearing an illegal edge can strand a height a cliff had raised, and lowering a height can make another edge
+        // illegal, so the repairs repeat until neither has anything left to do. Pruning runs once: it only removes
+        // cliffs, which can only uncrowd the map and open paths, so it never needs a second look.
+        for (int pass = 0; pass < 4; pass++)
+        {
+            bool changed = ClearInvalidEdges(state, content);
+            changed |= RepairHeights(state, content);
+            if (pass == 0) { PruneAllAreas(state, content); continue; }
+            if (!changed) return;
+        }
     }
 
     // Inspect every edge of the changed tile and its neighbours, including stale off-map bits.
     internal static void SanitizeTile(GameState state, ContentDb content, TileId tile)
     {
-        ClearInvalidEdges(state, content, tile);
-        foreach (var neighbor in state.Grid.Neighbors(tile)) ClearInvalidEdges(state, content, neighbor);
-        PruneArea(state, content, tile);
+        var neighborhood = new List<TileId> { tile };
+        neighborhood.AddRange(state.Grid.Neighbors(tile));
+        for (int pass = 0; pass < 4; pass++)
+        {
+            bool changed = false;
+            foreach (var member in neighborhood) changed |= ClearInvalidEdges(state, content, member);
+            changed |= RepairHeights(state, content, neighborhood);
+            if (pass == 0) { PruneArea(state, content, tile); continue; }
+            if (!changed) return;
+        }
     }
 
-    private static void ClearInvalidEdges(GameState state, ContentDb content, TileId tile)
+    private static bool ClearInvalidEdges(GameState state, ContentDb content)
+    {
+        bool changed = false;
+        foreach (var tile in state.Grid.Tiles) changed |= ClearInvalidEdges(state, content, tile);
+        return changed;
+    }
+
+    private static bool ClearInvalidEdges(GameState state, ContentDb content, TileId tile)
     {
         var plot = state.Plots[tile.Value];
-        plot.CliffEdges &= 63;
+        bool changed = false;
+        if (plot.CliffEdges > 63) { plot.CliffEdges &= 63; changed = true; }
         for (int direction = 0; direction < 6; direction++)
         {
-            if (state.Grid.Neighbor(tile, direction) is not { } next) { state.SetCliff(tile, direction, false); continue; }
-            int mirror = (direction + 3) % 6;
-            bool present = Present(state, tile, direction), mirrored = Present(state, next, mirror);
-            // Malformed one-sided cliffs are removed, not invented on the missing side.
-            if (!present || !mirrored) { state.SetCliff(tile, direction, false); continue; }
-            bool water = Geography.Water(content, plot), otherWater = Geography.Water(content, state.Plots[next.Value]);
-            if (water && otherWater) { state.SetCliff(tile, direction, false); continue; }
-            bool lifted = Lifted(state, tile, direction), otherLifted = Lifted(state, next, mirror);
-            if (water != otherWater)
-            {
-                // Water never stands above land; older saves carry no lifted side at all.
-                if (water) state.SetCliff(next, mirror, true);
-                else state.SetCliff(tile, direction, true);
-                continue;
-            }
-            // Land on both sides: exactly one side must be lifted, and a cliff with no lifted side cannot say which.
-            if (lifted == otherLifted) state.SetCliff(tile, direction, false);
+            if (!Present(state, tile, direction) || Legal(state, content, tile, direction)) continue;
+            state.SetCliff(tile, direction, false);
+            changed = true;
         }
+        return changed;
+    }
+
+    /// <summary>Whether the cliff bit on this edge may stand. The edge must be on the map and carried by both plots, water
+    /// may only be the low side, and land to land must step exactly one tier, or two below a peak.</summary>
+    private static bool Legal(GameState state, ContentDb content, TileId tile, int direction)
+    {
+        if (state.Grid.Neighbor(tile, direction) is not { } next) return false;
+        // A one-sided cliff is malformed; the missing side is not invented.
+        if (!Present(state, next, (direction + 3) % 6)) return false;
+        bool water = Geography.Water(content, state.Plots[tile.Value]);
+        bool otherWater = Geography.Water(content, state.Plots[next.Value]);
+        if (water && otherWater) return false;
+        if (water != otherWater) return true; // A shoreline takes any land height, and water is always the low side.
+        int height = state.Plots[tile.Value].Height, otherHeight = state.Plots[next.Value].Height;
+        if (height == otherHeight) return false;
+        var high = height > otherHeight ? state.Plots[tile.Value] : state.Plots[next.Value];
+        int step = Math.Abs(height - otherHeight);
+        return high.Kind == PlotKind.Peak ? step <= 2 : step == 1;
+    }
+
+    /// <summary>Bring every height back to what its terrain, lake flag and relief imply, keeping a flat at hills height
+    /// only while a cliff still drops away from it. Water always holds its depth and a peak is never raised.</summary>
+    private static bool RepairHeights(GameState state, ContentDb content)
+    {
+        bool changed = false;
+        foreach (var tile in state.Grid.Tiles) changed |= RepairHeight(state, content, tile);
+        return changed;
+    }
+
+    private static bool RepairHeights(GameState state, ContentDb content, IEnumerable<TileId> tiles)
+    {
+        bool changed = false;
+        foreach (var tile in tiles) changed |= RepairHeight(state, content, tile);
+        return changed;
+    }
+
+    private static bool RepairHeight(GameState state, ContentDb content, TileId tile)
+    {
+        var plot = state.Plots[tile.Value];
+        sbyte wanted = Geography.HeightOf(content, plot);
+        if (wanted == Levels.Flat && Supported(state, content, tile)) wanted = Levels.Hills;
+        if (plot.Height == wanted) return false;
+        plot.Height = wanted;
+        return true;
+    }
+
+    /// <summary>A flat may stay raised while a terrace drops from it to lower land; a shoreline is not a terrace, so a
+    /// cliff down to water never justifies a raise.</summary>
+    private static bool Supported(GameState state, ContentDb content, TileId tile)
+    {
+        for (int direction = 0; direction < 6; direction++)
+        {
+            if (!Present(state, tile, direction) || state.Grid.Neighbor(tile, direction) is not { } next) continue;
+            if (Geography.Water(content, state.Plots[next.Value])) continue;
+            if (state.Plots[next.Value].Height < Levels.Hills) return true;
+        }
+        return false;
     }
 
     /// <summary>Guarantee a way out of a land tile: one open sea edge for a coastal tile, and at least one open edge for a
@@ -101,7 +164,7 @@ internal sealed class CliffRules : IMapSanitizer
         Enumerable.Range(0, 6).Where(d => state.Grid.Neighbor(land, d) is { } next && Sea(content, state.Plots[next.Value]));
 
     /// <summary>Enforce walkability and spacing in every land area.</summary>
-    internal static void PruneAllAreas(GameState state, ContentDb content)
+    internal static bool PruneAllAreas(GameState state, ContentDb content)
     {
         var areas = new Dictionary<int, List<TileId>>();
         foreach (var tile in state.Grid.Tiles)
@@ -111,20 +174,23 @@ internal sealed class CliffRules : IMapSanitizer
             if (!areas.TryGetValue(area, out var tiles)) areas[area] = tiles = new List<TileId>();
             tiles.Add(tile);
         }
-        foreach (int area in areas.Keys.OrderBy(id => id)) PruneArea(state, content, areas[area]);
+        bool changed = false;
+        foreach (int area in areas.Keys.OrderBy(id => id)) changed |= PruneArea(state, content, areas[area]);
+        return changed;
     }
 
-    /// <summary>Keep the area walkable with its cliffs in place, then drop cliffs that stand too close in line. Opening a
-    /// cliff only adds a passable edge and dropping one only removes a cliff, so neither pass undoes the other.</summary>
-    internal static void PruneArea(GameState state, ContentDb content, TileId member) =>
+    /// <summary>Keep the area walkable with its cliffs in place, then drop cliffs that stand too close. Opening a cliff only
+    /// adds a passable edge and dropping one only removes a cliff, so neither pass undoes the other.</summary>
+    internal static bool PruneArea(GameState state, ContentDb content, TileId member) =>
         PruneArea(state, content, LandTiles(state, content, state.Plots[member.Value].AreaId));
 
     private static List<TileId> LandTiles(GameState state, ContentDb content, int area) =>
         state.Grid.Tiles.Where(t => !Geography.Water(content, state.Plots[t.Value]) && state.Plots[t.Value].AreaId == area).ToList();
 
-    private static void PruneArea(GameState state, ContentDb content, List<TileId> tiles)
+    private static bool PruneArea(GameState state, ContentDb content, List<TileId> tiles)
     {
-        if (tiles.Count == 0) return;
+        if (tiles.Count == 0) return false;
+        bool changed = false;
         var reached = new bool[state.Plots.Length];
         int count = Connect(state, content, tiles[0], reached);
         while (count < tiles.Count)
@@ -139,6 +205,7 @@ internal sealed class CliffRules : IMapSanitizer
                     if (state.Grid.Neighbor(tile, direction) is not { } next || reached[next.Value]) continue;
                     if (Geography.Water(content, state.Plots[next.Value]) || state.Plots[next.Value].AreaId != state.Plots[tile.Value].AreaId) continue;
                     state.SetCliff(tile, direction, false);
+                    changed = true;
                     count += Connect(state, content, next, reached);
                     opened = true;
                 }
@@ -146,15 +213,16 @@ internal sealed class CliffRules : IMapSanitizer
             }
             if (!opened) break; // The area id disagrees with the map; nothing here can reconnect it.
         }
-        var accepted = new List<(TileId Lifted, int Direction)>();
+        var accepted = new CliffSpacing();
         foreach (var tile in tiles)
             for (int direction = 0; direction < 6; direction++)
             {
                 if (!Present(state, tile, direction) || !Lifted(state, tile, direction)) continue;
                 if (state.Grid.Neighbor(tile, direction) is not { } below || Geography.Water(content, state.Plots[below.Value])) continue;
-                if (!SpacingOk(state, tile, direction, accepted)) state.SetCliff(tile, direction, false);
-                else accepted.Add((tile, direction));
+                if (!accepted.Fits(state, tile, direction)) { state.SetCliff(tile, direction, false); changed = true; }
+                else accepted.Add(state, tile, direction);
             }
+        return changed;
     }
 
     /// <summary>Mark every land tile of the area reachable from the start without crossing a cliff; return how many tiles
@@ -183,21 +251,42 @@ internal sealed class CliffRules : IMapSanitizer
         return added;
     }
 
-    /// <summary>Whether a cliff may stand beside every accepted one. Two cliffs in line must leave the ground between them
-    /// enough tiles to fall back to its normal height; two facing each other lift opposite ground and may stand closer.
-    /// Neighbouring lifted tiles are one raised mass, so a plateau of any shape is allowed.</summary>
-    private static bool SpacingOk(GameState state, TileId lifted, int direction, List<(TileId Lifted, int Direction)> accepted)
+    /// <summary>Whether a cliff may stand beside every accepted one. Two separate cliffs must leave enough ground between
+    /// them that each reads on its own: two tiles of raised ground, or one tile of low ground that both drop onto.
+    /// Neighbouring raised tiles are one raised mass, so a plateau of any shape is allowed.</summary>
+    internal sealed class CliffSpacing
     {
-        foreach (var (other, otherDirection) in accepted)
+        // Every accepted cliff is filed under the tiles its raised side can crowd, because a cliff is only ever compared
+        // with the ones standing within HighGap of its own raised side. Scanning the whole accepted list made thinning
+        // quadratic in the number of cliffs, which dominated world generation.
+        private readonly Dictionary<int, List<(TileId High, int Direction)>> _near = new();
+
+        internal void Add(GameState state, TileId high, int direction)
         {
-            int distance = state.Grid.Distance(lifted, other);
-            if (distance <= 1) continue;
-            int steps = Math.Abs(direction - otherDirection);
-            steps = Math.Min(steps, 6 - steps);
-            int gap = steps <= 1 ? SameFacingGap : steps == 3 ? FacingGap : 0;
-            if (gap > 0 && distance < gap) return false;
+            foreach (var tile in state.Grid.Range(high, HighGap - 1)) File(tile, high, direction);
         }
-        return true;
+
+        private void File(TileId tile, TileId high, int direction)
+        {
+            if (!_near.TryGetValue(tile.Value, out var nearby)) _near[tile.Value] = nearby = new();
+            nearby.Add((high, direction));
+        }
+
+        internal bool Fits(GameState state, TileId high, int direction)
+        {
+            if (state.Grid.Neighbor(high, direction) is not { } low) return false;
+            if (!_near.TryGetValue(high.Value, out var nearby)) return true;
+            foreach (var (otherHigh, otherDirection) in nearby)
+            {
+                int highDistance = state.Grid.Distance(high, otherHigh);
+                if (highDistance <= 1) continue; // One raised mass, not two cliffs.
+                if (highDistance >= HighGap) continue;
+                // Two cliffs that drop onto the same low tile face each other across one tile of low ground.
+                if (highDistance == 2 && state.Grid.Neighbor(otherHigh, otherDirection) == low) continue;
+                return false;
+            }
+            return true;
+        }
     }
 }
 
@@ -225,6 +314,7 @@ internal static class CliffGenerator
     {
         var state = new GameState { Map = grid.Spec, Plots = plots };
         foreach (var plot in plots) plot.CliffEdges = 0;
+        Geography.AssignHeights(content, plots);
         // Keep existing feature, resource and start RNG streams unchanged.
         var (a, b, c, d) = rng.State;
         var cliffRng = DeterministicRng.Restore(a, b, c, d);
@@ -270,7 +360,7 @@ internal static class CliffGenerator
         var grid = state.Grid;
         var plots = state.Plots;
         var noise = FractalNoise.Generate(grid, rng, TerraceNoiseScale, TerraceNoiseOctaves);
-        var candidates = new List<(TileId Lifted, TileId Below, int Direction, int Score)>();
+        var candidates = new List<(TileId Tile, TileId Next, int Direction, int Score)>();
         foreach (var tile in grid.Tiles)
         {
             var plot = plots[tile.Value];
@@ -282,48 +372,48 @@ internal static class CliffGenerator
                 if (Geography.Water(content, other) || other.AreaId != plot.AreaId) continue;
                 // A river edge may also be a cliff: the river then pours over the face as a waterfall.
                 bool river = (plot.RiverEdges & (1 << direction)) != 0 || (other.RiverEdges & (1 << ((direction + 3) % 6))) != 0;
-                bool liftTile = Higher(plot, other, noise[tile.Value], noise[next.Value], tile.Value, next.Value);
-                var lifted = liftTile ? tile : next;
-                var below = liftTile ? next : tile;
-                int liftedDirection = liftTile ? direction : (direction + 3) % 6;
-                candidates.Add((lifted, below, liftedDirection,
-                    noise[tile.Value] + noise[next.Value] + 120 * ReliefRank(plots[lifted.Value].Kind) + (river ? RiverFallBonus : 0)));
+                candidates.Add((tile, next, direction, noise[tile.Value] + noise[next.Value]
+                    + 120 * Math.Max(ReliefRank(plot.Kind), ReliefRank(other.Kind)) + (river ? RiverFallBonus : 0)));
             }
         }
         int remaining = candidates.Count * TerracePercent / 100;
-        var accepted = new List<(TileId Lifted, int Direction)>();
-        foreach (var (lifted, below, direction, _) in candidates
-            .OrderByDescending(c => c.Score).ThenBy(c => c.Lifted.Value).ThenBy(c => c.Direction))
+        var accepted = new CliffRules.CliffSpacing();
+        foreach (var (tile, next, direction, _) in candidates
+            .OrderByDescending(c => c.Score).ThenBy(c => c.Tile.Value).ThenBy(c => c.Direction))
         {
             if (remaining == 0) break;
-            if (!SpacingOk(state, lifted, direction, accepted)) continue;
-            state.SetCliff(lifted, direction, true);
-            accepted.Add((lifted, direction));
+            // An earlier terrace may have raised ground under this edge, so the step and its high side are decided against
+            // the heights as they stand now rather than the ones the edge was scored with.
+            bool liftTile = Higher(plots[tile.Value].Height, plots[next.Value].Height,
+                noise[tile.Value], noise[next.Value], tile.Value, next.Value);
+            var high = liftTile ? tile : next;
+            var low = liftTile ? next : tile;
+            int highDirection = liftTile ? direction : (direction + 3) % 6;
+            if (!TerraceLegal(plots[high.Value], plots[low.Value])) continue;
+            if (!accepted.Fits(state, high, highDirection)) continue;
+            state.SetCliff(high, highDirection, true);
+            accepted.Add(state, high, highDirection);
             remaining--;
         }
     }
 
-    private static bool Higher(Plot a, Plot b, int noiseA, int noiseB, int idA, int idB)
+    /// <summary>Whether an edge may carry a terrace. A peak may stand one or two tiers above any land and is never the low
+    /// side; otherwise the heights must step by exactly one tier, which an edge between two flats reaches by lifting one of
+    /// them to hills. Two hills, two raised flats or two peaks share a height and carry nothing.</summary>
+    private static bool TerraceLegal(Plot high, Plot low)
     {
-        int rankA = ReliefRank(a.Kind), rankB = ReliefRank(b.Kind);
-        if (rankA != rankB) return rankA > rankB;
-        if (noiseA != noiseB) return noiseA > noiseB;
-        return idA < idB;
+        if (low.Kind == PlotKind.Peak) return false;
+        if (high.Kind == PlotKind.Peak) return low.Height is Levels.Flat or Levels.Hills;
+        return high.Height - low.Height == 1
+            || (high.Kind == PlotKind.Flat && high.Height == Levels.Flat && low.Height == Levels.Flat);
+    }
+
+    private static bool Higher(sbyte height, sbyte otherHeight, int noise, int otherNoise, int id, int otherId)
+    {
+        if (height != otherHeight) return height > otherHeight;
+        if (noise != otherNoise) return noise > otherNoise;
+        return id < otherId;
     }
 
     private static int ReliefRank(PlotKind kind) => kind switch { PlotKind.Peak => 2, PlotKind.Hills => 1, _ => 0 };
-
-    private static bool SpacingOk(GameState state, TileId lifted, int direction, List<(TileId Lifted, int Direction)> accepted)
-    {
-        foreach (var (other, otherDirection) in accepted)
-        {
-            int distance = state.Grid.Distance(lifted, other);
-            if (distance <= 1) continue;
-            int steps = Math.Abs(direction - otherDirection);
-            steps = Math.Min(steps, 6 - steps);
-            int gap = steps <= 1 ? CliffRules.SameFacingGap : steps == 3 ? CliffRules.FacingGap : 0;
-            if (gap > 0 && distance < gap) return false;
-        }
-        return true;
-    }
 }
