@@ -10,6 +10,14 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
 {
     private static IVisibilityService Sight(Simulation sim) => sim.Content.Services.Get<IVisibilityService>().Single();
     private Simulation Scenario() => GameFactory.Scenario(mods.Content);
+
+    /// <summary>Stand a plot at the tier its relief implies. Sight reads the stored height, so a fixture that only
+    /// changed <see cref="Plot.Kind"/> would leave its hill at sea level and see like a flat.</summary>
+    private static void Relief(Plot plot, PlotKind kind)
+    {
+        plot.Kind = kind;
+        plot.Height = kind switch { PlotKind.Peak => Levels.Peak, PlotKind.Hills => Levels.Hills, _ => Levels.Flat };
+    }
     private static Unit Observer(Simulation sim, int owner, TileId tile, string type = "military:warrior", bool extendedSight = false)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(tile) };
@@ -31,7 +39,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         var grid = sim.State.Grid;
         var a = grid.TileAt(11, 3); var b = grid.TileAt(1, 3);
         var middle = sim.State.Plots[grid.TileAt(0, 3).Value];
-        middle.Kind = kind; middle.Feature = feature;
+        Relief(middle, kind); middle.Feature = feature;
 
         var sight = Sight(sim);
         Assert.Equal(!blocked, sight.CanSeePlot(sim, a, b, 0, 2));
@@ -57,12 +65,27 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
             Assert.Equal(visible, sim.State.Plots[b.Value].Visible.Contains(0));
         }
         Check(false);
-        sim.State.Plots[a.Value].Kind = PlotKind.Hills;
+        Relief(sim.State.Plots[a.Value], PlotKind.Hills);
         Check(true);
-        sim.State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
+        Relief(sim.State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         Check(false);
         Assert.True(sight.CanSeePlot(sim, a, b, 0, 3, aerial: true));
         Assert.False(sight.CanSeePlot(sim, a, b, 0, 2, aerial: true));
+    }
+
+    [Fact]
+    public void A_raised_flat_sees_one_level_further_than_a_plain_flat()
+    {
+        var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
+        var a = grid.TileAt(3, 3); var b = grid.TileAt(6, 3);
+        Observer(sim, 0, a, extendedSight: true);
+        Assert.False(sight.CanSeePlot(sim, a, b, 0, 2));
+        // The plain relief stays flat, so only the tier can lift the view over the ground in between.
+        sim.State.Plots[a.Value].Height = Levels.Hills;
+        Assert.Equal(PlotKind.Flat, sim.State.Plots[a.Value].Kind);
+        Assert.True(sight.CanSeePlot(sim, a, b, 0, 2));
+        sight.Recompute(sim);
+        Assert.Contains(0, sim.State.Plots[b.Value].Visible);
     }
 
     [Fact]
@@ -91,9 +114,9 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
             Check(true, true);
             Assert.False(sight.CanSeePlot(game, origin, grid.TileAt(7, 3), 0, 2));
             var blocker = game.State.Plots[grid.TileAt(4, 3).Value];
-            blocker.Kind = PlotKind.Peak;
+            Relief(blocker, PlotKind.Peak);
             Check(false, false);
-            blocker.Kind = PlotKind.Flat;
+            Relief(blocker, PlotKind.Flat);
             game.TeamOf(0).Techs.Remove("research:optics");
             Check(false, true);
         }
@@ -115,9 +138,9 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
             Assert.Equal(visible, sight.CanSeePlot(sim, target, origin, 0, 7));
         }
         Check(true);
-        sim.State.Plots[east.Value].Kind = PlotKind.Peak; Check(true);
-        sim.State.Plots[west.Value].Kind = PlotKind.Peak; Check(false);
-        sim.State.Plots[east.Value].Kind = PlotKind.Flat; Check(true);
+        Relief(sim.State.Plots[east.Value], PlotKind.Peak); Check(true);
+        Relief(sim.State.Plots[west.Value], PlotKind.Peak); Check(false);
+        Relief(sim.State.Plots[east.Value], PlotKind.Flat); Check(true);
     }
 
     [Fact]
@@ -164,7 +187,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
         var a = grid.TileAt(3, 3); var b = grid.TileAt(5, 3);
-        sim.State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
+        Relief(sim.State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         var aircraft = Observer(sim, 0, a, "military:fighter");
         aircraft.Promotions.Add(sim.Content.Get<Ariel.Content.Schema.PromotionDef>().All.First(p => p.VisibilityChange > 0).Id);
         sight.Recompute(sim);
@@ -200,7 +223,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         sight.Recompute(sim);
         plot.Feature = "world:forest"; plot.Route = "world:road"; city.Population = 5; plot.Height = Levels.Hills;
         Lose(first);
-        plot.Feature = "world:jungle"; plot.Kind = PlotKind.Hills; plot.Owner = 1;
+        plot.Feature = "world:jungle"; Relief(plot, PlotKind.Hills); plot.Owner = 1;
         sim.State.RemoveCity(city.Id);
         Lose(second);
         var before = sight.SnapshotOf(sim, tile, 0)!;
@@ -223,11 +246,11 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
         var a = grid.TileAt(3, 3); var target = grid.TileAt(5, 3); var blocker = grid.TileAt(4, 3);
-        sim.State.Plots[a.Value].Kind = PlotKind.Hills;
+        Relief(sim.State.Plots[a.Value], PlotKind.Hills);
         Observer(sim, 0, a); sight.Recompute(sim);
         Assert.True(sim.State.Plots[target.Value].Visible.Contains(0));
         sim.State.Plots[target.Value].Feature = "world:forest";
-        sim.State.Plots[blocker.Value].Kind = PlotKind.Peak;
+        Relief(sim.State.Plots[blocker.Value], PlotKind.Peak);
         sim.Events.Publish(new FeatureChanged(blocker, null, null));
         Assert.False(sim.State.Plots[target.Value].Visible.Contains(0));
         sim.State.Plots[target.Value].Feature = "world:jungle";
@@ -240,7 +263,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     {
         var sim = Scenario(); var grid = sim.State.Grid;
         var origin = grid.TileAt(3, 3); var target = grid.TileAt(5, 3); var blocker = grid.TileAt(4, 3);
-        sim.State.Plots[target.Value].Kind = PlotKind.Hills;
+        Relief(sim.State.Plots[target.Value], PlotKind.Hills);
         sim.State.Plots[blocker.Value].Feature = "world:forest";
         Observer(sim, 0, origin);
         Sight(sim).Recompute(sim);
@@ -271,7 +294,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         forks[1].TeamOf(1).Techs.Remove("research:optics");
         forks[1].TeamOf(0).Techs.Add("research:optics");
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Terrain = "world:peak";
-        forks[2].State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
+        Relief(forks[2].State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Height = Levels.Peak;
 // Canonical hashes include zero-valued cliff fields, sight, memory, city and recon state.
         ulong[] expectedHashes = [684383467510343478UL, 7340780370639032280UL, 4211214635590121083UL];

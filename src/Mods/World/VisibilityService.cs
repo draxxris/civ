@@ -111,13 +111,15 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         internal int SeeThrough(TileId tile) => _through[tile.Value] ??= SeeThroughLevel(sim, tile);
     }
 
-    private static int ElevationLevel(Simulation sim, Plot plot, int level, string direction) => plot.Kind switch
-    {
-        // Mountain terrain is a graphical placeholder with zero levels; use the land base.
-        PlotKind.Peak => Math.Max(1, level) + WorldTurnMath.Raw(sim, "PEAK_SEE_" + direction + "_CHANGE", 2),
-        PlotKind.Hills => level + WorldTurnMath.Raw(sim, "HILLS_SEE_" + direction + "_CHANGE", 1),
-        _ => level,
-    };
+    /// <summary>Terrain's own see level plus what standing on this tile's tier adds: a raised flat and a hill see one
+    /// level further, a peak two, and water or flat ground adds nothing. Mountain terrain keeps its own level rather
+    /// than a special case for relief, so the tier alone says how far a tile sees.</summary>
+    private static int ElevationLevel(Simulation sim, Plot plot, int level, string direction) =>
+        plot.Height >= Levels.Peak
+            ? level + WorldTurnMath.Raw(sim, "PEAK_SEE_" + direction + "_CHANGE", 2)
+            : plot.Height >= Levels.Hills
+                ? level + WorldTurnMath.Raw(sim, "HILLS_SEE_" + direction + "_CHANGE", 1)
+                : level;
 
     public RevealedPlotSnapshot? SnapshotOf(Simulation sim, TileId tile, int team)
     {

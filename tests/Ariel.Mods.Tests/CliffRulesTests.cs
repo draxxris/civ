@@ -74,6 +74,10 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                     var highPlot = sim.State.Plots[(lifted ? tile : next.Value).Value];
                     Assert.True(highPlot.Kind == PlotKind.Peak ? step <= 2 : step == 1,
                         "A terrace steps one tier, or two below a peak, and a peak is never the low side.");
+                    // The tier rule states the peak side twice, so assert it directly: a two-tier step only exists below
+                    // a peak, and the low side of any generated cliff is never a peak.
+                    Assert.NotEqual(PlotKind.Peak, sim.State.Plots[(lifted ? next.Value : tile).Value].Kind);
+                    if (step == 2) Assert.Equal(PlotKind.Peak, highPlot.Kind);
                     if (lifted) terraces.Add((tile, direction));
                 }
             // Every land area stays connected without crossing a cliff, so the area id still means walkable.
@@ -310,6 +314,123 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         // Reporting is the whole job: nothing was raised, lowered or cleared.
         Assert.Equal(Levels.Peak, sim.State.Plots[5].Height);
         Assert.Equal(1, CliffMask(sim, new(6)));
+    }
+
+    /// <summary>Author both presence bits of one edge without letting <see cref="GameState.SetCliff"/> repair the heights,
+    /// so a test can stand a cliff on a step the contract forbids.</summary>
+    private static void RawCliff(Simulation sim, TileId tile, int direction)
+    {
+        sim.State.Plots[tile.Value].CliffEdges |= (byte)(1 << direction);
+        var next = sim.State.Grid.Neighbor(tile, direction)!.Value;
+        sim.State.Plots[next.Value].CliffEdges |= (byte)(1 << ((direction + 3) % 6));
+    }
+
+    private static void OffsetOfTile(Simulation sim, TileId tile, out int col, out int row)
+    {
+        var at = sim.State.Grid.OffsetOf(tile);
+        col = at.Col;
+        row = at.Row;
+    }
+
+    [Fact]
+    public void Report_names_a_peak_standing_on_the_low_side_of_a_cliff()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var peak = new TileId(39);
+        var hill = new TileId(40);
+        sim.State.Plots[peak.Value].Kind = PlotKind.Peak;
+        sim.State.Plots[peak.Value].Height = Levels.Flat; // A peak authored at sea level is a data error by itself.
+        sim.State.Plots[hill.Value].Kind = PlotKind.Hills;
+        sim.State.Plots[hill.Value].Height = Levels.Hills;
+        SetCliff(sim, hill, 3, true);
+        OffsetOfTile(sim, peak, out int col, out int row);
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: peak is the low side of a cliff");
+    }
+
+    [Fact]
+    public void Report_names_a_two_tier_step_between_land_that_is_not_a_peak()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var flat = new TileId(39);
+        var hills = new TileId(40);
+        sim.State.Plots[hills.Value].Kind = PlotKind.Hills;
+        sim.State.Plots[hills.Value].Height = Levels.Peak; // Two tiers above flat ground, but not below a peak.
+        RawCliff(sim, flat, 0);
+        OffsetOfTile(sim, flat, out int col, out int row);
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: land cliff steps 2 tiers below a Hills");
+    }
+
+    [Fact]
+    public void Report_names_a_step_with_no_height_difference_and_a_raised_flat_with_no_cliff()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = new TileId(39);
+        var b = new TileId(40);
+        RawCliff(sim, a, 0); // Both sides stay at flat, so the parity of heights says there is no step.
+        OffsetOfTile(sim, a, out int col, out int row);
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: land cliff with no height step");
+
+        var raised = new TileId(50);
+        sim.State.Plots[raised.Value].Kind = PlotKind.Flat;
+        sim.State.Plots[raised.Value].Height = Levels.Hills;
+        OffsetOfTile(sim, raised, out col, out row);
+        problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}): height {Levels.Hills} where the ground implies {Levels.Flat}");
+    }
+
+    [Fact]
+    public void Report_names_a_cliff_between_two_water_plots_and_water_on_the_high_side()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var a = new TileId(39);
+        var b = new TileId(40);
+        sim.State.Plots[a.Value].Terrain = "world:ocean";
+        sim.State.Plots[a.Value].Height = Levels.DeepWater;
+        sim.State.Plots[b.Value].Terrain = "world:ocean";
+        sim.State.Plots[b.Value].Height = Levels.DeepWater;
+        RawCliff(sim, a, 0);
+        OffsetOfTile(sim, a, out int col, out int row);
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: cliff between two water plots");
+
+        // Land beside water that stands one tier higher than it: the land side is the low side, which water may never be.
+        var land = new TileId(50);
+        var sea = new TileId(51);
+        sim.State.Plots[sea.Value].Terrain = "world:ocean";
+        sim.State.Plots[sea.Value].Height = Levels.Hills; // Water standing above the land beside it.
+        RawCliff(sim, land, 0);
+        OffsetOfTile(sim, land, out col, out row);
+        problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: water on the high side");
+    }
+
+    [Fact]
+    public void Report_names_a_coastal_city_closed_off_from_its_sea_and_terraces_that_stand_too_close()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var city = new TileId(39);
+        var sea = new TileId(40);
+        sim.State.Plots[sea.Value].Terrain = "world:ocean";
+        sim.State.Plots[sea.Value].Height = Levels.DeepWater;
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(city),
+            Name = "Harbour", Population = 2 });
+        RawCliff(sim, city, 0); // Its only sea edge carries a wall, so no boat may land.
+        OffsetOfTile(sim, city, out int col, out int row);
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p == $"tile ({col}, {row}): coastal city has no open sea edge");
+
+        // Two separate terraces two tiles apart whose low sides are different tiles have one tile of raised ground between them.
+        var first = sim.State.Grid.TileAt(7, 5);
+        var second = sim.State.Grid.TileAt(9, 5);
+        SetCliff(sim, first, 3, true);
+        SetCliff(sim, second, 3, true);
+        Assert.Equal(Levels.Hills, sim.State.Plots[first.Value].Height);
+        Assert.Equal(Levels.Hills, sim.State.Plots[second.Value].Height);
+        problems = Service<IMapGeometry>(sim).Report(sim);
+        Assert.Contains(problems, p => p.Contains("direction W") && p.Contains("terrace stands too close to another one"));
     }
 
     [Theory]
