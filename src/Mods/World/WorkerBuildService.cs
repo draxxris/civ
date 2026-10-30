@@ -29,7 +29,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         bool remove = plot.Feature is { } feature && build.FeatureEffects.GetValueOrDefault(feature)?.Remove == true;
         return new Plot
         {
-            Terrain = build.TerrainChange ?? plot.Terrain, Kind = plot.Kind, IsLake = plot.IsLake,
+            Terrain = build.TerrainChange ?? plot.Terrain, Kind = plot.Kind, Height = plot.Height, IsLake = plot.IsLake,
             RiverEdges = plot.RiverEdges, Bonus = plot.Bonus, Owner = plot.Owner, AreaId = plot.AreaId,
             Improvement = build.ImprovementType ?? plot.Improvement, Route = build.RouteType ?? plot.Route,
             Feature = build.FeatureChange ?? (remove ? null : plot.Feature),

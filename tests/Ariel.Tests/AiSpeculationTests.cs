@@ -17,7 +17,7 @@ public sealed class AiSpeculationTests
         var plot = state.Plots[0];
         plot.BuildProgress["road"] = 7; plot.Culture[0] = 11;
         plot.Revealed.Add(0); plot.Visible.Add(0);
-        plot.RevealedSnapshots[0] = new("base:grassland", PlotKind.Hills, false, null, null, null, null, 0);
+        plot.RevealedSnapshots[0] = new("base:grassland", PlotKind.Hills, false, Levels.Hills, null, null, null, null, 0);
         state.PlayerById(0).Civics["rule"] = "old";
         state.TeamOf(0).Research["base:writing"] = 17;
         state.UnitById(1).Promotions.Add("old");

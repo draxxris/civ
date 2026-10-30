@@ -236,33 +236,44 @@ public sealed class GameState
         Set(tile, direction, present);
         Set(neighbor, (direction + 3) % 6, present);
     }
-    /// <summary>Set a cliff on one edge and its mirror on the neighboring plot, lifting the named plot. Off-map edges
-    /// never carry a cliff. Whether the edge is legal (a cliff needs land on one side at least) is a world rule; callers
-    /// keep that invariant.</summary>
-    public void SetCliff(TileId lifted, int direction, bool present)
+    /// <summary>Set a cliff on one edge and its mirror on the neighboring plot, raising the named plot to stand one tier
+    /// above the other. A height is only ever raised and never lowered by a cliff, so a peak stays at the top tier and
+    /// clearing a cliff leaves both heights alone: another cliff on the same side may still justify them. Off-map edges
+    /// never carry a cliff, and water never stands on the high side, which is a world rule callers keep.</summary>
+    public void SetCliff(TileId high, int direction, bool present)
     {
         if (direction < 0 || direction >= 6) throw new ArgumentOutOfRangeException(nameof(direction));
-        void Set(TileId t, int d, bool on)
+        void Bit(TileId t, int d, bool on)
         {
             var p = Plots[t.Value];
             p.CliffEdges = (byte)(on ? p.CliffEdges | (1 << d) : p.CliffEdges & ~(1 << d));
         }
-        void Lift(TileId t, int d, bool on)
+        if (Grid.Neighbor(high, direction) is not { } low)
         {
-            var p = Plots[t.Value];
-            p.CliffLiftEdges = (byte)(on ? p.CliffLiftEdges | (1 << d) : p.CliffLiftEdges & ~(1 << d));
-        }
-        if (Grid.Neighbor(lifted, direction) is not { } below)
-        {
-            Set(lifted, direction, false);
-            Lift(lifted, direction, false);
+            Bit(high, direction, false);
             return;
         }
         int mirror = (direction + 3) % 6;
-        Set(lifted, direction, present);
-        Set(below, mirror, present);
-        Lift(lifted, direction, present);
-        Lift(below, mirror, false);
+        Bit(high, direction, present);
+        Bit(low, mirror, present);
+        if (!present) return;
+        var raised = Plots[high.Value];
+        int oneTierAboveLow = Math.Min(Plots[low.Value].Height + 1, Levels.Peak);
+        if (raised.Height < oneTierAboveLow) raised.Height = (sbyte)oneTierAboveLow;
+    }
+    /// <summary>Six bits in Hex.Directions order, bit d set when this plot is the higher side of the cliff on edge d.
+    /// Derived from the two plots' heights, so it can never disagree with them, and never set on an off-map edge.</summary>
+    public byte CliffLifts(TileId tile)
+    {
+        int height = Plots[tile.Value].Height;
+        byte lifts = 0;
+        for (int direction = 0; direction < 6; direction++)
+        {
+            if ((Plots[tile.Value].CliffEdges & (1 << direction)) == 0) continue;
+            if (Grid.Neighbor(tile, direction) is not { } next) continue;
+            if (Plots[next.Value].Height < height) lifts |= (byte)(1 << direction);
+        }
+        return lifts;
     }
     /// <summary>Independent in-memory copy of all authoritative state with rebuilt lookup indexes. It hashes like the
     /// source; immutable data (map geometry, revealed plot memories, production orders) is shared, everything else is copied.</summary>

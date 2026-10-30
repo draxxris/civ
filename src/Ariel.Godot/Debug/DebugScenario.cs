@@ -137,7 +137,7 @@ internal static class DebugScenario
                 if (sceneWorld)
                 {
                     // The map is the scene, so nothing the generator made may show through it.
-                    plot.CliffEdges = 0; plot.CliffLiftEdges = 0; plot.Owner = null;
+                    plot.CliffEdges = 0; plot.Owner = null;
                 }
                 Edit(session, tile, fill);
             }

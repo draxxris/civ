@@ -179,6 +179,20 @@ public class ContractTests
     }
 
     [Fact]
+    public void StoredPlotHeightSurvivesCloneAndSaveLoad()
+    {
+        var sim = TestGame.Sim();
+        var plot = sim.State.Plots[sim.State.Grid.TileAt(3, 3).Value];
+        plot.Height = Levels.Hills;
+        Assert.Equal(Levels.Hills, sim.ForkSpeculative().State.Plots[sim.State.Grid.TileAt(3, 3).Value].Height);
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.Equal(Levels.Hills, loaded.State.Plots[sim.State.Grid.TileAt(3, 3).Value].Height);
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        plot.Height = Levels.Flat;
+        Assert.NotEqual(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
     public void ModifiersAreSummedInRegistrationOrderAndLedgerExplainsTypedAndKeyedTotals()
     {
         var extra = Source("extra", ctx =>

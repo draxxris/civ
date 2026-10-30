@@ -10,7 +10,7 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private static bool Water(Simulation sim, TileId tile) => sim.Content.Get<TerrainDef>(sim.State.Plots[tile.Value].Terrain).IsWater;
     private static bool Sea(Simulation sim, TileId tile) => Water(sim, tile) && !sim.State.Plots[tile.Value].IsLake;
     private static byte CliffMask(Simulation sim, TileId tile) => sim.State.Plots[tile.Value].CliffEdges;
-    private static byte LiftMask(Simulation sim, TileId tile) => sim.State.Plots[tile.Value].CliffLiftEdges;
+    private static byte LiftMask(Simulation sim, TileId tile) => sim.State.CliffLifts(tile);
     private static void SetCliff(Simulation sim, TileId tile, int direction, bool present) => sim.State.SetCliff(tile, direction, present);
     private static bool Cliff(Simulation sim, TileId tile, int direction) => (CliffMask(sim, tile) & (1 << direction)) != 0;
     private static int[] SeaEdges(Simulation sim, TileId tile) => Enumerable.Range(0, 6)

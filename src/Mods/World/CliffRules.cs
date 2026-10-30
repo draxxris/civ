@@ -25,7 +25,7 @@ internal sealed class CliffRules : IMapSanitizer
         (state.Plots[tile.Value].CliffEdges & (1 << direction)) != 0;
 
     private static bool Lifted(GameState state, TileId tile, int direction) =>
-        (state.Plots[tile.Value].CliffLiftEdges & (1 << direction)) != 0;
+        (state.CliffLifts(tile) & (1 << direction)) != 0;
 
     public void Sanitize(Simulation sim)
     {
@@ -54,7 +54,6 @@ internal sealed class CliffRules : IMapSanitizer
     {
         var plot = state.Plots[tile.Value];
         plot.CliffEdges &= 63;
-        plot.CliffLiftEdges &= 63;
         for (int direction = 0; direction < 6; direction++)
         {
             if (state.Grid.Neighbor(tile, direction) is not { } next) { state.SetCliff(tile, direction, false); continue; }
@@ -225,7 +224,7 @@ internal static class CliffGenerator
     internal static void Generate(HexGrid grid, Plot[] plots, DeterministicRng rng, ContentDb content)
     {
         var state = new GameState { Map = grid.Spec, Plots = plots };
-        foreach (var plot in plots) { plot.CliffEdges = 0; plot.CliffLiftEdges = 0; }
+        foreach (var plot in plots) plot.CliffEdges = 0;
         // Keep existing feature, resource and start RNG streams unchanged.
         var (a, b, c, d) = rng.State;
         var cliffRng = DeterministicRng.Restore(a, b, c, d);

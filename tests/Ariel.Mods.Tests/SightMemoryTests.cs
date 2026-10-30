@@ -198,7 +198,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
             sight.Recompute(sim);
         }
         sight.Recompute(sim);
-        plot.Feature = "world:forest"; plot.Route = "world:road"; city.Population = 5;
+        plot.Feature = "world:forest"; plot.Route = "world:road"; city.Population = 5; plot.Height = Levels.Hills;
         Lose(first);
         plot.Feature = "world:jungle"; plot.Kind = PlotKind.Hills; plot.Owner = 1;
         sim.State.RemoveCity(city.Id);
@@ -206,9 +206,10 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         var before = sight.SnapshotOf(sim, tile, 0)!;
         Assert.Equal("world:forest", before.Feature); Assert.Equal("world:road", before.Route);
         Assert.Equal(5, before.City!.Population);
+        Assert.Equal(Levels.Hills, before.Height);
         Assert.Equal("world:jungle", sight.SnapshotOf(sim, tile, 1)!.Feature);
         Assert.Null(sight.SnapshotOf(sim, tile, 1)!.City);
-        plot.Feature = null; plot.Route = null; plot.Terrain = "world:ocean";
+        plot.Feature = null; plot.Route = null; plot.Terrain = "world:ocean"; plot.Height = Levels.DeepWater;
         var restored = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Assert.Equal(sim.ComputeHash(), restored.ComputeHash());
         sight.Recompute(restored);
@@ -271,7 +272,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         forks[1].TeamOf(0).Techs.Add("research:optics");
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Kind = PlotKind.Peak;
 // Canonical hashes include zero-valued cliff fields, sight, memory, city and recon state.
-        ulong[] expectedHashes = [4008397960451232803UL, 12775576167823902493UL, 6335069045275542332UL];
+        ulong[] expectedHashes = [5985486210270297408UL, 16979967656531552894UL, 16161436678724005328UL];
         ulong parentHash = sim.ComputeHash();
         var rng = sim.Rng.State;
         Parallel.For(0, forks.Length, i =>

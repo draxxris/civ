@@ -158,26 +158,31 @@ public class HexGridTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void CliffEdgesMirrorAcrossNeighborsAndOnlyTheNamedSideIsLifted(bool wrap)
+    public void CliffEdgesMirrorAcrossNeighborsAndOnlyTheHigherSideLifts(bool wrap)
     {
         var state = new GameState { Map = new(4, 3, wrap), Plots = Enumerable.Range(0, 12).Select(_ => new Plot()).ToArray() };
+        static int Lift(GameState state, TileId tile, int direction) => state.CliffLifts(tile) & (1 << direction);
         foreach (var tile in state.Grid.Tiles)
             for (int direction = 0; direction < 6; direction++)
             {
+                // Each edge is visited on its own heights, so the named side stands one tier above the other.
+                state.Plots[tile.Value].Height = Levels.Hills;
+                if (state.Grid.Neighbor(tile, direction) is { } low) state.Plots[low.Value].Height = Levels.Flat;
                 state.SetCliff(tile, direction, true);
                 if (state.Grid.Neighbor(tile, direction) is { } next)
                 {
+                    int mirror = (direction + 3) % 6;
                     Assert.NotEqual(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
-                    Assert.NotEqual(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
-                    Assert.NotEqual(0, state.Plots[tile.Value].CliffLiftEdges & (1 << direction));
-                    Assert.Equal(0, state.Plots[next.Value].CliffLiftEdges & (1 << ((direction + 3) % 6)));
+                    Assert.NotEqual(0, state.Plots[next.Value].CliffEdges & (1 << mirror));
+                    Assert.NotEqual(0, Lift(state, tile, direction));
+                    Assert.Equal(0, Lift(state, next, mirror));
                     var copy = state.Clone();
                     state.SetCliff(tile, direction, false);
                     Assert.NotEqual(0, copy.Plots[tile.Value].CliffEdges & (1 << direction));
-                    Assert.NotEqual(0, copy.Plots[tile.Value].CliffLiftEdges & (1 << direction));
+                    Assert.NotEqual(0, Lift(copy, tile, direction));
                     Assert.Equal(0, state.Plots[tile.Value].CliffEdges & (1 << direction));
-                    Assert.Equal(0, state.Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6)));
-                    Assert.Equal(0, state.Plots[next.Value].CliffLiftEdges & (1 << ((direction + 3) % 6)));
+                    Assert.Equal(0, state.Plots[next.Value].CliffEdges & (1 << mirror));
+                    Assert.Equal(0, Lift(state, next, mirror));
                 }
                 else
                 {
@@ -189,7 +194,29 @@ public class HexGridTests
                 }
             }
         Assert.All(state.Plots, p => Assert.Equal(0, p.CliffEdges));
-        Assert.All(state.Plots, p => Assert.Equal(0, p.CliffLiftEdges));
+        Assert.All(state.Grid.Tiles, t => Assert.Equal(0, state.CliffLifts(t)));
+    }
+
+    [Fact]
+    public void SetCliffRaisesTheNamedSideAndNeverLowersIt()
+    {
+        var state = new GameState { Map = new(8, 4, false), Plots = Enumerable.Range(0, 32).Select(_ => new Plot()).ToArray() };
+        var high = new TileId(10);
+        var low = state.Grid.Neighbor(high, 0)!.Value;
+        state.SetCliff(high, 0, true);
+        Assert.Equal(Levels.Hills, state.Plots[high.Value].Height);
+        Assert.Equal(Levels.Flat, state.Plots[low.Value].Height);
+        state.SetCliff(high, 0, false);
+        Assert.Equal(Levels.Hills, state.Plots[high.Value].Height);
+        // A peak stays at the top tier rather than climbing above it, even over flat ground.
+        state.Plots[high.Value].Height = Levels.Peak;
+        state.SetCliff(high, 0, true);
+        Assert.Equal(Levels.Peak, state.Plots[high.Value].Height);
+        // Heights only ever rise, so re-setting a cliff never flattens a hill.
+        state.Plots[high.Value].Height = Levels.Hills;
+        state.Plots[low.Value].Height = Levels.Flat;
+        state.SetCliff(high, 0, true);
+        Assert.Equal(Levels.Hills, state.Plots[high.Value].Height);
     }
 
     [Fact]

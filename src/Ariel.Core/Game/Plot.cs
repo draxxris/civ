@@ -1,5 +1,21 @@
 namespace Ariel.Game;
 
+/// <summary>Plot height tiers. Water holds its depth, land its relief, and the only height a lift writes is flat land
+/// raised to <see cref="Hills"/> as the high side of a terrace cliff. Water never rises, so water is never the high side.</summary>
+public static class Levels
+{
+    /// <summary>Ocean and slimy ocean terrain.</summary>
+    public const sbyte DeepWater = -2;
+    /// <summary>Coast terrain and every lake, whatever its terrain.</summary>
+    public const sbyte ShallowWater = -1;
+    /// <summary>Flat land, and the default for a plot nobody has assigned a height to yet.</summary>
+    public const sbyte Flat = 0;
+    /// <summary>Hill relief, and flat land raised by the high side of a terrace cliff.</summary>
+    public const sbyte Hills = 1;
+    /// <summary>Peak relief, the top tier. A peak is never raised, so it stays here.</summary>
+    public const sbyte Peak = 2;
+}
+
 /// <summary>Plot data at a row-major TileId. River bits follow Hex.Directions;
 /// edits must use GameState.SetRiver to update both sides of shared edges.</summary>
 public sealed class Plot
@@ -8,6 +24,10 @@ public sealed class Plot
     public string Terrain { get; set; } = "";
     /// <summary>Flatland, hills or peak, independent of terrain.</summary>
     public PlotKind Kind { get; set; }
+    /// <summary>Stored height in tiers, one of the <see cref="Levels"/> constants. Authoritative: which side of a cliff is
+    /// high is derived by comparing two heights, so no separate lift mask is stored. Edits must use GameState.SetCliff to
+    /// keep the edge and the heights agreeing.</summary>
+    public sbyte Height { get; set; }
     /// <summary>Small inland water area, assigned by the world rules.</summary>
     public bool IsLake { get; set; }
     /// <summary>Worked turns toward the next improvement upgrade.</summary>
@@ -48,19 +68,6 @@ public sealed class Plot
         }
     }
     private byte _cliffEdges;
-    /// <summary>Six bits in Hex.Directions order, bit d set when this plot is the lifted side of the cliff on edge d.
-    /// Not mirrored: exactly one side of an edge sets it, so a memory that knows one plot knows which way the step drops.
-    /// Edits must use GameState.SetCliff.</summary>
-    public byte CliffLiftEdges
-    {
-        get => _cliffLiftEdges;
-        set
-        {
-            if (value > 63) throw new ArgumentOutOfRangeException(nameof(value), "Cliff masks use only six bits");
-            _cliffLiftEdges = value;
-        }
-    }
-    private byte _cliffLiftEdges;
     /// <summary>Controlling player, or null.</summary>
     public int? Owner { get; set; }
     /// <summary>Accumulated culture by player id.</summary>
@@ -76,9 +83,10 @@ public sealed class Plot
     // Revealed snapshots are immutable records, so the memory copy can share them.
     internal Plot Clone() => new()
     {
-        Terrain = Terrain, Kind = Kind, IsLake = IsLake, ImprovementTurns = ImprovementTurns, DepletedMine = DepletedMine,
+        Terrain = Terrain, Kind = Kind, Height = Height, IsLake = IsLake, ImprovementTurns = ImprovementTurns,
+        DepletedMine = DepletedMine,
         BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus, Improvement = Improvement,
-        Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges, _cliffLiftEdges = _cliffLiftEdges,
+        Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges,
         Owner = Owner, Culture = new(Culture, Culture.Comparer),
         Revealed = TeamMask.FromWords(Revealed.Words), Visible = TeamMask.FromWords(Visible.Words),
         RevealedSnapshots = new(RevealedSnapshots, RevealedSnapshots.Comparer), AreaId = AreaId,
@@ -86,8 +94,10 @@ public sealed class Plot
 }
 
 /// <summary>Immutable plot memory; rivers, cliffs and city marks must not use unseen live data either.</summary>
+/// <param name="CliffLiftEdges">Derived when the memory was captured: bit d is set when this plot stood higher than its
+/// neighbour across the cliff on edge d. Stored so a memory of a cliff still says which way it drops.</param>
 public sealed record RevealedPlotSnapshot(
-    string Terrain, PlotKind Kind, bool IsLake, string? Feature,
+    string Terrain, PlotKind Kind, bool IsLake, sbyte Height, string? Feature,
     string? Bonus, string? Improvement, string? Route, int? Owner,
     byte RiverEdges = 0, RevealedCitySnapshot? City = null, byte CliffEdges = 0, byte CliffLiftEdges = 0);
 

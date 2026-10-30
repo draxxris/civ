@@ -42,7 +42,7 @@ public sealed class ScenarioTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var plots = Plots();
         plots[95].Visible.Add(0); plots[95].Revealed.Add(0);
-        plots[95].RevealedSnapshots[0] = new("world:coast", PlotKind.Flat, false, null, null, null, null, null);
+        plots[95].RevealedSnapshots[0] = new("world:coast", PlotKind.Flat, false, Levels.ShallowWater, null, null, null, null, null);
         var sim = Simulation.CreateScenario(mods.Content, Settings, new(12, 8, true), plots, game =>
         {
             game.TeamOf(0).Techs.Clear();
