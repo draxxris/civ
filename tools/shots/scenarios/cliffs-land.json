@@ -1,5 +1,5 @@
 {
- "// note": "One row of six lifted tiles, cliffed on its perimeter edges only (no edge between two lifted tiles), so the rock wall runs continuously round the rim and each side reads as one long sheer run. Capture tools/shots/poses/cliffs-land-poses.json for the high and low side of the same stretch.",
+ "// note": "One row of six lifted tiles, cliffed on its perimeter edges only (no edge between two lifted tiles), so the rock wall runs continuously round the rim and each side reads as one long sheer run. The west end of the run is left open so the ground south of the wall stays reachable; closing it would cut the area in two. Capture tools/shots/poses/cliffs-land-poses.json for the high and low side of the same stretch.",
  "fill": {
   "terrain": "world:grass",
   "kind": "Flat",
@@ -20,7 +20,7 @@
     8,
     10
    ],
-   "cliff": 62
+   "cliff": 54
   },
   {
    "at": [
