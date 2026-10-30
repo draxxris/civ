@@ -1,3 +1,7 @@
+[tasks.help]
+description = "List the tasks this repository supports; call these instead of tools/*.sh, tools/*.py, dotnet, or godot-mono directly"
+run = "mise tasks"
+
 [tasks."build:game"]
 description = "Build the Godot game"
 run = "dotnet build src/Ariel.Godot"

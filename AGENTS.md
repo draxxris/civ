@@ -1,5 +1,17 @@
 # Agent Guidelines
 
+## Tooling: Use mise Tasks, Not Raw Commands
+
+Run `mise run help` first, every time. It lists the tasks this repository actually
+supports, and each task encodes prerequisites that calling the underlying command
+directly throws away.
+
+- Never call `tools/*.sh`, `tools/**/*.py`, `dotnet`, or `godot-mono` directly when a
+  mise task covers the job. Use `mise run test`, `mise run shot`, `mise run benchmark`,
+  and so on.
+- If a job has no task, add one to `mise.toml` and call that, rather than putting a raw
+  script invocation into a runbook or an agent prompt.
+
 ## Temporary Files
 
 Write temporary files to `/tmp/ariel`.
