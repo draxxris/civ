@@ -101,10 +101,26 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 Assert.Equal(members.Count, reached.Count);
             }
             // Separate terraces leave two tiles of raised ground between them, or one tile of low ground that both drop
-            // onto. Neighbouring raised tiles are one raised mass, so a plateau of any shape is allowed.
+            // onto. Neighbouring raised tiles are one raised mass, so a plateau or a long bluff is allowed: a pair of
+            // cliffs counts as separate only when their raised sides are not joined through raised tiles.
+            var raisedTiles = sim.State.Grid.Tiles.Where(t => LiftMask(sim, t) != 0).Select(t => t.Value).ToHashSet();
+            bool SameMass(TileId a, TileId b)
+            {
+                var seen = new HashSet<int> { a.Value };
+                var queue = new Queue<int>(seen);
+                while (queue.Count > 0)
+                {
+                    var tile = new TileId(queue.Dequeue());
+                    if (tile == b) return true;
+                    foreach (var neighbor in sim.State.Grid.Neighbors(tile))
+                        if (raisedTiles.Contains(neighbor.Value) && seen.Add(neighbor.Value)) queue.Enqueue(neighbor.Value);
+                }
+                return false;
+            }
             for (int i = 0; i < terraces.Count; i++)
                 for (int j = i + 1; j < terraces.Count; j++)
                 {
+                    if (SameMass(terraces[i].High, terraces[j].High)) continue;
                     int high = sim.State.Grid.Distance(terraces[i].High, terraces[j].High);
                     if (high <= 1) continue;
                     var lowA = sim.State.Grid.Neighbor(terraces[i].High, terraces[i].Direction)!.Value;
@@ -405,6 +421,26 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         OffsetOfTile(sim, land, out col, out row);
         problems = Service<IMapGeometry>(sim).Report(sim);
         Assert.Contains(problems, p => p == $"tile ({col}, {row}) direction E: water on the high side");
+    }
+
+    [Fact]
+    public void A_ridge_of_three_raised_tiles_is_one_cliff_and_stands_without_a_finding()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        // Three lifted flats in a row, each walled on its four diagonal faces and at both ends. The outer two are a
+        // distance-2 pair on to different low tiles, but raised ground joins them, so they are faces of one bluff.
+        foreach (int col in new[] { 3, 4, 5 })
+        {
+            var tile = sim.State.Grid.TileAt(col, 3);
+            SetCliff(sim, tile, 1, true);
+            SetCliff(sim, tile, 2, true);
+            SetCliff(sim, tile, 4, true);
+            SetCliff(sim, tile, 5, true);
+        }
+        // The west end is left open so the area is not sealed, exactly as the shipped cliffs-land scene does.
+        SetCliff(sim, sim.State.Grid.TileAt(5, 3), 0, true);
+        Assert.Equal(Levels.Hills, sim.State.Plots[sim.State.Grid.TileAt(4, 3).Value].Height);
+        Assert.Empty(Service<IMapGeometry>(sim).Report(sim));
     }
 
     [Fact]

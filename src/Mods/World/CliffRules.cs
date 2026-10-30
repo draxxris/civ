@@ -336,13 +336,17 @@ internal sealed class CliffRules : IMapGeometry
 
     /// <summary>Whether a cliff may stand beside every accepted one. Two separate cliffs must leave enough ground between
     /// them that each reads on its own: two tiles of raised ground, or one tile of low ground that both drop onto.
-    /// Neighbouring raised tiles are one raised mass, so a plateau of any shape is allowed.</summary>
+    /// Neighbouring raised tiles are one raised mass, so a plateau or a long bluff is allowed: cliffs whose raised sides
+    /// are joined through raised tiles are faces of one bluff, not two features, however long the rim runs.</summary>
     internal sealed class CliffSpacing
     {
         // Every accepted cliff is filed under the tiles its raised side can crowd, because a cliff is only ever compared
         // with the ones standing within HighGap of its own raised side. Scanning the whole accepted list made thinning
         // quadratic in the number of cliffs, which dominated world generation.
         private readonly Dictionary<int, List<(TileId High, int Direction)>> _near = new();
+        // Walk marks for the raised-mass search, so a ridge is followed without allocating a set per comparison.
+        private readonly Dictionary<int, int> _seen = new();
+        private int _walk;
 
         internal void Add(GameState state, TileId high, int direction)
         {
@@ -361,6 +365,7 @@ internal sealed class CliffRules : IMapGeometry
             if (!_near.TryGetValue(high.Value, out var nearby)) return true;
             foreach (var (otherHigh, otherDirection) in nearby)
             {
+                if (SameMass(state, high, otherHigh)) continue; // Faces of one bluff, not two cliffs.
                 int highDistance = state.Grid.Distance(high, otherHigh);
                 if (highDistance <= 1) continue; // One raised mass, not two cliffs.
                 if (highDistance >= HighGap) continue;
@@ -369,6 +374,30 @@ internal sealed class CliffRules : IMapGeometry
                 return false;
             }
             return true;
+        }
+
+        /// <summary>Whether raised ground joins the two tiles, read from the map's own lifts so a generator and a checker
+        /// visiting the same map in different orders get the same answer.</summary>
+        private bool SameMass(GameState state, TileId a, TileId b)
+        {
+            if (a == b || state.CliffLifts(a) == 0 || state.CliffLifts(b) == 0) return false;
+            int walk = ++_walk;
+            var queue = new Queue<TileId>();
+            queue.Enqueue(a);
+            _seen[a.Value] = walk;
+            while (queue.Count > 0)
+            {
+                var tile = queue.Dequeue();
+                foreach (var neighbor in state.Grid.Neighbors(tile))
+                {
+                    if (neighbor == b) return true;
+                    if (_seen.TryGetValue(neighbor.Value, out int mark) && mark == walk) continue;
+                    if (state.CliffLifts(neighbor) == 0) continue;
+                    _seen[neighbor.Value] = walk;
+                    queue.Enqueue(neighbor);
+                }
+            }
+            return false;
         }
     }
 }
