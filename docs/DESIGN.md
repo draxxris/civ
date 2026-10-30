@@ -128,15 +128,21 @@ land. `World` places and polices them; movement and the client read the plot fie
   sharpened across the edge, and overlapping lifts combine with a soft maximum, so the
   ground never rises more than one rise above its normal height. Every known cliff
   carries a rock wall, and its stored `CliffLifts` side tells the renderer where: a
-  coastal cliff stands its columns on the waterline, a land/land cliff just outside the
-  steepest step across its edge, each from the ground at the foot up to just above the
-  bluff. A land/land wall carries `LandRocksPerEdge` columns per edge, over twice the
-  coast's, because nothing else hides the pale stone the shader tints steep ground with:
-  the wall itself has to cover the face from the ground up. An edge that carries no step
-  at all — broken data, such as an edge marked between two lifted tiles — gets no wall,
-  so no rock ever stands on flat ground. A cliff whose lifted side is unknown stays
-  bare, because the wall would stand in the open instead of against the face. Sea stacks
-  and surf appear only where the lower side is water.
+  coastal cliff stands its columns on the waterline, a land/land cliff on the hex edge
+  itself, a little outside it, each from the ground at the foot up to just above the
+  bluff. Standing a land/land wall on the edge keeps a run of cliff edges looking like
+  the straight hexagon sides the map is made of, with a corner where two edges meet,
+  instead of tracing the cliff line's wander. A land/land wall carries
+  `LandRocksPerEdge` columns per edge, over twice the coast's, because nothing else
+  hides the pale stone the shader tints steep ground with: the wall itself has to cover
+  the face from the ground up. The ground colour follows the same edge: the mesh carries
+  the sharp cliff share in `UV.x`, and inside that band the palette transition drops its
+  wander and narrows to the step's own width, so the raised top keeps its own ground
+  instead of taking the colour of the tile below it. An edge that carries no step at all
+  — broken data, such as an edge marked between two lifted tiles — gets no wall, so no
+  rock ever stands on flat ground. A cliff whose lifted side is unknown stays bare,
+  because the wall would stand in the open instead of against the face. Sea stacks and
+  surf appear only where the lower side is water.
 - Rivers. Rivers run along hex edges in this ruleset, so a river edge may also carry a
   cliff: `RiverMesher` turns the channel downhill over the face, and the shader foams
   where it does. The generator therefore no longer withholds cliffs from river edges,

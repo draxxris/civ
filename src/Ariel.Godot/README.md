@@ -316,10 +316,13 @@ manager, because it cannot answer a prompt.
     generated relief, river, resource, feature, cliff or unit survives. Every pair of
     numbers in the file is read as a column and row — tile `at`, `focus`, unit positions
     and road points — and those coordinates are shifted so the scene sits two tiles in
-    from the corner. `--focus-tile` keeps taking the coordinates as written in the file.
-    Rects are not read as positions: they clear a whole map, so a 200 × 200 rect does
-    not stretch the world. A file with no positions at all keeps the generated map. A
-    tile can contain
+    from the corner, or three rows down when an even shift is the one the scene needs: a
+    direction index (a cliff or river bit) names a different neighbour on an even row
+    than on an odd one, so an odd row shift would land every diagonal bit on the wrong
+    edge. `--focus-tile` keeps taking the coordinates as written in the file. Rects are
+    not read as positions: they clear a whole map, so a 200 × 200 rect does not stretch
+    the world. A file with no positions at all keeps the generated map. A tile can
+    contain
     `"city":{"owner":0,"name":"Testburg","population":5,"buildings":["cities:walls"]}`.
     Owner and name are required. Population defaults to 1, and buildings default to an
     empty list. The city clears the plot improvement and sets its owner. Unknown

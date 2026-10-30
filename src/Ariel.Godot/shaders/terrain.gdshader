@@ -38,6 +38,8 @@ uniform float lava_glow = 1.1;
 
 varying vec3 world_pos;
 varying vec3 ground_normal;
+// TerrainField.CliffFaceAt from the mesh UV: the sharp share of a cliff edge at the vertex.
+varying float cliff_share;
 varying float cavity;
 // TerrainField.CraterAt: 1 at the middle of a crater floor, 0 from its rim outwards.
 varying float crater;
@@ -79,6 +81,7 @@ void vertex() {
 	// Chunk vertices are canonical world positions; wrap copies only translate the instance.
 	world_pos = VERTEX;
 	ground_normal = NORMAL;
+	cliff_share = UV.x;
 	cavity = UV2.x;
 	crater = UV2.y;
 }
@@ -120,7 +123,7 @@ void fragment() {
 	vec3 glow;
 	float wet;
 	// Keep sample coordinates unwrapped to prevent a mip-derivative jump at the cylinder seam.
-	blend_ground(world_pos.xz, linear, slope, snow, looks_a, looks_b, land, water_tint, fogged, hidden, w, glow, wet);
+	blend_ground(world_pos.xz, linear, slope, snow, cliff_share, looks_a, looks_b, land, water_tint, fogged, hidden, w, glow, wet);
 	float molten = lava(world_pos.xz, crater, TIME) * (1.0 - hidden) * mix(1.0, 0.35, fogged);
 	land = mix(land, land * 0.35, smoothstep(0.0, 0.3, crater));
 	vec3 colour = land * (1.0 - cavity_shade * smoothstep(0.0, 1.0, hollow) + ridge_light * smoothstep(0.0, 1.0, -hollow));

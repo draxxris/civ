@@ -94,6 +94,9 @@ public static class TerrainMesher
         private readonly ChunkResolution _resolution;
         private readonly int _k, _a0, _a1, _b0, _b1, _rx;
         private readonly double[] _heights;
+        /// <summary>How far a lattice point may be moved onto a cliff line: one lattice step, the most a point that the
+        /// face falls between can be from the line, so every such pair collapses and its quad is vertical.</summary>
+        private readonly double SnapRadius;
 
         public ChunkMesher(TerrainChunk chunk, TerrainField field, ChunkResolution resolution)
         {
@@ -101,6 +104,7 @@ public static class TerrainMesher
             _field = field;
             _resolution = resolution;
             _k = resolution.K;
+            SnapRadius = Sqrt3 / _k;
             _a0 = chunk.UnitX0 * _k; _a1 = chunk.UnitX1 * _k; _b0 = chunk.UnitZ0 * _k; _b1 = chunk.UnitZ1 * _k;
             // Heights over the chunk lattice and a two-vertex ring, indexed [(b - b0 + 2) * rx + (a - a0 + 2)].
             _rx = _a1 - _a0 + 5;
@@ -147,7 +151,14 @@ public static class TerrainMesher
                 {
                     int h = row[i];
                     var sample = Vertex(h, b, i == 0 || i == row.Count - 1 || b == _b0 || b == _b1);
-                    positions.Add((float)HalfStepX(h, _k)); positions.Add((float)sample.Height); positions.Add((float)z);
+                    // Cliff faces are drawn vertical: the points a drop falls between are pulled onto the cliff line, and
+                    // take the face's own normal, so the wall is shaded as stone instead of as the ground either side of it.
+                    var draw = _field.DrawPoint(HalfStepX(h, _k), z, SnapRadius);
+                    positions.Add((float)draw.X); positions.Add((float)sample.Height); positions.Add((float)draw.Z);
+                    // The field's own normals, not the face's: a lattice point on the line is shared with the ground at the
+                    // brink and at the foot, so a sideways normal there shades that strip as a wall and its shadow bias
+                    // pushes it into shadow — a dark band either side of the face, which reads as the cliff curving into
+                    // the ground. A crisp stone wall needs the wall's own vertices; see TerrainField.DrawPoint.
                     normals.Add((float)sample.NX); normals.Add((float)sample.NY); normals.Add((float)sample.NZ);
                     cavity.Add((float)sample.Cavity);
                 }

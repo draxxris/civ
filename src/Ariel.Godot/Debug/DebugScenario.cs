@@ -48,11 +48,8 @@ internal static class DebugScenario
     }
 
     /// <summary>A scene laid out in a world of its own: the file with every position shifted so the scene starts
-    /// <see cref="SceneMargin"/> tiles from the map edge, and the map size that leaves.</summary>
+    /// <see cref="SceneFrame.Margin"/> tiles from the map edge, and the map size that leaves.</summary>
     internal sealed record SceneWorld(string Json, int Width, int Height, int ShiftCol, int ShiftRow);
-
-    /// <summary>Tiles kept around the scene, so the camera can look along its edge without leaving the map.</summary>
-    private const int SceneMargin = 2;
 
     /// <summary>Ground a scene gets when it names no <c>fill</c> of its own.</summary>
     private const string BareFill = """{"terrain":"world:grass","kind":"Flat","owner":null}""";
@@ -73,10 +70,9 @@ internal static class DebugScenario
             col1 = Math.Max(col1, c); row1 = Math.Max(row1, r);
         });
         if (col0 > col1) return null;
-        int dc = SceneMargin - col0, dr = SceneMargin - row0;
-        Shift(root, dc, dr);
-        int width = Math.Max(8, col1 - col0 + 1 + 2 * SceneMargin), height = Math.Max(6, row1 - row0 + 1 + 2 * SceneMargin);
-        return new(root.ToJsonString(), width, height, dc, dr);
+        var frame = SceneFrame.Fit(col0, row0, col1, row1);
+        Shift(root, frame.ShiftCol, frame.ShiftRow);
+        return new(root.ToJsonString(), frame.Width, frame.Height, frame.ShiftCol, frame.ShiftRow);
     }
 
     /// <summary>Call <paramref name="visit"/> with the column and row of every two-number array in the document.</summary>

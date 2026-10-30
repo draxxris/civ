@@ -35,6 +35,9 @@ uniform float ground_reach = 0.4;
 uniform float ground_creep = 0.12;
 uniform float ground_detail = 0.12;
 uniform float ground_blend = 0.35;
+// cliff_blend: the same 10% to 90% width inside a cliff band, where the ground colour has to agree with the sharp step
+// the height field makes on that edge.
+uniform float cliff_blend = 0.2;
 uniform float ground_noise_frequency = 1.4;
 
 uniform ivec2 map_size = ivec2(1, 1);
@@ -531,9 +534,11 @@ vec3 feature_ground(vec2 p, vec3 land, vec4 a, vec4 b, bool linear, out vec3 glo
 
 // Hidden tiles supply only cloud coverage, never their true material. Sight and water tint retain geometric weights.
 // Ground colour is a softmax of the tiles' claims, ln λ plus a bounded shift. Along a corner-triangle border the opposite
-// vertex has λ = 0, so its claim falls to -∞: it contributes nothing on either side and the colour is continuous.
-void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec4 looks_a, vec4 looks_b, out vec3 land,
-		out vec4 water_tint, out float fogged, out float hidden, out vec3 weights, out vec3 glow, out float wet) {
+// vertex has λ = 0, so its claim falls to -∔: it contributes nothing on either side and the colour is continuous.
+// cliff is the sharp cliff share at the point: inside that band the transition drops its wander and narrows to the step's
+// own width, so the raised side keeps its ground up to the hex edge instead of taking the colour of the tile below it.
+void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, float cliff, vec4 looks_a, vec4 looks_b,
+		out vec3 land, out vec4 water_tint, out float fogged, out float hidden, out vec3 weights, out vec3 glow, out float wet) {
 	ivec2 base;
 	bool upper;
 	vec3 lambda = corner_lambda(p + warp_sample(p) * warp_amplitude, base, upper);
@@ -586,7 +591,7 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 		// Two noises in [-1, 1] differ by up to 2, the spreads by up to 1: each term's largest edge shift is its uniform.
 		float ragged = texelFetch(palette, ivec2(layer, 4), 0).a;
 		float shift = ragged * (0.5 * ground_reach * ground_noise(p, t) + ground_detail * material.a) + ground_creep * spread;
-		claims[k] = log(max(lambda[k], 1e-6)) + shift * CLAIM_PER_UNIT;
+		claims[k] = log(max(lambda[k], 1e-6)) + shift * (1.0 - cliff) * CLAIM_PER_UNIT;
 		vec3 c = mix(material.rgb, rock, rock_weight);
 		vec4 slime = palette_entry(layer, 3, linear);
 		colours[k] = mix(c, slime.rgb, slime.a);
@@ -604,8 +609,10 @@ void blend_ground(vec2 p, bool linear, float rock_weight, float snow_weight, vec
 		// At least the edge width, widened to a few pixels far away so the ragged edge does not shimmer.
 		// Softmax: exp(s·claim) = λ^s · e^(s·shift), the sharpened blend weights with the noise moving the transition.
 		// Across an edge the claim difference changes by CLAIM_PER_UNIT per world unit, and 10% to 90% is a difference of
-		// 2·ln 9 / s. Far away the width grows to a few pixels so the wandering line does not shimmer.
-		float s = 2.0 * log(9.0) / (max(ground_blend, footprint) * CLAIM_PER_UNIT);
+		// 2·ln 9 / s. Far away the width grows to a few pixels so the wandering line does not shimmer. A cliff takes the
+		// width down to the face's own, because the colour there has to agree with the step in the ground.
+		float width = mix(ground_blend, cliff_blend, cliff);
+		float s = 2.0 * log(9.0) / (max(width, footprint) * CLAIM_PER_UNIT);
 		// Hidden corners keep a claim of -1e4, so their weight underflows to zero.
 		vec3 adjusted = exp(s * (claims - vec3(highest)));
 		adjusted /= adjusted.x + adjusted.y + adjusted.z;
@@ -631,7 +638,8 @@ void blend_tiles(vec2 p, bool linear, float rock_weight, float snow_weight, out 
 	feature_shares(p, a, b);
 	vec3 glow;
 	float wet;
-	blend_ground(p, linear, rock_weight, snow_weight, a, b, land, water_tint, fogged, hidden, weights, glow, wet);
+	// Surfaces drawn over the ground take the unsharpened blend: they hide the transition anyway.
+	blend_ground(p, linear, rock_weight, snow_weight, 0.0, a, b, land, water_tint, fogged, hidden, weights, glow, wet);
 }
 
 // Two wrap-safe scrolling samples of the cloud layer, plus periodic coverage noise. Fully hidden means full cover.

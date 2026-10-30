@@ -249,6 +249,25 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
     }
 
     [Fact]
+    public void The_ground_cliff_share_is_full_across_the_band_the_colour_needs_and_gone_beyond_it()
+    {
+        // The ground shader takes the palette transition back to the hex edge over this share, so a raised tile's top keeps
+        // its own ground. A share that stayed at the edge's value would snap the colour inside the bluff, and one that
+        // reached further would repaint ground that has nothing to do with the cliff.
+        var s = TerrainTestMaps.Uniform(ReliefClass.Flat, 14, 12);
+        int high = s.Grid.TileAt(6, 5).Value, low = s.Grid.TileAt(7, 5).Value;
+        s.Cliffs[high] |= 1;
+        s.Cliffs[low] |= 1 << 3;
+        s.CliffLifts[high] |= 1;
+        var field = new TerrainField(s, 3, new TerrainTuning { WarpAmplitude = 0 });
+        var (cx, cz) = s.Grid.HexOf(new TileId(high)).ToPixel(1);
+        double edge = cx + Math.Sqrt(3) / 2;
+        Assert.InRange(field.SurfaceAt(edge, cz).CliffFace, 0.99, 1);
+        Assert.InRange(field.SurfaceAt(edge - 0.12, cz).CliffFace, 0.99, 1);
+        Assert.InRange(field.SurfaceAt(edge + 0.6, cz).CliffFace, 0, 0);
+    }
+
+    [Fact]
     public void Land_cliff_lifts_its_high_side_and_the_ramp_returns_to_the_normal_ground()
     {
         var s = new TerrainSnapshot(new MapSpec(9, 7, false));

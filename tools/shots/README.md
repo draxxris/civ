@@ -57,11 +57,12 @@ Run twice with different values, then `mise run shot:compare -- a.png b.png ab.p
 
 ## Hand-made scenes
 
-A `--scenario` run sizes the map to the scene: bounding box plus two tiles of margin, no
-wrapping, no opponents, every other tile cleared. Nothing the generator made survives,
-so a capture shows the scene and nothing else, and the same file frames the same way on
-any seed. Add `--world tiny` to go back to a generated world with the scene laid over
-it. `--focus-tile` takes the coordinates the file was written with.
+A `--scenario` run sizes the map to the scene: bounding box plus two tiles of margin
+(three at the top when only an even row shift keeps the scene's cliff and river bits on
+their edges), no wrapping, no opponents, every other tile cleared. Nothing the generator
+made survives, so a capture shows the scene and nothing else, and the same file frames
+the same way on any seed. Add `--world tiny` to go back to a generated world with the
+scene laid over it. `--focus-tile` takes the coordinates the file was written with.
 
 `--scenario tools/shots/scenarios/hills-forest-roads.json --world tiny` replaces the
 generated map with a fixed scene. Use `tools/shots/scenarios/improvements.json` to

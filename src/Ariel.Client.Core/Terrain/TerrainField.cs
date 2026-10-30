@@ -141,19 +141,31 @@ public sealed record TerrainTuning
     /// <summary>Cliffs: distance (world units, about one tile across) beyond a cliff tile over which the neighbouring
     /// ground climbs to the lifted side, so the rise starts before the cliff tile instead of at the edge.</summary>
     public double CliffRamp { get; init; } = 1.6;
-    /// <summary>Cliffs: blend sharpness across a cliff edge. Far above <see cref="MaterialSharpness"/>, so the ground drops
-    /// to the lower side within about a lattice step.</summary>
-    public double CliffSharpness { get; init; } = 18;
+    /// <summary>Cliffs: blend sharpness across a cliff edge. A bluff is a wall, so the blend is sharp enough that the whole
+    /// drop falls inside one lattice step of a cliff chunk (resolved at <see cref="TerrainMesher.PeakResolution"/>, 0.064
+    /// world units): the drawn face is then one near-vertical quad, and the rock wall stands against it.</summary>
+    public double CliffSharpness { get; init; } = 45;
     /// <summary>Cliffs: distance from the edge (world units) over which the cliff shape is full.</summary>
     public double CliffInner { get; init; } = 0.16;
     /// <summary>Cliffs: distance at which the cliff shape has faded out. With <see cref="CliffNoise"/> it stays within half
     /// a tile of the edge, so only the corner triangles that share the edge feel it (the field stays continuous).</summary>
     public double CliffOuter { get; init; } = 0.42;
+    /// <summary>Cliffs: how high the last edge of a cliff run stands, as a share of <see cref="CliffRise"/>. A bluff that
+    /// simply stops leaves the ground beside its end with the whole rise to absorb in a tile or two; ending it lower means
+    /// the grass beyond has less to climb down.</summary>
+    public double CliffEndScale { get; init; } = 0.64;
+    /// <summary>Cliffs: tiles over which a cliff climbs from <see cref="CliffEndScale"/> at the end of its run to full
+    /// height. A short run climbs over fewer tiles, so it can still reach full height in the middle.</summary>
+    public double CliffEndTaper { get; init; } = 2.5;
+    /// <summary>Cliffs: distance over which the ground beyond the end of a cliff run falls from its lowered height to
+    /// ground on the same level. Longer than <see cref="CliffRamp"/>, because the end has no wall to hide the descent.</summary>
+    public double CliffEndRamp { get; init; } = 2.4;
     /// <summary>Cliffs: how far noise moves the cliff's reach along the edge, so a bluff does not end in a straight line.</summary>
     public double CliffNoise { get; init; } = 0.06;
     /// <summary>Cliffs: how far edge noise moves the cliff line from the hex edge, either way. It stays inside
-    /// <see cref="CliffInner"/>, where the cliff shape is full.</summary>
-    public double CliffWander { get; init; } = 0.1;
+    /// <see cref="CliffInner"/>, where the cliff shape is full, and the rock wall moves with it. Small, so a bluff is still
+    /// a straight side of the map: enough to break the machining of a face grown from one edge.</summary>
+    public double CliffWander { get; init; } = 0.04;
     /// <summary>Sea stacks: chance that a coastal cliff edge carries a second lone rock off its foot. Every cliff whose
     /// lower side is water always carries at least one, so no stretch of coast is left bare.</summary>
     public double StackChance { get; init; } = 0.2;
@@ -196,9 +208,8 @@ public sealed class TerrainField
     /// <summary>Per-tile mountain shapes, built on first use. Racing threads build equal shapes, so either may win.</summary>
     private readonly Mountain?[] _mountains;
     private readonly bool _hasCrater;
-    /// <summary>Per tile: hex offsets to the lifted cliff tiles within <see cref="CliffReach"/>: tiles whose cliff ramp
-    /// can reach a point of it. Null for most tiles.</summary>
-    private readonly Hex[]?[] _cliffLifts;
+    /// <summary>Whether any known tile carries a cliff bit. Without one the ground shader input is always zero.</summary>
+    private readonly bool _hasCliffs;
     /// <summary>Per tile whether it is the raised side of any cliff. The edge blend biases by this, and only a lifted land
     /// tile carries the ramp.</summary>
     private readonly bool[] _lifted;
@@ -228,8 +239,10 @@ public sealed class TerrainField
         _wrap = snapshot.Grid.Spec.Wrap;
         _mountains = new Mountain?[snapshot.Relief.Length];
         _hasCrater = Array.IndexOf(snapshot.Crater, true) >= 0;
+        _hasCliffs = Array.IndexOf(snapshot.Cliffs, (byte)0) < snapshot.Cliffs.Length;
         _lifted = BuildLifted();
-        _cliffLifts = BuildCliffLifts();
+        _liftScale = BuildLiftScale();
+        _bareEdges = BuildBareEdges();
         Rivers = new RiverNetwork(snapshot, tuning, noise, (x, z) =>
         {
             if (_wrap) x -= Period * Math.Floor(x / Period);
@@ -284,8 +297,7 @@ public sealed class TerrainField
         var peak = corners.HasPeak ? PeakNoise(x, z) : default;
         double h = 0;
         hidden = 0;
-        // Profiles of all three corners: the cliff blend below needs the ones the regular weights ignore. Each profile
-        // carries its own tile's cliff lift, so the ground below a cliff stays down while the bluff above it stands.
+        // Profiles of all three corners: the cliff blend below needs the ones the regular weights ignore.
         double pa = 0, pb = 0, pc = 0;
         for (int k = 0; k < 3; k++)
         {
@@ -297,26 +309,46 @@ public sealed class TerrainField
                 ReliefClass.Hills => w[k] > 0 || corners.HasCliff ? HillProfile(corners, k, x, z) : 0,
                 _ => Profile(relief, x, z),
             };
-            if (relief != ReliefClass.Hidden && !IsWater(relief)) p += Tuning.CliffRise * CliffLift(corners, k);
             if (k == 0) pa = p; else if (k == 1) pb = p; else pc = p;
             if (w[k] <= 0) continue;
             if (relief == ReliefClass.Hidden) hidden += w[k];
             else h += w[k] * p;
         }
-        return corners.HasCliff ? CliffGround(corners, h, new Blend3(pa, pb, pc), x, z) : h;
+        // The lift comes in two forms. Away from a cliff edge it is the ramp from nearby bare edges: the ground climbs
+        // to the bluff over the tiles beside it, so a bluff with no cliff along a given edge still meets the ground
+        // instead of ending in a wall. Along a cliff edge it is the sharp blend, which puts the whole rise on the tile
+        // itself and leaves the foot flat, so the edge is a step. The ramp list holds bare edges only, so it cannot cross
+        // a cliff edge and raise the tiles behind a wall.
+        if (!corners.HasCliff) return h;
+        var (cliff, near) = CliffShares(corners, x, z);
+        var sharp = CliffWeights(corners, x, z);
+        // The lift belongs to the raised ground: a step at a cliff edge, level ground at its foot, and a ramp where an
+        // edge carries no cliff. Walls stand only on edges that actually step, so the step is always the face of a rock wall.
+        double bluff = 0;
+        for (int k = 0; k < 3; k++)
+        {
+            var relief = corners.Relief(k);
+            if (relief == ReliefClass.Hidden || IsWater(relief) || !_lifted[corners.Tile(k)]) continue;
+            bluff += sharp[k] * _liftScale[corners.Tile(k)];
+        }
+        // Along a cliff edge the ground below is level, so the ramp is held off there — through a smooth window, because a
+        // hard one leaves a crease in the grass where it ends. Elsewhere the ramp is what carries the bluff down to the
+        // ground over the tiles beside it, so a side with no cliff on it is a slope rather than a wall.
+        double window = near <= 0 ? 1 : 1 - SmoothStep(0, 1, near);
+        double lift = Math.Max(bluff, LiftRamp(corners) * window);
+        h += Tuning.CliffRise * lift;
+        return CliffGround(corners, h, new Blend3(pa, pb, pc), sharp, bluff, cliff, near, x, z);
     }
 
-    /// <summary>The ground near cliff edges: within <see cref="TerrainTuning.CliffOuter"/> of a cliff edge it blends towards a
-    /// much sharper high/low blend of the (cliff-lifted) profiles, so the lifted side stands as a bluff over a steep face.
-    /// Sea stacks then raise small shoals off the foot of a cliff that drops into water.</summary>
-    private double CliffGround(in CornerSet corners, double h, Blend3 profiles, double x, double z)
+    private double CliffGround(in CornerSet corners, double h, Blend3 profiles, Blend3 sharp, double lift, double cliff,
+        double near, double x, double z)
     {
         var t = Tuning;
-        var (cliff, near) = CliffShares(corners, x, z);
         if (near > 0)
         {
-            var sharp = CliffWeights(corners, x, z);
-            double hc = 0, flat = t.FlatBase + t.CliffRise + t.FlatNoise * _noise.Fbm(x, z, t.FlatFrequency, t.Octaves, salt: 2);
+            // The sharp version of the same ground: the cliff's own high/low blend of the profiles, with the sharp lift on
+            // top, capped at the flat top a peak on a bluff may reach.
+            double hc = 0, flat = t.FlatBase + t.FlatNoise * _noise.Fbm(x, z, t.FlatFrequency, t.Octaves, salt: 2);
             double peakShare = 0, peakLambda = 0;
             for (int k = 0; k < 3; k++)
             {
@@ -330,6 +362,7 @@ public sealed class TerrainField
                 }
                 else hc += sharp[k] * profiles[k];
             }
+            hc += t.CliffRise * lift;
             double blend = cliff + (near - cliff) * peakShare;
             double delta = (hc - h) * blend;
             if (delta > 0) delta *= 1 - SmoothStep(0.05, 0.3, peakLambda);
@@ -347,16 +380,16 @@ public sealed class TerrainField
         return h;
     }
 
-    /// <summary>Sharp high/low weights for cliffs, λ^s with the lifted corners biased by edge noise so the cliff line
-    /// wanders by up to <see cref="TerrainTuning.CliffWander"/> instead of following the straight hex edge. At an edge
+    /// <summary>Sharp high/low weights for cliffs, λ^s with the lifted corners biased by edge noise so the cliff line can
+    /// wander by up to <see cref="TerrainTuning.CliffWander"/> instead of following the straight hex edge. At an edge
     /// midpoint ln λ_high − ln λ_low changes by 4/√3 per world unit, so a bias b on the high side and −b on the low side
-    /// moves the line by b·√3/2. The weights stay continuous: λ = 0 still gives zero weight.</summary>
+    /// moves the line by b·√3/2. The weights stay continuous: λ = 0 still gives zero weight. Unbiased, the line falls
+    /// where the high and low weights are equal, which is the hex edge itself.</summary>
     private Blend3 CliffWeights(in CornerSet corners, double x, double z)
     {
         var t = Tuning;
         var lambda = corners.Triangle.Lambda;
-        double n = Math.Clamp(3.2 * (_noise.Fbm(x, z, 1.4, 3, salt: 10) - 0.5), -1, 1);
-        double b = (0.075 + t.CliffWander * n) * 2 / Math.Sqrt(3);
+        double b = t.CliffWander * CliffLineNoise(x, z) * 2 / Math.Sqrt(3);
         double wa = 0, wb = 0, wc = 0, sum = 0;
         for (int k = 0; k < 3; k++)
         {
@@ -371,6 +404,71 @@ public sealed class TerrainField
         return sum > 0 ? new(wa / sum, wb / sum, wc / sum) : new(1 / 3.0, 1 / 3.0, 1 / 3.0);
     }
 
+    /// <summary>Edge noise, in [-1, 1], that moves a cliff line off its hex edge. Canonical coordinates: the same value at
+    /// the same place whoever asks, so the rock wall can stand where the face does.</summary>
+    private double CliffLineNoise(double x, double z) =>
+        Math.Clamp(3.2 * (_noise.Fbm(x, z, 1.4, 3, salt: 10) - 0.5), -1, 1);
+
+    /// <summary>How far the cliff line at a canonical point stands out from the hex edge, in world units: positive towards
+    /// the ground below the cliff. <see cref="CliffWeights"/> moves the face by exactly this, so anything placed against
+    /// the face can find it.</summary>
+    private double CliffLineAt(double x, double z) => Tuning.CliffWander * CliffLineNoise(x, z);
+
+    /// <summary>The point a lattice vertex is drawn at, and the face normal when it was moved. A height field on a lattice
+    /// can only drop over one lattice step, so a cliff face would be a chamfer that wide — close to vertical, not vertical.
+    /// A point within <paramref name="radius"/> of a cliff line is therefore moved onto the line: the two lattice points the
+    /// face falls between end up at the same spot, and the quad between them is a wall. The move is a pure function of the
+    /// point, so chunks that share an edge agree, and it is less than one lattice step, so nothing else on the map shifts.
+    /// X and Z are the position, NX/NZ the horizontal normal of the face (zero when the point did not move).</summary>
+    public (double X, double Z, double NX, double NZ) DrawPoint(double x, double z, double radius)
+    {
+        if (!_hasCliffs) return (x, z, 0, 0);
+        double CornerReach = 2 * radius;
+        double cx = x, cz = z;
+        if (_wrap) cx -= Period * Math.Floor(cx / Period);
+        var corners = Corners(cx, cz);
+        if (!corners.HasCliff) return (x, z, 0, 0);
+        double best = radius, drawX = 0, drawZ = 0, nx = 0, nz = 0;
+        bool moved = false;
+        foreach (var (high, low) in CliffPairs(corners))
+        {
+            var (hx, hz) = corners.Triangle[high].ToPixel(1);
+            var (lx, lz) = corners.Triangle[low].ToPixel(1);
+            // u runs from the ground below the cliff to the bluff, one hex edge apart, so it is the face's own normal.
+            double ux = hx - lx, uz = hz - lz, len = Math.Sqrt(ux * ux + uz * uz);
+            ux /= len; uz /= len;
+            double mx = 0.5 * (hx + lx), mz = 0.5 * (hz + lz);
+            // Where the edge ends: the corners where this face meets the next one. Points there move onto the corner
+            // itself, or the two faces leave a slanted gusset between them instead of meeting in a vertical corner. The
+            // reach is wider than the line's: every point of the lattice step either side of a corner belongs to the
+            // corner, and one left behind would fan the two faces into a rounded cove instead of an arris.
+            for (int end = -1; end <= 1; end += 2)
+            {
+                double ex = mx - uz * 0.5 * end, ez = mz + ux * 0.5 * end;
+                double edx = corners.X - ex, edz = corners.Z - ez;
+                if (edx * edx + edz * edz >= CornerReach * CornerReach) continue;
+                var (qx, qz) = Unwarp(ex, ez);
+                double mdx = qx - cx, mdz = qz - cz, md = Math.Sqrt(mdx * mdx + mdz * mdz);
+                if (md >= best) continue;
+                best = md;
+                drawX = x + mdx; drawZ = z + mdz; nx = -ux; nz = -uz;
+                moved = true;
+            }
+            double along = (corners.X - mx) * -uz + (corners.Z - mz) * ux;
+            if (Math.Abs(along) > 0.5) continue;
+            double off = (corners.X - mx) * ux + (corners.Z - mz) * uz + CliffLineAt(cx, cz);
+            if (Math.Abs(off) >= best) continue;
+            // The face line lies in warped space; the point that lands on it is the inverse image of the projection.
+            var (px, pz) = Unwarp(corners.X - ux * off, corners.Z - uz * off);
+            double dx = px - cx, dz = pz - cz, d = Math.Sqrt(dx * dx + dz * dz);
+            if (d >= best) continue;
+            best = d;
+            drawX = x + dx; drawZ = z + dz; nx = -ux; nz = -uz;
+            moved = true;
+        }
+        return moved ? (drawX, drawZ, nx, nz) : (x, z, 0, 0);
+    }
+
     /// <summary>Closeness to a known cliff edge at world (x, z), in [0, 1]: 1 on the edge, falling linearly to 0 at
     /// <see cref="TerrainTuning.CliffOuter"/> (with the same coastal noise as the cliff). Zero far from cliffs. The water
     /// surface uses it to place surf at the cliff foot, and scatter keeps props off cliff faces.</summary>
@@ -379,6 +477,20 @@ public sealed class TerrainField
         if (_wrap) x -= Period * Math.Floor(x / Period);
         var corners = Corners(x, z);
         return corners.HasCliff ? CliffShares(corners, x, z).Near : 0;
+    }
+
+    /// <summary>Per-vertex ground shader inputs at world (x, z): the sharp share of a cliff edge in [0, 1] (1 at the edge,
+    /// gone at <see cref="TerrainTuning.CliffOuter"/> — the band the ground's own high/low blend uses), and how deep into a
+    /// volcano's crater floor the point lies. The ground shader uses the cliff share to take the palette transition back to
+    /// the hex edge, so a raised tile's top keeps its own ground instead of taking the colour of the tile below it, and the
+    /// crater share for the lava glow. Both read one corner set, which is most of the cost of either.</summary>
+    public (double CliffFace, double Crater) SurfaceAt(double x, double z)
+    {
+        if (!_hasCliffs && !_hasCrater) return (0, 0);
+        if (_wrap) x -= Period * Math.Floor(x / Period);
+        var corners = Corners(x, z);
+        double face = _hasCliffs && corners.HasCliff ? CliffShares(corners, x, z).Cliff : 0;
+        return (face, _hasCrater ? CraterOf(corners) : 0);
     }
 
     /// <summary>Cliff shares at a corner set's point: the sharp-blend share (full within <see cref="TerrainTuning.CliffInner"/>,
@@ -401,27 +513,148 @@ public sealed class TerrainField
         return (cliff, near);
     }
 
-    /// <summary>Cliff share at one corner's tile: 1 anywhere on that tile when it is the lifted side of a cliff, easing down
-    /// to 0 over <see cref="TerrainTuning.CliffRamp"/> beyond its hexagon (measured in warped space), so the ground climbs to
-    /// the cliff across the tiles before the edge. The lift belongs to the tile, not to a neighbourhood: a tile below a cliff
-    /// takes none of the bluff's rise (see <see cref="BuildCliffLifts"/>), or the face would be a rounded shoulder.</summary>
-    private double CliffLift(in CornerSet corners, int k)
+    /// <summary>How tall the cliff around each lifted tile stands, as a share of <see cref="TerrainTuning.CliffRise"/>: full
+    /// height in the middle of a run, easing down to <see cref="TerrainTuning.CliffEndScale"/> where the raised ground
+    /// ends. An end is the cap of a strip of raised ground, not every side tile: ground along a bluff has to reach the
+    /// rise, but only the last tile has nothing beyond it except ground on the same level.</summary>
+    private readonly double[] _liftScale;
+
+    /// <summary>How tall each lifted tile's cliff stands, from the distance along its strip to the nearest cap. A strip's
+    /// caps are its degree-one tiles: they have raised ground on one side and ground on the same level beyond. A tile on
+    /// the long side of a strip also touches low ground, but it is not an end; only distance along the strip lowers it.</summary>
+    private double[] BuildLiftScale()
     {
-        if (_cliffLifts[corners.Tile(k)] is not { } near) return 0;
-        var hex = corners.Triangle[k];
-        double gap = double.MaxValue;
-        foreach (var offset in near)
+        var s = Snapshot;
+        var t = Tuning;
+        var scale = new double[s.Relief.Length];
+        var component = new int[s.Relief.Length];
+        var degree = new int[s.Relief.Length];
+        var dist = new int[s.Relief.Length];
+        Array.Fill(component, -1);
+        Array.Fill(dist, int.MaxValue);
+        int components = 0;
+        var walk = new Queue<int>();
+        for (int tile = 0; tile < s.Relief.Length; tile++)
         {
-            var (cx, cz) = (hex + offset).ToPixel(1);
-            double dx = corners.X - cx, dz = corners.Z - cz, slab = 0;
-            // Beyond the hexagon's corners plus the ramp (and any nearer cliff), this one cannot matter.
-            double reach = Math.Min(gap, Tuning.CliffRamp) + 1;
-            if (dx * dx + dz * dz >= reach * reach) continue;
-            // A hexagon is three slabs of half width √3/2; a soft maximum keeps the ramp free of creases off its corners.
-            foreach (var (nx, nz) in EdgeNormals) slab = SoftMax(slab, Math.Abs(dx * nx + dz * nz), 0.15);
-            gap = Math.Min(gap, slab - Math.Sqrt(3) / 2);
+            if (!_lifted[tile] || component[tile] >= 0) continue;
+            component[tile] = components;
+            walk.Enqueue(tile);
+            while (walk.Count > 0)
+            {
+                int here = walk.Dequeue();
+                var hex = s.Grid.HexOf(new TileId(here));
+                for (int d = 0; d < 6; d++)
+                {
+                    var other = hex + Hex.Directions[d];
+                    if (!s.TryTile(other, out int there) || !_lifted[there]) continue;
+                    degree[here]++;
+                    if (component[there] < 0)
+                    {
+                        component[there] = components;
+                        walk.Enqueue(there);
+                    }
+                }
+            }
+            components++;
         }
-        return gap >= Tuning.CliffRamp ? 0 : 1 - SmoothStep(0, Tuning.CliffRamp, gap);
+        var longest = new int[components];
+        var queue = new Queue<int>();
+        for (int tile = 0; tile < s.Relief.Length; tile++)
+        {
+            if (!_lifted[tile] || degree[tile] != 1) continue;
+            dist[tile] = 0;
+            queue.Enqueue(tile);
+        }
+        // Spread along the raised ground only, so a run's height is read from its own length.
+        while (queue.Count > 0)
+        {
+            int tile = queue.Dequeue();
+            longest[component[tile]] = Math.Max(longest[component[tile]], dist[tile]);
+            var hex = s.Grid.HexOf(new TileId(tile));
+            for (int d = 0; d < 6; d++)
+            {
+                var other = hex + Hex.Directions[d];
+                if (!s.TryTile(other, out int o) || !_lifted[o] || dist[o] <= dist[tile] + 1) continue;
+                dist[o] = dist[tile] + 1;
+                queue.Enqueue(o);
+            }
+        }
+        for (int tile = 0; tile < scale.Length; tile++)
+        {
+            if (!_lifted[tile]) continue;
+            if (degree[tile] == 0)
+            {
+                scale[tile] = 1;
+                continue;
+            }
+            // A short run cannot spread its climb over the full taper, so shorten the taper to its own length. The ends
+            // still stand exactly at the end scale; the middle still reaches full height.
+            double taper = longest[component[tile]] > 0 ? Math.Min(t.CliffEndTaper, longest[component[tile]]) : t.CliffEndTaper;
+            double along = dist[tile] == int.MaxValue ? taper : dist[tile];
+            scale[tile] = t.CliffEndScale + (1 - t.CliffEndScale) * SmoothStep(0, taper, along);
+        }
+        return scale;
+    }
+
+    /// <summary>One edge of a lifted tile with no cliff on it: the midpoint and unit normal pointing away from the raised
+    /// ground, the share of the rise it carries, and the distance over which the ground beyond it falls to low ground.</summary>
+    private readonly record struct BareEdge(double X, double Z, double NX, double NZ, double Scale, double Reach);
+
+    /// <summary>Per tile, the bare edges of nearby lifted tiles. These are the only places the ground climbs to a bluff: an
+    /// edge that carries a cliff steps, and the ground at its foot is level.</summary>
+    private readonly BareEdge[]?[] _bareEdges;
+
+    /// <summary>The bare edges of every lifted tile, gathered per tile within the ramp's reach.</summary>
+    private BareEdge[]?[] BuildBareEdges()
+    {
+        var s = Snapshot;
+        var tune = Tuning;
+        var near = new List<BareEdge>?[s.Relief.Length];
+        for (int tile = 0; tile < s.Relief.Length; tile++)
+        {
+            if (!_lifted[tile]) continue;
+            var hex = s.Grid.HexOf(new TileId(tile));
+            var (ax, az) = hex.ToPixel(1);
+            for (int d = 0; d < 6; d++)
+            {
+                var other = hex + Hex.Directions[d];
+                if (!s.TryTile(other, out int t) || _lifted[t]) continue;
+                if (CliffHigh(hex, tile, other, t) >= 0) continue;
+                var (bx, bz) = other.ToPixel(1);
+                double nx = bx - ax, nz = bz - az, len = Math.Sqrt(nx * nx + nz * nz);
+                // An edge near the end of a run carries a lower rise and gets a longer descent, so the last of the bluff
+                // spreads over more ground instead of ending in a bank. Full-height edges keep the normal ramp.
+                double run = Math.Clamp((_liftScale[tile] - tune.CliffEndScale) / (1 - tune.CliffEndScale), 0, 1);
+                double descent = tune.CliffEndRamp + (tune.CliffRamp - tune.CliffEndRamp) * SmoothStep(0, 1, run);
+                var edge = new BareEdge(0.5 * (ax + bx), 0.5 * (az + bz), nx / len, nz / len, _liftScale[tile], descent);
+                foreach (var reach in Hex.Range(hex, CliffReach))
+                    if (s.TryTile(reach, out int r)) (near[r] ??= new()).Add(edge);
+            }
+        }
+        return near.Select(list => list?.ToArray()).ToArray();
+    }
+
+    /// <summary>How far the ground at a point has climbed to a bluff along an edge with no cliff: full on the edge itself,
+    /// falling to nothing over that edge's descent distance. Zero on ground that has cliffs all round it, because the
+    /// only edges it could climb from are the ones that step.</summary>
+    private double LiftRamp(in CornerSet corners)
+    {
+        var t = Tuning;
+        double lift = 0;
+        for (int k = 0; k < 3; k++)
+        {
+            if (_bareEdges[corners.Tile(k)] is not { } list) continue;
+            foreach (var edge in list)
+            {
+                double dx = corners.X - edge.X, dz = corners.Z - edge.Z;
+                // Distance to the edge itself, not to its line: past the ends of an edge the next one takes over.
+                double along = Math.Clamp(dx * -edge.NZ + dz * edge.NX, -0.5, 0.5);
+                double ox = dx + edge.NZ * along, oz = dz - edge.NX * along;
+                double ramp = 1 - SmoothStep(0, edge.Reach, Math.Sqrt(ox * ox + oz * oz));
+                lift = Math.Max(lift, ramp * edge.Scale);
+            }
+        }
+        return lift;
     }
 
     /// <summary>For each tile, whether it is the raised side of any cliff. Water is never raised.</summary>
@@ -443,29 +676,28 @@ public sealed class TerrainField
         return lifted;
     }
 
-    /// <summary>For each tile, the offsets to the lifted cliff tiles within <see cref="CliffReach"/> whose ramp reaches it.
-    /// A lifted tile whose edge carries a cliff against a land tile is left out of that tile's list: the ground at the foot
-    /// of a cliff must not climb to the bluff above it, which is what makes the edge a step instead of a slope.</summary>
-    private Hex[]?[] BuildCliffLifts()
+    /// <summary>Every hex within <see cref="CliffReach"/> of the given lifted one that a walk from it reaches without
+    /// crossing a cliff edge, itself included. An edge is a wall exactly when this tile is its high side.</summary>
+    private IEnumerable<Hex> OpenGround(Hex start)
     {
         var s = Snapshot;
-        var near = new List<Hex>?[s.Relief.Length];
-        for (int tile = 0; tile < s.Relief.Length; tile++)
+        var seen = new HashSet<Hex> { start };
+        var open = new List<Hex> { start };
+        for (int head = 0; head < open.Count; head++)
         {
-            if (!_lifted[tile]) continue;
-            var hex = s.Grid.HexOf(new TileId(tile));
-            foreach (var other in Hex.Range(hex, CliffReach))
-                if (s.TryTile(other, out int t) && !RampCut(tile, hex, t, other)) (near[t] ??= new()).Add(hex - other);
+            var hex = open[head];
+            if (hex.DistanceTo(start) >= CliffReach) continue;
+            if (!s.TryTile(hex, out int here)) continue;
+            for (int d = 0; d < 6; d++)
+            {
+                var next = hex + Hex.Directions[d];
+                if (seen.Contains(next) || !s.TryTile(next, out int there)) continue;
+                if (CliffHigh(hex, here, next, there) == 0) continue;
+                seen.Add(next);
+                open.Add(next);
+            }
         }
-        return near.Select(list => list?.ToArray()).ToArray();
-    }
-
-    /// <summary>Whether the edge between a lifted tile and a tile below it carries a cliff, so the lift's ramp stops there.
-    /// Water below a cliff takes no lift anyway (its profile is the sea), so only land counts.</summary>
-    private bool RampCut(int lifted, Hex liftedHex, int below, Hex belowHex)
-    {
-        if (IsWater(Snapshot.Relief[below])) return false;
-        return CliffHigh(liftedHex, lifted, belowHex, below) == 0;
+        return open;
     }
 
     /// <summary>Distance in warped space from the corner set's point to the hex edge between corners a and b.</summary>
@@ -481,7 +713,9 @@ public sealed class TerrainField
         return Math.Sqrt((corners.X - ex) * (corners.X - ex) + (corners.Z - ez) * (corners.Z - ez));
     }
 
-    /// <summary>The corner pairs (lifted index, lower index) of a corner set whose shared edge is a known cliff.</summary>
+    /// <summary>The corner pairs (lifted index, lower index) of a corner set whose shared edge is a known cliff. An edge
+    /// with no bit is not one: the ground there climbs to the bluff over the tiles beside it, so it has no face, no wall and
+    /// nothing to snap.</summary>
     private IEnumerable<(int High, int Low)> CliffPairs(CornerSet corners)
     {
         for (int k = 0; k < 3; k++)
@@ -569,6 +803,19 @@ public sealed class TerrainField
     /// model hash in [0, 1), turn in radians, uniform scale and extra vertical stretch.</summary>
     public readonly record struct CliffRock(double X, double Y, double Z, int Tile, double Model, double Yaw, double Scale, double Stretch);
 
+    /// <summary>How far a wall column may look for its cliff's face: the domain warp moves a face by up to its amplitude and
+    /// the line's wander adds a little, so the search has to reach past both without reaching a neighbouring edge.</summary>
+    public const double FaceSnap = 0.45;
+
+    /// <summary>How far outside the face a land wall's columns stand, so their bodies hang in front of it rather than
+    /// inside the ground it rises from.</summary>
+    public const double FaceOut = 0.03;
+
+    /// <summary>Distances from a land cliff's face, in world units, at which a wall column reads the ground for its top
+    /// (inland) and its foot (outside). Several, because one sample a fixed distance out can land on the ground above the
+    /// face where the line wanders, and a column based there would stand at the brink with the face below it bare.</summary>
+    private static readonly double[] WallProbe = { 0.12, 0.25, 0.4 };
+
     /// <summary>Rock columns per coastal cliff edge. The wall reads as a rampart of separate pillars, not a smooth face.</summary>
     public const int CliffRocksPerEdge = 22;
 
@@ -648,59 +895,57 @@ public sealed class TerrainField
         }
     }
 
-    /// <summary>The rock wall of a cliff between two land tiles. There is no waterline to follow, so the columns find the
-    /// cliff line itself: the ground drops from the lifted side to the tile below the edge, and the steepest step of a
-    /// march across the edge brackets that line. Standing the columns there puts their bodies in the face and their tips
-    /// over the bluff, which is what makes a terrace read as a cliff instead of a hill. An edge that carries no step at all
-    /// gets no wall: rocks there would stand on flat ground with nothing behind them.</summary>
+    /// <summary>The rock wall of a cliff between two land tiles. There is no waterline to follow, so the wall asks the field
+    /// where the face is: <see cref="DrawPoint"/> snaps a point onto the drawn cliff line, so each column stands against the
+    /// face the mesh drops over, wherever the warp and the line's wander have put it, and reads its top and foot there. An
+    /// edge whose ground does not step at all gets no wall: rocks there would stand on flat ground with nothing behind
+    /// them.</summary>
     private IEnumerable<CliffRock> LandEdgeRocks(int tile, int direction, double ax, double az, double bx, double bz)
     {
         double nx = bx - ax, nz = bz - az, len = Math.Sqrt(nx * nx + nz * nz);
         nx /= len; nz /= len;
         double mx = 0.5 * (ax + bx), mz = 0.5 * (az + bz);
         uint salt = 400 + 64 * (uint)direction;
-        // An edge with neither a steep face nor a real drop across it is broken data (two lifted tiles with the edge marked,
-        // say). Rocks there would stand on flat ground with nothing behind them, so the edge gets no wall. Both bounds sit
-        // well under what a face of one CliffRise measures, so no edge that does carry a face is dropped.
-        double face = StepAcross(mx, mz, nx, nz, out double top, out _, out double low);
-        if (face < 0.25 * Tuning.CliffRise && top - low < 0.5 * Tuning.CliffRise) yield break;
-        // The columns stand a little outside the face. Their bodies then hang in front of it instead of inside it, so they
-        // hide the pale stone the shader puts on steep ground; a land cliff has none of the water and shade that keep a
-        // coastal face out of sight. They are packed tightly enough that no band of that stone shows between them.
-        const double Step = 0.06, FaceOut = 0.05;
+        // The face at the middle of the edge, and whether there is one. Both bounds sit well under what a face of one
+        // CliffRise measures, so no edge that does carry a face is dropped.
+        var (faceX, faceZ, faceNX, faceNZ) = DrawPoint(mx, mz, FaceSnap);
+        if (faceNX == 0 && faceNZ == 0) yield break;
+        const double StepProbe = 0.12;
+        double drop = HeightAt(faceX - faceNX * StepProbe, faceZ - faceNZ * StepProbe)
+            - HeightAt(faceX + faceNX * StepProbe, faceZ + faceNZ * StepProbe);
+        if (drop < 0.5 * Tuning.CliffRise) yield break;
         for (int i = 0; i < LandRocksPerEdge; i++)
         {
             uint r = salt + 5 * (uint)i;
-            double along = -0.5 + (i + 0.5 + 0.6 * (TileHash(tile, r) - 0.5)) / LandRocksPerEdge;
+            // The first and last pillar stand on the corners themselves, where the next edge's wall starts, so the two
+            // meet; only the pillars between them are jittered, and never far enough to open a gap.
+            double along = -0.5 + i / (double)(LandRocksPerEdge - 1);
+            if (i > 0 && i < LandRocksPerEdge - 1) along += 0.6 * (TileHash(tile, r) - 0.5) / LandRocksPerEdge;
             var (px, pz) = Unwarp(mx - nz * along, mz + nx * along);
-            StepAcross(px, pz, nx, nz, out double above, out double at, out double floor);
-            // The line runs down the middle of the steepest step.
-            double line = at + 0.5 * Step + FaceOut;
-            double sx = px + nx * line, sz = pz + nz * line;
-            yield return Column(tile, r, sx, sz, Math.Min(floor, HeightAt(sx, sz)) - 0.03, above, lip: 0.03);
+            // Each column finds the face itself: the warp tilts the line across an edge, so one offset for the whole edge
+            // would walk the wall onto the ground above it at one end and into the face at the other.
+            var (fx, fz, fnx, fnz) = DrawPoint(px, pz, FaceSnap);
+            if (fnx == 0 && fnz == 0) { fx = px + (faceX - mx); fz = pz + (faceZ - mz); fnx = faceNX; fnz = faceNZ; }
+            double sx = fx + fnx * FaceOut, sz = fz + fnz * FaceOut;
+            double above = HeightAt(sx, sz), floor = above;
+            foreach (double t in WallProbe)
+            {
+                above = Math.Max(above, HeightAt(sx - fnx * t, sz - fnz * t));
+                floor = Math.Min(floor, HeightAt(sx + fnx * t, sz + fnz * t));
+            }
+            var pillar = Column(tile, r, sx, sz, floor - 0.03, above, lip: 0.03);
+            yield return pillar;
+            // A wider, shorter block at the pillar's foot, so the wall is thickest where it meets the ground and thins to
+            // the pillars above: the base covers the foot of the face, and the crest stays a line of pillars. It sits almost
+            // on the pillar's axis: every centimetre it is set further out leans the whole wall back — a bluff batters by
+            // atan(proud / rise), so 5 cm over the 22 cm of a cliff is 13° off vertical. This much is a plinth, not a lean,
+            // and it also offsets the rock models themselves, which are broadest at the top.
+            const double FootProud = 0.02;
+            uint fr = salt + 512 + 5 * (uint)i;
+            yield return new CliffRock(fx + fnx * (FaceOut + FootProud), floor - 0.03, fz + fnz * (FaceOut + FootProud), tile,
+                TileHash(tile, fr), Math.Tau * TileHash(tile, fr + 1), Math.Max(0.6, pillar.Scale * 1.6),
+                0.3 + 0.15 * TileHash(tile, fr + 2));
         }
-    }
-
-    /// <summary>The steepest step of a march across a cliff edge at world (x, z), along the side normal (nx, nz): its drop,
-    /// the ground above it, the offset of its top, and the lowest ground the march reaches. The cliff line wanders by up to
-    /// a fifth of a world unit either side of the hex edge and the face itself is only a few centimetres wide, so a coarse
-    /// march over the whole wander finds it without a bisection.</summary>
-    private double StepAcross(double x, double z, double nx, double nz, out double above, out double at, out double floor)
-    {
-        const double Step = 0.06, Reach = 0.24;
-        above = 0;
-        at = 0;
-        double best = double.MinValue;
-        double hPrev = HeightAt(x - nx * Reach, z - nz * Reach), oPrev = -Reach;
-        floor = hPrev;
-        for (double o = -Reach + Step; o <= Reach + 1e-9; o += Step)
-        {
-            double h = HeightAt(x + nx * o, z + nz * o), drop = hPrev - h;
-            if (drop > best) { best = drop; above = hPrev; at = oPrev; }
-            floor = Math.Min(floor, h);
-            hPrev = h; oPrev = o;
-        }
-        return best;
     }
 
     /// <summary>One column of a wall: a slender pillar from the ground at its foot to <paramref name="lip"/> and a little
@@ -926,7 +1171,12 @@ public sealed class TerrainField
     {
         if (!_hasCrater) return 0;
         if (_wrap) x -= Period * Math.Floor(x / Period);
-        var corners = Corners(x, z);
+        return CraterOf(Corners(x, z));
+    }
+
+    /// <summary>See <see cref="CraterAt"/>: the same share for a corner set already in hand.</summary>
+    private double CraterOf(in CornerSet corners)
+    {
         var w = HeightWeights(corners);
         double glow = 0;
         for (int k = 0; k < 3; k++)

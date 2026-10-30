@@ -293,21 +293,25 @@ internal sealed partial class TerrainRenderer : Node3D
         public double PackMs, SurfaceMs;
     }
 
-    /// <summary>The chunk's ground; UV2.x holds the lattice cavity for the shader's valley shading and snow, UV2.y the
-    /// crater floor share (<see cref="TerrainField.CraterAt"/>) for the lava glow.</summary>
+    /// <summary>The chunk's ground; UV holds the sharp cliff share in x (<see cref="TerrainField.SurfaceAt"/>), which takes
+    /// the palette transition back to the hex edge, so a raised tile's top keeps its own ground. UV2.x holds the lattice
+    /// cavity for the shader's valley shading and snow, UV2.y the crater floor share for the lava glow.</summary>
     private static SurfaceData PrepareGround(TerrainMeshData data, TerrainField field)
     {
         int n = data.VertexCount;
         var vertices = new Vector3[n];
         var normals = new Vector3[n];
+        var uv = new Vector2[n];
         var cavity = new Vector2[n];
         for (int v = 0; v < n; v++)
         {
             vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
-            cavity[v] = new Vector2(data.Cavity[v], (float)field.CraterAt(data.Positions[v * 3], data.Positions[v * 3 + 2]));
+            var (cliffFace, crater) = field.SurfaceAt(data.Positions[v * 3], data.Positions[v * 3 + 2]);
+            uv[v] = new Vector2((float)cliffFace, 0);
+            cavity[v] = new Vector2(data.Cavity[v], (float)crater);
         }
-        return new(vertices, normals, cavity, FrontFaces(data.Indices, _ => true));
+        return new(vertices, normals, cavity, FrontFaces(data.Indices, _ => true), uv);
     }
 
     /// <summary>A flat surface at y = 0 over every lattice triangle with a vertex below sea level that a water tile shapes;
