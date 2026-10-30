@@ -5,8 +5,8 @@
     python3 tools/shots/scenario_map.py tools/shots/scenarios/cliffs-land.json --world tiny --hex 40
 
 The scene files are the ones the Godot client loads with `--scenario` (format in
-src/Ariel.Godot/Debug/DebugScenario.cs). Only the layout fields are read: `fill`, `tiles`
-(terrain, kind, feature, lake, river, cliff, city) and `roads`. Units, improvements,
+src/Ariel.Client.Core/DebugScenario.cs). Only the layout fields are read: `fill`, `tiles`
+(terrain, kind, height, feature, lake, river, cliff, city) and `roads`. Units, improvements,
 resources and owners are ignored.
 
 The picture is a plan of the map, not a copy of the renderer:
@@ -15,18 +15,25 @@ The picture is a plan of the map, not a copy of the renderer:
   blue, marsh blue-green, and every water tile the same blue. Peaks (the mountain terrain,
   or Peak relief) are very dark grey.
 - A `T` marks forest or jungle.
-- An `H` marks heightened ground: a tile that is the raised side of a cliff. Heightening is
-  independent of hills and peaks, so a hill on flat ground has no `H` and a raised grass
-  tile does. Letters turn white on dark ground so the peak grey stays readable.
+- A faint triangle marks hill relief. It is small and pale so it reads as ground, not as a
+  label.
+- An `H` marks a tile whose tier is above what its own ground implies, which is a flat held
+  up by a terrace. Hills and peaks sit at their own tier, so they carry no `H`; a flat
+  raised by a cliff does. Letters turn white on dark ground so the peak grey stays readable.
 - A `C` marks a tile that founds a city.
 - Every hex is labelled with its column,row (--no-coords leaves the labels out).
 - A river is a blue hex border. A road is a dark brown line between the centres of two
   neighbouring tiles that both carry a route, so junctions and tile-by-tile connections come
   out as the client draws them.
-- Cliff rock is a thick grey line on the shared edge, following the client's rule: a cliff
-  is drawn when the edge has a cliff bit and exactly one side is lifted, a land tile is
-  always the high side of a land/water cliff, and every heightened tile that touches water
-  shows rock on that edge.
+- Cliff rock is a thick grey line on the shared edge, and it is drawn only where the state
+  says a step is: the edge carries a cliff bit and the two tiles stand at different
+  heights. Nothing is inferred from relief or from water, so a stray bit that disagrees
+  with the heights draws nothing and is reported instead.
+- The scene is judged by the same rules `mise run validate` applies, and every violation is
+  printed as a warning with its tile and direction. Two cliffs count as separate only when
+  their raised sides are not joined through raised tiles: a ridge or a bluff is one feature,
+  however long its rim runs. Separate cliffs keep two tiles of raised ground between them,
+  or drop onto one shared low tile.
 
 Hexes are the game's pointy-top grid with odd rows shifted right. The map is the content's
 world size (Tiny by default, scaled by hex_overrides.sourceGridScale), trimmed to the tiles
@@ -57,11 +64,18 @@ WATER_FILL = "#3f7fd0"
 UNKNOWN_FILL = "#777777"
 TREES = {"forest", "jungle"}
 
+# Terrain tiers, copied from Ariel.Game.Levels: water is negative, land climbs by relief.
+FLAT, HILLS, PEAK = 0, 1, 2
+SHALLOW, DEEP = -1, -2
+DEEP_TERRAIN = {"ocean", "slimy_ocean"}
+DIRECTION_NAMES = ("E", "NE", "NW", "W", "SW", "SE")
+
 RIVER_COLOUR = "#2657a8"
 ROAD_COLOUR = "#46301f"
 CLIFF_COLOUR = "#8a8a90"
 GRID_COLOUR = "#28282c"
 TREE_INK = "#123a0f"
+HILL_INK = "#8d9270"
 INK = "#141414"
 PALE_INK = "#ffffff"
 COORD_INK = "#3c3c3c"
@@ -81,6 +95,15 @@ NEIGHBOURS = {
 def short_id(value: str) -> str:
     """The part of a content id after the mod prefix: world:slimy_coast -> slimy_coast."""
     return value.rsplit(":", 1)[-1]
+
+
+def implied_height(plot: Tile, water: dict[str, bool]) -> int:
+    """Copy Geography.HeightOf: the asset says how deep water is, relief says how high land stands."""
+    if plot.lake:
+        return SHALLOW
+    if water.get(short_id(plot.terrain), False):
+        return DEEP if short_id(plot.terrain) in DEEP_TERRAIN else SHALLOW
+    return {"Peak": PEAK, "Hills": HILLS}.get(plot.kind, FLAT)
 
 
 class Grid:
@@ -108,22 +131,33 @@ class Grid:
         col, row = self.offset(tile)
         return SQRT3 * (col + 0.5 * (row & 1)), 1.5 * row
 
+    def axial(self, tile: int) -> tuple[int, int]:
+        col, row = self.offset(tile)
+        return col - (row - (row & 1)) // 2, row
+
+    def distance(self, a: int, b: int) -> int:
+        """Hex distance on the axial grid, the same metric GameState reports."""
+        (aq, ar), (bq, br) = self.axial(a), self.axial(b)
+        dq, dr = aq - bq, ar - br
+        return max(abs(dq), abs(dr), abs(dq + dr))
+
 
 class Tile:
-    __slots__ = ("terrain", "kind", "feature", "lake", "rivers", "cliffs", "lifts", "route", "city")
+    __slots__ = ("terrain", "kind", "feature", "lake", "rivers", "height", "cliffs", "lifts", "route", "city")
 
     def __init__(self, terrain: str = "", kind: str = "Flat", feature: str | None = None, lake: bool = False,
                  rivers: int = 0):
         self.terrain, self.kind, self.feature, self.lake = terrain, kind, feature, lake
         self.rivers = rivers
+        self.height = 0
         self.cliffs = 0
         self.lifts = 0
         self.route = False
         self.city = False
 
     def state(self) -> tuple:
-        return (self.terrain, self.kind, self.feature, self.lake, self.rivers, self.cliffs, self.lifts,
-                self.route, self.city)
+        return (self.terrain, self.kind, self.feature, self.lake, self.rivers, self.height, self.cliffs,
+                self.lifts, self.route, self.city)
 
 
 class Scenario:
@@ -170,19 +204,137 @@ def targets(grid: Grid, entry: dict, warnings: list[str], name: str) -> list[int
 
 
 def set_edge(grid: Grid, tiles: list[Tile], tile: int, direction: int, present: bool) -> None:
-    """Copy GameState.SetCliff: mirror the edge, lift the named tile, refuse off-map edges."""
+    """Copy GameState.SetCliff: mirror the edge, raise the named side one tier above the other, refuse
+    off-map edges. Lifts are derived from the heights afterwards, exactly as the game does."""
     other = grid.neighbour(tile, direction)
     if other is None:
         tiles[tile].cliffs &= ~(1 << direction)
-        tiles[tile].lifts &= ~(1 << direction)
         return
     mirror = (direction + 3) % 6
     for target, edge in ((tile, direction), (other, mirror)):
         bit = 1 << edge
         tiles[target].cliffs = (tiles[target].cliffs | bit) if present else (tiles[target].cliffs & ~bit)
-    bit = 1 << direction
-    tiles[tile].lifts = (tiles[tile].lifts | bit) if present else (tiles[tile].lifts & ~bit)
-    tiles[other].lifts &= ~(1 << mirror)
+    if present:
+        tiles[tile].height = max(tiles[tile].height, min(tiles[other].height + 1, PEAK))
+
+
+def derive_lifts(grid: Grid, tiles: list[Tile]) -> None:
+    """Copy GameState.CliffLifts: a bit says this tile is the high side, derived from the heights."""
+    for tile in range(grid.count):
+        tiles[tile].lifts = 0
+    for tile in range(grid.count):
+        for direction in range(6):
+            other = grid.neighbour(tile, direction)
+            if other is None or not tiles[tile].cliffs & (1 << direction):
+                continue
+            if tiles[other].height < tiles[tile].height:
+                tiles[tile].lifts |= 1 << direction
+
+
+def report(grid: Grid, tiles: list[Tile], water: dict[str, bool], warnings: list[str]) -> None:
+    """The contract rules `mise run validate` applies, as warnings naming the tile and direction.
+
+    Report never edits the map: a scene is judged as written, so an illegal cliff still draws where the
+    state puts it and the picture says what the client would build.
+    """
+    def flooded(tile: int) -> bool:
+        plot = tiles[tile]
+        return plot.lake or water.get(short_id(plot.terrain), False)
+
+    def supported(tile: int) -> bool:
+        # A flat may stand one tier up while a land cliff drops from it; a shoreline is not a terrace.
+        for direction in range(6):
+            if not tiles[tile].cliffs & (1 << direction):
+                continue
+            other = grid.neighbour(tile, direction)
+            if other is not None and not flooded(other) and tiles[other].height < HILLS:
+                return True
+        return False
+
+    def where(tile: int) -> str:
+        col, row = grid.offset(tile)
+        return f"tile {col},{row}"
+
+    for tile in range(grid.count):
+        plot = tiles[tile]
+        implied = implied_height(plot, water)
+        if implied == FLAT and supported(tile):
+            implied = HILLS
+        if plot.height != implied:
+            warnings.append(f"{where(tile)}: height {plot.height} where the ground implies {implied}")
+        for direction in range(6):
+            if not plot.cliffs & (1 << direction):
+                continue
+            edge = f"{where(tile)} direction {DIRECTION_NAMES[direction]}"
+            other = grid.neighbour(tile, direction)
+            if other is None:
+                warnings.append(f"{edge}: cliff on an edge with no neighbour")
+                continue
+            if not tiles[other].cliffs & (1 << ((direction + 3) % 6)):
+                warnings.append(f"{edge}: cliff is not mirrored on the other plot")
+            if other < tile:
+                continue  # the other side reports this edge's rules
+            here, there = flooded(tile), flooded(other)
+            if here and there:
+                warnings.append(f"{edge}: cliff between two water plots")
+                continue
+            if here or there:
+                high = plot.height if here else tiles[other].height
+                low = tiles[other].height if here else plot.height
+                if high > low:
+                    warnings.append(f"{edge}: water on the high side")
+                continue
+            if plot.height == tiles[other].height:
+                warnings.append(f"{edge}: land cliff with no height step")
+                continue
+            high = plot if plot.height > tiles[other].height else tiles[other]
+            low = tiles[other] if high is plot else plot
+            if low.kind == "Peak":
+                warnings.append(f"{edge}: peak is the low side of a cliff")
+                continue
+            step = abs(plot.height - tiles[other].height)
+            if step > 2:
+                warnings.append(f"{edge}: land cliff steps {step} tiers below a {high.kind}")
+            elif high.kind != "Peak" and step != 1:
+                warnings.append(f"{edge}: land cliff steps {step} tiers below a {high.kind}")
+
+    # Raised masses: a ridge or a plateau is one feature, so its walls are never separate cliffs.
+    mass: dict[int, int] = {}
+    for start in range(grid.count):
+        if start in mass or not tiles[start].lifts:
+            continue
+        identity = len(mass)
+        mass[start] = identity
+        queue = [start]
+        while queue:
+            tile = queue.pop()
+            for direction in range(6):
+                other = grid.neighbour(tile, direction)
+                if other is not None and other not in mass and tiles[other].lifts:
+                    mass[other] = identity
+                    queue.append(other)
+
+    accepted: list[tuple[int, int]] = []  # (raised tile, the low tile it drops onto)
+    for tile in range(grid.count):
+        for direction in range(6):
+            if not tiles[tile].lifts & (1 << direction):
+                continue
+            low = grid.neighbour(tile, direction)
+            if low is None or flooded(low):
+                continue
+            for other, other_low in accepted:
+                if mass.get(tile) == mass.get(other):
+                    continue
+                apart = grid.distance(tile, other)
+                if apart <= 1 or apart >= 3:
+                    continue
+                if apart == 2 and other_low == low:
+                    continue  # two cliffs facing each other across one shared low tile are legal
+                warnings.append(f"{where(tile)} direction {DIRECTION_NAMES[direction]}: "
+                                f"terrace stands too close to another one")
+                break
+            else:
+                accepted.append((tile, low))
 
 
 def parse_scenario(path: Path, width: int, height: int, water: dict[str, bool]) -> Scenario | None:
@@ -195,11 +347,18 @@ def parse_scenario(path: Path, width: int, height: int, water: dict[str, bool]) 
     fill = doc.get("fill", {})
     defaults = (fill.get("terrain", ""), str(fill.get("kind", "Flat")).capitalize(), fill.get("feature") or None,
                 bool(fill.get("lake", False)), int(fill.get("river", 0)))
-    fill_state = Tile(*defaults).state()
-    tiles = [Tile(*defaults) for _ in range(grid.count)]
+    ground = Tile(*defaults)
+    ground.height = int(fill["height"]) if "height" in fill else implied_height(ground, water)
+    fill_state = ground.state()
+    tiles = []
+    for _ in range(grid.count):
+        plot = Tile(*defaults)
+        plot.height = ground.height
+        tiles.append(plot)
 
     def edit(tile: int, entry: dict) -> None:
         plot = tiles[tile]
+        grounds = "terrain" in entry or "kind" in entry or "lake" in entry
         if "terrain" in entry:
             plot.terrain = entry["terrain"]
         if "kind" in entry:
@@ -212,6 +371,10 @@ def parse_scenario(path: Path, width: int, height: int, water: dict[str, bool]) 
             plot.rivers = int(entry["river"])
         if "city" in entry:
             plot.city = True
+        if "height" in entry:
+            plot.height = int(entry["height"])
+        elif grounds:
+            plot.height = implied_height(plot, water)
 
     entries = doc.get("tiles", [])
     for entry in entries:
@@ -232,6 +395,8 @@ def parse_scenario(path: Path, width: int, height: int, water: dict[str, bool]) 
                 if other is not None and tiles[other].lake:
                     continue  # edges to lakes never carry a cliff
                 set_edge(grid, tiles, tile, direction, bool(mask & (1 << direction)))
+    derive_lifts(grid, tiles)
+    report(grid, tiles, water, warnings)
 
     # A road entry only says which tiles carry a route; the client links a tile to every neighbour
     # that has any route, so the order of the points and the gaps between them do not matter.
@@ -273,11 +438,11 @@ def font(size: int):
     return ImageFont.load_default(size)
 
 
-def markers(plot: Tile) -> list[str]:
+def markers(plot: Tile, water: dict[str, bool]) -> list[str]:
     letters = []
     if plot.feature and short_id(plot.feature) in TREES:
         letters.append("T")
-    if plot.lifts:
+    if plot.height > implied_height(plot, water):
         letters.append("H")
     if plot.city:
         letters.append("C")
@@ -340,8 +505,8 @@ def render(scenario: Scenario, hexes: int, supersample: int, full_map: bool, coo
             ox, oy = where[other]
             draw.line([(cx, cy), (ox, oy)], fill=ROAD_COLOUR, width=road_width)
 
-    # Cliff rock, resolved like TerrainField.CliffHigh: exactly one lifted side names the high tile,
-    # an unlifted land/water edge drops towards the water, and a lifted/lifted edge draws nothing.
+    # Cliff rock, resolved like TerrainField.CliffHigh: a cliff bit alone draws nothing. Rock appears
+    # where exactly one side of a cliffed edge stands higher, and the lifts are derived from heights.
     rock = max(3, round(0.38 * scale))
     for tile in drawn:
         for direction in range(6):
@@ -351,13 +516,7 @@ def render(scenario: Scenario, hexes: int, supersample: int, full_map: bool, coo
             mirror = (direction + 3) % 6
             lifted = bool(tiles[tile].lifts & (1 << direction)) != bool(tiles[other].lifts & (1 << mirror))
             cliffed = bool(tiles[tile].cliffs & (1 << direction) or tiles[other].cliffs & (1 << mirror))
-            # A cliffed land/water edge always drops towards the water, and heightened ground
-            # always shows rock on its water edges even without a cliff bit.
-            show = (lifted if cliffed else False)
-            show = show or (cliffed and scenario.is_water(tile) != scenario.is_water(other))
-            show = show or (tiles[tile].lifts != 0 and scenario.is_water(other))
-            show = show or (tiles[other].lifts != 0 and scenario.is_water(tile))
-            if show:
+            if lifted and cliffed:
                 draw.line(edge(tile, direction), fill=CLIFF_COLOUR, width=rock)
 
     # Rivers run along hex edges, never through a tile: a river bit is an edge, mirrored on both
@@ -380,7 +539,16 @@ def render(scenario: Scenario, hexes: int, supersample: int, full_map: bool, coo
                       fill=PALE_INK if is_dark(colour[tile]) else COORD_INK, anchor="mm")
 
     for tile in drawn:
-        letters = markers(tiles[tile])
+        plot = tiles[tile]
+        if plot.kind == "Hills" and plot.terrain and short_id(plot.terrain) != "peak":
+            # A faint triangle, drawn under the letters, so hill relief reads without a label.
+            cx, cy = where[tile]
+            size = 0.3 * scale
+            draw.polygon([(cx, cy - size), (cx - size * 0.95, cy + size * 0.62), (cx + size * 0.95, cy + size * 0.62)],
+                         outline=HILL_INK, width=max(2, round(0.05 * scale)))
+
+    for tile in drawn:
+        letters = markers(tiles[tile], scenario.water)
         if not letters:
             continue
         cx, cy = where[tile]
@@ -388,6 +556,8 @@ def render(scenario: Scenario, hexes: int, supersample: int, full_map: bool, coo
         size = {1: 1.05, 2: 0.75, 3: 0.6}[len(letters)] * scale
         step = {1: 0.0, 2: 0.4, 3: 0.55}[len(letters)] * scale
         first = -step * (len(letters) - 1) / 2
+        if tiles[tile].kind == "Hills" and tiles[tile].terrain and short_id(tiles[tile].terrain) != "peak":
+            cy -= 0.3 * scale
         for index, letter in enumerate(letters):
             ink = PALE_INK if dark else (TREE_INK if letter == "T" else INK)
             draw.text((cx + first + index * step, cy), letter, font=font(round(size)), fill=ink, anchor="mm")

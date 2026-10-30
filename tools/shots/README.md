@@ -112,14 +112,19 @@ given, and `--hex` sets the hex radius in pixels.
 
 Grassland is green, plains yellow, desert pale yellow, tundra light grey, snow light
 blue, marsh blue-green, every water tile the same blue and peaks very dark grey. `T`
-marks forest or jungle, `C` a city, and `H` heightened ground: a tile that is the raised
-side of a cliff. Heightening is independent of hills and peaks, so a hill on flat ground
-has no `H` and a raised grass tile does. Rivers are blue hex borders, and cliff rock a
-thick grey line on the shared edge. Roads are dark brown lines between the centres of
-neighbouring tiles that both carry a route, which is how the client links them, so
-junctions and tile-by-tile chains come out right. Route types are not distinguished. A
-cliffed edge always drops towards water, and every heightened tile shows rock on its
-water edges.
+marks forest or jungle, `C` a city, a faint triangle marks hill relief, and `H` marks a
+tile whose tier is above what its own ground implies, which is a flat held up by a
+terrace; a hill or a peak sits at its own tier and carries no `H`. Rivers are blue hex
+borders, and cliff rock a thick grey line on the shared edge. Roads are dark brown lines
+between the centres of neighbouring tiles that both carry a route, which is how the
+client links them, so junctions and tile-by-tile chains come out right. Route types are
+not distinguished.
+
+Rock is drawn only where the scene says a step is: the edge carries a cliff bit and the
+two tiles stand at different heights, read from `"kind"`, `"terrain"`, `"lake"` and any
+explicit `"height"`. Nothing is inferred from relief or from water, so a stray bit draws
+nothing. The scene is then judged by the same rules `mise run validate` applies, and
+each violation is printed as a warning naming its tile and direction.
 
 ## Units
 
