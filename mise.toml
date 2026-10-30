@@ -4,6 +4,7 @@ run = "mise tasks"
 
 [tasks."build:game"]
 description = "Build the Godot game"
+depends = ["cool"]
 run = "dotnet build src/Ariel.Godot"
 
 [tasks."start:game"]
