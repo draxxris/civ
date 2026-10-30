@@ -94,6 +94,10 @@ run = "tools/shots/shot.sh"
 description = "Side-by-side and difference image: mise run shot:compare -- before.png after.png out.png"
 run = "tools/shots/compare.sh"
 
+[tasks.validate]
+description = "Report the height and cliff rules a save file or a debug scene breaks: mise run validate -- <file> [--save|--scene] [--map id] [--size id]"
+run = "dotnet run --project tools/Ariel.Validate/Ariel.Validate.csproj --"
+
 [tasks.benchmark]
 description = "Run operational benchmarks without timing thresholds"
 depends = ["cool"]

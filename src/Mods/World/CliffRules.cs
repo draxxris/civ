@@ -5,9 +5,9 @@ namespace Ariel.Mods.World;
 
 /// <summary>Cliff invariants and deterministic access rules. A cliff stands on the edge between two on-map plots, at
 /// least one of them land, is mirrored on both plots, and drops from the higher height to the lower one; water is never
-/// the high side. Heights follow terrain and relief, so the pass also drops a raise that no cliff still justifies. Only
-/// clears what is illegal and reconnects an area a cliff had severed.</summary>
-internal sealed class CliffRules : IMapSanitizer
+/// the high side. Heights follow terrain and relief, so a flat may stay raised only while a land cliff drops from it.
+/// Generation prunes with these rules; a map that breaks them is reported by <see cref="Report"/> and never corrected.</summary>
+internal sealed class CliffRules : IMapGeometry
 {
     /// <summary>Distance in tiles between the raised sides of two separate cliffs, counting the tiles between them. Two
     /// cliffs need two tiles of raised ground between them so each reads on its own. One tile of low ground between them
@@ -16,114 +16,188 @@ internal sealed class CliffRules : IMapSanitizer
     /// the same cliff.</summary>
     internal const int HighGap = 3;
 
+    /// <summary>Direction names in <see cref="Hex.Directions"/> order, for diagnostics.</summary>
+    private static readonly string[] Names = ["E", "NE", "NW", "W", "SW", "SE"];
+
     private static bool Present(GameState state, TileId tile, int direction) =>
         (state.Plots[tile.Value].CliffEdges & (1 << direction)) != 0;
 
     private static bool Lifted(GameState state, TileId tile, int direction) =>
         (state.CliffLifts(tile) & (1 << direction)) != 0;
 
-    public void Sanitize(Simulation sim)
+    public sbyte HeightOf(Simulation sim, Plot plot) => Geography.HeightOf(sim.Content, plot);
+
+    /// <summary>Every rule the map breaks. Reports each edge once, from the lower-numbered plot that carries it.</summary>
+    public IReadOnlyList<string> Report(Simulation sim)
     {
-        using var trace = Ariel.Modding.StartupTrace.Phase("map sanitize");
-        SanitizeAll(sim.State, sim.Content);
+        var problems = new List<string>();
+        foreach (var tile in sim.State.Grid.Tiles) ReportTile(sim.State, sim.Content, tile, problems);
+        ReportAreas(sim.State, sim.Content, problems);
         foreach (var player in sim.State.Players)
-            if (player.StartingPlot is { } start) EnsureAccess(sim.State, sim.Content, start);
+            if (player.StartingPlot is { } start) ReportAccess(sim.State, sim.Content, start, "start", problems);
         foreach (var city in sim.State.Cities)
-            EnsureAccess(sim.State, sim.Content, sim.State.Grid.TileAt(city.Position));
+            ReportAccess(sim.State, sim.Content, sim.State.Grid.TileAt(city.Position), "city", problems);
+        return problems;
     }
 
-    internal static void SanitizeAll(GameState state, ContentDb content)
+    private static string Where(GameState state, TileId tile)
     {
-        // Clearing an illegal edge can strand a height a cliff had raised, and lowering a height can make another edge
-        // illegal, so the repairs repeat until neither has anything left to do. Pruning runs once: it only removes
-        // cliffs, which can only uncrowd the map and open paths, so it never needs a second look.
-        for (int pass = 0; pass < 4; pass++)
-        {
-            bool changed = ClearInvalidEdges(state, content);
-            changed |= RepairHeights(state, content);
-            if (pass == 0) { PruneAllAreas(state, content); continue; }
-            if (!changed) return;
-        }
+        var at = state.Grid.OffsetOf(tile);
+        return $"tile ({at.Col}, {at.Row})";
     }
 
-    // Inspect every edge of the changed tile and its neighbours, including stale off-map bits.
-    internal static void SanitizeTile(GameState state, ContentDb content, TileId tile)
-    {
-        var neighborhood = new List<TileId> { tile };
-        neighborhood.AddRange(state.Grid.Neighbors(tile));
-        for (int pass = 0; pass < 4; pass++)
-        {
-            bool changed = false;
-            foreach (var member in neighborhood) changed |= ClearInvalidEdges(state, content, member);
-            changed |= RepairHeights(state, content, neighborhood);
-            if (pass == 0) { PruneArea(state, content, tile); continue; }
-            if (!changed) return;
-        }
-    }
-
-    private static bool ClearInvalidEdges(GameState state, ContentDb content)
-    {
-        bool changed = false;
-        foreach (var tile in state.Grid.Tiles) changed |= ClearInvalidEdges(state, content, tile);
-        return changed;
-    }
-
-    private static bool ClearInvalidEdges(GameState state, ContentDb content, TileId tile)
+    /// <summary>A plot's height against the ground under it, and every edge it carries.</summary>
+    private static void ReportTile(GameState state, ContentDb content, TileId tile, List<string> problems)
     {
         var plot = state.Plots[tile.Value];
-        bool changed = false;
-        if (plot.CliffEdges > 63) { plot.CliffEdges &= 63; changed = true; }
+        string where = Where(state, tile);
+        sbyte implied = Geography.HeightOf(content, plot);
+        if (implied == Levels.Flat && Supported(state, content, tile)) implied = Levels.Hills;
+        if (plot.Height != implied) problems.Add($"{where}: height {plot.Height} where the ground implies {implied}");
         for (int direction = 0; direction < 6; direction++)
         {
-            if (!Present(state, tile, direction) || Legal(state, content, tile, direction)) continue;
-            state.SetCliff(tile, direction, false);
-            changed = true;
+            if (!Present(state, tile, direction)) continue;
+            string edge = $"{where} direction {Names[direction]}";
+            if (state.Grid.Neighbor(tile, direction) is not { } next)
+            {
+                problems.Add($"{edge}: cliff on an edge with no neighbour");
+                continue;
+            }
+            if (!Present(state, next, (direction + 3) % 6)) problems.Add($"{edge}: cliff is not mirrored on the other plot");
+            if (next.Value < tile.Value) continue; // The other side reports this edge's rules.
+            var other = state.Plots[next.Value];
+            bool water = Geography.Water(content, plot), otherWater = Geography.Water(content, other);
+            if (water && otherWater) { problems.Add($"{edge}: cliff between two water plots"); continue; }
+            if (water || otherWater)
+            {
+                bool waterHigh = water ? plot.Height > other.Height : other.Height > plot.Height;
+                if (waterHigh) problems.Add($"{edge}: water on the high side");
+                continue;
+            }
+            if (plot.Height == other.Height) { problems.Add($"{edge}: land cliff with no height step"); continue; }
+            var high = plot.Height > other.Height ? plot : other;
+            if ((high == plot ? other : plot).Kind == PlotKind.Peak) { problems.Add($"{edge}: peak is the low side of a cliff"); continue; }
+            int step = Math.Abs(plot.Height - other.Height);
+            if (high.Kind == PlotKind.Peak ? step > 2 : step != 1)
+                problems.Add($"{edge}: land cliff steps {step} tiers below a {high.Kind}");
         }
-        return changed;
     }
 
-    /// <summary>Whether the cliff bit on this edge may stand. The edge must be on the map and carried by both plots, water
-    /// may only be the low side, and land to land must step exactly one tier, or two below a peak.</summary>
-    private static bool Legal(GameState state, ContentDb content, TileId tile, int direction)
+    /// <summary>Areas a cliff has cut in two, coasts without a beach, and terraces standing too close together. The
+    /// areas are the land plots reachable from each other, not the stored area ids, so a hand-made map is judged by its
+    /// ground rather than by the ids a generator left behind.</summary>
+    private static void ReportAreas(GameState state, ContentDb content, List<string> problems)
     {
-        if (state.Grid.Neighbor(tile, direction) is not { } next) return false;
-        // A one-sided cliff is malformed; the missing side is not invented.
-        if (!Present(state, next, (direction + 3) % 6)) return false;
-        bool water = Geography.Water(content, state.Plots[tile.Value]);
-        bool otherWater = Geography.Water(content, state.Plots[next.Value]);
-        if (water && otherWater) return false;
-        if (water != otherWater) return true; // A shoreline takes any land height, and water is always the low side.
-        int height = state.Plots[tile.Value].Height, otherHeight = state.Plots[next.Value].Height;
-        if (height == otherHeight) return false;
-        var high = height > otherHeight ? state.Plots[tile.Value] : state.Plots[next.Value];
-        int step = Math.Abs(height - otherHeight);
-        return high.Kind == PlotKind.Peak ? step <= 2 : step == 1;
+        var area = new int[state.Plots.Length];
+        int next = 0;
+        foreach (var start in state.Grid.Tiles)
+        {
+            if (area[start.Value] != 0 || Geography.Water(content, state.Plots[start.Value])) continue;
+            int id = ++next;
+            var members = new List<TileId>();
+            var queue = new Queue<TileId>();
+            area[start.Value] = id;
+            queue.Enqueue(start);
+            while (queue.Count > 0)
+            {
+                var tile = queue.Dequeue();
+                members.Add(tile);
+                for (int direction = 0; direction < 6; direction++)
+                {
+                    if (state.Grid.Neighbor(tile, direction) is not { } neighbor || area[neighbor.Value] != 0) continue;
+                    if (Geography.Water(content, state.Plots[neighbor.Value])) continue;
+                    area[neighbor.Value] = id;
+                    queue.Enqueue(neighbor);
+                }
+            }
+            ReportArea(state, content, id, members, problems);
+        }
     }
 
-    /// <summary>Bring every height back to what its terrain, lake flag and relief imply, keeping a flat at hills height
-    /// only while a cliff still drops away from it. Water always holds its depth and a peak is never raised.</summary>
-    private static bool RepairHeights(GameState state, ContentDb content)
+    private static void ReportArea(GameState state, ContentDb content, int area, List<TileId> tiles, List<string> problems)
     {
-        bool changed = false;
-        foreach (var tile in state.Grid.Tiles) changed |= RepairHeight(state, content, tile);
-        return changed;
+        var reached = new bool[state.Plots.Length];
+        Connect(state, content, tiles[0], reached);
+        foreach (var tile in tiles)
+            if (!reached[tile.Value])
+            {
+                problems.Add($"{Where(state, tile)}: cliffs cut land area {area} in two");
+                break;
+            }
+        var coasts = tiles.Where(t => SeaDirections(state, content, t).Any()).ToArray();
+        int seaEdges = coasts.Sum(t => SeaDirections(state, content, t).Count());
+        if (seaEdges > 0)
+        {
+            int beaches = coasts.Sum(t => SeaDirections(state, content, t).Count(d => !Present(state, t, d)));
+            // A small island keeps half its sea edges open, matching the generator's beach budget.
+            int least = tiles.Count <= CliffGenerator.SmallIslandTiles ? (seaEdges + 1) / 2 : 1;
+            if (beaches < least)
+                problems.Add($"{Where(state, coasts[0])}: land area {area} keeps {beaches} of the {least} open sea edges it needs");
+        }
+        var accepted = new CliffSpacing();
+        foreach (var tile in tiles)
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (!Present(state, tile, direction) || !Lifted(state, tile, direction)) continue;
+                if (state.Grid.Neighbor(tile, direction) is not { } below || Geography.Water(content, state.Plots[below.Value])) continue;
+                if (!accepted.Fits(state, tile, direction))
+                    problems.Add($"{Where(state, tile)} direction {Names[direction]}: terrace stands too close to another one");
+                else accepted.Add(state, tile, direction);
+            }
     }
 
-    private static bool RepairHeights(GameState state, ContentDb content, IEnumerable<TileId> tiles)
+    /// <summary>One open sea edge on a coastal tile, one open edge on a tile its cliffs walled in.</summary>
+    private static void ReportAccess(GameState state, ContentDb content, TileId tile, string what, List<string> problems)
     {
-        bool changed = false;
-        foreach (var tile in tiles) changed |= RepairHeight(state, content, tile);
-        return changed;
+        if (Geography.Water(content, state.Plots[tile.Value])) return;
+        var sea = SeaDirections(state, content, tile).ToArray();
+        if (sea.Length > 0 && sea.All(d => Present(state, tile, d)))
+            problems.Add($"{Where(state, tile)}: coastal {what} has no open sea edge");
+        var blocked = Enumerable.Range(0, 6).Where(d => Present(state, tile, d)).ToArray();
+        if (blocked.Length == state.Grid.Neighbors(tile).Count())
+            problems.Add($"{Where(state, tile)}: {what} has no open edge");
     }
 
-    private static bool RepairHeight(GameState state, ContentDb content, TileId tile)
+    /// <summary>Whether every cliff this tile carries still stands on a legal step. A raise can flatten a step or turn
+    /// it around, so a generator that raises a tile must not undo the cliffs the tile already carries.</summary>
+    internal static bool StepsHold(GameState state, ContentDb content, TileId tile)
     {
         var plot = state.Plots[tile.Value];
-        sbyte wanted = Geography.HeightOf(content, plot);
-        if (wanted == Levels.Flat && Supported(state, content, tile)) wanted = Levels.Hills;
-        if (plot.Height == wanted) return false;
-        plot.Height = wanted;
+        for (int direction = 0; direction < 6; direction++)
+        {
+            if (!Present(state, tile, direction) || state.Grid.Neighbor(tile, direction) is not { } next) continue;
+            var other = state.Plots[next.Value];
+            bool water = Geography.Water(content, plot), otherWater = Geography.Water(content, other);
+            if (water && otherWater) return false;
+            if (water || otherWater)
+            {
+                if (water ? plot.Height > other.Height : other.Height > plot.Height) return false;
+                continue;
+            }
+            if (plot.Height == other.Height) return false;
+            var high = plot.Height > other.Height ? plot : other;
+            int step = Math.Abs(plot.Height - other.Height);
+            if (high.Kind == PlotKind.Peak ? step > 2 : step != 1) return false;
+        }
         return true;
+    }
+
+    /// <summary>A tile whose terrain changed keeps the invariant itself, instead of leaving it to a pass: water drops to
+    /// its depth and loses its cliffs, and the neighbours the change was holding up settle with it.</summary>
+    internal static void AfterTerrainChange(GameState state, ContentDb content, TileId tile)
+    {
+        if (Geography.Water(content, state.Plots[tile.Value]))
+            for (int direction = 0; direction < 6; direction++) state.SetCliff(tile, direction, false);
+        Settle(state, content, tile);
+        foreach (var neighbor in state.Grid.Neighbors(tile)) Settle(state, content, neighbor);
+    }
+
+    /// <summary>Put one plot back to the height its ground implies, keeping a flat raised while a land cliff drops from it.</summary>
+    private static void Settle(GameState state, ContentDb content, TileId tile)
+    {
+        var plot = state.Plots[tile.Value];
+        sbyte implied = Geography.HeightOf(content, plot);
+        plot.Height = implied == Levels.Flat && Supported(state, content, tile) ? Levels.Hills : implied;
     }
 
     /// <summary>A flat may stay raised while a terrace drops from it to lower land; a shoreline is not a terrace, so a
@@ -205,6 +279,9 @@ internal sealed class CliffRules : IMapSanitizer
                     if (state.Grid.Neighbor(tile, direction) is not { } next || reached[next.Value]) continue;
                     if (Geography.Water(content, state.Plots[next.Value]) || state.Plots[next.Value].AreaId != state.Plots[tile.Value].AreaId) continue;
                     state.SetCliff(tile, direction, false);
+                    // Opening a path can leave the raise the cliff stood on with nothing to hold it up.
+                    Settle(state, content, tile);
+                    Settle(state, content, next);
                     changed = true;
                     count += Connect(state, content, next, reached);
                     opened = true;
@@ -219,7 +296,13 @@ internal sealed class CliffRules : IMapSanitizer
             {
                 if (!Present(state, tile, direction) || !Lifted(state, tile, direction)) continue;
                 if (state.Grid.Neighbor(tile, direction) is not { } below || Geography.Water(content, state.Plots[below.Value])) continue;
-                if (!accepted.Fits(state, tile, direction)) { state.SetCliff(tile, direction, false); changed = true; }
+                if (!accepted.Fits(state, tile, direction))
+                {
+                    state.SetCliff(tile, direction, false);
+                    Settle(state, content, tile);
+                    Settle(state, content, below);
+                    changed = true;
+                }
                 else accepted.Add(state, tile, direction);
             }
         return changed;
@@ -391,6 +474,10 @@ internal static class CliffGenerator
             int highDirection = liftTile ? direction : (direction + 3) % 6;
             if (!TerraceLegal(plots[high.Value], plots[low.Value])) continue;
             if (!accepted.Fits(state, high, highDirection)) continue;
+            // Standing the cliff raises the high side, which must leave the cliffs that tile already carries legal.
+            sbyte before = plots[high.Value].Height;
+            plots[high.Value].Height = (sbyte)Math.Max(before, Math.Min(plots[low.Value].Height + 1, Levels.Peak));
+            if (!CliffRules.StepsHold(state, content, high)) { plots[high.Value].Height = before; continue; }
             state.SetCliff(high, highDirection, true);
             accepted.Add(state, high, highDirection);
             remaining--;

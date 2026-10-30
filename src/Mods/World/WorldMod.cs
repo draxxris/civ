@@ -41,7 +41,7 @@ public sealed class WorldMod : IPreparableMod
         context.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         context.RegisterService<Ariel.Game.ITileAppearanceService>("tile_appearance", new TileAppearanceService());
         context.RegisterService<Ariel.Game.IWaterService>("water", water);
-        context.RegisterService<Ariel.Game.IMapSanitizer>("cliffs", new CliffRules());
+        context.RegisterService<Ariel.Game.IMapGeometry>("cliffs", new CliffRules());
         context.RegisterService<Ariel.Game.IPlotYieldService>("plot_yields", yields);
         context.RegisterService<Ariel.Game.IResourceNetwork>("resource_network", network);
         context.RegisterService<Ariel.Game.ICityConnectionService>("city_connections", network);

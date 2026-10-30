@@ -42,7 +42,6 @@ public sealed partial class Simulation
         sim.State.RebuildIndexes();
         configure?.Invoke(sim);
         sim.PrepareScenario();
-        sim.SanitizeMap();
         content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
         sim.StartGame();
         return sim;

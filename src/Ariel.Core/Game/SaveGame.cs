@@ -29,9 +29,7 @@ public static class SaveGame
         CanonicalJson.ValidateIntegers(json);
         save.State.RebuildIndexes();
         var rng = DeterministicRng.Restore(save.Rng[0], save.Rng[1], save.Rng[2], save.Rng[3]);
-        var sim = new Simulation(content, save.Settings, save.State, rng);
-        sim.SanitizeMap();
-        return sim;
+        return new Simulation(content, save.Settings, save.State, rng);
     }
     /// <summary>A save matches frozen content under the current digest, or under the pre-rename digest that the
     /// same content produced before the project rename changed type names. Any other difference is a mismatch.</summary>

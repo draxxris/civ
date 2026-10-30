@@ -31,8 +31,10 @@ namespace Ariel.Client;
 /// "revealResources": true gives the local team every resource's reveal technology, so every resource on the map shows.
 /// Every tile ends up revealed and visible, so no fog dims the scene. Not part of the game; it only edits the session state.
 /// A run without <c>--world</c> sizes the map to the scene (see <see cref="Frame"/>), clears every tile to flat ground
-/// first and shifts the scene's coordinates to fit it; a run with <c>--world</c> lays the scene over the generated map.</summary>
-internal static class DebugScenario
+/// first and shifts the scene's coordinates to fit it; a run with <c>--world</c> lays the scene over the generated map.
+/// Every tile field also accepts "height" (the tier of a cliff step), and a tile that names its terrain, relief or lake
+/// gets the height its ground implies, so <c>mise run validate</c> judges a scene by its own heights.</summary>
+public static class DebugScenario
 {
     /// <summary>"cliff": true puts a cliff on every edge of a land tile, false clears them, and a number is an edge bit mask
     /// (Hex.Directions order) of which edges get one, lifted on the named tile. Edges to lakes never get a cliff.</summary>
@@ -49,7 +51,7 @@ internal static class DebugScenario
 
     /// <summary>A scene laid out in a world of its own: the file with every position shifted so the scene starts
     /// <see cref="SceneFrame.Margin"/> tiles from the map edge, and the map size that leaves.</summary>
-    internal sealed record SceneWorld(string Json, int Width, int Height, int ShiftCol, int ShiftRow);
+    public sealed record SceneWorld(string Json, int Width, int Height, int ShiftCol, int ShiftRow);
 
     /// <summary>Ground a scene gets when it names no <c>fill</c> of its own.</summary>
     private const string BareFill = """{"terrain":"world:grass","kind":"Flat","owner":null}""";
@@ -134,11 +136,10 @@ internal static class DebugScenario
             {
                 var plot = state.Plots[tile.Value];
                 plot.Feature = null; plot.Route = null; plot.Improvement = null; plot.Bonus = null; plot.RiverEdges = 0; plot.IsLake = false;
-                if (sceneWorld)
-                {
-                    // The map is the scene, so nothing the generator made may show through it.
-                    plot.CliffEdges = 0; plot.Owner = null;
-                }
+                // A fill repaints the whole map, so nothing the generator stood there may show through it: its cliffs go with
+                // the ground they were cut into, and each tile takes the height its new ground implies.
+                plot.CliffEdges = 0;
+                if (sceneWorld) plot.Owner = null;
                 Edit(session, tile, fill);
             }
         if (sceneWorld)
@@ -199,9 +200,12 @@ internal static class DebugScenario
                 if (grid.TryTile(col, row, out var id)) yield return id;
     }
 
+    /// <summary>Write one tile's fields. Naming the ground derives its height, so a tile repainted as a hill stands at
+    /// hills height; an explicit "height" wins, and the cliffs are set afterwards and raise their high side.</summary>
     private static void Edit(GameSession session, TileId tile, JsonElement e)
     {
         var plot = session.Sim.State.Plots[tile.Value];
+        bool ground = e.TryGetProperty("terrain", out _) || e.TryGetProperty("kind", out _) || e.TryGetProperty("lake", out _);
         if (e.TryGetProperty("terrain", out var terrain))
         {
             // Fail now, with the id, rather than later in the renderer.
@@ -215,15 +219,22 @@ internal static class DebugScenario
         if (e.TryGetProperty("route", out var route)) plot.Route = Empty(route.GetString()) is { } id ? RouteId(session, id) : null;
         if (e.TryGetProperty("river", out var river)) plot.RiverEdges = (byte)river.GetInt32();
         if (e.TryGetProperty("lake", out var lake)) plot.IsLake = lake.GetBoolean();
-        if (e.TryGetProperty("owner", out var owner)) plot.Owner = owner.ValueKind == JsonValueKind.Null ? null : owner.GetInt32();
+        if (e.TryGetProperty("owner", out var owner))
+        {
+            plot.Owner = owner.ValueKind == JsonValueKind.Null ? null : owner.GetInt32();
+            if (plot.Owner is { } id) Owner(session, id);
+        }
         if (e.TryGetProperty("city", out var city)) AddCity(session, tile, city);
+        if (e.TryGetProperty("height", out var height)) plot.Height = (sbyte)height.GetInt32();
+        else if (ground && session.Sim.Content.Services.Get<IMapGeometry>().SingleOrDefault() is { } geometry)
+            plot.Height = geometry.HeightOf(session.Sim, plot);
     }
 
     private static void AddCity(GameSession session, TileId tile, JsonElement e)
     {
         var state = session.Sim.State;
         int owner = e.GetProperty("owner").GetInt32();
-        state.PlayerById(owner);
+        Owner(session, owner);
         var buildings = e.TryGetProperty("buildings", out var list)
             ? list.EnumerateArray().Select(b => ContentId<Schema.BuildingDef>(session, b.GetString(), "building")
                 ?? throw new ArgumentException("City building id must not be empty.")).ToList()
@@ -253,11 +264,19 @@ internal static class DebugScenario
         var type = ContentId<Schema.UnitDef>(session, e.GetProperty("type").GetString(), "unit")
             ?? throw new ArgumentException("Unit type must not be empty.");
         int owner = e.TryGetProperty("owner", out var o) ? o.GetInt32() : 0;
-        state.PlayerById(owner);
+        Owner(session, owner);
         int health = e.TryGetProperty("health", out var h) ? h.GetInt32() : 100;
         int count = e.TryGetProperty("count", out var c) ? c.GetInt32() : 1;
         for (int i = 0; i < count; i++)
             state.AddUnit(new Unit { Id = state.NextUnitId++, Owner = owner, Type = type, Position = position, Health = health });
+    }
+
+    /// <summary>Fail with the owner's index rather than a missing dictionary key: a scene that names owner 2 needs a match
+    /// of three players, and the debug world of a hand-made scene gives it only one.</summary>
+    private static void Owner(GameSession session, int owner)
+    {
+        if (session.Sim.State.Players.All(p => p.Id != owner))
+            throw new ArgumentException($"owner {owner} is not in the match: this scene needs {owner + 1} players, so lay it over a generated map");
     }
 
     /// <summary>Set the owner's current era, which picks the look of all its cities.</summary>
@@ -265,6 +284,7 @@ internal static class DebugScenario
     {
         var content = session.Sim.Content;
         var id = ContentId<Schema.EraDef>(session, name, "era") ?? throw new ArgumentException("City era must not be empty.");
+        if (session.Sim.State.Players.All(p => p.Id != owner)) Owner(session, owner);
         var player = session.Sim.State.PlayerById(owner);
         var current = player.Extensions.Get<CityPlayerState>(content) ?? new CityPlayerState();
         current.CurrentEra = id;

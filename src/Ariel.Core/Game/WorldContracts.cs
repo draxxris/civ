@@ -2,11 +2,15 @@ using Ariel.Content;
 
 namespace Ariel.Game;
 
-/// <summary>Ruleset-owned map repair after generation, scenario configuration or save loading.</summary>
-public interface IMapSanitizer
+/// <summary>Ruleset-owned map geometry: which heights and cliffs the contract allows, and which ones a map breaks.
+/// Nothing in the game calls it; <c>mise run validate</c> and the tests do, so a map is never corrected or refused.</summary>
+public interface IMapGeometry
 {
-    /// <summary>Clear invalid map state without RNG, events, or generation.</summary>
-    void Sanitize(Simulation sim);
+    /// <summary>The height a plot's terrain, lake flag and relief imply before any cliff raises it.</summary>
+    sbyte HeightOf(Simulation sim, Plot plot);
+    /// <summary>Every rule the map breaks, one line each, naming the tile, the direction and the rule. Never mutates
+    /// the map, consumes no RNG and publishes no events.</summary>
+    IReadOnlyList<string> Report(Simulation sim);
 }
 
 /// <summary>Optional ruleset setup. Selected when SimulationSettings.WorldSize is supplied.</summary>

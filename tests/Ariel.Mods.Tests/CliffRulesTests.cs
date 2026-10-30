@@ -39,6 +39,8 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         {
             var settings = GameFactory.Settings(seed) with { MapGenerator = generator };
             var sim = new Simulation(mods.Content, settings);
+            // Generation builds a legal map by itself; nothing repairs it afterwards.
+            Assert.Empty(Service<IMapGeometry>(sim).Report(sim));
             var coast = sim.State.Grid.Tiles.Where(t => !Water(sim, t))
                 .Select(t => (Tile: t, Edges: SeaEdges(sim, t))).Where(c => c.Edges.Length > 0).ToArray();
             // The generator fills a share of the sea edges instead of rolling per edge: some but not most sea edges
@@ -217,39 +219,42 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Scenario_and_load_clear_invalid_cliffs_without_rng_or_events(bool load)
+    public void Scenario_and_load_keep_the_cliffs_authors_wrote_and_only_report_them(bool load)
     {
         var plots = Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass" }).ToArray();
         void Author(Simulation sim)
         {
             sim.State.Plots[40].Terrain = "world:coast";
             sim.State.Plots[42].Terrain = "world:coast"; sim.State.Plots[42].IsLake = true;
-            SetCliff(sim, new(39), 0, true); // Valid sea edge remains intact.
-            SetCliff(sim, new(40), 0, true); // Terrain changes after authorship.
+            SetCliff(sim, new(39), 0, true); // Land to the water plot 40 becomes.
+            SetCliff(sim, new(40), 0, true); // Both sides turn to water afterwards.
             sim.State.Plots[41].Terrain = "world:coast";
-            SetCliff(sim, new(41), 0, true); // Lake edge is invalid: water on both sides.
-            SetCliff(sim, new(50), 0, true); // Land/land is a valid terrace, lifted on the named tile.
-            SetCliff(sim, new(0), 1, true); // Off-map north edge.
+            SetCliff(sim, new(41), 0, true); // Both sides are water.
+            SetCliff(sim, new(50), 0, true); // A valid terrace, lifted on the named tile.
+            SetCliff(sim, new(0), 1, true); // Off-map north edge, which SetCliff never writes.
         }
-        var sim = Simulation.CreateScenario(mods.Content, GameFactory.Settings(), new(12, 8, true), plots, load ? null : Author);
+        var sim = Simulation.CreateScenario(mods.Content, GameFactory.Settings(), new(12, 8, true), plots, Author);
         if (load)
         {
-            Author(sim);
             var rng = sim.Rng.State;
             sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
             Assert.Equal(rng, sim.Rng.State);
             Assert.Empty(sim.Events.Published);
         }
+        // Nothing canonicalizes a map any more: every bit the author wrote survives the scenario and the save.
         Assert.Equal(1, CliffMask(sim, new(39)));
-        Assert.Equal(8, CliffMask(sim, new(40)));
+        Assert.Equal(1 | 8, CliffMask(sim, new(40))); // Its own east edge, and the mirror of 39's.
+        Assert.Equal(1 | 8, CliffMask(sim, new(41))); // Its own east edge, and the mirror of 40's.
         Assert.Equal(1, CliffMask(sim, new(50)));
         Assert.Equal(8, CliffMask(sim, new(51)));
         Assert.Equal(1, LiftMask(sim, new(50)));
         Assert.Equal(0, LiftMask(sim, new(51)));
-        Assert.Equal(0, CliffMask(sim, new(41)));
-        Assert.Equal(0, CliffMask(sim, new(42)));
         Assert.Equal(0, CliffMask(sim, new(0)));
-        Assert.All(sim.State.Grid.Tiles.Where(t => t.Value is not (39 or 40 or 50 or 51)), t => Assert.Equal(0, CliffMask(sim, t)));
+        // The two water-to-water edges and the heights left over the changed terrain are what the tool names.
+        var problems = Service<IMapGeometry>(sim).Report(sim);
+        var at = sim.State.Grid.OffsetOf(new TileId(40));
+        Assert.Contains(problems, p => p.Contains($"tile ({at.Col}, {at.Row})") && p.Contains("two water plots"));
+        Assert.Contains(problems, p => p.Contains($"tile ({at.Col}, {at.Row})") && p.Contains("height"));
     }
 
     [Fact]
@@ -267,23 +272,44 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
-    public void Sanitizer_opens_a_terrace_that_would_cut_a_land_area_in_two()
+    public void Report_names_a_terrace_that_would_cut_a_land_area_in_two()
     {
         // A land bridge through a band of ocean is the only way between the north and south halves of the map.
         var plots = Enumerable.Range(0, 25).Select(_ => new Plot { Terrain = "world:grass" }).ToArray();
         for (int col = 0; col < 5; col++)
-            if (col != 2) plots[5 + col].Terrain = "world:ocean";
+            if (col != 2) plots[5 + col] = new Plot { Terrain = "world:ocean", Height = Levels.DeepWater };
         var sim = Simulation.CreateScenario(mods.Content, GameFactory.Settings(), new(5, 5, false), plots);
+        var geometry = Service<IMapGeometry>(sim);
         var bridge = sim.State.Grid.TileAt(2, 1);
         var landEdges = Enumerable.Range(0, 6)
             .Where(d => sim.State.Grid.Neighbor(bridge, d) is { } next && !Water(sim, next)).ToArray();
         Assert.NotEmpty(landEdges);
-        int landMask = landEdges.Aggregate(0, (mask, d) => mask | (1 << d));
         foreach (int d in landEdges) SetCliff(sim, bridge, d, true);
-        Assert.Equal(landMask, CliffMask(sim, bridge) & landMask);
-        sim.SanitizeMap();
-        // The pass keeps the area walkable, so at least one edge of the bridge must be open again.
-        Assert.Contains(landEdges, d => (CliffMask(sim, bridge) & (1 << d)) == 0);
+        var problems = geometry.Report(sim);
+        Assert.Contains(problems, p => p.Contains("cut") && p.Contains("in two"));
+        // The tool reports the sealed area; the map itself is left exactly as written.
+        Assert.Equal(landEdges.Aggregate(0, (mask, d) => mask | (1 << d)), CliffMask(sim, bridge));
+        // The bridge needs a way out on each side of the ocean band, so opening one north edge and one south edge reconnects.
+        int Row(int d) => sim.State.Grid.OffsetOf(sim.State.Grid.Neighbor(bridge, d)!.Value).Row;
+        SetCliff(sim, bridge, landEdges.First(d => Row(d) == 0), false);
+        SetCliff(sim, bridge, landEdges.First(d => Row(d) == 2), false);
+        Assert.DoesNotContain(geometry.Report(sim), p => p.Contains("cut"));
+    }
+
+    [Fact]
+    public void Report_collects_every_violation_without_touching_the_map()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var geometry = Service<IMapGeometry>(sim);
+        Assert.Empty(geometry.Report(sim));
+        sim.State.Plots[5].Height = Levels.Peak; // Grass under it asks for flat ground.
+        sim.State.Plots[6].CliffEdges |= 1;      // East edge with no mirror on plot 7.
+        var problems = geometry.Report(sim);
+        Assert.Contains(problems, p => p.Contains("tile (5, 0)") && p.Contains($"height {Levels.Peak}"));
+        Assert.Contains(problems, p => p.Contains("tile (6, 0) direction E") && p.Contains("not mirrored"));
+        // Reporting is the whole job: nothing was raised, lowered or cleared.
+        Assert.Equal(Levels.Peak, sim.State.Plots[5].Height);
+        Assert.Equal(1, CliffMask(sim, new(6)));
     }
 
     [Theory]
