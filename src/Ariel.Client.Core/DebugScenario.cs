@@ -37,7 +37,8 @@ namespace Ariel.Client;
 public static class DebugScenario
 {
     /// <summary>"cliff": true puts a cliff on every edge of a land tile, false clears them, and a number is an edge bit mask
-    /// (Hex.Directions order) of which edges get one, lifted on the named tile. Edges to lakes never get a cliff.</summary>
+    /// (Hex.Directions order) of which edges get one, lifted on the named tile. A lake shore may carry one, like any
+    /// other water edge; the rules allow it and the tool reports it if the heights disagree.</summary>
     private static void SetCliffs(GameSession session, TileId tile, JsonElement cliff)
     {
         var state = session.Sim.State;
@@ -45,8 +46,7 @@ public static class DebugScenario
         bool Water(TileId t) => session.Sim.Content.Get<Schema.TerrainDef>(state.Plots[t.Value].Terrain).IsWater;
         if (Water(tile)) return;
         for (int d = 0; d < 6; d++)
-            if (state.Grid.Neighbor(tile, d) is { } other && !(Water(other) && state.Plots[other.Value].IsLake))
-                state.SetCliff(tile, d, (mask & (1 << d)) != 0);
+            state.SetCliff(tile, d, (mask & (1 << d)) != 0);
     }
 
     /// <summary>A scene laid out in a world of its own: the file with every position shifted so the scene starts

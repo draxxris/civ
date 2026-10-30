@@ -56,6 +56,36 @@ public sealed class SceneHeightsTests(LoadedMods mods) : IClassFixture<LoadedMod
     }
 
     [Fact]
+    public void A_scene_may_put_a_cliff_on_a_lake_shore_and_the_rules_accept_it()
+    {
+        var session = TerrainTestMaps.RevealedSession(mods.Content);
+        var state = session.Sim.State;
+        var land = state.Grid.TileAt(HexGrid.FromOffset(6, 6));
+        var lake = state.Grid.Neighbor(land, 0)!.Value;
+        string file = Scene("""
+            {
+              "tiles": [
+                { "at": [6, 6], "terrain": "world:grass", "kind": "Flat", "cliff": true },
+                { "at": [7, 6], "terrain": "world:coast", "lake": true }
+              ]
+            }
+            """);
+        try
+        {
+            DebugScenario.Apply(session, file);
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+        Assert.True(state.Plots[lake.Value].IsLake);
+        Assert.NotEqual(0, state.Plots[land.Value].CliffEdges & 1);
+        Assert.NotEqual(0, state.CliffLifts(land) & 1);
+        Assert.DoesNotContain(session.Sim.Content.Services.Get<Ariel.Game.IMapGeometry>().Single().Report(session.Sim),
+            line => line.Contains("lake"));
+    }
+
+    [Fact]
     public void A_fill_repaint_takes_the_height_of_the_new_ground_and_drops_the_cliffs_cut_into_the_old_one()
     {
         var session = TerrainTestMaps.RevealedSession(mods.Content);
