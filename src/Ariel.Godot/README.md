@@ -305,7 +305,7 @@ manager, because it cannot answer a prompt.
 - `--reveal`: explore the whole map for the human team without making distant units
   visible.
 - `--scenario <file.json>`: replace the generated map with a hand-made scene. The format
-  is described in `src/Ariel.Godot/Debug/DebugScenario.cs` and examples are
+  is described in `src/Ariel.Client.Core/DebugScenario.cs` and examples are
   `tools/shots/scenarios/hills-forest-roads.json` and
   `tools/shots/scenarios/improvements.json`. It reveals every tile and makes every tile
   visible. A scene is an unattended run: it starts straight into the world, with no mod
@@ -328,6 +328,13 @@ manager, because it cannot answer a prompt.
     empty list. The city clears the plot improvement and sets its owner. Unknown
     building ids stop the run and appear in the error. A second city on the same tile
     stops the run. Without `--clean`, city tokens, labels, and units remain visible.
+  - **Heights and cliffs.** A tile names `"height"`, the terrain tier it stands at, and
+    `"cliff"`, which edges carry a wall: `true` for all of them, `false` to clear them,
+    or an edge bit mask in `Hex.Directions` order, lifted on the named tile. A tile that
+    names its terrain, relief (`kind`) or lake takes the height that ground implies, and
+    an explicit `"height"` wins; cliffs are set last and raise their high side one tier
+    above the low one. `mise run validate -- <file>` reports a scene whose cliffs and
+    heights disagree.
 
 ### Camera and view
 

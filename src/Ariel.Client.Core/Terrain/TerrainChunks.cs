@@ -143,7 +143,7 @@ public sealed class TerrainChunks
     }
 
     /// <summary>64-bit hash of everything that shapes a chunk's geometry and scatter: layer, relief class (which includes
-    /// water and the hidden flag), river and cliff bits and feature ground of its tiles and their ring, its mesh resolution (and its
+    /// water and the hidden flag), height, river and cliff bits and feature ground of its tiles and their ring, its mesh resolution (and its
     /// neighbours' when it is finer than the default), plus an optional per-tile
     /// <paramref name="extras"/> value (for example feature id, city or improvement presence) indexed by tile. When any
     /// tile in the wider river ring has river bits, the river bits and relief of that whole ring count too; likewise for cliff
@@ -157,6 +157,7 @@ public sealed class TerrainChunks
             ulong v = (ulong)(uint)t << 32 | (ulong)snapshot.Layer[t] << 24 | (ulong)snapshot.Relief[t] << 16
                 | (ulong)snapshot.Rivers[t] << 8 | snapshot.FeatureGround[t];
             h = Mix(h ^ v);
+            h = Mix(h ^ (ulong)(byte)snapshot.Heights[t]);
             h = Mix(h ^ snapshot.Cliffs[t]);
             h = Mix(h ^ snapshot.CliffLifts[t]);
             h = MixString(h, snapshot.Terrain[t]);

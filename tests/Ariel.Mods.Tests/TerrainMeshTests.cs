@@ -247,13 +247,16 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
     [InlineData("relief", 11, 7)] // reshapes the diagonal chunk across the corner at (4√3, 9)
     [InlineData("relief", 3, 0)]  // north edge: rows beyond it clamp to row 0
     [InlineData("relief", 0, 5)]  // west edge: the wrap image dirties east chunks
+    [InlineData("height", 7, 7)]  // a tier alone, with no cliff to derive a lift from
     public void Changing_one_plot_dirties_every_chunk_it_reshapes_and_only_chunks_within_one_tile(string change, int col, int row)
     {
         var session = TerrainTestMaps.RevealedSession(mods.Content);
         var target = HexGrid.FromOffset(col, row);
         var before = TerrainTestMaps.Snapshot(session);
         var plot = session.Sim.State.PlotAt(target);
-        if (change == "terrain") plot.Terrain = "world:desert"; else plot.Kind = PlotKind.Peak;
+        if (change == "terrain") plot.Terrain = "world:desert";
+        else if (change == "height") plot.Height = (sbyte)(plot.Height + 1);
+        else plot.Kind = PlotKind.Peak;
         var after = TerrainTestMaps.Snapshot(session);
         AssertDirtyChunks(before, after, target);
     }

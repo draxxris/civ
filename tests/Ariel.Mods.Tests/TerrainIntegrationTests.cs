@@ -71,6 +71,33 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
     }
 
     [Fact]
+    public void A_snapshot_carries_the_tier_the_team_observed_and_none_of_the_tile_it_never_saw()
+    {
+        var session = Generated(compact: true);
+        var state = session.Sim.State;
+        for (int i = 0; i < state.Plots.Length / 2; i++) state.Plots[i].Revealed.Add(session.Me.TeamId);
+        var snapshot = Snapshot(session);
+        int known = 0, unknown = 0;
+        foreach (var tile in state.Grid.Tiles)
+        {
+            if (session.PerceivedPlot(tile) is { } perceived)
+            {
+                Assert.Equal(perceived.Height, snapshot.Heights[tile.Value]);
+                known++;
+            }
+            else
+            {
+                // Half the plots are revealed by hand and have no memory, so their live height must not leak.
+                state.Plots[tile.Value].Height = (sbyte)(tile.Value % 7 - 3);
+                Assert.Equal(0, snapshot.Heights[tile.Value]);
+                unknown++;
+            }
+        }
+        Assert.True(known > 0 && unknown > 0, "Half a world must have both known and unknown tiles.");
+        Assert.True(snapshot.Heights.Any(h => h > 0), "A generated world must have raised ground.");
+    }
+
+    [Fact]
     public void Mutating_every_unexplored_plot_cannot_change_any_chunk_mesh_or_scatter()
     {
         var session = Generated(compact: true);
@@ -87,6 +114,7 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
             plot.Terrain = tile.Value % 3 == 1 ? "world:ocean" : "world:desert";
             plot.IsLake = tile.Value % 5 == 0;
             plot.Feature = tile.Value % 2 == 0 ? "world:jungle" : "world:forest";
+            plot.Height = (sbyte)(tile.Value % 5 - 2);
             // Change only the hidden side: the known side of a shared edge remains public information.
             plot.RiverEdges = (byte)((tile.Value * 17 + 11) % 64);
             plot.Improvement = "world:improvement_improvement_mine";
