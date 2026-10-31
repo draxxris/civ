@@ -60,18 +60,20 @@ values. Columns normalize across east–west wrap. Rows never wrap.
 - `Hex.DistanceTo`, `Hex.Range` and `Hex.Ring` describe the unbounded plane, not map
   topology.
 
-`GameState.Plots[tile.Value]` stores terrain, feature, bonus, improvement, route, owner,
-culture, visibility and area id. Culture uses sorted player ids. Revealed and visible
-teams use compact `TeamMask` bitsets, without a fixed team-count limit. Bitsets
-enumerate team ids in ascending order. Dense team ids minimize their storage.
+`GameState.Plots[tile.Value]` stores terrain, height, feature, bonus, improvement,
+route, river and cliff edge bits, owner, culture, visibility and area id. Culture uses
+sorted player ids. Revealed and visible teams use compact `TeamMask` bitsets, without a
+fixed team-count limit. Bitsets enumerate team ids in ascending order. Dense team ids
+minimize their storage.
 
-`RiverEdges` and `CliffEdges` store six bits in direction order. `GameState.SetRiver`
-and `SetCliff` mirror shared edges on both plots, and off-map edges never carry either
-bit. `CliffLiftEdges` is not mirrored: bit d says this plot is the raised side of the
-cliff on edge d, so exactly one side of an edge carries it and a memory that knows one
-plot knows which way the step drops. World clears cliffs unless the edge has land on at
-least one side. `IMapSanitizer` repairs map rules after setup, scenario configuration,
-and save loading.
+`Plot.Height` stores the tile's tier: deep water `-2`, coast or lake `-1`, flat land
+`0`, hills or a raised flat `1`, peak `2`. `RiverEdges` and `CliffEdges` store six bits
+in direction order. `GameState.SetRiver` and `SetCliff` mirror shared edges on both
+plots, and off-map edges never carry either bit. A cliff bit is only the presence mask;
+the raised side is derived by `GameState.CliffLifts` from the two heights, so no
+separate lift mask is stored in live state. `SetCliff` only raises the named side, to
+one tier above the other and never above a peak. The map rules live in `CliffRules` and
+are reported by `mise run validate`; the game neither repairs nor refuses a map at load.
 
 `IMapGenerator.Generate(MapSpec, Plot[], DeterministicRng, ContentDb)` fills every plot.
 `IMapGenerator.PreviewLand(MapSpec, seed, ContentDb)` is the land step of that
@@ -84,69 +86,117 @@ image, without duplicate wrap plots.
 ### Cliffs
 
 A cliff is a step in the ground on the edge between two plots, at least one of them
-land. `World` places and polices them; movement and the client read the plot fields.
+land. `World` owns the rules; movement and the client read the plots. See
+[cliff-rendering.md](cliff-rendering.md) for the capture workflow and the visual
+acceptance checks.
 
-- State. `Plot.CliffEdges` is the six-bit presence mask in direction order, mirrored on
-  the neighbour. `Plot.CliffLiftEdges` names the raised side: bit d says this plot
-  stands above its neighbour across edge d, exactly one side of an edge carries it, and
-  water is never raised. `GameState.SetCliff(lifted, direction, present)` writes both
-  masks and clears the lift on the far side. Both masks are part of the save, the state
-  hash and the clone. The sanitizer repairs a land/water cliff whose lift is missing or
-  on the water side, and removes a land/land cliff that carries no lift.
+- State. `Plot.Height` is authoritative and is part of the save, the state hash, the
+  clone and the fog memory. `Plot.CliffEdges` is the six-bit presence mask in direction
+  order, mirrored on the neighbour. `GameState.CliffLifts(tile)` derives the raised side
+  by comparing the two heights; it is never stored in live state.
+  `GameState.SetCliff( high, direction, present)` writes both presence bits and raises
+  `high` to `min(low.Height + 1, Levels.Peak)`. It never lowers a height, so clearing a
+  cliff leaves the height to be justified by another edge. Off-map edges never carry a
+  cliff, and the rules make water never the high side. `RevealedPlotSnapshot` carries
+  `Height`, the cliff bits and a derived `CliffLiftEdges` captured by
+  `VisibilityService`, so fog remembers which way a step drops without revealing the far
+  tile.
 - Generation. `ContinentsGenerator` calls `CliffGenerator.Generate` after rivers and
   before features. It draws its noise from a restored copy of the RNG state, so cliff
   generation leaves every other random stream unchanged. It fills 20% of land/sea edges
   through ranked smooth noise (scale 6, two octaves, range 0–999), with a 400-point
   bonus for Hills and Peak. River mouths and sea-edge river endpoints stay beaches. Each
   coastal area keeps one beach, and islands of at most four tiles keep half their sea
-  edges open. It then ranks land/land edges (scale 9, two octaves) with the same bonus,
-  lifts the higher side (Peak above Hills above Flat, then noise, then tile id) and
-  fills 8% of the candidates.
-- Spacing. Two land/land cliffs in line may not stand too close, or their ramps would
-  meet and the second cliff would start from raised ground. The gap is
-  `ceil((1 + ramp) / √3) + 2` lifted tiles when the raised sides face the same way (4
-  with the renderer's 1.6 ramp), one less when they face each other (3). The ramp is a
-  client tuning value, so `CliffRules.SpacingRamp` restates it; a world-generation test
-  recomputes the expected gap from `TerrainTuning.CliffRamp` and fails if the two drift.
-  Neighbouring lifted tiles count as one raised mass, so a plateau of any shape is
-  allowed.
-- Walkability. A cliff may not cut a land area in two. The sanitizer reconnects a
-  severed area by opening the cliffs on its first cut edge, so `Plot.AreaId` still means
+  edges open. It then ranks land/land edges (scale 9, two octaves) with a relief bonus
+  and a river bonus, lifts the higher side (Peak above Hills above Flat, then noise,
+  then tile id) and fills 8% of the candidates. A candidate terrace is accepted only if
+  the tile's existing cliffs still step (`StepsHold`) and the new mass has a legal slope
+  out (`SlopesNear`). After terraces, the generator reconnects severed areas, thins
+  terraces that stand too close, and clears the walls named by the slope report in
+  bounded passes.
+- Edge rules. Both plots carry the bit and the edge has a neighbour. Land/land with no
+  peak: exactly one tier of difference; a flat raised to `1` counts as a hill, and two
+  hills, two raised flats, or a hill and a raised flat have no step. Land/land with a
+  peak: one or two tiers, the peak is always the high side and never the low side.
+  Land/water: any land height against the water, with an explicit bit, lakes included;
+  no step rule. Water/water: never. A plot's height must match its ground, except that a
+  flat may stand at `1` while a land cliff drops from it.
+- Spacing. Separate terraces need room to read as separate features. The raised side of
+  one must be at least three hex steps from the raised side of another (two intermediate
+  tiles along the shortest path); two raised tiles with one low tile between them are
+  distance two and are illegal. Touching raised tiles are one mass, so a ridge, plateau
+  or long bluff is allowed however long its rim runs. Coastal land high sides are not
+  compared this way. `CliffRules.CliffSpacing` is the implementation.
+- Slope and enclosure. A raised mass is the connected group of cliff-lifted land tiles.
+  Every mass must have at least one uncliffed edge to ramp out of. Every uncliffed
+  land-to-land step of the mass is a slope, one edge wide (0.5 world units either side
+  of the midpoint) and `Lattice.CliffRamp` (1.6) long; its sweep must reach the ground
+  below before it meets another face or another mass's slope. A mass walled in on every
+  edge, and two slopes that meet in the gap between two raised tiles, are illegal. The
+  control applies to any land tile that is the high side of a cliff, including a hill or
+  peak that already stands high. `CliffRules.SlopeProblems` is the report, `SlopesHold`
+  and `SlopesNear` let the generator ask locally, and `SlopeWalls` names the wall to
+  clear.
+- Walkability and access. A cliff may not cut a land area in two. The generator
+  reconnects a severed area by opening the first cut edge, so `Plot.AreaId` still means
   "reachable on foot"; pathfinding, cities, barbarians and naval blockades need no
   special case. A start or city tile keeps one open sea edge (the beach rule) and, when
-  every edge is walled, one land edge.
-- Movement. Cliffs block land units from boarding, landing, attacking, or walking across
-  the edge. Ships cannot enter or leave a land tile across a cliff, including friendly
-  cities. The Amphibious promotion does not bypass cliffs. `CanMoveAllTerrain` units and
-  aircraft ignore them. Ranged attacks, aircraft, and coastal building/yield eligibility
-  do not change. Pathfinding uses the same rules, and naval AI selects ports and landing
-  edges with beach access. `VisibilityService` keeps both masks in a plot's memory.
-- Look. `TerrainSnapshot` carries `Cliffs` and `CliffLifts`. `TerrainField` raises the
-  lifted side by `CliffRise` over its whole tile and eases neighbouring ground up to it
-  over `CliffRamp`, but a ramp never crosses a cliff: the ground below a land/land cliff
-  takes none of the rise, so its edge is a step rather than a shoulder. The blend is
-  sharpened across the edge, and overlapping lifts combine with a soft maximum, so the
-  ground never rises more than one rise above its normal height. Every known cliff
-  carries a rock wall, and its stored `CliffLifts` side tells the renderer where: a
-  coastal cliff stands its columns on the waterline, a land/land cliff on the hex edge
-  itself, a little outside it, each from the ground at the foot up to just above the
-  bluff. Standing a land/land wall on the edge keeps a run of cliff edges looking like
-  the straight hexagon sides the map is made of, with a corner where two edges meet,
-  instead of tracing the cliff line's wander. A land/land wall carries
-  `LandRocksPerEdge` columns per edge, over twice the coast's, because nothing else
-  hides the pale stone the shader tints steep ground with: the wall itself has to cover
-  the face from the ground up. The ground colour follows the same edge: the mesh carries
-  the sharp cliff share in `UV.x`, and inside that band the palette transition drops its
-  wander and narrows to the step's own width, so the raised top keeps its own ground
-  instead of taking the colour of the tile below it. An edge that carries no step at all
-  — broken data, such as an edge marked between two lifted tiles — gets no wall, so no
-  rock ever stands on flat ground. A cliff whose lifted side is unknown stays bare,
-  because the wall would stand in the open instead of against the face. Sea stacks and
-  surf appear only where the lower side is water.
+  every edge is walled, one land edge; `EnsureAccess` runs when starts and cities are
+  placed. `mise run validate` reports a hand-made map that breaks any of these rules.
+- Movement and sight. Cliffs block land units from boarding, landing, attacking, or
+  walking across the edge. Ships cannot enter or leave a land tile across a cliff,
+  including friendly cities. The Amphibious promotion does not bypass cliffs.
+  `CanMoveAllTerrain` units and aircraft ignore them. Ranged attacks, aircraft, and
+  coastal building/yield eligibility do not change. Pathfinding uses the same rules, and
+  naval AI selects ports and landing edges with beach access. `VisibilityService` reads
+  `Height` for sight: water and flat add 0, hills and raised flats add +1, peaks add +2.
+  `GlobalWarmingSystem` clears the cliffs on a tile it floods and settles the tile and
+  its neighbours back to the height their ground implies.
+- Look. `TerrainSnapshot` carries `Heights`, `Cliffs` and `CliffLifts`. `TerrainField`
+  raises the lifted side by up to `CliffRise` (0.22) over its whole tile and eases bare
+  neighbouring ground up to it over `CliffRamp` (1.6), but a ramp never crosses a cliff:
+  the ground below a land/land cliff takes none of the rise, so the edge is a step
+  rather than a shoulder. The blend is sharpened across the edge (`CliffSharpness` 45)
+  and overlapping lifts combine with a maximum, so the ground never rises more than one
+  rise above its normal height.
+- Run ends. `BuildLiftScale` measures each run of lifted tiles from its caps. A
+  multi-tile run tapers from `CliffEndScale` (0.64, about 0.14 world units at the
+  default `CliffRise`) at an end tile to full height over up to `CliffEndTaper` (2.5)
+  tiles along the run, shortened to the run's own half-length; a run of three or more
+  reaches full height in its middle, while a two-tile run has no interior and both tiles
+  sit at about 0.14. Beyond the end, the adjacent tile's ground eases from about 0.14 to
+  0 (the current `CliffEndRamp` is 2.4 world units, a little over one tile), assuming
+  flat land with no hill, peak or water. A single isolated lifted tile keeps full
+  `CliffRise` (0.22); its bare adjacent ground ramps from 0.22 to 0 over `CliffRamp`
+  (1.6). If the tile has no bare edge at all (every side is a cliff or the map edge),
+  there is no ramp and the face drops the full 0.22.
+- Face and rock wall. `DrawPoint` moves lattice points within one lattice step of the
+  cliff line onto it, so the drop is drawn as a near-vertical face rather than a
+  lattice-wide chamfer. At a corner where two cliff edges meet, the current code moves
+  the corner onto the corner itself, producing a razor arris; the intended look is a
+  slight smoothing, not a razor arris and not a broad rounded cove, and the rendering
+  work adds that fillet. `TerrainMesher` keeps the field's own normals, so the ground
+  above and below the wall is not shaded as a dark band. A cliff with a bit but no
+  height step draws no wall, and `mise run validate` reports it.
+- Rock scatter. Every known cliff whose lifted side is known carries a wall from the
+  lifted side. A coastal cliff (`EdgeRocks`) draws 22 columns per edge on the waterline,
+  with sea stacks and surf only where the lower side is water. A land/land cliff
+  (`LandEdgeRocks`) draws 48 pillar positions per edge; each pillar finds the drawn face
+  with `DrawPoint`, stands `FaceOut` (0.03) outside it, probes the ground on several
+  rings for its top and foot, and yields a wide, short plinth at its foot, so the wall
+  is thickest at the ground and thins to pillars at the crest. Cliff rocks are exact
+  scatter: they are never thinned. A land/land cliff whose lift is unknown stays bare,
+  because a wall with nothing behind it reads worse than no wall.
+- Colour. The mesh carries the sharp cliff share in `UV.x`; inside that band the palette
+  transition drops its wander and narrows to the step's own width, so the raised top
+  keeps its own ground instead of taking the colour of the tile below it. Ordinary props
+  are kept off a cliff face when the cliff share is above 0.2 and the normal is steeper
+  than 0.8.
 - Rivers. Rivers run along hex edges in this ruleset, so a river edge may also carry a
-  cliff: `RiverMesher` turns the channel downhill over the face, and the shader foams
-  where it does. The generator therefore no longer withholds cliffs from river edges,
-  and scores them higher so some rivers do pour over a cliff.
+  cliff: `RiverMesher` turns the channel downhill over the face, and the water shader
+  foams where it does. The generator keeps river mouths and sea-edge river endpoints
+  open and scores river edges higher (`RiverFallBonus`) so some rivers pour over a
+  cliff.
 
 ## Teams and entity data
 
@@ -430,10 +480,11 @@ Line-of-sight elevation and feature occlusion (`TerrainDef.SeeFrom`,
 `TerrainDef.SeeThrough`, `FeatureDef.SeeThrough`) block sight behind hills, peaks, and
 dense features. High ground grants outer-ring vantage sight across lower terrain. Aerial
 units and recon bypass terrain occlusion. Per-team fog-of-war plot snapshots
-(`plot.RevealedSnapshots[team]`) preserve last-observed terrain, relief, features,
-bonuses, improvements, routes, and ownership. Missing fog memory hides tiles until real
-observation or explicit map reveal, preventing live state leaks. The client reads
-perceived snapshots for fogged tiles to hide unseen mutations.
+(`plot.RevealedSnapshots[team]`) preserve last-observed terrain, relief, height, cliff
+bits and derived cliff lifts, features, bonuses, improvements, routes, and ownership.
+Missing fog memory hides tiles until real observation or explicit map reveal, preventing
+live state leaks. The client reads perceived snapshots for fogged tiles to hide unseen
+mutations.
 
 `military:pillage` (`PillageCommand`) validates cargo, domain, and improvement
 permanence. During peace, a player can demolish their own non-permanent improvement
@@ -443,13 +494,16 @@ along `ImprovementDef.ImprovementPillage`. Pillaging routes removes the route an
 `PlotPillaged`. `WorkerPlanner` prioritizes repairing ruins, depleted mines, and severed
 routes, and replacing pillaged improvements to reconnect revealed resources.
 
-`Plot.Kind`, `IsLake`, `DepletedMine`, `ImprovementTurns`, `BuildProgress`,
-`RevealedSnapshots`, player leader/start ids, and worker components enter saves and
-state hashes. These fields are additive to save schema 1 and have defaults for older
-JSON. Changed mod versions reject old content identities unless the caller explicitly
-forces loading. Hand-authored geometry tuning lives in
-`src/Mods/Foundation/data/hex-overrides.json` and enters the content hash. The importer
-writes only its declared definition families and rejects that reserved filename.
+`Plot.Kind`, `Plot.Height`, `Plot.CliffEdges`, `IsLake`, `DepletedMine`,
+`ImprovementTurns`, `BuildProgress`, `RevealedSnapshots`, player leader/start ids, and
+worker components enter saves and state hashes. Heights are authoritative and live-state
+cliff lifts are derived, so the map never stores a lift that disagrees with its heights;
+fog snapshots carry the lift they derived when captured. The save schema is `4`; schema
+`3` and older are rejected by the version check. Changed mod versions reject old content
+identities unless the caller explicitly forces loading. Hand-authored geometry tuning
+lives in `src/Mods/Foundation/data/hex-overrides.json` and enters the content hash. The
+importer writes only its declared definition families and rejects that reserved
+filename.
 
 ## City services
 
@@ -1484,10 +1538,10 @@ flowchart TB
     subgraph Core["Ariel.Client.Core/Terrain (engine-free math)"]
         Noise["PeriodicNoise / WarpGrid<br/>wrap-safe periodic noise & baked 2D domain warp"]
         Blend["HexBlend<br/>dual-triangle barycentric weights"]
-        Snap["TerrainSnapshot<br/>per-tile layers, relief, rivers, sight, owner, features"]
+        Snap["TerrainSnapshot<br/>layers, relief, heights, cliffs, rivers, sight, features"]
         Field["TerrainField<br/>HeightAt, SurfaceHeightAt, NormalAt"]
         Chunks["TerrainChunks<br/>4x4 tile partition & 64-bit dirty signatures"]
-        Mesher["TerrainMesher<br/>global triangle lattice (k = 6)"]
+        Mesher["TerrainMesher<br/>global triangle lattice (k = 9, or 27 near peaks/cliffs)"]
         Ray["TerrainRay<br/>slope ray marching & bisection picking"]
         Palette["TerrainPalette<br/>layers, surfaces, feature styles, scatter sets"]
         Planner["ScatterPlanner<br/>global jittered lattice, thinning, mixing, clearings"]
@@ -1537,17 +1591,21 @@ Terrain math is fully decoupled from Godot and deterministically unit-tested in
   heights).
 - `TerrainSnapshot`: Immutable snapshot of local-team terrain perception containing tile
   layers, feature ground indices, relief classes (`Hidden`, `DeepWater`, `ShallowWater`,
-  `Flat`, `Hills`, `Peak`), water status, mirrored 6-bit river masks, sight (`Hidden`,
-  `Fogged`, `Visible`), owner, and features.
+  `Flat`, `Hills`, `Peak`), stored heights, mirrored 6-bit river and cliff masks,
+  derived cliff lifts, crater flags, sight (`Hidden`, `Fogged`, `Visible`), owner,
+  terrain ids and features.
 - `TerrainField`: Pure deterministic function of world coordinates $(x, z)$ and the
   `TerrainSnapshot`:
   - `HeightAt(x, z)`: Blends relief profiles using warped corner-triangle weights.
     Unexplored tiles stay at flat 0.0 to prevent leaking unseen terrain relief. Deep
     water is $-0.45 \\pm 0.02$ noise, shallow water/lakes are $-0.15 \\pm 0.02$ noise,
-    flat land is $0.03 + 0.03 \\cdot \\text{fbm}$, hills are $0.20 + 0.14 \\cdot
-    \\text{fbm}$, and peaks are $0.45 + 0.75 \\cdot \\text{ridged}$, merging adjacent
-    peaks into continuous ridges. Rivers carve down by up to 0.06 within a 0.12 band
-    along mirrored river edges.
+    flat land is $0.03 + 0.03 \\cdot \\text{fbm}$, hills stand on a $0.05$ saddle and
+    rise up to $0.33$ over their mounds with $0.04$ fbm, and peaks rise from a $0.38$
+    saddle by up to $1.15$ with up to $0.22$ ridged noise and $0.09$ fine rock relief,
+    merging adjacent peaks into continuous ridges. Rivers carve down by up to $0.075$
+    within a band along mirrored river edges. Cliff-raised land adds up to `CliffRise`
+    (0.22): a sharp step along a cliff edge and a 1.6 ramp on a bare edge, combined with
+    a maximum so lifts never stack.
   - `SurfaceHeightAt(x, z)`: Visible ground or water elevation. Submerged terrain ($\<
     0$) is clamped to 0 near water for seating surface units, tokens, and path previews,
     while the seabed stays at `HeightAt`.
@@ -1556,13 +1614,17 @@ Terrain math is fully decoupled from Godot and deterministically unit-tested in
 - `TerrainChunks`: Partitions the map into world-space rectangular chunks of $4 \\times
   4$ tiles ($4\\sqrt{3} \\times 6$ world units). Computes a 64-bit dirty signature over
   each chunk's tiles and an influence ring (accounting for domain warp, blend radius,
-  normal step, and river carving). When world state changes, only chunks with modified
-  signatures are rebuilt.
+  normal step, river carving, heights, cliff bits and lifts, and the cliff ramp). A
+  chunk whose influence ring contains a peak or a cliff resolves at 27; every other
+  chunk at 9. When world state changes, only chunks with modified signatures are
+  rebuilt.
 - `TerrainMesher`: Generates chunk meshes on a single global equilateral-ish triangle
-  lattice at resolution $k = 6$ (step $\\sqrt{3}/k$ in $x$, $1.5/k$ in $z$, alternating
-  row offsets, ~36 vertices per hex). Because lattice vertices are globally indexed and
-  divide chunk bounds exactly, chunk borders and the cylindrical wrap seam share
-  identical vertex positions and normals without cracks.
+  lattice at resolution $k = 9$ by default (step $\\sqrt{3}/k$ in $x$, $1.5/k$ in $z$,
+  alternating row offsets, about 81 vertices per hex), and at $k = 27$ around peaks and
+  cliffs. Because lattice vertices are globally indexed and divide chunk bounds exactly,
+  chunk borders and the cylindrical wrap seam share identical vertex positions and
+  normals without cracks. Cliff drops snap their lattice points onto the drawn face, so
+  the face is near-vertical rather than a lattice-wide chamfer.
 - `TerrainRay`: Slope ray marching (step 0.05) with 8 rounds of bisection against
   `HeightAt` or `SurfaceHeightAt`. Accurately picks the visible 3D slope under the
   cursor rather than intersecting a flat $y = 0$ plane.
@@ -1573,18 +1635,20 @@ Terrain math is fully decoupled from Godot and deterministically unit-tested in
   ~0.2) dividing the map period. Evaluates the warped corner-triangle weights to sample
   cumulative density $\\sum w_k \\cdot \\text{density}\_k$; features thin smoothly at
   borders (forest fading into plains) and mix species across boundaries (pines and palms
-  between forest and jungle). Avoids water, river troughs, steep slopes, cloud-covered
-  tiles, and designated clearings (city centres, improvements, unit tokens).
+  between forest and jungle). Avoids water, river troughs, cloud-covered tiles,
+  designated clearings (city centres, improvements, unit tokens), and cliff faces (cliff
+  share above 0.2 with a normal below 0.8). Cliff rocks and sea stacks are added as
+  exact props after the ordinary lattice, so they are never thinned.
 
 ### Godot presentation (`Ariel.Godot`)
 
 The Godot view translates the engine-free math into GPU-rendered visuals compliant with
 `gl_compatibility`:
 
-- `TerrainRenderer`: Manages one lit ground `MeshInstance3D` and one water
-  `MeshInstance3D` per chunk across 3 horizontal wrap copies ($[-P, 0, P]$) for seamless
-  east-west cylindrical wrap. When chunks are invalidated, CPU meshing runs in parallel
-  via `Parallel.For`.
+- `TerrainRenderer`: Manages one lit ground `MeshInstance3D`, one water `MeshInstance3D`
+  and one river surface per chunk across 3 horizontal wrap copies ($[-P, 0, P]$) for
+  seamless east-west cylindrical wrap. When chunks are invalidated, CPU meshing runs in
+  parallel via `Parallel.For`.
 - `TileDataTexture`: Packs tile state into two RGBA8 textures sampled via `texelFetch`:
   - `tileA`: R = terrain layer, G = feature ground, B = owner + 1, A = river edge mask
     (refreshed on world changes).
@@ -1602,10 +1666,11 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
     dry ground such as desert) and its texture height; a softmax of the claims
     ($\\lambda^s e^{s \\cdot \\text{shift}}$) gives the colour weights over a 0.35-unit
     band. Water layers get no noise or texture-height term, so seabeds only fade.
-    Forest-floor shade and fog stay soft; transitions to cliff rock on steep slopes;
-    renders owner borders, territory glow, river channels, work-tile overlay marks, and
-    hover outline; draws unexplored tiles as stylised, slowly drifting dual-layer
-    clouds.
+    Forest-floor shade and fog stay soft; transitions to cliff rock on steep slopes and
+    narrows the palette transition inside the cliff share in `UV.x`, so a raised top
+    keeps its own ground; renders owner borders, territory glow, river channels,
+    work-tile overlay marks, and hover outline; draws unexplored tiles as stylised,
+    slowly drifting dual-layer clouds.
   - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from
     vertex `UV2.x = -HeightAt` and the cliff share from `UV2.y = CliffAt` without
     depth-texture fetches; renders multi-frequency ripples, shore foam, surf and foam
@@ -1624,7 +1689,8 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
   - Deduplicates GPU textures across GLB models via SHA-256 image hashes.
   - Applies hash-stable per-instance thinning (`KeepProp` using deterministic 32-bit
     integer mixing of tile, model index, and float coordinates) to sustain high
-    framerates on large maps without prop flickering during chunk updates.
+    framerates on large maps without prop flickering during chunk updates. Exact props
+    (cliff rocks and sea stacks) bypass thinning so a wall keeps no gaps.
   - Distance culling with `VisibilityRangeEnd = 34f`.
   - Modulates instance vertex colours for fog darkening (1.0 for visible, 0.55 for
     fogged).

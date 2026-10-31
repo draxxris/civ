@@ -4,9 +4,10 @@ namespace Ariel.Client.Terrain;
 
 /// <summary>A prop rooted on the terrain. Tile is the containing tile, used for sight updates. Stretch scales height on top
 /// of Scale (cliff rock columns). Exact props are placed as given: the renderer neither thins them nor drops them, because a
-/// wall of columns with holes is worse than no wall.</summary>
+/// wall of columns with holes is worse than no wall. TiltX/TiltZ lean the prop: the horizontal direction its top moves,
+/// with the lean angle in radians as its length (cliff rocks lean into their face).</summary>
 public readonly record struct ScatterInstance(string Set, int ModelIndex, float X, float Y, float Z, float Yaw, float Scale, int Tile,
-    float Stretch = 1, bool Exact = false);
+    float Stretch = 1, bool Exact = false, float TiltX = 0, float TiltZ = 0);
 
 /// <summary>Deterministic global scatter, blended with the same warped corner triangle as the terrain.
 /// Reuse one planner on the rendering thread; asset and appearance lookups are cached across chunks.</summary>
@@ -82,7 +83,8 @@ public sealed class ScatterPlanner(GameCatalog catalog)
         {
             if (!chunk.Contains(rock.X, rock.Z) || Hidden(snapshot, rock.Tile)) continue;
             result.Add(new(SeaStackSet, Math.Min(models - 1, (int)(rock.Model * models)), (float)rock.X, (float)rock.Y,
-                (float)rock.Z, (float)rock.Yaw, (float)rock.Scale, rock.Tile, (float)rock.Stretch, Exact: true));
+                (float)rock.Z, (float)rock.Yaw, (float)rock.Scale, rock.Tile, (float)rock.Stretch, Exact: true,
+                TiltX: (float)rock.TiltX, TiltZ: (float)rock.TiltZ));
         }
     }
 

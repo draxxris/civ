@@ -36,6 +36,14 @@ uniform float mountain_light = 0.12;
 uniform vec3 lava_colour : source_color = vec3(1.0, 0.36, 0.06);
 uniform float lava_glow = 1.1;
 
+// Cliff faces: the drawn wall of a cliff edge (vertical, inside the cliff share) is painted as stone the colour of the
+// rock columns standing in front of it, so what shows between them reads as more of the same rock, not as bare ground.
+// cliff_face_tint multiplies the ground's own rock colour towards the rock models' darker, cooler stone; the face gets
+// blocky jointing and cracks in face space (along the wall and up it) rather than the ground's top-down texture, which a
+// vertical quad would smear into streaks.
+uniform vec3 cliff_face_tint = vec3(0.52, 0.58, 0.68);
+uniform float cliff_face_joints = 0.55;
+
 varying vec3 world_pos;
 varying vec3 ground_normal;
 // TerrainField.CliffFaceAt from the mesh UV: the sharp share of a cliff edge at the vertex.
@@ -86,6 +94,24 @@ void vertex() {
 	crater = UV2.y;
 }
 
+// Stone on a cliff's drawn face; everything else unchanged. The face is found from the triangle's own geometric normal,
+// because the mesh keeps the field's smooth normals on the wall's vertices.
+vec3 cliff_face(vec3 colour) {
+	if (cliff_share <= 0.01) return colour;
+	vec3 geo = normalize(cross(dFdx(world_pos), dFdy(world_pos)));
+	float face = smoothstep(0.55, 0.85, 1.0 - abs(geo.y)) * smoothstep(0.05, 0.4, cliff_share);
+	if (face <= 0.0) return colour;
+	vec2 along = normalize(vec2(-geo.z, geo.x) + vec2(1e-5, 0.0));
+	vec2 q = vec2(dot(world_pos.xz, along), world_pos.y * 1.7);
+	float blocks = seeded_noise(q, 16.0, 70u);
+	float grain = seeded_noise(q, 52.0, 71u);
+	// Joints: thin dark lines where the block noise crosses its middle, broken up by the grain.
+	float joints = 1.0 - smoothstep(0.015, 0.06, abs(blocks - 0.5) + 0.04 * (grain - 0.5));
+	vec3 stone = colour * cliff_face_tint * (0.78 + 0.4 * blocks + 0.25 * (grain - 0.5));
+	stone *= 1.0 - cliff_face_joints * joints;
+	return mix(colour, stone, face);
+}
+
 // Lava glow in [0, 1] on a crater floor: slowly shifting cracks in a dark crust, solid melt in the middle.
 float lava(vec2 p, float floor_share, float time) {
 	if (floor_share <= 0.001) return 0.0;
@@ -133,6 +159,7 @@ void fragment() {
 	vec3 rock_tint = mix(vec3(1.08, 0.97, 0.84), vec3(1.0, 0.98, 0.95), smoothstep(0.5, 1.1, world_pos.y));
 	vec3 snow_shade = mix(vec3(0.84, 0.89, 0.97), vec3(1.15), sun);
 	colour *= mix(vec3(1.0), mix(shade * rock_tint, snow_shade, snow), mountain);
+	colour = cliff_face(colour);
 	vec4 sky = clouds(world_pos.xz, hidden, TIME, linear);
 
 	ivec2 hex = containing_hex(p);

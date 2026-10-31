@@ -56,8 +56,9 @@ public sealed class TerrainChunks
         tuning ??= new TerrainTuning();
         RingRadius = tuning.InfluenceRadius + 2 * step;
         RiverRingRadius = tuning.RiverReach + 2 * step;
-        // A cliff tile lifts land up to CliffRamp beyond its hexagon, and whether it is a cliff depends on its neighbours.
-        CliffRingRadius = tuning.InfluenceRadius + tuning.CliffRamp + 2 * Sqrt3 + 2 * step;
+        // A cliff tile lifts land up to its longest ramp beyond its hexagon, and whether it is a cliff depends on its
+        // neighbours.
+        CliffRingRadius = tuning.InfluenceRadius + Math.Max(tuning.CliffRamp, tuning.CliffEndRamp) + 2 * Sqrt3 + 2 * step;
         int zEnd = map.Height + 1; // last row centre + 2 tile rows (3 world units)
         Columns = (map.Width + TileColumns - 1) / TileColumns;
         Rows = (zEnd + NorthMarginUnits + TileRows - 1) / TileRows;

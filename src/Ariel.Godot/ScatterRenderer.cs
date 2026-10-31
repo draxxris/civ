@@ -40,6 +40,10 @@ internal sealed partial class ScatterRenderer(GameCatalog catalog, float[] copie
             {
                 var prop = props[i];
                 var basis = new Basis(Vector3.Up, prop.Yaw).Scaled(new Vector3(prop.Scale, prop.Scale * prop.Stretch, prop.Scale));
+                float tilt = MathF.Sqrt(prop.TiltX * prop.TiltX + prop.TiltZ * prop.TiltZ);
+                // Rotating about up × d tips the prop's top towards d.
+                if (tilt > 1e-4f)
+                    basis = new Basis(Vector3.Up.Cross(new Vector3(prop.TiltX, 0, prop.TiltZ) / tilt).Normalized(), tilt) * basis;
                 multi.SetInstanceTransform(i, new Transform3D(basis, new Vector3(prop.X, prop.Y, prop.Z)));
             }
             var batch = new Batch(multi, props, new Sight[props.Length]);

@@ -126,6 +126,24 @@ explicit `"height"`. Nothing is inferred from relief or from water, so a stray b
 nothing. The scene is then judged by the same rules `mise run validate` applies, and
 each violation is printed as a warning naming its tile and direction.
 
+## Cliff two-state sheet
+
+`tools/shots/cliffs-two-states.py` captures `scenarios/cliffs-two-states.json` from one
+`mise run shot --shots` launch under a private Xvfb display and assembles a two-column
+contact sheet, by default `docs/screenshots/cliffs-two-states.png`. The poses cover both
+ends of the land-to-land run, its corners up close, the wall from the low side, the bare
+slope side, height and slope plans, and the peak in the land-to-ocean run. The scene
+carries a hill at `10,9` and a peak at `10,16`.
+
+```sh
+python3 tools/shots/cliffs-two-states.py --out /tmp/ariel/sheet.png
+python3 tools/shots/cliffs-two-states.py --only end,corner --tuning CliffFillet=0.4
+```
+
+The individual captures go to `/tmp/ariel/cliffs-two-states`. Pass `--shots-dir` to
+change that, and `--skip-capture` to reassemble existing captures without launching the
+game.
+
 ## Units
 
 Set `"clearUnits": true` to remove the generated starting units. Use `units` to place
