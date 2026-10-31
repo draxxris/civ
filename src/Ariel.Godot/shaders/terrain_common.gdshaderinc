@@ -5,7 +5,8 @@
 // Per tile, offset coordinates (col, row), one texel per tile.
 // tile_a: R = terrain layer, G = feature ground, B = owner + 1, A = river edge bits (Hex.Directions order).
 uniform sampler2D tile_a : filter_nearest, repeat_disable;
-// tile_b: R = sight (0 hidden, 1 fogged, 2 visible), G = overlay mark (1 workable, 2 worked, 3 locked), B = hover.
+// tile_b: R = sight (0 hidden, 1 fogged, 2 visible), G = overlay mark (1 workable, 2 worked, 3 locked), B = hover,
+// A = 255 on a tile of peak relief.
 uniform sampler2D tile_b : filter_nearest, repeat_disable;
 // Domain warp grid: R,G = dx and B,A = dz, each a 16-bit value mapping [0, 65535] to [-1, 1].
 uniform sampler2D warp_grid : filter_nearest, repeat_disable;
@@ -422,7 +423,9 @@ int ground_pattern(int feature_ground) {
 }
 
 // Shares of the feature ground patterns at p under the broad shade weights over seen tiles, each times its strength:
-// a = (pools, fertile, spring, blight), b = (floes, squall, crater, unused).
+// a = (pools, fertile, spring, blight), b = (floes, squall, crater, peak relief). The last is the share of peak tiles,
+// which is what mountain paint and mountain light key on; altitude alone cannot tell a mountain from a hill on lifted
+// ground.
 void feature_shares(vec2 p, out vec4 a, out vec4 b) {
 	ivec2 base;
 	bool upper;
@@ -432,7 +435,8 @@ void feature_shares(vec2 p, out vec4 a, out vec4 b) {
 	float seen = 0.0;
 	for (int k = 0; k < 3; k++) {
 		ivec2 t = clamped_texel(corner_hex(base, upper, k));
-		if (byte_of(texelFetch(tile_b, t, 0).r) == 0) continue;
+		vec4 tile = texelFetch(tile_b, t, 0);
+		if (byte_of(tile.r) == 0) continue;
 		seen += soft[k];
 		vec4 look = texelFetch(palette, ivec2(byte_of(texelFetch(tile_a, t, 0).g), 5), 0);
 		int pattern = byte_of(look.r);
@@ -444,6 +448,7 @@ void feature_shares(vec2 p, out vec4 a, out vec4 b) {
 		else if (pattern == GROUND_FLOES) b.x += w;
 		else if (pattern == GROUND_SQUALL) b.y += w;
 		else if (pattern == GROUND_CRATER) b.z += w;
+		b.w += soft[k] * tile.a;
 	}
 	a /= max(seen, 1e-8);
 	b /= max(seen, 1e-8);

@@ -33,7 +33,7 @@ internal sealed class TileDataTexture
 
     /// <summary>R = terrain layer, G = feature ground, B = owner + 1, A = river edge bits.</summary>
     public ImageTexture TileA { get; }
-    /// <summary>R = sight, G = overlay mark, B = hover flag (255), A = reserved.</summary>
+    /// <summary>R = sight, G = overlay mark, B = hover flag (255), A = 255 on a peak tile.</summary>
     public ImageTexture TileB { get; }
 
     /// <summary>Upload the world data of a snapshot (hidden tiles are already zero in the snapshot).</summary>
@@ -50,7 +50,8 @@ internal sealed class TileDataTexture
         TileA.Update(_imageA);
     }
 
-    /// <summary>Upload sight, overlay marks and the hovered tile (or -1).</summary>
+    /// <summary>Upload sight, overlay marks, the hovered tile (or -1) and which tiles carry peak relief, so the ground
+    /// shader can give a mountain's rock and mountain light to mountains alone.</summary>
     public void WriteTileB(TerrainSnapshot snapshot, byte[] marks, int hover)
     {
         for (int i = 0; i < _width * _height; i++)
@@ -58,7 +59,7 @@ internal sealed class TileDataTexture
             _b[i * 4] = (byte)snapshot.Sight[i];
             _b[i * 4 + 1] = marks[i];
             _b[i * 4 + 2] = i == hover ? (byte)255 : (byte)0;
-            _b[i * 4 + 3] = 0;
+            _b[i * 4 + 3] = snapshot.Relief[i] == ReliefClass.Peak ? (byte)255 : (byte)0;
         }
         _imageB.SetData(_width, _height, false, Image.Format.Rgba8, _b);
         TileB.Update(_imageB);

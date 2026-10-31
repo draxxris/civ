@@ -132,18 +132,23 @@ void fragment() {
 	bool linear = !OUTPUT_IS_SRGB;
 	vec3 normal = normalize(ground_normal);
 	float steep = 1.0 - normal.y;
+	vec4 dp = vec4(dFdx(world_pos.xz), dFdy(world_pos.xz));
+	vec4 looks_a, looks_b;
+	feature_shares(world_pos.xz, looks_a, looks_b);
+	// Mountain paint and mountain light belong to mountains. Altitude alone cannot stand in for that: a hill on lifted
+	// (cliff) ground stands as high as a mountain's saddle and would take its bare rock for the whole of its top.
+	float peak = looks_b.w;
 	float slope = smoothstep(0.08, 0.40, steep);
 	slope *= smoothstep(-0.01, 0.04, world_pos.y);
-	float mountain = smoothstep(0.42, 0.72, world_pos.y);
-	slope = max(slope, smoothstep(0.32, 0.52, world_pos.y));
-	vec4 dp = vec4(dFdx(world_pos.xz), dFdy(world_pos.xz));
+	float mountain = peak * smoothstep(0.42, 0.72, world_pos.y);
+	// Rock above the hills, so a mountain's high saddles and ledges stay rocky and a neighbouring tile cannot bleed its
+	// ground colour onto the upper flanks.
+	slope = max(slope, peak * smoothstep(0.32, 0.52, world_pos.y));
 	if (mountain > 0.0 && debug_mode != 7) {
 		normal = bump_normal(normal, world_pos.xz, dp, rock_bump * mountain);
 		NORMAL = normalize((VIEW_MATRIX * vec4(normal, 0.0)).xyz);
 	}
 	float hollow = clamp(cavity / 4.0, -1.0, 1.0) * mountain;
-	vec4 looks_a, looks_b;
-	feature_shares(world_pos.xz, looks_a, looks_b);
 	// Warm ash keeps a volcano's cone bare of snow.
 	float snow = snow_cover(world_pos.xz, world_pos.y, normal.y, max(hollow, 0.0)) * (1.0 - smoothstep(0.1, 0.6, looks_b.z));
 	vec3 glow;

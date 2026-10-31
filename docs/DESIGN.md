@@ -1653,8 +1653,8 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
   - `tileA`: R = terrain layer, G = feature ground, B = owner + 1, A = river edge mask
     (refreshed on world changes).
   - `tileB`: R = sight, G = overlay mark (workable/worked/locked), B = hover flag, A =
-    reserved (refreshed on selection, sight, or hover changes without rebuilding
-    meshes).
+    255 on a peak tile (relief) (refreshed on selection, sight, or hover changes without
+    rebuilding meshes).
   - Also generates a 16-bit packed domain-warp texture and a $256 \\times 4$ palette
     strip (layer colours, feature ground tints, owner colours, water tints).
 - `TerrainTextures`: A mipmapped `Texture2DArray` (1024×1024 RGBA8 per slice) storing
@@ -1666,11 +1666,12 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
     dry ground such as desert) and its texture height; a softmax of the claims
     ($\\lambda^s e^{s \\cdot \\text{shift}}$) gives the colour weights over a 0.35-unit
     band. Water layers get no noise or texture-height term, so seabeds only fade.
-    Forest-floor shade and fog stay soft; transitions to cliff rock on steep slopes and
-    narrows the palette transition inside the cliff share in `UV.x`, so a raised top
-    keeps its own ground; renders owner borders, territory glow, river channels,
-    work-tile overlay marks, and hover outline; draws unexplored tiles as stylised,
-    slowly drifting dual-layer clouds.
+    Forest-floor shade and fog stay soft; transitions to cliff rock on steep slopes, and
+    above the hills on peak tiles only, so a hill on lifted ground keeps its own
+    texture; the palette transition narrows inside the cliff share in `UV.x`, so a
+    raised top keeps its own ground; renders owner borders, territory glow, river
+    channels, work-tile overlay marks, and hover outline; draws unexplored tiles as
+    stylised, slowly drifting dual-layer clouds.
   - `water.gdshader`: Translucent water surface at $y = 0$. Reads terrain depth from
     vertex `UV2.x = -HeightAt` and the cliff share from `UV2.y = CliffAt` without
     depth-texture fetches; renders multi-frequency ripples, shore foam, surf and foam
