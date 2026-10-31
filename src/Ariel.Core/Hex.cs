@@ -1,5 +1,14 @@
 namespace Ariel;
 
+/// <summary>Lattice measurements shared by the world rules and the terrain that draws them, in world units where a hex has
+/// circumradius 1 (so one edge is 1 long). One copy keeps the control and the rendered ground from drifting apart.</summary>
+public static class Lattice
+{
+    /// <summary>How far a bare step's slope runs before it reaches the level below. A slope with less ground than this
+    /// ahead of it merges into whatever wall or slope it meets.</summary>
+    public const double CliffRamp = 1.6;
+}
+
 /// <summary>Axial hex coordinate (pointy-top layout). Cube S is derived.</summary>
 public readonly record struct Hex(int Q, int R)
 {

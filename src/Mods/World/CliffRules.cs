@@ -19,6 +19,14 @@ internal sealed class CliffRules : IMapGeometry
     /// <summary>Direction names in <see cref="Hex.Directions"/> order, for diagnostics.</summary>
     private static readonly string[] Names = ["E", "NE", "NW", "W", "SW", "SE"];
 
+    /// <summary>How far a bare step's slope runs, in world units where a hex has circumradius 1. A slope has to reach the
+    /// ground below before it meets another cliff face or another slope, or the two features merge into one lump. The
+    /// length is <see cref="Lattice.CliffRamp"/>, the number the terrain descends over.</summary>
+    internal const double CliffRampRoom = Lattice.CliffRamp;
+
+    /// <summary>Half the length of a hex edge when a hex has circumradius 1. A slope is as wide as the edge it leaves.</summary>
+    private const double HalfEdge = 0.5;
+
     private static bool Present(GameState state, TileId tile, int direction) =>
         (state.Plots[tile.Value].CliffEdges & (1 << direction)) != 0;
 
@@ -35,9 +43,26 @@ internal sealed class CliffRules : IMapGeometry
         ReportAreas(sim.State, sim.Content, problems);
         foreach (var player in sim.State.Players)
             if (player.StartingPlot is { } start) ReportAccess(sim.State, sim.Content, start, "start", problems);
+        ReportSlopes(sim.State, sim.Content, problems);
         foreach (var city in sim.State.Cities)
             ReportAccess(sim.State, sim.Content, sim.State.Grid.TileAt(city.Position), "city", problems);
         return problems;
+    }
+
+    /// <summary>One edge seen as a place in the world: its middle, and the unit normal pointing from the high side to the
+    /// low side. Hexes have circumradius 1, so two neighbouring centres are √3 apart and an edge is 1 long.</summary>
+    private readonly record struct EdgePoint(double MX, double MZ, double NX, double NZ)
+    {
+        public (double X, double Z) At(double forward, double side) =>
+            (MX + NX * forward - NZ * side, MZ + NZ * forward + NX * side);
+    }
+
+    private static EdgePoint EdgeBetween(GameState state, TileId high, TileId low)
+    {
+        var (hx, hz) = state.Grid.HexOf(high).ToPixel(1);
+        var (lx, lz) = state.Grid.HexOf(low).ToPixel(1);
+        double dx = lx - hx, dz = lz - hz, length = Math.Sqrt(dx * dx + dz * dz);
+        return new((hx + lx) / 2, (hz + lz) / 2, dx / length, dz / length);
     }
 
     private static string Where(GameState state, TileId tile)
@@ -144,6 +169,241 @@ internal sealed class CliffRules : IMapGeometry
                     problems.Add($"{Where(state, tile)} direction {Names[direction]}: terrace stands too close to another one");
                 else accepted.Add(state, tile, direction);
             }
+    }
+
+    /// <summary>A slope control failure, together with the wall that causes it: clearing that edge is what puts the ground
+    /// back. A generator uses the same answer the report prints, so the two can never disagree.</summary>
+    internal readonly record struct SlopeProblem(string Message, int High, int ClearTile, int ClearDirection);
+
+    /// <summary>Raised ground needs a way down, and that way down needs room. A raised mass is a group of tiles that are
+    /// the high side of a cliff and touch each other; its perimeter is every edge leading off the mass. If every one of
+    /// those edges is a cliff, the ground inside is walled in with no slope out of it. Otherwise each bare, land-to-land
+    /// step is a slope, and the slope has <see cref="CliffRampRoom"/> of ground to reach the level below before it runs
+    /// into another cliff face or another mass's slope.</summary>
+    private static void ReportSlopes(GameState state, ContentDb content, List<string> problems)
+    {
+        foreach (var problem in SlopeProblems(state, content)) problems.Add(problem.Message);
+    }
+
+    /// <summary>Whether the slopes and the perimeter of the raised mass at one tile are legal, for a generator that must
+    /// refuse a terrace the report would name. Only that mass and the ground within two tiles of it are walked, so the check
+    /// is cheap enough to ask for every candidate edge.</summary>
+    internal static bool SlopesHold(GameState state, ContentDb content, TileId tile)
+    {
+        if (state.CliffLifts(tile) == 0) return true;
+        var mass = new HashSet<int> { tile.Value };
+        var queue = new Queue<TileId>();
+        queue.Enqueue(tile);
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            foreach (var neighbor in state.Grid.Neighbors(current))
+                if (state.CliffLifts(neighbor) != 0 && mass.Add(neighbor.Value)) queue.Enqueue(neighbor);
+        }
+        bool open = false;
+        var ramps = new List<(TileId High, int Direction)>();
+        foreach (int value in mass)
+        {
+            var current = new TileId(value);
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (state.Grid.Neighbor(current, direction) is not { } next || next.Value < current.Value) continue;
+                if (!Step(state, content, current, next, direction, out var high, out int highDirection)) continue;
+                if (Present(state, current, direction) || Present(state, next, (direction + 3) % 6)) continue;
+                ramps.Add((high, highDirection));
+                if (!mass.Contains(next.Value)) open = true;
+            }
+        }
+        // The mass's own walls are its perimeter; a bare edge off the mass is the slope out of it.
+        foreach (int value in mass)
+        {
+            var current = new TileId(value);
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (state.Grid.Neighbor(current, direction) is not { } next) continue;
+                if (mass.Contains(next.Value) || Present(state, current, direction)) continue;
+                open = true;
+            }
+        }
+        if (!open) return false;
+        foreach (var (high, direction) in ramps)
+            if (!SlopeClears(state, content, mass, high, direction)) return false;
+        return true;
+    }
+
+    /// <summary>The high side of a land-to-land step, or false when the edge is flat, touches water or is absent.</summary>
+    private static bool Step(GameState state, ContentDb content, TileId a, TileId b, int direction,
+        out TileId high, out int highDirection)
+    {
+        high = a;
+        highDirection = direction;
+        var here = state.Plots[a.Value];
+        var there = state.Plots[b.Value];
+        if (Geography.Water(content, here) || Geography.Water(content, there)) return false;
+        if (here.Height == there.Height) return false;
+        if (there.Height > here.Height)
+        {
+            high = b;
+            highDirection = (direction + 3) % 6;
+        }
+        return true;
+    }
+
+    /// <summary>Whether one slope reaches the level below before it meets a wall or another mass's slope.</summary>
+    private static bool SlopeClears(GameState state, ContentDb content, HashSet<int> mass, TileId high, int direction) =>
+        Blocker(state, content, mass.Contains, high, direction) is null;
+
+    /// <summary>The wall or slope that stops a slope before it reaches the ground below, or null when the slope clears.
+    /// Only the ground within two tiles of the slope is walked: nothing further can reach its sweep.</summary>
+    private static (int Tile, int Direction)? Blocker(GameState state, ContentDb content, Func<int, bool> sameMass,
+        TileId high, int direction)
+    {
+        if (state.Grid.Neighbor(high, direction) is not { } below) return null;
+        var edge = EdgeBetween(state, high, below);
+        foreach (var tile in state.Grid.Range(high, 2))
+            for (int d = 0; d < 6; d++)
+            {
+                if (state.Grid.Neighbor(tile, d) is not { } next || next.Value < tile.Value) continue;
+                if (!Step(state, content, tile, next, d, out var stepHigh, out int stepDirection)) continue;
+                if (stepHigh == high) continue; // an edge of the slope's own tile is not in its path
+                bool face = Present(state, tile, d) || Present(state, next, (d + 3) % 6);
+                if (!face)
+                {
+                    if (sameMass(stepHigh.Value)) continue;    // one mass shares its own slopes
+                    if (state.CliffLifts(stepHigh) == 0) continue; // hills and peaks are not cliff raised
+                }
+                if (state.Grid.Neighbor(stepHigh, stepDirection) is not { } stepLow) continue;
+                if (!Crosses(edge, EdgeBetween(state, stepHigh, stepLow))) continue;
+                return face ? (stepHigh.Value, stepDirection) : WallOf(state, stepHigh);
+            }
+        return null;
+    }
+
+    /// <summary>Whether every raised mass within three tiles of a tile is legal. A new wall can block a slope that belongs
+    /// to a mass on the other side of it, so a generator has to look past the ground it just raised.</summary>
+    internal static bool SlopesNear(GameState state, ContentDb content, TileId tile)
+    {
+        foreach (var near in state.Grid.Range(tile, 3))
+            if (state.CliffLifts(near) != 0 && !SlopesHold(state, content, near)) return false;
+        return true;
+    }
+
+    /// <summary>The walls whose removal clears every slope finding, for a generator thinning its own cliffs.</summary>
+    internal static List<(TileId Tile, int Direction)> SlopeWalls(GameState state, ContentDb content) =>
+        SlopeProblems(state, content).Select(p => (new TileId(p.ClearTile), p.ClearDirection)).Distinct().ToList();
+
+    /// <summary>A cliff edge that keeps a tile raised: clearing it lowers the ground and takes the slope out of the way.</summary>
+    private static (int Tile, int Direction) WallOf(GameState state, TileId tile)
+    {
+        byte lifts = state.CliffLifts(tile);
+        for (int direction = 0; direction < 6; direction++)
+            if ((lifts & (1 << direction)) != 0) return (tile.Value, direction);
+        return (tile.Value, 0);
+    }
+
+    private static Dictionary<int, List<TileId>> Masses(GameState state)
+    {
+        var lifted = state.Grid.Tiles.Where(t => state.CliffLifts(t) != 0).Select(t => t.Value).ToHashSet();
+        var masses = new Dictionary<int, List<TileId>>();
+        var seen = new HashSet<int>();
+        foreach (int start in lifted)
+        {
+            if (!seen.Add(start)) continue;
+            var members = new List<TileId>();
+            var queue = new Queue<TileId>();
+            queue.Enqueue(new TileId(start));
+            while (queue.Count > 0)
+            {
+                var tile = queue.Dequeue();
+                members.Add(tile);
+                foreach (var neighbor in state.Grid.Neighbors(tile))
+                    if (lifted.Contains(neighbor.Value) && seen.Add(neighbor.Value)) queue.Enqueue(neighbor);
+            }
+            masses[start] = members;
+        }
+        return masses;
+    }
+
+    internal static List<SlopeProblem> SlopeProblems(GameState state, ContentDb content, int only = int.MinValue)
+    {
+        var problems = new List<SlopeProblem>();
+        var lifted = state.Grid.Tiles.Where(t => state.CliffLifts(t) != 0).Select(t => t.Value).ToHashSet();
+        var ramps = new List<(TileId High, TileId Low, int Direction)>();
+        var faces = new List<(TileId High, TileId Low, int Direction)>();
+        foreach (var tile in state.Grid.Tiles)
+            for (int direction = 0; direction < 6; direction++)
+            {
+                if (state.Grid.Neighbor(tile, direction) is not { } next) continue;
+                if (next.Value < tile.Value) continue; // each edge once
+                var here = state.Plots[tile.Value];
+                var there = state.Plots[next.Value];
+                if (Geography.Water(content, here) || Geography.Water(content, there)) continue;
+                if (here.Height == there.Height) continue;
+                var (high, low) = here.Height > there.Height ? (tile, next) : (next, tile);
+                int highDirection = high == tile ? direction : (direction + 3) % 6;
+                if (Present(state, tile, direction) || Present(state, next, (direction + 3) % 6))
+                    faces.Add((high, low, highDirection));
+                else if (lifted.Contains(high.Value)) ramps.Add((high, low, highDirection));
+            }
+
+        var massOf = new int[state.Plots.Length];
+        Array.Fill(massOf, -1);
+        var masses = Masses(state);
+        int id = 0;
+        foreach (var members in masses.Values)
+            foreach (var member in members) massOf[member.Value] = ++id;
+        // Give every member of one mass the same id.
+        foreach (var members in masses.Values)
+        {
+            int first = massOf[members[0].Value];
+            foreach (var member in members) massOf[member.Value] = first;
+        }
+
+        foreach (var (start, members) in masses)
+        {
+            if (only != int.MinValue && start != only && massOf[members[0].Value] != massOf[only]) continue;
+            // Enclosure: every edge leading off the mass is a wall.
+            (TileId Tile, int Direction)? open = null;
+            (TileId Tile, int Direction)? wall = null;
+            foreach (var tile in members)
+                for (int direction = 0; direction < 6; direction++)
+                {
+                    if (state.Grid.Neighbor(tile, direction) is not { } next) continue;
+                    if (massOf[next.Value] == massOf[tile.Value]) continue;
+                    if (Present(state, tile, direction)) wall ??= (tile, direction);
+                    else open ??= (tile, direction);
+                }
+            if (open is null && wall is { } plug)
+            {
+                problems.Add(new SlopeProblem(
+                    $"{Where(state, plug.Tile)}: raised ground is walled in with no edge to slope out of",
+                    plug.Tile.Value, plug.Tile.Value, plug.Direction));
+                continue;
+            }
+        }
+
+        foreach (var (high, low, direction) in ramps)
+        {
+            if (only != int.MinValue && massOf[high.Value] != massOf[only]) continue;
+            int mass = massOf[high.Value];
+            string where = $"{Where(state, high)} direction {Names[direction]}";
+            if (Blocker(state, content, v => massOf[v] == mass, high, direction) is not { } stop) continue;
+            var stopTile = new TileId(stop.Tile);
+            string what = Present(state, stopTile, stop.Direction) ? "a cliff face" : "another slope";
+            problems.Add(new SlopeProblem($"{where}: the slope meets {what} before it reaches the ground below",
+                high.Value, stop.Tile, stop.Direction));
+        }
+        return problems;
+    }
+
+    /// <summary>Whether the ground swept by one slope meets the edge another feature stands on. The sweep is as wide as
+    /// the edge it leaves and <see cref="CliffRampRoom"/> long.</summary>
+    private static bool Crosses(EdgePoint slope, EdgePoint feature)
+    {
+        // Distance from the feature's middle to the slope's sweep, in the slope's own frame.
+        double forward = (feature.MX - slope.MX) * slope.NX + (feature.MZ - slope.MZ) * slope.NZ;
+        double side = (feature.MZ - slope.MZ) * slope.NX - (feature.MX - slope.MX) * slope.NZ;
+        return forward > -HalfEdge && forward < CliffRampRoom && Math.Abs(side) < HalfEdge + HalfEdge;
     }
 
     /// <summary>One open sea edge on a coastal tile, one open edge on a tile its cliffs walled in.</summary>
@@ -334,10 +594,11 @@ internal sealed class CliffRules : IMapGeometry
         return added;
     }
 
-    /// <summary>Whether a cliff may stand beside every accepted one. Two separate cliffs must leave enough ground between
-    /// them that each reads on its own: two tiles of raised ground, or one tile of low ground that both drop onto.
-    /// Neighbouring raised tiles are one raised mass, so a plateau or a long bluff is allowed: cliffs whose raised sides
-    /// are joined through raised tiles are faces of one bluff, not two features, however long the rim runs.</summary>
+    /// <summary>Whether a cliff may stand beside every accepted one. Two separate cliffs must leave two tiles of raised
+    /// ground between them, so each reads on its own; facing each other across a single low tile is not enough, because
+    /// the two slopes then meet in the gap. Neighbouring raised tiles are one raised mass, so a plateau or a long bluff
+    /// is allowed: cliffs whose raised sides are joined through raised tiles are faces of one bluff, however long the
+    /// rim runs.</summary>
     internal sealed class CliffSpacing
     {
         // Every accepted cliff is filed under the tiles its raised side can crowd, because a cliff is only ever compared
@@ -363,14 +624,12 @@ internal sealed class CliffRules : IMapGeometry
         {
             if (state.Grid.Neighbor(high, direction) is not { } low) return false;
             if (!_near.TryGetValue(high.Value, out var nearby)) return true;
-            foreach (var (otherHigh, otherDirection) in nearby)
+            foreach (var (otherHigh, _) in nearby)
             {
                 if (SameMass(state, high, otherHigh)) continue; // Faces of one bluff, not two cliffs.
                 int highDistance = state.Grid.Distance(high, otherHigh);
                 if (highDistance <= 1) continue; // One raised mass, not two cliffs.
                 if (highDistance >= HighGap) continue;
-                // Two cliffs that drop onto the same low tile face each other across one tile of low ground.
-                if (highDistance == 2 && state.Grid.Neighbor(otherHigh, otherDirection) == low) continue;
                 return false;
             }
             return true;
@@ -458,6 +717,25 @@ internal static class CliffGenerator
         }
         Terraces(state, content, cliffRng);
         CliffRules.PruneAllAreas(state, content);
+        Legalize(state, content);
+    }
+
+    /// <summary>Thin the cliffs the slope control refuses. Walkability is not re-checked: every pass clears walls, and an
+    /// open edge never closes, so an area that had a way in keeps it.</summary>
+    private static void Legalize(GameState state, ContentDb content)
+    {
+        for (int pass = 0; pass < 8; pass++)
+        {
+            bool thinned = false;
+            var walls = CliffRules.SlopeWalls(state, content);
+            foreach (var (tile, direction) in walls)
+            {
+                state.SetCliff(tile, direction, false);
+                CliffRules.AfterTerrainChange(state, content, tile);
+                thinned = true;
+            }
+            if (!thinned) return;
+        }
     }
 
     // A drainage river shared with sea marks a mouth; keep its whole land plot open.
@@ -508,6 +786,13 @@ internal static class CliffGenerator
             plots[high.Value].Height = (sbyte)Math.Max(before, Math.Min(plots[low.Value].Height + 1, Levels.Peak));
             if (!CliffRules.StepsHold(state, content, high)) { plots[high.Value].Height = before; continue; }
             state.SetCliff(high, highDirection, true);
+            // A terrace whose raised ground is walled in, or whose slope runs into a wall, is not worth keeping.
+            if (!CliffRules.SlopesNear(state, content, high))
+            {
+                state.SetCliff(high, highDirection, false);
+                plots[high.Value].Height = before;
+                continue;
+            }
             accepted.Add(state, high, highDirection);
             remaining--;
         }

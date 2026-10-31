@@ -100,9 +100,9 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 }
                 Assert.Equal(members.Count, reached.Count);
             }
-            // Separate terraces leave two tiles of raised ground between them, or one tile of low ground that both drop
-            // onto. Neighbouring raised tiles are one raised mass, so a plateau or a long bluff is allowed: a pair of
-            // cliffs counts as separate only when their raised sides are not joined through raised tiles.
+            // Separate terraces leave two tiles of raised ground between them. Neighbouring raised tiles are one raised
+            // mass, so a plateau or a long bluff is allowed: a pair of cliffs counts as separate only when their raised
+            // sides are not joined through raised tiles.
             var raisedTiles = sim.State.Grid.Tiles.Where(t => LiftMask(sim, t) != 0).Select(t => t.Value).ToHashSet();
             bool SameMass(TileId a, TileId b)
             {
@@ -123,10 +123,7 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
                     if (SameMass(terraces[i].High, terraces[j].High)) continue;
                     int high = sim.State.Grid.Distance(terraces[i].High, terraces[j].High);
                     if (high <= 1) continue;
-                    var lowA = sim.State.Grid.Neighbor(terraces[i].High, terraces[i].Direction)!.Value;
-                    var lowB = sim.State.Grid.Neighbor(terraces[j].High, terraces[j].Direction)!.Value;
-                    Assert.True(high >= 3 || lowA == lowB,
-                        "Separate terraces need two tiles of raised ground or one shared low tile between them.");
+                    Assert.True(high >= 3, "Separate terraces need two tiles of raised ground between them.");
                 }
             foreach (var area in coast.GroupBy(c => sim.State.Plots[c.Tile.Value].AreaId))
             {
@@ -458,7 +455,8 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var problems = Service<IMapGeometry>(sim).Report(sim);
         Assert.Contains(problems, p => p == $"tile ({col}, {row}): coastal city has no open sea edge");
 
-        // Two separate terraces two tiles apart whose low sides are different tiles have one tile of raised ground between them.
+        // Two separate terraces two tiles apart have only one tile of raised ground between them, whether or not their
+        // low sides are the same tile.
         var first = sim.State.Grid.TileAt(7, 5);
         var second = sim.State.Grid.TileAt(9, 5);
         SetCliff(sim, first, 3, true);

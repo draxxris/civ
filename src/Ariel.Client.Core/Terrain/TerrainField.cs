@@ -140,7 +140,7 @@ public sealed record TerrainTuning
     public double CliffRise { get; init; } = 0.22;
     /// <summary>Cliffs: distance (world units, about one tile across) beyond a cliff tile over which the neighbouring
     /// ground climbs to the lifted side, so the rise starts before the cliff tile instead of at the edge.</summary>
-    public double CliffRamp { get; init; } = 1.6;
+    public double CliffRamp { get; init; } = Lattice.CliffRamp;
     /// <summary>Cliffs: blend sharpness across a cliff edge. A bluff is a wall, so the blend is sharp enough that the whole
     /// drop falls inside one lattice step of a cliff chunk (resolved at <see cref="TerrainMesher.PeakResolution"/>, 0.064
     /// world units): the drawn face is then one near-vertical quad, and the rock wall stands against it.</summary>
