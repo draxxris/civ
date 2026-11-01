@@ -18,11 +18,35 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         {
             var force = theater.OrderBy(u => u.Id).ToList();
             if (_targets.SelectPrimaryTargetCity(theater.Key) is not { } target) { remaining.AddRange(force); continue; }
-            int defenders = ctx.Sim.State.UnitsAt(target.Position).Count(u => ctx.IsEnemy(u.Owner));
-            if (force.Count < Math.Max(3, defenders + 2)) { remaining.AddRange(force); continue; }
+            if (!Ready(force, target)) { remaining.AddRange(force); continue; }
             Campaign(force, target);
         }
         return remaining;
+    }
+
+    internal const int MinimumForce = 3, CollateralCredit = 300_000, DefenderNeed = 800_000, ReserveNeed = 1_000_000, UnknownOdds = 500_000;
+
+    /// <summary>A force launches when its expected wins clear the defending stack: each unit counts its success odds
+    /// against the current best defender, and siege adds credit for collateral and bombard damage it deals first.</summary>
+    public bool Ready(List<Unit> force, City target)
+    {
+        if (force.Count < MinimumForce) return false;
+        int defenders = ctx.Sim.State.UnitsAt(target.Position).Count(u => ctx.IsEnemy(u.Owner) && u.Health > 0);
+        return ExpectedWins(force, target.Position) >= (long)defenders * DefenderNeed + ReserveNeed;
+    }
+
+    /// <summary>Sum of success odds (millionths) of every unit against the tile's best defender, with collateral credit.</summary>
+    public long ExpectedWins(IEnumerable<Unit> force, Hex target)
+    {
+        long total = 0;
+        foreach (var unit in force)
+        {
+            var def = ctx.Def(unit);
+            // Unseen defenders cannot be previewed: an unseen city counts as an even fight, a seen empty one as a sure win.
+            total += orders.Odds(unit, target) ?? (ctx.Sim.State.PlotAt(target).Visible.Contains(ctx.Team.Id) ? 1_000_000 : UnknownOdds);
+            if (def.CollateralDamage > 0 || def.BombardRate > 0) total += CollateralCredit;
+        }
+        return total;
     }
 
     private void Campaign(List<Unit> force, City target)
@@ -46,8 +70,36 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         foreach (var unit in force.Where(u => u.Position != assault.Value)) ctx.MoveToward(unit, assault.Value);
         Prepare(target.Position);
         if (force.Any(u => ctx.Role(u) == UnitRole.Melee && u.MovesLeft <= 0)) return;
-        foreach (var unit in force.OrderBy(u => ctx.Role(u) == UnitRole.Siege ? 0 : 1).ThenBy(u => u.Id))
-            Engage(unit, target.Position);
+        Assault(force, target.Position);
+    }
+
+    /// <summary>Attack one unit at a time, choosing again after every fight. Collateral siege goes first while more than
+    /// one defender stands, then the unit with the best odds against whoever defends now. The assault stops when no
+    /// remaining unit clears its odds threshold, so the rest of the stack is kept.</summary>
+    public void Assault(List<Unit> force, Hex target)
+    {
+        var pending = force.ToList();
+        while (true)
+        {
+            pending.RemoveAll(u => !ctx.Alive(u) || ctx.MilitaryState(u).Attacked || u.MovesLeft <= 0
+                || ctx.Grid.Distance(u.Position, target) > 1);
+            if (pending.Count == 0) return;
+            int defenders = ctx.Sim.State.UnitsAt(target).Count(u => ctx.IsEnemy(u.Owner) && u.Health > 0);
+            if (defenders == 0)
+            {
+                // Walk in with a unit that can hold the city.
+                var taker = pending.OrderBy(u => ctx.Role(u) == UnitRole.Melee ? 0 : 1).ThenBy(u => u.Id).First();
+                orders.Attack(taker, target);
+                return;
+            }
+            var pick = pending.Select(u => (Unit: u, Odds: orders.Odds(u, target) ?? 0))
+                .Where(x => x.Odds >= orders.ThresholdFor(x.Unit))
+                .OrderByDescending(x => defenders > 1 && ctx.Def(x.Unit).CollateralDamage > 0)
+                .ThenByDescending(x => x.Odds).ThenBy(x => x.Unit.Id).FirstOrDefault();
+            if (pick.Unit is null) return;
+            pending.Remove(pick.Unit);
+            if (!orders.Attack(pick.Unit, target)) continue;
+        }
     }
 
     /// <summary>All legal support fire is resolved before any close combat, including opportunistic stack attacks.</summary>
@@ -66,17 +118,13 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         if (ctx.Issue(command)) ctx.Done.Add(unit.Id);
     }
 
-    private void Engage(Unit unit, Hex target)
-    {
-        if (!ctx.Alive(unit) || ctx.MilitaryState(unit).Attacked) return;
-        var odds = orders.Odds(unit, target);
-        if (odds is null || odds >= orders.ThresholdFor(unit)) orders.Attack(unit, target);
-    }
-
     private Hex? AssaultTile(List<Unit> force, City target)
     {
+        // Enemy strength next to a tile, not counting the city itself, then the tile's own defense, then distance.
+        int garrison = ctx.ThreatAround(target.Position, 0);
         var tiles = ctx.Grid.Neighbors(ctx.Tile(target.Position)).Where(_targets.Land)
-            .OrderBy(t => force.Sum(u => ctx.Grid.Distance(u.Position, ctx.Grid.HexOf(t)))).ThenBy(t => t.Value).ToArray();
+            .OrderBy(t => ctx.ThreatAround(ctx.Grid.HexOf(t), 1) - garrison).ThenByDescending(TileDefense)
+            .ThenBy(t => force.Sum(u => ctx.Grid.Distance(u.Position, ctx.Grid.HexOf(t)))).ThenBy(t => t.Value).ToArray();
         return FirstReachable(tiles, force, CanReachThisTurn);
     }
 
@@ -104,8 +152,23 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         var leader = force[0];
         var tiles = ctx.Grid.Ring(ctx.Tile(target.Position), 2).Where(_targets.Land)
             .Where(t => ctx.Sim.State.Plots[t.Value].AreaId == _targets.Area(leader.Position))
-            .OrderBy(t => ctx.Grid.Distance(ctx.Tile(leader.Position), t)).ThenBy(t => t.Value).ToArray();
+            .OrderBy(t => StagingCost(t, leader)).ThenBy(t => t.Value).ToArray();
         return FirstReachable(tiles, force, (u, hex) => u.Position == hex || ctx.FindPath(u, hex) is not null)
             ?? leader.Position;
     }
+
+    /// <summary>Lower is better: exposure to enemy field units dominates, then defense against 15 points per hex of travel.</summary>
+    private long StagingCost(TileId tile, Unit leader) => ctx.ThreatAround(ctx.Grid.HexOf(tile), 1) * 1000L - TileDefense(tile)
+        + 15L * ctx.Grid.Distance(ctx.Tile(leader.Position), tile);
+
+    /// <summary>Defense percent a unit gets from the tile: terrain or feature, plus hills.</summary>
+    public int TileDefense(TileId tile)
+    {
+        var plot = ctx.Sim.State.Plots[tile.Value];
+        int defense = plot.Feature is { } feature ? ctx.Sim.Content.Get<Ariel.Content.Schema.FeatureDef>(feature).DefensePercent
+            : ctx.Sim.Content.Get<Ariel.Content.Schema.TerrainDef>(plot.Terrain).DefensePercent;
+        return defense + (plot.Kind == PlotKind.Hills ? HillsDefense : 0);
+    }
+
+    internal const int HillsDefense = 25;
 }

@@ -2,7 +2,7 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Ai;
 
-/// <summary>Found cities at scored sites. Continue safe destinations and retreat immediately from nearby threats.</summary>
+/// <summary>Found cities at scored sites. Continue safe destinations and retreat from nearby threats stronger than the escort.</summary>
 internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)
 {
     private readonly List<TileId> _targets = new();
@@ -23,7 +23,7 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)
     private void Act(Unit settler)
     {
         if (ctx.Cities.Count == 0) { FoundFirst(settler); return; }
-        if (ctx.ThreatAround(settler.Position, 3) > 0) { Retreat(settler); return; }
+        if (Threatened(settler, settler.Position)) { Retreat(settler); return; }
         var mission = CurrentMission(settler);
         if (mission is null) { if (ctx.Turn > 5) TryFound(settler); return; }
         if (mission.Target == ctx.Tile(settler.Position)) { TryFound(settler); return; }
@@ -84,7 +84,7 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)
         if (held is not null && Valid(settler, held)) { _targets.Add(held.Target); return; }
         _missions.Remove(settler.Id);
         if (!AiIntent.EligibleUnit(ctx, settler) || settler.MovesLeft <= 0) return;
-        if (ctx.ThreatAround(settler.Position, 3) > 0) return;
+        if (Threatened(settler, settler.Position)) return;
         var site = ChooseSite(settler);
         if (site is not null)
             _missions[settler.Id] = AiIntent.Create(ctx, settler, AiMissionKind.Settle, site.Tile);
@@ -96,7 +96,15 @@ internal sealed class SettlerPlanner(AiContext ctx, SitePlanner sites)
     private bool Destination(Unit settler, TileId tile) => sites.LegalDestination(tile)
         && ctx.Sim.State.Plots[tile.Value].AreaId == ctx.Sim.State.PlotAt(settler.Position).AreaId
         && _targets.All(t => ctx.Grid.Distance(t, tile) > 3)
-        && ctx.ThreatAround(settler.Position, 3) == 0 && ctx.ThreatAround(ctx.Grid.HexOf(tile), 3) == 0;
+        && !Threatened(settler, settler.Position) && !Threatened(settler, ctx.Grid.HexOf(tile));
+
+    /// <summary>Hostile strength near a position beats the soldiers standing guard with the settler.</summary>
+    private bool Threatened(Unit settler, Hex position) => ctx.ThreatAround(position, 3) > EscortStrength(settler);
+
+    /// <summary>Strength of own soldiers on the settler's tile.</summary>
+    public int EscortStrength(Unit settler) => ctx.Sim.State.UnitsAt(settler.Position)
+        .Where(u => u.Owner == ctx.PlayerId && u.Id != settler.Id && u.Health > 0 && ctx.Role(u) == UnitRole.Melee)
+        .Sum(u => ctx.Def(u).Strength * u.Health / 100);
 
     private Site? ChooseSite(Unit settler)
     {

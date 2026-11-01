@@ -20,16 +20,22 @@ public sealed class AiMod : IMod
         context.RegisterCommand<PruneAiIntentCommand>("prune_intent");
         context.RegisterCommand<DeclareWarCommand>("declare_war");
         context.RegisterCommand<MakePeaceCommand>("make_peace");
+        context.RegisterCommand<PrepareWarCommand>("prepare_war");
+        context.Subscribe<CombatResolved>("war_score_combat", WarRules.ScoreCombat);
+        context.Subscribe<CityCaptured>("war_score_capture", WarRules.ScoreCapture);
         context.Subscribe<DiplomaticWarDeclared>("diplomatic_war", (sim, war) =>
         {
             WarRules.State(sim, war.AggressorTeam).WarStarted[war.DefenderTeam] = sim.State.Turn;
             WarRules.State(sim, war.DefenderTeam).WarStarted[war.AggressorTeam] = sim.State.Turn;
+            WarRules.State(sim, war.AggressorTeam).WarScore.Remove(war.DefenderTeam);
+            WarRules.State(sim, war.DefenderTeam).WarScore.Remove(war.AggressorTeam);
         });
         context.Subscribe<DiplomaticPeaceSigned>("diplomatic_peace", (sim, peace) =>
         {
             var first = WarRules.State(sim, peace.FirstTeam);
             var second = WarRules.State(sim, peace.SecondTeam);
             first.WarStarted.Remove(peace.SecondTeam); second.WarStarted.Remove(peace.FirstTeam);
+            first.WarScore.Remove(peace.SecondTeam); second.WarScore.Remove(peace.FirstTeam);
             first.PeaceStarted[peace.SecondTeam] = sim.State.Turn;
             second.PeaceStarted[peace.FirstTeam] = sim.State.Turn;
         });

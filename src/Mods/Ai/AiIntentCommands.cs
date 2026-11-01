@@ -110,3 +110,17 @@ public sealed class PruneAiIntentCommand : GameCommand
         AiIntent.RemoveIfEmpty(ctx);
     }
 }
+
+/// <summary>Start preparing a war on a player, or with no target, stop preparing.</summary>
+public sealed class PrepareWarCommand : GameCommand
+{
+    public int? Target { get; init; }
+    public override string? Validate(Simulation sim) => IntentCommandRules.Validate(sim, Player)
+        ?? (Target is { } target && WarRules.Common(sim, Player, target) is { } error ? error : null);
+    public override void Apply(Simulation sim)
+    {
+        var ctx = new AiContext(sim, Player);
+        if (Target is { } target) AiIntent.Write(ctx).War = new(target, sim.State.Turn);
+        else if (AiIntent.Read(ctx).War is not null) { AiIntent.Write(ctx).War = null; AiIntent.RemoveIfEmpty(ctx); }
+    }
+}

@@ -21,6 +21,8 @@ internal sealed class AiContext
         public readonly Lazy<Dictionary<UnitRole, int>> UnitCounts;
         public readonly Lazy<Dictionary<UnitRole, int>> QueuedCounts;
         public readonly Lazy<int[]> ThreatStrength;
+        public readonly Lazy<int[]> PressureStrength;
+        public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Pressures = new();
         public readonly Lazy<CampaignTargets> Targets;
         public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Threats = new();
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
@@ -40,6 +42,9 @@ internal sealed class AiContext
             QueuedCounts = new(() => Cities.Value.SelectMany(c => c.ProductionQueue).Where(o => o.Kind == "cities:unit")
                 .GroupBy(o => ctx.Catalog.Roles.GetValueOrDefault(o.ContentId)).ToDictionary(g => g.Key, g => g.Count()));
             ThreatStrength = new(() => BuildThreatStrength(ctx, Enemies.Value));
+            PressureStrength = new(() => BuildThreatStrength(ctx, ctx.Sim.State.Units.Where(u => u.Health > 0 && ctx.Foreign(u.Owner)
+                && ctx.Def(u).Strength > 0 && ctx.Def(u).Domain == "military:domain_land"
+                && ctx.Sim.State.PlotAt(u.Position).Visible.Contains(ctx.Team.Id))));
             Targets = new(() => new CampaignTargets(ctx));
         }
 
@@ -117,6 +122,9 @@ internal sealed class AiContext
     public CityView ViewOf(City city) => _segment.Views.GetOrAdd(city.Id,
         _ => new Lazy<CityView>(() => CityView.Build(this, city))).Value;
     public bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);
+    /// <summary>Another civilization's player we are at peace with.</summary>
+    public bool Foreign(int player) => player != PlayerId && !IsEnemy(player) && Sim.State.PlayerById(player).TeamId != Team.Id
+        && !WarRules.IsBarbarian(Sim, player);
     public bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !WarRules.IsBarbarian(Sim, m)));
     public TileId Tile(Hex hex) => Grid.TileAt(hex);
 
@@ -176,6 +184,19 @@ internal sealed class AiContext
         return segment.Threats.GetOrAdd((Tile(position), radius), query =>
         {
             var strength = segment.ThreatStrength.Value;
+            int total = 0;
+            foreach (var tile in Grid.Range(query.Tile, query.Radius)) total = checked(total + strength[tile.Value]);
+            return total;
+        });
+    }
+
+    /// <summary>Visible land strength of civilizations at peace with us within a radius: troops massing on the border.</summary>
+    public int PressureAround(Hex position, int radius)
+    {
+        var segment = _segment;
+        return segment.Pressures.GetOrAdd((Tile(position), radius), query =>
+        {
+            var strength = segment.PressureStrength.Value;
             int total = 0;
             foreach (var tile in Grid.Range(query.Tile, query.Radius)) total = checked(total + strength[tile.Value]);
             return total;
