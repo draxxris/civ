@@ -153,10 +153,43 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
             .OrderBy(u => ctx.Grid.Distance(ship.Position, u.Position)).ThenBy(u => u.Id).FirstOrDefault();
         if (transport is not null) { ctx.MoveToward(ship, transport.Position); return; }
         if (ApproachCoastalTarget(ship)) return;
+        if (Blockade(ship)) return;
         if (_explorer.Explore(ship)) return;
         foreach (var port in ctx.Cities.Where(_targets.PortAccess).OrderBy(c => ctx.Grid.Distance(ship.Position, c.Position)).ThenBy(c => c.Id))
             if (ctx.MoveToward(ship, port.Position)) return;
     }
+
+    private readonly HashSet<int> _blockaded = new();
+
+    /// <summary>In war, one warship holds a blockade beside each reachable enemy coastal city: it sails to a sea tile
+    /// next to the city and sets the blockade activity once it has moves left there. A ship already blockading stays.</summary>
+    private bool Blockade(Unit ship)
+    {
+        if (!ctx.AtWarWithPlayers) return false;
+        var blockading = ctx.MilitaryState(ship).Activity == UnitActivity.Blockade;
+        foreach (var city in _targets.Enemies.Where(c => _targets.Coastal(c) && !WarRules.IsBarbarian(ctx.Sim, c.Owner))
+            .OrderBy(c => ctx.Grid.Distance(ship.Position, c.Position)).ThenBy(c => c.Id))
+        {
+            if (_blockaded.Contains(city.Id)) continue;
+            bool beside = ctx.Grid.Distance(ship.Position, city.Position) == 1;
+            if (blockading && beside) { _blockaded.Add(city.Id); return true; }
+            if (HeldByOther(ship, city)) { _blockaded.Add(city.Id); continue; }
+            foreach (var tile in ctx.Grid.Neighbors(ctx.Tile(city.Position)).Where(t => _targets.Water(t) && !ctx.Sim.State.Plots[t.Value].IsLake)
+                .OrderBy(t => ctx.Grid.Distance(ship.Position, ctx.Grid.HexOf(t))).ThenBy(t => t.Value))
+            {
+                var hex = ctx.Grid.HexOf(tile);
+                if (ship.Position != hex && !ctx.MoveToward(ship, hex)) continue;
+                _blockaded.Add(city.Id);
+                if (ctx.Alive(ship) && ship.Position == hex && ship.MovesLeft > 0)
+                    ctx.Issue(new SetUnitActivityCommand { Player = ctx.PlayerId, Unit = ship.Id, Activity = UnitActivity.Blockade });
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool HeldByOther(Unit ship, City city) => ctx.Units.Any(u => u.Id != ship.Id && ctx.Alive(u)
+        && ctx.MilitaryState(u).Activity == UnitActivity.Blockade && ctx.Grid.Distance(u.Position, city.Position) == 1);
 
     private bool ApproachCoastalTarget(Unit ship)
     {

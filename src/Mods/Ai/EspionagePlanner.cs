@@ -1,0 +1,93 @@
+using Ariel.Content.Schema;
+using Ariel.Game;
+
+namespace Ariel.Mods.Ai;
+
+/// <summary>Points the espionage budget at one rival, walks spies to that rival's cities, and runs the best mission the
+/// points allow: stealing a technology first, then sabotaging a wonder, and in war, stirring unrest or stealing gold.
+/// The rival is chosen from what this player can see: enemies first, then the nearest known civilization.</summary>
+internal sealed class EspionagePlanner(AiContext ctx)
+{
+    internal const int ReviewInterval = 5, FocusWeight = 4, OtherWeight = 1, CitiesPerSpy = 6;
+    private IEspionageService? Espionage => ctx.Sim.Content.Services.Get<IEspionageService>().SingleOrDefault();
+
+    public void Plan()
+    {
+        if (Espionage is not { } espionage || ctx.Cities.Count == 0) return;
+        int? focus = FocusTeam();
+        if ((ctx.Turn + ctx.PlayerId) % ReviewInterval == 0) Weights(espionage, focus);
+        foreach (var spy in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.Done.Contains(u.Id) && ctx.Def(u).Spy)
+            .OrderBy(u => u.Id).ToList())
+            Act(spy, focus);
+    }
+
+    /// <summary>Spies wanted: one per <see cref="CitiesPerSpy"/> cities once a rival is known.</summary>
+    public bool WantsSpy() => Espionage is not null && FocusTeam() is not null
+        && ctx.Units.Count(u => ctx.Def(u).Spy) + ctx.Cities.Sum(c => c.ProductionQueue.Count(o => o.Kind == "cities:unit"
+            && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Spy)) < Math.Max(1, ctx.Cities.Count / CitiesPerSpy);
+
+    private IEnumerable<City> KnownRivalCities() => ctx.Sim.State.Cities.Where(c => ctx.Sim.TeamOf(c.Owner).Id != ctx.Team.Id
+        && !WarRules.IsBarbarian(ctx.Sim, c.Owner) && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
+        && (ctx.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasMet(ctx.Sim, ctx.Team.Id, ctx.Sim.TeamOf(c.Owner).Id) ?? true));
+
+    /// <summary>An enemy team when at war, otherwise the known rival whose nearest city is closest to ours.</summary>
+    public int? FocusTeam()
+    {
+        var rivals = KnownRivalCities().GroupBy(c => ctx.Sim.TeamOf(c.Owner).Id)
+            .Select(g => (Team: g.Key, Enemy: ctx.Team.Wars.Contains(g.Key),
+                Distance: g.Min(c => ctx.Cities.Min(own => ctx.Grid.Distance(own.Position, c.Position)))))
+            .OrderByDescending(r => r.Enemy).ThenBy(r => r.Distance).ThenBy(r => r.Team).ToList();
+        return rivals.Count == 0 ? null : rivals[0].Team;
+    }
+
+    private void Weights(IEspionageService espionage, int? focus)
+    {
+        foreach (var team in ctx.Sim.State.Teams.Where(t => t.Id != ctx.Team.Id).OrderBy(t => t.Id))
+        {
+            int weight = team.Id == focus ? FocusWeight : OtherWeight;
+            if (espionage.ValidateWeight(ctx.Sim, ctx.PlayerId, team.Id, weight) is not null) continue;
+            if (espionage.Weight(ctx.Sim, ctx.PlayerId, team.Id) != weight)
+                ctx.Issue(new SetEspionageWeightCommand { Player = ctx.PlayerId, TargetTeam = team.Id, Weight = weight });
+        }
+    }
+
+    private void Act(Unit spy, int? focus)
+    {
+        ctx.Done.Add(spy.Id);
+        if (ctx.Sim.State.CityAt(spy.Position) is { } here && ctx.Sim.TeamOf(here.Owner).Id != ctx.Team.Id)
+        {
+            if (TryMission(spy, here)) return;
+            // Wait inside the city for points to build up.
+            return;
+        }
+        if (focus is not { } team) return;
+        var target = KnownRivalCities().Where(c => ctx.Sim.TeamOf(c.Owner).Id == team)
+            .Where(c => ctx.Sim.State.PlotAt(c.Position).AreaId == ctx.Sim.State.PlotAt(spy.Position).AreaId)
+            .OrderByDescending(c => c.Population).ThenBy(c => ctx.Grid.Distance(spy.Position, c.Position)).ThenBy(c => c.Id).FirstOrDefault();
+        if (target is not null) ctx.MoveToward(spy, target.Position);
+    }
+
+    /// <summary>Missions in order of worth. Each is tried through the normal command, which checks points and legality.</summary>
+    public bool TryMission(Unit spy, City city)
+    {
+        foreach (var (mission, tech) in Missions(city))
+            if (ctx.Issue(new ExecuteEspionageMissionCommand { Player = ctx.PlayerId, Unit = spy.Id, City = city.Id, Mission = mission, Tech = tech }))
+                return true;
+        return false;
+    }
+
+    private IEnumerable<(EspionageMissionKind, string?)> Missions(City city)
+    {
+        var research = ctx.Sim.Content.Services.Get<IResearchService>().SingleOrDefault();
+        if (research is not null)
+            foreach (var tech in ctx.Catalog.Techs.Where(t => !ctx.Team.Techs.Contains(t.Id))
+                .OrderByDescending(t => research.CalculateCost(ctx.Sim, ctx.Team.Id, t.Id).Cost).ThenBy(t => t.Id, StringComparer.Ordinal))
+                yield return (EspionageMissionKind.StealTech, tech.Id);
+        if (city.ProductionQueue.FirstOrDefault() is { Kind: "cities:building" } head
+            && CityBuildingRules.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId)))
+            yield return (EspionageMissionKind.SabotageProduction, null);
+        if (!ctx.IsEnemy(city.Owner)) yield break;
+        yield return (EspionageMissionKind.FomentUnhappiness, null);
+        yield return (EspionageMissionKind.StealTreasury, null);
+    }
+}

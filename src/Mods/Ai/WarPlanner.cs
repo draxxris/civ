@@ -34,11 +34,29 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
         int? best = null; long bestRatio = 0;
         foreach (var other in ctx.Sim.State.Players.Where(p => Candidate(p.Id)))
         {
+            if (AttitudeNeed(other.Id) is not { } shift) continue;
             long ratio = mine * 100 / Math.Max(1, AiContext.Power(ctx.Sim, other.Id));
-            if (ratio < need || ratio <= bestRatio) continue;
+            if (ratio < need + shift || ratio <= bestRatio) continue;
             best = other.Id; bestRatio = ratio;
         }
         return best;
+    }
+
+    /// <summary>Extra power advantage (percent) wanted before attacking a player, from this leader's attitude:
+    /// a grudge lowers the bar, goodwill raises it, and a friend or a defensive-pact partner is never attacked.</summary>
+    public int? AttitudeNeed(int player)
+    {
+        var diplomacy = ctx.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        if (diplomacy is null) return 0;
+        if (diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, ctx.Sim.State.PlayerById(player).TeamId)) return null;
+        return diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, player).Tier switch
+        {
+            AttitudeTier.Furious => -40,
+            AttitudeTier.Annoyed => -20,
+            AttitudeTier.Pleased => 40,
+            AttitudeTier.Friendly => null,
+            _ => 0,
+        };
     }
 
     private bool Candidate(int player)
