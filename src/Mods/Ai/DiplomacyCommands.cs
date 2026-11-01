@@ -8,6 +8,8 @@ public sealed class AiTeamState
 {
     [JsonInclude] public SortedDictionary<int, int> WarStarted { get; set; } = new();
     [JsonInclude] public SortedDictionary<int, int> PeaceStarted { get; set; } = new();
+    /// <summary>Success in each current war: unit value destroyed plus cities taken, less the same suffered.</summary>
+    [JsonInclude] public SortedDictionary<int, int> WarScore { get; set; } = new();
 }
 
 /// <summary>Shared checks for the minimal team war-state commands.</summary>
@@ -32,6 +34,34 @@ internal static class WarRules
         if (sim.State.PlayerById(player).TeamId == sim.State.PlayerById(target).TeamId) return "same team";
         return IsBarbarian(sim, target) || IsBarbarian(sim, player) ? "barbarians are always at war" : null;
     }
+    internal const int CityCaptureScore = 60, CityPopulationScore = 10;
+
+    /// <summary>A destroyed unit scores its production cost for the winner's team and against the loser's.</summary>
+    internal static void ScoreCombat(Simulation sim, CombatResolved combat)
+    {
+        if (combat.Report is not { LoserDied: true } report || combat.LoserOwner < 0) return;
+        int loser = combat.LoserOwner;
+        int winner = report.AttackerOwner == loser ? report.DefenderOwner : report.AttackerOwner;
+        string type = report.AttackerOwner == loser ? report.AttackerType : report.DefenderType;
+        if (winner < 0 || !sim.Content.TryGet<Ariel.Content.Schema.UnitDef>(type, out var def)) return;
+        Score(sim, winner, loser, def.Cost);
+    }
+
+    internal static void ScoreCapture(Simulation sim, CityCaptured capture)
+    {
+        int population = sim.State.FindCity(capture.City)?.Population ?? 0;
+        Score(sim, capture.Player, capture.PreviousOwner, CityCaptureScore + CityPopulationScore * population);
+    }
+
+    private static void Score(Simulation sim, int winner, int loser, int points)
+    {
+        if (winner == loser || !sim.State.Players.Any(p => p.Id == winner) || !sim.State.Players.Any(p => p.Id == loser)) return;
+        int a = sim.State.PlayerById(winner).TeamId, b = sim.State.PlayerById(loser).TeamId;
+        if (a == b || !sim.State.TeamById(a).Wars.Contains(b) || IsBarbarian(sim, winner) || IsBarbarian(sim, loser)) return;
+        var mine = State(sim, a).WarScore; mine[b] = mine.GetValueOrDefault(b) + points;
+        var theirs = State(sim, b).WarScore; theirs[a] = theirs.GetValueOrDefault(a) - points;
+    }
+
     internal static string? PeaceCooldown(Simulation sim, int team, int other) =>
         Read(sim, team).PeaceStarted.TryGetValue(other, out int signed) && sim.State.Turn - signed < PeaceCooldownTurns
             ? "peace treaty is too recent" : null;
@@ -53,6 +83,8 @@ var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
         sim.State.SetWar(mine, theirs, true);
         WarRules.State(sim, mine).WarStarted[theirs] = sim.State.Turn;
         WarRules.State(sim, theirs).WarStarted[mine] = sim.State.Turn;
+        WarRules.State(sim, mine).WarScore.Remove(theirs);
+        WarRules.State(sim, theirs).WarScore.Remove(mine);
     }
 }
 
@@ -77,6 +109,8 @@ var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
         sim.State.SetWar(mine, theirs, false);
         WarRules.State(sim, mine).WarStarted.Remove(theirs);
         WarRules.State(sim, theirs).WarStarted.Remove(mine);
+        WarRules.State(sim, mine).WarScore.Remove(theirs);
+        WarRules.State(sim, theirs).WarScore.Remove(mine);
         WarRules.State(sim, mine).PeaceStarted[theirs] = sim.State.Turn;
         WarRules.State(sim, theirs).PeaceStarted[mine] = sim.State.Turn;
     }

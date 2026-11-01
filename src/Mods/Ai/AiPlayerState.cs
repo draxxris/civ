@@ -8,7 +8,12 @@ public sealed class AiPlayerState
     public CivicGoal? Civic { get; set; }
     public SortedDictionary<int, CampaignGoal> Campaigns { get; set; } = new();
     public SortedDictionary<int, UnitMission> Missions { get; set; } = new();
+    public WarPreparation? War { get; set; }
 }
+
+/// <summary>A war being prepared: the intended target and the turn preparation began. The army gathers at the border
+/// city nearest the target before the declaration.</summary>
+public sealed record WarPreparation(int Target, int StartedTurn);
 
 /// <summary>Civic ids preferred at the last evaluation, including an empty choice when no change was worthwhile.</summary>
 public sealed record CivicGoal(int EvaluatedTurn, int ReviewTurn, string Dependencies, List<string> Civics);
@@ -64,7 +69,7 @@ internal static class AiIntent
     internal static void RemoveIfEmpty(AiContext ctx)
     {
         var state = ctx.Self.Extensions.Get<AiPlayerState>(ctx.Sim.Content);
-        if (state is { Civic: null, Campaigns.Count: 0, Missions.Count: 0 })
+        if (state is { Civic: null, Campaigns.Count: 0, Missions.Count: 0, War: null })
             ctx.Self.Extensions.Remove<AiPlayerState>(ctx.Sim.Content);
     }
 
@@ -85,7 +90,7 @@ internal static class AiIntent
         var state = ctx.Self.Extensions.Get<AiPlayerState>(ctx.Sim.Content);
         if (state is null) return;
         state.Missions = CleanMissions(ctx);
-        if (ctx.Cities.Count == 0) { state.Civic = null; state.Campaigns.Clear(); state.Missions.Clear(); }
+        if (ctx.Cities.Count == 0) { state.Civic = null; state.Campaigns.Clear(); state.Missions.Clear(); state.War = null; }
         if (ctx.Team.Wars.Count == 0) state.Campaigns.Clear();
     }
 

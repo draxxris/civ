@@ -4,6 +4,8 @@ using Ariel.Game;
 namespace Ariel.Mods.Ai;
 
 /// <summary>Soldier orders in priority order: garrisons, hunting nearby enemies, the war effort, exploring, then resting in cities.</summary>
+internal enum PromotionRole { General, Defender, Attacker, Siege, Scout }
+
 internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner cities, AttackPlanner attack)
 {
     private const int ParallelPaths = 4;
@@ -19,14 +21,19 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         var navy = new NavalPlanner(ctx, _orders, attack);
         navy.Support();
         var free = Soldiers().Where(u => !ctx.Done.Contains(u.Id) && u.MovesLeft > 0).ToList();
+        free = Heal(free);
+        free = Escort(free);
         free = Hunt(free);
         free = attack.Plan(free, Views);
+        free = Stage(free);
         free = navy.Sealift(free);
         navy.Plan();
         free = ExploreWith(free);
         foreach (var unit in free) Rest(unit);
         foreach (var scout in ctx.UnitsWithRole(UnitRole.Explorer).Where(u => !ctx.Done.Contains(u.Id)).ToList()) Scout(scout);
         Upgrades();
+        // Fights this turn can earn another level: spend it now rather than leave it waiting a turn.
+        foreach (var unit in Promotable().ToList()) Promote(unit);
     }
 
     /// <summary>Every unit still in play for this player: alive, not dead on health, and not loaded as cargo.</summary>
@@ -81,12 +88,107 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
     {
         var service = ctx.Service<IUnitService>();
         if (unit.Experience < service.ExperienceNeeded(ctx.Sim, unit.Id)) return;
+        _promoting = unit;
         var best = ctx.Sim.Content.Get<PromotionDef>().All.Where(p => service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
             .OrderByDescending(Value).ThenBy(p => p.Id, StringComparer.Ordinal).FirstOrDefault();
         if (best is not null) ctx.Issue(new PromoteMilitaryUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Promotion = best.Id });
     }
 
-    private static int Value(PromotionDef p) => p.CombatPercent * 3 + p.CityDefense + p.CityAttack / 2 + p.HillsDefense / 2 + p.ExperiencePercent / 4;
+    private int Value(PromotionDef p) => Value(p, PromotionRoleOf(_promoting!));
+    private Unit? _promoting;
+
+    /// <summary>The job a promotion should serve: holding a city, taking one, softening a stack, or scouting.</summary>
+    public PromotionRole PromotionRoleOf(Unit unit)
+    {
+        var def = ctx.Def(unit);
+        return ctx.Role(unit) switch
+        {
+            UnitRole.Siege => PromotionRole.Siege,
+            UnitRole.Explorer or UnitRole.NavalExplorer => PromotionRole.Scout,
+            UnitRole.Melee when def.OnlyDefensive || (AiOptions.Defends(def) && !AiOptions.Attacks(def))
+                || (ctx.CityAtUnit(unit) is not null && ctx.MilitaryState(unit).Activity == UnitActivity.Fortify) => PromotionRole.Defender,
+            UnitRole.Melee => PromotionRole.Attacker,
+            _ => PromotionRole.General,
+        };
+    }
+
+    public static int Value(PromotionDef p, PromotionRole role)
+    {
+        int value = p.CombatPercent * 3 + p.ExperiencePercent / 4 + p.FirstStrikesChange * 15 + p.ChanceFirstStrikesChange * 8;
+        return value + role switch
+        {
+            PromotionRole.Defender => p.CityDefense * 2 + p.HillsDefense + p.FirstStrikesChange * 10,
+            PromotionRole.Attacker => p.CityAttack * 2 + p.HillsAttack / 2 + p.WithdrawalChange / 2 + p.MovesChange * 15,
+            PromotionRole.Siege => p.CollateralDamageChange * 2 + p.BombardRateChange * 3 + p.CityAttack + p.WithdrawalChange,
+            PromotionRole.Scout => p.MovesChange * 40 + p.VisibilityChange * 30 + p.WithdrawalChange / 2,
+            _ => p.CityDefense / 2 + p.CityAttack / 2 + p.HillsDefense / 2 + p.MovesChange * 20,
+        };
+    }
+
+    internal const int WoundedHealth = 70, HavenThreatRadius = 2;
+
+    /// <summary>Wounded soldiers heal where they are only when no enemy is near; otherwise they fall back to the
+    /// nearest reachable own city. Either way they leave hunting and campaigns until healed.</summary>
+    private List<Unit> Heal(List<Unit> free)
+    {
+        var remaining = new List<Unit>();
+        foreach (var unit in free)
+        {
+            if (!ctx.Alive(unit)) continue;
+            if (unit.Health >= WoundedHealth) { remaining.Add(unit); continue; }
+            ctx.Done.Add(unit.Id);
+            if (ctx.CityAtUnit(unit) is not null || ctx.ThreatAround(unit.Position, HavenThreatRadius) == 0 || !Retreat(unit))
+                _orders.Fortify(unit);
+        }
+        return remaining;
+    }
+
+    private bool Retreat(Unit unit)
+    {
+        int area = ctx.Sim.State.PlotAt(unit.Position).AreaId;
+        foreach (var city in ctx.Cities.Where(c => ctx.Sim.State.PlotAt(c.Position).AreaId == area)
+            .OrderBy(c => ctx.Grid.Distance(c.Position, unit.Position)).ThenBy(c => c.Id).Take(3))
+            if (ctx.MoveToward(unit, city.Position))
+            {
+                if (ctx.Alive(unit) && unit.MovesLeft > 0) _orders.Fortify(unit);
+                return true;
+            }
+        return false;
+    }
+
+    internal const int EscortReach = 4;
+
+    /// <summary>Each settler that has left the cities gets one soldier on its tile. Settlers move first, so the escort
+    /// follows to where the settler stopped and the pair spends the other players' turns together.</summary>
+    private List<Unit> Escort(List<Unit> free)
+    {
+        var pool = free.Where(u => ctx.Role(u) == UnitRole.Melee).ToList();
+        foreach (var settler in ctx.UnitsWithRole(UnitRole.Settler).Where(s => ctx.Alive(s) && ctx.CityAtUnit(s) is null).OrderBy(s => s.Id).ToList())
+        {
+            var guard = pool.Where(u => ctx.Alive(u) && ctx.Grid.Distance(u.Position, settler.Position) <= EscortReach)
+                .OrderBy(u => ctx.Grid.Distance(u.Position, settler.Position)).ThenByDescending(u => ctx.Def(u).Strength).ThenBy(u => u.Id)
+                .FirstOrDefault(u => u.Position == settler.Position || ctx.FindPath(u, settler.Position) is not null);
+            if (guard is null) continue;
+            pool.Remove(guard);
+            ctx.Done.Add(guard.Id);
+            if (guard.Position != settler.Position) ctx.MoveToward(guard, settler.Position);
+        }
+        return free.Where(u => !ctx.Done.Contains(u.Id)).ToList();
+    }
+
+    /// <summary>While a war is being prepared, the field army gathers at the border city nearest the target.</summary>
+    private List<Unit> Stage(List<Unit> free)
+    {
+        if (ctx.AtWarWithPlayers || AiIntent.Read(ctx).War is not { } war) return free;
+        if (new WarPlanner(ctx, army).BorderCity(war.Target) is not { } border) return free;
+        foreach (var unit in free.Where(ctx.Alive))
+        {
+            ctx.Done.Add(unit.Id);
+            if (ctx.Grid.Distance(unit.Position, border.Position) <= 1) _orders.Fortify(unit);
+            else ctx.MoveToward(unit, border.Position);
+        }
+        return [];
+    }
 
     /// <summary>Free soldiers attack enemies that stand on or near our land when the odds are good.</summary>
     private List<Unit> Hunt(List<Unit> free)
@@ -95,7 +197,6 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         foreach (var unit in free)
         {
             if (!ctx.Alive(unit)) continue;
-            if (unit.Health < 70) { ctx.Done.Add(unit.Id); _orders.Fortify(unit); continue; }
             if (!HuntOne(unit)) remaining.Add(unit);
         }
         return remaining;
@@ -144,21 +245,40 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         if (ctx.NearestCity(unit.Position) is { } city) ctx.MoveToward(unit, city.Position);
     }
 
-    /// <summary>Upgrade units in cities when the treasury is comfortably above the reserve.</summary>
+    /// <summary>Upgrade units in cities when the treasury is comfortably above the reserve: threatened cities first,
+    /// then the most strength gained per gold. A threatened city does not wait for the three-turn review.</summary>
     private void Upgrades()
     {
-        if (ctx.Turn % 3 != ctx.PlayerId % 3) return;
+        var threat = Views.ToDictionary(v => v.City.Id, v => v.Threat);
+        bool urgent = threat.Values.Any(t => t > 0);
+        if (!urgent && ctx.Turn % 3 != ctx.PlayerId % 3) return;
         var service = ctx.Service<IUnitService>();
         long spare = ctx.Self.Treasury - EconomyPlanner.Reserve(ctx.Cities.Count);
+        if (spare <= 0) return;
+        var options = new List<(Unit Unit, string Target, long Price, int Threat, long Value)>();
         foreach (var unit in Soldiers().Where(u => ctx.CityAtUnit(u) is not null).ToList())
-        {
-            if (spare <= 0) return;
-            foreach (var target in ctx.Def(unit).Upgrades.Keys.OrderBy(k => k, StringComparer.Ordinal))
+            foreach (var target in ctx.Def(unit).Upgrades.Keys)
             {
                 long price = service.UpgradePrice(ctx.Sim, unit.Id, target);
-                if (price > spare || !ctx.Issue(new UpgradeUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Target = target })) continue;
-                spare -= price; break;
+                if (UpgradeValue(ctx.Def(unit), ctx.Sim.Content.Get<UnitDef>(target), price) is not { } value) continue;
+                options.Add((unit, target, price, threat.GetValueOrDefault(ctx.CityAtUnit(unit)!.Id), value));
             }
+        var upgraded = new HashSet<int>();
+        foreach (var option in options.OrderByDescending(o => o.Threat).ThenByDescending(o => o.Value).ThenBy(o => o.Unit.Id)
+            .ThenBy(o => o.Target, StringComparer.Ordinal))
+        {
+            if (spare <= 0) return;
+            if (upgraded.Contains(option.Unit.Id) || option.Price > spare || !ctx.Alive(option.Unit)) continue;
+            if (!ctx.Issue(new UpgradeUnitCommand { Player = ctx.PlayerId, Unit = option.Unit.Id, Target = option.Target })) continue;
+            upgraded.Add(option.Unit.Id);
+            spare -= option.Price;
         }
+    }
+
+    /// <summary>Strength gained per hundred gold, or null when the upgrade adds no strength.</summary>
+    public static long? UpgradeValue(UnitDef from, UnitDef to, long price)
+    {
+        int gain = to.Strength - from.Strength;
+        return gain <= 0 ? null : gain * 100_000L / Math.Max(1, price);
     }
 }
