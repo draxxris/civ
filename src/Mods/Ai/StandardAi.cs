@@ -29,10 +29,12 @@ public sealed class StandardAi : IPlayerAI
         new ResearchPlanner(ctx).Plan();
         new WarPlanner(ctx, army).Plan();
         new CivicPlanner(ctx).Plan();
+        new DiplomacyPlanner(ctx).Plan();
         new SettlerPlanner(ctx, sites).Plan();
         ctx.Refresh();
         new CitizenPlanner(ctx, army).Plan();
         new ReligionPlanner(ctx).Plan();
+        new CorporationPlanner(ctx).Plan();
         new GreatPersonPlanner(ctx).Plan();
         ctx.Refresh();
         var cities = new CityPlanner(ctx, sites, army);
@@ -42,6 +44,7 @@ public sealed class StandardAi : IPlayerAI
         new AirPlanner(ctx).Plan();
         var orders = new UnitOrders(ctx);
         new MilitaryPlanner(ctx, army, cities, new AttackPlanner(ctx, orders)).Plan();
+        new EspionagePlanner(ctx).Plan();
         new EconomyPlanner(ctx).Plan();
         new HurryPlanner(ctx, cities).Plan();
     }
