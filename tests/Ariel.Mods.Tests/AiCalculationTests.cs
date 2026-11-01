@@ -729,6 +729,10 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         }
         if (sim.State.Plots[tile.Value].Kind == PlotKind.Hills) score += 14;
         int nearest = own.Select(c => grid.Distance(grid.TileAt(c.Position), tile)).DefaultIfEmpty(0).Min();
+        // Contested land: within seven tiles of a rival city, early in the game, a site gains up to 18.
+        int rival = sim.State.Cities.Where(c => c.Owner != 0).Select(c => grid.Distance(grid.TileAt(c.Position), tile))
+            .DefaultIfEmpty(int.MaxValue).Min();
+        if (rival <= 7) score += sim.State.Turn < 150 ? 18 * (8 - rival) / 8 : -12 * (8 - rival) / 8;
         return score - Math.Max(0, nearest - 6) * 12;
     }
 

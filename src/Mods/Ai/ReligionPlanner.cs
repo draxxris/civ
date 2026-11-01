@@ -22,12 +22,26 @@ internal sealed class ReligionPlanner(AiContext ctx)
     {
         if (GovernmentStatus.IsAnarchy(ctx.Sim, ctx.PlayerId)) return;
         if (!ctx.Self.Civics.Values.Any(c => ctx.Sim.Content.Get<CivicDef>(c).RequiresStateReligion)) return;
-        int Count(string id) => ctx.Cities.Count(c => religion.Present(ctx.Sim, c.Id).Contains(id));
+        int Count(string id) => StateReligionValue(religion, id);
         var current = religion.StateReligion(ctx.Sim, ctx.PlayerId);
         var best = religion.Choices(ctx.Sim, ctx.PlayerId).OrderByDescending(r => Count(r.Id))
             .ThenBy(r => r.Id, StringComparer.Ordinal).FirstOrDefault();
         if (best is null || current is not null && Count(best.Id) <= Count(current)) return;
         ctx.Issue(new SetStateReligionCommand { Player = ctx.PlayerId, Religion = best.Id });
+    }
+
+    internal const int HolyCityValue = 3, ShrineValue = 3;
+
+    /// <summary>Own cities that follow the faith, plus a bonus for holding its holy city and more for its shrine there,
+    /// since the shrine's income grows with the faith.</summary>
+    public int StateReligionValue(IReligionService religion, string id)
+    {
+        int value = ctx.Cities.Count(c => religion.Present(ctx.Sim, c.Id).Contains(id));
+        if (religion.HolyCity(ctx.Sim, id) is not { } holy || ctx.Sim.State.FindCity(holy) is not { } city || city.Owner != ctx.PlayerId)
+            return value;
+        value += HolyCityValue;
+        if (city.Buildings.Any(b => ctx.Sim.Content.Get<BuildingDef>(b).GlobalReligionCommerce == id)) value += ShrineValue;
+        return value;
     }
 
     private void Purge(Unit unit, IReligionService religion)
@@ -45,10 +59,26 @@ internal sealed class ReligionPlanner(AiContext ctx)
         foreach (var spread in ctx.Def(unit).ReligionSpreads.Where(p => p.Value > 0).OrderBy(p => p.Key, StringComparer.Ordinal))
         {
             var targets = ctx.Cities.Where(c => !religion.Present(ctx.Sim, c.Id).Contains(spread.Key))
-                .OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenByDescending(c => c.Population).ThenBy(c => c.Id);
+                .OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenByDescending(c => c.Population).ThenBy(c => c.Id)
+                .Concat(ForeignTargets(religion, unit, spread.Key));
             foreach (var city in targets)
                 if (Visit(unit, city, new SpreadReligionCommand { Player = ctx.PlayerId, Unit = unit.Id, Religion = spread.Key })) return;
         }
+    }
+
+    internal const int ForeignSpreadRange = 10;
+
+    /// <summary>Once every own city has the faith, nearby cities of civilizations at peace come next: sharing a
+    /// religion improves relations, and a holy city's shrine earns from every follower.</summary>
+    private IEnumerable<City> ForeignTargets(IReligionService religion, Unit unit, string faith)
+    {
+        if (ctx.Cities.Any(c => !religion.Present(ctx.Sim, c.Id).Contains(faith))) return [];
+        return ctx.Sim.State.Cities.Where(c => c.Owner != ctx.PlayerId && !ctx.IsEnemy(c.Owner)
+                && !WarRules.IsBarbarian(ctx.Sim, c.Owner)
+                && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
+                && ctx.Grid.Distance(unit.Position, c.Position) <= ForeignSpreadRange
+                && !religion.Present(ctx.Sim, c.Id).Contains(faith))
+            .OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenByDescending(c => c.Population).ThenBy(c => c.Id).ToList();
     }
 
     private bool Visit(Unit unit, City city, GameCommand command)

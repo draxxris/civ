@@ -14,7 +14,7 @@ internal sealed class SitePlanner
     private readonly object _gate = new();
     private Segment? _segment;
 
-    private sealed record Geography(bool[] Excluded, int[] NearestCity);
+    private sealed record Geography(bool[] Excluded, int[] NearestCity, int[] NearestRival);
 
     private sealed class Segment
     {
@@ -63,12 +63,18 @@ internal sealed class SitePlanner
         return DistinctSites().Count > pending;
     }
 
+    internal const int CapitalGateTurn = 55, CapitalGatePopulation = 4;
+
     private bool EstablishedCapital()
     {
         // Do not rush free settlers while the capital cannot support growth or replace its defenders.
         bool worker = ctx.CountUnits(UnitRole.Worker) > 0;
         int soldiers = ctx.CountUnits(UnitRole.Melee);
-        return worker && soldiers >= 2 && ctx.Turn >= 55;
+        if (!worker || soldiers < 2) return false;
+        if (ctx.Turn >= CapitalGateTurn) return true;
+        // A capital that has reached a working size and its happy cap gains little from waiting for the turn gate.
+        return ctx.Cities.Count == 1 && ctx.Cities[0] is var capital && capital.Population >= CapitalGatePopulation
+            && ctx.ViewOf(capital).HappyMargin <= 0;
     }
 
     private bool ExpansionEconomyReady()
@@ -168,7 +174,20 @@ internal sealed class SitePlanner
         if (center.Kind == PlotKind.Hills) score += 14;
         if (ctx.Sim.State.Plots[tile.Value].Bonus is not null) score -= 6;
         int nearest = segment.Geography.Value.NearestCity[tile.Value];
+        score += ContestedValue(segment.Geography.Value.NearestRival[tile.Value]);
         return new(tile, score - Math.Max(0, nearest - 6) * 12, center.AreaId);
+    }
+
+    internal const int ContestedRange = 7, ContestedEarlyBonus = 18, ContestedLatePenalty = 12, ContestedLateTurn = 150;
+
+    /// <summary>Land near a rival is worth claiming before the rival takes it, and costly to hold late in the game.</summary>
+    public int ContestedValue(int rivalDistance)
+    {
+        if (rivalDistance > ContestedRange) return 0;
+        int closeness = ContestedRange + 1 - rivalDistance;
+        return ctx.Turn < ContestedLateTurn
+            ? ContestedEarlyBonus * closeness / (ContestedRange + 1)
+            : -ContestedLatePenalty * closeness / (ContestedRange + 1);
     }
 
     private Geography BuildGeography()
@@ -177,16 +196,26 @@ internal sealed class SitePlanner
         foreach (var city in ctx.Sim.State.Cities)
             foreach (var tile in ctx.Grid.Range(ctx.Tile(city.Position), MinRange + (city.Owner == ctx.PlayerId ? 1 : 2)))
                 excluded[tile.Value] = true;
-        return new(excluded, NearestCityDistances());
+        var rivals = ctx.Sim.State.Cities.Where(c => c.Owner != ctx.PlayerId
+            && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)).ToList();
+        var rivalDistance = rivals.Count == 0 ? FilledDistances(int.MaxValue) : NearestCityDistances(rivals);
+        return new(excluded, NearestCityDistances(ctx.Cities), rivalDistance);
     }
 
-    private int[] NearestCityDistances()
+    private int[] FilledDistances(int value)
     {
         var distance = new int[ctx.Grid.Count];
-        if (ctx.Cities.Count == 0) return distance;
+        Array.Fill(distance, value);
+        return distance;
+    }
+
+    private int[] NearestCityDistances(IReadOnlyList<City> cities)
+    {
+        var distance = new int[ctx.Grid.Count];
+        if (cities.Count == 0) return distance;
         Array.Fill(distance, int.MaxValue);
         var frontier = new Queue<TileId>();
-        foreach (var city in ctx.Cities)
+        foreach (var city in cities)
         {
             var tile = ctx.Tile(city.Position);
             distance[tile.Value] = 0;
