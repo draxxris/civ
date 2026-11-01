@@ -14,7 +14,7 @@ internal sealed class HurryPlanner(AiContext ctx, CityPlanner cities)
         if (spare <= 0) return;
         var hurry = ctx.Service<ICityHurryService>();
         int done = 0;
-        foreach (var view in cities.Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
+        foreach (var view in cities.Views.OrderByDescending(Urgency).ThenByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
             if (done >= MaxPerTurn || spare <= 0) return;
             if (view.City.ProductionQueue.FirstOrDefault() is not { } head || head.Kind == "economy:process") continue;
@@ -23,5 +23,20 @@ internal sealed class HurryPlanner(AiContext ctx, CityPlanner cities)
             if (gold <= 0 || gold > spare || !ctx.Issue(new HurryCityCommand { Player = ctx.PlayerId, CityId = view.City.Id, HurryId = HurryGold })) continue;
             spare -= gold; done++;
         }
+    }
+
+    /// <summary>Defenders in threatened cities first, then settlers, then wonders, then everything else.</summary>
+    public int Urgency(CityView view)
+    {
+        if (view.City.ProductionQueue.FirstOrDefault() is not { } head) return 0;
+        if (head.Kind == "cities:unit")
+        {
+            var role = ctx.Catalog.Roles.GetValueOrDefault(head.ContentId);
+            if (view.Threat > 0 && role is UnitRole.Melee) return 3;
+            if (role == UnitRole.Settler) return 2;
+            return 0;
+        }
+        return head.Kind == "cities:building"
+            && CityBuildingRules.IsWonder(ctx.Sim.Content.Get<Ariel.Content.Schema.BuildingDef>(head.ContentId)) ? 1 : 0;
     }
 }

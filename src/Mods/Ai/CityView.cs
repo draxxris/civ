@@ -20,3 +20,27 @@ internal sealed record CityView(City City, YieldVector Yields, int HappyMargin, 
             ctx.ThreatAround(city.Position, 3), garrison);
     }
 }
+
+/// <summary>What a city is best at, from its yields compared with the empire's other cities.</summary>
+internal enum CityFocus { General, Production, Military, Science, Commerce }
+
+internal static class CityFocusRules
+{
+    /// <summary>A city leads with production when it has well above the empire's average production, and becomes the
+    /// military city when it also has the empire's top production. High-commerce cities follow the leader's gold or science preference.
+    /// Small empires (fewer than three cities) keep a general focus.</summary>
+    public static CityFocus Focus(CityView v, IReadOnlyList<CityView> all, bool favorGold)
+    {
+        if (all.Count < 3) return CityFocus.General;
+        long production = all.Sum(c => (long)c.Production), commerce = all.Sum(c => (long)Math.Max(0, c.Commerce));
+        bool productive = v.Production * 100L * all.Count >= production * 130;
+        bool rich = v.Commerce * 100L * all.Count >= commerce * 130;
+        if (productive)
+        {
+            var top = all.OrderByDescending(c => c.Production).ThenBy(c => c.City.Id).First();
+            return top.City.Id == v.City.Id ? CityFocus.Military : CityFocus.Production;
+        }
+        if (rich) return favorGold ? CityFocus.Commerce : CityFocus.Science;
+        return CityFocus.General;
+    }
+}

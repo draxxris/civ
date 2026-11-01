@@ -59,22 +59,41 @@ internal sealed class CivicPlanner(AiContext ctx)
         });
     }
 
+    internal const int BundleThreshold = 15;
+
+    /// <summary>Best civic per option, then bundled into one revolution: once one option clears the full threshold,
+    /// smaller gains in other options ride along, because the anarchy is paid only once. A civic that needs a state
+    /// religion the empire cannot hold is skipped, and a set the rules reject loses its weakest change until it passes.</summary>
     private (List<string> Civics, int Gain) Changes()
     {
         var government = ctx.Service<IGovernmentService>();
-        var picked = new List<string>(); int gain = 0;
+        var options = new List<(string Civic, int Gain)>();
         foreach (var option in ctx.Sim.Content.Get<CivicOptionDef>().All.OrderBy(o => o.Id, StringComparer.Ordinal))
         {
             ctx.Self.Civics.TryGetValue(option.Id, out var held);
             int heldScore = held is null ? 0 : Score(ctx.Sim.Content.Get<CivicDef>(held));
-            var best = ctx.Sim.Content.Get<CivicDef>().All.Where(c => c.Option == option.Id && c.Id != held)
-                .Select(c => (Civic: c, Score: Score(c))).Where(x => x.Score - heldScore >= GainThreshold)
+            var best = ctx.Sim.Content.Get<CivicDef>().All.Where(c => c.Option == option.Id && c.Id != held && ReligionFits(c))
+                .Select(c => (Civic: c, Score: Score(c))).Where(x => x.Score - heldScore >= BundleThreshold)
                 .OrderByDescending(x => x.Score).ThenBy(x => x.Civic.Id, StringComparer.Ordinal)
                 .FirstOrDefault(x => government.Validate(ctx.Sim, ctx.PlayerId, [x.Civic.Id]) is null);
-            if (best.Civic is null) continue;
-            picked.Add(best.Civic.Id); gain += best.Score - heldScore;
+            if (best.Civic is not null) options.Add((best.Civic.Id, best.Score - heldScore));
         }
-        return (picked, gain);
+        if (!options.Any(o => o.Gain >= GainThreshold)) return ([], 0);
+        var picked = options.OrderByDescending(o => o.Gain).ThenBy(o => o.Civic, StringComparer.Ordinal).ToList();
+        while (picked.Count > 1 && government.Validate(ctx.Sim, ctx.PlayerId, picked.Select(p => p.Civic).ToList()) is not null)
+            picked.RemoveAt(picked.Count - 1);
+        if (!picked.Any(o => o.Gain >= GainThreshold)) return ([], 0);
+        return (picked.Select(p => p.Civic).OrderBy(c => c, StringComparer.Ordinal).ToList(), picked.Sum(p => p.Gain));
+    }
+
+    /// <summary>A civic that needs a state religion is only worth adopting when one of the empire's religions is present.</summary>
+    private bool ReligionFits(CivicDef c)
+    {
+        if (!c.RequiresStateReligion) return true;
+        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        if (religion is null) return false;
+        return religion.StateReligion(ctx.Sim, ctx.PlayerId) is not null
+            || ctx.Cities.Any(city => religion.Present(ctx.Sim, city.Id).Count > 0);
     }
 
     /// <summary>Integer estimate of a civic's worth to this leader and empire size.</summary>
@@ -88,8 +107,15 @@ internal sealed class CivicPlanner(AiContext ctx)
         score += scale * (c.CivicHappiness * 8 + c.ExtraHealth * 6 + c.PopulationGrowthPercent / 4);
         score += c.BaseFreeUnits * 2 + c.BaseFreeMilitaryUnits * 2 + c.FreeSpecialist * 8 + c.WorkerSpeedModifier / 4;
         score -= UpkeepCost(c) * cities / 25 + Math.Max(0, c.WarWearinessModifier / 10);
+        if (ctx.AtWarWithPlayers) score += WarValue(c, scale);
         return score;
     }
+
+    /// <summary>Extra worth during a war with another civilization: cheap armies, veteran units, less weariness.
+    /// Wars are part of the review dependencies, so entering or leaving one triggers a fresh evaluation.</summary>
+    public static int WarValue(CivicDef c, int scale) =>
+        c.BaseFreeMilitaryUnits * 4 + c.FreeExperience * 10 + c.ExtraCityDefense / 2 + c.HappyPerMilitaryUnit * 6 * scale
+        - c.WarWearinessModifier / 5 + c.UnitCombatProductionModifiers.Values.Sum() / 5 + c.GreatGeneralRateModifier / 10;
 
     private int UpkeepCost(CivicDef c) => c.Upkeep is { } id ? ctx.Sim.Content.Get<UpkeepDef>(id).CityPercent / 2 : 0;
 }

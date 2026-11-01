@@ -12,12 +12,16 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     private readonly Lazy<AiOptions> _options = new(() => new AiOptions(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
     private int _settlersQueued, _workersQueued, _wondersQueued, _soldiersQueued;
     public IReadOnlyList<CityView> Views { get; private set; } = [];
+    private Dictionary<int, CityFocus> _focus = new();
+    private CityFocus FocusOf(CityView v) => _focus.GetValueOrDefault(v.City.Id);
     public AiOptions Options => _options.Value;
 
     public void Plan()
     {
         AnnexMaturePuppets();
         Views = ParallelScoring.Select(ctx.Sim, ctx.Cities, ParallelCities, ctx.ViewOf);
+        bool favorGold = ctx.Weight("gold") > ctx.Weight("science");
+        _focus = Views.ToDictionary(v => v.City.Id, v => CityFocusRules.Focus(v, Views, favorGold));
         CountQueued();
         foreach (var view in Views.OrderByDescending(v => v.Population).ThenBy(v => v.City.Id))
         {
@@ -208,6 +212,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     {
         int shortage = army.Want(Views) - army.Soldiers - _soldiersQueued;
         long drive = 80 + Math.Min(4, shortage) * 40 + (ctx.Leader?.BuildUnitProbability ?? 25) + (ctx.AtWarWithPlayers ? 50 : 0);
+        if (FocusOf(v) == CityFocus.Military) drive += 40;
         if (Options.Best(v.City.Id, UnitRole.Melee, AiOptions.Quality, AiOptions.Attacks) is { } attacker) yield return ("cities:unit", attacker.Id, drive);
         if (ctx.CountUnits(UnitRole.Siege) < 1 + ctx.Cities.Count / 3 && Options.Best(v.City.Id, UnitRole.Siege, AiOptions.Quality) is { } siege)
             yield return ("cities:unit", siege.Id, drive + (ctx.Team.Wars.Count > 0 && army.Soldiers >= 5 ? 20 : -5));
@@ -221,8 +226,29 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         int value = _valuer.Value(b, v);
         if (wonder) value += 30 + (ctx.Leader?.WonderConstructRand ?? 0) / 2;
         if (value < 14) return null;
-        return value * 1000L / (b.Cost + 60);
+        value = value * FocusPercent(b, v) / 100;
+        return value * 1000L / BuildCost(b.Cost, v);
     }
+
+    internal const int SlowBuildTurns = 15;
+
+    /// <summary>Cost plus a surcharge for builds that tie a weak city up for many turns. Items finishing within
+    /// <see cref="SlowBuildTurns"/> turns keep the plain cost; each turn past that adds a share of the cost.</summary>
+    public static long BuildCost(int cost, CityView v)
+    {
+        long turns = (cost + v.Production - 1) / v.Production;
+        return cost + 60 + cost * Math.Max(0, turns - SlowBuildTurns) / SlowBuildTurns;
+    }
+
+    /// <summary>Percentage applied to a building's value for this city's specialization.</summary>
+    private int FocusPercent(BuildingDef b, CityView v) => FocusOf(v) switch
+    {
+        CityFocus.Science when b.CommerceModifiers.Research > 0 || b.CommerceChanges.Research > 0 => 125,
+        CityFocus.Commerce when b.CommerceModifiers.Gold > 0 || b.CommerceChanges.Gold > 0 || b.YieldModifiers.Commerce > 0 => 125,
+        CityFocus.Production when CityBuildingRules.IsWonder(b) || b.YieldModifiers.Production > 0 => 120,
+        CityFocus.Military when b.Experience > 0 || b.DefensePercent > 0 => 130,
+        _ => 100,
+    };
 
     private bool WonderAffordable(BuildingDef b, CityView v) =>
         _wondersQueued < (ctx.Cities.Count + 1) / 2 && v.Production * 40 >= b.Cost && v.Population >= 4;

@@ -27,8 +27,27 @@ internal sealed class EconomyPlanner(AiContext ctx)
             if (!TryShift(economy, rates, next, target, out var nextNet)) break;
             rates = next; net = nextNet;
         }
+        rates = WithCulture(economy, rates, target);
         Apply(economy, rates);
     }
+
+    internal const int CultureSteps = 2;
+
+    /// <summary>Unrest wants culture: while a city is in disorder (not from anarchy or occupation) or has more angry
+    /// citizens than content ones, move a little research into culture, keeping income on target.</summary>
+    private CommerceVector WithCulture(IPlayerEconomyService economy, CommerceVector rates, long target)
+    {
+        if (!Unrest()) return rates;
+        long culture = Math.Min(rates.Research, (long)Step * CultureSteps);
+        if (culture <= 0) return rates;
+        var next = new CommerceVector(rates.Gold, rates.Research - culture, culture, 0);
+        if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, next) is not null) return rates;
+        return Net(economy, next) >= Math.Min(target, Net(economy, rates)) ? next : rates;
+    }
+
+    private bool Unrest() => !GovernmentStatus.IsAnarchy(ctx.Sim, ctx.PlayerId) && ctx.Cities.Any(city =>
+        city.Extensions.TryGet<CityRuleState>(ctx.Sim.Content) is { Disorder: true, OccupationTurns: 0 }
+        || ctx.ViewOf(city).HappyMargin < 0);
 
     private long TargetIncome()
     {
