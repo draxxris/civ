@@ -133,7 +133,7 @@ public sealed class FeatureIntegrationReplayTests
         Apply(sim, new ExecuteEspionageMissionCommand
             { Player = 1, Unit = defender.Id, City = home.Id, Mission = EspionageMissionKind.CounterEspionage });
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
-        Assert.Equal(316, Service<IEspionageService>(sim).Points(sim, 1, 0));
+        Assert.Equal(300, Service<IEspionageService>(sim).Points(sim, 1, 0)); // 100 flat, neutral ratio
         int expiry = sim.State.Turn + 8;
         for (int i = 0; i < 3; i++) sim.AdvanceTurn();
         var resumed = SaveGame.Load(sim.Content, SaveGame.Save(sim));
@@ -145,7 +145,9 @@ public sealed class FeatureIntegrationReplayTests
                 var game = session.Sim;
                 var intel = session.DescribeRivalIntelligence(1)!;
                 Assert.Equal(new CounterEspionageEffect(expiry, 200), intel.RivalProtection);
-                Assert.Equal(new long[] { 100, 200, 300, 400 }, intel.Permissions.Select(p => p.Threshold));
+                // Team 1's counter mission spent 100 points of its own investment, so team 0's ratio is 99%,
+                // doubled to 198% by the protection. Thresholds follow the ratio, not a fixed number.
+                Assert.Equal(new long[] { 50, 100, 150, 200 }.Select(b => b * 198 / 100), intel.Permissions.Select(p => p.Threshold));
                 Assert.NotNull(Assert.Single(intel.Cities!).Details);
                 if (game.State.Turn != expiry - 1) continue;
                 var spy = P6RulesScenario.AddUnit(game, 0, game.State.CityById(target.Id), "military:spy");
@@ -156,7 +158,7 @@ public sealed class FeatureIntegrationReplayTests
                 Assert.Equal(own + victim / 4, game.State.PlayerById(0).Treasury);
                 Assert.Equal(victim - victim / 4, game.State.PlayerById(1).Treasury);
                 var spent = session.DescribeRivalIntelligence(1)!;
-                Assert.Equal(300, spent.Points); // 50 base * neutral ratio * 200% protection.
+                Assert.Equal(301, spent.Points); // 400 less 50 * 198% protection, the ratio being 99%.
                 Assert.Null(Assert.Single(spent.Cities!).Details);
                 Assert.NotNull(Assert.Single(intel.Cities!).Details); // Detached old snapshot.
             }
@@ -168,9 +170,10 @@ public sealed class FeatureIntegrationReplayTests
         {
             var intel = session.DescribeRivalIntelligence(1)!;
             Assert.Null(intel.RivalProtection);
-            Assert.Equal(300, intel.Points);
+            Assert.Equal(301, intel.Points);
             Assert.NotNull(Assert.Single(intel.Cities!).Details);
-            Assert.Equal(50, Service<IEspionageService>(session.Sim).MissionCost(session.Sim, 0, target.Id, EspionageMissionKind.StealTreasury));
+            // Protection is gone, but team 1's counter mission lowered its investment: the ratio is 99%, so 49.
+            Assert.Equal(49, Service<IEspionageService>(session.Sim).MissionCost(session.Sim, 0, target.Id, EspionageMissionKind.StealTreasury));
             foreach (var unit in session.Sim.State.Units.Where(u => u.Owner == 1).ToArray()) session.Sim.State.RemoveUnit(unit.Id);
             session.Sim.State.RemoveCity(target.Id);
             Assert.Null(session.DescribeRivalIntelligence(1));

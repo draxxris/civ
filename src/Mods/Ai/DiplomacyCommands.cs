@@ -15,8 +15,8 @@ internal static class WarRules
 {
     internal const int MinimumWarTurns = 12;
     internal const int PeaceCooldownTurns = 10;
-    internal static bool IsBarbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.Get<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
+    /// <summary>Kept as this mod's entry point; <see cref="PlayerRules.IsBarbarian"/> is the single definition.</summary>
+    internal static bool IsBarbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
     internal static AiTeamState Read(Simulation sim, int team) =>
         sim.State.TeamById(team).Extensions.Get<AiTeamState>(sim.Content) ?? new();
     internal static AiTeamState State(Simulation sim, int team)

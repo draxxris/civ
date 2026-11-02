@@ -34,7 +34,9 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - ScriptedWonders: `WonderScriptDef` for building-linked completion, timed, combat, and
   modifier effects.
 - Revolution: `RevolutionRulesDef` for instability thresholds, contributing factors,
-  suppression, unrest, and rebellion.
+  suppression, unrest, rebellion, and rebel faction ids.
+- Espionage: `EspionageRulesDef` for passive thresholds, mission costs, mission
+  effects, counter-espionage protection, and success chance.
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition
 families. Its noise, climate, sight, lake, source-grid scale, and start-balance integers

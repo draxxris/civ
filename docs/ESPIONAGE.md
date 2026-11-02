@@ -1,290 +1,207 @@
 # Espionage Subsystem
 
-The espionage subsystem models intelligence gathering, passive information advantages,
-and covert operations against rival civilizations.
+The espionage subsystem models passive intelligence and covert operations against
+rival civilizations. It is a separate mod. Cities, economy, military and diplomacy
+supply the units, commerce and contacts that it uses.
 
-Rather than being self-contained in a single isolated mod, espionage follows the
-project's decoupled architecture: the dedicated espionage mod defines the core
-intelligence service and mission logic, while buildings, commerce sliders, units, and
-user interfaces are contributed by their respective domain mods.
-
-______________________________________________________________________
-
-## Architecture Overview
-
-Espionage responsibilities are distributed across four main layers:
-
-```
-┌────────────────────────────────────────────────────────┐
-│                   Presentation Layer                   │
-│   Ariel.Godot (GameUi.Panels.cs) / Ariel.Client.Core       │
-│   - Espionage modal screen                             │
-│   - Top-bar espionage slider & city yield breakdown    │
-│   - Contextual unit actions for spies in rival cities  │
-└───────────────────────────┬────────────────────────────┘
-                            │
-┌───────────────────────────▼────────────────────────────┐
-│                  Core Espionage Mod                    │
-│   Ariel.Mods.Espionage (src/Mods/Espionage)              │
-│   - IEspionageService implementation                   │
-│   - Point allocation & bilateral spending ratio        │
-│   - Passive threshold checks                           │
-│   - Active missions (theft, sabotage, revolt, tech)    │
-│   - Counter-espionage & success chance calculations    │
-└───────────────┬────────────────────────┬───────────────┘
-                │                        │
-┌───────────────▼───────────┐ ┌──────────▼───────────────┐
-│     Economy & Cities      │ │         Military         │
-│  src/Mods/Economy         │ │  src/Mods/Military       │
-│  src/Mods/Cities          │ │  - Spy & CounterSpy      │
-│  - Commerce vector (4th)  │ │    unit definitions      │
-│  - Rate sliders & process │ │  - Movement & defense    │
-│  - Buildings & specialists│ │                          │
-└───────────────────────────┘ └──────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Presentation
+        UI[Godot espionage panel]
+        Client[Client.Core projections]
+    end
+    subgraph Core["Ariel.Mods.Espionage"]
+        Service[IEspionageService]
+        Rules[data/espionage-rules.json]
+    end
+    subgraph Domains
+        Economy[Economy commerce slider]
+        Cities[Cities buildings and specialists]
+        Military[Military spy and counter-spy units]
+        Diplomacy[Diplomacy contact]
+        Revolution[Revolution instability]
+    end
+    UI --> Client --> Service
+    Service --> Rules
+    Economy --> Service
+    Cities --> Economy
+    Military --> Service
+    Diplomacy --> Service
+    Service -.optional.-> Revolution
 ```
 
-______________________________________________________________________
+## Rules content
 
-## 1. Core Espionage Mod (`src/Mods/Espionage`)
+All balance numbers live in `src/Mods/Espionage/data/espionage-rules.json`, typed by
+`EspionageRulesDef`. `EspionageMod` implements `IPreparableMod` and validates the file
+at load. Rebalancing needs no rebuild.
 
-The mod entry point is `EspionageMod` (`EspionageMod.cs`). It registers:
+Groups of fields:
 
-- **Service**: `IEspionageService` registered under `"espionage"`.
-- **Modifier Source**: `SpyUnhappiness` under `"unhappiness"` for mission-induced
-  misery.
-- **State Components**:
-  - `EspionageTeamState` (`"team_state"`): stores accumulated `Points` and lifetime
-    `Spent` per rival team.
-  - `EspionagePlayerState` (`"player_state"`): stores target `Weights` and fractional
-    carryover `RemainderHundredths`.
-  - `EspionageCityState` (`"city_state"`): tracks per-city timers `UnhappyUntilTurn`,
-    `RevoltUntilTurn`, and `OwnsDisorder`.
-- **Commands**:
-  - `SetEspionageWeightCommand` (`"set_weight"`): updates player espionage weight for a
-    target rival team.
-  - `ExecuteEspionageMissionCommand` (`"execute_mission"`): validates and executes
-    active spy operations.
-- **Turn Systems**:
-  - `SpyAllocation` (`Order = TurnPhase.Espionage + 1`): distributes produced espionage
-    commerce into rival balances each turn.
-  - `SpyTimers` (`Order = TurnPhase.PlayerEnd + 1`): cleans up expired disorder and
-    unrest flags at turn end.
-  - `SpyExpiry` (`Order = TurnPhase.GameBegin + 1`): deletes counter-espionage records
-    at the first turn boundary after they expire, so dead protection cannot accumulate
-    in saved state.
+- Passive thresholds: `DemographicsThreshold`, `CityVisibilityThreshold`,
+  `InspectResearchThreshold`, `InvestigateCityThreshold`.
+- Mission costs: `StealTreasuryCost`, `SabotageProductionCost`, `InciteRevoltCost`,
+  `FomentUnhappinessCost`, `CounterEspionageCost`, `StealTechCostPercent`.
+- Mission effects: `StealTreasuryPercent`, `SabotagePercent`,
+  `FomentUnhappinessTurns`, `FomentUnhappiness`, `InciteRevoltTurns`.
+- Counter-espionage: `CounterEspionageTurns`, `CounterEspionagePercent`,
+  `CounterEspionagePerInterception`.
+- Success chance: `BaseSuccessPercent`, `DefenderSuccessPenalty`, `MaxDefenders`,
+  `ProtectionSuccessPenalty`, `RatioSuccessDivisor`, `MinSuccessPercent`,
+  `MaxSuccessPercent`.
+- Allocation: `MaxWeight`.
 
-______________________________________________________________________
+Turn counts scale with the game speed's pace (`GameSpeedDef.scalingPercents.default`),
+never with its research rate. `GamePace.Scale` is the only scaling helper.
 
-## 2. Point Generation, Allocation & Bilateral Ratio
+## State
 
-### Generation & Sliders (`src/Mods/Economy`)
+The mod registers three state components:
 
-Espionage is the fourth commerce channel in `CommerceVector` (Gold, Research, Culture,
-Espionage):
+- `EspionageTeamState`: `Points`, lifetime `Spent`, and `CounterEspionage` records per
+  rival team.
+- `EspionagePlayerState`: target `Weights` and fractional `RemainderHundredths`.
+- `EspionageCityState`: `UnhappyUntilTurn` and `RevoltUntilTurn`, both absolute turns.
+  Zero means no active effect. The mod clears every field it sets.
 
-- **Slider Allocation**: `PlayerEconomy` allows allocating a percentage of empire-wide
-  raw commerce toward espionage.
-- **Direct Yields**: Buildings and specialists contribute flat espionage hundredths and
-  percentage modifiers directly to city output.
-- **Production Conversion**: Cities can convert industrial production into espionage via
-  `economy:process_espionage`.
-- **Turn Turnout**: Total player espionage hundredths are calculated and consumed by
-  `EspionageService.Allocate()`.
+A conquest resets the city state: the `CityCaptured` subscription replaces the
+component with a fresh one so the previous owner's spy effects never reach the new
+owner.
 
-### Weight Distribution
+## Points and allocation
 
-Players assign relative weights (from 0 to 10,000) against met rival teams. During turn
-allocation:
+Espionage is the fourth commerce channel. `PlayerEconomy` produces espionage
+hundredths; `EspionageService.Allocate` runs at `TurnPhase.Espionage + 1`.
 
-1. Eliminated teams and barbarians are excluded. Contact through `IDiplomacyService` is
-   required.
-2. If total weight is zero, points are held in `RemainderHundredths` until positive
-   weight is set.
-3. Points are divided proportionally according to assigned weights. Indivisible
-   remainder points are granted to the teams with the highest fractional remainders
-   (with ties broken by lower team id).
+1. Only met, living, non-barbarian rival teams receive points.
+2. An unset weight is zero. Points stay in `RemainderHundredths` until the player
+   assigns a weight, and `Held` reports them so the panel can show them.
+3. Shares are proportional. The indivisible remainder goes to the largest fractional
+   remainders, and ties go to the lower team id.
+4. `Spending` is a forecast and never changes state.
 
-### Bilateral Spending Ratio
+`KnownRivals` is the single rival query. `PassiveStatus` returns all four passive tiers
+for one rival from one investment calculation.
 
-Passive thresholds and active mission costs scale dynamically according to bilateral
-lifetime investment between the two teams:
+### Bilateral ratio
 
-$$\\text{RatioPercent} = \\text{clamp}\\left(200 \\times \\frac{\\text{rival} +
-50}{\\text{own} + \\text{rival} + 100},, 50,, 200\\right)$$
+Passive thresholds and mission costs scale with each side's investment against the
+other:
 
-Where `own` and `rival` represent total invested espionage (`Spent + Points`) against
-each other.
+```text
+Invested(team, target) = Spent[target] + Points[target]
+RatioPercent = clamp(200 * (rival + 50) / (own + rival + 100), 50, 200)
+```
 
-- If you outspend your rival, costs and passive thresholds drop toward a 50% discount
-  floor.
-- If the rival outspends you, costs and passive thresholds increase up to a 200%
-  ceiling.
-- Investment against third parties does not alter this bilateral ratio.
+- Investment against a third party does not change the ratio.
+- A mission spends points and is **not** credited back to `Spent`. Running missions
+  therefore lowers the attacker's own investment and makes the next mission more
+  expensive.
+- `CostModifier` multiplies the ratio by any active counter-espionage protection.
 
-______________________________________________________________________
+## Passive intelligence
 
-## 3. Passive Espionage and Intelligence View
+Points unlock intelligence tiers without being spent:
 
-Accumulating espionage points against a rival team unlocks passive intelligence tiers
-without consuming stored points. The required threshold for each tier is modulated by
-the bilateral spending ratio:
+| Effect | Rule field | Reveals |
+| :--- | :--- | :--- |
+| Demographics | `DemographicsThreshold` | Population, units, treasury |
+| City visibility | `CityVisibilityThreshold` | Rival cities on the map |
+| Inspect research | `InspectResearchThreshold` | Current research and queue |
+| Investigate city | `InvestigateCityThreshold` | City yields and queues |
 
-$$\\text{Threshold} = \\frac{\\text{Baseline} \\times \\text{RatioPercent}}{100}$$
+The threshold is the rule value scaled by `RatioPercent`. A rival that outspends the
+player raises the threshold. Eliminating the rival revokes every tier.
 
-| Passive Effect       | Baseline Points | Description                                                                           |
-| :------------------- | :-------------- | :------------------------------------------------------------------------------------ |
-| **Demographics**     | 50              | Grants visibility into rival demographics, rankings, and power scores.                |
-| **City Visibility**  | 100             | Grants passive visibility of rival cities on the world map.                           |
-| **Inspect Research** | 150             | Reveals what technology the rival team is actively researching.                       |
-| **Investigate City** | 200             | Allows viewing detailed production queues, buildings, and yields inside rival cities. |
+The client projects only unlocked sections. Locked sections are null, never
+zero-filled.
 
-Passive capabilities are checked through
-`IEspionageService.HasPassiveEffect(sim, team, targetTeam, kind)`.
+## Missions
 
-### Full Intelligence View
+A spy must stand in a rival city, have a movement point, and have enough points
+against that team. `ValidateMission` checks all of it.
 
-When passive thresholds are unlocked, the espionage screen and city interface display
-detailed rival intelligence:
+| Mission | Cost field | Effect |
+| :--- | :--- | :--- |
+| `StealTreasury` | `StealTreasuryCost` | Steal `StealTreasuryPercent` of the treasury |
+| `SabotageProduction` | `SabotageProductionCost` | Destroy progress on the active order |
+| `InciteRevolt` | `InciteRevoltCost` | Disorder for `InciteRevoltTurns` turns |
+| `FomentUnhappiness` | `FomentUnhappinessCost` | Unhappiness for `FomentUnhappinessTurns` |
+| `StealTech` | `StealTechCostPercent` of research cost | Award the technology |
+| `CounterEspionage` | `CounterEspionageCost` | Raise the rival's costs and risk |
 
-- **Demographics**: Displays rival demographic standing and comparative rankings.
-- **Treasury Reserves**: Displays the rival civilization's current treasury balance.
-- **City Inspection**: Displays city yields, population health, happiness, and
-  constructed buildings.
-- **Production Queues**: Displays the active production order, progress, and turn
-  estimates.
+Details:
 
-### Permission Filtering and Immediate Revocation
+- `StealTech` requires a technology id. The command rejects a missing id before it is
+  priced, and `MissionCost` throws rather than returns a fake price. The spy panel
+  offers a picker built from `StealableTechnologies`: technologies the rival knows,
+  the player does not, and the player could research.
+- `InciteRevolt` is rejected when the city is already in revolt (`GovernmentStatus`
+  disorder, occupation, anarchy, or an unfinished spy revolt). On success it sets
+  `CityRuleState.Disorder` for a fixed number of turns and calls
+  `IRevolutionService.Incite` when that mod is present, which raises the city's
+  instability and starts unrest. A real rebellion follows through the normal
+  Revolution rules if the city crosses the threshold.
+- `SabotageProduction` destroys `SabotagePercent` of the progress on the first queue
+  item, or of build and train progress when the queue is empty.
+- Mission prices use `EspionageService.Percent`, the single documented truncation
+  step, so multiplying and dividing in a different order cannot silently rebalance
+  missions.
 
-Intelligence data passes through strict permission filtering before presentation:
+## Resolution
 
-- Client data transfer objects (`EspionageScreen`) populate fields only when passive
-  thresholds are met.
-- Locked fields are cleared or omitted before reaching the user interface.
-- If accumulated points drop below a threshold, or if rival spending raises the
-  bilateral ratio, access is immediately revoked.
-- Rival intelligence views are strictly read-only and provide no modification controls.
+```text
+chance = base
+       - min(defenders, maxDefenders) * defenderPenalty
+       + (100 - RatioPercent) / ratioDivisor
+       - (protectionCostPercent - 100) * protectionSuccessPenalty / 100
+chance = clamp(chance, minSuccessPercent, maxSuccessPercent)
+```
 
-______________________________________________________________________
+- `defenders` counts units on the city plot with `UnitDef.CounterSpy == true` and more
+  than zero hit points. Past `MaxDefenders` the penalty stops growing, so the cliff is
+  explicit content rather than a hidden constant.
+- Counter-espionage protection moves cost and risk together: a 250% cost multiplier
+  also costs `protectionSuccessPenalty` percentage points of success.
+- Health never changes a spy's odds. Spies die when attacked, so a wounded spy does
+  not exist.
+- On success the mission applies, and the spy retreats to the nearest owned city with
+  no moves left. On failure the spy is removed and the points stay spent.
+- One command prices the mission once. `ValidateMission` and `ExecuteMission` share
+  `ValidateMissionCore`.
 
-## 4. Active Spy Missions (`SpyMissions.cs`)
+### Counter-espionage
 
-Active missions require a spy unit stationed inside a rival city with movement points
-remaining. Missions consume accumulated espionage points upon execution.
+Protection is directed: it belongs to the defending team against one rival team. It
+lasts `CounterEspionageTurns` turns from the turn it is set, costs the flat
+`CounterEspionageCost` (the same on every game speed), and multiplies the rival's
+mission costs and passive thresholds by
+`CounterEspionagePercent + CounterEspionagePerInterception * interception`. A repeat
+mission against the same rival is rejected while protection is active. Expired records
+are deleted at the next turn boundary.
 
-### Mission Types
+## Integration
 
-- **`CounterEspionage`** (Baseline Cost: 100):
-  - Targets the rival team owning the city.
-  - Creates a directed protection record from the protecting team against the target
-    rival team.
-  - Multiplies rival mission costs against the protecting team by
-    `200 + 5 * InterceptionPercent`.
-  - The baseline multiplier is 200% (doubling costs) and scales higher with supported
-    interception bonuses.
-  - Counter-espionage is a directed cost penalty, not a new success roll penalty.
-  - Lasts for a speed-scaled duration (10 turns on Normal speed).
-  - Repeat missions against the same rival are rejected while protection remains active.
-- **`StealTreasury`** (Baseline Cost: 50):
-  - Steals up to 25% of the target civilization's treasury (minimum 1 gold).
-  - Stolen gold is transferred directly to the player's treasury.
-- **`SabotageProduction`** (Baseline Cost: 80):
-  - Halves current progress on the target city's active production order or train/build
-    progress.
-- **`InciteRevolt`** (Baseline Cost: 100):
-  - Sets `CityRuleState.Disorder = true` and `RevoltUntilTurn = Turn + 1`.
-  - Shuts down city yields, production, and commerce for 1 turn. Restored automatically
-    by `SpyTimers`.
-- **`FomentUnhappiness`** (Baseline Cost: 60):
-  - Sets `UnhappyUntilTurn = Turn + 3`.
-  - `SpyUnhappiness` contributes `-3` to `cities:happiness` for the duration.
-- **`StealTech`** (Baseline Cost: $2 \\times \\text{CalculateCost}(\\text{tech})$):
-  - Validates that the rival knows the tech, the player does not, and the player
-    satisfies all tech prerequisites.
-  - Awards the technology immediately to the player's team via
-    `IResearchService.AddProgress()` and fires `TechDiscovered`.
-  - Operates under independent theft eligibility: does not require diplomatic peace or
-    the `TechTrading` diplomatic flag.
+- Buildings and specialists (`src/Mods/Cities`) add espionage commerce.
+- Spy units (`src/Mods/Military`) set `spy: true`. Counter-spy units set
+  `counterSpy: true`.
+- Revolution is optional. Without it, a spy revolt still causes disorder, but adds no
+  instability.
+- Economy is optional. Without `IEspionageService` the economy mod accumulates
+  espionage itself.
 
-### Mission Resolution and Counter-Spies
+## Client and presentation
 
-- **Success Rate**: $$\\text{SuccessChance} = \\text{clamp}\\left(85 - 15 \\times
-  \\text{Defenders} + \\frac{100 - \\text{RatioPercent}}{5},, 10,, 95\\right)$$ Where
-  `Defenders` is the count of units with `UnitDef.CounterSpy == true` owned by the rival
-  team at the city plot.
-- **Failure**: The spy unit is caught and eliminated (`sim.State.RemoveUnit()`). Spent
-  points are not refunded.
-- **Success**: The mission effect is applied, and the spy escapes back to the owner's
-  capital city with moves depleted.
+- `GameSession.DescribeEspionage` returns one row per known rival plus the held points.
+- `GameSession.DescribeRivalIntelligence` reads the settled budget snapshot. It does
+  not recalculate city commerce.
+- `GameSession.SpyActions` offers the one-click missions. `StealableTechs` and
+  `StealTechnology` back the spy panel's technology picker.
+- The espionage panel is `src/Ariel.Godot/GameUi.Espionage.cs`. Weight controls step by
+  one and by ten.
 
-______________________________________________________________________
+## Notes
 
-## 5. Domain Mod Integration
-
-### Buildings & Specialists (`src/Mods/Cities`)
-
-Espionage infrastructure is configured via standard building and specialist definitions:
-
-- **Buildings**: Defined in `src/Mods/Cities/data/building.json`.
-  - Flat bonuses: Security Bureau, Intelligence Agency, Safehouse, TV Station, Cryogenic
-    Prison.
-  - Multipliers: Scotland Yard (+100% espionage output).
-  - Processed by `BuildingEffects.cs` into `sink.AddCommerce()`
-    (`direct_espionage_hundredths` and `PercentCommerce.Espionage`).
-- **Specialists**: Spy specialists defined in `src/Mods/Cities/data/specialist.json`
-  provide espionage yields per specialist assigned, evaluated in `Specialists.cs`.
-
-### Spy Units (`src/Mods/Military`)
-
-Units with espionage roles are defined in `src/Mods/Military/data/unit.json`:
-
-- `military:spy` (Spy)
-- `military:agent` (Agent)
-- `military:special_agent` (Special Agent)
-- `military:007` (Top Secret Agent)
-- `military:hacker` (Hacker)
-- `military:nanite_spy` (Nanite Spy)
-
-Each unit is designated with:
-
-- `"spy": true`: Permits entry into rival cities and execution of espionage missions.
-- `"counterSpy": true`: Provides defensive counter-surveillance penalties (-15% per
-  defender) against enemy spies attempting missions in the city.
-
-______________________________________________________________________
-
-## 6. Client & Presentation Layer
-
-- **Client Session Projection** (`src/Ariel.Client.Core/GameSession.Intelligence.cs`):
-  - `DescribeEspionage()`: Produces `EspionageScreen` with lists of known rivals,
-    current points, weights, and active passive statuses.
-  - `SetEspionageWeight()`: Submits weight commands to the simulation.
-  - `SpyActions()`: Generates contextual `UnitActionInfo` entries when selecting a spy
-    unit on a rival city plot.
-  - *Note on Tech Stealing UI*: `SpyActions()` currently omits `StealTech` from default
-    single-click unit action buttons because tech theft requires a target selection
-    dialog; the simulation and tests fully support the mission.
-- **Godot UI** (`src/Ariel.Godot`):
-  - **Espionage Panel** (`GameUi.Panels.cs`): Dedicated modal screen listing rival
-    teams, accumulated points, weight increment/decrement controls, and unlocked passive
-    capabilities.
-  - **Top Bar** (`GameUi.cs`): Displays and controls the national espionage commerce
-    slider rate.
-  - **City Interface** (`CityUi.cs`): Displays per-turn city espionage commerce
-    production.
-
-______________________________________________________________________
-
-## 7. Residual Notes and Verification
-
-The following observations are recorded for future maintenance:
-
-- **Commander and Ground-Health Interception**: Counter-espionage protection uses the
-  performing spy's interception percent without an attached commander unit's bonus and
-  without health scaling for ground units. Neither input can change a result here: the
-  engine has no commander unit pool (a leader bonus is copied onto the led unit as an
-  ordinary promotion, which the modifier already counts), and spies have no combat
-  strength, so nothing can wound one. (Severity: None. Reachability: Unreachable with
-  shipped play.)
-- **Malformed Research Identifiers**: Content definitions referencing non-existent
-  technology identifiers can fail when espionage unlocks evaluate permissions.
-  (Severity: Low. Reachability: Malformed custom content declarations.)
+- The mission enum ordinals are saved command data. Append new missions; never reorder
+  them. `EspionageMissionOrder.Display` sets button order independently.
+- The `Warning` stability tier belongs to the Revolution mod.

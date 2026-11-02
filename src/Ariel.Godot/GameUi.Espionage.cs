@@ -20,6 +20,8 @@ internal sealed partial class GameUi
         var rivals = Ui.VBox(4);
         foreach (var row in screen.Rivals) AddEspionageRival(rivals, row);
         if (screen.Rivals.Count == 0) rivals.AddChild(Ui.Text("You have not met any living rival.", 13, Ui.Dim));
+        // Held points are real points waiting for a target: say so rather than showing a silent zero.
+        if (screen.Held > 0) rivals.AddChild(Ui.Text($"{screen.Held} points held: set a weight to spend them.", 12, Ui.Accent));
         var rivalScroll = Ui.Scroll(rivals, 420);
         rivalScroll.CustomMinimumSize = new Vector2(210, 420);
         rivalScroll.SizeFlagsHorizontal = Control.SizeFlags.Fill;
@@ -62,8 +64,11 @@ internal sealed partial class GameUi
         list.AddChild(Ui.Text($"{row.Points} points", 12, Ui.Dim));
         var weights = Ui.HBox(4);
         weights.AddChild(Ui.Text($"Weight {row.Weight}", 12));
-        weights.AddChild(Ui.Button("−", () => _session.SetEspionageWeight(row.TeamId, row.Weight - 1), "Lower weight", row.Weight > 0));
+        // The weight range is wide, so both single-point and bulk steps are offered.
+        weights.AddChild(Ui.Button("−10", () => _session.SetEspionageWeight(row.TeamId, Math.Max(0, row.Weight - 10)), "Lower weight by ten", row.Weight > 0));
+        weights.AddChild(Ui.Button("−", () => _session.SetEspionageWeight(row.TeamId, Math.Max(0, row.Weight - 1)), "Lower weight", row.Weight > 0));
         weights.AddChild(Ui.Button("+", () => _session.SetEspionageWeight(row.TeamId, row.Weight + 1), "Raise weight"));
+        weights.AddChild(Ui.Button("+10", () => _session.SetEspionageWeight(row.TeamId, row.Weight + 10), "Raise weight by ten"));
         list.AddChild(weights);
     }
 
@@ -172,12 +177,23 @@ internal sealed partial class GameUi
         box.AddChild(Ui.Text("Spy missions use the selected unit at its location, not the inspected city.", 12, Ui.Dim));
         var row = new HFlowContainer();
         foreach (var action in actions)
-        {
-            string label = action.Command is ExecuteEspionageMissionCommand { Mission: EspionageMissionKind.CounterEspionage }
-                ? "Counter-espionage" : action.Label;
-            row.AddChild(Ui.Button(label, () => _session.RunAction(action.Id), action.Tooltip, action.Command is not null, 12));
-        }
+            row.AddChild(Ui.Button(action.Label, () => _session.RunAction(action.Id), action.Tooltip, action.Command is not null, 12));
         if (actions.Length == 0) row.AddChild(Ui.Text("Select a spy in a rival city with moves and enough points for a legal mission.", 12, Ui.Dim));
+        box.AddChild(row);
+        AddTechPicker(box);
+    }
+
+    /// <summary>Technology theft needs a target technology, so it gets a picker instead of a one-click action.</summary>
+    private void AddTechPicker(VBoxContainer box)
+    {
+        if (_session.StealableTechs(_session.Unit) is not { Count: > 0 } techs) return;
+        var row = Ui.HBox(6);
+        var picker = new OptionButton { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, FitToLongestItem = false, ClipText = true };
+        foreach (var tech in techs) picker.AddItem(tech.Name, picker.ItemCount);
+        picker.Select(0);
+        row.AddChild(picker);
+        row.AddChild(Ui.Button("Steal technology", () =>
+            _session.StealTechnology(_session.Unit, techs[picker.GetSelectedId()].Id), "Steal a technology this rival knows", true, 12));
         box.AddChild(row);
     }
 }

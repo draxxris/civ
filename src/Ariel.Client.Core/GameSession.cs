@@ -13,6 +13,10 @@ public sealed partial class GameSession
     public const int Human = 0;
 
     private readonly Dictionary<int, Hex> _gotos = new();
+    private int _espionageBudgetTurn = -1;
+    private int _espionageBudgetCities = -1;
+    private Ariel.Content.CommerceVector _espionageBudgetRates;
+    private long _espionageBudget;
 
     public Simulation Sim { get; private set; }
     public string Message { get; private set; } = "";

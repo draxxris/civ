@@ -1018,10 +1018,13 @@ local or foreign corporations. A branch requires an active branch owned by the s
 player.
 
 Espionage allocates whole points from saved commerce output across met rival teams by
-player-set weights. Passive thresholds unlock demographics, city visibility, research
-inspection, and city investigation. Spy missions spend points and use a calculated
-success chance. Saved team, player, and city state tracks points, weights, remainders,
-and timers.
+player-set weights. An unset weight is zero, and unspent points stay held and visible.
+Passive thresholds unlock demographics, city visibility, research inspection, and city
+investigation. Spy missions spend points and use a calculated success chance; running a
+mission lowers the attacker's own investment, so later missions cost more. Counter-
+espionage raises both cost and risk for a fixed number of turns. All numbers come from
+`data/espionage-rules.json`. Saved team, player, and city state tracks points, weights,
+remainders, and timers.
 
 Events roll eligible triggers per turn with the simulation RNG. Trigger definitions set
 eligibility, chance, repeat policy, and cooldown. Pending events hold a player choice.
@@ -1032,8 +1035,10 @@ ScriptedWonders adds completion, periodic, combat, and modifier effects to selec
 buildings. City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
-recovery. Thresholds can trigger mutiny or rebellion. Players can suppress instability
-with gold or a military garrison.
+recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
+is a display-only alert. Players can suppress instability with gold, priced by the
+reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
+A spy-incited revolt adds instability through the Revolution service.
 
 ## Client presentation
 

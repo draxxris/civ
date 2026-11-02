@@ -67,7 +67,9 @@ internal sealed class EspionagePlanner(AiContext ctx)
         if (target is not null) ctx.MoveToward(spy, target.Position);
     }
 
-    /// <summary>Missions in order of worth. Each is tried through the normal command, which checks points and legality.</summary>
+    /// <summary>Missions in order of worth. Candidates are the target's own stealable technologies, cheapest first, so
+    /// each spy prices tens of technologies instead of the whole catalog. Every mission is still checked by the
+    /// normal command, and the AI issues every mission the rules define.</summary>
     public bool TryMission(Unit spy, City city)
     {
         foreach (var (mission, tech) in Missions(city))
@@ -78,14 +80,20 @@ internal sealed class EspionagePlanner(AiContext ctx)
 
     private IEnumerable<(EspionageMissionKind, string?)> Missions(City city)
     {
+        var service = Espionage!;
         var research = ctx.Sim.Content.Services.Get<IResearchService>().SingleOrDefault();
+        // Only what this rival knows and this player can research; cheapest first, so the first candidate is the
+        // most likely to be affordable.
+        var stealable = service.StealableTechnologies(ctx.Sim, ctx.PlayerId, city.Id);
         if (research is not null)
-            foreach (var tech in ctx.Catalog.Techs.Where(t => !ctx.Team.Techs.Contains(t.Id))
-                .OrderByDescending(t => research.CalculateCost(ctx.Sim, ctx.Team.Id, t.Id).Cost).ThenBy(t => t.Id, StringComparer.Ordinal))
-                yield return (EspionageMissionKind.StealTech, tech.Id);
+            foreach (var tech in stealable
+                .OrderBy(t => research.CalculateCost(ctx.Sim, ctx.Team.Id, t).Cost).ThenBy(t => t, StringComparer.Ordinal))
+                yield return (EspionageMissionKind.StealTech, tech);
         if (city.ProductionQueue.FirstOrDefault() is { Kind: "cities:building" } head
             && CityBuildingRules.IsWonder(ctx.Sim.Content.Get<BuildingDef>(head.ContentId)))
             yield return (EspionageMissionKind.SabotageProduction, null);
+        yield return (EspionageMissionKind.InciteRevolt, null);
+        yield return (EspionageMissionKind.CounterEspionage, null);
         if (!ctx.IsEnemy(city.Owner)) yield break;
         yield return (EspionageMissionKind.FomentUnhappiness, null);
         yield return (EspionageMissionKind.StealTreasury, null);

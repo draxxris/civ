@@ -22,6 +22,7 @@ internal sealed partial class GameUi : CanvasLayer
     private Label _turnText = null!;
     private Label _goldenAgeText = null!;
     private Label _goldText = null!;
+    private Label _unrestText = null!;
     private Button _researchButton = null!;
     private (Label Label, Button Minus, Button Plus) _scienceRate;
     private (Label Label, Button Minus, Button Plus) _cultureRate;
@@ -281,6 +282,8 @@ internal sealed partial class GameUi : CanvasLayer
         _goldenAgeText = Ui.Text("", 14, Ui.Accent, wrap: false);
         _goldenAgeText.Visible = false;
         _goldText = Ui.Text("", 15, Ui.Accent, wrap: false);
+        _unrestText = Ui.Text("", 14, Ui.Warn, wrap: false);
+        _unrestText.Visible = false;
         _researchButton = Ui.Button("", ToggleResearch, "Open the research list (R)");
         _researchButton.ClipText = true;
         _researchButton.CustomMinimumSize = new Vector2(170, 0);
@@ -300,6 +303,7 @@ internal sealed partial class GameUi : CanvasLayer
         _topRow.AddChild(_turnText);
         _topRow.AddChild(_goldenAgeText);
         _topRow.AddChild(_goldText);
+        _topRow.AddChild(_unrestText);
         _topRow.AddChild(_researchButton);
         _scienceRate = RateBox("Science", RateKind.Research);
         _cultureRate = RateBox("Culture", RateKind.Culture);
@@ -330,6 +334,9 @@ internal sealed partial class GameUi : CanvasLayer
         _goldenAgeText.Visible = goldenAge > 0;
         if (goldenAge > 0) Ui.Set(_goldenAgeText, $"Golden Age · {goldenAge} turns");
         Ui.Set(_goldText, $"Gold {_session.Me.Treasury} ({Labels.Signed(s.Net)})");
+        var unrest = _session.CitiesAtRisk();
+        _unrestText.Visible = unrest.Count > 0;
+        if (unrest.Count > 0) Ui.Set(_unrestText, $"Unrest · {unrest.Count} {(unrest.Count == 1 ? "city" : "cities")}");
         Ui.Tint(_goldText, s.Net < 0 ? Ui.Bad : Ui.Accent);
         var r = s.Research;
         Ui.Set(_researchButton, r == null ? "Choose research!" : $"{r.Name} {r.Progress}/{r.Cost}" + (r.Turns is int t ? $" ({t}t)" : ""));

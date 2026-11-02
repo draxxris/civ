@@ -45,6 +45,7 @@ public sealed class StandardAi : IPlayerAI
         var orders = new UnitOrders(ctx);
         new MilitaryPlanner(ctx, army, cities, new AttackPlanner(ctx, orders)).Plan();
         new EspionagePlanner(ctx).Plan();
+        new StabilityPlanner(ctx).Plan();
         new EconomyPlanner(ctx).Plan();
         new HurryPlanner(ctx, cities).Plan();
     }

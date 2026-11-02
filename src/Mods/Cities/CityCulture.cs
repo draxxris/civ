@@ -225,8 +225,8 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         }
         return false;
     }
-    internal static bool IsBarbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
+    /// <summary>Kept as this mod's entry point; <see cref="PlayerRules.IsBarbarian"/> is the single definition.</summary>
+    internal static bool IsBarbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
     internal static int CultureRadius(Simulation sim, City city) => Math.Max(1, CityData.LevelIndex(sim, city));
 }
 

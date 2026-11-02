@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Modding;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -18,6 +19,8 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
     }
     private static long Contribution(CityStabilityDescription result, string source) =>
         result.Ledger.Lines.Where(l => l.Source == source).Sum(l => l.Amount);
+    // Normal pace is 85%; each line rounds once, to the nearest point away from zero.
+    private static long Round(long amount) => (long)Math.Round(amount * 100.0 / 85, MidpointRounding.AwayFromZero);
 
     [Theory]
     [InlineData(0, CityStabilityStatus.Stable)]
@@ -48,19 +51,19 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var city = P7ModFixture.City(sim, 46, population: 30);
         var service = Service(sim);
         var bare = service.DescribeCityStability(sim, city.Id);
-        // Normal research speed is 84%; each term truncates separately.
-        Assert.Equal(6 * 3 * 100 / 84, Contribution(bare, "revolution:distance"));
-        Assert.Equal(15 * 100 / 84, Contribution(bare, "revolution:garrison"));
+        // Normal pace is 85%; each term rounds once, so the lines add up to the total.
+        Assert.Equal(Round(6 * 3), Contribution(bare, "revolution:distance"));
+        Assert.Equal(Round(15), Contribution(bare, "revolution:garrison"));
         Assert.True(Contribution(bare, "revolution:wellbeing") > 0);
         P7ModFixture.Unit(sim, city);
         sim.State.PlayerById(0).Civics["government:civicoption_government"] = "government:despotism";
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = 2 });
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new GreatPeoplePlayerState { GoldenAgeTurns = 2 });
         var protectedCity = service.DescribeCityStability(sim, city.Id);
-        Assert.Equal(-12 * 100 / 84, Contribution(protectedCity, "revolution:garrison"));
-        Assert.Equal(8 * 100 / 84, Contribution(protectedCity, "government:despotism"));
-        Assert.Equal(40 * 100 / 84, Contribution(protectedCity, "revolution:anarchy"));
-        Assert.Equal(-30 * 100 / 84, Contribution(protectedCity, "revolution:golden_age"));
+        Assert.Equal(Round(-12), Contribution(protectedCity, "revolution:garrison"));
+        Assert.Equal(Round(8), Contribution(protectedCity, "government:despotism"));
+        Assert.Equal(Round(40), Contribution(protectedCity, "revolution:anarchy"));
+        Assert.Equal(Round(-30), Contribution(protectedCity, "revolution:golden_age"));
         Assert.Equal(protectedCity.Ledger.Lines.Sum(l => l.Amount), protectedCity.ChangePerTurn);
         var state = State(sim, city, 200);
         Update(sim);
@@ -83,11 +86,11 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = "religion:buddhism" });
         city.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(StringComparer.Ordinal) { "religion:buddhism", "religion:christianity" } });
         var mild = Service(sim).DescribeCityStability(sim, city.Id);
-        Assert.Equal(10 * 100 / 84, Contribution(mild, "revolution:non_state_religion"));
-        Assert.Equal(-10 * 100 / 84, Contribution(mild, "revolution:state_religion"));
+        Assert.Equal(Round(10), Contribution(mild, "revolution:non_state_religion"));
+        Assert.Equal(Round(-10), Contribution(mild, "revolution:state_religion"));
         sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
         var intolerant = Service(sim).DescribeCityStability(sim, city.Id);
-        Assert.Equal(20 * 100 / 84, Contribution(intolerant, "revolution:non_state_religion"));
+        Assert.Equal(Round(20), Contribution(intolerant, "revolution:non_state_religion"));
         city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Remove("religion:buddhism");
         Assert.Equal(0, Contribution(Service(sim).DescribeCityStability(sim, city.Id), "revolution:state_religion"));
         sim.State.PlayerById(0).Civics.Clear();
@@ -113,7 +116,9 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.True(sim.State.PlayerById(rebellion.RebelPlayer).Extensions.Get<MilitaryPlayerState>(sim.Content)!.Barbarian);
         Assert.Contains(sim.TeamOf(0).Id, sim.TeamOf(rebellion.RebelPlayer).Wars);
         var rebels = rebellion.Units.Select(sim.State.UnitById).ToArray();
-        Assert.Equal(neighbors.Skip(3).Take(2).Select(t => sim.State.Grid.HexOf(t)), rebels.Select(u => u.Position));
+        var legal = neighbors.Skip(3).Select(t => sim.State.Grid.HexOf(t)).ToArray();
+        Assert.Equal(2, rebels.Select(u => u.Position).Distinct().Count());
+        Assert.All(rebels, u => Assert.Contains(u.Position, legal));
         Assert.All(rebels, u => { Assert.Equal(rebellion.RebelPlayer, u.Owner); Assert.True(u.MovesLeft > 0); });
         var unrest = ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger;
         Assert.Equal(3, unrest.Lines.Single(l => l.Source == "revolution:unrest").Amount);
@@ -136,8 +141,9 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         foreach (var tile in sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position))) sim.State.Plots[tile.Value].Kind = PlotKind.Peak;
         Rebellions(sim);
         Assert.Empty(sim.State.Units);
-        Assert.Equal(400, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
-        Assert.Empty(Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>()).Units);
+        // No legal tile means no rebellion: pressure is not released and no cooldown starts.
+        Assert.Equal(1000, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
+        Assert.Empty(sim.Events.Published.OfType<CityRebellionTriggered>());
     }
 
     [Fact]
@@ -214,6 +220,105 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         before = sim.ComputeHash();
         Assert.False(sim.TryApply(new SuppressRebellionCommand { Player = 1, CityId = city.Id }, out _));
         Assert.Equal(before, sim.ComputeHash());
+    }
+
+    [Fact]
+    public void Inciting_a_revolt_raises_instability_and_starts_unrest_once()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 100);
+        Assert.True(Service(sim).Incite(sim, city.Id));
+        Assert.Equal(400, state.InstabilityIndex);
+        Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, state.UnrestUntilTurn);
+        // A city already in disorder cannot be incited again, so the pressure cannot stack.
+        city.Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
+        Assert.False(Service(sim).Incite(sim, city.Id));
+        Assert.Equal(400, state.InstabilityIndex);
+    }
+
+    [Fact]
+    public void Spy_revolt_feeds_the_revolution_instability_system()
+    {
+        var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
+        var city = P7ModFixture.City(sim, 57, owner: 1);
+        P7ModFixture.City(sim, 40, owner: 0); // A return city for the spy; every mission needs one.
+        var spy = P7ModFixture.Unit(sim, city, "military:spy", owner: 0);
+        spy.MovesLeft = 60;
+        sim.Content.Services.Get<IDiplomacyService>().Single().EstablishContact(sim, 0, 1);
+        var team = new EspionageTeamState(); team.Points[1] = 1000;
+        sim.State.TeamById(0).Extensions.Set(sim.Content, team);
+        var before = city.Extensions.Get<RevolutionCityState>(sim.Content)?.InstabilityIndex ?? 0;
+        Assert.True(sim.TryApply(new ExecuteEspionageMissionCommand
+            { Player = 0, Unit = spy.Id, City = city.Id, Mission = EspionageMissionKind.InciteRevolt }, out var error), error);
+        Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
+        // The Revolution mod's incite raises the city's instability as well as causing disorder.
+        Assert.True((city.Extensions.Get<RevolutionCityState>(sim.Content)?.InstabilityIndex ?? 0) > before);
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+    }
+
+    [Fact]
+    public void Cities_at_risk_reports_saved_instability_above_the_warning_tier()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        P7ModFixture.City(sim);
+        var warning = P7ModFixture.City(sim, 20); State(sim, warning, 400);
+        var mutiny = P7ModFixture.City(sim, 26); State(sim, mutiny, 900);
+        Assert.Equal(new[] { warning.Id, mutiny.Id }, Service(sim).CitiesAtRisk(sim, 0));
+        Assert.Empty(Service(sim).CitiesAtRisk(sim, 1));
+    }
+
+    [Fact]
+    public void Suppression_price_falls_with_the_instability_actually_removed()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 10);
+        sim.State.PlayerById(0).Treasury = 1000;
+        // A full 400-point reduction costs 100 gold, so a 10-point reduction costs 100 * 10 / 400 = 2.
+        Assert.Equal(2, Service(sim).DescribeCityStability(sim, city.Id).SuppressionGold);
+        Assert.True(sim.TryApply(new SuppressRebellionCommand { Player = 0, CityId = city.Id }, out var error), error);
+        Assert.Equal(998, sim.State.PlayerById(0).Treasury);
+        Assert.Equal(0, state.InstabilityIndex);
+        // Nothing left to suppress, and the price of nothing is nothing.
+        Assert.Equal(0, Service(sim).DescribeCityStability(sim, city.Id).SuppressionGold);
+        Assert.Contains("no instability", Service(sim).ValidateSuppression(sim, 0, city.Id, null));
+    }
+
+    [Fact]
+    public void Mutiny_adds_unhappiness_while_warning_stays_a_display_alert()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        long Mutiny() => ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger
+            .Lines.Where(l => l.Source == "revolution:mutiny").Sum(l => l.Amount);
+        State(sim, city, 500);
+        Assert.Equal(0, Mutiny());
+        State(sim, city, 700);
+        Assert.Equal(2, Mutiny());
+        Assert.Equal(CityStabilityStatus.Mutiny, Service(sim).DescribeCityStability(sim, city.Id).Status);
+    }
+
+    /// <summary>Revolution and Espionage are both optional mods; the capture reset spans both.</summary>
+    private static readonly Lazy<ContentDb> SpiesAndRevolution = new(() => ModLoader.Build(new LoadedMods().Sources
+        .Concat(new[] { "Revolution", "Espionage", "Diplomacy" }
+            .Select(name => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name))))));
+
+    [Fact]
+    public void Capture_resets_the_losers_spy_and_revolution_city_state()
+    {
+        var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
+        var city = P7ModFixture.City(sim);
+        city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900, RebellionCooldownUntilTurn = 5, UnrestUntilTurn = 5 });
+        city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9, UnhappyUntilTurn = 9 });
+        sim.Events.Publish(new CityCaptured(city.Id, 0, 1));
+        var revolution = city.Extensions.Get<RevolutionCityState>(sim.Content);
+        var espionage = city.Extensions.Get<EspionageCityState>(sim.Content);
+        Assert.Equal(0, revolution?.InstabilityIndex ?? 0);
+        Assert.Equal(0, revolution?.RebellionCooldownUntilTurn ?? 0);
+        Assert.Equal(0, revolution?.UnrestUntilTurn ?? 0);
+        Assert.Equal(0, espionage?.RevoltUntilTurn ?? 0);
+        Assert.Equal(0, espionage?.UnhappyUntilTurn ?? 0);
     }
 
     [Fact]

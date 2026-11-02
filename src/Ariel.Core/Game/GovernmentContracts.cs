@@ -3,10 +3,12 @@ using Ariel.Content.Schema;
 
 namespace Ariel.Game;
 
-/// <summary>Saved revolution timers. Each boundary consumes one anarchy turn at PlayerEnd.</summary>
+/// <summary>Saved civic-change timers. Each boundary consumes one anarchy turn at PlayerEnd.</summary>
 public sealed class GovernmentPlayerState
 {
     public int AnarchyTurns { get; set; }
+    /// <summary>Cooldown before the next civic change. Unrelated to city instability, which the Revolution mod keeps
+    /// in <see cref="RevolutionCityState"/>.</summary>
     public int RevolutionTimer { get; set; }
 }
 

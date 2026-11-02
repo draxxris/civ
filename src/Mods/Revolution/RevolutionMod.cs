@@ -14,12 +14,18 @@ public sealed class RevolutionMod : IPreparableMod
         var rules = Rules.Read(context.Data);
         ValidateThresholds(rules);
         ValidateResponses(rules);
+        ValidateFactors(rules);
         context.Content<RevolutionRulesDef>().Register(rules);
         var service = new RevolutionService();
         context.RegisterService<IRevolutionService>("queries", service);
         context.RegisterService<IModifierSource>("unrest", service);
         context.RegisterStateComponent<RevolutionCityState>("city_state");
         context.RegisterCommand<SuppressRebellionCommand>("suppress_rebellion");
+        // A conquest must not hand the loser's instability, cooldown or unrest to the winner.
+        context.Subscribe<CityCaptured>("reset_capture", (sim, captured) =>
+        {
+            if (sim.State.FindCity(captured.City) is { } city) city.Extensions.Set(sim.Content, new RevolutionCityState());
+        });
         context.TurnSystems.Register(new InstabilityTurns(service));
         context.TurnSystems.Register(new RebellionTurns(service));
     }
@@ -37,6 +43,16 @@ public sealed class RevolutionMod : IPreparableMod
             || rules.CooldownTurns < 1 || rules.UnrestTurns < 1 || rules.RebelUnits < 1)
             throw new InvalidDataException("Invalid revolution responses");
     }
+
+    private static void ValidateFactors(RevolutionRulesDef rules)
+    {
+        if (rules.WellbeingFactor <= 0 || rules.DistanceFactor <= 0 || rules.GarrisonFactor > 0
+            || rules.UndefendedFactor < 0 || rules.GoldenAgeFactor > 0 || rules.NaturalRecovery > 0
+            || rules.MaxGarrison < 0 || rules.AnarchyFactor < 0 || rules.IntolerancePercent < 0
+            || rules.NonStateReligionFactor < 0 || rules.MutinyUnhappiness < 0 || rules.UnrestUnhappiness < 0
+            || rules.InciteInstability < 0)
+            throw new InvalidDataException("Invalid revolution instability factors");
+    }
 }
 
 internal sealed class InstabilityTurns(RevolutionService service) : IPlayerTurnSystem
@@ -45,7 +61,7 @@ internal sealed class InstabilityTurns(RevolutionService service) : IPlayerTurnS
     public int Order => TurnPhase.PlayerEnd - 1;
     public void Run(Simulation sim, int player)
     {
-        if (sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true) return;
+        if (PlayerRules.IsBarbarian(sim, player)) return;
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.Update(sim, city);
     }
 }

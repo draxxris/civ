@@ -130,12 +130,10 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             state.StrikeTurns = 0;
             return;
         }
-        if (IsBarbarian(sim, player) || !EconomyData.Cities(sim, player).Any()) return;
+        if (PlayerRules.IsBarbarian(sim, player) || !EconomyData.Cities(sim, player).Any()) return;
         state.StrikeTurns++;
         if (state.StrikeTurns > 1) DisbandForDeficit(sim, player, state.StrikeTurns / 2);
     }
-    private static bool IsBarbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     private void DisbandForDeficit(Simulation sim, int player, int limit)
     {
         bool disbanded = false;

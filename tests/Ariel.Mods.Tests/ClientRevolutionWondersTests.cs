@@ -29,7 +29,7 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         var report = session.DescribeCity(city)!.Stability!;
         Assert.Equal(CityStabilityStatus.Mutiny, report.Status);
         Assert.Equal(800, report.Index);
-        Assert.True(report.CanSuppress);
+        Assert.True(report.CanSuppressGold);
         long gold = session.Me.Treasury;
         Assert.True(session.SuppressRebellion(city.Id));
         Assert.True(session.Me.Treasury < gold);
@@ -57,9 +57,10 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         var garrison = P7ModFixture.Unit(session.Sim, city);
         garrison.MovesLeft = 1;
         var report = session.DescribeCity(city)!.Stability!;
-        Assert.True(report.CanSuppress);
+        Assert.False(report.CanSuppressGold);
+        Assert.True(report.CanSuppressGarrison);
         Assert.Null(report.SuppressBlocked);
-        Assert.True(session.SuppressRebellion(city.Id));
+        Assert.True(session.SuppressRebellionWithGarrison(city.Id));
         Assert.Equal(0, garrison.MovesLeft);
         Assert.Equal(0, session.Me.Treasury);
         Assert.True(session.DescribeCity(city)!.Stability!.Index < 800);
@@ -72,7 +73,8 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         session.Sim.State.PlayerById(0).Treasury = 0;
         city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
         var report = session.DescribeCity(city)!.Stability!;
-        Assert.False(report.CanSuppress);
+        Assert.False(report.CanSuppressGold);
+        Assert.False(report.CanSuppressGarrison);
         Assert.Equal("Insufficient gold", report.SuppressBlocked);
         Assert.False(session.SuppressRebellion(city.Id));
     }

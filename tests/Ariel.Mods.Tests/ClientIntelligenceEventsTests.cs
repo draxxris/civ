@@ -260,6 +260,8 @@ public sealed class ClientIntelligenceEventsTests
         var session = IntelligenceSession(out var points, out var target); var sim = session.Sim;
         points.Points[1] = 100;
         sim.Content.Services.Get<IPlayerEconomyService>().Single().SetRates(sim, 0, new(0, 0, 0, 100));
+        // An unset weight is zero, so the player must ask for the rival before the forecast moves.
+        Assert.True(session.SetEspionageWeight(1, 1));
         var spy = AddUnit(sim, target, "military:spy", 0);
         var unlocked = session.DescribeRivalIntelligence(1)!;
         Assert.NotNull(Assert.Single(unlocked.Cities!).Details);
@@ -269,7 +271,7 @@ public sealed class ClientIntelligenceEventsTests
             { Player = 0, Unit = spy.Id, City = target.Id, Mission = EspionageMissionKind.CounterEspionage }, out var error), error);
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
         var refreshed = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(58, refreshed.Points); // floor(84*50/100) = 42 points spent.
+        Assert.Equal(50, refreshed.Points); // Flat 100 points at a 50% ratio.
         Assert.Null(refreshed.Research); Assert.Null(Assert.Single(refreshed.Cities!).Details);
         Assert.Equal(new CounterEspionageEffect(sim.State.Turn + 8, 200), refreshed.ProtectionAgainstRival);
         Assert.NotNull(Assert.Single(unlocked.Cities!).Details); // Existing snapshots never alias live state.

@@ -183,7 +183,7 @@ internal sealed partial class CityUi : Control
         if (c.Stability is { } s)
         {
             key.Append('|').Append(s.Status).Append('~').Append(s.Index).Append('~').Append(s.ChangePerTurn).Append('~')
-                .Append(s.CooldownTurns).Append('~').Append(s.CanSuppress);
+                .Append(s.CooldownTurns).Append('~').Append(s.CanSuppressGold).Append('~').Append(s.CanSuppressGarrison).Append('~').Append(s.SuppressGold);
             foreach (var row in s.Ledger) key.Append('~').Append(row.Text);
         }
         foreach (var w in c.WonderScripts) key.Append('|').Append(w.Name).Append('~').Append(w.Active).Append('~').Append(w.TurnsToSpawn).Append('~').Append(w.SpawnUnit);
@@ -276,10 +276,25 @@ internal sealed partial class CityUi : Control
         if (c.Stability is not { } s) return;
         box.AddChild(Ui.Heading($"Stability: {s.Status} ({s.Index})"));
         string extra = s.CooldownTurns > 0 ? $", rebellion cooldown {s.CooldownTurns} turns" : "";
-        box.AddChild(Ui.Text($"{Labels.Signed(s.ChangePerTurn)} per turn{extra}", 13, s.Status == CityStabilityStatus.Stable ? Ui.Dim : Ui.Bad));
+        box.AddChild(Ui.Text($"{Labels.Signed(s.ChangePerTurn)} per turn{extra}", 13, StatusColour(s.Status)));
         foreach (var row in s.Ledger) box.AddChild(Ui.Text(row.Text, 12, Ui.Dim));
-        if (s.CanSuppress) box.AddChild(Ui.Button("Suppress Rebellion", () => _session.SuppressRebellion(c.Id), "Pay to reduce instability", size: 13));
+        // Both routes stay visible: the player chooses gold or a garrison instead of the client choosing for them.
+        if (s.CanSuppressGold)
+            box.AddChild(Ui.Button($"Suppress Rebellion ({s.SuppressGold} gold)", () => _session.SuppressRebellion(c.Id),
+                "Pay to reduce instability by up to the full suppression amount", size: 13));
+        if (s.CanSuppressGarrison)
+            box.AddChild(Ui.Button("Suppress with garrison", () => _session.SuppressRebellionWithGarrison(c.Id),
+                "Spend a military garrison's remaining movement instead of gold", size: 13));
+        if (s.SuppressBlocked is { } blocked) box.AddChild(Ui.Text(blocked, 12, Ui.Dim));
     }
+
+    private static Color StatusColour(CityStabilityStatus status) => status switch
+    {
+        CityStabilityStatus.Rebellion => Ui.Bad,
+        CityStabilityStatus.Mutiny => Ui.Warn,
+        CityStabilityStatus.Warning => Ui.Accent,
+        _ => Ui.Dim
+    };
 
     private void AddWonderScripts(VBoxContainer box, CityScreen c)
     {

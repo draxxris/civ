@@ -90,7 +90,7 @@ internal sealed class CivicEffects : IModifierSource
     }
     private static void CivicAnger(Simulation sim, City city, ModifierSink sink)
     {
-        var others = sim.State.Players.Where(p => p.Id != city.Owner && !IsBarbarian(sim, p.Id)
+        var others = sim.State.Players.Where(p => p.Id != city.Owner && !PlayerRules.IsBarbarian(sim, p.Id)
             && sim.TeamOf(p.Id).Id != sim.TeamOf(city.Owner).Id)
             .Select(p => new { Player = p, Cities = sim.State.Cities.Count(c => c.Owner == p.Id) }).ToArray();
         int possible = others.Sum(p => p.Cities);
@@ -103,8 +103,6 @@ internal sealed class CivicEffects : IModifierSource
             sink.Add(civic.Id, "cities:civic_percent_anger", (long)civic.CivicPercentAnger * count / possible);
         }
     }
-    private static bool IsBarbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     private static void Capital(City city, CivicDef c, BuildingDef[] buildings, ModifierSink sink)
     {
         if (!buildings.Any(b => b.Capital)) return;

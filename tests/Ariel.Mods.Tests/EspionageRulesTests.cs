@@ -25,7 +25,9 @@ public sealed class EspionageRulesTests
         P6RulesScenario.AddCity(sim, 2, 80);
         var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);
         economy.SetRates(sim, 0, new(0, 0, 0, 100));
-        Assert.Equal(1, Spies(sim).Weight(sim, 0, 1));
+        // An unset weight is zero: the player must ask for a target before points move.
+        Assert.Equal(0, Spies(sim).Weight(sim, 0, 1));
+        P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });
         Assert.Contains("known", P6RulesScenario.Reject(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 }));
         ulong beforeForecast = sim.ComputeHash();
         var forecast = economy.Calculate(sim, 0);
@@ -59,6 +61,8 @@ public sealed class EspionageRulesTests
         long before = Spies(sim).Points(sim, 0, 1) + Spies(sim).Points(sim, 0, 2);
         sim.AdvanceTurn(); Assert.Equal(before, Spies(sim).Points(sim, 0, 1) + Spies(sim).Points(sim, 0, 2));
         Assert.True(sim.State.PlayerById(0).Extensions.Get<EspionagePlayerState>(sim.Content)!.RemainderHundredths >= 100);
+        // Held points are reported, not hidden: a full point is waiting for a target.
+        Assert.True(Spies(sim).Held(sim, 0) >= 1);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });
         sim.AdvanceTurn(); Assert.True(Spies(sim).Points(sim, 0, 1) + Spies(sim).Points(sim, 0, 2) > before);
     }
@@ -92,6 +96,57 @@ public sealed class EspionageRulesTests
         TeamState(sim, 0).Spent[2] = 1000; // Team 0 spends on team 2, so the 0-1 ratio stays neutral.
         Assert.Equal(50, Spies(sim).PassiveThreshold(sim, 0, 1, PassiveEspionageKind.Demographics));
     }
+    [Fact]
+    public void Running_a_mission_lowers_the_attackers_investment_and_raises_the_next_price()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2];
+        // Equal investment puts the ratio in its linear range, where a change actually moves the price.
+        Fund(sim, 0, 1, 200); Fund(sim, 1, 0, 200);
+        long before = Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.StealTreasury);
+        Assert.Equal(50, before);
+        P6RulesScenario.Apply(sim, Mission(Spy(sim), city, EspionageMissionKind.StealTreasury));
+        // The points are spent and are not credited back to lifetime allocation.
+        Assert.Equal(150, Spies(sim).Points(sim, 0, 1));
+        Assert.Equal(0, TeamState(sim, 0).Spent.GetValueOrDefault(1));
+        Assert.True(Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.StealTreasury) > before);
+    }
+
+    [Fact]
+    public void Technology_theft_cannot_be_priced_without_a_technology()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2];
+        Assert.Throws<ArgumentException>(() => Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.StealTech));
+        // The command path rejects it before pricing, so a real caller never reaches the throw.
+        Assert.Contains("Choose", P6RulesScenario.Reject(sim, Mission(Spy(sim), city, EspionageMissionKind.StealTech)));
+    }
+
+    [Fact]
+    public void Spy_revolt_is_refused_in_a_city_that_is_already_in_disorder()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
+        city.Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
+        Assert.Contains("already in revolt", P6RulesScenario.Reject(sim, Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt)));
+        // Disorder only blocks the revolt, not the other missions.
+        Assert.Null(Mission(Spy(sim), city, EspionageMissionKind.StealTreasury).Validate(sim));
+        city.Extensions.Set(sim.Content, new CityRuleState());
+        P6RulesScenario.Apply(sim, Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt));
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        // Three nominal turns at the Normal pace of 85%: the deadline is two turns away, not one.
+        Assert.Equal(sim.State.Turn + 2, city.Extensions.Get<EspionageCityState>(sim.Content)!.RevoltUntilTurn);
+    }
+
+    [Fact]
+    public void Known_rivals_are_the_only_allocation_targets_and_are_the_same_query_everywhere()
+    {
+        var sim = P6RulesScenario.Create();
+        Assert.Equal(new[] { 1 }, Spies(sim).KnownRivals(sim, 0));
+        Assert.Equal(new[] { 0 }, Spies(sim).KnownRivals(sim, 1));
+        var victim = sim.State.Cities.Where(c => c.Owner == 1).ToArray();
+        foreach (var city in victim) sim.State.RemoveCity(city.Id);
+        foreach (var unit in sim.State.Units.Where(u => u.Owner == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
+        Assert.Empty(Spies(sim).KnownRivals(sim, 0));
+    }
+
     [Fact]
     public void Eliminated_teams_stop_receiving_espionage_points()
     {
@@ -167,7 +222,14 @@ public sealed class EspionageRulesTests
         loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         long production = city.ProductionQueue[0].Progress;
         sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        if (mission == EspionageMissionKind.InciteRevolt) { Assert.False(GovernmentStatus.IsDisorder(sim, city)); Assert.Equal(production, city.ProductionQueue[0].Progress); }
+        if (mission == EspionageMissionKind.InciteRevolt)
+        {
+            // Normically three turns, paced to two on Normal: still in revolt after one, clear after two.
+            Assert.True(GovernmentStatus.IsDisorder(sim, city));
+            sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+            Assert.False(GovernmentStatus.IsDisorder(sim, city));
+            Assert.Equal(production, city.ProductionQueue[0].Progress);
+        }
         if (mission == EspionageMissionKind.FomentUnhappiness)
         {
             sim.AdvanceTurn(); sim.AdvanceTurn();
@@ -199,9 +261,9 @@ public sealed class EspionageRulesTests
     }
 
     [Theory]
-    [InlineData("foundation:gamespeed_normal", 84, 8)]
-    [InlineData("foundation:gamespeed_quick", 63, 6)]
-    [InlineData("foundation:gamespeed_marathon", 168, 16)]
+    [InlineData("foundation:gamespeed_normal", 100, 8)]
+    [InlineData("foundation:gamespeed_quick", 100, 6)]
+    [InlineData("foundation:gamespeed_marathon", 100, 25)]
     public void Counter_espionage_has_one_team_expiry_and_survives_save_load(string speed, long cost, int duration)
     {
         var content = P6RulesScenario.Create().Content;
@@ -258,7 +320,8 @@ public sealed class EspionageRulesTests
         Assert.Empty(TeamState(sim, 0).CounterEspionage);
         Assert.Empty(TeamState(loaded, 0).CounterEspionage);
         Assert.Null(repeat.Validate(sim));
-        Assert.Equal(50, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.StealTreasury));
+        // Team 0's counter-espionage spent 100 points of its own investment, so team 1's ratio is 99%: 50 -> 49.
+        Assert.Equal(49, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.StealTreasury));
     }
 
     [Fact]
@@ -276,7 +339,9 @@ public sealed class EspionageRulesTests
         Assert.Equal(201, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.SabotageProduction));
         Assert.Equal(504, Spies(sim).PassiveThreshold(sim, 1, 0, PassiveEspionageKind.InvestigateCity));
         Assert.Equal(78, Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.SabotageProduction));
-        Assert.Equal(chance, Spies(sim).SuccessChance(sim, 1, home.Id));
+        // Risk moves with cost: 250% costs 30 points of success chance on a city with no counter-spy.
+        Assert.Equal(chance - 30, Spies(sim).SuccessChance(sim, 1, sim.State.Cities[0].Id));
+        Assert.True(Spies(sim).SuccessChance(sim, 1, home.Id) <= chance - 30);
         // The unrelated team pair has no effect.
         sim.State.Players.Add(new Player { Id = 2, TeamId = 2 });
         sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();

@@ -17,7 +17,7 @@ public sealed record CorporationScreen(bool Available, IReadOnlyList<Corporation
 public sealed record EspionageRow(
     int TeamId, string Name, long Points, int Weight, bool Demographics, bool CityVisibility, bool InspectResearch, bool InvestigateCity);
 
-public sealed record EspionageScreen(bool Available, IReadOnlyList<EspionageRow> Rivals);
+public sealed record EspionageScreen(bool Available, long Held, IReadOnlyList<EspionageRow> Rivals);
 
 public sealed record EventOptionRow(string Id, string Name, string Help, bool IsDefault, string? Blocked);
 
@@ -57,27 +57,28 @@ public sealed partial class GameSession
             .Select(d => new CityCorporation(d.Id, d.Name, service.Headquarters(Sim, d.Id) == city.Id, service.IsActive(Sim, city.Id, d.Id), d.Icon)).ToList();
     }
 
-    /// <summary>Rival teams the player has met, with espionage points, weight and unlocked passive effects.</summary>
+    /// <summary>Known rival teams with espionage points, weight and unlocked passive effects.</summary>
     public EspionageScreen DescribeEspionage()
     {
         var service = OptionalService<IEspionageService>();
-        if (service == null) return new(false, []);
+        if (service == null) return new(false, 0, []);
         int me = MyTeam.Id;
-        // ValidateWeight admits only met, living, non-barbarian rivals, so eliminated and barbarian teams stay hidden.
-        var rivals = Sim.State.Teams.Where(t => t.Id != me).OrderBy(t => t.Id)
-            .Where(t => service.ValidateWeight(Sim, Human, t.Id, service.Weight(Sim, Human, t.Id)) is null)
-            .Select(t => new EspionageRow(t.Id, TeamName(t), service.Points(Sim, me, t.Id), service.Weight(Sim, Human, t.Id),
-                service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.Demographics),
-                service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.CityVisibility),
-                service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.InspectResearch),
-                service.HasPassiveEffect(Sim, me, t.Id, PassiveEspionageKind.InvestigateCity))).ToList();
-        return new(true, rivals);
+        // One rival query for the whole screen; one bulk passive query per rival.
+        var rivals = service.KnownRivals(Sim, Human)
+            .Select(id => (Team: Sim.State.TeamById(id), Status: service.PassiveStatus(Sim, me, id)))
+            .Select(r => new EspionageRow(r.Team.Id, TeamName(r.Team), service.Points(Sim, me, r.Team.Id), service.Weight(Sim, Human, r.Team.Id),
+                r.Status.Single(p => p.Kind == PassiveEspionageKind.Demographics).Unlocked,
+                r.Status.Single(p => p.Kind == PassiveEspionageKind.CityVisibility).Unlocked,
+                r.Status.Single(p => p.Kind == PassiveEspionageKind.InspectResearch).Unlocked,
+                r.Status.Single(p => p.Kind == PassiveEspionageKind.InvestigateCity).Unlocked)).ToList();
+        return new(true, service.Held(Sim, Human), rivals);
     }
 
     private string TeamName(Team team) => string.Join(", ", team.Members.OrderBy(m => m).Select(PlayerName));
 
-    /// <summary>Change how much of the espionage budget goes against a team.</summary>
-    public bool SetEspionageWeight(int targetTeam, int weight) => Submit(new SetEspionageWeightCommand { Player = Human, TargetTeam = targetTeam, Weight = weight });
+    /// <summary>Change how much of the espionage budget goes against a team. False when the espionage mod is absent.</summary>
+    public bool SetEspionageWeight(int targetTeam, int weight) => OptionalService<IEspionageService>() is not null
+        && Submit(new SetEspionageWeightCommand { Player = Human, TargetTeam = targetTeam, Weight = weight });
 
     /// <summary>Events waiting for the local player's choice.</summary>
     public IReadOnlyList<PendingEventRow> DescribePendingEvents()
@@ -126,12 +127,37 @@ public sealed partial class GameSession
         var service = OptionalService<IEspionageService>();
         var city = Sim.State.CityAt(unit.Position);
         if (service == null || city == null || city.Owner == Human || unit.MovesLeft <= 0) yield break;
-        foreach (var kind in Enum.GetValues<EspionageMissionKind>().Where(k => k != EspionageMissionKind.StealTech))
+        // Technology theft needs a target technology, so it is offered by the spy panel's picker, not as one-click action.
+        foreach (var kind in EspionageMissionOrder.Display.Where(k => k != EspionageMissionKind.StealTech))
         {
             var mission = new ExecuteEspionageMissionCommand { Player = Human, Unit = unit.Id, City = city.Id, Mission = kind };
             if (mission.Validate(Sim) != null) continue;
             yield return new($"spy:{kind}:{city.Id}", Labels.Humanize(kind.ToString()), mission, null,
                 $"{service.MissionCost(Sim, Human, city.Id, kind)} points, {service.SuccessChance(Sim, Human, city.Id)}% chance");
         }
+    }
+
+    /// <summary>Technologies the selected spy could steal where it stands, cheapest mission first.</summary>
+    public IReadOnlyList<RivalTechnology> StealableTechs(Unit? unit)
+    {
+        var service = OptionalService<IEspionageService>();
+        if (service is null || unit is null || Sim.State.CityAt(unit.Position) is not { } city) return [];
+        return service.StealableTechnologies(Sim, Human, city.Id)
+            .Select(id => (Id: id, Name: RivalTechnologyOf(id).Name, Cost: service.MissionCost(Sim, Human, city.Id, EspionageMissionKind.StealTech, id)))
+            .OrderBy(t => t.Cost).ThenBy(t => t.Id, StringComparer.Ordinal)
+            .Select(t => new RivalTechnology(t.Id, t.Name)).ToArray();
+    }
+
+    /// <summary>Run the technology theft the picker selected at the spy's current city.</summary>
+    public bool StealTechnology(Unit? unit, string tech)
+    {
+        var service = OptionalService<IEspionageService>();
+        if (service is null || unit is null || Sim.State.CityAt(unit.Position) is not { } city)
+        {
+            SetMessage("Select a spy in a rival city");
+            return false;
+        }
+        return Submit(new ExecuteEspionageMissionCommand
+            { Player = Human, Unit = unit.Id, City = city.Id, Mission = EspionageMissionKind.StealTech, Tech = tech });
     }
 }

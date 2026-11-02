@@ -4,22 +4,31 @@ using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
 
+/// <summary>Instability of one city, with both suppression routes priced separately and never chosen for the player.</summary>
 public sealed record CityStabilityReport(int City, int Index, CityStabilityStatus Status, int ChangePerTurn, int CooldownTurns,
-    int UnrestTurns, IReadOnlyList<LedgerRow> Ledger, bool CanSuppress, string? SuppressBlocked);
+    int UnrestTurns, IReadOnlyList<LedgerRow> Ledger, long SuppressGold, bool CanSuppressGold, bool CanSuppressGarrison,
+    string? SuppressBlocked);
 
 public sealed record CityWonderScript(string Building, string Name, bool Active, int ElapsedTurns, int SpawnInterval,
     string? SpawnUnit, int? TurnsToSpawn);
 
 public sealed partial class GameSession
 {
+    /// <summary>Own cities at or above the warning tier, lowest id first. Saved instability only, no ledger per city.</summary>
+    public IReadOnlyList<int> CitiesAtRisk() => OptionalService<IRevolutionService>()?.CitiesAtRisk(Sim, Human) ?? [];
+
     private CityStabilityReport? StabilityOf(City city)
     {
         var service = OptionalService<IRevolutionService>();
         if (service == null) return null;
         var d = service.DescribeCityStability(Sim, city.Id);
-        string? blocked = city.Owner == Human ? SuppressionBlocked(service, city) : "Not your city";
         var rows = d.Ledger.Lines.Where(l => l.Amount != 0).Select(l => new LedgerRow(Labels.Source(Sim, l.Source), l.Amount)).ToList();
-        return new(city.Id, d.InstabilityIndex, d.Status, d.ChangePerTurn, d.CooldownTurns, d.UnrestTurns, rows, blocked == null, blocked);
+        bool gold = city.Owner == Human && service.ValidateSuppression(Sim, Human, city.Id, null) is null;
+        bool garrison = city.Owner == Human && GarrisonFor(service, city) is not null;
+        string? blocked = city.Owner != Human ? "Not your city"
+            : gold || garrison ? null : service.ValidateSuppression(Sim, Human, city.Id, null);
+        return new(city.Id, d.InstabilityIndex, d.Status, d.ChangePerTurn, d.CooldownTurns, d.UnrestTurns, rows,
+            d.SuppressionGold, gold, garrison, blocked);
     }
 
     private IReadOnlyList<CityWonderScript> WonderScriptsIn(City city)
@@ -32,24 +41,26 @@ public sealed partial class GameSession
             w.Active && w.SpawnUnit != null && w.SpawnInterval > 0 ? Math.Max(0, w.SpawnInterval - w.ElapsedTurns) : null)).ToList();
     }
 
-    /// <summary>Pay gold to suppress a city's rebellion, or spend a garrison when gold cannot pay.</summary>
-    public bool SuppressRebellion(int cityId)
+    /// <summary>Pay gold to suppress a city's rebellion. The price falls with the instability actually removed.</summary>
+    public bool SuppressRebellion(int cityId) => OptionalService<IRevolutionService>() is not null
+        && Submit(new SuppressRebellionCommand { Player = Human, CityId = cityId });
+
+    /// <summary>Spend an owned military garrison's remaining movement instead of gold.</summary>
+    public bool SuppressRebellionWithGarrison(int cityId)
     {
         var service = OptionalService<IRevolutionService>();
         var city = Sim.State.FindCity(cityId);
-        int? garrison = service == null || city == null ? null : SuppressionGarrison(service, city);
+        if (service is null || city is null) { SetMessage("No revolution rules loaded"); return false; }
+        if (GarrisonFor(service, city) is not { } garrison) { SetMessage("No garrison can suppress this city"); return false; }
         return Submit(new SuppressRebellionCommand { Player = Human, CityId = cityId, Garrison = garrison });
     }
 
-    /// <summary>The garrison that suppresses instead of gold. Null means gold pays, or nothing can.</summary>
-    private int? SuppressionGarrison(IRevolutionService service, City city)
+    /// <summary>The garrison that suppresses instead of gold, when one qualifies.</summary>
+    private int? GarrisonFor(IRevolutionService service, City city)
     {
-        if (city.Owner != Human || service.ValidateSuppression(Sim, Human, city.Id, null) is null) return null;
-        return Sim.State.UnitsAt(city.Position).Where(u => u.Owner == Human).OrderBy(u => u.Id)
-            .Where(u => service.ValidateSuppression(Sim, Human, city.Id, u.Id) is null).Select(u => (int?)u.Id).FirstOrDefault();
+        if (city.Owner != Human) return null;
+        foreach (var unit in Sim.State.UnitsAt(city.Position).Where(u => u.Owner == Human).OrderBy(u => u.Id))
+            if (service.ValidateSuppression(Sim, Human, city.Id, unit.Id) is null) return unit.Id;
+        return null;
     }
-
-    /// <summary>Why the player cannot suppress this city now, or null when gold or a garrison can.</summary>
-    private string? SuppressionBlocked(IRevolutionService service, City city) =>
-        SuppressionGarrison(service, city) is null ? service.ValidateSuppression(Sim, Human, city.Id, null) : null;
 }

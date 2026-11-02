@@ -14,13 +14,19 @@ public sealed class RevolutionCityState
 }
 
 public sealed record CityStabilityDescription(int City, int InstabilityIndex, CityStabilityStatus Status,
-    int ChangePerTurn, int CooldownTurns, int UnrestTurns, Ledger Ledger);
+    int ChangePerTurn, int CooldownTurns, int UnrestTurns, long SuppressionGold, Ledger Ledger);
 
 public interface IRevolutionService
 {
     CityStabilityDescription DescribeCityStability(Simulation sim, int cityId);
     string? ValidateSuppression(Simulation sim, int player, int cityId, int? garrison);
     void Suppress(Simulation sim, int player, int cityId, int? garrison);
+    /// <summary>Outside agents start a revolt: raises instability and unrest without spawning units directly.
+    /// A city already in disorder is left alone. Returns false when the city cannot be incited.</summary>
+    bool Incite(Simulation sim, int cityId);
+    /// <summary>Own cities at or above the warning tier, lowest id first. Reads saved instability only, so a caller
+    /// never pays for a wellbeing ledger just to count them.</summary>
+    IReadOnlyList<int> CitiesAtRisk(Simulation sim, int player);
 }
 
 /// <summary>Pay gold, or consume the remaining movement of an owned military garrison.</summary>
@@ -34,6 +40,8 @@ public sealed class SuppressRebellionCommand : GameCommand
         .Suppress(sim, Player, CityId, Garrison);
 }
 
+/// <summary>RebelPlayer is the barbarian or rebel player that owns the spawned units, or -1 when no legal tile
+/// existed and no faction had to be created.</summary>
 public sealed record CityRebellionTriggered(int City, int Player, int RebelPlayer,
     IReadOnlyList<int> Units, int InstabilityReleased) : DomainEvent;
 public sealed record CityRebellionSuppressed(int City, int Player, int? Garrison, long Gold, int Reduction) : DomainEvent;

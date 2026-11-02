@@ -13,10 +13,8 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private static TeamProjectState ReadTeam(Simulation sim, int team) => sim.State.TeamById(team).Extensions.Get<TeamProjectState>(sim.Content) ?? new();
     private static IEnumerable<VictoryDef> Victories(Simulation sim) => sim.Content.Get<VictoryDef>().All
         .Where(v => v.Enabled).OrderBy(v => v.Priority).ThenBy(v => v.Id, StringComparer.Ordinal);
-    private static bool IsBarbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
     private static IEnumerable<Player> Civilizations(Simulation sim) =>
-        sim.State.Players.Where(p => !IsBarbarian(sim, p.Id)).OrderBy(p => p.Id);
+        sim.State.Players.Where(p => !PlayerRules.IsBarbarian(sim, p.Id)).OrderBy(p => p.Id);
     /// <summary>Candidate winning teams, highest combined score first. Ties go to the lower team id.</summary>
     private IEnumerable<IGrouping<int, Player>> TeamsByScore(Simulation sim) => Civilizations(sim).GroupBy(p => p.TeamId)
         .OrderByDescending(team => TeamScore(sim, team)).ThenBy(team => team.Key);
