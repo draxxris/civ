@@ -39,7 +39,6 @@ public interface IReligionService
     IReadOnlyList<string> Present(Simulation sim, int city);
     int? HolyCity(Simulation sim, string religion);
     IReadOnlyList<ReligionDef> Choices(Simulation sim, int player);
-    IReadOnlyList<Ariel.Content.Schema.UnitDef> Missionaries(Simulation sim, string religion);
     string? ValidateConversion(Simulation sim, int player, string? religion);
     ReligionConversion PreviewConversion(Simulation sim, int player);
     void Convert(Simulation sim, int player, string? religion);

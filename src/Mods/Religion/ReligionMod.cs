@@ -35,12 +35,9 @@ internal sealed class ReligionTurns(ReligionService service) : IPlayerTurnSystem
     public int Order => TurnPhase.CityPostProduction - 1;
     public void Run(Simulation sim, int player)
     {
-        foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.NaturalSpread(sim, city);
+        var spread = service.BeginSpreadTurn(sim);
+        foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.NaturalSpread(sim, city, spread);
         var state = sim.State.PlayerById(player).Extensions.Get<ReligionPlayerState>(sim.Content);
         if (state is not null) state.ConversionTimer = Math.Max(0, state.ConversionTimer - 1);
-    }
-    public void Run(Simulation sim)
-    {
-        foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Run(sim, player.Id);
     }
 }

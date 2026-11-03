@@ -159,14 +159,27 @@ internal sealed partial class DiplomacyService
         return balance;
     }
     /// <summary>The city's own network copies, capped by what exports leave in its group, plus imports when the city is linked to the capital.</summary>
-    public long AvailableResourceCount(Simulation sim, int player, int city, string resource)
+    public long AvailableResourceCount(Simulation sim, int player, int city, string resource) =>
+        AvailableResourceCounts(sim, player, city, [resource]).GetValueOrDefault(resource);
+    public IReadOnlyDictionary<string, long> AvailableResourceCounts(Simulation sim, int player, int city, IReadOnlyCollection<string> resources)
     {
+        var result = new SortedDictionary<string, long>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
-        if (target is null || target.Owner != player) return 0;
-        long own = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault()?.ConnectedCount(sim, player, city, resource) ?? 0;
-        long physical = Exports(sim, player, resource) == 0 ? own : Math.Min(own, Remaining(sim, player, target, resource));
-        long imports = Imports(sim, player, resource);
-        return Math.Max(0, physical + (imports > 0 && ConnectedToRoot(sim, player, target) ? imports : 0));
+        if (target is null || target.Owner != player) return result;
+        // One connectivity query covers every resource; only the export/import arithmetic is per resource.
+        var connected = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault()?.ConnectedCounts(sim, player, city)
+            ?? new Dictionary<string, int>();
+        bool rooted = false;
+        foreach (var resource in resources.Distinct(StringComparer.Ordinal))
+        {
+            long own = connected.GetValueOrDefault(resource);
+            long physical = Exports(sim, player, resource) == 0 ? own : Math.Min(own, Remaining(sim, player, target, resource));
+            long imports = Imports(sim, player, resource);
+            if (imports == 0) { result[resource] = physical; continue; }
+            if (!rooted) rooted = ConnectedToRoot(sim, player, target);
+            result[resource] = rooted ? physical + imports : physical;
+        }
+        return result;
     }
     /// <summary>Exports leave the empire pool in group order. Returns the copies that stay in the target's group.</summary>
     private static long Remaining(Simulation sim, int player, City target, string resource)

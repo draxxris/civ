@@ -50,6 +50,8 @@ public interface IDiplomacyService
     long ResourceBalance(Simulation sim, int player, string resource);
     /// <summary>Physical connected copies plus diplomatic allocations, clamped to zero.</summary>
     long AvailableResourceCount(Simulation sim, int player, int city, string resource);
+    /// <summary>The same answer for several resources, reusing one connectivity query.</summary>
+    IReadOnlyDictionary<string, long> AvailableResourceCounts(Simulation sim, int player, int city, IReadOnlyCollection<string> resources);
 }
 
 public sealed class SignOpenBordersCommand : GameCommand

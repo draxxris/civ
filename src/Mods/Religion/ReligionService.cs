@@ -8,18 +8,12 @@ namespace Ariel.Mods.Religion;
 internal sealed partial class ReligionService : IReligionService
 {
     public string? StateReligion(Simulation sim, int player) => ReligionData.StateReligion(sim, player);
-    public IReadOnlyList<string> Present(Simulation sim, int city) => ReligionData.Present(sim, sim.State.CityById(city));
-    public int? HolyCity(Simulation sim, string religion)
-    {
-        var founding = ReligionData.Game(sim).Founded.GetValueOrDefault(religion);
-        return founding is not null && sim.State.FindCity(founding.HolyCity) is not null ? founding.HolyCity : null;
-    }
+    /// <summary>Religions present in the city; empty for a stale id, like the sibling queries.</summary>
+    public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city) is { } target ? ReligionData.Present(sim, target) : [];
+    public int? HolyCity(Simulation sim, string religion) => ReligionData.HolyCity(sim, religion);
     public IReadOnlyList<ReligionDef> Choices(Simulation sim, int player) => sim.Content.Get<ReligionDef>().All
         .Where(r => sim.State.Cities.Any(c => c.Owner == player && ReligionData.Has(sim, c, r.Id)))
         .OrderBy(r => r.Id, StringComparer.Ordinal).ToArray();
-    public IReadOnlyList<Ariel.Content.Schema.UnitDef> Missionaries(Simulation sim, string religion) => sim.Content.Get<Ariel.Content.Schema.UnitDef>().All
-        .Where(u => u.ReligionSpreads.GetValueOrDefault(religion) > 0 && u.DefaultUnitAi == "military:unitai_missionary")
-        .OrderBy(u => u.Id, StringComparer.Ordinal).ToArray();
     public string? EvaluateCondition(Requirement.Leaf leaf, RequirementContext context)
     {
         bool success = leaf.Id switch
@@ -44,7 +38,7 @@ internal sealed partial class ReligionService : IReligionService
     public string? ValidateConversion(Simulation sim, int player, string? religion)
     {
         var owner = sim.State.Players.FirstOrDefault(p => p.Id == player);
-        if (owner is null || owner.Ai == "military:barbarians") return "Invalid player";
+        if (owner is null || PlayerRules.IsBarbarian(sim, player)) return "Invalid player";
         if (GovernmentStatus.IsAnarchy(sim, player)) return "Player is in anarchy";
         var current = ReligionData.Player(sim, player);
         if (current.ConversionTimer > 0) return "Religion conversion cooldown is active";
@@ -79,6 +73,9 @@ internal sealed partial class ReligionService : IReligionService
     }
     public void Convert(Simulation sim, int player, string? religion)
     {
+        // The rules own the guard, not the command wrapper: a mod or script calling the service directly must not
+        // be able to convert during anarchy, off cooldown or to a faith the player does not follow.
+        if (ValidateConversion(sim, player, religion) is { } error) throw new InvalidOperationException(error);
         var preview = PreviewConversion(sim, player);
         var state = ReligionData.EditPlayer(sim, player);
         state.LastStateReligion = religion;

@@ -5,6 +5,9 @@ namespace Ariel.Mods.Religion;
 
 internal static class ReligionData
 {
+    /// <summary>The unit AI role that marks a unit as a missionary, kept in one place: a rename must not silently
+    /// disable validation in a second file.</summary>
+    internal const string MissionaryUnitAi = "military:unitai_missionary";
     internal static ReligionGameState Game(Simulation sim) => sim.State.Extensions.Get<ReligionGameState>(sim.Content) ?? new();
     internal static ReligionGameState EditGame(Simulation sim)
     {
@@ -33,21 +36,49 @@ internal static class ReligionData
         if (city.Extensions.Get<ReligionCityState>(sim.Content)?.Religions.Remove(religion) == true)
             sim.Events.Publish(new ReligionRemoved(religion, city.Id, reason));
     }
-    internal static BuildingDef[] ReligiousBuildings(Simulation sim, City city, IReadOnlyList<string> religions) =>
-        city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>)
-            .Where(b => b.Limits.World < 0 && b.Limits.Team < 0 && b.Limits.Player < 0)
-            .Where(b => RequiresReligion(b, religions)).ToArray();
-    private static bool RequiresReligion(BuildingDef building, IReadOnlyList<string> religions) =>
-        religions.Contains(building.ReligionType ?? "", StringComparer.Ordinal)
-        || Ariel.Content.ContentReferences.Leaves(building.Requirements ?? new Ariel.Content.Requirement.All([]))
-            .Any(l => l.Kind == "religion" && religions.Contains(l.Id, StringComparer.Ordinal));
+    /// <summary>Buildings whose religion presence requirements <paramref name="removed"/> no longer satisfies, which
+    /// is what the production validator would now reject for religion reasons. Wonders are included, as in AND.</summary>
+    internal static BuildingDef[] InvalidatedBuildings(Simulation sim, City city, IReadOnlyList<string> removed)
+    {
+        var remaining = Present(sim, city).Where(r => !removed.Contains(r, StringComparer.Ordinal)).ToArray();
+        return city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>)
+            .Where(b => !ReligionSupported(b, remaining)).ToArray();
+    }
+    /// <summary>Only religion requirements can be broken by a faith leaving; lost resources never destroy buildings,
+    /// so every other branch counts as satisfied here. Religion alternatives are honoured: one surviving faith keeps
+    /// a building whose requirement is "this religion or that one".</summary>
+    private static bool ReligionSupported(BuildingDef building, IReadOnlyList<string> remaining)
+    {
+        // FreeFromStateReligion only relaxes state matching; the faith itself must still be present.
+        if (building.ReligionType is { } type && !remaining.Contains(type, StringComparer.Ordinal)) return false;
+        return ReligionSupported(building.Requirements ?? new Ariel.Content.Requirement.All([]), remaining);
+    }
+    private static bool ReligionSupported(Ariel.Content.Requirement requirement, IReadOnlyList<string> remaining) => requirement switch
+    {
+        // Only presence leaves can be broken by a faith leaving the city. State-religion (1), holy-city (2) and
+        // unknown parameters describe player choices or other states, which AND does not purge for either
+        // (CvCity.cpp:20736-20744 selects buildings by getPrereqReligion, the presence requirement).
+        Ariel.Content.Requirement.Leaf leaf => leaf.Kind != "religion" || leaf.Param is not (null or 0)
+            || remaining.Contains(leaf.Id, StringComparer.Ordinal),
+        Ariel.Content.Requirement.All all => all.Items.All(item => ReligionSupported(item, remaining)),
+        Ariel.Content.Requirement.Any any => any.Items.Any(item => ReligionSupported(item, remaining)),
+        Ariel.Content.Requirement.Not not => !ReligionSupported(not.Item, remaining),
+        _ => true,
+    };
+    internal static int? HolyCity(Simulation sim, string religion)
+    {
+        var founding = Game(sim).Founded.GetValueOrDefault(religion);
+        return founding is not null && sim.State.FindCity(founding.HolyCity) is not null ? founding.HolyCity : null;
+    }
     internal static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
-    internal static IEnumerable<BuildingDef> Active(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>).Where(b => Active(sim, city, b));
-    private static bool Active(Simulation sim, City city, BuildingDef b)
+    /// <summary>Buildings the city actually runs. The Cities service also covers empire grants, replacement
+    /// buildings and power, which this view must match; the local rule is the fallback when Cities is absent.</summary>
+    internal static IReadOnlyList<BuildingDef> Active(Simulation sim, City city)
     {
-        if (b.ObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) return false;
-        return !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city), "civic").Success;
+        var ids = sim.Content.Services.Get<ICityBuildingService>().SingleOrDefault()?.ActiveBuildings(sim, city.Id)
+            ?? CityBuildingRules.Active(sim, city, city.Buildings).Select(b => b.Id).ToArray();
+        return ids.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>).ToArray();
     }
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var text) && int.TryParse(text, out var value) ? value : fallback;
     internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.NoNonStateReligionSpread);

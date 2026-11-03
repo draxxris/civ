@@ -1,7 +1,7 @@
 {
   "id": "world",
   "name": "World",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "assembly": "Ariel.Mods.World.dll",
   "dependencies": [],
   "references": [

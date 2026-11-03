@@ -12,7 +12,8 @@ internal sealed partial class ReligionService
         if (unit.MovesLeft <= 0) return "No moves left";
         if (!sim.Content.TryGet<S.ReligionDef>(religion, out _)) return "Unknown religion";
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
-        if (def.DefaultUnitAi != "military:unitai_missionary" || def.ReligionSpreads.GetValueOrDefault(religion) <= 0) return "Unit cannot spread this religion";
+        if (def.DefaultUnitAi != ReligionData.MissionaryUnitAi || def.ReligionSpreads.GetValueOrDefault(religion) <= 0)
+            return "Unit cannot spread this religion";
         var city = sim.State.CityAt(unit.Position);
         if (city is null) return "Missionary must be in a city";
         if (ReligionData.Has(sim, city, religion)) return "Religion is already present";
@@ -35,7 +36,7 @@ internal sealed partial class ReligionService
     public void SpreadMissionary(Simulation sim, int unitId, string religion)
     {
         var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position)!;
+        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Missionary is not in a city");
         bool success = sim.Rng.Next(100) < MissionaryChance(sim, unitId, religion);
         if (success) ReligionData.Add(sim, city, religion);
         sim.Events.Publish(new MissionaryAttempt(unit.Id, city.Id, religion, success));

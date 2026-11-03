@@ -78,6 +78,16 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         }
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
+        NoteAmbiguousReligion(record, requirements);
+        // Ariel founds corporations through great people, so an imported headquarters that founds one (AND's guild
+        // halls) must not be purchasable: it would be a building nothing in the rules reacts to.
+        if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
+            && values.GetValueOrDefault("cost") is int cost && cost >= 0)
+        {
+            values["cost"] = -1;
+            Issues.Add(new(ids[(record.Class, record.Type)], "iCost", cost.ToString(CultureInfo.InvariantCulture),
+                "Set to -1: Ariel founds corporations through great people, not by constructing the headquarters."));
+        }
         FoldClass(record, values, mapped);
         if (record.Class == "ReligionInfo") ReligionBuildings(record, values);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
@@ -87,6 +97,19 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         paths.UnionWith(mapped);
         var json = JsonSerializer.Serialize(values, Json);
         return (GameContentDef)JsonSerializer.Deserialize(json, mapping.DefinitionType, Json)!;
+    }
+
+    /// <summary>AND stores at most one presence religion per building, and the state-religion rule reads the first
+    /// such leaf. Two different ones cannot be represented, so record the conversion error instead of shipping a
+    /// requirement whose second half never runs.</summary>
+    private void NoteAmbiguousReligion(EffectiveRecord record, Requirement? requirements)
+    {
+        if (requirements is null) return;
+        var religions = ContentReferences.Leaves(requirements)
+            .Where(l => l.Kind == "religion" && l.Param is null or 0).Select(l => l.Id).Distinct(StringComparer.Ordinal).ToArray();
+        if (religions.Length <= 1) return;
+        Issues.Add(new(ids[(record.Class, record.Type)], "PrereqReligion", string.Join(", ", religions),
+            "More than one presence religion. AND has a single PrereqReligion field and the game keeps the first, so split this requirement before shipping."));
     }
 
     private string? CivicDefault(EffectiveRecord option)

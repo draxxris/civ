@@ -12,7 +12,10 @@ public sealed class CorporationsMod : IPreparableMod
 
     public void Register(IModContext context)
     {
-        ContentRegistration.Load(context, Corporations);
+        var definitions = Corporations.Read(context.Data);
+        foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
+        // The schema covers reference resolution and sign-free fields; these invariants are rules-level.
+        CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
@@ -22,6 +25,24 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterCommand<FoundCorporationCommand>("found_corporation");
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
+        context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));
+    }
+
+    /// <summary>A razed headquarters dissolves the corporation: its branches leave every city and it may be founded again.</summary>
+    private static void Dissolve(Simulation sim, int city, int player)
+    {
+        var state = sim.State.Extensions.Get<CorporationGameState>(sim.Content);
+        if (state is null) return;
+        foreach (var corporation in state.Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
+        {
+            foreach (var other in sim.State.Cities)
+            {
+                var branches = other.Extensions.Get<CorporationCityState>(sim.Content);
+                branches?.Corporations.Remove(corporation);
+            }
+            state.Founded.Remove(corporation);
+            sim.Events.Publish(new CorporationDissolved(corporation, city, player));
+        }
     }
 }
 internal sealed class CorporationEffects(ICorporationService service) : IModifierSource
@@ -43,9 +64,9 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
                 sink.AddCommerce(def.Id + ":headquarters", def.HeadquartersCommerce * branches);
             }
         }
-        long maintenance = service.MaintenanceHundredths(sim, city.Id);
-        sink.Add("corporations:maintenance", "corporations:maintenance_hundredths", maintenance);
-        sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", maintenance);
+        // One key: the city maintenance service folds flat costs into its own total. A second corporate key
+        // would be skipped there as the same source and would suggest a settlement that never happens.
+        sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", service.MaintenanceHundredths(sim, city.Id));
     }
 }
 /// <summary>Fallback settlement when Economy is absent. Economy otherwise owns all city maintenance.</summary>
@@ -55,10 +76,19 @@ internal sealed class CorporationMaintenance(ICorporationService service) : IPla
     public int Order => TurnPhase.Economy + 1;
     public void Run(Simulation sim, int player)
     {
-        if (sim.Content.Services.Get<IPlayerEconomyService>().Any()) return;
         var owner = sim.State.PlayerById(player);
-        long cost = sim.State.Cities.Where(c => c.Owner == player).Sum(c => service.MaintenanceHundredths(sim, c.Id));
         var state = owner.Extensions.Get<CorporationPlayerState>(sim.Content);
+        if (sim.Content.Services.Get<IPlayerEconomyService>().Any())
+        {
+            // Economy settles city maintenance without a remainder; one carried over from a save made without it
+            // would otherwise resurface if Economy were removed again.
+            if (state is not null) state.MaintenanceRemainder = 0;
+            return;
+        }
+        long cost = sim.State.Cities.Where(c => c.Owner == player).Sum(c => service.MaintenanceHundredths(sim, c.Id));
+        // MaintenanceHundredths is stripped of inflation for the economy's aggregate pass; nobody re-inflates it
+        // here, so the fallback must, or a corporation would cost less without Economy loaded.
+        cost = cost * (CorporationService.InflationPercent(sim, player) + 100) / 100;
         if (cost == 0 && state is null) return;
         state ??= new(); owner.Extensions.Set(sim.Content, state);
         long total = state.MaintenanceRemainder + cost;

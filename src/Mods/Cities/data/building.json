@@ -44939,7 +44939,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_apotheguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -45251,7 +45251,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_artistguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -45563,7 +45563,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_bakerguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -45875,7 +45875,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_blacksmguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -46814,7 +46814,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_butcherguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -47126,7 +47126,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_carpenterguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -47438,7 +47438,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_clerksguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -47750,7 +47750,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_drapersguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -48357,7 +48357,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_equestguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -49591,7 +49591,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_fishmonguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -49903,7 +49903,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_glassguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -50215,7 +50215,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_goldsmguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -50527,7 +50527,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_grocerguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -51773,7 +51773,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_masonguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -52085,7 +52085,7 @@
       "research": 0
     },
     "connectedCityMaintenanceModifier": 0,
-    "cost": 300,
+    "cost": -1,
     "defaultBuilding": "cities:corporation_mercerguild",
     "defensePercent": 0,
     "dirtyPower": false,

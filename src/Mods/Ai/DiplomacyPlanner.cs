@@ -42,7 +42,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     {
         var tier = diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, deal.Proposer).Tier;
         if (tier == AttitudeTier.Furious) return false;
-        return Value(diplomacy, deal.Items) >= Margin(tier);
+        return Value(deal.Items) >= Margin(tier);
     }
 
     public static long Margin(AttitudeTier tier) => tier switch
@@ -55,34 +55,34 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     };
 
     /// <summary>Gold-equivalent worth of a set of items to this player: received items count positive, given items negative.</summary>
-    public long Value(IDiplomacyService diplomacy, IReadOnlyList<DiplomaticTradeItem> items)
+    public long Value(IReadOnlyList<DiplomaticTradeItem> items)
     {
         long total = 0;
         foreach (var item in items)
         {
             bool giving = item.FromPlayer == ctx.PlayerId;
-            total += giving ? -GiveCost(diplomacy, item) : ReceiveValue(diplomacy, item);
+            total += giving ? -GiveCost(item) : ReceiveValue(item);
         }
         return total;
     }
 
-    private long ReceiveValue(IDiplomacyService diplomacy, DiplomaticTradeItem item) => item.Kind switch
+    private long ReceiveValue(DiplomaticTradeItem item) => item.Kind switch
     {
         TradeItemKind.Gold => item.Amount,
         TradeItemKind.GoldPerTurn => item.Amount * GoldPerTurnTurns,
         TradeItemKind.Technology => ctx.Team.Techs.Contains(item.ContentId) ? 0 : TechCost(item.ContentId),
-        TradeItemKind.Resource => Held(diplomacy, item.ContentId) > 0 ? 5 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
+        TradeItemKind.Resource => Held(item.ContentId) > 0 ? 5 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
         _ => 0,
     };
 
-    private long GiveCost(IDiplomacyService diplomacy, DiplomaticTradeItem item) => item.Kind switch
+    private long GiveCost(DiplomaticTradeItem item) => item.Kind switch
     {
         TradeItemKind.Gold => item.Amount,
         TradeItemKind.GoldPerTurn => item.Amount * GoldPerTurnTurns,
         // Knowledge given away also strengthens a rival, so it costs more than it would be worth to receive.
         TradeItemKind.Technology => TechCost(item.ContentId) * 5 / 4,
         // A spare copy costs little; the last copy costs its whole worth.
-        TradeItemKind.Resource => Held(diplomacy, item.ContentId) > item.Amount ? 10 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
+        TradeItemKind.Resource => Held(item.ContentId) > item.Amount ? 10 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
         _ => 0,
     };
 
@@ -96,10 +96,10 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     }
 
     /// <summary>Copies the empire can use at its capital, imports included.</summary>
-    private long Held(IDiplomacyService diplomacy, string bonus) => Held(diplomacy, ctx.PlayerId, bonus);
+    private long Held(string bonus) => Held(ctx.PlayerId, bonus);
 
-    private long Held(IDiplomacyService diplomacy, int player, string bonus) => Capital(player) is { } city
-        ? diplomacy.AvailableResourceCount(ctx.Sim, player, city.Id, bonus) : 0;
+    private long Held(int player, string bonus) => Capital(player) is { } city
+        ? ResourceAccess.Count(ctx.Sim, player, city.Id, bonus) : 0;
 
     private City? Capital(int player) => ctx.Sim.State.Cities.Where(c => c.Owner == player)
         .OrderByDescending(c => c.Buildings.Any(b => ctx.Sim.Content.Get<BuildingDef>(b).Capital)).ThenBy(c => c.Id).FirstOrDefault();
@@ -115,22 +115,22 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         var pending = diplomacy.Deals(ctx.Sim).Where(d => d.Status == DiplomaticDealStatus.Proposed && d.Proposer == ctx.PlayerId)
             .Select(d => d.Recipient).ToHashSet();
         var bonuses = ctx.Sim.Content.Get<BonusDef>().All.Where(b => b.Happiness + b.Health > 0).OrderBy(b => b.Id, StringComparer.Ordinal).ToArray();
-        var spare = bonuses.Where(b => Held(diplomacy, b.Id) >= 2).ToArray();
-        var wanted = bonuses.Where(b => Held(diplomacy, b.Id) == 0).OrderByDescending(b => ResourceWorth(b.Id)).ToArray();
+        var spare = bonuses.Where(b => Held(b.Id) >= 2).ToArray();
+        var wanted = bonuses.Where(b => Held(b.Id) == 0).OrderByDescending(b => ResourceWorth(b.Id)).ToArray();
         if (spare.Length == 0) return;
         int proposed = 0;
         foreach (var partner in Partners(diplomacy))
         {
             if (proposed >= ProposalsPerTurn) return;
             if (pending.Contains(partner.Id) || diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier == AttitudeTier.Furious) continue;
-            var get = wanted.FirstOrDefault(b => Held(diplomacy, partner.Id, b.Id) >= 2);
-            var give = spare.FirstOrDefault(b => Held(diplomacy, partner.Id, b.Id) == 0);
+            var get = wanted.FirstOrDefault(b => Held(partner.Id, b.Id) >= 2);
+            var give = spare.FirstOrDefault(b => Held(partner.Id, b.Id) == 0);
             if (give is null) continue;
             // A swap when both sides have something to spare; otherwise sell the spare copy for gold per turn.
             var items = get is not null
                 ? new List<DiplomaticTradeItem> { new(ctx.PlayerId, TradeItemKind.Resource, give.Id), new(partner.Id, TradeItemKind.Resource, get.Id) }
                 : new List<DiplomaticTradeItem> { new(ctx.PlayerId, TradeItemKind.Resource, give.Id), new(partner.Id, TradeItemKind.GoldPerTurn, Amount: SalePrice(give.Id)) };
-            if (Value(diplomacy, items) > 0 && ctx.Issue(new ProposeDealCommand { Player = ctx.PlayerId, Target = partner.Id, Items = items }))
+            if (Value(items) > 0 && ctx.Issue(new ProposeDealCommand { Player = ctx.PlayerId, Target = partner.Id, Items = items }))
             { proposed++; continue; }
             // Without gold trading, a spare copy goes to a partner this leader likes: a running deal builds goodwill.
             if (diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier >= AttitudeTier.Pleased

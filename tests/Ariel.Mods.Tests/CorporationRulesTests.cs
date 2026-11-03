@@ -117,6 +117,35 @@ public sealed class CorporationRulesTests
         Assert.Equal(1, P6RulesScenario.Service<ICityYieldService>(sim).Calculate(sim, domestic.Id).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
     }
     [Fact]
+    public void Headquarters_buildings_are_not_constructible()
+    {
+        // Founding is a great-person action, so a purchasable headquarters would be a building with no rules behind it.
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        var production = P6RulesScenario.Service<ICityProductionService>(sim);
+        var headquarters = sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All.Where(b => b.FoundsCorporation is not null).ToArray();
+        Assert.NotEmpty(headquarters);
+        Assert.All(headquarters, b => Assert.False(production.Validate(sim, city.Id, "cities:building", b.Id).Success));
+    }
+    [Fact]
+    public void Queries_answer_a_stale_city_id_instead_of_throwing()
+    {
+        var sim = P6RulesScenario.Create(); var corporations = Corps(sim);
+        Assert.Empty(corporations.Present(sim, 9999));
+        Assert.False(corporations.IsActive(sim, 9999, Cereal));
+        Assert.Equal(0, corporations.ConsumedBonusCount(sim, 9999, Cereal));
+    }
+    [Fact]
+    public void Corporation_gated_buildings_require_a_present_branch()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0];
+        var production = P6RulesScenario.Service<ICityProductionService>(sim);
+        static bool CorporationFailure(RequirementResult result) =>
+            result.Failures.Any(f => f.Explanation.Contains("corporation", StringComparison.OrdinalIgnoreCase));
+        Assert.True(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
+        Found(sim, hq);
+        Assert.False(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
+    }
+    [Fact]
     public void Competing_branches_are_displaced_but_headquarters_are_protected()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var branch = sim.State.Cities[1]; var otherHq = sim.State.Cities[2];
@@ -126,6 +155,9 @@ public sealed class CorporationRulesTests
         var unit = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_3");
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 1, City = branch.Id, Unit = unit.Id, Corporation = Ethanol });
         Assert.DoesNotContain(Cereal, Corps(sim).Present(sim, branch.Id)); Assert.Contains(Ethanol, Corps(sim).Present(sim, branch.Id));
+        // Displacement is silent in the rules, so it must at least be reported.
+        Assert.Contains(sim.Events.Published.OfType<CorporationDisplaced>(),
+            e => e.Corporation == Cereal && e.By == Ethanol && e.City == branch.Id);
         Assert.Equal(2, P6RulesScenario.Service<IPlayerEconomyService>(sim).CalculateCity(sim, branch.Id).Ledger.Lines.Single(l => l.Source == Ethanol && l.Key == "commerce.flat.research").Amount);
         var attacker = P6RulesScenario.AddUnit(sim, 1, hq, "military:executive_3");
         Assert.Contains("headquarters", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 1, City = hq.Id, Unit = attacker.Id, Corporation = Ethanol }));
@@ -223,6 +255,24 @@ public sealed class CorporationRulesTests
         else Assert.Equal(new CommerceVector(0, 100, 0, 0), economy.Rates(sim, 0));
     }
     [Fact]
+    public void Razing_the_headquarters_dissolves_every_branch_and_allows_refounding()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var branch = sim.State.Cities[1];
+        Found(sim, hq); P6RulesScenario.Resource(sim, branch, "world:corn");
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
+        Assert.Contains(Cereal, Corps(sim).Present(sim, branch.Id));
+        Assert.True(Corps(sim).MaintenanceHundredths(sim, branch.Id) > 0);
+        P6RulesScenario.Service<ICityCaptureService>(sim).Raze(sim, hq.Id);
+        Assert.False(Corps(sim).IsFounded(sim, Cereal));
+        Assert.DoesNotContain(Cereal, Corps(sim).Present(sim, branch.Id));
+        Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, branch.Id));
+        Assert.Contains(sim.Events.Published.OfType<CorporationDissolved>(), e => e.Corporation == Cereal && e.City == hq.Id);
+        Found(sim, branch);
+        Assert.Equal(branch.Id, Corps(sim).Headquarters(sim, Cereal));
+        Assert.True(Corps(sim).IsFounded(sim, Cereal));
+    }
+
+    [Fact]
     public void Maintenance_is_settled_once_with_economy_rounding_and_founding_records_survive_save_load()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; Found(sim, hq);
@@ -240,8 +290,10 @@ public sealed class CorporationRulesTests
         net = P6RulesScenario.Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold; gold = sim.State.PlayerById(0).Treasury;
         sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(gold + net, sim.State.PlayerById(0).Treasury);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        sim.State.RemoveCity(hq.Id); Assert.Null(Corps(sim).Headquarters(sim, Cereal));
-        var rival = sim.State.Cities.Last(); var gp = P6RulesScenario.AddUnit(sim, rival.Owner, rival, "military:merchant");
-        Assert.Contains("already founded", P6RulesScenario.Reject(sim, new FoundCorporationCommand { Player = rival.Owner, Unit = gp.Id, Corporation = Cereal }));
+        P6RulesScenario.Service<ICityCaptureService>(sim).Raze(sim, hq.Id);
+        Assert.Null(Corps(sim).Headquarters(sim, Cereal)); Assert.False(Corps(sim).IsFounded(sim, Cereal));
+        var rival = sim.State.Cities.Last();
+        Found(sim, rival);
+        Assert.Equal(rival.Id, Corps(sim).Headquarters(sim, Cereal));
     }
 }

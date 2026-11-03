@@ -141,7 +141,8 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.Turn = 101;
         city.Buildings.Add("cities:hindu_temple");
         Assert.True(religion.DecayChancePermille(sim, city.Id, minority) < mature);
-        city.Buildings.AddRange(["cities:hindu_monastery", "cities:buddhist_temple", "cities:granary"]);
+        city.Buildings.AddRange(["cities:hindu_monastery", "cities:buddhist_temple", "cities:granary",
+            "cities:hindu_brihadeeswarar", "cities:kotoku"]);
         Assert.Equal(0, religion.DecayChancePermille(sim, city.Id, Buddhism));
         Assert.Equal(0, religion.DecayChancePermille(sim, holy.Id, minority));
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
@@ -155,9 +156,30 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Contains(minority, religion.Present(sim, holy.Id));
         Assert.DoesNotContain("cities:hindu_temple", city.Buildings);
         Assert.DoesNotContain("cities:hindu_monastery", city.Buildings);
+        // A religious wonder goes with its faith, as in AND; the other faith's wonder keeps paying.
+        Assert.DoesNotContain("cities:hindu_brihadeeswarar", city.Buildings);
+        Assert.Contains("cities:kotoku", city.Buildings);
         Assert.Contains("cities:buddhist_temple", city.Buildings); Assert.Contains("cities:granary", city.Buildings);
         Assert.Contains(sim.Events.Published.OfType<ReligionRemoved>(), e => e.City == city.Id && e.Religion == minority && e.Reason == "decay");
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+    }
+
+    [Fact]
+    public void Decay_requires_the_religion_decay_option()
+    {
+        var sim = Scenario(); var city = City(sim, 39); var holy = City(sim, 44, 1);
+        const string minority = "religion:hinduism";
+        Presence(sim, city, Buddhism, minority); Presence(sim, holy, minority);
+        StateFaith(sim, 0);
+        var founded = new ReligionGameState(); founded.Founded[minority] = new(holy.Id, 0);
+        sim.State.Extensions.Set(sim.Content, founded);
+        sim.Settings.GameOptions["foundation:gameoption_religion_decay"] = false;
+        var religion = Service<IReligionService>(sim);
+        Assert.Equal(0, religion.DecayChancePermille(sim, city.Id, minority));
+        for (int i = 0; i < 500; i++) sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(sim);
+        Assert.Contains(minority, religion.Present(sim, city.Id));
+        sim.Settings.GameOptions["foundation:gameoption_religion_decay"] = true;
+        Assert.True(religion.DecayChancePermille(sim, city.Id, minority) > 0);
     }
 
     [Theory]
@@ -242,6 +264,31 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Inquisition_pays_the_treasury_when_the_revolution_city_state_is_missing()
+    {
+        var sim = GameFactory.Scenario(InquisitionContent(true));
+        foreach (var player in sim.State.Players) player.Civics.Clear();
+        var city = City(sim, 39);
+        Presence(sim, city, Buddhism, "religion:hinduism"); StateFaith(sim, 0);
+        city.Buildings.Add("cities:hindu_temple");
+        var inquisitor = Missionary(sim, city, type: "military:inquisitor");
+        var religion = Service<IReligionService>(sim);
+        Assert.Null(city.Extensions.Get<RevolutionCityState>(sim.Content));
+        while (true)
+        {
+            var (w, x, y, z) = sim.Rng.State;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) < religion.InquisitionChance(sim, inquisitor.Id)) break;
+            sim.Rng.NextUInt64();
+        }
+        long treasury = sim.State.PlayerById(0).Treasury;
+        Assert.True(sim.TryApply(new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id }, out var error), error);
+        var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
+        Assert.True(attempt.Success); Assert.True(attempt.CompensationGold > 0);
+        Assert.Equal(treasury + attempt.CompensationGold, sim.State.PlayerById(0).Treasury);
+        Assert.Null(city.Extensions.Get<RevolutionCityState>(sim.Content));
+    }
+
+    [Fact]
     public void Failed_inquisition_consumes_the_inquisitor_and_adds_anger_without_purging_or_compensation()
     {
         var sim = Scenario(); var city = City(sim, 39); StateFaith(sim, 0);
@@ -286,9 +333,12 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Single(sim.Events.Published.OfType<ReligionFounded>());
         string missionary = sim.Content.Get<S.ReligionDef>(religionId).Missionary!;
         Assert.Equal(missionaries, sim.State.Units.Count(u => u.Type == missionary));
+        int moves = sim.Content.Get<S.UnitDef>(missionary).Moves * sim.Content.Get<S.RuleConstantsDef>().All.Single().Values.MoveDenominator;
         Assert.All(sim.State.Units.Where(u => u.Type == missionary), u =>
         {
-            Assert.Equal(0, u.Owner); Assert.Equal(other.Position, u.Position); Assert.True(u.MovesLeft > 0);
+            Assert.Equal(0, u.Owner); Assert.Equal(other.Position, u.Position);
+            // Awarded on discovery, so it must already have its full moves rather than waiting for a refill.
+            Assert.Equal(moves, u.MovesLeft);
         });
     }
     [Fact]
@@ -370,6 +420,15 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(15, effects.Total("cities:religion_building_production_percent"));
         Assert.Equal(15, Service<ICityProductionService>(sim).Calculate(sim, holy.Id, "cities:building", "cities:granary").ModifierPercent - 100);
         Assert.False(sim.TryApply(new SetStateReligionCommand { Player = 0 }, out error)); Assert.Contains("cooldown", error);
+        // The rule owns the guard, so a direct service call cannot skip it either.
+        Assert.Throws<InvalidOperationException>(() => religion.Convert(sim, 0, null));
+    }
+    [Fact]
+    public void Queries_answer_a_stale_city_id_instead_of_throwing()
+    {
+        var sim = Scenario(); var religion = Service<IReligionService>(sim);
+        Assert.Empty(religion.Present(sim, 9999));
+        Assert.Equal(0, religion.DecayChancePermille(sim, 9999, Buddhism));
     }
     [Fact]
     public void Building_eligibility_distinguishes_presence_state_religion_and_holy_city()

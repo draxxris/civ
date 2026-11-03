@@ -100,6 +100,10 @@ public sealed partial class GameSession
                 return Note(turn, "corporation", $"{CorporationName(f.Corporation)} was founded in {CityName(f.City)}", f.City);
             case CorporationSpread s when Mine(s.City):
                 return Note(turn, "corporation", $"{CorporationName(s.Corporation)} spread to {CityName(s.City)}", s.City);
+            case CorporationDissolved d when d.Player == Human:
+                return Note(turn, "corporation", $"{CorporationName(d.Corporation)} was dissolved with its headquarters");
+            case CorporationDisplaced d when Mine(d.City):
+                return Note(turn, "corporation", $"{CorporationName(d.Corporation)} was displaced by {CorporationName(d.By)}", d.City);
             case EspionageMissionResult m when m.Unit >= 0 && (_myUnits.Contains(m.Unit) || Mine(m.City)):
                 return Note(turn, "espionage", $"Spy mission {Labels.Humanize(m.Mission.ToString())} in {CityName(m.City)} {(m.Success ? "succeeded" : "failed")}", m.City);
             case EventTriggered t when t.Player == Human:

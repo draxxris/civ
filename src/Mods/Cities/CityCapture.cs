@@ -109,19 +109,16 @@ internal sealed class CityCapture : ICityCaptureService
         return RazeRollSucceeds(sim, city.Owner);
     }
 
+    /// <summary>Ariel-specific protection list; AND's isAutoRaze has none of it (CvCity.cpp), so these cities are only
+    /// ever razed by a human's explicit conquest choice. A corporation headquarters is deliberately absent: razing one
+    /// now dissolves the corporation cleanly, so the AI may destroy it like any other city.</summary>
     private static bool HasRazeProtection(Simulation sim, City city, bool wasCapital, bool hadWorldWonder) =>
-        wasCapital || hadWorldWonder || IsHolyCity(sim, city) || IsCorporationHeadquarters(sim, city) || HasStrategicBonus(sim, city);
+        wasCapital || hadWorldWonder || IsHolyCity(sim, city) || HasStrategicBonus(sim, city);
 
     private static bool IsHolyCity(Simulation sim, City city)
     {
         var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
         return service is not null && sim.Content.Get<S.ReligionDef>().All.Any(religion => service.HolyCity(sim, religion.Id) == city.Id);
-    }
-
-    private static bool IsCorporationHeadquarters(Simulation sim, City city)
-    {
-        var service = sim.Content.Services.Get<ICorporationService>().SingleOrDefault();
-        return service is not null && sim.Content.Get<S.CorporationDef>().All.Any(corporation => service.Headquarters(sim, corporation.Id) == city.Id);
     }
 
     private static bool HasStrategicBonus(Simulation sim, City city)

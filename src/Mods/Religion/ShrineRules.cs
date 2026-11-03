@@ -1,3 +1,4 @@
+using Ariel.Content;
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
@@ -22,12 +23,12 @@ internal sealed partial class ReligionService
         if (HolyCity(sim, shrine.GlobalReligionCommerce!) != city.Id) return "Requires the holy city";
         // Prophets bypass the negative production cost, not requirements, replacements or class limits.
         var result = sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, city.Id, "cities:building", shrine.Id);
-        return result.Failures.FirstOrDefault(f => f.Explanation != "Building cannot be constructed")?.Explanation;
+        return result.Failures.FirstOrDefault(f => !ProductionFailures.IsCostOnly(f))?.Explanation;
     }
     public void BuildShrine(Simulation sim, int unitId, string building)
     {
         var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position)!;
+        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Prophet is not in a city");
         city.Buildings.Add(building);
         sim.Events.Publish(new BuildingCompleted(city.Id, building));
         sim.State.RemoveUnit(unitId);

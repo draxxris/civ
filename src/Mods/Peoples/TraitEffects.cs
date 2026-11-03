@@ -58,10 +58,9 @@ internal sealed class TraitEffects(IPeoplesService peoples) : IModifierSource
     private static void BonusHappiness(Simulation sim, City city, S.TraitDef t, ModifierSink sink)
     {
         if (t.BonusHappinessChanges.Count == 0) return;
-        var network = sim.Content.Services.Get<IResourceNetwork>().Single();
         foreach (var pair in t.BonusHappinessChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
-            if ((sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.AvailableResourceCount(sim, city.Owner, city.Id, pair.Key)
-                ?? network.ConnectedCount(sim, city.Owner, city.Id, pair.Key)) > 0) sink.Add(t.Id + ":" + pair.Key, "cities:happiness", pair.Value);
+            if (ResourceAccess.Count(sim, city.Owner, city.Id, pair.Key) > 0)
+                sink.Add(t.Id + ":" + pair.Key, "cities:happiness", pair.Value);
     }
 private static void Plot(Simulation sim, Plot plot, S.TraitDef t, ModifierSink sink)
     {

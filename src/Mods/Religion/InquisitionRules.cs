@@ -37,7 +37,7 @@ internal sealed partial class ReligionService
     {
         var unit = sim.State.FindUnit(unitId);
         if (unit is null || ValidateInquisition(sim, unit.Owner, unitId) is not null) return 0;
-        var city = sim.State.CityAt(unit.Position)!;
+        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Inquisitor is not in a city");
         var targets = Present(sim, city.Id).Where(r => r != StateReligion(sim, unit.Owner)).ToArray();
         int holy = targets.Any(r => HolyCity(sim, r) == city.Id) ? 50 : 0;
         return Math.Max(25, 95 - holy - 5 * targets.Length);
@@ -45,7 +45,7 @@ internal sealed partial class ReligionService
     public void PerformInquisition(Simulation sim, int unitId)
     {
         var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position)!;
+        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Inquisitor is not in a city");
         bool success = sim.Rng.Next(100) < InquisitionChance(sim, unitId);
         string[] removed = [];
         long gold = 0;
@@ -65,7 +65,7 @@ internal sealed partial class ReligionService
     {
         long gold = 0;
         int speed = sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).ConstructPercent;
-        foreach (var building in ReligionData.ReligiousBuildings(sim, city, religions))
+        foreach (var building in ReligionData.InvalidatedBuildings(sim, city, religions))
         {
             city.Buildings.Remove(building.Id);
             gold += (long)Math.Max(0, building.Cost) * speed / Math.Max(1, ReligionData.Raw(sim, "INQUISITION_BUILDING_GOLD_DIVISOR", 4));
@@ -94,8 +94,10 @@ internal sealed partial class ReligionService
             sim.State.PlayerById(player).Treasury += gold;
             return;
         }
-        var state = city.Extensions.Get<RevolutionCityState>(sim.Content);
-        if (state is not null) state.InstabilityIndex = (int)Math.Max(0, state.InstabilityIndex - gold);
+        // AND converts compensation to local revolution index only while it can; otherwise the gold is paid.
+        if (city.Extensions.Get<RevolutionCityState>(sim.Content) is { } state)
+            state.InstabilityIndex = (int)Math.Max(0, state.InstabilityIndex - gold);
+        else sim.State.PlayerById(player).Treasury += gold;
     }
     private static void AddInquisitionAnger(Simulation sim, City city)
     {

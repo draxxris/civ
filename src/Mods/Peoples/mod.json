@@ -1,7 +1,7 @@
 {
   "id": "peoples",
   "name": "Peoples",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "assembly": "Ariel.Mods.Peoples.dll",
   "dependencies": [],
   "references": [

@@ -42,7 +42,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     {
         var sim = Scenario();
         var planner = NewAi(sim, "DiplomacyPlanner", NewAi(sim, "AiContext", sim, 0));
-        long Value(params DiplomaticTradeItem[] items) => (long)Call(planner, "Value", Diplomacy(sim), items.ToList())!;
+        long Value(params DiplomaticTradeItem[] items) => (long)Call(planner, "Value", items.ToList())!;
         Assert.Equal(40, Value(new DiplomaticTradeItem(1, TradeItemKind.Gold, Amount: 40)));
         Assert.Equal(-40, Value(new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 40)));
         Assert.Equal(30, Value(new DiplomaticTradeItem(1, TradeItemKind.GoldPerTurn, Amount: 3)));

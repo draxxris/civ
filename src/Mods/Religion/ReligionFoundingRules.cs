@@ -19,9 +19,10 @@ internal static class ReligionFoundingRules
     }
     internal static void CityFounded(Simulation sim, CityFounded message)
     {
+        // One state read for the whole loop: before the first religion exists this allocates nothing per city.
+        var state = ReligionData.Game(sim);
         foreach (var religion in sim.Content.Get<ReligionDef>().All.OrderBy(r => r.Id, StringComparer.Ordinal))
         {
-            var state = ReligionData.Game(sim);
             if (state.PendingTeams.TryGetValue(religion.Id, out var team)) Found(sim, religion, team);
             else if (religion.FoundingTech is null || sim.KnowsTech(message.Player, religion.FoundingTech))
                 Reserve(sim, religion, sim.TeamOf(message.Player).Id, false);
@@ -29,7 +30,9 @@ internal static class ReligionFoundingRules
     }
     private static void Found(Simulation sim, ReligionDef religion, int team)
     {
-        var candidates = sim.State.Players.Where(p => p.TeamId == team && p.Ai != "military:barbarians")
+        // Guard here too: the reservation path checks first, but a pending team can be retried by city founding.
+        if (ReligionData.Game(sim).Founded.ContainsKey(religion.Id)) return;
+        var candidates = sim.State.Players.Where(p => p.TeamId == team && !PlayerRules.IsBarbarian(sim, p.Id))
             .Where(p => sim.State.Cities.Any(c => c.Owner == p.Id)).OrderBy(p => p.Id).ToArray();
         int best = int.MaxValue;
         Player? owner = null;
@@ -55,9 +58,12 @@ internal static class ReligionFoundingRules
         var civilization = sim.Content.Get<CivilizationDef>(player.Civilization);
         var unitType = civilization.UnitOverrides.GetValueOrDefault(defaultUnit, defaultUnit);
         if (unitType is null) return;
+        // Full health is the Unit default; moves must be set here or the award is immobile until the next refill.
+        var def = sim.Content.Get<UnitDef>(unitType);
+        int moves = def.Moves * sim.Content.Get<RuleConstantsDef>().All.Single().Values.MoveDenominator;
         for (int i = 0; i < religion.FreeUnits; i++)
         {
-            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = player.Id, Type = unitType, Position = city.Position };
+            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = player.Id, Type = unitType, Position = city.Position, MovesLeft = moves };
             sim.State.AddUnit(unit);
             sim.Events.Publish(new UnitCreated(unit.Id, player.Id, unit.Type, city.Position));
         }

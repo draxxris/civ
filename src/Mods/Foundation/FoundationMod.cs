@@ -76,7 +76,11 @@ public sealed class FoundationMod : IPreparableMod
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
         context.RegisterService<Ariel.Content.IRequirementEvaluator>("game-option_requirements", new GameOptionRequirements());
 
-        ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation");
+        // AND's PrereqCorporation is city presence (CvCity.cpp:4039-4046). The owning rules answer it; without them
+        // the leaf fails, which keeps corporation-gated buildings unbuildable rather than granting them for free.
+        ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation", (leaf, subject) =>
+            subject.City is { } city && subject.Sim.Content.Services.Get<Ariel.Game.ICorporationService>().SingleOrDefault()
+                is { } corporations && corporations.HasIdentity(subject.Sim, city.Id, leaf.Id));
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");
     }
 }

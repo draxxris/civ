@@ -36,7 +36,7 @@ internal static class UnitUpgrades
     {
         if (unit.MovesLeft <= 0) return "No moves left";
         if (!sim.Content.TryGet<S.UnitDef>(targetId, out var target)) return "Unknown unit type";
-        if (target.Cost < 0) return "Unit cannot be trained";
+        if (target.Cost < 0) return ProductionFailures.UnitCost;
         if (!Reachable(sim, MilitaryData.Definition(sim, unit), target.DefaultUnit, new(StringComparer.Ordinal))) return "No upgrade path";
         if (!Replacement(sim, unit.Owner, target)) return "Civilization has a different class replacement";
         if (!MilitaryData.Friendly(sim, unit.Owner, sim.State.PlotAt(unit.Position).Owner)) return "Upgrade requires friendly territory";

@@ -1,4 +1,5 @@
 using System.Globalization;
+using Ariel.Content;
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
@@ -54,7 +55,7 @@ internal static partial class GreatPersonActions
     }
     private static bool CanConstruct(Simulation sim, City city, string building) =>
         sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, city.Id, "cities:building", building)
-            .Failures.All(f => f.Explanation == "Building cannot be constructed");
+            .Failures.All(ProductionFailures.IsCostOnly);
 
     private static GreatPersonAction? Trade(Simulation sim, Unit unit, S.UnitDef def, Hex position)
     {

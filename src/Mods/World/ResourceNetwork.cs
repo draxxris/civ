@@ -167,9 +167,7 @@ internal sealed class BonusEvaluator(IResourceNetwork network) : IContentRequire
             return service is null ? "Vicinity resources require Cities scope rules" : service.Evaluate(leaf, context);
         }
         var cities = context.City is { } city ? new[] { city } : context.Sim.State.Cities.Where(c => c.Owner == context.Player);
-        var diplomacy = context.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
-        long count = cities.Select(c => diplomacy?.AvailableResourceCount(context.Sim, context.Player, c.Id, leaf.Id)
-            ?? network.ConnectedCount(context.Sim, context.Player, c.Id, leaf.Id)).DefaultIfEmpty().Max();
+        long count = cities.Select(c => ResourceAccess.Count(context.Sim, context.Player, c.Id, leaf.Id)).DefaultIfEmpty().Max();
         return count >= (leaf.Count ?? 1) ? null : $"Required connected bonus: {leaf.Id}";
     }
 }

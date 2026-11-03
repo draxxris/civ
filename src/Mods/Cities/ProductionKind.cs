@@ -8,7 +8,7 @@ internal sealed class ProductionKind<T>(string id, string label, Func<T, long> c
     where T : ContentDef
 {
     private static readonly string[] HiddenBlockers =
-        ["Civilization class replacement required", "Building cannot be constructed", "Unit cannot be trained", "Unknown building", "Unknown unit"];
+        ["Civilization class replacement required", ProductionFailures.BuildingCost, ProductionFailures.UnitCost, "Unknown building", "Unknown unit"];
 
     public string Id => id;
     public string Label => label;

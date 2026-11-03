@@ -22,11 +22,19 @@ internal sealed class ReligionPlanner(AiContext ctx)
     {
         if (GovernmentStatus.IsAnarchy(ctx.Sim, ctx.PlayerId)) return;
         if (!ctx.Self.Civics.Values.Any(c => ctx.Sim.Content.Get<CivicDef>(c).RequiresStateReligion)) return;
+        // Validation rejects a switch during the cooldown, so asking would only burn a plan pass.
+        if (ctx.Self.Extensions.Get<ReligionPlayerState>(ctx.Sim.Content)?.ConversionTimer > 0) return;
         int Count(string id) => StateReligionValue(religion, id);
         var current = religion.StateReligion(ctx.Sim, ctx.PlayerId);
         var best = religion.Choices(ctx.Sim, ctx.PlayerId).OrderByDescending(r => Count(r.Id))
             .ThenBy(r => r.Id, StringComparer.Ordinal).FirstOrDefault();
-        if (best is null || current is not null && Count(best.Id) <= Count(current)) return;
+        if (best is null) return;
+        int gain = Count(best.Id) - (current is null ? 0 : Count(current));
+        if (gain <= 0) return;
+        // The first adoption unlocks the state-religion civic, so it pays for its anarchy. A switch between faiths
+        // buys presence only: a point is about one city, a turn of anarchy costs the whole empire, so require the
+        // gain to exceed the dead turns it costs.
+        if (current is not null && gain <= religion.PreviewConversion(ctx.Sim, ctx.PlayerId).AnarchyTurns) return;
         ctx.Issue(new SetStateReligionCommand { Player = ctx.PlayerId, Religion = best.Id });
     }
 
@@ -86,6 +94,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
         bool moved = ctx.MoveToward(unit, city.Position);
         bool used = unit.Position == city.Position && ctx.Issue(command);
         if (!moved && !used) return false;
+        // A unit that moved has spent its turn even when it did not arrive, so it is not planned again this pass.
         ctx.Done.Add(unit.Id);
         return true;
     }

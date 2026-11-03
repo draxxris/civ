@@ -21,9 +21,10 @@ internal sealed class BuildingValuer(AiContext ctx)
 
     private int YieldValue(BuildingDef b, CityView v)
     {
-        int flat = (int)(b.YieldChanges.Food * 8 + b.YieldChanges.Production * 8 + b.YieldChanges.Commerce * 5);
-        int percent = (int)(b.YieldModifiers.Food * v.Food * 8 + b.YieldModifiers.Production * v.Production * 8
-            + b.YieldModifiers.Commerce * v.Commerce * 5) / 100;
+        int flat = (int)(b.YieldChanges.Food * PlannerPoints.Food + b.YieldChanges.Production * PlannerPoints.Production
+            + b.YieldChanges.Commerce * PlannerPoints.CommerceYield);
+        int percent = (int)(b.YieldModifiers.Food * v.Food * PlannerPoints.Food + b.YieldModifiers.Production * v.Production * PlannerPoints.Production
+            + b.YieldModifiers.Commerce * v.Commerce * PlannerPoints.CommerceYield) / 100;
         var buildings = ctx.Service<ICityBuildingService>();
         bool powered = buildings.IsPowered(ctx.Sim, v.City.Id);
         if (powered) percent += YieldPercentValue(b.PowerYieldModifiers, v);
@@ -61,9 +62,11 @@ internal sealed class BuildingValuer(AiContext ctx)
     private int CommerceValue(BuildingDef b, CityView v)
     {
         var c = b.CommerceChanges;
-        int flat = (int)(c.Gold * 5 + c.Research * (6 + ctx.Weight("science") / 5) + c.Culture * (3 + ctx.Weight("culture") / 8) + c.Espionage);
+        int flat = (int)(c.Gold * PlannerPoints.Gold + c.Research * (PlannerPoints.Research + ctx.Weight("science") / 5)
+            + c.Culture * (PlannerPoints.Culture + ctx.Weight("culture") / 8) + c.Espionage * PlannerPoints.Espionage);
         var m = b.CommerceModifiers;
-        int percent = (int)(m.Gold * 5 + m.Research * (6 + ctx.Weight("science") / 5) + m.Culture * 3) * v.Commerce / 100;
+        int percent = (int)(m.Gold * PlannerPoints.Gold + m.Research * (PlannerPoints.Research + ctx.Weight("science") / 5)
+            + m.Culture * PlannerPoints.Culture) * v.Commerce / 100;
         return flat + percent + (int)b.CapitalExtraCommerce;
     }
 

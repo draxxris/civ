@@ -8,22 +8,41 @@ namespace Ariel.Mods.Corporations;
 internal sealed class CorporationService : ICorporationService
 {
     private static CorporationGameState Read(Simulation sim) => sim.State.Extensions.Get<CorporationGameState>(sim.Content) ?? new();
-    private static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Select(sim.Content.Get<CivicDef>);
-    public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.CityById(city).Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
-    public int? Headquarters(Simulation sim, string corporation) => Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record.Headquarters : null;
+    /// <summary>The recorded state, created and attached on first use. Callers must mutate the returned instance:
+    /// a fresh state is only persisted once it is set, so a caller that reads without editing loses nothing.</summary>
+    private static CorporationGameState Edit(Simulation sim)
+    {
+        var state = sim.State.Extensions.Get<CorporationGameState>(sim.Content);
+        if (state is not null) return state;
+        state = new(); sim.State.Extensions.Set(sim.Content, state); return state;
+    }
+    private static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values
+        .Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
+    /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
+    public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
+    public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
+        .Any(corporation => sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity);
+    /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
+    private static CorporationFounding? Founding(Simulation sim, string corporation) =>
+        Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record : null;
+    public int? Headquarters(Simulation sim, string corporation) => Founding(sim, corporation)?.Headquarters;
+    public bool IsFounded(Simulation sim, string corporation) => Founding(sim, corporation) is not null;
     /// <summary>The team that owns the headquarters now. A captured headquarters moves the corporation with it; a razed one falls back to the founder.</summary>
     private static int HeadquartersTeam(Simulation sim, CorporationFounding founded) =>
         sim.State.FindCity(founded.Headquarters) is { } hq ? sim.TeamOf(hq.Owner).Id : founded.FounderTeam;
     private static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
-    public bool IsActive(Simulation sim, int city, string corporation) => Read(sim).Founded.TryGetValue(corporation, out var record)
-        && Present(sim, city).Contains(corporation) && !Blocked(sim, sim.State.CityById(city), HeadquartersTeam(sim, record));
+    public bool IsActive(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
+        && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
+        && !Blocked(sim, target, HeadquartersTeam(sim, record));
     public long ConsumedBonusCount(Simulation sim, int city, string corporation)
     {
-        var owner = sim.State.CityById(city).Owner;
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
-        var network = sim.Content.Services.Get<IResourceNetwork>().Single();
-        return sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Distinct(StringComparer.Ordinal)
-            .Sum(b => Math.Max(0, diplomacy?.AvailableResourceCount(sim, owner, city, b) ?? network.ConnectedCount(sim, owner, city, b)));
+        if (sim.State.FindCity(city) is not { } cityObj) return 0;
+        var owner = cityObj.Owner;
+        var prerequisites = sim.Content.Get<CorporationDef>(corporation).PrereqBonuses;
+        if (prerequisites.Length == 0) return 0;
+        // One connectivity query for the city, then a lookup per prerequisite.
+        var available = ResourceAccess.Counts(sim, owner, city, prerequisites);
+        return prerequisites.Distinct(StringComparer.Ordinal).Sum(b => Math.Max(0, available.GetValueOrDefault(b)));
     }
     public long MaintenanceHundredths(Simulation sim, int city)
     {
@@ -31,7 +50,7 @@ internal sealed class CorporationService : ICorporationService
         var world = sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!);
         var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total("cities:corporation_maintenance_percent");
-        int inflation = InflationRate(sim, cityObj.Owner) + 100;
+        int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
         long total = 0;
         foreach (var corporation in Present(sim, city).Where(c => IsActive(sim, city, c)))
@@ -51,7 +70,9 @@ internal sealed class CorporationService : ICorporationService
         }
         return total;
     }
-    private static int InflationRate(Simulation sim, int player)
+    /// <summary>Inflation percent the player pays on expenses, 0 when disabled. Maintenance is divided by
+    /// (100 + this) so the economy can re-apply it to the aggregate (see RecurringCosts).</summary>
+    internal static int InflationPercent(Simulation sim, int player)
     {
         var raw = sim.Content.Get<RuleConstantsDef>().All.Single().Raw;
         if (int.TryParse(raw.GetValueOrDefault("DISABLE_INFLATION"), out int disabled) && disabled != 0) return 0;
@@ -67,7 +88,7 @@ internal sealed class CorporationService : ICorporationService
         if (sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit != def.RequiredGreatPersonClass) return "Requires the correct Great Person class";
         var city = sim.State.CityAt(unit.Position);
         if (city is null || city.Owner != player) return "Great Person must be in your city";
-        if (Read(sim).Founded.ContainsKey(corporation)) return "Corporation is already founded";
+        if (IsFounded(sim, corporation)) return "Corporation is already founded";
         if (def.FoundingTech is { } tech && !sim.KnowsTech(player, tech)) return "Requires technology: " + tech;
         if (Blocked(sim, city, sim.TeamOf(player).Id)) return "Civics prohibit corporations";
         if (ConsumedBonusCount(sim, city.Id, corporation) <= 0) return "Requires a connected corporation resource";
@@ -77,8 +98,9 @@ internal sealed class CorporationService : ICorporationService
     {
         if (ValidateFound(sim, player, unit, corporation) is { } error) throw new InvalidOperationException(error);
         var city = sim.State.CityAt(sim.State.UnitById(unit).Position)!;
-        var state = Read(sim); sim.State.Extensions.Set(sim.Content, state);
-        state.Founded.Add(corporation, new(city.Id, sim.TeamOf(player).Id, sim.State.Turn));
+        var state = Edit(sim);
+        // A stale record whose headquarters city no longer exists is replaced rather than rejected by IsFounded.
+        state.Founded[corporation] = new(city.Id, sim.TeamOf(player).Id, sim.State.Turn);
         Add(sim, city, sim.Content.Get<CorporationDef>(corporation));
         sim.State.RemoveUnit(unit);
         sim.Events.Publish(new CorporationFounded(corporation, city.Id, player));
@@ -88,13 +110,14 @@ internal sealed class CorporationService : ICorporationService
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         if (!sim.Content.TryGet<CorporationDef>(corporation, out var def)) return "Unknown corporation";
-        if (!Read(sim).Founded.TryGetValue(corporation, out var record)) return "Corporation is not founded";
+        if (Founding(sim, corporation) is not { } record) return "Corporation is not founded";
         var city = sim.State.FindCity(cityId);
         if (city is null) return "Unknown city";
+        // Cheap checks first: the branch scan and the connectivity queries are wasted on a player who cannot pay.
+        if (sim.State.PlayerById(player).Treasury < def.SpreadCost) return "Insufficient gold";
         if (ValidateBranch(sim, player, city, corporation, record) is { } branchError) return branchError;
         if (ValidateSpreadAgent(sim, player, city, def, unitId) is { } agentError) return agentError;
         if (ConsumedBonusCount(sim, cityId, corporation) <= 0) return "Requires a connected corporation resource";
-        if (sim.State.PlayerById(player).Treasury < def.SpreadCost) return "Insufficient gold";
         return HeadquartersConflict(sim, cityId, def);
     }
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)
@@ -127,7 +150,10 @@ internal sealed class CorporationService : ICorporationService
     {
         var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();
         city.Extensions.Set(sim.Content, state);
+        var displaced = state.Corporations.Where(c => Competes(sim, c, def)).Order(StringComparer.Ordinal).ToArray();
         state.Corporations.RemoveWhere(c => Competes(sim, c, def));
         state.Corporations.Add(def.Id);
+        // Displacement is silent in the rules, as in AND's shared-resource competition, so the event carries it.
+        foreach (var corporation in displaced) sim.Events.Publish(new CorporationDisplaced(corporation, def.Id, city.Id));
     }
 }
