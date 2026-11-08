@@ -11,7 +11,7 @@ internal sealed partial class DiplomacyService
     private static int Growth(int turns, int divisor, int limit) => divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
     private static bool FavoriteCivic(Simulation sim, int from, int toward, S.LeaderDef leader) => leader.FavoriteCivic is { } civic &&
         sim.State.PlayerById(from).Civics.Values.Contains(civic) && sim.State.PlayerById(toward).Civics.Values.Contains(civic);
-    private static string Direction(int from, int toward) => from + "/" + toward;
+    private static PlayerDirection Direction(int from, int toward) => PlayerDirection.Of(from, toward);
     private static bool CloseBorders(Simulation sim, int teamA, int teamB) => sim.State.Grid.Tiles.Any(tile =>
         sim.State.Plots[tile.Value].Owner is { } owner && sim.TeamOf(owner).Id == teamA && sim.State.Grid.Neighbors(tile).Any(n =>
             sim.State.Plots[n.Value].Owner is { } other && sim.TeamOf(other).Id == teamB));
@@ -22,7 +22,7 @@ internal sealed partial class DiplomacyService
         if (leader is null) return new(0, AttitudeTier.Cautious, sink.Ledger);
         int a = sim.TeamOf(fromPlayer).Id, b = sim.TeamOf(towardPlayer).Id;
         var relation = Relation(sim, a, b);
-        var history = Read(sim).Histories.GetValueOrDefault(Direction(fromPlayer, towardPlayer)) ?? new();
+        var history = Read(sim).GetHistory(fromPlayer, towardPlayer) ?? new();
         void Add(string reason, long amount) => sink.Add("diplomacy:" + reason, "diplomacy:attitude", amount);
         Add("base", leader.BaseAttitude);
         AddPersonality(leader, Leader(sim, towardPlayer), Add);
@@ -46,9 +46,8 @@ internal sealed partial class DiplomacyService
     public void RecordMemory(Simulation sim, int fromPlayer, int towardPlayer, string memory)
     {
         var state = Edit(sim);
-        string direction = Direction(fromPlayer, towardPlayer);
-        if (!state.Histories.TryGetValue(direction, out var history)) state.Histories[direction] = history = new();
-        history.Memories[memory] = history.Memories.GetValueOrDefault(memory) + 1;
+        var history = state.GetOrCreateHistory(fromPlayer, towardPlayer);
+        history.RecordMemory(memory);
     }
     private static AttitudeTier Tier(int score) => score switch
     {
@@ -98,8 +97,7 @@ internal sealed partial class DiplomacyService
             foreach (var toward in sim.State.Players.Where(p => p.TeamId != from.TeamId).OrderBy(p => p.Id))
             {
                 if (!HasMet(sim, from.TeamId, toward.TeamId)) continue;
-                string key = Direction(from.Id, toward.Id);
-                if (!state.Histories.TryGetValue(key, out var history)) state.Histories[key] = history = new();
+                var history = state.GetOrCreateHistory(from.Id, toward.Id);
                 string? mine = Religion(sim, from.Id), theirs = Religion(sim, toward.Id);
                 history.SameReligionTurns = mine is not null && mine == theirs ? history.SameReligionTurns + 1 : 0;
                 history.DifferentReligionTurns = mine is not null && theirs is not null && mine != theirs ? history.DifferentReligionTurns + 1 : 0;

@@ -429,6 +429,77 @@ public sealed class DiplomacyRulesTests
         Reject(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }, "at war");
         Reject(sim, new SignDefensivePactCommand { Player = 0, Target = 1 }, "at war");
     }
+
+    [Fact]
+    public void TeamPair_and_PlayerDirection_provide_strongly_typed_keys_and_canonical_formatting()
+    {
+        var pair1 = TeamPair.Of(2, 0);
+        var pair2 = TeamPair.Of(0, 2);
+        Assert.Equal(pair1, pair2);
+        Assert.Equal(0, pair1.First);
+        Assert.Equal(2, pair1.Second);
+        Assert.Equal("0/2", pair1.Key);
+        Assert.Equal("0/2", pair1.ToString());
+        Assert.Equal(pair1, TeamPair.Parse("0/2"));
+
+        var dir = PlayerDirection.Of(1, 3);
+        Assert.Equal(1, dir.FromPlayer);
+        Assert.Equal(3, dir.TowardPlayer);
+        Assert.Equal("1/3", dir.Key);
+        Assert.Equal("1/3", dir.ToString());
+        Assert.Equal(dir, PlayerDirection.Parse("1/3"));
+    }
+
+    [Fact]
+    public void Individual_trade_items_have_canonical_ids_and_can_be_cancelled_independently()
+    {
+        var sim = Scenario(); Meet(sim);
+        City(sim, 0, 40); City(sim, 1, 41);
+        sim.State.Plots[40].Bonus = "diplomacy_probe:grain";
+        sim.TeamOf(0).Techs.Add("research:currency");
+
+        // Propose deal with two ongoing items: grain resource and gold per turn
+        Apply(sim, new ProposeDealCommand
+        {
+            Player = 0,
+            Target = 1,
+            Items = [new(0, TradeItemKind.Resource, "diplomacy_probe:grain"), new(1, TradeItemKind.GoldPerTurn, Amount: 3)]
+        });
+
+        var deal = Service(sim).Deals(sim).Last();
+        Assert.Equal(2, deal.Items.Count);
+        Assert.Equal(1, deal.Items[0].Id);
+        Assert.Equal(2, deal.Items[1].Id);
+
+        Apply(sim, new ExecuteDealCommand { Player = 1, Deal = deal.Id });
+
+        // Cannot cancel trade item during 10-turn binding period
+        var cancelItem1 = new CancelTradeItemCommand { Player = 0, Deal = deal.Id, ItemId = 1 };
+        Reject(sim, cancelItem1, "binding for ten turns");
+
+        // Advance 10 turns
+        sim.State.Turn += 10;
+
+        // Non-existent item rejected
+        Reject(sim, new CancelTradeItemCommand { Player = 0, Deal = deal.Id, ItemId = 99 }, "unknown trade item");
+
+        // Cancel item 1 (grain resource)
+        Apply(sim, cancelItem1);
+        Assert.Contains(sim.Events.Published, e => e is TradeItemCancelled t && t.DealId == deal.Id && t.ItemId == 1 && t.Player == 0);
+
+        // Deal remains active with item 2 (gold per turn)
+        var updatedDeal = Service(sim).Deals(sim).First(d => d.Id == deal.Id);
+        Assert.Equal(DiplomaticDealStatus.Active, updatedDeal.Status);
+        Assert.Single(updatedDeal.Items);
+        Assert.Equal(2, updatedDeal.Items[0].Id);
+        Assert.Equal(0, Service(sim).ResourceBalance(sim, 1, "diplomacy_probe:grain"));
+
+        // Cancel item 2 (last ongoing item) -> completes the deal
+        Apply(sim, new CancelTradeItemCommand { Player = 1, Deal = deal.Id, ItemId = 2 });
+        var finishedDeal = Service(sim).Deals(sim).First(d => d.Id == deal.Id);
+        Assert.Equal(DiplomaticDealStatus.Completed, finishedDeal.Status);
+        Assert.Empty(finishedDeal.Items);
+    }
     /// <summary>Five gold per player, run after the Gold phase so settlement sees income earned during the turn.</summary>
     private sealed class IncomeProbe : IPlayerTurnSystem
     {

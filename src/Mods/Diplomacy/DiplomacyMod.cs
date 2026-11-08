@@ -17,6 +17,7 @@ public sealed class DiplomacyMod : IMod
         context.RegisterCommand<ProposeDealCommand>("propose_deal");
         context.RegisterCommand<ExecuteDealCommand>("execute_deal");
         context.RegisterCommand<CancelDealCommand>("cancel_deal");
+        context.RegisterCommand<CancelTradeItemCommand>("cancel_trade_item");
         context.RegisterCommand<DiplomaticDeclareWarCommand>("declare_war");
         context.RegisterCommand<DiplomaticMakePeaceCommand>("make_peace");
         context.Subscribe<TurnStarted>("contact_turn", (sim, _) => service.DiscoverContacts(sim));

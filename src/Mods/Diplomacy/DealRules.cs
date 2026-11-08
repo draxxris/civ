@@ -112,7 +112,9 @@ internal sealed partial class DiplomacyService
     {
         var state = Edit(sim);
         int id = state.NextDealId++;
-        state.Deals.Add(new() { Id = id, Proposer = player, Recipient = target, Items = items.ToList(), Status = DiplomaticDealStatus.Proposed });
+        int nextItemId = 1;
+        var canonicalItems = items.Select(i => i.Id > 0 ? i : i with { Id = nextItemId++ }).ToList();
+        state.Deals.Add(new() { Id = id, Proposer = player, Recipient = target, Items = canonicalItems, Status = DiplomaticDealStatus.Proposed });
         return id;
     }
     public string? ValidateExecution(Simulation sim, int player, int deal)
@@ -151,6 +153,28 @@ internal sealed partial class DiplomacyService
         return d.Status == DiplomaticDealStatus.Active && sim.State.Turn - d.StartedTurn < BindingTurns ? "deal is binding for ten turns" : null;
     }
     public void CancelDeal(Simulation sim, int deal) => Deal(sim, deal)!.Status = DiplomaticDealStatus.Cancelled;
+    public string? ValidateCancelTradeItem(Simulation sim, int player, int dealId, int itemId)
+    {
+        var d = Deal(sim, dealId);
+        if (d is null || d.Status is DiplomaticDealStatus.Completed or DiplomaticDealStatus.Cancelled) return "unknown or finished deal";
+        if (player != d.Proposer && player != d.Recipient) return "not a deal participant";
+        if (d.Status != DiplomaticDealStatus.Active) return "deal is not active";
+        if (sim.State.Turn - d.StartedTurn < BindingTurns) return "deal is binding for ten turns";
+        var item = d.FindItem(itemId);
+        if (item is null) return "unknown trade item";
+        if (!Ongoing(item)) return "only ongoing items can be cancelled individually";
+        return null;
+    }
+    public void CancelTradeItem(Simulation sim, int player, int dealId, int itemId)
+    {
+        if (ValidateCancelTradeItem(sim, player, dealId, itemId) is { } error)
+            throw new InvalidOperationException(error);
+        var d = Deal(sim, dealId)!;
+        d.RemoveItem(itemId);
+        if (!d.Items.Any(Ongoing))
+            d.Status = DiplomaticDealStatus.Completed;
+        sim.Events.Publish(new TradeItemCancelled(dealId, itemId, player));
+    }
     public long ResourceBalance(Simulation sim, int player, string resource)
     {
         long balance = 0;

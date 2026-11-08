@@ -13,8 +13,8 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         if (state is not null) return state;
         state = new(); sim.State.Extensions.Set(sim.Content, state); return state;
     }
-    private static string Pair(int a, int b) => Math.Min(a, b) + "/" + Math.Max(a, b);
-    private static TeamRelation? Relation(Simulation sim, int a, int b) => Read(sim).Relations.GetValueOrDefault(Pair(a, b));
+    private static TeamPair Pair(int a, int b) => TeamPair.Of(a, b);
+    private static TeamRelation? Relation(Simulation sim, int a, int b) => Read(sim).GetRelation(a, b);
     private static bool Barbarian(Simulation sim, int team) => sim.State.TeamById(team).Members.Any(p =>
         sim.State.PlayerById(p).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true);
     private static string? Participants(Simulation sim, int player, int target)
@@ -28,9 +28,9 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     public void EstablishContact(Simulation sim, int teamA, int teamB)
     {
         if (teamA == teamB || Barbarian(sim, teamA) || Barbarian(sim, teamB) || HasMet(sim, teamA, teamB)) return;
-        int first = Math.Min(teamA, teamB), second = Math.Max(teamA, teamB);
-        Edit(sim).Relations[Pair(first, second)] = new() { First = first, Second = second, ContactTurn = sim.State.Turn, PeaceStarted = sim.State.Turn };
-        sim.Events.Publish(new TeamsMet(first, second));
+        var pair = Pair(teamA, teamB);
+        Edit(sim).SetRelation(pair, new() { First = pair.First, Second = pair.Second, ContactTurn = sim.State.Turn, PeaceStarted = sim.State.Turn });
+        sim.Events.Publish(new TeamsMet(pair.First, pair.Second));
     }
     public void DiscoverContacts(Simulation sim)
     {
