@@ -85,6 +85,47 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var disabled = GameFactory.Scenario(mods.Content); disabled.State.AddCity(new City { Id = 1, Owner = 0, Position = disabled.State.Grid.HexOf(new TileId(0)) });
         Assert.Equal(0, Service(disabled).MaxRoutes(disabled, 1));
     }
+    [Fact]
+    public void TradeRouteKey_and_CityPair_provide_typed_keys_and_query_operations()
+    {
+        var key = TradeRouteKey.Of(1, 3);
+        Assert.Equal("1->3", key.Key);
+        Assert.Equal("1->3", key.ToString());
+        Assert.Equal(key, TradeRouteKey.Parse("1->3"));
+        Assert.Equal(CityPair.Of(1, 3), key.Unordered);
+
+        var pair = CityPair.Of(3, 1);
+        Assert.Equal(1, pair.First);
+        Assert.Equal(3, pair.Second);
+        Assert.Equal("1<->3", pair.Key);
+        Assert.Equal("1<->3", pair.ToString());
+        Assert.Equal(pair, CityPair.Parse("1<->3"));
+        Assert.True(pair.Contains(1));
+        Assert.True(pair.Contains(3));
+        Assert.False(pair.Contains(2));
+
+        var sim = Scenario();
+        var trade = Service(sim);
+        var result = trade.Calculate(sim, 1);
+        Assert.NotEmpty(result.Routes);
+
+        var route = result.Routes[0];
+        Assert.Equal(1, route.SourceCity);
+        Assert.Equal(TradeRouteKey.Of(1, route.PartnerCity), route.Key);
+        Assert.Equal(CityPair.Of(1, route.PartnerCity), route.Cities);
+
+        Assert.True(trade.HasRoute(sim, 1, 3));
+        Assert.True(trade.HasBilateralRoute(sim, 1, 3));
+        Assert.True(trade.HasBilateralRoute(sim, 3, 1));
+        Assert.False(trade.HasRoute(sim, 1, 999));
+        Assert.False(trade.HasBilateralRoute(sim, 1, 999));
+
+        var player0Routes = trade.ActiveRoutes(sim, 0);
+        Assert.Contains(player0Routes, r => r.Key == TradeRouteKey.Of(1, 3));
+
+        var allRoutes = trade.AllActiveRoutes(sim);
+        Assert.Contains(allRoutes, r => r.Key == TradeRouteKey.Of(1, 3));
+    }
     private sealed class Probe(S.RuleConstantsDef original) : IMod
     {
         public void Register(IModContext context)

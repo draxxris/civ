@@ -90,8 +90,29 @@ internal sealed class TradeRouteService : ITradeRouteService
         var yields = new YieldVector(profit * percent.Food / 100, profit * percent.Production / 100, profit * percent.Commerce / 100);
         sink.Add("trade:total", "trade:profit_hundredths", profit);
         sink.AddYield("trade:route_hundredths", yields);
-        return new(partner.Id, foreign, overseas, profit, yields, sink.Ledger);
+        return new(partner.Id, foreign, overseas, profit, yields, sink.Ledger, city.Id);
     }
+
+    public bool HasRoute(Simulation sim, int sourceCity, int partnerCity) =>
+        sim.State.FindCity(sourceCity) is not null
+        && sim.State.FindCity(partnerCity) is not null
+        && Calculate(sim, sourceCity).Routes.Any(r => r.PartnerCity == partnerCity);
+
+    public bool HasBilateralRoute(Simulation sim, int cityA, int cityB) =>
+        HasRoute(sim, cityA, cityB) || HasRoute(sim, cityB, cityA);
+
+    public IReadOnlyList<TradeRouteResult> ActiveRoutes(Simulation sim, int player) =>
+        sim.State.Cities
+            .Where(c => c.Owner == player)
+            .OrderBy(c => c.Id)
+            .SelectMany(c => Calculate(sim, c.Id).Routes)
+            .ToArray();
+
+    public IReadOnlyList<TradeRouteResult> AllActiveRoutes(Simulation sim) =>
+        sim.State.Cities
+            .OrderBy(c => c.Id)
+            .SelectMany(c => Calculate(sim, c.Id).Routes)
+            .ToArray();
     private static void AddProfitModifiers(Simulation sim, City city, City partner, bool foreign, bool overseas, ModifierSink sink)
     {
         sink.Add("trade:population", "trade:profit_percent", Math.Max(0, (city.Population + TradeData.Raw(sim, "OUR_POPULATION_TRADE_MODIFIER_OFFSET", -10)) * TradeData.Raw(sim, "OUR_POPULATION_TRADE_MODIFIER", 5)));
