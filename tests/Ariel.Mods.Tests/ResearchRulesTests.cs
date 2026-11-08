@@ -243,6 +243,57 @@ public sealed class ResearchRulesTests
         Assert.Equal(before, SaveGame.Save(excessive));
     }
 
+    [Fact]
+    public void Research_queue_rejects_duplicate_non_repeatable_technologies_and_encapsulates_state()
+    {
+        var sim = Scenario();
+        var research = Service<IResearchService>(sim);
+
+        // Reject duplicate non-repeatable tech in queue
+        var duplicateCmd = new SetTeamResearchCommand
+        {
+            Player = 0,
+            Tech = Agriculture,
+            Queue = [Agriculture]
+        };
+        Assert.False(sim.TryApply(duplicateCmd, out var error));
+        Assert.Contains("Duplicate non-repeatable technology", error);
+
+        // Valid queue with distinct techs succeeds
+        var validCmd = new SetTeamResearchCommand
+        {
+            Player = 0,
+            Tech = Agriculture,
+            Queue = ["research:pottery"]
+        };
+        Assert.True(sim.TryApply(validCmd, out _));
+
+        // ResearchTeamState lifecycle and transition methods
+        var state = new ResearchTeamState();
+        Assert.False(state.HasQueue);
+        Assert.Equal(0, state.QueueCount);
+        Assert.Null(state.CurrentTarget);
+
+        state.Enqueue(Agriculture);
+        state.Enqueue("research:pottery");
+        Assert.True(state.HasQueue);
+        Assert.Equal(2, state.QueueCount);
+        Assert.Equal(Agriculture, state.CurrentTarget);
+
+        Assert.Equal(Agriculture, state.PopQueue());
+        Assert.Equal(1, state.QueueCount);
+        Assert.Equal("research:pottery", state.CurrentTarget);
+
+        Assert.True(state.RemoveFromQueue("research:pottery"));
+        Assert.False(state.RemoveFromQueue("research:pottery"));
+        Assert.False(state.HasQueue);
+        Assert.Null(state.PopQueue());
+
+        // Sanitization on property setter
+        state.Queue = [Agriculture, "  ", null!, "research:pottery"];
+        Assert.Equal([Agriculture, "research:pottery"], state.Queue);
+    }
+
     private sealed class CustomRules : IMod
     {
         public void Register(IModContext context)

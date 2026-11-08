@@ -30,6 +30,7 @@ internal sealed class ResearchService : IResearchService
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         if (freeTech && ValidateFreeSelection(sim, player, queue) is { } freeError) return freeError;
         if (SelectionError(sim, player, queue) is { } selectionError) return selectionError;
+        if (ValidateQueueDuplicates(sim, queue) is { } duplicateError) return duplicateError;
         // Future entries may depend on earlier entries. Recheck actual requirements at activation.
         foreach (var id in queue)
         {
@@ -38,6 +39,18 @@ internal sealed class ResearchService : IResearchService
         if (queue.Count == 0) return null;
         var result = Validate(sim, player, queue[0]);
         return result.Success ? null : string.Join("; ", result.Failures.Select(f => f.Explanation));
+    }
+
+    private static string? ValidateQueueDuplicates(Simulation sim, IReadOnlyList<string> queue)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var id in queue)
+        {
+            if (!sim.Content.TryGet<TechDef>(id, out var def)) continue;
+            if (!def.Repeat && !seen.Add(id))
+                return $"Duplicate non-repeatable technology in research queue: {id}";
+        }
+        return null;
     }
     private static string? Availability(Simulation sim, int player, string tech)
     {
@@ -83,7 +96,7 @@ internal sealed class ResearchService : IResearchService
         state.Overflow = checked((long)((Int128)(progress - cost) * 100 / modifier));
         team.Research[tech] = 0;
         Discover(sim, player, team, tech);
-        if (state.Queue.FirstOrDefault() == tech) state.Queue.RemoveAt(0);
+        if (state.CurrentTarget == tech) state.PopQueue();
         team.Researching = null;
         sim.Events.Publish(new ResearchCompleted(team.Id, tech));
         SelectNext(sim, player, team, state);
@@ -99,7 +112,7 @@ internal sealed class ResearchService : IResearchService
         team.Research[tech] = 0;
         Discover(sim, player, team, tech);
         var state = Edit(sim, team);
-        state.Queue.RemoveAll(t => t == tech);
+        state.RemoveFromQueue(tech);
         if (team.Researching == tech) team.Researching = null;
         sim.Events.Publish(new ResearchCompleted(team.Id, tech));
         SelectNext(sim, player, team, state);
@@ -108,12 +121,12 @@ internal sealed class ResearchService : IResearchService
     {
         if (team.Researching is { } active && ValidateSelection(sim, player, active).Success) return;
         team.Researching = null;
-        while (state.Queue.Count > 0)
+        while (state.HasQueue)
         {
             string id = state.Queue[0];
             if (ValidateSelection(sim, player, id).Success) { team.Researching = id; return; }
             if (!team.Techs.Contains(id)) return; // Retain an unmet prerequisite rather than silently dropping it.
-            state.Queue.RemoveAt(0);
+            state.PopQueue();
         }
     }
     private static void Discover(Simulation sim, int player, Team team, string tech)

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Ariel.Content;
 
 namespace Ariel.Game;
@@ -25,12 +26,52 @@ public interface IPlayerResearchSource
 }
 public sealed class ResearchTeamState
 {
-    public List<string> Queue { get; set; } = [];
+    private List<string> _queue = [];
+
+    public List<string> Queue
+    {
+        get => _queue;
+        set => _queue = value != null ? SanitizeQueue(value) : [];
+    }
     public long Overflow { get; set; }
     public int FreeTechs { get; set; }
     public SortedDictionary<string, int> Completions { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Explicit contact gate for the known-team rate bonus. Diplomacy can populate this set.</summary>
     public SortedSet<int> MetTeams { get; set; } = new();
+
+    [JsonIgnore]
+    public bool HasQueue => _queue.Count > 0;
+
+    [JsonIgnore]
+    public int QueueCount => _queue.Count;
+
+    [JsonIgnore]
+    public string? CurrentTarget => _queue.FirstOrDefault();
+
+    public void Enqueue(string tech)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tech);
+        _queue.Add(tech);
+    }
+
+    public bool RemoveFromQueue(string tech)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tech);
+        return _queue.RemoveAll(t => string.Equals(t, tech, StringComparison.Ordinal)) > 0;
+    }
+
+    public string? PopQueue()
+    {
+        if (_queue.Count == 0) return null;
+        string top = _queue[0];
+        _queue.RemoveAt(0);
+        return top;
+    }
+
+    public void ClearQueue() => _queue.Clear();
+
+    public static List<string> SanitizeQueue(IEnumerable<string> items) =>
+        items.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
 }
 public sealed class SetTeamResearchCommand : GameCommand
 {
