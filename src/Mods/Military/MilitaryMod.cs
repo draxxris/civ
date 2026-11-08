@@ -60,6 +60,7 @@ public sealed class MilitaryMod : IPreparableMod
         context.TurnSystems.Register(new BarbarianSpawns());
         context.TurnSystems.Register(new BarbarianBehavior());
         context.Subscribe<UnitCreated>("initialize", (sim, created) => units.Initialize(sim, created.Unit));
+        context.Subscribe<GlobalWarmingOccurred>("flood_evacuation", (sim, flood) => FloodedUnits.Evacuate(sim, movement, flood));
         context.Subscribe<TurnStarted>("begin", (sim, _) =>
         {
             foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);

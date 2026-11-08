@@ -128,6 +128,33 @@ public sealed partial class WorldRulesTests
         Assert.Equal(8, sim.State.AreaSize(3));
     }
 
+    [Theory]
+    [InlineData(new[] { 1 })]
+    [InlineData(new[] { 1, 3 })]
+    [InlineData(new int[0])]
+    public void Warming_flood_moves_the_stranded_stack_together_to_an_adjacent_refuge(int[] land)
+    {
+        // 5x2, row-major. Tile 2 is coastal desert carrying two land units; only the listed tiles stay land. With no
+        // land beside it, the stack has nowhere to go and drowns.
+        var (sim, target) = FloodScenario(5, 2, 2, t => t == 2 ? "world:desert" : land.Contains(t) ? "world:grass" : "world:coast");
+        var units = Service<IUnitService>(sim);
+        var stack = Enumerable.Range(0, 2).Select(_ =>
+        {
+            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(target) };
+            sim.State.AddUnit(unit); units.Initialize(sim, unit.Id);
+            return unit.Id;
+        }).ToArray();
+        WarmingTurn(sim);
+        Assert.Equal("world:coast", sim.State.Plots[target.Value].Terrain);
+        if (land.Length == 0)
+        {
+            Assert.All(stack, id => Assert.Null(sim.State.FindUnit(id)));
+            return;
+        }
+        var positions = stack.Select(id => sim.State.Grid.TileAt(sim.State.UnitById(id).Position).Value).Distinct().ToArray();
+        Assert.Contains(Assert.Single(positions), land);
+    }
+
     /// <summary>A polluting map whose only plot without a city is <paramref name="target"/>, with areas assigned as a
     /// generator would leave them.</summary>
     private static (Simulation Sim, TileId Target) FloodScenario(int width, int height, int target, Func<int, string> terrain)
