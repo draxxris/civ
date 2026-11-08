@@ -54,7 +54,11 @@ public static class DebugScenario
     public sealed record SceneWorld(string Json, int Width, int Height, int ShiftCol, int ShiftRow);
 
     /// <summary>Ground a scene gets when it names no <c>fill</c> of its own.</summary>
-    private const string BareFill = """{"terrain":"world:grass","kind":"Flat","owner":null}""";
+    private static string BareFill(GameSession session)
+    {
+        var terrain = session.Sim.Content.Get<Schema.TerrainDef>().All.FirstOrDefault(t => !t.IsWater)?.Id ?? "";
+        return $$"""{"terrain":"{{terrain}}","kind":"Flat","owner":null}""";
+    }
 
     /// <summary>The world a scene file asks for, or null when it names no position. Every pair of numbers in the file counts
     /// as a column and row — tile <c>at</c> lists, <c>focus</c>, unit positions and road points — and none of them are
@@ -127,7 +131,7 @@ public static class DebugScenario
         var text = System.IO.File.ReadAllText(file);
         if (sceneWorld) text = Frame(file)?.Json ?? text;
         using var doc = JsonDocument.Parse(text, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-        using var bare = sceneWorld ? JsonDocument.Parse(BareFill) : null;
+        using var bare = sceneWorld ? JsonDocument.Parse(BareFill(session)) : null;
         var state = session.Sim.State;
         var root = doc.RootElement;
         JsonElement? ground = root.TryGetProperty("fill", out var declared) ? declared : sceneWorld ? bare!.RootElement : null;

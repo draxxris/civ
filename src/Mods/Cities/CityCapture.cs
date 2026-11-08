@@ -54,17 +54,15 @@ internal sealed class CityCapture : ICityCaptureService
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
         state.CultureRemainder = state.CultureHundredths.GetValueOrDefault(player) % 100;
         state.LastCultureRateHundredths = 0;
-        state.Overflow = 0; state.FeatureProduction = 0; state.PendingCompletion = null;
-        state.PendingCost = 0; state.PendingProduction = 0; state.PendingModifierPercent = 0;
+        state.Overflow = 0; state.FeatureProduction = 0; state.PendingCommit = null;
         state.PausedProduction.Clear(); state.ManualWork = false; state.Disorder = false;
-        state.OccupationTurns = 0; state.IsPuppet = false; state.PendingConquestChoice = false;
+        state.OccupationTurns = 0; state.Governance = CityGovernance.Integrated;
     }
     private static void PrepareConquest(Simulation sim, City source, City target, CityRuleState state)
     {
         CityConquestBuildings.Transfer(sim, source, target);
         state.OccupationTurns = CalculateOccupationTurns(sim, target);
-        state.PendingConquestChoice = true;
-        state.IsPuppet = true;
+        state.Governance = CityGovernance.PendingConquest;
         sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, target.Id);
     }
     private static int CalculateOccupationTurns(Simulation sim, City city)

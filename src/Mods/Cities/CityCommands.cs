@@ -131,9 +131,9 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (city is null || city.Owner != player) return "Not your city";
         var state = CityData.Read(sim, city);
         if (option == CityConquestOption.Annex)
-            return state.PendingConquestChoice || state.IsPuppet ? null : "City is already annexed";
+            return state.Governance is CityGovernance.PendingConquest or CityGovernance.Puppet ? null : "City is already annexed";
         if (!Enum.IsDefined(option)) return "Unknown conquest option";
-        if (!state.PendingConquestChoice) return "No pending conquest choice";
+        if (state.Governance != CityGovernance.PendingConquest) return "No pending conquest choice";
         return option == CityConquestOption.Raze
             ? sim.Content.Services.Get<ICityCaptureService>().Single().ValidateRaze(sim, cityId, player) : null;
     }
@@ -142,13 +142,13 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (ValidateConquestChoice(sim, player, cityId, option) is not null) return;
         var city = sim.State.CityById(cityId);
         var state = CityData.Edit(sim, city);
-        state.PendingConquestChoice = false;
         if (option == CityConquestOption.Raze)
         {
+            state.Governance = CityGovernance.Integrated;
             sim.Content.Services.Get<ICityCaptureService>().Single().Raze(sim, cityId);
             return;
         }
-        state.IsPuppet = option == CityConquestOption.Puppet;
+        state.Governance = option == CityConquestOption.Puppet ? CityGovernance.Puppet : CityGovernance.Integrated;
         state.ManualWork = false;
         work.Assign(sim, cityId);
     }

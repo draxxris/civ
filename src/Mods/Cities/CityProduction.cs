@@ -106,7 +106,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     internal void Work(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);
-        state.PendingCompletion = null;
+        state.PendingCommit = null;
         bool hasOrder = DropInvalidHead(sim, city);
         if (!hasOrder && state.IsPuppet) PuppetProduction.Choose(sim, city, this);
         if (GovernmentStatus.IsDisorder(sim, city) || city.ProductionQueue.Count == 0) return;
@@ -117,10 +117,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         city.ProductionQueue[0] = order;
         state.Overflow = 0; state.FeatureProduction = 0;
         if (order.Progress < result.Cost) return;
-        state.PendingCompletion = order;
-        state.PendingCost = result.Cost;
-        state.PendingProduction = result.Production;
-        state.PendingModifierPercent = result.ModifierPercent;
+        state.PendingCommit = new(order, result.Cost, result.Production, result.ModifierPercent);
     }
     /// <summary>Dequeue (and refund progress for) invalid head orders; false when no valid order remains.</summary>
     private static int OverflowGoldPercent(Simulation sim, string kind) => kind switch
@@ -144,8 +141,9 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     internal void Complete(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);
-        if (state.PendingCompletion is not { } order) return;
-        state.PendingCompletion = null;
+        if (state.PendingCommit is not { } commit) return;
+        state.PendingCommit = null;
+        var order = commit.Order;
         // Earlier city completions may consume a global/team/player class limit.
         if (!Validate(sim, city.Id, order.Kind, order.ContentId).Success)
         {
@@ -153,14 +151,12 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
             if (index >= 0) city.ProductionQueue.RemoveAt(index);
             if (order.Progress > 0)
                 sim.State.PlayerById(city.Owner).Treasury += order.Progress * Math.Max(0, OverflowGoldPercent(sim, order.Kind)) / 100;
-            state.PendingCost = 0; state.PendingProduction = 0; state.PendingModifierPercent = 0;
             return;
         }
-        long excess = order.Progress - state.PendingCost;
-        long cap = Math.Max(state.PendingCost, state.PendingProduction);
-        state.Overflow = Math.Min(excess, cap) * 100 / Math.Max(1, state.PendingModifierPercent);
-        ConvertExcessOverflow(sim, city, order, state, excess, cap);
-        state.PendingCost = 0; state.PendingProduction = 0; state.PendingModifierPercent = 0;
+        long excess = order.Progress - commit.Cost;
+        long cap = Math.Max(commit.Cost, commit.Production);
+        state.Overflow = Math.Min(excess, cap) * 100 / Math.Max(1, commit.ModifierPercent);
+        ConvertExcessOverflow(sim, city, order, commit, excess, cap);
         city.ProductionQueue.RemoveAt(0);
         if (order.Kind == "cities:building")
         {
@@ -170,11 +166,11 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         else if (order.Kind == "cities:unit") Spawn(sim, city, order.ContentId);
         else foreach (var handler in sim.Content.Services.Get<IProductionCompletion>().Where(h => h.Kind == order.Kind)) handler.Complete(sim, city.Id, order.ContentId);
     }
-    private void ConvertExcessOverflow(Simulation sim, City city, ProductionOrder order, CityRuleState state, long excess, long cap)
+    private void ConvertExcessOverflow(Simulation sim, City city, ProductionOrder order, CompletedOrderBatch commit, long excess, long cap)
     {
         if (excess <= cap) return;
         int basePercent = Math.Max(0, 100 + (int)yields.Calculate(sim, city.Id).Ledger.Total("yield.percent.production"));
-        long lost = (excess - cap) * basePercent / Math.Max(1, state.PendingModifierPercent);
+        long lost = (excess - cap) * basePercent / Math.Max(1, commit.ModifierPercent);
         long gold = lost * Math.Max(0, OverflowGoldPercent(sim, order.Kind)) / 100;
         if (gold > 0) sim.State.PlayerById(city.Owner).Treasury += gold;
     }

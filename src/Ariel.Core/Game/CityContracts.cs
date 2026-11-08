@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Ariel.Content;
 
 namespace Ariel.Game;
@@ -97,14 +98,50 @@ public interface ICityCommandService
     string? ValidateQueueMove(Simulation sim, int player, int city, int from, int to);
     void MoveQueue(Simulation sim, int city, int from, int to);
 }
+/// <summary>City political and governance relationship to its controlling player.</summary>
+public enum CityGovernance
+{
+    /// <summary>Standard citizen control; queues and citizens are fully managed by the owner.</summary>
+    Integrated = 0,
+    /// <summary>Captured city awaiting conquest choice (Annex, Puppet, or Raze). Defaults to Puppet at turn end.</summary>
+    PendingConquest = 1,
+    /// <summary>Semi-autonomous puppet; citizens and production self-manage, cannot be hurried or drafted.</summary>
+    Puppet = 2,
+}
+
+/// <summary>Atomic production completion payload evaluated at CityProduction and committed at CityCompletion.</summary>
+public sealed record CompletedOrderBatch(ProductionOrder Order, long Cost, long Production, int ModifierPercent);
+
 /// <summary>Saved feature-ruleset city state. Culture keeps fractional output separately from the legacy whole value.</summary>
 public sealed class CityRuleState
 {
     public int TurnAcquired { get; set; }
     public int HighestPopulation { get; set; } = 1;
     public int OccupationTurns { get; set; }
-    public bool IsPuppet { get; set; }
-    public bool PendingConquestChoice { get; set; }
+    public CityGovernance Governance { get; set; } = CityGovernance.Integrated;
+    [JsonIgnore]
+    public bool IsPuppet
+    {
+        get => Governance is CityGovernance.Puppet or CityGovernance.PendingConquest;
+        set
+        {
+            if (value)
+            {
+                if (Governance != CityGovernance.PendingConquest) Governance = CityGovernance.Puppet;
+            }
+            else Governance = CityGovernance.Integrated;
+        }
+    }
+    [JsonIgnore]
+    public bool PendingConquestChoice
+    {
+        get => Governance == CityGovernance.PendingConquest;
+        set
+        {
+            if (value) Governance = CityGovernance.PendingConquest;
+            else if (Governance == CityGovernance.PendingConquest) Governance = CityGovernance.Integrated;
+        }
+    }
     public long FoodKept { get; set; }
     public long Overflow { get; set; }
     public long FeatureProduction { get; set; }
@@ -122,10 +159,31 @@ public sealed class CityRuleState
     public long GreatPeopleProgress { get; set; }
     public SortedDictionary<string, long> GreatPeopleWeights { get; set; } = new(StringComparer.Ordinal);
     public SortedDictionary<string, long> PausedProduction { get; set; } = new(StringComparer.Ordinal);
-    public ProductionOrder? PendingCompletion { get; set; }
-    public long PendingCost { get; set; }
-    public long PendingProduction { get; set; }
-    public int PendingModifierPercent { get; set; }
+    public CompletedOrderBatch? PendingCommit { get; set; }
+    [JsonIgnore]
+    public ProductionOrder? PendingCompletion
+    {
+        get => PendingCommit?.Order;
+        set => PendingCommit = value is null ? null : new(value, 0, 0, 100);
+    }
+    [JsonIgnore]
+    public long PendingCost
+    {
+        get => PendingCommit?.Cost ?? 0;
+        set { if (PendingCommit is { } c) PendingCommit = c with { Cost = value }; }
+    }
+    [JsonIgnore]
+    public long PendingProduction
+    {
+        get => PendingCommit?.Production ?? 0;
+        set { if (PendingCommit is { } c) PendingCommit = c with { Production = value }; }
+    }
+    [JsonIgnore]
+    public int PendingModifierPercent
+    {
+        get => PendingCommit?.ModifierPercent ?? 0;
+        set { if (PendingCommit is { } c) PendingCommit = c with { ModifierPercent = value }; }
+    }
 }
 /// <summary>Research can update CurrentEra. Null uses the starting era until era progression is implemented.</summary>
 public sealed class CityPlayerState
