@@ -69,11 +69,13 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
             if (id is not null && !city.Buildings.Contains(id)) city.Buildings.Add(id);
         }
     }
-    public string? ValidateQueue(Simulation sim, int player, int cityId, string kind, string content, bool append, int? remove)
+    public string? ValidateQueue(Simulation sim, int player, int cityId, string kind, string content, bool append, int? remove, int? removeOrderId = null)
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
         if (CityData.Read(sim, city).IsPuppet) return "Puppet cities manage their own production";
+        if (removeOrderId is { } orderId)
+            return city.IndexOfOrder(orderId) >= 0 ? null : "Order not found in queue";
         if (remove is { } index) return index >= 0 && index < city.ProductionQueue.Count ? null : "Invalid queue index";
         var result = production.Validate(sim, cityId, kind, content);
         if (!result.Success) return string.Join("; ", result.Failures.Select(f => f.Explanation));
@@ -84,12 +86,14 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (KindOf(sim, kind) is not { } owner) return null;
         return QueueBlocker.Of(sim, owner, city, owner.Definition(sim.Content, content), replace: !append);
     }
-    public string? ValidateQueueMove(Simulation sim, int player, int cityId, int from, int to)
+    public string? ValidateQueueMove(Simulation sim, int player, int cityId, int from, int to, int? orderId = null, int? targetOrderId = null)
     {
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Owner != player) return "Not your city";
         if (CityData.Read(sim, city).IsPuppet) return "Puppet cities manage their own production";
-        if (from < 0 || from >= city.ProductionQueue.Count || to < 0 || to >= city.ProductionQueue.Count || from == to)
+        int fromIndex = orderId is { } oid ? city.IndexOfOrder(oid) : from;
+        int toIndex = targetOrderId is { } toOid ? city.IndexOfOrder(toOid) : to;
+        if (fromIndex < 0 || fromIndex >= city.ProductionQueue.Count || toIndex < 0 || toIndex >= city.ProductionQueue.Count || fromIndex == toIndex)
             return "Invalid queue index";
         // Nothing else is checked: a swap moves two entries the queue already holds, so it can neither add an entry nor
         // make one less buildable. Re-checking the entries would refuse every reorder in a city whose queue still holds
@@ -97,33 +101,45 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         return null;
     }
 
-    public void MoveQueue(Simulation sim, int cityId, int from, int to)
+    public void MoveQueue(Simulation sim, int cityId, int from, int to, int? orderId = null, int? targetOrderId = null)
     {
+        var city = sim.State.CityById(cityId);
+        int fromIndex = orderId is { } oid ? city.IndexOfOrder(oid) : from;
+        int toIndex = targetOrderId is { } toOid ? city.IndexOfOrder(toOid) : to;
         // Swapping the entries keeps each one's progress where it is: a move never changes what is being built.
-        var queue = sim.State.CityById(cityId).ProductionQueue;
-        (queue[from], queue[to]) = (queue[to], queue[from]);
+        var queue = city.ProductionQueue;
+        if (fromIndex >= 0 && fromIndex < queue.Count && toIndex >= 0 && toIndex < queue.Count && fromIndex != toIndex)
+        {
+            (queue[fromIndex], queue[toIndex]) = (queue[toIndex], queue[fromIndex]);
+        }
     }
 
     private static IProductionKind? KindOf(Simulation sim, string kind) =>
         sim.Content.Services.Get<IProductionKind>().FirstOrDefault(k => k.Id == kind);
 
-    public void Queue(Simulation sim, int cityId, string kind, string content, bool append, int? remove)
+    public void Queue(Simulation sim, int cityId, string kind, string content, bool append, int? remove, int? removeOrderId = null)
     {
         var city = sim.State.CityById(cityId);
         var state = CityData.Edit(sim, city);
-        if (remove is { } index)
+        int? targetIndex = removeOrderId is { } oid ? city.IndexOfOrder(oid) : remove;
+        if (targetIndex is { } index)
         {
-            Pause(state, city.ProductionQueue[index]); city.ProductionQueue.RemoveAt(index); return;
+            if (index >= 0 && index < city.ProductionQueue.Count)
+            {
+                Pause(state, city.ProductionQueue[index]);
+                city.ProductionQueue.RemoveAt(index);
+            }
+            return;
         }
         if (!append)
         {
             foreach (var old in city.ProductionQueue) Pause(state, old);
             city.ProductionQueue.Clear();
         }
-        string key = kind + "/" + content;
-        long progress = state.PausedProduction.GetValueOrDefault(key);
-        state.PausedProduction.Remove(key);
-        city.ProductionQueue.Add(new(kind, content, progress));
+        var key = ProductionKey.Of(kind, content);
+        long progress = state.GetPausedProgress(key);
+        state.RemovePausedProgress(key);
+        city.EnqueueOrder(kind, content, progress);
     }
     public string? ValidateConquestChoice(Simulation sim, int player, int cityId, CityConquestOption option)
     {
@@ -152,5 +168,9 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         state.ManualWork = false;
         work.Assign(sim, cityId);
     }
-    private static void Pause(CityRuleState state, ProductionOrder order) => state.PausedProduction[order.Kind + "/" + order.ContentId] = Math.Max(state.PausedProduction.GetValueOrDefault(order.Kind + "/" + order.ContentId), order.Progress);
+    private static void Pause(CityRuleState state, ProductionOrder order)
+    {
+        var key = ProductionKey.Of(order.Kind, order.ContentId);
+        state.SetPausedProgress(key, Math.Max(state.GetPausedProgress(key), order.Progress));
+    }
 }

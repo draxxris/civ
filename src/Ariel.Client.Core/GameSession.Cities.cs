@@ -127,13 +127,31 @@ public sealed partial class GameSession
     public bool Enqueue(City city, string kind, string id, bool append) =>
         Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, Kind = kind, ContentId = id, Append = append });
 
-    public bool RemoveFromQueue(City city, int index) =>
-        Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveIndex = index });
+    public bool RemoveFromQueue(City city, int index)
+    {
+        int? orderId = index >= 0 && index < city.ProductionQueue.Count ? city.ProductionQueue[index].Id : null;
+        return Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveIndex = index, RemoveOrderId = orderId });
+    }
+
+    public bool RemoveOrderFromQueue(City city, int orderId) =>
+        Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveOrderId = orderId });
 
     /// <summary>Swap a queue entry with its neighbour (-1 earlier, +1 later) in one command, so the queue changes once,
     /// every entry keeps its stored progress, and the move costs a single revision bump.</summary>
-    public bool MoveInQueue(City city, int index, int delta) =>
-        Submit(new MoveCityQueueCommand { Player = Human, CityId = city.Id, From = index, To = index + delta });
+    public bool MoveInQueue(City city, int index, int delta)
+    {
+        int target = index + delta;
+        int? orderId = index >= 0 && index < city.ProductionQueue.Count ? city.ProductionQueue[index].Id : null;
+        int? targetOrderId = target >= 0 && target < city.ProductionQueue.Count ? city.ProductionQueue[target].Id : null;
+        return Submit(new MoveCityQueueCommand { Player = Human, CityId = city.Id, From = index, To = target, OrderId = orderId, TargetOrderId = targetOrderId });
+    }
+
+    public bool MoveOrderInQueue(City city, int orderId, int delta)
+    {
+        int index = city.IndexOfOrder(orderId);
+        if (index < 0) return false;
+        return MoveInQueue(city, index, delta);
+    }
 
     public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = Human, CityId = city.Id, HurryId = hurryId });
 

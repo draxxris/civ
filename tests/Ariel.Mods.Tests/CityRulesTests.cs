@@ -250,6 +250,74 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void Production_orders_have_canonical_ids_and_support_stable_order_id_operations()
+    {
+        var sim = ProbeScenario(RefundProbeContent.Value); var city = sim.State.Cities[0];
+        var session = new GameSession(sim);
+        Assert.True(session.Enqueue(city, "cities:building", "probe:wonder", append: true));
+        Assert.True(session.Enqueue(city, "cities:building", "probe:enhanced_building", append: true));
+        Assert.True(session.Enqueue(city, "cities:building", "probe:parallel_building", append: true));
+
+        // Monotonic positive order IDs assigned
+        Assert.Equal(3, city.ProductionQueue.Count);
+        int id1 = city.ProductionQueue[0].Id;
+        int id2 = city.ProductionQueue[1].Id;
+        int id3 = city.ProductionQueue[2].Id;
+        Assert.True(id1 > 0 && id2 > id1 && id3 > id2);
+
+        // FindOrder and IndexOfOrder lookups
+        Assert.Equal("probe:wonder", city.FindOrder(id1)?.ContentId);
+        Assert.Equal(0, city.IndexOfOrder(id1));
+        Assert.Equal("probe:enhanced_building", city.FindOrder(id2)?.ContentId);
+        Assert.Equal(1, city.IndexOfOrder(id2));
+        Assert.Null(city.FindOrder(9999));
+        Assert.Equal(-1, city.IndexOfOrder(9999));
+
+        // Reordering by OrderId and TargetOrderId
+        Assert.True(session.MoveOrderInQueue(city, id3, -1)); // Swap id3 with id2
+        Assert.Equal(id3, city.ProductionQueue[1].Id);
+        Assert.Equal(id2, city.ProductionQueue[2].Id);
+
+        // Removing specific order by OrderId removes only that order
+        Assert.True(session.RemoveOrderFromQueue(city, id3));
+        Assert.Equal(2, city.ProductionQueue.Count);
+        Assert.Equal(id1, city.ProductionQueue[0].Id);
+        Assert.Equal(id2, city.ProductionQueue[1].Id);
+        Assert.Null(city.FindOrder(id3));
+
+        // Attempting to remove non-existent order fails validation
+        var cmd = Service<ICityCommandService>(sim);
+        Assert.Equal("Order not found in queue", cmd.ValidateQueue(sim, 0, city.Id, "cities:building", "probe:wonder", append: true, remove: null, removeOrderId: id3));
+    }
+
+    [Fact]
+    public void Production_key_and_paused_production_track_progress_across_queue_cycles()
+    {
+        var key = ProductionKey.Of("cities:building", "probe:wonder");
+        Assert.Equal("cities:building/probe:wonder", key.Key);
+        Assert.Equal(key, ProductionKey.Parse("cities:building/probe:wonder"));
+
+        var sim = ProbeScenario(RefundProbeContent.Value); var city = sim.State.Cities[0];
+        var state = city.Extensions.Get<CityRuleState>(sim.Content)!;
+        var cmd = Service<ICityCommandService>(sim);
+
+        // Queue wonder and simulate progress
+        cmd.Queue(sim, city.Id, "cities:building", "probe:wonder", append: false, remove: null);
+        var order = city.ProductionQueue[0];
+        city.ProductionQueue[0] = order with { Progress = 45 };
+
+        // Replace queue with another item, wonder progress should be paused
+        cmd.Queue(sim, city.Id, "cities:building", "probe:enhanced_building", append: false, remove: null);
+        Assert.Equal(45, state.GetPausedProgress(key));
+        Assert.Equal("probe:enhanced_building", city.ProductionQueue[0].ContentId);
+
+        // Re-queuing wonder restores paused progress
+        cmd.Queue(sim, city.Id, "cities:building", "probe:wonder", append: false, remove: null);
+        Assert.Equal(45, city.ProductionQueue[0].Progress);
+        Assert.Equal(0, state.GetPausedProgress(key));
+    }
+
+    [Fact]
     public void Production_modifiers_normalize_overflow_and_wonders_are_globally_unique()
     {
         var sim = ProbeScenario(); var city = sim.State.Cities[0]; city.Culture = 1;

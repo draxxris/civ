@@ -297,7 +297,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         Relief(forks[2].State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Height = Levels.Peak;
 // Canonical hashes include zero-valued cliff fields, sight, memory, city and recon state.
-        ulong[] expectedHashes = [684383467510343478UL, 7340780370639032280UL, 4211214635590121083UL];
+        ulong[] expectedHashes = [3128337717959866743UL, 16189378580481692177UL, 11695986800061062060UL];
         ulong parentHash = sim.ComputeHash();
         var rng = sim.Rng.State;
         Parallel.For(0, forks.Length, i =>

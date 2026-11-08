@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Ariel.Game;
 
 /// <summary>Plot height tiers. Water holds its depth, land its relief, and the only height a lift writes is flat land
@@ -154,5 +156,9 @@ public sealed class Team
     }
 }
 
-/// <summary>A future production queue entry; kind is a mod-owned namespaced key.</summary>
-public sealed record ProductionOrder(string Kind, string ContentId, long Progress = 0);
+/// <summary>A future production queue entry with canonical order identifier; kind is a mod-owned namespaced key.</summary>
+[method: JsonConstructor]
+public sealed record ProductionOrder(int Id, string Kind, string ContentId, long Progress = 0)
+{
+    public ProductionOrder(string kind, string contentId, long progress = 0) : this(0, kind, contentId, progress) { }
+}

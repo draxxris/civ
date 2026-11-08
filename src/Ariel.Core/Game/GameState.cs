@@ -60,8 +60,62 @@ public sealed class City
     public string? Training { get; set; }
     /// <summary>Current unit progress.</summary>
     public long TrainProgress { get; set; }
+    /// <summary>Next unique production order id for this city.</summary>
+    public int NextOrderId { get; set; } = 1;
     /// <summary>Ordered production queue for feature rulesets.</summary>
     public List<ProductionOrder> ProductionQueue { get; set; } = new();
+
+    /// <summary>Finds an active production order by its canonical identifier, or null if not present.</summary>
+    public ProductionOrder? FindOrder(int orderId)
+    {
+        NormalizeOrderIds();
+        return ProductionQueue.FirstOrDefault(o => o.Id == orderId);
+    }
+
+    /// <summary>Returns the index of an order by its canonical identifier, or -1 if not present.</summary>
+    public int IndexOfOrder(int orderId)
+    {
+        NormalizeOrderIds();
+        return ProductionQueue.FindIndex(o => o.Id == orderId);
+    }
+
+    /// <summary>Appends a production order to the queue, assigning an order ID if none is set.</summary>
+    public ProductionOrder EnqueueOrder(string kind, string contentId, long progress = 0, int id = 0)
+    {
+        int orderId = id > 0 ? id : NextOrderId++;
+        if (orderId >= NextOrderId) NextOrderId = orderId + 1;
+        var order = new ProductionOrder(orderId, kind, contentId, progress);
+        ProductionQueue.Add(order);
+        return order;
+    }
+
+    /// <summary>Removes an order by its canonical identifier, returning true if removed.</summary>
+    public bool RemoveOrder(int orderId)
+    {
+        int index = IndexOfOrder(orderId);
+        if (index >= 0)
+        {
+            ProductionQueue.RemoveAt(index);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>Ensures all orders in the queue have unique, positive IDs.</summary>
+    public void NormalizeOrderIds()
+    {
+        for (int i = 0; i < ProductionQueue.Count; i++)
+        {
+            if (ProductionQueue[i].Id <= 0)
+            {
+                ProductionQueue[i] = ProductionQueue[i] with { Id = NextOrderId++ };
+            }
+            else if (ProductionQueue[i].Id >= NextOrderId)
+            {
+                NextOrderId = ProductionQueue[i].Id + 1;
+            }
+        }
+    }
     /// <summary>Citizen count.</summary>
     public int Population { get; set; } = 1;
     /// <summary>Stored food.</summary>
@@ -78,9 +132,9 @@ public sealed class City
     internal City Clone() => new()
     {
         Id = Id, Owner = Owner, Name = Name, Position = Position, Buildings = new(Buildings), Building = Building,
-        BuildProgress = BuildProgress, Training = Training, TrainProgress = TrainProgress, ProductionQueue = new(ProductionQueue),
-        Population = Population, FoodStored = FoodStored, Worked = new(Worked), Specialists = new(Specialists, Specialists.Comparer),
-        Culture = Culture, Extensions = GameState.CloneExtensions(Extensions),
+        BuildProgress = BuildProgress, Training = Training, TrainProgress = TrainProgress, NextOrderId = NextOrderId,
+        ProductionQueue = new(ProductionQueue), Population = Population, FoodStored = FoodStored, Worked = new(Worked),
+        Specialists = new(Specialists, Specialists.Comparer), Culture = Culture, Extensions = GameState.CloneExtensions(Extensions),
     };
 }
 

@@ -14,7 +14,7 @@ public sealed record CityPlate(string Name, int Population, float Growth, float?
 
 public sealed record SpecialistRow(string Id, string Name, int Count, int Slots, string Effects);
 
-public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns, bool IsContinuous);
+public sealed record QueueRow(int Index, string Kind, string Id, string Name, long Progress, long Cost, int? Turns, bool IsContinuous, int OrderId = 0);
 
 /// <summary>Something the city could produce. <see cref="Blockers"/> are the requirement failures, empty when it can be queued.</summary>
 public sealed record ProductionChoice(string Kind, string Id, string Name, long Cost, int? Turns, IReadOnlyList<string> Blockers, bool IsContinuous)
@@ -215,7 +215,7 @@ public sealed partial class GameSession
             var kind = KindOf(order.Kind);
             var calc = kind.Calculate(Sim, city.Id, order.ContentId);
             rows.Add(new(i, order.Kind, order.ContentId, kind.Definition(Sim.Content, order.ContentId).Name, order.Progress, calc.Cost,
-                kind.IsContinuous ? null : TurnsToFinish(calc.Cost - order.Progress, calc.Production), kind.IsContinuous));
+                kind.IsContinuous ? null : TurnsToFinish(calc.Cost - order.Progress, calc.Production), kind.IsContinuous, order.Id));
         }
         return rows;
     }

@@ -85,6 +85,42 @@ public interface ICityRequirementService
 {
     string? Evaluate(Requirement.Leaf leaf, RequirementContext context);
 }
+/// <summary>Strongly-typed allocation-free key for paused city production progress.</summary>
+public readonly record struct ProductionKey : IComparable<ProductionKey>
+{
+    public string Kind { get; }
+    public string ContentId { get; }
+
+    public ProductionKey(string kind, string contentId)
+    {
+        Kind = kind ?? string.Empty;
+        ContentId = contentId ?? string.Empty;
+    }
+
+    public static ProductionKey Of(string kind, string contentId) => new(kind, contentId);
+
+    [JsonIgnore]
+    public string Key => $"{Kind}/{ContentId}";
+
+    public override string ToString() => Key;
+
+    public int CompareTo(ProductionKey other)
+    {
+        int cmp = string.CompareOrdinal(Kind, other.Kind);
+        return cmp != 0 ? cmp : string.CompareOrdinal(ContentId, other.ContentId);
+    }
+
+    public static ProductionKey Parse(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        int slash = key.IndexOf('/');
+        if (slash < 0) throw new FormatException($"Invalid production key: {key}");
+        return new(key[..slash], key[(slash + 1)..]);
+    }
+
+    public static implicit operator string(ProductionKey key) => key.Key;
+}
+
 /// <summary>Queue and founding mutations owned by Cities. Commands call the same validation as previews.</summary>
 public enum CityConquestOption { Annex, Puppet, Raze }
 public interface ICityCommandService
@@ -93,10 +129,10 @@ public interface ICityCommandService
     void Found(Simulation sim, int player, int settler);
     string? ValidateConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
     void ResolveConquestChoice(Simulation sim, int player, int city, CityConquestOption option);
-    string? ValidateQueue(Simulation sim, int player, int city, string kind, string content, bool append, int? remove);
-    void Queue(Simulation sim, int city, string kind, string content, bool append, int? remove);
-    string? ValidateQueueMove(Simulation sim, int player, int city, int from, int to);
-    void MoveQueue(Simulation sim, int city, int from, int to);
+    string? ValidateQueue(Simulation sim, int player, int city, string kind, string content, bool append, int? remove, int? removeOrderId = null);
+    void Queue(Simulation sim, int city, string kind, string content, bool append, int? remove, int? removeOrderId = null);
+    string? ValidateQueueMove(Simulation sim, int player, int city, int from, int to, int? orderId = null, int? targetOrderId = null);
+    void MoveQueue(Simulation sim, int city, int from, int to, int? orderId = null, int? targetOrderId = null);
 }
 /// <summary>City political and governance relationship to its controlling player.</summary>
 public enum CityGovernance
@@ -159,6 +195,19 @@ public sealed class CityRuleState
     public long GreatPeopleProgress { get; set; }
     public SortedDictionary<string, long> GreatPeopleWeights { get; set; } = new(StringComparer.Ordinal);
     public SortedDictionary<string, long> PausedProduction { get; set; } = new(StringComparer.Ordinal);
+
+    public long GetPausedProgress(ProductionKey key) =>
+        PausedProduction.GetValueOrDefault(key.Key);
+
+    public long GetPausedProgress(string kind, string contentId) =>
+        GetPausedProgress(ProductionKey.Of(kind, contentId));
+
+    public void SetPausedProgress(ProductionKey key, long progress) =>
+        PausedProduction[key.Key] = progress;
+
+    public bool RemovePausedProgress(ProductionKey key) =>
+        PausedProduction.Remove(key.Key);
+
     public CompletedOrderBatch? PendingCommit { get; set; }
     [JsonIgnore]
     public ProductionOrder? PendingCompletion
@@ -230,8 +279,10 @@ public sealed class MoveCityQueueCommand : GameCommand
     public int CityId { get; init; }
     public int From { get; init; }
     public int To { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueueMove(sim, Player, CityId, From, To);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().MoveQueue(sim, CityId, From, To);
+    public int? OrderId { get; init; }
+    public int? TargetOrderId { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueueMove(sim, Player, CityId, From, To, OrderId, TargetOrderId);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().MoveQueue(sim, CityId, From, To, OrderId, TargetOrderId);
 }
 public sealed class ResolveCityConquestCommand : GameCommand
 {
@@ -253,6 +304,7 @@ public sealed class SetCityProductionCommand : GameCommand
     public string ContentId { get; init; } = "";
     public bool Append { get; init; }
     public int? RemoveIndex { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueue(sim, Player, CityId, Kind, ContentId, Append, RemoveIndex);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().Queue(sim, CityId, Kind, ContentId, Append, RemoveIndex);
+    public int? RemoveOrderId { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueue(sim, Player, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().Queue(sim, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
 }
