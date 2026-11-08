@@ -222,6 +222,72 @@ public class ContractTests
     }
 
     [Fact]
+    public void MonotonicEntityIdentifiersAdvancePastExplicitIdsAndAutoAllocateWhenUnassigned()
+    {
+        var state = new GameState { Map = new(6, 6, false), Plots = Enumerable.Range(0, 36).Select(_ => new Plot()).ToArray() };
+        Assert.Equal(1, state.NextCityId);
+        Assert.Equal(1, state.NextUnitId);
+
+        // Auto-allocation when Id <= 0
+        var c1 = new City { Position = new Hex(0, 0), Name = "First" };
+        var u1 = new Unit { Position = new Hex(1, 0), Type = "base:warrior" };
+        state.AddCity(c1);
+        state.AddUnit(u1);
+        Assert.Equal(1, c1.Id);
+        Assert.Equal(1, u1.Id);
+        Assert.Equal(2, state.NextCityId);
+        Assert.Equal(2, state.NextUnitId);
+
+        // Explicit Id >= NextId advances the monotonic counter
+        var c50 = new City { Id = 50, Position = new Hex(2, 0), Name = "Fifty" };
+        var u100 = new Unit { Id = 100, Position = new Hex(3, 0), Type = "base:warrior" };
+        state.AddCity(c50);
+        state.AddUnit(u100);
+        Assert.Equal(51, state.NextCityId);
+        Assert.Equal(101, state.NextUnitId);
+
+        // Subsequent allocations avoid colliding with the injected IDs
+        var c51 = new City { Position = new Hex(4, 0), Name = "Fifty-One" };
+        var u101 = new Unit { Position = new Hex(5, 0), Type = "base:warrior" };
+        state.AddCity(c51);
+        state.AddUnit(u101);
+        Assert.Equal(51, c51.Id);
+        Assert.Equal(101, u101.Id);
+        Assert.Equal(52, state.NextCityId);
+        Assert.Equal(102, state.NextUnitId);
+
+        // Duplicate IDs throw
+        Assert.Throws<ArgumentException>(() => state.AddCity(new City { Id = 50, Position = new Hex(0, 1) }));
+        Assert.Throws<ArgumentException>(() => state.AddUnit(new Unit { Id = 100, Position = new Hex(1, 1), Type = "base:warrior" }));
+
+        // RebuildIndexes repairs lower NextId values and preserves monotonicity
+        state.NextCityId = 1;
+        state.NextUnitId = 1;
+        state.RebuildIndexes();
+        Assert.True(state.NextCityId > 51);
+        Assert.True(state.NextUnitId > 101);
+        Assert.Equal(52, state.NextCityId);
+        Assert.Equal(102, state.NextUnitId);
+
+        // RebuildIndexes rejects duplicate entity IDs
+        var badDuplicateCity = new GameState
+        {
+            Map = new(6, 6, false),
+            Plots = Enumerable.Range(0, 36).Select(_ => new Plot()).ToArray(),
+            Cities = [new City { Id = 10, Position = new Hex(0, 0) }, new City { Id = 10, Position = new Hex(1, 0) }],
+        };
+        Assert.Throws<ArgumentException>(() => badDuplicateCity.RebuildIndexes());
+
+        var badDuplicateUnit = new GameState
+        {
+            Map = new(6, 6, false),
+            Plots = Enumerable.Range(0, 36).Select(_ => new Plot()).ToArray(),
+            Units = [new Unit { Id = 20, Position = new Hex(0, 0) }, new Unit { Id = 20, Position = new Hex(1, 0) }],
+        };
+        Assert.Throws<ArgumentException>(() => badDuplicateUnit.RebuildIndexes());
+    }
+
+    [Fact]
     public void PlotVisibilitySupportsMoreThan64TeamsAndHasHistoryIndependentEncoding()
     {
         var sim = TestGame.Sim();

@@ -41,7 +41,7 @@ public sealed class Player
 public sealed class City
 {
     /// <summary>Stable city id.</summary>
-    public int Id { get; init; }
+    public int Id { get; set; }
     /// <summary>Owner player id.</summary>
     public int Owner { get; init; }
     /// <summary>Display name.</summary>
@@ -155,7 +155,7 @@ public sealed class City
 public sealed class Unit
 {
     /// <summary>Stable unit id.</summary>
-    public int Id { get; init; }
+    public int Id { get; set; }
     /// <summary>Owner player id.</summary>
     public int Owner { get; init; }
     /// <summary>Unit definition id.</summary>
@@ -296,12 +296,21 @@ public sealed class GameState
         player.TeamId = newTeamId;
         newTeam.Members.Add(playerId);
     }
-    /// <summary>Add a city and update its indexes. Duplicate ids or plots throw before any state changes.</summary>
+    /// <summary>Add a city and update its indexes. Duplicate ids or plots throw before any state changes.
+    /// Unassigned ids (<= 0) are allocated from NextCityId; explicit ids advance NextCityId monotonically.</summary>
     public void AddCity(City city)
     {
         var position = Grid.Normalize(city.Position);
         var tile = Grid.TileAt(position);
-        if (_cities.ContainsKey(city.Id)) throw new ArgumentException($"City id {city.Id} is already in use", nameof(city));
+        if (city.Id <= 0)
+        {
+            city.Id = NextCityId++;
+        }
+        else
+        {
+            if (_cities.ContainsKey(city.Id)) throw new ArgumentException($"City id {city.Id} is already in use", nameof(city));
+            if (city.Id >= NextCityId) NextCityId = checked(city.Id + 1);
+        }
         if (_cityPlots.ContainsKey(tile)) throw new ArgumentException($"Plot {tile.Value} already has a city", nameof(city));
         city.SetPosition(position);
         IndexCity(city);
@@ -310,11 +319,20 @@ public sealed class GameState
     private void IndexCity(City city) { _cities.Add(city.Id, city); _cityPlots.Add(Grid.TileAt(city.Position), city); }
     /// <summary>Remove a city and its indexes.</summary>
     public void RemoveCity(int id) { var c = _cities[id]; _cities.Remove(id); _cityPlots.Remove(Grid.TileAt(c.Position)); Cities.Remove(c); }
-    /// <summary>Add a unit at a canonicalized position. Duplicate ids throw before any state changes.</summary>
+    /// <summary>Add a unit at a canonicalized position. Duplicate ids throw before any state changes.
+    /// Unassigned ids (<= 0) are allocated from NextUnitId; explicit ids advance NextUnitId monotonically.</summary>
     public void AddUnit(Unit unit)
     {
         var position = Grid.Normalize(unit.Position);
-        if (_units.ContainsKey(unit.Id)) throw new ArgumentException($"Unit id {unit.Id} is already in use", nameof(unit));
+        if (unit.Id <= 0)
+        {
+            unit.Id = NextUnitId++;
+        }
+        else
+        {
+            if (_units.ContainsKey(unit.Id)) throw new ArgumentException($"Unit id {unit.Id} is already in use", nameof(unit));
+            if (unit.Id >= NextUnitId) NextUnitId = checked(unit.Id + 1);
+        }
         unit.SetPosition(position);
         IndexUnit(unit);
         Units.Add(unit);
@@ -516,7 +534,22 @@ public sealed class GameState
         {
             t.Members.RemoveWhere(id => !_players.TryGetValue(id, out var p) || p.TeamId != t.Id);
         }
-        foreach (var c in Cities) { c.Specialists = new(c.Specialists, StringComparer.Ordinal); IndexCity(c); }
-        foreach (var u in Units) { u.Promotions = new(u.Promotions, StringComparer.Ordinal); IndexUnit(u); }
+        foreach (var c in Cities)
+        {
+            c.Specialists = new(c.Specialists, StringComparer.Ordinal);
+            if (c.Id <= 0) c.Id = NextCityId++;
+            else if (c.Id >= NextCityId) NextCityId = checked(c.Id + 1);
+            if (!_cities.TryAdd(c.Id, c)) throw new ArgumentException($"Duplicate city id {c.Id}");
+            var tile = Grid.TileAt(c.Position);
+            if (!_cityPlots.TryAdd(tile, c)) throw new ArgumentException($"Plot {tile.Value} already has a city");
+        }
+        foreach (var u in Units)
+        {
+            u.Promotions = new(u.Promotions, StringComparer.Ordinal);
+            if (u.Id <= 0) u.Id = NextUnitId++;
+            else if (u.Id >= NextUnitId) NextUnitId = checked(u.Id + 1);
+            if (!_units.TryAdd(u.Id, u)) throw new ArgumentException($"Duplicate unit id {u.Id}");
+            AddUnitPlot(Grid.TileAt(u.Position), u);
+        }
     }
 }
