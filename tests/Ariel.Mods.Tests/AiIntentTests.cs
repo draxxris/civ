@@ -72,6 +72,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     [InlineData("destroy")]
     [InlineData("capture")]
     [InlineData("hidden")]
+    [InlineData("separated")]
     public void Invalid_campaign_target_is_replaced_in_the_same_pass(string change)
     {
         var sim = Strategy();
@@ -83,6 +84,8 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
             case "destroy": sim.State.RemoveCity(3); break;
             case "capture": TransferCity(sim, 3, 0); break;
             case "hidden": sim.State.PlotAt(sim.State.CityById(3).Position).Revealed.Clear(); break;
+            // The target's land now has another area id, as after a flood splits it off; the saved goal must not survive.
+            case "separated": sim.State.PlotAt(sim.State.CityById(3).Position).AreaId = 99; break;
         }
         Review(sim);
         Assert.Equal(4, Campaign(sim).GetProperty("City").GetInt32());

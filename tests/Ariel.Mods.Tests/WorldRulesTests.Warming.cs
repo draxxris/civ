@@ -87,6 +87,65 @@ public sealed partial class WorldRulesTests
         Assert.Equal(floods ? 1 : 0, sim.Events.Published.OfType<GlobalWarmingOccurred>().Count());
     }
 
+    [Fact]
+    public void Warming_flood_keeps_the_ids_of_areas_it_does_not_touch()
+    {
+        // 5x2, row-major. A lone desert island at tile 2 sits in one sea; land A is column 0 and land C column 4. A
+        // counter numbered C after the island, so drowning the island used to renumber C. Smallest-tile ids leave it.
+        //   L W D W L
+        //   L W W W L
+        var (sim, target) = FloodScenario(5, 2, 2, t => t switch
+        {
+            0 or 5 or 4 or 9 => "world:grass", 2 => "world:desert", _ => "world:coast",
+        });
+        Assert.Equal([0, 1, 2, 1, 4, 0, 1, 1, 1, 4], sim.State.Plots.Select(p => p.AreaId));
+        Assert.Equal(1, sim.State.AreaSize(2));
+        WarmingTurn(sim);
+        Assert.Equal("world:coast", sim.State.Plots[target.Value].Terrain);
+        Assert.Equal([0, 1, 1, 1, 4, 0, 1, 1, 1, 4], sim.State.Plots.Select(p => p.AreaId));
+        Assert.Equal(6, sim.State.AreaSize(1));
+        Assert.Equal(0, sim.State.AreaSize(2));
+        Assert.Equal(2, sim.State.AreaSize(4));
+    }
+
+    [Fact]
+    public void Warming_flood_that_opens_a_lake_to_the_sea_clears_the_lake()
+    {
+        // 5x3, row-major. Tile 6 is an enclosed lake; columns 3 and 4 are sea. Drowning tile 7 joins them.
+        var (sim, target) = FloodScenario(5, 3, 7, t => t switch
+        {
+            6 => "world:coast", 7 => "world:desert", _ when t % 5 >= 3 => "world:coast", _ => "world:grass",
+        });
+        var lake = sim.State.Plots[6];
+        Assert.True(lake.IsLake);
+        Assert.Equal(6, lake.AreaId);
+        WarmingTurn(sim);
+        Assert.Equal("world:coast", sim.State.Plots[target.Value].Terrain);
+        Assert.False(lake.IsLake);
+        Assert.False(sim.State.Plots[target.Value].IsLake);
+        Assert.Equal(3, lake.AreaId);
+        Assert.Equal(3, sim.State.Plots[target.Value].AreaId);
+        Assert.Equal(8, sim.State.AreaSize(3));
+    }
+
+    /// <summary>A polluting map whose only plot without a city is <paramref name="target"/>, with areas assigned as a
+    /// generator would leave them.</summary>
+    private static (Simulation Sim, TileId Target) FloodScenario(int width, int height, int target, Func<int, string> terrain)
+    {
+        var (sim, _, _) = WarmingScenario(width: width, height: height);
+        foreach (var tile in sim.State.Grid.Tiles) sim.State.Plots[tile.Value].Terrain = terrain(tile.Value);
+        var tileId = new TileId(target);
+        sim.State.RemoveCity(sim.State.CityAt(sim.State.Grid.HexOf(tileId))!.Id);
+        AddCity(sim, sim.State.Grid.Tiles.Last());
+        // Pollution is spread over the whole map, so every city pollutes to guarantee an attempt on a larger map.
+        foreach (var city in sim.State.Cities) city.Buildings.Add(Warming + "factory");
+        var geography = sim.Content.TurnSystems.All.Single(s => s.Id == "world:global_warming").GetType().Assembly
+            .GetType("Ariel.Mods.World.Geography", throwOnError: true)!;
+        geography.GetMethod("AssignAreas", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
+            .Invoke(null, [sim.State.Grid, sim.State.Plots, sim.Content]);
+        return (sim, tileId);
+    }
+
     [Theory]
     [InlineData("factory", 1, 0, 0, 1)]
     [InlineData("bonus_factory", 0, 2, 0, 4)]
@@ -248,7 +307,7 @@ public sealed partial class WorldRulesTests
         foreach (var system in sim.Content.TurnSystems.All.Where(s => s.Order == TurnPhase.Environment)) system.Run(sim);
     }
 
-    private static (Simulation Sim, TileId Target, City Polluter) WarmingScenario(ContentDb? content = null, int width = 3)
+    private static (Simulation Sim, TileId Target, City Polluter) WarmingScenario(ContentDb? content = null, int width = 3, int height = 2)
     {
 var sim = new Simulation(content ?? WarmingContentDb.Value, new SimulationSettings
         {
@@ -257,11 +316,11 @@ var sim = new Simulation(content ?? WarmingContentDb.Value, new SimulationSettin
         });
         GameFactory.NeutralPolitics(sim);
         sim.State.Units.Clear();
-sim.State.Map = new(width, 2, false);
-        sim.State.Plots = Enumerable.Range(0, width * 2).Select(_ => new Plot { Terrain = "world:grass", Owner = 0 }).ToArray();
+sim.State.Map = new(width, height, false);
+        sim.State.Plots = Enumerable.Range(0, width * height).Select(_ => new Plot { Terrain = "world:grass", Owner = 0 }).ToArray();
         sim.State.RebuildIndexes();
         // Only the last tile is not a city. Damage selection remains a real system boundary, not an injected predicate.
-        foreach (var tile in sim.State.Grid.Tiles.Take(width * 2 - 1)) AddCity(sim, tile);
+        foreach (var tile in sim.State.Grid.Tiles.Take(width * height - 1)) AddCity(sim, tile);
         return (sim, sim.State.Grid.Tiles.Last(), sim.State.Cities[0]);
     }
 

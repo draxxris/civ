@@ -102,8 +102,22 @@ public sealed class Plot
     public TeamMask Visible { get; set; } = new();
     /// <summary>Last observed state per team. Missing memory stays unknown until observation.</summary>
     public SortedDictionary<int, RevealedPlotSnapshot> RevealedSnapshots { get; set; } = new();
-    /// <summary>Connected land or water area id, assigned by the world rules.</summary>
-    public int AreaId { get; set; }
+    /// <summary>Connected land or water area id, assigned by the world rules: the smallest TileId in the area, so a
+    /// change to one area never renumbers another. An area is all land or all water.</summary>
+    public int AreaId
+    {
+        get => _areaId;
+        set
+        {
+            if (_areaId == value) return;
+            _areaId = value;
+            Interlocked.Increment(ref s_areaRevision);
+        }
+    }
+    private int _areaId;
+    private static long s_areaRevision;
+    /// <summary>Bumped by every AreaId change on any plot, so derived area caches can tell when to rebuild.</summary>
+    internal static long AreaRevision => Interlocked.Read(ref s_areaRevision);
     // Revealed snapshots are immutable records, so the memory copy can share them.
     internal Plot Clone() => new()
     {

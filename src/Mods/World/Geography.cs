@@ -33,14 +33,22 @@ internal static class Geography
     internal static bool Coast(HexGrid grid, Plot[] plots, ContentDb db, TileId tile) =>
         grid.Neighbors(tile).Any(n => Water(db, plots[n.Value]));
 
+    /// <summary>Whether replacing one terrain with another can change which plots are connected. Only a flip between
+    /// land and water does; anything else leaves every area as it was.</summary>
+    internal static bool ChangesAreas(ContentDb db, string before, string after) =>
+        db.Get<S.TerrainDef>(before).IsWater != db.Get<S.TerrainDef>(after).IsWater;
+
+    /// <summary>Flood-fill connected land and water areas and mark small enclosed water as lakes. Each area takes the
+    /// smallest TileId among its plots as its id, so a terrain change renumbers only the areas it touches: an area whose
+    /// plots did not change keeps its id however the rest of the map changed.</summary>
     internal static void AssignAreas(HexGrid grid, Plot[] plots, ContentDb db)
     {
         foreach (var plot in plots) { plot.AreaId = -1; plot.IsLake = false; }
-        int area = 0;
         foreach (var tile in grid.Tiles)
         {
             if (plots[tile.Value].AreaId >= 0) continue;
-            var members = FillArea(grid, plots, db, tile, area++);
+            // Tiles run in ascending order, so the first unvisited plot of an area is its smallest.
+            var members = FillArea(grid, plots, db, tile, tile.Value);
             bool lake = Water(db, plots[tile.Value]) && members.Count <= Tuning(db).LakeMaxSize
                 && members.All(t => grid.OffsetOf(t).Row > 0 && grid.OffsetOf(t).Row < grid.Spec.Height - 1);
             if (lake) foreach (var member in members) { plots[member.Value].IsLake = true; plots[member.Value].Terrain = "world:coast"; }

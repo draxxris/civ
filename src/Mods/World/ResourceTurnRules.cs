@@ -9,7 +9,6 @@ internal sealed class ResourceTurnRules
     private readonly Simulation _sim;
     private readonly bool _depletion;
     private readonly int _constructPercent;
-    private readonly Dictionary<int, int> _areaSizes;
     private readonly Dictionary<string, int> _bonusCounts;
     private readonly S.ImprovementDef? _depletedMine;
     private readonly long _worldSizeFactor;
@@ -19,7 +18,6 @@ internal sealed class ResourceTurnRules
         _sim = sim;
         _depletion = sim.IsOptionEnabled("foundation:gameoption_resource_depletion");
         _constructPercent = Math.Max(0, sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).ConstructPercent);
-        _areaSizes = sim.State.Plots.GroupBy(p => p.AreaId).ToDictionary(g => g.Key, g => g.Count());
         _bonusCounts = sim.State.Plots.Where(p => p.Bonus is not null).GroupBy(p => p.Bonus!, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
         _depletedMine = sim.Content.Get<S.ImprovementDef>().All.FirstOrDefault(i => i.DepletedMine);
@@ -48,7 +46,7 @@ internal sealed class ResourceTurnRules
         {
             int range = improvement.BonusEffects.GetValueOrDefault(bonus.Id)?.DiscoveryRandomRange ?? 0;
             if (range <= 0 || !Revealed(owner, bonus)) continue;
-            if (!Placement.BonusValid(_sim.State.Grid, _sim.State.Plots, _sim.Content, tile, bonus, _areaSizes[plot.AreaId])) continue;
+            if (!Placement.BonusValid(_sim.State.Grid, _sim.State.Plots, _sim.Content, tile, bonus, _sim.State.AreaSize(plot.AreaId))) continue;
             Int128 odds = (Int128)range * _constructPercent / 100;
             if (_depletion) odds /= 10;
             if (_sim.Rng.Next(WorldTurnMath.Range(odds)) != 0) continue;

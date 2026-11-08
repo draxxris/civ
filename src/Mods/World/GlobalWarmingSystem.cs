@@ -17,12 +17,15 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
         Int128 odds = ((Int128)WorldTurnMath.Raw(sim, "GLOBAL_WARMING_PROB", 10) - Defense(sim)) * 100
             / Math.Max(1, sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).VictoryDelayPercent);
         var candidates = sim.State.Grid.Tiles.Where(t => sim.State.CityAt(sim.State.Grid.HexOf(t)) is null).ToArray();
+        bool flooded = false;
         for (Int128 i = 0; i < attempts; i++)
         {
             // The reference consumes a probability roll even when defense makes warming impossible.
             if (sim.Rng.Next(100) >= odds || candidates.Length == 0) continue;
-            Degrade(sim, candidates[sim.Rng.Next(candidates.Length)]);
+            flooded |= Degrade(sim, candidates[sim.Rng.Next(candidates.Length)]);
         }
+        // Nothing in a degrade step reads areas or lake flags, so one rebuild after the pass covers every flood.
+        if (flooded) Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content);
     }
 
     private static Int128 WarmingValue(Simulation sim)
@@ -60,14 +63,15 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
         return points * WorldTurnMath.Raw(sim, "GLOBAL_WARMING_FOREST", 60) / Math.Max(1, land);
     }
 
-    private void Degrade(Simulation sim, TileId tile)
+    /// <summary>Degrade one plot. Returns whether land became water, which leaves areas to be rebuilt.</summary>
+    private bool Degrade(Simulation sim, TileId tile)
     {
         var plot = sim.State.Plots[tile.Value];
         string terrain = plot.Terrain;
         string? feature = plot.Feature;
         if (feature is not null) DegradeFeature(sim, tile, plot);
         else if (!Geography.Water(sim.Content, plot)) DegradeTerrain(sim, tile, plot);
-        if (terrain == plot.Terrain && feature == plot.Feature) return;
+        if (terrain == plot.Terrain && feature == plot.Feature) return false;
         CliffRules.AfterTerrainChange(sim.State, sim.Content, tile);
         if (plot.Feature is { } remaining && !Placement.FeatureValid(sim.State.Grid, sim.State.Plots, sim.Content, tile, sim.Content.Get<S.FeatureDef>(remaining)))
             plot.Feature = null;
@@ -75,6 +79,7 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
         plot.ImprovementTurns = 0;
         plot.BuildProgress.Clear();
         sim.Events.Publish(new GlobalWarmingOccurred(tile, terrain, plot.Terrain, feature, plot.Feature));
+        return Geography.ChangesAreas(sim.Content, terrain, plot.Terrain);
     }
 
     private void DegradeFeature(Simulation sim, TileId tile, Plot plot)
@@ -109,6 +114,5 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
         if (WorldTurnMath.Raw(sim, "GW_MOD_ENABLED", 1) == 0 || !Geography.Coast(sim.State.Grid, sim.State.Plots, sim.Content, tile)) return;
         plot.Terrain = "world:coast";
         plot.Route = null;
-        Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content);
     }
 }

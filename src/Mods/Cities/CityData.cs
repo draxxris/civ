@@ -111,8 +111,8 @@ internal static class CityData
             var plot = sim.State.Plots[n.Value];
             if (!sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater || plot.IsLake) continue;
             if (minimum <= 0) return true;
-            int size = sim.State.Plots.Count(p => p.AreaId == plot.AreaId && sim.Content.Get<S.TerrainDef>(p.Terrain).IsWater);
-            if (size >= minimum) return true;
+            // Areas are all water or all land, so the size of a water plot's area counts only water.
+            if (sim.State.AreaSize(plot.AreaId) >= minimum) return true;
         }
         return false;
     }

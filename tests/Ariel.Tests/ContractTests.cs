@@ -374,6 +374,23 @@ public class ContractTests
     }
 
     [Fact]
+    public void AreaSizeFollowsAreaIdChangesAndReplacedPlots()
+    {
+        var state = new GameState { Map = new(3, 1, false), Plots = [new() { AreaId = 0 }, new() { AreaId = 0 }, new() { AreaId = 2 }] };
+        state.RebuildIndexes();
+        Assert.Equal(2, state.AreaSize(0));
+        Assert.Equal(1, state.AreaSize(2));
+        Assert.Equal(0, state.AreaSize(1));
+        state.Plots[1].AreaId = 2;
+        Assert.Equal(1, state.AreaSize(0));
+        Assert.Equal(2, state.AreaSize(2));
+        state.Plots = [new() { AreaId = 5 }, new() { AreaId = 5 }, new() { AreaId = 5 }];
+        Assert.Equal(3, state.AreaSize(5));
+        Assert.Equal(0, state.AreaSize(2));
+        Assert.Equal(3, state.Clone().AreaSize(5));
+    }
+
+    [Fact]
     public void HashIncludesPlotTeamTreasuryQueueAndIdentityFields()
     {
         var sim = TestGame.Sim();

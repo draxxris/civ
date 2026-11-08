@@ -214,6 +214,23 @@ public sealed class GameState
     private readonly Dictionary<TileId, SortedDictionary<int, Unit>> _unitPlots = new();
     /// <summary>Geometry derived from the map specification.</summary>
     [JsonIgnore] public HexGrid Grid => _grid ??= new HexGrid(Map);
+    private AreaSizes? _areaSizes;
+    private sealed record AreaSizes(long Revision, Plot[] Plots, Dictionary<int, int> Counts);
+    /// <summary>Number of plots in a connected area, or zero for an unknown area. Derived from <see cref="Plot.AreaId"/>
+    /// and rebuilt only after an area id changes, so repeated queries do not scan the map.</summary>
+    public int AreaSize(int areaId)
+    {
+        var cache = _areaSizes;
+        long revision = Plot.AreaRevision;
+        if (cache is null || cache.Revision != revision || !ReferenceEquals(cache.Plots, Plots))
+        {
+            // Read the revision before counting: a write during the count leaves this entry stale and it is rebuilt.
+            var counts = new Dictionary<int, int>();
+            foreach (var plot in Plots) counts[plot.AreaId] = counts.GetValueOrDefault(plot.AreaId) + 1;
+            _areaSizes = cache = new(revision, Plots, counts);
+        }
+        return cache.Counts.GetValueOrDefault(areaId);
+    }
     /// <summary>Get a player by id.</summary>
     public Player PlayerById(int id) => _players[id];
     /// <summary>Get a team by id.</summary>

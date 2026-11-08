@@ -123,7 +123,12 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         }
         if (build.ImprovementType is { } improvement) { plot.Improvement = improvement; plot.ImprovementTurns = 0; }
         if (build.RouteType is { } route) plot.Route = route;
-        if (build.TerrainChange is { } terrain) { plot.Terrain = terrain; Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content); }
+        if (build.TerrainChange is { } terrain)
+        {
+            bool reshapes = Geography.ChangesAreas(sim.Content, plot.Terrain, terrain);
+            plot.Terrain = terrain;
+            if (reshapes) Geography.AssignAreas(sim.State.Grid, sim.State.Plots, sim.Content);
+        }
         if (build.FeatureChange is { } newFeature) plot.Feature = newFeature;
         if (build.Kill) sim.State.RemoveUnit(worker.Id);
         sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
