@@ -369,4 +369,61 @@ public sealed class EventRulesTests
         }
         Assert.Equal(Run(), Run());
     }
+
+    [Fact]
+    public void EventCooldownKey_provides_strongly_typed_keys_and_canonical_formatting()
+    {
+        var key1 = EventCooldownKey.Of(0, "events:herbalists");
+        var key2 = EventCooldownKey.Of(1, "events:forest_fire");
+        var parsed = EventCooldownKey.Parse("0:events:herbalists");
+
+        Assert.Equal("0:events:herbalists", key1.Key);
+        Assert.Equal("0:events:herbalists", key1.ToString());
+        Assert.Equal(key1, parsed);
+        Assert.True(key1.CompareTo(key2) < 0);
+
+        string implicitString = key1;
+        Assert.Equal("0:events:herbalists", implicitString);
+
+        var state = new EventState();
+        Assert.Null(state.GetLastFired(key1));
+        state.RecordFired(key1, 10);
+        Assert.Equal(10, state.GetLastFired(key1));
+        Assert.Equal(10, state.GetLastFired(0, "events:herbalists"));
+    }
+
+    [Fact]
+    public void Active_event_effects_have_canonical_ids_and_can_be_queried_and_cancelled_by_id()
+    {
+        var sim = Scenario();
+        var service = Events(sim);
+        var state = new EventState();
+        sim.State.Extensions.Set(sim.Content, state);
+
+        var eff1 = new ActiveEventEffect { Trigger = "t1", Player = 0, Happiness = 1 };
+        var eff2 = new ActiveEventEffect { Trigger = "t2", Player = 1, Happiness = 2 };
+        state.AddEffect(eff1);
+        state.AddEffect(eff2);
+
+        Assert.Equal(1, eff1.Id);
+        Assert.Equal(2, eff2.Id);
+        Assert.Equal(3, state.NextEffectId);
+
+        var all = service.ActiveEffects(sim);
+        Assert.Equal(2, all.Count);
+        Assert.Equal([1, 2], all.Select(e => e.Id));
+
+        var player0Effects = service.ActiveEffects(sim, 0);
+        Assert.Single(player0Effects);
+        Assert.Equal(1, player0Effects[0].Id);
+
+        Assert.Same(eff1, service.FindEffect(sim, 1));
+        Assert.Same(eff2, service.FindEffect(sim, 2));
+        Assert.Null(service.FindEffect(sim, 999));
+
+        Assert.True(service.CancelEffect(sim, 1));
+        Assert.False(service.CancelEffect(sim, 1));
+        Assert.Null(service.FindEffect(sim, 1));
+        Assert.Single(service.ActiveEffects(sim));
+    }
 }

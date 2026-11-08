@@ -2,6 +2,42 @@ using System.Text.Json.Serialization;
 
 namespace Ariel.Game;
 
+/// <summary>Strongly-typed allocation-free key for event trigger cooldowns.</summary>
+public readonly record struct EventCooldownKey : IComparable<EventCooldownKey>
+{
+    public int Player { get; }
+    public string Trigger { get; }
+
+    public EventCooldownKey(int player, string trigger)
+    {
+        Player = player;
+        Trigger = trigger ?? string.Empty;
+    }
+
+    public static EventCooldownKey Of(int player, string trigger) => new(player, trigger);
+
+    [JsonIgnore]
+    public string Key => $"{Player}:{Trigger}";
+
+    public override string ToString() => Key;
+
+    public int CompareTo(EventCooldownKey other)
+    {
+        int cmp = Player.CompareTo(other.Player);
+        return cmp != 0 ? cmp : string.CompareOrdinal(Trigger, other.Trigger);
+    }
+
+    public static EventCooldownKey Parse(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        int colon = key.IndexOf(':');
+        if (colon < 0) throw new FormatException($"Invalid event cooldown key: {key}");
+        return new(int.Parse(key.AsSpan(0, colon)), key[(colon + 1)..]);
+    }
+
+    public static implicit operator string(EventCooldownKey key) => key.Key;
+}
+
 /// <summary>An event waiting for a player choice. City and Plot are -1 when the event has no such subject.</summary>
 public sealed record PendingEvent(int Id, int Player, string Trigger, int City, int Plot, int Turn);
 /// <summary>An event was started for a player.</summary>
@@ -24,6 +60,14 @@ public interface IEventService
     string? ValidateChoice(Simulation sim, int player, int eventId, string option);
     /// <summary>Apply a validated option and publish EventResolved.</summary>
     void Choose(Simulation sim, int player, int eventId, string option, bool automatic = false);
+    /// <summary>Active ongoing event modifier effects, by id order.</summary>
+    IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim);
+    /// <summary>Active ongoing event modifier effects of a player, by id order.</summary>
+    IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim, int player);
+    /// <summary>Finds an active effect by its canonical identifier, or null if not found.</summary>
+    ActiveEventEffect? FindEffect(Simulation sim, int effectId);
+    /// <summary>Removes an active effect by its canonical identifier, returning true if found and removed.</summary>
+    bool CancelEffect(Simulation sim, int effectId);
 }
 
 /// <summary>Resolve one pending event.</summary>
@@ -39,6 +83,7 @@ public sealed class ChooseEventOptionCommand : GameCommand
 public sealed class EventState
 {
     public int NextEventId { get; set; } = 1;
+    public int NextEffectId { get; set; } = 1;
     public List<PendingEvent> Pending { get; set; } = [];
     /// <summary>Last turn an event happened, keyed "player:trigger".</summary>
     public SortedDictionary<string, int> LastFired { get; set; } = new(StringComparer.Ordinal);
@@ -81,7 +126,24 @@ public sealed class EventState
     public void AddEffect(ActiveEventEffect effect)
     {
         ArgumentNullException.ThrowIfNull(effect);
+        if (effect.Id <= 0) effect.Id = NextEffectId++;
         Effects.Add(effect);
+    }
+
+    /// <summary>Finds an active effect by its canonical identifier, or null if not present.</summary>
+    public ActiveEventEffect? FindEffect(int effectId) =>
+        Effects.FirstOrDefault(e => e.Id == effectId);
+
+    /// <summary>Removes an active effect by its canonical identifier, returning true if removed.</summary>
+    public bool RemoveEffect(int effectId)
+    {
+        int index = Effects.FindIndex(e => e.Id == effectId);
+        if (index >= 0)
+        {
+            Effects.RemoveAt(index);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>Removes timed effects where ExpiresTurn is greater than zero and currentTurn has reached or exceeded ExpiresTurn.</summary>
@@ -114,24 +176,27 @@ public sealed class EventState
         });
     }
 
+    /// <summary>Records the turn an event trigger fired for a player using a typed cooldown key.</summary>
+    public void RecordFired(EventCooldownKey key, int turn) =>
+        LastFired[key.Key] = turn;
+
     /// <summary>Records the turn an event trigger fired for a player.</summary>
-    public void RecordFired(int player, string trigger, int turn)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
-        LastFired[player + ":" + trigger] = turn;
-    }
+    public void RecordFired(int player, string trigger, int turn) =>
+        RecordFired(EventCooldownKey.Of(player, trigger), turn);
 
     /// <summary>Returns the last turn an event trigger fired for a player, or null if it has never fired.</summary>
-    public int? GetLastFired(int player, string trigger)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
-        return LastFired.TryGetValue(player + ":" + trigger, out int turn) ? turn : null;
-    }
+    public int? GetLastFired(EventCooldownKey key) =>
+        LastFired.TryGetValue(key.Key, out int turn) ? turn : null;
+
+    /// <summary>Returns the last turn an event trigger fired for a player, or null if it has never fired.</summary>
+    public int? GetLastFired(int player, string trigger) =>
+        GetLastFired(EventCooldownKey.Of(player, trigger));
 }
 
 /// <summary>A kept happiness, health or plot yield change. ExpiresTurn zero means permanent.</summary>
 public sealed class ActiveEventEffect
 {
+    public int Id { get; set; }
     public int EventId { get; set; } = -1;
     public string Trigger { get; set; } = "";
     public int Player { get; set; }

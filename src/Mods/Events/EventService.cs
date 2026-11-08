@@ -40,6 +40,18 @@ internal sealed class EventService : IEventService
     public IReadOnlyList<PendingEvent> Pending(Simulation sim, int player) =>
         Read(sim).Pending.Where(p => p.Player == player).OrderBy(p => p.Id).ToArray();
 
+    public IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim) =>
+        Read(sim).Effects.OrderBy(e => e.Id).ToArray();
+
+    public IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim, int player) =>
+        Read(sim).Effects.Where(e => e.Player == player).OrderBy(e => e.Id).ToArray();
+
+    public ActiveEventEffect? FindEffect(Simulation sim, int effectId) =>
+        Read(sim).FindEffect(effectId);
+
+    public bool CancelEffect(Simulation sim, int effectId) =>
+        Write(sim).RemoveEffect(effectId);
+
     public IReadOnlyList<string> Options(Simulation sim, int eventId) =>
         Read(sim).FindPending(eventId) is { } pending ? LegalOptions(sim, pending).Select(o => o.Id).ToArray() : [];
 
@@ -138,7 +150,7 @@ internal sealed class EventService : IEventService
             if (trigger.ChancePercent < 100 && sim.Rng.Next(100) >= trigger.ChancePercent) continue;
             var pending = new PendingEvent(state.NextEventId++, player.Id, trigger.Id, subject.City, subject.Plot, sim.State.Turn);
             state.AddPending(pending);
-            state.RecordFired(player.Id, trigger.Id, sim.State.Turn);
+            state.RecordFired(EventCooldownKey.Of(player.Id, trigger.Id), sim.State.Turn);
             sim.Events.Publish(new EventTriggered(player.Id, pending.Id, trigger.Id, pending.City));
             if (player.Ai is not null) AutoResolve(sim, pending);
             return;
@@ -153,7 +165,7 @@ internal sealed class EventService : IEventService
     {
         if (sim.State.Turn < t.MinTurn || player.Treasury < t.MinTreasury) return null;
         if (t.RequiredTech is not null && !sim.TeamOf(player.Id).Techs.Contains(t.RequiredTech)) return null;
-        if (state.GetLastFired(player.Id, t.Id) is { } last && (!t.Repeatable || sim.State.Turn - last < t.CooldownTurns)) return null;
+        if (state.GetLastFired(EventCooldownKey.Of(player.Id, t.Id)) is { } last && (!t.Repeatable || sim.State.Turn - last < t.CooldownTurns)) return null;
         if (state.Pending.Any(p => p.Player == player.Id)) return null;
         if (!IsCityScope(t)) return (-1, -1);
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player.Id).OrderBy(c => c.Id))
