@@ -23,6 +23,11 @@ public sealed class EventsMod : IPreparableMod
         context.RegisterStateComponent<EventState>("state");
         context.RegisterCommand<ChooseEventOptionCommand>("choose_option");
         context.TurnSystems.Register(new EventTurn(service));
+        context.Subscribe<CityCaptured>("events_city_captured", (sim, captured) =>
+        {
+            var state = sim.State.Extensions.Get<EventState>(sim.Content);
+            state?.PruneCityEffects(captured.City);
+        });
     }
 }
 

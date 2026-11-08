@@ -41,7 +41,7 @@ internal sealed class EventService : IEventService
         Read(sim).Pending.Where(p => p.Player == player).OrderBy(p => p.Id).ToArray();
 
     public IReadOnlyList<string> Options(Simulation sim, int eventId) =>
-        Read(sim).Pending.FirstOrDefault(p => p.Id == eventId) is { } pending ? LegalOptions(sim, pending).Select(o => o.Id).ToArray() : [];
+        Read(sim).FindPending(eventId) is { } pending ? LegalOptions(sim, pending).Select(o => o.Id).ToArray() : [];
 
     private static IEnumerable<EventOptionDef> LegalOptions(Simulation sim, PendingEvent pending) =>
         sim.Content.Get<EventOptionDef>().All.Where(o => o.Trigger == pending.Trigger)
@@ -50,7 +50,7 @@ internal sealed class EventService : IEventService
 
     public string? ValidateChoice(Simulation sim, int player, int eventId, string option)
     {
-        var pending = Read(sim).Pending.FirstOrDefault(p => p.Id == eventId);
+        var pending = Read(sim).FindPending(eventId);
         if (pending is null) return "Unknown event";
         if (pending.Player != player) return "Event belongs to another player";
         return LegalOptions(sim, pending).Any(o => o.Id == option) ? null : "Option is not available";
@@ -59,8 +59,8 @@ internal sealed class EventService : IEventService
     public void Choose(Simulation sim, int player, int eventId, string option, bool automatic = false)
     {
         var state = Write(sim);
-        var pending = state.Pending.First(p => p.Id == eventId);
-        state.Pending.Remove(pending);
+        var pending = state.FindPending(eventId) ?? throw new InvalidOperationException($"Pending event {eventId} not found");
+        state.RemovePending(eventId);
         var def = sim.Content.Get<EventOptionDef>(option);
         Apply(sim, state, pending, def);
         sim.Events.Publish(new EventResolved(player, eventId, pending.Trigger, option, automatic));
@@ -81,13 +81,21 @@ internal sealed class EventService : IEventService
         }
         bool kept = option.HappinessDelta != 0 || option.HealthDelta != 0 || option.PlotFoodDelta != 0 || option.PlotProductionDelta != 0 || option.PlotCommerceDelta != 0;
         if (!kept) return;
-        state.Effects.Add(new ActiveEventEffect
+        state.AddEffect(new ActiveEventEffect
         {
-            Player = player.Id, City = pending.City, Plot = pending.Plot, Option = option.Id,
-            // Timed effects count from the trigger turn, so a late answer does not outlast an automatic one.
-            ExpiresTurn = option.DurationTurns > 0 ? Math.Max(sim.State.Turn, pending.Turn + option.DurationTurns) : 0,
-            Happiness = option.HappinessDelta, Health = option.HealthDelta,
-            PlotFood = option.PlotFoodDelta, PlotProduction = option.PlotProductionDelta, PlotCommerce = option.PlotCommerceDelta,
+            EventId = pending.Id,
+            Trigger = pending.Trigger,
+            Player = player.Id,
+            City = pending.City,
+            Plot = pending.Plot,
+            Option = option.Id,
+            // Timed effects count from the resolution turn so late answers receive their full duration.
+            ExpiresTurn = option.DurationTurns > 0 ? sim.State.Turn + option.DurationTurns : 0,
+            Happiness = option.HappinessDelta,
+            Health = option.HealthDelta,
+            PlotFood = option.PlotFoodDelta,
+            PlotProduction = option.PlotProductionDelta,
+            PlotCommerce = option.PlotCommerceDelta,
         });
     }
 
@@ -95,7 +103,8 @@ internal sealed class EventService : IEventService
     internal void RunTurn(Simulation sim)
     {
         var state = Write(sim);
-        state.Effects.RemoveAll(e => e.ExpiresTurn > 0 && sim.State.Turn >= e.ExpiresTurn);
+        state.PruneExpiredEffects(sim.State.Turn);
+        state.PruneInvalidEffects(sim);
         foreach (var pending in state.Pending.OrderBy(p => p.Id).ToArray()) AutoResolve(sim, pending);
         foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Roll(sim, state, player);
     }
@@ -107,7 +116,13 @@ internal sealed class EventService : IEventService
         var pick = player.Ai is not null
             ? legal.OrderByDescending(Value).ThenByDescending(o => o.IsDefault).FirstOrDefault()
             : legal.FirstOrDefault(o => o.IsDefault) ?? legal.FirstOrDefault();
-        if (pick is null) { Write(sim).Pending.Remove(pending); return; }
+        if (pick is null)
+        {
+            var state = Write(sim);
+            state.RemovePending(pending.Id);
+            sim.Events.Publish(new EventResolved(pending.Player, pending.Id, pending.Trigger, EventResolved.Expired, Automatic: true));
+            return;
+        }
         Choose(sim, pending.Player, pending.Id, pick.Id, true);
     }
 
@@ -122,8 +137,8 @@ internal sealed class EventService : IEventService
             if (trigger.ChancePercent <= 0 || Eligible(sim, state, player, trigger) is not { } subject) continue;
             if (trigger.ChancePercent < 100 && sim.Rng.Next(100) >= trigger.ChancePercent) continue;
             var pending = new PendingEvent(state.NextEventId++, player.Id, trigger.Id, subject.City, subject.Plot, sim.State.Turn);
-            state.Pending.Add(pending);
-            state.LastFired[player.Id + ":" + trigger.Id] = sim.State.Turn;
+            state.AddPending(pending);
+            state.RecordFired(player.Id, trigger.Id, sim.State.Turn);
             sim.Events.Publish(new EventTriggered(player.Id, pending.Id, trigger.Id, pending.City));
             if (player.Ai is not null) AutoResolve(sim, pending);
             return;
@@ -138,7 +153,7 @@ internal sealed class EventService : IEventService
     {
         if (sim.State.Turn < t.MinTurn || player.Treasury < t.MinTreasury) return null;
         if (t.RequiredTech is not null && !sim.TeamOf(player.Id).Techs.Contains(t.RequiredTech)) return null;
-        if (state.LastFired.TryGetValue(player.Id + ":" + t.Id, out int last) && (!t.Repeatable || sim.State.Turn - last < t.CooldownTurns)) return null;
+        if (state.GetLastFired(player.Id, t.Id) is { } last && (!t.Repeatable || sim.State.Turn - last < t.CooldownTurns)) return null;
         if (state.Pending.Any(p => p.Player == player.Id)) return null;
         if (!IsCityScope(t)) return (-1, -1);
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player.Id).OrderBy(c => c.Id))
