@@ -89,7 +89,7 @@ internal sealed partial class CombatService : ICombatService
     private static void Finish(Simulation sim, Unit a, Unit d, Hex combatPlot, CombatPreview preview, CombatOutcome outcome)
     {
         var state = MilitaryData.Edit(sim, a);
-        state.Attacked = true; state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
+        state.Attacked = true; state.Moved = true; state.BreakActivity();
         int cost = sim.Content.Services.Get<IMovementService>().Single().StepCost(sim, a.Id, sim.State.Grid.TileAt(a.Position), sim.State.Grid.TileAt(combatPlot));
         a.MovesLeft = Math.Max(0, a.MovesLeft - Math.Max(cost, MilitaryData.Constants(sim).MoveDenominator));
         if (outcome == CombatOutcome.DefenderWithdrawn)
@@ -132,7 +132,7 @@ internal sealed partial class CombatService : ICombatService
         d.Health = 1;
         MilitaryData.MoveUnit(sim, d.Id, retreat);
         var state = MilitaryData.Edit(sim, d);
-        state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
+        state.Moved = true; state.BreakActivity();
         return true;
     }
     private static Hex? FindSafeRetreatHex(Simulation sim, Unit defender, Unit attacker)

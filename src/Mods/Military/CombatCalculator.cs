@@ -51,7 +51,9 @@ internal static class CombatCalculator
         var plot = sim.State.PlotAt(defender.Position);
         var a = MilitaryData.Definition(sim, attacker); var d = MilitaryData.Definition(sim, defender);
         if (!d.NoDefensiveBonus) PlotDefense(sim, defender, a.IgnoreBuildingDefense, de);
-        if (Fortifiable(d)) Add(de, "military:fortify", MilitaryData.Read(sim, defender).FortifyTurns * MilitaryData.Raw(sim, "FORTIFY_MODIFIER_PER_TURN", 5));
+        var defenderState = MilitaryData.Read(sim, defender);
+        if (Fortifiable(d) && defenderState.Activity == UnitActivity.Fortify && defenderState.FortifyTurns > 0)
+            Add(de, "military:fortify", defenderState.FortifyTurns * MilitaryData.Raw(sim, "FORTIFY_MODIFIER_PER_TURN", 5));
         AddLocations(sim, attacker, defender, plot, ae, de);
         AddOpponents(a, d, ae, de);
         AddHandicap(sim, attacker, defender, de);

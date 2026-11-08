@@ -179,7 +179,7 @@ internal sealed class MovementService : IMovementService
         int cost = StepCost(sim, unit.Id, from, to);
         int? transport = AutoLoadTransport(sim, unit, MilitaryData.Definition(sim, unit), to);
         var state = MilitaryData.Edit(sim, unit);
-        state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
+        state.Moved = true; state.BreakActivity();
         bool hostile = HostilePlot(sim, unit, target);
         var combatService = sim.Content.Services.Get<ICombatService>().Single();
         var defender = hostile ? combatService.BestDefender(sim, unit.Id, target) : null;

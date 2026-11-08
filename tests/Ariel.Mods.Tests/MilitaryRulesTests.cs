@@ -903,15 +903,72 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var sim = GameFactory.Scenario(mods.Content);
         var idle = Add(sim, 0, 39); var fortified = Add(sim, 0, 40);
-        Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 0, Unit = fortified.Id, Activity = UnitActivity.Fortify }, out var error), error);
         var enemy = Add(sim, 1, 41);
         sim.State.SetWar(0, 1, true);
-        sim.AdvanceTurn(); sim.AdvanceTurn();
+        sim.AdvanceTurn();
+
+        // Turn zero fortification grants 0 defense bonus; bonus begins after resting a turn boundary.
+        Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 0, Unit = fortified.Id, Activity = UnitActivity.Fortify }, out var error), error);
         var combat = Service<ICombatService>(sim);
+        int idleDefenseTurn0 = combat.Preview(sim, enemy.Id, idle.Id).DefenseStrength.Current;
+        int fortifiedDefenseTurn0 = combat.Preview(sim, enemy.Id, fortified.Id).DefenseStrength.Current;
+        Assert.Equal(idleDefenseTurn0, fortifiedDefenseTurn0);
+        Assert.Equal(0, fortified.Extensions.Get<MilitaryUnitState>(sim.Content)!.FortifyTurns);
+
+        sim.AdvanceTurn();
+        Assert.Equal(1, fortified.Extensions.Get<MilitaryUnitState>(sim.Content)!.FortifyTurns);
+        int fortifiedDefenseTurn1 = combat.Preview(sim, enemy.Id, fortified.Id).DefenseStrength.Current;
+        Assert.True(fortifiedDefenseTurn1 > idleDefenseTurn0);
+
+        sim.AdvanceTurn();
+        Assert.Equal(2, fortified.Extensions.Get<MilitaryUnitState>(sim.Content)!.FortifyTurns);
         int idleDefense = combat.Preview(sim, enemy.Id, idle.Id).DefenseStrength.Current;
         int fortifiedDefense = combat.Preview(sim, enemy.Id, fortified.Id).DefenseStrength.Current;
         Assert.True(idleDefense > 0);
-        Assert.True(fortifiedDefense > idleDefense);
+        Assert.True(fortifiedDefense > fortifiedDefenseTurn1);
+    }
+
+    [Fact]
+    public void Pillaging_wakes_unit_and_clears_fortification()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var def = mods.Content.Get<Ariel.Content.Schema.UnitDef>().All.First(u => u.Pillage && u.Domain == "military:domain_land");
+        var unit = Add(sim, 0, 39, def.Id);
+        var improvement = mods.Content.Get<Ariel.Content.Schema.ImprovementDef>().All
+            .First(i => !i.Permanent && !i.Goody && i.ImprovementPillage is not null);
+        var plot = sim.State.PlotAt(unit.Position);
+        plot.Owner = unit.Owner;
+        plot.Improvement = improvement.Id;
+
+        sim.AdvanceTurn();
+        Assert.True(sim.TryApply(new SetUnitActivityCommand { Player = 0, Unit = unit.Id, Activity = UnitActivity.Fortify }, out var error), error);
+        sim.AdvanceTurn();
+        var state = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
+        Assert.Equal(UnitActivity.Fortify, state.Activity);
+        Assert.Equal(1, state.FortifyTurns);
+
+        Assert.True(sim.TryApply(new PillageCommand { Player = unit.Owner, Unit = unit.Id }, out error), error);
+        Assert.Equal(UnitActivity.Awake, state.Activity);
+        Assert.Equal(0, state.FortifyTurns);
+    }
+
+    [Fact]
+    public void Cargo_units_cannot_change_activity_and_do_not_accumulate_fortify_turns()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var units = Service<IUnitService>(sim);
+        sim.State.Plots[40].Terrain = "world:coast";
+        var ship = Add(sim, 0, 40, "military:cog");
+        var cargo = Add(sim, 0, 40, "military:warrior");
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+
+        Assert.Equal("Cargo units cannot change activity", units.Validate(sim, cargo.Owner, cargo.Id, UnitAction.Activity, "Fortify"));
+        var cargoState = cargo.Extensions.Get<MilitaryUnitState>(sim.Content)!;
+        Assert.Equal(UnitActivity.Sleep, cargoState.Activity);
+        Assert.Equal(0, cargoState.FortifyTurns);
+
+        sim.AdvanceTurn();
+        Assert.Equal(0, cargoState.FortifyTurns);
     }
     [Fact]
     public void Naval_unit_on_water_upgrades_from_an_adjacent_coastal_city()

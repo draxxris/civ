@@ -118,7 +118,7 @@ internal sealed partial class AirMissionService : IAirMissionService
     {
         var state = MilitaryData.Edit(sim, unit);
         state.Attacked |= !finish;
-        state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
+        state.Moved = true; state.BreakActivity();
         unit.MovesLeft = finish ? 0 : Math.Max(0, unit.MovesLeft - MilitaryData.Constants(sim).MoveDenominator);
     }
     private static AirMissionReport Strike(Simulation sim, Unit unit, Hex target, AirMissionReport report)

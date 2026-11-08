@@ -45,7 +45,7 @@ internal sealed partial class UnitService
     public void Load(Simulation sim, int unit, int transport)
     {
         var state = MilitaryData.Edit(sim, sim.State.UnitById(unit));
-        state.TransportId = transport; state.Activity = UnitActivity.Sleep; state.FortifyTurns = 0;
+        state.TransportId = transport; state.Activity = UnitActivity.Sleep;
         MilitaryData.Sight(sim);
     }
     public string? ValidateUnload(Simulation sim, int player, int unitId, Hex? destination = null)
@@ -92,7 +92,7 @@ internal sealed partial class UnitService
         var unit = sim.State.UnitById(unitId);
         var target = sim.State.Grid.Normalize(destination ?? unit.Position);
         var state = MilitaryData.Edit(sim, unit);
-        state.TransportId = null; state.Activity = UnitActivity.Awake; state.FortifyTurns = 0;
+        state.TransportId = null; state.BreakActivity();
         if (target != unit.Position)
         {
             sim.State.MoveUnit(unit.Id, target); unit.MovesLeft = 0; state.Moved = true;

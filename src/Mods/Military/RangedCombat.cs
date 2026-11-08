@@ -112,7 +112,7 @@ internal sealed partial class CombatService
     private static void SpendFireMoves(Simulation sim, Unit unit, int cost)
     {
         var state = MilitaryData.Edit(sim, unit);
-        state.Attacked = true; state.Moved = true; state.FortifyTurns = 0; state.Activity = UnitActivity.Awake;
+        state.Attacked = true; state.Moved = true; state.BreakActivity();
         unit.MovesLeft = Math.Max(0, unit.MovesLeft - cost);
     }
 }

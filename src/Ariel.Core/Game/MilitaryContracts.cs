@@ -99,14 +99,40 @@ public sealed class MilitaryUnitState
 {
     public int Level { get; set; } = 1;
     public int ExperienceRemainder { get; set; }
-    public int FortifyTurns { get; set; }
+    private int _fortifyTurns;
+    /// <summary>Completed turn boundaries rested while fortified, granting defense bonuses on subsequent turns.</summary>
+    public int FortifyTurns
+    {
+        get => _activity == UnitActivity.Fortify ? _fortifyTurns : 0;
+        set
+        {
+            _fortifyTurns = value;
+            if (value > 0 && _activity != UnitActivity.Fortify) _activity = UnitActivity.Fortify;
+        }
+    }
     public bool Moved { get; set; }
     public bool Attacked { get; set; }
     public bool InterceptedThisTurn { get; set; }
-    public UnitActivity Activity { get; set; }
+    private UnitActivity _activity;
+    public UnitActivity Activity
+    {
+        get => _activity;
+        set
+        {
+            _activity = value;
+            if (value != UnitActivity.Fortify) _fortifyTurns = 0;
+        }
+    }
     public int CreatedTurn { get; set; }
     public string? AttachedLeaderUnitType { get; set; }
     public int? TransportId { get; set; }
+
+    /// <summary>Wake the unit and clear any ongoing fortification counter.</summary>
+    public void BreakActivity()
+    {
+        _activity = UnitActivity.Awake;
+        _fortifyTurns = 0;
+    }
 }
 public sealed class MilitaryPlayerState
 {

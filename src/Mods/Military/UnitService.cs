@@ -53,6 +53,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     }
     private static string? ValidateActivity(Simulation sim, Unit unit, string argument)
     {
+        if (MilitaryData.Read(sim, unit).TransportId is not null) return "Cargo units cannot change activity";
         if (!Enum.TryParse<UnitActivity>(argument, out var activity) || !Enum.IsDefined(activity)) return "Unknown activity";
         if (activity == UnitActivity.Blockade)
             return unit.MovesLeft <= 0 ? "No moves left" : NavalBlockades.PositionError(sim, unit);
@@ -116,7 +117,6 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     private static void SetActivity(Simulation sim, Unit unit, UnitActivity activity)
     {
         var state = MilitaryData.Edit(sim, unit);
-        if (activity != UnitActivity.Fortify) state.FortifyTurns = 0;
         state.Activity = activity;
         if (activity == UnitActivity.Blockade) { unit.MovesLeft = 0; state.Moved = true; }
     }
@@ -151,7 +151,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
         else plot.Route = null;
         plot.BuildProgress.Clear();
         unit.MovesLeft = Math.Max(0, unit.MovesLeft - MilitaryData.Constants(sim).MoveDenominator);
-        var state = MilitaryData.Edit(sim, unit); state.Moved = true; state.FortifyTurns = 0;
+        var state = MilitaryData.Edit(sim, unit); state.Moved = true; state.BreakActivity();
         sim.Events.Publish(new PlotPillaged(unit.Id, unit.Owner, tile, improvementId, replacement,
             improvementId is null ? routeId : null, gold));
         if (removedCityImprovement) MilitaryData.Sight(sim);
@@ -204,7 +204,7 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
         if (state.CreatedTurn != sim.State.Turn)
         {
             if (!active || alwaysHeal) unit.Health = Math.Min(MilitaryData.Constants(sim).MaxHitPoints, unit.Health + units.HealRate(sim, unit.Id));
-            if (!active && state.Activity == UnitActivity.Fortify && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
+            if (!active && state.TransportId is null && state.Activity == UnitActivity.Fortify && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
                 state.FortifyTurns = Math.Min(MilitaryData.Raw(sim, "MAX_FORTIFY_TURNS", 5), state.FortifyTurns + 1);
         }
         WakeSentry(sim, unit, state);
