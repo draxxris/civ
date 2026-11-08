@@ -70,6 +70,10 @@ public interface IAirMissionService
     int InterceptionProbability(Simulation sim, int unit);
     string? Validate(Simulation sim, int player, int unit, AirMissionKind kind, Hex target);
     AirMissionReport Execute(Simulation sim, int unit, AirMissionKind kind, Hex target);
+    /// <summary>Active aerial reconnaissance sectors for the current turn.</summary>
+    IReadOnlyList<ReconSight> ActiveRecon(Simulation sim);
+    /// <summary>Active aerial reconnaissance sectors for a team for the current turn.</summary>
+    IReadOnlyList<ReconSight> ActiveRecon(Simulation sim, int team);
 }
 public enum UnitAction { Promote, Activity, Pillage, Upgrade, Disband }
 public interface IUnitService
@@ -147,6 +151,34 @@ public sealed class MilitaryGameState
 {
     public List<CombatReport> Combats { get; set; } = [];
     public List<ReconSight> ReconSights { get; set; } = [];
+
+    /// <summary>
+    /// Adds or updates an active recon sector for a team, deduplicating matching center hexes
+    /// and retaining the larger radius.
+    /// </summary>
+    public bool AddReconSight(ReconSight sight)
+    {
+        ArgumentNullException.ThrowIfNull(sight);
+        for (int i = 0; i < ReconSights.Count; i++)
+        {
+            var existing = ReconSights[i];
+            if (existing.Team == sight.Team && existing.Center == sight.Center)
+            {
+                if (sight.Radius > existing.Radius)
+                {
+                    ReconSights[i] = sight;
+                    return true;
+                }
+                return false;
+            }
+        }
+        ReconSights.Add(sight);
+        return true;
+    }
+
+    /// <summary>Adds or updates an active recon sector for a team.</summary>
+    public bool AddReconSight(int team, Hex center, int radius) =>
+        AddReconSight(new ReconSight(team, center, radius));
 }
 /// <summary>Minimal ownership and razing boundary; Cities owns city state changes.</summary>
 public interface ICityCaptureService

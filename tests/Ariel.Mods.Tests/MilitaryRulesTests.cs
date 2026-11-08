@@ -568,6 +568,41 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Recon_sight_deduplicates_overlapping_missions_for_same_team_and_target()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var plane1 = Add(sim, 0, 39, "military:bomber");
+        var plane2 = Add(sim, 0, 39, "military:fighter");
+        var target = sim.State.Grid.Tiles.Select(sim.State.Grid.HexOf)
+            .First(h => sim.State.Grid.Distance(plane1.Position, h) == 5);
+        var airService = Service<IAirMissionService>(sim);
+
+        var cmd1 = new AirMissionCommand { Player = 0, Unit = plane1.Id, Kind = AirMissionKind.Recon, Target = target };
+        var cmd2 = new AirMissionCommand { Player = 0, Unit = plane2.Id, Kind = AirMissionKind.Recon, Target = target };
+
+        Assert.True(sim.TryApply(cmd1, out _));
+        Assert.Single(airService.ActiveRecon(sim));
+        Assert.Single(airService.ActiveRecon(sim, 0));
+        Assert.Empty(airService.ActiveRecon(sim, 1));
+
+        Assert.True(sim.TryApply(cmd2, out _));
+        // Both aircraft executed and spent moves, but active recon sights are deduplicated on the same center
+        Assert.Equal(0, plane1.MovesLeft);
+        Assert.Equal(0, plane2.MovesLeft);
+        var sights = airService.ActiveRecon(sim);
+        Assert.Single(sights);
+        Assert.Equal(target, sights[0].Center);
+
+        // Verify radius upgrade behavior on MilitaryGameState
+        var military = sim.State.Extensions.Get<MilitaryGameState>(sim.Content)!;
+        Assert.False(military.AddReconSight(0, target, sights[0].Radius - 1)); // smaller radius ignored
+        Assert.Single(military.ReconSights);
+        Assert.True(military.AddReconSight(0, target, sights[0].Radius + 2)); // larger radius upgrades
+        Assert.Single(military.ReconSights);
+        Assert.Equal(sights[0].Radius + 2, military.ReconSights[0].Radius);
+    }
+
+    [Fact]
     public void Rebase_obeys_base_capacity_and_loads_onto_a_carrier()
     {
         var sim = GameFactory.Scenario(mods.Content);

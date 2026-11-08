@@ -5,6 +5,12 @@ namespace Ariel.Mods.Military;
 
 internal sealed partial class AirMissionService : IAirMissionService
 {
+    public IReadOnlyList<ReconSight> ActiveRecon(Simulation sim) =>
+        sim.State.Extensions.Get<MilitaryGameState>(sim.Content)?.ReconSights.ToArray() ?? [];
+
+    public IReadOnlyList<ReconSight> ActiveRecon(Simulation sim, int team) =>
+        sim.State.Extensions.Get<MilitaryGameState>(sim.Content)?.ReconSights.Where(r => r.Team == team).ToArray() ?? [];
+
     public int AirRange(Simulation sim, int unitId)
     {
         var unit = sim.State.UnitById(unitId);
@@ -100,7 +106,7 @@ internal sealed partial class AirMissionService : IAirMissionService
     private static AirMissionReport Recon(Simulation sim, Unit unit, Hex target, AirMissionReport report)
     {
         int radius = sim.Content.Get<S.HexOverridesDef>("foundation:hex_overrides").UnitSight + 1;
-        CombatService.HistoryState(sim).ReconSights.Add(new(sim.TeamOf(unit.Owner).Id, target, radius));
+        CombatService.HistoryState(sim).AddReconSight(new(sim.TeamOf(unit.Owner).Id, target, radius));
         SpendMoves(sim, unit, finish: true);
         return report;
     }
