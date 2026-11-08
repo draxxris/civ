@@ -86,6 +86,9 @@ public sealed class CardResearchTests
         Assert.Equal(SaveGame.Save(sim), SaveGame.Save(twin));
     }
 
+    private static int Generation(Simulation sim, int team) =>
+        (int)sim.State.TeamById(team).Extensions.Values["card_research:hand"].GetType().GetProperty("Generation")!.GetValue(sim.State.TeamById(team).Extensions.Values["card_research:hand"])!;
+
     [Fact]
     public void Traded_cards_leave_without_refilling_or_changing_the_remaining_hand()
     {
@@ -97,11 +100,26 @@ public sealed class CardResearchTests
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
         diplomacy.EstablishContact(sim, 0, 1);
         var rng = sim.Rng.State;
+        int genBefore = Generation(sim, 0);
         Apply(sim, new ProposeDealCommand { Player = 1, Target = 0, Items = [new(1, TradeItemKind.Technology, tech)] });
         Apply(sim, new ExecuteDealCommand { Player = 0, Deal = diplomacy.Deals(sim).Single().Id });
         Assert.Equal(hand.Skip(1), Hand(sim));
         Assert.Null(sim.TeamOf(0).Researching);
         Assert.Equal(rng, sim.Rng.State);
+        Assert.Equal(genBefore + 1, Generation(sim, 0));
+    }
+
+    [Fact]
+    public void Hand_state_sanitizes_duplicates_and_enforces_capacity()
+    {
+        var sim = Scenario();
+        var handObj = sim.State.TeamById(0).Extensions.Values["card_research:hand"];
+        var type = handObj.GetType();
+        var dealMethod = type.GetMethod("Deal")!;
+        dealMethod.Invoke(handObj, [new[] { "research:mining", "research:mining", "", "  ", "research:wheel", "research:pottery", "research:writing", "research:masonry" }]);
+        var offered = (List<string>)type.GetProperty("Offered")!.GetValue(handObj)!;
+        Assert.Equal(4, offered.Count);
+        Assert.Equal(["research:mining", "research:wheel", "research:pottery", "research:writing"], offered);
     }
 
     [Fact]
