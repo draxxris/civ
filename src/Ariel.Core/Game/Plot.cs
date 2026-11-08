@@ -30,8 +30,13 @@ public sealed class Plot
     public sbyte Height { get; set; }
     /// <summary>Small inland water area, assigned by the world rules.</summary>
     public bool IsLake { get; set; }
+    private int _improvementTurns;
     /// <summary>Worked turns toward the next improvement upgrade.</summary>
-    public int ImprovementTurns { get; set; }
+    public int ImprovementTurns
+    {
+        get => _improvement is not null ? _improvementTurns : 0;
+        set => _improvementTurns = _improvement is not null ? value : 0;
+    }
     /// <summary>Blocks mine builds until a resource discovery or reveal permits rebuilding.</summary>
     public bool DepletedMine { get; set; }
     /// <summary>Shared worker progress by build id.</summary>
@@ -40,8 +45,20 @@ public sealed class Plot
     public string? Feature { get; set; }
     /// <summary>Optional resource content id.</summary>
     public string? Bonus { get; set; }
+    private string? _improvement;
     /// <summary>Optional improvement content id.</summary>
-    public string? Improvement { get; set; }
+    public string? Improvement
+    {
+        get => _improvement;
+        set
+        {
+            if (_improvement != value)
+            {
+                _improvement = value;
+                _improvementTurns = 0;
+            }
+        }
+    }
     /// <summary>Optional route content id.</summary>
     public string? Route { get; set; }
     /// <summary>Six river-edge bits, mirrored on adjacent plots.</summary>
@@ -83,9 +100,10 @@ public sealed class Plot
     // Revealed snapshots are immutable records, so the memory copy can share them.
     internal Plot Clone() => new()
     {
-        Terrain = Terrain, Kind = Kind, Height = Height, IsLake = IsLake, ImprovementTurns = ImprovementTurns,
+        Terrain = Terrain, Kind = Kind, Height = Height, IsLake = IsLake,
         DepletedMine = DepletedMine,
-        BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus, Improvement = Improvement,
+        BuildProgress = new(BuildProgress, BuildProgress.Comparer), Feature = Feature, Bonus = Bonus,
+        Improvement = Improvement, ImprovementTurns = ImprovementTurns,
         Route = Route, _riverEdges = _riverEdges, _cliffEdges = _cliffEdges,
         Owner = Owner, Culture = new(Culture, Culture.Comparer),
         Revealed = TeamMask.FromWords(Revealed.Words), Visible = TeamMask.FromWords(Visible.Words),

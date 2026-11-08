@@ -16,6 +16,13 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     public string Id => "world:workers";
     public int Order => TurnPhase.Units;
     public string? Validate(Simulation sim, int player, int unit, string build) => _eligibility.Validate(sim, player, unit, build);
+    public string? ValidateCancel(Simulation sim, int player, int unitId)
+    {
+        var unit = sim.State.FindUnit(unitId);
+        if (unit is null || unit.Owner != player) return "Worker is not owned by this player";
+        if (!IsWorking(sim, unitId)) return "Worker is not building";
+        return null;
+    }
     public WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build)
     {
         var error = _eligibility.ValidateAt(sim, player, unit, tile, build);
@@ -38,7 +45,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     public bool IsWorking(Simulation sim, int unitId)
     {
         var unit = sim.State.FindUnit(unitId);
-        var order = unit?.Extensions.Get<WorkerOrder>(sim.Content);
+        var order = unit?.Extensions.TryGet<WorkerOrder>(sim.Content);
         if (unit is null || order?.Build is not { } build) return false;
         return sim.State.Grid.TileAt(unit.Position) == order.Tile
             && _eligibility.Validate(sim, unit.Owner, unit.Id, build, continuing: true) is null;
@@ -49,6 +56,13 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         var build = sim.Content.Get<S.BuildDef>(buildId);
         sim.State.PlayerById(player).Treasury -= build.Cost;
         unit.Extensions.Set(sim.Content, new WorkerOrder { Build = buildId, Tile = sim.State.Grid.TileAt(unit.Position) });
+    }
+    public void Cancel(Simulation sim, int player, int unitId)
+    {
+        var unit = sim.State.FindUnit(unitId);
+        if (unit is null || unit.Owner != player) return;
+        var order = unit.Extensions.TryGet<WorkerOrder>(sim.Content);
+        if (order is not null) order.Build = null;
     }
     public int RequiredWork(Simulation sim, TileId tile, string buildId)
     {
@@ -79,7 +93,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     }
     private void Work(Simulation sim, Unit unit)
     {
-        var order = unit.Extensions.Get<WorkerOrder>(sim.Content);
+        var order = unit.Extensions.TryGet<WorkerOrder>(sim.Content);
         if (order?.Build is not { } id) return;
         if (sim.State.Grid.TileAt(unit.Position) != order.Tile || _eligibility.Validate(sim, unit.Owner, unit.Id, id, continuing: true) is not null)
         { order.Build = null; return; }

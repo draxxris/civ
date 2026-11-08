@@ -210,7 +210,13 @@ public sealed partial class GameSession
     private IEnumerable<UnitActionInfo> BuildActions(Unit unit, Schema.UnitDef def)
     {
         var builds = OptionalService<IWorkerBuildService>();
-        if (builds == null || unit.MovesLeft <= 0) yield break;
+        if (builds == null) yield break;
+        if (builds.IsWorking(Sim, unit.Id))
+        {
+            var cancel = Action("cancel_build", "Cancel build", new CancelBuildCommand { Player = Human, Unit = unit.Id }, "Cancel build");
+            if (cancel.Command is not null) yield return cancel;
+        }
+        if (unit.MovesLeft <= 0) yield break;
         var tile = Sim.State.Grid.TileAt(unit.Position);
         foreach (var id in def.Builds.Where(b => b.Value).Select(b => b.Key).Order(StringComparer.Ordinal))
         {

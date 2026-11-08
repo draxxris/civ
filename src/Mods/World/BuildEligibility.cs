@@ -26,6 +26,9 @@ internal sealed class BuildEligibility(IWaterService water)
         var player = sim.State.PlayerById(unit.Owner);
         if (!continuing && player.EndedTurn) return "Player has ended the turn";
         if (!continuing && player.Treasury < build.Cost) return "Not enough gold";
+        var military = unit.Extensions.TryGet<MilitaryUnitState>(sim.Content);
+        if (military?.TransportId is not null) return "Cargo units cannot perform builds";
+        if (military is not null && military.Activity != UnitActivity.Awake) return "Unit is not awake";
         var definition = sim.Content.Get<S.UnitDef>(unit.Type);
         return definition.WorkRate <= 0 || !definition.Builds.GetValueOrDefault(build.Id) ? "Unit cannot perform this build" : null;
     }

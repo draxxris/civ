@@ -5,12 +5,16 @@ public interface IWorkerBuildService
 {
     /// <summary>Explain command rejection without changing state.</summary>
     string? Validate(Simulation sim, int player, int unit, string build);
+    /// <summary>Explain cancel rejection without changing state.</summary>
+    string? ValidateCancel(Simulation sim, int player, int unit);
     /// <summary>Read-only build preview at a proposed tile. Includes legality, resulting yields and required work.</summary>
     WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build);
     /// <summary>Whether a worker has a legal unfinished order on its current plot. Continuation needs no new payment.</summary>
     bool IsWorking(Simulation sim, int unit);
     /// <summary>Start a validated build and charge its initial gold cost.</summary>
     void Start(Simulation sim, int player, int unit, string build);
+    /// <summary>Cancel an active build order on a worker.</summary>
+    void Cancel(Simulation sim, int player, int unit);
     /// <summary>Integer work threshold after terrain, speed and starting-era scaling.</summary>
     int RequiredWork(Simulation sim, TileId tile, string build);
 }
@@ -28,4 +32,15 @@ public sealed class StartBuildCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Validate(sim, Player, Unit, Build);
     /// <inheritdoc/>
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Start(sim, Player, Unit, Build);
+}
+
+/// <summary>Cancel an active build order on a worker. World registers the command identity.</summary>
+public sealed class CancelBuildCommand : GameCommand
+{
+    /// <summary>Worker entity id.</summary>
+    public int Unit { get; init; }
+    /// <inheritdoc/>
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().ValidateCancel(sim, Player, Unit);
+    /// <inheritdoc/>
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Cancel(sim, Player, Unit);
 }

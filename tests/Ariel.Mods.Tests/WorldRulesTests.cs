@@ -473,6 +473,120 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         Assert.True(connections.Connected(sim, home.Id, foreign.Id));
     }
 
+    [Fact]
+    public void Plot_improvement_and_turns_enforce_synchronization_invariant()
+    {
+        var plot = new Plot { Terrain = "world:grass" };
+        plot.ImprovementTurns = 10;
+        Assert.Equal(0, plot.ImprovementTurns);
+
+        plot.Improvement = "world:improvement_improvement_cottage";
+        plot.ImprovementTurns = 5;
+        Assert.Equal("world:improvement_improvement_cottage", plot.Improvement);
+        Assert.Equal(5, plot.ImprovementTurns);
+
+        // Setting same improvement retains turns
+        plot.Improvement = "world:improvement_improvement_cottage";
+        Assert.Equal(5, plot.ImprovementTurns);
+
+        // Changing improvement resets turns to 0
+        plot.Improvement = "world:improvement_improvement_farm";
+        Assert.Equal("world:improvement_improvement_farm", plot.Improvement);
+        Assert.Equal(0, plot.ImprovementTurns);
+
+        plot.ImprovementTurns = 7;
+        Assert.Equal(7, plot.ImprovementTurns);
+
+        // Clearing improvement resets turns to 0
+        plot.Improvement = null;
+        Assert.Null(plot.Improvement);
+        Assert.Equal(0, plot.ImprovementTurns);
+
+        // Clone preserves state correctly
+        plot.Improvement = "world:improvement_improvement_cottage";
+        plot.ImprovementTurns = 8;
+        var clone = plot.Clone();
+        Assert.Equal("world:improvement_improvement_cottage", clone.Improvement);
+        Assert.Equal(8, clone.ImprovementTurns);
+    }
+
+    [Fact]
+    public void Worker_cancel_build_command_validates_and_cancels_active_order()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        sim.State.SetRiver(tile, 0, true);
+        var worker = AddWorker(sim, tile);
+        var builds = Service<IWorkerBuildService>(sim);
+
+        var cancel = new CancelBuildCommand { Player = 0, Unit = worker.Id };
+        // Worker not working -> rejects cancel
+        Assert.NotNull(cancel.Validate(sim));
+
+        // Start build
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        var start = new StartBuildCommand { Player = 0, Unit = worker.Id, Build = "world:build_build_farm" };
+        Assert.True(sim.TryApply(start, out var error), error);
+        Assert.True(builds.IsWorking(sim, worker.Id));
+
+        // Foreign player cannot cancel
+        Assert.NotNull(new CancelBuildCommand { Player = 1, Unit = worker.Id }.Validate(sim));
+
+        // Cancel command validates and applies successfully
+        Assert.Null(cancel.Validate(sim));
+        var codec = new CommandCodec(Content);
+        var decoded = codec.Decode(codec.Encode(cancel));
+        Assert.True(sim.TryApply(decoded, out error), error);
+
+        Assert.False(builds.IsWorking(sim, worker.Id));
+        // Cancelling again rejects because no longer working
+        Assert.NotNull(cancel.Validate(sim));
+    }
+
+    [Fact]
+    public void Worker_build_order_cancels_on_movement_or_invalidating_conditions()
+    {
+        var sim = GameFactory.Scenario(Content);
+        var tile = sim.State.Grid.TileAt(3, 3);
+        sim.State.SetRiver(tile, 0, true);
+        var worker = AddWorker(sim, tile);
+        worker.MovesLeft = 120;
+        var builds = Service<IWorkerBuildService>(sim);
+
+        sim.TeamOf(0).Techs.Add("research:agriculture");
+        var start = new StartBuildCommand { Player = 0, Unit = worker.Id, Build = "world:build_build_farm" };
+        Assert.True(sim.TryApply(start, out var error), error);
+        Assert.True(builds.IsWorking(sim, worker.Id));
+
+        // Movement cancels active build
+        var movement = Service<IMovementService>(sim);
+        var nextTile = sim.State.Grid.TileAt(4, 3);
+        movement.Move(sim, worker.Id, [sim.State.Grid.HexOf(nextTile)]);
+        Assert.False(builds.IsWorking(sim, worker.Id));
+
+        // Move back and restart build
+        worker.MovesLeft = 120;
+        movement.Move(sim, worker.Id, [sim.State.Grid.HexOf(tile)]);
+        worker.MovesLeft = 120;
+        Assert.True(sim.TryApply(start, out error), error);
+        Assert.True(builds.IsWorking(sim, worker.Id));
+
+        // Sleep/Fortify invalidates build order
+        var military = worker.Extensions.TryGet<MilitaryUnitState>(sim.Content);
+        if (military is not null)
+        {
+            military.Activity = UnitActivity.Sleep;
+            Assert.False(builds.IsWorking(sim, worker.Id));
+            Assert.Equal("Unit is not awake", builds.Validate(sim, 0, worker.Id, "world:build_build_farm"));
+
+            // Cargo check
+            military.Activity = UnitActivity.Awake;
+            military.TransportId = 999;
+            Assert.False(builds.IsWorking(sim, worker.Id));
+            Assert.Equal("Cargo units cannot perform builds", builds.Validate(sim, 0, worker.Id, "world:build_build_farm"));
+        }
+    }
+
     private static Unit AddWorker(Simulation sim, TileId tile)
     {
         var worker = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:worker", Position = sim.State.Grid.HexOf(tile), MovesLeft = 1 };
