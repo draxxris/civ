@@ -159,6 +159,69 @@ public class ContractTests
     }
 
     [Fact]
+    public void PlayerAndTeamStateEnforcesForeignKeysAndBidirectionalMembership()
+    {
+        var state = new GameState { Map = new(4, 3, false), Plots = Enumerable.Range(0, 12).Select(_ => new Plot()).ToArray() };
+        var team0 = new Team { Id = 0 };
+        var team1 = new Team { Id = 1 };
+        state.AddTeam(team0);
+        state.AddTeam(team1);
+        Assert.Throws<ArgumentException>(() => state.AddTeam(new Team { Id = 0 }));
+
+        Assert.Equal(team0, state.FindTeam(0));
+        Assert.Equal(team1, state.TeamById(1));
+        Assert.Null(state.FindTeam(99));
+
+        // AddPlayer validates foreign key to Team
+        Assert.Throws<ArgumentException>(() => state.AddPlayer(new Player { Id = 0, TeamId = 99 }));
+
+        var p0 = new Player { Id = 0, TeamId = 0 };
+        var p1 = new Player { Id = 1, TeamId = 0 };
+        state.AddPlayer(p0);
+        state.AddPlayer(p1);
+        Assert.Throws<ArgumentException>(() => state.AddPlayer(new Player { Id = 0, TeamId = 0 }));
+
+        Assert.Equal(p0, state.FindPlayer(0));
+        Assert.Equal(p1, state.PlayerById(1));
+        Assert.Null(state.FindPlayer(99));
+
+        // Bidirectional membership is synchronized on add
+        Assert.True(team0.HasMember(0));
+        Assert.True(team0.HasMember(1));
+        Assert.Equal([0, 1], team0.Members);
+        Assert.Empty(team1.Members);
+        Assert.Equal(team0, state.TeamOf(0));
+        Assert.Equal(team0, state.TeamOf(1));
+
+        // Transfer player between teams
+        state.SetPlayerTeam(1, 1);
+        Assert.Equal(1, p1.TeamId);
+        Assert.True(team0.HasMember(0));
+        Assert.False(team0.HasMember(1));
+        Assert.Equal([0], team0.Members);
+        Assert.True(team1.HasMember(1));
+        Assert.Equal([1], team1.Members);
+        Assert.Equal(team1, state.TeamOf(1));
+
+        // Invalid team transfer throws
+        Assert.Throws<ArgumentException>(() => state.SetPlayerTeam(1, 99));
+        Assert.Throws<ArgumentException>(() => state.SetPlayerTeam(99, 0));
+
+        // RebuildIndexes validates foreign keys
+        p1.TeamId = 99;
+        Assert.Throws<InvalidDataException>(() => state.RebuildIndexes());
+        p1.TeamId = 1;
+
+        // RebuildIndexes synchronizes bidirectional membership and purges orphaned member IDs
+        team0.Members.Add(999); // phantom player
+        team1.Members.Clear(); // desynced missing member
+        state.RebuildIndexes();
+        Assert.Equal([0], team0.Members);
+        Assert.Equal([1], team1.Members);
+        Assert.False(team0.HasMember(999));
+    }
+
+    [Fact]
     public void PlotVisibilitySupportsMoreThan64TeamsAndHasHistoryIndependentEncoding()
     {
         var sim = TestGame.Sim();

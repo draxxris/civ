@@ -18,7 +18,7 @@ public sealed class Player
     /// <summary>Controlling AI service id, or null for a human.</summary>
     public string? Ai { get; init; }
     /// <summary>Owning team id.</summary>
-    public int TeamId { get; init; }
+    public int TeamId { get; set; }
     /// <summary>Accumulated culture.</summary>
     public long Culture { get; set; }
     /// <summary>Treasury in integer gold.</summary>
@@ -233,8 +233,12 @@ public sealed class GameState
     }
     /// <summary>Get a player by id.</summary>
     public Player PlayerById(int id) => _players[id];
+    /// <summary>Find a player without throwing.</summary>
+    public Player? FindPlayer(int id) => _players.GetValueOrDefault(id);
     /// <summary>Get a team by id.</summary>
     public Team TeamById(int id) => _teams[id];
+    /// <summary>Find a team without throwing.</summary>
+    public Team? FindTeam(int id) => _teams.GetValueOrDefault(id);
     /// <summary>Get the team owning a player.</summary>
     public Team TeamOf(int playerId) => TeamById(PlayerById(playerId).TeamId);
     /// <summary>Get a unit by id.</summary>
@@ -262,6 +266,36 @@ public sealed class GameState
     public IEnumerable<Unit> UnitsAt(Hex pos) => Grid.TryTile(pos, out var t) && _unitPlots.TryGetValue(t, out var units) ? units.Values : [];
     /// <summary>Mutable plot at a valid axial coordinate.</summary>
     public Plot PlotAt(Hex pos) => Plots[Grid.TileAt(pos).Value];
+    /// <summary>Add a team to the state and update indexes. Duplicate ids throw before any state changes.</summary>
+    public void AddTeam(Team team)
+    {
+        if (_teams.ContainsKey(team.Id)) throw new ArgumentException($"Team id {team.Id} is already in use", nameof(team));
+        _teams.Add(team.Id, team);
+        Teams.Add(team);
+    }
+    /// <summary>Add a player and register them with their team. Missing teams or duplicate ids throw before state changes.</summary>
+    public void AddPlayer(Player player)
+    {
+        if (_players.ContainsKey(player.Id)) throw new ArgumentException($"Player id {player.Id} is already in use", nameof(player));
+        if (!_teams.TryGetValue(player.TeamId, out var team))
+            throw new ArgumentException($"Team id {player.TeamId} does not exist", nameof(player));
+        _players.Add(player.Id, player);
+        team.Members.Add(player.Id);
+        Players.Add(player);
+    }
+    /// <summary>Change a player's team and synchronize bidirectional team membership atomically.</summary>
+    public void SetPlayerTeam(int playerId, int newTeamId)
+    {
+        if (!_players.TryGetValue(playerId, out var player))
+            throw new ArgumentException($"Player id {playerId} does not exist", nameof(playerId));
+        if (player.TeamId == newTeamId) return;
+        if (!_teams.TryGetValue(newTeamId, out var newTeam))
+            throw new ArgumentException($"Target team id {newTeamId} does not exist", nameof(newTeamId));
+        if (_teams.TryGetValue(player.TeamId, out var oldTeam))
+            oldTeam.Members.Remove(playerId);
+        player.TeamId = newTeamId;
+        newTeam.Members.Add(playerId);
+    }
     /// <summary>Add a city and update its indexes. Duplicate ids or plots throw before any state changes.</summary>
     public void AddCity(City city)
     {
@@ -449,8 +483,8 @@ public sealed class GameState
     private void IndexEntities()
     {
         _players.Clear(); _teams.Clear(); _units.Clear(); _cities.Clear(); _cityPlots.Clear(); _unitPlots.Clear();
-        foreach (var p in Players) _players.Add(p.Id, p);
         foreach (var t in Teams) _teams.Add(t.Id, t);
+        foreach (var p in Players) _players.Add(p.Id, p);
         foreach (var c in Cities) IndexCity(c);
         foreach (var u in Units) IndexUnit(u);
     }
@@ -462,8 +496,26 @@ public sealed class GameState
         if (Plots.Length != Grid.Count) throw new InvalidDataException("Plot count does not match map dimensions");
         _players.Clear(); _teams.Clear(); _units.Clear(); _cities.Clear(); _cityPlots.Clear(); _unitPlots.Clear();
         foreach (var plot in Plots) { plot.BuildProgress = new(plot.BuildProgress, StringComparer.Ordinal); plot.Culture = new(plot.Culture); }
-        foreach (var p in Players) { p.Civics = new(p.Civics, StringComparer.Ordinal); _players.Add(p.Id, p); }
-        foreach (var t in Teams) { t.Techs = new(t.Techs, StringComparer.Ordinal); t.Research = new(t.Research, StringComparer.Ordinal); t.Members = new(t.Members); t.Wars = new(t.Wars); _teams.Add(t.Id, t); }
+        foreach (var t in Teams)
+        {
+            t.Techs = new(t.Techs, StringComparer.Ordinal);
+            t.Research = new(t.Research, StringComparer.Ordinal);
+            t.Wars = new(t.Wars);
+            t.Members = new(t.Members);
+            if (!_teams.TryAdd(t.Id, t)) throw new InvalidDataException($"Duplicate team id {t.Id}");
+        }
+        foreach (var p in Players)
+        {
+            p.Civics = new(p.Civics, StringComparer.Ordinal);
+            if (!_teams.TryGetValue(p.TeamId, out var team))
+                throw new InvalidDataException($"Player {p.Id} references nonexistent team {p.TeamId}");
+            if (!_players.TryAdd(p.Id, p)) throw new InvalidDataException($"Duplicate player id {p.Id}");
+            team.Members.Add(p.Id);
+        }
+        foreach (var t in Teams)
+        {
+            t.Members.RemoveWhere(id => !_players.TryGetValue(id, out var p) || p.TeamId != t.Id);
+        }
         foreach (var c in Cities) { c.Specialists = new(c.Specialists, StringComparer.Ordinal); IndexCity(c); }
         foreach (var u in Units) { u.Promotions = new(u.Promotions, StringComparer.Ordinal); IndexUnit(u); }
     }

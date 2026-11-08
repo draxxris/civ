@@ -159,6 +159,8 @@ public sealed class Team
     public SortedDictionary<string, long> Research { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Team ids at war. Absence means peace; GameState.SetWar keeps the matrix symmetric.</summary>
     public SortedSet<int> Wars { get; set; } = new();
+    /// <summary>Whether this team includes the specified player.</summary>
+    public bool HasMember(int playerId) => Members.Contains(playerId);
     /// <summary>Mod-owned typed state.</summary>
     public ExtensionState Extensions { get; set; } = new();
     internal Team Clone() => new()
