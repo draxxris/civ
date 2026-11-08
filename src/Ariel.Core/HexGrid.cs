@@ -5,6 +5,47 @@ namespace Ariel;
 /// <summary>Row-major plot index. Valid values are in [0, Width * Height).</summary>
 public readonly record struct TileId(int Value);
 
+/// <summary>Canonical undirected edge between two adjacent tiles. First.Value is strictly less than Second.Value.</summary>
+public readonly record struct HexEdge : IComparable<HexEdge>
+{
+    public TileId First { get; }
+    public TileId Second { get; }
+
+    public HexEdge(TileId a, TileId b)
+    {
+        if (a == b) throw new ArgumentException("An edge must connect two distinct tiles");
+        if (a.Value < b.Value) { First = a; Second = b; }
+        else { First = b; Second = a; }
+    }
+
+    public static HexEdge Of(TileId a, TileId b) => new(a, b);
+
+    public bool Contains(TileId tile) => First == tile || Second == tile;
+
+    public TileId Other(TileId tile) =>
+        tile == First ? Second : tile == Second ? First : throw new ArgumentException($"Tile {tile.Value} is not on edge {this}");
+
+    [JsonIgnore]
+    public string Key => $"{First.Value}<->{Second.Value}";
+
+    public override string ToString() => Key;
+
+    public int CompareTo(HexEdge other)
+    {
+        int cmp = First.Value.CompareTo(other.First.Value);
+        return cmp != 0 ? cmp : Second.Value.CompareTo(other.Second.Value);
+    }
+
+    public static HexEdge Parse(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        int sep = key.IndexOf("<->", StringComparison.Ordinal);
+        if (sep < 0) throw new FormatException($"Invalid hex edge key: {key}");
+        return new(new(int.Parse(key[..sep], System.Globalization.CultureInfo.InvariantCulture)),
+                   new(int.Parse(key[(sep + 3)..], System.Globalization.CultureInfo.InvariantCulture)));
+    }
+}
+
 /// <summary>Rectangular pointy-top odd-row map; only east–west wrapping is supported.</summary>
 public sealed record MapSpec(int Width, int Height, bool Wrap = false);
 
@@ -63,6 +104,16 @@ public sealed class HexGrid
     public Hex Normalize(Hex hex) => HexOf(TileAt(hex));
     /// <summary>Neighbor in one direction, or null at a bounded edge.</summary>
     public TileId? Neighbor(TileId tile, int direction) => TryTile(HexOf(tile).Neighbor(direction), out var n) ? n : null;
+    /// <summary>Returns the canonical edge between two adjacent tiles, or null if they are not neighbors.</summary>
+    public HexEdge? EdgeBetween(TileId a, TileId b)
+    {
+        for (int d = 0; d < 6; d++)
+            if (Neighbor(a, d) == b) return HexEdge.Of(a, b);
+        return null;
+    }
+    /// <summary>Returns the canonical edge in a direction from a tile, or null if off-map.</summary>
+    public HexEdge? EdgeIn(TileId tile, int direction) =>
+        Neighbor(tile, direction) is { } next ? HexEdge.Of(tile, next) : null;
     /// <summary>Distinct neighbors, excluding self on narrow wrapped maps.</summary>
     public IEnumerable<TileId> Neighbors(TileId tile)
     {

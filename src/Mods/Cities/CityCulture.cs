@@ -215,16 +215,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         if (CrossesRiver(sim, from, to)) penalty++;
         return Math.Max(1, 1 + penalty);
     }
-    private static bool CrossesRiver(Simulation sim, TileId from, TileId to)
-    {
-        for (int direction = 0; direction < 6; direction++)
-        {
-            if (sim.State.Grid.Neighbor(from, direction) != to) continue;
-            return (sim.State.Plots[from.Value].RiverEdges & (1 << direction)) != 0
-                || (sim.State.Plots[to.Value].RiverEdges & (1 << ((direction + 3) % 6))) != 0;
-        }
-        return false;
-    }
+    private static bool CrossesRiver(Simulation sim, TileId from, TileId to) => sim.State.HasRiver(from, to);
     /// <summary>Kept as this mod's entry point; <see cref="PlayerRules.IsBarbarian"/> is the single definition.</summary>
     internal static bool IsBarbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
     internal static int CultureRadius(Simulation sim, City city) => Math.Max(1, CityData.LevelIndex(sim, city));

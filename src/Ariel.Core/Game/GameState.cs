@@ -329,6 +329,54 @@ public sealed class GameState
         }
         return lifts;
     }
+    /// <summary>Whether a river runs along the specified edge direction of a tile.</summary>
+    public bool HasRiver(TileId tile, int direction)
+    {
+        if (direction < 0 || direction >= 6) return false;
+        if ((Plots[tile.Value].RiverEdges & (1 << direction)) != 0) return true;
+        if (Grid.Neighbor(tile, direction) is { } next)
+            return (Plots[next.Value].RiverEdges & (1 << ((direction + 3) % 6))) != 0;
+        return false;
+    }
+    /// <summary>Whether a river runs along the shared edge between two tiles.</summary>
+    public bool HasRiver(TileId a, TileId b)
+    {
+        for (int d = 0; d < 6; d++)
+            if (Grid.Neighbor(a, d) == b) return HasRiver(a, d);
+        return false;
+    }
+    /// <summary>Whether a river runs along the specified canonical edge.</summary>
+    public bool HasRiver(HexEdge edge) => HasRiver(edge.First, edge.Second);
+    /// <summary>Whether an impassable cliff stands on the specified edge direction of a tile.</summary>
+    public bool HasCliff(TileId tile, int direction)
+    {
+        if (direction < 0 || direction >= 6) return false;
+        if ((Plots[tile.Value].CliffEdges & (1 << direction)) != 0) return true;
+        if (Grid.Neighbor(tile, direction) is { } next)
+            return (Plots[next.Value].CliffEdges & (1 << ((direction + 3) % 6))) != 0;
+        return false;
+    }
+    /// <summary>Whether an impassable cliff stands on the shared edge between two tiles.</summary>
+    public bool HasCliff(TileId a, TileId b)
+    {
+        for (int d = 0; d < 6; d++)
+            if (Grid.Neighbor(a, d) == b) return HasCliff(a, d);
+        return false;
+    }
+    /// <summary>Whether an impassable cliff stands on the specified canonical edge.</summary>
+    public bool HasCliff(HexEdge edge) => HasCliff(edge.First, edge.Second);
+    /// <summary>Whether a cliff drops down from `from` to `to` (`from` is strictly higher than `to`).</summary>
+    public bool IsCliffDrop(TileId from, TileId to)
+    {
+        for (int d = 0; d < 6; d++)
+        {
+            if (Grid.Neighbor(from, d) == to)
+                return HasCliff(from, d) && (CliffLifts(from) & (1 << d)) != 0;
+        }
+        return false;
+    }
+    /// <summary>Whether a cliff rises as a wall facing `from` toward `to` (`to` is strictly higher than `from`).</summary>
+    public bool IsCliffWall(TileId from, TileId to) => IsCliffDrop(to, from);
     /// <summary>Independent in-memory copy of all authoritative state with rebuilt lookup indexes. It hashes like the
     /// source; immutable data (map geometry, revealed plot memories, production orders) is shared, everything else is copied.</summary>
     public GameState Clone()

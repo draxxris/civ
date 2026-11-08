@@ -247,4 +247,85 @@ public class HexGridTests
                     queue.Enqueue(next);
         return distances;
     }
+
+    [Fact]
+    public void HexEdgeConstructsCanonicalOrderAndParsesRoundTrip()
+    {
+        var edge1 = new HexEdge(new TileId(10), new TileId(5));
+        var edge2 = HexEdge.Of(new TileId(5), new TileId(10));
+        Assert.Equal(new TileId(5), edge1.First);
+        Assert.Equal(new TileId(10), edge1.Second);
+        Assert.Equal(edge1, edge2);
+        Assert.Equal("5<->10", edge1.Key);
+        Assert.Equal(edge1, HexEdge.Parse("5<->10"));
+        Assert.True(edge1.Contains(new TileId(5)));
+        Assert.True(edge1.Contains(new TileId(10)));
+        Assert.False(edge1.Contains(new TileId(7)));
+        Assert.Equal(new TileId(10), edge1.Other(new TileId(5)));
+        Assert.Equal(new TileId(5), edge1.Other(new TileId(10)));
+        Assert.Throws<ArgumentException>(() => edge1.Other(new TileId(7)));
+        Assert.Throws<ArgumentException>(() => new HexEdge(new TileId(3), new TileId(3)));
+    }
+
+    [Fact]
+    public void HexGridResolvesCanonicalEdgesBetweenNeighbors()
+    {
+        var grid = new HexGrid(new MapSpec(4, 3, false));
+        var tile = new TileId(5);
+        for (int d = 0; d < 6; d++)
+        {
+            var neighbor = grid.Neighbor(tile, d);
+            var edgeIn = grid.EdgeIn(tile, d);
+            if (neighbor is { } next)
+            {
+                Assert.NotNull(edgeIn);
+                Assert.Equal(HexEdge.Of(tile, next), edgeIn.Value);
+                Assert.Equal(edgeIn, grid.EdgeBetween(tile, next));
+            }
+            else
+            {
+                Assert.Null(edgeIn);
+            }
+        }
+        Assert.Null(grid.EdgeBetween(new TileId(0), new TileId(11))); // Non-neighbors on non-wrapping grid
+    }
+
+    [Fact]
+    public void GameStateQueriesRiversAndCliffsConsistently()
+    {
+        var state = new GameState { Map = new(8, 4, false), Plots = Enumerable.Range(0, 32).Select(_ => new Plot()).ToArray() };
+        var high = new TileId(10);
+        var low = state.Grid.Neighbor(high, 0)!.Value;
+        var edge = HexEdge.Of(high, low);
+
+        // River queries
+        Assert.False(state.HasRiver(high, 0));
+        Assert.False(state.HasRiver(high, low));
+        Assert.False(state.HasRiver(edge));
+        state.SetRiver(high, 0, true);
+        Assert.True(state.HasRiver(high, 0));
+        Assert.True(state.HasRiver(low, 3));
+        Assert.True(state.HasRiver(high, low));
+        Assert.True(state.HasRiver(low, high));
+        Assert.True(state.HasRiver(edge));
+
+        // Cliff queries
+        Assert.False(state.HasCliff(high, 0));
+        Assert.False(state.HasCliff(high, low));
+        Assert.False(state.HasCliff(edge));
+        Assert.False(state.IsCliffDrop(high, low));
+        Assert.False(state.IsCliffWall(low, high));
+
+        state.SetCliff(high, 0, true);
+        Assert.True(state.HasCliff(high, 0));
+        Assert.True(state.HasCliff(low, 3));
+        Assert.True(state.HasCliff(high, low));
+        Assert.True(state.HasCliff(low, high));
+        Assert.True(state.HasCliff(edge));
+
+        Assert.True(state.IsCliffDrop(high, low));
+        Assert.False(state.IsCliffDrop(low, high));
+        Assert.True(state.IsCliffWall(low, high));
+        Assert.False(state.IsCliffWall(high, low));
+    }
 }

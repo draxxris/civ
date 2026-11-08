@@ -63,7 +63,7 @@ public sealed class Plot
     }
     /// <summary>Optional route content id.</summary>
     public string? Route { get; set; }
-    /// <summary>Six river-edge bits, mirrored on adjacent plots.</summary>
+    /// <summary>Six river-edge bits, mirrored on adjacent plots. Prefer GameState.SetRiver and GameState.HasRiver.</summary>
     public byte RiverEdges
     {
         get => _riverEdges;
@@ -74,6 +74,9 @@ public sealed class Plot
         }
     }
     private byte _riverEdges;
+    /// <summary>Whether a river edge bit is set in the given direction [0..5].</summary>
+    public bool HasRiverEdge(int direction) => direction >= 0 && direction < 6 && (_riverEdges & (1 << direction)) != 0;
+
     /// <summary>Six cliff-edge bits in Hex.Directions order, mirrored on adjacent plots. A cliff stands on the edge
     /// between two on-map plots, at least one of them land, and names one side as lifted. Edits must use
     /// GameState.SetCliff. The world rules own which edges are legal.</summary>
@@ -87,6 +90,8 @@ public sealed class Plot
         }
     }
     private byte _cliffEdges;
+    /// <summary>Whether a cliff edge bit is set in the given direction [0..5].</summary>
+    public bool HasCliffEdge(int direction) => direction >= 0 && direction < 6 && (_cliffEdges & (1 << direction)) != 0;
     /// <summary>Controlling player, or null.</summary>
     public int? Owner { get; set; }
     /// <summary>Accumulated culture by player id.</summary>

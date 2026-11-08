@@ -50,19 +50,8 @@ internal static class MilitaryData
         foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.MoveUnit(cargo, target);
         sim.State.MoveUnit(unit, target);
     }
-    internal static bool CrossesCliff(Simulation sim, TileId from, TileId to)
-    {
-        for (int direction = 0; direction < 6; direction++)
-            if (sim.State.Grid.Neighbor(from, direction) == to)
-                return (sim.State.Plots[from.Value].CliffEdges & (1 << direction)) != 0;
-        return false;
-    }
-    internal static bool CrossesRiver(Simulation sim, TileId from, TileId to)
-    {
-        for (int direction = 0; direction < 6; direction++)
-            if (sim.State.Grid.Neighbor(from, direction) == to) return (sim.State.Plots[from.Value].RiverEdges & (1 << direction)) != 0;
-        return false;
-    }
+    internal static bool CrossesCliff(Simulation sim, TileId from, TileId to) => sim.State.HasCliff(from, to);
+    internal static bool CrossesRiver(Simulation sim, TileId from, TileId to) => sim.State.HasRiver(from, to);
     internal static IEnumerable<S.BuildingDef> Buildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
         .Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
         .Where(b => !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success);
