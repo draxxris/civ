@@ -12,7 +12,7 @@ internal sealed class GovernmentService : IGovernmentService
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         var state = Read(sim, player);
-        if (state.AnarchyTurns > 0) return "Player is in anarchy";
+        if (state.IsAnarchy) return "Player is in anarchy";
         if (state.RevolutionTimer > 0) return "Revolution cooldown is active";
         if (ValidateChoices(sim, civics) is { } error) return error;
         var proposed = Proposed(sim, player, civics);
@@ -87,7 +87,9 @@ internal sealed class GovernmentService : IGovernmentService
         var result = Calculate(sim, player, civics);
         var owner = sim.State.PlayerById(player);
         foreach (var id in civics) owner.Civics[sim.Content.Get<CivicDef>(id).Option!] = id;
-        owner.Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = result.AnarchyTurns, RevolutionTimer = result.CooldownTurns });
+        var state = owner.Extensions.Get<GovernmentPlayerState>(sim.Content) ?? new();
+        state.StartRevolution(result.AnarchyTurns, result.CooldownTurns);
+        owner.Extensions.Set(sim.Content, state);
     }
     private static GovernmentPlayerState Read(Simulation sim, int player) => sim.State.PlayerById(player).Extensions.Get<GovernmentPlayerState>(sim.Content) ?? new();
 }
@@ -95,13 +97,12 @@ internal sealed class GovernmentService : IGovernmentService
 internal sealed class GovernmentTimers : IPlayerTurnSystem
 {
     public string Id => "government:timers";
-    public int Order => TurnPhase.PlayerEnd + 1;
+    public int Order => TurnPhase.PlayerEnd;
     public void Run(Simulation sim, int player)
     {
         var state = sim.State.PlayerById(player).Extensions.Get<GovernmentPlayerState>(sim.Content);
         if (state is null) return;
-        state.AnarchyTurns = Math.Max(0, state.AnarchyTurns - 1);
-        state.RevolutionTimer = Math.Max(0, state.RevolutionTimer - 1);
+        state.AdvanceTurn();
     }
     public void Run(Simulation sim) { foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Run(sim, player.Id); }
 }

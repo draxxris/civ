@@ -141,9 +141,18 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         foreach (var tile in sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position))) sim.State.Plots[tile.Value].Kind = PlotKind.Peak;
         Rebellions(sim);
         Assert.Empty(sim.State.Units);
-        // No legal tile means no rebellion: pressure is not released and no cooldown starts.
-        Assert.Equal(1000, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
-        Assert.Empty(sim.Events.Published.OfType<CityRebellionTriggered>());
+        // An enclosed city releases pressure and starts cooldown without spawning units, preventing deadlock.
+        var state = city.Extensions.Get<RevolutionCityState>(sim.Content)!;
+        Assert.Equal(400, state.InstabilityIndex);
+        var rebellion = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
+        Assert.Equal(-1, rebellion.RebelPlayer);
+        Assert.Empty(rebellion.Units);
+        Assert.Equal(600, rebellion.InstabilityReleased);
+        Assert.True(state.IsRebellionOnCooldown(sim.State.Turn));
+        // Cooldown prevents immediate re-triggering.
+        state.InstabilityIndex = 1000;
+        Rebellions(sim);
+        Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
     }
 
     [Fact]
@@ -338,5 +347,100 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
             sim.AdvanceTurn(); peer.AdvanceTurn();
             Assert.Equal(sim.ComputeHash(), peer.ComputeHash());
         }
+    }
+
+    [Fact]
+    public void RevolutionCityState_invariants_and_transitions_manage_instability_and_timers()
+    {
+        var state = new RevolutionCityState();
+        Assert.Equal(0, state.InstabilityIndex);
+        Assert.Equal(0, state.LastUpdatedTurn);
+        Assert.Equal(0, state.RebellionCooldownUntilTurn);
+        Assert.Equal(0, state.UnrestUntilTurn);
+        Assert.False(state.IsRebellionOnCooldown(0));
+        Assert.False(state.IsInUnrest(0));
+        Assert.Equal(0, state.CooldownTurnsRemaining(0));
+        Assert.Equal(0, state.UnrestTurnsRemaining(0));
+
+        // Clamping non-negative values
+        state.InstabilityIndex = -10;
+        state.LastUpdatedTurn = -1;
+        state.RebellionCooldownUntilTurn = -5;
+        state.UnrestUntilTurn = -2;
+        Assert.Equal(0, state.InstabilityIndex);
+        Assert.Equal(0, state.LastUpdatedTurn);
+        Assert.Equal(0, state.RebellionCooldownUntilTurn);
+        Assert.Equal(0, state.UnrestUntilTurn);
+
+        // RecordInstabilityChange
+        state.RecordInstabilityChange(500, turn: 5);
+        Assert.Equal(500, state.InstabilityIndex);
+        Assert.Equal(5, state.LastUpdatedTurn);
+        state.RecordInstabilityChange(-200, turn: 6);
+        Assert.Equal(300, state.InstabilityIndex);
+        Assert.Equal(6, state.LastUpdatedTurn);
+        state.RecordInstabilityChange(-500, turn: 7);
+        Assert.Equal(0, state.InstabilityIndex);
+        Assert.Equal(7, state.LastUpdatedTurn);
+
+        // Suppress
+        state.InstabilityIndex = 400;
+        state.Suppress(150);
+        Assert.Equal(250, state.InstabilityIndex);
+        state.Suppress(500);
+        Assert.Equal(0, state.InstabilityIndex);
+
+        // Incite
+        state.Incite(currentTurn: 10, additionalInstability: 300, unrestTurns: 3);
+        Assert.Equal(300, state.InstabilityIndex);
+        Assert.Equal(14, state.UnrestUntilTurn); // 10 + 1 + 3
+        Assert.True(state.IsInUnrest(10));
+        Assert.True(state.IsInUnrest(13));
+        Assert.False(state.IsInUnrest(14));
+        Assert.Equal(4, state.UnrestTurnsRemaining(10));
+        Assert.Equal(0, state.UnrestTurnsRemaining(14));
+
+        // TriggerRebellion
+        state.InstabilityIndex = 1200;
+        state.TriggerRebellion(currentTurn: 20, threshold: 1000, release: 600, cooldownTurns: 8, unrestTurns: 3);
+        Assert.Equal(400, state.InstabilityIndex); // 1000 - 600
+        Assert.Equal(29, state.RebellionCooldownUntilTurn); // 20 + 1 + 8
+        Assert.Equal(24, state.UnrestUntilTurn); // 20 + 1 + 3
+        Assert.True(state.IsRebellionOnCooldown(20));
+        Assert.True(state.IsRebellionOnCooldown(28));
+        Assert.False(state.IsRebellionOnCooldown(29));
+        Assert.Equal(9, state.CooldownTurnsRemaining(20));
+        Assert.Equal(0, state.CooldownTurnsRemaining(29));
+    }
+
+    [Fact]
+    public void Status_is_capped_at_mutiny_while_rebellion_cooldown_is_active()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 1200);
+        state.RebellionCooldownUntilTurn = sim.State.Turn + 5;
+
+        // Above 1000 threshold, but cooldown is active -> capped at Mutiny
+        var desc = Service(sim).DescribeCityStability(sim, city.Id);
+        Assert.Equal(CityStabilityStatus.Mutiny, desc.Status);
+        Assert.Equal(5, desc.CooldownTurns);
+
+        // Advance past cooldown -> status reflects Rebellion
+        sim.State.Turn += 5;
+        desc = Service(sim).DescribeCityStability(sim, city.Id);
+        Assert.Equal(CityStabilityStatus.Rebellion, desc.Status);
+        Assert.Equal(0, desc.CooldownTurns);
+    }
+
+    [Fact]
+    public void Government_timers_run_before_revolution_instability_at_player_end()
+    {
+        var sim = P7ModFixture.Scenario(mods.Combined);
+        int govOrder = sim.Content.TurnSystems.Get("government:timers").Order;
+        int revOrder = sim.Content.TurnSystems.Get("revolution:instability").Order;
+        Assert.Equal(TurnPhase.PlayerEnd, govOrder);
+        Assert.Equal(TurnPhase.PlayerEnd + 1, revOrder);
+        Assert.True(govOrder < revOrder);
     }
 }

@@ -58,7 +58,7 @@ public sealed class RevolutionMod : IPreparableMod
 internal sealed class InstabilityTurns(RevolutionService service) : IPlayerTurnSystem
 {
     public string Id => "revolution:instability";
-    public int Order => TurnPhase.PlayerEnd - 1;
+    public int Order => TurnPhase.PlayerEnd + 1;
     public void Run(Simulation sim, int player)
     {
         if (PlayerRules.IsBarbarian(sim, player)) return;

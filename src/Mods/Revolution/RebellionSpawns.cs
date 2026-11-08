@@ -10,9 +10,15 @@ internal static class RebellionSpawns
     {
         var candidates = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).Distinct().OrderBy(t => t.Value)
             .Where(t => Walkable(sim, city, t)).ToArray();
-        // An enclosed city cannot rebel: no legal tile means no rebels, no released pressure and no cooldown,
-        // so blocking a city's approaches never turns a rebellion into a cheap way to vent instability.
-        if (candidates.Length == 0) return;
+        var state = RevolutionService.Edit(sim, city);
+        if (candidates.Length == 0)
+        {
+            int released = Math.Min(state.InstabilityIndex, rules.RebellionRelease);
+            state.Suppress(released);
+            state.RebellionCooldownUntilTurn = sim.State.Turn + 1 + GamePace.Scale(sim, rules.CooldownTurns);
+            sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, -1, [], released));
+            return;
+        }
         Shuffle(sim, candidates);
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
         int rebel = EnsureBarbarians(sim, rules);
@@ -25,15 +31,12 @@ internal static class RebellionSpawns
             sim.Events.Publish(new UnitCreated(unit.Id, rebel, unit.Type, unit.Position));
             units.Add(unit.Id);
         }
-        var state = RevolutionService.Edit(sim, city);
         // Pressure above the threshold is discarded, so a rebellion always leaves the city below it.
         int before = state.InstabilityIndex;
-        state.InstabilityIndex = Math.Max(0, Math.Min(before, rules.RebellionThreshold) - rules.RebellionRelease);
-        int released = before - state.InstabilityIndex;
-        // The +1 makes the cooldown cover the next turn, as UnrestUntilTurn does.
-        state.RebellionCooldownUntilTurn = sim.State.Turn + 1 + GamePace.Scale(sim, rules.CooldownTurns);
-        state.UnrestUntilTurn = sim.State.Turn + 1 + GamePace.Scale(sim, rules.UnrestTurns);
-        sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), released));
+        state.TriggerRebellion(sim.State.Turn, rules.RebellionThreshold, rules.RebellionRelease,
+            GamePace.Scale(sim, rules.CooldownTurns), GamePace.Scale(sim, rules.UnrestTurns));
+        int releasedUnits = before - state.InstabilityIndex;
+        sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), releasedUnits));
         sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
     }
 

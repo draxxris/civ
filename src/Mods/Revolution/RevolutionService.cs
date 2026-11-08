@@ -21,10 +21,13 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var state = Read(sim, city);
         var rules = Rules(sim);
         var ledger = InstabilityLedger(sim, city, rules);
-        return new(cityId, state.InstabilityIndex, Status(state.InstabilityIndex, rules),
+        var status = Status(state.InstabilityIndex, rules);
+        if (state.IsRebellionOnCooldown(sim.State.Turn) && status == CityStabilityStatus.Rebellion)
+            status = CityStabilityStatus.Mutiny;
+        return new(cityId, state.InstabilityIndex, status,
             checked((int)ledger.Total("revolution:change")),
-            Math.Max(0, state.RebellionCooldownUntilTurn - sim.State.Turn),
-            Math.Max(0, state.UnrestUntilTurn - sim.State.Turn), SuppressionGold(sim, state.InstabilityIndex), ledger);
+            state.CooldownTurnsRemaining(sim.State.Turn),
+            state.UnrestTurnsRemaining(sim.State.Turn), SuppressionGold(sim, state.InstabilityIndex), ledger);
     }
 
     private static CityStabilityStatus Status(int index, RevolutionRulesDef rules)
@@ -99,8 +102,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var state = Edit(sim, city);
         if (state.LastUpdatedTurn == sim.State.Turn) return;
         long change = DescribeCityStability(sim, city.Id).ChangePerTurn;
-        state.InstabilityIndex = (int)Math.Clamp(state.InstabilityIndex + change, 0, int.MaxValue);
-        state.LastUpdatedTurn = sim.State.Turn;
+        state.RecordInstabilityChange(change, sim.State.Turn);
     }
 
     public string? ValidateSuppression(Simulation sim, int player, int cityId, int? garrison)
@@ -140,7 +142,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         sim.State.PlayerById(player).Treasury -= gold;
         if (garrison is { } unit) sim.State.UnitById(unit).MovesLeft = 0;
         int reduction = Math.Min(state.InstabilityIndex, rules.SuppressionReduction);
-        state.InstabilityIndex -= reduction;
+        state.Suppress(reduction);
         sim.Events.Publish(new CityRebellionSuppressed(cityId, player, garrison, gold, reduction));
     }
 
@@ -152,8 +154,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (city is null || GovernmentStatus.IsDisorder(sim, city)) return false;
         var rules = Rules(sim);
         var state = Edit(sim, city);
-        state.InstabilityIndex = (int)Math.Clamp(state.InstabilityIndex + rules.InciteInstability, 0, int.MaxValue);
-        state.UnrestUntilTurn = Math.Max(state.UnrestUntilTurn, checked(sim.State.Turn + 1 + GamePace.Scale(sim, rules.UnrestTurns)));
+        state.Incite(sim.State.Turn, rules.InciteInstability, GamePace.Scale(sim, rules.UnrestTurns));
         return true;
     }
 
@@ -170,7 +171,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (PlayerRules.IsBarbarian(sim, city.Owner)) return;
         var state = Read(sim, city);
         var rules = Rules(sim);
-        if (state.InstabilityIndex < rules.RebellionThreshold || sim.State.Turn < state.RebellionCooldownUntilTurn) return;
+        if (state.InstabilityIndex < rules.RebellionThreshold || state.IsRebellionOnCooldown(sim.State.Turn)) return;
         RebellionSpawns.Trigger(sim, city, rules);
     }
 
@@ -179,7 +180,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var rules = Rules(context.Sim);
         var state = Read(context.Sim, city);
-        if (state.UnrestUntilTurn > context.Sim.State.Turn)
+        if (state.IsInUnrest(context.Sim.State.Turn))
             sink.Add("revolution:unrest", "cities:happiness", rules.UnrestUnhappiness);
         // Mutiny is the first tier with a gameplay effect: the city's people stop cooperating.
         if (Status(state.InstabilityIndex, rules) >= CityStabilityStatus.Mutiny)

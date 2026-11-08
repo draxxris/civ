@@ -225,6 +225,82 @@ public sealed class GovernmentPeoplesTests(LoadedMods mods) : IClassFixture<Load
         Assert.Equal(151, sim.State.Turn);
     }
 
+    [Fact]
+    public void GovernmentPlayerState_invariants_transitions_and_phases()
+    {
+        var state = new GovernmentPlayerState();
+        Assert.Equal(0, state.AnarchyTurns);
+        Assert.Equal(0, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Stable, state.Phase);
+        Assert.True(state.IsStable);
+        Assert.False(state.IsAnarchy);
+
+        // Clamping non-negative values
+        state.AnarchyTurns = -5;
+        state.RevolutionTimer = -10;
+        Assert.Equal(0, state.AnarchyTurns);
+        Assert.Equal(0, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Stable, state.Phase);
+
+        // Invariant: RevolutionTimer is at least AnarchyTurns
+        state.AnarchyTurns = 3;
+        Assert.Equal(3, state.AnarchyTurns);
+        Assert.Equal(3, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Anarchy, state.Phase);
+        Assert.True(state.IsAnarchy);
+        Assert.False(state.IsStable);
+
+        // Setting RevolutionTimer cannot be less than AnarchyTurns
+        state.RevolutionTimer = 1;
+        Assert.Equal(3, state.RevolutionTimer);
+
+        // Setting RevolutionTimer higher than AnarchyTurns is allowed (cooldown extends beyond anarchy)
+        state.RevolutionTimer = 6;
+        Assert.Equal(6, state.RevolutionTimer);
+        Assert.Equal(3, state.AnarchyTurns);
+        Assert.Equal(GovernmentPhase.Anarchy, state.Phase);
+
+        // AdvanceTurn decrements both
+        state.AdvanceTurn();
+        Assert.Equal(2, state.AnarchyTurns);
+        Assert.Equal(5, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Anarchy, state.Phase);
+
+        state.AdvanceTurn();
+        state.AdvanceTurn();
+        Assert.Equal(0, state.AnarchyTurns);
+        Assert.Equal(3, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Cooldown, state.Phase);
+        Assert.False(state.IsAnarchy);
+        Assert.False(state.IsStable);
+
+        // EndAnarchyEarly immediately zeroes AnarchyTurns
+        state.AnarchyTurns = 2;
+        Assert.Equal(GovernmentPhase.Anarchy, state.Phase);
+        state.EndAnarchyEarly();
+        Assert.Equal(0, state.AnarchyTurns);
+        Assert.Equal(GovernmentPhase.Cooldown, state.Phase);
+
+        // StartRevolution sets both
+        state.StartRevolution(2, 5);
+        Assert.Equal(2, state.AnarchyTurns);
+        Assert.Equal(5, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Anarchy, state.Phase);
+
+        // StartRevolution with cooldown < anarchy clamps cooldown to anarchy
+        state.StartRevolution(4, 2);
+        Assert.Equal(4, state.AnarchyTurns);
+        Assert.Equal(4, state.RevolutionTimer);
+
+        // Decrementing down to stable
+        for (int i = 0; i < 5; i++) state.AdvanceTurn();
+        Assert.Equal(0, state.AnarchyTurns);
+        Assert.Equal(0, state.RevolutionTimer);
+        Assert.Equal(GovernmentPhase.Stable, state.Phase);
+        Assert.True(state.IsStable);
+        Assert.False(state.IsAnarchy);
+    }
+
     /// <summary>Registers one playable civilization that names a starting civic, which no shipped civilization does.</summary>
     private sealed class CivicProbe : IMod
     {
