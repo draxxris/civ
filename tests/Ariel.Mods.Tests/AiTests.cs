@@ -340,13 +340,13 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         }
         var target = sim.State.Plots[routeTile.Value];
         target.Improvement = "world:improvement_improvement_farm";
-        home.Worked.Add(sim.State.Grid.HexOf(routeTile));
+        home.Worked.Add(routeTile);
         var blocker = new TileId(50);
         var workedPlot = sim.State.Plots[blocker.Value];
         workedPlot.Owner = 0;
         if (workedTile == "water") workedPlot.Terrain = "world:coast";
         if (workedTile == "improved-land") workedPlot.Improvement = "world:improvement_improvement_farm";
-        home.Worked.Add(sim.State.Grid.HexOf(blocker));
+        home.Worked.Add(blocker);
         home.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.TeamOf(0).Techs.Add("research:railroad");
         sim.State.PlayerById(0).Treasury = treasury;
@@ -372,7 +372,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         plot.Owner = 0;
         plot.Improvement = "world:city_ruins";
         sim.State.SetRiver(tile, 0, true);
-        city.Worked.Add(sim.State.Grid.HexOf(tile));
+        city.Worked.Add(tile);
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.TeamOf(0).Techs.Add("research:agriculture");
         var worker = Add(sim, "military:worker", sim.State.Grid.HexOf(tile));

@@ -343,7 +343,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         city.Population = 20; city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = 1 };
         // Happiness is not modelled here: give the city 18 workers, as if it had grown content, so the whip must release them.
         var center = sim.State.Grid.TileAt(city.Position);
-        city.Worked = Service<ICityWorkService>(sim).WorkArea(sim, 1).Where(t => t != center).Take(18).Select(t => sim.State.Grid.HexOf(t)).ToList();
+        city.Worked = Service<ICityWorkService>(sim).WorkArea(sim, 1).Where(t => t != center).Take(18).ToList();
         hurry = service.Calculate(sim, 1, "cities:hurry_population");
         Assert.Equal(3, hurry.Population); // Cost 528, left 527. ceil(527²/790)=352; per citizen 3000/19=157.
         Assert.Equal(706, hurry.Production); // 3*157*150/100 = 706.

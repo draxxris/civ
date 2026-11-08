@@ -23,7 +23,7 @@ public static class Yields
     public static Yield OfCity(Simulation sim, City city)
     {
         var total = new Yield(0, 1, 1) + OfTile(sim, city.Position);
-        foreach (var hex in city.Worked) total += OfTile(sim, hex);
+        foreach (var tile in city.Worked) total += OfTile(sim, sim.State.Grid.HexOf(tile));
         foreach (var (id, count) in city.Specialists)
         {
             var s = sim.Content.Specialists.Get(id);

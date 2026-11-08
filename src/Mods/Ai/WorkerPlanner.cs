@@ -133,7 +133,7 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private List<WorkTile> Tiles()
     {
         if (_tiles is not null) return _tiles;
-        var worked = ctx.Cities.SelectMany(c => c.Worked).Select(ctx.Grid.TileAt).ToHashSet();
+        var worked = ctx.Cities.SelectMany(c => c.Worked).ToHashSet();
         var seen = new HashSet<TileId>();
         _tiles = new();
         foreach (var city in ctx.Cities)
@@ -311,6 +311,6 @@ internal sealed class WorkerPlanner(AiContext ctx)
 
     // Route upgrades wait for work only on tiles a worker can improve; water and blocked land are not blockers.
     private bool HasUnimprovedWorkedLandTile() => ctx.Cities.SelectMany(city => city.Worked)
-        .Select(ctx.Grid.TileAt).Where(Workable)
+        .Where(Workable)
         .Any(tile => ctx.Sim.State.Plots[tile.Value].Improvement is null);
 }

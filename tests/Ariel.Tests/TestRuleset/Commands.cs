@@ -85,7 +85,7 @@ public sealed class SetCityWorkCommand : GameCommand
     }
 
     public override void Apply(Simulation sim) =>
-        CityRules.Assign(sim.State.CityById(CityId), Tiles, Specialists);
+        CityRules.Assign(sim, sim.State.CityById(CityId), Tiles, Specialists);
 }
 
 public sealed class SetCivicCommand : GameCommand

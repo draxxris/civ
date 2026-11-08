@@ -25,7 +25,7 @@ public sealed class WorkerRepairTests(LoadedMods mods) : IClassFixture<LoadedMod
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.State.AddCity(city); sim.State.Plots[39].Owner = 0;
         sim.State.Plots[40].Owner = 0;
-        city.Worked.Add(sim.State.Grid.HexOf(new(40)));
+        city.Worked.Add(new(40));
         return city;
     }
     private static Unit Worker(Simulation sim, string type = "military:worker")

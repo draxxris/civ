@@ -13,7 +13,7 @@ internal sealed class CityYields : ICityYieldService
         var sink = CityData.Effects(sim, city);
         var plots = sim.Content.Services.Get<IPlotYieldService>().Single();
         AddPlot(sim, city, CityData.Tile(sim, city), true, plots, sink);
-        foreach (var tile in city.Worked.Select(sim.State.Grid.TileAt).OrderBy(t => t.Value)) AddPlot(sim, city, tile, false, plots, sink);
+        foreach (var tile in city.Worked) AddPlot(sim, city, tile, false, plots, sink);
         Specialists.Contribute(sim, city, sink);
         var yields = sink.FlatYield.WithPercent(sink.PercentYield);
         yields = new(Math.Max(0, yields.Food), Math.Max(0, yields.Production), Math.Max(0, yields.Commerce));

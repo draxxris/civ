@@ -22,7 +22,7 @@ public sealed class AiSpeculationTests
         state.TeamOf(0).Research["base:writing"] = 17;
         state.UnitById(1).Promotions.Add("old");
         var city = new City { Id = state.NextCityId++, Owner = 0, Position = new(5, 5),
-            Buildings = ["old"], Worked = [new(6, 5)], Specialists = new() { ["old"] = 1 },
+            Buildings = ["old"], Worked = [new(6)], Specialists = new() { ["old"] = 1 },
             ProductionQueue = [new("unit", "base:warrior", 3)] };
         state.AddCity(city);
         foreach (var extensions in Extensions(state))

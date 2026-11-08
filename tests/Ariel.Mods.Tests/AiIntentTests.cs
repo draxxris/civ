@@ -289,11 +289,11 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
             sim.State.Plots[tile.Value].Owner = 0;
             sim.State.SetRiver(tile, 0, true);
             sim.State.Plots[tile.Value].BuildProgress["world:build_build_farm"] = 1;
-            distant.Worked.Add(sim.State.Grid.HexOf(tile));
+            distant.Worked.Add(tile);
         }
         var home = AddCity(sim, 0, HexGrid.FromOffset(1, 2));
         FarmTile(sim, 2, 2);
-        home.Worked.Add(HexGrid.FromOffset(2, 2));
+        home.Worked.Add(sim.State.Grid.TileAt(2, 2));
         Apply(sim, "PrepareWorkerMissionsCommand");
         Assert.True(Mission(sim, 1).GetProperty("Target").GetProperty("Value").GetInt32() % sim.State.Map.Width > 4);
         foreach (int row in Enumerable.Range(0, sim.State.Map.Height)) sim.State.Plots[Tile(sim, 4, row).Value].Owner = 1;
@@ -499,7 +499,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
             var distant = AddCity(sim, 1, HexGrid.FromOffset(12, 2));
             var tile = Tile(sim, 13, 2);
             FarmTile(sim, 13, 2, owner: 1);
-            distant.Worked.Add(sim.State.Grid.HexOf(tile));
+            distant.Worked.Add(tile);
         }
         var sequential = SaveGame.Load(content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
         var events = new List<SpeculationEvent>(); sim.SpeculationObserver = events.Add;
@@ -562,7 +562,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var sim = Empty(content ?? mods.Content, new(width, 5), players);
         var home = AddCity(sim, 0, HexGrid.FromOffset(8, 2));
         FarmTile(sim, 7, 2); FarmTile(sim, 9, 4);
-        home.Worked = [HexGrid.FromOffset(7, 2), HexGrid.FromOffset(9, 4)];
+        home.Worked = [sim.State.Grid.TileAt(7, 2), sim.State.Grid.TileAt(9, 4)];
         sim.TeamOf(0).Techs.Add("research:agriculture");
         if (players > 1) sim.TeamOf(1).Techs.Add("research:agriculture");
         AddUnit(sim, 0, "military:worker", HexGrid.FromOffset(0, 2));
@@ -602,7 +602,8 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var tile = Tile(sim, column, row);
         sim.State.Plots[tile.Value].Owner = owner;
         sim.State.SetRiver(tile, 0, true);
-        sim.State.CityById(1).Worked.Add(sim.State.Grid.HexOf(tile));
+        var city = sim.State.CityById(1);
+        if (!city.Worked.Contains(tile)) city.Worked.Add(tile);
     }
 
     private static City AddCity(Simulation sim, int owner, Hex position)

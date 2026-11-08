@@ -382,7 +382,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
                 {
                     var city = AddCity(game, 0, column, 3);
                     var worker = AddUnit(game, 0, "military:worker", column == 2 ? 3 : 7, 3);
-                    city.Worked.Add(worker.Position);
+                    city.Worked.Add(game.State.Grid.TileAt(worker.Position));
                     city.Extensions.Set(game.Content, new CityRuleState { ManualWork = true });
                 }
             });
@@ -658,7 +658,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var issue = Method<Func<GameCommand, bool>>(ctx, "Issue");
         var city = sim.State.CityById(1);
         var before = Property<YieldVector>(Call(ctx, "ViewOf", city)!, "Yields");
-        Assert.True(issue(new SetCityAssignmentsCommand { Player = 0, CityId = 1, Tiles = [HexGrid.FromOffset(5, 4)] }));
+        Assert.True(issue(new SetCityAssignmentsCommand { Player = 0, CityId = 1, Tiles = [sim.State.Grid.TileAt(5, 4)] }));
         var after = Property<YieldVector>(Call(ctx, "ViewOf", city)!, "Yields");
         Assert.NotEqual(before, after);
         Assert.Equal(sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, 1).Yields, after);

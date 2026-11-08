@@ -15,18 +15,18 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         return Math.Clamp(Math.Max(CityData.Level(sim, city).CityRadius, buildingRadius), 2, 3);
     }
     public IReadOnlyList<TileId> WorkArea(Simulation sim, int cityId) => sim.State.Grid.Range(CityData.Tile(sim, sim.State.CityById(cityId)), Radius(sim, cityId)).ToArray();
-    public string? Validate(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists) =>
+    public string? Validate(Simulation sim, int cityId, IReadOnlyList<TileId> tiles, IReadOnlyDictionary<string, int> specialists) =>
         CityReadScope.Run(sim, _ => ValidateScoped(sim, cityId, tiles, specialists));
-    private string? ValidateScoped(Simulation sim, int cityId, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
+    private string? ValidateScoped(Simulation sim, int cityId, IReadOnlyList<TileId> tiles, IReadOnlyDictionary<string, int> specialists)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);
         int available = city.Population - wellbeing.Calculate(sim, city.Id).Angry;
         if (tiles.Count + specialists.Values.Sum() > available) return "Too many working citizens";
         var seen = new HashSet<TileId>();
-        foreach (var hex in tiles)
+        foreach (var tile in tiles)
         {
-            if (!sim.State.Grid.TryTile(hex, out var tile)) return "Work plot is outside the map";
+            if (tile.Value < 0 || tile.Value >= sim.State.Plots.Length) return "Work plot is outside the map";
             if (!seen.Add(tile)) return "Duplicate work plot";
             if (!CanWork(sim, city, tile)) return "Work plot is unavailable";
         }
@@ -40,10 +40,11 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
     private bool CanWork(Simulation sim, City city, TileId tile)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (tile == CityData.Tile(sim, city) || sim.State.CityAt(sim.State.Grid.HexOf(tile)) is not null) return false;
+        if (tile == CityData.Tile(sim, city) || sim.State.CityAtTile(tile) is not null) return false;
         if (plot.Owner != city.Owner || sim.State.Grid.Distance(CityData.Tile(sim, city), tile) > Radius(sim, city.Id)) return false;
         if (BlockedPlot(sim, city, tile, plot)) return false;
-        return !sim.State.Cities.Any(c => c.Id != city.Id && c.Worked.Any(h => sim.State.Grid.TileAt(h) == tile));
+        var worker = sim.State.WorkingCity(tile);
+        return worker is null || worker.Id == city.Id;
     }
     private static bool BlockedPlot(Simulation sim, City city, TileId tile, Plot plot)
     {
@@ -62,9 +63,9 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         foreach (var choice in candidates.OrderByDescending(p => p.Score).ThenBy(p => p.Tile).ThenBy(p => p.Specialist, StringComparer.Ordinal).Take(available))
         {
             if (choice.Specialist is { } specialist) city.Specialists[specialist] = city.Specialists.GetValueOrDefault(specialist) + 1;
-            else city.Worked.Add(sim.State.Grid.HexOf(new(choice.Tile)));
+            else city.Worked.Add(new(choice.Tile));
         }
-        city.Worked = city.Worked.OrderBy(h => h.Q).ThenBy(h => h.R).ToList();
+        city.Worked.Sort();
     }
     private (int Available, List<WorkChoice> Candidates) Candidates(Simulation sim, City city)
     {
@@ -91,7 +92,8 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
     {
         int available = city.Population - wellbeing.Calculate(sim, city.Id).Angry;
         var effects = CityData.Effects(sim, city);
-        city.Worked = city.Worked.Where(h => sim.State.Grid.TryTile(h, out var t) && CanWork(sim, city, t)).Distinct().Take(available).ToList();
+        city.Worked = city.Worked.Where(t => CanWork(sim, city, t)).Distinct().Take(available).ToList();
+        city.Worked.Sort();
         available -= city.Worked.Count;
         var specialists = new SortedDictionary<string, int>(StringComparer.Ordinal);
         foreach (var pair in city.Specialists)

@@ -22,7 +22,7 @@ public static class CityRules
         sim.State.Grid.Range(city.Position, Radius)
             .Where(h => h != city.Position)
             .Where(h => sim.State.CityAt(h) is not { } occupying || occupying.Id == city.Id)
-            .Where(h => !sim.State.Cities.Any(o => o.Id != city.Id && o.Worked.Contains(h)));
+            .Where(h => !sim.State.Cities.Any(o => o.Id != city.Id && o.Worked.Contains(sim.State.Grid.TileAt(h))));
 
     public static SpecialistDef? DefaultSpecialist(Simulation sim) => sim.Content.Specialists.All.FirstOrDefault(s => s.Unlimited);
 
@@ -54,10 +54,10 @@ public static class CityRules
         return null;
     }
 
-    public static void Assign(City city, IEnumerable<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
+    public static void Assign(Simulation sim, City city, IEnumerable<Hex> tiles, IReadOnlyDictionary<string, int> specialists)
     {
         city.Worked.Clear();
-        city.Worked.AddRange(tiles.OrderBy(h => h.Q).ThenBy(h => h.R));
+        city.Worked.AddRange(tiles.Select(sim.State.Grid.TileAt).OrderBy(t => t.Value));
         city.Specialists.Clear();
         foreach (var (id, n) in specialists) if (n > 0) city.Specialists[id] = n;
     }
@@ -65,13 +65,13 @@ public static class CityRules
     /// <summary>Put one new citizen on the best free tile, or make it a default specialist if there is none.</summary>
     public static void AddCitizen(Simulation sim, City city)
     {
-        var best = WorkableTiles(sim, city).Where(h => !city.Worked.Contains(h))
+        var best = WorkableTiles(sim, city).Where(h => !city.Worked.Contains(sim.State.Grid.TileAt(h)))
             .OrderByDescending(h => TileScore(sim, h)).ThenBy(h => h.Q).ThenBy(h => h.R)
             .Select(h => (Hex?)h).FirstOrDefault();
         if (best != null)
         {
-            city.Worked.Add(best.Value);
-            city.Worked.Sort((a, b) => a.Q != b.Q ? a.Q.CompareTo(b.Q) : a.R.CompareTo(b.R));
+            city.Worked.Add(sim.State.Grid.TileAt(best.Value));
+            city.Worked.Sort();
             return;
         }
         var spec = DefaultSpecialist(sim);
@@ -87,7 +87,7 @@ public static class CityRules
             if (--city.Specialists[id] <= 0) city.Specialists.Remove(id);
             return;
         }
-        var worst = city.Worked.OrderBy(h => TileScore(sim, h)).ThenByDescending(h => h.Q).ThenByDescending(h => h.R).FirstOrDefault();
+        var worst = city.Worked.OrderBy(t => TileScore(sim, sim.State.Grid.HexOf(t))).ThenByDescending(t => t.Value).FirstOrDefault();
         city.Worked.Remove(worst);
     }
 

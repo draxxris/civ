@@ -85,8 +85,8 @@ public static class EvaluationMetrics
             buildProgressEntries++;
             buildProgressBasisPoints += boundedProgress * 10_000 / requiredWork;
         }
-        var workedTiles = cities.SelectMany(c => c.Worked.Append(c.Position))
-            .Select(sim.State.Grid.TileAt).Distinct().ToArray();
+        var workedTiles = cities.SelectMany(c => c.Worked.Append(sim.State.Grid.TileAt(c.Position)))
+            .Distinct().ToArray();
         long workedLandWithoutImprovement = 0;
         YieldVector workedYield = default;
         foreach (var tile in workedTiles)

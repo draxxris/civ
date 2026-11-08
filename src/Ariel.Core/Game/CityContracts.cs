@@ -44,7 +44,7 @@ public interface ICityWorkService
     string DefaultSpecialist(Simulation sim);
     int Radius(Simulation sim, int city);
     IReadOnlyList<TileId> WorkArea(Simulation sim, int city);
-    string? Validate(Simulation sim, int city, IReadOnlyList<Hex> tiles, IReadOnlyDictionary<string, int> specialists);
+    string? Validate(Simulation sim, int city, IReadOnlyList<TileId> tiles, IReadOnlyDictionary<string, int> specialists);
     void Assign(Simulation sim, int city);
 }
 public sealed record CityMaintenanceResult(long DistanceHundredths, long CityCountHundredths, long TotalHundredths, Ledger Ledger, long CorporateHundredths = 0);
@@ -252,16 +252,41 @@ public sealed class FoundCityWithSettlerCommand : GameCommand
 public sealed class SetCityAssignmentsCommand : GameCommand
 {
     public int CityId { get; init; }
-    public Hex[] Tiles { get; init; } = [];
+    public TileId[] Tiles { get; init; } = [];
+    public Hex[]? Hexes { get; init; }
     public SortedDictionary<string, int> Specialists { get; init; } = new(StringComparer.Ordinal);
     public bool Automatic { get; init; }
     public bool AvoidGrowth { get; init; }
+
+    public IReadOnlyList<TileId> ResolvedTiles(Simulation sim)
+    {
+        if (Hexes is { Length: > 0 })
+        {
+            var list = new List<TileId>(Hexes.Length);
+            foreach (var h in Hexes)
+                if (sim.State.Grid.TryTile(h, out var t)) list.Add(t);
+            return list;
+        }
+        return Tiles;
+    }
+
     public override string? Validate(Simulation sim)
     {
         var city = sim.State.FindCity(CityId);
         if (city is null || city.Owner != Player) return "Not your city";
         if (city.Extensions.TryGet<CityRuleState>(sim.Content)?.IsPuppet == true) return "Puppet cities manage their own citizens";
-        return Automatic ? null : sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, Tiles, Specialists);
+        if (Automatic) return null;
+        if (Hexes is { Length: > 0 })
+        {
+            var list = new List<TileId>(Hexes.Length);
+            foreach (var h in Hexes)
+            {
+                if (!sim.State.Grid.TryTile(h, out var t)) return "Work plot is outside the map";
+                list.Add(t);
+            }
+            return sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, list, Specialists);
+        }
+        return sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, Tiles, Specialists);
     }
     public override void Apply(Simulation sim)
     {
@@ -269,7 +294,8 @@ public sealed class SetCityAssignmentsCommand : GameCommand
         var state = city.Extensions.Get<CityRuleState>(sim.Content) ?? new();
         city.Extensions.Set(sim.Content, state);
         state.ManualWork = !Automatic; state.AvoidGrowth = AvoidGrowth;
-        city.Worked = Tiles.Select(sim.State.Grid.Normalize).OrderBy(h => h.Q).ThenBy(h => h.R).ToList();
+        var resolved = ResolvedTiles(sim);
+        city.Worked = resolved.Distinct().OrderBy(t => t.Value).ToList();
         city.Specialists = new(Specialists, StringComparer.Ordinal);
         sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, CityId);
     }

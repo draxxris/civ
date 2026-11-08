@@ -162,7 +162,7 @@ public sealed class NetworkTransitTests
     public void Blockade_command_severs_sea_network_work_and_both_trade_endpoints_and_survives_reload()
     {
         var (sim, home, colony, blocker) = SeaScenario();
-        var assign = new SetCityAssignmentsCommand { Player = 0, CityId = home.Id, Tiles = [sim.State.Grid.HexOf(new(41))] };
+        var assign = new SetCityAssignmentsCommand { Player = 0, CityId = home.Id, Tiles = [new(41)] };
         Apply(sim, assign);
         var connections = Service<ICityConnectionService>(sim);
         Assert.True(connections.Connected(sim, home.Id, colony.Id));

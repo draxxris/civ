@@ -146,10 +146,10 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
     public int Order => TurnPhase.Map;
     public void Run(Simulation sim)
     {
-        var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
+        var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(sim.State.Grid.TileAt(c.Position))).ToHashSet();
         // Disorder stops productive work, but assigned plots still resist feature overgrowth.
         var productiveWorked = sim.State.Cities.Where(c => !GovernmentStatus.IsDisorder(sim, c))
-            .SelectMany(c => c.Worked.Append(c.Position)).Select(sim.State.Grid.TileAt).ToHashSet();
+            .SelectMany(c => c.Worked.Append(sim.State.Grid.TileAt(c.Position))).ToHashSet();
         var features = new FeatureTurnRules(sim, worked);
         var resources = new ResourceTurnRules(sim);
         foreach (var tile in sim.State.Grid.Tiles)

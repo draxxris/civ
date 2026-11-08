@@ -282,7 +282,7 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         sim.State.Plots[tile.Value].Improvement = "world:improvement_improvement_cottage";
         for (int i = 0; i < 20; i++) sim.AdvanceTurn();
         Assert.Equal("world:improvement_improvement_cottage", sim.State.Plots[tile.Value].Improvement);
-        city.Worked.Add(sim.State.Grid.HexOf(tile));
+        city.Worked.Add(tile);
         for (int i = 0; i < 16; i++) sim.AdvanceTurn();
         Assert.Equal("world:improvement_improvement_cottage", sim.State.Plots[tile.Value].Improvement);
         sim.TeamOf(0).Techs.Add("research:city_planning");

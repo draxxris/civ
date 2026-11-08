@@ -120,8 +120,21 @@ public sealed class City
     public int Population { get; set; } = 1;
     /// <summary>Stored food.</summary>
     public long FoodStored { get; set; }
-    /// <summary>Worked plots in canonical (Q,R) order; center is worked for free.</summary>
-    public List<Hex> Worked { get; set; } = new();
+    /// <summary>Worked plots in canonical ascending TileId order; center is worked for free.</summary>
+    public List<TileId> Worked { get; set; } = new();
+
+    /// <summary>Whether this city is working the specified plot.</summary>
+    public bool IsWorking(TileId tile) => Worked.Contains(tile);
+
+    /// <summary>Sorts worked plots in canonical ascending TileId order and removes duplicates.</summary>
+    public void NormalizeWorked()
+    {
+        if (Worked.Count <= 1) return;
+        Worked.Sort();
+        for (int i = Worked.Count - 1; i > 0; i--)
+            if (Worked[i] == Worked[i - 1]) Worked.RemoveAt(i);
+    }
+
     /// <summary>Specialist counts by id.</summary>
     public SortedDictionary<string, int> Specialists { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Accumulated city culture.</summary>
@@ -215,8 +228,19 @@ public sealed class GameState
     public City CityById(int id) => _cities[id];
     /// <summary>Find a city without throwing.</summary>
     public City? FindCity(int id) => _cities.GetValueOrDefault(id);
-    /// <summary>Find the city on a valid tile, including wrap images.</summary>
+    /// <summary>Find the city on a valid tile.</summary>
+    public City? CityAtTile(TileId tile) => _cityPlots.GetValueOrDefault(tile);
+    /// <summary>Find the city on a valid axial coordinate, including wrap images.</summary>
     public City? CityAt(Hex pos) => Grid.TryTile(pos, out var t) ? _cityPlots.GetValueOrDefault(t) : null;
+    /// <summary>Find the city working this plot, if any. City center tiles are not counted as worked plots.</summary>
+    public City? WorkingCity(TileId tile)
+    {
+        for (int i = 0; i < Cities.Count; i++)
+            if (Cities[i].Worked.Contains(tile)) return Cities[i];
+        return null;
+    }
+    /// <summary>Whether this plot is worked by any city.</summary>
+    public bool IsPlotWorked(TileId tile) => WorkingCity(tile) is not null;
     /// <summary>Units on a plot, in ascending id order.</summary>
     public IEnumerable<Unit> UnitsAt(Hex pos) => Grid.TryTile(pos, out var t) && _unitPlots.TryGetValue(t, out var units) ? units.Values : [];
     /// <summary>Mutable plot at a valid axial coordinate.</summary>

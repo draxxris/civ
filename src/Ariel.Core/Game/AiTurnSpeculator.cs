@@ -319,8 +319,8 @@ internal static class AiTurnSpeculator
 
         private void AddCommandTiles(Simulation sim, GameCommand command)
         {
-            foreach (var hex in CommandHexes(command))
-                if (sim.State.Grid.TryTile(hex, out var tile)) _tiles.Add(tile.Value);
+            foreach (var tile in CommandTiles(sim, command))
+                _tiles.Add(tile);
         }
 
         private static bool Scout(Simulation sim, Unit unit) => sim.Content.TryGet<SchemaUnitDef>(unit.Type, out var def)
@@ -494,19 +494,36 @@ internal static class AiTurnSpeculator
         }
     }
 
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> HexProperties = new();
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> SpatialProperties = new();
 
-    /// <summary>Map positions named by a command (targets and path steps), found through its public data properties.</summary>
-    private static IEnumerable<Hex> CommandHexes(GameCommand command)
+    /// <summary>Map plot indices named by a command (targets and path steps), found through its public data properties.</summary>
+    private static IEnumerable<int> CommandTiles(Simulation sim, GameCommand command)
     {
-        var properties = HexProperties.GetOrAdd(command.GetType(), type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetIndexParameters().Length == 0 && (p.PropertyType == typeof(Hex) || p.PropertyType == typeof(Hex?)
-                || typeof(IEnumerable<Hex>).IsAssignableFrom(p.PropertyType))).ToArray());
+        var properties = SpatialProperties.GetOrAdd(command.GetType(), type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.GetIndexParameters().Length == 0 && (
+                p.PropertyType == typeof(Hex) || p.PropertyType == typeof(Hex?) || typeof(IEnumerable<Hex>).IsAssignableFrom(p.PropertyType) ||
+                p.PropertyType == typeof(TileId) || p.PropertyType == typeof(TileId?) || typeof(IEnumerable<TileId>).IsAssignableFrom(p.PropertyType)
+            )).ToArray());
+
         foreach (var property in properties)
+        {
             switch (property.GetValue(command))
             {
-                case Hex hex: yield return hex; break;
-                case IEnumerable<Hex> hexes: foreach (var h in hexes) yield return h; break;
+                case Hex hex:
+                    if (sim.State.Grid.TryTile(hex, out var hexTile)) yield return hexTile.Value;
+                    break;
+                case IEnumerable<Hex> hexes:
+                    foreach (var h in hexes)
+                        if (sim.State.Grid.TryTile(h, out var th)) yield return th.Value;
+                    break;
+                case TileId tile:
+                    if (tile.Value >= 0 && tile.Value < sim.State.Plots.Length) yield return tile.Value;
+                    break;
+                case IEnumerable<TileId> tiles:
+                    foreach (var item in tiles)
+                        if (item.Value >= 0 && item.Value < sim.State.Plots.Length) yield return item.Value;
+                    break;
             }
+        }
     }
 }

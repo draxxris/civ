@@ -805,7 +805,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         s.ToggleTile(city, worked);
         Assert.Contains(worked, city.Worked);
         s.SelectCity(city.Id);
-        Assert.Equal(TileMark.Worked, s.TileMarks()[worked]);
+        Assert.Equal(TileMark.Worked, s.TileMarks()[s.Sim.State.Grid.HexOf(worked)]);
     }
     [Fact]
     public void Research_choices_set_the_team_target_and_the_summary_tracks_it()

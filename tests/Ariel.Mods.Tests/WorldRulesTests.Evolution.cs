@@ -344,7 +344,7 @@ public sealed partial class WorldRulesTests
         var tile = EvolutionPlot(sim);
         var plot = sim.State.Plots[tile.Value];
         var city = AddCity(sim, center ? tile : sim.State.Grid.TileAt(5, 3));
-        if (!center) city.Worked.Add(sim.State.Grid.HexOf(tile));
+        if (!center) city.Worked.Add(tile);
         plot.Improvement = Evolution + (mechanic == "discovery" ? "prospect" : mechanic == "mine" ? "mine" : "upgrading");
         plot.ImprovementTurns = 100;
         city.Extensions.Set(sim.Content, new CityRuleState { Disorder = !anarchy });
@@ -391,7 +391,7 @@ public sealed partial class WorldRulesTests
         var tile = EvolutionPlot(sim);
         var plot = sim.State.Plots[tile.Value];
         var city = AddCity(sim, center ? tile : sim.State.Grid.TileAt(5, 3));
-        if (!center) city.Worked.Add(sim.State.Grid.HexOf(tile));
+        if (!center) city.Worked.Add(tile);
         string source = Evolution + (outsideBorders ? "outside_upgrade" : "inside_upgrade");
         plot.Improvement = source;
         plot.ImprovementTurns = initialTurns;
@@ -444,13 +444,13 @@ public sealed partial class WorldRulesTests
         var tile = EvolutionPlot(sim);
         sim.State.Plots[tile.Value].Improvement = Evolution + "mine";
         var disordered = AddCity(sim, sim.State.Grid.TileAt(5, 3));
-        disordered.Worked.Add(sim.State.Grid.HexOf(tile));
+        disordered.Worked.Add(tile);
         disordered.Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
         var center = sim.State.Plots[sim.State.Grid.TileAt(disordered.Position).Value];
         center.Owner = 0;
         center.Improvement = Evolution + "mine";
         var healthy = AddCity(sim, sim.State.Grid.TileAt(4, 4));
-        healthy.Worked.Add(sim.State.Grid.HexOf(tile));
+        healthy.Worked.Add(tile);
         MapTurn(sim);
         Assert.False(center.DepletedMine);
         Assert.True(sim.State.Plots[tile.Value].DepletedMine);
@@ -470,7 +470,7 @@ public sealed partial class WorldRulesTests
         deposit.Owner = 0;
         deposit.Improvement = Evolution + "deposit"; // 8 * 12 / 96 copies = guaranteed exhaustion.
         var city = AddCity(sim, sim.State.Grid.TileAt(5, 3));
-        city.Worked.AddRange([sim.State.Grid.HexOf(tile), sim.State.Grid.HexOf(depositTile)]);
+        city.Worked.AddRange([tile, depositTile]);
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new GovernmentPlayerState { AnarchyTurns = 2 });
         Assert.True(GovernmentStatus.IsDisorder(sim, city));
         MapTurn(sim);
@@ -509,7 +509,7 @@ public sealed partial class WorldRulesTests
     private static void WorkEvolutionPlot(Simulation sim, TileId tile)
     {
         var city = AddCity(sim, sim.State.Grid.TileAt(5, 3));
-        city.Worked.Add(sim.State.Grid.HexOf(tile));
+        city.Worked.Add(tile);
     }
 
     private static DeterministicRng CopyRng(Simulation sim)

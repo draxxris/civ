@@ -3,7 +3,11 @@ using System.Text.Json.Serialization;
 namespace Ariel;
 
 /// <summary>Row-major plot index. Valid values are in [0, Width * Height).</summary>
-public readonly record struct TileId(int Value);
+public readonly record struct TileId(int Value) : IComparable<TileId>
+{
+    public int CompareTo(TileId other) => Value.CompareTo(other.Value);
+    public override string ToString() => Value.ToString();
+}
 
 /// <summary>Canonical undirected edge between two adjacent tiles. First.Value is strictly less than Second.Value.</summary>
 public readonly record struct HexEdge : IComparable<HexEdge>

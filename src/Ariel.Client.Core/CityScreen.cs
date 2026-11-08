@@ -92,7 +92,7 @@ public sealed partial class GameSession
             rules.ManualWork, rules.AvoidGrowth, GovernmentStatus.IsDisorder(Sim, city),
             Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
-            city.Worked.Select(h => TileRowOf(h)).ToList(), idle, SpecialistRows(city),
+            city.Worked.Select(TileRowOf).ToList(), idle, SpecialistRows(city),
             QueueRows(city), BuildingNames(city), HurryOptions(city), ReligionsIn(city),
             GreatPeopleRate(greatPeople), SettledSpecialists(city), GoldenAgeTurns(city), TradeRoutes(trade),
             MaxTradeRoutes(city), CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city))
@@ -167,13 +167,16 @@ public sealed partial class GameSession
         .Where(l => l.Key.Contains(kind) && l.Amount != 0 && (l.Key.EndsWith("_good", StringComparison.Ordinal) || l.Key.EndsWith("_bad", StringComparison.Ordinal)))
         .Select(l => new LedgerRow(Labels.Source(Sim, l.Source), l.Key.EndsWith("_bad", StringComparison.Ordinal) ? -l.Amount : l.Amount)).ToList();
 
-    private TileRow TileRowOf(Hex hex)
+    private TileRow TileRowOf(TileId tile)
     {
-        var plot = Sim.State.PlotAt(hex);
-        var y = Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields;
+        var plot = Sim.State.Plots[tile.Value];
+        var hex = Sim.State.Grid.HexOf(tile);
+        var y = Service<IPlotYieldService>().Calculate(Sim, Human, tile).Yields;
         var name = plot.Feature is { } f ? Sim.Content.Get<Schema.FeatureDef>(f).Name : Sim.Content.Get<Schema.TerrainDef>(plot.Terrain).Name;
         return new(hex, name, y.Food, y.Production, y.Commerce);
     }
+
+    private TileRow TileRowOf(Hex hex) => TileRowOf(Sim.State.Grid.TileAt(hex));
 
     private IReadOnlyList<SpecialistRow> SpecialistRows(City city)
     {

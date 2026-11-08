@@ -19,8 +19,8 @@ public sealed partial class GameSession
     {
         var work = Service<ICityWorkService>();
         var none = new Dictionary<string, int>();
-        return WorkArea(city).Where(h => h != city.Position && !city.Worked.Contains(h) && work.Validate(Sim, city.Id, [h], none) == null)
-            .Concat(city.Worked).Distinct().ToList();
+        return WorkArea(city).Where(h => h != city.Position && !city.Worked.Contains(Sim.State.Grid.TileAt(h)) && work.Validate(Sim, city.Id, [Sim.State.Grid.TileAt(h)], none) == null)
+            .Concat(city.Worked.Select(Sim.State.Grid.HexOf)).Distinct().ToList();
     }
 
     /// <summary>Marks for every tile of the selected city's work area, computed once so the renderer does not repeat the validation per tile.</summary>
@@ -30,8 +30,11 @@ public sealed partial class GameSession
         if (City is not { } city) return marks;
         var workable = WorkableTiles(city).ToHashSet();
         foreach (var hex in WorkArea(city).Where(h => SightOf(h) == Sight.Visible))
-            marks[hex] = hex == city.Position ? TileMark.Selected : city.Worked.Contains(hex) ? TileMark.Worked
+        {
+            var tile = Sim.State.Grid.TileAt(hex);
+            marks[hex] = hex == city.Position ? TileMark.Selected : city.Worked.Contains(tile) ? TileMark.Worked
                 : workable.Contains(hex) ? TileMark.Workable : TileMark.Locked;
+        }
         return marks;
     }
 
@@ -47,7 +50,7 @@ public sealed partial class GameSession
 
 
 
-    private bool Assign(City city, List<Hex> tiles, IDictionary<string, int> specialists, bool automatic = false)
+    private bool Assign(City city, List<TileId> tiles, IDictionary<string, int> specialists, bool automatic = false)
     {
         var spec = new SortedDictionary<string, int>(specialists.Where(s => s.Value > 0).ToDictionary(s => s.Key, s => s.Value), StringComparer.Ordinal);
         var state = city.Extensions.Get<CityRuleState>(Sim.Content);
@@ -59,26 +62,27 @@ public sealed partial class GameSession
     }
 
     /// <summary>Take a citizen off a worked tile (it becomes a plain citizen) or put one on a free tile, taking it from the plain pool, then any specialist, then the worst worked tile.</summary>
-    public void ToggleTile(City city, Hex hex)
+    public void ToggleTile(City city, Hex hex) => ToggleTile(city, Sim.State.Grid.TileAt(hex));
+
+    public void ToggleTile(City city, TileId tile)
     {
-        hex = Sim.State.Grid.Normalize(hex);
         var tiles = city.Worked.ToList();
         var spec = new Dictionary<string, int>(city.Specialists);
-        if (tiles.Remove(hex)) spec[CitizenSpecialist] = spec.GetValueOrDefault(CitizenSpecialist) + 1;
-        else if (!TakeCitizen(city, tiles, spec, hex)) { SetMessage("No citizen to assign"); return; }
+        if (tiles.Remove(tile)) spec[CitizenSpecialist] = spec.GetValueOrDefault(CitizenSpecialist) + 1;
+        else if (!TakeCitizen(city, tiles, spec, tile)) { SetMessage("No citizen to assign"); return; }
         Assign(city, tiles, spec);
     }
 
-    /// <summary>Free one citizen for <paramref name="hex"/> and add the tile; false when the city has nobody to move.</summary>
-    private bool TakeCitizen(City city, List<Hex> tiles, Dictionary<string, int> spec, Hex hex)
+    /// <summary>Free one citizen for <paramref name="tile"/> and add the tile; false when the city has nobody to move.</summary>
+    private bool TakeCitizen(City city, List<TileId> tiles, Dictionary<string, int> spec, TileId tile)
     {
         string? from = spec.GetValueOrDefault(CitizenSpecialist) > 0 ? CitizenSpecialist
             : spec.Where(kv => kv.Value > 0).Select(kv => kv.Key).FirstOrDefault();
-        if (tiles.Count + spec.Values.Sum() < WorkingPopulation(city)) { tiles.Add(hex); return true; }
+        if (tiles.Count + spec.Values.Sum() < WorkingPopulation(city)) { tiles.Add(tile); return true; }
         if (from != null) spec[from]--;
-        else if (tiles.Count > 0) tiles.Remove(tiles.OrderBy(TileScore).ThenBy(t => t.Q).ThenBy(t => t.R).First());
+        else if (tiles.Count > 0) tiles.Remove(tiles.OrderBy(t => TileScore(Sim.State.Grid.HexOf(t))).ThenBy(t => t.Value).First());
         else return false;
-        tiles.Add(hex);
+        tiles.Add(tile);
         return true;
     }
 
@@ -98,12 +102,12 @@ public sealed partial class GameSession
         Assign(city, tiles, spec);
     }
 
-    private bool FreeCitizen(City city, List<Hex> tiles, Dictionary<string, int> spec, string target)
+    private bool FreeCitizen(City city, List<TileId> tiles, Dictionary<string, int> spec, string target)
     {
         if (tiles.Count + spec.Values.Sum() < WorkingPopulation(city)) return true;
         if (target != CitizenSpecialist && spec.GetValueOrDefault(CitizenSpecialist) > 0) { spec[CitizenSpecialist]--; return true; }
         if (tiles.Count == 0) return false;
-        tiles.Remove(tiles.OrderBy(TileScore).ThenBy(t => t.Q).ThenBy(t => t.R).First());
+        tiles.Remove(tiles.OrderBy(t => TileScore(Sim.State.Grid.HexOf(t))).ThenBy(t => t.Value).First());
         return true;
     }
 

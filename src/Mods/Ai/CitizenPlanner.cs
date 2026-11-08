@@ -37,7 +37,7 @@ internal sealed class CitizenPlanner(AiContext ctx, ArmyPlan army)
         SupplyFood(chosen, choices, needed);
         ctx.Issue(new SetCityAssignmentsCommand
         {
-            Player = ctx.PlayerId, CityId = city.Id, Tiles = chosen.Select(c => ctx.Grid.HexOf(c.Tile)).ToArray(), AvoidGrowth = avoid,
+            Player = ctx.PlayerId, CityId = city.Id, Tiles = chosen.Select(c => c.Tile).ToArray(), AvoidGrowth = avoid,
         });
     }
 
@@ -49,10 +49,10 @@ internal sealed class CitizenPlanner(AiContext ctx, ArmyPlan army)
 
     private List<Choice> Choices(City city)
     {
-        var blocked = ctx.Cities.Where(c => c.Id != city.Id).SelectMany(c => c.Worked).Select(ctx.Tile).ToHashSet();
+        var blocked = ctx.Cities.Where(c => c.Id != city.Id).SelectMany(c => c.Worked).ToHashSet();
         var yields = ctx.Service<IPlotYieldService>();
         return ctx.Service<ICityWorkService>().WorkArea(ctx.Sim, city.Id)
-            .Where(t => !blocked.Contains(t) && ctx.Sim.State.Plots[t.Value].Owner == ctx.PlayerId && ctx.Sim.State.CityAt(ctx.Grid.HexOf(t)) is null)
+            .Where(t => !blocked.Contains(t) && ctx.Sim.State.Plots[t.Value].Owner == ctx.PlayerId && ctx.Sim.State.CityAtTile(t) is null)
             .Select(t => new Choice(t, yields.Calculate(ctx.Sim, ctx.PlayerId, t).Yields))
             .Where(c => c.Yield != default).ToList();
     }
