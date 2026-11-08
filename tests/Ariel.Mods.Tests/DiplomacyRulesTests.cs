@@ -386,6 +386,49 @@ public sealed class DiplomacyRulesTests
         Assert.Contains(0, sim.TeamOf(2).Wars);
         Assert.False(Service(sim).HasDefensivePact(sim, 1, 2));
     }
+
+    [Fact]
+    public void Agreements_can_be_cancelled_after_ten_turns_but_are_binding_before()
+    {
+        var sim = Scenario(); Meet(sim, 0, 1);
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
+        Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 1 });
+        Assert.True(Service(sim).HasOpenBorders(sim, 0, 1));
+        Assert.True(Service(sim).HasDefensivePact(sim, 0, 1));
+
+        var cancelBorders = new CancelAgreementCommand { Player = 0, Target = 1, Agreement = DiplomaticAgreement.OpenBorders };
+        var cancelPact = new CancelAgreementCommand { Player = 1, Target = 0, Agreement = DiplomaticAgreement.DefensivePact };
+
+        Reject(sim, cancelBorders, "binding for ten turns");
+        Reject(sim, cancelPact, "binding for ten turns");
+
+        sim.State.Turn += 10;
+        Apply(sim, cancelBorders);
+        Assert.False(Service(sim).HasOpenBorders(sim, 0, 1));
+        Assert.True(Service(sim).HasDefensivePact(sim, 0, 1));
+
+        Apply(sim, cancelPact);
+        Assert.False(Service(sim).HasDefensivePact(sim, 0, 1));
+    }
+
+    [Fact]
+    public void War_dissolves_pacts_and_pacts_cannot_be_signed_while_at_war()
+    {
+        var sim = Scenario(); Meet(sim, 0, 1);
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
+        Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 1 });
+        Assert.True(Service(sim).HasOpenBorders(sim, 0, 1));
+        Assert.True(Service(sim).HasDefensivePact(sim, 0, 1));
+
+        // War dissolves pacts
+        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Assert.False(Service(sim).HasOpenBorders(sim, 0, 1));
+        Assert.False(Service(sim).HasDefensivePact(sim, 0, 1));
+
+        // Pacts cannot be signed while at war
+        Reject(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }, "at war");
+        Reject(sim, new SignDefensivePactCommand { Player = 0, Target = 1 }, "at war");
+    }
     /// <summary>Five gold per player, run after the Gold phase so settlement sees income earned during the turn.</summary>
     private sealed class IncomeProbe : IPlayerTurnSystem
     {

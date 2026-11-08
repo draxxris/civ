@@ -35,6 +35,8 @@ public interface IDiplomacyService
     bool HasDefensivePact(Simulation sim, int teamA, int teamB);
     string? ValidateAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement);
     void SignAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement);
+    string? ValidateCancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement);
+    void CancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement);
     string? ValidateWar(Simulation sim, int player, int target);
     void DeclareWar(Simulation sim, int player, int target);
     string? ValidatePeace(Simulation sim, int player, int target);
@@ -65,6 +67,13 @@ public sealed class SignDefensivePactCommand : GameCommand
     public int Target { get; init; }
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().ValidateAgreement(sim, Player, Target, DiplomaticAgreement.DefensivePact);
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().SignAgreement(sim, Player, Target, DiplomaticAgreement.DefensivePact);
+}
+public sealed class CancelAgreementCommand : GameCommand
+{
+    public int Target { get; init; }
+    public DiplomaticAgreement Agreement { get; init; }
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().ValidateCancelAgreement(sim, Player, Target, Agreement);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().CancelAgreement(sim, Player, Target, Agreement);
 }
 public sealed class ProposeDealCommand : GameCommand
 {

@@ -13,6 +13,7 @@ public sealed class DiplomacyMod : IMod
         context.RegisterStateComponent<DiplomacyState>("state");
         context.RegisterCommand<SignOpenBordersCommand>("open_borders");
         context.RegisterCommand<SignDefensivePactCommand>("defensive_pact");
+        context.RegisterCommand<CancelAgreementCommand>("cancel_agreement");
         context.RegisterCommand<ProposeDealCommand>("propose_deal");
         context.RegisterCommand<ExecuteDealCommand>("execute_deal");
         context.RegisterCommand<CancelDealCommand>("cancel_deal");

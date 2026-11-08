@@ -53,9 +53,9 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         }
     }
     public bool HasOpenBorders(Simulation sim, int teamA, int teamB) => teamA == teamB ||
-        (!sim.State.TeamById(teamA).Wars.Contains(teamB) && Relation(sim, teamA, teamB)?.OpenBordersStarted is not null);
+        (!sim.State.TeamById(teamA).Wars.Contains(teamB) && Relation(sim, teamA, teamB)?.HasOpenBorders == true);
     public bool HasDefensivePact(Simulation sim, int teamA, int teamB) => teamA != teamB &&
-        !sim.State.TeamById(teamA).Wars.Contains(teamB) && Relation(sim, teamA, teamB)?.DefensivePactStarted is not null;
+        !sim.State.TeamById(teamA).Wars.Contains(teamB) && Relation(sim, teamA, teamB)?.HasDefensivePact == true;
     public string? ValidateAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
     {
         var error = Participants(sim, player, target);
@@ -81,10 +81,28 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     public void SignAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
     {
         var relation = Relation(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id)!;
-        if (agreement == DiplomaticAgreement.OpenBorders) relation.OpenBordersStarted = sim.State.Turn;
-        else relation.DefensivePactStarted = sim.State.Turn;
+        relation.SignPact(agreement, sim.State.Turn);
     }
-    private static bool BindingPeace(Simulation sim, int a, int b) => Relation(sim, a, b)?.TreatyStarted is { } signed && sim.State.Turn - signed < BindingTurns;
+    public string? ValidateCancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
+    {
+        var error = Participants(sim, player, target);
+        if (error is not null) return error;
+        int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
+        if (!Enum.IsDefined(agreement)) return "unknown agreement";
+        if (!HasMet(sim, a, b)) return "teams have not met";
+        var relation = Relation(sim, a, b);
+        if (relation is null) return "no agreement exists";
+        int? started = agreement == DiplomaticAgreement.OpenBorders ? relation.OpenBordersStarted : relation.DefensivePactStarted;
+        if (started is null) return "agreement not active";
+        return sim.State.Turn - started < BindingTurns ? "agreement is binding for ten turns" : null;
+    }
+    public void CancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
+    {
+        var relation = Relation(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id);
+        relation?.CancelPact(agreement);
+    }
+    private static bool BindingPeace(Simulation sim, int a, int b) =>
+        Relation(sim, a, b)?.HasBindingPeace(sim.State.Turn, BindingTurns) == true;
     public string? ValidateWar(Simulation sim, int player, int target)
     {
         var error = Participants(sim, player, target);
@@ -99,14 +117,14 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
         var state = Edit(sim);
         // Offensive declarations dissolve ALL the aggressor's pacts before defending partners are collected.
-        foreach (var r in state.Relations.Values.Where(r => r.First == a || r.Second == a)) r.DefensivePactStarted = null;
-        var defenders = state.Relations.Values.Where(r => r.DefensivePactStarted is not null && (r.First == b || r.Second == b))
+        foreach (var r in state.Relations.Values.Where(r => r.First == a || r.Second == a)) r.CancelPact(DiplomaticAgreement.DefensivePact);
+        var defenders = state.Relations.Values.Where(r => r.HasDefensivePact && (r.First == b || r.Second == b))
             .Select(r => r.First == b ? r.Second : r.First).Where(t => t != a).Order().ToArray();
         StartWar(sim, a, b, true);
         foreach (int defender in defenders)
         {
             // The war consumes the victim's pact with each partner, whether or not that partner can join it.
-            Relation(sim, b, defender)!.DefensivePactStarted = null;
+            Relation(sim, b, defender)!.CancelPact(DiplomaticAgreement.DefensivePact);
             if (!sim.State.TeamById(defender).Wars.Contains(a) && !BindingPeace(sim, defender, a)) StartWar(sim, a, defender, false);
         }
     }
@@ -115,12 +133,7 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         EstablishContact(sim, aggressor, defender);
         var r = Relation(sim, aggressor, defender)!;
         sim.State.SetWar(aggressor, defender, true);
-        r.WarStarted = sim.State.Turn; r.OpenBordersStarted = null; r.DefensivePactStarted = null;
-        if (offensive)
-        {
-            if (aggressor == r.First) r.FirstOffensiveWars++;
-            else r.SecondOffensiveWars++;
-        }
+        r.StartWar(sim.State.Turn, aggressor, offensive);
         foreach (var deal in Edit(sim).Deals.Where(d => d.Status is DiplomaticDealStatus.Active or DiplomaticDealStatus.Proposed))
             if (Pair(sim.TeamOf(deal.Proposer).Id, sim.TeamOf(deal.Recipient).Id) == Pair(aggressor, defender)) deal.Status = DiplomaticDealStatus.Cancelled;
         sim.Events.Publish(new DiplomaticWarDeclared(aggressor, defender));
@@ -140,7 +153,7 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         EstablishContact(sim, a, b);
         var r = Relation(sim, a, b)!;
         sim.State.SetWar(a, b, false);
-        r.WarStarted = null; r.PeaceStarted = sim.State.Turn; r.TreatyStarted = sim.State.Turn;
+        r.MakePeace(sim.State.Turn);
         sim.Events.Publish(new DiplomaticPeaceSigned(a, b));
     }
 }

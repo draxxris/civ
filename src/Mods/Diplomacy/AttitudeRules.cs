@@ -67,7 +67,7 @@ internal sealed partial class DiplomacyService
         bool war = sim.State.TeamById(a).Wars.Contains(b);
         if (war) add("war", -3 + Growth(sim.State.Turn - (relation.WarStarted ?? sim.State.Turn), leader.AtWarAttitudeDivisor, leader.AtWarAttitudeChangeLimit));
         else add("years_of_peace", Growth(sim.State.Turn - relation.PeaceStarted, leader.AtPeaceAttitudeDivisor, leader.AtPeaceAttitudeChangeLimit));
-        int offensiveWars = b == relation.First ? relation.FirstOffensiveWars : relation.SecondOffensiveWars;
+        int offensiveWars = relation.OffensiveWarsBy(b);
         add("war_history", -3L * offensiveWars);
         if (HasOpenBorders(sim, a, b)) add("open_borders", Growth(sim.State.Turn - relation.OpenBordersStarted!.Value, leader.OpenBordersAttitudeDivisor, leader.OpenBordersAttitudeChangeLimit));
         if (HasDefensivePact(sim, a, b)) add("defensive_pact", Growth(sim.State.Turn - relation.DefensivePactStarted!.Value, leader.DefensivePactAttitudeDivisor, leader.DefensivePactAttitudeChangeLimit));
