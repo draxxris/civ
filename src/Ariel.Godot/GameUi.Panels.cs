@@ -6,7 +6,7 @@ namespace Ariel.Client;
 internal sealed partial class GameUi
 {
     private enum Modal { None, Religion, Corporations, Espionage, Events, Conquest, Diplomacy, Pedia, TechTree, Load }
-    private const string SaveDirectory = "user://saves";
+    internal const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
 
     private readonly PanelContainer _modal = Ui.Panel(margin: 12);

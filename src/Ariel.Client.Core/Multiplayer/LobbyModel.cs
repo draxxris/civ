@@ -15,7 +15,7 @@ public sealed record LobbyPeer(int Peer, string Name, bool ContentMatches);
 /// <summary>The host's game setup, apart from the seats.</summary>
 public sealed record LobbySetup(
     string WorldSize, string GameSpeed, string Handicap, string MapGenerator, string StartingEra, ulong Seed,
-    TurnMode TurnMode = TurnMode.Dynamic, IReadOnlyDictionary<string, bool>? GameOptions = null)
+    TurnMode TurnMode = TurnMode.Dynamic, IReadOnlyDictionary<string, bool>? GameOptions = null, int TurnTimerSeconds = 0)
 {
     /// <summary>The single-player defaults, with dynamic turns.</summary>
     public static LobbySetup Default(GameCatalog catalog)
@@ -25,8 +25,9 @@ public sealed record LobbySetup(
     }
 }
 
-/// <summary>Everything every peer sees in the lobby. The host owns it and sends the whole state after each change.</summary>
-public sealed record LobbyState(int Revision, LobbySetup Setup, IReadOnlyList<LobbySeat> Seats, IReadOnlyList<LobbyPeer> Peers)
+/// <summary>Everything every peer sees in the lobby. The host owns it and sends the whole state after each change.
+/// <see cref="SavedTurn"/> is set when the host loaded a saved game: then the seats are that game's players.</summary>
+public sealed record LobbyState(int Revision, LobbySetup Setup, IReadOnlyList<LobbySeat> Seats, IReadOnlyList<LobbyPeer> Peers, int? SavedTurn = null)
 {
     /// <summary>Peers holding human seats, ascending: the lockstep peers of the game.</summary>
     public int[] SeatedPeers() => Seats.Where(s => s.Kind == SeatKind.Human && s.Peer != null).Select(s => s.Peer!.Value).Distinct().Order().ToArray();
@@ -71,8 +72,20 @@ public sealed record LobbyState(int Revision, LobbySetup Setup, IReadOnlyList<Lo
     }
 }
 
-/// <summary>What a peer needs to build the agreed game: the settings, the lockstep peers, and its own seat.</summary>
-public sealed record GameStart(SimulationSettings Settings, int[] Peers, int LocalSeat, IReadOnlyDictionary<int, string> Names);
+/// <summary>What a peer needs to build the agreed game: new-game settings or a save, the lockstep peers, every peer's
+/// seat and name, and its own seat. <see cref="ResumeTick"/> is set for a peer joining a game in progress, with the
+/// batches the host held for that tick and later. <see cref="Early"/> holds messages that reached the lobby meant for the
+/// game: lockstep input from peers already playing, and everything after the start; the lobby keeps adding to it until
+/// it releases the connection.</summary>
+public sealed record GameStart(SimulationSettings? Settings, int[] Peers, int LocalSeat, IReadOnlyDictionary<int, string> Names)
+{
+    public string? Save { get; init; }
+    public int? ResumeTick { get; init; }
+    public IReadOnlyDictionary<int, int> Seats { get; init; } = new Dictionary<int, int>();
+    public IReadOnlyList<Ariel.Net.NetMessage> Early { get; init; } = [];
+    internal IReadOnlyList<CarriedBatch> Batches { get; init; } = [];
+    public int TurnTimerSeconds { get; init; }
+}
 
 /// <summary>A chat line; <see cref="Peer"/> is -1 for a system notice.</summary>
 public sealed record ChatLine(int Peer, string Name, string Text);

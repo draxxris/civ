@@ -24,9 +24,15 @@ public sealed partial class GameSession
         }
     }
 
-    /// <summary>Replace the simulation with a saved one from the same ruleset. A bad save leaves the current game untouched.</summary>
+    /// <summary>Replace the simulation with a saved one from the same ruleset. A bad save leaves the current game
+    /// untouched. A networked game refuses: every peer must load the same save, which the lobby arranges.</summary>
     public bool LoadFromJson(string json)
     {
+        if (!_channel.PlaysAbsentHumans)
+        {
+            SetMessage("Load a multiplayer game from the multiplayer lobby.");
+            return false;
+        }
         Simulation loaded;
         try { loaded = Game.SaveGame.Load(Sim.Content, json); }
         catch (Exception e) when (e is InvalidDataException or System.Text.Json.JsonException or KeyNotFoundException or InvalidOperationException)
@@ -34,8 +40,17 @@ public sealed partial class GameSession
             SetMessage($"Can't load: {e.Message}");
             return false;
         }
-        Sim = loaded;
-        _ordersTurn = loaded.State.Turn;
+        ReplaceSimulation(loaded);
+        Message = "Game loaded";
+        return true;
+    }
+
+    /// <summary>Continue from another simulation of the same game, such as a loaded save or the host's snapshot after a
+    /// desync: selections, standing orders and notifications start afresh.</summary>
+    public void ReplaceSimulation(Simulation sim)
+    {
+        Sim = sim;
+        _ordersTurn = sim.State.Turn;
         _gotos.Clear();
         _choices.Clear();
         _choicesKey = (-1, -1);
@@ -43,10 +58,8 @@ public sealed partial class GameSession
         SelectedCityId = null;
         SelectedUnitId = null;
         SelectNextUnit();
-        Message = "Game loaded";
         Revision++;
         WorldRevision++;
-        return true;
     }
 
     public bool LoadGame(string path)

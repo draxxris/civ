@@ -25,6 +25,7 @@ internal sealed partial class MultiplayerScreen : Control
     private VBoxContainer? _seats, _setup;
     private Label? _lobbyMessage;
     private Button? _startButton;
+    private string? _loadedSave;
 
     /// <summary>The lobby has a game to start; the receiver takes the lobby over.</summary>
     public event Action<Lobby>? Starting;
@@ -201,7 +202,7 @@ internal sealed partial class MultiplayerScreen : Control
         BuildSetup(lobby, state.Setup);
         Ui.Clear(_seats);
         for (int i = 0; i < state.Seats.Count; i++) _seats.AddChild(SeatRow(lobby, state, i));
-        if (lobby.IsHost)
+        if (lobby.IsHost && state.SavedTurn == null)
         {
             var add = Ui.HBox(8);
             add.AddChild(Ui.Button("Add AI seat", () => lobby.AddSeat(SeatKind.Ai)));
@@ -216,13 +217,21 @@ internal sealed partial class MultiplayerScreen : Control
     {
         Ui.Clear(_setup!);
         _setup!.AddChild(Ui.Heading("Game"));
-        if (!lobby.IsHost)
+        string timer = setup.TurnTimerSeconds > 0 ? $", {setup.TurnTimerSeconds} s turn timer" : "";
+        if (!lobby.IsHost || lobby.State.SavedTurn != null)
         {
             string Name(IReadOnlyList<SetupChoice> choices, string id) => choices.FirstOrDefault(c => c.Id == id)?.Name ?? id;
+            if (lobby.State.SavedTurn is int turn) _setup.AddChild(Ui.Text($"Continuing a saved game at turn {turn}.", 14, Ui.Accent));
             _setup.AddChild(Ui.Text($"{Name(_catalog.WorldSizes, setup.WorldSize)} world, {Name(_catalog.GameSpeeds, setup.GameSpeed)} speed, "
-                + $"{Name(_catalog.Handicaps, setup.Handicap)} difficulty, {setup.TurnMode} turns, seed {setup.Seed}", 14));
+                + $"{Name(_catalog.Handicaps, setup.Handicap)} difficulty, {setup.TurnMode} turns, seed {setup.Seed}{timer}", 14));
+            if (lobby.IsHost)
+            {
+                _setup.AddChild(Row("Saved game", SaveChoice(lobby)));
+                _setup.AddChild(Row("Turn timer", TimerBox(lobby, setup)));
+            }
             return;
         }
+        _setup.AddChild(Row("Saved game", SaveChoice(lobby)));
         _setup.AddChild(Row("World size", Choice(_catalog.WorldSizes, setup.WorldSize, id => lobby.SetSetup(setup with { WorldSize = id }))));
         if (_catalog.MapGenerators.Count > 0)
             _setup.AddChild(Row("Map", Choice(_catalog.MapGenerators, setup.MapGenerator, id => lobby.SetSetup(setup with { MapGenerator = id }))));
@@ -234,6 +243,35 @@ internal sealed partial class MultiplayerScreen : Control
         seed.TextSubmitted += text => { if (ulong.TryParse(text, out var s)) lobby.SetSetup(setup with { Seed = s }); };
         seed.FocusExited += () => { if (ulong.TryParse(seed.Text, out var s) && s != setup.Seed) lobby.SetSetup(setup with { Seed = s }); };
         _setup.AddChild(Row("Seed", seed));
+        _setup.AddChild(Row("Turn timer", TimerBox(lobby, setup)));
+    }
+
+    /// <summary>Seconds each turn segment may last before the host ends it; 0 is no timer.</summary>
+    private static SpinBox TimerBox(Lobby lobby, LobbySetup setup)
+    {
+        var box = new SpinBox { MinValue = 0, MaxValue = 3600, Step = 15, Value = setup.TurnTimerSeconds, Suffix = "s (0 = off)" };
+        box.ValueChanged += v => lobby.SetSetup(setup with { TurnTimerSeconds = (int)v });
+        return box;
+    }
+
+    /// <summary>A new game, or one of the saves in the game's save folder, newest first.</summary>
+    private OptionButton SaveChoice(Lobby lobby)
+    {
+        var dir = ProjectSettings.GlobalizePath(GameUi.SaveDirectory);
+        var files = System.IO.Directory.Exists(dir)
+            ? System.IO.Directory.GetFiles(dir, "*.json").OrderByDescending(System.IO.File.GetLastWriteTime).ToList() : [];
+        var choices = new List<SetupChoice> { new("", "New game") };
+        choices.AddRange(files.Select(f => new SetupChoice(f, System.IO.Path.GetFileNameWithoutExtension(f))));
+        string selected = lobby.State.SavedTurn == null ? "" : _loadedSave ?? "";
+        return Choice(choices, selected, path =>
+        {
+            if (path.Length == 0) { _loadedSave = null; lobby.ClearSave(); return; }
+            string? problem;
+            try { problem = lobby.LoadSave(System.IO.File.ReadAllText(path)); }
+            catch (System.IO.IOException e) { problem = e.Message; }
+            if (problem == null) _loadedSave = path;
+            else if (_lobbyMessage != null) Ui.Set(_lobbyMessage, problem);
+        });
     }
 
     private Control SeatRow(Lobby lobby, LobbyState state, int index)
@@ -252,7 +290,8 @@ internal sealed partial class MultiplayerScreen : Control
             action = Ui.Button("Take", () => lobby.TakeSeat(index));
         else if (mine && !lobby.IsHost) action = Ui.Button("Stand up", lobby.LeaveSeat);
         row.AddChild(Cell(action, 90));
-        bool canPickLeader = mine || (lobby.IsHost && seat.Kind == SeatKind.Ai);
+        bool saved = state.SavedTurn != null;
+        bool canPickLeader = !saved && (mine || (lobby.IsHost && seat.Kind == SeatKind.Ai));
         string leaderKey = seat.Leader.Length == 0 ? "" : seat.Leader + "|" + seat.Civilization;
         if (canPickLeader)
         {
@@ -270,7 +309,7 @@ internal sealed partial class MultiplayerScreen : Control
             var chosen = _catalog.Leaders.FirstOrDefault(l => l.Id == seat.Leader && (seat.Civilization.Length == 0 || l.CivilizationId == seat.Civilization));
             row.AddChild(Cell(Ui.Text(chosen == null ? "Random leader" : $"{chosen.Name} ({chosen.CivilizationName})", 14, Ui.Dim, wrap: false), 240));
         }
-        if (lobby.IsHost)
+        if (lobby.IsHost && !saved)
         {
             var team = new SpinBox { MinValue = 0, MaxValue = 31, Value = seat.Team >= 0 ? seat.Team : index, Prefix = "Team" };
             team.ValueChanged += v => lobby.SetTeam(index, (int)v);

@@ -38,12 +38,17 @@ internal sealed partial class ChatView : VBoxContainer
     }
 }
 
-/// <summary>In-game multiplayer overlay: chat above the end-turn button, and a banner when the connection fails.</summary>
+/// <summary>In-game multiplayer overlay above the end-turn button: who is playing, the turn timer, chat, and a banner
+/// when the connection fails. It also ticks the game's per-frame work. Labels change only when their text would.</summary>
 internal sealed partial class MultiplayerOverlay : CanvasLayer
 {
     private readonly MultiplayerGame _game;
     private readonly Label _problem = Ui.Text("", 15, Ui.Bad);
+    private readonly Label _players = Ui.Text("", 13, Ui.Dim);
+    private readonly Label _timer = Ui.Text("", 15, Ui.Warn);
     private string? _shownProblem;
+    private int _shownPlayers = -1;
+    private int? _shownSeconds = -1;
 
     public MultiplayerOverlay(MultiplayerGame game) => _game = game;
 
@@ -55,6 +60,9 @@ internal sealed partial class MultiplayerOverlay : CanvasLayer
         var column = Ui.VBox(4);
         _problem.Visible = false;
         column.AddChild(_problem);
+        column.AddChild(_players);
+        _timer.Visible = false;
+        column.AddChild(_timer);
         column.AddChild(new ChatView(_game.Chat, _game.Say));
         panel.AddChild(column);
         AddChild(panel);
@@ -62,6 +70,23 @@ internal sealed partial class MultiplayerOverlay : CanvasLayer
 
     public override void _Process(double delta)
     {
+        _game.Update();
+        int playersKey = _game.Revision * 31 + _game.Session.WorldRevision;
+        if (playersKey != _shownPlayers)
+        {
+            _shownPlayers = playersKey;
+            var sim = _game.Session.Sim;
+            var seated = _game.Players().ToDictionary(p => p.Seat, p => p.Name);
+            _players.Text = string.Join(", ", sim.State.Players.Where(p => p.Id < sim.Settings.PlayerCount).Select(p =>
+                (seated.TryGetValue(p.Id, out var name) ? name : p.Ai != null ? $"{p.Name} (AI)" : p.Name) + (p.EndedTurn ? " ✓" : "")));
+        }
+        var seconds = _game.TurnSecondsLeft;
+        if (seconds != _shownSeconds)
+        {
+            _shownSeconds = seconds;
+            _timer.Visible = seconds != null;
+            if (seconds is int s) _timer.Text = $"Turn ends in {s / 60}:{s % 60:00}";
+        }
         var problem = _game.Session.ConnectionProblem;
         if (ReferenceEquals(problem, _shownProblem)) return;
         _shownProblem = problem;

@@ -15,8 +15,9 @@ public sealed class Player
     public string Leader { get; init; } = "";
     /// <summary>Initial location selected by the ruleset setup, or null for legacy games.</summary>
     public TileId? StartingPlot { get; set; }
-    /// <summary>Controlling AI service id, or null for a human.</summary>
-    public string? Ai { get; init; }
+    /// <summary>Controlling AI service id, or null for a human. Changes mid-game only through
+    /// <see cref="SetPlayerControlCommand"/>, when a multiplayer seat is handed to the AI or back.</summary>
+    public string? Ai { get; set; }
     /// <summary>Owning team id.</summary>
     public int TeamId { get; set; }
     /// <summary>Accumulated culture.</summary>

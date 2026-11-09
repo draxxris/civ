@@ -242,7 +242,7 @@ public sealed partial class Simulation
     /// Commands the rules issue themselves (turn systems, AI, effects) use <see cref="TryApply"/>.</summary>
     public bool TrySubmit(GameCommand cmd, out string? error)
     {
-        if (!MayAct(cmd.Player)) { error = "Not your turn"; return false; }
+        if (!cmd.OutOfTurn && !MayAct(cmd.Player)) { error = "Not your turn"; return false; }
         return TryApply(cmd, out error);
     }
     /// <summary>Validate and apply; rejected commands must not change state.</summary>

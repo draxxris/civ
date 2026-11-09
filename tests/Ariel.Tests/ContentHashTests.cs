@@ -25,14 +25,15 @@ public sealed class ContentHashTests
             Instance = new ProbeMod(definitions),
         }]);
 
-        // SHA-256 of the protocol fixture: runtime converter data, mod version, core command, empty extensions.
+        // SHA-256 of the protocol fixture: runtime converter data, mod version, core commands, empty extensions.
         // The probe type's namespace is part of the digest, so the probe's own name appears here; the value below was
         // the pre-rename one and was recomputed once when the namespaces became Ariel.
-        Assert.Equal("5B7DBC7A0C35382B87131E9367E9D253F65BEA742E6E07618CFC3ABCC9F0CAA5", content.ContentHash);
+        Assert.Equal("A58A22535EC2BF3C5CDB78BA0418CC8A0DBAE2CAF8D47FFB297BAE95EC15C823", content.ContentHash);
         // The same fixture's digest as the pre-rename build computed it. Pinning the legacy digest here, rather
         // than only comparing it with the current one, is what catches a digest input that was not mapped back:
         // a forgotten mapping still yields a different, self-consistent legacy digest that no old save matches.
-        Assert.Equal("AD81C9ADE53FC52F78D67E786535F318B96645AE685AF538A020DC2F1CD0B5E0", content.LegacyContentHash);
+        // Both values changed again when core:set_player_control joined the built-in commands.
+        Assert.Equal("2968C767D33A71934AB1047C65931A3AE880C8A00FEC02CE79BE369BF49C3E11", content.LegacyContentHash);
     }
 
     private sealed class ProbeMod(ContentDef[] definitions) : IMod

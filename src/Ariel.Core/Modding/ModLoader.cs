@@ -62,6 +62,7 @@ public static class ModLoader
         var data = PreparedModData.Prepare(ordered);
         var db = new ContentDb();
         db.CommandTypes.Register(new CommandTypeDef("core:end_turn", typeof(Game.EndTurnCommand)), "core");
+        db.CommandTypes.Register(new CommandTypeDef("core:set_player_control", typeof(Game.SetPlayerControlCommand)), "core");
         for (int i = 0; i < ordered.Count; i++)
         {
             var mod = ordered[i];

@@ -6,18 +6,17 @@ namespace Ariel.Client;
 /// <summary>
 /// A networked game: commands are checked here for an immediate answer, then queued in lockstep and applied, with every
 /// other peer's, when the ticks that carry them complete. A pump stops after a tick that started a new turn, so the
-/// session reads each turn's events before the event bus moves on. A desync or a failed handshake stops the game and
-/// becomes <see cref="Problem"/>.
+/// session reads each turn's events before the event bus moves on. A failed handshake stops the game and becomes
+/// <see cref="Problem"/>; a desync is the owner's to resolve (see <see cref="MultiplayerGame"/>).
 /// </summary>
 public sealed class LockstepChannel : ICommandChannel
 {
+    /// <summary>Most ticks one pump runs, so a frame never stalls.</summary>
+    public const int MaxTicksPerPump = 64;
+
     private readonly LockstepSession _lockstep;
 
-    public LockstepChannel(LockstepSession lockstep)
-    {
-        _lockstep = lockstep;
-        lockstep.Desync += tick => Problem ??= $"The game is out of sync (step {tick}).";
-    }
+    public LockstepChannel(LockstepSession lockstep) => _lockstep = lockstep;
 
     public bool PlaysAbsentHumans => false;
 
@@ -43,7 +42,8 @@ public sealed class LockstepChannel : ICommandChannel
         int turn = sim.State.Turn;
         try
         {
-            while (Problem == null && sim.State.Turn == turn && _lockstep.Pump(maxTicks: 1) > 0) { }
+            // Bounded: a peer left alone in lockstep needs nobody else's input and could run ticks forever.
+            for (int i = 0; i < MaxTicksPerPump && Problem == null && sim.State.Turn == turn && _lockstep.Pump(maxTicks: 1) > 0; i++) { }
         }
         catch (InvalidDataException e) { Problem = e.Message; }
         return _lockstep.Applied != applied;

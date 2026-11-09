@@ -129,22 +129,4 @@ public sealed class LobbyTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Null(a.Session.ConnectionProblem);
         Assert.Equal(a.Session.Sim.ComputeHash(), b.Session.Sim.ComputeHash());
     }
-
-    [Fact]
-    public void A_peer_leaving_mid_game_is_reported_to_the_others()
-    {
-        var catalog = Catalog();
-        var (host, guest) = Pair(catalog);
-        guest.TakeSeat(1);
-        Settle(host, guest);
-        Assert.Null(host.Start());
-        Settle(host, guest);
-        using var a = MultiplayerGame.Create(catalog, host.Release(), host.Starting!, host.Chat);
-        var b = MultiplayerGame.Create(catalog, guest.Release(), guest.Starting!, guest.Chat);
-
-        b.Dispose();
-        a.Session.Pump();
-
-        Assert.Equal("Bo left the game.", a.Session.ConnectionProblem);
-    }
 }

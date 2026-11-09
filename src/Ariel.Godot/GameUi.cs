@@ -92,6 +92,7 @@ internal sealed partial class GameUi : CanvasLayer
         _message.OffsetTop = -96; _message.OffsetBottom = -66;
         _message.MouseFilter = Control.MouseFilterEnum.Ignore;
         _endTurn = Ui.Button("End turn", session.EndTurn, size: 18);
+        _endTurn.ClipText = true;
         _endTurn.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomRight);
         _endTurn.OffsetLeft = -220; _endTurn.OffsetTop = -64; _endTurn.OffsetRight = -12; _endTurn.OffsetBottom = -12;
         _researchDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
@@ -195,7 +196,8 @@ internal sealed partial class GameUi : CanvasLayer
             var waiting = _session.WaitingFor();
             _endTurn.Disabled = waiting != null;
             _endTurn.Text = waiting is null ? idle > 0 ? $"End turn ({idle} waiting)" : "End turn"
-                : waiting.Length > 0 ? $"Waiting for {waiting}" : "Waiting...";
+                : waiting.Length > 0 ? $"Waiting: {waiting}" : "Waiting...";
+            _endTurn.TooltipText = waiting is { Length: > 0 } ? $"Waiting for {waiting}" : "";
         }
         if (MapRenderer.LogTimings)
             GD.Print($"ui update: top {topMs:F2} ms, left {leftMs:F2} ms, city {cityMs:F2} ms, "

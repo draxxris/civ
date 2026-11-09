@@ -13,6 +13,9 @@ public abstract class GameCommand
     /// <summary>Issuing player id.</summary>
     public int Player { get; init; }
 
+    /// <summary>Whether a player may issue this command outside its turn segment. Session control, not play.</summary>
+    public virtual bool OutOfTurn => false;
+
     /// <summary>Return null if legal, otherwise the reason it was rejected.</summary>
     public abstract string? Validate(Simulation sim);
     /// <summary>Apply a validated command deterministically.</summary>
@@ -35,6 +38,38 @@ public sealed class EndTurnCommand : GameCommand
     {
         sim.State.PlayerById(Player).EndedTurn = true;
         sim.ContinueTurn(mayAdvance: true);
+    }
+}
+
+/// <summary>
+/// Hands a player to an AI or back to a human, as a lockstep command so every peer switches at the same step: a
+/// multiplayer host issues it when a player disconnects or rejoins. A player handed to the AI mid-turn plays that turn
+/// at once if its segment is moving, so the game does not wait for someone who left. <see cref="GameCommand.Player"/>
+/// is the issuer; <see cref="Target"/> is the player whose control changes.
+/// </summary>
+public sealed class SetPlayerControlCommand : GameCommand
+{
+    /// <summary>The player whose control changes.</summary>
+    public int Target { get; init; }
+    /// <summary>The AI service to take over, or null to hand the player back to a human.</summary>
+    public string? Ai { get; init; }
+
+    /// <inheritdoc/>
+    public override bool OutOfTurn => true;
+
+    /// <inheritdoc/>
+    public override string? Validate(Simulation sim)
+    {
+        if (!sim.State.Players.Any(p => p.Id == Target)) return "unknown player";
+        if (Ai != null && !sim.Content.PlayerAIs.All.Any(a => a.Id == Ai)) return $"unknown AI '{Ai}'";
+        return sim.State.PlayerById(Target).Ai == Ai ? "Nothing to change." : null;
+    }
+
+    /// <inheritdoc/>
+    public override void Apply(Simulation sim)
+    {
+        sim.State.PlayerById(Target).Ai = Ai;
+        if (Ai != null) sim.ContinueTurn(mayAdvance: true);
     }
 }
 

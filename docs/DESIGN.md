@@ -1536,6 +1536,38 @@ explicit content error. Peers then submit command batches and exchange state has
 after each tick. A state mismatch raises `Desync`. The handshake identifies content, not
 initial setup. State hashes detect setup divergence.
 
+### Multiplayer sessions
+
+`Ariel.Net` carries lockstep over an `ITransport`. `TcpTransport` is a star for LAN and
+direct IP: clients connect to the host, which relays their messages and stamps the true
+sender. Each link has its own reader, writer and heartbeat tasks, so a long turn on the
+game thread never looks like a lost connection. Received messages queue until `Poll`.
+
+`Ariel.Client.Core/Multiplayer` holds the engine-free session layer. In the `Lobby`, the
+host owns the `LobbyState` (setup, seats, peers, chat) and broadcasts it after every
+request. On start, the host sends every peer either the resolved `SimulationSettings`,
+as canonical JSON, or the save it loaded. `MultiplayerGame` builds the simulation, the
+`LockstepSession` and a `GameSession` over a `LockstepChannel`.
+
+Lockstep membership changes at ticks the host chooses, which no peer can have run yet:
+
+- A seated peer that leaves stays a member up to the last batch the host received from
+  it. Its player passes to the AI through `SetPlayerControlCommand`, a built-in command
+  allowed out of turn, so every peer switches at the same step.
+- A peer that connects later takes back a seat the AI holds. The host makes it a member
+  from `LockstepSession.NextSubmit`. When its own game reaches that tick
+  (`SnapshotBefore`), it sends the joiner the save and every batch it holds from that
+  tick on, and the joiner continues with `LockstepSession.Resume`.
+- After a desync, every peer writes its save to `user://desync`, and the host sends
+  everyone the same kind of snapshot to restart from (`LockstepSession.Restart`).
+  `mise run check:desync-diff -- A.json B.json` prints where two such saves differ.
+
+An optional turn timer runs on the host's clock. When it runs out, the host submits
+`EndTurnCommand`s for the humans still moving, so the result stays deterministic.
+`mise run check:sync` checks determinism across processes, thread counts and
+save/reload. `mise run check:multiplayer` plays a host and a guest client against each
+other over localhost.
+
 ## Feature content mods
 
 `src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government,

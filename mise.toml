@@ -117,6 +117,10 @@ run = "tools/sync-check.sh"
 description = "Two game clients (host and guest) play over localhost TCP under Xvfb and must reach the same state: mise run check:multiplayer -- [--turns N] [--world duel] [--opponents N] [--out-dir DIR]"
 run = "tools/mp-smoke.sh"
 
+[tasks."check:desync-diff"]
+description = "Print where two saves of one game differ, e.g. the files peers write to user://desync after a desync: mise run check:desync-diff -- A.json B.json [--max N]"
+run = "tools/desync-diff.sh"
+
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
 depends = ["cool"]

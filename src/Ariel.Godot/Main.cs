@@ -241,6 +241,7 @@ public partial class Main : Node3D
                 return;
             }
             _multiplayer = multiplayer.Result;
+            _multiplayer.DesyncDirectory = ProjectSettings.GlobalizePath("user://desync");
             _status.Visible = false;
             Launch(_multiplayer.Session, _multiplayer);
             return;
