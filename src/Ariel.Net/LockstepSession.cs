@@ -4,10 +4,12 @@ namespace Ariel.Net;
 
 /// <summary>
 /// Deterministic lockstep. Every peer submits a (possibly empty) command batch for each tick, <c>InputDelay</c> ticks ahead.
-/// A tick executes only once all peers' batches for it are present; batches apply in ascending peer order.
-/// After each tick every peer reports its state hash; a mismatch raises <see cref="Desync"/>.
+/// A tick executes only once all peers' batches for it are present; batches apply in ascending peer order, each command
+/// through <see cref="Simulation.TrySubmit"/>, so a command out of its player's turn is refused on every peer alike.
+/// After each tick that applied commands every peer reports its state hash; a mismatch raises <see cref="Desync"/>.
+/// Empty ticks cannot change the state, so they are not hashed: hashing serializes the whole game.
 /// </summary>
-public sealed class LockstepSession
+public sealed class LockstepSession : IDisposable
 {
     private readonly Simulation _sim;
     private readonly CommandCodec _codec;
@@ -25,6 +27,8 @@ public sealed class LockstepSession
     private bool _announced;
 
     public int Tick { get; private set; }
+    /// <summary>Commands applied so far, from every peer, accepted or not; it moves only when a tick had input.</summary>
+    public long Applied { get; private set; }
     public event Action<int>? Desync;
 
     public LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, IEnumerable<int> peers, int localPeer, int inputDelay = 2)
@@ -43,9 +47,11 @@ public sealed class LockstepSession
     /// <summary>Queue a local command; it goes out with the next submitted batch.</summary>
     public void Enqueue(GameCommand cmd) => _pending.Add(_codec.Encode(cmd));
 
-    /// <summary>Submit local input and run every tick that is complete. Call as often as you like; returns how many ticks ran.</summary>
-    public int Pump()
+    /// <summary>Receive, submit local input and run every complete tick, up to <paramref name="maxTicks"/>. Call as
+    /// often as you like; returns how many ticks ran.</summary>
+    public int Pump(int maxTicks = int.MaxValue)
     {
+        _transport.Poll();
         // Repeat while waiting: endpoints may not have subscribed when a peer first announced itself.
         if (!_announced || _handshakes.Count < _peers.Length)
         {
@@ -55,11 +61,11 @@ public sealed class LockstepSession
         if (_handshakeError != null) throw new InvalidDataException(_handshakeError);
         if (_handshakes.Count < _peers.Length) return 0;
         int ran = 0;
-        while (true)
+        while (ran < maxTicks)
         {
             while (_nextSubmit <= Tick + _delay)
             {
-                var batch = _pending.ToArray();
+                string[] batch = _pending.Count == 0 ? [] : _pending.ToArray();
                 _pending.Clear();
                 Store(_nextSubmit, _local, batch);
                 _transport.Broadcast(new NetMessage(NetMessageKind.Commands, _nextSubmit, _local, batch, 0));
@@ -69,21 +75,33 @@ public sealed class LockstepSession
             if (!_batches.TryGetValue(Tick, out var tickBatches) || _peers.Any(p => !tickBatches.ContainsKey(p)))
                 return ran;
 
+            bool any = false;
             foreach (var p in _peers)
                 foreach (var text in tickBatches[p])
-                    _sim.TryApply(_codec.Decode(text), out _);
+                {
+                    _sim.TrySubmit(_codec.Decode(text), out _);
+                    any = true;
+                    Applied++;
+                }
 
-            var hash = _sim.ComputeHash();
-            StoreHash(Tick, _local, hash);
-            _transport.Broadcast(new NetMessage(NetMessageKind.Hash, Tick, _local, [], hash));
+            if (any)
+            {
+                var hash = _sim.ComputeHash();
+                StoreHash(Tick, _local, hash);
+                _transport.Broadcast(new NetMessage(NetMessageKind.Hash, Tick, _local, [], hash));
+            }
             _batches.Remove(Tick);
             Tick++;
             ran++;
         }
+        return ran;
     }
+
+    public void Dispose() => _transport.Received -= OnReceived;
 
     private void OnReceived(NetMessage m)
     {
+        if (m.Kind is not (NetMessageKind.Handshake or NetMessageKind.Commands or NetMessageKind.Hash)) return;
         if (!_peers.Contains(m.Peer)) throw new InvalidDataException($"Unknown lockstep peer {m.Peer}");
         if (m.Kind == NetMessageKind.Handshake)
         {

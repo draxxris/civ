@@ -70,6 +70,7 @@ public class LockstepTests
         bool desync = false;
         a.Desync += _ => desync = true;
         simA.State.Turn = 99; // simulate a nondeterminism bug
+        a.Enqueue(new EndTurnCommand { Player = 0 }); // only ticks that apply commands are hashed
         PumpAll(a, b, 10);
         Assert.True(desync);
     }
