@@ -108,6 +108,11 @@ description = "Run operational benchmarks without timing thresholds"
 depends = ["cool"]
 run = "dotnet run --project tools/Ariel.Benchmarks/Ariel.Benchmarks.csproj --configuration Release"
 
+[tasks."check:sync"]
+description = "Play one AI game in three processes (1 CPU, all CPUs, all CPUs with save/reload) and fail unless every turn hash matches: mise run check:sync -- [--seed N] [--players N] [--turns N]"
+depends = ["cool"]
+run = "tools/sync-check.sh"
+
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
 depends = ["cool"]

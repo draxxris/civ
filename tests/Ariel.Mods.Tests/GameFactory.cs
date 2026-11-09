@@ -22,8 +22,9 @@ public static class GameFactory
     }
     /// <summary>Headless AI game with the same setup defaults as the normal feature harness.</summary>
     public static Simulation CreateAi(ContentDb content, ulong seed = 1, int players = 4,
-        string world = "foundation:worldsize_small") => new(content, new SimulationSettings
+        string world = "foundation:worldsize_small", TurnMode turnMode = TurnMode.Simultaneous) => new(content, new SimulationSettings
     {
+        TurnMode = turnMode,
         Seed = seed, WorldSize = world, MapGenerator = "world:continents",
         GameSpeed = "foundation:gamespeed_normal", Handicap = "foundation:handicap_noble",
         StartingEra = "foundation:era_ancient", PlayerCount = players,
