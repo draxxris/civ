@@ -34,7 +34,7 @@ internal static class DebugFocusFinder
             case "peak": return TerrainShowcase.Focus(session);
             case "river": return TerrainShowcase.RiverFocus(session);
             case "city":
-                return state.Cities.Where(c => c.Owner == GameSession.Human).Select(c => (Hex?)c.Position).FirstOrDefault()
+                return state.Cities.Where(c => c.Owner == session.LocalPlayer).Select(c => (Hex?)c.Position).FirstOrDefault()
                     ?? session.Unit?.Position;
         }
         Func<Plot, bool> match = kind.ToLowerInvariant() switch

@@ -111,7 +111,7 @@ public sealed partial class GameSession
     public CityPlate PlateOf(City known)
     {
         var city = Sim.State.Cities.FirstOrDefault(c => c.Id == known.Id);
-        if (city == null || city.Owner != Human) return new(known.Name, known.Population, 0f, null, null, null, null);
+        if (city == null || city.Owner != LocalPlayer) return new(known.Name, known.Population, 0f, null, null, null, null);
         var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
         float food = growth.Threshold > 0 ? Math.Clamp((float)city.FoodStored / growth.Threshold, 0f, 1f) : 0f;
         var row = QueueRows(city).FirstOrDefault();
@@ -171,7 +171,7 @@ public sealed partial class GameSession
     {
         var plot = Sim.State.Plots[tile.Value];
         var hex = Sim.State.Grid.HexOf(tile);
-        var y = Service<IPlotYieldService>().Calculate(Sim, Human, tile).Yields;
+        var y = Service<IPlotYieldService>().Calculate(Sim, LocalPlayer, tile).Yields;
         var name = plot.Feature is { } f ? Sim.Content.Get<Schema.FeatureDef>(f).Name : Sim.Content.Get<Schema.TerrainDef>(plot.Terrain).Name;
         return new(hex, name, y.Food, y.Production, y.Commerce);
     }
@@ -231,7 +231,7 @@ public sealed partial class GameSession
         if (service?.Calculate(Sim, city.Id) is not { } result) return null;
         return new(result.UnitId, Sim.Content.Get<Schema.UnitDef>(result.UnitId).Name, result.PopulationCost,
             result.MinPopulation, result.Experience, result.AngerTurns, result.MaxPlayerDrafts,
-            service.Validate(Sim, Human, city.Id));
+            service.Validate(Sim, LocalPlayer, city.Id));
     }
 
     private IReadOnlyList<HurryOption> HurryOptions(City city)
@@ -241,7 +241,7 @@ public sealed partial class GameSession
         return Sim.Content.Get<Schema.HurryDef>().All.OrderBy(h => h.Id, StringComparer.Ordinal).Select(h =>
         {
             var cost = service.Calculate(Sim, city.Id, h.Id);
-            return new HurryOption(h.Id, h.Name, cost.Gold, cost.Population, service.Validate(Sim, Human, city.Id, h.Id));
+            return new HurryOption(h.Id, h.Name, cost.Gold, cost.Population, service.Validate(Sim, LocalPlayer, city.Id, h.Id));
         }).ToList();
     }
 

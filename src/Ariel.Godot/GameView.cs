@@ -61,7 +61,7 @@ internal sealed partial class GameView : Node3D
         AddChild(_camera);
         _ui = new GameUi(_session, _icons);
         AddChild(_ui);
-        var start = _session.Unit?.Position ?? _session.Sim.State.Cities.FirstOrDefault(c => c.Owner == GameSession.Human)?.Position ?? new Hex(0, 0);
+        var start = _session.Unit?.Position ?? _session.Sim.State.Cities.FirstOrDefault(c => c.Owner == _session.LocalPlayer)?.Position ?? new Hex(0, 0);
         _camera.FocusOn(MapRenderer.PositionOf(start));
     }
 
@@ -73,6 +73,7 @@ internal sealed partial class GameView : Node3D
             var turn = TurnDirection();
             _camera.Rotate(turn.X * TurnRate * (float)delta, turn.Y * TiltRate * (float)delta);
         }
+        _session.Pump(); // Networked commands apply here; a local game returns at once.
         var city = _session.City;
         _camera.FollowCity(city?.Id, city == null ? Vector3.Zero : MapRenderer.PositionOf(city.Position));
         _map.Refresh();

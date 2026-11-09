@@ -25,11 +25,11 @@ public sealed partial class GameSession
     {
         var service = Religions;
         if (service == null) return new(null, null, false, 0, 0, 0, null, []);
-        var state = service.StateReligion(Sim, Human);
+        var state = service.StateReligion(Sim, LocalPlayer);
         var founded = Sim.Content.Get<Schema.ReligionDef>().All.OrderBy(r => r.Name, StringComparer.Ordinal).Select(r => RowOf(service, r, state)).ToList();
-        var preview = service.PreviewConversion(Sim, Human);
+        var preview = service.PreviewConversion(Sim, LocalPlayer);
         int remaining = Me.Extensions.Get<ReligionPlayerState>(Sim.Content)?.ConversionTimer ?? 0;
-        string? none = service.ValidateConversion(Sim, Human, null);
+        string? none = service.ValidateConversion(Sim, LocalPlayer, null);
         bool can = founded.Any(r => r.CanAdopt) || (state != null && none == null);
         string? name = state == null ? null : Sim.Content.Get<Schema.ReligionDef>(state).Name;
         return new(state, name, can, preview.AnarchyTurns, preview.CooldownTurns, remaining, none, founded);
@@ -39,7 +39,7 @@ public sealed partial class GameSession
     {
         int? holy = service.HolyCity(Sim, def.Id);
         var city = holy is int id ? Sim.State.FindCity(id) : null;
-        string? blocked = def.Id == state ? "Already the state religion" : service.ValidateConversion(Sim, Human, def.Id);
+        string? blocked = def.Id == state ? "Already the state religion" : service.ValidateConversion(Sim, LocalPlayer, def.Id);
         string? tech = def.FoundingTech is { } t && Sim.Content.TryGet<Schema.TechDef>(t, out var techDef) ? techDef.Name : null;
         return new(def.Id, def.Name, def.Adjective, def.Icon, def.Help, holy != null || Founded(def.Id), tech, holy, city?.Name,
             city?.Position, def.Id == state, blocked == null, blocked);
@@ -49,7 +49,7 @@ public sealed partial class GameSession
         Sim.State.Extensions.Get<ReligionGameState>(Sim.Content)?.Founded.ContainsKey(religion) == true;
 
     /// <summary>Adopt a state religion, or pass null to drop to none. The rules decide anarchy and cooldown.</summary>
-    public bool AdoptStateReligion(string? religion) => Submit(new SetStateReligionCommand { Player = Human, Religion = religion });
+    public bool AdoptStateReligion(string? religion) => Submit(new SetStateReligionCommand { Player = LocalPlayer, Religion = religion });
 
     /// <summary>The religions present in a city, holy-city markers included.</summary>
     public IReadOnlyList<CityReligion> ReligionsIn(City city)
@@ -68,19 +68,19 @@ public sealed partial class GameSession
     {
         var service = Religions;
         if (service == null || unit.MovesLeft <= 0) yield break;
-        var inquisition = new PerformInquisitionCommand { Player = Human, Unit = unit.Id };
+        var inquisition = new PerformInquisitionCommand { Player = LocalPlayer, Unit = unit.Id };
         if (inquisition.Validate(Sim) == null)
             yield return new("inquisition", "Perform inquisition", inquisition, null,
                 $"{service.InquisitionChance(Sim, unit.Id)}% chance");
         foreach (var religion in Sim.Content.Get<Schema.ReligionDef>().All.OrderBy(r => r.Id, StringComparer.Ordinal))
         {
-            var spread = new SpreadReligionCommand { Player = Human, Unit = unit.Id, Religion = religion.Id };
+            var spread = new SpreadReligionCommand { Player = LocalPlayer, Unit = unit.Id, Religion = religion.Id };
             if (spread.Validate(Sim) == null)
                 yield return new("spread:" + religion.Id, "Spread " + religion.Name, spread, null,
                     $"{service.MissionaryChance(Sim, unit.Id, religion.Id)}% chance");
             foreach (var building in religion.Shrines.Distinct().OrderBy(b => b, StringComparer.Ordinal))
             {
-                var shrine = new BuildShrineCommand { Player = Human, Unit = unit.Id, Building = building };
+                var shrine = new BuildShrineCommand { Player = LocalPlayer, Unit = unit.Id, Building = building };
                 if (shrine.Validate(Sim) == null)
                     yield return new("shrine:" + building, "Build " + Sim.Content.Get<Schema.BuildingDef>(building).Name, shrine);
             }

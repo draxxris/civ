@@ -251,7 +251,7 @@ internal sealed partial class GameUi
     }
 
     private List<City> HumanCities() =>
-        _session.Sim.State.Cities.Where(c => c.Owner == GameSession.Human).OrderBy(c => c.Id).ToList();
+        _session.Sim.State.Cities.Where(c => c.Owner == _session.LocalPlayer).OrderBy(c => c.Id).ToList();
 
     /// <summary>Rebuilds the city buttons only when a row's id, name, population or religion badge changed.</summary>
     private void RefreshCityList()

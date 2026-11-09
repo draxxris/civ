@@ -6,19 +6,25 @@ namespace Ariel.Client;
 /// <summary>
 /// Everything a front end needs that is not drawing: the simulation, who the local player is, what is selected, and the
 /// player's actions expressed as commands. It has no engine types, so it is shared by any renderer and unit tested.
-/// For multiplayer, <see cref="Submit"/> is the one place to route commands into a LockstepSession instead.
+/// Every change to the simulation goes through its <see cref="ICommandChannel"/>, so the same session drives a local or
+/// a networked game; whatever the channel applies, from any player, reaches <see cref="SimulationChanged"/>.
 /// </summary>
 public sealed partial class GameSession
 {
-    public const int Human = 0;
+    /// <summary>The seat a single-player game gives its human.</summary>
+    public const int DefaultLocalPlayer = 0;
 
+    private readonly ICommandChannel _channel;
     private readonly Dictionary<int, Hex> _gotos = new();
+    private int _turn;
     private int _espionageBudgetTurn = -1;
     private int _espionageBudgetCities = -1;
     private Ariel.Content.CommerceVector _espionageBudgetRates;
     private long _espionageBudget;
 
     public Simulation Sim { get; private set; }
+    /// <summary>The player this front end controls.</summary>
+    public int LocalPlayer { get; }
     public string Message { get; private set; } = "";
     public int? SelectedUnitId { get; private set; }
     public int? SelectedCityId { get; private set; }
@@ -27,9 +33,13 @@ public sealed partial class GameSession
     /// <summary>Counts only changes to the simulation, for the map to rebuild its meshes.</summary>
     public int WorldRevision { get; private set; }
 
-    public GameSession(Simulation sim)
+    public GameSession(Simulation sim, int localPlayer = DefaultLocalPlayer, ICommandChannel? channel = null)
     {
+        if (sim.State.Players.All(p => p.Id != localPlayer)) throw new ArgumentException($"No player {localPlayer} to control", nameof(localPlayer));
         Sim = sim;
+        LocalPlayer = localPlayer;
+        _channel = channel ?? LocalCommandChannel.Instance;
+        _turn = sim.State.Turn;
         ResetNotifications();
         SelectNextUnit();
     }
@@ -38,8 +48,8 @@ public sealed partial class GameSession
     public static GameSession Start(GameCatalog catalog, NewGameOptions options) =>
         new(new Simulation(catalog.Content, options.ToSettings(catalog)));
 
-    public Player Me => Sim.State.PlayerById(Human);
-    public Team MyTeam => Sim.TeamOf(Human);
+    public Player Me => Sim.State.PlayerById(LocalPlayer);
+    public Team MyTeam => Sim.TeamOf(LocalPlayer);
     public City? City => SelectedCityId is int id ? Sim.State.FindCity(id) : null;
     public Unit? Unit => SelectedUnitId is int id ? Sim.State.FindUnit(id) : null;
 
@@ -55,31 +65,53 @@ public sealed partial class GameSession
         Revision++;
     }
 
-    /// <summary>Apply a command for the local player; a rejection becomes <see cref="Message"/>.</summary>
+    /// <summary>Issue a command for the local player; a rejection becomes <see cref="Message"/>. True means the
+    /// channel accepted it, which in a networked game is before it applies.</summary>
     public bool Submit(GameCommand command)
     {
-        bool ok = Sim.TryApply(command, out var error);
-        Message = ok ? "" : $"Can't do that: {error}";
+        var result = _channel.Submit(Sim, command);
+        Message = result.Error is null ? "" : $"Can't do that: {result.Error}";
         Revision++;
-        if (ok) WorldRevision++;
+        if (result.Applied) SimulationChanged();
+        else CollectNotifications();
+        return result.Error is null;
+    }
+
+    /// <summary>Apply whatever the channel received since the last call. Front ends call this every frame; with nothing
+    /// new it returns at once.</summary>
+    public void Pump()
+    {
+        if (!_channel.Pump(Sim)) return;
+        Revision++;
+        SimulationChanged();
+    }
+
+    /// <summary>React to applied commands, whoever issued them: read new events, drop what no longer exists, and pick
+    /// up standing orders when a new turn has begun.</summary>
+    private void SimulationChanged()
+    {
+        WorldRevision++;
         CollectNotifications();
         if (City == null) SelectedCityId = null;
         if (Unit == null) SelectedUnitId = null;
-        return ok;
+        foreach (var (id, destination) in _gotos)
+            if (Sim.State.FindUnit(id) is not { } unit || unit.Position == destination) _gotos.Remove(id);
+        if (Sim.State.Turn == _turn) return;
+        _turn = Sim.State.Turn;
+        ContinueOrders();
+        SelectNextUnit();
     }
 
     // --- turns ------------------------------------------------------------------------------
 
-    /// <summary>End the turn. Opponents without an AI service have nothing to do, so they end theirs first; the human ends last.</summary>
+    /// <summary>End the turn. In a local game, other humans have nobody at the controls, so they end theirs first and
+    /// the local player ends last. The turn advances once every player has ended, which may be another peer's command.</summary>
     public void EndTurn()
     {
-        foreach (var player in Sim.State.Players.Where(p => p.Id != Human && p.Ai == null && !p.EndedTurn).ToList())
-            Sim.TryApply(new EndTurnCommand { Player = player.Id }, out _);
-        int turn = Sim.State.Turn;
-        Submit(new EndTurnCommand { Player = Human });
-        if (Sim.State.Turn == turn) return;
-        ContinueOrders();
-        SelectNextUnit();
+        if (_channel.PlaysAbsentHumans)
+            foreach (var player in Sim.State.Players.Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn).ToList())
+                _channel.Submit(Sim, new EndTurnCommand { Player = player.Id });
+        Submit(new EndTurnCommand { Player = LocalPlayer });
     }
 
     /// <summary>Re-issue standing go-to orders at the start of a turn.</summary>
@@ -102,8 +134,8 @@ public sealed partial class GameSession
     public void SelectAt(Hex hex)
     {
         var stack = new List<(bool IsCity, int Id)>();
-        stack.AddRange(Sim.State.UnitsAt(hex).Where(u => u.Owner == Human).OrderBy(u => u.Id).Select(u => (false, u.Id)));
-        if (Sim.State.CityAt(hex) is { Owner: Human } here) stack.Add((true, here.Id));
+        stack.AddRange(Sim.State.UnitsAt(hex).Where(u => u.Owner == LocalPlayer).OrderBy(u => u.Id).Select(u => (false, u.Id)));
+        if (Sim.State.CityAt(hex) is { } here && here.Owner == LocalPlayer) stack.Add((true, here.Id));
         if (stack.Count == 0) { ClearSelection(); return; }
 
         int current = stack.FindIndex(e => e.IsCity ? e.Id == SelectedCityId : e.Id == SelectedUnitId);
@@ -118,14 +150,14 @@ public sealed partial class GameSession
 
     public void SelectUnit(int id)
     {
-        if (Sim.State.FindUnit(id)?.Owner != Human) return;
+        if (Sim.State.FindUnit(id)?.Owner != LocalPlayer) return;
         if (id == SelectedUnitId && SelectedCityId == null) return;
         SelectedUnitId = id; SelectedCityId = null; Revision++;
     }
 
     public void SelectCity(int id)
     {
-        if (Sim.State.FindCity(id)?.Owner != Human) return;
+        if (Sim.State.FindCity(id)?.Owner != LocalPlayer) return;
         if (id == SelectedCityId && SelectedUnitId == null) return;
         SelectedCityId = id; SelectedUnitId = null; Revision++;
     }
@@ -141,7 +173,7 @@ public sealed partial class GameSession
     /// <summary>Select the next of my units that still has moves and is awake; clears the selection when none is left.</summary>
     public void SelectNextUnit()
     {
-        var waiting = Sim.State.Units.Where(u => u.Owner == Human && NeedsOrders(u)).OrderBy(u => u.Id).ToList();
+        var waiting = Sim.State.Units.Where(u => u.Owner == LocalPlayer && NeedsOrders(u)).OrderBy(u => u.Id).ToList();
         var next = waiting.FirstOrDefault(u => u.Id > (SelectedUnitId ?? 0)) ?? waiting.FirstOrDefault();
         if (next?.Id == SelectedUnitId && SelectedCityId == null) return;
         SelectedCityId = null;
@@ -155,7 +187,7 @@ public sealed partial class GameSession
     public UnitActivity ActivityOf(Unit unit) => unit.Extensions.Get<MilitaryUnitState>(Sim.Content)?.Activity ?? UnitActivity.Awake;
 
     /// <summary>Units whose turn is not finished; the end-turn button warns when this is not zero.</summary>
-    public int UnitsNeedingOrders => Sim.State.Units.Count(u => u.Owner == Human && NeedsOrders(u));
+    public int UnitsNeedingOrders => Sim.State.Units.Count(u => u.Owner == LocalPlayer && NeedsOrders(u));
 
     // --- map clicks ---------------------------------------------------------------------
 
@@ -182,14 +214,15 @@ public sealed partial class GameSession
         if (preview == null) { SetMessage("No path there"); return; }
         if (preview.Attack != null) _gotos.Remove(unit.Id);
         else _gotos[unit.Id] = hex;
-        if (!Submit(new MoveUnitPathCommand { Player = Human, Unit = unit.Id, Path = preview.Path.ToArray() }) || unit.Position == hex) _gotos.Remove(unit.Id);
+        // Arrival clears the order once the walk applies; see SimulationChanged.
+        if (!Submit(new MoveUnitPathCommand { Player = LocalPlayer, Unit = unit.Id, Path = preview.Path.ToArray() })) _gotos.Remove(unit.Id);
     }
 
     private bool TryWalk(Unit unit, Hex destination)
     {
         var path = Service<IPathfindingService>().FindPath(Sim, unit.Id, destination);
         if (path == null || path.Steps.Count == 0) return false;
-        return Sim.TryApply(new MoveUnitPathCommand { Player = Human, Unit = unit.Id, Path = path.Steps.ToArray() }, out _);
+        return _channel.Submit(Sim, new MoveUnitPathCommand { Player = LocalPlayer, Unit = unit.Id, Path = path.Steps.ToArray() }).Error is null;
     }
 
     /// <summary>Whether a unit has a standing go-to order.</summary>

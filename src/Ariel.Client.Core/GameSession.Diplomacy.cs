@@ -38,7 +38,7 @@ public sealed partial class GameSession
         var rivals = Sim.State.Players.Where(p => p.TeamId != myTeam && service.HasMet(Sim, myTeam, p.TeamId))
             .OrderBy(p => p.Id).Select(p => RivalOf(service, p)).ToList();
         var deals = service.Deals(Sim)
-            .Where(d => d.Status is DiplomaticDealStatus.Active or DiplomaticDealStatus.Proposed && (d.Proposer == Human || d.Recipient == Human))
+            .Where(d => d.Status is DiplomaticDealStatus.Active or DiplomaticDealStatus.Proposed && (d.Proposer == LocalPlayer || d.Recipient == LocalPlayer))
             .OrderBy(d => d.Id).Select(d => DealOf(service, d)).ToList();
         return new(true, rivals, deals);
     }
@@ -46,19 +46,19 @@ public sealed partial class GameSession
     private DiplomacyRival RivalOf(IDiplomacyService service, Player p)
     {
         int myTeam = MyTeam.Id;
-        var attitude = service.GetAttitude(Sim, p.Id, Human);
+        var attitude = service.GetAttitude(Sim, p.Id, LocalPlayer);
         bool war = MyTeam.Wars.Contains(p.TeamId);
-        bool treaty = !war && service.ValidateWar(Sim, Human, p.Id) != null;
+        bool treaty = !war && service.ValidateWar(Sim, LocalPlayer, p.Id) != null;
         bool borders = service.HasOpenBorders(Sim, myTeam, p.TeamId), pact = service.HasDefensivePact(Sim, myTeam, p.TeamId);
         string status = war ? "At war" : treaty ? "Peace treaty" : "At peace";
         var actions = new List<DiplomacyAction>
         {
-            new("declare_war", "Declare war", new DiplomaticDeclareWarCommand { Player = Human, Target = p.Id }, service.ValidateWar(Sim, Human, p.Id)),
-            new("make_peace", "Make peace", new DiplomaticMakePeaceCommand { Player = Human, Target = p.Id }, service.ValidatePeace(Sim, Human, p.Id)),
-            new("open_borders", "Open borders", new SignOpenBordersCommand { Player = Human, Target = p.Id },
-                service.ValidateAgreement(Sim, Human, p.Id, DiplomaticAgreement.OpenBorders)),
-            new("defensive_pact", "Defensive pact", new SignDefensivePactCommand { Player = Human, Target = p.Id },
-                service.ValidateAgreement(Sim, Human, p.Id, DiplomaticAgreement.DefensivePact)),
+            new("declare_war", "Declare war", new DiplomaticDeclareWarCommand { Player = LocalPlayer, Target = p.Id }, service.ValidateWar(Sim, LocalPlayer, p.Id)),
+            new("make_peace", "Make peace", new DiplomaticMakePeaceCommand { Player = LocalPlayer, Target = p.Id }, service.ValidatePeace(Sim, LocalPlayer, p.Id)),
+            new("open_borders", "Open borders", new SignOpenBordersCommand { Player = LocalPlayer, Target = p.Id },
+                service.ValidateAgreement(Sim, LocalPlayer, p.Id, DiplomaticAgreement.OpenBorders)),
+            new("defensive_pact", "Defensive pact", new SignDefensivePactCommand { Player = LocalPlayer, Target = p.Id },
+                service.ValidateAgreement(Sim, LocalPlayer, p.Id, DiplomaticAgreement.DefensivePact)),
         };
         string leader = Sim.Content.TryGet<Schema.LeaderDef>(p.Leader, out var l) ? l.Name : p.Leader;
         string civ = Sim.Content.TryGet<Schema.CivilizationDef>(p.Civilization, out var c) ? c.Name : p.Civilization;
@@ -67,13 +67,13 @@ public sealed partial class GameSession
 
     private DiplomacyDealRow DealOf(IDiplomacyService service, DiplomaticDeal deal)
     {
-        int other = deal.Proposer == Human ? deal.Recipient : deal.Proposer;
+        int other = deal.Proposer == LocalPlayer ? deal.Recipient : deal.Proposer;
         string summary = string.Join("; ", deal.Items.Select(i =>
-            $"{(i.FromPlayer == Human ? "You give" : "You get")} {(i.Kind is TradeItemKind.Technology ? "" : i.Amount + " ")}{ItemName(i)}"));
-        var cancel = new DiplomacyAction("cancel_deal", "Cancel deal", new CancelDealCommand { Player = Human, Deal = deal.Id },
-            service.ValidateCancellation(Sim, Human, deal.Id));
-        DiplomacyAction? accept = deal.Status == DiplomaticDealStatus.Proposed && deal.Recipient == Human
-            ? new("accept_deal", "Accept", new ExecuteDealCommand { Player = Human, Deal = deal.Id }, service.ValidateExecution(Sim, Human, deal.Id))
+            $"{(i.FromPlayer == LocalPlayer ? "You give" : "You get")} {(i.Kind is TradeItemKind.Technology ? "" : i.Amount + " ")}{ItemName(i)}"));
+        var cancel = new DiplomacyAction("cancel_deal", "Cancel deal", new CancelDealCommand { Player = LocalPlayer, Deal = deal.Id },
+            service.ValidateCancellation(Sim, LocalPlayer, deal.Id));
+        DiplomacyAction? accept = deal.Status == DiplomaticDealStatus.Proposed && deal.Recipient == LocalPlayer
+            ? new("accept_deal", "Accept", new ExecuteDealCommand { Player = LocalPlayer, Deal = deal.Id }, service.ValidateExecution(Sim, LocalPlayer, deal.Id))
             : null;
         return new(deal.Id, other, deal.Status.ToString(), summary, cancel, accept);
     }
@@ -96,7 +96,7 @@ public sealed partial class GameSession
         if (service == null) return new(false, null, null, null, [], []);
         var status = service.GetVictoryStatus(Sim);
         var scores = Sim.State.Players.OrderBy(p => p.Id).Select(p => new ScoreRow(p.Id, p.Name,
-            Sim.Content.TryGet<Schema.CivilizationDef>(p.Civilization, out var c) ? c.Name : p.Civilization, p.Id == Human, service.GetScore(Sim, p.Id)))
+            Sim.Content.TryGet<Schema.CivilizationDef>(p.Civilization, out var c) ? c.Name : p.Civilization, p.Id == LocalPlayer, service.GetScore(Sim, p.Id)))
             .OrderByDescending(r => r.Score.Total).ThenBy(r => r.PlayerId).ToList();
         string? winner = status.IsGameOver && Sim.State.Players.Any(p => p.Id == status.WinningPlayerId) ? Sim.State.PlayerById(status.WinningPlayerId).Name : null;
         string? victory = status.VictoryId is { } v && Sim.Content.TryGet<Schema.VictoryDef>(v, out var def) ? def.Name : status.VictoryId;

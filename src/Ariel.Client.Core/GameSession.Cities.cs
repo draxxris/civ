@@ -40,7 +40,7 @@ public sealed partial class GameSession
 
     /// <summary>Current yields only in sight; fog cannot query live irrigation or adjacent modifiers.</summary>
     public YieldVector YieldsOf(Hex hex) => SightOf(hex) == Sight.Visible
-        ? Service<IPlotYieldService>().Calculate(Sim, Human, Sim.State.Grid.TileAt(hex)).Yields : default;
+        ? Service<IPlotYieldService>().Calculate(Sim, LocalPlayer, Sim.State.Grid.TileAt(hex)).Yields : default;
 
     private long TileScore(Hex hex)
     {
@@ -56,7 +56,7 @@ public sealed partial class GameSession
         var state = city.Extensions.Get<CityRuleState>(Sim.Content);
         return Submit(new SetCityAssignmentsCommand
         {
-            Player = Human, CityId = city.Id, Tiles = tiles.ToArray(), Specialists = spec, Automatic = automatic,
+            Player = LocalPlayer, CityId = city.Id, Tiles = tiles.ToArray(), Specialists = spec, Automatic = automatic,
             AvoidGrowth = state?.AvoidGrowth ?? false,
         });
     }
@@ -121,7 +121,7 @@ public sealed partial class GameSession
         var state = city.Extensions.Get<CityRuleState>(Sim.Content);
         Submit(new SetCityAssignmentsCommand
         {
-            Player = Human, CityId = city.Id, Tiles = city.Worked.ToArray(), Specialists = new(city.Specialists, StringComparer.Ordinal),
+            Player = LocalPlayer, CityId = city.Id, Tiles = city.Worked.ToArray(), Specialists = new(city.Specialists, StringComparer.Ordinal),
             Automatic = !(state?.ManualWork ?? false), AvoidGrowth = !(state?.AvoidGrowth ?? false),
         });
     }
@@ -129,16 +129,16 @@ public sealed partial class GameSession
     // --- production -------------------------------------------------------------------------
 
     public bool Enqueue(City city, string kind, string id, bool append) =>
-        Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, Kind = kind, ContentId = id, Append = append });
+        Submit(new SetCityProductionCommand { Player = LocalPlayer, CityId = city.Id, Kind = kind, ContentId = id, Append = append });
 
     public bool RemoveFromQueue(City city, int index)
     {
         int? orderId = index >= 0 && index < city.ProductionQueue.Count ? city.ProductionQueue[index].Id : null;
-        return Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveIndex = index, RemoveOrderId = orderId });
+        return Submit(new SetCityProductionCommand { Player = LocalPlayer, CityId = city.Id, RemoveIndex = index, RemoveOrderId = orderId });
     }
 
     public bool RemoveOrderFromQueue(City city, int orderId) =>
-        Submit(new SetCityProductionCommand { Player = Human, CityId = city.Id, RemoveOrderId = orderId });
+        Submit(new SetCityProductionCommand { Player = LocalPlayer, CityId = city.Id, RemoveOrderId = orderId });
 
     /// <summary>Swap a queue entry with its neighbour (-1 earlier, +1 later) in one command, so the queue changes once,
     /// every entry keeps its stored progress, and the move costs a single revision bump.</summary>
@@ -147,7 +147,7 @@ public sealed partial class GameSession
         int target = index + delta;
         int? orderId = index >= 0 && index < city.ProductionQueue.Count ? city.ProductionQueue[index].Id : null;
         int? targetOrderId = target >= 0 && target < city.ProductionQueue.Count ? city.ProductionQueue[target].Id : null;
-        return Submit(new MoveCityQueueCommand { Player = Human, CityId = city.Id, From = index, To = target, OrderId = orderId, TargetOrderId = targetOrderId });
+        return Submit(new MoveCityQueueCommand { Player = LocalPlayer, CityId = city.Id, From = index, To = target, OrderId = orderId, TargetOrderId = targetOrderId });
     }
 
     public bool MoveOrderInQueue(City city, int orderId, int delta)
@@ -157,26 +157,26 @@ public sealed partial class GameSession
         return MoveInQueue(city, index, delta);
     }
 
-    public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = Human, CityId = city.Id, HurryId = hurryId });
+    public bool Hurry(City city, string hurryId) => Submit(new HurryCityCommand { Player = LocalPlayer, CityId = city.Id, HurryId = hurryId });
 
     public IReadOnlyList<PendingCityConquest> DescribePendingConquests()
     {
         var commands = Service<ICityCommandService>();
         return Sim.State.Cities
-            .Where(city => city.Owner == Human)
+            .Where(city => city.Owner == LocalPlayer)
             .Select(city => (City: city, Rules: city.Extensions.Get<CityRuleState>(Sim.Content)))
             .Where(entry => entry.Rules?.PendingConquestChoice == true)
             .OrderBy(entry => entry.City.Id)
             .Select(entry => new PendingCityConquest(
                 entry.City.Id, entry.City.Name, entry.City.Population, entry.Rules!.OccupationTurns,
-                commands.ValidateConquestChoice(Sim, Human, entry.City.Id, CityConquestOption.Raze) is null))
+                commands.ValidateConquestChoice(Sim, LocalPlayer, entry.City.Id, CityConquestOption.Raze) is null))
             .ToList();
     }
 
     public bool ResolveCityConquest(int cityId, CityConquestOption option) =>
-        Submit(new ResolveCityConquestCommand { Player = Human, CityId = cityId, Option = option });
+        Submit(new ResolveCityConquestCommand { Player = LocalPlayer, CityId = cityId, Option = option });
 
     public bool AnnexCity(City city) => ResolveCityConquest(city.Id, CityConquestOption.Annex);
 
-    public bool Conscript(City city) => Submit(new ConscriptCityCommand { Player = Human, CityId = city.Id });
+    public bool Conscript(City city) => Submit(new ConscriptCityCommand { Player = LocalPlayer, CityId = city.Id });
 }

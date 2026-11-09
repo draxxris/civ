@@ -34,7 +34,7 @@ public sealed record StackedUnit(int Id, string Type, string Name, int Health, I
 
 public sealed partial class GameSession
 {
-    public int GoldenAgeTurnsRemaining => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, Human) ?? 0;
+    public int GoldenAgeTurnsRemaining => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, LocalPlayer) ?? 0;
 
     public Schema.UnitDef DefOf(Unit unit) => Sim.Content.Get<Schema.UnitDef>(unit.Type);
     /// <summary>Route and combat odds for sending the selected unit to a tile, or null with no unit or route.</summary>
@@ -77,7 +77,7 @@ public sealed partial class GameSession
     public IReadOnlyList<StackedUnit> UnitStack()
     {
         if (Unit is not { } selected) return [];
-        var units = Sim.State.UnitsAt(selected.Position).Where(u => u.Owner == Human).OrderBy(u => u.Id).ToList();
+        var units = Sim.State.UnitsAt(selected.Position).Where(u => u.Owner == LocalPlayer).OrderBy(u => u.Id).ToList();
         if (units.Count < 2) return [];
         return units.Select(unit => new StackedUnit(unit.Id, unit.Type, DefOf(unit).Name, unit.Health,
             unit.Promotions.Select(p => new UnitRank(p, Sim.Content.Get<Schema.PromotionDef>(p).Name)).ToList())).ToList();
@@ -92,12 +92,12 @@ public sealed partial class GameSession
     public IReadOnlyList<UnitActionInfo> UnitActions(Unit unit, Schema.UnitDef def)
     {
         var actions = new List<UnitActionInfo>();
-        if (def.CanFoundCity) actions.Add(Action("found", "Found city", new FoundCityWithSettlerCommand { Player = Human, Settler = unit.Id }));
+        if (def.CanFoundCity) actions.Add(Action("found", "Found city", new FoundCityWithSettlerCommand { Player = LocalPlayer, Settler = unit.Id }));
         actions.AddRange(BuildActions(unit, def));
         foreach (var activity in new[] { UnitActivity.Fortify, UnitActivity.Sleep, UnitActivity.Awake, UnitActivity.Intercept, UnitActivity.Blockade })
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
-                new SetUnitActivityCommand { Player = Human, Unit = unit.Id, Activity = activity }));
-        if (def.Pillage) actions.Add(Action("pillage", "Pillage", new PillageCommand { Player = Human, Unit = unit.Id }));
+                new SetUnitActivityCommand { Player = LocalPlayer, Unit = unit.Id, Activity = activity }));
+        if (def.Pillage) actions.Add(Action("pillage", "Pillage", new PillageCommand { Player = LocalPlayer, Unit = unit.Id }));
         actions.AddRange(ArtilleryActions(unit, def));
         actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));
@@ -129,7 +129,7 @@ public sealed partial class GameSession
                 string name = Sim.State.CityAt(target) is { } city && Sim.State.Plots[tile.Value].Revealed.Contains(Me.TeamId)
                     ? city.Name : target.ToString();
                 var action = Action($"air_mission:{kind}:{tile.Value}", $"{label}: {name}",
-                    new AirMissionCommand { Player = Human, Unit = unit.Id, Kind = kind, Target = target });
+                    new AirMissionCommand { Player = LocalPlayer, Unit = unit.Id, Kind = kind, Target = target });
                 if (action.Command is not null) yield return action;
             }
         }
@@ -139,13 +139,13 @@ public sealed partial class GameSession
     {
         foreach (var transport in Sim.State.UnitsAt(unit.Position).OrderBy(u => u.Id))
             yield return Action($"load:{transport.Id}", $"Load: {DefOf(transport).Name}",
-                new LoadUnitCommand { Player = Human, Unit = unit.Id, Transport = transport.Id });
-        yield return Action("unload", "Unload", new UnloadUnitCommand { Player = Human, Unit = unit.Id });
+                new LoadUnitCommand { Player = LocalPlayer, Unit = unit.Id, Transport = transport.Id });
+        yield return Action("unload", "Unload", new UnloadUnitCommand { Player = LocalPlayer, Unit = unit.Id });
         foreach (var tile in Sim.State.Grid.Neighbors(Sim.State.Grid.TileAt(unit.Position)).OrderBy(t => t.Value))
         {
             var target = Sim.State.Grid.HexOf(tile);
             yield return Action($"unload:{tile.Value}", $"Unload: {target}",
-                new UnloadUnitCommand { Player = Human, Unit = unit.Id, Destination = target });
+                new UnloadUnitCommand { Player = LocalPlayer, Unit = unit.Id, Destination = target });
         }
     }
 
@@ -157,10 +157,10 @@ public sealed partial class GameSession
         {
             var target = Sim.State.Grid.HexOf(tile);
             string name = Sim.State.CityAt(target)?.Name ?? target.ToString();
-            var bombard = Action($"bombard:{tile.Value}", $"Bombard: {name}", new BombardCityCommand { Player = Human, Unit = unit.Id, Target = target });
+            var bombard = Action($"bombard:{tile.Value}", $"Bombard: {name}", new BombardCityCommand { Player = LocalPlayer, Unit = unit.Id, Target = target });
             if (bombard.Command is not null) yield return bombard;
             if (def.BombRange <= 0) continue;
-            var ranged = Action($"ranged_strike:{tile.Value}", $"Ranged strike: {name}", new RangedStrikeCommand { Player = Human, Unit = unit.Id, Target = target });
+            var ranged = Action($"ranged_strike:{tile.Value}", $"Ranged strike: {name}", new RangedStrikeCommand { Player = LocalPlayer, Unit = unit.Id, Target = target });
             if (ranged.Command is not null) yield return ranged;
         }
     }
@@ -169,19 +169,19 @@ public sealed partial class GameSession
     {
         var service = OptionalService<IGreatPeopleService>();
         if (service == null) yield break;
-        foreach (var action in service.AvailableActions(Sim, Human, unit.Id))
+        foreach (var action in service.AvailableActions(Sim, LocalPlayer, unit.Id))
         {
             string suffix = action.Command[(action.Command.LastIndexOf(':') + 1)..];
             GameCommand? command = suffix switch
             {
-                "join_city" => new JoinGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "discover_tech" => new DiscoverGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "hurry_production" => new HurryGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "culture_bomb" => new CultureGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "golden_age" => new GoldenAgeGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "lead_unit" => new LeadGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "construct_building" => new ConstructGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
-                "trade_mission" => new TradeGreatPersonCommand { Player = Human, UnitId = unit.Id, Target = action.Target },
+                "join_city" => new JoinGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "discover_tech" => new DiscoverGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "hurry_production" => new HurryGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "culture_bomb" => new CultureGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "golden_age" => new GoldenAgeGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "lead_unit" => new LeadGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "construct_building" => new ConstructGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
+                "trade_mission" => new TradeGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
                 _ => null,
             };
             if (command == null) continue;
@@ -213,7 +213,7 @@ public sealed partial class GameSession
         if (builds == null) yield break;
         if (builds.IsWorking(Sim, unit.Id))
         {
-            var cancel = Action("cancel_build", "Cancel build", new CancelBuildCommand { Player = Human, Unit = unit.Id }, "Cancel build");
+            var cancel = Action("cancel_build", "Cancel build", new CancelBuildCommand { Player = LocalPlayer, Unit = unit.Id }, "Cancel build");
             if (cancel.Command is not null) yield return cancel;
         }
         if (unit.MovesLeft <= 0) yield break;
@@ -221,9 +221,9 @@ public sealed partial class GameSession
         foreach (var id in def.Builds.Where(b => b.Value).Select(b => b.Key).Order(StringComparer.Ordinal))
         {
             var build = Sim.Content.Get<Schema.BuildDef>(id);
-            if (builds.Validate(Sim, Human, unit.Id, id) != null) continue;
+            if (builds.Validate(Sim, LocalPlayer, unit.Id, id) != null) continue;
             int work = builds.RequiredWork(Sim, tile, id);
-            yield return new("build:" + id, build.Name, new StartBuildCommand { Player = Human, Unit = unit.Id, Build = id }, null, $"{work} work");
+            yield return new("build:" + id, build.Name, new StartBuildCommand { Player = LocalPlayer, Unit = unit.Id, Build = id }, null, $"{work} work");
         }
     }
 
@@ -231,7 +231,7 @@ public sealed partial class GameSession
     {
         foreach (var promotion in Sim.Content.Get<Schema.PromotionDef>().All.OrderBy(p => p.Id, StringComparer.Ordinal))
         {
-            var command = new PromoteMilitaryUnitCommand { Player = Human, Unit = unit.Id, Promotion = promotion.Id };
+            var command = new PromoteMilitaryUnitCommand { Player = LocalPlayer, Unit = unit.Id, Promotion = promotion.Id };
             if (command.Validate(Sim) == null) yield return new("promote:" + promotion.Id, "Promote: " + promotion.Name, command, null, promotion.Help);
         }
     }
@@ -248,5 +248,5 @@ public sealed partial class GameSession
     }
 
     /// <summary>Settlers' best advice: why founding fails here, or null when it works.</summary>
-    public string? CannotFoundReason(Unit unit) => new FoundCityWithSettlerCommand { Player = Human, Settler = unit.Id }.Validate(Sim);
+    public string? CannotFoundReason(Unit unit) => new FoundCityWithSettlerCommand { Player = LocalPlayer, Settler = unit.Id }.Validate(Sim);
 }

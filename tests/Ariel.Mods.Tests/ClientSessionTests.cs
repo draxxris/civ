@@ -65,10 +65,10 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
 
     private static City Found(GameSession s)
     {
-        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
+        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && s.DefOf(u).CanFoundCity);
         s.SelectUnit(settler.Id);
         s.RunAction("found");
-        return s.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
+        return s.Sim.State.Cities.First(c => c.Owner == GameSession.DefaultLocalPlayer);
     }
 
     private static City CaptureForHuman(GameSession session, int population = 4)
@@ -84,8 +84,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var plot = sim.State.PlotAt(city.Position);
         plot.Owner = city.Owner;
         plot.Culture[city.Owner] = 100;
-        sim.State.SetWar(GameSession.Human, city.Owner, true);
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, GameSession.Human);
+        sim.State.SetWar(GameSession.DefaultLocalPlayer, city.Owner, true);
+        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, GameSession.DefaultLocalPlayer);
         return sim.State.CityById(city.Id);
     }
     [Fact]
@@ -130,7 +130,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var session = GameSession.Start(catalog, catalog.DefaultOptions() with { WorldSize = "foundation:worldsize_duel", Opponents = 1 });
         Assert.Equal(2, session.Sim.State.Players.Count);
         Assert.NotNull(session.Unit);
-        Assert.True(session.Sim.State.Units.Count(u => u.Owner == GameSession.Human) >= 2);
+        Assert.True(session.Sim.State.Units.Count(u => u.Owner == GameSession.DefaultLocalPlayer) >= 2);
     }
 
     [Fact]
@@ -140,8 +140,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Contains(s.DescribeUnit(s.Unit)!.Actions, a => a.Id == "found" && a.Command != null);
         var city = Found(s);
         Assert.Equal("", s.Message);
-        Assert.Equal(GameSession.Human, city.Owner);
-        Assert.DoesNotContain(s.Sim.State.Units, u => s.DefOf(u).CanFoundCity && u.Owner == GameSession.Human);
+        Assert.Equal(GameSession.DefaultLocalPlayer, city.Owner);
+        Assert.DoesNotContain(s.Sim.State.Units, u => s.DefOf(u).CanFoundCity && u.Owner == GameSession.DefaultLocalPlayer);
     }
 
     [Fact]
@@ -164,8 +164,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Stacked_units_lists_my_units_on_the_tile_in_the_order_clicks_cycle_through_them()
     {
         var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
-        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
         s.Sim.State.AddUnit(new Unit { Id = s.Sim.State.NextUnitId++, Owner = 1, Type = "military:warrior", Position = warrior.Position });
         warrior.Experience = 20;
         warrior.Health = 70;
@@ -193,7 +193,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
         Assert.Equal(2, s.UnitStack().Count);
         Found(s);
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer);
         s.SelectUnit(warrior.Id);
         Assert.Empty(s.UnitStack());
     }
@@ -213,7 +213,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Right_click_uses_the_pathfinder_and_standing_orders_continue_next_turn()
     {
         var s = NewSession();
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
         s.SelectUnit(warrior.Id);
         var target = FarLandTarget(s, warrior);
         var preview = s.PreviewAt(target)!;
@@ -245,7 +245,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Attack_preview_reports_win_odds_for_an_adjacent_enemy()
     {
         var s = NewSession();
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
         var spot = s.Sim.State.Grid.Neighbors(warrior.Position).First(h => s.Sim.Content.Services.Get<IMovementService>().Single()
             .CanEnter(s.Sim, warrior.Id, s.Sim.State.Grid.TileAt(warrior.Position), s.Sim.State.Grid.TileAt(h)) == null);
         var enemy = new Unit { Id = s.Sim.State.NextUnitId++, Owner = 1, Type = warrior.Type, Position = spot, MovesLeft = 120 };
@@ -267,7 +267,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var s = NewSession();
         var city = Found(s);
-        var worker = new Unit { Id = s.Sim.State.NextUnitId++, Owner = GameSession.Human, Type = "military:worker", Position = city.Position, MovesLeft = 120 };
+        var worker = new Unit { Id = s.Sim.State.NextUnitId++, Owner = GameSession.DefaultLocalPlayer, Type = "military:worker", Position = city.Position, MovesLeft = 120 };
         s.Sim.State.AddUnit(worker);
         s.Sim.Content.Services.Get<IUnitService>().Single().Initialize(s.Sim, worker.Id);
         foreach (var hex in WorkArea(s, city))
@@ -323,7 +323,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Activity_actions_carry_their_activity_and_change_the_unit(string actionId, UnitActivity activity)
     {
         var s = NewSession();
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
         s.SelectUnit(warrior.Id);
         var offered = Assert.Single(s.DescribeUnit(warrior)!.Actions, a => a.Id == actionId);
 
@@ -452,7 +452,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Earned_promotions_are_available_actions_and_can_be_applied()
     {
         var s = NewSession();
-        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && !s.DefOf(u).CanFoundCity);
+        var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
         warrior.Experience = 20;
         warrior.Health = 70;
         s.SelectUnit(warrior.Id);
@@ -492,11 +492,11 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Visibility_shows_the_start_and_hides_the_far_side()
     {
         var s = NewSession();
-        var start = s.Sim.State.Units.First(u => u.Owner == GameSession.Human).Position;
+        var start = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer).Position;
         Assert.Equal(Sight.Visible, s.SightOf(start));
         var far = s.Sim.State.Plots.Select((p, i) => (p, i)).First(t => s.SightOf(t.p) == Sight.Hidden);
         Assert.Equal("Unexplored", s.DescribeTile(s.Sim.State.Grid.HexOf(new TileId(far.i)))!.Title);
-        Assert.Contains(s.VisibleUnits(), u => u.Owner == GameSession.Human);
+        Assert.Contains(s.VisibleUnits(), u => u.Owner == GameSession.DefaultLocalPlayer);
     }
 
     [Theory]
@@ -512,7 +512,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         plot.Kind = kind;
         var visibility = sim.Content.Services.Get<IVisibilityService>().Single();
         // Explicit map observation establishes memory without granting current sight.
-        visibility.RevealPlot(sim, tile, sim.TeamOf(GameSession.Human).Id);
+        visibility.RevealPlot(sim, tile, sim.TeamOf(GameSession.DefaultLocalPlayer).Id);
         var session = new GameSession(sim);
         Assert.Equal(Sight.Fogged, session.SightOf(plot));
         Assert.Equal(terrain, session.PerceivedPlot(tile)!.Terrain);

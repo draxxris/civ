@@ -31,7 +31,7 @@ public sealed partial class GameSession
     {
         var alternative = new SortedDictionary<string, string>(cabinet.ToDictionary(p => p.Key, p => p.Value), StringComparer.Ordinal)
         { [civic.Option!] = civic.Id };
-        var result = Sim.Content.Requirements.Evaluate(civic.Requirements, new(Sim, Human, ProposedCivics: alternative));
+        var result = Sim.Content.Requirements.Evaluate(civic.Requirements, new(Sim, LocalPlayer, ProposedCivics: alternative));
         return new(civic.Id, civic.Name, Me.Civics.GetValueOrDefault(civic.Option!) == civic.Id,
             result.Failures.Select(f => f.Explanation).ToList(), civic.Help);
     }
@@ -39,10 +39,10 @@ public sealed partial class GameSession
     public RevolutionPreview PreviewCivics(IReadOnlyList<string> civics)
     {
         var service = Service<IGovernmentService>();
-        var result = service.Calculate(Sim, Human, civics);
-        return new(result.AnarchyTurns, result.CooldownTurns, service.Validate(Sim, Human, civics));
+        var result = service.Calculate(Sim, LocalPlayer, civics);
+        return new(result.AnarchyTurns, result.CooldownTurns, service.Validate(Sim, LocalPlayer, civics));
     }
 
     public bool AdoptCivics(IReadOnlyList<string> civics) =>
-        Submit(new SetCivicsCommand { Player = Human, Civics = civics.ToList() });
+        Submit(new SetCivicsCommand { Player = LocalPlayer, Civics = civics.ToList() });
 }

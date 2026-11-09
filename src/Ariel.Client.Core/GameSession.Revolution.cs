@@ -15,7 +15,7 @@ public sealed record CityWonderScript(string Building, string Name, bool Active,
 public sealed partial class GameSession
 {
     /// <summary>Own cities at or above the warning tier, lowest id first. Saved instability only, no ledger per city.</summary>
-    public IReadOnlyList<int> CitiesAtRisk() => OptionalService<IRevolutionService>()?.CitiesAtRisk(Sim, Human) ?? [];
+    public IReadOnlyList<int> CitiesAtRisk() => OptionalService<IRevolutionService>()?.CitiesAtRisk(Sim, LocalPlayer) ?? [];
 
     private CityStabilityReport? StabilityOf(City city)
     {
@@ -23,10 +23,10 @@ public sealed partial class GameSession
         if (service == null) return null;
         var d = service.DescribeCityStability(Sim, city.Id);
         var rows = d.Ledger.Lines.Where(l => l.Amount != 0).Select(l => new LedgerRow(Labels.Source(Sim, l.Source), l.Amount)).ToList();
-        bool gold = city.Owner == Human && service.ValidateSuppression(Sim, Human, city.Id, null) is null;
-        bool garrison = city.Owner == Human && GarrisonFor(service, city) is not null;
-        string? blocked = city.Owner != Human ? "Not your city"
-            : gold || garrison ? null : service.ValidateSuppression(Sim, Human, city.Id, null);
+        bool gold = city.Owner == LocalPlayer && service.ValidateSuppression(Sim, LocalPlayer, city.Id, null) is null;
+        bool garrison = city.Owner == LocalPlayer && GarrisonFor(service, city) is not null;
+        string? blocked = city.Owner != LocalPlayer ? "Not your city"
+            : gold || garrison ? null : service.ValidateSuppression(Sim, LocalPlayer, city.Id, null);
         return new(city.Id, d.InstabilityIndex, d.Status, d.ChangePerTurn, d.CooldownTurns, d.UnrestTurns, rows,
             d.SuppressionGold, gold, garrison, blocked);
     }
@@ -43,7 +43,7 @@ public sealed partial class GameSession
 
     /// <summary>Pay gold to suppress a city's rebellion. The price falls with the instability actually removed.</summary>
     public bool SuppressRebellion(int cityId) => OptionalService<IRevolutionService>() is not null
-        && Submit(new SuppressRebellionCommand { Player = Human, CityId = cityId });
+        && Submit(new SuppressRebellionCommand { Player = LocalPlayer, CityId = cityId });
 
     /// <summary>Spend an owned military garrison's remaining movement instead of gold.</summary>
     public bool SuppressRebellionWithGarrison(int cityId)
@@ -52,15 +52,15 @@ public sealed partial class GameSession
         var city = Sim.State.FindCity(cityId);
         if (service is null || city is null) { SetMessage("No revolution rules loaded"); return false; }
         if (GarrisonFor(service, city) is not { } garrison) { SetMessage("No garrison can suppress this city"); return false; }
-        return Submit(new SuppressRebellionCommand { Player = Human, CityId = cityId, Garrison = garrison });
+        return Submit(new SuppressRebellionCommand { Player = LocalPlayer, CityId = cityId, Garrison = garrison });
     }
 
     /// <summary>The garrison that suppresses instead of gold, when one qualifies.</summary>
     private int? GarrisonFor(IRevolutionService service, City city)
     {
-        if (city.Owner != Human) return null;
-        foreach (var unit in Sim.State.UnitsAt(city.Position).Where(u => u.Owner == Human).OrderBy(u => u.Id))
-            if (service.ValidateSuppression(Sim, Human, city.Id, unit.Id) is null) return unit.Id;
+        if (city.Owner != LocalPlayer) return null;
+        foreach (var unit in Sim.State.UnitsAt(city.Position).Where(u => u.Owner == LocalPlayer).OrderBy(u => u.Id))
+            if (service.ValidateSuppression(Sim, LocalPlayer, city.Id, unit.Id) is null) return unit.Id;
         return null;
     }
 }

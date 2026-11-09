@@ -17,7 +17,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
             {
                 var position = game.State.Grid.HexOf(new TileId(39));
                 foreach (var type in types)
-                    game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = GameSession.Human, Type = type, Position = position });
+                    game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = GameSession.DefaultLocalPlayer, Type = type, Position = position });
                 foreach (var unit in game.State.Units) game.Content.Services.Get<IUnitService>().Single().Initialize(game, unit.Id);
             });
         return new GameSession(sim);
@@ -27,10 +27,10 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
 
     private static City Found(GameSession s)
     {
-        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
+        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && s.DefOf(u).CanFoundCity);
         s.SelectUnit(settler.Id);
         s.RunAction("found");
-        return s.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
+        return s.Sim.State.Cities.First(c => c.Owner == GameSession.DefaultLocalPlayer);
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
         Assert.Equal(settled + 1, s.Revision);
 
         var found = Found(s);
-        var otherCity = new City { Id = s.Sim.State.NextCityId++, Owner = GameSession.Human, Position = s.Sim.State.Grid.HexOf(new TileId(41)) };
+        var otherCity = new City { Id = s.Sim.State.NextCityId++, Owner = GameSession.DefaultLocalPlayer, Position = s.Sim.State.Grid.HexOf(new TileId(41)) };
         s.Sim.State.AddCity(otherCity);
         s.SelectCity(found.Id);
         settled = s.Revision;
@@ -110,7 +110,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
         Assert.Equal(otherCity.Id, s.SelectedCityId);
         Assert.Equal(settled + 1, s.Revision);
 
-        s.SelectUnit(s.Sim.State.Units.First(u => u.Owner == GameSession.Human).Id);
+        s.SelectUnit(s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer).Id);
         settled = s.Revision;
         s.ClearSelection();
         Assert.Null(s.Unit);
@@ -125,7 +125,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
         var s = NewSession("military:warrior");
         int revision = s.Revision;
 
-        bool ok = s.Submit(new MoveUnitPathCommand { Player = GameSession.Human, Unit = 999_999, Path = [] });
+        bool ok = s.Submit(new MoveUnitPathCommand { Player = GameSession.DefaultLocalPlayer, Unit = 999_999, Path = [] });
 
         Assert.False(ok);
         Assert.StartsWith("Can't do that:", s.Message);
@@ -136,7 +136,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
     public void Clicking_a_tile_with_two_units_cycles_the_stack_and_bumps_on_every_click()
     {
         var s = StackedSession();
-        var tile = s.Sim.State.Units.First(u => u.Owner == GameSession.Human).Position;
+        var tile = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer).Position;
         s.ClearSelection();
         int revision = s.Revision;
         var seen = new List<int>();

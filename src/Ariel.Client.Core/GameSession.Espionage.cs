@@ -24,7 +24,7 @@ public sealed partial class GameSession
     public RivalIntelligence? DescribeRivalIntelligence(int targetTeam)
     {
         var service = OptionalService<IEspionageService>();
-        if (service is null || !service.KnownRivals(Sim, Human).Contains(targetTeam)) return null;
+        if (service is null || !service.KnownRivals(Sim, LocalPlayer).Contains(targetTeam)) return null;
         int me = MyTeam.Id;
         // One bulk query gives every tier's threshold and unlock state from a single investment calculation.
         var permissions = service.PassiveStatus(Sim, me, targetTeam)
@@ -32,8 +32,8 @@ public sealed partial class GameSession
         bool Allowed(PassiveEspionageKind kind) => permissions.Single(p => p.Kind == kind).Unlocked;
         var rival = Sim.State.TeamById(targetTeam);
 
-        return new(targetTeam, TeamName(rival), service.Points(Sim, me, targetTeam), service.Weight(Sim, Human, targetTeam),
-            service.Spending(Sim, Human, CurrentEspionageBudget()).GetValueOrDefault(targetTeam), permissions,
+        return new(targetTeam, TeamName(rival), service.Points(Sim, me, targetTeam), service.Weight(Sim, LocalPlayer, targetTeam),
+            service.Spending(Sim, LocalPlayer, CurrentEspionageBudget()).GetValueOrDefault(targetTeam), permissions,
             service.CounterEspionage(Sim, me, targetTeam), service.CounterEspionage(Sim, targetTeam, me),
             Allowed(PassiveEspionageKind.Demographics) ? RivalDemographicsOf(rival) : null,
             Allowed(PassiveEspionageKind.InspectResearch) ? RivalResearchOf(rival) : null,
@@ -44,11 +44,11 @@ public sealed partial class GameSession
     /// The panel rebuilds on every revision, so an uncached read would recalculate the whole economy each time.</summary>
     private long CurrentEspionageBudget()
     {
-        var rates = Sim.State.PlayerById(Human).Extensions.Get<EconomyPlayerState>(Sim.Content)?.Rates ?? default;
+        var rates = Sim.State.PlayerById(LocalPlayer).Extensions.Get<EconomyPlayerState>(Sim.Content)?.Rates ?? default;
         if (_espionageBudgetTurn == Sim.State.Turn && _espionageBudgetRates == rates && _espionageBudgetCities == Sim.State.Cities.Count)
             return _espionageBudget;
-        _espionageBudget = OptionalService<IPlayerEspionageSource>()?.EspionageHundredths(Sim, Human)
-            ?? OptionalService<IPlayerEconomyService>()?.Calculate(Sim, Human).CommerceHundredths.Espionage ?? 0;
+        _espionageBudget = OptionalService<IPlayerEspionageSource>()?.EspionageHundredths(Sim, LocalPlayer)
+            ?? OptionalService<IPlayerEconomyService>()?.Calculate(Sim, LocalPlayer).CommerceHundredths.Espionage ?? 0;
         _espionageBudgetTurn = Sim.State.Turn;
         _espionageBudgetRates = rates;
         _espionageBudgetCities = Sim.State.Cities.Count;

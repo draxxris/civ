@@ -214,7 +214,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     public void Turn_events_become_notifications_for_the_local_player_only()
     {
         var s = new GameSession(GameFactory.Create(mods.Content, 3));
-        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.Human && s.DefOf(u).CanFoundCity);
+        var settler = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && s.DefOf(u).CanFoundCity);
         s.SelectUnit(settler.Id);
         s.RunAction("found");
         Assert.Contains(s.Notifications, n => n.Kind == "city" && n.Text.StartsWith("Founded"));
@@ -275,12 +275,12 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var a = AddFighter(s.Sim, 0, 39); var d = AddFighter(s.Sim, 1, 40, "military:archer");
         s.Sim.State.SetWar(0, 1, true);
         var (attackerHex, defenderHex) = (a.Position, d.Position);
-        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = a.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands.
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = a.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands.
         tweak?.Invoke(a, d);
         RigNextRound(s.Sim, a, d, defenderHits);
         s.Sim.Content.Services.Get<ICombatService>().Single().Resolve(s.Sim, a.Id, d.Id);
         s.SetMessage("");
-        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = a.Id, Activity = UnitActivity.Sleep });
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = a.Id, Activity = UnitActivity.Sleep });
         var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
         Assert.Equal(attackerHex, battle.AttackerHex);
         Assert.Equal(defenderHex, battle.DefenderHex);
@@ -332,11 +332,11 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         // Both units join the roster after the session last read it, then fight within the same batch.
         var victor = AddUnit(s.Sim, city, "military:warrior");
         var casualty = AddUnit(s.Sim, city, "military:warrior");
-        s.Sim.Events.Publish(new UnitCreated(victor.Id, GameSession.Human, victor.Type, victor.Position));
-        s.Sim.Events.Publish(new UnitCreated(casualty.Id, GameSession.Human, casualty.Type, casualty.Position));
+        s.Sim.Events.Publish(new UnitCreated(victor.Id, GameSession.DefaultLocalPlayer, victor.Type, victor.Position));
+        s.Sim.Events.Publish(new UnitCreated(casualty.Id, GameSession.DefaultLocalPlayer, casualty.Type, casualty.Position));
         s.Sim.Events.Publish(new CombatResolved(victor.Id, enemy.Id, victor.Id));
         s.Sim.Events.Publish(new CombatResolved(enemy.Id, casualty.Id, enemy.Id));
-        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = victor.Id, Activity = UnitActivity.Sleep });
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = victor.Id, Activity = UnitActivity.Sleep });
         Assert.Contains(s.Notifications, n => n.Kind == "combat" && n.Text == "Your unit won a battle");
         Assert.Contains(s.Notifications, n => n.Kind == "combat" && n.Text == "Your unit was lost in battle");
     }
@@ -351,7 +351,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var attacker = AddFighter(s.Sim, 0, grid.TileAt(start).Value, "military:horseman"); // Two moves: one step, then the attack.
         var defender = AddFighter(s.Sim, 1, grid.TileAt(target).Value, "military:archer");
         s.Sim.State.SetWar(0, 1, true);
-        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = attacker.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the walk.
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = attacker.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the walk.
         s.SelectUnit(attacker.Id);
         var path = s.PreviewAt(target)!.Path;
         Assert.Equal(2, path.Count);
@@ -381,7 +381,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var attacker = AddFighter(sim, 1, 39, "military:warrior");
         sim.State.SetWar(0, 1, true);
         defender.Health = 1;
-        s.Submit(new SetUnitActivityCommand { Player = GameSession.Human, Unit = defender.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the turn ends.
+        s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = defender.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands before the turn ends.
         strike.Pending = (attacker.Id, defender.Id);
         int turn = sim.State.Turn;
         s.EndTurn();

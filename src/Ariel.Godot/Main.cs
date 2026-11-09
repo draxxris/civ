@@ -319,7 +319,7 @@ public partial class Main : Node3D
         if (_debug.ScreenshotPath == null) return;
         Input.WarpMouse(new Vector2(700, 10));
         if (_debug.Stage is "diplomacy" or "espionage")
-            foreach (var rival in session.Sim.State.Players.Where(p => p.Id != GameSession.Human))
+            foreach (var rival in session.Sim.State.Players.Where(p => p.Id != session.LocalPlayer))
                 session.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.EstablishContact(session.Sim, session.Me.TeamId, rival.TeamId);
         if (_debug.Stage == "espionage") _espionageCapture = new EspionageCapture(session);
         if (_debug.Stage is "city" or "map-city" or "conquest") FoundScreenshotCity(session);
@@ -344,7 +344,7 @@ public partial class Main : Node3D
 
     private static void FoundScreenshotCity(GameSession session)
     {
-        var settler = session.Sim.State.Units.FirstOrDefault(u => u.Owner == GameSession.Human && session.DefOf(u).CanFoundCity);
+        var settler = session.Sim.State.Units.FirstOrDefault(u => u.Owner == session.LocalPlayer && session.DefOf(u).CanFoundCity);
         if (settler == null) return;
         session.SelectUnit(settler.Id);
         session.RunAction("found");
@@ -352,7 +352,7 @@ public partial class Main : Node3D
 
     private static void OpenScreenshotCity(GameSession session)
     {
-        var city = session.Sim.State.Cities.FirstOrDefault(c => c.Owner == GameSession.Human);
+        var city = session.Sim.State.Cities.FirstOrDefault(c => c.Owner == session.LocalPlayer);
         if (city == null) return;
         session.SelectCity(city.Id);
         foreach (var choice in session.ProductionChoices(city).Where(p => p.Available).Take(3))

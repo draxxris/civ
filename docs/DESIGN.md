@@ -1507,6 +1507,14 @@ Commands travel as registered JSON type/data envelopes. Every player ends a simu
 turn before the simulation advances. AI runs on every peer and submits ordinary
 validated commands locally.
 
+The client's `GameSession` controls one seat, `LocalPlayer`, and changes the simulation
+only through an `ICommandChannel`. `LocalCommandChannel` applies each command at once. A
+networked channel queues commands and applies them, from every peer, when the front end
+calls `GameSession.Pump` each frame. The session reacts to whatever was applied, whoever
+issued it: it reads new events, drops stale selections, and re-issues standing go-to
+orders as ordinary commands when a new turn begins. Only a local game ends the turns of
+human players nobody controls.
+
 Lockstep peers exchange content hashes before any tick runs. A mismatch raises an
 explicit content error. Peers then submit command batches and exchange state hashes
 after each tick. A state mismatch raises `Desync`. The handshake identifies content, not

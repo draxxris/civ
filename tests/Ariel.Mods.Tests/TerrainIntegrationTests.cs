@@ -176,7 +176,7 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
             EqualScatter(props[chunk.Id], planner.Plan(chunk, fogged, foggedField, palette));
         }
         // An actual observer reacquires sight; do not edit the stored snapshot or visibility masks.
-        var observer = new Unit { Id = session.Sim.State.NextUnitId++, Owner = GameSession.Human,
+        var observer = new Unit { Id = session.Sim.State.NextUnitId++, Owner = GameSession.DefaultLocalPlayer,
             Type = "military:warrior", Position = before.Grid.HexOf(new TileId(tile)) };
         session.Sim.State.AddUnit(observer);
         visibility.Recompute(session.Sim);

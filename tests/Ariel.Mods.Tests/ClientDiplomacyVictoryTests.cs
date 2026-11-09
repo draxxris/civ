@@ -77,7 +77,7 @@ public sealed class ClientDiplomacyVictoryTests
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
         service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         session.Me.Treasury = 100;
-        Assert.True(session.Submit(new ProposeDealCommand { Player = GameSession.Human, Target = 1, Items = [new(GameSession.Human, TradeItemKind.Gold, "", 10)] }));
+        Assert.True(session.Submit(new ProposeDealCommand { Player = GameSession.DefaultLocalPlayer, Target = 1, Items = [new(GameSession.DefaultLocalPlayer, TradeItemKind.Gold, "", 10)] }));
         var deal = Assert.Single(session.DescribeDiplomacy().Deals);
         Assert.Contains("You give 10 gold", deal.Summary);
         Assert.True(session.DoDiplomacy(deal.Cancel!));
@@ -91,12 +91,12 @@ public sealed class ClientDiplomacyVictoryTests
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
         service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         var goldTrading = session.Sim.Content.Get<Ariel.Content.Schema.TechDef>().All.First(t => t.GoldTrading);
-        session.Sim.TeamOf(GameSession.Human).Techs.Add(goldTrading.Id);
+        session.Sim.TeamOf(GameSession.DefaultLocalPlayer).Techs.Add(goldTrading.Id);
         session.Sim.TeamOf(1).Techs.Add(goldTrading.Id);
         session.Sim.State.PlayerById(1).Treasury = 100;
         Assert.True(session.Submit(new ProposeDealCommand
         {
-            Player = 1, Target = GameSession.Human,
+            Player = 1, Target = GameSession.DefaultLocalPlayer,
             Items = [new(1, TradeItemKind.GoldPerTurn, Amount: 1)],
         }));
 
@@ -119,8 +119,8 @@ public sealed class ClientDiplomacyVictoryTests
         session.MyTeam.Techs.Remove("research:woodworking");
         sim.TeamOf(1).Techs.Add("research:woodworking");
         session.Me.Treasury = 100;
-        Assert.True(session.Submit(new ProposeDealCommand { Player = 1, Target = GameSession.Human,
-            Items = [new(1, TradeItemKind.Technology, "research:woodworking"), new(GameSession.Human, TradeItemKind.Gold, Amount: 7)] }));
+        Assert.True(session.Submit(new ProposeDealCommand { Player = 1, Target = GameSession.DefaultLocalPlayer,
+            Items = [new(1, TradeItemKind.Technology, "research:woodworking"), new(GameSession.DefaultLocalPlayer, TradeItemKind.Gold, Amount: 7)] }));
         var stale = Assert.Single(session.DescribeDiplomacy().Deals).Accept!;
         Assert.Null(stale.Blocked);
         if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = true;
@@ -139,7 +139,7 @@ public sealed class ClientDiplomacyVictoryTests
         Assert.Null(allowed.Blocked);
         Assert.True(session.DoDiplomacy(allowed));
         Assert.Empty(session.DescribeDiplomacy().Deals);
-        Assert.True(sim.KnowsTech(GameSession.Human, "research:woodworking"));
+        Assert.True(sim.KnowsTech(GameSession.DefaultLocalPlayer, "research:woodworking"));
         Assert.Equal(93, session.Me.Treasury);
     }
 

@@ -56,7 +56,7 @@ internal sealed partial class MapRenderer
         var at = PositionOf(top.Position, YTokens + 0.01f) + (inCity ? offset : Vector3.Zero);
         float radius = inCity ? 0.3f : 0.4f;
         var owner = Ui.ToColor(MapStyle.PlayerColor(top.Owner));
-        float shade = top.Owner == GameSession.Human && top.MovesLeft <= 0 ? 0.62f : 1f;
+        float shade = top.Owner == _session.LocalPlayer && top.MovesLeft <= 0 ? 0.62f : 1f;
         if (_models.Has(top.Type))
         {
             // The 3D model carries its own banner and health bar; the flat layer only adds selection and the stack count.

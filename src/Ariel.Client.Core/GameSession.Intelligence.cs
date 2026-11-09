@@ -43,7 +43,7 @@ public sealed partial class GameSession
                 int branches = Sim.State.Cities.Count(c => service.Present(Sim, c.Id).Contains(def.Id));
                 return new CorporationRow(def.Id, def.Name, def.Icon, def.Help, hq != null, hq, hq is int id ? Sim.State.FindCity(id)?.Name : null, branches);
             }).ToList();
-        var cities = Sim.State.Cities.Where(c => c.Owner == Human).OrderBy(c => c.Id)
+        var cities = Sim.State.Cities.Where(c => c.Owner == LocalPlayer).OrderBy(c => c.Id)
             .Select(c => new CorporationCityRow(c.Id, c.Name, CorporationsIn(c))).Where(r => r.Corporations.Count > 0).ToList();
         return new(true, rows, cities);
     }
@@ -64,34 +64,34 @@ public sealed partial class GameSession
         if (service == null) return new(false, 0, []);
         int me = MyTeam.Id;
         // One rival query for the whole screen; one bulk passive query per rival.
-        var rivals = service.KnownRivals(Sim, Human)
+        var rivals = service.KnownRivals(Sim, LocalPlayer)
             .Select(id => (Team: Sim.State.TeamById(id), Status: service.PassiveStatus(Sim, me, id)))
-            .Select(r => new EspionageRow(r.Team.Id, TeamName(r.Team), service.Points(Sim, me, r.Team.Id), service.Weight(Sim, Human, r.Team.Id),
+            .Select(r => new EspionageRow(r.Team.Id, TeamName(r.Team), service.Points(Sim, me, r.Team.Id), service.Weight(Sim, LocalPlayer, r.Team.Id),
                 r.Status.Single(p => p.Kind == PassiveEspionageKind.Demographics).Unlocked,
                 r.Status.Single(p => p.Kind == PassiveEspionageKind.CityVisibility).Unlocked,
                 r.Status.Single(p => p.Kind == PassiveEspionageKind.InspectResearch).Unlocked,
                 r.Status.Single(p => p.Kind == PassiveEspionageKind.InvestigateCity).Unlocked)).ToList();
-        return new(true, service.Held(Sim, Human), rivals);
+        return new(true, service.Held(Sim, LocalPlayer), rivals);
     }
 
     private string TeamName(Team team) => string.Join(", ", team.Members.OrderBy(m => m).Select(PlayerName));
 
     /// <summary>Change how much of the espionage budget goes against a team. False when the espionage mod is absent.</summary>
     public bool SetEspionageWeight(int targetTeam, int weight) => OptionalService<IEspionageService>() is not null
-        && Submit(new SetEspionageWeightCommand { Player = Human, TargetTeam = targetTeam, Weight = weight });
+        && Submit(new SetEspionageWeightCommand { Player = LocalPlayer, TargetTeam = targetTeam, Weight = weight });
 
     /// <summary>Events waiting for the local player's choice.</summary>
     public IReadOnlyList<PendingEventRow> DescribePendingEvents()
     {
         var service = OptionalService<IEventService>();
         if (service == null) return [];
-        return service.Pending(Sim, Human).Select(p =>
+        return service.Pending(Sim, LocalPlayer).Select(p =>
         {
             Sim.Content.TryGet<Schema.EventTriggerDef>(p.Trigger, out var def);
             var options = service.Options(Sim, p.Id).Select(o =>
             {
                 Sim.Content.TryGet<Schema.EventOptionDef>(o, out var opt);
-                return new EventOptionRow(o, opt?.Name ?? Labels.Humanize(o), opt?.Help ?? "", opt?.IsDefault ?? false, service.ValidateChoice(Sim, Human, p.Id, o));
+                return new EventOptionRow(o, opt?.Name ?? Labels.Humanize(o), opt?.Help ?? "", opt?.IsDefault ?? false, service.ValidateChoice(Sim, LocalPlayer, p.Id, o));
             }).ToList();
             return new PendingEventRow(p.Id, p.Trigger, def?.Name ?? Labels.Humanize(p.Trigger), def?.Help ?? "",
                 p.City >= 0 ? p.City : null, p.City >= 0 ? Sim.State.FindCity(p.City)?.Name : null, p.Turn, options);
@@ -102,9 +102,9 @@ public sealed partial class GameSession
     public bool ChooseEventOption(string triggerId, string optionId)
     {
         var service = OptionalService<IEventService>();
-        var pending = service?.Pending(Sim, Human).FirstOrDefault(p => p.Trigger == triggerId);
+        var pending = service?.Pending(Sim, LocalPlayer).FirstOrDefault(p => p.Trigger == triggerId);
         if (pending == null) { SetMessage("No such event is waiting"); return false; }
-        return Submit(new ChooseEventOptionCommand { Player = Human, EventId = pending.Id, Option = optionId });
+        return Submit(new ChooseEventOptionCommand { Player = LocalPlayer, EventId = pending.Id, Option = optionId });
     }
 
     private IEnumerable<UnitActionInfo> CorporationActions(Unit unit)
@@ -114,10 +114,10 @@ public sealed partial class GameSession
         var city = Sim.State.CityAt(unit.Position);
         foreach (var def in Sim.Content.Get<Schema.CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal))
         {
-            var found = new FoundCorporationCommand { Player = Human, Unit = unit.Id, Corporation = def.Id };
+            var found = new FoundCorporationCommand { Player = LocalPlayer, Unit = unit.Id, Corporation = def.Id };
             if (found.Validate(Sim) == null) yield return new("found_corp:" + def.Id, "Found " + def.Name, found, null, def.Help);
             if (city == null) continue;
-            var spread = new SpreadCorporationCommand { Player = Human, City = city.Id, Unit = unit.Id, Corporation = def.Id };
+            var spread = new SpreadCorporationCommand { Player = LocalPlayer, City = city.Id, Unit = unit.Id, Corporation = def.Id };
             if (spread.Validate(Sim) == null) yield return new("spread_corp:" + def.Id, "Spread " + def.Name, spread, null, $"{def.SpreadCost} gold");
         }
     }
@@ -126,14 +126,14 @@ public sealed partial class GameSession
     {
         var service = OptionalService<IEspionageService>();
         var city = Sim.State.CityAt(unit.Position);
-        if (service == null || city == null || city.Owner == Human || unit.MovesLeft <= 0) yield break;
+        if (service == null || city == null || city.Owner == LocalPlayer || unit.MovesLeft <= 0) yield break;
         // Technology theft needs a target technology, so it is offered by the spy panel's picker, not as one-click action.
         foreach (var kind in EspionageMissionOrder.Display.Where(k => k != EspionageMissionKind.StealTech))
         {
-            var mission = new ExecuteEspionageMissionCommand { Player = Human, Unit = unit.Id, City = city.Id, Mission = kind };
+            var mission = new ExecuteEspionageMissionCommand { Player = LocalPlayer, Unit = unit.Id, City = city.Id, Mission = kind };
             if (mission.Validate(Sim) != null) continue;
             yield return new($"spy:{kind}:{city.Id}", Labels.Humanize(kind.ToString()), mission, null,
-                $"{service.MissionCost(Sim, Human, city.Id, kind)} points, {service.SuccessChance(Sim, Human, city.Id)}% chance");
+                $"{service.MissionCost(Sim, LocalPlayer, city.Id, kind)} points, {service.SuccessChance(Sim, LocalPlayer, city.Id)}% chance");
         }
     }
 
@@ -142,8 +142,8 @@ public sealed partial class GameSession
     {
         var service = OptionalService<IEspionageService>();
         if (service is null || unit is null || Sim.State.CityAt(unit.Position) is not { } city) return [];
-        return service.StealableTechnologies(Sim, Human, city.Id)
-            .Select(id => (Id: id, Name: RivalTechnologyOf(id).Name, Cost: service.MissionCost(Sim, Human, city.Id, EspionageMissionKind.StealTech, id)))
+        return service.StealableTechnologies(Sim, LocalPlayer, city.Id)
+            .Select(id => (Id: id, Name: RivalTechnologyOf(id).Name, Cost: service.MissionCost(Sim, LocalPlayer, city.Id, EspionageMissionKind.StealTech, id)))
             .OrderBy(t => t.Cost).ThenBy(t => t.Id, StringComparer.Ordinal)
             .Select(t => new RivalTechnology(t.Id, t.Name)).ToArray();
     }
@@ -158,6 +158,6 @@ public sealed partial class GameSession
             return false;
         }
         return Submit(new ExecuteEspionageMissionCommand
-            { Player = Human, Unit = unit.Id, City = city.Id, Mission = EspionageMissionKind.StealTech, Tech = tech });
+            { Player = LocalPlayer, Unit = unit.Id, City = city.Id, Mission = EspionageMissionKind.StealTech, Tech = tech });
     }
 }

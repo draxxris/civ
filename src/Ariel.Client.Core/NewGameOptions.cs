@@ -26,7 +26,7 @@ public sealed record NewGameOptions(
             Seed = Seed, WorldSize = WorldSize, MapGenerator = MapGenerator, GameSpeed = GameSpeed, Handicap = Handicap,
             StartingEra = StartingEra, PlayerCount = leaders.Count, Leaders = leaders.Select(l => l.Id).ToArray(),
             Civilizations = leaders.Select(l => l.CivilizationId).ToArray(),
-            PlayerAis = leaders.Select((_, i) => i == GameSession.Human ? null : catalog.OpponentAi).ToArray(),
+            PlayerAis = leaders.Select((_, i) => i == GameSession.DefaultLocalPlayer ? null : catalog.OpponentAi).ToArray(),
             GameOptions = gameOptions, MapOverride = MapOverride,
         }.Resolve(catalog.Content);
     }

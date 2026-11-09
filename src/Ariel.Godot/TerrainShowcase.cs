@@ -98,7 +98,7 @@ internal static class TerrainShowcase
         bool Land(Hex h) => !session.Sim.Content.Get<Schema.TerrainDef>(state.PlotAt(h).Terrain).IsWater
             && state.PlotAt(h).Kind != PlotKind.Peak;
         var territory = state.Grid.Range(centre, 2).Where(Land).ToArray();
-        foreach (var h in territory) state.PlotAt(h).Owner = GameSession.Human;
+        foreach (var h in territory) state.PlotAt(h).Owner = session.LocalPlayer;
         if (territory.Length == 0) return;
         var road = new List<Hex> { territory[0] };
         for (int i = 0; i < 4; i++)
