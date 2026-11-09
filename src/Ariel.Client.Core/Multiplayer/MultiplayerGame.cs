@@ -63,7 +63,8 @@ public sealed class MultiplayerGame : IDisposable
         foreach (var batch in start.Batches) _lockstep.Deliver(new NetMessage(NetMessageKind.Commands, batch.Tick, batch.Peer, batch.Commands, 0));
         _lockstep.Desync += OnDesync;
         _channel = new LockstepChannel(_lockstep);
-        Session = new GameSession(sim, start.LocalSeat, _channel);
+        // Every peer runs turns in the background, since lockstep compares states between commands.
+        Session = new GameSession(sim, start.LocalSeat, _channel, backgroundTurns: true);
         foreach (var early in start.Early)
             if (PeerMessage.IsLockstep(early)) _lockstep.Deliver(early);
             else OnReceived(early);

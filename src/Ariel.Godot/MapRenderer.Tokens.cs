@@ -14,7 +14,7 @@ internal sealed partial class MapRenderer
         foreach (var city in _session.KnownCities()) DrawCity(shapes, city);
         _standing.Clear();
         _selectionAt = null;
-        foreach (var group in _session.VisibleUnits().Where(u => !_battleIds.Contains(u.Id)).GroupBy(u => u.Position))
+        foreach (var group in _session.VisibleUnits().Where(u => !_battleIds.Contains(u.Id) && !_walkers.ContainsKey(u.Id)).GroupBy(u => u.Position))
             DrawUnitStack(shapes, icons, group.OrderBy(u => u.Id).ToList());
         SyncActors();
         _tokens.Mesh = shapes.Build(_tokenMaterial);

@@ -109,7 +109,7 @@ depends = ["cool"]
 run = "dotnet run --project tools/Ariel.Benchmarks/Ariel.Benchmarks.csproj --configuration Release"
 
 [tasks."check:sync"]
-description = "Play one AI game in three processes (1 CPU, all CPUs, all CPUs with save/reload) and fail unless every turn hash matches: mise run check:sync -- [--seed N] [--players N] [--turns N]"
+description = "Play one AI game in four processes (1 CPU, all CPUs, all CPUs with save/reload, turns on a background copy) and fail unless every turn hash matches: mise run check:sync -- [--seed N] [--players N] [--turns N]"
 depends = ["cool"]
 run = "tools/sync-check.sh"
 

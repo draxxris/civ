@@ -6,7 +6,8 @@ namespace Ariel.Client;
 /// <summary>
 /// A networked game: commands are checked here for an immediate answer, then queued in lockstep and applied, with every
 /// other peer's, when the ticks that carry them complete. A pump stops after a tick that started a new turn, so the
-/// session reads each turn's events before the event bus moves on. A failed handshake stops the game and becomes
+/// session reads each turn's events before the event bus moves on, and after a tick that left turn work pending (see
+/// <see cref="Simulation.DeferTurnWork"/>), which the session must finish first. A failed handshake stops the game and becomes
 /// <see cref="Problem"/>; a desync is the owner's to resolve (see <see cref="MultiplayerGame"/>).
 /// </summary>
 public sealed class LockstepChannel : ICommandChannel
@@ -42,8 +43,11 @@ public sealed class LockstepChannel : ICommandChannel
         int turn = sim.State.Turn;
         try
         {
+            // Turn work a tick left pending must finish before the next tick: keep receiving, but run nothing.
+            if (sim.HasPendingTurnWork) { _lockstep.Pump(maxTicks: 0); return false; }
             // Bounded: a peer left alone in lockstep needs nobody else's input and could run ticks forever.
-            for (int i = 0; i < MaxTicksPerPump && Problem == null && sim.State.Turn == turn && _lockstep.Pump(maxTicks: 1) > 0; i++) { }
+            for (int i = 0; i < MaxTicksPerPump && Problem == null && sim.State.Turn == turn && !sim.HasPendingTurnWork
+                && _lockstep.Pump(maxTicks: 1) > 0; i++) { }
         }
         catch (InvalidDataException e) { Problem = e.Message; }
         return _lockstep.Applied != applied;

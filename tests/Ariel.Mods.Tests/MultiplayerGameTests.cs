@@ -17,8 +17,13 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
 
     private static void Run(Func<bool> until, params MultiplayerGame[] games)
     {
-        for (int i = 0; i < 600 && !until(); i++)
+        // Turns run on pool threads, so give them time as well as frames.
+        var deadline = DateTime.UtcNow.AddSeconds(60);
+        for (int i = 0; (i < 600 || DateTime.UtcNow < deadline) && !until(); i++)
+        {
             foreach (var g in games) { g.Session.Pump(); g.Update(); }
+            if (i >= 600 || games.Any(g => g.Session.TurnInProgress)) Thread.Sleep(1);
+        }
         Assert.True(until(), "the game did not get there: " + string.Join(" | ", games.Select(g =>
             $"peer {g.LocalPeer} {g.Describe()} turn {g.Session.Sim.State.Turn} seg {g.Session.Sim.State.TurnOrder.Active}/{g.Session.Sim.State.TurnOrder.Segments.Count} " +
             $"ended [{string.Join(",", g.Session.Sim.State.Players.Select(p => $"{p.Id}:{(p.EndedTurn ? 1 : 0)}{(p.Ai == null ? "h" : "a")}"))}] " +
@@ -46,6 +51,7 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
 
     private static void EndTurns(params MultiplayerGame[] games)
     {
+        Run(() => games.All(g => !g.Session.TurnInProgress), games); // The others may still be moving.
         int turn = games[0].Session.Sim.State.Turn;
         foreach (var g in games) g.Session.EndTurn();
         Run(() => games.All(g => g.Session.Sim.State.Turn > turn), games);

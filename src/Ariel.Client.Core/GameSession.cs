@@ -33,20 +33,24 @@ public sealed partial class GameSession
     /// <summary>Counts only changes to the simulation, for the map to rebuild its meshes.</summary>
     public int WorldRevision { get; private set; }
 
-    public GameSession(Simulation sim, int localPlayer = DefaultLocalPlayer, ICommandChannel? channel = null)
+    /// <param name="backgroundTurns">See <see cref="BackgroundTurns"/>.</param>
+    public GameSession(Simulation sim, int localPlayer = DefaultLocalPlayer, ICommandChannel? channel = null, bool backgroundTurns = false)
     {
         if (sim.State.Players.All(p => p.Id != localPlayer)) throw new ArgumentException($"No player {localPlayer} to control", nameof(localPlayer));
         Sim = sim;
         LocalPlayer = localPlayer;
         _channel = channel ?? LocalCommandChannel.Instance;
+        BackgroundTurns = backgroundTurns;
+        sim.DeferTurnWork = backgroundTurns;
         _ordersTurn = sim.State.Turn;
         ResetNotifications();
         SelectNextUnit();
+        StartTurnWork();
     }
 
     /// <summary>Create a new game from the setup screen's choices.</summary>
-    public static GameSession Start(GameCatalog catalog, NewGameOptions options) =>
-        new(new Simulation(catalog.Content, options.ToSettings(catalog)));
+    public static GameSession Start(GameCatalog catalog, NewGameOptions options, bool backgroundTurns = false) =>
+        new(new Simulation(catalog.Content, options.ToSettings(catalog)), backgroundTurns: backgroundTurns);
 
     public Player Me => Sim.State.PlayerById(LocalPlayer);
     /// <summary>What has gone wrong with a networked game's connection, or null.</summary>
@@ -73,6 +77,11 @@ public sealed partial class GameSession
     /// channel accepted it, which in a networked game is before it applies.</summary>
     public bool Submit(GameCommand command)
     {
+        if (TurnInProgress)
+        {
+            SetMessage("Wait for the other players to finish moving.");
+            return false;
+        }
         var result = _channel.Submit(Sim, command);
         Message = result.Error is null ? "" : $"Can't do that: {result.Error}";
         Revision++;
@@ -85,7 +94,9 @@ public sealed partial class GameSession
     /// new it returns at once.</summary>
     public void Pump()
     {
-        if (!_channel.Pump(Sim)) return;
+        bool changed = FinishTurnWork();
+        if (_channel.Pump(Sim)) changed = true;
+        if (!changed) return;
         Revision++;
         SimulationChanged();
     }
@@ -100,6 +111,7 @@ public sealed partial class GameSession
         if (Unit == null) SelectedUnitId = null;
         foreach (var (id, destination) in _gotos)
             if (Sim.State.FindUnit(id) is not { } unit || unit.Position == destination) _gotos.Remove(id);
+        if (StartTurnWork()) return;
         if (Sim.State.Turn == _ordersTurn || !IsMyMove) return;
         _ordersTurn = Sim.State.Turn;
         ContinueOrders();
@@ -120,9 +132,10 @@ public sealed partial class GameSession
 
     /// <summary>The human players the game is waiting on, by name, once the local player cannot move: its turn is
     /// over or another segment is moving. Null while the local player still has its move. Empty when only AI or the
-    /// rules remain.</summary>
+    /// rules remain, as while <see cref="TurnInProgress"/>.</summary>
     public string? WaitingFor()
     {
+        if (TurnInProgress) return "";
         if (IsMyMove && !Me.EndedTurn) return null;
         return string.Join(", ", Sim.State.Players
             .Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn && Sim.MayAct(p.Id))

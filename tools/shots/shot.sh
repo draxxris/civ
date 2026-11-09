@@ -13,4 +13,8 @@ for arg in "$@"; do
   esac
   args+=("$arg"); prev="$arg"
 done
-exec godot-mono --path src/Ariel.Godot -- "${args[@]}"
+# ARIEL_FIXED_FPS=N steps the engine N frames per simulated second however slowly frames really render, so captures
+# of animations (walks, battles) land at the same moment on a throttled desktop as under Xvfb.
+engine=()
+[[ -n "${ARIEL_FIXED_FPS:-}" ]] && engine=(--fixed-fps "$ARIEL_FIXED_FPS")
+exec godot-mono --path src/Ariel.Godot "${engine[@]}" -- "${args[@]}"

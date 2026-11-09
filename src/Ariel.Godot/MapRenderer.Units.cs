@@ -80,6 +80,7 @@ internal sealed partial class MapRenderer
     private void PlaceActors(float focusX)
     {
         foreach (var actor in _actors.Values) Place(actor, focusX);
+        foreach (var walker in _walkers.Values) Place(walker.Actor, focusX);
         if (_battle == null) return;
         Place(_battle.Attacker, focusX);
         Place(_battle.Defender, focusX);
@@ -95,16 +96,6 @@ internal sealed partial class MapRenderer
     // --- battles --------------------------------------------------------------------------------
 
     private bool Seen(Hex hex) => _session.SightOf(_session.Sim.State.PlotAt(hex)) == Sight.Visible;
-
-    private void StartNextBattle()
-    {
-        while (_session.DequeueBattle() is { } playback)
-        {
-            if (!Seen(playback.AttackerHex) && !Seen(playback.DefenderHex)) continue;
-            _battle = Begin(playback);
-            return;
-        }
-    }
 
     private Battle Begin(BattlePlayback p)
     {
@@ -151,6 +142,7 @@ internal sealed partial class MapRenderer
     public override void _Process(double delta)
     {
         if (_battle != null) Advance(_battle, (float)delta);
+        if (_walkers.Count > 0) AdvanceWalkers((float)delta);
     }
 
     private void Advance(Battle b, float delta)
@@ -207,7 +199,10 @@ internal sealed partial class MapRenderer
         b.Defender.QueueFree();
         _battleIds.Remove(b.Playback.AttackerId);
         _battleIds.Remove(b.Playback.DefenderId);
+        SetWalkerVisible(b.Playback.AttackerId, true);
+        SetWalkerVisible(b.Playback.DefenderId, true);
         _battle = null;
+        _battlesDone++;
         _revision = -1;
     }
 }

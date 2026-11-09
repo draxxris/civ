@@ -269,6 +269,17 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         }
     }
 
+    /// <summary>The next battle the session would replay, past any steps queued before it.</summary>
+    private static BattlePlayback NextBattle(GameSession s) => NextBattle(s, required: true)!;
+
+    private static BattlePlayback? NextBattle(GameSession s, bool required)
+    {
+        while (s.DequeuePlayback() is { } item)
+            if (item is BattlePlayback battle) return battle;
+        Assert.False(required, "no battle to replay");
+        return null;
+    }
+
     private (GameSession Session, Unit Attacker, Unit Defender, BattlePlayback Battle) Fight(bool defenderHits, Action<Unit, Unit>? tweak = null)
     {
         var s = Scenario();
@@ -281,7 +292,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         s.Sim.Content.Services.Get<ICombatService>().Single().Resolve(s.Sim, a.Id, d.Id);
         s.SetMessage("");
         s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = a.Id, Activity = UnitActivity.Sleep });
-        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
+        var battle = NextBattle(s);
         Assert.Equal(attackerHex, battle.AttackerHex);
         Assert.Equal(defenderHex, battle.DefenderHex);
         Assert.Equal("military:warrior", battle.AttackerType);
@@ -298,7 +309,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
         Assert.Equal((a.Id, d.Id), (battle.WinnerId, battle.LoserId));
         Assert.True(battle.LoserDied);
-        Assert.Null(s.DequeueBattle());
+        Assert.Null(NextBattle(s, required: false));
     }
 
     [Fact]
@@ -356,7 +367,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var path = s.PreviewAt(target)!.Path;
         Assert.Equal(2, path.Count);
         s.RightClick(target);
-        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
+        var battle = NextBattle(s);
         Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
         Assert.Equal(path[0], battle.AttackerHex);
         Assert.NotEqual(start, battle.AttackerHex);
@@ -386,7 +397,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         int turn = sim.State.Turn;
         s.EndTurn();
         Assert.Equal(turn + 1, sim.State.Turn);
-        var battle = Assert.IsType<BattlePlayback>(s.DequeueBattle());
+        var battle = NextBattle(s);
         Assert.Equal((attacker.Id, defender.Id), (battle.AttackerId, battle.DefenderId));
         Assert.Equal(CombatOutcome.AttackerWon, battle.Outcome);
         Assert.True(battle.LoserDied);

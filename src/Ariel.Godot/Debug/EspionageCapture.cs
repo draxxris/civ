@@ -92,6 +92,7 @@ internal sealed class EspionageCapture
             case "turn":
                 foreach (var player in sim.State.Players.Where(p => p.Id != 0)) player.EndedTurn = true;
                 _session.EndTurn();
+                _session.WaitForOtherPlayers();
                 break;
             case "revoked": SetPoints(0); break;
             case "restored": SetPoints(100000); break;

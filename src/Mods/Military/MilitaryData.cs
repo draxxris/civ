@@ -45,10 +45,18 @@ internal static class MilitaryData
         foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.RemoveUnit(cargo);
         sim.State.RemoveUnit(unit);
     }
+    /// <summary>Move a unit and its cargo, telling presentation where each went from.</summary>
     internal static void MoveUnit(Simulation sim, int unit, Hex target)
     {
-        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.MoveUnit(cargo, target);
-        sim.State.MoveUnit(unit, target);
+        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) Relocate(sim, cargo, target);
+        Relocate(sim, unit, target);
+    }
+    private static void Relocate(Simulation sim, int id, Hex target)
+    {
+        var unit = sim.State.FindUnit(id)!;
+        var from = unit.Position;
+        sim.State.MoveUnit(id, target);
+        sim.Events.Publish(new UnitMoved(id, unit.Owner, from, unit.Position));
     }
     internal static bool CrossesCliff(Simulation sim, TileId from, TileId to) => sim.State.HasCliff(from, to);
     internal static bool CrossesRiver(Simulation sim, TileId from, TileId to) => sim.State.HasRiver(from, to);

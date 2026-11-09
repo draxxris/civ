@@ -49,7 +49,9 @@ public sealed partial class GameSession
     /// desync: selections, standing orders and notifications start afresh.</summary>
     public void ReplaceSimulation(Simulation sim)
     {
+        AbandonTurnWork();
         Sim = sim;
+        Sim.DeferTurnWork = BackgroundTurns;
         _ordersTurn = sim.State.Turn;
         _gotos.Clear();
         _choices.Clear();
@@ -60,6 +62,7 @@ public sealed partial class GameSession
         SelectNextUnit();
         Revision++;
         WorldRevision++;
+        StartTurnWork(); // A save made while other players moved holds that work; it carries on from here.
     }
 
     public bool LoadGame(string path)

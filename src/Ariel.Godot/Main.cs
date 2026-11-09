@@ -196,7 +196,7 @@ public partial class Main : Node3D
         _status.Text = "Generating world…";
         _status.Visible = true;
         var catalog = _catalog!;
-        _starting = Task.Run(() => GameSession.Start(catalog, options));
+        _starting = Task.Run(() => GameSession.Start(catalog, options, backgroundTurns: true));
     }
 
     public override void _ExitTree() => _multiplayer?.Dispose();
@@ -393,7 +393,11 @@ public partial class Main : Node3D
         if (_debug.Stage is "city" or "map-city" or "conquest") FoundScreenshotCity(session);
         if (_debug.Stage == "conquest" && session.Sim.State.Cities.FirstOrDefault() is { } captured)
             captured.Extensions.Set(session.Sim.Content, new CityRuleState { PendingConquestChoice = true });
-        for (int i = 0; i < _debug.Turns; i++) session.EndTurn();
+        for (int i = 0; i < _debug.Turns; i++)
+        {
+            session.EndTurn();
+            session.WaitForOtherPlayers();
+        }
         if (_debug.Stage == "city") OpenScreenshotCity(session);
     }
 

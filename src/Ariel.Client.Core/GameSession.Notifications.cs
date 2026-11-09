@@ -29,7 +29,7 @@ public sealed partial class GameSession
         _seenCount = Sim.Events.Published.Count;
         _myUnits = MyUnitIds();
         SnapshotUnits();
-        _battles.Clear();
+        _playback.Clear();
     }
 
     private HashSet<int> MyUnitIds() => Sim.State.Units.Where(u => u.Owner == LocalPlayer).Select(u => u.Id).ToHashSet();
@@ -55,6 +55,7 @@ public sealed partial class GameSession
     private void Notify(DomainEvent e, int turn)
     {
         if (e is CombatResolved combat) RecordBattle(combat);
+        else if (e is UnitMoved moved) { RecordStep(moved); return; }
         var note = Describe(e, turn);
         if (note != null) _notifications.Add(note);
     }

@@ -37,7 +37,7 @@ public sealed class EndTurnCommand : GameCommand
     public override void Apply(Simulation sim)
     {
         sim.State.PlayerById(Player).EndedTurn = true;
-        sim.ContinueTurn(mayAdvance: true);
+        sim.ContinueTurn();
     }
 }
 
@@ -69,7 +69,7 @@ public sealed class SetPlayerControlCommand : GameCommand
     public override void Apply(Simulation sim)
     {
         sim.State.PlayerById(Target).Ai = Ai;
-        if (Ai != null) sim.ContinueTurn(mayAdvance: true);
+        if (Ai != null) sim.ContinueTurn();
     }
 }
 

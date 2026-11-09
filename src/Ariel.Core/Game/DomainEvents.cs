@@ -12,6 +12,8 @@ public sealed record CityGrew(int City, int Population) : DomainEvent;
 public sealed record BuildingCompleted(int City, string Building) : DomainEvent;
 /// <summary>A unit entered the game.</summary>
 public sealed record UnitCreated(int Unit, int Player, string Type, Hex Position) : DomainEvent;
+/// <summary>A unit moved from one plot to another, usually a single step, for presentation to animate.</summary>
+public sealed record UnitMoved(int Unit, int Player, Hex From, Hex To) : DomainEvent;
 /// <summary>A unit was removed because its owner could not pay recurring costs.</summary>
 public sealed record UnitDisbandedForDeficit(int UnitId, int Player, Hex Position) : DomainEvent;
 /// <summary>A combat finished; the loser was removed. Report is the fight as it resolved, so presentation can replay it after the turn rolls over.</summary>
@@ -48,6 +50,14 @@ public sealed class DomainEventBus
     internal int PublishedCount => _turnEvents.Count;
     /// <summary>Forget presentation events published after a restored state point.</summary>
     internal void Truncate(int count) => _turnEvents.RemoveRange(count, _turnEvents.Count - count);
+    /// <summary>Take over another bus's events, as a copy of this simulation made them: this turn's in a list of
+    /// our own, and the previous turn's as the same list, so readers can tell whether the turn rolled over.</summary>
+    internal void CopyFrom(DomainEventBus other)
+    {
+        _turnEvents.Clear();
+        _turnEvents.AddRange(other._turnEvents);
+        PreviousTurn = other.PreviousTurn;
+    }
     internal void BeginTurn()
     {
         PreviousTurn = Array.AsReadOnly(_turnEvents.ToArray());

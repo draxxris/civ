@@ -10,6 +10,8 @@ namespace Ariel.SyncCheck;
 /// to compute the same hashes, so two runs of the same game must print the same lines whatever the machine: thread
 /// count, timing of the parallel AI waves, process-local string hashing. With <c>--reload-every N</c> the run also saves
 /// and reloads its game every N turns, which must not change the hashes either; a rejoining peer starts from a save.
+/// With <c>--background</c> every turn rolls over as a front end runs it: as turn work on a copy of the game, on another
+/// thread, taken back afterwards.
 /// </summary>
 internal static class HashTrace
 {
@@ -21,18 +23,29 @@ internal static class HashTrace
         int reload = int.Parse(Option(args, "--reload-every") ?? "0", CultureInfo.InvariantCulture);
         string world = Option(args, "--world") ?? "foundation:worldsize_small";
         var mode = Enum.Parse<TurnMode>(Option(args, "--turn-mode") ?? nameof(TurnMode.Simultaneous), ignoreCase: true);
+        bool background = args.Contains("--background");
 
         var sim = GameFactory.CreateAi(content, seed, players, world, mode);
-        Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} turn-mode={mode} reload-every={reload} " +
+        Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} turn-mode={mode} reload-every={reload} background={background} " +
                                 $"processors={Environment.ProcessorCount} content={content.ContentHash}");
         Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
         for (int i = 1; i <= turns; i++)
         {
-            sim.AdvanceTurn();
+            if (background) Background(sim);
+            else sim.AdvanceTurn();
             if (reload > 0 && i % reload == 0) sim = SaveGame.Load(content, SaveGame.Save(sim));
             Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
         }
         return 0;
+    }
+
+    /// <summary>Every AI has ended, so the pending work is the rollover and the next turn's moves.</summary>
+    private static void Background(Simulation sim)
+    {
+        sim.DeferTurnWork = true;
+        var work = sim.BeginTurnWork();
+        Task.Run(work.Run).Wait();
+        sim.CompleteTurnWork(work);
     }
 
     private static string? Option(string[] args, string name)

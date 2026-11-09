@@ -196,7 +196,7 @@ internal sealed partial class GameUi : CanvasLayer
             var waiting = _session.WaitingFor();
             _endTurn.Disabled = waiting != null;
             _endTurn.Text = waiting is null ? idle > 0 ? $"End turn ({idle} waiting)" : "End turn"
-                : waiting.Length > 0 ? $"Waiting: {waiting}" : "Waiting...";
+                : waiting.Length > 0 ? $"Waiting: {waiting}" : _session.TurnInProgress ? "Others moving..." : "Waiting...";
             _endTurn.TooltipText = waiting is { Length: > 0 } ? $"Waiting for {waiting}" : "";
         }
         if (MapRenderer.LogTimings)

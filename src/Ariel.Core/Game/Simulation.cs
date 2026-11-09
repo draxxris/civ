@@ -183,25 +183,41 @@ public sealed partial class Simulation
     private void BeginTurnOrder()
     {
         State.TurnOrder = new TurnOrder { Segments = TurnOrder.Plan(State, Settings.TurnMode) };
-        ContinueTurn(mayAdvance: false);
+        Proceed(mayAdvance: false, defer: false);
     }
+    /// <summary>A player ended its turn or passed to the AI: move the turn on, or, with <see cref="DeferTurnWork"/>,
+    /// leave the AI moves and the turn rollover for <see cref="RunPendingTurnWork"/> or a <see cref="TurnWork"/>.</summary>
+    internal void ContinueTurn() => Proceed(mayAdvance: true, defer: DeferTurnWork);
     /// <summary>Move the turn on as far as it can go without a human: run the AI of the active segment, pass every
     /// segment whose players have all ended, and, once none is left, advance the turn when allowed. A run of segments
     /// with only AI players plans as one ordered batch, which gives the same result as one segment after another.
-    /// The turn never advances from its own start, so an all-AI game does not recurse.</summary>
-    internal void ContinueTurn(bool mayAdvance)
+    /// The turn never advances from its own start, so an all-AI game does not recurse. Deferring stops before the
+    /// first AI move or rollover; passing segments is cheap and still happens at once.</summary>
+    private void Proceed(bool mayAdvance, bool defer)
     {
         var order = State.TurnOrder;
         while (!order.Finished)
         {
-            int last = order.Active;
-            while (last + 1 < order.Segments.Count && OnlyAi(order.Segments[last])) last++;
-            RunAi(order.Segments.Skip(order.Active).Take(last - order.Active + 1)
-                .SelectMany(s => s.Where(id => State.PlayerById(id) is { Ai: not null, EndedTurn: false })).ToArray());
+            var ai = AiDue(out int last);
+            if (ai.Length > 0)
+            {
+                if (defer) return;
+                RunAi(ai);
+            }
             while (!order.Finished && order.Segments[order.Active].All(id => State.PlayerById(id).EndedTurn)) order.Active++;
             if (!order.Finished && order.Active <= last) return; // Humans of this segment still have to move.
         }
-        if (mayAdvance && State.Players.All(p => p.EndedTurn)) AdvanceTurn();
+        if (mayAdvance && !defer && State.Players.All(p => p.EndedTurn)) AdvanceTurn();
+    }
+    /// <summary>The AI players that move next, in order: those of the active segment and of every AI-only segment
+    /// that follows it up to the next one with a human, which is <paramref name="last"/>.</summary>
+    private int[] AiDue(out int last)
+    {
+        var order = State.TurnOrder;
+        last = order.Active;
+        while (last + 1 < order.Segments.Count && OnlyAi(order.Segments[last])) last++;
+        return order.Segments.Skip(order.Active).Take(last - order.Active + 1)
+            .SelectMany(s => s.Where(id => State.PlayerById(id) is { Ai: not null, EndedTurn: false })).ToArray();
     }
     private bool OnlyAi(int[] segment) => segment.All(id => State.PlayerById(id).Ai != null);
     /// <summary>Whether a player may issue commands now. A human acts only in its own segment; AI players are run by
@@ -250,6 +266,8 @@ public sealed partial class Simulation
     {
         // Only top-level commands are recorded; commands applied from inside another command replay with it.
         bool top = _commandDepth == 0;
+        // A command applies after the turn work its predecessors left, exactly as if that work had not been deferred.
+        if (top && DeferTurnWork && HasPendingTurnWork) RunPendingTurnWork();
         var observer = top ? CommandObserver : null;
         var preRng = Rng.State;
         _commandDepth++;
@@ -261,7 +279,7 @@ public sealed partial class Simulation
             cmd.Apply(this);
         }
         finally { _commandDepth--; }
-        if (top) _recordedCommands?.Add((cmd, preRng, Rng.State));
+        if (top) { _recordedCommands?.Add((cmd, preRng, Rng.State)); _version++; }
         observer?.After(this, cmd);
         return true;
     }

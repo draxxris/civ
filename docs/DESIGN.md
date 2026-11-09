@@ -1564,9 +1564,42 @@ Lockstep membership changes at ticks the host chooses, which no peer can have ru
 
 An optional turn timer runs on the host's clock. When it runs out, the host submits
 `EndTurnCommand`s for the humans still moving, so the result stays deterministic.
-`mise run check:sync` checks determinism across processes, thread counts and
-save/reload. `mise run check:multiplayer` plays a host and a guest client against each
-other over localhost.
+`mise run check:sync` checks determinism across processes, thread counts,
+save/reload and background turns. `mise run check:multiplayer` plays a host and a guest
+client against each other over localhost.
+
+### Background turns and replayed moves
+
+AI moves and the turn rollover run off the game thread, in single player and
+multiplayer alike. With `Simulation.DeferTurnWork` set, the command that ends a turn or
+hands a player to the AI only passes finished segments. AI moves and the rollover
+remain, and `HasPendingTurnWork` reports them, derived from the turn order and who has
+ended. The game thread runs nothing else in the meantime:
+
+- `GameSession` (built with `backgroundTurns`) calls `BeginTurnWork`, which copies the
+  state, RNG and this turn's events. It runs `TurnWork.Run` on a pool thread and takes
+  the result back with `CompleteTurnWork` in a later `Pump`. The front end reads the
+  untouched original the whole time, so nothing races. The local player's commands are
+  refused until the work is back, and the end-turn button reads "Others moving...".
+- A command that applies while work is pending runs that work in place first, so a
+  deferred game plays out exactly like one that runs the work inside the command.
+  `CompleteTurnWork` refuses a result if any command applied after the copy was made.
+- `LockstepChannel` runs no tick while work is pending; it only keeps receiving.
+  Lockstep hashes between ticks, so every peer must defer the same way, and
+  `MultiplayerGame` always does.
+- A save made while work is pending holds everything needed to finish it. The loading
+  session simply carries on.
+
+Moves are replayed on the map in the order they happened. `MilitaryData.MoveUnit`
+publishes a `UnitMoved` presentation event for every plot a unit (or its cargo) enters.
+The session turns these into `StepPlayback`s, queued with `BattlePlayback`s as
+`MapPlayback`. The map renderer gives each moving unit a walker that leaves its stack
+and plays its steps one after another, with every unit walking at once. A battle waits
+for the steps queued before it, and steps queued after a battle wait for that battle.
+Steps the local player cannot see, and units without a 3D model, skip to where they
+ended up. Long walks speed up so a walker never takes much longer than six steps.
+`ARIEL_FIXED_FPS=60 mise run shot -- ...` captures such animations at fixed simulated
+time, even when the desktop throttles the window.
 
 ## Feature content mods
 

@@ -156,7 +156,8 @@ internal sealed partial class MapRenderer : Node3D
         // Heights must be current before seating tokens, marks or a newly queued battle.
         _terrain.RefreshWorld();
         double terrain = clock.Elapsed.TotalMilliseconds;
-        if (_battle == null) StartNextBattle();
+        DrainPlayback();
+        StartNextBattle();
         bool dynamic = world || _revision != _session.Revision;
         if (world) { BuildLand(); BuildResources(); _worldRevision = _session.WorldRevision; }
         RefreshMapOverlays();
@@ -205,8 +206,8 @@ internal sealed partial class MapRenderer : Node3D
     /// <summary>Keep each label on the world copy nearest the camera so text never sits a map-width away.</summary>
     public void WrapLabels(float focusX)
     {
-        // Battles move anchors between refreshes; stationary actors only need wrapping after a camera move or rebuild.
-        if (_wrappedFocusX == focusX && _battle == null) return;
+        // Battles and walks move anchors between refreshes; stationary actors only need wrapping after a camera move or rebuild.
+        if (_wrappedFocusX == focusX && !Replaying) return;
         _wrappedFocusX = focusX;
         PlaceActors(focusX);
         if (Period <= 0) return;

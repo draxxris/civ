@@ -120,10 +120,12 @@ public sealed class LobbyTests(LoadedMods mods) : IClassFixture<LoadedMods>
 
         a.Session.EndTurn();
         b.Session.EndTurn();
-        for (int i = 0; i < 400 && (a.Session.Sim.State.Turn < 2 || b.Session.Sim.State.Turn < 2); i++)
+        var deadline = DateTime.UtcNow.AddSeconds(60); // Turns run on pool threads.
+        while (DateTime.UtcNow < deadline && (a.Session.Sim.State.Turn < 2 || b.Session.Sim.State.Turn < 2))
         {
             a.Session.Pump();
             b.Session.Pump();
+            Thread.Sleep(1);
         }
         Assert.Equal(2, b.Session.Sim.State.Turn);
         Assert.Null(a.Session.ConnectionProblem);
