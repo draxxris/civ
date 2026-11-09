@@ -236,17 +236,21 @@ the wrong side of a wall.
 
 ### The drawn face
 
-`TerrainField.DrawPoint` moves a lattice point that falls within one lattice step of the
-chosen cliff line onto that line. The two lattice points either side of a drop therefore
-collapse onto the same line and the quad between them is vertical. Where two faces of
-one tile meet (an outside corner of the bluff, or an inside corner wrapped round a low
-tile), `FilletAt` rounds the corner with an arc of radius `CliffFillet` (0.6) tangent to
-both faces: `CliffWeights` biases that tile so the height field steps on the arc, and
-`DrawPoint` offsets the line by the same amount, so the mesh face and the rock wall
-follow it. Only a face that ends (a run end) or a three-way junction still snaps to the
-corner point itself. `TerrainMesher.ChunkMesher` uses `DrawPoint` for every vertex and
-keeps the field's own normals, not a sideways face normal, so the ground immediately
-above and below the wall is not shaded as a dark band.
+The mesh draws a cliff face as the height field's own drop: `CliffSharpness` puts the
+whole drop inside one `PeakResolution` lattice step (about 0.064 world units), so the
+face is a steep slope that wide. Mesh vertices stay on their lattice points. Pulling the
+points either side of a face onto the cliff line would make it vertical, but it flips
+the triangles that cross the line on a slant, and it takes the drawn ground off the
+lattice that rivers drape over (`TerrainLattice`).
+
+`TerrainField.DrawPoint` finds where the face stands: it moves a point within a given
+radius of the chosen cliff line onto that line. Where two faces of one tile meet (an
+outside corner of the bluff, or an inside corner wrapped round a low tile), `FilletAt`
+rounds the corner with an arc of radius `CliffFillet` (0.6) tangent to both faces:
+`CliffWeights` biases that tile so the height field steps on the arc, and `DrawPoint`
+offsets the line by the same amount, so the drop and the rock wall follow it. Only a
+face that ends (a run end) or a three-way junction still snaps to the corner point
+itself. The rock walls use `DrawPoint`; the mesh does not.
 
 A cliff face is drawn only when the ground actually steps. `LandEdgeRocks` probes the
 drop across the face and yields no wall when it is less than half a `CliffRise`. An edge
@@ -607,7 +611,7 @@ Match the symptom to the layer before changing code:
   brink. The old bug placed the wall by bracketing the steepest step of a march across
   the edge; the current code asks the face directly.
 - **The face is a smooth slope, not a step.** Check `CliffSharpness`, `CliffOuter`,
-  `DrawPoint`/`SnapRadius`, and the chunk resolution. A cliff chunk must mesh at
+  and the chunk resolution. A cliff chunk must mesh at
   `PeakResolution`; if it falls back to 9, the drop is a chamfer. `TerrainChunks`
   decides this from the snapshot's relief and cliff bits.
 - **The face is grass-coloured, or the low tile's ground paints across it.** Check
@@ -629,8 +633,8 @@ Match the symptom to the layer before changing code:
   the full 0.22, so do not force the 0.64 end scale onto it.
 - **A corner is a razor arris or a broad rounded cove.** Check how `DrawPoint` handles
   the corner where two cliff edges meet, and `FilletAt` and `CliffFillet` for the arc.
-  `CliffWeights` and `DrawPoint` must apply the same offset, or the mesh face and the
-  rock wall part company at the corner.
+  `CliffWeights` and `DrawPoint` must apply the same offset, or the drop and the rock
+  wall part company at the corner.
 - **A ramp climbs into another face, or two slopes meet.** This is a world rule, not a
   renderer setting. `Lattice.CliffRamp` is shared by `CliffRules.CliffRampRoom` and
   `TerrainTuning.CliffRamp`; changing the rendered ramp without changing the rule makes

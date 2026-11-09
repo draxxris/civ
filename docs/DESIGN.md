@@ -170,13 +170,12 @@ acceptance checks.
   `CliffRise` (0.22); its bare adjacent ground ramps from 0.22 to 0 over `CliffRamp`
   (1.6). If the tile has no bare edge at all (every side is a cliff or the map edge),
   there is no ramp and the face drops the full 0.22.
-- Face and rock wall. `DrawPoint` moves lattice points within one lattice step of the
-  cliff line onto it, so the drop is drawn as a near-vertical face rather than a
-  lattice-wide chamfer. At a corner where two cliff edges meet, the current code moves
-  the corner onto the corner itself, producing a razor arris; the intended look is a
-  slight smoothing, not a razor arris and not a broad rounded cove, and the rendering
-  work adds that fillet. `TerrainMesher` keeps the field's own normals, so the ground
-  above and below the wall is not shaded as a dark band. A cliff with a bit but no
+- Face and rock wall. The field drops a cliff within one `PeakResolution` lattice step,
+  and the mesh keeps its vertices on the lattice, so the face is a steep slope about
+  0.064 world units wide; pulling vertices onto the cliff line would flip triangles that
+  cross it. `DrawPoint` finds the cliff line, and the rock wall stands against it. At a
+  corner where two cliff edges meet, the intended look is a slight smoothing, not a
+  razor arris and not a broad rounded cove; `FilletAt` adds that fillet. A cliff with a bit but no
   height step draws no wall, and `mise run validate` reports it.
 - Rock scatter. Every known cliff whose lifted side is known carries a wall from the
   lifted side. A coastal cliff (`EdgeRocks`) draws 22 columns per edge on the waterline,
@@ -1717,8 +1716,8 @@ Terrain math is fully decoupled from Godot and deterministically unit-tested in
   alternating row offsets, about 81 vertices per hex), and at $k = 27$ around peaks and
   cliffs. Because lattice vertices are globally indexed and divide chunk bounds exactly,
   chunk borders and the cylindrical wrap seam share identical vertex positions and
-  normals without cracks. Cliff drops snap their lattice points onto the drawn face, so
-  the face is near-vertical rather than a lattice-wide chamfer.
+  normals without cracks. Vertices never leave the lattice; a cliff drop falls within one
+  $k = 27$ step, so the face is a steep slope that wide.
 - `TerrainRay`: Slope ray marching (step 0.05) with 8 rounds of bisection against
   `HeightAt` or `SurfaceHeightAt`. Accurately picks the visible 3D slope under the
   cursor rather than intersecting a flat $y = 0$ plane.

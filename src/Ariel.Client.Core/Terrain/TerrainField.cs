@@ -487,12 +487,12 @@ public sealed class TerrainField
         }
     }
 
-    /// <summary>The point a lattice vertex is drawn at, and the face normal when it was moved. A height field on a lattice
-    /// can only drop over one lattice step, so a cliff face would be a chamfer that wide — close to vertical, not vertical.
-    /// A point within <paramref name="radius"/> of a cliff line is therefore moved onto the line: the two lattice points the
-    /// face falls between end up at the same spot, and the quad between them is a wall. The move is a pure function of the
-    /// point, so chunks that share an edge agree, and it is less than one lattice step, so nothing else on the map shifts.
-    /// X and Z are the position, NX/NZ the horizontal normal of the face (zero when the point did not move).</summary>
+    /// <summary>Where the cliff face nearest a point stands, and its normal. A point within <paramref name="radius"/> of a
+    /// cliff line is moved onto the line (or onto the corner where two faces meet, within twice the radius): the line the
+    /// height field's drop is centred on, offset by the corner fillet like <see cref="CliffWeights"/>. Rock walls use it to
+    /// stand their columns against the face. The mesh does not: its vertices stay on the lattice, because pulling them onto
+    /// the line flips the triangles that cross it on a slant. X and Z are the position, NX/NZ the horizontal normal of the
+    /// face (zero when no face is in reach).</summary>
     public (double X, double Z, double NX, double NZ) DrawPoint(double x, double z, double radius)
     {
         if (!_hasCliffs) return (x, z, 0, 0);
