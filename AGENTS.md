@@ -1,5 +1,12 @@
 # Agent Guidelines
 
+## Architecture & Code Quality
+
+Always build code cleanly, modularly, and with proper architecture and separation of
+concerns. Never simply bolt on a feature because it was requested. If you cannot find an
+easy way to build it naturally, and you would recommend a refactor to make the whole
+thing clean, stop your work ahead of time and say so.
+
 ## Tooling: Use mise Tasks, Not Raw Commands
 
 Run `mise run help` first, every time. It lists the tasks this repository actually
