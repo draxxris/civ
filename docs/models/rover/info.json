@@ -1,0 +1,17 @@
+{
+  "name": "rover",
+  "model": "src/Mods/Military/art/models/rover.glb",
+  "texture_path": "art/units/rover/rover.dds",
+  "textures": [
+    "art/units/rover/rover.dds"
+  ],
+  "triangles": 620,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

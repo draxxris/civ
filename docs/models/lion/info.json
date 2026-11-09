@@ -1,0 +1,18 @@
+{
+  "name": "lion",
+  "model": "src/Mods/Military/art/models/lion.glb",
+  "texture_path": "art/units/lion/lion.dds",
+  "textures": [
+    "art/units/lion/lion.dds"
+  ],
+  "triangles": 472,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "cuirassier",
+  "model": "src/Mods/Military/art/models/cuirassier.glb",
+  "texture_path": [
+    "art/units/cuirassier/cuirassier_rider_128.dds",
+    "art/units/cuirassier/cuirassier_horse_128.dds"
+  ],
+  "textures": [
+    "art/units/cuirassier/cuirassier_rider_128.dds",
+    "art/units/cuirassier/cuirassier_horse_128.dds"
+  ],
+  "triangles": 1344,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

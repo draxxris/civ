@@ -1,0 +1,22 @@
+{
+  "name": "modern_grenadier",
+  "model": "src/Mods/Military/art/models/modern_grenadier.glb",
+  "texture_path": [
+    "art/units/modern grenadier/grenadier_128.dds",
+    "art/units/modern grenadier/marine_128.dds"
+  ],
+  "textures": [
+    "art/units/modern grenadier/grenadier_128.dds",
+    "art/units/modern grenadier/marine_128.dds"
+  ],
+  "triangles": 848,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

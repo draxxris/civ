@@ -1,0 +1,22 @@
+{
+  "name": "longbowman",
+  "model": "src/Mods/Military/art/models/longbowman.glb",
+  "texture_path": [
+    "art/units/longbowman/longbowman.dds",
+    "art/units/longbowman/longbowman_128.dds"
+  ],
+  "textures": [
+    "art/units/longbowman/longbowman.dds",
+    "art/units/longbowman/longbowman_128.dds"
+  ],
+  "triangles": 718,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

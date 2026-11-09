@@ -1,0 +1,18 @@
+{
+  "name": "pikeman",
+  "model": "src/Mods/Military/art/models/pikeman.glb",
+  "texture_path": "art/units/pikeman/pikeman_128.dds",
+  "textures": [
+    "art/units/pikeman/pikeman_128.dds"
+  ],
+  "triangles": 864,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "nlos_cannon",
+  "model": "src/Mods/Military/art/models/nlos_cannon.glb",
+  "texture_path": "art/units/nlos cannon/disruptor.dds",
+  "textures": [
+    "art/units/nlos cannon/disruptor.dds"
+  ],
+  "triangles": 1306,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

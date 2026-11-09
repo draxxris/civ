@@ -1,0 +1,27 @@
+{
+  "name": "assyria_ram",
+  "model": "src/Mods/Military/art/models/assyria_ram.glb",
+  "texture_path": [
+    "art/units/battering_ram/ram.dds",
+    "art/units/battering_ram/annual_rings.nif",
+    "art/units/battering_ram/wood.dds",
+    "art/units/battering_ram/rope.nif",
+    "art/units/battering_ram/wheel.dds"
+  ],
+  "textures": [
+    "art/units/battering_ram/ram.dds",
+    "art/units/battering_ram/annual_rings.nif",
+    "art/units/battering_ram/wood.dds",
+    "art/units/battering_ram/rope.nif",
+    "art/units/battering_ram/wheel.dds"
+  ],
+  "triangles": 1452,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

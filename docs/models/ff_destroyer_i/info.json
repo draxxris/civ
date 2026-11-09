@@ -1,0 +1,18 @@
+{
+  "name": "ff_destroyer_i",
+  "model": "src/Mods/Military/art/models/ff_destroyer_i.glb",
+  "texture_path": "art/units/finalfrontier_destroyer/destroyer_diff.dds",
+  "textures": [
+    "art/units/finalfrontier_destroyer/destroyer_diff.dds"
+  ],
+  "triangles": 983,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

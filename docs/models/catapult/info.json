@@ -1,0 +1,17 @@
+{
+  "name": "catapult",
+  "model": "src/Mods/Military/art/models/catapult.glb",
+  "texture_path": "art/units/catapult/catapult_256.dds",
+  "textures": [
+    "art/units/catapult/catapult_256.dds"
+  ],
+  "triangles": 646,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "colonist",
+  "model": "src/Mods/Military/art/models/colonist.glb",
+  "texture_path": [
+    "art/units/settler/settler_child_128.dds",
+    "art/units/settler/settler_male_128.dds"
+  ],
+  "textures": [
+    "art/units/settler/settler_child_128.dds",
+    "art/units/settler/settler_male_128.dds"
+  ],
+  "triangles": 700,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

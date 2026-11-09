@@ -1,0 +1,18 @@
+{
+  "name": "greek_phalanx",
+  "model": "src/Mods/Military/art/models/greek_phalanx.glb",
+  "texture_path": "art/units/spearman/spearman_128.dds",
+  "textures": [
+    "art/units/spearman/spearman_128.dds"
+  ],
+  "triangles": 708,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

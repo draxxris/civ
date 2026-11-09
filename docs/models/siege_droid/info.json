@@ -1,0 +1,17 @@
+{
+  "name": "siege_droid",
+  "model": "src/Mods/Military/art/models/siege_droid.glb",
+  "texture_path": "art/units/siege droid/lightmech.dds",
+  "textures": [
+    "art/units/siege droid/lightmech.dds"
+  ],
+  "triangles": 2478,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

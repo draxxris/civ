@@ -1,0 +1,18 @@
+{
+  "name": "littoral_combat_ship",
+  "model": "src/Mods/Military/art/models/littoral_combat_ship.glb",
+  "texture_path": "art/units/littoral combat ship/sensordestroyer.dds",
+  "textures": [
+    "art/units/littoral combat ship/sensordestroyer.dds"
+  ],
+  "triangles": 955,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

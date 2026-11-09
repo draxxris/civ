@@ -1,0 +1,18 @@
+{
+  "name": "explorer",
+  "model": "src/Mods/Military/art/models/explorer.glb",
+  "texture_path": "art/units/explorer/explorer_128.dds",
+  "textures": [
+    "art/units/explorer/explorer_128.dds"
+  ],
+  "triangles": 584,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

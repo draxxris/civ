@@ -1,0 +1,24 @@
+{
+  "name": "mongol_keshik",
+  "model": "src/Mods/Military/art/models/mongol_keshik.glb",
+  "texture_path": [
+    "art/units/unique/mongol/keshik/mongol_weapons.dds",
+    "art/units/unique/mongol/keshik/mongol_rider_128.dds",
+    "art/units/unique/mongol/keshik/mongol_horse_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/mongol/keshik/mongol_weapons.dds",
+    "art/units/unique/mongol/keshik/mongol_rider_128.dds",
+    "art/units/unique/mongol/keshik/mongol_horse_128.dds"
+  ],
+  "triangles": 1148,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

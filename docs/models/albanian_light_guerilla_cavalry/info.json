@@ -1,0 +1,26 @@
+{
+  "name": "albanian_light_guerilla_cavalry",
+  "model": "src/Mods/Military/art/models/albanian_light_guerilla_cavalry.glb",
+  "texture_path": [
+    "art/albania/kalorse/knight/knight_shield_64.dds",
+    "art/albania/kalorse/knight/knight_128.dds",
+    "art/albania/kalorse/knight/knight-horse128.dds",
+    "art/albania/kalorse/knight/knight_horse_128.dds"
+  ],
+  "textures": [
+    "art/albania/kalorse/knight/knight_shield_64.dds",
+    "art/albania/kalorse/knight/knight_128.dds",
+    "art/albania/kalorse/knight/knight-horse128.dds",
+    "art/albania/kalorse/knight/knight_horse_128.dds"
+  ],
+  "triangles": 1143,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

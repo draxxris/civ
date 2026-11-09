@@ -1,0 +1,22 @@
+{
+  "name": "ambassador",
+  "model": "src/Mods/Military/art/models/ambassador.glb",
+  "texture_path": [
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/ambassador/diplomat_256.dds"
+  ],
+  "textures": [
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/ambassador/diplomat_256.dds"
+  ],
+  "triangles": 590,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack"
+  ]
+}

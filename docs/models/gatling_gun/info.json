@@ -1,0 +1,23 @@
+{
+  "name": "gatling_gun",
+  "model": "src/Mods/Military/art/models/gatling_gun.glb",
+  "texture_path": [
+    "art/units/gatlinggun/european/cannon.dds",
+    "art/units/gatlinggun/european/machine_gun_64.dds",
+    "art/units/gatlinggun/european/machine_gunner_128.dds"
+  ],
+  "textures": [
+    "art/units/gatlinggun/european/cannon.dds",
+    "art/units/gatlinggun/european/machine_gun_64.dds",
+    "art/units/gatlinggun/european/machine_gunner_128.dds"
+  ],
+  "triangles": 1282,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

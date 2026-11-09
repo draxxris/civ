@@ -1,0 +1,18 @@
+{
+  "name": "netherlands_oostindievaarder",
+  "model": "src/Mods/Military/art/models/netherlands_oostindievaarder.glb",
+  "texture_path": "art/units/dutch_east_india_man/east_india_man_256.dds",
+  "textures": [
+    "art/units/dutch_east_india_man/east_india_man_256.dds"
+  ],
+  "triangles": 844,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

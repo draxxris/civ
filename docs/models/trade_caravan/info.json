@@ -1,0 +1,24 @@
+{
+  "name": "trade_caravan",
+  "model": "src/Mods/Military/art/models/trade_caravan.glb",
+  "texture_path": [
+    "art/units/caravan/survivor_settler_256_2.dds",
+    "art/units/caravan/caravan_diff.dds",
+    "art/units/caravan/cargoart_diff.dds",
+    "art/units/caravan/supplyox_2_128.dds",
+    "art/units/caravan/supplyox_128.dds"
+  ],
+  "textures": [
+    "art/units/caravan/survivor_settler_256_2.dds",
+    "art/units/caravan/caravan_diff.dds",
+    "art/units/caravan/cargoart_diff.dds",
+    "art/units/caravan/supplyox_2_128.dds",
+    "art/units/caravan/supplyox_128.dds"
+  ],
+  "triangles": 2320,
+  "animation_count": 2,
+  "animations": [
+    "idle",
+    "run"
+  ]
+}

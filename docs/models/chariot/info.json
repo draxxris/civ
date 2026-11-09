@@ -1,0 +1,28 @@
+{
+  "name": "chariot",
+  "model": "src/Mods/Military/art/models/chariot.glb",
+  "texture_path": [
+    "art/units/chariot/chariot_horse_128.dds",
+    "art/shared/string.dds",
+    "art/units/chariot/chariot_driver_128.dds",
+    "art/units/chariot/chariot_weapons_64.dds",
+    "art/units/chariot/chariot_128.dds"
+  ],
+  "textures": [
+    "art/units/chariot/chariot_horse_128.dds",
+    "art/shared/string.dds",
+    "art/units/chariot/chariot_driver_128.dds",
+    "art/units/chariot/chariot_weapons_64.dds",
+    "art/units/chariot/chariot_128.dds"
+  ],
+  "triangles": 1488,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

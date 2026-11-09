@@ -1,0 +1,19 @@
+{
+  "name": "f15",
+  "model": "src/Mods/Military/art/models/f15.glb",
+  "texture_path": [
+    "art/units/strike fighter/american/jetfighter_256.dds",
+    "art/units/strike fighter/american/f15_256.dds"
+  ],
+  "textures": [
+    "art/units/strike fighter/american/jetfighter_256.dds",
+    "art/units/strike fighter/american/f15_256.dds"
+  ],
+  "triangles": 1205,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "hurt"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "construct_ship",
+  "model": "src/Mods/Military/art/models/construct_ship.glb",
+  "texture_path": "art/units/finalfrontier_constructionship/constructionship_diff.dds",
+  "textures": [
+    "art/units/finalfrontier_constructionship/constructionship_diff.dds"
+  ],
+  "triangles": 853,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

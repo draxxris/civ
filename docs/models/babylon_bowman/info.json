@@ -1,0 +1,21 @@
+{
+  "name": "babylon_bowman",
+  "model": "src/Mods/Military/art/models/babylon_bowman.glb",
+  "texture_path": [
+    "art/units/unique_babylon_bowman/unique_babylon_bowman_arrow_64.dds",
+    "art/units/unique_babylon_bowman/unique_babylon_bowman_128.dds"
+  ],
+  "textures": [
+    "art/units/unique_babylon_bowman/unique_babylon_bowman_arrow_64.dds",
+    "art/units/unique_babylon_bowman/unique_babylon_bowman_128.dds"
+  ],
+  "triangles": 712,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

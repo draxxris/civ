@@ -1,0 +1,25 @@
+{
+  "name": "nanite_spy",
+  "model": "src/Mods/Military/art/models/nanite_spy.glb",
+  "texture_path": [
+    "art/units/nanite spy/aw_boss_spike.dds",
+    "art/units/nanite spy/clash_blue.dds",
+    "art/units/nanite spy/aw_boss_blue.dds",
+    "art/units/nanite spy/forcefield.dds",
+    "art/units/nanite spy/aw_boss_light.dds"
+  ],
+  "textures": [
+    "art/units/nanite spy/aw_boss_spike.dds",
+    "art/units/nanite spy/clash_blue.dds",
+    "art/units/nanite spy/aw_boss_blue.dds",
+    "art/units/nanite spy/forcefield.dds",
+    "art/units/nanite spy/aw_boss_light.dds"
+  ],
+  "triangles": 476,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "attack",
+    "die"
+  ]
+}

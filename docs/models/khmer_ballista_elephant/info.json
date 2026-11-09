@@ -1,0 +1,24 @@
+{
+  "name": "khmer_ballista_elephant",
+  "model": "src/Mods/Military/art/models/khmer_ballista_elephant.glb",
+  "texture_path": [
+    "art/units/unique_khmer_elephantballista/khmerballistadriver_128.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistacar_128.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistaelephant_256.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistaarrows.dds"
+  ],
+  "textures": [
+    "art/units/unique_khmer_elephantballista/khmerballistadriver_128.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistacar_128.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistaelephant_256.dds",
+    "art/units/unique_khmer_elephantballista/khmerballistaarrows.dds"
+  ],
+  "triangles": 1414,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "attack",
+    "die"
+  ]
+}

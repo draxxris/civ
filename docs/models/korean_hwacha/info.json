@@ -1,0 +1,21 @@
+{
+  "name": "korean_hwacha",
+  "model": "src/Mods/Military/art/models/korean_hwacha.glb",
+  "texture_path": [
+    "art/units/hwacha_korean/hwacha_pilot.dds",
+    "art/units/hwacha_korean/hwacha_w_tc.dds"
+  ],
+  "textures": [
+    "art/units/hwacha_korean/hwacha_pilot.dds",
+    "art/units/hwacha_korean/hwacha_w_tc.dds"
+  ],
+  "triangles": 1298,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

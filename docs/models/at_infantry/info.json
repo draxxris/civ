@@ -1,0 +1,17 @@
+{
+  "name": "at_infantry",
+  "model": "src/Mods/Military/art/models/at_infantry.glb",
+  "texture_path": "art/units/antitankinfantry/antitankinfantry_256.dds",
+  "textures": [
+    "art/units/antitankinfantry/antitankinfantry_256.dds"
+  ],
+  "triangles": 800,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

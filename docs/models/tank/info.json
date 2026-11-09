@@ -1,0 +1,17 @@
+{
+  "name": "tank",
+  "model": "src/Mods/Military/art/models/tank.glb",
+  "texture_path": "art/units/tank/tank_256.dds",
+  "textures": [
+    "art/units/tank/tank_256.dds"
+  ],
+  "triangles": 369,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

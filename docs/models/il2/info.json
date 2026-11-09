@@ -1,0 +1,22 @@
+{
+  "name": "il2",
+  "model": "src/Mods/Military/art/models/il2.glb",
+  "texture_path": [
+    "art/units/il2/fighter_256.dds",
+    "art/units/il2/il2textura.dds",
+    "art/units/il2/il2texture2.dds"
+  ],
+  "textures": [
+    "art/units/il2/fighter_256.dds",
+    "art/units/il2/il2textura.dds",
+    "art/units/il2/il2texture2.dds"
+  ],
+  "triangles": 1430,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "persia_immortal",
+  "model": "src/Mods/Military/art/models/persia_immortal.glb",
+  "texture_path": [
+    "art/units/unique/persia/immortal/persian_immortal_128.dds",
+    "art/units/unique/persia/immortal/persian_immortal_horse_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/persia/immortal/persian_immortal_128.dds",
+    "art/units/unique/persia/immortal/persian_immortal_horse_128.dds"
+  ],
+  "triangles": 971,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

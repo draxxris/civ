@@ -1,0 +1,16 @@
+{
+  "name": "shinto_missionary",
+  "model": "src/Mods/Military/art/models/shinto_missionary.glb",
+  "texture_path": "art/units/kannushi/missionary_confucian_128.dds",
+  "textures": [
+    "art/units/kannushi/missionary_confucian_128.dds"
+  ],
+  "triangles": 480,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

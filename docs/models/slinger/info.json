@@ -1,0 +1,18 @@
+{
+  "name": "slinger",
+  "model": "src/Mods/Military/art/models/slinger.glb",
+  "texture_path": "art/units/peltast/peltast_128x256.dds",
+  "textures": [
+    "art/units/peltast/peltast_128x256.dds"
+  ],
+  "triangles": 792,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "japan_samurai",
+  "model": "src/Mods/Military/art/models/japan_samurai.glb",
+  "texture_path": "art/units/unique/japan/samurai/samurai_128.dds",
+  "textures": [
+    "art/units/unique/japan/samurai/samurai_128.dds"
+  ],
+  "triangles": 801,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

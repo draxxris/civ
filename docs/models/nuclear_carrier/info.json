@@ -1,0 +1,22 @@
+{
+  "name": "nuclear_carrier",
+  "model": "src/Mods/Military/art/models/nuclear_carrier.glb",
+  "texture_path": [
+    "art/units/carrier/carrier_256.dds",
+    "art/units/carrier/carrier_opacity_64.dds"
+  ],
+  "textures": [
+    "art/units/carrier/carrier_256.dds",
+    "art/units/carrier/carrier_opacity_64.dds"
+  ],
+  "triangles": 603,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

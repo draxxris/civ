@@ -1,0 +1,17 @@
+{
+  "name": "assault_mech",
+  "model": "src/Mods/Military/art/models/assault_mech.glb",
+  "texture_path": "art/units/assault_mech/assault_mech_256.dds",
+  "textures": [
+    "art/units/assault_mech/assault_mech_256.dds"
+  ],
+  "triangles": 833,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

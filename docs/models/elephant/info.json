@@ -1,0 +1,18 @@
+{
+  "name": "elephant",
+  "model": "src/Mods/Military/art/models/elephant.glb",
+  "texture_path": "art/units/elephant/warelephant_carthage_256.dds",
+  "textures": [
+    "art/units/elephant/warelephant_carthage_256.dds"
+  ],
+  "triangles": 630,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "elephant_rider",
+  "model": "src/Mods/Military/art/models/elephant_rider.glb",
+  "texture_path": [
+    "art/units/warelephant/warelephant_256.dds",
+    "art/units/warelephant/warelephant_carriage_128.dds",
+    "art/units/warelephant/warelephant_driver_128.dds",
+    "art/units/warelephant/warelephant_spear.dds"
+  ],
+  "textures": [
+    "art/units/warelephant/warelephant_256.dds",
+    "art/units/warelephant/warelephant_carriage_128.dds",
+    "art/units/warelephant/warelephant_driver_128.dds",
+    "art/units/warelephant/warelephant_spear.dds"
+  ],
+  "triangles": 1454,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

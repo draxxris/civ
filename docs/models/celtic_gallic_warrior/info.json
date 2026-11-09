@@ -1,0 +1,18 @@
+{
+  "name": "celtic_gallic_warrior",
+  "model": "src/Mods/Military/art/models/celtic_gallic_warrior.glb",
+  "texture_path": "art/units/celtic_warrior/celticwarrior_128.dds",
+  "textures": [
+    "art/units/celtic_warrior/celticwarrior_128.dds"
+  ],
+  "triangles": 595,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

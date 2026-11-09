@@ -1,0 +1,22 @@
+{
+  "name": "iron_frigate",
+  "model": "src/Mods/Military/art/models/iron_frigate.glb",
+  "texture_path": [
+    "art/units/iron frigate/hmswarrior256.dds",
+    "art/units/iron frigate/frigate.dds"
+  ],
+  "textures": [
+    "art/units/iron frigate/hmswarrior256.dds",
+    "art/units/iron frigate/frigate.dds"
+  ],
+  "triangles": 1393,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "dreadnought",
+  "model": "src/Mods/Military/art/models/dreadnought.glb",
+  "texture_path": "art/units/dreadnought/dreadnought_256.dds",
+  "textures": [
+    "art/units/dreadnought/dreadnought_256.dds"
+  ],
+  "triangles": 397,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack"
+  ]
+}

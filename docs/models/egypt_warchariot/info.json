@@ -1,0 +1,28 @@
+{
+  "name": "egypt_warchariot",
+  "model": "src/Mods/Military/art/models/egypt_warchariot.glb",
+  "texture_path": [
+    "art/units/unique/egypt/warchariot/ewc_spearman_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_spear.dds",
+    "art/units/unique/egypt/warchariot/ewc_driver_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_horse_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_chariot_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/egypt/warchariot/ewc_spearman_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_spear.dds",
+    "art/units/unique/egypt/warchariot/ewc_driver_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_horse_128.dds",
+    "art/units/unique/egypt/warchariot/ewc_chariot_128.dds"
+  ],
+  "triangles": 2412,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

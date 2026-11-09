@@ -1,0 +1,19 @@
+{
+  "name": "worker",
+  "model": "src/Mods/Military/art/models/worker.glb",
+  "texture_path": [
+    "art/units/worker/worker_tools.dds",
+    "art/units/worker/worker_128.dds"
+  ],
+  "textures": [
+    "art/units/worker/worker_tools.dds",
+    "art/units/worker/worker_128.dds"
+  ],
+  "triangles": 884,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

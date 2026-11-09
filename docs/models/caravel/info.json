@@ -1,0 +1,18 @@
+{
+  "name": "caravel",
+  "model": "src/Mods/Military/art/models/caravel.glb",
+  "texture_path": "art/units/caravel/caravel_256.dds",
+  "textures": [
+    "art/units/caravel/caravel_256.dds"
+  ],
+  "triangles": 427,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

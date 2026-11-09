@@ -1,0 +1,17 @@
+{
+  "name": "hybrid_gunship",
+  "model": "src/Mods/Military/art/models/hybrid_gunship.glb",
+  "texture_path": "art/units/hybrid gunship/heavymisslehelicopter.dds",
+  "textures": [
+    "art/units/hybrid gunship/heavymisslehelicopter.dds"
+  ],
+  "triangles": 1859,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

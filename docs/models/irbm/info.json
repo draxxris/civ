@@ -1,0 +1,15 @@
+{
+  "name": "irbm",
+  "model": "src/Mods/Military/art/models/irbm.glb",
+  "texture_path": "art/units/nukes/irbm/icbm_white_256.dds",
+  "textures": [
+    "art/units/nukes/irbm/icbm_white_256.dds"
+  ],
+  "triangles": 386,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

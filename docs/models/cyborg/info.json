@@ -1,0 +1,17 @@
+{
+  "name": "cyborg",
+  "model": "src/Mods/Military/art/models/cyborg.glb",
+  "texture_path": "art/units/nextwar_cyborg/cyborg_128.dds",
+  "textures": [
+    "art/units/nextwar_cyborg/cyborg_128.dds"
+  ],
+  "triangles": 828,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

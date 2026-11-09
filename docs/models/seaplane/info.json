@@ -1,0 +1,20 @@
+{
+  "name": "seaplane",
+  "model": "src/Mods/Military/art/models/seaplane.glb",
+  "texture_path": [
+    "art/units/seaplane/generic/e16a1_g4 copy.dds",
+    "art/units/seaplane/generic/fighter_256.dds"
+  ],
+  "textures": [
+    "art/units/seaplane/generic/e16a1_g4 copy.dds",
+    "art/units/seaplane/generic/fighter_256.dds"
+  ],
+  "triangles": 1129,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

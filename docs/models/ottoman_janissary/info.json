@@ -1,0 +1,18 @@
+{
+  "name": "ottoman_janissary",
+  "model": "src/Mods/Military/art/models/ottoman_janissary.glb",
+  "texture_path": "art/units/janissary/janissary_128.dds",
+  "textures": [
+    "art/units/janissary/janissary_128.dds"
+  ],
+  "triangles": 696,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

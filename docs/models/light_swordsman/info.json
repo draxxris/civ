@@ -1,0 +1,18 @@
+{
+  "name": "light_swordsman",
+  "model": "src/Mods/Military/art/models/light_swordsman.glb",
+  "texture_path": "art/units/swordsman/swordsman_128.dds",
+  "textures": [
+    "art/units/swordsman/swordsman_128.dds"
+  ],
+  "triangles": 660,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

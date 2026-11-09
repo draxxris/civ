@@ -1,0 +1,22 @@
+{
+  "name": "horseman",
+  "model": "src/Mods/Military/art/models/horseman.glb",
+  "texture_path": [
+    "art/units/horseman_eurasian/eurasian_horseman128.dds",
+    "art/units/horseman_eurasian/eurasian_horse128.dds"
+  ],
+  "textures": [
+    "art/units/horseman_eurasian/eurasian_horseman128.dds",
+    "art/units/horseman_eurasian/eurasian_horse128.dds"
+  ],
+  "triangles": 1183,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

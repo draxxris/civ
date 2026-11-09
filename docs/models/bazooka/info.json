@@ -1,0 +1,18 @@
+{
+  "name": "bazooka",
+  "model": "src/Mods/Military/art/models/bazooka.glb",
+  "texture_path": "art/units/bazooka/european/saminfantry_128.dds",
+  "textures": [
+    "art/units/bazooka/european/saminfantry_128.dds"
+  ],
+  "triangles": 754,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

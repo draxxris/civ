@@ -1,0 +1,30 @@
+{
+  "name": "hitech_robot",
+  "model": "src/Mods/Military/art/models/hitech_robot.glb",
+  "texture_path": [
+    "art/units/afterworld_gravebringer/jal/gravebringer_diff.dds",
+    "art/shared/fx_fire_flash.dds",
+    "art/shared/greenflare.dds",
+    "art/units/afterworld_gravebringer/jal/tailbase_diff.dds",
+    "art/units/afterworld_gravebringer/jal/whipglow_diff.dds",
+    "art/units/afterworld_gravebringer/jal/tailglow_diff.dds"
+  ],
+  "textures": [
+    "art/units/afterworld_gravebringer/jal/gravebringer_diff.dds",
+    "art/shared/fx_fire_flash.dds",
+    "art/shared/greenflare.dds",
+    "art/units/afterworld_gravebringer/jal/tailbase_diff.dds",
+    "art/units/afterworld_gravebringer/jal/whipglow_diff.dds",
+    "art/units/afterworld_gravebringer/jal/tailglow_diff.dds"
+  ],
+  "triangles": 3438,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

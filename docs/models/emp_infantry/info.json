@@ -1,0 +1,24 @@
+{
+  "name": "emp_infantry",
+  "model": "src/Mods/Military/art/models/emp_infantry.glb",
+  "texture_path": [
+    "art/units/emp_infantry2/marine_128.dds",
+    "art/units/emp_infantry2/hammer_pad.dds",
+    "art/units/emp_infantry2/battleship_diff.dds"
+  ],
+  "textures": [
+    "art/units/emp_infantry2/marine_128.dds",
+    "art/units/emp_infantry2/hammer_pad.dds",
+    "art/units/emp_infantry2/battleship_diff.dds"
+  ],
+  "triangles": 2262,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

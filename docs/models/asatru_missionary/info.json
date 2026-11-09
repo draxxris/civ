@@ -1,0 +1,16 @@
+{
+  "name": "asatru_missionary",
+  "model": "src/Mods/Military/art/models/asatru_missionary.glb",
+  "texture_path": "art/units/gothi/missionary_general.dds",
+  "textures": [
+    "art/units/gothi/missionary_general.dds"
+  ],
+  "triangles": 584,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

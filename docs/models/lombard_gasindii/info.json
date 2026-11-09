@@ -1,0 +1,24 @@
+{
+  "name": "lombard_gasindii",
+  "model": "src/Mods/Military/art/models/lombard_gasindii.glb",
+  "texture_path": [
+    "art/lombards/gasindii/greek_phalanx_weapons_64.dds",
+    "art/lombards/gasindii/maceman_128.dds",
+    "art/lombards/gasindii/numidian_cavalry_128.dds"
+  ],
+  "textures": [
+    "art/lombards/gasindii/greek_phalanx_weapons_64.dds",
+    "art/lombards/gasindii/maceman_128.dds",
+    "art/lombards/gasindii/numidian_cavalry_128.dds"
+  ],
+  "triangles": 598,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

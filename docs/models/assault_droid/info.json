@@ -1,0 +1,17 @@
+{
+  "name": "assault_droid",
+  "model": "src/Mods/Military/art/models/assault_droid.glb",
+  "texture_path": "art/units/assault droid/lightmech.dds",
+  "textures": [
+    "art/units/assault droid/lightmech.dds"
+  ],
+  "triangles": 1700,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "captured_bull",
+  "model": "src/Mods/Military/art/models/captured_bull.glb",
+  "texture_path": "art/units/bull/bizon.dds",
+  "textures": [
+    "art/units/bull/bizon.dds"
+  ],
+  "triangles": 1182,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

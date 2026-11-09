@@ -1,0 +1,21 @@
+{
+  "name": "t95",
+  "model": "src/Mods/Military/art/models/t95.glb",
+  "texture_path": [
+    "art/units/hybrid tank/text4.dds",
+    "art/units/hybrid tank/t-84.dds"
+  ],
+  "textures": [
+    "art/units/hybrid tank/text4.dds",
+    "art/units/hybrid tank/t-84.dds"
+  ],
+  "triangles": 2434,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

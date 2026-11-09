@@ -1,0 +1,18 @@
+{
+  "name": "special_forces",
+  "model": "src/Mods/Military/art/models/special_forces.glb",
+  "texture_path": "art/units/unique/america/navyseal/navyseal_128.dds",
+  "textures": [
+    "art/units/unique/america/navyseal/navyseal_128.dds"
+  ],
+  "triangles": 802,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

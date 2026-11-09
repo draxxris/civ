@@ -1,0 +1,24 @@
+{
+  "name": "agent",
+  "model": "src/Mods/Military/art/models/agent.glb",
+  "texture_path": [
+    "art/units/agent/timebomb.dds",
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/agent/agent_diff.dds"
+  ],
+  "textures": [
+    "art/units/agent/timebomb.dds",
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/agent/agent_diff.dds"
+  ],
+  "triangles": 823,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack"
+  ]
+}

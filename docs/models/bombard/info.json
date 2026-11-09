@@ -1,0 +1,21 @@
+{
+  "name": "bombard",
+  "model": "src/Mods/Military/art/models/bombard.glb",
+  "texture_path": [
+    "art/units/bombard/bombardcannon1.dds",
+    "art/units/bombard/bombardwood1.dds"
+  ],
+  "textures": [
+    "art/units/bombard/bombardcannon1.dds",
+    "art/units/bombard/bombardwood1.dds"
+  ],
+  "triangles": 992,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

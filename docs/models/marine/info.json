@@ -1,0 +1,18 @@
+{
+  "name": "marine",
+  "model": "src/Mods/Military/art/models/marine.glb",
+  "texture_path": "art/units/marine/marine_128.dds",
+  "textures": [
+    "art/units/marine/marine_128.dds"
+  ],
+  "triangles": 728,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

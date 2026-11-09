@@ -1,0 +1,22 @@
+{
+  "name": "javelineer",
+  "model": "src/Mods/Military/art/models/javelineer.glb",
+  "texture_path": [
+    "art/units/javelineer/european/scout_128.dds",
+    "art/units/javelineer/european/jav_weapons_64.dds"
+  ],
+  "textures": [
+    "art/units/javelineer/european/scout_128.dds",
+    "art/units/javelineer/european/jav_weapons_64.dds"
+  ],
+  "triangles": 620,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

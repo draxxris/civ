@@ -1,0 +1,18 @@
+{
+  "name": "picts_cruithni",
+  "model": "src/Mods/Military/art/models/picts_cruithni.glb",
+  "texture_path": "art/picts/cruithni/swordsman_128.dds",
+  "textures": [
+    "art/picts/cruithni/swordsman_128.dds"
+  ],
+  "triangles": 660,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

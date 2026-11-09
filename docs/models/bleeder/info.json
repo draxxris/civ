@@ -1,0 +1,24 @@
+{
+  "name": "bleeder",
+  "model": "src/Mods/Military/art/models/bleeder.glb",
+  "texture_path": [
+    "art/units/genetic soldier/cca.dds",
+    "art/units/genetic soldier/cyb.dds",
+    "art/units/genetic soldier/saminfantry_128.dds"
+  ],
+  "textures": [
+    "art/units/genetic soldier/cca.dds",
+    "art/units/genetic soldier/cyb.dds",
+    "art/units/genetic soldier/saminfantry_128.dds"
+  ],
+  "triangles": 1036,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

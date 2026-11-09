@@ -1,0 +1,23 @@
+{
+  "name": "jeep",
+  "model": "src/Mods/Military/art/models/jeep.glb",
+  "texture_path": [
+    "art/units/jeep/jeep.dds",
+    "art/units/jeep/jeep_ww.dds",
+    "art/units/jeep/infantry_128.dds"
+  ],
+  "textures": [
+    "art/units/jeep/jeep.dds",
+    "art/units/jeep/jeep_ww.dds",
+    "art/units/jeep/infantry_128.dds"
+  ],
+  "triangles": 2443,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

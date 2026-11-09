@@ -1,0 +1,21 @@
+{
+  "name": "stealth_armor",
+  "model": "src/Mods/Military/art/models/stealth_armor.glb",
+  "texture_path": [
+    "art/units/stealth armor/modern_armor_256.dds",
+    "art/units/stealth armor/myrmidontank.dds"
+  ],
+  "textures": [
+    "art/units/stealth armor/modern_armor_256.dds",
+    "art/units/stealth armor/myrmidontank.dds"
+  ],
+  "triangles": 476,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

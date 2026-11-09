@@ -1,0 +1,16 @@
+{
+  "name": "fighter",
+  "model": "src/Mods/Military/art/models/fighter.glb",
+  "texture_path": "art/units/fighter/fighter_256.dds",
+  "textures": [
+    "art/units/fighter/fighter_256.dds"
+  ],
+  "triangles": 532,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

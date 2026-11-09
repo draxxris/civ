@@ -1,0 +1,24 @@
+{
+  "name": "hungarian_huszar_cavalry",
+  "model": "src/Mods/Military/art/models/hungarian_huszar_cavalry.glb",
+  "texture_path": [
+    "art/hungary/huszar cavalry/russiancossack_horse_128.dds",
+    "art/hungary/huszar cavalry/russiancossack_128.dds",
+    "art/hungary/huszar cavalry/russiancossack_weapons_128.dds"
+  ],
+  "textures": [
+    "art/hungary/huszar cavalry/russiancossack_horse_128.dds",
+    "art/hungary/huszar cavalry/russiancossack_128.dds",
+    "art/hungary/huszar cavalry/russiancossack_weapons_128.dds"
+  ],
+  "triangles": 1076,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

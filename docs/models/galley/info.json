@@ -1,0 +1,18 @@
+{
+  "name": "galley",
+  "model": "src/Mods/Military/art/models/galley.glb",
+  "texture_path": "art/units/galley/galley_128.dds",
+  "textures": [
+    "art/units/galley/galley_128.dds"
+  ],
+  "triangles": 897,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

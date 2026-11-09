@@ -1,0 +1,22 @@
+{
+  "name": "maya_holkan",
+  "model": "src/Mods/Military/art/models/maya_holkan.glb",
+  "texture_path": [
+    "art/units/unique_maya_holkan/mayan_holkan_weapons_64.dds",
+    "art/units/unique_maya_holkan/maya_holkan_128.dds"
+  ],
+  "textures": [
+    "art/units/unique_maya_holkan/mayan_holkan_weapons_64.dds",
+    "art/units/unique_maya_holkan/maya_holkan_128.dds"
+  ],
+  "triangles": 588,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

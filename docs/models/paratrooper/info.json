@@ -1,0 +1,21 @@
+{
+  "name": "paratrooper",
+  "model": "src/Mods/Military/art/models/paratrooper.glb",
+  "texture_path": [
+    "art/units/paratrooper/paratrooper_128.dds",
+    "art/units/paratrooper/paratrooper_chute_128.dds"
+  ],
+  "textures": [
+    "art/units/paratrooper/paratrooper_128.dds",
+    "art/units/paratrooper/paratrooper_chute_128.dds"
+  ],
+  "triangles": 882,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

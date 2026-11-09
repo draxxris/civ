@@ -1,0 +1,25 @@
+{
+  "name": "nanite_cloud",
+  "model": "src/Mods/Military/art/models/nanite_cloud.glb",
+  "texture_path": [
+    "art/units/afterworld_boss/aw_boss_spike.dds",
+    "art/units/afterworld_boss/clash_blue.dds",
+    "art/units/afterworld_boss/aw_boss_blue.dds",
+    "art/units/afterworld_boss/forcefield.dds",
+    "art/units/afterworld_boss/aw_boss_light.dds"
+  ],
+  "textures": [
+    "art/units/afterworld_boss/aw_boss_spike.dds",
+    "art/units/afterworld_boss/clash_blue.dds",
+    "art/units/afterworld_boss/aw_boss_blue.dds",
+    "art/units/afterworld_boss/forcefield.dds",
+    "art/units/afterworld_boss/aw_boss_light.dds"
+  ],
+  "triangles": 476,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "attack",
+    "die"
+  ]
+}

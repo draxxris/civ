@@ -1,0 +1,15 @@
+{
+  "name": "wild_ram",
+  "model": "src/Mods/Military/art/models/wild_ram.glb",
+  "texture_path": [
+    "art/units/wild_ram/moufloneuropean_adult.dds",
+    "art/units/wild_ram/mouf_beard.dds"
+  ],
+  "textures": [
+    "art/units/wild_ram/moufloneuropean_adult.dds",
+    "art/units/wild_ram/mouf_beard.dds"
+  ],
+  "triangles": 794,
+  "animation_count": 0,
+  "animations": []
+}

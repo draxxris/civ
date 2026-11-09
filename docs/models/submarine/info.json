@@ -1,0 +1,22 @@
+{
+  "name": "submarine",
+  "model": "src/Mods/Military/art/models/submarine.glb",
+  "texture_path": [
+    "art/units/submarine/submarine_256.dds",
+    "art/units/submarine/submarine_alpha_ 256.dds"
+  ],
+  "textures": [
+    "art/units/submarine/submarine_256.dds",
+    "art/units/submarine/submarine_alpha_ 256.dds"
+  ],
+  "triangles": 424,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

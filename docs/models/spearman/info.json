@@ -1,0 +1,22 @@
+{
+  "name": "spearman",
+  "model": "src/Mods/Military/art/models/spearman.glb",
+  "texture_path": [
+    "art/units/unique/greek/phalanx/greek_phalanx_weapons_64.dds",
+    "art/units/unique/greek/phalanx/greek_phalanx_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/greek/phalanx/greek_phalanx_weapons_64.dds",
+    "art/units/unique/greek/phalanx/greek_phalanx_128.dds"
+  ],
+  "triangles": 728,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

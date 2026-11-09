@@ -1,0 +1,28 @@
+{
+  "name": "lancer",
+  "model": "src/Mods/Military/art/models/lancer.glb",
+  "texture_path": [
+    "art/units/lancer/european/hat.dds",
+    "art/units/lancer/european/mongol_weapons.dds",
+    "art/units/lancer/european/lance.dds",
+    "art/units/lancer/european/mongol_rider_128.dds",
+    "art/units/lancer/european/mongol_horse_128.dds"
+  ],
+  "textures": [
+    "art/units/lancer/european/hat.dds",
+    "art/units/lancer/european/mongol_weapons.dds",
+    "art/units/lancer/european/lance.dds",
+    "art/units/lancer/european/mongol_rider_128.dds",
+    "art/units/lancer/european/mongol_horse_128.dds"
+  ],
+  "triangles": 1228,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

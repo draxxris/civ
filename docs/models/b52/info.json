@@ -1,0 +1,16 @@
+{
+  "name": "b52",
+  "model": "src/Mods/Military/art/models/b52.glb",
+  "texture_path": "art/units/strategic bomber/b52.dds",
+  "textures": [
+    "art/units/strategic bomber/b52.dds"
+  ],
+  "triangles": 960,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

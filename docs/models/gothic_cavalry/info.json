@@ -1,0 +1,30 @@
+{
+  "name": "gothic_cavalry",
+  "model": "src/Mods/Military/art/models/gothic_cavalry.glb",
+  "texture_path": [
+    "art/goths/gothiccavalry/bb2.dds",
+    "art/goths/gothiccavalry/mongol_weapons.dds",
+    "art/goths/gothiccavalry/knight_templar_weapons_64.dds",
+    "art/goths/gothiccavalry/hammer_pad.dds",
+    "art/goths/gothiccavalry/mongol_rider_128.dds",
+    "art/goths/gothiccavalry/mongol_horse_128.dds"
+  ],
+  "textures": [
+    "art/goths/gothiccavalry/bb2.dds",
+    "art/goths/gothiccavalry/mongol_weapons.dds",
+    "art/goths/gothiccavalry/knight_templar_weapons_64.dds",
+    "art/goths/gothiccavalry/hammer_pad.dds",
+    "art/goths/gothiccavalry/mongol_rider_128.dds",
+    "art/goths/gothiccavalry/mongol_horse_128.dds"
+  ],
+  "triangles": 1505,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

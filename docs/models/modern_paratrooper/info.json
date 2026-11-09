@@ -1,0 +1,33 @@
+{
+  "name": "modern_paratrooper",
+  "model": "src/Mods/Military/art/models/modern_paratrooper.glb",
+  "texture_path": [
+    "art/units/modern paratrooper/buddhist_missionary_128.dds",
+    "art/units/modern paratrooper/beret_nonshader.dds",
+    "art/units/modern paratrooper/paratrooper_128.dds",
+    "art/units/modern paratrooper/g36.dds",
+    "art/units/modern paratrooper/scout_128.dds",
+    "art/units/modern paratrooper/plecak.dds",
+    "art/units/modern paratrooper/paratrooper_chute_128.dds",
+    "art/units/modern paratrooper/marine_128.dds"
+  ],
+  "textures": [
+    "art/units/modern paratrooper/buddhist_missionary_128.dds",
+    "art/units/modern paratrooper/beret_nonshader.dds",
+    "art/units/modern paratrooper/paratrooper_128.dds",
+    "art/units/modern paratrooper/g36.dds",
+    "art/units/modern paratrooper/scout_128.dds",
+    "art/units/modern paratrooper/plecak.dds",
+    "art/units/modern paratrooper/paratrooper_chute_128.dds",
+    "art/units/modern paratrooper/marine_128.dds"
+  ],
+  "triangles": 1487,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

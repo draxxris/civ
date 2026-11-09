@@ -1,0 +1,22 @@
+{
+  "name": "native_america_dog_soldier",
+  "model": "src/Mods/Military/art/models/native_america_dog_soldier.glb",
+  "texture_path": [
+    "art/units/unique_nativeamerica_dogsoldier/dogsoldier_weapon_64.dds",
+    "art/units/unique_nativeamerica_dogsoldier/dogsoldier_128.dds"
+  ],
+  "textures": [
+    "art/units/unique_nativeamerica_dogsoldier/dogsoldier_weapon_64.dds",
+    "art/units/unique_nativeamerica_dogsoldier/dogsoldier_128.dds"
+  ],
+  "triangles": 1014,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

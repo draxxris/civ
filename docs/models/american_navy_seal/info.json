@@ -1,0 +1,22 @@
+{
+  "name": "american_navy_seal",
+  "model": "src/Mods/Military/art/models/american_navy_seal.glb",
+  "texture_path": [
+    "art/units/unique/american navy seal/thompson.dds",
+    "art/units/unique/american navy seal/marine_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/american navy seal/thompson.dds",
+    "art/units/unique/american navy seal/marine_128.dds"
+  ],
+  "triangles": 798,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

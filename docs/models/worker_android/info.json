@@ -1,0 +1,19 @@
+{
+  "name": "worker_android",
+  "model": "src/Mods/Military/art/models/worker_android.glb",
+  "texture_path": [
+    "art/units/android worker/modern_worker_tools_64.dds",
+    "art/units/android worker/modern_worker_128.dds"
+  ],
+  "textures": [
+    "art/units/android worker/modern_worker_tools_64.dds",
+    "art/units/android worker/modern_worker_128.dds"
+  ],
+  "triangles": 854,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

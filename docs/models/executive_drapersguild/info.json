@@ -1,0 +1,20 @@
+{
+  "name": "executive_drapersguild",
+  "model": "src/Mods/Military/art/models/executive_drapersguild.glb",
+  "texture_path": [
+    "art/units/guildmaster/whiteguildmaster.dds",
+    "art/units/guildmaster/settler_child.dds"
+  ],
+  "textures": [
+    "art/units/guildmaster/whiteguildmaster.dds",
+    "art/units/guildmaster/settler_child.dds"
+  ],
+  "triangles": 632,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

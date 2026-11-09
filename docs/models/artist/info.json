@@ -1,0 +1,15 @@
+{
+  "name": "artist",
+  "model": "src/Mods/Military/art/models/artist.glb",
+  "texture_path": "art/units/greatpeople/artist/great_artist_128.dds",
+  "textures": [
+    "art/units/greatpeople/artist/great_artist_128.dds"
+  ],
+  "triangles": 710,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

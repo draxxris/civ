@@ -94,6 +94,11 @@ run = "tools/shots/shot.sh"
 description = "Side-by-side and difference image: mise run shot:compare -- before.png after.png out.png"
 run = "tools/shots/compare.sh"
 
+[tasks."shot:models"]
+description = "Render 5 views, composite sheet, and metadata JSON for unit GLBs: mise run shot:models -- [--units NAME ...]"
+depends = ["cool"]
+run = "python3 tools/art/render_unit_models.py"
+
 [tasks.validate]
 description = "Report the height and cliff rules a save file or a debug scene breaks: mise run validate -- <file> [--save|--scene] [--map id] [--size id]"
 run = "dotnet run --project tools/Ariel.Validate/Ariel.Validate.csproj --"

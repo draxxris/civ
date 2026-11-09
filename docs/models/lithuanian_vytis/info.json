@@ -1,0 +1,26 @@
+{
+  "name": "lithuanian_vytis",
+  "model": "src/Mods/Military/art/models/lithuanian_vytis.glb",
+  "texture_path": [
+    "art/lithuania/vytis/heavycavalry_weapons_64.dds",
+    "art/lithuania/vytis/heavycavalry_128.dds",
+    "art/lithuania/vytis/knight-shield-64.dds",
+    "art/lithuania/vytis/knight-horse128.dds"
+  ],
+  "textures": [
+    "art/lithuania/vytis/heavycavalry_weapons_64.dds",
+    "art/lithuania/vytis/heavycavalry_128.dds",
+    "art/lithuania/vytis/knight-shield-64.dds",
+    "art/lithuania/vytis/knight-horse128.dds"
+  ],
+  "triangles": 1138,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

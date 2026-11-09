@@ -1,0 +1,23 @@
+{
+  "name": "great_diplomat",
+  "model": "src/Mods/Military/art/models/great_diplomat.glb",
+  "texture_path": [
+    "art/units/great diplomat/settler_male_128.dds",
+    "art/units/great diplomat/modernmerchant_moneybag_64.dds",
+    "art/units/great diplomat/ge_plans.dds",
+    "art/units/great diplomat/modern_worker_128.dds"
+  ],
+  "textures": [
+    "art/units/great diplomat/settler_male_128.dds",
+    "art/units/great diplomat/modernmerchant_moneybag_64.dds",
+    "art/units/great diplomat/ge_plans.dds",
+    "art/units/great diplomat/modern_worker_128.dds"
+  ],
+  "triangles": 658,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "light_aa",
+  "model": "src/Mods/Military/art/models/light_aa.glb",
+  "texture_path": "art/units/light antiair gun/brown_01.dds",
+  "textures": [
+    "art/units/light antiair gun/brown_01.dds"
+  ],
+  "triangles": 1045,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

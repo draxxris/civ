@@ -1,0 +1,16 @@
+{
+  "name": "islamic_missionary",
+  "model": "src/Mods/Military/art/models/islamic_missionary.glb",
+  "texture_path": "art/units/missionary/islamic/islamic_missionary_128.dds",
+  "textures": [
+    "art/units/missionary/islamic/islamic_missionary_128.dds"
+  ],
+  "triangles": 566,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

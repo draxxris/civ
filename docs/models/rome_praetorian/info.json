@@ -1,0 +1,22 @@
+{
+  "name": "rome_praetorian",
+  "model": "src/Mods/Military/art/models/rome_praetorian.glb",
+  "texture_path": [
+    "art/units/unique/roman/praetorian/praetorian_weapons_64.dds",
+    "art/units/unique/roman/praetorian/praetorian_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/roman/praetorian/praetorian_weapons_64.dds",
+    "art/units/unique/roman/praetorian/praetorian_128.dds"
+  ],
+  "triangles": 810,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

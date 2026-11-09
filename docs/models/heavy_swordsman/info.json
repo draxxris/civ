@@ -1,0 +1,24 @@
+{
+  "name": "heavy_swordsman",
+  "model": "src/Mods/Military/art/models/heavy_swordsman.glb",
+  "texture_path": [
+    "art/shared/shield_icon_32.dds",
+    "art/units/charlemagne_heavyswordsman/heavyswordsman_weapons_64.dds",
+    "art/units/charlemagne_heavyswordsman/heavyswordsman_128.dds"
+  ],
+  "textures": [
+    "art/shared/shield_icon_32.dds",
+    "art/units/charlemagne_heavyswordsman/heavyswordsman_weapons_64.dds",
+    "art/units/charlemagne_heavyswordsman/heavyswordsman_128.dds"
+  ],
+  "triangles": 602,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

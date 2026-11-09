@@ -1,0 +1,18 @@
+{
+  "name": "captured_boar",
+  "model": "src/Mods/Military/art/models/captured_boar.glb",
+  "texture_path": "art/units/boar/warthog_adult_m.dds",
+  "textures": [
+    "art/units/boar/warthog_adult_m.dds"
+  ],
+  "triangles": 948,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

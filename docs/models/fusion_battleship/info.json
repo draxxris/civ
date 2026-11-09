@@ -1,0 +1,18 @@
+{
+  "name": "fusion_battleship",
+  "model": "src/Mods/Military/art/models/fusion_battleship.glb",
+  "texture_path": "art/units/finalfrontier_battleship/battleship_diff.dds",
+  "textures": [
+    "art/units/finalfrontier_battleship/battleship_diff.dds"
+  ],
+  "triangles": 1456,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

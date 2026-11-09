@@ -1,0 +1,16 @@
+{
+  "name": "atomic",
+  "model": "src/Mods/Military/art/models/atomic.glb",
+  "texture_path": "art/units/a bomb/bomber_256.dds",
+  "textures": [
+    "art/units/a bomb/bomber_256.dds"
+  ],
+  "triangles": 1006,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

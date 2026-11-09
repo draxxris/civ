@@ -1,0 +1,26 @@
+{
+  "name": "dragoon",
+  "model": "src/Mods/Military/art/models/dragoon.glb",
+  "texture_path": [
+    "art/units/dragoon/british/rifleman_128.dds",
+    "art/units/dragoon/british/horse.dds",
+    "art/units/dragoon/british/light_dragoon.dds",
+    "art/units/dragoon/british/tarleton.dds"
+  ],
+  "textures": [
+    "art/units/dragoon/british/rifleman_128.dds",
+    "art/units/dragoon/british/horse.dds",
+    "art/units/dragoon/british/light_dragoon.dds",
+    "art/units/dragoon/british/tarleton.dds"
+  ],
+  "triangles": 1200,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

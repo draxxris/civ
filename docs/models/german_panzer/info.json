@@ -1,0 +1,17 @@
+{
+  "name": "german_panzer",
+  "model": "src/Mods/Military/art/models/german_panzer.glb",
+  "texture_path": "art/units/unique/german/panzer/panzer_256.dds",
+  "textures": [
+    "art/units/unique/german/panzer/panzer_256.dds"
+  ],
+  "triangles": 526,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

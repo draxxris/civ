@@ -1,0 +1,15 @@
+{
+  "name": "hacker",
+  "model": "src/Mods/Military/art/models/hacker.glb",
+  "texture_path": "art/units/hacker/modernscientist_128.dds",
+  "textures": [
+    "art/units/hacker/modernscientist_128.dds"
+  ],
+  "triangles": 568,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

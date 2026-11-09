@@ -1,0 +1,17 @@
+{
+  "name": "motorized_infantry",
+  "model": "src/Mods/Military/art/models/motorized_infantry.glb",
+  "texture_path": "art/units/armor_units/fiat_618_grom/1_c.dds",
+  "textures": [
+    "art/units/armor_units/fiat_618_grom/1_c.dds"
+  ],
+  "triangles": 358,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

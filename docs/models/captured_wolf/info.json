@@ -1,0 +1,22 @@
+{
+  "name": "captured_wolf",
+  "model": "src/Mods/Military/art/models/captured_wolf.glb",
+  "texture_path": [
+    "art/units/wolf/wolf.dds",
+    "art/units/wolf/wolf_alpha.dds"
+  ],
+  "textures": [
+    "art/units/wolf/wolf.dds",
+    "art/units/wolf/wolf_alpha.dds"
+  ],
+  "triangles": 604,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "executive_milehigh",
+  "model": "src/Mods/Military/art/models/executive_milehigh.glb",
+  "texture_path": [
+    "art/units/executive/milehigh_a.dds",
+    "art/units/executive/ceo_case_64.dds",
+    "art/units/executive/ceo_128.dds"
+  ],
+  "textures": [
+    "art/units/executive/milehigh_a.dds",
+    "art/units/executive/ceo_case_64.dds",
+    "art/units/executive/ceo_128.dds"
+  ],
+  "triangles": 630,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

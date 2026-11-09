@@ -1,0 +1,16 @@
+{
+  "name": "hindu_missionary",
+  "model": "src/Mods/Military/art/models/hindu_missionary.glb",
+  "texture_path": "art/units/missionary/hindu/missionary_hindu_128.dds",
+  "textures": [
+    "art/units/missionary/hindu/missionary_hindu_128.dds"
+  ],
+  "triangles": 584,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

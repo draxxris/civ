@@ -1,0 +1,23 @@
+{
+  "name": "cannon",
+  "model": "src/Mods/Military/art/models/cannon.glb",
+  "texture_path": [
+    "art/units/cannon/cannonier_128.dds",
+    "art/units/cannon/cannon_128.dds",
+    "art/units/cannon/cannon_wheels_128.dds"
+  ],
+  "textures": [
+    "art/units/cannon/cannonier_128.dds",
+    "art/units/cannon/cannon_128.dds",
+    "art/units/cannon/cannon_wheels_128.dds"
+  ],
+  "triangles": 1168,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

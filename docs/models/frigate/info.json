@@ -1,0 +1,18 @@
+{
+  "name": "frigate",
+  "model": "src/Mods/Military/art/models/frigate.glb",
+  "texture_path": "art/units/frigate/frigate.dds",
+  "textures": [
+    "art/units/frigate/frigate.dds"
+  ],
+  "triangles": 1174,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

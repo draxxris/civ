@@ -1,0 +1,23 @@
+{
+  "name": "dreadnought_helgoland",
+  "model": "src/Mods/Military/art/models/dreadnought_helgoland.glb",
+  "texture_path": [
+    "art/units/dreadnought/european/extras.dds",
+    "art/units/dreadnought/european/helgoland.dds",
+    "art/units/dreadnought/european/railings.dds"
+  ],
+  "textures": [
+    "art/units/dreadnought/european/extras.dds",
+    "art/units/dreadnought/european/helgoland.dds",
+    "art/units/dreadnought/european/railings.dds"
+  ],
+  "triangles": 1996,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rifleman",
+  "model": "src/Mods/Military/art/models/rifleman.glb",
+  "texture_path": "art/units/rifleman/rifleman_128.dds",
+  "textures": [
+    "art/units/rifleman/rifleman_128.dds"
+  ],
+  "triangles": 618,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

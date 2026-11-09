@@ -1,0 +1,24 @@
+{
+  "name": "assyrian_redu",
+  "model": "src/Mods/Military/art/models/assyrian_redu.glb",
+  "texture_path": [
+    "art/units/redu/crescent_shield.dds",
+    "art/units/redu/zulu_impi.dds",
+    "art/units/redu/unique_babylon_bowman_128.dds"
+  ],
+  "textures": [
+    "art/units/redu/crescent_shield.dds",
+    "art/units/redu/zulu_impi.dds",
+    "art/units/redu/unique_babylon_bowman_128.dds"
+  ],
+  "triangles": 752,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

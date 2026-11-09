@@ -1,0 +1,16 @@
+{
+  "name": "jewish_missionary",
+  "model": "src/Mods/Military/art/models/jewish_missionary.glb",
+  "texture_path": "art/units/missionary/jewish/missionary_jewish_128.dds",
+  "textures": [
+    "art/units/missionary/jewish/missionary_jewish_128.dds"
+  ],
+  "triangles": 592,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

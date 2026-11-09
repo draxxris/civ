@@ -1,0 +1,28 @@
+{
+  "name": "elephant_bombard",
+  "model": "src/Mods/Military/art/models/elephant_bombard.glb",
+  "texture_path": [
+    "art/units/elephant bombard/warelephant_256.dds",
+    "art/units/elephant bombard/arabian_warelephant_128.dds",
+    "art/units/elephant bombard/bombard.dds",
+    "art/units/elephant bombard/warelephant_carriage_128.dds",
+    "art/units/elephant bombard/warelephant_driver_128.dds"
+  ],
+  "textures": [
+    "art/units/elephant bombard/warelephant_256.dds",
+    "art/units/elephant bombard/arabian_warelephant_128.dds",
+    "art/units/elephant bombard/bombard.dds",
+    "art/units/elephant bombard/warelephant_carriage_128.dds",
+    "art/units/elephant bombard/warelephant_driver_128.dds"
+  ],
+  "triangles": 1973,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

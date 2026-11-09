@@ -1,0 +1,19 @@
+{
+  "name": "prophet",
+  "model": "src/Mods/Military/art/models/prophet.glb",
+  "texture_path": [
+    "art/units/greatpeople/prophet/greatprophet_glow.dds",
+    "art/units/greatpeople/prophet/greatprophet_128.dds"
+  ],
+  "textures": [
+    "art/units/greatpeople/prophet/greatprophet_glow.dds",
+    "art/units/greatpeople/prophet/greatprophet_128.dds"
+  ],
+  "triangles": 552,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

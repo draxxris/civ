@@ -1,0 +1,22 @@
+{
+  "name": "spanish_conquistador",
+  "model": "src/Mods/Military/art/models/spanish_conquistador.glb",
+  "texture_path": [
+    "art/units/unique/spanish/conquistador/conquistador_horse_128.dds",
+    "art/units/unique/spanish/conquistador/conquistador_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/spanish/conquistador/conquistador_horse_128.dds",
+    "art/units/unique/spanish/conquistador/conquistador_128.dds"
+  ],
+  "triangles": 1019,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

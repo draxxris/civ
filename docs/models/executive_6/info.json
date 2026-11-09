@@ -1,0 +1,21 @@
+{
+  "name": "executive_6",
+  "model": "src/Mods/Military/art/models/executive_6.glb",
+  "texture_path": [
+    "art/shared/aluminuminc_a.dds",
+    "art/units/ceo/ceo_case_64.dds",
+    "art/units/ceo/ceo_128.dds"
+  ],
+  "textures": [
+    "art/shared/aluminuminc_a.dds",
+    "art/units/ceo/ceo_case_64.dds",
+    "art/units/ceo/ceo_128.dds"
+  ],
+  "triangles": 630,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

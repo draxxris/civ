@@ -1,0 +1,22 @@
+{
+  "name": "aztec_jaguar",
+  "model": "src/Mods/Military/art/models/aztec_jaguar.glb",
+  "texture_path": [
+    "art/units/unique/aztec/jaguar/aztec_jaguar_weapons_64.dds",
+    "art/units/unique/aztec/jaguar/aztec_jaguar_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/aztec/jaguar/aztec_jaguar_weapons_64.dds",
+    "art/units/unique/aztec/jaguar/aztec_jaguar_128.dds"
+  ],
+  "triangles": 702,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

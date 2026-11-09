@@ -1,0 +1,22 @@
+{
+  "name": "bulgarian_konnik",
+  "model": "src/Mods/Military/art/models/bulgarian_konnik.glb",
+  "texture_path": [
+    "art/bulgaria/konnik/eurasian_horseman128.dds",
+    "art/bulgaria/konnik/eurasian_horse128.dds"
+  ],
+  "textures": [
+    "art/bulgaria/konnik/eurasian_horseman128.dds",
+    "art/bulgaria/konnik/eurasian_horse128.dds"
+  ],
+  "triangles": 1183,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

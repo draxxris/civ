@@ -1,0 +1,25 @@
+{
+  "name": "minigun",
+  "model": "src/Mods/Military/art/models/minigun.glb",
+  "texture_path": [
+    "art/units/minigun/european/settler_male_128.dds",
+    "art/units/minigun/european/british_helmet.dds",
+    "art/units/minigun/european/machine_gun_64.dds",
+    "art/units/minigun/european/machine_gunner_128.dds"
+  ],
+  "textures": [
+    "art/units/minigun/european/settler_male_128.dds",
+    "art/units/minigun/european/british_helmet.dds",
+    "art/units/minigun/european/machine_gun_64.dds",
+    "art/units/minigun/european/machine_gunner_128.dds"
+  ],
+  "triangles": 1012,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

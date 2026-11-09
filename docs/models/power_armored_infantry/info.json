@@ -1,0 +1,17 @@
+{
+  "name": "power_armored_infantry",
+  "model": "src/Mods/Military/art/models/power_armored_infantry.glb",
+  "texture_path": "art/units/power armor infantry/bw.dds",
+  "textures": [
+    "art/units/power armor infantry/bw.dds"
+  ],
+  "triangles": 1568,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

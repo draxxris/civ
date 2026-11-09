@@ -1,0 +1,22 @@
+{
+  "name": "china_chokonu",
+  "model": "src/Mods/Military/art/models/china_chokonu.glb",
+  "texture_path": [
+    "art/units/unique/china/chokonu/chokunu_weapons_64.dds",
+    "art/units/unique/china/chokonu/chokonu_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/china/chokonu/chokunu_weapons_64.dds",
+    "art/units/unique/china/chokonu/chokonu_128.dds"
+  ],
+  "triangles": 812,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

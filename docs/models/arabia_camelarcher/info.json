@@ -1,0 +1,24 @@
+{
+  "name": "arabia_camelarcher",
+  "model": "src/Mods/Military/art/models/arabia_camelarcher.glb",
+  "texture_path": [
+    "art/units/unique/arabia/camelarcher/camelarcher_weapons_64.dds",
+    "art/units/unique/arabia/camelarcher/camelarcher_camel_128.dds",
+    "art/units/unique/arabia/camelarcher/camelarcher_archer_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/arabia/camelarcher/camelarcher_weapons_64.dds",
+    "art/units/unique/arabia/camelarcher/camelarcher_camel_128.dds",
+    "art/units/unique/arabia/camelarcher/camelarcher_archer_128.dds"
+  ],
+  "triangles": 1250,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "motorcycle",
+  "model": "src/Mods/Military/art/models/motorcycle.glb",
+  "texture_path": [
+    "art/units/motorcycle/zundapp_diff.dds",
+    "art/units/motorcycle/wehrmachtbiker_diff.dds"
+  ],
+  "textures": [
+    "art/units/motorcycle/zundapp_diff.dds",
+    "art/units/motorcycle/wehrmachtbiker_diff.dds"
+  ],
+  "triangles": 1674,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "scout",
+  "model": "src/Mods/Military/art/models/scout.glb",
+  "texture_path": [
+    "art/units/scout/scout_128.dds",
+    "art/units/scout/scout_fringe_128x16.dds"
+  ],
+  "textures": [
+    "art/units/scout/scout_128.dds",
+    "art/units/scout/scout_fringe_128x16.dds"
+  ],
+  "triangles": 740,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

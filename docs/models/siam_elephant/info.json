@@ -1,0 +1,36 @@
+{
+  "name": "siam_elephant",
+  "model": "src/Mods/Military/art/models/siam_elephant.glb",
+  "texture_path": [
+    "art/units/unique/siamese/battle elephant/lightswordsman_128.dds",
+    "art/units/unique/siamese/battle elephant/suryaverman_nonshader.dds",
+    "art/units/unique/siamese/battle elephant/halberdec.dds",
+    "art/units/unique/siamese/battle elephant/relic.dds",
+    "art/units/unique/siamese/battle elephant/mongol_rider_128red.dds",
+    "art/units/unique/siamese/battle elephant/heavyswordsman_128.dds",
+    "art/units/unique/siamese/battle elephant/warelephant_carthage_256.dds",
+    "art/units/unique/siamese/battle elephant/warelephant_carthage_carriage_128.dds",
+    "art/units/unique/siamese/battle elephant/chinese_swordsman128.dds"
+  ],
+  "textures": [
+    "art/units/unique/siamese/battle elephant/lightswordsman_128.dds",
+    "art/units/unique/siamese/battle elephant/suryaverman_nonshader.dds",
+    "art/units/unique/siamese/battle elephant/halberdec.dds",
+    "art/units/unique/siamese/battle elephant/relic.dds",
+    "art/units/unique/siamese/battle elephant/mongol_rider_128red.dds",
+    "art/units/unique/siamese/battle elephant/heavyswordsman_128.dds",
+    "art/units/unique/siamese/battle elephant/warelephant_carthage_256.dds",
+    "art/units/unique/siamese/battle elephant/warelephant_carthage_carriage_128.dds",
+    "art/units/unique/siamese/battle elephant/chinese_swordsman128.dds"
+  ],
+  "triangles": 2813,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

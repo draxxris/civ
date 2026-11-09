@@ -1,0 +1,22 @@
+{
+  "name": "czech_hussite",
+  "model": "src/Mods/Military/art/models/czech_hussite.glb",
+  "texture_path": [
+    "art/czech/hussite/holyromanmusketman_128.dds",
+    "art/czech/hussite/musketman.dds"
+  ],
+  "textures": [
+    "art/czech/hussite/holyromanmusketman_128.dds",
+    "art/czech/hussite/musketman.dds"
+  ],
+  "triangles": 955,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "dropship",
+  "model": "src/Mods/Military/art/models/dropship.glb",
+  "texture_path": "art/units/dropship/isscv_diff.dds",
+  "textures": [
+    "art/units/dropship/isscv_diff.dds"
+  ],
+  "triangles": 1168,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

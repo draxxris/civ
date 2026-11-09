@@ -1,0 +1,15 @@
+{
+  "name": "ram",
+  "model": "src/Mods/Military/art/models/ram.glb",
+  "texture_path": [
+    "art/units/logram/wood.dds",
+    "art/units/logram/spearman_128.dds"
+  ],
+  "textures": [
+    "art/units/logram/wood.dds",
+    "art/units/logram/spearman_128.dds"
+  ],
+  "triangles": 2352,
+  "animation_count": 0,
+  "animations": []
+}

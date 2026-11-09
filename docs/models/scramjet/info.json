@@ -1,0 +1,15 @@
+{
+  "name": "scramjet",
+  "model": "src/Mods/Military/art/models/scramjet.glb",
+  "texture_path": "art/units/orbital fighters/fightery.dds",
+  "textures": [
+    "art/units/orbital fighters/fightery.dds"
+  ],
+  "triangles": 142,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "hurt"
+  ]
+}

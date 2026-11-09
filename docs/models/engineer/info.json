@@ -1,0 +1,19 @@
+{
+  "name": "engineer",
+  "model": "src/Mods/Military/art/models/engineer.glb",
+  "texture_path": [
+    "art/units/greatpeople/engineer/great_engineer_128.dds",
+    "art/units/greatpeople/engineer/ge_plans.dds"
+  ],
+  "textures": [
+    "art/units/greatpeople/engineer/great_engineer_128.dds",
+    "art/units/greatpeople/engineer/ge_plans.dds"
+  ],
+  "triangles": 706,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

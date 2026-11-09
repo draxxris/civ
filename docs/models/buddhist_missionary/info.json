@@ -1,0 +1,16 @@
+{
+  "name": "buddhist_missionary",
+  "model": "src/Mods/Military/art/models/buddhist_missionary.glb",
+  "texture_path": "art/units/missionary/buddhist/buddhist_missionary_128.dds",
+  "textures": [
+    "art/units/missionary/buddhist/buddhist_missionary_128.dds"
+  ],
+  "triangles": 630,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

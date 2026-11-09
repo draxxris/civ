@@ -1,0 +1,19 @@
+{
+  "name": "orbital_fighter",
+  "model": "src/Mods/Military/art/models/orbital_fighter.glb",
+  "texture_path": [
+    "art/units/hammerheadrefar/jetfighter_256.dds",
+    "art/units/hammerheadrefar/hammerhead_diff.dds"
+  ],
+  "textures": [
+    "art/units/hammerheadrefar/jetfighter_256.dds",
+    "art/units/hammerheadrefar/hammerhead_diff.dds"
+  ],
+  "triangles": 1001,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "hurt"
+  ]
+}

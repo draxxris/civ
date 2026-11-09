@@ -1,0 +1,20 @@
+{
+  "name": "spy",
+  "model": "src/Mods/Military/art/models/spy.glb",
+  "texture_path": [
+    "art/units/ancientspy/ancientspy_128.dds",
+    "art/units/ancientspy/great_spy_ancient_diff.dds"
+  ],
+  "textures": [
+    "art/units/ancientspy/ancientspy_128.dds",
+    "art/units/ancientspy/great_spy_ancient_diff.dds"
+  ],
+  "triangles": 678,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack"
+  ]
+}

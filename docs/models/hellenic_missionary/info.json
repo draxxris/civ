@@ -1,0 +1,16 @@
+{
+  "name": "hellenic_missionary",
+  "model": "src/Mods/Military/art/models/hellenic_missionary.glb",
+  "texture_path": "art/units/missionary/oracle/olympmissionary_diffuse.dds",
+  "textures": [
+    "art/units/missionary/oracle/olympmissionary_diffuse.dds"
+  ],
+  "triangles": 643,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

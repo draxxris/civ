@@ -1,0 +1,24 @@
+{
+  "name": "chivalry",
+  "model": "src/Mods/Military/art/models/chivalry.glb",
+  "texture_path": [
+    "art/units/mailed knight/european/knight_templar_weapons_64.dds",
+    "art/units/mailed knight/european/knight-horse128.dds",
+    "art/units/mailed knight/european/knight_templar_body_128.dds"
+  ],
+  "textures": [
+    "art/units/mailed knight/european/knight_templar_weapons_64.dds",
+    "art/units/mailed knight/european/knight-horse128.dds",
+    "art/units/mailed knight/european/knight_templar_body_128.dds"
+  ],
+  "triangles": 1090,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

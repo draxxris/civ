@@ -1,0 +1,22 @@
+{
+  "name": "mali_skirmisher",
+  "model": "src/Mods/Military/art/models/mali_skirmisher.glb",
+  "texture_path": [
+    "art/units/unique/mali/skirmisher/skirmisher_128.dds",
+    "art/units/unique/mali/skirmisher/skirmisher_weapons_64.dds"
+  ],
+  "textures": [
+    "art/units/unique/mali/skirmisher/skirmisher_128.dds",
+    "art/units/unique/mali/skirmisher/skirmisher_weapons_64.dds"
+  ],
+  "triangles": 710,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

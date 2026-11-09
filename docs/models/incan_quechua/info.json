@@ -1,0 +1,22 @@
+{
+  "name": "incan_quechua",
+  "model": "src/Mods/Military/art/models/incan_quechua.glb",
+  "texture_path": [
+    "art/units/unique/inca/quechua/inca_quechua_weapons.dds",
+    "art/units/unique/inca/quechua/inca_quechua_128.dds"
+  ],
+  "textures": [
+    "art/units/unique/inca/quechua/inca_quechua_weapons.dds",
+    "art/units/unique/inca/quechua/inca_quechua_128.dds"
+  ],
+  "triangles": 648,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

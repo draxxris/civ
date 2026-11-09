@@ -1,0 +1,19 @@
+{
+  "name": "icbm",
+  "model": "src/Mods/Military/art/models/icbm.glb",
+  "texture_path": [
+    "art/units/icbm/icbm_white_256.dds",
+    "art/units/icbm/icbm glow.dds"
+  ],
+  "textures": [
+    "art/units/icbm/icbm_white_256.dds",
+    "art/units/icbm/icbm glow.dds"
+  ],
+  "triangles": 386,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

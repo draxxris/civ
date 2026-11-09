@@ -1,0 +1,22 @@
+{
+  "name": "adventurer",
+  "model": "src/Mods/Military/art/models/adventurer.glb",
+  "texture_path": [
+    "art/units/adventurer/persian_immortal_horse_128.dds",
+    "art/units/adventurer/great_merchant_128.dds"
+  ],
+  "textures": [
+    "art/units/adventurer/persian_immortal_horse_128.dds",
+    "art/units/adventurer/great_merchant_128.dds"
+  ],
+  "triangles": 1150,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

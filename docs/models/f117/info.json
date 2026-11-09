@@ -1,0 +1,19 @@
+{
+  "name": "f117",
+  "model": "src/Mods/Military/art/models/f117.glb",
+  "texture_path": [
+    "art/units/stealth fighter/f117texture2.dds",
+    "art/units/stealth fighter/f117texture.dds"
+  ],
+  "textures": [
+    "art/units/stealth fighter/f117texture2.dds",
+    "art/units/stealth fighter/f117texture.dds"
+  ],
+  "triangles": 402,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "hurt"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "merchant",
+  "model": "src/Mods/Military/art/models/merchant.glb",
+  "texture_path": [
+    "art/units/greatpeople/merchant/camel_128_tc.dds",
+    "art/units/greatpeople/merchant/camel_128_a.dds",
+    "art/units/greatpeople/merchant/great_merchant_128.dds"
+  ],
+  "textures": [
+    "art/units/greatpeople/merchant/camel_128_tc.dds",
+    "art/units/greatpeople/merchant/camel_128_a.dds",
+    "art/units/greatpeople/merchant/great_merchant_128.dds"
+  ],
+  "triangles": 1410,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

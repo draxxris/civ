@@ -1,0 +1,17 @@
+{
+  "name": "automatons",
+  "model": "src/Mods/Military/art/models/automatons.glb",
+  "texture_path": "art/units/nextwar_automaton/automaton_128.dds",
+  "textures": [
+    "art/units/nextwar_automaton/automaton_128.dds"
+  ],
+  "triangles": 920,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "die"
+  ]
+}

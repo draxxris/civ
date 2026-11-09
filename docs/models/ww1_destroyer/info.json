@@ -1,0 +1,21 @@
+{
+  "name": "ww1_destroyer",
+  "model": "src/Mods/Military/art/models/ww1_destroyer.glb",
+  "texture_path": [
+    "art/units/destroyer/american/clemson.dds",
+    "art/units/destroyer/american/whalingboat_ancient.dds"
+  ],
+  "textures": [
+    "art/units/destroyer/american/clemson.dds",
+    "art/units/destroyer/american/whalingboat_ancient.dds"
+  ],
+  "triangles": 650,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

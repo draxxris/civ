@@ -1,0 +1,18 @@
+{
+  "name": "arquebusier",
+  "model": "src/Mods/Military/art/models/arquebusier.glb",
+  "texture_path": "art/units/musketman/musketman.dds",
+  "textures": [
+    "art/units/musketman/musketman.dds"
+  ],
+  "triangles": 715,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

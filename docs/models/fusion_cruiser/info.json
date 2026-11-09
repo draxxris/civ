@@ -1,0 +1,18 @@
+{
+  "name": "fusion_cruiser",
+  "model": "src/Mods/Military/art/models/fusion_cruiser.glb",
+  "texture_path": "art/units/finalfrontier_cruiser/cruiser_diff.dds",
+  "textures": [
+    "art/units/finalfrontier_cruiser/cruiser_diff.dds"
+  ],
+  "triangles": 1046,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

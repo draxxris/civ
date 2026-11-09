@@ -1,0 +1,18 @@
+{
+  "name": "manowar",
+  "model": "src/Mods/Military/art/models/manowar.glb",
+  "texture_path": "art/units/man o war/frigate.dds",
+  "textures": [
+    "art/units/man o war/frigate.dds"
+  ],
+  "triangles": 1135,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

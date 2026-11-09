@@ -1,0 +1,15 @@
+{
+  "name": "precision_attack_missile",
+  "model": "src/Mods/Military/art/models/precision_attack_missile.glb",
+  "texture_path": "art/units/precision attack missile/tomahawk.dds",
+  "textures": [
+    "art/units/precision attack missile/tomahawk.dds"
+  ],
+  "triangles": 286,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

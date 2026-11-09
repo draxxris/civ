@@ -1,0 +1,23 @@
+{
+  "name": "nagualism_missionary",
+  "model": "src/Mods/Military/art/models/nagualism_missionary.glb",
+  "texture_path": [
+    "art/units/missionary/tlenamacac/shamstaff.dds",
+    "art/units/missionary/tlenamacac/skull.dds",
+    "art/units/missionary/tlenamacac/warlord_ancient.dds",
+    "art/units/missionary/tlenamacac/buddhist_missionary_128.dds"
+  ],
+  "textures": [
+    "art/units/missionary/tlenamacac/shamstaff.dds",
+    "art/units/missionary/tlenamacac/skull.dds",
+    "art/units/missionary/tlenamacac/warlord_ancient.dds",
+    "art/units/missionary/tlenamacac/buddhist_missionary_128.dds"
+  ],
+  "triangles": 1540,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "fortify"
+  ]
+}

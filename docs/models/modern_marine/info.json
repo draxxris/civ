@@ -1,0 +1,24 @@
+{
+  "name": "modern_marine",
+  "model": "src/Mods/Military/art/models/modern_marine.glb",
+  "texture_path": [
+    "art/units/modern marine/marine_128.dds",
+    "art/units/modern marine/m16a2.dds",
+    "art/units/modern marine/antitankinfantry_128.dds"
+  ],
+  "textures": [
+    "art/units/modern marine/marine_128.dds",
+    "art/units/modern marine/m16a2.dds",
+    "art/units/modern marine/antitankinfantry_128.dds"
+  ],
+  "triangles": 823,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

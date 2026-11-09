@@ -1,0 +1,24 @@
+{
+  "name": "anglo_saxon_huscarl",
+  "model": "src/Mods/Military/art/models/anglo_saxon_huscarl.glb",
+  "texture_path": [
+    "art/anglosaxons/huskarl/huscarlweapons_64.dds",
+    "art/shared/shield_icon_32.dds",
+    "art/anglosaxons/huskarl/huscarl_128.dds"
+  ],
+  "textures": [
+    "art/anglosaxons/huskarl/huscarlweapons_64.dds",
+    "art/shared/shield_icon_32.dds",
+    "art/anglosaxons/huskarl/huscarl_128.dds"
+  ],
+  "triangles": 689,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

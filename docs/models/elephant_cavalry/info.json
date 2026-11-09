@@ -1,0 +1,28 @@
+{
+  "name": "elephant_cavalry",
+  "model": "src/Mods/Military/art/models/elephant_cavalry.glb",
+  "texture_path": [
+    "art/units/elephant cavalry/warelephant_256.dds",
+    "art/units/elephant cavalry/arabian_warelephant_128.dds",
+    "art/units/elephant cavalry/musketman.dds",
+    "art/units/elephant cavalry/warelephant_carriage_128.dds",
+    "art/units/elephant cavalry/warelephant_driver_128.dds"
+  ],
+  "textures": [
+    "art/units/elephant cavalry/warelephant_256.dds",
+    "art/units/elephant cavalry/arabian_warelephant_128.dds",
+    "art/units/elephant cavalry/musketman.dds",
+    "art/units/elephant cavalry/warelephant_carriage_128.dds",
+    "art/units/elephant cavalry/warelephant_driver_128.dds"
+  ],
+  "triangles": 1718,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "zoroastrian_missionary",
+  "model": "src/Mods/Military/art/models/zoroastrian_missionary.glb",
+  "texture_path": "art/units/missionary/magi/missionary_confucian_128.dds",
+  "textures": [
+    "art/units/missionary/magi/missionary_confucian_128.dds"
+  ],
+  "triangles": 480,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

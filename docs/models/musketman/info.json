@@ -1,0 +1,24 @@
+{
+  "name": "musketman",
+  "model": "src/Mods/Military/art/models/musketman.glb",
+  "texture_path": [
+    "art/units/musketman/european/redcoat_128.dds",
+    "art/units/musketman/european/mongol_weapons.dds",
+    "art/units/musketman/european/french_musketeer_128.dds"
+  ],
+  "textures": [
+    "art/units/musketman/european/redcoat_128.dds",
+    "art/units/musketman/european/mongol_weapons.dds",
+    "art/units/musketman/european/french_musketeer_128.dds"
+  ],
+  "triangles": 800,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

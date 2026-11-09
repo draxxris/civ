@@ -1,0 +1,18 @@
+{
+  "name": "envoy",
+  "model": "src/Mods/Military/art/models/envoy.glb",
+  "texture_path": "art/units/envoy/european/master_tobacconist.dds",
+  "textures": [
+    "art/units/envoy/european/master_tobacconist.dds"
+  ],
+  "triangles": 708,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

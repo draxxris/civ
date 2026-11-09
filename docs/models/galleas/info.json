@@ -1,0 +1,22 @@
+{
+  "name": "galleas",
+  "model": "src/Mods/Military/art/models/galleas.glb",
+  "texture_path": [
+    "art/venice/galleas/galley_128.dds",
+    "art/venice/galleas/frigate.dds"
+  ],
+  "textures": [
+    "art/venice/galleas/galley_128.dds",
+    "art/venice/galleas/frigate.dds"
+  ],
+  "triangles": 1444,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "modern_armor",
+  "model": "src/Mods/Military/art/models/modern_armor.glb",
+  "texture_path": "art/units/modernarmor/modern_armor_256.dds",
+  "textures": [
+    "art/units/modernarmor/modern_armor_256.dds"
+  ],
+  "triangles": 546,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

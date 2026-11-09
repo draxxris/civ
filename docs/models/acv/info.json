@@ -1,0 +1,21 @@
+{
+  "name": "acv",
+  "model": "src/Mods/Military/art/models/acv.glb",
+  "texture_path": [
+    "art/units/acv/acvweapons.dds",
+    "art/units/acv/acvchasis.dds"
+  ],
+  "textures": [
+    "art/units/acv/acvweapons.dds",
+    "art/units/acv/acvchasis.dds"
+  ],
+  "triangles": 553,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

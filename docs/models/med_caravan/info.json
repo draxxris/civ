@@ -1,0 +1,22 @@
+{
+  "name": "med_caravan",
+  "model": "src/Mods/Military/art/models/med_caravan.glb",
+  "texture_path": [
+    "art/units/charlemagne_supplytrain/supplydriver_128.dds",
+    "art/units/charlemagne_supplytrain/supplyox_2_128.dds",
+    "art/units/charlemagne_supplytrain/supplywagon_128.dds",
+    "art/units/charlemagne_supplytrain/supplyox_128.dds"
+  ],
+  "textures": [
+    "art/units/charlemagne_supplytrain/supplydriver_128.dds",
+    "art/units/charlemagne_supplytrain/supplyox_2_128.dds",
+    "art/units/charlemagne_supplytrain/supplywagon_128.dds",
+    "art/units/charlemagne_supplytrain/supplyox_128.dds"
+  ],
+  "triangles": 2396,
+  "animation_count": 2,
+  "animations": [
+    "idle",
+    "run"
+  ]
+}

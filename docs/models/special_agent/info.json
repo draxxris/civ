@@ -1,0 +1,24 @@
+{
+  "name": "special_agent",
+  "model": "src/Mods/Military/art/models/special_agent.glb",
+  "texture_path": [
+    "art/units/specialagent/timebomb.dds",
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/specialagent/specialagent_diff.dds"
+  ],
+  "textures": [
+    "art/units/specialagent/timebomb.dds",
+    "art/shared/darkmap_gradient.dds",
+    "art/units/great_spy_modern/spy_128.dds",
+    "art/units/specialagent/specialagent_diff.dds"
+  ],
+  "triangles": 811,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack"
+  ]
+}

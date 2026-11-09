@@ -1,0 +1,26 @@
+{
+  "name": "heavy_cavalry",
+  "model": "src/Mods/Military/art/models/heavy_cavalry.glb",
+  "texture_path": [
+    "art/shared/shield_icon_32.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_weapons_64.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_128.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_horse_128.dds"
+  ],
+  "textures": [
+    "art/shared/shield_icon_32.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_weapons_64.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_128.dds",
+    "art/units/charlemagne_heavycavalry/heavycavalry_horse_128.dds"
+  ],
+  "triangles": 1227,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

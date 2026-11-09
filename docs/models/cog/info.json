@@ -1,0 +1,30 @@
+{
+  "name": "cog",
+  "model": "src/Mods/Military/art/models/cog.glb",
+  "texture_path": [
+    "art/units/cog/ship_shrouds.dds",
+    "art/units/cog/ship_sail_main.dds",
+    "art/units/cog/ship_sloop.dds",
+    "art/units/cog/ship_masts.dds",
+    "art/units/cog/a.dds",
+    "art/units/cog/medieval_house2_256.dds"
+  ],
+  "textures": [
+    "art/units/cog/ship_shrouds.dds",
+    "art/units/cog/ship_sail_main.dds",
+    "art/units/cog/ship_sloop.dds",
+    "art/units/cog/ship_masts.dds",
+    "art/units/cog/a.dds",
+    "art/units/cog/medieval_house2_256.dds"
+  ],
+  "triangles": 1313,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

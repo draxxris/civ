@@ -1,0 +1,20 @@
+{
+  "name": "executive_mercerguild",
+  "model": "src/Mods/Military/art/models/executive_mercerguild.glb",
+  "texture_path": [
+    "art/units/guildmaster/greenguildmaster.dds",
+    "art/units/guildmaster/settler_child.dds"
+  ],
+  "textures": [
+    "art/units/guildmaster/greenguildmaster.dds",
+    "art/units/guildmaster/settler_child.dds"
+  ],
+  "triangles": 632,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "die"
+  ]
+}

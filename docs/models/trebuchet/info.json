@@ -1,0 +1,18 @@
+{
+  "name": "trebuchet",
+  "model": "src/Mods/Military/art/models/trebuchet.glb",
+  "texture_path": "art/units/trebuchet/trebuchet.dds",
+  "textures": [
+    "art/units/trebuchet/trebuchet.dds"
+  ],
+  "triangles": 680,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

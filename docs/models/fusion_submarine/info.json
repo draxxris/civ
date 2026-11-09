@@ -1,0 +1,18 @@
+{
+  "name": "fusion_submarine",
+  "model": "src/Mods/Military/art/models/fusion_submarine.glb",
+  "texture_path": "art/units/fusion submarine/manta.dds",
+  "textures": [
+    "art/units/fusion submarine/manta.dds"
+  ],
+  "triangles": 568,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

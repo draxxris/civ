@@ -1,0 +1,17 @@
+{
+  "name": "scout_mech",
+  "model": "src/Mods/Military/art/models/scout_mech.glb",
+  "texture_path": "art/units/scout mech/hercelecwarfare.dds",
+  "textures": [
+    "art/units/scout mech/hercelecwarfare.dds"
+  ],
+  "triangles": 1519,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "airship",
+  "model": "src/Mods/Military/art/models/airship.glb",
+  "texture_path": "art/units/airship/airship_256.dds",
+  "textures": [
+    "art/units/airship/airship_256.dds"
+  ],
+  "triangles": 904,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}

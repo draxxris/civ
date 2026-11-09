@@ -1,0 +1,30 @@
+{
+  "name": "polish_heavy_hussar",
+  "model": "src/Mods/Military/art/models/polish_heavy_hussar.glb",
+  "texture_path": [
+    "art/poland/heavy hussar/mongol_weapons.dds",
+    "art/poland/heavy hussar/knight_templar_weapons_64.dds",
+    "art/poland/heavy hussar/lance.dds",
+    "art/poland/heavy hussar/poleflags.dds",
+    "art/poland/heavy hussar/roman_horse_128.dds",
+    "art/poland/heavy hussar/mongol_rider_128.dds"
+  ],
+  "textures": [
+    "art/poland/heavy hussar/mongol_weapons.dds",
+    "art/poland/heavy hussar/knight_templar_weapons_64.dds",
+    "art/poland/heavy hussar/lance.dds",
+    "art/poland/heavy hussar/poleflags.dds",
+    "art/poland/heavy hussar/roman_horse_128.dds",
+    "art/poland/heavy hussar/mongol_rider_128.dds"
+  ],
+  "triangles": 1252,
+  "animation_count": 6,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt",
+    "die"
+  ]
+}

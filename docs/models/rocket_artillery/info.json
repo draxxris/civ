@@ -1,0 +1,17 @@
+{
+  "name": "rocket_artillery",
+  "model": "src/Mods/Military/art/models/rocket_artillery.glb",
+  "texture_path": "art/units/rocket artillery/m270.dds",
+  "textures": [
+    "art/units/rocket artillery/m270.dds"
+  ],
+  "triangles": 400,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

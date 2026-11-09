@@ -1,0 +1,15 @@
+{
+  "name": "poison_nuke",
+  "model": "src/Mods/Military/art/models/poison_nuke.glb",
+  "texture_path": "art/units/nukes/poisonnuke/icbm_white_256.dds",
+  "textures": [
+    "art/units/nukes/poisonnuke/icbm_white_256.dds"
+  ],
+  "triangles": 386,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "hydrogen",
+  "model": "src/Mods/Military/art/models/hydrogen.glb",
+  "texture_path": "art/units/nukes/topol-m/icbm_white_256.dds",
+  "textures": [
+    "art/units/nukes/topol-m/icbm_white_256.dds"
+  ],
+  "triangles": 386,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

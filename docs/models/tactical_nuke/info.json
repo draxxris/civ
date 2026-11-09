@@ -1,0 +1,19 @@
+{
+  "name": "tactical_nuke",
+  "model": "src/Mods/Military/art/models/tactical_nuke.glb",
+  "texture_path": [
+    "art/units/tactical_nuke/tactical_nuke_256.dds",
+    "art/units/tactical_nuke/missileglow.dds"
+  ],
+  "textures": [
+    "art/units/tactical_nuke/tactical_nuke_256.dds",
+    "art/units/tactical_nuke/missileglow.dds"
+  ],
+  "triangles": 154,
+  "animation_count": 3,
+  "animations": [
+    "idle",
+    "run",
+    "attack"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "artillery",
+  "model": "src/Mods/Military/art/models/artillery.glb",
+  "texture_path": "art/units/artillery/artillery_256.dds",
+  "textures": [
+    "art/units/artillery/artillery_256.dds"
+  ],
+  "triangles": 478,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

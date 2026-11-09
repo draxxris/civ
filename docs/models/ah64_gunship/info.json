@@ -1,0 +1,21 @@
+{
+  "name": "ah64_gunship",
+  "model": "src/Mods/Military/art/models/ah64_gunship.glb",
+  "texture_path": [
+    "art/units/gunship/ah64/gunship_prop_64.dds",
+    "art/units/gunship/ah64/ah64.dds"
+  ],
+  "textures": [
+    "art/units/gunship/ah64/gunship_prop_64.dds",
+    "art/units/gunship/ah64/ah64.dds"
+  ],
+  "triangles": 2109,
+  "animation_count": 5,
+  "animations": [
+    "idle",
+    "run",
+    "fortify",
+    "attack",
+    "hurt"
+  ]
+}

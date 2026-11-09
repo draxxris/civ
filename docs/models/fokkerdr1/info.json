@@ -1,0 +1,20 @@
+{
+  "name": "fokkerdr1",
+  "model": "src/Mods/Military/art/models/fokkerdr1.glb",
+  "texture_path": [
+    "art/units/earlyfighter/extras.dds",
+    "art/units/earlyfighter/pup.dds"
+  ],
+  "textures": [
+    "art/units/earlyfighter/extras.dds",
+    "art/units/earlyfighter/pup.dds"
+  ],
+  "triangles": 1080,
+  "animation_count": 4,
+  "animations": [
+    "idle",
+    "run",
+    "hurt",
+    "die"
+  ]
+}
