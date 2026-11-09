@@ -19,7 +19,8 @@ public abstract class GameCommand
     public abstract void Apply(Simulation sim);
 }
 
-/// <summary>Built-in because it is the lockstep turn primitive. When every player has ended, the turn advances.</summary>
+/// <summary>Built-in because it is the lockstep turn primitive. When every player of the active segment has ended, the
+/// next segment starts; after the last, the turn advances.</summary>
 public sealed class EndTurnCommand : GameCommand
 {
     /// <inheritdoc/>
@@ -33,7 +34,7 @@ public sealed class EndTurnCommand : GameCommand
     public override void Apply(Simulation sim)
     {
         sim.State.PlayerById(Player).EndedTurn = true;
-        if (sim.State.Players.All(p => p.EndedTurn)) sim.AdvanceTurn();
+        sim.ContinueTurn(mayAdvance: true);
     }
 }
 

@@ -34,9 +34,10 @@ internal static class AiTurnSpeculator
     // Unit AI roles are content ids; the land explorer role keeps this suffix in every namespace.
     private const string ExploreAiSuffix = ":unitai_explore";
 
-    public static void Run(Simulation sim)
+    /// <summary>Run the given AI players' turns, with the same result as running them one by one in that order.</summary>
+    public static void Run(Simulation sim, int[] players)
     {
-        var remaining = sim.State.Players.OrderBy(p => p.Id).Where(p => p.Ai != null && !p.EndedTurn).Select(p => p.Id).ToArray();
+        var remaining = players;
         int wave = 0;
         while (remaining.Length > 0)
         {

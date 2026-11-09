@@ -1503,9 +1503,25 @@ Runtime environment variables use the `ARIEL_` prefix:
 sorts object properties ordinally, preserves array order and rejects non-integer
 numbers. Content identity uses SHA-256 over canonical content data.
 
-Commands travel as registered JSON type/data envelopes. Every player ends a simultaneous
-turn before the simulation advances. AI runs on every peer and submits ordinary
-validated commands locally.
+Commands travel as registered JSON type/data envelopes. AI runs on every peer and submits
+ordinary validated commands locally.
+
+`SimulationSettings.TurnMode` decides how players share a turn. `Simultaneous` (the
+default) moves everyone at once. `Sequential` moves one player at a time. `Dynamic` moves
+players at peace together and separates teams at war, as a greedy grouping of teams in id
+order. At each turn start `TurnOrder.Plan` splits the players who still have to move
+into segments. Players already ended, such as barbarians and rebels, are left out. The
+plan is saved in `GameState.TurnOrder` and kept until the turn ends, so a war declared
+mid-turn changes the next turn's plan. When a segment starts, its AI players move. A run
+of segments with only AI players plans as one ordered speculative batch, which gives the
+same result as running the segments one after another. The next segment starts once
+every player of the active one has ended, and the turn advances after the last.
+
+`Simulation.TrySubmit` applies a command a player issued, from a front end or the
+network, and rejects it unless it is that player's move: a human moves only in its own
+segment. Players who join after the turn was planned are bound by no segment. Commands
+the rules issue themselves (turn systems, AI, effects) use `TryApply` and are never
+gated.
 
 The client's `GameSession` controls one seat, `LocalPlayer`, and changes the simulation
 only through an `ICommandChannel`. `LocalCommandChannel` applies each command at once. A

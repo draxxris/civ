@@ -35,7 +35,7 @@ public sealed partial class GameSession
             return false;
         }
         Sim = loaded;
-        _turn = loaded.State.Turn;
+        _ordersTurn = loaded.State.Turn;
         _gotos.Clear();
         _choices.Clear();
         _choicesKey = (-1, -1);

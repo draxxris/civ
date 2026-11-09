@@ -192,7 +192,10 @@ internal sealed partial class GameUi : CanvasLayer
         if (revision || worldRevision)
         {
             int idle = _session.UnitsNeedingOrders;
-            _endTurn.Text = idle > 0 ? $"End turn ({idle} waiting)" : "End turn";
+            var waiting = _session.WaitingFor();
+            _endTurn.Disabled = waiting != null;
+            _endTurn.Text = waiting is null ? idle > 0 ? $"End turn ({idle} waiting)" : "End turn"
+                : waiting.Length > 0 ? $"Waiting for {waiting}" : "Waiting...";
         }
         if (MapRenderer.LogTimings)
             GD.Print($"ui update: top {topMs:F2} ms, left {leftMs:F2} ms, city {cityMs:F2} ms, "

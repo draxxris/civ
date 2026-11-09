@@ -39,7 +39,7 @@ public sealed class LocalCommandChannel : ICommandChannel
     public bool PlaysAbsentHumans => true;
 
     public Submission Submit(Simulation sim, GameCommand command) =>
-        sim.TryApply(command, out var error) ? Submission.Done : Submission.Rejected(error);
+        sim.TrySubmit(command, out var error) ? Submission.Done : Submission.Rejected(error);
 
     public bool Pump(Simulation sim) => false;
 }

@@ -205,6 +205,8 @@ public sealed class GameState
     public int NextUnitId { get; set; } = 1;
     /// <summary>Game-wide mod state.</summary>
     public ExtensionState Extensions { get; set; } = new();
+    /// <summary>Who moves when within the current turn.</summary>
+    public TurnOrder TurnOrder { get; set; } = new();
     private HexGrid? _grid;
     private readonly Dictionary<int, Player> _players = new();
     private readonly Dictionary<int, Team> _teams = new();
@@ -483,6 +485,7 @@ public sealed class GameState
             Cities = Cities.ConvertAll(c => c.Clone()),
             Units = Units.ConvertAll(u => u.Clone()),
             Extensions = CloneExtensions(Extensions),
+            TurnOrder = TurnOrder.Clone(),
             _grid = Grid,
         };
         copy.IndexEntities();
@@ -495,6 +498,7 @@ public sealed class GameState
         Turn = copy.Turn; Map = copy.Map; NextCityId = copy.NextCityId; NextUnitId = copy.NextUnitId;
         Plots = copy.Plots; Players = copy.Players; Teams = copy.Teams; Cities = copy.Cities; Units = copy.Units;
         Extensions = copy.Extensions;
+        TurnOrder = copy.TurnOrder;
         _grid = copy.Grid;
         IndexEntities();
     }

@@ -16,7 +16,7 @@ public sealed partial class GameSession
 
     private readonly ICommandChannel _channel;
     private readonly Dictionary<int, Hex> _gotos = new();
-    private int _turn;
+    private int _ordersTurn;   // the turn whose standing orders already continued
     private int _espionageBudgetTurn = -1;
     private int _espionageBudgetCities = -1;
     private Ariel.Content.CommerceVector _espionageBudgetRates;
@@ -39,7 +39,7 @@ public sealed partial class GameSession
         Sim = sim;
         LocalPlayer = localPlayer;
         _channel = channel ?? LocalCommandChannel.Instance;
-        _turn = sim.State.Turn;
+        _ordersTurn = sim.State.Turn;
         ResetNotifications();
         SelectNextUnit();
     }
@@ -49,6 +49,8 @@ public sealed partial class GameSession
         new(new Simulation(catalog.Content, options.ToSettings(catalog)));
 
     public Player Me => Sim.State.PlayerById(LocalPlayer);
+    /// <summary>Whether the local player's segment of the turn is moving, so its commands are accepted.</summary>
+    public bool IsMyMove => Sim.MayAct(LocalPlayer);
     public Team MyTeam => Sim.TeamOf(LocalPlayer);
     public City? City => SelectedCityId is int id ? Sim.State.FindCity(id) : null;
     public Unit? Unit => SelectedUnitId is int id ? Sim.State.FindUnit(id) : null;
@@ -87,7 +89,7 @@ public sealed partial class GameSession
     }
 
     /// <summary>React to applied commands, whoever issued them: read new events, drop what no longer exists, and pick
-    /// up standing orders when a new turn has begun.</summary>
+    /// up standing orders once the local player's segment of a new turn is moving.</summary>
     private void SimulationChanged()
     {
         WorldRevision++;
@@ -96,8 +98,8 @@ public sealed partial class GameSession
         if (Unit == null) SelectedUnitId = null;
         foreach (var (id, destination) in _gotos)
             if (Sim.State.FindUnit(id) is not { } unit || unit.Position == destination) _gotos.Remove(id);
-        if (Sim.State.Turn == _turn) return;
-        _turn = Sim.State.Turn;
+        if (Sim.State.Turn == _ordersTurn || !IsMyMove) return;
+        _ordersTurn = Sim.State.Turn;
         ContinueOrders();
         SelectNextUnit();
     }
@@ -112,6 +114,17 @@ public sealed partial class GameSession
             foreach (var player in Sim.State.Players.Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn).ToList())
                 _channel.Submit(Sim, new EndTurnCommand { Player = player.Id });
         Submit(new EndTurnCommand { Player = LocalPlayer });
+    }
+
+    /// <summary>The human players the game is waiting on, by name, once the local player cannot move: its turn is
+    /// over or another segment is moving. Null while the local player still has its move. Empty when only AI or the
+    /// rules remain.</summary>
+    public string? WaitingFor()
+    {
+        if (IsMyMove && !Me.EndedTurn) return null;
+        return string.Join(", ", Sim.State.Players
+            .Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn && Sim.MayAct(p.Id))
+            .OrderBy(p => p.Id).Select(p => p.Name));
     }
 
     /// <summary>Re-issue standing go-to orders at the start of a turn.</summary>

@@ -32,6 +32,8 @@ public sealed record SimulationSettings
     public string?[] PlayerAis { get; init; } = [];
     /// <summary>Team id per player; missing entries default to player id.</summary>
     public int[] PlayerTeams { get; init; } = [];
+    /// <summary>How players share each turn.</summary>
+    public TurnMode TurnMode { get; init; } = TurnMode.Simultaneous;
     /// <summary>Per-session game option overrides. Missing options use their ruleset defaults.</summary>
     public SortedDictionary<string, bool> GameOptions { get; init; } = new(StringComparer.Ordinal);
 
@@ -117,7 +119,7 @@ public sealed partial class Simulation
     private void StartGame()
     {
         Events.Publish(new TurnStarted(State.Turn));
-        RunAi();
+        BeginTurnOrder();
     }
     private CivilizationDef? ChooseCivilization(int player, IReadOnlyList<CivilizationDef> civs)
     {
@@ -163,16 +165,49 @@ public sealed partial class Simulation
         var id = State.PlayerById(playerId).Civilization;
         return id.Length == 0 ? null : Content.Civilizations.Get(id);
     }
-    /// <summary>Let each AI act and end its turn, without recursively advancing all-AI games. Players act in id order;
-    /// independent players may plan concurrently, but the result is the same on every peer.</summary>
-    public void RunAi()
+    /// <summary>Let every AI that has yet to move act and end its turn, in id order, ignoring turn segments. Independent
+    /// players may plan concurrently, but the result is the same on every peer.</summary>
+    public void RunAi() => RunAi(State.Players.OrderBy(p => p.Id).Where(p => p.Ai != null && !p.EndedTurn).Select(p => p.Id).ToArray());
+    /// <summary>Let the given AI players act and end their turns, with the same result as running them one by one in
+    /// the given order.</summary>
+    private void RunAi(int[] players)
     {
+        if (players.Length == 0) return;
         // AI commands are the players' own top-level commands, even when an end-turn command advanced the turn.
         int depth = _commandDepth;
         _commandDepth = 0;
-        try { AiTurnSpeculator.Run(this); }
+        try { AiTurnSpeculator.Run(this, players); }
         finally { _commandDepth = depth; }
     }
+    /// <summary>Plan the new turn's segments and start the first.</summary>
+    private void BeginTurnOrder()
+    {
+        State.TurnOrder = new TurnOrder { Segments = TurnOrder.Plan(State, Settings.TurnMode) };
+        ContinueTurn(mayAdvance: false);
+    }
+    /// <summary>Move the turn on as far as it can go without a human: run the AI of the active segment, pass every
+    /// segment whose players have all ended, and, once none is left, advance the turn when allowed. A run of segments
+    /// with only AI players plans as one ordered batch, which gives the same result as one segment after another.
+    /// The turn never advances from its own start, so an all-AI game does not recurse.</summary>
+    internal void ContinueTurn(bool mayAdvance)
+    {
+        var order = State.TurnOrder;
+        while (!order.Finished)
+        {
+            int last = order.Active;
+            while (last + 1 < order.Segments.Count && OnlyAi(order.Segments[last])) last++;
+            RunAi(order.Segments.Skip(order.Active).Take(last - order.Active + 1)
+                .SelectMany(s => s.Where(id => State.PlayerById(id) is { Ai: not null, EndedTurn: false })).ToArray());
+            while (!order.Finished && order.Segments[order.Active].All(id => State.PlayerById(id).EndedTurn)) order.Active++;
+            if (!order.Finished && order.Active <= last) return; // Humans of this segment still have to move.
+        }
+        if (mayAdvance && State.Players.All(p => p.EndedTurn)) AdvanceTurn();
+    }
+    private bool OnlyAi(int[] segment) => segment.All(id => State.PlayerById(id).Ai != null);
+    /// <summary>Whether a player may issue commands now. A human acts only in its own segment; AI players are run by
+    /// the simulation itself at their segment's start.</summary>
+    public bool MayAct(int playerId) =>
+        State.Players.All(p => p.Id != playerId) || State.PlayerById(playerId).Ai != null || State.TurnOrder.IsActing(playerId);
     /// <summary>Run one AI player's turn in place: its decisions, then any returned commands. Does not end its turn.</summary>
     internal void RunAiPlayer(int playerId)
     {
@@ -203,6 +238,13 @@ public sealed partial class Simulation
     internal Action<SpeculationEvent>? SpeculationObserver { get; set; }
     /// <summary>Terrain definition on a valid plot, including normalized wrap coordinates.</summary>
     public TerrainDef TerrainAt(Hex hex) => Content.Terrains.Get(State.PlotAt(hex).Terrain);
+    /// <summary>Apply a command a player issued, from a front end or the network: it must also be that player's move.
+    /// Commands the rules issue themselves (turn systems, AI, effects) use <see cref="TryApply"/>.</summary>
+    public bool TrySubmit(GameCommand cmd, out string? error)
+    {
+        if (!MayAct(cmd.Player)) { error = "Not your turn"; return false; }
+        return TryApply(cmd, out error);
+    }
     /// <summary>Validate and apply; rejected commands must not change state.</summary>
     public bool TryApply(GameCommand cmd, out string? error)
     {
@@ -236,7 +278,7 @@ public sealed partial class Simulation
         foreach (var player in State.Players) player.EndedTurn = false;
         Events.BeginTurn();
         Events.Publish(new TurnStarted(State.Turn));
-        RunAi();
+        BeginTurnOrder();
     }
     /// <summary>Hash all authoritative fields and RNG state; presentation events and caches are excluded.</summary>
     public ulong ComputeHash() => StateHasher.Hash(State, Rng);
