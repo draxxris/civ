@@ -31,6 +31,11 @@ public static class SaveGame
         var rng = DeterministicRng.Restore(save.Rng[0], save.Rng[1], save.Rng[2], save.Rng[3]);
         return new Simulation(content, save.Settings, save.State, rng);
     }
+    /// <summary>Settings as canonical JSON, so a multiplayer host can hand every peer the exact setup it resolved.</summary>
+    public static string SaveSettings(SimulationSettings settings) => CanonicalJson.Serialize(settings);
+    /// <summary>Read settings written by <see cref="SaveSettings"/>.</summary>
+    public static SimulationSettings LoadSettings(string json) =>
+        JsonSerializer.Deserialize<SimulationSettings>(json, CanonicalJson.Options) ?? throw new InvalidDataException("Empty settings");
     /// <summary>A save matches frozen content under the current digest, or under the pre-rename digest that the
     /// same content produced before the project rename changed type names. Any other difference is a mismatch.</summary>
     private static bool MatchesContent(ContentDb content, Snapshot save) =>

@@ -21,6 +21,9 @@ public interface ICommandChannel
     /// <summary>Whether this front end is the only one playing, so it also ends the turns of human players nobody controls.</summary>
     bool PlaysAbsentHumans { get; }
 
+    /// <summary>What has gone wrong with the game's connection (desync, a lost peer), or null.</summary>
+    string? Problem { get; }
+
     /// <summary>Issue a command for a player this front end controls.</summary>
     Submission Submit(Simulation sim, GameCommand command);
 
@@ -37,6 +40,8 @@ public sealed class LocalCommandChannel : ICommandChannel
     private LocalCommandChannel() { }
 
     public bool PlaysAbsentHumans => true;
+
+    public string? Problem => null;
 
     public Submission Submit(Simulation sim, GameCommand command) =>
         sim.TrySubmit(command, out var error) ? Submission.Done : Submission.Rejected(error);

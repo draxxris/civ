@@ -105,6 +105,34 @@ public sealed class GameCatalog
         return chosen;
     }
 
+    /// <summary>One leader per seat. A seat that names a leader (and optionally its civilization) gets it; the rest
+    /// get distinct leaders of civilizations nobody else plays, drawn from the seed, and repeat only once every
+    /// civilization is taken.</summary>
+    public IReadOnlyList<LeaderChoice> AssignLeaders(IReadOnlyList<(string Leader, string Civilization)> seats, ulong seed)
+    {
+        var chosen = new LeaderChoice?[seats.Count];
+        for (int i = 0; i < seats.Count; i++)
+        {
+            var (leader, civ) = seats[i];
+            if (leader.Length == 0) continue;
+            chosen[i] = civ.Length == 0 ? LeaderById(leader)
+                : Leaders.FirstOrDefault(c => c.Id == leader && c.CivilizationId == civ)
+                  ?? throw new ArgumentException($"Leader '{leader}' does not lead civilization '{civ}'.");
+        }
+        var pool = Leaders.Where(l => chosen.All(c => c?.CivilizationId != l.CivilizationId)).ToList();
+        ulong state = seed * 0x9E3779B97F4A7C15UL + 0xD1B54A32D192ED03UL;
+        for (int i = 0; i < seats.Count; i++)
+        {
+            if (chosen[i] != null) continue;
+            if (pool.Count == 0) pool = Leaders.ToList();
+            state = (state ^ (state >> 29)) * 0xBF58476D1CE4E5B9UL + 0x94D049BB133111EBUL;
+            var pick = pool[(int)((state >> 11) % (ulong)pool.Count)];
+            chosen[i] = pick;
+            pool.RemoveAll(l => l.CivilizationId == pick.CivilizationId);
+        }
+        return chosen!;
+    }
+
     public NewGameOptions DefaultOptions() => new(
         Pick(WorldSizes, SetupField.WorldSize), Pick(GameSpeeds, SetupField.GameSpeed), Pick(Handicaps, SetupField.Handicap),
         Leaders[0].Id, 3, 1, MapGenerator: MapGenerators.Count == 0 ? "" : Pick(MapGenerators, SetupField.MapGenerator));

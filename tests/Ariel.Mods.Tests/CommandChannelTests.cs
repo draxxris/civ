@@ -14,6 +14,7 @@ public sealed class CommandChannelTests(LoadedMods mods) : IClassFixture<LoadedM
         private readonly List<GameCommand> _ready = [];
         public List<GameCommand> Sent { get; } = [];
         public bool PlaysAbsentHumans => false;
+        public string? Problem => null;
 
         public Submission Submit(Simulation sim, GameCommand command)
         {

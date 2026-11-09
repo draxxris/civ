@@ -113,6 +113,10 @@ description = "Play one AI game in three processes (1 CPU, all CPUs, all CPUs wi
 depends = ["cool"]
 run = "tools/sync-check.sh"
 
+[tasks."check:multiplayer"]
+description = "Two game clients (host and guest) play over localhost TCP under Xvfb and must reach the same state: mise run check:multiplayer -- [--turns N] [--world duel] [--opponents N] [--out-dir DIR]"
+run = "tools/mp-smoke.sh"
+
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
 depends = ["cool"]

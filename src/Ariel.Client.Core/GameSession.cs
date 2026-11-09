@@ -49,6 +49,8 @@ public sealed partial class GameSession
         new(new Simulation(catalog.Content, options.ToSettings(catalog)));
 
     public Player Me => Sim.State.PlayerById(LocalPlayer);
+    /// <summary>What has gone wrong with a networked game's connection, or null.</summary>
+    public string? ConnectionProblem => _channel.Problem;
     /// <summary>Whether the local player's segment of the turn is moving, so its commands are accepted.</summary>
     public bool IsMyMove => Sim.MayAct(LocalPlayer);
     public Team MyTeam => Sim.TeamOf(LocalPlayer);

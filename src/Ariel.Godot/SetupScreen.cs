@@ -36,6 +36,7 @@ internal sealed partial class SetupScreen : Control
 
     public event Action<NewGameOptions>? StartRequested;
     public event Action? ModsRequested;
+    public event Action? MultiplayerRequested;
 
     public SetupScreen(GameCatalog catalog)
     {
@@ -184,6 +185,9 @@ internal sealed partial class SetupScreen : Control
         var mods = Ui.Button("Mods (restart required)", () => ModsRequested?.Invoke(), size: 15);
         mods.CustomMinimumSize = new Vector2(210, 44);
         row.AddChild(mods);
+        var multiplayer = Ui.Button("Multiplayer", () => MultiplayerRequested?.Invoke(), size: 15);
+        multiplayer.CustomMinimumSize = new Vector2(150, 44);
+        row.AddChild(multiplayer);
         row.AddChild(_start);
         return row;
     }

@@ -13,6 +13,10 @@ public partial class Main : Node3D
     private readonly Label _status = new() { Text = "Loading mods…" };
     private Task<GameCatalog>? _loading;
     private Task<GameSession>? _starting;
+    private Task<MultiplayerGame>? _startingMultiplayer;
+    private MultiplayerScreen? _multiplayerScreen;
+    private MultiplayerGame? _multiplayer;
+    private DebugMultiplayer? _debugMultiplayer;
     private GameCatalog? _catalog;
     private IconCache? _icons;
     private SetupScreen? _setup;
@@ -92,7 +96,14 @@ public partial class Main : Node3D
         try
         {
             PollLoading();
+            if (_debugMultiplayer?.Tick() is { } lobby) StartMultiplayer(lobby);
             PollStarting();
+            if (_debugMultiplayer != null && _multiplayer != null && _framesSinceReady < 0 && _debugMultiplayer.Drive(_multiplayer.Session))
+            {
+                GD.Print($"multiplayer smoke: turn {_multiplayer.Session.Sim.State.Turn}, hash {_multiplayer.Session.Sim.ComputeHash():x16}");
+                if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
+                else GetTree().Quit();
+            }
             if (_fpsProbe is not null && _fpsProbe.Tick()) GetTree().Quit();
             if (_framesSinceReady >= 0)
             {
@@ -128,8 +139,16 @@ public partial class Main : Node3D
         _setup = new SetupScreen(_catalog!);
         _setup.StartRequested += Start;
         _setup.ModsRequested += () => ShowModManager();
+        _setup.MultiplayerRequested += ShowMultiplayer;
         AddChild(_setup);
-        if (_debug.ScreenshotPath != null && _debug.Stage == "setup") _framesSinceReady = 0;
+        if (_debug.Multiplayer != null) _debugMultiplayer = new DebugMultiplayer(_catalog!, _debug);
+        else if (_debug.ScreenshotPath != null && _debug.Stage == "lobby")
+        {
+            ShowMultiplayer();
+            _multiplayerScreen!.DebugHost();
+            _framesSinceReady = 0;
+        }
+        else if (_debug.ScreenshotPath != null && _debug.Stage == "setup") _framesSinceReady = 0;
         else if (_debug.Unattended) Start(DebugGame());
     }
 
@@ -180,8 +199,52 @@ public partial class Main : Node3D
         _starting = Task.Run(() => GameSession.Start(catalog, options));
     }
 
+    public override void _ExitTree() => _multiplayer?.Dispose();
+
+    /// <summary>Leave setup for the multiplayer screen; Back returns to setup.</summary>
+    private void ShowMultiplayer()
+    {
+        if (_setup != null) _setup.Visible = false;
+        _multiplayerScreen = new MultiplayerScreen(_catalog!);
+        _multiplayerScreen.Back += () =>
+        {
+            _multiplayerScreen?.QueueFree();
+            _multiplayerScreen = null;
+            if (_setup != null) _setup.Visible = true;
+        };
+        _multiplayerScreen.Starting += StartMultiplayer;
+        AddChild(_multiplayerScreen);
+    }
+
+    /// <summary>The lobby agreed on a game: build the same world as every other peer, off the game thread.</summary>
+    private void StartMultiplayer(Lobby lobby)
+    {
+        _status.Text = "Generating world…";
+        _status.Visible = true;
+        _multiplayerScreen?.QueueFree();
+        _multiplayerScreen = null;
+        var catalog = _catalog!;
+        var start = lobby.Starting!;
+        var transport = lobby.Release();
+        _startingMultiplayer = Task.Run(() => MultiplayerGame.Create(catalog, transport, start, lobby.Chat));
+    }
+
     private void PollStarting()
     {
+        if (_startingMultiplayer is { IsCompleted: true } multiplayer)
+        {
+            _startingMultiplayer = null;
+            if (multiplayer.IsFaulted)
+            {
+                _status.Text = "Could not start the game:\n" + multiplayer.Exception?.GetBaseException().Message;
+                if (_setup != null) _setup.Visible = true;
+                return;
+            }
+            _multiplayer = multiplayer.Result;
+            _status.Visible = false;
+            Launch(_multiplayer.Session, _multiplayer);
+            return;
+        }
         if (_starting is not { IsCompleted: true } task) return;
         _starting = null;
         if (task.IsFaulted)
@@ -191,20 +254,24 @@ public partial class Main : Node3D
             return;
         }
         _status.Visible = false;
+        Launch(task.Result, null);
+    }
+
+    private void Launch(GameSession session, MultiplayerGame? multiplayer)
+    {
         _setup?.QueueFree();
         _setup = null;
-        var session = task.Result;
-        PrepareDebugStage(session);
+        if (multiplayer == null) PrepareDebugStage(session); // debug stages edit the state directly, which would desync
         MapRenderer.LogTimings = _debug.Unattended || OS.GetCmdlineUserArgs().Contains("--trace-performance");
         TerrainRenderer.DebugMode = _debug.Unattended ? _debug.TerrainDebug : 0;
-        _game = new GameView(session, _icons!);
+        _game = new GameView(session, _icons!, multiplayer);
         AddChild(_game);
         if (_debug.Zoom != 0) _game.DebugZoom(_debug.Zoom);
         FocusTerrainScreenshot(session);
         ApplyCaptureOptions(session);
         if (_debug.Stage == "path") _game.ForceHover(PathTarget(session));
         OpenDebugPanel();
-        if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
+        if (_debug.ScreenshotPath != null && multiplayer == null) _framesSinceReady = 0;
         if (_debug.Stats) RenderingServer.ViewportSetMeasureRenderTime(GetViewport().GetViewportRid(), true);
         if (_debug.FpsProbe)
         {

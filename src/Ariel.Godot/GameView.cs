@@ -46,7 +46,14 @@ internal sealed partial class GameView : Node3D
 
     public void ForceHover(Hex? hex) => _forcedHover = hex;
 
-    public GameView(GameSession session, IconCache icons) { _session = session; _icons = icons; }
+    private readonly MultiplayerGame? _multiplayer;
+
+    public GameView(GameSession session, IconCache icons, MultiplayerGame? multiplayer = null)
+    {
+        _session = session;
+        _icons = icons;
+        _multiplayer = multiplayer;
+    }
 
     public override void _Ready()
     {
@@ -61,6 +68,7 @@ internal sealed partial class GameView : Node3D
         AddChild(_camera);
         _ui = new GameUi(_session, _icons);
         AddChild(_ui);
+        if (_multiplayer != null) AddChild(new MultiplayerOverlay(_multiplayer));
         var start = _session.Unit?.Position ?? _session.Sim.State.Cities.FirstOrDefault(c => c.Owner == _session.LocalPlayer)?.Position ?? new Hex(0, 0);
         _camera.FocusOn(MapRenderer.PositionOf(start));
     }

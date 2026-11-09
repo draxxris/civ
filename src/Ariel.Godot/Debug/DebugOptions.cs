@@ -40,6 +40,9 @@ internal sealed record DebugOptions
     public float Zoom { get; private init; }
     public int TerrainDebug { get; private init; }
     public bool FpsProbe { get; private init; }
+    /// <summary>"host" or "join": play one side of a two-process multiplayer smoke check (see DebugMultiplayer).</summary>
+    public string? Multiplayer { get; private init; }
+    public int MultiplayerPort { get; private init; } = MultiplayerScreen.DefaultPort;
     /// <summary>Start the game and stay open: no capture, so the run is a live window to inspect with the camera.</summary>
     public bool Inspect { get; private init; }
     public string? OutDir { get; private init; }
@@ -63,7 +66,7 @@ internal sealed record DebugOptions
 
     /// <summary>Whether the run drives itself: a capture, an FPS probe, a live inspection window, or a hand-made scene, none
     /// of which can answer a mod prompt or a setup screen. Anything else opens both, as a player sees it.</summary>
-    public bool Unattended => ScreenshotPath != null || FpsProbe || Inspect || ScenarioFile != null;
+    public bool Unattended => ScreenshotPath != null || FpsProbe || Inspect || ScenarioFile != null || Multiplayer != null;
 
     public static readonly string[] TerrainDebugNames = ["normal", "weights", "hidden", "", "relief", "bands", "slope", "lattice", "cavity"];
 
@@ -85,6 +88,7 @@ internal sealed record DebugOptions
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),
             TerrainDebug = ParseTerrainDebug(Value("--terrain-debug", "0")), FpsProbe = args.Contains("--fps-probe"),
             Inspect = args.Contains("--inspect"),
+            Multiplayer = Raw("--mp"), MultiplayerPort = int.Parse(Value("--mp-port", MultiplayerScreen.DefaultPort.ToString())),
             OutDir = Raw("--out-dir"), ShotsFile = Raw("--shots"), Focus = Raw("--focus"),
             FocusTile = Raw("--focus-tile") is { } t && t.Split(',') is [var c, var r] ? (int.Parse(c), int.Parse(r)) : null,
             Pitch = Float("--pitch"), Yaw = Float("--yaw"), Distance = Float("--distance"), Clean = args.Contains("--clean"),
@@ -114,7 +118,7 @@ internal sealed record DebugOptions
     }
 
     /// <summary>Stages whose capture shows an interface screen. The committed images live in the <c>gui</c> subfolder.</summary>
-    private static readonly HashSet<string> GuiStages = ["setup", "map", "city", "civics", "research", "conquest", "espionage"];
+    private static readonly HashSet<string> GuiStages = ["setup", "lobby", "map", "city", "civics", "research", "conquest", "espionage"];
 
     /// <summary>The PNG path for a capture name: in <see cref="OutDir"/> when given, else the committed screenshots folder.</summary>
     public string PathFor(string name) => OutDir != null ? System.IO.Path.Combine(OutDir, name + ".png")
