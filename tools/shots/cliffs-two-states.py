@@ -7,17 +7,14 @@
     python3 tools/shots/cliffs-two-states.py --only end,west --tuning CliffRamp=2
 
 The scene is tools/shots/scenarios/cliffs-two-states.json. Every pose is taken from one
-`mise run shot --shots` launch under a private Xvfb display (no Wayland throttling, and a
-fresh build only when the code changed). The sheet goes to docs/screenshots/cliffs-two-states.png
+`mise run shot --shots` launch, which captures on a private Xvfb display (no Wayland
+throttling) and builds only when the code changed. The sheet goes to docs/screenshots/cliffs-two-states.png
 unless --out says otherwise; the individual captures go to /tmp/ariel/cliffs-two-states.
 """
 import argparse
 import json
-import os
-import shutil
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -26,7 +23,6 @@ REPO = Path(__file__).resolve().parents[2]
 SCENE = REPO / "tools/shots/scenarios/cliffs-two-states.json"
 DEFAULT_OUT = REPO / "docs/screenshots/cliffs-two-states.png"
 DEFAULT_SHOTS = Path("/tmp/ariel/cliffs-two-states")
-DISPLAY = ":97"
 
 # Yaw turns counter-clockwise from north: 0 looks north, 90 west, 180 south, 270 east.
 # Poses for one --shots launch. A missing field keeps the previous pose's value, so every
@@ -98,24 +94,12 @@ def capture(shots, shots_dir, tuning):
     shots_dir.mkdir(parents=True, exist_ok=True)
     pose_file = shots_dir / "poses.json"
     pose_file.write_text(json.dumps(poses_with_resets(shots), indent=1))
-    xvfb = None
-    env = dict(os.environ)
-    if shutil.which("Xvfb"):
-        xvfb = subprocess.Popen(["Xvfb", DISPLAY, "-screen", "0", "1280x720x24", "-nolisten", "tcp"],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(0.5)
-        env["DISPLAY"] = DISPLAY
     cmd = ["mise", "run", "shot", "--", "--scenario", str(SCENE), "--clean", "--frames", "3",
            "--out-dir", str(shots_dir), "--shots", str(pose_file)]
     if tuning:
         cmd += ["--tuning", tuning]
     print(f"[cliffs] capturing {len(shots)} poses")
-    try:
-        result = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True, env=env)
-    finally:
-        if xvfb:
-            xvfb.terminate()
-            xvfb.wait()
+    result = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True)
     if result.returncode != 0:
         print(result.stdout[-4000:])
         print(result.stderr[-4000:], file=sys.stderr)

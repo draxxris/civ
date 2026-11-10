@@ -1,0 +1,12 @@
+[
+ {"name":"waterfalls-overview","focusTile":[14,13],"pitch":65,"yaw":0,"distance":16},
+ {"name":"waterfall-land","focusTile":[9,9],"pitch":55,"yaw":0,"distance":5},
+ {"name":"waterfall-ocean","focusTile":[9,17],"pitch":55,"yaw":0,"distance":5},
+ {"name":"waterfall-land-close","focusTile":[9,9],"pitch":45,"yaw":15,"distance":3},
+ {"name":"waterfall-ocean-close","focusTile":[9,17],"pitch":45,"yaw":15,"distance":3},
+ {"name":"waterfall-land-near","focusTile":[9,9],"pitch":35,"yaw":20,"distance":1.6},
+ {"name":"waterfall-ocean-near","focusTile":[9,17],"pitch":35,"yaw":20,"distance":1.6},
+ {"name":"river-ends-at-cliff","focusTile":[21,9],"pitch":55,"yaw":0,"distance":5},
+ {"name":"river-ends-at-brink-close","focusTile":[19,9],"pitch":45,"yaw":15,"distance":2.4},
+ {"name":"river-starts-at-foot-close","focusTile":[22,9],"pitch":45,"yaw":15,"distance":2.4}
+]

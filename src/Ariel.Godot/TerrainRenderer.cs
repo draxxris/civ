@@ -6,8 +6,8 @@ using Godot;
 namespace Ariel.Client;
 
 /// <summary>
-/// The 3D terrain: one lit mesh, one sea/lake water mesh and one river surface per chunk (three wrap copies on a wrapping
-/// map), shaded from the tile-data textures. A world change rebuilds only the chunks whose dirty signature changed; sight, overlay marks and
+/// The 3D terrain: one lit mesh, one sea/lake water mesh, one river surface and one waterfall mesh per chunk (three wrap
+/// copies on a wrapping map), shaded from the tile-data textures. A world change rebuilds only the chunks whose dirty signature changed; sight, overlay marks and
 /// hover only re-upload <c>tileB</c>.
 /// </summary>
 internal sealed partial class TerrainRenderer : Node3D
@@ -16,8 +16,8 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly TerrainChunks _chunks;
     private readonly TileDataTexture _data;
     private readonly TerrainTextures _textures;
-    private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial;
-    private readonly MeshInstance3D[][] _ground, _water, _rivers;
+    private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial;
+    private readonly MeshInstance3D[][] _ground, _water, _rivers, _falls;
     private readonly HazeRenderer _haze;
     private readonly float[] _copies;
     private readonly byte[] _marks;
@@ -73,6 +73,11 @@ internal sealed partial class TerrainRenderer : Node3D
         _terrainMaterial = Material("res://shaders/terrain.gdshader", warp, palette);
         _waterMaterial = Material("res://shaders/water.gdshader", warp, palette);
         _riverMaterial = Material("res://shaders/river.gdshader", warp, palette);
+        _fallMaterial = Material("res://shaders/waterfall.gdshader", warp, palette);
+        _mistMaterial = Material("res://shaders/waterfall_mist.gdshader", warp, palette);
+        // Over the rivers and the sea they pour into, and the mist over the falling water.
+        _fallMaterial.RenderPriority = 1;
+        _mistMaterial.RenderPriority = 2;
         RoadMaterial = Material("res://shaders/road.gdshader", warp, palette);
         // After the rivers, so a road crossing one stays on top.
         RoadMaterial.RenderPriority = 1;
@@ -80,6 +85,7 @@ internal sealed partial class TerrainRenderer : Node3D
         _ground = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
+        _falls = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _haze = new HazeRenderer(_chunks.Chunks, _copies, Snapshot.Period);
         AddChild(_haze);
     }
@@ -114,7 +120,7 @@ internal sealed partial class TerrainRenderer : Node3D
     /// <summary>Shared surface controls: uniforms only, with no terrain or sight rebuild.</summary>
     public void SetMapOverlays(MapOverlays overlays)
     {
-        foreach (var material in new[] { _terrainMaterial, _waterMaterial, _riverMaterial })
+        foreach (var material in new[] { _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial })
         {
             material.SetShaderParameter("show_grid", overlays.Grid);
             material.SetShaderParameter("show_borders", overlays.CulturalBorders);
@@ -161,9 +167,11 @@ internal sealed partial class TerrainRenderer : Node3D
             var chunk = _chunks.Chunks[dirty[i]];
             var mesh = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
             var river = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
+            var falls = WaterfallMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
             if (logTimings) meshMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
-            prepared[i] = new(PrepareGround(mesh, field), PrepareWater(mesh, field), PrepareRiver(river));
+            prepared[i] = new(PrepareGround(mesh, field), PrepareWater(mesh, field), PrepareRiver(river), PrepareFalls(falls),
+                PrepareMist(falls));
             if (logTimings) prepareMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         });
         double built = logTimings ? Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds : 0;
@@ -184,6 +192,9 @@ internal sealed partial class TerrainRenderer : Node3D
             var river = Build(data.River, _riverMaterial, uploads);
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
             foreach (var copy in _rivers[dirty[i]]) copy.Mesh = river;
+            var falls = Build(data.Falls, _fallMaterial, uploads);
+            if (falls != null && data.Mist != null) AddSurface(falls, data.Mist, _mistMaterial);
+            foreach (var copy in _falls[dirty[i]]) copy.Mesh = falls;
             if (logTimings) assignMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
             var props = _scatterPlanner.Plan(_chunks.Chunks[dirty[i]], Snapshot, Field, Palette, extras);
@@ -286,7 +297,8 @@ internal sealed partial class TerrainRenderer : Node3D
     private sealed record SurfaceData(Vector3[] Vertices, Vector3[] Normals, Vector2[] Uv2, int[] Indices,
         Vector2[]? Uv = null, Color[]? Colors = null);
 
-    private sealed record PreparedChunk(SurfaceData Ground, SurfaceData? Water, SurfaceData? River);
+    private sealed record PreparedChunk(SurfaceData Ground, SurfaceData? Water, SurfaceData? River, SurfaceData? Falls,
+        SurfaceData? Mist);
 
     private sealed class UploadTimings
     {
@@ -337,7 +349,9 @@ internal sealed partial class TerrainRenderer : Node3D
     }
 
 
-    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream or downhill flow in UV2, fade, white water and fall share in COLOR.</summary>
+    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream or downhill flow in UV2, and in COLOR the
+    /// fade, the white water and the rock contact (<see cref="RiverMeshData.Rock"/>), which churns the water white where it
+    /// runs against the rock columns of a cliff, as the sea does at the foot of one.</summary>
     private static SurfaceData? PrepareRiver(RiverMeshData? data)
     {
         if (data == null) return null;
@@ -353,9 +367,54 @@ internal sealed partial class TerrainRenderer : Node3D
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
             lanes[v] = new Vector2(data.Lanes[v * 2], data.Lanes[v * 2 + 1]);
             flow[v] = new Vector2(data.Flow[v * 2], data.Flow[v * 2 + 1]);
-            info[v] = new Color(data.Info[v * 3], data.Info[v * 3 + 1], data.Info[v * 3 + 2]);
+            info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], data.Rock[v]);
         }
         return new(vertices, normals, flow, FrontFaces(data.Indices, _ => true), lanes, info);
+    }
+
+    /// <summary>The chunk's waterfall water: lanes (across, down) in UV, (part, seed) in UV2 and (foam, fade) in COLOR.
+    /// Part codes go in UV2 because vertex colours are stored as clamped 8-bit values. Both sides of a sheet are drawn,
+    /// so the winding does not matter.</summary>
+    private static SurfaceData? PrepareFalls(WaterfallMeshData? data)
+    {
+        if (data == null || data.WaterIndices.Length == 0) return null;
+        int n = data.WaterVertexCount;
+        var vertices = new Vector3[n];
+        var normals = new Vector3[n];
+        var lanes = new Vector2[n];
+        var parts = new Vector2[n];
+        var info = new Color[n];
+        for (int v = 0; v < n; v++)
+        {
+            vertices[v] = new Vector3(data.WaterPositions[v * 3], data.WaterPositions[v * 3 + 1], data.WaterPositions[v * 3 + 2]);
+            normals[v] = new Vector3(data.WaterNormals[v * 3], data.WaterNormals[v * 3 + 1], data.WaterNormals[v * 3 + 2]);
+            lanes[v] = new Vector2(data.WaterLanes[v * 2], data.WaterLanes[v * 2 + 1]);
+            parts[v] = new Vector2(data.WaterInfo[v * 4], data.WaterInfo[v * 4 + 1]);
+            info[v] = new Color(data.WaterInfo[v * 4 + 2], data.WaterInfo[v * 4 + 3], 0);
+        }
+        return new(vertices, normals, parts, data.WaterIndices, lanes, info);
+    }
+
+    /// <summary>The chunk's waterfall mist: each puff's centre as its four vertices, the corner in UV, (size, rise) in UV2
+    /// and (phase, density) in COLOR; waterfall_mist.gdshader turns each puff to the camera.</summary>
+    private static SurfaceData? PrepareMist(WaterfallMeshData? data)
+    {
+        if (data == null || data.MistIndices.Length == 0) return null;
+        int n = data.MistVertexCount;
+        var vertices = new Vector3[n];
+        var normals = new Vector3[n];
+        var corners = new Vector2[n];
+        var shape = new Vector2[n];
+        var info = new Color[n];
+        for (int v = 0; v < n; v++)
+        {
+            vertices[v] = new Vector3(data.MistPositions[v * 3], data.MistPositions[v * 3 + 1], data.MistPositions[v * 3 + 2]);
+            normals[v] = Vector3.Up;
+            corners[v] = new Vector2(data.MistCorners[v * 2], data.MistCorners[v * 2 + 1]);
+            shape[v] = new Vector2(data.MistInfo[v * 4], data.MistInfo[v * 4 + 2]);
+            info[v] = new Color(data.MistInfo[v * 4 + 1], data.MistInfo[v * 4 + 3], 0);
+        }
+        return new(vertices, normals, shape, data.MistIndices, corners, info);
     }
 
     /// <summary>The mesher winds triangles counter-clockwise seen from above; Godot's front faces are clockwise.</summary>
@@ -374,14 +433,7 @@ internal sealed partial class TerrainRenderer : Node3D
     {
         if (data == null || data.Indices.Length == 0) return null;
         long start = timings != null ? Stopwatch.GetTimestamp() : 0;
-        var arrays = new Godot.Collections.Array();
-        arrays.Resize((int)Mesh.ArrayType.Max);
-        arrays[(int)Mesh.ArrayType.Vertex] = data.Vertices;
-        arrays[(int)Mesh.ArrayType.Normal] = data.Normals;
-        if (data.Uv != null) arrays[(int)Mesh.ArrayType.TexUV] = data.Uv;
-        arrays[(int)Mesh.ArrayType.TexUV2] = data.Uv2;
-        if (data.Colors != null) arrays[(int)Mesh.ArrayType.Color] = data.Colors;
-        arrays[(int)Mesh.ArrayType.Index] = data.Indices;
+        var arrays = Arrays(data);
         if (timings != null)
         {
             timings.PackMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
@@ -392,5 +444,25 @@ internal sealed partial class TerrainRenderer : Node3D
         mesh.SurfaceSetMaterial(0, material);
         if (timings != null) timings.SurfaceMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         return mesh;
+    }
+
+    /// <summary>Another surface on a built mesh, with its own material.</summary>
+    private static void AddSurface(ArrayMesh mesh, SurfaceData data, Material material)
+    {
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, Arrays(data));
+        mesh.SurfaceSetMaterial(mesh.GetSurfaceCount() - 1, material);
+    }
+
+    private static Godot.Collections.Array Arrays(SurfaceData data)
+    {
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = data.Vertices;
+        arrays[(int)Mesh.ArrayType.Normal] = data.Normals;
+        if (data.Uv != null) arrays[(int)Mesh.ArrayType.TexUV] = data.Uv;
+        arrays[(int)Mesh.ArrayType.TexUV2] = data.Uv2;
+        if (data.Colors != null) arrays[(int)Mesh.ArrayType.Color] = data.Colors;
+        arrays[(int)Mesh.ArrayType.Index] = data.Indices;
+        return arrays;
     }
 }

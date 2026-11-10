@@ -21,6 +21,13 @@ mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /tmp/sh
   thinning, triangles per layer, height range per relief class, FPS.
 - `--seed`, `--world tiny|...` choose the map.
 
+`mise run shot` captures on a private Xvfb display it starts and stops itself, because a
+desktop throttles an unfocused game window to about one frame a second. Set
+`ARIEL_SHOT_DESKTOP=1` to capture on your own display instead, to watch a run;
+`--inspect` always opens there. With `--shots`, the first pose waits `--frames` (30 for a
+scene) while the world builds and shaders compile, and each later pose `--pose-frames`
+(default 3), since the camera jumps straight to it.
+
 ## Looking around by hand
 
 Drop `--screenshot` and add `--inspect` to start on the same scene with the same pose
@@ -125,6 +132,39 @@ two tiles stand at different heights, read from `"kind"`, `"terrain"`, `"lake"` 
 explicit `"height"`. Nothing is inferred from relief or from water, so a stray bit draws
 nothing. The scene is then judged by the same rules `mise run validate` applies, and
 each violation is printed as a warning naming its tile and direction.
+
+## Meshes from above
+
+`mise run shot:mesh` draws the meshes the game builds for one region of a scenario, seen
+from straight above, triangle by triangle and without textures. Reach for it when a
+capture shows a seam, a kink or a piece of water in the wrong place: the textured render
+hides the shape of the triangles, and this shows it, with the river paths drawn over them.
+
+```sh
+mise run shot:mesh -- tools/shots/scenarios/waterfalls.json --focus 9,9
+mise run shot:mesh -- tools/shots/scenarios/waterfalls.json --focus 9,9 --fall --radius 0.4
+mise run shot:mesh -- tools/shots/scenarios/waterfalls.json --focus 9,9 --layers river,courses
+```
+
+`tools/Ariel.MeshPlot` sets the world up exactly as `mise run shot -- --scenario` does
+(a scene-sized world, seed 1 unless `--seed` says otherwise) and runs the game's own
+terrain, river and waterfall meshers, so the triangles are the ones on screen. It writes
+them to JSON; `tools/shots/mesh_plot.py` draws that file. Both land in `/tmp/ariel/mesh/`
+unless `--out` names the PNG.
+
+- `--focus COL,ROW` is the centre tile, in the scenario's own coordinates, the same as a
+  pose's `focusTile`. Without it the scenario's own focus is used.
+- `--fall` centres on the brink of the waterfall nearest that tile.
+- `--radius` is half the region's width, in tiles (1.5 by default). `--size` is the
+  plot's width in pixels.
+- `--layers` picks from `terrain` (the ground lattice, lighter is higher), `tiles` (hex
+  outlines with column,row and height tier), `river` (blue water, tan bank, fainter where
+  it fades), `falls` (red lip, white sheet, magenta veil, orange pool), `courses` (river
+  paths with a dot per sample: cyan feeds a fall, orange leaves one) and `lips` (each
+  brink in green, with an arrow the way it pours). The key is in a panel beside the plot.
+
+North is up, as the capture camera sees it at yaw 0. The view is flat, so a height
+problem, such as water sunk into the ground, does not show here.
 
 ## Cliff two-state sheet
 

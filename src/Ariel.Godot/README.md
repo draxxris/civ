@@ -275,8 +275,11 @@ manager, because it cannot answer a prompt.
   `roads/`), so set this for test captures.
 - `--stage <name>`: the stage for `--screenshot`. It defaults to `setup`, or to `map`
   when a scene switch below is used.
-- `--frames N`: ready frames to wait before each capture. The default is 60, or 30 with
-  a scene switch, and 90 in the stage tour.
+- `--frames N`: ready frames to wait before each capture (the first, with `--shots`).
+  The default is 60, or 30 with a scene switch, and 90 in the stage tour.
+- `--pose-frames N`: frames each later `--shots` pose waits before its capture. The
+  default is 3: the first capture has already built the world and compiled its
+  shaders, and the camera jumps straight to each pose.
 - `--stats`: print and save `<name>.json` beside each capture: props per scatter set
   before and after thinning, triangles per layer, height minimum, maximum and mean per
   relief class, and FPS.

@@ -1,0 +1,641 @@
+{
+ "// note": "Waterfalls and rivers that end at a cliff. Land-to-land (row 8, columns 5-13): lifted plains with a wall on their south-west and south-east edges down to grass; a river runs down the edge between 9,8 and 10,8, falls over the south-east face of 9,8, and continues on the low ground along the east edges of 8,9 and 8,10. Land-to-ocean (row 16): the same wall facing a coast strip; the river runs down the edge between 9,16 and 10,16 and pours over the south-east face of 9,16 into the sea, where it ends. Dead ends (rows 7 and 8, columns 17-25, two tiles deep, walled on the north too except where the river rises behind 18,7): a river on the plateau runs from the back of 18,7 down its east edge, along the north-east edge of 19,8 and down the edge between 19,8 and 20,8, and stops at the brink with nothing below it; a river on the low ground starts at the foot of the wall, under 23,8, and runs down the east edges of 22,9 and 22,10.",
+ "fill": {
+  "terrain": "world:grass",
+  "kind": "Flat",
+  "owner": null
+ },
+ "tiles": [
+  {
+   "rect": [
+    0,
+    0,
+    200,
+    200
+   ],
+   "cliff": false
+  },
+  {
+   "at": [
+    5,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    6,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    7,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    8,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    9,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    10,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    11,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    12,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    13,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    3,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    4,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    5,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    6,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    7,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    8,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    9,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    10,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    13,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    14,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    15,
+    17
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    3,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    4,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    5,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    6,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    7,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    8,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    9,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    10,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    13,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    14,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    15,
+    18
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    3,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    4,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    5,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    6,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    7,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    8,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    9,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    10,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    11,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    12,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    13,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    14,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    15,
+    19
+   ],
+   "terrain": "world:coast"
+  },
+  {
+   "at": [
+    5,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    6,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    7,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    8,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    9,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    10,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    11,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    12,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    13,
+    16
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    17,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    18,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    19,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    20,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    21,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    22,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    23,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    24,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    25,
+    8
+   ],
+   "terrain": "world:plains",
+   "cliff": 48
+  },
+  {
+   "at": [
+    17,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    18,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 4
+  },
+  {
+   "at": [
+    19,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 2
+  },
+  {
+   "at": [
+    20,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    21,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    22,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    23,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    24,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    25,
+    7
+   ],
+   "terrain": "world:plains",
+   "cliff": 6
+  },
+  {
+   "at": [
+    9,
+    8
+   ],
+   "river": 33
+  },
+  {
+   "at": [
+    8,
+    9
+   ],
+   "river": 33
+  },
+  {
+   "at": [
+    8,
+    10
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    9,
+    16
+   ],
+   "river": 33
+  },
+  {
+   "at": [
+    19,
+    8
+   ],
+   "river": 3
+  },
+  {
+   "at": [
+    22,
+    9
+   ],
+   "river": 33
+  },
+  {
+   "at": [
+    22,
+    10
+   ],
+   "river": 1
+  },
+  {
+   "at": [
+    18,
+    7
+   ],
+   "river": 1
+  }
+ ],
+ "clearUnits": true,
+ "focus": [
+  9,
+  12
+ ]
+}

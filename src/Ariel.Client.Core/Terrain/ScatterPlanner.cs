@@ -56,6 +56,7 @@ public sealed class ScatterPlanner(GameCatalog catalog)
             }
         AddSeaStacks(chunk, snapshot, field, result);
         AddCliffRocks(chunk, snapshot, field, result);
+        AddFallLedges(chunk, snapshot, field, result);
         return result;
     }
 
@@ -87,6 +88,25 @@ public sealed class ScatterPlanner(GameCatalog catalog)
                 TiltX: (float)rock.TiltX, TiltZ: (float)rock.TiltZ));
         }
     }
+
+    /// <summary>The ledge rock on top of each waterfall's cliff, drawn by the chunk that holds the fall's corner, like its
+    /// water (see <see cref="RiverMesher"/>).</summary>
+    private void AddFallLedges(TerrainChunk chunk, TerrainSnapshot snapshot, TerrainField field, List<ScatterInstance> result)
+    {
+        if (field.Rivers.Falls.Count == 0 || ModelCount(FallLedgeSet) == 0) return;
+        foreach (var fall in field.Rivers.Falls)
+        {
+            double x = snapshot.Grid.Spec.Wrap ? fall.X - snapshot.Period * Math.Floor(fall.X / snapshot.Period) : fall.X;
+            if (!chunk.Contains(x, fall.Z)) continue;
+            var ledge = field.LedgeOf(fall);
+            if (Hidden(snapshot, ledge.Tile)) continue;
+            result.Add(new(FallLedgeSet, 0, (float)(ledge.X + x - fall.X), (float)ledge.Y, (float)ledge.Z, (float)ledge.Yaw,
+                (float)ledge.Scale, ledge.Tile, (float)ledge.Stretch, Exact: true));
+        }
+    }
+
+    /// <summary>The model of the rock a waterfall pours over; see <see cref="FallLedge"/>.</summary>
+    public const string FallLedgeSet = "fall_ledges";
 
     /// <summary>Default models of sea stacks: the same rocks that lie at mountain feet, standing taller out of the sea.</summary>
     public const string SeaStackSet = "rocks";

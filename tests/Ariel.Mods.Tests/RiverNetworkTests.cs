@@ -133,12 +133,27 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
             var river = RiverMesher.Build(chunk, field);
             if (river == null) continue;
             var ground = TerrainMesher.Build(chunk, field);
-            for (int v = 0; v < river.VertexCount; v += 5)
+            for (int v = 0; v < river.VertexCount; v++)
             {
                 double x = river.Positions[v * 3], z = river.Positions[v * 3 + 2];
                 // Odd lattice rows start half a step in, so keep clear of the chunk's east and west edges.
                 if (!chunk.Contains(x - 0.2, z) || !chunk.Contains(x + 0.2, z)) continue;
-                Assert.Equal(TerrainTestMaps.HeightAt(ground, x, z), river.Positions[v * 3 + 1], 5e-4);
+                // The wet bank drapes over the ground; the water between the waterlines lies level instead (see
+                // RiverFallTests), at the ground of its lower waterline, so it never floats over the ground at both.
+                double across = river.Lanes[v * 2];
+                if (Math.Abs(across) > 1)
+                    Assert.Equal(TerrainTestMaps.HeightAt(ground, x, z), river.Positions[v * 3 + 1], 5e-4);
+                else if (across == -1)
+                {
+                    // The waterlines of one section are its lanes at -1 and +1.
+                    int w = v + 1;
+                    while (river.Lanes[w * 2] != 1) w++;
+                    double wx = river.Positions[w * 3];
+                    if (!chunk.Contains(wx - 0.2, river.Positions[w * 3 + 2]) || !chunk.Contains(wx + 0.2, river.Positions[w * 3 + 2])) continue;
+                    double gap = Math.Min(river.Positions[v * 3 + 1] - TerrainTestMaps.HeightAt(ground, x, z),
+                        river.Positions[w * 3 + 1] - TerrainTestMaps.HeightAt(ground, river.Positions[w * 3], river.Positions[w * 3 + 2]));
+                    Assert.True(gap < 5e-4, $"the water floats {gap:F4} over the ground at both its waterlines");
+                }
                 checkedVertices++;
             }
         }

@@ -25,12 +25,15 @@ namespace Ariel.Client;
 /// --wireframe                draw the terrain mesh lattice (the compatibility renderer has no wireframe mode)
 /// --stats                    print and save props, triangles and height statistics next to each capture
 /// --world size --map-generator id|short-id|name --seed n --opponents n --reveal --zoom d --frames n --fps-probe
+/// --pose-frames n            frames each --shots pose after the first waits before its capture (default 3): the world is
+///                            built and its shaders compiled by the first, and the camera jumps straight to each pose
 /// </code></summary>
 internal sealed record DebugOptions
 {
     public string? ScreenshotPath { get; private init; }
     public string Stage { get; private init; } = "setup";
     public int Frames { get; private init; } = 60;
+    public int PoseFrames { get; private init; } = 3;
     public int Turns { get; private init; }
     public string World { get; private init; } = "";
     public string MapGenerator { get; private init; } = "";
@@ -83,6 +86,7 @@ internal sealed record DebugOptions
         var options = new DebugOptions
         {
             ScreenshotPath = Value("--screenshot", ""), Stage = Raw("--stage") ?? "setup", Frames = int.Parse(Value("--frames", "60")),
+            PoseFrames = int.Parse(Value("--pose-frames", "3")),
             Turns = int.Parse(Value("--turns", "0")), World = Value("--world", ""), MapGenerator = Value("--map-generator", ""),
             Opponents = int.Parse(Value("--opponents", "3")),
             Seed = ulong.Parse(Value("--seed", "1")), Reveal = args.Contains("--reveal"), Zoom = float.Parse(Value("--zoom", "0")),

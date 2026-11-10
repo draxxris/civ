@@ -4,6 +4,7 @@ shader_type spatial;
 render_mode blend_mix, cull_back, depth_draw_opaque, diffuse_lambert, specular_schlick_ggx;
 
 #include "res://shaders/terrain_common.gdshaderinc"
+#include "res://shaders/surf.gdshaderinc"
 
 // Coast and ocean stay close in colour; the ocean reads as deeper, not as a different sea.
 uniform vec3 shallow_colour : source_color = vec3(0.07, 0.40, 0.50);
@@ -23,28 +24,13 @@ uniform vec3 sun_direction = vec3(-0.542, 0.643, -0.542);
 
 varying vec3 world_pos;
 varying float water_depth;
-// TerrainField.LedgeAt: 1 at a cliff edge, falling linearly to 0 about 0.42 world units out.
+// TerrainField.CliffAt: 1 at a cliff edge, falling linearly to 0 about 0.42 world units out.
 varying float cliff;
 
 void vertex() {
 	world_pos = VERTEX;
 	water_depth = UV2.x;
 	cliff = UV2.y;
-}
-
-// Surf coverage in [0, 1] beside a cliff. The cliff share stands in for the distance to the rock face.
-float cliff_surf(vec2 p, float share, float time) {
-	if (share <= 0.01) return 0.0;
-	float lace = seeded_noise(p + vec2(time * 0.07, -time * 0.05), 9.0, 16u) * 0.6
-		+ seeded_noise(p + vec2(-time * 0.05, time * 0.08), 19.0, 17u) * 0.4;
-	float fine = seeded_noise(p + vec2(time * 0.11, time * 0.04), 34.0, 18u);
-	// White water against the rock: solid at the face, torn into lace and holes as it spreads out.
-	float churn = smoothstep(0.8, 0.97, share + (lace - 0.5) * 0.3);
-	churn *= mix(0.45, 1.0, smoothstep(0.3, 0.7, lace * 0.7 + fine * 0.3)) * mix(0.75, 1.0, smoothstep(0.92, 1.0, share));
-	// Foam lines move outward from the face and break up into lace.
-	float swash = 0.5 + 0.5 * sin((1.0 - share) * 24.0 - time * 1.4 + lace * 4.0);
-	float streaks = smoothstep(0.6, 1.0, swash) * smoothstep(0.05, 0.6, share) * smoothstep(0.42, 0.7, lace) * (0.6 + 0.4 * fine);
-	return clamp(churn * cliff_churn + streaks * cliff_streaks * (1.0 - churn), 0.0, 1.0);
 }
 
 // Wave height (world units for the normal) blending fine coastal ripples into broad ocean swells by the deep share.
@@ -160,7 +146,7 @@ void fragment() {
 	// Foam lies on the shore, where the waves are the fine ripples; h0 / ripple_slope is their noise in [0, 1].
 	float foam = (1.0 - smoothstep(foam_depth * 0.3, foam_depth * (0.6 + wobble), water_depth))
 		* (0.45 + 0.4 * clamp(h0 / ripple_slope, 0.0, 1.0));
-	foam = max(foam, cliff_surf(p, cliff, TIME));
+	foam = max(foam, cliff_surf(p, cliff, TIME, cliff_churn, cliff_streaks));
 	foam = max(foam, whitecaps(p, TIME) * squall * 0.6);
 	colour = mix(colour, vec3(0.92, 0.96, 1.0), foam);
 	// Ice: slush whitens the water, then floes pack tight along the shore and break up further out.

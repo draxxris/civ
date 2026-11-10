@@ -22,6 +22,8 @@ public partial class Main : Node3D
     private SetupScreen? _setup;
     private GameView? _game;
     private int _framesSinceReady = -1;
+    // Frames the current capture waits: --frames for the first, --pose-frames for each later --shots pose.
+    private int _framesToWait = -1;
     private FpsProbe? _fpsProbe;
     private List<ShotSpec>? _shots;
     private int _shotIndex;
@@ -111,7 +113,7 @@ public partial class Main : Node3D
                 {
                     _game!.Ui.DebugShowResearchTooltip();
                 }
-                if (_framesSinceReady >= _debug.Frames) TakeScreenshot();
+                if (_framesSinceReady >= (_framesToWait < 0 ? _debug.Frames : _framesToWait)) TakeScreenshot();
             }
         }
         catch (Exception error) when (_debug.Unattended)
@@ -478,6 +480,7 @@ public partial class Main : Node3D
         if (_shots is null || ++_shotIndex >= _shots.Count) return false;
         ApplyShot(_game!.Session, _shots[_shotIndex]);
         _framesSinceReady = 0;
+        _framesToWait = _debug.PoseFrames;
         return true;
     }
 

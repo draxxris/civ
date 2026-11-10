@@ -41,6 +41,11 @@ public sealed class TerrainSnapshot
     /// <summary>World width of the map (<c>Width · √3</c>); the east-west repeat distance when the map wraps.</summary>
     public double Period => Width * Sqrt3;
 
+    /// <summary>The copy of world x nearest <paramref name="near"/>: x itself on a map that does not wrap, otherwise x
+    /// moved by whole periods. Positions on rivers and falls are in the unwrapped frame of their own link, so one
+    /// compared with another takes it this way first.</summary>
+    public double Nearest(double x, double near) => Grid.Spec.Wrap ? x + Period * Math.Round((near - x) / Period) : x;
+
     /// <summary>Terrain layer index from the palette.</summary>
     public byte[] Layer { get; }
     /// <summary>Height profile class.</summary>

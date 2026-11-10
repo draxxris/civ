@@ -249,12 +249,18 @@ public sealed class TerrainField
         Rivers = new RiverNetwork(snapshot, tuning, noise, (x, z) =>
         {
             if (_wrap) x -= Period * Math.Floor(x / Period);
-            return GroundAt(x, z, out _);
-        });
+            return GroundAt(x, z, out _, out double rise) - rise;
+        }, new CliffShape((x, z) => DrawPoint(x, z, FaceSnap), (x, z) =>
+        {
+            if (_wrap) x -= Period * Math.Floor(x / Period);
+            GroundAt(x, z, out _, out double rise);
+            return rise;
+        }));
         MaxHeight = new[] { 0, tuning.DeepWater + tuning.WaterNoise, tuning.ShallowWater + tuning.WaterNoise,
             tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsRise + tuning.HillsNoise,
             tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise + tuning.PeakRoughness }.Max() + tuning.CliffRise;
         _stacks = new Lazy<IReadOnlyList<SeaStack>>(BuildStacks);
+        _ledges = new Lazy<Dictionary<RiverFall, FallLedge>>(BuildLedges);
         MinHeight = new[] { 0, tuning.DeepWater - tuning.WaterNoise, tuning.ShallowWater - tuning.WaterNoise,
             tuning.FlatBase - tuning.FlatNoise, tuning.HillsBase - tuning.HillsNoise, tuning.PeakBase }.Min() - tuning.RiverDepth;
     }
@@ -287,19 +293,26 @@ public sealed class TerrainField
     public double HeightAt(double x, double z)
     {
         if (_wrap) x -= Period * Math.Floor(x / Period);
-        double h = GroundAt(x, z, out double hidden);
-        if (hidden < 1) h += (1 - hidden) * (Rivers.Level(x, z, h) - h - Rivers.Carve(x, z));
-        return h;
+        double h = GroundAt(x, z, out double hidden, out double rise);
+        // Rivers level and carve the ground under the cliff lift, so a river beside or over a cliff never wears the step
+        // away: the drawdown pulls the ground towards the valley floor on each side of the face, and the face stays a wall
+        // that a river crossing it pours over. A river along the foot of a cliff does take away the apron of lift its
+        // channel lies on, short of the face, so its water lies on level ground (see RiverNetwork.Unlift).
+        double ground = h - rise;
+        if (hidden < 1) ground += (1 - hidden) * (Rivers.Level(x, z, ground) - ground - Rivers.Carve(x, z));
+        return ground + rise * (1 - Rivers.Unlift(x, z));
     }
 
-    /// <summary>The blended relief profiles before rivers level and carve them, and the hidden share of the blend.</summary>
-    private double GroundAt(double x, double z, out double hidden)
+    /// <summary>The blended relief profiles before rivers level and carve them, the hidden share of the blend, and the part
+    /// of the height that is cliff lift (<paramref name="rise"/>), which rivers leave alone.</summary>
+    private double GroundAt(double x, double z, out double hidden, out double rise)
     {
         var corners = Corners(x, z);
         var w = HeightWeights(corners);
         var peak = corners.HasPeak ? PeakNoise(x, z) : default;
         double h = 0;
         hidden = 0;
+        rise = 0;
         // Profiles of all three corners: the cliff blend below needs the ones the regular weights ignore.
         double pa = 0, pb = 0, pc = 0;
         for (int k = 0; k < 3; k++)
@@ -325,7 +338,11 @@ public sealed class TerrainField
         // A ramp reaches well past the tiles that carry cliff bits, so it applies wherever a bare edge is in reach, not
         // only in corner sets that touch a cliff; stopping it there leaves a bank where the slope is cut off.
         if (!corners.HasCliff)
-            return hidden >= 1 ? h : h + Tuning.CliffRise * LiftRamp(corners);
+        {
+            if (hidden >= 1) return h;
+            rise = Tuning.CliffRise * LiftRamp(corners);
+            return h + rise;
+        }
         var (cliff, near) = CliffShares(corners, x, z);
         var sharp = CliffWeights(corners, x, z);
         // The lift belongs to the raised ground: a step at a cliff edge, level ground at its foot, and a ramp where an
@@ -349,7 +366,8 @@ public sealed class TerrainField
         // is a slope rather than a wall. It needs no window at a cliff: each slope is one edge wide and fades out at the
         // corner where its edge meets a face, so it never reaches the ground at the foot of the wall.
         double lift = Math.Max(bluff, LiftRamp(corners));
-        h += Tuning.CliffRise * lift;
+        rise = Tuning.CliffRise * lift;
+        h += rise;
         return CliffGround(corners, h, new Blend3(pa, pb, pc), sharp, lift, cliff, near, x, z);
     }
 
@@ -870,6 +888,20 @@ public sealed class TerrainField
         return -1;
     }
 
+    /// <summary>Whether a river runs along the edge of a tile in the given direction or along either edge of that tile
+    /// that meets it at a corner, as either tile of each edge records it.</summary>
+    private bool RiverReaches(int tile, int direction)
+    {
+        var s = Snapshot;
+        var hex = s.Grid.HexOf(new TileId(tile));
+        foreach (int d in new[] { direction, (direction + 1) % 6, (direction + 5) % 6 })
+        {
+            if ((s.Rivers[tile] & (1 << d)) != 0) return true;
+            if (s.TryTile(hex + Hex.Directions[d], out int other) && (s.Rivers[other] & (1 << (d + 3) % 6)) != 0) return true;
+        }
+        return false;
+    }
+
     private static bool IsWater(ReliefClass relief) => relief is ReliefClass.DeepWater or ReliefClass.ShallowWater;
 
     /// <summary>A lone rock off a cliff's foot: its warped-space centre and shoal radius, the water tile it stands in, and
@@ -888,6 +920,8 @@ public sealed class TerrainField
 
     private IEnumerable<StackSpot> StacksOfEdge(int highTile, int direction, double ax, double az, double bx, double bz, int lowTile)
     {
+        // A river that reaches this edge pours over it into the sea; a rock there would stand in the falling water.
+        if (RiverReaches(highTile, direction)) yield break;
         uint salt = 50 + 10 * (uint)direction;
         double roll = TileHash(highTile, salt);
         // A cliff that meets water always stands on rock; the roll only adds a second column for body.
@@ -910,6 +944,7 @@ public sealed class TerrainField
     public readonly record struct SeaStack(double X, double Y, double Z, int Tile, double Model, double Yaw, double Scale);
 
     private readonly Lazy<IReadOnlyList<SeaStack>> _stacks;
+    private readonly Lazy<Dictionary<RiverFall, FallLedge>> _ledges;
 
     /// <summary>Every sea stack of the known cliffs, in canonical world coordinates.</summary>
     public IReadOnlyList<SeaStack> SeaStacks => _stacks.Value;
@@ -953,6 +988,72 @@ public sealed class TerrainField
     /// <summary>Height of the rock model geometry at scale 1, in world units: the column placement solves the scale from
     /// the height it must span so its thick body, not just its pointed tip, reaches the bluff.</summary>
     public const double CliffRockHeight = 0.16;
+
+    /// <summary>Half width at the waterline of a cliff wall's rock column at scale 1: under the rock models' widest
+    /// footprints, since the columns taper and lean back into the face.</summary>
+    public const double CliffRockRadius = 0.035;
+
+    /// <summary>The ledge a waterfall pours over. Across the lip, the ground is read along the fall: the brink is where it
+    /// first drops away and the foot is the low ground (or the water surface) below. The ledge stands on the furthest
+    /// brink, so its slab rests on raised ground along the whole lip and its body fills any notch the corner cuts into the
+    /// face. Its top is flush with the ground behind it, so the river runs straight onto it.</summary>
+    public FallLedge LedgeOf(RiverFall fall) => _ledges.Value[fall];
+
+    private Dictionary<RiverFall, FallLedge> BuildLedges() => Rivers.Falls.ToDictionary(f => f, ComputeLedge);
+
+    private FallLedge ComputeLedge(RiverFall fall)
+    {
+        double dx = fall.DirectionX, dz = fall.DirectionZ;
+        double scale = 2 * fall.HalfWidth / FallLedge.Width;
+        double brink = 0, foot = double.MaxValue, plateau = double.MinValue;
+        for (int k = 0; k < LedgeProbes; k++)
+        {
+            double s = fall.HalfWidth * (2.0 * k / (LedgeProbes - 1) - 1);
+            double px = fall.X - dz * s, pz = fall.Z + dx * s;
+            double top = HeightAt(px - dx * 0.25, pz - dz * 0.25);
+            plateau = Math.Max(plateau, top);
+            double low = double.MaxValue;
+            for (double o = 0.2; o <= 0.5; o += 0.05) low = Math.Min(low, HeightAt(px + dx * o, pz + dz * o));
+            if (low < 0 && NearWater(px + dx * 0.4, pz + dz * 0.4)) low = 0;
+            foot = Math.Min(foot, low);
+            for (double o = -0.25; o <= 0.5; o += 0.02)
+                if (HeightAt(px + dx * o, pz + dz * o) < top - 0.3 * (top - low)) { brink = Math.Max(brink, o); break; }
+        }
+        double ox = fall.X + dx * brink, oz = fall.Z + dz * brink;
+        // The slab lies level with the plateau behind it. Where the brink runs slantwise across the lip, the ground behind
+        // the origin can already be rounding down over the edge, so the plateau behind the whole lip sets its height too.
+        double y = Math.Max(HeightAt(ox - dx * FallLedge.Back * scale, oz - dz * FallLedge.Back * scale), plateau) + 0.01;
+        double stretch = Math.Max(0.5, (y - foot) / (FallLedge.Height * scale));
+        double wrapped = _wrap ? fall.X - Period * Math.Floor(fall.X / Period) : fall.X;
+        Snapshot.TryTile(Hex.FromPixel(wrapped - dx * 0.3, fall.Z - dz * 0.3, 1), out int tile);
+        return new FallLedge(ox, y, oz, dx, dz, scale, stretch, foot, Reach(fall, ox, oz, scale), tile);
+    }
+
+    /// <summary>How far past the nose of a fall's ledge (origin ox, oz) the sheet lands. A fall into a river along the
+    /// foot lands no further out than <see cref="LandingInWater"/> of the way from that river's centre line to its far
+    /// waterline, where the river runs under the lip, so a narrow stream close under the wall still catches it; otherwise
+    /// it is thrown <see cref="FallLedge.JetReach"/>.</summary>
+    private double Reach(RiverFall fall, double ox, double oz, double scale)
+    {
+        double nose = FallLedge.Nose * scale;
+        if (!fall.AlongFoot || Rivers.Curves.FirstOrDefault(c => c.Fall == fall) is not { } river) return FallLedge.JetReach;
+        double reach = FallLedge.JetReach;
+        for (int i = 0; i < river.Count; i++)
+        {
+            double rx = river.X[i] - ox, rz = river.Z[i] - oz;
+            double across = Math.Abs(-rx * fall.DirectionZ + rz * fall.DirectionX);
+            if (across > fall.HalfWidth) continue;
+            double @out = rx * fall.DirectionX + rz * fall.DirectionZ;
+            reach = Math.Min(reach, @out + river.Width[i] * LandingInWater - nose);
+        }
+        return Math.Max(FallLedge.MinReach, reach);
+    }
+
+    /// <summary>Share of a river's half width out from its centre line that a sheet falling into it lands at most.</summary>
+    private const double LandingInWater = 0.75;
+
+    /// <summary>Points across a waterfall's lip at which <see cref="LedgeOf"/> reads the ground.</summary>
+    private const int LedgeProbes = 5;
 
     /// <summary>The rock wall of every known cliff whose lifted tile centre lies within 1.5 of the rectangle (x0..x1,
     /// z0..z1), canonical x: a cliff that drops into water stands its columns on the waterline, a cliff between two land
@@ -1019,7 +1120,8 @@ public sealed class TerrainField
             double top = Math.Max(HeightAt(px + nx * (off - 0.12), pz + nz * (off - 0.12)), Tuning.FlatBase + Tuning.CliffRise +
                 Tuning.FlatNoise * _noise.Fbm(sx, sz, Tuning.FlatFrequency, Tuning.Octaves, salt: 2));
             // Lean back towards the land, a little: the waterline column only has to rest its top against the bluff.
-            yield return Column(tile, r, sx, sz, foot, top, lip: 0.015, -nx, -nz, 0.03);
+            var column = Column(tile, r, sx, sz, foot, top, lip: 0.015, -nx, -nz, 0.03);
+            if (!InPlunge(column)) yield return column;
         }
     }
 
@@ -1069,7 +1171,8 @@ public sealed class TerrainField
             // the foot of the face and its tip just reaches the brink.
             // Where the face has run out (the shoulder at the end of a run) a column would be a loose boulder on the grass.
             if (above - floor < 0.3 * Tuning.CliffRise) continue;
-            yield return Column(tile, r, sx, sz, floor - 0.03, above, lip: 0.005, -fnx, -fnz, FaceOut + LeanPast);
+            var column = Column(tile, r, sx, sz, floor - 0.03, above, lip: 0.005, -fnx, -fnz, FaceOut + LeanPast);
+            if (!InPlunge(column)) yield return column;
         }
     }
 
@@ -1088,6 +1191,7 @@ public sealed class TerrainField
         double intoZ, double reach)
     {
         double stretch = ColumnStretch + ColumnStretchSpread * TileHash(tile, r + 1);
+        if (UnderFall(x, z) is { } cap) (top, lip) = (Math.Min(top, Math.Max(cap, foot)), 0);
         double height = top + lip * (1 + TileHash(tile, r + 2)) - foot;
         double scale = Math.Max(0.4, height / (CliffRockHeight * stretch));
         if (_wrap) x -= Period * Math.Floor(x / Period);
@@ -1099,6 +1203,46 @@ public sealed class TerrainField
         return new(x, foot, z, tile, TileHash(tile, r + 3), Math.Tau * TileHash(tile, r + 4), scale, stretch,
             intoX * lean, intoZ * lean);
     }
+
+    /// <summary>The highest a wall column at (x, z) may stand under a waterfall's ledge, or null when no ledge is over it.
+    /// The column stops beneath the slab, so the water runs over the rock instead of the rock poking through the
+    /// water.</summary>
+    private double? UnderFall(double x, double z)
+    {
+        double? cap = null;
+        foreach (var ledge in Ledges(x, z))
+            if (ledge.Along <= ledge.Ledge.NoseOut)
+                cap = Math.Min(cap ?? double.MaxValue, ledge.Ledge.Y - FallLedge.SlabDepth * ledge.Ledge.Scale * ledge.Ledge.Stretch);
+        return cap;
+    }
+
+    /// <summary>Whether a wall column would stand where a waterfall lands, out past its ledge's nose, with any of its foot
+    /// across the sheet. The wall leaves it out: a stub of rock there reads as a stray boulder in the pool, and one beside
+    /// a narrow sheet hides it from the open water.</summary>
+    private bool InPlunge(CliffRock rock)
+    {
+        foreach (var ledge in Ledges(rock.X, rock.Z, CliffRockRadius * rock.Scale))
+            if (ledge.Along > ledge.Ledge.NoseOut && ledge.Along <= ledge.Ledge.NoseOut + FallPlunge) return true;
+        return false;
+    }
+
+    /// <summary>Every ledge whose lip spans (x, z) across its fall, widened by <paramref name="reach"/> on each side, with
+    /// how far along the fall from its brink the point lies; points behind the slab's back edge are left out.</summary>
+    private IEnumerable<(FallLedge Ledge, double Along)> Ledges(double x, double z, double reach = 0)
+    {
+        if (Rivers.Falls.Count == 0) yield break;
+        foreach (var ledge in _ledges.Value.Values)
+        {
+            double dx = x - ledge.X, dz = z - ledge.Z;
+            if (_wrap) dx -= Period * Math.Round(dx / Period);
+            double along = dx * ledge.DirectionX + dz * ledge.DirectionZ;
+            double side = Math.Abs(-dx * ledge.DirectionZ + dz * ledge.DirectionX);
+            if (side <= FallLedge.Width * ledge.Scale / 2 + reach && along >= -ledge.BackIn) yield return (ledge, along);
+        }
+    }
+
+    /// <summary>How far out from a ledge's nose the falling water lands, within which no wall column stands.</summary>
+    private const double FallPlunge = 0.2;
 
     /// <summary>The world point that warps onto the given canonical point (the warp is smooth and small, so a few
     /// iterations of the inverse are enough).</summary>

@@ -94,10 +94,22 @@ run = "tools/shots/shot.sh"
 description = "Side-by-side and difference image: mise run shot:compare -- before.png after.png out.png"
 run = "tools/shots/compare.sh"
 
+[tasks."shot:map"]
+description = "Draw a top-down plan of capture scenarios and check them against the height and cliff rules: mise run shot:map -- <scenario.json ...> [--out DIR]"
+run = "python3 tools/shots/scenario_map.py"
+
+[tasks."shot:mesh"]
+description = "Draw the terrain, river and waterfall meshes of a scenario region from above, triangle by triangle: mise run shot:mesh -- <scenario.json> [--focus COL,ROW] [--fall] [--radius TILES] [--layers ...] [--out FILE.png]"
+run = "python3 tools/shots/mesh_plot.py"
+
 [tasks."shot:models"]
 description = "Render 5 views, composite sheet, and metadata JSON for unit GLBs: mise run shot:models -- [--units NAME ...]"
 depends = ["cool"]
 run = "python3 tools/art/render_unit_models.py"
+
+[tasks."art:fall-ledge"]
+description = "Write the waterfall ledge rock model to src/Mods/World/art/scatter/fall_ledges/Ledge_1.glb"
+run = "uv run --script tools/art/fall_ledge.py"
 
 [tasks.validate]
 description = "Report the height and cliff rules a save file or a debug scene breaks: mise run validate -- <file> [--save|--scene] [--map id] [--size id]"
