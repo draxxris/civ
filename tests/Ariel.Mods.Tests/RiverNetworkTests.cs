@@ -279,6 +279,58 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
         return p.CompareTo(q) <= 0 ? (p.Item1, p.Item2, q.Item1, q.Item2) : (q.Item1, q.Item2, p.Item1, p.Item2);
     }
 
+    /// <summary>A river along the feet of a line of peaks: the ground at its banks climbs at each mountain's foot and sinks
+    /// at each saddle between them, but the water never runs uphill on its way to the sea.</summary>
+    [Fact]
+    public void A_river_along_a_line_of_peaks_never_runs_uphill()
+    {
+        var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat);
+        const int row = 6;
+        int Tile(int col) => row * snapshot.Width + col;
+        snapshot.Relief[Tile(11)] = ReliefClass.ShallowWater;
+        for (int col = 2; col <= 10; col++)
+        {
+            if (col % 2 == 0) snapshot.Relief[Tile(col)] = ReliefClass.Peak;
+            TerrainTestMaps.SetRiver(snapshot, Tile(col), 4);
+            TerrainTestMaps.SetRiver(snapshot, Tile(col), 5);
+        }
+
+        AssertRunsDownhill(new TerrainField(snapshot, 1));
+    }
+
+    /// <summary>Walk each curve in flow order (sources first), reading the water where the mesher reads it, at the lower
+    /// of its two waterlines, and require it never to stand more than a sliver above the lowest water upstream of it.
+    /// Pond flares are skipped: a pond's water is level at its own shore, not at the flared waterline.</summary>
+    internal static void AssertRunsDownhill(TerrainField field)
+    {
+        const double Sliver = 0.01;
+        var rivers = field.Rivers;
+        Assert.NotEmpty(rivers.Curves);
+        var level = new double[rivers.Graph.NodeCount];
+        Array.Fill(level, double.PositiveInfinity);
+        var worst = (Climb: 0.0, Where: "");
+        foreach (int k in rivers.Flow.Order)
+        {
+            var c = rivers.Curves[k];
+            Assert.True(c.Downstream is 1 or -1, $"link {k} has no flow");
+            double lowest = level[rivers.Flow.Upstream(c.Link, k)];
+            for (int j = 0; j < c.Count; j++)
+            {
+                int i = c.Downstream > 0 ? j : c.Count - 1 - j;
+                if (InFlare(c.StartPond, c.Arc[i]) || InFlare(c.EndPond, c.Arc[^1] - c.Arc[i])) continue;
+                double nx = -c.TZ[i] * c.Width[i], nz = c.TX[i] * c.Width[i];
+                double water = Math.Min(field.HeightAt(c.X[i] + nx, c.Z[i] + nz), field.HeightAt(c.X[i] - nx, c.Z[i] - nz));
+                if (water - lowest > worst.Climb) worst = (water - lowest, $"link {k} sample {i} ({c.X[i]:F2}, {c.Z[i]:F2})");
+                lowest = Math.Min(lowest, water);
+            }
+            int down = rivers.Flow.Downhill(c.Link, k);
+            level[down] = Math.Min(level[down], lowest);
+        }
+        Assert.True(worst.Climb <= Sliver, $"the water climbs {worst.Climb:F3} at {worst.Where}");
+
+        static bool InFlare(RiverPond? pond, double fromEnd) => pond is { } p && fromEnd <= RiverNetwork.PondFlare * p.Radius;
+    }
+
     /// <summary>Brute force over every curve and wrap copy: the distance from (x, z) to the nearest river centre line and
     /// the water half width there.</summary>
     private static (double Distance, double Width) CentreLine(TerrainField field, double x, double z)

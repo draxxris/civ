@@ -128,8 +128,7 @@ public static class RiverMesher
         {
             // A mouth off a sea cliff is nothing but its waterfall.
             if (curve.Fall is { Course: FallCourse.Sea }) return;
-            int sign = curve.Downstream != 0 ? curve.Downstream
-                : field.HeightAt(curve.X[0], curve.Z[0]) >= field.HeightAt(curve.X[^1], curve.Z[^1]) ? 1 : -1;
+            int sign = curve.Downstream;
             int i = 0;
             while (i < curve.Count - 1)
             {

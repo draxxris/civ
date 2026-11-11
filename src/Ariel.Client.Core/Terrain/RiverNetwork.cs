@@ -1,8 +1,9 @@
 namespace Ariel.Client.Terrain;
 
 /// <summary>One sampled river curve: centre points, unit tangents, water half widths, arc lengths and carve depths, in the
-/// unwrapped frame of its <see cref="RiverLink"/>. Tangents are exact, so curves meeting at a node share one. <see cref="Downstream"/> is +1 when water flows from the first sample to the last, -1 for
-/// the reverse and 0 when the network does not decide (renderers then pick by height).</summary>
+/// unwrapped frame of its <see cref="RiverLink"/>. Tangents are exact, so curves meeting at a node share one.
+/// <see cref="Downstream"/> is +1 when water flows from the first sample to the last and -1 for the reverse (see
+/// <see cref="RiverFlow"/>); it is 0 only while the network is still being built, where the link alone does not say.</summary>
 public sealed record RiverCurve(RiverLink Link, double[] X, double[] Z, double[] TX, double[] TZ, double[] Width, double[] Arc,
     double[] Depth, int Downstream)
 {
@@ -130,6 +131,8 @@ public sealed class RiverNetwork
     /// <summary>Distance along a river, in world units, over which it bends out to meet a foot river's far end where
     /// that end has moved off their shared corner (see <see cref="Rejoin"/>).</summary>
     private const double RejoinReach = 0.4;
+    /// <summary>Length of a river over which it eases down to the river it joins, where that one runs lower.</summary>
+    private const double JoinReach = 0.5;
     /// <summary>Distance along a river, in world units, over which it turns to run straight out over a fall it feeds.</summary>
     private const double AimReach = 0.35;
     /// <summary>Smoothing passes that round the turn where a foot river joins the river it runs on into.</summary>
@@ -197,7 +200,9 @@ public sealed class RiverNetwork
             AX = l.AX + shifts[l.A].X, AZ = l.AZ + shifts[l.A].Z, BX = l.BX + shifts[l.B].X, BZ = l.BZ + shifts[l.B].Z,
         }).ToArray();
         _ponds = PlacePonds();
-        Curves = Aim(Gather(Rejoin(BuildCurves(noise).Select(c => Settle(snapshot, c, cliffs)).ToArray())));
+        var curves = Aim(Gather(Rejoin(BuildCurves(noise).Select(c => Settle(snapshot, c, cliffs)).ToArray())));
+        Flow = RiverFlow.Of(Graph, curves.Select(c => c.Downstream).ToArray(), node => NodeGround(node, ground));
+        Curves = curves.Select((c, k) => c with { Downstream = Flow.Downstream[k] }).ToArray();
         Falls = Curves.Where(c => c.Fall != null).Select(c => c.Fall!).ToArray();
         Ponds = [.. Curves.SelectMany(c => new[] { c.StartPond, c.EndPond }).OfType<RiverPond>()];
         _columns = _wrap ? Math.Max(1, (int)Math.Round(_period / CellSize)) : (int)Math.Ceiling((_period + 8) / CellSize);
@@ -205,10 +210,13 @@ public sealed class RiverNetwork
         _z0 = -6;
         _rows = (int)Math.Ceiling((1.5 * (snapshot.Height - 1) + 12) / CellSize);
         var footEnds = FootEnds();
-        _segments = Curves.SelectMany(c =>
+        var floors = Curves.Select(c => Floors(c, ground)).ToArray();
+        var unlifts = Curves.Select(c => Unlifts(c, footEnds)).ToArray();
+        Descend(floors, (k, i) => cliffs == null ? 0 : cliffs.Lift(Curves[k].X[i], Curves[k].Z[i]) * (1 - unlifts[k][i]));
+        _segments = Curves.SelectMany((c, k) =>
         {
-            var floor = Floors(c, ground);
-            var unlift = Unlifts(c, footEnds);
+            var floor = floors[k];
+            var unlift = unlifts[k];
             return Enumerable.Range(0, c.Count - 1).Select(i =>
             {
                 var (wx, wz) = WallSide(c);
@@ -223,7 +231,10 @@ public sealed class RiverNetwork
 
     /// <summary>The topology the curves follow.</summary>
     public RiverGraph Graph { get; }
-    /// <summary>One curve per graph link, in link order.</summary>
+    /// <summary>Which way the water runs along each link, and the order to walk them from the sources down.</summary>
+    public RiverFlow Flow { get; }
+    /// <summary>One curve per graph link, in link order, each with its <see cref="RiverCurve.Downstream"/> from
+    /// <see cref="Flow"/>.</summary>
     public IReadOnlyList<RiverCurve> Curves { get; }
     /// <summary>Every waterfall, one per curve that pours over a cliff.</summary>
     public IReadOnlyList<RiverFall> Falls { get; }
@@ -343,6 +354,80 @@ public sealed class RiverNetwork
         if (c.StartPond is { Spring: true } a) LevelPool(c, floor, a, atStart: true);
         if (c.EndPond is { Spring: true } b) LevelPool(c, floor, b, atStart: false);
         return floor;
+    }
+
+    /// <summary>Lower the valley floors so that water only ever runs downhill: walking every river from its sources down
+    /// (<see cref="Flow"/>), the water nowhere stands above the water upstream of it, through each curve and on across
+    /// the nodes. The floors follow the ground beside the river, and along a line of peaks each mountain's foot pushes that
+    /// ground up where it meets the water and each saddle lets it down again; the river now cuts through those humps
+    /// instead of climbing over them. The water lies at the waterline, a share of the channel's depth under the floor
+    /// (<see cref="Sink"/>), so a stretch where the river narrows and shallows is lowered too, and on whatever cliff lift
+    /// its channel leaves (<paramref name="lift"/>, per curve and sample), so a river passing a wall's apron cuts through
+    /// it rather than riding up it. Where two rivers meet, the
+    /// higher one eases down over <see cref="JoinReach"/> to the lower, so it runs into it rather than stepping down; a
+    /// waterfall's drop needs no easing.</summary>
+    private void Descend(double[][] floors, Func<int, int, double> lift)
+    {
+        double sink = Sink;
+        var level = new double[Graph.NodeCount];
+        Array.Fill(level, double.PositiveInfinity);
+        var met = new bool[Graph.NodeCount];
+        foreach (int k in Flow.Order)
+        {
+            var c = Curves[k];
+            int up = Flow.Upstream(c.Link, k);
+            if (!met[up])
+            {
+                met[up] = true;
+                Meet(up, level[up], floors);
+            }
+            var floor = floors[k];
+            double run = level[up];
+            for (int j = 0; j < c.Count; j++)
+            {
+                int i = c.Downstream > 0 ? j : c.Count - 1 - j;
+                double above = lift(k, i) - sink * c.Depth[i];
+                double water = Math.Min(floor[i] + above, run);
+                floor[i] = water - above;
+                run = water;
+            }
+            int down = Flow.Downhill(c.Link, k);
+            level[down] = Math.Min(level[down], run);
+        }
+    }
+
+    /// <summary>Share of a channel's depth its water lies under the valley floor: the carve at the waterline (see
+    /// <see cref="Carve"/>), one water half width out in a band of <see cref="TerrainTuning.RiverBankRatio"/> of them.</summary>
+    private double Sink => 1 - SmoothStep(BedShare, 1, 1 / _tuning.RiverBankRatio);
+
+    /// <summary>Ease the water of every river that runs into a junction down to the lowest of them,
+    /// <paramref name="level"/>, over its last <see cref="JoinReach"/>.</summary>
+    private void Meet(int node, double level, double[][] floors)
+    {
+        var links = Graph.LinksAt(node);
+        if (links.Any(l => Curves[l].Fall != null || Curves[l].Feeds != null)) return;
+        var into = links.Where(l => Flow.Downhill(Curves[l].Link, l) == node).ToArray();
+        if (into.Length < 2) return;
+        double sink = Sink;
+        foreach (int l in into)
+        {
+            var c = Curves[l];
+            var floor = floors[l];
+            for (int i = 0; i < c.Count; i++)
+            {
+                double fromEnd = c.Downstream > 0 ? c.Arc[^1] - c.Arc[i] : c.Arc[i];
+                double above = floor[i] - sink * c.Depth[i] - level;
+                if (above > 0) floor[i] -= above * SmoothStep(JoinReach, 0, fromEnd);
+            }
+        }
+    }
+
+    /// <summary>The uncarved ground at a node.</summary>
+    private double NodeGround(int node, Func<double, double, double> ground)
+    {
+        int l = Graph.LinksAt(node)[0];
+        var link = _links[l];
+        return link.A == node ? ground(link.AX, link.AZ) : ground(link.BX, link.BZ);
     }
 
     /// <summary>Lay the valley floor level under a spring's still water: a spring rises on cramped, sloping ground, and its
@@ -1146,7 +1231,7 @@ public sealed class RiverNetwork
     private double PondRadius(RiverLink link) => _tuning.RiverWidth * PondScale * Math.Max(link.Relief, 0.6);
 
 
-    /// <summary>Water leaves sources and runs into the open water; elsewhere the renderer decides from the heights.</summary>
+    /// <summary>Water leaves sources and runs into the open water; elsewhere <see cref="RiverFlow"/> decides.</summary>
     private int Downstream(RiverLink link)
     {
         if (Graph.IsOpen(link.B) || Graph.LinksAt(link.A).Count == 1) return 1;

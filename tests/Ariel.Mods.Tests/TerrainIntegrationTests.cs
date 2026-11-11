@@ -38,6 +38,15 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         return new(snapshot, unchecked((int)(seed ^ (seed >> 32))));
     }
 
+    /// <summary>Every river of a generated world, revealed: the water only ever runs downhill from its sources to the sea,
+    /// through each curve and on from one to the next, over hills, peaks and cliffs.</summary>
+    [Fact]
+    public void Every_river_of_a_generated_world_runs_downhill_to_the_water()
+    {
+        var session = Generated(reveal: true);
+        RiverNetworkTests.AssertRunsDownhill(Field(session, Snapshot(session)));
+    }
+
     [Fact]
     public void Saving_and_loading_a_generated_world_preserves_known_terrain_and_surface_heights()
     {
