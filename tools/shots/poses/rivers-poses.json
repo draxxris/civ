@@ -1,0 +1,11 @@
+[
+ {"name": "overview", "focusTile": [12, 7], "pitch": 55, "yaw": 0, "distance": 16},
+ {"name": "grass_pond", "focusTile": [3, 4], "pitch": 45, "yaw": 0, "distance": 4.5},
+ {"name": "grass_reach", "focusTile": [6, 5], "pitch": 40, "yaw": 0, "distance": 4.5},
+ {"name": "plains_reach", "focusTile": [11, 5], "pitch": 40, "yaw": 0, "distance": 4.5},
+ {"name": "desert_reach", "focusTile": [17, 5], "pitch": 40, "yaw": 0, "distance": 4.5},
+ {"name": "tundra_mouth", "focusTile": [21, 5], "pitch": 40, "yaw": 0, "distance": 5},
+ {"name": "desert_pond", "focusTile": [15, 10], "pitch": 45, "yaw": 0, "distance": 4.5},
+ {"name": "tundra_pond", "focusTile": [22, 10], "pitch": 45, "yaw": 0, "distance": 4.5},
+ {"name": "grass_short", "focusTile": [4, 11], "pitch": 50, "yaw": 0, "distance": 6}
+]

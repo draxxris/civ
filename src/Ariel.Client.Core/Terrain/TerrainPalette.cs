@@ -10,10 +10,11 @@ namespace Ariel.Client.Terrain;
 /// fade smoothly into each other instead of the ragged edges of land; <see cref="Ocean"/> marks deep water.
 /// <see cref="PatchLayer"/> is the layer whose ground shows through in patches over <see cref="PatchShare"/> (0..1) of
 /// this one (see <see cref="TileAppearance.Patch"/>), or <see cref="TerrainPalette.ColorOnlyLayer"/> for none.
-/// <see cref="Turn"/> (0..1 of 180°) is the largest random turn of its texture (see <see cref="TileAppearance.TurnDegrees"/>).</summary>
+/// <see cref="Turn"/> (0..1 of 180°) is the largest random turn of its texture (see <see cref="TileAppearance.TurnDegrees"/>).
+/// <see cref="Riverbed"/> is the ground along a river's banks through this layer (see <see cref="TileAppearance.Riverbed"/>).</summary>
 public sealed record TerrainPaletteLayer(string Id, Rgb Fallback, string? TexturePath, TerrainSurface? Surface = null,
     float Spread = 0.5f, bool Water = false, bool Ocean = false, int PatchLayer = TerrainPalette.ColorOnlyLayer,
-    float PatchShare = 0, float Turn = 1);
+    float PatchShare = 0, float Turn = 1, Riverbed Riverbed = Riverbed.Gravel);
 
 /// <summary>Deterministic, engine-free material and scatter lookups for the loaded ruleset.</summary>
 public sealed class TerrainPalette
@@ -62,7 +63,8 @@ public sealed class TerrainPalette
             _terrainLayers.Add(terrain.Id, index);
             float spread = Math.Clamp(appearance?.Spread ?? 50, 0, 100) / 100f;
             layers.Add(new(terrain.Id, color, catalog.TexturePath(terrain.Id), Spread: spread,
-                Water: terrain.IsWater, Ocean: terrain.IsWater && TerrainSnapshot.IsOcean(terrain.Id), Turn: TurnOf(appearance)));
+                Water: terrain.IsWater, Ocean: terrain.IsWater && TerrainSnapshot.IsOcean(terrain.Id), Turn: TurnOf(appearance),
+                Riverbed: appearance?.Riverbed ?? Riverbed.Gravel));
         }
 
         foreach (var surface in surfaces)

@@ -40,6 +40,9 @@ public sealed class RiverGraph
     private readonly List<RiverLink> _links = [];
     private readonly List<List<int>> _nodeLinks = [];
     private readonly List<bool> _open = [];
+    private readonly List<bool> _veiled = [];
+    private readonly List<bool> _pinned = [];
+    private readonly List<bool> _cliff = [];
 
     private RiverGraph() { }
 
@@ -51,6 +54,14 @@ public sealed class RiverGraph
     public IReadOnlyList<int> LinksAt(int node) => _nodeLinks[node];
     /// <summary>Whether a node is the open end of a mouth or creek in a water tile, where the river widens into the water.</summary>
     public bool IsOpen(int node) => _open[node];
+    /// <summary>Whether a node is a hex corner that touches a hidden tile, where the river may run on out of sight: a
+    /// renderer must not end the river there in a pond that would vanish once the tile is explored.</summary>
+    public bool IsVeiled(int node) => _veiled[node];
+    /// <summary>Whether a node must stay exactly where the rules put it: the open end of a mouth or creek, a corner that
+    /// touches water, or a corner on a cliff edge (a waterfall has to leave over the cliff itself).</summary>
+    public bool IsPinned(int node) => _pinned[node];
+    /// <summary>Whether a node is a hex corner on a cliff edge, where a waterfall leaves or a river along the foot runs.</summary>
+    public bool IsOnCliff(int node) => _cliff[node];
 
     /// <summary>The network for a snapshot's known river bits.</summary>
     public static RiverGraph Build(TerrainSnapshot snapshot) => new Builder(snapshot).Build();
@@ -66,6 +77,9 @@ public sealed class RiverGraph
     {
         _nodeLinks.Add([]);
         _open.Add(open);
+        _veiled.Add(false);
+        _pinned.Add(open);
+        _cliff.Add(false);
         return _nodeLinks.Count - 1;
     }
 
@@ -240,8 +254,32 @@ public sealed class RiverGraph
             long a = Corner(tile, from), b = Corner(tile, to);
             var (ax, az) = CornerPosition(tile, from);
             var (bx, bz) = CornerPosition(tile, to);
-            _graph.AddLink(new(_graph.Node(_corners, a), _graph.Node(_corners, b), ax, az, bx, bz, kind, relief, Hash(a, b)));
+            int na = _graph.Node(_corners, a), nb = _graph.Node(_corners, b);
+            Mark(na, tile, from, a);
+            Mark(nb, tile, to, b);
+            _graph.AddLink(new(na, nb, ax, az, bx, bz, kind, relief, Hash(a, b)));
         }
+
+        /// <summary>Flag a corner node: veiled when any of the three tiles at the corner is hidden, pinned when any of them
+        /// is water or any of the three edges meeting there carries a cliff. Corner j of a tile ends edge j - 1 and starts
+        /// edge j; the third edge runs from the neighbour across edge j - 1 to the neighbour across edge j.</summary>
+        private void Mark(int node, int tile, int corner, long key)
+        {
+            int before = (corner + 5) % 6, after = corner % 6;
+            bool hasBefore = snapshot.TryTile(HexOf(tile).Neighbor(before), out int left);
+            bool hasAfter = snapshot.TryTile(HexOf(tile).Neighbor(after), out int right);
+            if (snapshot.Relief[tile] == ReliefClass.Hidden || (hasBefore && snapshot.Relief[left] == ReliefClass.Hidden)
+                || (hasAfter && snapshot.Relief[right] == ReliefClass.Hidden))
+                _graph._veiled[node] = true;
+            if (Cliff(tile, before) || Cliff(tile, after) || (hasBefore && Cliff(left, (after + 1) % 6)))
+                _graph._cliff[node] = _graph._pinned[node] = true;
+            if (_shoreCorners.Contains(key) || IsWater(tile) || (hasBefore && IsWater(left)) || (hasAfter && IsWater(right)))
+                _graph._pinned[node] = true;
+        }
+
+        private bool Cliff(int tile, int direction) =>
+            (snapshot.Cliffs[tile] & (1 << direction)) != 0
+            || (snapshot.TryTile(HexOf(tile).Neighbor(direction), out int other) && (snapshot.Cliffs[other] & (1 << ((direction + 3) % 6))) != 0);
 
         private double EdgeRelief(int tile, int d)
         {

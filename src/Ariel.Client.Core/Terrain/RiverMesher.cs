@@ -2,7 +2,8 @@ namespace Ariel.Client.Terrain;
 
 /// <summary>Engine-free river surface arrays for one chunk, wound like <see cref="TerrainMeshData"/>. Per vertex:
 /// <see cref="Lanes"/> = (across, along): across is ±1 at the waterline and ±<see cref="RiverMesher.BankExtent"/> at the
-/// outer edge of the wet bank, along is arc length; <see cref="Flow"/> = downstream direction (x, z) times speed;
+/// outer edge of the riverbed band, along is arc length (around a pond: angle times radius); normals on the banks lean
+/// toward the water, so the light picks out the channel walls; <see cref="Flow"/> = downstream direction (x, z) times speed;
 /// <see cref="Info"/> = (fade, white water): fade drops to 0 where sea or lake water covers the river and toward dead
 /// ends; white water rises on steep reaches. <see cref="Rock"/> is how close the water is to a cliff wall's rock columns,
 /// 1 at a column's side and 0 a short way out from it, where it churns white against the rock.
@@ -14,20 +15,28 @@ public sealed record RiverMeshData(float[] Positions, float[] Normals, float[] L
     public int VertexCount => Positions.Length / 3;
 }
 
-/// <summary>Builds the river water and wet-bank strips of one chunk from <see cref="TerrainField.Rivers"/>. Strips follow
+/// <summary>Builds the river water and riverbed strips (and the ponds at river ends) of one chunk from <see cref="TerrainField.Rivers"/>. Strips follow
 /// each curve with lanes across its width and drape over the rendered terrain (<see cref="TerrainLattice"/>), so the water
 /// lies in the carved channel. Waterfalls are drawn by <see cref="WaterfallMesher"/>: a mouth that falls off a sea cliff
 /// gets no strip, a river that feeds a fall runs on under the back of its ledge rock, where the fall's tongue lies on top
-/// of it, and a river along the foot of a cliff softens in past the far side of its fall, under its plunge pool. A strip piece belongs to
-/// the chunk holding its midpoint, which shares wrap copies and dirty signatures with the chunk meshes.</summary>
+/// of it, and a river along the foot of a cliff softens in past the far side of its fall, under its plunge pool. A river
+/// that ends in a pond fades out inside it, and the pond is a lobed disc of level water with the same lanes running out
+/// from its centre. A strip piece belongs to the chunk holding its midpoint and a pond to the chunk holding its centre,
+/// which shares wrap copies and dirty signatures with the chunk meshes.</summary>
 public static class RiverMesher
 {
-    /// <summary>Outer edge of the wet bank, in water half widths.</summary>
-    public const float BankExtent = 2f;
+    /// <summary>Outer edge of the riverbed band, in water half widths: a little past the carved channel's rim, where the
+    /// bare bed thins out into the ground.</summary>
+    public const float BankExtent = 2.8f;
+    /// <summary>How far bank normals lean toward the water, as a share of the up vector, just above the waterline.</summary>
+    private const double BankLean = 0.9;
     private const double SlopeSpan = 0.2;
     /// <summary>Lanes across a strip, in water half widths: the water (with one lane on each waterline, so it stays level
-    /// all the way to the shore) and the wet bank beyond.</summary>
-    private static readonly float[] LanesAcross = [-BankExtent, -1.3f, -1f, -0.5f, 0f, 0.5f, 1f, 1.3f, BankExtent];
+    /// all the way to the shore), the steep bank just above it and the riverbed beyond.</summary>
+    private static readonly float[] LanesAcross = [-BankExtent, -1.9f, -1.15f, -1f, -0.5f, 0f, 0.5f, 1f, 1.15f, 1.9f, BankExtent];
+    /// <summary>Rings of a pond, out from its centre, in water radii: the same water, bank and bed as a strip.</summary>
+    private static readonly float[] PondRings = [0f, 0.5f, 0.85f, 1f, 1.15f, 1.9f, BankExtent];
+    private const int PondSides = 36;
 
     /// <summary>Lengths of a foot river, from its start, over which its water and its wet bank soften in.</summary>
     private const double FootWaterIn = 0.06, FootBankIn = 0.2;
@@ -59,6 +68,9 @@ public static class RiverMesher
         foreach (var curve in field.Rivers.Curves)
             foreach (double shift in shifts)
                 if (Overlaps(curve, shift, chunk)) mesh.Add(curve, shift, chunk);
+        foreach (var pond in field.Rivers.Ponds)
+            foreach (double shift in shifts)
+                if (chunk.Contains(pond.X + shift, pond.Z)) mesh.Pond(pond, shift);
         return mesh.Indices.Count == 0 ? null : mesh.ToData();
     }
 
@@ -151,7 +163,7 @@ public static class RiverMesher
             double fromEnd = Math.Min(c.Arc[i], c.Arc[^1] - c.Arc[i]);
             double speed = (0.5 + Math.Min(2 * slope, 1.5)) * SmoothStep(0, 0.3, fromEnd);
             float foam = (float)SmoothStep(0.25, 0.7, slope);
-            double dry = (c.StartsDry ? SmoothStep(0, 0.35, c.Arc[i]) : 1) * (c.EndsDry ? SmoothStep(0, 0.35, c.Arc[^1] - c.Arc[i]) : 1);
+            double dry = Dry(c.StartsDry, c.StartPond, c.Arc[i]) * Dry(c.EndsDry, c.EndPond, c.Arc[^1] - c.Arc[i]);
             // A river along the foot of a cliff starts against the rocks past the far side of its fall; it softens in
             // there, its water quickly and its wider wet bank more gently, so its end never shows as a cut.
             double start = c.Fall is { AlongFoot: true } fall ? (fall.AtStart ? c.Arc[i] : c.Arc[^1] - c.Arc[i]) : double.MaxValue;
@@ -214,13 +226,74 @@ public static class RiverMesher
                 var (x, z) = At(cut, across);
                 var (y, nx, ny, nz) = lattice.Sample(x, z);
                 bool wet = Math.Abs(across) <= 1;
-                if (wet || wallSide != 0 && y > (across * wallSide > 0 ? water : water + LiftedLane)) (y, nx, ny, nz) = (water, 0, 1, 0);
-                // Bank lanes keep the ground's shading, turning up towards the water.
+                bool level = wet || wallSide != 0 && y > (across * wallSide > 0 ? water : water + LiftedLane);
+                if (level) (y, nx, ny, nz) = (water, 0, 1, 0);
+                // Bank lanes keep the ground's shading, turning up towards the water, and lean toward it on the steep wall
+                // just above the waterline, so the light picks out the channel's sides.
                 double flat = Math.Clamp((1.5 - Math.Abs(across)) / 0.85, 0, 1);
                 nx *= 1 - flat; nz *= 1 - flat; ny += (1 - ny) * flat;
+                if (!level)
+                {
+                    double lean = Lean(across) * -Math.Sign(across);
+                    nx += -tz * lean; nz += tx * lean;
+                }
                 double shows = cut.Dry * SmoothStep(0, wet ? FootWaterIn : FootBankIn, cut.FromStart);
                 Vertex(x, y, z, nx, ny, nz, across, cut.Arc, fx, fz, Fade(x, y, z) * shows, cut.Foam, Math.Abs(across) <= 1.5 ? Rock(x, z) : 0);
             }
+        }
+
+        /// <summary>How far a bank normal leans toward the water at a lane: most on the steep wall just above the waterline,
+        /// none on the water or at the outer edge of the band, where the strip meets the ground.</summary>
+        private static double Lean(double across)
+        {
+            double a = Math.Abs(across);
+            return BankLean * SmoothStep(1, 1.15, a) * (1 - SmoothStep(1.15, BankExtent, a));
+        }
+
+        /// <summary>How much of the strip shows at a distance along the curve from one of its ends: all of it at a joint, fading
+        /// in from a dead end that runs on out of sight, and fading out inside a pond, which draws the water there.</summary>
+        private static double Dry(bool deadEnd, double pond, double fromEnd) =>
+            !deadEnd ? 1 : pond > 0 ? SmoothStep(0.45 * pond, 0.95 * pond, fromEnd) : SmoothStep(0, 0.35, fromEnd);
+
+        /// <summary>A pond: rings of lanes from its centre out past its lobed shoreline to the edge of its bed, draped over
+        /// the carved bowl like the river strips. Its water is level, at the lowest ground around its shore, and still, so it
+        /// has no flow and no foam.</summary>
+        public void Pond(RiverPond pond, double shift)
+        {
+            int rings = PondRings.Length, start = _positions.Count / 3;
+            double water = double.MaxValue;
+            for (int k = 0; k < PondSides; k++)
+            {
+                double angle = 2 * Math.PI * k / PondSides, radius = pond.RadiusAt(angle);
+                water = Math.Min(water, lattice.Sample(pond.X + shift + Math.Cos(angle) * radius, pond.Z + Math.Sin(angle) * radius).Height);
+            }
+            for (int k = 0; k < PondSides; k++)
+            {
+                double angle = 2 * Math.PI * k / PondSides, radius = pond.RadiusAt(angle);
+                double dx = Math.Cos(angle), dz = Math.Sin(angle);
+                foreach (float across in PondRings)
+                {
+                    double x = pond.X + shift + dx * radius * across, z = pond.Z + dz * radius * across;
+                    var (y, nx, ny, nz) = lattice.Sample(x, z);
+                    if (across <= 1) (y, nx, ny, nz) = (water, 0, 1, 0);
+                    else
+                    {
+                        double flat = Math.Clamp((1.5 - across) / 0.85, 0, 1);
+                        nx *= 1 - flat; nz *= 1 - flat; ny += (1 - ny) * flat;
+                        double lean = Lean(across);
+                        nx -= dx * lean; nz -= dz * lean;
+                    }
+                    Vertex(x, y, z, nx, ny, nz, across, angle * pond.Radius, 0, 0, Fade(x, y, z), 0, 0);
+                }
+            }
+            for (int k = 0; k < PondSides; k++)
+                for (int r = 0; r < rings - 1; r++)
+                {
+                    int v00 = start + k * rings + r, v01 = v00 + 1;
+                    int v10 = start + (k + 1) % PondSides * rings + r, v11 = v10 + 1;
+                    if (r > 0) Triangle(v00, v10, v01);
+                    Triangle(v01, v10, v11);
+                }
         }
 
         /// <summary>The point <paramref name="across"/> water half widths across a section from its centre. Lanes on the

@@ -56,6 +56,16 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void Rivers_through_desert_and_tundra_run_between_mud_banks_and_elsewhere_over_gravel()
+    {
+        Riverbed Bed(string id) => _palette.Layers.Single(l => l.Id == id).Riverbed;
+        Assert.Equal(Riverbed.Mud, Bed("world:desert"));
+        Assert.Equal(Riverbed.Mud, Bed("world:tundra"));
+        Assert.Equal(Riverbed.Gravel, Bed("world:grass"));
+        Assert.Equal(Riverbed.Gravel, Bed("world:plains"));
+    }
+
+    [Fact]
     public void Lush_ground_spreads_into_plains_and_plains_into_desert()
     {
         float Spread(string id) => Assert.Single(_palette.Layers, layer => layer.Id == id).Spread;
@@ -105,8 +115,8 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal(95, ordinaryForest?.ScatterDensity);
     }
 
-    /// <summary>The colour table is the C# half of the shader-parity formula: layer colour, spread, turn and ragged-edge
-    /// strength must land in the rows the shaders fetch, and a water tint must not leak onto land.</summary>
+    /// <summary>The colour table is the C# half of the shader-parity formula: layer colour, spread, turn, riverbed and
+    /// ragged-edge strength must land in the rows the shaders fetch, and a water tint must not leak onto land.</summary>
     [Fact]
     public void Colour_table_packs_layer_colour_spread_turn_and_ragged_edge_rows()
     {
@@ -118,7 +128,8 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
             var layer = _palette.Layers[i];
             Assert.Equal(new[] { B(layer.Fallback.R), B(layer.Fallback.G), B(layer.Fallback.B), B(layer.Spread) },
                 Texel(bytes, PaletteTable.LayerRow, i));
-            Assert.Equal(new byte[] { B(layer.Turn), 0, 0, 255 }, Texel(bytes, PaletteTable.TurnRow, i));
+            Assert.Equal(new byte[] { B(layer.Turn), layer.Riverbed == Riverbed.Mud ? (byte)255 : (byte)0, 0, 255 },
+                Texel(bytes, PaletteTable.TurnRow, i));
             Assert.Equal(new[] { layer.Ocean ? (byte)255 : (byte)0, B((layer.PatchLayer + 1) / 255f), B(layer.PatchShare), layer.Water ? (byte)0 : (byte)255 },
                 Texel(bytes, PaletteTable.EdgeRow, i));
             Assert.Equal(layer.Id == "world:ocean" ? new byte[] { 0x12, 0x34, 0x56, B(PaletteTable.WaterTintStrength) } : new byte[4],

@@ -397,8 +397,13 @@ and work-tile overlays from two per-tile data textures. Visibility, borders, and
 changes update these textures without rebuilding meshes.
 
 River meshes follow curved channels and use a separate shader for water, ripples, and
-wet banks. Visual connectors join disconnected river marks without changing gameplay
-river masks. A world change rebuilds only the chunks whose tiles changed. Feature marks,
+the riverbed along the banks: sand and pebbles, or mud where the terrain's appearance asks
+for it (`TileAppearance.Riverbed`). The channel is carved flat-bottomed with steep banks,
+and bank normals lean toward the water so the river reads as sunk into the ground. The
+drawn course only follows its rules edges loosely: free hex-corner nodes move up to
+`RiverNetwork.MaxNodeShift` off their corners (nodes on cliffs and water stay put). A river
+that ends on land in plain sight ends in a small pond. Visual connectors join disconnected
+river marks without changing gameplay river masks. A world change rebuilds only the chunks whose tiles changed. Feature marks,
 routes, and icons use batched triangle meshes and an icon atlas. Each route type has its
 own look (`RouteLooks` in `src/Ariel.Client.Core/Terrain/RoutePlan.cs`). Cart paths,
 roads, paved roads, highways and both railroads are ribbons draped on the terrain

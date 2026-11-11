@@ -8,7 +8,7 @@ namespace Ariel.Client.Terrain;
 /// owner + 1, water tints per layer (alpha = <see cref="WaterTintStrength"/>), ragged-edge strength per layer (alpha; 0
 /// for water, red = deep ocean, green = patch layer + 1, blue = patch share), feature looks (R =
 /// <see cref="Game.FeatureGround"/>, G = its strength, B = <see cref="Game.FeatureHaze"/>, A = haze density), feature haze
-/// colours, and texture turn per layer (R = 0..1 of 180°).</para>
+/// colours, and texture turn and riverbed per layer (R = 0..1 of 180°, G = 1 for a muddy <see cref="Game.Riverbed"/>).</para>
 /// </summary>
 public static class PaletteTable
 {
@@ -28,7 +28,7 @@ public static class PaletteTable
             var layer = palette.Layers[i];
             Put(LayerRow, i, layer.Fallback, layer.Spread);
             if (waterTintOf(layer.Id) is Rgb tint) Put(WaterTintRow, i, tint, WaterTintStrength);
-            Put(TurnRow, i, new Rgb(layer.Turn, 0, 0), 1);
+            Put(TurnRow, i, new Rgb(layer.Turn, layer.Riverbed == Game.Riverbed.Mud ? 1 : 0, 0), 1);
             Put(EdgeRow, i, new Rgb(layer.Ocean ? 1 : 0, (layer.PatchLayer + 1) / 255f, layer.PatchShare), layer.Water ? 0 : 1);
         }
         for (int i = 1; i < palette.FeatureGrounds.Count; i++)

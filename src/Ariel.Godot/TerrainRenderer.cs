@@ -349,9 +349,9 @@ internal sealed partial class TerrainRenderer : Node3D
     }
 
 
-    /// <summary>The chunk's river water and wet banks: lanes in UV, downstream or downhill flow in UV2, and in COLOR the
-    /// fade, the white water and the rock contact (<see cref="RiverMeshData.Rock"/>), which churns the water white where it
-    /// runs against the rock columns of a cliff, as the sea does at the foot of one.</summary>
+    /// <summary>The chunk's river water, riverbeds and ponds: lanes in UV, downstream or downhill flow in UV2, and in COLOR
+    /// the fade, the white water and the rock contact (<see cref="RiverMeshData.Rock"/>), which churns the water white where
+    /// it runs against the rock columns of a cliff, as the sea does at the foot of one.</summary>
     private static SurfaceData? PrepareRiver(RiverMeshData? data)
     {
         if (data == null) return null;

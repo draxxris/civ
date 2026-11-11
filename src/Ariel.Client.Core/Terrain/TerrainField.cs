@@ -186,7 +186,9 @@ public sealed record TerrainTuning
 
     /// <summary>Largest distance from a point to the centre of a tile whose river bits or relief can change river geometry
     /// (carve, banks or water surface) at that point. A point lies within one carve band of a curve sample; the sample lies
-    /// within one link span (a bowed bridge across a tile) of the link's corner nodes; a node depends on the river tiles
+    /// within one link span (a bowed bridge across a tile) of the link's drawn ends, each within
+    /// <see cref="RiverNetwork.MaxNodeShift"/> of its hex corner; whether a dead end ends in a pond depends on the dead ends
+    /// within <see cref="RiverNetwork.PondSpacing"/> of it; a node depends on the river tiles
     /// around it (1) and on their bridge choices, which read their own neighbours (√3). River surfaces also overhang their
     /// chunk by up to one band and read heights there.</summary>
     public double RiverReach
@@ -194,9 +196,10 @@ public sealed record TerrainTuning
         get
         {
             // The drawdown reaches further than the carve, and the valley floor reads the ground at the banks.
-            double band = RiverWidth * RiverNetwork.MaxWidthScale * RiverBankRatio;
+            // River strips reach past the carve to the outer edge of their riverbed band.
+            double band = RiverWidth * RiverNetwork.MaxWidthScale * Math.Max(RiverBankRatio, RiverMesher.BankExtent);
             double reach = band + RiverDrawdown;
-            return reach + Math.Max(InfluenceRadius + band, band + RiverNetwork.MaxLinkSpan + 1 + Math.Sqrt(3));
+            return reach + Math.Max(InfluenceRadius + band, band + RiverNetwork.MaxLinkSpan + RiverNetwork.MaxNodeShift + RiverNetwork.PondSpacing + 1 + Math.Sqrt(3));
         }
     }
 }

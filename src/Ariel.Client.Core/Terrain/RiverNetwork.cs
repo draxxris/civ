@@ -22,7 +22,28 @@ public sealed record RiverCurve(RiverLink Link, double[] X, double[] Z, double[]
     public RiverFall? Feeds { get; init; }
     /// <summary>Whether <see cref="Feeds"/> is at the first sample (otherwise at the last).</summary>
     public bool FeedsAtStart { get; init; }
+    /// <summary>Water radius of the pond the first sample ends in, or 0 when it ends in no pond.</summary>
+    public double StartPond { get; init; }
+    /// <summary>Water radius of the pond the last sample ends in, or 0.</summary>
+    public double EndPond { get; init; }
 }
+
+/// <summary>A small pond where a river ends on land in plain sight: centre, water radius (the mean of its lobed shoreline,
+/// see <see cref="RadiusAt"/>) and a hash that varies its outline.</summary>
+public sealed record RiverPond(double X, double Z, double Radius, uint Hash)
+{
+    /// <summary>Largest share by which the lobed shoreline strays from <see cref="Radius"/>.</summary>
+    public const double Lobes = 0.14;
+
+    /// <summary>Water radius toward angle <paramref name="angle"/> (radians from +x toward +z): three soft lobes.</summary>
+    public double RadiusAt(double angle)
+    {
+        double p1 = (Hash & 0xff) / 255.0 * 2 * Math.PI, p2 = ((Hash >> 8) & 0xff) / 255.0 * 2 * Math.PI;
+        double p3 = ((Hash >> 16) & 0xff) / 255.0 * 2 * Math.PI;
+        return Radius * (1 + Lobes * (0.45 * Math.Cos(angle + p1) + 0.35 * Math.Cos(2 * angle + p2) + 0.2 * Math.Cos(3 * angle + p3)));
+    }
+}
+
 
 /// <summary>Where the drawn cliffs stand, for laying rivers along them. <see cref="Face"/> snaps a point onto the nearest
 /// drawn cliff face and gives the face's outward normal (zero when there is none); <see cref="Lift"/> is how far the
@@ -37,18 +58,34 @@ public readonly record struct RiverBank(double X, double Z, double AcrossX, doub
 
 /// <summary>Smooth river curves through a <see cref="RiverGraph"/>, with organic width, plus a spatial index for the
 /// height field's carve. Links are cubic Hermite curves whose tangents agree at shared corners, so connected links form
-/// one smooth river; edge links also meander gently about their rules edge. Widths taper at sources, narrow on hills and
-/// peaks and flare at mouths. Everything is a pure function of the snapshot and seed.</summary>
+/// one smooth river. The river only follows its rules edges loosely: every free corner node is drawn part of the way
+/// toward the middle of its neighbours (which straightens the zigzag around hex corners) and wanders with a slow noise, so
+/// the course sweeps across the hex grid instead of tracing it; edge links also meander gently between their ends. Nodes
+/// on cliffs and shores stay put. Widths narrow on hills and peaks and flare at mouths. A river that ends on land in plain
+/// sight ends in a small pond. Everything is a pure function of the snapshot and seed.</summary>
 public sealed class RiverNetwork
 {
     /// <summary>Distance between curve samples, in world units.</summary>
     public const double SampleStep = 0.08;
     /// <summary>Widest water half width relative to <see cref="TerrainTuning.RiverWidth"/> (a mouth with the widest noise).</summary>
     public const double MaxWidthScale = MouthFlare * NoiseMax;
-    private const double MouthFlare = 1.8, ShoreWiden = 1.3, SourceTaper = 0.3, NoiseMax = 1.2;
-    /// <summary>Upper bound on the distance from any sample of a curve to either end of its link.</summary>
-    public const double MaxLinkSpan = 2.3;
-    private const double Meander = 0.07, CellSize = 0.5;
+    private const double MouthFlare = 1.8, ShoreWiden = 1.3, SourceTaper = 0.3, PondWidth = 0.75, NoiseMax = 1.2;
+    /// <summary>Farthest a corner node moves from its hex corner (see <see cref="NodeShift"/>).</summary>
+    public const double MaxNodeShift = 0.35;
+    /// <summary>Upper bound on the distance from any sample of a curve to either end of its link, as drawn (both ends may
+    /// have moved by up to <see cref="MaxNodeShift"/>).</summary>
+    public const double MaxLinkSpan = 2.3 + 2 * MaxNodeShift;
+    /// <summary>Pond water radius in <see cref="TerrainTuning.RiverWidth"/> units; with its lobes it stays inside
+    /// <see cref="MaxWidthScale"/>.</summary>
+    public const double PondScale = 1.75;
+    /// <summary>Least distance between two ponds. A dead end nearer than this to a pond already placed tapers out instead,
+    /// so a short isolated river ends in one pond rather than two.</summary>
+    public const double PondSpacing = 1.6;
+    private const double Meander = 0.1, CellSize = 0.5;
+    /// <summary>Share of the carve band, from the centre line, over which the channel bed stays at its full depth.</summary>
+    private const double BedShare = 0.3;
+    // Share of the way a two-link node moves toward the middle of its neighbours, and the reach and frequency of its wander.
+    private const double NodePull = 0.32, NodeWander = 0.3, WanderFrequency = 0.22;
     /// <summary>How far out from the face a river along the foot of a cliff runs its centre line, in world units: just past
     /// the line the wall's columns stand on (<see cref="TerrainField.FaceOut"/>), so their broad feet stand in the water,
     /// the wall hides the inner half of the channel and the outer half runs on clear of the rocks.</summary>
@@ -108,8 +145,15 @@ public sealed class RiverNetwork
         _wrap = snapshot.Grid.Spec.Wrap;
         _period = snapshot.Period;
         Graph = RiverGraph.Build(snapshot);
+        var shifts = Enumerable.Range(0, Graph.NodeCount).Select(n => NodeShift(n, noise)).ToArray();
+        _links = Graph.Links.Select(l => l with
+        {
+            AX = l.AX + shifts[l.A].X, AZ = l.AZ + shifts[l.A].Z, BX = l.BX + shifts[l.B].X, BZ = l.BZ + shifts[l.B].Z,
+        }).ToArray();
+        _ponds = PlacePonds();
         Curves = Aim(Gather(Rejoin(BuildCurves(noise).Select(c => Settle(snapshot, c, cliffs)).ToArray())));
         Falls = Curves.Where(c => c.Fall != null).Select(c => c.Fall!).ToArray();
+        Ponds = BuildPonds();
         _columns = _wrap ? Math.Max(1, (int)Math.Round(_period / CellSize)) : (int)Math.Ceiling((_period + 8) / CellSize);
         _x0 = _wrap ? 0 : -4;
         _z0 = -6;
@@ -125,7 +169,12 @@ public sealed class RiverNetwork
                 return new Segment(c.X[i], c.Z[i], c.X[i + 1], c.Z[i + 1], c.Width[i], c.Width[i + 1], c.Depth[i], c.Depth[i + 1],
                     floor[i], floor[i + 1], wx, wz, unlift[i], unlift[i + 1]);
             });
-        }).ToArray();
+        }).Concat(Ponds.Select(p =>
+        {
+            // A pond is a segment of zero length: its bowl, banks and valley floor come from the same carve as the river.
+            double floor = PondFloor(p, ground), width = p.Radius * (1 + RiverPond.Lobes);
+            return new Segment(p.X, p.Z, p.X, p.Z, width, width, _tuning.RiverDepth, _tuning.RiverDepth, floor, floor);
+        })).ToArray();
         (_cellStart, _entrySegment, _entryShift) = Index();
         _hasFoot = Curves.Any(c => c.Foot != null);
     }
@@ -136,9 +185,16 @@ public sealed class RiverNetwork
     public IReadOnlyList<RiverCurve> Curves { get; }
     /// <summary>Every waterfall, one per curve that pours over a cliff.</summary>
     public IReadOnlyList<RiverFall> Falls { get; }
+    /// <summary>The ponds at the river ends, one per dead-end node in plain sight.</summary>
+    public IReadOnlyList<RiverPond> Ponds { get; }
 
-    /// <summary>Carve depth (≥ 0) at a world point: a smooth trough of half width
-    /// <see cref="TerrainTuning.RiverBankRatio"/> times the water half width around every curve. Along the foot of a cliff
+    private readonly RiverLink[] _links;
+    private readonly bool[] _ponds;
+
+    /// <summary>Carve depth (≥ 0) at a world point: a flat-bottomed channel of half width
+    /// <see cref="TerrainTuning.RiverBankRatio"/> times the water half width around every curve. The bed under the water
+    /// keeps nearly its full depth and the banks rise steeply just beyond the waterline, so the river sits down in the ground
+    /// rather than in a shallow dip. Along the foot of a cliff
     /// the trough runs out <see cref="WallSteep"/> times faster on the cliff's side, so it does not cut into the brink.</summary>
     public double Carve(double x, double z)
     {
@@ -150,8 +206,7 @@ public sealed class RiverNetwork
             if (dx * s.WX + dz * s.WZ > 0) distance *= WallSteep;
             double band = Lerp(s.WA, s.WB, t) * _tuning.RiverBankRatio;
             if (distance >= band) continue;
-            double u = 1 - distance / band * (distance / band);
-            best = Math.Max(best, Lerp(s.DA, s.DB, t) * u * u);
+            best = Math.Max(best, Lerp(s.DA, s.DB, t) * (1 - SmoothStep(BedShare, 1, distance / band)));
         }
         return best;
     }
@@ -246,7 +301,8 @@ public sealed class RiverNetwork
             if (distance >= best) continue;
             double ax = s.AX + _entryShift[e] - shift, bx = s.BX + _entryShift[e] - shift;
             (best, px, pz, width) = (distance, Lerp(ax, bx, t), Lerp(s.AZ, s.BZ, t), Lerp(s.WA, s.WB, t));
-            (tx, tz) = Normalize(bx - ax, s.BZ - s.AZ);
+            // A pond has no course: its across direction points from the point to the pond's centre.
+            (tx, tz) = ax == bx && s.AZ == s.BZ ? Normalize(z - s.AZ, ax - x) : Normalize(bx - ax, s.BZ - s.AZ);
         }
         if (best == double.MaxValue) return null;
         double nx = -tz, nz = tx;
@@ -397,10 +453,61 @@ public sealed class RiverNetwork
         return tangents;
     }
 
-    /// <summary>Unit direction from a node along a link's chord.</summary>
+    /// <summary>How far a corner node moves from its hex corner: part of the way toward the middle of its two neighbours,
+    /// which turns a zigzag around hex corners into a smoother course, plus a slow wander that is the same for every frame
+    /// of a wrapping map. Confluences pull half as hard; pinned nodes (cliffs, shores, open ends) and the inland ends of
+    /// creeks, which are no hex corners, stay put.</summary>
+    private (double X, double Z) NodeShift(int node, PeriodicNoise noise)
+    {
+        var links = Graph.LinksAt(node);
+        if (Graph.IsPinned(node) || links.Count == 0 || links.Any(l => Graph.Links[l].Kind == RiverLinkKind.Creek))
+            return (0, 0);
+        var first = Graph.Links[links[0]];
+        var (x, z) = first.A == node ? (first.AX, first.AZ) : (first.BX, first.BZ);
+        double sx = NodeWander * noise.Value(x, z, WanderFrequency, salt: 31);
+        double sz = NodeWander * noise.Value(x, z, WanderFrequency, salt: 32);
+        if (links.Count >= 2)
+        {
+            double mx = 0, mz = 0;
+            foreach (int link in links)
+            {
+                var l = Graph.Links[link];
+                (mx, mz) = l.A == node ? (mx + l.BX - l.AX, mz + l.BZ - l.AZ) : (mx + l.AX - l.BX, mz + l.AZ - l.BZ);
+            }
+            double pull = NodePull / links.Count * (links.Count == 2 ? 1 : 0.5);
+            sx += mx * pull;
+            sz += mz * pull;
+        }
+        double length = Math.Sqrt(sx * sx + sz * sz);
+        return length > MaxNodeShift ? (sx / length * MaxNodeShift, sz / length * MaxNodeShift) : (sx, sz);
+    }
+
+    /// <summary>A pond at every dead end in plain sight, centred on the end of its curve.</summary>
+    private IReadOnlyList<RiverPond> BuildPonds()
+    {
+        var ponds = new List<RiverPond>();
+        for (int i = 0; i < Curves.Count; i++)
+        {
+            var c = Curves[i];
+            if (c.StartPond > 0) ponds.Add(new(c.X[0], c.Z[0], c.StartPond, _links[i].Hash ^ 0x5bd1e995u));
+            if (c.EndPond > 0) ponds.Add(new(c.X[^1], c.Z[^1], c.EndPond, _links[i].Hash ^ 0x1b873593u));
+        }
+        return ponds;
+    }
+
+    /// <summary>Valley floor of a pond: the lowest uncarved ground at its centre and around its banks.</summary>
+    private double PondFloor(RiverPond pond, Func<double, double, double> ground)
+    {
+        double floor = ground(pond.X, pond.Z), bank = pond.Radius * _tuning.RiverBankRatio * 0.6;
+        for (int k = 0; k < 6; k++)
+            floor = Math.Min(floor, ground(pond.X + bank * Math.Cos(k * Math.PI / 3), pond.Z + bank * Math.Sin(k * Math.PI / 3)));
+        return floor;
+    }
+
+    /// <summary>Unit direction from a node along a link's chord, as drawn.</summary>
     private (double X, double Z) Away(int node, int link)
     {
-        var l = Graph.Links[link];
+        var l = _links[link];
         return l.A == node ? Normalize(l.BX - l.AX, l.BZ - l.AZ) : Normalize(l.AX - l.BX, l.AZ - l.BZ);
     }
 
@@ -411,14 +518,17 @@ public sealed class RiverNetwork
         var links = Graph.LinksAt(node);
         double width = _tuning.RiverWidth * links.Average(l => Graph.Links[l].Relief);
         if (Graph.IsOpen(node)) return _tuning.RiverWidth * MouthFlare;
-        if (links.Count == 1) return width * SourceTaper;
+        // A river that ends in a pond keeps most of its width into the pond; one that runs on out of sight tapers.
+        if (links.Count == 1) return width * (Pond(node) ? PondWidth : SourceTaper);
         if (links.Any(l => Graph.Links[l].Kind == RiverLinkKind.Mouth)) return width * ShoreWiden;
         return width;
     }
 
     private RiverCurve Curve(int index, Dictionary<(int, int), (double X, double Z)> tangents, double[] widths, PeriodicNoise noise)
     {
-        var link = Graph.Links[index];
+        // The course runs between the link's drawn ends; the curve keeps the rules link, whose corners the waterfall and
+        // cliff-foot code read (those corners are pinned, so the two agree wherever it matters).
+        var link = _links[index];
         double length = link.Length;
         var (t0x, t0z) = tangents[(link.A, index)];
         var (t1x, t1z) = tangents[(link.B, index)];
@@ -426,7 +536,9 @@ public sealed class RiverNetwork
         double cx = (link.BX - link.AX) / length, cz = (link.BZ - link.AZ) / length;
         double m0 = length * Math.Clamp(0.5 + t0x * cx + t0z * cz, 0.4, 1);
         double m1 = length * Math.Clamp(0.5 - (t1x * cx + t1z * cz), 0.4, 1);
-        double meander = link.Kind == RiverLinkKind.Edge ? Meander * ((link.Hash & 0xffff) / 32767.5 - 1) : 0;
+        // A cliff or shore edge stays on its rules edge, so a waterfall leaves over the cliff itself.
+        bool free = link.Kind == RiverLinkKind.Edge && !Graph.IsPinned(link.A) && !Graph.IsPinned(link.B);
+        double meander = free ? Meander * ((link.Hash & 0xffff) / 32767.5 - 1) : 0;
         int n = Math.Max(6, (int)Math.Ceiling(length * 1.3 / SampleStep)) + 1;
         double[] xs = new double[n], zs = new double[n], ws = new double[n], arc = new double[n], depth = new double[n];
         double[] txs = new double[n], tzs = new double[n];
@@ -449,10 +561,12 @@ public sealed class RiverNetwork
             if (i > 0) arc[i] = arc[i - 1] + Math.Sqrt((xs[i] - xs[i - 1]) * (xs[i] - xs[i - 1]) + (zs[i] - zs[i - 1]) * (zs[i] - zs[i - 1]));
         }
         // A dead end at the foot of a cliff is a spring: the water comes out from under the wall at full width.
-        return new(link, xs, zs, txs, tzs, ws, arc, depth, Downstream(link))
+        var rules = Graph.Links[index];
+        return new(rules, xs, zs, txs, tzs, ws, arc, depth, Downstream(rules))
         {
-            StartsDry = DeadEnd(link.A) && !RiverFall.AtFoot(_snapshot, link, start: true),
-            EndsDry = DeadEnd(link.B) && !RiverFall.AtFoot(_snapshot, link, start: false),
+            StartsDry = DeadEnd(rules.A) && !RiverFall.AtFoot(_snapshot, rules, start: true),
+            EndsDry = DeadEnd(rules.B) && !RiverFall.AtFoot(_snapshot, rules, start: false),
+            StartPond = Pond(rules.A) ? PondRadius(rules) : 0, EndPond = Pond(rules.B) ? PondRadius(rules) : 0,
         };
     }
 
@@ -797,6 +911,59 @@ public sealed class RiverNetwork
     }
 
     private bool DeadEnd(int node) => Graph.LinksAt(node).Count == 1 && !Graph.IsOpen(node);
+
+    /// <summary>Whether a river ends at a node in a pond (see <see cref="PlacePonds"/>).</summary>
+    private bool Pond(int node) => _ponds[node];
+
+    /// <summary>The nodes that end in a pond: dead ends whose surroundings are all explored, except where another such dead
+    /// end that comes first in an order fixed by their links' hashes lies within <see cref="PondSpacing"/>. The rule reads
+    /// only dead ends within that distance, so a pond stays a local function of the snapshot (see
+    /// <see cref="TerrainTuning.RiverReach"/>). A dead end on a cliff or the shore, or one link from a cliff, tapers out
+    /// instead: a pond's bowl there would cut into the cliff's lip, the channel along its foot or the beach.</summary>
+    private bool[] PlacePonds()
+    {
+        var ponds = new bool[Graph.NodeCount];
+        var candidates = new List<(uint Order, int Node, double X, double Z)>();
+        for (int node = 0; node < Graph.NodeCount; node++)
+        {
+            if (!DeadEnd(node) || Graph.IsVeiled(node) || Graph.IsPinned(node)) continue;
+            var link = _links[Graph.LinksAt(node)[0]];
+            bool a = link.A == node;
+            // A pond's bowl reaches past the far end of its one link, so one link from a cliff it would sink the lip of the
+            // fall or the channel along the foot; such a river tapers out instead.
+            if (Graph.IsOnCliff(a ? link.B : link.A)) continue;
+            candidates.Add((Mix(link.Hash ^ (a ? 0x68e31da4u : 0xb5297a4du)), node, a ? link.AX : link.BX, a ? link.AZ : link.BZ));
+        }
+        candidates.Sort((p, q) => p.Order != q.Order ? p.Order.CompareTo(q.Order) : p.X != q.X ? p.X.CompareTo(q.X) : p.Z.CompareTo(q.Z));
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            var (_, node, x, z) = candidates[i];
+            bool first = true;
+            for (int j = 0; j < i && first; j++)
+                if (Distance(candidates[j].X, candidates[j].Z, x, z) < PondSpacing) first = false;
+            ponds[node] = first;
+        }
+        return ponds;
+    }
+
+    /// <summary>Distance between two points, across the seam on a wrapping map.</summary>
+    private double Distance(double ax, double az, double bx, double bz)
+    {
+        double dx = Math.Abs(ax - bx);
+        if (_wrap) { dx %= _period; dx = Math.Min(dx, _period - dx); }
+        return Math.Sqrt(dx * dx + (az - bz) * (az - bz));
+    }
+
+    private static uint Mix(uint h)
+    {
+        h ^= h >> 16; h *= 0x7feb352du;
+        h ^= h >> 15; h *= 0x846ca68bu;
+        return h ^ (h >> 16);
+    }
+
+    /// <summary>Water radius of a pond at the end of a link: smaller up in the hills and mountains.</summary>
+    private double PondRadius(RiverLink link) => _tuning.RiverWidth * PondScale * Math.Max(link.Relief, 0.6);
+
 
     /// <summary>Water leaves sources and runs into the open water; elsewhere the renderer decides from the heights.</summary>
     private int Downstream(RiverLink link)

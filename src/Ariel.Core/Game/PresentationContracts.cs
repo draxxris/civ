@@ -147,9 +147,20 @@ public interface ILedgerSourceLabel
 /// whose ground shows through in scattered patches over <paramref name="PatchPercent"/> (0..100) of the ground, so a
 /// large area of one terrain does not look uniform. <paramref name="TurnDegrees"/> (terrains and surfaces, 0..180) is
 /// the largest random turn the renderer may give the ground texture to hide its repeat; ground with a direction, such
-/// as wind-blown sand ripples, keeps a small value so its pattern stays roughly parallel.</summary>
+/// as wind-blown sand ripples, keeps a small value so its pattern stays roughly parallel. <paramref name="Riverbed"/>
+/// (terrains only) is the ground the renderer shows along a river's banks where it runs through this terrain.</summary>
 public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0,
-    int Spread = 50, FeatureLook? Look = null, string? Patch = null, int PatchPercent = 0, int TurnDegrees = 180);
+    int Spread = 50, FeatureLook? Look = null, string? Patch = null, int PatchPercent = 0, int TurnDegrees = 180,
+    Riverbed Riverbed = Riverbed.Gravel);
+
+/// <summary>The ground exposed along a river's banks. The client draws each procedurally.</summary>
+public enum Riverbed
+{
+    /// <summary>Pale sand and pebbles, with rocks along the waterline.</summary>
+    Gravel,
+    /// <summary>Dark, wet silt and cracked mud.</summary>
+    Mud,
+}
 
 /// <summary>How a feature paints the ground (or water) under it. The client draws each pattern procedurally.</summary>
 public enum FeatureGround
