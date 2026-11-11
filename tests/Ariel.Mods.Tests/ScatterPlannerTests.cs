@@ -129,6 +129,35 @@ public sealed class ScatterPlannerTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void A_cliff_wall_on_the_wrap_seam_is_drawn_whole_by_the_chunks()
+    {
+        // Column 0's west edge meets the last column across the seam, so its wall stands at the east end of the period, a
+        // whole map away from its tile's centre: every column of it must still be drawn, once, by the chunk that holds it.
+        var snapshot = Map(right: null);
+        var grid = snapshot.Grid;
+        var walls = new List<int>();
+        for (int row = 5; row <= 8; row++)
+        {
+            int land = grid.TileAt(0, row).Value, water = grid.Neighbor(new TileId(land), 3)!.Value.Value;
+            snapshot.Relief[water] = ReliefClass.ShallowWater;
+            snapshot.Cliffs[land] |= 1 << 3;
+            snapshot.Cliffs[water] |= 1;
+            snapshot.CliffLifts[land] |= 1 << 3;
+            walls.Add(land);
+        }
+        var field = new TerrainField(snapshot, 5);
+        var chunks = new TerrainChunks(snapshot.Grid.Spec);
+        var rocks = chunks.Chunks.SelectMany(c => _planner.Plan(c, snapshot, field, _palette))
+            .Where(r => r.Set == ScatterPlanner.SeaStackSet).ToArray();
+        foreach (int land in walls)
+        {
+            var drawn = rocks.Where(r => r.Tile == land).ToArray();
+            Assert.Equal(TerrainField.CliffRocksPerEdge, drawn.Length);
+            Assert.All(drawn, r => Assert.InRange(r.X, 0, snapshot.Period));
+        }
+    }
+
+    [Fact]
     public void Chunk_partition_and_wrap_copies_preserve_candidates_without_gaps_or_duplicates()
     {
         var snapshot = Map("world:jungle");

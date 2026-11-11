@@ -1,10 +1,12 @@
 // Lit terrain chunks. Albedo/height textures blend across the height field's corner triangle, then the containing hex
-// adds the work-tile overlay, owner borders and the hover outline. Rivers are separate draped surfaces (river.gdshader)
+// adds the work-tile overlay, owner borders and the hover outline. Where land meets open water without a cliff, each
+// land's own shore runs along the waterline (shore.gdshaderinc). Rivers are separate draped surfaces (river.gdshader)
 // over the channels the height field carves. Unexplored tiles become drifting clouds.
 shader_type spatial;
 render_mode cull_back, diffuse_lambert, specular_schlick_ggx;
 
 #include "res://shaders/terrain_common.gdshaderinc"
+#include "res://shaders/shore.gdshaderinc"
 
 // 0 = normal; 1 = sharpened blend weights as RGB; 2 = hidden weight; 3 = blended colour without lines or clouds;
 // 4 = white ground (lighting and relief only); 5 = height bands with contour lines every 0.05; 6 = slope (1 - normal.y); 7 = the mesh lattice
@@ -155,6 +157,30 @@ void fragment() {
 	float wet;
 	// Keep sample coordinates unwrapped to prevent a mip-derivative jump at the cylinder seam.
 	blend_ground(world_pos.xz, linear, slope, snow, cliff_share, looks_a, looks_b, land, water_tint, fogged, hidden, w, glow, wet);
+	// The shore along open water: only near a water corner, never on a cliff or a steep face. Its ground continues under
+	// the translucent water, where the sea floor takes over.
+	float footprint = max(fwidth(world_pos.x), fwidth(world_pos.z));
+	float coast_edge, coast_relief;
+	vec3 shores_a, shores_b;
+	float shore_cover = 0.0, shore_up = 0.0;
+	if (hidden < 1.0 && coast_near(world_pos.xz, dp, linear, coast_edge, shores_a, shores_b, coast_relief)) {
+		float present = shores_a.x + shores_a.y + shores_a.z + shores_b.x + shores_b.y + shores_b.z;
+		// Distance up the shore from the waterline, from the ground's height and slope: the waterline is where the height
+		// crosses zero, so the shore keeps one width whether the tile's ground lies high or low.
+		float rise = max(length(normal.xz) / max(normal.y, 0.05), 0.02);
+		shore_up = world_pos.y / rise;
+		shore_cover = shore_share(world_pos.xz, shore_up, coast_edge, coast_relief, world_pos.y, footprint) * present
+			* (1.0 - smoothstep(0.0, 0.2, cliff_share)) * (1.0 - smoothstep(0.3, 0.55, steep)) * (1.0 - hidden);
+	}
+	// The shore's own ground, decided apart from the coast test above: nested in it, the share test let the colour through
+	// only at the waterline (seen on Mesa's GL driver).
+	if (shore_cover > 0.001) {
+		float shine;
+		vec3 shore = shore_colour(world_pos.xz, shores_a, shores_b, shore_up, world_pos.y, linear, shine);
+		shore = macro_variation(world_pos.xz, shore);
+		land = mix(land, mix(shore, fog_tone(shore), fogged), shore_cover);
+		wet = mix(wet, shine, shore_cover);
+	}
 	float molten = lava(world_pos.xz, crater, TIME) * (1.0 - hidden) * mix(1.0, 0.35, fogged);
 	land = mix(land, land * 0.35, smoothstep(0.0, 0.3, crater));
 	vec3 colour = land * (1.0 - cavity_shade * smoothstep(0.0, 1.0, hollow) + ridge_light * smoothstep(0.0, 1.0, -hollow));
@@ -209,7 +235,7 @@ void fragment() {
 	}
 	ALBEDO = colour * (1.0 - cover);
 	EMISSION = emission;
-	// Standing water (pools, springs) is glossy.
+	// Standing water (pools, springs) and wet shore are glossy.
 	ROUGHNESS = mix(0.92, 0.3, wet);
 	SPECULAR = mix(0.15, 0.3, wet) * (1.0 - cover);
 }

@@ -36,8 +36,8 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
     }
     private static readonly double Sqrt3 = TerrainTestMaps.Sqrt3;
 
-    /// <summary>The map generator marks the edge crossed by each step of a tile-centre drainage chain. A chain running
-    /// straight east crosses opposite edges of every tile, so none of its river edges touch each other.</summary>
+    /// <summary>Older saves and hand-made scenes may mark the edge crossed by each step of a tile-centre drainage chain. A
+    /// chain running straight east crosses opposite edges of every tile, so none of its river edges touch each other.</summary>
     [Fact]
     public void A_straight_generated_chain_becomes_one_connected_river_that_keeps_its_rules_edges_and_reaches_the_sea()
     {
@@ -56,6 +56,36 @@ public sealed class RiverNetworkTests(RiverNetworkTests.DirtyBaseline baseline) 
         var mouth = Assert.Single(graph.Links, l => l.Kind == RiverLinkKind.Mouth);
         Assert.Equal(snapshot.Grid.HexOf(new TileId(Tile(first + length))), Hex.FromPixel(mouth.BX, mouth.BZ, 1));
         // Bridges alternate sides, so the only dry end is the source.
+        Assert.Single(Enumerable.Range(0, graph.NodeCount), n => graph.LinksAt(n).Count == 1 && !graph.IsOpen(n));
+    }
+
+    /// <summary>The generator lays a river corner to corner along land edges and ends it at the first corner that touches
+    /// water. That end opens one mouth into the water; the source stays a dry end; nothing is bridged through a tile. A
+    /// shore edge marked as well at the same corner does not open a second mouth.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_river_ending_at_a_corner_beside_water_opens_one_mouth_into_it(bool shoreBit)
+    {
+        var snapshot = TerrainTestMaps.Uniform(ReliefClass.Flat);
+        const int row = 6;
+        int Tile(int col) => row * snapshot.Width + col;
+        // The south-west and south-east edges of a row of tiles join corner to corner; the last one's south-east edge
+        // ends at its corner 0, where the tile to its east is water.
+        snapshot.Relief[Tile(6)] = ReliefClass.ShallowWater;
+        for (int col = 3; col <= 5; col++)
+        {
+            TerrainTestMaps.SetRiver(snapshot, Tile(col), 4);
+            TerrainTestMaps.SetRiver(snapshot, Tile(col), 5);
+        }
+        if (shoreBit) TerrainTestMaps.SetRiver(snapshot, Tile(5), 0);
+
+        var graph = RiverGraph.Build(snapshot);
+
+        Assert.DoesNotContain(graph.Links, l => l.Kind is RiverLinkKind.Bridge or RiverLinkKind.Creek);
+        var mouth = Assert.Single(graph.Links, l => l.Kind == RiverLinkKind.Mouth);
+        Assert.Equal(snapshot.Grid.HexOf(new TileId(Tile(6))), Hex.FromPixel(mouth.BX, mouth.BZ, 1));
+        Assert.Equal(graph.NodeCount, Reachable(graph, 0));
         Assert.Single(Enumerable.Range(0, graph.NodeCount), n => graph.LinksAt(n).Count == 1 && !graph.IsOpen(n));
     }
 

@@ -7,18 +7,13 @@ namespace Ariel.Client.Terrain;
 /// <see cref="WaterfallMesher.Lip"/>, <see cref="WaterfallMesher.Sheet"/>, <see cref="WaterfallMesher.Veil"/> or
 /// <see cref="WaterfallMesher.Pool"/>, seed
 /// shifts the noise between layers and falls, foam is how churned the water is and fade is 0 where the surface runs out
-/// into the river behind the ledge. The mist is a set of camera-facing
-/// puffs: every corner of a puff carries its centre in <see cref="MistPositions"/>, its corner (±1, ±1) in
-/// <see cref="MistCorners"/> and (size, phase, rise, density) in <see cref="MistInfo"/>; the shader turns the quad to
-/// the camera and drifts it.</summary>
+/// into the river behind the ledge. The <see cref="Mist"/> is a set of camera-facing puffs, which the shader turns to the
+/// camera and drifts.</summary>
 public sealed record WaterfallMeshData(
-    float[] WaterPositions, float[] WaterNormals, float[] WaterLanes, float[] WaterInfo, int[] WaterIndices,
-    float[] MistPositions, float[] MistCorners, float[] MistInfo, int[] MistIndices)
+    float[] WaterPositions, float[] WaterNormals, float[] WaterLanes, float[] WaterInfo, int[] WaterIndices, PuffMeshData Mist)
 {
     /// <summary>Number of water vertices.</summary>
     public int WaterVertexCount => WaterPositions.Length / 3;
-    /// <summary>Number of mist vertices.</summary>
-    public int MistVertexCount => MistPositions.Length / 3;
 }
 
 /// <summary>A fall's plunge pool: its centre, in the fall's link's frame, and its radius.</summary>
@@ -131,8 +126,7 @@ public static class WaterfallMesher
     {
         private readonly List<float> _positions = [], _normals = [], _lanes = [], _info = [];
         private readonly List<int> _indices = [];
-        private readonly List<float> _mistPositions = [], _mistCorners = [], _mistInfo = [];
-        private readonly List<int> _mistIndices = [];
+        private readonly PuffBuilder _mist = new();
 
         public bool Empty => _indices.Count == 0;
 
@@ -280,14 +274,7 @@ public static class WaterfallMesher
             double dx = ledge.DirectionX, dz = ledge.DirectionZ;
             double side = (Hash(seed, p, 1) - 0.5) * 2 * spread, ahead = (Hash(seed, p, 2) - 0.3) * spread;
             double x = lx - dz * side + dx * ahead, z = lz + dx * side + dz * ahead;
-            int start = _mistPositions.Count / 3;
-            foreach (var (cu, cv) in new[] { (-1f, -1f), (1f, -1f), (1f, 1f), (-1f, 1f) })
-            {
-                _mistPositions.AddRange([(float)x, (float)y, (float)z]);
-                _mistCorners.AddRange([cu, cv]);
-                _mistInfo.AddRange([(float)size, (float)phase, (float)rise, (float)density]);
-            }
-            _mistIndices.AddRange([start, start + 1, start + 2, start, start + 2, start + 3]);
+            _mist.Add(x, y, z, size, phase, rise, density);
         }
 
         private static double Hash(float seed, int i, int salt)
@@ -320,7 +307,7 @@ public static class WaterfallMesher
         }
 
         public WaterfallMeshData ToData() => new([.. _positions], [.. _normals], [.. _lanes], [.. _info], [.. _indices],
-            [.. _mistPositions], [.. _mistCorners], [.. _mistInfo], [.. _mistIndices]);
+            _mist.ToData());
     }
 
     private static double SmoothStep(double edge0, double edge1, double x)

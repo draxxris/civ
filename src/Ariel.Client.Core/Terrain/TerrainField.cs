@@ -253,12 +253,7 @@ public sealed class TerrainField
         {
             if (_wrap) x -= Period * Math.Floor(x / Period);
             return GroundAt(x, z, out _, out double rise) - rise;
-        }, new CliffShape((x, z) => DrawPoint(x, z, FaceSnap), (x, z) =>
-        {
-            if (_wrap) x -= Period * Math.Floor(x / Period);
-            GroundAt(x, z, out _, out double rise);
-            return rise;
-        }));
+        }, new CliffShape((x, z) => DrawPoint(x, z, FaceSnap), CliffLiftAt));
         MaxHeight = new[] { 0, tuning.DeepWater + tuning.WaterNoise, tuning.ShallowWater + tuning.WaterNoise,
             tuning.FlatBase + tuning.FlatNoise, tuning.HillsBase + tuning.HillsRise + tuning.HillsNoise,
             tuning.PeakBase + tuning.PeakRise + tuning.PeakNoise + tuning.PeakRoughness }.Max() + tuning.CliffRise;
@@ -290,6 +285,15 @@ public sealed class TerrainField
     {
         if (snapshot.Grid.Spec != Snapshot.Grid.Spec) throw new ArgumentException("Snapshot is for a different map", nameof(snapshot));
         return new(snapshot, Seed, Tuning, _noise, Warp);
+    }
+
+    /// <summary>The part of the terrain at a world position that is cliff lift, before any river takes it away: the step a
+    /// raised tile stands on and the apron it ramps down over beside a wall.</summary>
+    public double CliffLiftAt(double x, double z)
+    {
+        if (_wrap) x -= Period * Math.Floor(x / Period);
+        GroundAt(x, z, out _, out double rise);
+        return rise;
     }
 
     /// <summary>Terrain height at a world position.</summary>
@@ -771,6 +775,9 @@ public sealed class TerrainField
             foreach (var edge in list)
             {
                 double dx = corners.X - edge.X, dz = corners.Z - edge.Z;
+                // An edge is stored where its tile's canonical centre puts it, but the point may lie a period away across
+                // the seam, so measure to the nearest image of the edge.
+                if (_wrap) dx -= Period * Math.Round(dx / Period);
                 // The slope runs straight out from the edge, one edge wide: forward distance sets its height, and past
                 // either end it fades sideways, quickly where that end meets a cliff face so the slope stays off the
                 // ground in front of the wall.
@@ -1085,10 +1092,13 @@ public sealed class TerrainField
         }
     }
 
+    /// <summary>Distance along x from <paramref name="x"/> to the span x0..x1, the nearest of its wrap images on a wrapping
+    /// map.</summary>
     private double WrappedGap(double x, double x0, double x1)
     {
-        double gap = x < x0 ? x0 - x : x > x1 ? x - x1 : 0;
-        if (_wrap && gap > 0) gap = Math.Min(gap, Math.Min(Math.Abs(x + Period - x0), Math.Abs(x - Period - x1)));
+        static double Gap(double x, double x0, double x1) => x < x0 ? x0 - x : x > x1 ? x - x1 : 0;
+        double gap = Gap(x, x0, x1);
+        if (_wrap && gap > 0) gap = Math.Min(gap, Math.Min(Gap(x + Period, x0, x1), Gap(x - Period, x0, x1)));
         return gap;
     }
 

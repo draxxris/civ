@@ -36,6 +36,46 @@ namespace Ariel.Client;
 /// gets the height its ground implies, so <c>mise run validate</c> judges a scene by its own heights.</summary>
 public static class DebugScenario
 {
+    /// <summary>Write the session's whole map as a scene file, so a generated world can be drawn as a plan
+    /// (<c>mise run shot:map</c>) or replayed with <c>--scenario</c>: every tile with its terrain, relief, height, feature,
+    /// lake flag, river edge bits and cliff edge bits (on each cliff's high side, the side a scene's bit lifts), over a fill
+    /// that clears the world it is replayed on. The map size goes in <c>"// size"</c> as COLUMNSxROWS for the plan's
+    /// <c>--size</c>.</summary>
+    public static void Write(GameSession session, string path)
+    {
+        var state = session.Sim.State;
+        var grid = state.Grid;
+        var tiles = new JsonArray();
+        foreach (var tile in grid.Tiles)
+        {
+            var plot = state.Plots[tile.Value];
+            var (col, row) = grid.OffsetOf(tile);
+            var entry = new JsonObject
+            {
+                ["at"] = new JsonArray(col, row), ["terrain"] = plot.Terrain, ["kind"] = plot.Kind.ToString(), ["height"] = (int)plot.Height,
+            };
+            if (plot.Feature is { } feature) entry["feature"] = feature;
+            if (plot.IsLake) entry["lake"] = true;
+            if (plot.RiverEdges != 0) entry["river"] = (int)plot.RiverEdges;
+            // A scene's cliff bits lift the tile that names them, so each cliff goes on its high side only.
+            int lifts = 0;
+            for (int d = 0; d < 6; d++)
+                if ((plot.CliffEdges & (1 << d)) != 0 && grid.Neighbor(tile, d) is { } other && state.Plots[other.Value].Height < plot.Height)
+                    lifts |= 1 << d;
+            if (lifts != 0) entry["cliff"] = lifts;
+            tiles.Add(entry);
+        }
+        // The fill clears whatever the world the scene is replayed over carries, so its rivers, cliffs and features cannot
+        // show through on tiles the dump leaves them off; every tile is then written over it, so its terrain is any.
+        var scene = new JsonObject
+        {
+            ["// size"] = $"{grid.Spec.Width}x{grid.Spec.Height}",
+            ["fill"] = new JsonObject { ["terrain"] = state.Plots[0].Terrain, ["kind"] = "Flat" },
+            ["tiles"] = tiles,
+        };
+        File.WriteAllText(path, scene.ToJsonString(new JsonSerializerOptions { WriteIndented = false }));
+    }
+
     /// <summary>"cliff": true puts a cliff on every edge of a land tile, false clears them, and a number is an edge bit mask
     /// (Hex.Directions order) of which edges get one, lifted on the named tile. A lake shore may carry one, like any
     /// other water edge; the rules allow it and the tool reports it if the heights disagree.</summary>

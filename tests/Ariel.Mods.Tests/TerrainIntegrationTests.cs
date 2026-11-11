@@ -76,6 +76,11 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         var session = Generated(compact: true);
         var state = session.Sim.State;
         for (int i = 0; i < state.Plots.Length / 2; i++) state.Plots[i].Revealed.Add(session.Me.TeamId);
+        // The team sees one stretch of raised ground, wherever the starts put its units, so a known tier above zero is
+        // always on the snapshot to check.
+        var raised = state.Plots.Last(p => p.Height > 0);
+        raised.Revealed.Add(session.Me.TeamId);
+        raised.Visible.Add(session.Me.TeamId);
         var snapshot = Snapshot(session);
         int known = 0, unknown = 0;
         foreach (var tile in state.Grid.Tiles)

@@ -21,6 +21,7 @@
     "startRadius": 2,
     "startOuterRadius": 3,
     "startSpacing": 10,
+    "startMinArea": 19,
     "startFoodWeight": 4,
     "startProductionWeight": 3,
     "startCoastWeight": 6,

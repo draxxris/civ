@@ -414,6 +414,7 @@ public partial class Main : Node3D
             RevealEverything(session);
             foreach (var plot in session.Sim.State.Plots) plot.Visible.Add(session.Me.TeamId);
         }
+        if (_debug.DumpScenarioFile is { } dump) DebugScenario.Write(session, dump);
     }
 
     private static void FoundScreenshotCity(GameSession session)

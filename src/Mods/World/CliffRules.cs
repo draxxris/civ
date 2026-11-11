@@ -678,7 +678,8 @@ internal static class CliffGenerator
     internal const int TerracePercent = 8;
     internal const int TerraceNoiseScale = 9;
     internal const int TerraceNoiseOctaves = 2;
-    /// <summary>Score bonus for a candidate edge that also carries a river, so some rivers cross a cliff as waterfalls.</summary>
+    /// <summary>Score bonus for a candidate edge that also carries a river, so some rivers run along the foot of a cliff and
+    /// pour off its brink as waterfalls.</summary>
     internal const int RiverFallBonus = 70;
 
     internal static void Generate(HexGrid grid, Plot[] plots, DeterministicRng rng, ContentDb content)
@@ -709,7 +710,6 @@ internal static class CliffGenerator
             {
                 if (remaining == 0) break;
                 if (budgets[plot.AreaId] == 0) break;
-                if (RiverEndpoint(plot, direction)) continue;
                 state.SetCliff(coast.Tile, direction, true);
                 budgets[plot.AreaId]--; remaining--;
             }
@@ -738,10 +738,10 @@ internal static class CliffGenerator
         }
     }
 
-    // A drainage river shared with sea marks a mouth; keep its whole land plot open.
-    private static bool RiverMouth(Plot plot, int[] seaEdges) => seaEdges.Any(d => (plot.RiverEdges & (1 << d)) != 0);
-    private static bool RiverEndpoint(Plot plot, int direction) =>
-        (plot.RiverEdges & ((1 << ((direction + 5) % 6)) | (1 << direction) | (1 << ((direction + 1) % 6)))) != 0;
+    // A river reaches the sea at a corner of one of the plot's sea edges, its mouth: a river edge next to a sea edge
+    // (or, in a hand-made scene, on it). Keep the whole land plot open, so the mouth is a beach rather than a cliff.
+    private static bool RiverMouth(Plot plot, int[] seaEdges) => seaEdges.Any(d =>
+        (plot.RiverEdges & ((1 << ((d + 5) % 6)) | (1 << d) | (1 << ((d + 1) % 6)))) != 0);
 
     /// <summary>Choose land-to-land cliffs by the same noise ranking as the coast, lift the higher side, and thin them until
     /// the cliffs stand far enough apart and every area stays walkable.</summary>
@@ -760,7 +760,8 @@ internal static class CliffGenerator
                 if (grid.Neighbor(tile, direction) is not { } next || next.Value <= tile.Value) continue;
                 var other = plots[next.Value];
                 if (Geography.Water(content, other) || other.AreaId != plot.AreaId) continue;
-                // A river edge may also be a cliff: the river then pours over the face as a waterfall.
+                // A river edge may also be a cliff: the river then runs along its foot, and falls where its course leaves the
+                // upper ground.
                 bool river = (plot.RiverEdges & (1 << direction)) != 0 || (other.RiverEdges & (1 << ((direction + 3) % 6))) != 0;
                 candidates.Add((tile, next, direction, noise[tile.Value] + noise[next.Value]
                     + 120 * Math.Max(ReliefRank(plot.Kind), ReliefRank(other.Kind)) + (river ? RiverFallBonus : 0)));

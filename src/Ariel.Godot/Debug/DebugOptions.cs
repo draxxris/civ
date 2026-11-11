@@ -18,6 +18,8 @@ namespace Ariel.Client;
 /// --pitch deg --yaw deg --distance n   camera pose (yaw 0 looks north; pitch 62 and distance 18 are the defaults)
 /// --clean                    no HUD, tooltips, hover, path preview, units, cities or labels
 /// --scenario file.json       overwrite the generated map with a hand-made scene (see DebugScenario)
+/// --dump-scenario file.json  write the map as a scene file once it is ready (see DebugScenario.Write), e.g. to draw a
+///                            generated world with mise run shot:map
 /// --tuning Name=v,Name=v     override TerrainTuning values; --tuning-file file.json does the same from {"Name": v}
 /// --scatter-density-scale f  multiply forest/jungle scatter density
 /// --scatter-keep tree=f,other=f   fraction of tree and other props drawn after thinning
@@ -57,6 +59,7 @@ internal sealed record DebugOptions
     public float? Distance { get; private init; }
     public bool Clean { get; private init; }
     public string? ScenarioFile { get; private init; }
+    public string? DumpScenarioFile { get; private init; }
     public bool Wireframe { get; private init; }
     public bool Stats { get; private init; }
     public IReadOnlyDictionary<string, double> Tuning { get; private init; } = new Dictionary<string, double>();
@@ -96,7 +99,7 @@ internal sealed record DebugOptions
             OutDir = Raw("--out-dir"), ShotsFile = Raw("--shots"), Focus = Raw("--focus"),
             FocusTile = Raw("--focus-tile") is { } t && t.Split(',') is [var c, var r] ? (int.Parse(c), int.Parse(r)) : null,
             Pitch = Float("--pitch"), Yaw = Float("--yaw"), Distance = Float("--distance"), Clean = args.Contains("--clean"),
-            ScenarioFile = Raw("--scenario"), Wireframe = args.Contains("--wireframe"), Stats = args.Contains("--stats"), Tuning = tuning,
+            ScenarioFile = Raw("--scenario"), DumpScenarioFile = Raw("--dump-scenario"), Wireframe = args.Contains("--wireframe"), Stats = args.Contains("--stats"), Tuning = tuning,
             ScatterDensityScale = Float("--scatter-density-scale") ?? 1,
             TreeKeep = keep.TryGetValue("tree", out var tk) ? tk : null, OtherKeep = keep.TryGetValue("other", out var ok) ? ok : null,
         };

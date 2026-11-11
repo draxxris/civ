@@ -307,6 +307,11 @@ manager, because it cannot answer a prompt.
 - `--turns N`: end this many turns before capture.
 - `--reveal`: explore the whole map for the human team without making distant units
   visible.
+- `--dump-scenario <file.json>`: once the map is ready (after any `--scenario`), write the
+  whole map as a scene file: every tile's terrain, relief, height, feature, lake flag, river
+  and cliff bits, with the map size in `"// size"`, over a fill that clears the world it is
+  replayed on, so `--world` with the file shows exactly the dumped map. Draw a generated world as a flat plan
+  with `mise run shot:map -- <file.json> --size COLUMNSxROWS --full-map`.
 - `--scenario <file.json>`: replace the generated map with a hand-made scene. The format
   is described in `src/Ariel.Client.Core/DebugScenario.cs` and examples are
   `tools/shots/scenarios/hills-forest-roads.json` and
@@ -396,13 +401,28 @@ shaders blend tile textures and draw fog, unexplored clouds, borders, hover outl
 and work-tile overlays from two per-tile data textures. Visibility, borders, and hover
 changes update these textures without rebuilding meshes.
 
-River meshes follow curved channels and use a separate shader for water, ripples, and
-the riverbed along the banks: sand and pebbles, or mud where the terrain's appearance asks
-for it (`TileAppearance.Riverbed`). The channel is carved flat-bottomed with steep banks,
+Where land meets the sea or a lake without a cliff, the terrain shader draws each land's
+own shore along the waterline (`shaders/shore.gdshaderinc`, chosen by
+`TileAppearance.Shore`): dune sand with beach grass behind grassland, shell sand on the
+plains, salt-crusted sand in the desert, mudflats along marsh, shingle on tundra and shore
+ice under snow. The shore meets the ground the way a riverbed does: a soft blend whose
+middle wanders along the coast and is frayed by the ground texture's own relief. It runs
+a little way under the translucent water before the sea floor takes over. Use
+`tools/shots/scenarios/coasts-biomes.json` with `--shots tools/shots/poses/coasts-poses.json`
+to look at every shore.
+
+River meshes follow curved channels and use a separate shader for the water and the
+riverbed along the banks: sand and pebbles, or mud where the terrain's appearance asks
+for it (`TileAppearance.Riverbed`). The water's surface is shared with the sea and lakes
+(`shaders/water_surface.gdshaderinc`): one set of colours and the same normal map
+(`Water/`), drifted downstream on rivers and with the wind at sea; the bed shows through the shallows and fades out as the water
+deepens (each vertex carries its depth), and the sky shows in it toward grazing angles. The channel is carved flat-bottomed with steep banks,
 and bank normals lean toward the water so the river reads as sunk into the ground. The
 drawn course only follows its rules edges loosely: free hex-corner nodes move up to
 `RiverNetwork.MaxNodeShift` off their corners (nodes on cliffs and water stay put). A river
-that ends on land in plain sight ends in a small pond. Visual connectors join disconnected
+that ends on land in plain sight widens into a small pond, one body of water with the
+river, its bed running on round the pond's lobed shore. The bed thins raggedly into the
+ground, with clumps of grass reaching into it. Visual connectors join disconnected
 river marks without changing gameplay river masks. A world change rebuilds only the chunks whose tiles changed. Feature marks,
 routes, and icons use batched triangle meshes and an icon atlas. Each route type has its
 own look (`RouteLooks` in `src/Ariel.Client.Core/Terrain/RoutePlan.cs`). Cart paths,

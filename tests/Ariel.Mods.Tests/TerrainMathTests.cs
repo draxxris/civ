@@ -101,6 +101,19 @@ public sealed class TerrainMathTests(LoadedMods mods) : IClassFixture<LoadedMods
 {
     private static readonly double Sqrt3 = TerrainTestMaps.Sqrt3;
 
+    /// <summary>The ground meets itself across the wrap seam: everything the field builds from a tile's own position,
+    /// such as the slopes up to a bluff, is measured to its nearest image, so no step opens at x = 0.</summary>
+    [Theory]
+    [InlineData(5)]
+    [InlineData(9)]
+    public void The_height_field_is_continuous_across_the_wrap_seam(int seed)
+    {
+        var snapshot = TerrainTestMaps.Mixed(16, 12, seed, cliffs: true);
+        var field = new TerrainField(snapshot, seed);
+        for (double z = 0; z <= 17; z += 0.05)
+            Assert.Equal(field.HeightAt(field.Period - 1e-7, z), field.HeightAt(1e-7, z), 3);
+    }
+
     [Fact]
     public void Blend_weights_sum_to_one_and_stay_in_the_unit_interval()
     {

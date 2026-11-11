@@ -3,7 +3,8 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.World;
 
-/// <summary>CvPlayer::findStartingPlot / foundValue: food, production, coast, fresh water and distance pressure.</summary>
+/// <summary>CvPlayer::findStartingPlot / foundValue: food, production, coast, fresh water and distance pressure, on a
+/// landmass of at least StartMinArea tiles.</summary>
 internal sealed class StartingPositions(IWaterService water) : IStartingPositionService
 {
     public IReadOnlyList<TileId> Select(Simulation sim, int count)
@@ -15,8 +16,10 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         // New World reserves the eastern landmass for later colonization. Keep this restriction
         // inside selection so normalization, unit grants, and initial AI all use the same starts.
         bool oldWorldOnly = sim.Settings.MapGenerator == "world:new_world";
+        var areas = sim.State.Plots.GroupBy(p => p.AreaId).ToDictionary(g => g.Key, g => g.Count());
         var candidates = sim.State.Grid.Tiles
             .Where(t => !oldWorldOnly || sim.State.Grid.OffsetOf(t).Col < sim.State.Map.Width / 2)
+            .Where(t => areas[sim.State.Plots[t.Value].AreaId] >= tuning.StartMinArea)
             .Where(t => CanStart(sim, t))
             .Select(t => (Tile: t, Score: Score(sim, t, tuning, potentials)))
             .OrderByDescending(c => c.Score).ThenBy(c => c.Tile.Value).ToArray();

@@ -1,0 +1,112 @@
+[
+ {
+  "name": "overview",
+  "focusTile": [
+   14,
+   6
+  ],
+  "pitch": 55,
+  "yaw": 0,
+  "distance": 20
+ },
+ {
+  "name": "grass_shore",
+  "focusTile": [
+   1,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "plains_shore",
+  "focusTile": [
+   5,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "desert_shore",
+  "focusTile": [
+   9,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "tundra_shore",
+  "focusTile": [
+   13,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "marsh_shore",
+  "focusTile": [
+   17,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "snow_shore",
+  "focusTile": [
+   21,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "hills_shore",
+  "focusTile": [
+   25,
+   6
+  ],
+  "pitch": 45,
+  "yaw": 0,
+  "distance": 4.5
+ },
+ {
+  "name": "cliff_shore",
+  "focusTile": [
+   6,
+   6
+  ],
+  "pitch": 40,
+  "yaw": 0,
+  "distance": 4
+ },
+ {
+  "name": "grass_plains_seam",
+  "focusTile": [
+   4,
+   7
+  ],
+  "pitch": 55,
+  "yaw": 0,
+  "distance": 3
+ },
+ {
+  "name": "far",
+  "focusTile": [
+   12,
+   6
+  ],
+  "pitch": 60,
+  "yaw": 0,
+  "distance": 30
+ }
+]

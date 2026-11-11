@@ -24,6 +24,8 @@ public sealed class HexOverridesDef : ContentDef
     public int StartRadius { get; init; }
     public int StartOuterRadius { get; init; }
     public int StartSpacing { get; init; }
+    /// <summary>Fewest land tiles a landmass needs for a player to start on it, so no one starts on a tiny island.</summary>
+    public int StartMinArea { get; init; }
     public int StartFoodWeight { get; init; }
     public int StartProductionWeight { get; init; }
     public int StartCoastWeight { get; init; }

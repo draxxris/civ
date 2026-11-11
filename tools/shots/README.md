@@ -76,7 +76,10 @@ generated map with a fixed scene. Use `tools/shots/scenarios/improvements.json` 
 preview improvement icons, and `tools/shots/scenarios/resources.json --world small` to
 see every map resource model on a tile it may spawn on. Use `tools/shots/scenarios/rivers-biomes.json`
 with `--shots tools/shots/poses/rivers-poses.json` to check how rivers look: one river across
-grass, plains, desert and tundra into a lake, plus short rivers whose tips end in ponds. The format is in
+grass, plains, desert and tundra into a lake, plus short rivers whose tips end in ponds. Use
+`tools/shots/scenarios/rivers-peaks.json` with `--shots tools/shots/poses/rivers-peaks-poses.json` for a
+long river running corner to corner along the feet of peaks, through a gorge, past a spur and out to sea, as
+the generator lays rivers. The format is in
 `src/Ariel.Godot/Debug/DebugScenario.cs`. Every tile is revealed and visible. Use
 `--clean` to hide the starting units. Road paths can be point arrays for the default
 road, or objects with a `path` and optional `route`. Set `routes` instead to assign one

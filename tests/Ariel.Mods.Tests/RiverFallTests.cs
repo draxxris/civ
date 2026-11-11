@@ -142,7 +142,8 @@ public sealed class RiverFallTests
         return new RiverMeshData(
             [.. parts.SelectMany(p => p!.Positions)], [.. parts.SelectMany(p => p!.Normals)],
             [.. parts.SelectMany(p => p!.Lanes)], [.. parts.SelectMany(p => p!.Flow)],
-            [.. parts.SelectMany(p => p!.Info)], [.. parts.SelectMany(p => p!.Rock)], [.. parts.SelectMany(p => p!.Indices)]);
+            [.. parts.SelectMany(p => p!.Info)], [.. parts.SelectMany(p => p!.Rock)], [.. parts.SelectMany(p => p!.Depth)],
+            [.. parts.SelectMany(p => p!.Indices)]);
     }
 
     [Theory, MemberData(nameof(Every))]
@@ -431,7 +432,7 @@ public sealed class RiverFallTests
         Assert.True(sheet > 0, "the fall has no sheet");
         Assert.True(highest >= ledge.Y, "the water does not run over the ledge's top");
         Assert.True(lowest < ledge.Foot + 0.03, $"the sheet stops at {lowest:F2}, above the foot at {ledge.Foot:F2}");
-        Assert.NotEmpty(data.MistIndices);
+        Assert.NotEmpty(data.Mist.Indices);
     }
 
     [Theory, MemberData(nameof(Every))]
@@ -518,7 +519,7 @@ public sealed class RiverFallTests
     }
 
     [Fact]
-    public void A_river_that_starts_at_the_foot_of_a_cliff_springs_from_under_the_wall()
+    public void A_river_that_starts_at_the_foot_of_a_cliff_springs_from_a_pond_under_the_wall()
     {
         // The east edge of the low tile south-west of the high tile, whose upper corner is the foot of the wall under it.
         var (field, _) = Strip(rivers: [(West, 0)]);
@@ -527,6 +528,118 @@ public sealed class RiverFallTests
         bool startAtFoot = curve.Z[0] < curve.Z[^1];
         Assert.False(startAtFoot ? curve.StartsDry : curve.EndsDry);
         Assert.True(startAtFoot ? curve.EndsDry : curve.StartsDry);
+        // It rises in a pond, which lies back from the corner, clear of the wall's columns on both sides.
+        var pond = Assert.IsType<RiverPond>(startAtFoot ? curve.StartPond : curve.EndPond);
+        foreach (var rock in field.CliffRocks(-1, field.Period + 1, -100, 100))
+        {
+            double gap = Math.Sqrt(Math.Pow(Dx(field, rock.X - pond.X), 2) + Math.Pow(rock.Z - pond.Z, 2))
+                - TerrainField.CliffRockRadius * rock.Scale - pond.Radius * (1 + RiverPond.Lobes);
+            Assert.True(gap > 0, $"a wall column stands {-gap:F3} into the spring's pond");
+        }
+    }
+
+    [Theory, MemberData(nameof(Every))]
+    public void A_river_that_rises_along_the_foot_of_a_wall_springs_from_a_pond_in_the_corner(string layout)
+    {
+        // Only the high tile is raised. The river rises at the corner where its south-east wall ends, and runs along the
+        // foot of that wall and on between the low tiles. No river comes over the brink, so nothing falls.
+        var (field, at) = Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]);
+        Assert.Empty(field.Rivers.Falls);
+        var (foot, pond) = FootSpring(field, at);
+        // It rises in a spring: a pool broader than the river along the foot, but smaller than a pond in the open, so it
+        // fits in the cramped corner.
+        Assert.True(pond.Spring);
+        double river = foot.Width.Min();
+        Assert.True(pond.Radius >= 1.2 * river, $"a spring of radius {pond.Radius:F3} on a river {river:F3} wide");
+        Assert.True(pond.Radius < 0.8 * RiverNetwork.PondScale * field.Tuning.RiverWidth, $"a spring of radius {pond.Radius:F3}");
+        // It lies in that corner, shifted a little out into the low tile: off the corner, with its near shore no further
+        // from it than the wall's columns and the gap past them need.
+        var (cx, cz) = Corner(at, High, East, Below);
+        double off = Math.Sqrt(Math.Pow(Dx(field, pond.X - cx), 2) + Math.Pow(pond.Z - cz, 2));
+        Assert.True(off > pond.Radius && off - pond.Radius * (1 + RiverPond.Lobes) < 0.45,
+            $"a spring's pond of radius {pond.Radius:F3}, {off:F3} from its corner");
+        Assert.True(field.Snapshot.TryTile(Hex.FromPixel(pond.X, pond.Z, 1), out int tile));
+        Assert.Equal(foot.Foot!.Low, tile);
+        AssertClearOfWalls(field, pond);
+    }
+
+    [Theory, MemberData(nameof(Every))]
+    public void A_spring_bubbles_on_its_water_under_a_breath_of_mist(string layout)
+    {
+        var (field, at) = Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]);
+        var (_, spring) = FootSpring(field, at);
+        var parts = Chunks(field).Select(c => SpringMesher.Build(c, field)).OfType<SpringMeshData>().ToArray();
+        // Drawn once, by the chunk that holds it.
+        var data = Assert.Single(parts);
+        Assert.Equal(SpringMesher.Bubbles * 4, data.Bubbles.VertexCount);
+        Assert.Equal(SpringMesher.Wisps * 4, data.Mist.VertexCount);
+        // Every bubble comes up on the water the river mesher draws inside the spring: at the height of the water lanes
+        // (level, or lying on the ground just above it) there.
+        var river = AllRivers(field);
+        double low = double.MaxValue, high = double.MinValue;
+        for (int w = 0; w < river.VertexCount; w++)
+        {
+            if (Math.Abs(river.Lanes[w * 2]) > 1) continue;
+            double d = Math.Sqrt(Math.Pow(Dx(field, river.Positions[w * 3] - spring.X), 2) + Math.Pow(river.Positions[w * 3 + 2] - spring.Z, 2));
+            if (d > spring.Radius) continue;
+            low = Math.Min(low, river.Positions[w * 3 + 1]);
+            high = Math.Max(high, river.Positions[w * 3 + 1]);
+        }
+        Assert.True(low <= high, "the spring has no water drawn in it");
+        for (int v = 0; v < data.Bubbles.VertexCount; v++)
+        {
+            double off = Math.Sqrt(Math.Pow(Dx(field, data.Bubbles.Positions[v * 3] - spring.X), 2)
+                + Math.Pow(data.Bubbles.Positions[v * 3 + 2] - spring.Z, 2));
+            double reach = off + data.Bubbles.Info[v * 4];
+            Assert.True(reach < spring.Radius, $"a bubble reaches {reach:F3} from the middle of a spring of radius {spring.Radius:F3}");
+            // The ground between the lattice's vertices can stand a hair above them.
+            Assert.InRange(data.Bubbles.Positions[v * 3 + 1], low, high + SpringMesher.BubbleLift + 0.002);
+        }
+        // The mist hangs over it.
+        for (int v = 0; v < data.Mist.VertexCount; v++)
+            Assert.True(data.Mist.Positions[v * 3 + 1] > low, "a wisp of the spring's mist starts under its water");
+    }
+
+    [Fact]
+    public void A_pond_in_the_open_is_no_spring_and_bubbles_nowhere()
+    {
+        // No cliff: the river ends in a plain pond.
+        var (field, _) = Strip(cliff: false, rivers: [(High, 5), (Below, 3)]);
+        Assert.Contains(field.Rivers.Ponds, p => !p.Spring);
+        Assert.DoesNotContain(field.Rivers.Ponds, p => p.Spring);
+        Assert.All(Chunks(field), c => Assert.Null(SpringMesher.Build(c, field)));
+    }
+
+    [Theory, MemberData(nameof(Every))]
+    public void A_spring_in_the_elbow_of_two_walls_keeps_its_pond_clear_of_both(string layout)
+    {
+        // The wall the river rises along meets the raised east neighbour's wall at the corner it rises in.
+        var (field, at) = Strip(layout, rivers: [(High, 5), (Below, 3)]);
+        Assert.Empty(field.Rivers.Falls);
+        AssertClearOfWalls(field, FootSpring(field, at).Pond);
+    }
+
+    /// <summary>The curve along the foot of the high tile's south-east wall, and the pond it rises in at the corner it
+    /// shares with the east and lower tiles.</summary>
+    private static (RiverCurve Foot, RiverPond Pond) FootSpring(TerrainField field, Layout at)
+    {
+        var foot = Assert.Single(field.Rivers.Curves, c => c.Foot != null);
+        Assert.Null(foot.Fall);
+        var (cx, cz) = Corner(at, High, East, Below);
+        var pond = new[] { foot.StartPond, foot.EndPond }.OfType<RiverPond>()
+            .MinBy(p => Math.Abs(Dx(field, p.X - cx)) + Math.Abs(p.Z - cz));
+        Assert.NotNull(pond);
+        return (foot, pond);
+    }
+
+    private static void AssertClearOfWalls(TerrainField field, RiverPond pond)
+    {
+        foreach (var rock in field.CliffRocks(-1, field.Period + 1, -100, 100))
+        {
+            double gap = Math.Sqrt(Math.Pow(Dx(field, rock.X - pond.X), 2) + Math.Pow(rock.Z - pond.Z, 2))
+                - TerrainField.CliffRockRadius * rock.Scale - pond.Radius * (1 + RiverPond.Lobes);
+            Assert.True(gap > 0, $"a wall column stands {-gap:F3} into the spring's pond");
+        }
     }
 
     [Theory, MemberData(nameof(Every))]
@@ -546,7 +659,8 @@ public sealed class RiverFallTests
     public void Every_river_lies_level_from_waterline_to_waterline(string layout)
     {
         // Water is level across: a cross-section's water lanes all lie at one height, along the foot of a wall (with a
-        // fall or without one) as anywhere else. Where the ground rises above that level, it hides the water instead.
+        // fall or without one) as anywhere else. Where the ground rises above that level, it hides the water instead, but
+        // where the drawn ground stands only a hair above it the water lies on that ground, so no lane rises further.
         foreach (var (field, _) in new[] { Strip(layout), Strip(layout, raised: [High], rivers: [(East, 4), (High, 5), (Below, 3)]),
                      Strip(layout, cliff: false) })
         {
@@ -561,7 +675,7 @@ public sealed class RiverFallTests
                     double y = data.Positions[end * 3 + 1];
                     (lo, hi) = (Math.Min(lo, y), Math.Max(hi, y));
                 }
-                Assert.True(hi - lo < 1e-4, $"the water across a section at ({data.Positions[v * 3]:F2}, {data.Positions[v * 3 + 2]:F2}) tilts by {hi - lo:F3}");
+                Assert.True(hi - lo <= RiverMesher.WaterOnGround + 1e-4, $"the water across a section at ({data.Positions[v * 3]:F2}, {data.Positions[v * 3 + 2]:F2}) tilts by {hi - lo:F3}");
                 v = end;
             }
         }

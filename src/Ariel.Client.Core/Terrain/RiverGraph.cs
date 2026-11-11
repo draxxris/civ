@@ -219,11 +219,14 @@ public sealed class RiverGraph
             _degree[b] = _degree.GetValueOrDefault(b) + delta;
         }
 
-        /// <summary>Each shore edge opens a mouth into the water from every one of its corners the river reaches; a shore edge
-        /// the river reaches at neither corner becomes a short creek across it.</summary>
+        /// <summary>A river that ends at a corner touching water opens a mouth into that water; so does each shore edge,
+        /// from every one of its corners the river reaches, and a shore edge the river reaches at neither corner becomes
+        /// a short creek across it. Generated rivers never run along a shore, so they reach the sea the first way; hand-made
+        /// scenes may use either.</summary>
         private void AddMouths()
         {
             var opened = new HashSet<(int Node, int Water)>();
+            AddCornerMouths(opened);
             foreach (var shore in _shores)
             {
                 var (cx, cz) = Centre(shore.Land);
@@ -246,6 +249,31 @@ public sealed class RiverGraph
                 var (tx, tz) = Toward(mx, mz, wx, wz, 0.45);
                 _graph.AddLink(new(_graph.AddNode(open: false), _graph.AddNode(open: true), sx, sz, tx, tz, RiverLinkKind.Creek,
                     ReliefScale(snapshot.Relief[shore.Land]), TileHash(shore.Land) ^ (uint)shore.Direction));
+            }
+        }
+
+        /// <summary>Open a mouth from every dead end of the river at a corner beside water, into each water tile there.</summary>
+        private void AddCornerMouths(HashSet<(int Node, int Water)> opened)
+        {
+            var ends = new List<(int Node, int Tile, int Corner, int Water, int Direction)>();
+            foreach (var (tile, d) in _landEdges)
+                foreach (int j in new[] { d, d + 1 })
+                {
+                    int node = _corners[Corner(tile, j)];
+                    if (_graph.LinksAt(node).Count != 1) continue;
+                    foreach (int direction in new[] { (j + 5) % 6, j % 6 })
+                        if (snapshot.TryTile(HexOf(tile).Neighbor(direction), out int water) && IsWater(water))
+                            ends.Add((node, tile, j, water, direction));
+                }
+            foreach (var (node, tile, corner, water, direction) in ends)
+            {
+                if (!opened.Add((node, water))) continue;
+                var (cx, cz) = Centre(tile);
+                var (dx, dz) = Offset(direction);
+                var (x, z) = CornerPosition(tile, corner);
+                var (ex, ez) = Toward(x, z, cx + dx, cz + dz, 0.6);
+                _graph.AddLink(new(node, _graph.AddNode(open: true), x, z, ex, ez, RiverLinkKind.Mouth,
+                    ReliefScale(snapshot.Relief[tile]), Hash(node, water)));
             }
         }
 

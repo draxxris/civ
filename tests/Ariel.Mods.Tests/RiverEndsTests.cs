@@ -32,14 +32,18 @@ public sealed class RiverEndsTests
         var rivers = field.Rivers;
 
         Assert.Equal(2, rivers.Ponds.Count);
-        var tips = rivers.Curves.SelectMany(c => new[] { (c.StartPond, c.X[0], c.Z[0]), (c.EndPond, c.X[^1], c.Z[^1]) })
-            .Where(t => t.Item1 > 0).ToArray();
-        Assert.Equal(2, tips.Length);
-        foreach (var pond in rivers.Ponds)
+        var ends = rivers.Curves.SelectMany(c => new[] { (c.StartPond, c.X[0], c.Z[0], c.Width[0]), (c.EndPond, c.X[^1], c.Z[^1], c.Width[^1]) })
+            .Where(t => t.Item1 != null).ToArray();
+        Assert.Equal(2, ends.Length);
+        foreach (var (pond, x, z, width) in ends)
         {
-            // The pond sits on the river's own tip, wider than the river, and its bowl is carved to the full depth.
-            Assert.Contains(tips, t => Math.Abs(t.Item2 - pond.X) < 1e-9 && Math.Abs(t.Item3 - pond.Z) < 1e-9);
+            // The pond sits on the river's own tip, wider than the river, which widens into it; its bowl is carved to the
+            // full depth.
+            Assert.Contains(pond!, rivers.Ponds);
+            Assert.Equal(x, pond!.X, 9);
+            Assert.Equal(z, pond.Z, 9);
             Assert.True(pond.Radius > field.Tuning.RiverWidth, $"pond radius {pond.Radius:F3} is no wider than the river");
+            Assert.Equal(pond.Radius, width, 9);
             Assert.Equal(field.Tuning.RiverDepth, rivers.Carve(pond.X, pond.Z), 6);
             Assert.True(rivers.Near(pond.X + pond.Radius, pond.Z));
         }
@@ -85,7 +89,7 @@ public sealed class RiverEndsTests
         Assert.Single(rivers.Ponds);
         var curve = Assert.Single(rivers.Curves);
         Assert.True(curve.StartsDry && curve.EndsDry);
-        Assert.True((curve.StartPond > 0) != (curve.EndPond > 0), "the river should end in a pond at exactly one tip");
+        Assert.True((curve.StartPond != null) != (curve.EndPond != null), "the river should end in a pond at exactly one tip");
     }
 
     [Fact]
@@ -113,27 +117,64 @@ public sealed class RiverEndsTests
     }
 
     [Fact]
-    public void A_pond_is_still_water_ringed_by_its_bed()
+    public void A_river_widens_into_its_pond_as_one_body_of_level_still_water()
     {
         var field = new TerrainField(Chain(), 3);
         var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
-        var pond = field.Rivers.Ponds[0];
-        var chunk = chunks.Chunks.Single(c => c.Contains(pond.X, pond.Z));
-        var mesh = RiverMesher.Build(chunk, field)!;
-        int inside = 0;
+        var curve = field.Rivers.Curves.First(c => c.EndPond != null || c.StartPond != null);
+        var pond = (curve.EndPond ?? curve.StartPond)!;
+        // The river widens steadily into the pond: no narrowing neck before it.
+        var widths = (curve.EndPond != null ? curve.Width : curve.Width.Reverse()).ToArray();
+        var reach = Enumerable.Range(0, curve.Count).Where(i => Math.Abs(curve.Arc[i] - (curve.EndPond != null ? curve.Arc[^1] : 0))
+            < RiverNetwork.PondFlare * pond.Radius).Select(i => curve.EndPond != null ? i : curve.Count - 1 - i).Order().ToArray();
+        for (int k = 1; k < reach.Length; k++)
+            Assert.True(widths[reach[k]] >= widths[reach[k - 1]] - 1e-3, "the river narrows on its way into the pond");
+
+        var mesh = RiverMesher.Build(chunks.Chunks.Single(c => c.Contains(pond.X, pond.Z)), field)!;
+        double? level = null;
+        int water = 0, far = 0;
         for (int v = 0; v < mesh.VertexCount; v++)
         {
-            double dx = mesh.Positions[v * 3] - pond.X, dz = mesh.Positions[v * 3 + 2] - pond.Z;
-            if (dx * dx + dz * dz > 1e-8) continue;
-            // At the pond's centre (its ring's hub and the river's tip) the water lies still and level, and the river's
-            // own strip has faded out: the pond draws the water there.
+            double x = mesh.Positions[v * 3], y = mesh.Positions[v * 3 + 1], z = mesh.Positions[v * 3 + 2];
+            double r = Math.Sqrt((x - pond.X) * (x - pond.X) + (z - pond.Z) * (z - pond.Z));
+            if (r > 0.5 * pond.Radius || Math.Abs(mesh.Lanes[v * 2]) > 1) continue;
+            // In the middle of the pond the water lies level and still, fully shown: the river does not fade out.
+            level ??= y;
+            Assert.Equal(level.Value, y, 4);
             Assert.Equal(0f, mesh.Flow[v * 2], 6);
             Assert.Equal(0f, mesh.Flow[v * 2 + 1], 6);
-            Assert.True(mesh.Normals[v * 3 + 1] > 0.99f);
-            if (mesh.Lanes[v * 2 + 1] > 0.01f || mesh.Info[v * 2] == 1f) inside++;
-            else Assert.Equal(0f, mesh.Info[v * 2], 6);
+            Assert.Equal(1f, mesh.Info[v * 2], 6);
+            water++;
         }
-        Assert.True(inside > 0);
-        Assert.Contains(Enumerable.Range(0, mesh.VertexCount), v => Math.Abs(mesh.Lanes[v * 2] - RiverMesher.BankExtent) < 1e-6f);
+        // The cap closes the strip round the far shore: its outer lanes lie beyond the end of the river.
+        double ox = curve.EndPond != null ? curve.TX[^1] : -curve.TX[0], oz = curve.EndPond != null ? curve.TZ[^1] : -curve.TZ[0];
+        for (int v = 0; v < mesh.VertexCount; v++)
+            if (Math.Abs(mesh.Lanes[v * 2] - RiverMesher.BankExtent) < 1e-6
+                && (mesh.Positions[v * 3] - pond.X) * ox + (mesh.Positions[v * 3 + 2] - pond.Z) * oz > pond.Radius)
+                far++;
+        Assert.True(water > 0, "no water in the middle of the pond");
+        Assert.True(far > 0, "the strip does not close round the pond's far shore");
+    }
+
+    [Fact]
+    public void The_water_carries_its_depth_over_the_bed_and_the_banks_are_dry()
+    {
+        var field = new TerrainField(Chain(), 3);
+        var chunks = new TerrainChunks(field.Snapshot.Grid.Spec);
+        int deep = 0;
+        foreach (var chunk in chunks.Chunks)
+        {
+            var mesh = RiverMesher.Build(chunk, field);
+            if (mesh == null) continue;
+            for (int v = 0; v < mesh.VertexCount; v++)
+            {
+                float across = Math.Abs(mesh.Lanes[v * 2]), depth = mesh.Depth[v];
+                // The shader reads depth through an 8-bit channel scaled by DepthRange, so it stays inside it.
+                Assert.InRange(depth, 0f, RiverMeshData.DepthRange);
+                if (across > 1.0001f) Assert.Equal(0f, depth);
+                if (across < 0.01f && depth > 0.01f) deep++;
+            }
+        }
+        Assert.True(deep > 0, "no water stands over its bed in mid-channel");
     }
 }

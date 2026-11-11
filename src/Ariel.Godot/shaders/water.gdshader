@@ -1,14 +1,15 @@
 // Translucent water surface at y = 0. Depth comes from the terrain height baked per vertex (UV2.x = -HeightAt), so no
 // depth-texture reads are needed. Fog, clouds and per-layer tints (slimy water) use the same tile blend as the terrain.
+// The surface is the one all water shares (water_surface.gdshaderinc): its waves drift with the wind, with broad swells
+// added offshore.
 shader_type spatial;
 render_mode blend_mix, cull_back, depth_draw_opaque, diffuse_lambert, specular_schlick_ggx;
 
 #include "res://shaders/terrain_common.gdshaderinc"
 #include "res://shaders/surf.gdshaderinc"
+#include "res://shaders/water_surface.gdshaderinc"
 
-// Coast and ocean stay close in colour; the ocean reads as deeper, not as a different sea.
-uniform vec3 shallow_colour : source_color = vec3(0.07, 0.40, 0.50);
-uniform vec3 deep_colour : source_color = vec3(0.07, 0.27, 0.52);
+// Coast and ocean stay close in colour (WATER_SHALLOW, WATER_DEEP); the ocean reads as deeper, not as a different sea.
 uniform float deep_depth = 0.42;
 // Coast to ocean shading: a broad blend of the tiles' ocean flags (lower sharpness = wider band), with part of the depth
 // shading kept so coast water still darkens away from the shore.
@@ -33,21 +34,18 @@ void vertex() {
 	cliff = UV2.y;
 }
 
-// Wave height (world units for the normal) blending fine coastal ripples into broad ocean swells by the deep share.
-// Seeded integer-hash noise: the sin hash of periodic_noise breaks at large z lattice values, and its seams showed as
-// horizontal bands in the specular glare.
-uniform float ripple_slope = 0.06;
+// The wind the waves drift with (world units a second, see water_waves), and how much calmer they lie out at sea, where
+// the broad swells take over.
+const vec2 WIND = vec2(0.3, 0.12);
+uniform float open_sea_calm = 0.5;
+// Swell height (world units for the normal) on the open ocean, by the deep share. Seeded integer-hash noise: the sin
+// hash of periodic_noise breaks at large z lattice values, and its seams showed as horizontal bands in the specular glare.
 uniform float swell_slope = 0.16;
-float ripple(vec2 p, float time, float deep) {
-	float fine = seeded_noise(p + vec2(time * 0.06, time * 0.025), 1.6, 11u) * 0.6
-		+ seeded_noise(p + vec2(-time * 0.04, time * 0.07), 3.1, 12u) * 0.4;
-	float h = fine * ripple_slope * mix(1.0, 0.35, deep);
-	if (deep > 0.0) {
-		float swell = seeded_noise(p + vec2(time * 0.035, time * 0.012), 0.55, 13u) * 0.6
-			+ seeded_noise(p + vec2(-time * 0.02, time * 0.04), 1.1, 14u) * 0.4;
-		h += swell * swell_slope * deep;
-	}
-	return h;
+float swell(vec2 p, float time, float deep) {
+	if (deep <= 0.0) return 0.0;
+	float h = seeded_noise(p + vec2(time * 0.035, time * 0.012), 0.55, 13u) * 0.6
+		+ seeded_noise(p + vec2(-time * 0.02, time * 0.04), 1.1, 14u) * 0.4;
+	return h * swell_slope * deep;
 }
 
 // Sea ice: Voronoi floes over a period-wrapped cell lattice, at two sizes. Returns (1 if the cell holds a floe, else 0;
@@ -127,8 +125,8 @@ void fragment() {
 	float deep = max(ocean_share(p, ocean_sharpness) * smoothstep(0.0, 0.1, water_depth), shelf * coast_shelf);
 	vec4 dp = vec4(dFdx(p), dFdy(p));
 	vec3 bed = mix(material_sample(seabed_layer, p, dp, linear).rgb, material_sample(deep_seabed_layer, p, dp, linear).rgb, deep);
-	vec3 colour = mix(shallow_colour, deep_colour, deep);
-	colour = mix(colour, bed, mix(0.08, 0.05, deep));
+	vec3 colour = mix(decode_colour(WATER_SHALLOW, linear), decode_colour(WATER_DEEP, linear), deep);
+	colour = mix(colour, bed, mix(WATER_BED_SHOW, 0.05, deep));
 	colour = mix(colour, water_tint.rgb, water_tint.a);
 
 	// A storm darkens the sea under its clouds and churns it into steep, fast swells.
@@ -136,19 +134,22 @@ void fragment() {
 	float e = 0.04;
 	float storm_time = TIME * (1.0 + 1.5 * squall);
 	float rough = 1.0 + 2.6 * squall;
-	float h0 = ripple(p, storm_time, deep) * rough;
-	float hx = ripple(p + vec2(e, 0.0), storm_time, deep) * rough;
-	float hz = ripple(p + vec2(0.0, e), storm_time, deep) * rough;
-	vec3 n = normalize(vec3(-(hx - h0) / e, 1.0, -(hz - h0) / e));
+	vec3 waves = water_waves(p, WIND, storm_time);
+	float h0 = swell(p, storm_time, deep);
+	float hx = swell(p + vec2(e, 0.0), storm_time, deep);
+	float hz = swell(p + vec2(0.0, e), storm_time, deep);
+	vec2 slope = (waves.xy * mix(1.0, open_sea_calm, deep) + vec2(hx - h0, hz - h0) / e) * rough;
+	vec3 n = normalize(vec3(-slope.x, 1.0, -slope.y));
 	NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
+	colour = water_sky(colour, NORMAL, VIEW, linear);
 
 	float wobble = seeded_noise(p + vec2(TIME * 0.05, 0.0), 2.4, 15u);
-	// Foam lies on the shore, where the waves are the fine ripples; h0 / ripple_slope is their noise in [0, 1].
+	// Foam lies on the shore, gathered where the waves' foam pattern is bright.
 	float foam = (1.0 - smoothstep(foam_depth * 0.3, foam_depth * (0.6 + wobble), water_depth))
-		* (0.45 + 0.4 * clamp(h0 / ripple_slope, 0.0, 1.0));
+		* (0.45 + 0.4 * clamp(waves.z, 0.0, 1.0));
 	foam = max(foam, cliff_surf(p, cliff, TIME, cliff_churn, cliff_streaks));
 	foam = max(foam, whitecaps(p, TIME) * squall * 0.6);
-	colour = mix(colour, vec3(0.92, 0.96, 1.0), foam);
+	colour = mix(colour, decode_colour(WATER_FOAM, linear), foam);
 	// Ice: slush whitens the water, then floes pack tight along the shore and break up further out.
 	float floe = 0.0;
 	if (ice > 0.001) {
@@ -217,7 +218,7 @@ void fragment() {
 		NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
 	}
 	// Opacity follows the real depth, so shallow coast water does not turn pale over its bright seabed.
-	float alpha = mix(0.84, 0.94, max(shelf, deep));
+	float alpha = mix(WATER_SHALLOW_ALPHA, 0.94, max(shelf, deep));
 	alpha = mix(alpha, 0.95, foam);
 	alpha = mix(alpha, 1.0, max(floe, squall * 0.5));
 
@@ -233,9 +234,8 @@ void fragment() {
 	ALBEDO = colour * (1.0 - sky.a);
 	EMISSION = sky.rgb * sky.a;
 	ALPHA = mix(alpha, 1.0, sky.a);
-	// A tile spans a city's worth of sea, so the sun's reflection must not read as a nearby lamp: a weak, broad sheen
-	// instead of a bright glint.
-	// Ice is matte; under storm clouds the sea has no sun to reflect.
-	ROUGHNESS = mix(mix(0.35, 0.8, floe), 1.0, max(sky.a, fogged * 0.5));
-	SPECULAR = 0.12 * (1.0 - sky.a) * fog * (1.0 - 0.7 * squall) * (1.0 - 0.6 * floe);
+	// Water shines like all water (WATER_ROUGHNESS, WATER_SPECULAR). Ice is matte; under storm clouds the sea has no sun
+	// to reflect.
+	ROUGHNESS = mix(mix(WATER_ROUGHNESS, 0.8, floe), 1.0, max(sky.a, fogged * 0.5));
+	SPECULAR = WATER_SPECULAR * (1.0 - sky.a) * fog * (1.0 - 0.7 * squall) * (1.0 - 0.6 * floe);
 }

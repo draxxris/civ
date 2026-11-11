@@ -301,6 +301,50 @@ float periodic_fbm(vec2 p, float frequency) {
 	return periodic_noise(p, frequency) * 0.57 + periodic_noise(p, frequency * 2.0) * 0.29 + periodic_noise(p, frequency * 4.0) * 0.14;
 }
 
+// Cellular noise that repeats every period in x: distance to the nearest and second-nearest jittered cell point (in
+// cells) and a random value for the nearest cell; offset points from p to the nearest point (in cells).
+vec3 periodic_cells(vec2 p, float frequency, uint seed, out vec2 offset) {
+	int cells = max(1, int(round(period * frequency)));
+	vec2 u = p * (float(cells) / period);
+	vec2 f = floor(u);
+	float first = 8.0, second = 8.0, value = 0.0;
+	offset = vec2(0.0);
+	for (int j = -1; j <= 1; j++)
+		for (int i = -1; i <= 1; i++) {
+			vec2 c = f + vec2(float(i), float(j));
+			int x = int(mod(c.x, float(cells)));
+			if (x >= cells) x -= cells;
+			ivec2 cell = ivec2(x, int(c.y));
+			vec2 point = c + vec2(lattice_hash(cell, seed), lattice_hash(cell, seed + 7u)) * 0.8 + 0.1;
+			float d = length(u - point);
+			if (d < first) {
+				second = first;
+				first = d;
+				value = lattice_hash(cell, seed + 13u);
+				offset = point - u;
+			} else if (d < second) second = d;
+		}
+	return vec3(first, second, value);
+}
+
+// A rounded stone of the given radius (in cells) around a cell point: coverage, and a gentle dome shade, a little lit on
+// the side toward the sun (north-west, like the terrain's light) and a little dark on the far side.
+vec2 stone(vec3 cell, vec2 offset, float radius) {
+	float cover = 1.0 - smoothstep(radius * 0.78, radius, cell.x);
+	// offset points from p to the stone's centre, so it points away from the sun on the lit side.
+	float facing = dot(offset / max(radius, 1e-4), vec2(0.6, 0.6));
+	return vec2(cover, 1.0 + 0.26 * facing - 0.17 * smoothstep(radius * 0.5, radius, cell.x));
+}
+
+// A ragged transition between two grounds, as the share of the nearer one: claim is how far inside its reach the point
+// lies (positive inside), width the transition from 10% to 90%, and footprint the same units per pixel, so far away the
+// transition widens to a couple of pixels and its frayed edge does not shimmer. smoothstep rises from 10% to 90% over
+// 0.61 of its span.
+float ragged_band(float claim, float width, float footprint) {
+	float span = max(width, 2.0 * footprint) / 0.61;
+	return smoothstep(-0.5 * span, 0.5 * span, claim);
+}
+
 // The texture scale has an integer number of repeats across the period, so a period shift in world x is an integer
 // shift in texture space.
 vec2 terrain_uv(vec2 p, float frequency) {
@@ -383,6 +427,13 @@ vec4 material_sample(int layer, vec2 p, vec4 dp, bool linear) {
 		}
 	}
 	return vec4(decode_colour(sample_colour.rgb, linear), sample_colour.a);
+}
+
+// A layer's texture height at p relative to its own mean there (its coarsest mips, sampled with a footprint many times
+// the pixel's), around 0.5: frays an edge into the ground's own tufts equally for every ground, so a texture that is high
+// all over does not push its ground further in.
+float ground_relief(int layer, vec2 p, vec4 dp, bool linear) {
+	return material_sample(layer, p, dp, linear).a - material_sample(layer, p, dp * 256.0, linear).a + 0.5;
 }
 
 // Broad, gentle colour drift over the land so wide areas of one ground are not even: brightness, and a shift

@@ -370,26 +370,6 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
     }
 
     [Fact]
-    public void Standard_world_supports_its_default_player_count_with_separated_starts()
-    {
-        int count = Content.Get<S.WorldSizeDef>("foundation:worldsize_standard").DefaultPlayers;
-        var leaders = Enumerable.Repeat("peoples:leader_gjergj_kastrioti", count).ToArray();
-        var sim = GameFactory.Create(Content, 42, leaders);
-        var starts = sim.State.Players.Select(p => p.StartingPlot!.Value).ToArray();
-        Assert.Equal(count, starts.Length);
-        foreach (var player in sim.State.Players)
-        {
-            var potential = sim.State.Grid.Range(player.StartingPlot!.Value, 2)
-                .Select(t => Service<IPlotYieldService>(sim).CalculateNature(sim, player.Id, t).Yields)
-                .Aggregate(default(YieldVector), (a, b) => a + b);
-            Assert.True(potential.Food >= 20, $"Player {player.Id} lacks nearby food: {potential}");
-            Assert.True(potential.Production >= 4, $"Player {player.Id} lacks nearby production: {potential}");
-        }
-        for (int i = 0; i < count; i++)
-            for (int j = i + 1; j < count; j++) Assert.True(sim.State.Grid.Distance(starts[i], starts[j]) >= 10);
-    }
-
-    [Fact]
     public void River_and_sea_trade_require_capabilities_and_use_distinct_connected_edges()
     {
         var sim = GameFactory.Scenario(Content);

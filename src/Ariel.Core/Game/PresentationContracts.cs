@@ -148,10 +148,12 @@ public interface ILedgerSourceLabel
 /// large area of one terrain does not look uniform. <paramref name="TurnDegrees"/> (terrains and surfaces, 0..180) is
 /// the largest random turn the renderer may give the ground texture to hide its repeat; ground with a direction, such
 /// as wind-blown sand ripples, keeps a small value so its pattern stays roughly parallel. <paramref name="Riverbed"/>
-/// (terrains only) is the ground the renderer shows along a river's banks where it runs through this terrain.</summary>
+/// (terrains only) is the ground the renderer shows along a river's banks where it runs through this terrain.
+/// <paramref name="Shore"/> (terrains only) is the ground it shows where this terrain meets the sea or a lake without a
+/// cliff; <see cref="Game.Shore.None"/> lets the ground run straight into the water.</summary>
 public sealed record TileAppearance(int Rgb, int TintPercent = 0, int Marks = 0, string? Scatter = null, int ScatterDensity = 0,
     int Spread = 50, FeatureLook? Look = null, string? Patch = null, int PatchPercent = 0, int TurnDegrees = 180,
-    Riverbed Riverbed = Riverbed.Gravel);
+    Riverbed Riverbed = Riverbed.Gravel, Shore Shore = Shore.None);
 
 /// <summary>The ground exposed along a river's banks. The client draws each procedurally.</summary>
 public enum Riverbed
@@ -160,6 +162,26 @@ public enum Riverbed
     Gravel,
     /// <summary>Dark, wet silt and cracked mud.</summary>
     Mud,
+}
+
+/// <summary>The ground exposed where land meets open water without a cliff, in a band along the waterline. The client
+/// draws each procedurally; none of them is a <see cref="Riverbed"/> look.</summary>
+public enum Shore
+{
+    /// <summary>No shore: the ground runs into the water.</summary>
+    None,
+    /// <summary>Pale dune sand with tufts of beach grass and a dark line of washed-up weed.</summary>
+    Dunes,
+    /// <summary>Pale, pinkish sand strewn with crushed shell.</summary>
+    Shells,
+    /// <summary>White sand in ripple marks, crusted with salt above the water.</summary>
+    Salt,
+    /// <summary>Packed flat grey pebbles, frosted where dry.</summary>
+    Shingle,
+    /// <summary>Glossy grey tidal mud cut by winding creeks, with weed and red marsh plants at its top.</summary>
+    Mudflat,
+    /// <summary>Slabs of shore ice split by blue cracks, under drifted snow.</summary>
+    Ice,
 }
 
 /// <summary>How a feature paints the ground (or water) under it. The client draws each pattern procedurally.</summary>

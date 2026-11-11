@@ -16,8 +16,11 @@ internal sealed partial class TerrainRenderer : Node3D
     private readonly TerrainChunks _chunks;
     private readonly TileDataTexture _data;
     private readonly TerrainTextures _textures;
-    private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial;
-    private readonly MeshInstance3D[][] _ground, _water, _rivers, _falls;
+    private readonly ShaderMaterial _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial,
+        _bubbleMaterial, _springMistMaterial;
+    private readonly MeshInstance3D[][] _ground, _water, _rivers, _falls, _springs;
+    /// <summary>A spring's mist next to a waterfall's: seconds per billow, slower, and its opacity, fainter.</summary>
+    private const float SpringMistCycle = 6.5f, SpringMistStrength = 0.3f;
     private readonly HazeRenderer _haze;
     private readonly float[] _copies;
     private readonly byte[] _marks;
@@ -73,11 +76,21 @@ internal sealed partial class TerrainRenderer : Node3D
         _terrainMaterial = Material("res://shaders/terrain.gdshader", warp, palette);
         _waterMaterial = Material("res://shaders/water.gdshader", warp, palette);
         _riverMaterial = Material("res://shaders/river.gdshader", warp, palette);
+        var waterNormal = WaterNormal();
+        _waterMaterial.SetShaderParameter("water_normal", waterNormal);
+        _riverMaterial.SetShaderParameter("water_normal", waterNormal);
         _fallMaterial = Material("res://shaders/waterfall.gdshader", warp, palette);
         _mistMaterial = Material("res://shaders/waterfall_mist.gdshader", warp, palette);
         // Over the rivers and the sea they pour into, and the mist over the falling water.
         _fallMaterial.RenderPriority = 1;
         _mistMaterial.RenderPriority = 2;
+        // A spring's bubbles lie on its water, and its mist is the falls' mist made thin and slow.
+        _bubbleMaterial = Material("res://shaders/spring_bubbles.gdshader", warp, palette);
+        _springMistMaterial = Material("res://shaders/waterfall_mist.gdshader", warp, palette);
+        _springMistMaterial.SetShaderParameter("cycle", SpringMistCycle);
+        _springMistMaterial.SetShaderParameter("strength", SpringMistStrength);
+        _bubbleMaterial.RenderPriority = 1;
+        _springMistMaterial.RenderPriority = 2;
         RoadMaterial = Material("res://shaders/road.gdshader", warp, palette);
         // After the rivers, so a road crossing one stays on top.
         RoadMaterial.RenderPriority = 1;
@@ -86,6 +99,7 @@ internal sealed partial class TerrainRenderer : Node3D
         _water = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _rivers = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _falls = _chunks.Chunks.Select(_ => Instances()).ToArray();
+        _springs = _chunks.Chunks.Select(_ => Instances()).ToArray();
         _haze = new HazeRenderer(_chunks.Chunks, _copies, Snapshot.Period);
         AddChild(_haze);
     }
@@ -120,7 +134,8 @@ internal sealed partial class TerrainRenderer : Node3D
     /// <summary>Shared surface controls: uniforms only, with no terrain or sight rebuild.</summary>
     public void SetMapOverlays(MapOverlays overlays)
     {
-        foreach (var material in new[] { _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial })
+        foreach (var material in new[] { _terrainMaterial, _waterMaterial, _riverMaterial, _fallMaterial, _mistMaterial,
+                     _bubbleMaterial, _springMistMaterial })
         {
             material.SetShaderParameter("show_grid", overlays.Grid);
             material.SetShaderParameter("show_borders", overlays.CulturalBorders);
@@ -168,10 +183,11 @@ internal sealed partial class TerrainRenderer : Node3D
             var mesh = TerrainMesher.Build(chunk, field, _chunks.Resolution(chunk, resolutions));
             var river = RiverMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
             var falls = WaterfallMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
+            var springs = SpringMesher.Build(chunk, field, (x, z) => _chunks.ResolutionAt(x, z, resolutions));
             if (logTimings) meshMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
             prepared[i] = new(PrepareGround(mesh, field), PrepareWater(mesh, field), PrepareRiver(river), PrepareFalls(falls),
-                PrepareMist(falls));
+                PreparePuffs(falls?.Mist), PreparePuffs(springs?.Bubbles), PreparePuffs(springs?.Mist));
             if (logTimings) prepareMs![i] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         });
         double built = logTimings ? Stopwatch.GetElapsedTime(totalStart).TotalMilliseconds : 0;
@@ -195,6 +211,9 @@ internal sealed partial class TerrainRenderer : Node3D
             var falls = Build(data.Falls, _fallMaterial, uploads);
             if (falls != null && data.Mist != null) AddSurface(falls, data.Mist, _mistMaterial);
             foreach (var copy in _falls[dirty[i]]) copy.Mesh = falls;
+            var springs = Build(data.Bubbles, _bubbleMaterial, uploads);
+            if (springs != null && data.SpringMist != null) AddSurface(springs, data.SpringMist, _springMistMaterial);
+            foreach (var copy in _springs[dirty[i]]) copy.Mesh = springs;
             if (logTimings) assignMs += Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             start = logTimings ? Stopwatch.GetTimestamp() : 0;
             var props = _scatterPlanner.Plan(_chunks.Chunks[dirty[i]], Snapshot, Field, Palette, extras);
@@ -288,6 +307,23 @@ internal sealed partial class TerrainRenderer : Node3D
         return material;
     }
 
+    /// <summary>The river surface's normal map (see Water/README.md), mipmapped. It is read as a plain file, so the project
+    /// needs no import step for it; without it the water is flat.</summary>
+    private static Texture2D? WaterNormal()
+    {
+        const string path = "res://Water/water_normal.png";
+        using var image = Image.LoadFromFile(path);
+        if (image is null || image.IsEmpty())
+        {
+            GD.PushWarning($"Water normal map could not load: {path}");
+            return null;
+        }
+        image.Convert(Image.Format.Rgba8);
+        var error = image.GenerateMipmaps();
+        if (error != Error.Ok) GD.PushWarning($"Water normal map mipmaps failed: {error}");
+        return ImageTexture.CreateFromImage(image);
+    }
+
     /// <summary>Slimy water terrains tint the water surface green; other layers leave it alone.</summary>
     private static Rgb? WaterTintOf(string layerId) =>
         layerId.Contains("slimy", StringComparison.Ordinal) ? Rgb.Hex(0x5c9a1e) : null;
@@ -298,7 +334,7 @@ internal sealed partial class TerrainRenderer : Node3D
         Vector2[]? Uv = null, Color[]? Colors = null);
 
     private sealed record PreparedChunk(SurfaceData Ground, SurfaceData? Water, SurfaceData? River, SurfaceData? Falls,
-        SurfaceData? Mist);
+        SurfaceData? Mist, SurfaceData? Bubbles, SurfaceData? SpringMist);
 
     private sealed class UploadTimings
     {
@@ -350,8 +386,9 @@ internal sealed partial class TerrainRenderer : Node3D
 
 
     /// <summary>The chunk's river water, riverbeds and ponds: lanes in UV, downstream or downhill flow in UV2, and in COLOR
-    /// the fade, the white water and the rock contact (<see cref="RiverMeshData.Rock"/>), which churns the water white where
-    /// it runs against the rock columns of a cliff, as the sea does at the foot of one.</summary>
+    /// the fade, the white water, the rock contact (<see cref="RiverMeshData.Rock"/>), which churns the water white where it
+    /// runs against the rock columns of a cliff, as the sea does at the foot of one, and in alpha the water's depth over
+    /// <see cref="RiverMeshData.DepthRange"/> (vertex colours are clamped 8-bit values).</summary>
     private static SurfaceData? PrepareRiver(RiverMeshData? data)
     {
         if (data == null) return null;
@@ -367,7 +404,7 @@ internal sealed partial class TerrainRenderer : Node3D
             normals[v] = new Vector3(data.Normals[v * 3], data.Normals[v * 3 + 1], data.Normals[v * 3 + 2]);
             lanes[v] = new Vector2(data.Lanes[v * 2], data.Lanes[v * 2 + 1]);
             flow[v] = new Vector2(data.Flow[v * 2], data.Flow[v * 2 + 1]);
-            info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], data.Rock[v]);
+            info[v] = new Color(data.Info[v * 2], data.Info[v * 2 + 1], data.Rock[v], data.Depth[v] / RiverMeshData.DepthRange);
         }
         return new(vertices, normals, flow, FrontFaces(data.Indices, _ => true), lanes, info);
     }
@@ -395,12 +432,12 @@ internal sealed partial class TerrainRenderer : Node3D
         return new(vertices, normals, parts, data.WaterIndices, lanes, info);
     }
 
-    /// <summary>The chunk's waterfall mist: each puff's centre as its four vertices, the corner in UV, (size, rise) in UV2
-    /// and (phase, density) in COLOR; waterfall_mist.gdshader turns each puff to the camera.</summary>
-    private static SurfaceData? PrepareMist(WaterfallMeshData? data)
+    /// <summary>A chunk's puffs (a waterfall's mist, a spring's bubbles or mist): each puff's centre as its four vertices,
+    /// the corner in UV, (size, rise) in UV2 and (phase, density) in COLOR; the shader shapes and moves each puff.</summary>
+    private static SurfaceData? PreparePuffs(PuffMeshData? data)
     {
-        if (data == null || data.MistIndices.Length == 0) return null;
-        int n = data.MistVertexCount;
+        if (data == null || data.Indices.Length == 0) return null;
+        int n = data.VertexCount;
         var vertices = new Vector3[n];
         var normals = new Vector3[n];
         var corners = new Vector2[n];
@@ -408,13 +445,13 @@ internal sealed partial class TerrainRenderer : Node3D
         var info = new Color[n];
         for (int v = 0; v < n; v++)
         {
-            vertices[v] = new Vector3(data.MistPositions[v * 3], data.MistPositions[v * 3 + 1], data.MistPositions[v * 3 + 2]);
+            vertices[v] = new Vector3(data.Positions[v * 3], data.Positions[v * 3 + 1], data.Positions[v * 3 + 2]);
             normals[v] = Vector3.Up;
-            corners[v] = new Vector2(data.MistCorners[v * 2], data.MistCorners[v * 2 + 1]);
-            shape[v] = new Vector2(data.MistInfo[v * 4], data.MistInfo[v * 4 + 2]);
-            info[v] = new Color(data.MistInfo[v * 4 + 1], data.MistInfo[v * 4 + 3], 0);
+            corners[v] = new Vector2(data.Corners[v * 2], data.Corners[v * 2 + 1]);
+            shape[v] = new Vector2(data.Info[v * 4], data.Info[v * 4 + 2]);
+            info[v] = new Color(data.Info[v * 4 + 1], data.Info[v * 4 + 3], 0);
         }
-        return new(vertices, normals, shape, data.MistIndices, corners, info);
+        return new(vertices, normals, shape, data.Indices, corners, info);
     }
 
     /// <summary>The mesher winds triangles counter-clockwise seen from above; Godot's front faces are clockwise.</summary>

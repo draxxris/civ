@@ -66,6 +66,16 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void Every_land_terrain_meets_the_sea_on_its_own_shore_and_water_has_none()
+    {
+        var land = new[] { "world:desert", "world:grass", "world:marsh", "world:plains", "world:snow", "world:tundra" }
+            .Select(id => _palette.Layers[_palette.LayerOf(id)]).ToArray();
+        Assert.DoesNotContain(land, l => l.Shore == Shore.None);
+        Assert.Equal(land.Length, land.Select(l => l.Shore).Distinct().Count());
+        Assert.All(_palette.Layers.Where(l => l.Water), l => Assert.Equal(Shore.None, l.Shore));
+    }
+
+    [Fact]
     public void Lush_ground_spreads_into_plains_and_plains_into_desert()
     {
         float Spread(string id) => Assert.Single(_palette.Layers, layer => layer.Id == id).Spread;
@@ -128,7 +138,7 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
             var layer = _palette.Layers[i];
             Assert.Equal(new[] { B(layer.Fallback.R), B(layer.Fallback.G), B(layer.Fallback.B), B(layer.Spread) },
                 Texel(bytes, PaletteTable.LayerRow, i));
-            Assert.Equal(new byte[] { B(layer.Turn), layer.Riverbed == Riverbed.Mud ? (byte)255 : (byte)0, 0, 255 },
+            Assert.Equal(new byte[] { B(layer.Turn), layer.Riverbed == Riverbed.Mud ? (byte)255 : (byte)0, (byte)layer.Shore, 255 },
                 Texel(bytes, PaletteTable.TurnRow, i));
             Assert.Equal(new[] { layer.Ocean ? (byte)255 : (byte)0, B((layer.PatchLayer + 1) / 255f), B(layer.PatchShare), layer.Water ? (byte)0 : (byte)255 },
                 Texel(bytes, PaletteTable.EdgeRow, i));

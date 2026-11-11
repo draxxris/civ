@@ -140,7 +140,10 @@ public sealed class CliffRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             foreach (var c in coast)
             {
                 byte rivers = sim.State.Plots[c.Tile.Value].RiverEdges;
-                if (c.Edges.Any(d => (rivers & (1 << d)) != 0))
+                // A river reaches the sea at a corner of a sea edge, between the two edges next to it; that plot stays a
+                // beach on every sea edge, so the mouth is open water.
+                int mouthEdges = c.Edges.Aggregate(0, (mask, d) => mask | (1 << ((d + 5) % 6)) | (1 << ((d + 1) % 6)));
+                if ((rivers & mouthEdges) != 0)
                     Assert.Equal(0, CliffMask(sim, c.Tile) & c.Edges.Aggregate(0, (mask, d) => mask | (1 << d)));
                 foreach (int d in c.Edges.Where(d => Cliff(sim, c.Tile, d)))
                     Assert.Equal(0, rivers & ((1 << d) | (1 << ((d + 5) % 6)) | (1 << ((d + 1) % 6))));

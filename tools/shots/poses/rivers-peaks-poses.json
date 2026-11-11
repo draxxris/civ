@@ -1,0 +1,7 @@
+[
+ {"name": "overview", "focusTile": [9, 6], "pitch": 55, "yaw": 0, "distance": 14},
+ {"name": "gorge", "focusTile": [6, 4], "pitch": 40, "yaw": 0, "distance": 6},
+ {"name": "gorge_east", "focusTile": [10, 4], "pitch": 35, "yaw": 300, "distance": 6},
+ {"name": "spur", "focusTile": [12, 6], "pitch": 45, "yaw": 0, "distance": 6},
+ {"name": "mouth", "focusTile": [12, 9], "pitch": 45, "yaw": 0, "distance": 4.5}
+]
