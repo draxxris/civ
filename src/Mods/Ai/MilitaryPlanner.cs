@@ -75,15 +75,20 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         return (target.Threat - sourceThreat) * 1000L - path.Cost;
     }
 
-    /// <summary>Spend any promotion the unit has earned. Every unit is asked, not just soldiers: a scout earns
-    /// experience exploring, and leaving it unspent wastes the level it paid for.</summary>
+    /// <summary>Spend every promotion the unit has earned. Every unit is asked, not just soldiers: a scout earns
+    /// experience exploring, and leaving it unspent wastes the level it paid for. Each promotion raises the
+    /// experience the next one needs, so the unit is re-checked until nothing qualifies, and a rejected
+    /// command ends the loop.</summary>
     private void Promote(Unit unit)
     {
         var service = ctx.Service<IUnitService>();
-        if (unit.Experience < service.ExperienceNeeded(ctx.Sim, unit.Id)) return;
-        var best = ctx.Sim.Content.Get<PromotionDef>().All.Where(p => service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
-            .OrderByDescending(Value).ThenBy(p => p.Id, StringComparer.Ordinal).FirstOrDefault();
-        if (best is not null) ctx.Issue(new PromoteMilitaryUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Promotion = best.Id });
+        var promotions = ctx.Sim.Content.Get<PromotionDef>().All;
+        while (ctx.Alive(unit) && unit.Experience >= service.ExperienceNeeded(ctx.Sim, unit.Id))
+        {
+            var best = promotions.Where(p => service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
+                .OrderByDescending(Value).ThenBy(p => p.Id, StringComparer.Ordinal).FirstOrDefault();
+            if (best is null || !ctx.Issue(new PromoteMilitaryUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Promotion = best.Id })) return;
+        }
     }
 
     private static int Value(PromotionDef p) => p.CombatPercent * 3 + p.CityDefense + p.CityAttack / 2 + p.HillsDefense / 2 + p.ExperiencePercent / 4;
