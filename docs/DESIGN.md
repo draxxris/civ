@@ -248,7 +248,9 @@ requires the owning namespace. Overrides can replace earlier content.
   its shared interface.
 - `ContentDb.Services.Get<T>()` returns implementations in mod-load and registration
   order. Use it for seams with many implementations (`IModifierSource`,
-  `IRequirementEvaluator`, `IProductionKind`) and for a mod's own service.
+  `IRequirementEvaluator`, `IProductionKind`) and for a mod's own service. The two
+  many-implementation seams that clients and planners read, unit orders and support
+  fire, are also bound as lists on `GameRules` (below).
 - `sim.Rules()` (or `content.Rules()`) returns `GameRules`: one property per base
   service (`Units`, `Combat`, `CityYields`, `Visibility`, ...) and a nullable property
   per optional mod seam (`Diplomacy`, `Espionage`, `GreatPeople`, ...). `GameRules.Bind`
