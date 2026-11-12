@@ -22,10 +22,19 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from content_roots import module_dir  # noqa: E402
 from glb_writer import Glb  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-OUT = REPO_ROOT / "src/Ariel.Rules/World/art/models"
+
+
+def models_dir(mod: str = "World") -> Path:
+    """The art/models folder of the module that owns a model's content id (src/Ariel.Rules or src/Mods)."""
+    return module_dir(mod) / "art" / "models"
+
+
+OUT = models_dir()
 FOOT = -0.05  # foundations reach this far below the seat point (before SCALE)
 # Pieces are authored life-ish size, then enlarged so they read at the game's camera distance next to 0.85-tall units.
 SCALE = 2.0

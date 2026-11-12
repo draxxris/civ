@@ -29,7 +29,7 @@ public static class ContentEmission
         return new(kept, dropped, mapper.Issues.Distinct().OrderBy(i => i.Record, StringComparer.Ordinal).ThenBy(i => i.Field, StringComparer.Ordinal).ToArray(), mapper.MappedPaths);
     }
 
-    public static void Write(EmissionResult result, string destination, string reports)
+    public static void Write(EmissionResult result, ContentRoots destination, string reports)
     {
         // Prepare every payload and scan decoded strings before touching any mod sidecar.
         var families = SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition)).Concat(new[] { (Mod: "foundation", Definition: "ConditionDef"), (Mod: "foundation", Definition: "RuleConstantsDef") });
@@ -42,12 +42,12 @@ public static class ContentEmission
         foreach (var file in files) AssertNeutral(file.Json);
         foreach (var file in files)
         {
-            var directory = Path.Combine(destination, DisplayMod(file.Mod), "data");
+            var directory = Path.Combine(destination.Module(file.Mod), "data");
             Directory.CreateDirectory(directory);
             File.WriteAllText(Path.Combine(directory, file.File), file.Json, new UTF8Encoding(false));
         }
         // Retire the former generated identity family when upgrading an existing output directory.
-        File.Delete(Path.Combine(destination, "Foundation", "data", "religion-identity.json"));
+        File.Delete(Path.Combine(destination.Module("foundation"), "data", "religion-identity.json"));
         WriteReports(result, reports);
     }
 

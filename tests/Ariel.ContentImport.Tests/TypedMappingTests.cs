@@ -8,6 +8,15 @@ namespace Ariel.ContentImport.Tests;
 public sealed class TypedMappingTests
 {
     [Fact]
+    public void Base_modules_emit_under_the_rules_root_and_other_mods_under_the_mods_root()
+    {
+        var roots = new ContentRoots("/out/rules", "/out/mods");
+        Assert.Equal("/out/rules/Foundation", roots.Module("foundation"));
+        Assert.Equal("/out/rules/World", roots.Module("world"));
+        Assert.Equal("/out/mods/Trade", roots.Module("trade"));
+    }
+
+    [Fact]
     public void Typed_mapping_preserves_groups_explicit_zero_negative_slots_and_padded_vectors()
     {
         var mapper = Mapper(

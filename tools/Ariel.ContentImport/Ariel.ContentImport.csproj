@@ -5,6 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
+    <!-- BaseRules decides which emitted modules belong under src/Ariel.Rules rather than src/Mods. -->
+    <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
     <EmbeddedResource Include="SchemaMapping.json" />
     <EmbeddedResource Include="RuleConstantMapping.json" />
   </ItemGroup>

@@ -7,7 +7,8 @@ from PIL import Image
 
 WORKBENCH = Path(__file__).resolve().parent.parent
 REPOSITORY = WORKBENCH.parent
-MODS_ROOT = (REPOSITORY / "src/Mods").resolve()
+# Originals live in a module folder under either content root: base modules in src/Ariel.Rules, mods in src/Mods.
+CONTENT_ROOTS = ("src/Ariel.Rules", "src/Mods")
 GRID_ROWS = 8
 GRID_COLUMNS = 8
 ICON_SIZE = 64
@@ -31,11 +32,13 @@ def crop_bounds(edit_bounds):
 
 
 def resolve_original(relative_path):
-    if not isinstance(relative_path, str) or not relative_path.startswith("src/Mods/"):
+    root = next((r for r in CONTENT_ROOTS if isinstance(relative_path, str) and relative_path.startswith(r + "/")), None)
+    if root is None:
         raise ValueError(f"Invalid original path: {relative_path!r}")
+    # The resolved file must stay inside the root the path names, so ".." cannot climb out of it.
     path = (REPOSITORY / relative_path).resolve()
-    if not path.is_relative_to(MODS_ROOT) or not path.is_file():
-        raise ValueError(f"Original is missing or outside src/Mods: {relative_path}")
+    if not path.is_relative_to((REPOSITORY / root).resolve()) or not path.is_file():
+        raise ValueError(f"Original is missing or outside {root}: {relative_path}")
     return path
 
 

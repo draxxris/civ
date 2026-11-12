@@ -9,17 +9,20 @@ sidecars are the runtime content. The extraction is not needed to build the game
 Supply the extraction directory as a CLI argument:
 
 ```sh
-mise exec -- dotnet run --project tools/Ariel.ContentImport -- --source <source-directory> --reports tools/Ariel.ContentImport/reports --out-mods src/Mods
+mise exec -- dotnet run --project tools/Ariel.ContentImport -- --source <source-directory> --reports tools/Ariel.ContentImport/reports --out-rules src/Ariel.Rules --out-mods src/Mods
 dotnet test Ariel.slnx
 ```
 
 Use `--dump tools/Ariel.ContentImport/out` for the optional, git-ignored generic dump.
-The default mod destination is `src/Mods`. Use `--out-mods` to select another directory.
+Each module's sidecars go to `<root>/<Module>/data`. Base modules (the ids in
+`src/Ariel.Rules/BaseRules.cs`) use the rules root, `src/Ariel.Rules` by default; every other
+mod uses the mods root, `src/Mods` by default. Use `--out-rules` and `--out-mods` to select
+other directories.
 Use `--max-era ancient` or `--max-era foundation:era_ancient` for a closed ancient
 subset. The active extraction contains ancient, classical, medieval, renaissance,
 industrial, modern, transhuman, and future eras. It has no prehistoric era. Unknown era
 values fail import. Use `--max-era all`, or omit the filter, to emit all eras. For era
-experiments, select temporary `--out-mods` and `--reports` directories. Do not replace
+experiments, select temporary `--out-rules`, `--out-mods` and `--reports` directories. Do not replace
 the committed ancient sidecars or their count report. Reports contain no timestamps or
 absolute machine paths. The tool rejects output directories inside the source directory.
 Extraction-backed tests skip when the source is absent. `ARIEL_CONTENT_SOURCE` can

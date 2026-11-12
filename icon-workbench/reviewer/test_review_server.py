@@ -26,10 +26,8 @@ class WorkbenchTestCase(unittest.TestCase):
         self.repo = Path(temporary.name)
         self.root = self.repo / 'icon-workbench'
         self.root.mkdir()
-        self.mods = self.repo / 'src/Mods'
-        self.mods.mkdir(parents=True)
         for module, values in (
-            (prepare_review, {'WORKBENCH': self.root, 'REPOSITORY': self.repo, 'MODS_ROOT': self.mods}),
+            (prepare_review, {'WORKBENCH': self.root, 'REPOSITORY': self.repo}),
             (generate_batch, {'ROOT': self.root}),
             (review_server, {'WORKBENCH': self.root,
                              'STATE_FILE': self.root / review_server.STATE_FILE.name}),
@@ -193,15 +191,25 @@ class CropTests(WorkbenchTestCase):
         geometry = json.loads((batch / 'review-crops/geometry.json').read_text())
         self.assertEqual(geometry['source_sheet'], 'render.png')
 
+    def test_originals_resolve_under_either_content_root(self):
+        mod_icon = self.repo / 'src/Mods/Trade/art/icons/route.png'
+        mod_icon.parent.mkdir(parents=True)
+        Image.new('RGB', (64, 64)).save(mod_icon)
+        self.assertEqual(prepare_review.resolve_original('src/Mods/Trade/art/icons/route.png'), mod_icon.resolve())
+        rules_icon = self.repo / self.entries[0]['path']
+        self.assertEqual(prepare_review.resolve_original(self.entries[0]['path']), rules_icon.resolve())
+
     def test_manifest_and_symlink_escapes_fail_before_cropping(self):
         batch, manifest = self.write_batch('unsafe', self.entries[:2])
         variants = []
         duplicate = copy.deepcopy(manifest)
         duplicate['cells'][1]['catalog_id'] = duplicate['cells'][0]['catalog_id']
         variants.append(duplicate)
-        outside = copy.deepcopy(manifest)
-        outside['cells'][0]['path'] = 'src/Mods/../../../outside.png'
-        variants.append(outside)
+        for escape in ('src/Mods/../../../outside.png', 'src/Ariel.Rules/../../../outside.png',
+                       'src/Mods/../Ariel.Rules/Cities/art/icons/icon-0.png', 'src/outside.png'):
+            outside = copy.deepcopy(manifest)
+            outside['cells'][0]['path'] = escape
+            variants.append(outside)
         bounds = copy.deepcopy(manifest)
         bounds['cells'][0]['edit_bounds'] = [0, 0, 90, 90]
         variants.append(bounds)

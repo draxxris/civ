@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Convert mod icons to 64x64 RGBA PNGs and write tools/icons/report.md.
 
-Each definition with a non-empty "icon" in src/Mods/<Mod>/data/*.json gets one PNG at
-src/Mods/<Mod>/art/icons/<name>.png, where <name> is the part of the id after the colon.
+Each definition with a non-empty "icon" in <root>/<Mod>/data/*.json gets one PNG at
+<root>/<Mod>/art/icons/<name>.png, where <name> is the part of the id after the colon and <root> is
+src/Ariel.Rules for a base module or src/Mods for any other mod (see tools/content_roots.py).
 
 Resolution order for each definition:
   1. Button tuples (",direct,atlas,col,row"): the atlas cell named by the tuple, under CONVENTION below, if the
@@ -26,6 +27,7 @@ import hashlib
 import json
 import re
 import statistics
+import sys
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,10 +35,12 @@ from typing import NamedTuple
 
 from PIL import Image, ImageChops, ImageStat
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from content_roots import module_dir, module_dirs  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[2]
 MEDIA = REPO / "AND-extraction" / "media" / "assets"
 ARCHIVE_INDEX = REPO / "AND-extraction" / "media" / "archive-index.json"
-MODS = REPO / "src" / "Mods"
 REPORT = Path(__file__).resolve().parent / "report.md"
 
 ICON = 64  # output size in px, and the default atlas cell size
@@ -183,9 +187,12 @@ def parse_icon(mod: str, ident: str, raw: str) -> Icon:
 def load_definitions() -> list[tuple[str, str, str]]:
     """(mod, id, icon) for every definition, in sorted file and array order."""
     rows = []
-    for path in sorted(MODS.glob("*/data/*.json")):
+    for path in (p for module in module_dirs() for p in sorted(module.glob("data/*.json"))):
         mod = path.parent.parent.name
-        for item in json.loads(path.read_text(encoding="utf-8-sig")):
+        items = json.loads(path.read_text(encoding="utf-8-sig"))
+        if not isinstance(items, list):
+            continue  # a single-object rules file (e.g. diplomacy-rules.json) holds no definitions
+        for item in items:
             rows.append((mod, str(item["id"]), str(item.get("icon") or "")))
     return rows
 
@@ -201,7 +208,7 @@ def archived_paths() -> set[str]:
 def shared_images() -> list[list[str]]:
     """Groups of two or more icon files with identical PNG bytes, largest first."""
     groups: dict[str, list[str]] = {}
-    for path in sorted(MODS.glob("*/art/icons/*.png")):
+    for path in (p for module in module_dirs() for p in sorted(module.glob("art/icons/*.png"))):
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         groups.setdefault(digest, []).append(f"{path.parents[2].name}:{path.stem}")
     return sorted((g for g in groups.values() if len(g) > 1), key=len, reverse=True)
@@ -398,7 +405,7 @@ def output_path(mod: str, ident: str) -> Path | None:
     name = ident.split(":", 1)[-1]
     if ":" not in ident or not SAFE_NAME.fullmatch(name):
         return None
-    return MODS / mod / "art" / "icons" / f"{name}.png"
+    return module_dir(mod) / "art" / "icons" / f"{name}.png"
 
 
 def save_png(im: Image.Image, path: Path) -> int:
@@ -407,7 +414,7 @@ def save_png(im: Image.Image, path: Path) -> int:
 
 
 def _clear_icons(mod: str) -> None:
-    for old in (MODS / mod / "art" / "icons").glob("*.png"):
+    for old in (module_dir(mod) / "art" / "icons").glob("*.png"):
         old.unlink()
 
 

@@ -580,8 +580,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--supersample", type=int, default=2, help="draw at this multiple, then scale down (default: 2)")
     parser.add_argument("--full-map", action="store_true", help="keep the whole map instead of trimming the fill border")
     parser.add_argument("--no-coords", dest="coords", action="store_false", help="leave out the column,row labels")
-    parser.add_argument("--content", type=Path, default=REPO / "src/Mods",
-                        help="mod directory holding the terrain and world size data")
+    parser.add_argument("--content", type=Path, default=REPO / "src/Ariel.Rules",
+                        help="base rules directory holding the World and Foundation modules' terrain and world size "
+                             "data (default: src/Ariel.Rules)")
     args = parser.parse_args(argv)
 
     if args.hex < 3 or args.supersample < 1:

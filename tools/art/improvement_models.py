@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Build the procedural terrain improvement and resource (bonus) models into src/Mods/<mod>/art/models/<id suffix>.glb
-(World by default).
+"""Build the procedural terrain improvement and resource (bonus) models into <module>/art/models/<id suffix>.glb
+(World by default), where <module> is src/Ariel.Rules/<mod> for a base module or src/Mods/<mod> for any other mod.
 
 Run: python3 tools/art/improvement_models.py [--only NAME ...]
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 import argparse
 import importlib
 
-from improvements.kit import OUT, REPO_ROOT, write
+from improvements.kit import REPO_ROOT, models_dir, write
 
 GROUPS = ["settlements", "extraction", "farming", "industry", "forestry", "military", "landmarks", "water", "walls",
           "bonus_plants", "bonus_animals", "bonus_minerals", "bonus_sea"]
@@ -50,7 +50,7 @@ def main():
             continue
         extras = dict(extras)
         mod = extras.pop("mod", "World")
-        out = OUT if mod == "World" else REPO_ROOT / f"src/Mods/{mod}/art/models"
+        out = models_dir(mod)
         out.mkdir(parents=True, exist_ok=True)
         size, triangles = write(out / f"{name}.glb", build(), clear, **extras)
         print(f"{out.relative_to(REPO_ROOT)}/{name}.glb: {triangles} triangles, {size} bytes, clear={clear}"

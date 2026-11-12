@@ -75,17 +75,22 @@ public sealed class ExtractionSmokeTests
         Reports.Write(registry, source, first.Path, System.IO.Path.Combine(first.Path, "dump"), firstEmission.MappedPaths);
         Reports.Write(secondRegistry, source, second.Path, null, secondEmission.MappedPaths);
         const string handAuthored = "[{\"id\":\"foundation:hex_overrides\",\"waterPercent\":71}]\n";
-        foreach (var root in new[] { first.Path, second.Path })
+        var firstRoots = Roots(first.Path);
+        var secondRoots = Roots(second.Path);
+        foreach (var roots in new[] { firstRoots, secondRoots })
         {
-            var data = System.IO.Path.Combine(root, "mods", "Foundation", "data");
+            var data = System.IO.Path.Combine(roots.Module("foundation"), "data");
             Directory.CreateDirectory(data);
             File.WriteAllText(System.IO.Path.Combine(data, "hex-overrides.json"), handAuthored);
         }
-        ContentEmission.Write(firstEmission, System.IO.Path.Combine(first.Path, "mods"), first.Path);
-        ContentEmission.Write(secondEmission, System.IO.Path.Combine(second.Path, "mods"), second.Path);
-        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(first.Path, "mods", "Foundation", "data", "hex-overrides.json")));
-        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(second.Path, "mods", "Foundation", "data", "hex-overrides.json")));
-        foreach (var payload in Directory.GetFiles(System.IO.Path.Combine(first.Path, "mods"), "*.json", SearchOption.AllDirectories))
+        ContentEmission.Write(firstEmission, firstRoots, first.Path);
+        ContentEmission.Write(secondEmission, secondRoots, second.Path);
+        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(first.Path, "rules", "Foundation", "data", "hex-overrides.json")));
+        Assert.Equal(handAuthored, File.ReadAllText(System.IO.Path.Combine(second.Path, "rules", "Foundation", "data", "hex-overrides.json")));
+        var payloads = new[] { firstRoots.Rules, firstRoots.Mods }.Where(Directory.Exists)
+            .SelectMany(root => Directory.GetFiles(root, "*.json", SearchOption.AllDirectories)).ToArray();
+        Assert.NotEmpty(payloads);
+        foreach (var payload in payloads)
             Assert.Equal(File.ReadAllBytes(payload), File.ReadAllBytes(System.IO.Path.Combine(second.Path, System.IO.Path.GetRelativePath(first.Path, payload))));
         var reports = Directory.GetFiles(first.Path).Order(StringComparer.Ordinal).ToArray();
         Assert.NotEmpty(reports);
@@ -116,9 +121,9 @@ public sealed class ExtractionSmokeTests
         Assert.All(result.Definitions.SelectMany(d => ContentEmission.References(d.Definition)), r => Assert.Contains(r.Id, ids));
         Assert.DoesNotContain(result.Definitions, d => d.Definition.Era is not null && d.Definition.Era != "foundation:era_ancient");
         using var directory = new TemporaryDirectory();
-        ContentEmission.Write(result, directory.Path, directory.Path);
+        ContentEmission.Write(result, Roots(directory.Path), directory.Path);
         Assert.Equal(SchemaCatalog.Definitions.Count + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
-        Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "Foundation/data/handicap.json")).Trim());
+        Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "rules/Foundation/data/handicap.json")).Trim());
     }
 
     [SourceFact]
@@ -136,6 +141,9 @@ public sealed class ExtractionSmokeTests
         Assert.All(corporations, c => Assert.True(c.Deferred));
         Assert.All(victories, v => Assert.True(v.Deferred));
     }
+
+    private static ContentRoots Roots(string directory) =>
+        new(System.IO.Path.Combine(directory, "rules"), System.IO.Path.Combine(directory, "mods"));
 
     private static EffectiveRecord Record(ImportRegistry registry, string family, string type) =>
         registry.Records.Single(x => x.Class == family && x.Type == type);

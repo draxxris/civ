@@ -61,7 +61,8 @@ public sealed class EraProgressionTests
     private static void AssertLoadsNeutralSidecars(EmissionResult result)
     {
         using var output = new TemporaryDirectory();
-        ContentEmission.Write(result, output.Path, Path.Combine(output.Path, "reports"));
+        var roots = new ContentRoots(Path.Combine(output.Path, "rules"), Path.Combine(output.Path, "mods"));
+        ContentEmission.Write(result, roots, Path.Combine(output.Path, "reports"));
         foreach (var file in Directory.GetFiles(output.Path, "*.json", SearchOption.AllDirectories).Where(p => p.Contains("/data/", StringComparison.Ordinal)))
         {
             using var payload = JsonDocument.Parse(File.ReadAllText(file));
@@ -75,7 +76,7 @@ public sealed class EraProgressionTests
         var mods = families.GroupBy(m => m.Mod).Select(group => new ModSource
         {
             Manifest = new ModManifest { Id = group.Key, References = families.Select(m => m.Mod).Distinct().Where(m => m != group.Key).ToArray() },
-            Root = Path.Combine(output.Path, ContentEmission.DisplayMod(group.Key)),
+            Root = roots.Module(group.Key),
             Instance = new EmittedDataMod(group.ToArray())
         }).ToArray();
         // Build validates annotated keys, values, nested effects, text links and all prerequisite leaf kinds.
