@@ -36,10 +36,10 @@ internal sealed class EspionageService : IEspionageService
 
     public IReadOnlyList<int> KnownRivals(Simulation sim, int player)
     {
-        var diplomacy = sim.Rules().Diplomacy;
+        var relations = sim.Rules().Relations;
         int own = sim.TeamOf(player).Id;
         var living = LivingTeams(sim);
-        return sim.State.Teams.Where(t => t.Id != own && living.Contains(t.Id) && (diplomacy is null || diplomacy.HasMet(sim, own, t.Id)))
+        return sim.State.Teams.Where(t => t.Id != own && living.Contains(t.Id) && relations.HasMet(sim, own, t.Id))
             .Select(t => t.Id).Order().ToArray();
     }
 

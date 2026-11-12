@@ -19,9 +19,9 @@ internal sealed partial class DiplomacyService
     {
         var sink = new ModifierSink();
         var leader = Leader(sim, fromPlayer);
-        if (leader is null) return new(0, AttitudeTier.Cautious, sink.Ledger);
+        if (leader is null) return new(0, Disposition.Cautious, sink.Ledger);
         int a = sim.TeamOf(fromPlayer).Id, b = sim.TeamOf(towardPlayer).Id;
-        var relation = Relation(sim, a, b);
+        var relation = Relations(sim).Relation(sim, a, b);
         var history = Read(sim).GetHistory(fromPlayer, towardPlayer) ?? new();
         void Add(string reason, long amount) => sink.Add("diplomacy:" + reason, "diplomacy:attitude", amount);
         Add("base", leader.BaseAttitude);
@@ -35,21 +35,21 @@ internal sealed partial class DiplomacyService
             .Select(d => sim.State.Turn - d.StartedTurn).DefaultIfEmpty().Max();
         Add("active_deals", Growth(tradeTurns, leader.BonusTradeAttitudeDivisor, leader.BonusTradeAttitudeChangeLimit));
         AddCivics(sim, fromPlayer, towardPlayer, Add);
-        foreach (var memory in history.Memories)
-            Add(memory.Key, (long)memory.Value * leader.MemoryAttitudePercents.GetValueOrDefault(MemoryKind(memory.Key)) / 100);
+        foreach (var memory in Relations(sim).Memories(sim, fromPlayer, towardPlayer))
+            Add("memory:" + memory.Key, (long)memory.Value * MemoryPercent(sim, leader, memory.Key) / 100);
         int score = checked((int)sink.Ledger.Total("diplomacy:attitude"));
         return new(score, Tier(score), sink.Ledger);
     }
-    public void RecordMemory(Simulation sim, int fromPlayer, int towardPlayer, string memory)
+    /// <summary>Attitude per remembered count: the leader's own weight for the kind, else the kind's default.</summary>
+    private static int MemoryPercent(Simulation sim, S.LeaderDef leader, string kind)
     {
-        var state = Edit(sim);
-        var history = state.GetOrCreateHistory(fromPlayer, towardPlayer);
-        history.RecordMemory(memory);
+        var def = sim.Content.Get<S.MemoryKindDef>(kind);
+        return leader.MemoryAttitudePercents.TryGetValue(def.LeaderKey, out int percent) ? percent : def.AttitudePercent;
     }
-    private static AttitudeTier Tier(int score) => score switch
+    private static Disposition Tier(int score) => score switch
     {
-        <= -10 => AttitudeTier.Furious, <= -3 => AttitudeTier.Annoyed,
-        >= 10 => AttitudeTier.Friendly, >= 3 => AttitudeTier.Pleased, _ => AttitudeTier.Cautious,
+        <= -10 => Disposition.Furious, <= -3 => Disposition.Annoyed,
+        >= 10 => Disposition.Friendly, >= 3 => Disposition.Pleased, _ => Disposition.Cautious,
     };
     private static void AddPersonality(S.LeaderDef leader, S.LeaderDef? other, Action<string, long> add)
     {
@@ -65,8 +65,9 @@ internal sealed partial class DiplomacyService
         else add("years_of_peace", Growth(sim.State.Turn - relation.PeaceStarted, leader.AtPeaceAttitudeDivisor, leader.AtPeaceAttitudeChangeLimit));
         int offensiveWars = relation.OffensiveWarsBy(b);
         add("war_history", -3L * offensiveWars);
-        if (HasOpenBorders(sim, a, b)) add("open_borders", Growth(sim.State.Turn - relation.OpenBordersStarted!.Value, leader.OpenBordersAttitudeDivisor, leader.OpenBordersAttitudeChangeLimit));
-        if (HasDefensivePact(sim, a, b)) add("defensive_pact", Growth(sim.State.Turn - relation.DefensivePactStarted!.Value, leader.DefensivePactAttitudeDivisor, leader.DefensivePactAttitudeChangeLimit));
+        var agreement = Agreement(sim, a, b);
+        if (HasOpenBorders(sim, a, b)) add("open_borders", Growth(sim.State.Turn - agreement!.OpenBordersStarted!.Value, leader.OpenBordersAttitudeDivisor, leader.OpenBordersAttitudeChangeLimit));
+        if (HasDefensivePact(sim, a, b)) add("defensive_pact", Growth(sim.State.Turn - agreement!.DefensivePactStarted!.Value, leader.DefensivePactAttitudeDivisor, leader.DefensivePactAttitudeChangeLimit));
     }
     private static void AddReligion(Simulation sim, int from, int toward, S.LeaderDef leader, AttitudeHistory history, Action<string, long> add)
     {
@@ -101,32 +102,6 @@ internal sealed partial class DiplomacyService
                 var leader = Leader(sim, from.Id);
                 history.FavoriteCivicTurns = leader is not null && FavoriteCivic(sim, from.Id, toward.Id, leader) ? history.FavoriteCivicTurns + 1 : 0;
             }
-        FadeMemories(sim, state);
         state.LastHistoryTurn = sim.State.Turn;
-    }
-    /// <summary>Leader tables key memories without the <c>memory_</c> prefix that recorded memory ids carry.</summary>
-    private static string MemoryKind(string memory) => memory.StartsWith("memory_", StringComparison.Ordinal) ? memory[7..] : memory;
-    /// <summary>Each remembered kind loses one count with a chance of one in its decay, rolled in player and memory
-    /// order; a kind at zero is forgotten. Histories with no memories draw nothing.</summary>
-    private static void FadeMemories(Simulation sim, DiplomacyState state)
-    {
-        var rules = sim.Content.Get<DiplomacyRulesDef>().All.Single();
-        foreach (var from in sim.State.Players.OrderBy(p => p.Id))
-        {
-            var leader = Leader(sim, from.Id);
-            foreach (var toward in sim.State.Players.OrderBy(p => p.Id))
-            {
-                if (state.GetHistory(from.Id, toward.Id) is not { Memories.Count: > 0 } history) continue;
-                foreach (string memory in history.Memories.Keys.ToArray())
-                {
-                    string kind = MemoryKind(memory);
-                    int decay = leader?.MemoryDecays.GetValueOrDefault(kind) is int own and > 0 ? own
-                        : rules.MemoryDecays.GetValueOrDefault(kind, rules.DefaultMemoryDecay);
-                    if (sim.Rng.Next(GamePace.Scale(sim, decay)) != 0) continue;
-                    if (history.Memories[memory] <= 1) history.Memories.Remove(memory);
-                    else history.Memories[memory]--;
-                }
-            }
-        }
     }
 }

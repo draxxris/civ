@@ -281,7 +281,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         sim.State.AddCity(foreign); sim.State.PlotAt(foreign.Position).Owner = 1;
         var merchant = Unit(sim, "military:merchant"); Service<IUnitService>(sim).Initialize(sim, merchant.Id);
         var soldier = Unit(sim, "military:warrior"); Service<IUnitService>(sim).Initialize(sim, soldier.Id);
-        Assert.Empty(sim.Content.Services.Get<IDiplomacyService>()); // No agreement service: ordinary units still need border permission.
+        Assert.Null(sim.Rules().TeamAgreements); // No agreement service: ordinary units still need border permission.
         var move = new MoveUnitPathCommand { Player = 0, Unit = merchant.Id, Path = [foreign.Position] };
         Assert.False(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = soldier.Id, Path = [foreign.Position] }, out _));
         Apply(sim, move);

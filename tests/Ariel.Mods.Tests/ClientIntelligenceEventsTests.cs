@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Corporations;
 using Ariel.Mods.Events;
@@ -109,7 +110,7 @@ public sealed class ClientIntelligenceEventsTests
         AddCity(session.Sim, 0, 14); AddCity(session.Sim, 1, 57);
         Assert.True(session.DescribeEspionage().Available);
         Assert.Empty(session.DescribeEspionage().Rivals);
-        session.Sim.Content.Services.Get<IDiplomacyService>().Single().EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         var rival = Assert.Single(session.DescribeEspionage().Rivals);
         Assert.Equal(1, rival.TeamId); Assert.Equal(0, rival.Points); Assert.False(rival.Demographics);
         Assert.True(session.SetEspionageWeight(1, 4));
@@ -135,8 +136,8 @@ public sealed class ClientIntelligenceEventsTests
         GameFactory.MakeBarbarian(sim, 2);
         AddUnit(sim, sim.State.Cities.Single(c => c.Owner == 1), "military:warrior", owner: 2);
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
-        diplomacy.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
-        diplomacy.EstablishContact(sim, session.MyTeam.Id, 2);
+        sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
+        sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, 2);
         Assert.Equal(1, Assert.Single(session.DescribeEspionage().Rivals).TeamId);
 
         foreach (var unit in sim.State.Units.Where(u => u.Owner == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
@@ -150,7 +151,7 @@ public sealed class ClientIntelligenceEventsTests
         var session = Session("Espionage", "Diplomacy");
         AddCity(session.Sim, 0, 14);
         var target = AddCity(session.Sim, 1, 57);
-        session.Sim.Content.Services.Get<IDiplomacyService>().Single().EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         var state = new EspionageTeamState();
         state.Points[1] = 100000;
         session.MyTeam.Extensions.Set(session.Sim.Content, state);
@@ -185,7 +186,7 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = Session("Espionage", "Diplomacy");
         AddCity(session.Sim, 0, 14); target = AddCity(session.Sim, 1, 57);
-        session.Sim.Content.Services.Get<IDiplomacyService>().Single().EstablishContact(session.Sim, 0, 1);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, 0, 1);
         points = new EspionageTeamState(); points.Spent[1] = 100000;
         session.MyTeam.Extensions.Set(session.Sim.Content, points);
         return session;

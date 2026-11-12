@@ -266,9 +266,10 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   verification, overseas profit bonuses, and shared civic bonuses. Player naval
   blockades sever water trade networks and coastal trade, while autonomous AI blockade
   planning remains absent.
-- **Diplomacy**: Bilateral team contact discovery, attitude ledgers, peace treaties,
-  open borders, defensive pacts, and multi-item trade deals (resources, gold, gold/turn,
-  techs).
+- **Relations (base)**: Bilateral team contact discovery, one war and peace path with
+  peace treaties, and a memory ledger whose kinds any mod can register.
+- **Diplomacy**: Attitude ledgers, open borders, defensive pacts, and multi-item trade
+  deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination,
   Cultural, Space Race, and Time victories with victory resolution screens.
 - **Corporations**: Great Person founding, branch spread (via gold or executives),

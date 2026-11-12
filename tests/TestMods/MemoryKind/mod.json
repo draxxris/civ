@@ -1,0 +1,6 @@
+{
+  "id": "memory_probe",
+  "name": "Memory Probe",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.MemoryKind.dll"
+}

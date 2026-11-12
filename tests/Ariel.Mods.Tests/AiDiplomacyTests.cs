@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using Xunit.Abstractions;
@@ -29,7 +30,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
         Assert.True(sim.TryApply(new ProposeDealCommand { Player = 2, Target = 0, Items = [new(0, TradeItemKind.Gold, Amount: 80)] }, out error), error);
 
         var ctx = NewAi(sim, "AiContext", sim, 0);
-        Call(NewAi(sim, "DiplomacyPlanner", ctx), "Plan");
+        Call(NewDiplomacyPlanner(sim, ctx), "Plan");
 
         var deals = diplomacy.Deals(sim).OrderBy(d => d.Id).ToArray();
         Assert.Equal(DiplomaticDealStatus.Completed, deals[0].Status);
@@ -41,7 +42,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     public void Deal_value_counts_received_items_against_given_ones()
     {
         var sim = Scenario();
-        var planner = NewAi(sim, "DiplomacyPlanner", NewAi(sim, "AiContext", sim, 0));
+        var planner = NewDiplomacyPlanner(sim, NewAi(sim, "AiContext", sim, 0));
         long Value(params DiplomaticTradeItem[] items) => (long)Call(planner, "Value", items.ToList())!;
         Assert.Equal(40, Value(new DiplomaticTradeItem(1, TradeItemKind.Gold, Amount: 40)));
         Assert.Equal(-40, Value(new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 40)));
@@ -53,12 +54,12 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     public void Friendlier_leaders_accept_thinner_deals()
     {
         var sim = Scenario();
-        var margin = AiType(sim, "DiplomacyPlanner").GetMethod("Margin")!;
-        long Margin(AttitudeTier tier) => (long)margin.Invoke(null, [tier])!;
-        Assert.True(Margin(AttitudeTier.Annoyed) > Margin(AttitudeTier.Cautious));
-        Assert.True(Margin(AttitudeTier.Cautious) > Margin(AttitudeTier.Pleased));
-        Assert.True(Margin(AttitudeTier.Pleased) > Margin(AttitudeTier.Friendly));
-        Assert.Equal(long.MaxValue, Margin(AttitudeTier.Furious));
+        var margin = DiplomacyPlannerType(sim).GetMethod("Margin")!;
+        long Margin(Disposition tier) => (long)margin.Invoke(null, [tier])!;
+        Assert.True(Margin(Disposition.Annoyed) > Margin(Disposition.Cautious));
+        Assert.True(Margin(Disposition.Cautious) > Margin(Disposition.Pleased));
+        Assert.True(Margin(Disposition.Pleased) > Margin(Disposition.Friendly));
+        Assert.Equal(long.MaxValue, Margin(Disposition.Furious));
     }
 
     [Fact]
@@ -128,7 +129,15 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
             && sim.State.PlayerById(d.Recipient).Ai is not null) <= sim.State.Players.Count);
     }
 
-    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single();
+    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Service<IDiplomacyService>()!;
+
+    /// <summary>The Diplomacy mod contributes its planner to the AI; it lives beside the service it plays.</summary>
+    private static Type DiplomacyPlannerType(Simulation sim) =>
+        Diplomacy(sim).GetType().Assembly.GetType("Ariel.Mods.Diplomacy.DiplomacyPlanner", throwOnError: true)!;
+
+    private static object NewDiplomacyPlanner(Simulation sim, object ctx) => Activator.CreateInstance(DiplomacyPlannerType(sim),
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
+        binder: null, [ctx], culture: null)!;
 
     /// <summary>Three civilizations that have met, with gold trading unlocked and a city each: player 1 at five tiles
     /// from player 0's city, player 2 at nine.</summary>
@@ -148,7 +157,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
         AddCity(sim, 2, 13, 4);
         var diplomacy = Diplomacy(sim);
         foreach (var (a, b) in new[] { (0, 1), (0, 2), (1, 2) })
-            diplomacy.EstablishContact(sim, sim.TeamOf(a).Id, sim.TeamOf(b).Id);
+            sim.Rules().Relations.EstablishContact(sim, sim.TeamOf(a).Id, sim.TeamOf(b).Id);
         return sim;
     }
 

@@ -1,0 +1,6 @@
+[
+  { "id": "relations:declared_war", "name": "Declared war on us", "decay": 60 },
+  { "id": "relations:declared_war_on_friend", "name": "Declared war on our friend", "decay": 60 },
+  { "id": "relations:razed_city", "name": "Razed our city", "decay": 100 },
+  { "id": "relations:razed_holy_city", "name": "Razed our holy city", "decay": 100 }
+]

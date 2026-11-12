@@ -7,5 +7,6 @@
     <!-- Screens for optional features read those mods' published APIs; a missing provider means no service. -->
     <ProjectReference Include="..\Mods\Corporations\Api\Ariel.Mods.Corporations.Api.csproj" />
     <ProjectReference Include="..\Mods\Events\Api\Ariel.Mods.Events.Api.csproj" />
+    <ProjectReference Include="..\Mods\Diplomacy\Api\Ariel.Mods.Diplomacy.Api.csproj" />
   </ItemGroup>
 </Project>

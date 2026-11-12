@@ -58,28 +58,25 @@ internal sealed class BuildingEffects : IModifierSource
         if (count == -1) count = sim.Content.TryGet<S.WorldSizeDef>(sim.Settings.WorldSize ?? "", out var world) ? world.NumFreeBuildingBonuses : 0;
         return Math.Max(0, count) + Math.Max(0, building.ExtraFreeBonuses.GetValueOrDefault(bonus));
     }
-    /// <summary>Connected copies after diplomatic allocations. Only resources named in the owner's live deals need a second lookup.</summary>
+    /// <summary>Connected copies after exchanges with other players. Only resources the owner exchanges need a second lookup.</summary>
     private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city) =>
         CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city, () => AvailableUncached(sim, city)));
     private static IReadOnlyDictionary<string, int> AvailableUncached(Simulation sim, City city)
     {
         var network = sim.Rules().Resources;
         var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
-        var diplomacy = sim.Rules().Diplomacy;
-        if (diplomacy is null) return physical;
-        var traded = TradedResources(sim, diplomacy, city.Owner);
+        var exchanges = sim.Rules().Exchanges;
+        if (exchanges is null) return physical;
+        var traded = exchanges.ExchangedResources(sim, city.Owner);
         if (traded.Count == 0) return physical;
         var result = new SortedDictionary<string, int>(StringComparer.Ordinal);
         foreach (var bonus in physical.Keys.Concat(traded).Distinct(StringComparer.Ordinal))
         {
-            int count = (int)diplomacy.AvailableResourceCount(sim, city.Owner, city.Id, bonus);
+            int count = (int)exchanges.AvailableResourceCount(sim, city.Owner, city.Id, bonus);
             if (count > 0) result[bonus] = count;
         }
         return result;
     }
-    private static HashSet<string> TradedResources(Simulation sim, IDiplomacyService diplomacy, int player) => diplomacy.Deals(sim)
-        .Where(d => d.Status == DiplomaticDealStatus.Active && (d.Proposer == player || d.Recipient == player))
-        .SelectMany(d => d.Items).Where(i => i.Kind == TradeItemKind.Resource).Select(i => i.ContentId).ToHashSet(StringComparer.Ordinal);
     private static void Local(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         sink.AddYield(b.Id, b.YieldChanges); sink.AddYield(b.Id, b.YieldModifiers, true);

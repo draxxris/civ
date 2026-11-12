@@ -1,8 +1,9 @@
 # Espionage Subsystem
 
 The espionage subsystem models passive intelligence and covert operations against
-rival civilizations. It is a separate mod. Cities, economy, military and diplomacy
-supply the units, commerce and contacts that it uses.
+rival civilizations. It is a separate mod. Cities, economy and military supply the units
+and commerce that it uses; the base game's relations supply contacts and remember a caught
+spy (`espionage:spy_caught`, a memory kind in `data/memory-kind.json`).
 
 ```mermaid
 flowchart TB
@@ -18,7 +19,7 @@ flowchart TB
         Economy[Economy commerce slider]
         Cities[Cities buildings and specialists]
         Military[Military spy and counter-spy units]
-        Diplomacy[Diplomacy contact]
+        Relations[Base relations contact and memory]
         Revolution[Revolution instability]
     end
     UI --> Client --> Service
@@ -26,7 +27,7 @@ flowchart TB
     Economy --> Service
     Cities --> Economy
     Military --> Service
-    Diplomacy --> Service
+    Relations --> Service
     Service -.optional.-> Revolution
 ```
 

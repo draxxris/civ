@@ -89,10 +89,18 @@ public sealed class GameRules : IRuleset
     public IPeoplesService Peoples { get; private set; } = null!;
     /// <summary>Religions, spread and state religion.</summary>
     public IReligionService Religion { get; private set; } = null!;
+    /// <summary>Contact, war and peace, border passage and what players remember of each other.</summary>
+    public IRelationsService Relations { get; private set; } = null!;
 
     // Seams a mod may fill. Null when that mod is not loaded.
-    /// <summary>The Diplomacy mod's service, or null without it.</summary>
-    public IDiplomacyService? Diplomacy { get; private set; }
+    /// <summary>Agreements between teams (open borders, defensive pacts), answered by the mod that negotiates them, or
+    /// null without one. Rules ask <see cref="Relations"/>, which applies the default.</summary>
+    public ITeamAgreements? TeamAgreements { get; private set; }
+    /// <summary>How players regard each other, answered by the mod that judges it, or null without one. Rules ask
+    /// <see cref="Relations"/>, which applies the default.</summary>
+    public IDispositions? Dispositions { get; private set; }
+    /// <summary>Resources and gold players exchange, answered by the mod that runs deals, or null without one.</summary>
+    public IPlayerExchanges? Exchanges { get; private set; }
     /// <summary>The Espionage mod's service, or null without it.</summary>
     public IEspionageService? Espionage { get; private set; }
     /// <summary>The Great People mod's service, or null without it.</summary>
@@ -162,7 +170,10 @@ public sealed class GameRules : IRuleset
         Government = services.Get<IGovernmentService>().Single();
         Peoples = services.Get<IPeoplesService>().Single();
         Religion = services.Get<IReligionService>().Single();
-        Diplomacy = services.Get<IDiplomacyService>().SingleOrDefault();
+        Relations = services.Get<IRelationsService>().Single();
+        TeamAgreements = services.Get<ITeamAgreements>().SingleOrDefault();
+        Dispositions = services.Get<IDispositions>().SingleOrDefault();
+        Exchanges = services.Get<IPlayerExchanges>().SingleOrDefault();
         Espionage = services.Get<IEspionageService>().SingleOrDefault();
         GreatPeople = services.Get<IGreatPeopleService>().SingleOrDefault();
         TradeRoutes = services.Get<ITradeRouteService>().SingleOrDefault();

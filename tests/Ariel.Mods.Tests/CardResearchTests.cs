@@ -1,6 +1,7 @@
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using TechDef = Ariel.Content.Schema.TechDef;
@@ -98,7 +99,7 @@ public sealed class CardResearchTests
         Apply(sim, new SetTeamResearchCommand { Player = 0, Tech = tech });
         sim.TeamOf(1).Techs.UnionWith([tech, "research:alphabet"]);
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
-        diplomacy.EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         var rng = sim.Rng.State;
         int genBefore = Generation(sim, 0);
         Apply(sim, new ProposeDealCommand { Player = 1, Target = 0, Items = [new(1, TradeItemKind.Technology, tech)] });

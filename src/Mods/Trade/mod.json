@@ -1,7 +1,7 @@
 {
   "id": "trade",
   "name": "Trade",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "assembly": "Ariel.Mods.Trade.dll",
   "dependencies": ["cities"],
   "references": ["cities", "foundation", "government", "peoples", "research", "world"]

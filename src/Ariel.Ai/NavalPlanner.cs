@@ -167,7 +167,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
     {
         if (!ctx.AtWarWithPlayers) return false;
         var blockading = ctx.MilitaryState(ship).Activity == UnitActivity.Blockade;
-        foreach (var city in _targets.Enemies.Where(c => _targets.Coastal(c) && !WarRules.IsBarbarian(ctx.Sim, c.Owner))
+        foreach (var city in _targets.Enemies.Where(c => _targets.Coastal(c) && !PlayerRules.IsBarbarian(ctx.Sim, c.Owner))
             .OrderBy(c => ctx.Grid.Distance(ship.Position, c.Position)).ThenBy(c => c.Id))
         {
             if (_blockaded.Contains(city.Id)) continue;

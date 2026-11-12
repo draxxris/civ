@@ -149,6 +149,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
                     }
                 }
                 foreach (var plot in game.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); }
+                game.Rules().Relations.EstablishContact(game, 0, 1); // A war needs contact.
             });
         var sequential = SaveGame.Load(mods.Content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
         Assert.Empty(sim.TeamOf(0).Wars);
@@ -433,12 +434,13 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     public void War_commands_roundtrip_and_rejected_early_peace_does_not_change_state()
     {
         var sim = GameFactory.Scenario(mods.Content);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1); // A war needs contact.
         var codec = new CommandCodec(mods.Content);
-        var war = codec.Decode("{\"type\":\"ai:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
+        var war = codec.Decode("{\"type\":\"relations:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
         Assert.True(sim.TryApply(codec.Decode(codec.Encode(war)), out var error), error);
         Assert.Contains(1, sim.TeamOf(0).Wars); Assert.Contains(0, sim.TeamOf(1).Wars);
         var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
-        var peace = codec.Decode("{\"type\":\"ai:make_peace\",\"data\":{\"player\":0,\"target\":1}}");
+        var peace = codec.Decode("{\"type\":\"relations:make_peace\",\"data\":{\"player\":0,\"target\":1}}");
         ulong before = sim.ComputeHash();
         Assert.False(sim.TryApply(peace, out _));
         Assert.Equal(before, sim.ComputeHash());
@@ -454,9 +456,10 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     public void Peace_treaty_blocks_redeclaring_war_for_ten_turns_and_survives_save_load()
     {
         var sim = GameFactory.Scenario(mods.Content);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1); // A war needs contact.
         var codec = new CommandCodec(mods.Content);
-        var war = codec.Decode("{\"type\":\"ai:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
-        var peace = codec.Decode("{\"type\":\"ai:make_peace\",\"data\":{\"player\":0,\"target\":1}}");
+        var war = codec.Decode("{\"type\":\"relations:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
+        var peace = codec.Decode("{\"type\":\"relations:make_peace\",\"data\":{\"player\":0,\"target\":1}}");
         Assert.True(sim.TryApply(war, out var error), error);
         sim.State.Turn += 12; // Minimum war duration before a treaty.
         Assert.True(sim.TryApply(peace, out error), error);

@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Diplomacy;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -41,7 +42,7 @@ public sealed class DiplomacyRulesTests
         ulong before = sim.ComputeHash();
         Assert.False(sim.TryApply(command, out var error)); Assert.Contains(reason, error!); Assert.Equal(before, sim.ComputeHash());
     }
-    private static void Meet(Simulation sim, int a = 0, int b = 1) => Service(sim).EstablishContact(sim, sim.TeamOf(a).Id, sim.TeamOf(b).Id);
+    private static void Meet(Simulation sim, int a = 0, int b = 1) => sim.Rules().Relations.EstablishContact(sim, sim.TeamOf(a).Id, sim.TeamOf(b).Id);
     private static City City(Simulation sim, int owner, int tile)
     {
         var city = new City { Id = sim.State.NextCityId++, Owner = owner, Position = sim.State.Grid.HexOf(new(tile)), Population = 5 };
@@ -54,7 +55,7 @@ public sealed class DiplomacyRulesTests
         { "declared_war", "declared_war_on_friend", "razed_city", "razed_holy_city", "spy_caught", "traded_tech_to_us", "give_help", "stopped_trading" }
         .ToImmutableDictionary(k => k, _ => 100);
     private static long Remembered(Simulation sim, int from, int toward, string memory) =>
-        Service(sim).GetAttitude(sim, from, toward).Ledger.Lines.Where(l => l.Source == "diplomacy:" + memory).Sum(l => l.Amount);
+        Service(sim).GetAttitude(sim, from, toward).Ledger.Lines.Where(l => l.Source == "diplomacy:memory:" + memory).Sum(l => l.Amount);
     private const string Grain = "diplomacy_probe:grain";
     /// <summary>Foreign, unrevealed columns 0 and 6 split the 12-wide map into two continents.</summary>
     private static void Wall(Simulation sim)
@@ -71,7 +72,7 @@ public sealed class DiplomacyRulesTests
     [Fact]
     public void Current_sight_and_adjacent_borders_discover_teams_but_exploration_and_barbarians_do_not()
     {
-        var sim = Scenario(); var diplomacy = Service(sim);
+        var sim = Scenario(); var diplomacy = sim.Rules().Relations;
         sim.State.Teams.Add(new Team { Id = 17, Members = [17] });
         sim.State.Players.Add(new Player { Id = 17, TeamId = 17 });
         sim.State.Teams.Add(new Team { Id = 18, Members = [18] });
@@ -84,7 +85,7 @@ public sealed class DiplomacyRulesTests
         sim.State.Plots[41].Owner = 1; diplomacy.DiscoverContacts(sim); Assert.True(diplomacy.HasMet(sim, 1, 17));
         sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = 18, Type = "military:warrior", Position = sim.State.Grid.HexOf(new(40)) });
         diplomacy.DiscoverContacts(sim); Assert.False(diplomacy.HasMet(sim, 17, 18));
-        var restored = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.True(Service(restored).HasMet(restored, 0, 17)); Assert.Equal(sim.ComputeHash(), restored.ComputeHash());
+        var restored = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.True(restored.Rules().Relations.HasMet(restored, 0, 17)); Assert.Equal(sim.ComputeHash(), restored.ComputeHash());
     }
     [Fact]
     public void Personality_religion_shared_favorite_civic_borders_and_war_have_an_explainable_readonly_ledger()
@@ -101,13 +102,13 @@ public sealed class DiplomacyRulesTests
         long Source(string id) => result.Ledger.Lines.Where(l => l.Source == "diplomacy:" + id).Sum(l => l.Amount);
         Assert.Equal(1, Source("base")); Assert.Equal(2, Source("peace_weight")); Assert.Equal(1, Source("warmonger_respect"));
         Assert.Equal(2, Source("same_religion")); Assert.Equal(2, Source("favorite_civic")); Assert.Equal(-2, Source("close_borders"));
-        Assert.Equal(AttitudeTier.Pleased, result.Tier); Assert.Equal(hash, sim.ComputeHash());
+        Assert.Equal(Disposition.Pleased, result.Tier); Assert.Equal(hash, sim.ComputeHash());
         sim.State.PlayerById(1).Extensions.Get<ReligionPlayerState>(sim.Content)!.LastStateReligion = "religion:hinduism";
         Assert.Contains(Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines, l => l.Source == "diplomacy:different_religion" && l.Amount == -3);
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 1, Target = 0 });
+        Apply(sim, new DeclareWarCommand { Player = 1, Target = 0 });
         var war = Service(sim).GetAttitude(sim, 0, 1); Assert.Contains(war.Ledger.Lines, l => l.Source == "diplomacy:war_history" && l.Amount == -3);
         Assert.Contains(war.Ledger.Lines, l => l.Source == "diplomacy:war" && l.Amount == -3);
-        sim.State.Turn += 12; Apply(sim, new DiplomaticMakePeaceCommand { Player = 0, Target = 1 });
+        sim.State.Turn += 12; Apply(sim, new MakePeaceCommand { Player = 0, Target = 1 });
         sim.State.Turn += 10; Assert.Contains(Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines, l => l.Source == "diplomacy:years_of_peace" && l.Amount == 2);
     }
     [Fact]
@@ -217,22 +218,23 @@ public sealed class DiplomacyRulesTests
     [InlineData(true)]
     public void Custom_content_without_unlock_flags_stays_open_but_obeys_the_option_default(bool disabled)
     {
+        var mods = new LoadedMods();
         var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
-        var custom = new ModSource { Root = AppContext.BaseDirectory, Manifest = new() { Id = "foundation", Version = "1" }, Instance = new CustomTradingContent(disabled) };
-        var content = ModLoader.Build([custom, diplomacy]);
-        var sim = Simulation.CreateScenario(content, new(), new(2, 2),
-            Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "foundation:plain" }).ToArray());
+        var custom = new ModSource { Root = mods.Root, Manifest = new() { Id = "trading_probe", Version = "1", Dependencies = ["foundation", "research"] },
+            Instance = new CustomTradingContent(mods.Content, disabled) };
+        var content = ModLoader.Build(mods.Sources.Append(diplomacy).Append(custom));
+        var sim = GameFactory.Scenario(content);
         Meet(sim);
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
         Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 1 });
-        sim.TeamOf(0).Techs.Add("foundation:discovery");
-        var proposal = new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, "foundation:discovery")] };
+        sim.TeamOf(0).Techs.Add("research:mysticism");
+        var proposal = new ProposeDealCommand { Player = 0, Target = 1, Items = [new(0, TradeItemKind.Technology, "research:mysticism")] };
         if (disabled) Reject(sim, proposal, "technology trading is disabled");
         else
         {
             Apply(sim, proposal);
             Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Single().Id });
-            Assert.True(sim.KnowsTech(1, "foundation:discovery"));
+            Assert.True(sim.KnowsTech(1, "research:mysticism"));
         }
     }
     [Fact]
@@ -240,14 +242,13 @@ public sealed class DiplomacyRulesTests
     {
         var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2); Meet(sim, 0, 3);
         Apply(sim, new SignDefensivePactCommand { Player = 1, Target = 2 }); Apply(sim, new SignDefensivePactCommand { Player = 0, Target = 3 });
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         Assert.Contains(0, sim.TeamOf(2).Wars); Assert.Contains(2, sim.TeamOf(0).Wars); Assert.DoesNotContain(1, sim.TeamOf(3).Wars);
         Assert.False(Service(sim).HasDefensivePact(sim, 0, 3));
-        Reject(sim, new DiplomaticMakePeaceCommand { Player = 0, Target = 1 }, "recent");
-        sim.State.Turn += 12; Apply(sim, new DiplomaticMakePeaceCommand { Player = 0, Target = 1 });
-        var aiWar = new CommandCodec(sim.Content).Decode("{\"type\":\"ai:declare_war\",\"data\":{\"player\":0,\"target\":1}}");
-        Reject(sim, aiWar, "recent"); Reject(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 }, "recent");
-        sim.State.Turn += 10; Apply(sim, aiWar);
+        Reject(sim, new MakePeaceCommand { Player = 0, Target = 1 }, "recent");
+        sim.State.Turn += 12; Apply(sim, new MakePeaceCommand { Player = 0, Target = 1 });
+        Reject(sim, new DeclareWarCommand { Player = 0, Target = 1 }, "recent");
+        sim.State.Turn += 10; Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
     }
     [Fact]
     public void Deals_transfer_assets_reserve_resources_settle_once_and_unlock_cancellation_after_ten_turns()
@@ -277,7 +278,7 @@ public sealed class DiplomacyRulesTests
         int deal = Service(sim).Deals(sim).Last().Id; Apply(sim, new ExecuteDealCommand { Player = 1, Deal = deal });
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         for (int i = 0; i < 3; i++) { sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash()); }
-        foreach (var game in new[] { sim, loaded }) Apply(game, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        foreach (var game in new[] { sim, loaded }) Apply(game, new DeclareWarCommand { Player = 0, Target = 1 });
         Assert.Equal(DiplomaticDealStatus.Cancelled, Service(sim).Deals(sim).Last().Status); Assert.False(Service(sim).HasOpenBorders(sim, 0, 1)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
     [Fact]
@@ -389,7 +390,7 @@ public sealed class DiplomacyRulesTests
     {
         var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2);
         Apply(sim, new SignDefensivePactCommand { Player = 1, Target = 2 });
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         Assert.Contains(0, sim.TeamOf(2).Wars);
         Assert.False(Service(sim).HasDefensivePact(sim, 1, 2));
     }
@@ -428,7 +429,7 @@ public sealed class DiplomacyRulesTests
         Assert.True(Service(sim).HasDefensivePact(sim, 0, 1));
 
         // War dissolves pacts
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         Assert.False(Service(sim).HasOpenBorders(sim, 0, 1));
         Assert.False(Service(sim).HasDefensivePact(sim, 0, 1));
 
@@ -438,26 +439,27 @@ public sealed class DiplomacyRulesTests
     }
 
     [Fact]
-    public void Memories_fade_one_count_at_a_time_by_the_leaders_decay_or_else_the_diplomacy_rules()
+    public void Memories_fade_one_count_at_a_time_by_the_leaders_decay_or_else_the_kinds_own()
     {
         var sim = Scenario();
-        var history = sim.Content.TurnSystems.All.Single(s => s.Id == "diplomacy:history");
+        var history = sim.Content.TurnSystems.All.Single(s => s.Id == "relations:turn");
         long Memory(string memory) => Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines
-            .Where(l => l.Source == "diplomacy:" + memory).Sum(l => l.Amount);
+            .Where(l => l.Source == "diplomacy:memory:" + memory).Sum(l => l.Amount);
         void Turn() { sim.State.Turn++; history.Run(sim); }
-        for (int i = 0; i < 3; i++) Service(sim).RecordMemory(sim, 0, 1, DiplomaticMemories.Inquisition);
-        Service(sim).RecordMemory(sim, 0, 1, "memory_spy_caught");
+        for (int i = 0; i < 3; i++) sim.Rules().Relations.Remember(sim, 0, 1, BaseMemories.Inquisition);
+        sim.Rules().Relations.Remember(sim, 0, 1, DiplomacyMemories.StoppedTrading);
 
         // The probe leader forgets one inquisition every turn: a decay of one is a certain roll.
         Turn();
-        Assert.Equal(-2, Memory(DiplomaticMemories.Inquisition));
+        Assert.Equal(-2, Memory(BaseMemories.Inquisition));
         Turn(); Turn();
-        Assert.Equal(0, Memory(DiplomaticMemories.Inquisition));
+        Assert.Equal(0, Memory(BaseMemories.Inquisition));
 
-        // The leader has no decay for a caught spy, so the diplomacy rules' 20 turns apply: rare per turn, certain
-        // well before 1,000 turns.
-        for (int turn = 3; turn < 1000 && Memory("memory_spy_caught") != 0; turn++) Turn();
-        Assert.Equal(0, Memory("memory_spy_caught"));
+        // The leader has no decay for a stopped trade, so the kind's own 20 turns apply: rare per turn, certain well
+        // before 1,000 turns.
+        Assert.Equal(1, Memory(DiplomacyMemories.StoppedTrading));
+        for (int turn = 3; turn < 1000 && Memory(DiplomacyMemories.StoppedTrading) != 0; turn++) Turn();
+        Assert.Equal(0, Memory(DiplomacyMemories.StoppedTrading));
     }
 
     [Fact]
@@ -466,14 +468,14 @@ public sealed class DiplomacyRulesTests
         var sim = Scenario();
         Meet(sim, 0, 1); Meet(sim, 0, 2); Meet(sim, 1, 2); Meet(sim, 1, 3);
         // Players 2 and 3 share player 1's personality, so both are at least Pleased with it; only 2 has met player 0.
-        Assert.True(Service(sim).GetAttitude(sim, 3, 1).Tier >= AttitudeTier.Pleased);
+        Assert.True(Service(sim).GetAttitude(sim, 3, 1).Tier >= Disposition.Pleased);
 
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
 
-        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.DeclaredWar));
-        Assert.Equal(1, Remembered(sim, 2, 0, DiplomaticMemories.DeclaredWarOnFriend));
-        Assert.Equal(0, Remembered(sim, 3, 0, DiplomaticMemories.DeclaredWarOnFriend));
-        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.DeclaredWar));
+        Assert.Equal(1, Remembered(sim, 1, 0, BaseMemories.DeclaredWar));
+        Assert.Equal(1, Remembered(sim, 2, 0, BaseMemories.DeclaredWarOnFriend));
+        Assert.Equal(0, Remembered(sim, 3, 0, BaseMemories.DeclaredWarOnFriend));
+        Assert.Equal(0, Remembered(sim, 0, 1, BaseMemories.DeclaredWar));
     }
 
     [Fact]
@@ -488,21 +490,21 @@ public sealed class DiplomacyRulesTests
         }
         void Accept(int player, int deal) => Apply(sim, new ExecuteDealCommand { Player = player, Deal = deal });
         for (int i = 0; i < 4; i++) Accept(1, Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 1)));
-        Assert.Equal(3, Remembered(sim, 1, 0, DiplomaticMemories.GiveHelp));
+        Assert.Equal(3, Remembered(sim, 1, 0, DiplomacyMemories.GiveHelp));
 
         sim.State.TeamById(0).Techs.Add("research:mysticism");
         Accept(1, Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Technology, "research:mysticism"), new DiplomaticTradeItem(1, TradeItemKind.Gold, Amount: 1)));
-        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.TradedTechToUs));
-        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.GiveHelp));
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomacyMemories.TradedTechToUs));
+        Assert.Equal(0, Remembered(sim, 0, 1, DiplomacyMemories.GiveHelp));
 
         Apply(sim, new CancelDealCommand { Player = 0, Deal = Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 1)) });
         int ongoing = Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.GoldPerTurn, Amount: 1), new DiplomaticTradeItem(1, TradeItemKind.GoldPerTurn, Amount: 1));
         Accept(1, ongoing);
-        Assert.Equal(0, Remembered(sim, 1, 0, DiplomaticMemories.StoppedTrading));
+        Assert.Equal(0, Remembered(sim, 1, 0, DiplomacyMemories.StoppedTrading));
         sim.State.Turn += 10;
         Apply(sim, new CancelDealCommand { Player = 0, Deal = ongoing });
-        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.StoppedTrading));
-        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.StoppedTrading));
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomacyMemories.StoppedTrading));
+        Assert.Equal(0, Remembered(sim, 0, 1, DiplomacyMemories.StoppedTrading));
     }
 
     [Fact]
@@ -517,32 +519,19 @@ public sealed class DiplomacyRulesTests
             sim.State.PlayerById(p).Civics["religion"] = civic;
             sim.State.PlayerById(p).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = p == 2 ? "religion:buddhism" : "religion:hinduism" });
         }
-        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         var capture = sim.Rules().CityCapture;
 
         capture.Capture(sim, holy.Id, 0);
         capture.Raze(sim, holy.Id);
 
-        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.RazedCity));
-        Assert.Equal(1, Remembered(sim, 2, 0, DiplomaticMemories.RazedHolyCity));
-        Assert.Equal(0, Remembered(sim, 3, 0, DiplomaticMemories.RazedHolyCity));
+        Assert.Equal(1, Remembered(sim, 1, 0, BaseMemories.RazedCity));
+        Assert.Equal(1, Remembered(sim, 2, 0, BaseMemories.RazedHolyCity));
+        Assert.Equal(0, Remembered(sim, 3, 0, BaseMemories.RazedHolyCity));
         // A city its own owner founded and razes is no one's loss.
         var own = City(sim, 0, 50);
         capture.Raze(sim, own.Id);
-        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.RazedCity));
-    }
-
-    [Theory]
-    [InlineData(true, 0)]
-    [InlineData(false, 1)]
-    public void A_caught_spy_is_remembered_by_the_target_citys_owner(bool success, long remembered)
-    {
-        var sim = Scenario();
-        var city = City(sim, 1, 40);
-
-        sim.Events.Publish(new EspionageMissionResult(-1, city.Id, EspionageMissionKind.StealTreasury, success, 50, 0));
-
-        Assert.Equal(remembered, Remembered(sim, 1, 0, DiplomaticMemories.SpyCaught));
+        Assert.Equal(1, Remembered(sim, 1, 0, BaseMemories.RazedCity));
     }
 
     [Fact]
@@ -620,14 +609,28 @@ public sealed class DiplomacyRulesTests
         public int Order => TurnPhase.Gold + 1;
         public void Run(Simulation sim, int player) => sim.State.PlayerById(player).Treasury += 5;
     }
-    private sealed class CustomTradingContent(bool disabled) : IMod
+    /// <summary>The base game with no technology that unlocks trading or agreements, and the no-technology-trading option
+    /// defaulting as asked.</summary>
+    private sealed class CustomTradingContent(ContentDb baseContent, bool disabled) : IMod
     {
+        private static readonly string[] Unlocks = [nameof(S.TechDef.GoldTrading), nameof(S.TechDef.TechTrading),
+            nameof(S.TechDef.OpenBordersTrading), nameof(S.TechDef.DefensivePactTrading)];
+
         public void Register(IModContext context)
         {
-            ProbeRuleset.Register(context);
-            context.Content<S.TerrainDef>().Register(new() { Id = "foundation:plain" });
-            context.Content<S.TechDef>().Register(new() { Id = "foundation:discovery" });
-            context.Content<S.GameOptionDef>().Register(new() { Id = "foundation:gameoption_no_tech_trading", Default = disabled });
+            foreach (var tech in baseContent.Get<S.TechDef>().All.Where(t => t.GoldTrading || t.TechTrading || t.OpenBordersTrading || t.DefensivePactTrading))
+                context.Content<S.TechDef>().Override(With(tech, Unlocks.Select(name => (name, (object)false)).ToArray()));
+            var option = baseContent.Get<S.GameOptionDef>("foundation:gameoption_no_tech_trading");
+            context.Content<S.GameOptionDef>().Override(With(option, (nameof(S.GameOptionDef.Default), disabled)));
+        }
+
+        /// <summary>A copy of a frozen definition with some init-only properties replaced.</summary>
+        private static T With<T>(T definition, params (string Name, object Value)[] changes) where T : ContentDef
+        {
+            var copy = (T)typeof(object).GetMethod("MemberwiseClone", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(definition, null)!;
+            foreach (var (name, value) in changes) typeof(T).GetProperty(name)!.SetValue(copy, value);
+            return copy;
         }
     }
     private sealed class Probe(S.CivicDef civic, S.RuleConstantsDef constants) : IMod

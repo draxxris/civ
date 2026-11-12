@@ -1,8 +1,9 @@
 {
   "id": "diplomacy",
   "name": "Diplomacy",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "assembly": "Ariel.Mods.Diplomacy.dll",
+  "api": "Ariel.Mods.Diplomacy.Api.dll",
   "dependencies": [],
   "references": []
 }

@@ -1,19 +1,24 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Rules;
+using Ariel.Content.Schema;
 
 namespace Ariel.Mods.Espionage;
 
 public sealed class EspionageMod : IPreparableMod
 {
     private static readonly ModJsonFile<EspionageRulesDef> Rules = new("data/espionage-rules.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules];
+    /// <summary>What a caught spy leaves in the memory of the city's owner.</summary>
+    private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Memories];
 
     public void Register(IModContext context)
     {
         var rules = Rules.Read(context.Data);
         Validate(rules);
         context.Content<EspionageRulesDef>().Register(rules);
+        MemoryKinds.Load(context, Memories);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterService<IModifierSource>("unhappiness", new SpyUnhappiness());
@@ -29,9 +34,17 @@ public sealed class EspionageMod : IPreparableMod
         {
             if (sim.State.FindCity(captured.City) is { } city) city.Extensions.Set(sim.Content, new EspionageCityState());
         });
+        context.Subscribe<EspionageMissionResult>("memory_spy", RememberCaughtSpy);
         context.TurnSystems.Register(new SpyAllocation(service));
         context.TurnSystems.Register(new SpyTimers());
         context.TurnSystems.Register(new SpyExpiry());
+    }
+
+    /// <summary>The owner of the target city remembers a spy it caught.</summary>
+    private static void RememberCaughtSpy(Simulation sim, EspionageMissionResult result)
+    {
+        if (!result.Success && sim.State.FindCity(result.City) is { } city)
+            sim.Rules().Relations.Remember(sim, city.Owner, result.Player, EspionageMemories.SpyCaught);
     }
 
     private static void Validate(EspionageRulesDef rules)
@@ -57,6 +70,13 @@ public sealed class EspionageMod : IPreparableMod
             throw new InvalidDataException("Invalid espionage success chance");
         if (rules.MaxWeight < 1) throw new InvalidDataException("Espionage weights need a positive range");
     }
+}
+
+/// <summary>Memory kinds the Espionage mod records (<c>data/memory-kind.json</c>).</summary>
+public static class EspionageMemories
+{
+    /// <summary>Remembered by the owner of a city where a spy was caught, toward the spy's owner.</summary>
+    public const string SpyCaught = "espionage:spy_caught";
 }
 
 internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSystem

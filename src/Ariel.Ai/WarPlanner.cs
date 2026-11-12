@@ -42,26 +42,25 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
         return best;
     }
 
-    /// <summary>Extra power advantage (percent) wanted before attacking a player, from this leader's attitude:
-    /// a grudge lowers the bar, goodwill raises it, and a friend or a defensive-pact partner is never attacked.</summary>
+    /// <summary>Extra power advantage (percent) wanted before attacking a player, from how this leader regards it:
+    /// a grudge lowers the bar, goodwill raises it, and a friend or an ally is never attacked.</summary>
     public int? AttitudeNeed(int player)
     {
-        var diplomacy = ctx.Sim.Rules().Diplomacy;
-        if (diplomacy is null) return 0;
-        if (diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, ctx.Sim.State.PlayerById(player).TeamId)) return null;
-        return diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, player).Tier switch
+        var relations = ctx.Sim.Rules().Relations;
+        if (relations.Allied(ctx.Sim, ctx.Self.TeamId, ctx.Sim.State.PlayerById(player).TeamId)) return null;
+        return relations.DispositionToward(ctx.Sim, ctx.PlayerId, player) switch
         {
-            AttitudeTier.Furious => -40,
-            AttitudeTier.Annoyed => -20,
-            AttitudeTier.Pleased => 40,
-            AttitudeTier.Friendly => null,
+            Disposition.Furious => -40,
+            Disposition.Annoyed => -20,
+            Disposition.Pleased => 40,
+            Disposition.Friendly => null,
             _ => 0,
         };
     }
 
     private bool Candidate(int player)
     {
-        if (player == ctx.PlayerId || WarRules.IsBarbarian(ctx.Sim, player) || ctx.Sim.State.PlayerById(player).TeamId == ctx.Self.TeamId) return false;
+        if (player == ctx.PlayerId || PlayerRules.IsBarbarian(ctx.Sim, player) || ctx.Sim.State.PlayerById(player).TeamId == ctx.Self.TeamId) return false;
         var areas = ctx.Cities.Select(c => ctx.Sim.State.PlotAt(c.Position).AreaId).ToHashSet();
         var theirs = ctx.Sim.State.Cities.Where(c => c.Owner == player && areas.Contains(ctx.Sim.State.PlotAt(c.Position).AreaId)
             && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)).ToList();
@@ -71,15 +70,15 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
     /// <summary>Asks for peace with enemy teams that are losing or have fought too long. Returns true when a treaty was signed.</summary>
     private bool MakePeace()
     {
-        long mine = ctx.Team.Members.Where(m => !WarRules.IsBarbarian(ctx.Sim, m)).Sum(m => AiContext.Power(ctx.Sim, m));
+        long mine = ctx.Team.Members.Where(m => !PlayerRules.IsBarbarian(ctx.Sim, m)).Sum(m => AiContext.Power(ctx.Sim, m));
         bool signed = false;
         foreach (var teamId in ctx.Team.Wars.ToList())
         {
-            var enemies = ctx.Sim.State.TeamById(teamId).Members.Where(m => !WarRules.IsBarbarian(ctx.Sim, m)).ToList();
+            var enemies = ctx.Sim.State.TeamById(teamId).Members.Where(m => !PlayerRules.IsBarbarian(ctx.Sim, m)).ToList();
             if (enemies.Count == 0) continue;
             long theirs = enemies.Sum(m => AiContext.Power(ctx.Sim, m));
             bool losing = mine * 100 < theirs * 85;
-            bool tired = ctx.Sim.State.Turn - WarRules.Read(ctx.Sim, ctx.Self.TeamId).WarStarted.GetValueOrDefault(teamId) > 40;
+            bool tired = ctx.Sim.State.Turn - (ctx.Sim.Rules().Relations.Relation(ctx.Sim, ctx.Self.TeamId, teamId)?.WarStarted ?? 0) > 40;
             if ((losing || tired) && ctx.Issue(new MakePeaceCommand { Player = ctx.PlayerId, Target = enemies[0] })) signed = true;
         }
         return signed;

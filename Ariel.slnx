@@ -14,6 +14,7 @@
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />
     <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
     <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
+    <Project Path="src/Mods/Diplomacy/Api/Ariel.Mods.Diplomacy.Api.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
     <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />
     <Project Path="src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
@@ -33,6 +34,7 @@
     <Project Path="tests/TestMods/ApiProvider/Ariel.TestMods.ApiProvider.csproj" />
     <Project Path="tests/TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" />
     <Project Path="tests/TestMods/AiPlanner/Ariel.TestMods.AiPlanner.csproj" />
+    <Project Path="tests/TestMods/MemoryKind/Ariel.TestMods.MemoryKind.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />

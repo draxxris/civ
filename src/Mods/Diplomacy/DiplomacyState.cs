@@ -1,125 +1,61 @@
-using System.Text.Json.Serialization;
 using Ariel.Game;
 
 namespace Ariel.Mods.Diplomacy;
 
-/// <summary>Authoritative contracts and counters. No derived caches or RNG are stored here.</summary>
+/// <summary>Agreements, deals and the counters attitudes grow with. Contact, war and peace, and memories are the base
+/// game's (<see cref="RelationsState"/>). No derived caches or RNG are stored here.</summary>
 public sealed class DiplomacyState
 {
-    public SortedDictionary<string, TeamRelation> Relations { get; set; } = new(StringComparer.Ordinal);
+    /// <summary>Agreements by <see cref="TeamPair.Key"/>. A war between the teams ends them.</summary>
+    public SortedDictionary<string, TeamAgreement> Agreements { get; set; } = new(StringComparer.Ordinal);
     public SortedDictionary<string, AttitudeHistory> Histories { get; set; } = new(StringComparer.Ordinal);
     public List<DiplomaticDeal> Deals { get; set; } = [];
     public int NextDealId { get; set; } = 1;
     public int LastHistoryTurn { get; set; }
 
-    public TeamRelation? GetRelation(TeamPair pair) => Relations.GetValueOrDefault(pair.Key);
-    public TeamRelation? GetRelation(int teamA, int teamB) => GetRelation(TeamPair.Of(teamA, teamB));
-    public void SetRelation(TeamPair pair, TeamRelation relation) => Relations[pair.Key] = relation;
-    public void SetRelation(int teamA, int teamB, TeamRelation relation) => SetRelation(TeamPair.Of(teamA, teamB), relation);
-
-    public AttitudeHistory? GetHistory(PlayerDirection direction) => Histories.GetValueOrDefault(direction.Key);
-    public AttitudeHistory? GetHistory(int fromPlayer, int towardPlayer) => GetHistory(PlayerDirection.Of(fromPlayer, towardPlayer));
-    public AttitudeHistory GetOrCreateHistory(PlayerDirection direction)
+    public TeamAgreement? GetAgreement(int teamA, int teamB) => Agreements.GetValueOrDefault(TeamPair.Of(teamA, teamB).Key);
+    public TeamAgreement GetOrCreateAgreement(int teamA, int teamB)
     {
-        if (!Histories.TryGetValue(direction.Key, out var history))
-        {
-            history = new AttitudeHistory();
-            Histories[direction.Key] = history;
-        }
+        string key = TeamPair.Of(teamA, teamB).Key;
+        if (!Agreements.TryGetValue(key, out var agreement)) Agreements[key] = agreement = new();
+        return agreement;
+    }
+
+    public AttitudeHistory? GetHistory(int fromPlayer, int towardPlayer) => Histories.GetValueOrDefault(PlayerDirection.Of(fromPlayer, towardPlayer).Key);
+    public AttitudeHistory GetOrCreateHistory(int fromPlayer, int towardPlayer)
+    {
+        string key = PlayerDirection.Of(fromPlayer, towardPlayer).Key;
+        if (!Histories.TryGetValue(key, out var history)) Histories[key] = history = new();
         return history;
     }
-    public AttitudeHistory GetOrCreateHistory(int fromPlayer, int towardPlayer) => GetOrCreateHistory(PlayerDirection.Of(fromPlayer, towardPlayer));
 }
-public sealed class TeamRelation
+
+/// <summary>The agreements two teams have signed, each with the turn it began, or null when not in force.</summary>
+public sealed class TeamAgreement
 {
-    public int First { get; set; }
-    public int Second { get; set; }
-    public int ContactTurn { get; set; }
-    public int PeaceStarted { get; set; }
-    public int? TreatyStarted { get; set; }
-    private int? _warStarted;
-    public int? WarStarted
+    public int? OpenBordersStarted { get; set; }
+    public int? DefensivePactStarted { get; set; }
+
+    public int? Started(DiplomaticAgreement agreement) =>
+        agreement == DiplomaticAgreement.OpenBorders ? OpenBordersStarted : DefensivePactStarted;
+
+    public void Sign(DiplomaticAgreement agreement, int turn)
     {
-        get => _warStarted;
-        set
-        {
-            _warStarted = value;
-            if (value is not null)
-            {
-                _openBordersStarted = null;
-                _defensivePactStarted = null;
-            }
-        }
-    }
-    public int FirstOffensiveWars { get; set; }
-    public int SecondOffensiveWars { get; set; }
-    private int? _openBordersStarted;
-    public int? OpenBordersStarted
-    {
-        get => _warStarted is null ? _openBordersStarted : null;
-        set => _openBordersStarted = _warStarted is null ? value : null;
-    }
-    private int? _defensivePactStarted;
-    public int? DefensivePactStarted
-    {
-        get => _warStarted is null ? _defensivePactStarted : null;
-        set => _defensivePactStarted = _warStarted is null ? value : null;
+        if (agreement == DiplomaticAgreement.OpenBorders) OpenBordersStarted = turn;
+        else if (agreement == DiplomaticAgreement.DefensivePact) DefensivePactStarted = turn;
     }
 
-    [JsonIgnore]
-    public bool AtWar => _warStarted is not null;
-
-    [JsonIgnore]
-    public bool HasOpenBorders => _warStarted is null && _openBordersStarted is not null;
-
-    [JsonIgnore]
-    public bool HasDefensivePact => _warStarted is null && _defensivePactStarted is not null;
-
-    public bool HasBindingPeace(int currentTurn, int bindingTurns = 10) =>
-        _warStarted is null && TreatyStarted is { } signed && currentTurn - signed < bindingTurns;
-
-    public int OffensiveWarsBy(int team) =>
-        team == First ? FirstOffensiveWars : team == Second ? SecondOffensiveWars : 0;
-
-    public void RecordOffensiveWar(int aggressor)
+    public void Cancel(DiplomaticAgreement agreement)
     {
-        if (aggressor == First) FirstOffensiveWars++;
-        else if (aggressor == Second) SecondOffensiveWars++;
-    }
-
-    public void StartWar(int turn, int aggressor, bool offensive)
-    {
-        WarStarted = turn;
-        if (offensive) RecordOffensiveWar(aggressor);
-    }
-
-    public void MakePeace(int turn)
-    {
-        _warStarted = null;
-        PeaceStarted = turn;
-        TreatyStarted = turn;
-    }
-
-    public void SignPact(DiplomaticAgreement agreement, int turn)
-    {
-        if (_warStarted is not null) return;
-        if (agreement == DiplomaticAgreement.OpenBorders) _openBordersStarted = turn;
-        else if (agreement == DiplomaticAgreement.DefensivePact) _defensivePactStarted = turn;
-    }
-
-    public void CancelPact(DiplomaticAgreement agreement)
-    {
-        if (agreement == DiplomaticAgreement.OpenBorders) _openBordersStarted = null;
-        else if (agreement == DiplomaticAgreement.DefensivePact) _defensivePactStarted = null;
+        if (agreement == DiplomaticAgreement.OpenBorders) OpenBordersStarted = null;
+        else if (agreement == DiplomaticAgreement.DefensivePact) DefensivePactStarted = null;
     }
 }
+
+/// <summary>How long one player has shared a religion or a favourite civic with another.</summary>
 public sealed class AttitudeHistory
 {
     public int SameReligionTurns { get; set; }
     public int DifferentReligionTurns { get; set; }
     public int FavoriteCivicTurns { get; set; }
-    public SortedDictionary<string, int> Memories { get; set; } = new(StringComparer.Ordinal);
-
-    public void RecordMemory(string memory, int count = 1) =>
-        Memories[memory] = Memories.GetValueOrDefault(memory) + count;
 }

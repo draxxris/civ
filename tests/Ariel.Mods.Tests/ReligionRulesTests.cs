@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using S = Ariel.Content.Schema;
@@ -83,7 +84,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var religion = Service<IReligionService>(sim);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, holy.Id, foreign.Id));
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
-        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Service<IDiplomacyService>(sim).SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
         Assert.Contains(Service<ITradeRouteService>(sim).Calculate(sim, foreign.Id).Routes, r => r.PartnerCity == holy.Id && r.Foreign);
         Assert.Equal(10, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
@@ -128,7 +129,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.Turn = 101;
         var religion = Service<IReligionService>(sim);
         var diplomacyService = Service<IDiplomacyService>(sim);
-        diplomacyService.EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, holy.Id, foreign.Id));
         Assert.False(Service<ICityConnectionService>(sim).Connected(sim, foreign.Id, holy.Id));
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
@@ -251,7 +252,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.Extensions.Set(sim.Content, game);
         city.Buildings.AddRange(["cities:hindu_temple", "cities:hindu_monastery", "cities:buddhist_temple", "cities:granary"]);
         if (revolution) city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 10000 });
-        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1); sim.State.PlotAt(city.Position).Revealed.Add(1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1); sim.State.PlotAt(city.Position).Revealed.Add(1);
         return (sim, city, refuge, Missionary(sim, city, type: "military:inquisitor"));
     }
 
@@ -287,7 +288,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         if (revolution) Assert.Equal(10000 - attempt.CompensationGold, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
         else Assert.Equal(treasury + attempt.CompensationGold, sim.State.PlayerById(0).Treasury);
         Assert.True(city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns > 0);
-        Assert.Contains(Service<IDiplomacyService>(sim).GetAttitude(sim, 1, 0).Ledger.Lines, l => l.Source.Contains(DiplomaticMemories.Inquisition) && l.Amount < 0);
+        Assert.Contains(Service<IDiplomacyService>(sim).GetAttitude(sim, 1, 0).Ledger.Lines, l => l.Source.Contains(BaseMemories.Inquisition) && l.Amount < 0);
         int? destination = holy && !relocate ? null : refuge.Id;
         Assert.Equal(destination ?? -1, sim.State.Extensions.Get<ReligionGameState>(sim.Content)!.Founded[minority].HolyCity);
         Assert.Equal(destination, religion.HolyCity(sim, minority));

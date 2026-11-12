@@ -64,7 +64,7 @@ public sealed class AiPlannerTests
 
         Assert.Equal(
         [
-            "ai:research", "ai:war", "ai:civics", "ai:diplomacy", "ai:settlers", "ai:citizens", "ai:religion",
+            "ai:research", "ai:war", "ai:civics", "diplomacy:planner", "ai:settlers", "ai:citizens", "ai:religion",
             "corporations:planner", "ai_planner_probe:planner", "great_people:planner",
             "ai:cities", "ai:workers", "ai:air", "ai:military", "ai:espionage", "ai:stability", "ai:economy", "ai:hurry",
         ], ids);

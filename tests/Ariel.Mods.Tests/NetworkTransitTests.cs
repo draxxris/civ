@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using S = Ariel.Content.Schema;
@@ -72,12 +73,12 @@ public sealed class NetworkTransitTests
         sim.State.Plots[42].Revealed.Add(0); Check(true);
         if (diplomacy)
         {
-            Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+            sim.Rules().Relations.EstablishContact(sim, 0, 1);
             sim.TeamOf(0).Techs.Add("research:writing");
             Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }); Check(true);
             sim.State.Plots[42].Revealed.Remove(0); Check(false);
             sim.State.Plots[42].Revealed.Add(0); Check(true);
-            Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+            Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         }
         else sim.State.SetWar(0, 1, true);
         Check(false);
@@ -117,7 +118,7 @@ public sealed class NetworkTransitTests
     {
         var sim = Scenario(true); var home = City(sim, 40); var foreign = City(sim, 42, 1);
         for (int i = 40; i <= 42; i++) sim.State.Plots[i].Route = Road;
-        var diplomacy = Service<IDiplomacyService>(sim); diplomacy.EstablishContact(sim, 0, 1);
+        var diplomacy = Service<IDiplomacyService>(sim); sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, home.Id, foreign.Id));
         Assert.Empty(Service<ITradeRouteService>(sim).Calculate(sim, home.Id).Routes);
         sim.TeamOf(0).Techs.Add("research:writing");

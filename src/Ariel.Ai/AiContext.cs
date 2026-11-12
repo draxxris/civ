@@ -144,7 +144,7 @@ public sealed class AiContext
     internal CityView ViewOf(City city) => _segment.Views.GetOrAdd(city.Id,
         _ => new Lazy<CityView>(() => CityView.Build(this, city))).Value;
     internal bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);
-    internal bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !WarRules.IsBarbarian(Sim, m)));
+    internal bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !PlayerRules.IsBarbarian(Sim, m)));
     public TileId Tile(Hex hex) => Grid.TileAt(hex);
 
     /// <summary>Flavor weight: a base of 10 plus the leader's own flavor, so every flavor counts a little.</summary>

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 
@@ -47,7 +48,7 @@ public sealed class ClientDiplomacyVictoryTests
         Assert.True(session.DescribeDiplomacy().Available);
         Assert.Empty(session.DescribeDiplomacy().Rivals);
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         var rival = Assert.Single(session.DescribeDiplomacy().Rivals);
         Assert.Equal(1, rival.PlayerId);
         Assert.False(string.IsNullOrEmpty(rival.Leader));
@@ -62,7 +63,7 @@ public sealed class ClientDiplomacyVictoryTests
     {
         var session = Session();
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         Assert.True(session.DoDiplomacy(session.DescribeDiplomacy().Rivals[0].Actions.Single(a => a.Kind == "open_borders")));
         Assert.True(session.DescribeDiplomacy().Rivals[0].OpenBorders);
         Assert.True(session.DoDiplomacy(session.DescribeDiplomacy().Rivals[0].Actions.Single(a => a.Kind == "declare_war")));
@@ -75,7 +76,7 @@ public sealed class ClientDiplomacyVictoryTests
     {
         var session = Session();
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         session.Me.Treasury = 100;
         Assert.True(session.Submit(new ProposeDealCommand { Player = GameSession.DefaultLocalPlayer, Target = 1, Items = [new(GameSession.DefaultLocalPlayer, TradeItemKind.Gold, "", 10)] }));
         var deal = Assert.Single(session.DescribeDiplomacy().Deals);
@@ -89,7 +90,7 @@ public sealed class ClientDiplomacyVictoryTests
     {
         var session = Session();
         var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        service.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
         var goldTrading = session.Sim.Content.Get<Ariel.Content.Schema.TechDef>().All.First(t => t.GoldTrading);
         session.Sim.TeamOf(GameSession.DefaultLocalPlayer).Techs.Add(goldTrading.Id);
         session.Sim.TeamOf(1).Techs.Add(goldTrading.Id);
@@ -115,7 +116,7 @@ public sealed class ClientDiplomacyVictoryTests
         var session = Session();
         var sim = session.Sim;
         var service = sim.Content.Services.Get<IDiplomacyService>().Single();
-        service.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
+        sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
         session.MyTeam.Techs.Remove("research:woodworking");
         sim.TeamOf(1).Techs.Add("research:woodworking");
         session.Me.Treasury = 100;

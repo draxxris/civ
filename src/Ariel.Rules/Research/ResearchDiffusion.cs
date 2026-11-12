@@ -9,17 +9,17 @@ internal static class ResearchDiffusion
     internal static int RateModifier(Simulation sim, Team team, string tech)
     {
         var rules = sim.Content.Get<RuleConstantsDef>().All.Single().Values;
-        var diplomacy = sim.Rules().Diplomacy;
+        var relations = sim.Rules().Relations;
         var living = sim.State.Players.Where(p => Eligible(sim, p)).ToArray();
         var teams = sim.State.Teams.Where(t => living.Any(p => p.TeamId == t.Id)).ToArray();
         if (teams.Length == 0) return 100;
-        var contacted = teams.Where(t => HasMet(sim, diplomacy, team, t.Id)).ToArray();
+        var contacted = teams.Where(t => HasMet(sim, relations, team, t.Id)).ToArray();
         var holders = contacted.Where(t => t.Techs.Contains(tech)).ToArray();
         if (sim.IsOptionEnabled("foundation:gameoption_no_tech_diffusion") || rules.ResearchDiffusionEnabled == 0)
             return checked((int)Math.Max(1, 100L + (long)rules.ResearchKnownTeamsPercent * holders.Length / teams.Length));
         if (holders.Length == 0) return 100;
         // Half units: normal contact 0.5, open borders 2, war 1. No vassal contract exists.
-        long halves = holders.Sum(t => Weight(sim, diplomacy, team, t.Id));
+        long halves = holders.Sum(t => Weight(sim, relations, team, t.Id));
         BigInteger numerator = (BigInteger)halves * contacted.Length;
         BigInteger denominator = 2 * (BigInteger)teams.Length;
         if ((long)holders.Length * 3 < teams.Length) denominator *= 100;
@@ -31,14 +31,13 @@ internal static class ResearchDiffusion
     private static bool Eligible(Simulation sim, Player player) => ResearchTimeline.Alive(sim, player.Id)
         && !PlayerRules.IsBarbarian(sim, player.Id);
 
-    private static bool HasMet(Simulation sim, IDiplomacyService? diplomacy, Team team, int other) =>
-        other == team.Id || diplomacy?.HasMet(sim, team.Id, other) == true
-        || team.Extensions.TryGet<ResearchTeamState>(sim.Content)?.MetTeams.Contains(other) == true;
+    private static bool HasMet(Simulation sim, IRelationsService relations, Team team, int other) =>
+        relations.HasMet(sim, team.Id, other);
 
-    private static long Weight(Simulation sim, IDiplomacyService? diplomacy, Team team, int other)
+    private static long Weight(Simulation sim, IRelationsService relations, Team team, int other)
     {
         if (other == team.Id) return 1;
-        if (diplomacy?.HasOpenBorders(sim, team.Id, other) == true) return 4;
+        if (relations.MayEnter(sim, team.Id, other)) return 4;
         return team.Wars.Contains(other) ? 2 : 1;
     }
 

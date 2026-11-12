@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -12,11 +13,12 @@ public sealed record DiplomacyDealRow(int Id, int OtherPlayer, string Status, st
 
 /// <summary>A met rival with attitude, treaties and the actions available against them.</summary>
 public sealed record DiplomacyRival(
-    int PlayerId, int TeamId, string Name, string Leader, string Civilization, int AttitudeScore, AttitudeTier Tier,
+    int PlayerId, int TeamId, string Name, string Leader, string Civilization, int AttitudeScore, Disposition Tier,
     IReadOnlyList<LedgerLine> Breakdown, bool AtWar, bool PeaceTreaty, bool OpenBorders, bool DefensivePact,
     string Status, IReadOnlyList<DiplomacyAction> Actions);
 
-/// <summary>The diplomacy screen. <see cref="Available"/> is false when no ruleset registers diplomacy.</summary>
+/// <summary>The diplomacy screen. <see cref="Available"/> is false without the Diplomacy mod, whose attitudes, agreements
+/// and deals it shows; contact, war and peace are the base game's.</summary>
 public sealed record DiplomacyScreen(bool Available, IReadOnlyList<DiplomacyRival> Rivals, IReadOnlyList<DiplomacyDealRow> Deals);
 
 /// <summary>One row of the score table.</summary>
@@ -35,7 +37,7 @@ public sealed partial class GameSession
         var service = OptionalService<IDiplomacyService>();
         if (service == null) return new(false, [], []);
         int myTeam = MyTeam.Id;
-        var rivals = Sim.State.Players.Where(p => p.TeamId != myTeam && service.HasMet(Sim, myTeam, p.TeamId))
+        var rivals = Sim.State.Players.Where(p => p.TeamId != myTeam && Sim.Rules().Relations.HasMet(Sim, myTeam, p.TeamId))
             .OrderBy(p => p.Id).Select(p => RivalOf(service, p)).ToList();
         var deals = service.Deals(Sim)
             .Where(d => d.Status is DiplomaticDealStatus.Active or DiplomaticDealStatus.Proposed && (d.Proposer == LocalPlayer || d.Recipient == LocalPlayer))
@@ -46,15 +48,16 @@ public sealed partial class GameSession
     private DiplomacyRival RivalOf(IDiplomacyService service, Player p)
     {
         int myTeam = MyTeam.Id;
+        var relations = Sim.Rules().Relations;
         var attitude = service.GetAttitude(Sim, p.Id, LocalPlayer);
         bool war = MyTeam.Wars.Contains(p.TeamId);
-        bool treaty = !war && service.ValidateWar(Sim, LocalPlayer, p.Id) != null;
+        bool treaty = !war && relations.ValidateWar(Sim, LocalPlayer, p.Id) != null;
         bool borders = service.HasOpenBorders(Sim, myTeam, p.TeamId), pact = service.HasDefensivePact(Sim, myTeam, p.TeamId);
         string status = war ? "At war" : treaty ? "Peace treaty" : "At peace";
         var actions = new List<DiplomacyAction>
         {
-            new("declare_war", "Declare war", new DiplomaticDeclareWarCommand { Player = LocalPlayer, Target = p.Id }, service.ValidateWar(Sim, LocalPlayer, p.Id)),
-            new("make_peace", "Make peace", new DiplomaticMakePeaceCommand { Player = LocalPlayer, Target = p.Id }, service.ValidatePeace(Sim, LocalPlayer, p.Id)),
+            new("declare_war", "Declare war", new DeclareWarCommand { Player = LocalPlayer, Target = p.Id }, relations.ValidateWar(Sim, LocalPlayer, p.Id)),
+            new("make_peace", "Make peace", new MakePeaceCommand { Player = LocalPlayer, Target = p.Id }, relations.ValidatePeace(Sim, LocalPlayer, p.Id)),
             new("open_borders", "Open borders", new SignOpenBordersCommand { Player = LocalPlayer, Target = p.Id },
                 service.ValidateAgreement(Sim, LocalPlayer, p.Id, DiplomaticAgreement.OpenBorders)),
             new("defensive_pact", "Defensive pact", new SignDefensivePactCommand { Player = LocalPlayer, Target = p.Id },

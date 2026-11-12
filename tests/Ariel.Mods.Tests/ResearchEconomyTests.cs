@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using S = Ariel.Content.Schema;
 using Xunit;
@@ -81,7 +82,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = 1, Type = "military:warrior", Position = sim.State.Grid.HexOf(new TileId(80)) });
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
         Assert.Equal(100, service.RateModifier(sim, 0, "research:agriculture")); // No contact, no exposure.
-        team.Extensions.Set(sim.Content, new ResearchTeamState { MetTeams = [1] });
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = "research:agriculture", Queue = ["research:fishing"] }, out var error), error);
         Assert.Equal(125, service.RateModifier(sim, 0, "research:agriculture"));
         service.Contribute(sim, 0, 47); // 47 * 125 / 100 = 58; cost 53; normalized overflow 5 * 100 / 125 = 4.

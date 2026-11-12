@@ -16,6 +16,19 @@ public sealed class EspionageRulesTests
     private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "military:spy");
     private static PerformMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => EspionageMissions.Order(spy.Owner, spy.Id, mission, tech);
 
+    [Theory]
+    [InlineData(true, 0)]
+    [InlineData(false, 1)]
+    public void A_caught_spy_is_remembered_by_the_target_citys_owner(bool success, int remembered)
+    {
+        var sim = P6RulesScenario.Create();
+        var city = sim.State.Cities.First(c => c.Owner == 1);
+
+        sim.Events.Publish(new EspionageMissionResult(-1, city.Id, EspionageMissionKind.StealTreasury, success, 50, 0));
+
+        Assert.Equal(remembered, sim.Rules().Relations.Memories(sim, 1, 0).GetValueOrDefault("espionage:spy_caught"));
+    }
+
     [Fact]
     public void Commerce_is_allocated_only_to_known_teams_and_weights_conserve_points_across_save_load()
     {
@@ -41,7 +54,7 @@ public sealed class EspionageRulesTests
         var settled = sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!;
         Assert.Equal(0, settled.EspionageHundredths);
         Assert.Equal(generated, settled.SettledCommerceHundredths.Espionage);
-        P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 2);
+        sim.Rules().Relations.EstablishContact(sim, 0, 2);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
         long previous = Spies(sim).Points(sim, 0, 1);
         generated = economy.Calculate(sim, 0).CommerceHundredths.Espionage + sim.State.PlayerById(0).Extensions.Get<EspionagePlayerState>(sim.Content)!.RemainderHundredths;
@@ -155,7 +168,7 @@ public sealed class EspionageRulesTests
         sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();
         var colony = P6RulesScenario.AddCity(sim, 2, 80);
         P6RulesScenario.Service<IPlayerEconomyService>(sim).SetRates(sim, 0, new(0, 0, 0, 100));
-        P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 2);
+        sim.Rules().Relations.EstablishContact(sim, 0, 2);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });
         for (int turn = 0; turn < 5; turn++) sim.AdvanceTurn();
@@ -272,7 +285,7 @@ public sealed class EspionageRulesTests
         GameFactory.NeutralPolitics(sim);
         var home = P6RulesScenario.AddCity(sim, 0, 14);
         var city = P6RulesScenario.AddCity(sim, 1, 57);
-        P6RulesScenario.Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Fund(sim); Fund(sim, 1, 0);
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
         var spy = P6RulesScenario.AddUnit(sim, 0, city, "military:spy");

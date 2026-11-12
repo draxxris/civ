@@ -92,7 +92,7 @@ internal sealed class MovementService : IMovementService
     }
     private static bool TerritoryEntry(Simulation sim, Unit unit, S.UnitDef def, int? owner) => owner is null
         || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory || def.BaseTrade > 0 || def.TradeMultiplier > 0
-        || sim.Rules().Diplomacy?.HasOpenBorders(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id) == true;
+        || sim.Rules().Relations.MayEnter(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id);
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
         sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);

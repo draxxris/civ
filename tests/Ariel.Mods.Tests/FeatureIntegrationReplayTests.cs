@@ -1,6 +1,7 @@
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using S = Ariel.Content.Schema;
 using Xunit;
@@ -48,7 +49,7 @@ public sealed class FeatureIntegrationReplayTests
             sim.State.PlayerById(player).Treasury = 10000;
             Service<IPlayerEconomyService>(sim).SetRates(sim, player, new(100, 0, 0, 0));
         }
-        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         return sim;
     }
 

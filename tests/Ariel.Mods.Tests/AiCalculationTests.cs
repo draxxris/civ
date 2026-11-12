@@ -540,9 +540,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         enemy.Health = 100;
         Call(ctx, "Refresh");
         Check();
-        var peace = (GameCommand)NewAi(sim, "MakePeaceCommand");
-        Set(peace, "Player", 0);
-        Set(peace, "Target", 1);
+        var peace = new MakePeaceCommand { Player = 0, Target = 1 };
         Assert.True(issue(peace));
         Check();
     }
@@ -562,8 +560,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var ctx = NewAi(sim, "AiContext", sim, 0);
         var targets = NewAi(sim, "CampaignTargets", ctx);
         Assert.Null(Call(targets, "SelectPrimaryTargetCity", 0));
-        var war = (GameCommand)NewAi(sim, "DeclareWarCommand");
-        Set(war, "Target", 1);
+        var war = new DeclareWarCommand { Player = 0, Target = 1 };
         Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(war));
         Parallel.For(0, 16, _ => Assert.Equal(2, ((City)Call(targets, "SelectPrimaryTargetCity", 0)!).Id));
         sim.Rules().CityCapture.Capture(sim, 2, 0);

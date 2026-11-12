@@ -55,31 +55,15 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         var (dealIncome, dealExpenses) = DealGold(sim, player);
         long income = total.Gold / 100 + dealIncome;
         expenses += dealExpenses;
-        lines.Add(new("diplomacy:deals", "economy:deal_income", dealIncome));
-        lines.Add(new("diplomacy:deals", "economy:deal_expenses", dealExpenses));
+        lines.Add(new("economy:exchanges", "economy:deal_income", dealIncome));
+        lines.Add(new("economy:exchanges", "economy:deal_expenses", dealExpenses));
         lines.Add(new("economy:total", "economy:income", income));
         lines.Add(new("economy:rules", "economy:expenses", expenses));
         lines.Add(new("economy:total", "economy:net_gold", income - expenses));
         return new(total, income, expenses, income - expenses, new(lines));
     }
-    private static (long Income, long Expenses) DealGold(Simulation sim, int player)
-    {
-        var diplomacy = sim.Rules().Diplomacy;
-        if (diplomacy is null) return default;
-        long income = 0, expenses = 0;
-        foreach (var deal in diplomacy.Deals(sim))
-        {
-            if (deal.Status != DiplomaticDealStatus.Active) continue;
-            if (deal.Proposer != player && deal.Recipient != player) continue;
-            if (sim.TeamOf(deal.Proposer).Wars.Contains(sim.TeamOf(deal.Recipient).Id)) continue;
-            foreach (var item in deal.Items.Where(i => i.Kind == TradeItemKind.GoldPerTurn))
-            {
-                if (item.FromPlayer == player) expenses += item.Amount;
-                else income += item.Amount;
-            }
-        }
-        return (income, expenses);
-    }
+    private static (long Income, long Expenses) DealGold(Simulation sim, int player) =>
+        sim.Rules().Exchanges?.GoldPerTurn(sim, player) ?? default;
     internal void Settle(Simulation sim, int player)
     {
         var owner = sim.State.PlayerById(player);
@@ -108,7 +92,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
                 netGold = total.Gold / 100 + dealIncome - expenses;
             }
         }
-        // Diplomacy transfers deal gold after every player's Gold phase. Keep any domestic debt
+        // The exchanges mod transfers deal gold after every player's Gold phase. Keep any domestic debt
         // until those transfers arrive, rather than forgiving it at the zero-treasury clamp.
         long treasury = owner.Treasury + total.Gold / 100 - domesticExpenses;
         state.UnpaidGold = Math.Max(0, -treasury);
@@ -120,7 +104,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     {
         var owner = sim.State.PlayerById(player);
         var state = EconomyData.Edit(sim, player);
-        // Evaluate strikes only after Diplomacy transfers actual deal payments. Expected income
+        // Evaluate strikes only after exchanges transfer actual deal payments. Expected income
         // can fail to arrive when the payer cannot afford a deal.
         long treasury = owner.Treasury - state.UnpaidGold;
         state.UnpaidGold = Math.Max(0, -treasury);

@@ -82,7 +82,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
     {
         if (ctx.Cities.Any(c => !religion.Present(ctx.Sim, c.Id).Contains(faith))) return [];
         return ctx.Sim.State.Cities.Where(c => c.Owner != ctx.PlayerId && !ctx.IsEnemy(c.Owner)
-                && !WarRules.IsBarbarian(ctx.Sim, c.Owner)
+                && !PlayerRules.IsBarbarian(ctx.Sim, c.Owner)
                 && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
                 && ctx.Grid.Distance(unit.Position, c.Position) <= ForeignSpreadRange
                 && !religion.Present(ctx.Sim, c.Id).Contains(faith))

@@ -1,22 +1,29 @@
 using Ariel.Content;
+using Ariel.Ai;
+using Ariel.Content.Schema;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Rules;
 
 namespace Ariel.Mods.Diplomacy;
 
+/// <summary>Attitudes, agreements (open borders, defensive pacts) and deals between players, and the computer player's
+/// use of them. Contact, war and peace and the memory ledger are the base game's; this mod answers the base game's
+/// questions about agreements, dispositions and exchanges, and adds the memories deals leave.</summary>
 public sealed class DiplomacyMod : IPreparableMod
 {
-    private static readonly ModJsonFile<DiplomacyRulesDef> Rules = new("data/diplomacy-rules.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules];
+    private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Memories];
 
     public void Register(IModContext context)
     {
-        var rules = Rules.Read(context.Data);
-        if (rules.DefaultMemoryDecay < 1 || rules.MemoryDecays.Values.Any(d => d < 1) || rules.GiveHelpMemoryLimit < 0)
-            throw new InvalidDataException("Diplomacy memory decays must be at least one turn and the gift limit not negative");
-        context.Content<DiplomacyRulesDef>().Register(rules);
+        MemoryKinds.Load(context, Memories);
         var service = new DiplomacyService();
-        context.RegisterService<IDiplomacyService>("relations", service);
+        context.RegisterService<IDiplomacyService>("diplomacy", service);
+        context.RegisterService<ITeamAgreements>("agreements", service);
+        context.RegisterService<IDispositions>("dispositions", service);
+        context.RegisterService<IPlayerExchanges>("exchanges", service);
+        context.RegisterService<IAiPlanner>("planner", new DiplomacyAiPlanner());
         context.RegisterStateComponent<DiplomacyState>("state");
         context.RegisterCommand<SignOpenBordersCommand>("open_borders");
         context.RegisterCommand<SignDefensivePactCommand>("defensive_pact");
@@ -25,13 +32,7 @@ public sealed class DiplomacyMod : IPreparableMod
         context.RegisterCommand<ExecuteDealCommand>("execute_deal");
         context.RegisterCommand<CancelDealCommand>("cancel_deal");
         context.RegisterCommand<CancelTradeItemCommand>("cancel_trade_item");
-        context.RegisterCommand<DiplomaticDeclareWarCommand>("declare_war");
-        context.RegisterCommand<DiplomaticMakePeaceCommand>("make_peace");
-        context.Subscribe<TurnStarted>("contact_turn", (sim, _) => service.DiscoverContacts(sim));
-        context.Subscribe<CityFounded>("contact_city", (sim, _) => service.DiscoverContacts(sim));
-        context.Subscribe<UnitCreated>("contact_unit", (sim, _) => service.DiscoverContacts(sim));
-        context.Subscribe<CityRazed>("memory_raze", DiplomacyService.RememberRaze);
-        context.Subscribe<EspionageMissionResult>("memory_spy", DiplomacyService.RememberSpy);
+        context.Subscribe<WarDeclared>("war_ends_agreements", DiplomacyService.EndAgreements);
         context.TurnSystems.Register(new DiplomacyDeals(service));
         context.TurnSystems.Register(new DiplomacyHistory(service));
     }
@@ -43,13 +44,11 @@ internal sealed class DiplomacyDeals(DiplomacyService service) : ITurnSystem
     public int Order => TurnPhase.Map + 1;
     public void Run(Simulation sim) => service.SettleDeals(sim);
 }
+/// <summary>Grows the religion and favourite-civic counters attitudes read. The base game has already met this
+/// turn's contacts (<c>relations:turn</c>, before <see cref="TurnPhase.GameEnd"/>).</summary>
 internal sealed class DiplomacyHistory(DiplomacyService service) : ITurnSystem
 {
     public string Id => "diplomacy:history";
     public int Order => TurnPhase.GameEnd;
-    public void Run(Simulation sim)
-    {
-        service.DiscoverContacts(sim);
-        service.UpdateHistory(sim);
-    }
+    public void Run(Simulation sim) => service.UpdateHistory(sim);
 }

@@ -36,8 +36,6 @@ public sealed class ResearchTeamState
     public long Overflow { get; set; }
     public int FreeTechs { get; set; }
     public SortedDictionary<string, int> Completions { get; set; } = new(StringComparer.Ordinal);
-    /// <summary>Explicit contact gate for the known-team rate bonus. Diplomacy can populate this set.</summary>
-    public SortedSet<int> MetTeams { get; set; } = new();
 
     [JsonIgnore]
     public bool HasQueue => _queue.Count > 0;

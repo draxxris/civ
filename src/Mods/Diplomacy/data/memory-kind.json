@@ -1,0 +1,5 @@
+[
+  { "id": "diplomacy:give_help", "name": "Gave us help", "decay": 60, "limit": 3 },
+  { "id": "diplomacy:stopped_trading", "name": "Stopped trading with us", "decay": 20 },
+  { "id": "diplomacy:traded_tech_to_us", "name": "Traded technology to us", "decay": 60 }
+]

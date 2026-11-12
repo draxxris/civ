@@ -52,7 +52,7 @@ internal static class ProductionEligibility
         if (b.ExtendsBuildingClass is { Length: > 0 } category && !active.Any(x => x.DefaultBuilding == category || x.Id == category))
             Fail(failures, "Requires active building class: " + category);
     }
-    /// <summary>Connected copies after diplomatic allocations. Imports count here; exports reduce the count.</summary>
+    /// <summary>Connected copies after exchanges with other players. Imports count here; exports reduce the count.</summary>
     private static long Available(Simulation sim, City city, string bonus) =>
         ResourceAccess.Count(sim, city.Owner, city.Id, bonus);
     private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)

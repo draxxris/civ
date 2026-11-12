@@ -10,12 +10,15 @@ public sealed class ReligionModule : IPreparableMod
     private static readonly ModJsonFile<ReligionDef[]> Religions = new("data/religion.json");
     /// <summary>One world wonder per religion; completing it founds the religion in that city.</summary>
     private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> FoundingWonders = new("data/founding-wonders.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders];
+    /// <summary>What an inquisition leaves in the memory of the faithful it purged.</summary>
+    private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders, Memories];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Religions);
         ContentRegistration.Load(context, FoundingWonders);
+        MemoryKinds.Load(context, Memories);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<IModifierSource>("effects", new ReligionEffects());

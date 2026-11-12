@@ -38,7 +38,7 @@ internal static class P6RulesScenario
         AddCity(sim, 0, 14); AddCity(sim, 0, 18); AddCity(sim, 1, 57);
         foreach (var player in sim.State.Players) player.Treasury = 10000;
         sim.TeamOf(0).Techs.Add("research:currency");
-        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         return sim;
     }
     public static City AddCity(Simulation sim, int owner, int tile)

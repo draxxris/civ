@@ -18,7 +18,6 @@ internal static class StandardPlanners
         new Planner("research", AiPlannerOrder.Research, ctx => new ResearchPlanner(ctx).Plan()),
         new Planner("war", AiPlannerOrder.War, ctx => new WarPlanner(ctx, ctx.Army).Plan()),
         new Planner("civics", AiPlannerOrder.Civics, ctx => new CivicPlanner(ctx).Plan()),
-        new Planner("diplomacy", AiPlannerOrder.Diplomacy, ctx => new DiplomacyPlanner(ctx).Plan()),
         new Planner("settlers", AiPlannerOrder.Settlers, ctx => new SettlerPlanner(ctx, ctx.Sites).Plan()),
         new Planner("citizens", AiPlannerOrder.Citizens, ctx =>
         {

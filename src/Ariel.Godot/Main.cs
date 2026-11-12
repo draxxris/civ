@@ -414,7 +414,7 @@ public partial class Main : Node3D
         Input.WarpMouse(new Vector2(700, 10));
         if (_debug.Stage is "diplomacy" or "espionage")
             foreach (var rival in session.Sim.State.Players.Where(p => p.Id != session.LocalPlayer))
-                session.Sim.Rules().Diplomacy?.EstablishContact(session.Sim, session.Me.TeamId, rival.TeamId);
+                session.Sim.Rules().Relations.EstablishContact(session.Sim, session.Me.TeamId, rival.TeamId);
         if (_debug.Stage == "espionage") _espionageCapture = new EspionageCapture(session);
         if (_debug.Stage is "city" or "map-city" or "conquest") FoundScreenshotCity(session);
         if (_debug.Stage == "conquest" && session.Sim.State.Cities.FirstOrDefault() is { } captured)

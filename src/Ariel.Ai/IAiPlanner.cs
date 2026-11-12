@@ -33,7 +33,7 @@ public static class AiPlannerOrder
     public const int War = 200;
     /// <summary>Change civics.</summary>
     public const int Civics = 300;
-    /// <summary>Answer and propose deals.</summary>
+    /// <summary>Answer and propose deals and sign agreements. No built-in planner runs here; the Diplomacy mod's does.</summary>
     public const int Diplomacy = 400;
     /// <summary>Send settlers to city sites and found cities.</summary>
     public const int Settlers = 500;

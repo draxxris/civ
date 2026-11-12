@@ -39,7 +39,7 @@ internal sealed class SpyMissionRules(EspionageService service)
         var (player, city) = (order.Player, order.City);
         if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(order.Unit.Type).Spy) return "Requires your spy unit";
         if (sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id) return "Requires a rival city";
-        if (sim.Rules().Diplomacy is { } diplomacy && !diplomacy.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id))
+        if (!sim.Rules().Relations.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id))
             return "Requires a known rival team";
         string? tech = Tech(order);
         if (MissionAvailability(sim, player, city, mission, tech) is { } error) return error;

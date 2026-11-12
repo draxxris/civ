@@ -1,7 +1,7 @@
 # Ariel
 
 A super-moddable, hex-grid Civilization 4 clone. The base game (world, cities, units,
-research, economy, government, and the computer player) is linked in from `src/Ariel.Rules`
+research, economy, government, relations between teams, and the computer player) is linked in from `src/Ariel.Rules`
 and `src/Ariel.Ai`, composed by `src/Ariel.Composition`; everything else is a mod on the
 same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 
@@ -40,8 +40,10 @@ mods' published API assemblies, never Godot types; visuals ship as data (`.pck` 
 assets). A mod teaches the standard computer player its feature by registering an
 `IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new
 computer player implements `IPlayerAI`. A mod publishes an API for other mods by shipping an
-assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`;
-see "Mod APIs" in [docs/DESIGN.md](docs/DESIGN.md).
+assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`,
+as the Diplomacy mod does with `Ariel.Mods.Diplomacy.Api`; see "Mod APIs" in
+[docs/DESIGN.md](docs/DESIGN.md). Any mod can add kinds of memory between leaders in
+`data/memory-kind.json`; the base game records and fades them (see "Relations").
 
 ### User data migration and compatibility
 

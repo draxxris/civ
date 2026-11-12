@@ -38,7 +38,7 @@ internal static class MilitaryData
     internal static void Sight(Simulation sim)
     {
         sim.Rules().Visibility.Recompute(sim);
-        sim.Rules().Diplomacy?.DiscoverContacts(sim);
+        sim.Rules().Relations.DiscoverContacts(sim);
     }
     internal static void RemoveUnit(Simulation sim, int unit)
     {

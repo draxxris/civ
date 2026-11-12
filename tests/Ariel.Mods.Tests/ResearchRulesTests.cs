@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using S = Ariel.Content.Schema;
 using Xunit;
@@ -63,7 +64,7 @@ public sealed class ResearchRulesTests
     {
         var sim = Scenario(players);
         var diplomacy = Service<IDiplomacyService>(sim);
-        for (int p = 1; p < met; p++) diplomacy.EstablishContact(sim, 0, p);
+        for (int p = 1; p < met; p++) sim.Rules().Relations.EstablishContact(sim, 0, p);
         for (int p = 1; p <= holders; p++) sim.TeamOf(p).Techs.Add(Agriculture);
         if (relation == "war") sim.State.SetWar(0, 1, true);
         if (relation == "open") diplomacy.SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
@@ -84,7 +85,7 @@ public sealed class ResearchRulesTests
         var sim = Scenario(players);
         sim.TeamOf(0).Techs.Add(tech);
         var diplomacy = Service<IDiplomacyService>(sim);
-        for (int p = 1; p < players; p++) diplomacy.EstablishContact(sim, 0, p);
+        for (int p = 1; p < players; p++) sim.Rules().Relations.EstablishContact(sim, 0, p);
         for (int p = 1; p <= rivalHolders; p++) sim.TeamOf(p).Techs.Add(tech);
         Assert.Equal(expected, Service<IResearchService>(sim).RateModifier(sim, 0, tech));
     }
@@ -96,7 +97,7 @@ public sealed class ResearchRulesTests
     {
         var sim = Scenario(3);
         var diplomacy = Service<IDiplomacyService>(sim);
-        for (int p = 1; p < 3; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
+        for (int p = 1; p < 3; p++) { sim.Rules().Relations.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
         sim.State.RemoveCity(sim.State.Cities.Single(c => c.Owner == 2).Id);
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
         Assert.Equal(125, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
@@ -111,7 +112,7 @@ public sealed class ResearchRulesTests
     {
         var sim = Scenario(4);
         var diplomacy = Service<IDiplomacyService>(sim);
-        for (int p = 1; p < 4; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
+        for (int p = 1; p < 4; p++) { sim.Rules().Relations.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
         GameFactory.MakeBarbarian(sim, 3);
         Assert.Contains(sim.State.Cities, c => c.Owner == 3);
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
@@ -132,7 +133,7 @@ public sealed class ResearchRulesTests
         sim.State.Cities.Single(c => c.Owner == 1).Population = 40;
         if (!zero) sim.TeamOf(0).Techs.Add("research:fishing");
         sim.TeamOf(1).Techs.UnionWith([Agriculture, "research:advanced_flight"]);
-        Service<IDiplomacyService>(sim).EstablishContact(sim, 0, 1);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
         // Deficit 75 - floor(100/7) = 61; round(100*.98^61)=29; floor(71*88/24)=260.
         Assert.Equal(expected, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
     }

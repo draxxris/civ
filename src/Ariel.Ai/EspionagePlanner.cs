@@ -27,8 +27,8 @@ internal sealed class EspionagePlanner(AiContext ctx)
             && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Spy)) < Math.Max(1, ctx.Cities.Count / CitiesPerSpy);
 
     private IEnumerable<City> KnownRivalCities() => ctx.Sim.State.Cities.Where(c => ctx.Sim.TeamOf(c.Owner).Id != ctx.Team.Id
-        && !WarRules.IsBarbarian(ctx.Sim, c.Owner) && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
-        && (ctx.Sim.Rules().Diplomacy?.HasMet(ctx.Sim, ctx.Team.Id, ctx.Sim.TeamOf(c.Owner).Id) ?? true));
+        && !PlayerRules.IsBarbarian(ctx.Sim, c.Owner) && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
+        && ctx.Sim.Rules().Relations.HasMet(ctx.Sim, ctx.Team.Id, ctx.Sim.TeamOf(c.Owner).Id));
 
     /// <summary>An enemy team when at war, otherwise the known rival whose nearest city is closest to ours.</summary>
     public int? FocusTeam()

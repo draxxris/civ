@@ -1,7 +1,17 @@
+using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Ai;
+namespace Ariel.Mods.Diplomacy;
+
+/// <summary>The computer player's diplomacy, run inside the standard AI's turn in the slot the AI keeps for it, after
+/// war and civics and before settlers. War and peace are the AI's own (<c>ai:war</c>).</summary>
+internal sealed class DiplomacyAiPlanner : IAiPlanner
+{
+    public string Id => "diplomacy:planner";
+    public int Order => AiPlannerOrder.Diplomacy;
+    public void Plan(AiContext ctx) => new DiplomacyPlanner(ctx).Plan();
+}
 
 /// <summary>Answers deals offered to this player, proposes resource swaps, and signs agreements with friendly
 /// computer players. Agreements apply at once for both sides, so they are only signed with another computer player
@@ -9,7 +19,7 @@ namespace Ariel.Ai;
 internal sealed class DiplomacyPlanner(AiContext ctx)
 {
     internal const int ReviewInterval = 5, ProposalsPerTurn = 1, GoldPerTurnTurns = 10;
-    private IDiplomacyService? Diplomacy => ctx.Sim.Rules().Diplomacy;
+    private IDiplomacyService? Diplomacy => ctx.Sim.Service<IDiplomacyService>();
 
     public void Plan()
     {
@@ -21,9 +31,9 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     }
 
     private IEnumerable<Player> Partners(IDiplomacyService diplomacy) => ctx.Sim.State.Players
-        .Where(p => p.Id != ctx.PlayerId && p.TeamId != ctx.Self.TeamId && !WarRules.IsBarbarian(ctx.Sim, p.Id)
+        .Where(p => p.Id != ctx.PlayerId && p.TeamId != ctx.Self.TeamId && !PlayerRules.IsBarbarian(ctx.Sim, p.Id)
             && ctx.Sim.State.Cities.Any(c => c.Owner == p.Id)
-            && diplomacy.HasMet(ctx.Sim, ctx.Self.TeamId, p.TeamId) && !ctx.Team.Wars.Contains(p.TeamId))
+            && ctx.Sim.Rules().Relations.HasMet(ctx.Sim, ctx.Self.TeamId, p.TeamId) && !ctx.Team.Wars.Contains(p.TeamId))
         .OrderBy(p => p.Id);
 
     private void Answer(IDiplomacyService diplomacy)
@@ -41,16 +51,16 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     public bool Accepts(IDiplomacyService diplomacy, DiplomaticDeal deal)
     {
         var tier = diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, deal.Proposer).Tier;
-        if (tier == AttitudeTier.Furious) return false;
+        if (tier == Disposition.Furious) return false;
         return Value(deal.Items) >= Margin(tier);
     }
 
-    public static long Margin(AttitudeTier tier) => tier switch
+    public static long Margin(Disposition tier) => tier switch
     {
-        AttitudeTier.Annoyed => 60,
-        AttitudeTier.Cautious => 15,
-        AttitudeTier.Pleased => 0,
-        AttitudeTier.Friendly => -15,
+        Disposition.Annoyed => 60,
+        Disposition.Cautious => 15,
+        Disposition.Pleased => 0,
+        Disposition.Friendly => -15,
         _ => long.MaxValue,
     };
 
@@ -122,7 +132,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         foreach (var partner in Partners(diplomacy))
         {
             if (proposed >= ProposalsPerTurn) return;
-            if (pending.Contains(partner.Id) || diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier == AttitudeTier.Furious) continue;
+            if (pending.Contains(partner.Id) || diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier == Disposition.Furious) continue;
             var get = wanted.FirstOrDefault(b => Held(partner.Id, b.Id) >= 2);
             var give = spare.FirstOrDefault(b => Held(partner.Id, b.Id) == 0);
             if (give is null) continue;
@@ -133,7 +143,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
             if (Value(items) > 0 && ctx.Issue(new ProposeDealCommand { Player = ctx.PlayerId, Target = partner.Id, Items = items }))
             { proposed++; continue; }
             // Without gold trading, a spare copy goes to a partner this leader likes: a running deal builds goodwill.
-            if (diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier >= AttitudeTier.Pleased
+            if (diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier >= Disposition.Pleased
                 && ctx.Issue(new ProposeDealCommand { Player = ctx.PlayerId, Target = partner.Id,
                     Items = [new(ctx.PlayerId, TradeItemKind.Resource, give.Id)] }))
                 proposed++;
@@ -147,10 +157,10 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         {
             var mine = diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, partner.Id).Tier;
             var theirs = diplomacy.GetAttitude(ctx.Sim, partner.Id, ctx.PlayerId).Tier;
-            var mutual = (AttitudeTier)Math.Min((int)mine, (int)theirs);
-            if (mutual >= AttitudeTier.Pleased && !diplomacy.HasOpenBorders(ctx.Sim, ctx.Self.TeamId, partner.TeamId))
+            var mutual = (Disposition)Math.Min((int)mine, (int)theirs);
+            if (mutual >= Disposition.Pleased && !diplomacy.HasOpenBorders(ctx.Sim, ctx.Self.TeamId, partner.TeamId))
                 ctx.Issue(new SignOpenBordersCommand { Player = ctx.PlayerId, Target = partner.Id });
-            if (mutual >= AttitudeTier.Friendly && !diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, partner.TeamId))
+            if (mutual >= Disposition.Friendly && !diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, partner.TeamId))
                 ctx.Issue(new SignDefensivePactCommand { Player = ctx.PlayerId, Target = partner.Id });
         }
     }

@@ -183,6 +183,29 @@ internal sealed partial class DiplomacyService
             d.Status = DiplomaticDealStatus.Completed;
         sim.Events.Publish(new TradeItemCancelled(dealId, itemId, player));
     }
+    /// <summary>Resources in the player's active deals, whether or not a war suspends them: their counts need the full
+    /// answer of <see cref="AvailableResourceCount"/>.</summary>
+    public IReadOnlyCollection<string> ExchangedResources(Simulation sim, int player) => Read(sim).Deals
+        .Where(d => d.Status == DiplomaticDealStatus.Active && (d.Proposer == player || d.Recipient == player))
+        .SelectMany(d => d.Items).Where(i => i.Kind == TradeItemKind.Resource).Select(i => i.ContentId).ToHashSet(StringComparer.Ordinal);
+    /// <summary>Gold per turn the player's live deals promise; <see cref="SettleDeals"/> pays it after every player's
+    /// Gold phase.</summary>
+    public (long Income, long Expenses) GoldPerTurn(Simulation sim, int player)
+    {
+        long income = 0, expenses = 0;
+        foreach (var deal in Read(sim).Deals.OrderBy(d => d.Id))
+        {
+            if (deal.Status != DiplomaticDealStatus.Active) continue;
+            if (deal.Proposer != player && deal.Recipient != player) continue;
+            if (sim.TeamOf(deal.Proposer).Wars.Contains(sim.TeamOf(deal.Recipient).Id)) continue;
+            foreach (var item in deal.Items.Where(i => i.Kind == TradeItemKind.GoldPerTurn))
+            {
+                if (item.FromPlayer == player) expenses += item.Amount;
+                else income += item.Amount;
+            }
+        }
+        return (income, expenses);
+    }
     public long ResourceBalance(Simulation sim, int player, string resource)
     {
         long balance = 0;

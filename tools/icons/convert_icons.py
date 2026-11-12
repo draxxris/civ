@@ -191,7 +191,7 @@ def load_definitions() -> list[tuple[str, str, str]]:
         mod = path.parent.parent.name
         items = json.loads(path.read_text(encoding="utf-8-sig"))
         if not isinstance(items, list):
-            continue  # a single-object rules file (e.g. diplomacy-rules.json) holds no definitions
+            continue  # a single-object rules file (e.g. espionage-rules.json) holds no definitions
         for item in items:
             rows.append((mod, str(item["id"]), str(item.get("icon") or "")))
     return rows

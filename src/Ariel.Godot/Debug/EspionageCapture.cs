@@ -38,7 +38,7 @@ internal sealed class EspionageCapture
         rival.Researching = technologies[0];
         rival.ResearchProgress = 17;
         rival.Extensions.Set(sim.Content, new ResearchTeamState { Queue = technologies });
-        sim.Content.Services.Get<IDiplomacyService>().Single().EstablishContact(sim, session.MyTeam.Id, rival.Id);
+        sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, rival.Id);
         _points.Spent[rival.Id] = 100000;
         session.MyTeam.Extensions.Set(sim.Content, _points);
         var spy = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = sim.Content.Get<Schema.UnitDef>().All.First(u => u.Spy).Id, Position = _target.Position, MovesLeft = 60 };
