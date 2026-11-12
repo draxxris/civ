@@ -32,6 +32,9 @@ mise run benchmark -- --hash
 # 5b. State copy for AI forks (standard 8-player game at turn 100)
 mise run benchmark -- --clone
 
+# 5c. What a turn allocates, by type (same game, turns 100-104)
+mise run benchmark -- --allocations
+
 # 6. Whole AI turns on a gigantic world (8 players, turns 21-30 timed, final hash printed)
 mise run benchmark -- --gigantic
 
@@ -61,6 +64,9 @@ mise run benchmark -- --borders
 - **`--clone`**: Times 50 `GameState.Clone` calls on an eight-player standard world played
   to turn 100, the part of each spent copying extension components through their JSON
   contract, and five whole turns to set both against.
+- **`--allocations`**: Plays the same game through turns 100-104 and lists the 40 types
+  that allocate the most per turn, from the runtime's allocation samples. It names types,
+  not call sites.
 - **`--gigantic`**: Plays an eight-player AI game on a gigantic world, times turns 21-30,
   and reports time and allocated bytes per turn, gen-2 collections, and the final state
   hash, which must not change under a pure optimization.
@@ -943,6 +949,42 @@ forks and the speculator's own snapshots). Together they are 3.7% of the turn, a
 extension copies in them 0.4%. Removing the JSON round trip entirely could not be seen
 in a turn time. The clones also account for about 140 MiB of the 2.4 GiB a turn allocates,
 so the rest of the turn is where further work on turn processing should look.
+
+### Pass 12: Sight Lines and Network Searches Without Per-Call Buffers
+
+- **Date**: 2026-11-12
+
+A turn-100 turn of a standard eight-player game allocated 2.4 GiB. The new
+`mise run benchmark -- --allocations` profile named two sources for over half of it.
+
+- **Resource network searches** (`ResourceNetwork`): every connectivity query allocated a
+  map-sized mode array and two map-sized flag arrays, and a turn makes about 22,000
+  queries: 382 MiB of `NetworkMode[]` and most of 306 MiB of `bool[]`. A search now
+  borrows one set of buffers kept per thread (`Search`, cleared per query, with a fresh
+  set for a search opened inside another), stores a mode in a byte, and reads team
+  techs and blockades without LINQ.
+- **Sight lines** (`SightLine`, `VisibilityService`): every step of every ray built a
+  list of four candidates and three LINQ iterators, and each sight test a closure:
+  about 430 MiB together. The ray now walks the four candidates on the stack and takes
+  its tile rule as a struct (`ISightStep`). The elevation lookups also built their
+  constant's name by concatenation on every call and now use literals.
+
+Results are unchanged: the 60-turn seed-7 AI game saves an identical state, and
+`mise run check:sync` matches on all 101 turn hashes.
+
+| Workload                                     |             Before |              After |
+| :------------------------------------------- | -----------------: | -----------------: |
+| Standard turn 100-104, allocated per turn    |        2,439.6 MiB |        1,194.6 MiB |
+| Standard turn 100-104, time per turn         | 1,233-1,263 ms     |         907-921 ms |
+| Gigantic turns 21-30, allocated per turn     |           481.4 MB |           431.0 MB |
+
+The gigantic "before" is the Pass 9 figure, so that row also spans later changes.
+
+What the profile shows next, per turn: `System.String` 201 MiB (likely the
+`"cities:" + key` and `"military:" + key` modifier names built on every lookup),
+`RevealedPlotSnapshot` 75 MiB (every visible plot is captured again on every sight
+recompute), and about 80 MiB of LINQ closures over `TechDef` and `TerrainDef` lookups.
+None was changed here; each needs its call sites found and its own measurement.
 
 ______________________________________________________________________
 

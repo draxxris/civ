@@ -52,12 +52,19 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         if (distance <= 1) return true;
         int level = SeeFromLevel(sim, observer, team, levels);
         bool outer = distance > range;
-        return SightLine.Clear(grid, observer, target, (step, last) =>
+        return SightLine.Clear(grid, observer, target, new SightStep(sim, levels, level, outer, target, team));
+    }
+
+    /// <summary>One sight test's rule for a tile on the ray: terrain no higher than the observer's level passes, and
+    /// a target one beyond range is seen only over lower ground or when it stands higher than the observer.</summary>
+    private readonly struct SightStep(Simulation sim, RecomputeLevels? levels, int level, bool outer, TileId target, int team) : ISightStep
+    {
+        public bool Passable(TileId tile, bool last)
         {
-            int through = SeeThroughLevel(sim, step, levels);
+            int through = SeeThroughLevel(sim, tile, levels);
             if (level < through) return false;
             return !outer || !last || level > through || SeeFromLevel(sim, target, team, levels) > level;
-        });
+        }
     }
 
     private static int SeeFromLevel(Simulation sim, TileId tile, int team, RecomputeLevels? levels)
@@ -71,7 +78,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     {
         var plot = sim.State.Plots[tile.Value];
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
-        int level = ElevationLevel(sim, plot, terrain.SeeFrom, "FROM");
+        int level = ElevationLevel(sim, plot, terrain.SeeFrom, from: true);
         if (terrain.IsWater) level += WorldTurnMath.Raw(sim, "SEAWATER_SEE_FROM_CHANGE", 0);
         return (level, terrain.IsWater);
     }
@@ -84,7 +91,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         if (levels is not null) return levels.SeeThrough(tile);
         var plot = sim.State.Plots[tile.Value];
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
-        int level = ElevationLevel(sim, plot, terrain.SeeThrough, "THROUGH");
+        int level = ElevationLevel(sim, plot, terrain.SeeThrough, from: false);
         if (plot.Feature is { } feature) level += sim.Content.Get<S.FeatureDef>(feature).SeeThrough;
         if (terrain.IsWater) level += WorldTurnMath.Raw(sim, "SEAWATER_SEE_THROUGH_CHANGE", 0);
         return level;
@@ -114,11 +121,11 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     /// <summary>Terrain's own see level plus what standing on this tile's tier adds: a raised flat and a hill see one
     /// level further, a peak two, and water or flat ground adds nothing. Mountain terrain keeps its own level rather
     /// than a special case for relief, so the tier alone says how far a tile sees.</summary>
-    private static int ElevationLevel(Simulation sim, Plot plot, int level, string direction) =>
+    private static int ElevationLevel(Simulation sim, Plot plot, int level, bool from) =>
         plot.Height >= Levels.Peak
-            ? level + WorldTurnMath.Raw(sim, "PEAK_SEE_" + direction + "_CHANGE", 2)
+            ? level + WorldTurnMath.Raw(sim, from ? "PEAK_SEE_FROM_CHANGE" : "PEAK_SEE_THROUGH_CHANGE", 2)
             : plot.Height >= Levels.Hills
-                ? level + WorldTurnMath.Raw(sim, "HILLS_SEE_" + direction + "_CHANGE", 1)
+                ? level + WorldTurnMath.Raw(sim, from ? "HILLS_SEE_FROM_CHANGE" : "HILLS_SEE_THROUGH_CHANGE", 1)
                 : level;
 
     public RevealedPlotSnapshot? SnapshotOf(Simulation sim, TileId tile, int team)

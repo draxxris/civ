@@ -4,7 +4,7 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.World;
 
-/// <summary>CvPlotGroup connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
+/// <summary>Plot group connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
 internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 {
     public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
@@ -15,7 +15,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         if (target is null || target.Owner != player) return counts;
         // Foreign plots can carry the network, but ConnectedBonus only counts owned sources.
         if (!sim.State.Plots.Any(p => p.Owner == player && p.Bonus is not null)) return counts;
-        foreach (var tile in Reachable(sim, player, target, peacefulForeign: true))
+        using var search = Reach(sim, player, target, peacefulForeign: true);
+        foreach (var tile in search.Tiles)
             if (sim.State.Plots[tile.Value].Bonus is { } bonus && ConnectedBonus(sim, player, tile, bonus))
                 counts[bonus] = counts.GetValueOrDefault(bonus) + 1;
         return counts;
@@ -25,13 +26,16 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         var first = sim.State.CityById(firstCity);
         var second = sim.State.CityById(secondCity);
         if (sim.TeamOf(first.Owner).Wars.Contains(sim.TeamOf(second.Owner).Id)) return false;
-        return Reachable(sim, first.Owner, first, peacefulForeign: true).Contains(sim.State.Grid.TileAt(second.Position));
+        using var search = Reach(sim, first.Owner, first, peacefulForeign: true);
+        // Seen marks only queued tiles, and the flood has drained its queue, so it is exactly the reached set.
+        return search.Seen[sim.State.Grid.TileAt(second.Position).Value];
     }
     public IReadOnlySet<TileId> ConnectedTiles(Simulation sim, int player, int city)
     {
         var target = sim.State.FindCity(city);
-        return target is null || target.Owner != player ? new HashSet<TileId>()
-            : Reachable(sim, player, target, peacefulForeign: true).ToHashSet();
+        if (target is null || target.Owner != player) return new HashSet<TileId>();
+        using var search = Reach(sim, player, target, peacefulForeign: true);
+        return search.Tiles.ToHashSet();
     }
     public bool IsTileBlockaded(Simulation sim, TileId tile, int team) =>
         sim.Content.Services.Get<INavalBlockadeService>().Any(s => s.IsBlockaded(sim, tile, team));
@@ -41,66 +45,100 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         return sim.State.Grid.Neighbors(sim.State.Grid.TileAt(target.Position))
             .Any(t => IsTileBlockaded(sim, t, sim.TeamOf(target.Owner).Id));
     }
-    private static IEnumerable<TileId> Reachable(Simulation sim, int player, City target, bool peacefulForeign = false)
+    /// <summary>Flood the network from a city. The result borrows this thread's buffers: dispose it before the next
+    /// search on the thread, which every caller does by reading it at once.</summary>
+    private static Search Reach(Simulation sim, int player, City target, bool peacefulForeign = false)
     {
-        var modes = new Modes(sim, player, peacefulForeign);
+        var search = Search.Begin(sim, player, peacefulForeign);
         var start = sim.State.Grid.TileAt(target.Position);
-        if (modes[start.Value] == NetworkMode.None) yield break;
-        var seen = new bool[modes.Length];
-        var queue = new Queue<TileId>();
+        if (search.ModeOf(start.Value) == NetworkMode.None) return search;
+        var queue = search.Queue;
         queue.Enqueue(start);
-        seen[start.Value] = true;
-
+        search.Seen[start.Value] = true;
         while (queue.TryDequeue(out var tile))
         {
-            yield return tile;
+            search.Tiles.Add(tile);
             foreach (var neighbor in sim.State.Grid.Neighbors(tile))
             {
-                if (seen[neighbor.Value] || !Edge(sim, tile, neighbor, modes)) continue;
-                seen[neighbor.Value] = true;
+                if (search.Seen[neighbor.Value] || !Edge(sim, tile, neighbor, search)) continue;
+                search.Seen[neighbor.Value] = true;
                 queue.Enqueue(neighbor);
             }
         }
+        return search;
     }
-    [Flags] private enum NetworkMode { None = 0, Route = 1, River = 2, Water = 4, City = 8 }
-    /// <summary>Plot modes for one query, resolved on first use so a search only pays for the plots it reaches.</summary>
-    private sealed class Modes
+    [Flags] private enum NetworkMode : byte { None = 0, Route = 1, River = 2, Water = 4, City = 8, Resolved = 0x80 }
+    /// <summary>One network search: plot modes, resolved on first use so a search only pays for the plots it reaches,
+    /// and the tiles reached in breadth-first order. Searches run thousands of times a turn, so each thread keeps one
+    /// set of map-sized buffers and reuses it; a search started while another is open on the thread gets its own.</summary>
+    private sealed class Search : IDisposable
     {
-        private readonly Simulation _sim;
-        private readonly int _player;
-        private readonly bool _river, _peacefulForeign;
-        private readonly HashSet<string> _terrainTrade;
-        private readonly IReadOnlySet<TileId>[] _blockaded;
-        private readonly NetworkMode[] _modes;
-        private readonly bool[] _resolved;
-        public Modes(Simulation sim, int player, bool peacefulForeign)
+        [ThreadStatic] private static Search? _spare;
+        private Simulation _sim = null!;
+        private int _player;
+        private bool _river, _peacefulForeign, _open;
+        private readonly HashSet<string> _terrainTrade = new(StringComparer.Ordinal);
+        private IReadOnlySet<TileId>[] _blockaded = [];
+        private NetworkMode[] _modes = [];
+        /// <summary>Tiles the flood has queued or reached.</summary>
+        public bool[] Seen { get; private set; } = [];
+        public Queue<TileId> Queue { get; } = new();
+        /// <summary>Reached tiles, nearest first.</summary>
+        public List<TileId> Tiles { get; } = new();
+
+        public static Search Begin(Simulation sim, int player, bool peacefulForeign)
         {
-            _sim = sim; _player = player; _peacefulForeign = peacefulForeign;
-            var techs = sim.TeamOf(player).Techs.Select(t => sim.Content.Get<S.TechDef>(t)).ToArray();
-            _river = techs.Any(t => t.RiverTrade);
-            _terrainTrade = techs.SelectMany(t => t.TradeTerrains.Where(p => p.Value).Select(p => p.Key)).ToHashSet(StringComparer.Ordinal);
+            var search = _spare is { _open: false } spare ? spare : new Search();
+            _spare ??= search;
+            search.Reset(sim, player, peacefulForeign);
+            return search;
+        }
+
+        private void Reset(Simulation sim, int player, bool peacefulForeign)
+        {
+            _sim = sim; _player = player; _peacefulForeign = peacefulForeign; _open = true;
+            _river = false;
+            _terrainTrade.Clear();
+            foreach (var id in sim.TeamOf(player).Techs)
+            {
+                var tech = sim.Content.Get<S.TechDef>(id);
+                _river |= tech.RiverTrade;
+                foreach (var (terrain, trades) in tech.TradeTerrains) if (trades) _terrainTrade.Add(terrain);
+            }
             // Resolve blockades once for the whole query instead of scanning every unit for every plot.
             int team = sim.TeamOf(player).Id;
-            _blockaded = sim.Content.Services.Get<INavalBlockadeService>().Select(s => s.BlockadedTiles(sim, team)).ToArray();
-            _modes = new NetworkMode[sim.State.Grid.Count];
-            _resolved = new bool[_modes.Length];
+            var blockades = sim.Content.Services.Get<INavalBlockadeService>();
+            if (_blockaded.Length != blockades.Count) _blockaded = new IReadOnlySet<TileId>[blockades.Count];
+            for (int i = 0; i < blockades.Count; i++) _blockaded[i] = blockades[i].BlockadedTiles(sim, team);
+            int count = sim.State.Grid.Count;
+            if (_modes.Length != count) { _modes = new NetworkMode[count]; Seen = new bool[count]; }
+            else { Array.Clear(_modes); Array.Clear(Seen); }
+            Queue.Clear();
+            Tiles.Clear();
         }
-        public int Length => _modes.Length;
-        public NetworkMode this[int tile]
+
+        public NetworkMode ModeOf(int tile)
         {
-            get
-            {
-                if (_resolved[tile]) return _modes[tile];
-                _resolved[tile] = true;
-                return _modes[tile] = Mode(_sim, _player, new TileId(tile), _river, _terrainTrade, _peacefulForeign, _blockaded);
-            }
+            var mode = _modes[tile];
+            if (mode != NetworkMode.None) return mode & ~NetworkMode.Resolved;
+            mode = Mode(_sim, _player, new TileId(tile), _river, _terrainTrade, _peacefulForeign, _blockaded);
+            _modes[tile] = mode | NetworkMode.Resolved;
+            return mode;
+        }
+
+        public void Dispose()
+        {
+            _open = false;
+            _sim = null!; // A parked search must not keep a finished simulation fork alive.
+            Array.Clear(_blockaded);
         }
     }
     private static NetworkMode Mode(Simulation sim, int player, TileId tile, bool river, HashSet<string> terrains, bool peacefulForeign,
         IReadOnlySet<TileId>[] blockaded)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (blockaded.Any(b => b.Contains(tile)) || !Access(sim, player, tile, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot))
+        foreach (var blockade in blockaded) if (blockade.Contains(tile)) return NetworkMode.None;
+        if (!Access(sim, player, tile, plot, peacefulForeign) || Geography.Impassable(sim.Content, plot))
             return NetworkMode.None;
 
         if (Geography.Water(sim.Content, plot)) return terrains.Contains(plot.Terrain) || plot.Owner == player ? NetworkMode.Water : NetworkMode.None;
@@ -118,9 +156,9 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         return plot.Revealed.Contains(sim.State.PlayerById(player).TeamId);
     }
 
-    private static bool Edge(Simulation sim, TileId from, TileId to, Modes modes)
+    private static bool Edge(Simulation sim, TileId from, TileId to, Search search)
     {
-        var a = modes[from.Value]; var b = modes[to.Value];
+        var a = search.ModeOf(from.Value); var b = search.ModeOf(to.Value);
         if (a == NetworkMode.None || b == NetworkMode.None) return false;
         if (((a & b) & (NetworkMode.Route | NetworkMode.Water)) != 0) return true;
         if (a.HasFlag(NetworkMode.City) || b.HasFlag(NetworkMode.City)) return true;
@@ -130,7 +168,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     {
         if (((a | b) & NetworkMode.River) == 0) return false;
         if ((a & (NetworkMode.River | NetworkMode.Water)) == 0 || (b & (NetworkMode.River | NetworkMode.Water)) == 0) return false;
-        int direction = Enumerable.Range(0, 6).First(d => sim.State.Grid.Neighbor(from, d) == to);
+        int direction = 0;
+        while (sim.State.Grid.Neighbor(from, direction) != to) direction++;
         int fromEdges = sim.State.Plots[from.Value].RiverEdges, toEdges = sim.State.Plots[to.Value].RiverEdges;
         // Same river corridor: the shared edge, or an edge meeting it at either shared vertex.
         return (fromEdges & (1 << direction)) != 0
