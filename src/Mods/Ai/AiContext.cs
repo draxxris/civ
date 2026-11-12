@@ -10,6 +10,9 @@ namespace Ariel.Mods.Ai;
 internal sealed class AiContext
 {
     private Segment _segment;
+    /// <summary>The threat grid every segment refills in place: one map-sized array for the whole turn instead of
+    /// one per issued command, which on large maps is a large-object-heap allocation each time.</summary>
+    private int[]? _threat;
 
     // A segment has no authoritative writes. Parallel scoring joins before Issue or Refresh replaces it.
     private sealed class Segment
@@ -66,7 +69,9 @@ internal sealed class AiContext
         private static int[] BuildThreatStrength(AiContext ctx, IEnumerable<Unit> enemies)
         {
             // Supported maps have a bounded plot array; a dense strength bucket avoids per-query unit scans.
-            var strength = new int[ctx.Grid.Count];
+            // Reusing it is safe because segments never overlap: scoring joins before Issue or Refresh replaces one.
+            var strength = ctx._threat ??= new int[ctx.Grid.Count];
+            Array.Clear(strength);
             foreach (var enemy in enemies)
             {
                 int tile = ctx.Tile(enemy.Position).Value;

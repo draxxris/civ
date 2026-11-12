@@ -28,6 +28,9 @@ mise run benchmark
 
 # 5. Lockstep state hash (fresh gigantic world, then standard 8-player game at turn 100)
 mise run benchmark -- --hash
+
+# 6. Whole AI turns on a gigantic world (8 players, turns 21-30 timed, final hash printed)
+mise run benchmark -- --gigantic
 ```
 
 #### Workload Descriptions
@@ -49,6 +52,9 @@ mise run benchmark -- --hash
 - **`--hash`**: Times 100 `Simulation.ComputeHash` calls on a fresh eight-player gigantic
   world, then on an eight-player standard world played to turn 100, and reports time,
   allocated bytes and gen-2 collections per hash.
+- **`--gigantic`**: Plays an eight-player AI game on a gigantic world, times turns 21-30,
+  and reports time and allocated bytes per turn, gen-2 collections, and the final state
+  hash, which must not change under a pure optimization.
 
 ### Profiling and Diagnostic Tracing
 
@@ -817,6 +823,27 @@ after measured back to back:
 The hash values are unchanged (`11110498118ABED7` and `F36B7E720365C85E`), and
 `mise run test` passes. A first cut capped the reused buffers at 8 MB, which a fresh
 gigantic world fills exactly and a later one would overflow, regrowing them on every hash.
+
+### Pass 9: AI Threat Grid Reuse
+
+- **Date**: 2026-11-11
+
+`AiContext` rebuilt its whole-map threat grid (`int[Grid.Count]`, 94 KB on a gigantic map,
+so a large-object-heap allocation) after every command an AI issued. The context now owns
+one array that each segment clears and refills. Segments never overlap: parallel
+scoring joins before `Issue` or `Refresh` replaces one.
+
+`mise run benchmark -- --gigantic`, back to back:
+
+| Metric (turns 21-30)            |   Before |    After |
+| :------------------------------ | -------: | -------: |
+| Allocated per turn              | 483.4 MB | 481.4 MB |
+| Gen-2 collections (10 turns)    |       15 |       13 |
+| Time per turn                   |   486 ms |   501 ms |
+
+The final hash is unchanged (`8DE653BF50D0B641`). At turn 30 each AI has only a few
+workers and settlers, so about 20 grid allocations a turn go away. The saving grows with
+the number of workers and settlers issuing commands; the turn-time difference is noise.
 
 ______________________________________________________________________
 
