@@ -19,6 +19,15 @@ directly throws away.
 - If a job has no task, add one to `mise.toml` and call that, rather than putting a raw
   script invocation into a runbook or an agent prompt.
 
+## Art Assets (git-lfs)
+
+Models and terrain textures are git-lfs files. A fresh worktree can hold only their
+pointer files, which fails model tests with "is not a GLB" and leaves the game without
+scatter models. The build and test tasks depend on the hidden `assets` task, which fills
+them in from the shared local LFS store (`git lfs checkout`, no network) and fetches
+only what the store lacks. If you see that failure, run `mise run assets`; do not report
+it as a known failure.
+
 ## Temporary Files
 
 Write temporary files to `/tmp/ariel`.

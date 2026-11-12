@@ -4,19 +4,22 @@ run = "mise tasks"
 
 [tasks.build]
 description = "Build the headless solution (core, rules, mods, tools and tests) without running tests"
+depends = ["assets"]
 run = "dotnet build Ariel.slnx -v quiet -nologo"
 
 [tasks."build:project"]
 description = "Build one project and what it references: mise run build:project -- tests/Ariel.Tests"
+depends = ["assets"]
 run = "dotnet build -v quiet -nologo"
 
 [tasks."test:project"]
 description = "Build and run one test project, with optional dotnet test arguments: mise run test:project -- tests/Ariel.Tests [--filter NAME]"
+depends = ["assets"]
 run = "dotnet test -v quiet -nologo"
 
 [tasks."build:game"]
 description = "Build the Godot game"
-depends = ["cool"]
+depends = ["assets", "cool"]
 run = "dotnet build src/Ariel.Godot"
 
 [tasks."start:game"]
@@ -34,6 +37,20 @@ description = "Open the reference sheet's widgets at full size (skin scale 3) to
 depends = ["build:game"]
 run = "godot-mono --path src/Ariel.Godot --resolution 1672x1000 res://UiGallery.tscn -- --replica"
 
+[tasks.assets]
+description = "Fill in the git-lfs art (models, terrain textures) when the checkout holds only pointer files, as a fresh worktree does"
+hide = true
+run = '''
+set -u
+command -v git-lfs >/dev/null || { echo "assets: git-lfs is not installed; art files stay pointers and model tests fail" >&2; exit 0; }
+# A worktree shares the main checkout's LFS store, so this copies files without the network and is a no-op once done.
+git lfs checkout >/dev/null 2>&1 || true
+if git lfs ls-files | grep -q ' - '; then
+  echo "assets: some art is not in the local LFS store; fetching it" >&2
+  git lfs pull || { echo "assets: git lfs pull failed; art files stay pointers and model tests fail" >&2; exit 0; }
+fi
+'''
+
 [tasks.cool]
 description = "Wait for the laptop to cool down before a heavy job (thermal gate; the EC hard-powers off when hot)"
 hide = true
@@ -41,7 +58,7 @@ run = "tools/cool-wait.sh"
 
 [tasks.test]
 description = "Build once, then run the default tests (excludes E2E, extractor and world generation tests)"
-depends = ["cool"]
+depends = ["assets", "cool"]
 env = { DOTNET_gcServer = "1" }
 run = '''
 set -u
@@ -51,7 +68,7 @@ mise run test:nobuild
 
 [tasks."test:nobuild"]
 description = "Run the default tests on the current build (excludes E2E, extractor and world generation tests)"
-depends = ["cool"]
+depends = ["assets", "cool"]
 # Server GC is the single biggest GC win; disabling tiered compilation stops the suite from spending its first
 # seconds in tier-0 code and re-JITting hot paths it only reaches a few times.
 env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
@@ -83,13 +100,13 @@ exit $fail
 
 [tasks."test:worldgen"]
 description = "Run world generation tests (run when the work set touches world generation)"
-depends = ["cool"]
+depends = ["assets", "cool"]
 env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
 run = "dotnet test Ariel.slnx --filter 'Category=WorldGen'"
 
 [tasks."test:e2e"]
 description = "Run E2E tests"
-depends = ["cool"]
+depends = ["assets", "cool"]
 run = "dotnet test Ariel.slnx --filter 'Category=E2E'"
 
 [tasks."test:extractor"]
