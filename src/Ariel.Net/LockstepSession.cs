@@ -34,6 +34,12 @@ public sealed class LockstepSession : IDisposable
     private string? _handshakeError;
     private bool _announced;
 
+    /// <summary>How far past the current tick a peer's batch or hash may be. A peer runs a tick only once it holds
+    /// everyone's batch, so no honest peer gets more than twice the input delay ahead; the rest is slack for a peer
+    /// resuming or restarting. Anything further out could only be stored forever, or keep its sender a member of
+    /// ticks nobody will reach.</summary>
+    private int MaxLead => 2 * _delay + 64;
+
     public int Tick { get; private set; }
     /// <summary>The next tick this peer will submit a batch for. No peer can have run it, so a membership change the
     /// host announces at this tick reaches everyone in time.</summary>
@@ -42,6 +48,9 @@ public sealed class LockstepSession : IDisposable
     public long Applied { get; private set; }
     public Simulation Simulation => _sim;
     public event Action<int>? Desync;
+    /// <summary>The latest input a peer sent that broke the protocol and was ignored, such as a second, different
+    /// batch for a tick it already sent. Diagnostics only.</summary>
+    public string? LastFault { get; private set; }
 
     /// <summary>Start a new game: every peer is a member from tick 0, and ticks [0, delay) carry no input by agreement.</summary>
     public LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, IEnumerable<int> peers, int localPeer, int inputDelay = 2)
@@ -120,7 +129,9 @@ public sealed class LockstepSession : IDisposable
         Tick = tick;
         _nextSubmit = Math.Max(_nextSubmit, tick);
         foreach (int t in _batches.Keys.Where(t => t < tick).ToList()) _batches.Remove(t);
-        foreach (int t in _hashes.Keys.Where(t => t < tick).ToList()) _hashes.Remove(t);
+        // Every tick from here runs again from the snapshot, so hashes reported before the restart describe states
+        // nobody will reach; a hash is written once, so they must go rather than be overwritten later.
+        _hashes.Clear();
     }
 
     /// <summary>Every batch held for <paramref name="fromTick"/> and later, for a peer resuming at that tick.</summary>
@@ -137,7 +148,8 @@ public sealed class LockstepSession : IDisposable
         var held = _batches.TryGetValue(Tick, out var d) ? d.Keys.Order().ToArray() : [];
         var members = _peers.Where(p => IsMember(p, Tick)).ToArray();
         return $"tick {Tick}: members [{string.Join(",", members)}], held [{string.Join(",", held)}], "
-            + $"next submit {_nextSubmit}, last batch per peer [{string.Join(",", _lastTick.OrderBy(t => t.Key).Select(t => $"{t.Key}:{t.Value}"))}]";
+            + $"next submit {_nextSubmit}, last batch per peer [{string.Join(",", _lastTick.OrderBy(t => t.Key).Select(t => $"{t.Key}:{t.Value}"))}]"
+            + (LastFault is { } fault ? $", last fault: {fault}" : "");
     }
 
     /// <summary>Hand over a message received before this session existed.</summary>
@@ -237,26 +249,50 @@ public sealed class LockstepSession : IDisposable
         switch (m.Kind)
         {
             case NetMessageKind.Handshake:
+                // Only a peer this session still waits on can be checked; a repeat, or a handshake from a peer that
+                // was never waited on (one the host admitted mid-game after checking its content), cannot stop it.
+                if (!_awaitingHandshake.Contains(m.Peer)) return;
                 if (!string.Equals(m.ContentHash, _sim.Content.ContentHash, StringComparison.Ordinal))
                     _handshakeError = $"Lockstep content mismatch with peer {m.Peer}: expected {_sim.Content.ContentHash}, got {m.ContentHash}";
                 else _awaitingHandshake.Remove(m.Peer);
                 break;
             case NetMessageKind.Commands:
-                // Batches for ticks already run (a resumed peer hears some) can never be used.
-                if (m.Tick < Tick) return;
-                Store(m.Tick, m.Peer, m.Commands ?? []);
+                // Batches for ticks already run (a resumed peer hears some) can never be used. This peer's own batches
+                // come only from Pump: a relayed copy is the same batch, and anything else is not ours to accept.
+                if (m.Tick < Tick || m.Peer == _local || !Accepts(m.Peer, m.Tick)) return;
+                if (!Store(m.Tick, m.Peer, m.Commands ?? [])) return;
                 if (!_lastTick.TryGetValue(m.Peer, out int last) || m.Tick > last) _lastTick[m.Peer] = m.Tick;
                 break;
             case NetMessageKind.Hash:
+                if (m.Peer == _local || !Accepts(m.Peer, m.Tick)) return;
                 StoreHash(m.Tick, m.Peer, m.Hash);
                 break;
         }
     }
 
-    private void Store(int tick, int peer, string[] commands)
+    /// <summary>Whether input from <paramref name="peer"/> for <paramref name="tick"/> can be used: the tick is within
+    /// reach, and the peer is not known to be outside its membership then, before it joined or after it left. A peer
+    /// not yet announced is accepted, since its batches can arrive before the announcement does.</summary>
+    private bool Accepts(int peer, int tick)
+    {
+        if (tick > Tick + MaxLead) { LastFault = $"peer {peer} sent tick {tick}, beyond {Tick + MaxLead}"; return false; }
+        return !_joinedAt.ContainsKey(peer) || IsMember(peer, tick);
+    }
+
+    /// <summary>Hold a peer's batch for a tick. Each batch is written once: a repeat of the same batch changes nothing,
+    /// and a different one is ignored and recorded as a fault, so a tick never applies one copy on some peers and
+    /// another on the rest. Returns whether the batch is now held as given.</summary>
+    private bool Store(int tick, int peer, string[] commands)
     {
         if (!_batches.TryGetValue(tick, out var d)) _batches[tick] = d = new();
+        if (d.TryGetValue(peer, out var held))
+        {
+            if (held.AsSpan().SequenceEqual(commands)) return true;
+            LastFault = $"peer {peer} sent a second, different batch for tick {tick}";
+            return false;
+        }
         d[peer] = commands;
+        return true;
     }
 
     /// <summary>Compare once every member of the tick has reported. Hashes for ticks this peer never ran (before it
@@ -265,7 +301,9 @@ public sealed class LockstepSession : IDisposable
     {
         if (tick < Tick && !_hashes.ContainsKey(tick) && peer != _local) return;
         if (!_hashes.TryGetValue(tick, out var d)) _hashes[tick] = d = new();
-        d[peer] = hash;
+        // One hash per peer and tick: a later report cannot replace the first, so a peer cannot raise a desync by
+        // revising what it said.
+        if (!d.TryAdd(peer, hash)) return;
         ulong? first = null;
         bool mismatch = false;
         foreach (int p in _peers)

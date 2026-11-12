@@ -100,4 +100,82 @@ public class LockstepTests
         Assert.Equal(applied, a.Applied);
         Assert.Single(sim.State.Cities);
     }
+
+    /// <summary>Peer 0's session, with peer 1 played by hand through raw messages.</summary>
+    private static (LockstepSession a, Simulation sim, CommandCodec codec) WithScriptedPeer()
+    {
+        var hub = new InProcessHub();
+        var sim = TestGame.Sim();
+        var codec = new CommandCodec(sim.Content);
+        var a = new LockstepSession(sim, codec, hub.CreateEndpoint(), [0, 1], 0);
+        a.Deliver(new NetMessage(NetMessageKind.Handshake, 0, 1, [], 0, sim.Content.ContentHash));
+        a.Pump(); // runs the agreed empty ticks; tick 2 waits for peer 1
+        Assert.Equal(2, a.Tick);
+        return (a, sim, codec);
+    }
+
+    [Fact]
+    public void A_peers_first_batch_for_a_tick_stands_and_a_different_second_one_is_a_fault()
+    {
+        var (a, sim, codec) = WithScriptedPeer();
+        var land = TestGame.FindLand(sim);
+        string found = codec.Encode(new FoundCityCommand { Player = 1, Position = land });
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 2, 1, [], 0));
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 2, 1, [found], 0));
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 2, 1, [], 0)); // an identical repeat is harmless
+
+        a.Pump(maxTicks: 1);
+
+        Assert.Equal(3, a.Tick);
+        Assert.Empty(sim.State.Cities);
+        Assert.Contains("second, different batch for tick 2", a.LastFault);
+    }
+
+    [Fact]
+    public void A_relayed_batch_claiming_to_be_the_local_peers_is_ignored()
+    {
+        var (a, sim, codec) = WithScriptedPeer();
+        string found = codec.Encode(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) });
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 4, 0, [found], 0)); // before peer 0 submits tick 4 itself
+        for (int t = 2; t <= 4; t++) a.Deliver(new NetMessage(NetMessageKind.Commands, t, 1, [], 0));
+
+        a.Pump();
+
+        Assert.Equal(5, a.Tick);
+        Assert.Empty(sim.State.Cities);
+    }
+
+    [Fact]
+    public void A_far_future_batch_cannot_keep_a_departed_peer_a_member()
+    {
+        var (a, _, _) = WithScriptedPeer();
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 2, 1, [], 0));
+        a.Deliver(new NetMessage(NetMessageKind.Commands, int.MaxValue - 1, 1, [], 0));
+        Assert.Equal(2, a.LastBatchTick(1));
+        Assert.Contains("beyond", a.LastFault);
+
+        a.RemovePeer(1, a.LastBatchTick(1));
+        a.Pump(maxTicks: 10); // alone, the session would run ticks forever: bound it
+
+        Assert.Equal(12, a.Tick);
+    }
+
+    [Fact]
+    public void A_late_handshake_and_a_revised_hash_cannot_stop_or_desync_the_game()
+    {
+        var (a, sim, codec) = WithScriptedPeer();
+        bool desync = false;
+        a.Desync += _ => desync = true;
+        a.Deliver(new NetMessage(NetMessageKind.Handshake, 0, 1, [], 0, "some other content"));
+        a.Enqueue(new SetResearchCommand { Player = 0, Tech = "base:mining" }); // goes out for tick 4
+        for (int t = 2; t <= 4; t++) a.Deliver(new NetMessage(NetMessageKind.Commands, t, 1, [], 0));
+        a.Pump(maxTicks: 3);
+        Assert.Equal(5, a.Tick);
+        var copy = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+
+        a.Deliver(new NetMessage(NetMessageKind.Hash, 4, 1, [], copy.ComputeHash()));
+        a.Deliver(new NetMessage(NetMessageKind.Hash, 4, 1, [], 12345));
+
+        Assert.False(desync);
+    }
 }
