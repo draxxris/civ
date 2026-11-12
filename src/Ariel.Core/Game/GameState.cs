@@ -539,6 +539,7 @@ public sealed class GameState
         {
             t.Members.RemoveWhere(id => !_players.TryGetValue(id, out var p) || p.TeamId != t.Id);
         }
+        (TurnOrder ?? throw new InvalidDataException("Missing turn order")).Validate(_players.ContainsKey);
         foreach (var c in Cities)
         {
             c.Specialists = new(c.Specialists, StringComparer.Ordinal);

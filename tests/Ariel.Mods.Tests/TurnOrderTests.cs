@@ -161,6 +161,28 @@ public sealed class TurnOrderTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(2, loaded.State.Turn);
     }
 
+    [Theory]
+    [InlineData("nonexistent player", "nonexistent player 99")]
+    [InlineData("player twice", "player 0 twice")]
+    [InlineData("negative active", "outside its")]
+    [InlineData("active past the end", "outside its")]
+    public void A_save_with_an_impossible_turn_order_is_refused(string corruption, string message)
+    {
+        var sim = Game(TurnMode.Sequential, null, Ai, null);
+        var order = sim.State.TurnOrder;
+        switch (corruption)
+        {
+            case "nonexistent player": order.Segments[1] = [99]; break;
+            case "player twice": order.Segments[1] = [0]; break;
+            case "negative active": order.Active = -1; break;
+            default: order.Active = order.Segments.Count + 1; break;
+        }
+
+        var error = Assert.Throws<InvalidDataException>(() => SaveGame.Load(mods.Content, SaveGame.Save(sim)));
+
+        Assert.Contains(message, error.Message);
+    }
+
     [Fact]
     public void A_session_shows_whom_it_waits_for_once_its_segment_has_moved()
     {

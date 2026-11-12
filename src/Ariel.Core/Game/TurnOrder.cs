@@ -37,6 +37,26 @@ public sealed class TurnOrder
         return true;
     }
 
+    /// <summary>Reject an order a save or a host snapshot could carry but play cannot: a segment naming a player that
+    /// does not exist, a player in two places, or an active segment outside the plan. Any of them would make every
+    /// <see cref="IsActing"/> query throw or wait forever.</summary>
+    internal void Validate(Func<int, bool> playerExists)
+    {
+        if (Segments is null) throw new InvalidDataException("Turn order has no segment list");
+        if (Active < 0 || Active > Segments.Count)
+            throw new InvalidDataException($"Turn order's active segment {Active} is outside its {Segments.Count} segments");
+        var seen = new HashSet<int>();
+        foreach (var segment in Segments)
+        {
+            if (segment is null) throw new InvalidDataException("Turn order has a missing segment");
+            foreach (int player in segment)
+            {
+                if (!playerExists(player)) throw new InvalidDataException($"Turn order names nonexistent player {player}");
+                if (!seen.Add(player)) throw new InvalidDataException($"Turn order names player {player} twice");
+            }
+        }
+    }
+
     internal TurnOrder Clone() => new() { Segments = Segments.ConvertAll(s => s.ToArray()), Active = Active };
 
     /// <summary>Split the players who still have a move to make into segments for <paramref name="mode"/>. Players
