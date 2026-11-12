@@ -144,7 +144,15 @@ ______________________________________________________________________
        │
        ▼
 [Pass 8: Nov 11, 2026] Lockstep State Hash Without Copies
-                       (Commit: a17020e)
+                       (Commits: a17020e, 4c63893)
+       │
+       ▼
+[Pass 9: Nov 11, 2026] AI Threat Grid Reuse
+                       (Commit: 4cb9780)
+       │
+       ▼
+[Pass 10: Nov 11, 2026] Culture Reach Cached Across a Batch of Plots
+                        (Commit: 4eb56de)
 ```
 
 ______________________________________________________________________
@@ -796,7 +804,9 @@ open:
 ### Pass 8: Lockstep State Hash Without Copies
 
 - **Date**: 2026-11-11
-- **Primary Commit**: `a17020e`: *Hash the canonical state bytes where they are written*
+- **Primary Commits**:
+  - `a17020e`: *Hash the canonical state bytes where they are written*
+  - `4c63893`: *Keep the state hash buffers for gigantic worlds*
 
 #### Implementation Changes
 
@@ -833,6 +843,7 @@ gigantic world fills exactly and a later one would overflow, regrowing them on e
 ### Pass 9: AI Threat Grid Reuse
 
 - **Date**: 2026-11-11
+- **Primary Commit**: `4cb9780`: *Refill one threat grid per turn instead of allocating one per command*
 
 `AiContext` rebuilt its whole-map threat grid (`int[Grid.Count]`, 94 KB on a gigantic map,
 so a large-object-heap allocation) after every command an AI issued. The context now owns
@@ -854,6 +865,7 @@ the number of workers and settlers issuing commands; the turn-time difference is
 ### Pass 10: Culture Reach Cached Across a Batch of Plots
 
 - **Date**: 2026-11-11
+- **Primary Commit**: `4eb56de`: *Reuse each city's culture reach across a batch of plot resolutions*
 
 Settling a plot's owner asks, for every player with culture on it, whether one of that
 player's cities reaches the plot. Each answer evaluated the city's culture levels and ran
@@ -916,6 +928,8 @@ passes:
 |                                         |                      | Unchanged selection click (repeat click)                   | UI update lines          |               1 line |           0 lines |                    **-100% (eliminated)** |
 |                                         |                      | Research dialog reopen (unchanged session)                 | Wall time                |             14.00 ms |           0.07 ms |                                **-99.5%** |
 |                                         |                      | Religion plate scrape pattern delta on click               | Differing pixels         |               594 px |              0 px |                        **-100% (stable)** |
-| **Pass 8: Lockstep State Hash**         | `a17020e`            | Standard turn-100 8-player `ComputeHash`                   | Managed bytes per hash   |             8,923 KB |            827 KB |                                **-90.7%** |
+| **Pass 8: Lockstep State Hash**         | `a17020e`, `4c63893` | Standard turn-100 8-player `ComputeHash`                   | Managed bytes per hash   |             8,923 KB |            827 KB |                                **-90.7%** |
 |                                         |                      | Standard turn-100 8-player `ComputeHash`                   | Wall time per hash       |             14.90 ms |          13.03 ms |                                **-12.6%** |
 |                                         |                      | Gigantic turn-1 8-player `ComputeHash`                     | Managed bytes per hash   |            31,002 KB |          2,327 KB |                                **-92.5%** |
+| **Pass 9: AI Threat Grid Reuse**        | `4cb9780`            | Gigantic 8-player turns 21-30                              | Managed bytes per turn   |             483.4 MB |          481.4 MB |                                  **-0.4%** |
+| **Pass 10: Culture Reach Cache**        | `4eb56de`            | Turn-100 culture spread and plot ownership (36 cities)     | Wall time                |              1.44 ms |           0.37 ms |                                **-74.3%** |

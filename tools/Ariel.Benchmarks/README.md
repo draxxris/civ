@@ -37,6 +37,19 @@ mise run benchmark -- --hash
 gigantic world, then on an eight-player standard world played to turn 100. It reports
 the time, bytes allocated and gen-2 collections per hash, and the hash itself.
 
+For whole AI turns on a large map, and for the borders phase, run:
+
+```sh
+mise run benchmark -- --gigantic
+mise run benchmark -- --borders
+```
+
+`--gigantic` plays eight AI players on a gigantic world and times turns 21-30: time and
+bytes allocated per turn, gen-2 collections, and the final state hash. `--borders` plays
+the standard eight-player game to turn 100, then times the `cities:borders` phase on
+fresh copies of that state and prints the state hash before and after it. Both hashes
+must stay unchanged under a pure optimization.
+
 Neither `--quick` nor `--startup` runs the old 99-turn AI preparation. `--terrain`
 selects the terrain workload. Without a workload flag, the tool runs the original turn
 and AI workloads.
