@@ -25,7 +25,7 @@ internal static class FloodedUnits
         else
         {
             var target = sim.State.Grid.HexOf(refuges[sim.Rng.Next(refuges.Length)]);
-            var builds = sim.Content.Services.Get<IWorkerBuildService>().SingleOrDefault();
+            var builds = sim.Rules().WorkerBuilds;
             foreach (var unit in stranded)
             {
                 MilitaryData.Edit(sim, unit).BreakActivity();

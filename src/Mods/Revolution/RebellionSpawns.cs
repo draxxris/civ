@@ -21,7 +21,7 @@ internal static class RebellionSpawns
         }
         Shuffle(sim, candidates);
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
-        int rebel = sim.Content.Services.Get<IBarbarianFaction>().Single().Ensure(sim);
+        int rebel = sim.Rules().Barbarians.Ensure(sim);
         var units = new List<int>();
         foreach (var tile in tiles)
         {
@@ -37,7 +37,7 @@ internal static class RebellionSpawns
             GamePace.Scale(sim, rules.CooldownTurns), GamePace.Scale(sim, rules.UnrestTurns));
         int releasedUnits = before - state.InstabilityIndex;
         sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), releasedUnits));
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
 
     /// <summary>Fisher-Yates over the seeded simulation rng: which neighbour rebels appear on is random per game

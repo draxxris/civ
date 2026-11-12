@@ -9,20 +9,20 @@ public static class UnitRules
     public const int DamagePerRound = 20;
 
     public static IEnumerable<PromotionDef> PromotionsOf(Simulation sim, Unit u) =>
-        u.Promotions.Select(id => sim.Content.Promotions.Get(id));
+        u.Promotions.Select(id => sim.Content.Get<PromotionDef>(id));
 
     public static int MaxMoves(Simulation sim, Unit u) =>
-        sim.Content.Units.Get(u.Type).Moves + PromotionsOf(sim, u).Sum(p => p.MovesBonus);
+        sim.Content.Get<UnitDef>(u.Type).Moves + PromotionsOf(sim, u).Sum(p => p.MovesBonus);
 
     /// <summary>Number of experience thresholds reached.</summary>
     public static int Level(Simulation sim, Unit u) =>
-        sim.Content.ExperienceLevels.All.Count(l => u.Experience >= l.Threshold);
+        sim.Content.Get<ExperienceLevelDef>().All.Count(l => u.Experience >= l.Threshold);
 
     public static int UnspentPromotions(Simulation sim, Unit u) => Level(sim, u) - u.Promotions.Count;
 
     public static string? CanPromote(Simulation sim, Unit u, PromotionDef promo)
     {
-        var def = sim.Content.Units.Get(u.Type);
+        var def = sim.Content.Get<UnitDef>(u.Type);
         if (def.Strength <= 0) return "unit cannot be promoted";
         if (UnspentPromotions(sim, u) <= 0) return "no promotion available";
         if (u.Promotions.Contains(promo.Id)) return "already has promotion";
@@ -32,12 +32,12 @@ public static class UnitRules
     }
 
     public static IEnumerable<PromotionDef> AvailablePromotions(Simulation sim, Unit u) =>
-        sim.Content.Promotions.All.Where(p => CanPromote(sim, u, p) == null);
+        sim.Content.Get<PromotionDef>().All.Where(p => CanPromote(sim, u, p) == null);
 
     /// <summary>Strength x100 after promotions, terrain (defenders) and current health.</summary>
     public static int Strength(Simulation sim, Unit u, bool attacking)
     {
-        var def = sim.Content.Units.Get(u.Type);
+        var def = sim.Content.Get<UnitDef>(u.Type);
         int bonus = 0;
         foreach (var p in PromotionsOf(sim, u))
             bonus += p.StrengthBonus + (attacking ? p.AttackBonus : p.DefenseBonus);
@@ -77,3 +77,6 @@ public static class UnitRules
         return unit;
     }
 }
+
+/// <summary>A combat finished; the loser was removed.</summary>
+public sealed record CombatResolved(int Attacker, int Defender, int Winner) : DomainEvent;

@@ -113,7 +113,7 @@ internal sealed class CivicEffects : IModifierSource
         if (c.LargestCityHappiness != 0) LargestCities(sim, city, c, sink);
         if (c.FeatureHappinessChanges.Count == 0 && c.ImprovementHealthPercentChanges.Count == 0) return;
         long featureHappy = 0, improvementHealth = 0;
-        foreach (var tile in sim.Content.Services.Get<ICityWorkService>().Single().WorkArea(sim, city.Id))
+        foreach (var tile in sim.Rules().CityWork.WorkArea(sim, city.Id))
         {
             var plot = sim.State.Plots[tile.Value];
             if (plot.Owner != city.Owner) continue;

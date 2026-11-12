@@ -1,5 +1,4 @@
 using Ariel.Content;
-using S = Ariel.Content.Schema;
 
 namespace Ariel.Game;
 
@@ -32,7 +31,6 @@ public sealed partial class Simulation
         // Validate ruleset setup ids, but never use world-size dimensions for authored maps.
         _ = sim.Settings.ResolveMap(content);
         sim.InitializePlayers();
-        sim.ValidateTerrains();
         foreach (var plot in plots)
         {
             plot.Visible.Clear();
@@ -42,7 +40,7 @@ public sealed partial class Simulation
         sim.State.RebuildIndexes();
         configure?.Invoke(sim);
         sim.PrepareScenario();
-        content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        content.Ruleset.CompleteScenario(sim);
         sim.StartGame();
         return sim;
     }
@@ -51,8 +49,9 @@ public sealed partial class Simulation
     {
         if (State.Map != Settings.Map) throw new InvalidDataException("Configure cannot change the scenario map dimensions");
         if (State.Plots.Length != State.Grid.Count) throw new InvalidDataException("Plot count does not match map dimensions");
-        ValidateTerrains();
-        foreach (var plot in State.Plots) ValidateScenarioPlot(plot);
+        Content.Ruleset.Validate(this);
+        foreach (var plot in State.Plots)
+            if (plot.Owner is { } owner) _ = State.PlayerById(owner);
         foreach (var player in State.Players)
             if (player.StartingPlot is { } tile) _ = State.Grid.HexOf(tile);
         foreach (var city in State.Cities)
@@ -63,23 +62,11 @@ public sealed partial class Simulation
         foreach (var unit in State.Units)
         {
             ValidateScenarioEntity(unit.Id, unit.Owner);
-            if (Settings.WorldSize is null) _ = Content.Units.Get(unit.Type);
-            else _ = Content.Get<S.UnitDef>(unit.Type);
             unit.SetPosition(State.Grid.Normalize(unit.Position));
         }
         State.NextCityId = Math.Max(State.NextCityId, checked(State.Cities.Select(c => c.Id).DefaultIfEmpty(0).Max() + 1));
         State.NextUnitId = Math.Max(State.NextUnitId, checked(State.Units.Select(u => u.Id).DefaultIfEmpty(0).Max() + 1));
         State.RebuildIndexes();
-    }
-
-    private void ValidateScenarioPlot(Plot plot)
-    {
-        if (plot.Owner is { } owner) _ = State.PlayerById(owner);
-        if (Settings.WorldSize is null) return;
-        if (plot.Feature is { } feature) _ = Content.Get<S.FeatureDef>(feature);
-        if (plot.Bonus is { } bonus) _ = Content.Get<S.BonusDef>(bonus);
-        if (plot.Improvement is { } improvement) _ = Content.Get<S.ImprovementDef>(improvement);
-        if (plot.Route is { } route) _ = Content.Get<S.RouteDef>(route);
     }
 
     private void ValidateScenarioEntity(int id, int owner)

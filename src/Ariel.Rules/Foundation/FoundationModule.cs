@@ -1,6 +1,7 @@
 using Ariel.Content.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Ariel.Game;
 using Ariel.Modding;
 
 namespace Ariel.Rules.Foundation;
@@ -53,7 +54,7 @@ public sealed class FoundationModule : IPreparableMod
     {
         context.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
         ContentRegistration.Load(context, HexOverrides);
-        context.RegisterService<Ariel.Game.INewGameSetup>("new_game", new NewGameSetup());
+        context.RegisterService<Ariel.Game.IRuleset>("ruleset", new Ariel.Game.GameRules());
         ContentRegistration.Load(context, Commerce);
         ContentRegistration.Load(context, Corporations);
         ContentRegistration.Load(context, CultureLevels);
@@ -79,7 +80,7 @@ public sealed class FoundationModule : IPreparableMod
         // AND's PrereqCorporation is city presence (CvCity.cpp:4039-4046). The owning rules answer it; without them
         // the leaf fails, which keeps corporation-gated buildings unbuildable rather than granting them for free.
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation", (leaf, subject) =>
-            subject.City is { } city && subject.Sim.Content.Services.Get<Ariel.Game.ICorporationService>().SingleOrDefault()
+            subject.City is { } city && subject.Sim.Rules().Corporations
                 is { } corporations && corporations.HasIdentity(subject.Sim, city.Id, leaf.Id));
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory");
     }

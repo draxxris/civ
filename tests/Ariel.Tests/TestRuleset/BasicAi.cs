@@ -13,8 +13,8 @@ public sealed class BasicAi : IPlayerAI
         if (!sim.State.Cities.Any(c => c.Owner == playerId) && Sites.Best(sim, playerId) is { } site)
             yield return new FoundCityCommand { Player = playerId, Position = site };
         if (Research(sim, playerId) is { } research) yield return research;
-        foreach (var city in sim.State.Cities.Where(c => c.Owner == playerId && c.Building == null))
-            if (Production(sim, city) is { } production) yield return production;
+        foreach (var city in sim.State.Cities.Where(c => c.Owner == playerId && Production.Building(sim, c) == null))
+            if (ChooseProduction(sim, city) is { } production) yield return production;
         foreach (var unit in sim.State.Units.Where(u => u.Owner == playerId).OrderBy(u => u.Id).ToList())
         {
             if (Promotion(sim, unit) is { } promotion) yield return promotion;
@@ -26,26 +26,26 @@ public sealed class BasicAi : IPlayerAI
     {
         var team = sim.TeamOf(player);
         if (team.Researching != null) return null;
-        var tech = sim.Content.Techs.All
+        var tech = sim.Content.Get<TechDef>().All
             .Where(t => !team.Techs.Contains(t.Id) && t.Prerequisites.All(team.Techs.Contains)
                 && sim.Content.Requirements.Evaluate(t.Requirements, new(sim, player)).Success)
             .OrderBy(t => t.Cost).ThenBy(t => t.Id, StringComparer.Ordinal).FirstOrDefault();
         return tech == null ? null : new SetResearchCommand { Player = player, Tech = tech.Id };
     }
-    private static GameCommand? Production(Simulation sim, City city)
+    private static GameCommand? ChooseProduction(Simulation sim, City city)
     {
-        var building = sim.Content.Buildings.All
+        var building = sim.Content.Get<BuildingDef>().All
             .Where(b => !city.Buildings.Contains(b.Id) && (b.RequiresTech == null || sim.KnowsTech(city.Owner, b.RequiresTech)))
             .OrderBy(b => b.Cost).ThenBy(b => b.Id, StringComparer.Ordinal).FirstOrDefault();
         if (building != null) return new StartBuildingCommand { Player = city.Owner, CityId = city.Id, Building = building.Id };
-        if (city.Training != null || HasEnoughMilitary(sim, city.Owner)) return null;
-        var unit = sim.Content.Units.All
+        if (Production.Training(sim, city) != null || HasEnoughMilitary(sim, city.Owner)) return null;
+        var unit = sim.Content.Get<UnitDef>().All
             .Where(u => u.Strength > 0 && (u.RequiresTech == null || sim.KnowsTech(city.Owner, u.RequiresTech)))
             .OrderByDescending(u => u.Strength).ThenBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
         return unit == null ? null : new StartTrainingCommand { Player = city.Owner, CityId = city.Id, Unit = unit.Id };
     }
     private static bool HasEnoughMilitary(Simulation sim, int player) =>
-        sim.State.Units.Count(u => u.Owner == player && sim.Content.Units.Get(u.Type).Strength > 0)
+        sim.State.Units.Count(u => u.Owner == player && sim.Content.Get<UnitDef>(u.Type).Strength > 0)
         >= sim.State.Cities.Count(c => c.Owner == player);
 
     private static GameCommand? Promotion(Simulation sim, Unit unit)
@@ -56,7 +56,7 @@ public sealed class BasicAi : IPlayerAI
     }
     private static GameCommand? Attack(Simulation sim, Unit unit)
     {
-        if (sim.Content.Units.Get(unit.Type).Strength <= 0 || unit.MovesLeft <= 0) return null;
+        if (sim.Content.Get<UnitDef>(unit.Type).Strength <= 0 || unit.MovesLeft <= 0) return null;
         foreach (var neighbor in sim.State.Grid.Neighbors(unit.Position))
         {
             var target = UnitRules.BestDefender(sim, neighbor, unit.Owner);

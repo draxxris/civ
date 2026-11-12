@@ -26,7 +26,7 @@ internal sealed class ReligionEffects : IModifierSource
         var presence = ReligionData.Present(sim, city);
         if (presence.Count == 0 && city.Buildings.Count == 0) return;
         var civics = ReligionData.Civics(sim, city.Owner).ToArray();
-        bool allCommerce = sim.Content.Services.Get<IPeoplesService>().SingleOrDefault()?.Traits(sim, city.Owner).Any(t => t.NonStateReligionCommerce) == true;
+        bool allCommerce = sim.Rules().Peoples?.Traits(sim, city.Owner).Any(t => t.NonStateReligionCommerce) == true;
         foreach (var religion in presence)
         {
             var def = sim.Content.Get<ReligionDef>(religion);

@@ -1,11 +1,14 @@
 using Ariel.Content;
+using Ariel.Game;
 using Ariel.Modding;
 
 namespace Ariel.BaseGame;
 
 /// <summary>
-/// The base game is an ordinary mod: it has no privileges over any other. Terrain is code, techs/buildings/culture
-/// levels are sidecar JSON, rules are turn systems and commands.
+/// The test ruleset: a complete small game the kernel runs with no knowledge of the real game's domain. It loads as an
+/// ordinary mod with no privileges over any other. Its content schema is its own (<see cref="TerrainDef"/> and the rest
+/// in Defs.cs); terrain is code, techs/buildings/culture levels are sidecar JSON, rules are turn systems and commands,
+/// and <see cref="BaseRuleset"/> answers the kernel's setup questions.
 /// </summary>
 public sealed class TestRulesetMod : IMod
 {
@@ -14,31 +17,33 @@ public sealed class TestRulesetMod : IMod
         ctx.RegisterService<IRequirementEvaluator>("tech_requirements", new TechRequirementEvaluator());
         ctx.RegisterService<IModifierSource>("civilization_modifiers", new CivilizationModifiers());
         ctx.RegisterService<IModifierSource>("civic_modifiers", new CivicModifiers());
+        ctx.RegisterService<IRuleset>("ruleset", new BaseRuleset());
+        ctx.RegisterStateComponent<CityProduction>("city_production");
 
         // Terrain, registered in code.
-        ctx.Terrains.Register(new TerrainDef { Id = "base:ocean",     Name = "Ocean",     IsWater = true, Passable = false, Food = 1, Commerce = 2, Color = "#2a5d9f" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:grassland", Name = "Grassland", Food = 2, Color = "#5fa84a" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:plains",    Name = "Plains",    Food = 1, Production = 1, Color = "#c4b45a" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:desert",    Name = "Desert",    Color = "#e0cf8a" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:hills",     Name = "Hills",     MoveCost = 2, Production = 2, DefenseBonus = 25, Color = "#8a7a52" });
-        ctx.Terrains.Register(new TerrainDef { Id = "base:mountains", Name = "Mountains", Passable = false, DefenseBonus = 50, Color = "#9a9a9a" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:ocean",     Name = "Ocean",     IsWater = true, Passable = false, Food = 1, Commerce = 2, Color = "#2a5d9f" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:grassland", Name = "Grassland", Food = 2, Color = "#5fa84a" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:plains",    Name = "Plains",    Food = 1, Production = 1, Color = "#c4b45a" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:desert",    Name = "Desert",    Color = "#e0cf8a" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:hills",     Name = "Hills",     MoveCost = 2, Production = 2, DefenseBonus = 25, Color = "#8a7a52" });
+        ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "base:mountains", Name = "Mountains", Passable = false, DefenseBonus = 50, Color = "#9a9a9a" });
 
         // Sidecar data.
-        foreach (var t in ctx.Data.ReadJson<TechDef[]>("data/techs.json")) ctx.Techs.Register(t);
-        foreach (var b in ctx.Data.ReadJson<BuildingDef[]>("data/buildings.json")) ctx.Buildings.Register(b);
-        foreach (var c in ctx.Data.ReadJson<CultureLevelDef[]>("data/culture.json")) ctx.CultureLevels.Register(c);
+        foreach (var t in ctx.Data.ReadJson<TechDef[]>("data/techs.json")) ctx.Content<TechDef>().Register(t);
+        foreach (var b in ctx.Data.ReadJson<BuildingDef[]>("data/buildings.json")) ctx.Content<BuildingDef>().Register(b);
+        foreach (var c in ctx.Data.ReadJson<CultureLevelDef[]>("data/culture.json")) ctx.Content<CultureLevelDef>().Register(c);
 
-        foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Civilizations.Register(c);
+        foreach (var c in ctx.Data.ReadJson<CivilizationDef[]>("data/civilizations.json")) ctx.Content<CivilizationDef>().Register(c);
         ctx.PlayerAIs.Register(new BasicAi());
 
-        foreach (var s in ctx.Data.ReadJson<SpecialistDef[]>("data/specialists.json")) ctx.Specialists.Register(s);
-        foreach (var c in ctx.Data.ReadJson<CivicDef[]>("data/civics.json")) ctx.Civics.Register(c);
-        foreach (var u in ctx.Data.ReadJson<UnitDef[]>("data/units.json")) ctx.Units.Register(u);
-        foreach (var p in ctx.Data.ReadJson<PromotionDef[]>("data/promotions.json")) ctx.Promotions.Register(p);
-        foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.ExperienceLevels.Register(l);
+        foreach (var s in ctx.Data.ReadJson<SpecialistDef[]>("data/specialists.json")) ctx.Content<SpecialistDef>().Register(s);
+        foreach (var c in ctx.Data.ReadJson<CivicDef[]>("data/civics.json")) ctx.Content<CivicDef>().Register(c);
+        foreach (var u in ctx.Data.ReadJson<UnitDef[]>("data/units.json")) ctx.Content<UnitDef>().Register(u);
+        foreach (var p in ctx.Data.ReadJson<PromotionDef[]>("data/promotions.json")) ctx.Content<PromotionDef>().Register(p);
+        foreach (var l in ctx.Data.ReadJson<ExperienceLevelDef[]>("data/experience_levels.json")) ctx.Content<ExperienceLevelDef>().Register(l);
 
         ctx.MapGenerators.Register(new ContinentsGenerator());
-        ctx.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
+        ctx.RegisterService<ISetupPolicy>("setup_policy", new SetupPolicy());
 
         ctx.RegisterCommand<FoundCityCommand>("found_city");
         ctx.RegisterCommand<SetResearchCommand>("set_research");

@@ -61,7 +61,7 @@ internal sealed partial class CombatService : ICombatService
     {
         if (a.MovesLeft <= 0 || a.Health <= 0) throw new InvalidOperationException("Attacker cannot act");
         if (!EligibleDefender(sim, a, d)) throw new InvalidOperationException("Invalid defender");
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var movement = sim.Rules().Movement;
         var error = movement.CanEnter(sim, a.Id, sim.State.Grid.TileAt(a.Position), sim.State.Grid.TileAt(d.Position), true);
         if (error is not null) throw new InvalidOperationException(error);
         if (MilitaryData.Constants(sim).MaxHitPoints - d.Health >= MilitaryData.Definition(sim, a).CombatLimit)
@@ -90,7 +90,7 @@ internal sealed partial class CombatService : ICombatService
     {
         var state = MilitaryData.Edit(sim, a);
         state.Attacked = true; state.Moved = true; state.BreakActivity();
-        int cost = sim.Content.Services.Get<IMovementService>().Single().StepCost(sim, a.Id, sim.State.Grid.TileAt(a.Position), sim.State.Grid.TileAt(combatPlot));
+        int cost = sim.Rules().Movement.StepCost(sim, a.Id, sim.State.Grid.TileAt(a.Position), sim.State.Grid.TileAt(combatPlot));
         a.MovesLeft = Math.Max(0, a.MovesLeft - Math.Max(cost, MilitaryData.Constants(sim).MoveDenominator));
         if (outcome == CombatOutcome.DefenderWithdrawn)
         {
@@ -137,7 +137,7 @@ internal sealed partial class CombatService : ICombatService
     }
     private static Hex? FindSafeRetreatHex(Simulation sim, Unit defender, Unit attacker)
     {
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var movement = sim.Rules().Movement;
         var origin = sim.State.Grid.TileAt(defender.Position);
         foreach (var tile in sim.State.Grid.Neighbors(origin).OrderBy(t => t.Value))
         {

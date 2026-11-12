@@ -396,7 +396,7 @@ public class ContractTests
         var city = sim.State.Cities[0];
         city.FoodStored = 1000;
         new GrowthSystem().Run(sim);
-        city.Building = "base:granary"; city.BuildProgress = 1000;
+        Production.Start(sim, city, ProductionKind.Building, "base:granary", progress: 1000);
         new ProductionSystem().Run(sim);
         var a = UnitRules.Spawn(sim, 0, "base:warrior", site);
         var b = UnitRules.Spawn(sim, 1, "base:warrior", site);
@@ -613,12 +613,14 @@ public class ContractTests
     {
         var sim = TestGame.Sim();
         var player = sim.State.PlayerById(0);
-        Assert.Null(player.Extensions.TryGet<GovernmentPlayerState>(sim.Content));
-        Assert.Throws<InvalidOperationException>(() => player.Extensions.Get<GovernmentPlayerState>(sim.Content));
-        Assert.False(GovernmentStatus.IsAnarchy(sim, 0));
+        Assert.Null(player.Extensions.TryGet<UnloadedModState>(sim.Content));
+        Assert.Throws<InvalidOperationException>(() => player.Extensions.Get<UnloadedModState>(sim.Content));
         Assert.True(sim.TryApply(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) }, out _));
-        Assert.False(GovernmentStatus.IsDisorder(sim, sim.State.Cities[0]));
+        Assert.Null(sim.State.Cities[0].Extensions.TryGet<UnloadedModState>(sim.Content));
     }
+
+    /// <summary>State a mod that is not loaded would register.</summary>
+    private sealed class UnloadedModState { public int Value { get; set; } }
 
     [Fact]
     public void RejectedCityAndUnitInsertsAndMovesLeaveAllIndexesUnchanged()

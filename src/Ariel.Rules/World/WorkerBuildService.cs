@@ -131,7 +131,7 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         }
         if (build.FeatureChange is { } newFeature) plot.Feature = newFeature;
         if (build.Kill) sim.State.RemoveUnit(worker.Id);
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Visibility.Recompute(sim);
     }
     private static void FeatureProduction(Simulation sim, int player, TileId tile, int production)
     {

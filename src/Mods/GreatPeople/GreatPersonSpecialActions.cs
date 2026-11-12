@@ -54,7 +54,7 @@ internal static partial class GreatPersonActions
         }
     }
     private static bool CanConstruct(Simulation sim, City city, string building) =>
-        sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, city.Id, "cities:building", building)
+        sim.Rules().CityProduction.Validate(sim, city.Id, "cities:building", building)
             .Failures.All(ProductionFailures.IsCostOnly);
 
     private static GreatPersonAction? Trade(Simulation sim, Unit unit, S.UnitDef def, Hex position)
@@ -73,7 +73,7 @@ internal static partial class GreatPersonActions
         var capital = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)
             .FirstOrDefault(c => GreatPeopleData.Active(sim, c).Any(b => b.Capital));
         if (capital is null) return 0;
-        return (sim.Content.Services.Get<ITradeRouteService>().SingleOrDefault()?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
+        return (sim.Rules().TradeRoutes?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
     }
     private static long TeamTradeMissionModifier(Simulation sim, int player)
     {

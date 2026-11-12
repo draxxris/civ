@@ -16,9 +16,6 @@ public sealed record UnitCreated(int Unit, int Player, string Type, Hex Position
 public sealed record UnitMoved(int Unit, int Player, Hex From, Hex To) : DomainEvent;
 /// <summary>A unit was removed because its owner could not pay recurring costs.</summary>
 public sealed record UnitDisbandedForDeficit(int UnitId, int Player, Hex Position) : DomainEvent;
-/// <summary>A combat finished; the loser was removed. Report is the fight as it resolved, so presentation can replay it after the turn rolls over.</summary>
-public sealed record CombatResolved(int Attacker, int Defender, int Winner, int LoserOwner = -1, CombatReport? Report = null) : DomainEvent;
-public sealed record AirMissionResolved(AirMissionReport Report) : DomainEvent;
 /// <summary>A turn began.</summary>
 public sealed record TurnStarted(int Turn) : DomainEvent;
 /// <summary>A turn ended after all rule systems ran.</summary>

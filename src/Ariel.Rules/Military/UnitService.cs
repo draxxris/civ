@@ -62,7 +62,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     }
     private static string? ValidateIntercept(Simulation sim, Unit unit)
     {
-        if (sim.Content.Services.Get<IAirMissionService>().Single().InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
+        if (sim.Rules().AirMissions.InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
         return MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved ? "Aircraft has moved" : null;
     }
     private static string? ValidatePillage(Simulation sim, Unit unit)
@@ -216,6 +216,6 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
         if (state.Activity != UnitActivity.Sentry) return;
         int team = sim.TeamOf(unit.Owner).Id;
         if (sim.State.Units.Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
-            && sim.Content.Services.Get<IVisibilityService>().Single().IsUnitVisible(sim, u.Id, team))) state.Activity = UnitActivity.Awake;
+            && sim.Rules().Visibility.IsUnitVisible(sim, u.Id, team))) state.Activity = UnitActivity.Awake;
     }
 }

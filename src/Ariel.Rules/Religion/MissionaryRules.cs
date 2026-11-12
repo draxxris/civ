@@ -41,6 +41,6 @@ internal sealed partial class ReligionService
         if (success) ReligionData.Add(sim, city, religion);
         sim.Events.Publish(new MissionaryAttempt(unit.Id, city.Id, religion, success));
         sim.State.RemoveUnit(unitId);
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
 }

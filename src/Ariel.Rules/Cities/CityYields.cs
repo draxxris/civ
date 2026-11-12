@@ -11,7 +11,7 @@ internal sealed class CityYields : ICityYieldService
     {
         var city = sim.State.CityById(cityId);
         var sink = CityData.Effects(sim, city);
-        var plots = sim.Content.Services.Get<IPlotYieldService>().Single();
+        var plots = sim.Rules().PlotYields;
         AddPlot(sim, city, CityData.Tile(sim, city), true, plots, sink);
         foreach (var tile in city.Worked) AddPlot(sim, city, tile, false, plots, sink);
         Specialists.Contribute(sim, city, sink);
@@ -28,7 +28,7 @@ internal sealed class CityYields : ICityYieldService
     }
     private static void AddPlot(Simulation sim, City city, TileId tile, bool center, IPlotYieldService plots, ModifierSink sink)
     {
-        if (!center && sim.Content.Services.Get<ICityConnectionService>().Single().IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id)) return;
+        if (!center && sim.Rules().CityConnections.IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id)) return;
         var yield = plots.Calculate(sim, city.Owner, tile).Yields;
         if (center) yield = Center(sim, city, yield);
         sink.AddYield("cities:plot:" + tile.Value, yield);

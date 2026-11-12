@@ -54,7 +54,7 @@ public static class Program
             Console.Error.WriteLine($"mods do not load: {e.Message}");
             return 2;
         }
-        var geometry = catalog.Content.Services.Get<IMapGeometry>().Single();
+        var geometry = catalog.Content.Rules().MapGeometry;
         int bad = 0;
         foreach (var file in options.Files)
         {

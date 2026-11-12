@@ -181,7 +181,7 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     {
         if (def.CultureLevel is null || def.CultureCities <= 0) return null;
         long threshold = sim.Content.Get<CultureLevelDef>(def.CultureLevel).SpeedThresholds[sim.Settings.GameSpeed];
-        var culture = sim.Content.Services.Get<ICityCultureService>().SingleOrDefault();
+        var culture = sim.Rules().CityCulture;
         foreach (var team in TeamsByScore(sim))
         {
             var members = team.Select(p => p.Id).ToHashSet();

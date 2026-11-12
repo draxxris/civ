@@ -171,7 +171,7 @@ internal sealed class ResearchPhase(IResearchService research) : IPlayerTurnSyst
     public void Run(Simulation sim, int player)
     {
         if (GovernmentStatus.IsAnarchy(sim, player)) return;
-        long commerce = sim.Content.Services.Get<IPlayerResearchSource>().SingleOrDefault()?.ResearchHundredths(sim, player) ?? 0;
+        long commerce = sim.Rules().ResearchSource?.ResearchHundredths(sim, player) ?? 0;
         // Players without cities cannot accumulate the otherwise unconditional base research.
         if (!sim.State.Cities.Any(c => c.Owner == player)) return;
         long baseRate = sim.Content.Get<RuleConstantsDef>().All.Single().Values.BaseResearchRate;

@@ -90,7 +90,7 @@ internal sealed class CivicPlanner(AiContext ctx)
     private bool ReligionFits(CivicDef c)
     {
         if (!c.RequiresStateReligion) return true;
-        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var religion = ctx.Sim.Rules().Religion;
         if (religion is null) return false;
         return religion.StateReligion(ctx.Sim, ctx.PlayerId) is not null
             || ctx.Cities.Any(city => religion.Present(ctx.Sim, city.Id).Count > 0);

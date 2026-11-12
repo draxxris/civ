@@ -26,12 +26,12 @@ public static class Yields
         foreach (var tile in city.Worked) total += OfTile(sim, sim.State.Grid.HexOf(tile));
         foreach (var (id, count) in city.Specialists)
         {
-            var s = sim.Content.Specialists.Get(id);
+            var s = sim.Content.Get<SpecialistDef>(id);
             total += new Yield(s.Food, s.Production, s.Commerce, s.Culture) * count;
         }
         foreach (var id in city.Buildings)
         {
-            var b = sim.Content.Buildings.Get(id);
+            var b = sim.Content.Get<BuildingDef>(id);
             total += new Yield(b.Food, b.Production, b.Commerce, b.Culture);
         }
         return total;

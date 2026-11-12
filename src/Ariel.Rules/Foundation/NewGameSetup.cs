@@ -4,8 +4,8 @@ using Ariel.Game;
 
 namespace Ariel.Rules.Foundation;
 
-/// <summary>Feature ruleset setup, using CvPlayer::initFreeUnits class grants and role selection.</summary>
-internal sealed class NewGameSetup : INewGameSetup
+/// <summary>New-game setup for <see cref="GameRules"/>, using CvPlayer::initFreeUnits class grants and role selection.</summary>
+internal sealed class NewGameSetup
 {
     public MapSpec ResolveMap(ContentDb content, SimulationSettings settings)
     {
@@ -68,14 +68,14 @@ internal sealed class NewGameSetup : INewGameSetup
 
     public void Complete(Simulation sim)
     {
-        var starts = sim.Content.Services.Get<IStartingPositionService>().Single();
+        var starts = sim.Rules().StartingPositions;
         var positions = starts.Select(sim, sim.State.Players.Count);
         starts.Normalize(sim, positions);
         foreach (var player in sim.State.Players.OrderBy(p => p.Id)) GrantUnits(sim, player, positions[player.Id]);
         if (sim.Content.Get<EraDef>(sim.Settings.StartingEra).NoGoodies)
             foreach (var plot in sim.State.Plots)
                 if (plot.Improvement is { } id && sim.Content.Get<ImprovementDef>(id).Goody) plot.Improvement = null;
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Visibility.Recompute(sim);
     }
 
     private static void GrantUnits(Simulation sim, Player player, TileId tile)

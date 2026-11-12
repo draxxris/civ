@@ -65,8 +65,8 @@ internal sealed partial class DiplomacyService
     /// <summary>The player's connected city groups. The capital's group is last, so exports drain the other groups first.</summary>
     private static List<CityGroup> Groups(Simulation sim, int player, string resource)
     {
-        var network = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault();
-        var connections = sim.Content.Services.Get<ICityConnectionService>().SingleOrDefault();
+        var network = sim.Rules().Resources;
+        var connections = sim.Rules().CityConnections;
         if (network is null || connections is null) return [];
         var groups = new List<CityGroup>();
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
@@ -94,7 +94,7 @@ internal sealed partial class DiplomacyService
     private static bool ConnectedToRoot(Simulation sim, int player, City city)
     {
         var root = Root(sim, player);
-        return root is not null && (root.Id == city.Id || sim.Content.Services.Get<ICityConnectionService>().SingleOrDefault()?.Connected(sim, root.Id, city.Id) == true);
+        return root is not null && (root.Id == city.Id || sim.Rules().CityConnections?.Connected(sim, root.Id, city.Id) == true);
     }
     private static long Exports(Simulation sim, int player, string resource, int excludedDeal = 0) => Read(sim).Deals
         .Where(d => d.Id != excludedDeal && Live(sim, d)).SelectMany(d => d.Items)
@@ -199,7 +199,7 @@ internal sealed partial class DiplomacyService
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return result;
         // One connectivity query covers every resource; only the export/import arithmetic is per resource.
-        var connected = sim.Content.Services.Get<IResourceNetwork>().SingleOrDefault()?.ConnectedCounts(sim, player, city)
+        var connected = sim.Rules().Resources?.ConnectedCounts(sim, player, city)
             ?? new Dictionary<string, int>();
         bool rooted = false;
         foreach (var resource in resources.Distinct(StringComparer.Ordinal))

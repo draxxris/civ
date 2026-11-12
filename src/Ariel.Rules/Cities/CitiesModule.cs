@@ -89,7 +89,7 @@ public sealed class CitiesModule : IPreparableMod
         var state = CityData.Edit(sim, city);
         state.OccupationTurns = Math.Max(0, state.OccupationTurns - 1);
         if (state.Governance != CityGovernance.PendingConquest) return;
-        sim.Content.Services.Get<ICityCommandService>().Single().ResolveConquestChoice(sim, city.Owner, city.Id, CityConquestOption.Puppet);
+        sim.Rules().CityCommands.ResolveConquestChoice(sim, city.Owner, city.Id, CityConquestOption.Puppet);
     }
     private static void RecoverDefense(Simulation sim, City city)
     {

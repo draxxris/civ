@@ -96,17 +96,7 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
         public void RegisterCommand<T>(string name) where T : GameCommand => inner.RegisterCommand<T>(name);
         public string ModId => inner.ModId;
         public IModData Data => inner.Data;
-        public ModRegistry<TerrainDef> Terrains => inner.Terrains;
-        public ModRegistry<CivilizationDef> Civilizations => inner.Civilizations;
         public ModRegistry<IPlayerAI> PlayerAIs => inner.PlayerAIs;
-        public ModRegistry<UnitDef> Units => inner.Units;
-        public ModRegistry<PromotionDef> Promotions => inner.Promotions;
-        public ModRegistry<ExperienceLevelDef> ExperienceLevels => inner.ExperienceLevels;
-        public ModRegistry<SpecialistDef> Specialists => inner.Specialists;
-        public ModRegistry<CivicDef> Civics => inner.Civics;
-        public ModRegistry<TechDef> Techs => inner.Techs;
-        public ModRegistry<BuildingDef> Buildings => inner.Buildings;
-        public ModRegistry<CultureLevelDef> CultureLevels => inner.CultureLevels;
         public ModRegistry<IMapGenerator> MapGenerators => inner.MapGenerators;
         public ModRegistry<ITurnSystem> TurnSystems => inner.TurnSystems;
         public ModRegistry<CommandTypeDef> CommandTypes => inner.CommandTypes;

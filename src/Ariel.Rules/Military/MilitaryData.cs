@@ -27,7 +27,7 @@ internal static class MilitaryData
         state = new(); sim.State.PlayerById(player).Extensions.Set(sim.Content, state); return state;
     }
     internal static bool VisibleEnemy(Simulation sim, int player, Unit other) => Enemy(sim, player, other.Owner)
-        && sim.Content.Services.Get<IVisibilityService>().Single().IsUnitVisible(sim, other.Id, sim.TeamOf(player).Id);
+        && sim.Rules().Visibility.IsUnitVisible(sim, other.Id, sim.TeamOf(player).Id);
     internal static bool Enemy(Simulation sim, int player, int other) => sim.TeamOf(player).Wars.Contains(sim.TeamOf(other).Id);
     internal static bool Friendly(Simulation sim, int player, int? other) => other is { } owner && sim.TeamOf(player).Id == sim.TeamOf(owner).Id;
     internal static IEnumerable<S.PromotionDef> Promotions(Simulation sim, Unit unit) => unit.Promotions.Select(sim.Content.Get<S.PromotionDef>);
@@ -37,18 +37,18 @@ internal static class MilitaryData
     internal static int Effect(ModifierSink sink, string key) => checked((int)sink.Ledger.Total("military:" + key));
     internal static void Sight(Simulation sim)
     {
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
-        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.DiscoverContacts(sim);
+        sim.Rules().Visibility.Recompute(sim);
+        sim.Rules().Diplomacy?.DiscoverContacts(sim);
     }
     internal static void RemoveUnit(Simulation sim, int unit)
     {
-        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) sim.State.RemoveUnit(cargo);
+        foreach (int cargo in sim.Rules().Units.CargoUnits(sim, unit)) sim.State.RemoveUnit(cargo);
         sim.State.RemoveUnit(unit);
     }
     /// <summary>Move a unit and its cargo, telling presentation where each went from.</summary>
     internal static void MoveUnit(Simulation sim, int unit, Hex target)
     {
-        foreach (int cargo in sim.Content.Services.Get<IUnitService>().Single().CargoUnits(sim, unit)) Relocate(sim, cargo, target);
+        foreach (int cargo in sim.Rules().Units.CargoUnits(sim, unit)) Relocate(sim, cargo, target);
         Relocate(sim, unit, target);
     }
     private static void Relocate(Simulation sim, int id, Hex target)

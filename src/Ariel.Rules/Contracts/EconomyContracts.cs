@@ -47,13 +47,13 @@ public sealed class EconomyCityState
 public sealed class SetCommerceRatesCommand : GameCommand
 {
     public CommerceVector Rates { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IPlayerEconomyService>().Single().ValidateRates(sim, Player, Rates);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IPlayerEconomyService>().Single().SetRates(sim, Player, Rates);
+    public override string? Validate(Simulation sim) => sim.Rules().Economy.ValidateRates(sim, Player, Rates);
+    public override void Apply(Simulation sim) => sim.Rules().Economy.SetRates(sim, Player, Rates);
 }
 public sealed class HurryCityCommand : GameCommand
 {
     public int CityId { get; init; }
     public string HurryId { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityHurryService>().Single().Validate(sim, Player, CityId, HurryId);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityHurryService>().Single().Hurry(sim, CityId, HurryId);
+    public override string? Validate(Simulation sim) => sim.Rules().Hurry.Validate(sim, Player, CityId, HurryId);
+    public override void Apply(Simulation sim) => sim.Rules().Hurry.Hurry(sim, CityId, HurryId);
 }

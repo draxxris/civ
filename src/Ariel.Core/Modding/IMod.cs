@@ -35,28 +35,8 @@ public interface IModContext
     string ModId { get; }
     /// <summary>This mod's sidecar reader.</summary>
     IModData Data { get; }
-    /// <summary>Terrain convenience registry.</summary>
-    ModRegistry<TerrainDef> Terrains { get; }
-    /// <summary>Civilization convenience registry.</summary>
-    ModRegistry<CivilizationDef> Civilizations { get; }
     /// <summary>Deterministic player AI registry.</summary>
     ModRegistry<IPlayerAI> PlayerAIs { get; }
-    /// <summary>Unit convenience registry.</summary>
-    ModRegistry<UnitDef> Units { get; }
-    /// <summary>Promotion convenience registry.</summary>
-    ModRegistry<PromotionDef> Promotions { get; }
-    /// <summary>Experience threshold convenience registry.</summary>
-    ModRegistry<ExperienceLevelDef> ExperienceLevels { get; }
-    /// <summary>Specialist convenience registry.</summary>
-    ModRegistry<SpecialistDef> Specialists { get; }
-    /// <summary>Civic convenience registry.</summary>
-    ModRegistry<CivicDef> Civics { get; }
-    /// <summary>Technology convenience registry.</summary>
-    ModRegistry<TechDef> Techs { get; }
-    /// <summary>Building convenience registry.</summary>
-    ModRegistry<BuildingDef> Buildings { get; }
-    /// <summary>Culture level convenience registry.</summary>
-    ModRegistry<CultureLevelDef> CultureLevels { get; }
     /// <summary>Map generator registry.</summary>
     ModRegistry<IMapGenerator> MapGenerators { get; }
     /// <summary>Ordered turn step registry.</summary>

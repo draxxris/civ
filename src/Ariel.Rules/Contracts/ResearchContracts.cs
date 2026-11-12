@@ -74,6 +74,6 @@ public sealed class SetTeamResearchCommand : GameCommand
     public string[] Queue { get; init; } = [];
     public bool FreeTech { get; init; }
     private IReadOnlyList<string> Targets => Tech.Length == 0 ? Queue : new[] { Tech }.Concat(Queue).ToArray();
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IResearchService>().Single().ValidateQueue(sim, Player, Targets, FreeTech);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IResearchService>().Single().SetQueue(sim, Player, Targets, FreeTech);
+    public override string? Validate(Simulation sim) => sim.Rules().Research.ValidateQueue(sim, Player, Targets, FreeTech);
+    public override void Apply(Simulation sim) => sim.Rules().Research.SetQueue(sim, Player, Targets, FreeTech);
 }

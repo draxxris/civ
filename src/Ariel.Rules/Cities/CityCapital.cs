@@ -19,10 +19,10 @@ internal static class CityCapital
     }
     private static long Score(Simulation sim, City city)
     {
-        var yields = sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, city.Id).Yields;
-        int religions = sim.Content.Services.Get<IReligionService>().SingleOrDefault()?.Present(sim, city.Id).Count ?? 0;
-        int corporations = sim.Content.Services.Get<ICorporationService>().SingleOrDefault()?.Present(sim, city.Id).Count ?? 0;
-        int settled = sim.Content.Services.Get<IGreatPeopleService>().SingleOrDefault()?.SettledSpecialists(sim, city.Id).Values.Sum() ?? 0;
+        var yields = sim.Rules().CityYields.Calculate(sim, city.Id).Yields;
+        int religions = sim.Rules().Religion?.Present(sim, city.Id).Count ?? 0;
+        int corporations = sim.Rules().Corporations?.Present(sim, city.Id).Count ?? 0;
+        int settled = sim.Rules().GreatPeople?.SettledSpecialists(sim, city.Id).Values.Sum() ?? 0;
         long value = city.Population * 4L + yields.Food + yields.Production * 3L + yields.Commerce * 2L
             + CityData.LevelIndex(sim, city) + religions + corporations + settled * 2L;
         return value * (CityData.OwnerCulturePercent(sim, city) + 100L) / 100L;

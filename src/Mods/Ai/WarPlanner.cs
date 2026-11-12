@@ -46,7 +46,7 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
     /// a grudge lowers the bar, goodwill raises it, and a friend or a defensive-pact partner is never attacked.</summary>
     public int? AttitudeNeed(int player)
     {
-        var diplomacy = ctx.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = ctx.Sim.Rules().Diplomacy;
         if (diplomacy is null) return 0;
         if (diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, ctx.Sim.State.PlayerById(player).TeamId)) return null;
         return diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, player).Tier switch

@@ -29,9 +29,9 @@ public sealed class StartBuildCommand : GameCommand
     /// <summary>Build definition id.</summary>
     public string Build { get; init; } = "";
     /// <inheritdoc/>
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Validate(sim, Player, Unit, Build);
+    public override string? Validate(Simulation sim) => sim.Rules().WorkerBuilds.Validate(sim, Player, Unit, Build);
     /// <inheritdoc/>
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Start(sim, Player, Unit, Build);
+    public override void Apply(Simulation sim) => sim.Rules().WorkerBuilds.Start(sim, Player, Unit, Build);
 }
 
 /// <summary>Cancel an active build order on a worker. World registers the command identity.</summary>
@@ -40,7 +40,7 @@ public sealed class CancelBuildCommand : GameCommand
     /// <summary>Worker entity id.</summary>
     public int Unit { get; init; }
     /// <inheritdoc/>
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().ValidateCancel(sim, Player, Unit);
+    public override string? Validate(Simulation sim) => sim.Rules().WorkerBuilds.ValidateCancel(sim, Player, Unit);
     /// <inheritdoc/>
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IWorkerBuildService>().Single().Cancel(sim, Player, Unit);
+    public override void Apply(Simulation sim) => sim.Rules().WorkerBuilds.Cancel(sim, Player, Unit);
 }

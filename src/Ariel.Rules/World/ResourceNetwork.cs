@@ -163,7 +163,7 @@ internal sealed class BonusEvaluator : IContentRequirementEvaluator
     {
         if (leaf.Param == 2)
         {
-            var service = context.Sim.Content.Services.Get<ICityRequirementService>().SingleOrDefault();
+            var service = context.Sim.Rules().CityRequirements;
             return service is null ? "Vicinity resources require Cities scope rules" : service.Evaluate(leaf, context);
         }
         var cities = context.City is { } city ? new[] { city } : context.Sim.State.Cities.Where(c => c.Owner == context.Player);

@@ -151,7 +151,7 @@ internal sealed class CardResearchRules : IResearchSelectionPolicy, IResearchSel
 
     private static IEnumerable<string> Eligible(Simulation sim, Team team)
     {
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         return sim.Content.Get<TechDef>().All.OrderBy(t => t.Id, StringComparer.Ordinal)
             .Where(t => team.Members.Any(p => research.Validate(sim, p, t.Id).Success)).Select(t => t.Id);
     }

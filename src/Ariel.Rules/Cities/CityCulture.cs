@@ -51,7 +51,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     private long Rate(Simulation sim, City city)
     {
         if (GovernmentStatus.IsDisorder(sim, city)) return 0;
-        var source = sim.Content.Services.Get<ICityCultureSource>().SingleOrDefault();
+        var source = sim.Rules().CityCultureSource;
         if (source is not null) return Math.Max(0, source.CultureHundredths(sim, city.Id));
         var result = yields.Calculate(sim, city.Id);
         return Math.Max(0, result.DirectCommerceHundredths.Culture * Math.Max(1, 100 + result.CommercePercent.Culture) / 100);

@@ -58,26 +58,26 @@ public interface IReligionService
 public sealed class SetStateReligionCommand : GameCommand
 {
     public string? Religion { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateConversion(sim, Player, Religion);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().Convert(sim, Player, Religion);
+    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateConversion(sim, Player, Religion);
+    public override void Apply(Simulation sim) => sim.Rules().Religion.Convert(sim, Player, Religion);
 }
 public sealed class BuildShrineCommand : GameCommand
 {
     public int Unit { get; init; }
     public string Building { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateShrine(sim, Player, Unit, Building);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().BuildShrine(sim, Unit, Building);
+    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateShrine(sim, Player, Unit, Building);
+    public override void Apply(Simulation sim) => sim.Rules().Religion.BuildShrine(sim, Unit, Building);
 }
 public sealed class PerformInquisitionCommand : GameCommand
 {
     public int Unit { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateInquisition(sim, Player, Unit);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().PerformInquisition(sim, Unit);
+    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateInquisition(sim, Player, Unit);
+    public override void Apply(Simulation sim) => sim.Rules().Religion.PerformInquisition(sim, Unit);
 }
 public sealed class SpreadReligionCommand : GameCommand
 {
     public int Unit { get; init; }
     public string Religion { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().ValidateMissionary(sim, Player, Unit, Religion);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IReligionService>().Single().SpreadMissionary(sim, Unit, Religion);
+    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateMissionary(sim, Player, Unit, Religion);
+    public override void Apply(Simulation sim) => sim.Rules().Religion.SpreadMissionary(sim, Unit, Religion);
 }

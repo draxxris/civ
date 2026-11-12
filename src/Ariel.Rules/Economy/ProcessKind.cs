@@ -17,5 +17,5 @@ internal sealed class ProcessKind(ICityProcessService processes) : IProductionKi
     public IReadOnlyList<RequirementResult> ValidateBatch(Simulation sim, int city, IReadOnlyList<string> ids) =>
         ids.Select(id => Validate(sim, city, id)).ToArray();
     public CityProductionResult Calculate(Simulation sim, int city, string id) =>
-        sim.Content.Services.Get<ICityProductionService>().Single().Calculate(sim, city, Id, id);
+        sim.Rules().CityProduction.Calculate(sim, city, Id, id);
 }

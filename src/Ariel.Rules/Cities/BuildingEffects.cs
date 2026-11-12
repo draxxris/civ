@@ -63,9 +63,9 @@ internal sealed class BuildingEffects : IModifierSource
         CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city, () => AvailableUncached(sim, city)));
     private static IReadOnlyDictionary<string, int> AvailableUncached(Simulation sim, City city)
     {
-        var network = sim.Content.Services.Get<IResourceNetwork>().Single();
+        var network = sim.Rules().Resources;
         var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         if (diplomacy is null) return physical;
         var traded = TradedResources(sim, diplomacy, city.Owner);
         if (traded.Count == 0) return physical;

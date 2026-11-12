@@ -28,7 +28,7 @@ internal sealed class TechTreePresentation : ITechTreePresentation
     public TechTreeView? Describe(Simulation sim, int player)
     {
         if (!sim.IsOptionEnabled(Option)) return null;
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         var team = sim.TeamOf(player);
         var nodes = sim.Content.Get<TechDef>().All.OrderBy(t => t.Id, StringComparer.Ordinal).Select(t =>
         {

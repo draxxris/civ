@@ -13,8 +13,8 @@ internal static class VicinityBonuses
         var center = CityData.Tile(sim, city);
         if (sim.State.Plots[center.Value].Bonus == bonus) count++;
         if (count >= requiredCount) return true;
-        var connected = sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedTiles(sim, city.Owner, city.Id);
-        foreach (var tile in sim.Content.Services.Get<ICityWorkService>().Single().WorkArea(sim, city.Id))
+        var connected = sim.Rules().Resources.ConnectedTiles(sim, city.Owner, city.Id);
+        foreach (var tile in sim.Rules().CityWork.WorkArea(sim, city.Id))
         {
             if (tile == center || !connected.Contains(tile)) continue;
             if (ValidPlot(sim, city, tile, bonus)) count++;

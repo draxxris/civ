@@ -18,7 +18,7 @@ public sealed class ResearchSystem : ITurnSystem
                 long commerce = sim.State.Cities.Where(c => c.Owner == player).Sum(c => (long)Yields.OfCity(sim, c).Commerce);
                 team.ResearchProgress += commerce * (100 + Bonuses.Research(sim, player)) / 100;
             }
-            var tech = sim.Content.Techs.Get(team.Researching);
+            var tech = sim.Content.Get<TechDef>(team.Researching);
             if (team.ResearchProgress >= tech.Cost)
             {
                 team.Techs.Add(tech.Id);
@@ -39,32 +39,28 @@ public sealed class ProductionSystem : ITurnSystem
     {
         foreach (var city in sim.State.Cities)
         {
-            if (city.Building == null && city.Training == null) continue;
+            if (Production.Of(sim, city) is not { } order) continue;
             int bonus = Bonuses.Production(sim, city.Owner);
-            int production = Yields.OfCity(sim, city).Production * (100 + bonus) / 100;
+            order.Progress += Yields.OfCity(sim, city).Production * (100 + bonus) / 100;
 
-            if (city.Building != null)
+            if (order.Kind == ProductionKind.Building)
             {
-                city.BuildProgress += production;
-                var def = sim.Content.Buildings.Get(city.Building);
-                if (city.BuildProgress >= def.Cost)
+                var def = sim.Content.Get<BuildingDef>(order.Item);
+                if (order.Progress >= def.Cost)
                 {
                     city.Buildings.Add(def.Id);
-                    city.Building = null;
-                    city.BuildProgress = 0;
+                    Production.Clear(sim, city);
                     sim.Events.Publish(new BuildingCompleted(city.Id, def.Id));
                 }
             }
             else
             {
-                city.TrainProgress += production;
-                var def = sim.Content.Units.Get(city.Training!);
-                if (city.TrainProgress >= def.Cost)
+                var def = sim.Content.Get<UnitDef>(order.Item);
+                if (order.Progress >= def.Cost)
                 {
-                    int xp = city.Buildings.Sum(b => sim.Content.Buildings.Get(b).UnitExperience);
+                    int xp = city.Buildings.Sum(b => sim.Content.Get<BuildingDef>(b).UnitExperience);
                     UnitRules.Spawn(sim, city.Owner, def.Id, city.Position, xp);
-                    city.Training = null;
-                    city.TrainProgress = 0;
+                    Production.Clear(sim, city);
                 }
             }
         }

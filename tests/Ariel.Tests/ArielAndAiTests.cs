@@ -63,7 +63,7 @@ public class ArielAndAiTests
     {
         public void Register(IModContext ctx)
         {
-            ctx.Civilizations.Register(new CivilizationDef { Id = "mymod:nomads", Name = "Nomads", StartingTechs = ["base:the_wheel"] });
+            ctx.Content<CivilizationDef>().Register(new CivilizationDef { Id = "mymod:nomads", Name = "Nomads", StartingTechs = ["base:the_wheel"] });
             ctx.PlayerAIs.Register(new SilentAi());
         }
     }

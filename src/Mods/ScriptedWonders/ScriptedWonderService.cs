@@ -167,14 +167,14 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     }
 
     private static void AddCulture(Simulation sim, City city, int amount) =>
-        sim.Content.Services.Get<ICityCultureService>().Single().AddCulture(sim, city.Id, amount, 1);
+        sim.Rules().CityCulture.AddCulture(sim, city.Id, amount, 1);
 
     private static void Spawn(Simulation sim, City city, string type)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = city.Owner, Type = type, Position = city.Position };
         sim.State.AddUnit(unit);
         sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
 
     private static void Effect(Simulation sim, City city, WonderScriptDef rule, string effect, long amount) =>

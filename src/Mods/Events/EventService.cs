@@ -82,7 +82,7 @@ internal sealed class EventService : IEventService
     {
         var player = sim.State.PlayerById(pending.Player);
         player.Treasury = Math.Max(0, player.Treasury + option.GoldDelta);
-        if (option.ResearchBonus > 0 && sim.Content.Services.Get<IResearchService>().SingleOrDefault() is { } research)
+        if (option.ResearchBonus > 0 && sim.Rules().Research is { } research)
             research.Contribute(sim, player.Id, option.ResearchBonus);
         if (sim.State.FindCity(pending.City) is { } city && city.Owner == player.Id)
         {

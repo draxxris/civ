@@ -20,7 +20,7 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         Add(lines, "cities:city_count", "happiness", -countUnhappy);
         bool noPopulation = CityData.Effect(effects, "no_unhealthy_population") > 0;
         if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
-        if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
+        if (sim.Rules().Water.IsFreshWater(sim, CityData.Tile(sim, city)))
             Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
         AddModifiers(effects, lines);
         AddCultureAnger(sim, city, lines);

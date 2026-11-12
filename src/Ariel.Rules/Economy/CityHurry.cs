@@ -12,7 +12,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
     {
         var city = sim.State.CityById(cityId);
         var order = city.ProductionQueue[0];
-        var production = sim.Content.Services.Get<ICityProductionService>().Single().Calculate(sim, cityId, order.Kind, order.ContentId);
+        var production = sim.Rules().CityProduction.Calculate(sim, cityId, order.Kind, order.ContentId);
         var def = sim.Content.Get<HurryDef>(hurry);
         long left = Math.Max(0, production.Cost - order.Progress);
         int itemModifier = order.Kind == "cities:unit" ? sim.Content.Get<UnitDef>(order.ContentId).HurryCostModifier
@@ -58,7 +58,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         if (GovernmentStatus.IsDisorder(sim, city)) return "City is in disorder";
         if (city.ProductionQueue.FirstOrDefault() is not { } order) return "No production to hurry";
         if (order.Kind == "economy:process") return "Processes cannot be hurried";
-        var service = sim.Content.Services.Get<ICityProductionService>().Single();
+        var service = sim.Rules().CityProduction;
         if (!service.Validate(sim, city.Id, order.Kind, order.ContentId).Success) return "Production requirements are not met";
         return order.Progress >= service.Calculate(sim, city.Id, order.Kind, order.ContentId).Cost ? "Production is already complete" : null;
     }
@@ -74,7 +74,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         var result = Calculate(sim, cityId, hurry);
         sim.State.PlayerById(city.Owner).Treasury -= result.Gold;
         city.Population -= result.Population;
-        if (result.Population > 0) sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, cityId);
+        if (result.Population > 0) sim.Rules().CityWork.Assign(sim, cityId);
         city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + result.Production };
         EconomyData.Edit(sim, city.Owner).HurriedCount++;
         if (!sim.Content.Get<HurryDef>(hurry).Anger) return;

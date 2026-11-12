@@ -33,7 +33,7 @@ public sealed class SetResearchCommand : GameCommand
     public override string? Validate(Simulation sim)
     {
         if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
-        if (!sim.Content.Techs.TryGet(Tech, out var def)) return "unknown tech";
+        if (!sim.Content.TryGet<TechDef>(Tech, out var def)) return "unknown tech";
         var p = sim.TeamOf(Player);
         if (p.Techs.Contains(Tech)) return "already known";
         if (def.Prerequisites.Any(r => !p.Techs.Contains(r)) || !sim.Content.Requirements.Evaluate(def.Requirements, new(sim, Player)).Success) return "missing prerequisites";
@@ -56,7 +56,7 @@ public sealed class StartBuildingCommand : GameCommand
     {
         var city = sim.State.FindCity(CityId);
         if (city == null || city.Owner != Player) return "not your city";
-        if (!sim.Content.Buildings.TryGet(Building, out var def)) return "unknown building";
+        if (!sim.Content.TryGet<BuildingDef>(Building, out var def)) return "unknown building";
         if (city.Buildings.Contains(Building)) return "already built";
         if (def.RequiresTech != null && !sim.KnowsTech(Player, def.RequiresTech)) return "tech not known";
         return null;
@@ -64,9 +64,7 @@ public sealed class StartBuildingCommand : GameCommand
 
     public override void Apply(Simulation sim)
     {
-        var city = sim.State.CityById(CityId);
-        if (city.Building != Building) { city.Building = Building; city.BuildProgress = 0; }
-        city.Training = null; city.TrainProgress = 0;
+        Production.Start(sim, sim.State.CityById(CityId), ProductionKind.Building, Building);
     }
 }
 
@@ -95,14 +93,14 @@ public sealed class SetCivicCommand : GameCommand
     public override string? Validate(Simulation sim)
     {
         if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
-        if (!sim.Content.Civics.TryGet(Civic, out var def)) return "unknown civic";
+        if (!sim.Content.TryGet<CivicDef>(Civic, out var def)) return "unknown civic";
         if (def.RequiresTech != null && !sim.KnowsTech(Player, def.RequiresTech)) return "tech not known";
         return null;
     }
 
     public override void Apply(Simulation sim)
     {
-        var def = sim.Content.Civics.Get(Civic);
+        var def = sim.Content.Get<CivicDef>(Civic);
         sim.State.PlayerById(Player).Civics[def.Category] = def.Id;
         foreach (var city in sim.State.Cities.Where(c => c.Owner == Player)) CityRules.EnforceSlots(sim, city);
     }

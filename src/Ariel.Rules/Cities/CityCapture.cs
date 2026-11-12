@@ -30,7 +30,7 @@ internal sealed class CityCapture : ICityCaptureService
         if (autoRaze) Raze(sim, cityId);
         else if (sim.State.PlayerById(player).Ai is not null)
             ResolveAiConquestChoice(sim, transferred, wasCapital, hadWorldWonder);
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Visibility.Recompute(sim);
     }
     private static int ConquestCultureLevel(Simulation sim, City city)
     {
@@ -64,7 +64,7 @@ internal sealed class CityCapture : ICityCaptureService
         CityConquestBuildings.Transfer(sim, source, target);
         state.OccupationTurns = CalculateOccupationTurns(sim, target);
         state.Governance = CityGovernance.PendingConquest;
-        sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, target.Id);
+        sim.Rules().CityWork.Assign(sim, target.Id);
     }
     private static int CalculateOccupationTurns(Simulation sim, City city)
     {
@@ -90,7 +90,7 @@ internal sealed class CityCapture : ICityCaptureService
     {
         int cityCount = CityData.Owned(sim, city.Owner).Count();
         var option = AiConquestOption(sim, city, cityCount, wasCapital, hadWorldWonder);
-        sim.Content.Services.Get<ICityCommandService>().Single().ResolveConquestChoice(sim, city.Owner, city.Id, option);
+        sim.Rules().CityCommands.ResolveConquestChoice(sim, city.Owner, city.Id, option);
     }
 
     private static CityConquestOption AiConquestOption(Simulation sim, City city, int cityCount, bool wasCapital, bool hadWorldWonder)
@@ -117,7 +117,7 @@ internal sealed class CityCapture : ICityCaptureService
     private static bool IsHolyCity(Simulation sim, City city) => HolyReligions(sim, city).Length > 0;
     private static string[] HolyReligions(Simulation sim, City city)
     {
-        var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var service = sim.Rules().Religion;
         return service is null ? []
             : sim.Content.Get<S.ReligionDef>().All.Where(religion => service.HolyCity(sim, religion.Id) == city.Id).Select(r => r.Id).ToArray();
     }
@@ -144,7 +144,7 @@ internal sealed class CityCapture : ICityCaptureService
 
     private static bool RazeRollSucceeds(Simulation sim, int player)
     {
-        int chance = sim.Content.Services.Get<IPeoplesService>().SingleOrDefault()?.Leader(sim, player)?.RazeCityProbability ?? 0;
+        int chance = sim.Rules().Peoples?.Leader(sim, player)?.RazeCityProbability ?? 0;
         return chance > 0 && sim.Rng.Next(100) < chance;
     }
     public string? ValidateRaze(Simulation sim, int cityId, int player)
@@ -164,7 +164,7 @@ internal sealed class CityCapture : ICityCaptureService
         foreach (var plot in sim.State.Grid.Range(tile, radius)) CityCulture.Resolve(sim, plot);
         CityCapital.RelocateIfNeeded(sim, city.Owner);
         sim.Events.Publish(new CityRazed(cityId, city.Owner, city.Position, capturedFrom, holy));
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Visibility.Recompute(sim);
     }
 }
 

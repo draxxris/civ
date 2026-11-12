@@ -11,16 +11,14 @@ public sealed class StartTrainingCommand : GameCommand
     {
         var city = sim.State.FindCity(CityId);
         if (city == null || city.Owner != Player) return "not your city";
-        if (!sim.Content.Units.TryGet(Unit, out var def)) return "unknown unit";
+        if (!sim.Content.TryGet<UnitDef>(Unit, out var def)) return "unknown unit";
         if (def.RequiresTech != null && !sim.KnowsTech(Player, def.RequiresTech)) return "tech not known";
         return null;
     }
 
     public override void Apply(Simulation sim)
     {
-        var city = sim.State.CityById(CityId);
-        if (city.Training != Unit) { city.Training = Unit; city.TrainProgress = 0; }
-        city.Building = null; city.BuildProgress = 0;
+        Production.Start(sim, sim.State.CityById(CityId), ProductionKind.Unit, Unit);
     }
 }
 
@@ -59,7 +57,7 @@ public sealed class AttackCommand : GameCommand
     {
         var u = sim.State.FindUnit(UnitId);
         if (u == null || u.Owner != Player) return "not your unit";
-        if (sim.Content.Units.Get(u.Type).Strength <= 0) return "unit cannot attack";
+        if (sim.Content.Get<UnitDef>(u.Type).Strength <= 0) return "unit cannot attack";
         if (u.MovesLeft <= 0) return "no moves left";
         if (!sim.State.Grid.Contains(Target)) return "off map";
         if (sim.State.Grid.Distance(u.Position, Target) != 1) return "target not adjacent";
@@ -85,7 +83,7 @@ public sealed class PromoteUnitCommand : GameCommand
     {
         var u = sim.State.FindUnit(UnitId);
         if (u == null || u.Owner != Player) return "not your unit";
-        if (!sim.Content.Promotions.TryGet(Promotion, out var promo)) return "unknown promotion";
+        if (!sim.Content.TryGet<PromotionDef>(Promotion, out var promo)) return "unknown promotion";
         return UnitRules.CanPromote(sim, u, promo);
     }
 
@@ -94,6 +92,6 @@ public sealed class PromoteUnitCommand : GameCommand
         var u = sim.State.UnitById(UnitId);
         u.Promotions.Add(Promotion);
         // A mobility-style promotion takes effect immediately for the rest of this turn.
-        u.MovesLeft += sim.Content.Promotions.Get(Promotion).MovesBonus;
+        u.MovesLeft += sim.Content.Get<PromotionDef>(Promotion).MovesBonus;
     }
 }

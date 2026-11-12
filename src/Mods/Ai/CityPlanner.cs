@@ -207,7 +207,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     private bool InquisitorWanted()
     {
-        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var religion = ctx.Sim.Rules().Religion;
         if (religion is null || !religion.IsInquisitionEnabled(ctx.Sim, ctx.PlayerId)) return false;
         if (ctx.Units.Any(u => ctx.Alive(u) && u.Health > 0 && ctx.Def(u).Inquisitor)) return false;
         if (ctx.Cities.SelectMany(c => c.ProductionQueue).Any(o => o.Kind == "cities:unit" && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Inquisitor)) return false;

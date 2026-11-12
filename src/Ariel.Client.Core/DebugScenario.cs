@@ -270,7 +270,7 @@ public static class DebugScenario
         }
         if (e.TryGetProperty("city", out var city)) AddCity(session, tile, city);
         if (e.TryGetProperty("height", out var height)) plot.Height = (sbyte)height.GetInt32();
-        else if (ground && session.Sim.Content.Services.Get<IMapGeometry>().SingleOrDefault() is { } geometry)
+        else if (ground && session.Sim.Rules().MapGeometry is { } geometry)
             plot.Height = geometry.HeightOf(session.Sim, plot);
     }
 

@@ -12,7 +12,7 @@ internal sealed class CityCommerce : ICityCultureSource, ICityProcessService
     internal CityCommerceResult Calculate(Simulation sim, int cityId, CommerceVector rates)
     {
         var city = sim.State.CityById(cityId);
-        var yields = sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, cityId);
+        var yields = sim.Rules().CityYields.Calculate(sim, cityId);
         var lines = yields.Ledger.Lines.ToList();
         var slider = Parts(rates); var direct = Parts(yields.DirectCommerceHundredths);
         var modifier = Parts(yields.CommercePercent); var result = new long[4];
@@ -51,5 +51,5 @@ internal sealed class CityCommerce : ICityCultureSource, ICityProcessService
     }
     public CommerceVector Convert(Simulation sim, int city, string process, long production) => Validate(sim, city, process).Success
         ? sim.Content.Get<ProcessDef>(process).ProductionToCommerceModifiers * production : default;
-    public long CultureHundredths(Simulation sim, int city) => sim.Content.Services.Get<IPlayerEconomyService>().Single().CalculateCity(sim, city).Hundredths.Culture;
+    public long CultureHundredths(Simulation sim, int city) => sim.Rules().Economy.CalculateCity(sim, city).Hundredths.Culture;
 }

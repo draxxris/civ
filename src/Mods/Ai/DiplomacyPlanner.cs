@@ -9,7 +9,7 @@ namespace Ariel.Mods.Ai;
 internal sealed class DiplomacyPlanner(AiContext ctx)
 {
     internal const int ReviewInterval = 5, ProposalsPerTurn = 1, GoldPerTurnTurns = 10;
-    private IDiplomacyService? Diplomacy => ctx.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+    private IDiplomacyService? Diplomacy => ctx.Sim.Rules().Diplomacy;
 
     public void Plan()
     {
@@ -86,7 +86,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         _ => 0,
     };
 
-    private long TechCost(string tech) => ctx.Sim.Content.Services.Get<IResearchService>().SingleOrDefault()
+    private long TechCost(string tech) => ctx.Sim.Rules().Research
         ?.CalculateCost(ctx.Sim, ctx.Team.Id, tech).Cost ?? 0;
 
     public long ResourceWorth(string bonus)

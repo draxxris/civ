@@ -86,7 +86,7 @@ internal static class CityData
                 if (building.FreeBuilding is { Length: > 0 } category && (source.Owner == owner || building.TeamShare))
                     categories.Add(category);
         }
-        if (sim.Content.Services.Get<IScriptedWonderService>().SingleOrDefault() is { } scripted)
+        if (sim.Rules().ScriptedWonders is { } scripted)
             categories.UnionWith(scripted.EmpireFreeBuildings(sim, owner));
         return categories;
     });

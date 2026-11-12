@@ -61,16 +61,16 @@ public static class EvaluationMetrics
     internal static EconomicSnapshot Capture(Simulation sim, ulong seed, Player player, CommerceVector accumulated,
         WorkerActivityHistory workerActivity)
     {
-        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        var economy = sim.Rules().Economy;
         var result = economy.Calculate(sim, player.Id);
         var state = player.Extensions.TryGet<EconomyPlayerState>(sim.Content);
         var cities = sim.State.Cities.Where(c => c.Owner == player.Id).ToArray();
-        var yields = sim.Content.Services.Get<ICityYieldService>().Single();
-        var growth = sim.Content.Services.Get<ICityGrowthService>().Single();
-        var production = sim.Content.Services.Get<ICityProductionService>().Single();
-        var plotYields = sim.Content.Services.Get<IPlotYieldService>().Single();
+        var yields = sim.Rules().CityYields;
+        var growth = sim.Rules().CityGrowth;
+        var production = sim.Rules().CityProduction;
+        var plotYields = sim.Rules().PlotYields;
         var workers = sim.State.Units.Where(u => u.Owner == player.Id && IsWorker(sim, u)).ToArray();
-        var workerBuilds = sim.Content.Services.Get<IWorkerBuildService>().Single();
+        var workerBuilds = sim.Rules().WorkerBuilds;
         int workersBuilding = workers.Count(u => workerBuilds.IsWorking(sim, u.Id));
         var ownedPlots = sim.State.Grid.Tiles.Select(tile => (Tile: tile, Plot: sim.State.Plots[tile.Value]))
             .Where(entry => entry.Plot.Owner == player.Id).ToArray();

@@ -11,9 +11,9 @@ public sealed class Player
     public string Name { get; init; } = "";
     /// <summary>Civilization definition id.</summary>
     public string Civilization { get; init; } = "";
-    /// <summary>Selected leader id, empty for legacy rulesets.</summary>
+    /// <summary>Selected leader id, or empty when the ruleset has no leaders.</summary>
     public string Leader { get; init; } = "";
-    /// <summary>Initial location selected by the ruleset setup, or null for legacy games.</summary>
+    /// <summary>Initial location selected by the ruleset setup, or null when it selects none.</summary>
     public TileId? StartingPlot { get; set; }
     /// <summary>Controlling AI service id, or null for a human. Changes mid-game only through
     /// <see cref="SetPlayerControlCommand"/>, when a multiplayer seat is handed to the AI or back.</summary>
@@ -53,17 +53,9 @@ public sealed class City
     internal void SetPosition(Hex position) => _position = position;
     /// <summary>Completed building ids.</summary>
     public List<string> Buildings { get; set; } = new();
-    /// <summary>Current building (small test ruleset).</summary>
-    public string? Building { get; set; }
-    /// <summary>Current building progress.</summary>
-    public long BuildProgress { get; set; }
-    /// <summary>Unit currently being trained, exclusive with Building.</summary>
-    public string? Training { get; set; }
-    /// <summary>Current unit progress.</summary>
-    public long TrainProgress { get; set; }
     /// <summary>Next unique production order id for this city.</summary>
     public int NextOrderId { get; set; } = 1;
-    /// <summary>Ordered production queue for feature rulesets.</summary>
+    /// <summary>Ordered production queue.</summary>
     public List<ProductionOrder> ProductionQueue { get; set; } = new();
 
     /// <summary>Finds an active production order by its canonical identifier, or null if not present.</summary>
@@ -145,8 +137,7 @@ public sealed class City
     // Production orders are immutable records, so the queue copy can share them.
     internal City Clone() => new()
     {
-        Id = Id, Owner = Owner, Name = Name, Position = Position, Buildings = new(Buildings), Building = Building,
-        BuildProgress = BuildProgress, Training = Training, TrainProgress = TrainProgress, NextOrderId = NextOrderId,
+        Id = Id, Owner = Owner, Name = Name, Position = Position, Buildings = new(Buildings), NextOrderId = NextOrderId,
         ProductionQueue = new(ProductionQueue), Population = Population, FoodStored = FoodStored, Worked = new(Worked),
         Specialists = new(Specialists, Specialists.Comparer), Culture = Culture, Extensions = GameState.CloneExtensions(Extensions),
     };

@@ -215,3 +215,7 @@ public sealed record CityCaptured(int City, int PreviousOwner, int Player, int C
 public sealed record CityRazed(int City, int Player, Hex Position, int? CapturedFrom = null, IReadOnlyList<string>? HolyCityOf = null) : DomainEvent;
 public sealed record PlotPillaged(int Unit, int Player, TileId Plot, string? Improvement, string? ReplacementImprovement, string? Route, int Gold) : DomainEvent;
 public sealed record GoodyReceived(int Unit, string Goody) : DomainEvent;
+
+/// <summary>A combat finished; the loser was removed. Report is the fight as it resolved, so presentation can replay it after the turn rolls over.</summary>
+public sealed record CombatResolved(int Attacker, int Defender, int Winner, int LoserOwner = -1, CombatReport? Report = null) : DomainEvent;
+public sealed record AirMissionResolved(AirMissionReport Report) : DomainEvent;

@@ -13,16 +13,6 @@ public interface IMapGeometry
     IReadOnlyList<string> Report(Simulation sim);
 }
 
-/// <summary>Optional ruleset setup. Selected when SimulationSettings.WorldSize is supplied.</summary>
-public interface INewGameSetup
-{
-    /// <summary>Validate setup content ids and resolve the effective map dimensions.</summary>
-    MapSpec ResolveMap(ContentDb content, SimulationSettings settings);
-    /// <summary>Create player and team data before map generation.</summary>
-    void CreatePlayers(Simulation sim);
-    /// <summary>Normalize starts, grant units and initialize sight after map generation and indexing.</summary>
-    void Complete(Simulation sim);
-}
 /// <summary>Explainable integer plot yields for a player's team knowledge.</summary>
 public sealed record PlotYieldResult(YieldVector Yields, Ledger Ledger);
 /// <summary>Read-only, RNG-free plot calculation owned by World.</summary>
@@ -83,16 +73,6 @@ public interface IStartingPositionService
     IReadOnlyList<TileId> Select(Simulation sim, int count);
     /// <summary>Setup-only mutation: improve natural potential near weak starts without moving resources.</summary>
     void Normalize(Simulation sim, IReadOnlyList<TileId> starts);
-}
-/// <summary>Elevation is independent of terrain and features.</summary>
-public enum PlotKind
-{
-    /// <summary>Ordinary flat land or water.</summary>
-    Flat,
-    /// <summary>Hill relief on land.</summary>
-    Hills,
-    /// <summary>Mountain relief, gated by peak capabilities.</summary>
-    Peak,
 }
 /// <summary>Feature production is a pending city grant; Cities owns the overflow mutation.</summary>
 public sealed record FeatureProduction(int Player, TileId Plot, int? City, int Production) : DomainEvent;

@@ -9,7 +9,7 @@ namespace Ariel.Mods.Ai;
 internal sealed class CorporationPlanner(AiContext ctx)
 {
     internal const int SpreadsPerTurn = 1;
-    private ICorporationService? Corporations => ctx.Sim.Content.Services.Get<ICorporationService>().SingleOrDefault();
+    private ICorporationService? Corporations => ctx.Sim.Rules().Corporations;
     private readonly Dictionary<(int City, string Corporation), long> _consumed = [];
 
     public void Plan()

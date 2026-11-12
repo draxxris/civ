@@ -48,7 +48,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             lines.Add(new("economy:city:" + city.Id, "economy:culture_hundredths", result.Hundredths.Culture));
             lines.Add(new("economy:city:" + city.Id, "economy:espionage_hundredths", result.Hundredths.Espionage));
         }
-        if (sim.Content.Services.Get<IEspionageService>().SingleOrDefault() is { } espionage)
+        if (sim.Rules().Espionage is { } espionage)
             foreach (var share in espionage.Spending(sim, player, total.Espionage))
                 lines.Add(new("economy:espionage_target:" + share.Key, "economy:espionage_spending", share.Value));
         long expenses = RecurringCosts.Calculate(sim, player, lines);
@@ -64,7 +64,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     }
     private static (long Income, long Expenses) DealGold(Simulation sim, int player)
     {
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         if (diplomacy is null) return default;
         long income = 0, expenses = 0;
         foreach (var deal in diplomacy.Deals(sim))
@@ -142,14 +142,14 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             var unit = SelectDisbandUnit(sim, player);
             if (unit is null) break;
             // A transport's cargo goes ashore where it can; what cannot is lost with it.
-            var removed = sim.Content.Services.Get<IUnitService>().SingleOrDefault()?.Disband(sim, unit.Id);
+            var removed = sim.Rules().Units?.Disband(sim, unit.Id);
             if (removed is null) sim.State.RemoveUnit(unit.Id);
             foreach (int id in removed ?? [unit.Id])
                 sim.Events.Publish(new UnitDisbandedForDeficit(id, player, unit.Position));
             disbanded = true;
             if (Calculate(sim, player).NetGold >= 0) break;
         }
-        if (disbanded) sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        if (disbanded) sim.Rules().Visibility?.Recompute(sim);
     }
     private static Unit? SelectDisbandUnit(Simulation sim, int player)
     {

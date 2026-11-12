@@ -31,12 +31,6 @@ public sealed class ContentDb
     private bool _frozen;
     private Lazy<string>? _hash;
     private Lazy<string>? _legacyHash;
-    /// <summary>Create a registration database with empty shared-schema registries.</summary>
-    public ContentDb()
-    {
-        _ = Terrains; _ = Units; _ = Promotions; _ = ExperienceLevels; _ = Specialists;
-        _ = Civics; _ = Techs; _ = Buildings; _ = CultureLevels; _ = Civilizations;
-    }
     /// <summary>Get a registry by content subtype; an unknown type after freezing is an error.</summary>
     public Registry<T> Get<T>() where T : ContentDef
     {
@@ -54,26 +48,6 @@ public sealed class ContentDb
         item = null!;
         return _registries.TryGetValue(typeof(T), out var entry) && ((Registry<T>)entry.Registry).TryGet(id, out item);
     }
-    /// <summary>Terrain convenience registry.</summary>
-    public Registry<TerrainDef> Terrains => Get<TerrainDef>();
-    /// <summary>Unit convenience registry.</summary>
-    public Registry<UnitDef> Units => Get<UnitDef>();
-    /// <summary>Promotion convenience registry.</summary>
-    public Registry<PromotionDef> Promotions => Get<PromotionDef>();
-    /// <summary>Experience level convenience registry.</summary>
-    public Registry<ExperienceLevelDef> ExperienceLevels => Get<ExperienceLevelDef>();
-    /// <summary>Specialist convenience registry.</summary>
-    public Registry<SpecialistDef> Specialists => Get<SpecialistDef>();
-    /// <summary>Civic convenience registry.</summary>
-    public Registry<CivicDef> Civics => Get<CivicDef>();
-    /// <summary>Technology convenience registry.</summary>
-    public Registry<TechDef> Techs => Get<TechDef>();
-    /// <summary>Building convenience registry.</summary>
-    public Registry<BuildingDef> Buildings => Get<BuildingDef>();
-    /// <summary>Culture level convenience registry.</summary>
-    public Registry<CultureLevelDef> CultureLevels => Get<CultureLevelDef>();
-    /// <summary>Civilization convenience registry.</summary>
-    public Registry<CivilizationDef> Civilizations => Get<CivilizationDef>();
     /// <summary>Player AI implementations.</summary>
     public Registry<IPlayerAI> PlayerAIs { get; } = new("player AI");
     /// <summary>Map generator implementations.</summary>
@@ -86,6 +60,9 @@ public sealed class ContentDb
     public ServiceRegistry Services { get; } = new();
     /// <summary>Typed extension state identities.</summary>
     public StateComponentRegistry StateComponents { get; } = new();
+    /// <summary>The loaded game's answers to the kernel. Resolved when content freezes; exactly one must be registered.</summary>
+    public IRuleset Ruleset => _ruleset ?? throw new InvalidOperationException("Content is not frozen, or no mod registered an IRuleset");
+    private IRuleset? _ruleset;
     /// <summary>Requirement dispatch after content loading.</summary>
     public RequirementService Requirements { get; private set; } = new([]);
     /// <summary>Loaded mod ids in dependency order.</summary>
@@ -133,6 +110,12 @@ public sealed class ContentDb
     {
         using var trace = Modding.StartupTrace.Phase("content freeze");
         Requirements = new(Services.Get<IRequirementEvaluator>());
+        _ruleset = Services.Get<IRuleset>().Count switch
+        {
+            0 => null,
+            1 => Services.Get<IRuleset>()[0],
+            int count => throw new InvalidOperationException($"{count} rulesets are registered; a game runs exactly one"),
+        };
         using (Modding.StartupTrace.Phase("content requirement validation"))
             foreach (var entry in _registries.Values)
                 foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
@@ -142,6 +125,7 @@ public sealed class ContentDb
         foreach (var entry in _registries.Values) entry.Freeze();
         MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
         _frozen = true;
+        _ruleset?.Bind(this);
     }
     /// <summary>Capture the digest input now and return the digest to run on first read. Registry enumeration order
     /// is stable before and after the freeze, so taking the digest later yields the identical value.</summary>

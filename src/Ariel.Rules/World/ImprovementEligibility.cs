@@ -43,7 +43,7 @@ internal sealed class ImprovementEligibility(IWaterService water)
         if (!ValidGround(plot, improvement, water.IsFreshWater(sim, tile))) return "Improvement is not valid on this terrain or feature";
         bool removes = plot.Feature is { } f && build.FeatureEffects.GetValueOrDefault(f)?.Remove == true;
         if (!removes && plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).NoImprovement) return "Feature prohibits improvements";
-        var nature = sim.Content.Services.Get<IPlotYieldService>().Single().CalculateNature(sim, player, tile, removes).Yields;
+        var nature = sim.Rules().PlotYields.CalculateNature(sim, player, tile, removes).Yields;
         var required = improvement.PrereqNatureYields;
         return nature.Food >= required.Food && nature.Production >= required.Production && nature.Commerce >= required.Commerce
             ? null : "Plot does not meet minimum natural yields";

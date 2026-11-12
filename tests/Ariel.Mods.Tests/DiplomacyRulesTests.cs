@@ -624,7 +624,8 @@ public sealed class DiplomacyRulesTests
     {
         public void Register(IModContext context)
         {
-            context.Terrains.Register(new() { Id = "foundation:plain" });
+            ProbeRuleset.Register(context);
+            context.Content<S.TerrainDef>().Register(new() { Id = "foundation:plain" });
             context.Content<S.TechDef>().Register(new() { Id = "foundation:discovery" });
             context.Content<S.GameOptionDef>().Register(new() { Id = "foundation:gameoption_no_tech_trading", Default = disabled });
         }

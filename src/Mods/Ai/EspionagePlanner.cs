@@ -9,7 +9,7 @@ namespace Ariel.Mods.Ai;
 internal sealed class EspionagePlanner(AiContext ctx)
 {
     internal const int ReviewInterval = 5, FocusWeight = 4, OtherWeight = 1, CitiesPerSpy = 6;
-    private IEspionageService? Espionage => ctx.Sim.Content.Services.Get<IEspionageService>().SingleOrDefault();
+    private IEspionageService? Espionage => ctx.Sim.Rules().Espionage;
 
     public void Plan()
     {
@@ -28,7 +28,7 @@ internal sealed class EspionagePlanner(AiContext ctx)
 
     private IEnumerable<City> KnownRivalCities() => ctx.Sim.State.Cities.Where(c => ctx.Sim.TeamOf(c.Owner).Id != ctx.Team.Id
         && !WarRules.IsBarbarian(ctx.Sim, c.Owner) && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)
-        && (ctx.Sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasMet(ctx.Sim, ctx.Team.Id, ctx.Sim.TeamOf(c.Owner).Id) ?? true));
+        && (ctx.Sim.Rules().Diplomacy?.HasMet(ctx.Sim, ctx.Team.Id, ctx.Sim.TeamOf(c.Owner).Id) ?? true));
 
     /// <summary>An enemy team when at war, otherwise the known rival whose nearest city is closest to ours.</summary>
     public int? FocusTeam()
@@ -81,7 +81,7 @@ internal sealed class EspionagePlanner(AiContext ctx)
     private IEnumerable<(EspionageMissionKind, string?)> Missions(City city)
     {
         var service = Espionage!;
-        var research = ctx.Sim.Content.Services.Get<IResearchService>().SingleOrDefault();
+        var research = ctx.Sim.Rules().Research;
         // Only what this rival knows and this player can research; cheapest first, so the first candidate is the
         // most likely to be affordable.
         var stealable = service.StealableTechnologies(ctx.Sim, ctx.PlayerId, city.Id);

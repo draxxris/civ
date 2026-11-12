@@ -2,32 +2,6 @@ using Ariel.Content;
 
 namespace Ariel.Game;
 
-/// <summary>Setup fields whose defaults and display order belong to the loaded ruleset.</summary>
-public enum SetupField { WorldSize, GameSpeed, Handicap, StartingEra, MapGenerator }
-
-/// <summary>Optional ruleset policy. At most one provider may supply a default for each field.</summary>
-public sealed record SetupGameOption(string Id, string Name, bool Default, string Help = "");
-
-public interface ISetupPolicy
-{
-    string? Default(SetupField field);
-    int? SortOrder(SetupField field, string id) => null;
-    IEnumerable<SetupGameOption> GameOptions(ContentDb content) => [];
-}
-
-public static class SetupPolicies
-{
-    public static string? Default(ContentDb content, SetupField field) =>
-        content.Services.Get<ISetupPolicy>().Select(p => p.Default(field)).Where(id => id != null).SingleOrDefault();
-
-    public static int SortOrder(ContentDb content, SetupField field, string id) =>
-        content.Services.Get<ISetupPolicy>().Select(p => p.SortOrder(field, id)).Where(n => n != null).SingleOrDefault() ?? 0;
-
-    public static IReadOnlyList<SetupGameOption> GameOptions(ContentDb content) =>
-        content.Services.Get<ISetupPolicy>().SelectMany(p => p.GameOptions(content))
-            .OrderBy(option => option.Name, StringComparer.Ordinal).ThenBy(option => option.Id, StringComparer.Ordinal).ToList();
-}
-
 /// <summary>How far a queued copy of a candidate reaches. Entries for kinds that can be built repeatedly never cover
 /// each other and use <see cref="None"/>.</summary>
 public enum QueueScope

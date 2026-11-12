@@ -83,7 +83,7 @@ internal sealed class StartingPositions(IWaterService water) : IStartingPosition
         if (Geography.Water(sim.Content, plot) || Geography.Impassable(sim.Content, plot)) return false;
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).NoCity) return false;
         return terrain.CanFoundCity || (terrain.FoundCoast && Geography.Coast(sim.State.Grid, sim.State.Plots, sim.Content, tile))
-            || (terrain.FoundFreshWater && sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, tile));
+            || (terrain.FoundFreshWater && sim.Rules().Water.IsFreshWater(sim, tile));
     }
     private static int TilePotential(Simulation sim, TileId tile, S.HexOverridesDef tuning)
     {

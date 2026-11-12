@@ -83,7 +83,7 @@ internal sealed partial class CombatService
         if (hit && BombardRate(sim, unit) > 0 && BombardTarget(sim, unit, target) is { } city)
             ReduceCityDefense(sim, unit, city);
         int denominator = MilitaryData.Constants(sim).MoveDenominator;
-        int maximumMoves = sim.Content.Services.Get<IUnitService>().Single().MaximumMoves(sim, unitId);
+        int maximumMoves = sim.Rules().Units.MaximumMoves(sim, unitId);
         SpendFireMoves(sim, unit, Math.Max(denominator, maximumMoves * MilitaryData.Raw(sim, "VOLLEY_MP_COST_PERCENT", 65) / 100));
         return RecordRangedStrike(sim, unit, defender, target, collateral);
     }

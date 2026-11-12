@@ -58,7 +58,7 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
         tiles.Reverse();
         var unit = sim.State.UnitById(unitId);
         long remaining = Math.Max(0, unit.MovesLeft);
-        int maximum = Math.Max(1, sim.Content.Services.Get<IUnitService>().Single().MaximumMoves(sim, unitId));
+        int maximum = Math.Max(1, sim.Rules().Units.MaximumMoves(sim, unitId));
         int turn = 1;
         var turns = new List<int>(tiles.Count);
         foreach (var tile in tiles)

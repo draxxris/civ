@@ -104,7 +104,7 @@ internal sealed class CorporationService : ICorporationService
         Add(sim, city, sim.Content.Get<CorporationDef>(corporation));
         sim.State.RemoveUnit(unit);
         sim.Events.Publish(new CorporationFounded(corporation, city.Id, player));
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
     public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation, int? unitId = null)
     {
@@ -142,7 +142,7 @@ internal sealed class CorporationService : ICorporationService
         Add(sim, sim.State.CityById(city), def);
         if (unit is { } id) sim.State.RemoveUnit(id);
         sim.Events.Publish(new CorporationSpread(corporation, city, player));
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
     private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => corporation != incoming.Id && sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Intersect(incoming.PrereqBonuses, StringComparer.Ordinal).Any();
     private string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;

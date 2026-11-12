@@ -44,7 +44,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var lines = new List<LedgerLine>();
         int pace = GamePace.Percent(sim);
         void Add(string source, long amount) => lines.Add(new(source, "revolution:change", Round(amount, pace)));
-        var wellbeing = sim.Content.Services.Get<ICityWellbeingService>().Single().Calculate(sim, city.Id);
+        var wellbeing = sim.Rules().CityWellbeing.Calculate(sim, city.Id);
         Add("revolution:wellbeing", ((long)wellbeing.Unhappy - wellbeing.Happy) * rules.WellbeingFactor);
         Add("revolution:distance", (long)sim.State.Grid.Distance(CapitalOf(sim, city), city.Position) * rules.DistanceFactor);
         AddReligion(sim, city, rules, Add);
@@ -52,7 +52,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (GovernmentStatus.IsAnarchy(sim, city.Owner)) Add("revolution:anarchy", rules.AnarchyFactor);
         int garrison = sim.State.UnitsAt(city.Position).Count(u => u.Owner == city.Owner && Military(sim, u));
         Add("revolution:garrison", garrison == 0 ? rules.UndefendedFactor : (long)Math.Min(garrison, rules.MaxGarrison) * rules.GarrisonFactor);
-        if (sim.Content.Services.Get<IGreatPeopleService>().SingleOrDefault()?.GoldenAgeTurnsRemaining(sim, city.Owner) > 0)
+        if (sim.Rules().GreatPeople?.GoldenAgeTurnsRemaining(sim, city.Owner) > 0)
             Add("revolution:golden_age", rules.GoldenAgeFactor);
         Add("revolution:recovery", rules.NaturalRecovery);
         return new(lines);
@@ -74,7 +74,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
 
     private static void AddReligion(Simulation sim, City city, RevolutionRulesDef rules, Action<string, long> add)
     {
-        var religions = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var religions = sim.Rules().Religion;
         if (religions?.StateReligion(sim, city.Owner) is not { } stateReligion) return;
         var present = religions.Present(sim, city.Id);
         // One civic pass serves both the intolerance multiplier and the rest of the ledger.

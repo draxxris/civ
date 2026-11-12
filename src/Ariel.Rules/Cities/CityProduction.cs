@@ -22,7 +22,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
         {
             // Food-production excludes angry mouths, matching foodConsumption(true).
             long consumption = growth.Calculate(sim, cityId).Consumption;
-            int angry = sim.Content.Services.Get<ICityWellbeingService>().Single().Calculate(sim, cityId).Angry;
+            int angry = sim.Rules().CityWellbeing.Calculate(sim, cityId).Angry;
             consumption -= angry * CityData.Constants(sim).FoodConsumptionPerPopulation;
             long food = Math.Max(0, result.Yields.Food - consumption);
             production += food; sink.Add(content, "cities:food_production", food);
@@ -197,7 +197,7 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
             Type = id, MovesLeft = def.Moves * CityData.Constants(sim).MoveDenominator };
         sim.State.AddUnit(unit);
         // Initialize before publishing: Military grants promotions, experience and full movement here.
-        sim.Content.Services.Get<IUnitService>().SingleOrDefault()?.Initialize(sim, unit.Id);
+        sim.Rules().Units?.Initialize(sim, unit.Id);
         unit.Experience += LocalExperience(sim, city, def);
         if (conscript)
         {

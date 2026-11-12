@@ -29,23 +29,32 @@ extend both through one registration API.
 
 ## Projects
 
-- `Ariel.Core`: geometry, shared data, content registries, extension contracts,
-  simulation, commands, saves and hashes.
+- `Ariel.Core`: the kernel. Geometry, RNG, plain game state (players, teams, plots,
+  cities, units), content and service registries, the mod loader, requirements and
+  modifiers, the simulation, turn order, commands, saves and hashes. It defines no
+  content schema and no rule contract. It asks the loaded game seven questions through
+  one required service, `IRuleset` (map size, player setup, content validation, option
+  defaults, scouting).
 - `Ariel.Rules`: the base modules, one folder each with its code, `mod.json` manifest,
   `data/` sidecars and `art/`. `BaseRules` lists them; `GameContent` is the one place a
   host composes base modules with mods. The build stages manifests and data to
-  `rules/<Module>/` beside every host and symlinks `art/` there.
+  `rules/<Module>/` beside every host and symlinks `art/` there. `Contracts/` holds the
+  service interfaces, state components, commands and domain events of the base game
+  and of the seams mods fill; `Schema/` holds the content definitions
+  (`Ariel.Content.Schema`). `GameRules` implements `IRuleset` and is the typed root
+  of the base services.
 - `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`. The
   loader hands a mod the host's copy of both, so types are shared.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
-- `tests/Ariel.Tests/TestRuleset`: test-only ruleset loaded through the same mod API as
-  feature rulesets.
+- `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
+  definitions, city state and `IRuleset`. `Ariel.Tests` references the kernel only,
+  which proves the kernel runs a complete game without the base game's domain.
 - `Ariel.Client.Core`: engine-free selection, picking, commands and city screen data.
 - `Ariel.Godot`: Godot view. Build separately with `dotnet build src/Ariel.Godot`.
 - `Ariel.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-The client uses Core query contracts. It has no reference to a feature-mod or
+The client uses the query contracts in `Ariel.Rules`. It has no reference to a mod or
 test-ruleset assembly.
 
 ## Determinism
@@ -235,11 +244,17 @@ requires the owning namespace. Overrides can replace earlier content.
 - `ctx.Content<T>()` returns `ModRegistry<T>` for any `ContentDef` subtype.
 - `ContentDb.Get<T>()`, `Get<T>(id)` and `TryGet<T>(id, out item)` resolve generic
   content.
-- Existing typed registries remain convenience accessors.
 - `ctx.RegisterService<T>(name, service)` registers a non-content implementation under
   its shared interface.
 - `ContentDb.Services.Get<T>()` returns implementations in mod-load and registration
-  order.
+  order. Use it for seams with many implementations (`IModifierSource`,
+  `IRequirementEvaluator`, `IProductionKind`) and for a mod's own service.
+- `sim.Rules()` (or `content.Rules()`) returns `GameRules`: one property per base
+  service (`Units`, `Combat`, `CityYields`, `Visibility`, ...) and a nullable property
+  per optional mod seam (`Diplomacy`, `Espionage`, `GreatPeople`, ...). `GameRules.Bind`
+  fills them from the registry once, when content freezes, so rule code reads a field
+  instead of searching the registry on every call. A base module still registers each
+  service, so service identity stays in the content hash.
 - `ITurnSystem` retains explicit `(Order, Id)` execution order.
 
 Registries freeze after load. Definitions and their nested collections must not change
@@ -296,7 +311,7 @@ orders can use the gaps between slots.
 Orders from `PlayerBegin` through `Map - 1` require
 `IPlayerTurnSystem.Run(Simulation, int player)`. The scheduler completes this interval
 for one player before the next player, in ascending player-id order. Other orders use
-`ITurnSystem.Run(Simulation)` once per boundary. Legacy test-ruleset orders remain
+`ITurnSystem.Run(Simulation)` once per boundary. The test ruleset's orders lie
 outside the player interval.
 
 | Constant             | Order | Work                            |
@@ -345,23 +360,24 @@ presentation semantics.
 
 ## Feature ruleset setup
 
-A non-null `SimulationSettings.WorldSize` selects Foundation's `INewGameSetup` service.
-Null retains the legacy setup. Feature settings include `WorldSize`, `GameSpeed`,
+The kernel requires exactly one registered `IRuleset`; `ContentDb.Ruleset` resolves it at
+freeze. The base game's is `GameRules`, registered by Foundation. It requires
+`SimulationSettings.WorldSize` and fails with a clear error without one. Settings
+include `WorldSize`, `GameSpeed`,
 `Handicap`, `StartingEra`, and one entry in `Leaders` per player. Empty speed, handicap,
 era, and generator ids resolve through mod-registered `ISetupPolicy` services before
 generation. Explicit ids remain unchanged. `Simulation.Settings` stores the resolved
 ids, and saves retain them. World supplies its generator default. Foundation supplies
 the speed, handicap, era, and setup-screen world-size defaults. The test ruleset
 supplies its own generator default. Without a generator policy, Core selects the first
-loaded generator in ordinal id order. Core never selects a world size implicitly, so
-omitted `WorldSize` retains legacy setup. An optional `Civilizations` entry resolves a
+loaded generator in ordinal id order. Core never selects a world size implicitly. An optional `Civilizations` entry resolves a
 leader shared by multiple civilizations. An incompatible selection fails before
 generation.
 
 Foundation resolves dimensions from `WorldSizeDef.GridWidth/GridHeight` times the source
 landscape-cell scale of four. Standard therefore contains 84 × 52 = 4368 plots, with
-east–west wrap. `State.Map` holds the effective map. `Settings.Map` remains the caller's
-original legacy map setting.
+east–west wrap. `State.Map` holds the effective map. `Settings.Map` is the literal map
+a ruleset without world sizes uses, as the test ruleset does.
 
 Foundation creates teams and grants civilization and handicap starting technologies.
 Civilization free-unit classes resolve through `UnitOverrides`, including explicit
@@ -380,8 +396,7 @@ this API.
 
 ## World services
 
-Clients and other mods resolve these Core contracts through
-`ContentDb.Services.Get<T>().Single()`:
+Clients and mods reach these contracts through `sim.Rules()`:
 
 - `IPlotYieldService.Calculate(Simulation, int player, TileId)` returns
   `PlotYieldResult(YieldVector, Ledger)`.
@@ -519,7 +534,7 @@ filename.
 
 ## City services
 
-Cities registers Core query contracts. All queries are RNG-free and do not change
+Cities registers the city query contracts. All queries are RNG-free and do not change
 authoritative state. `Calculate(Simulation, int city)` returns ledgers through
 `ICityYieldService`, `ICityWellbeingService`, `ICityGrowthService`,
 `ICityProductionService`, `ICityMaintenanceService`, and `ICityGreatPeopleService`.
@@ -1646,8 +1661,7 @@ properties fail load.
 requirements, vectors, indexed effects, class limits, civilization overrides, and AI
 weights. Definitions retain English text, eras, icon references, and unsupported-field
 paths. Corporation and victory identities now have executable definitions. Religion owns
-playable religion definitions and prerequisites. The test ruleset moved to
-`tests/Ariel.Tests/TestRuleset`; `src/Ariel.BaseGame` was removed. See
+playable religion definitions and prerequisites. The schema lives in `src/Ariel.Rules/Schema`. See
 [content-schema.md](content-schema.md) for definition types, units, scopes, and importer
 decisions.
 
@@ -1823,7 +1837,7 @@ The Godot view translates the engine-free math into GPU-rendered visuals complia
 
 ### Mod appearance contract & asset discovery
 
-The presentation contract in `Ariel.Core` and client catalog in `Ariel.Client.Core`
+The presentation contract in `Ariel.Rules` and client catalog in `Ariel.Client.Core`
 provide extension points for 3D art:
 
 - `TileAppearance`: Extended record

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Ariel.BaseGame;
 using Ariel.Content;
 using Ariel.Modding;
 using Xunit;
@@ -26,22 +27,22 @@ public sealed class ModPreparationTests
             {
                 Assert.True(reads.IsSet); // All workers reached deserialization before any registration.
                 calls.Add("z");
-                ctx.Terrains.Register(new TerrainDef { Id = "z:tile", Name = providerFile.Read(ctx.Data).Name });
+                ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "z:tile", Name = providerFile.Read(ctx.Data).Name });
             }));
             var consumer = files.Source("a", new PreparedMod([consumerFile], ctx =>
             {
                 Assert.Equal(["z"], calls);
-                Assert.Equal("Original", ctx.Terrains.Get("z:tile").Name);
+                Assert.Equal("Original", ctx.Content<TerrainDef>().Get("z:tile").Name);
                 calls.Add("a");
-                ctx.Terrains.Override(new TerrainDef { Id = "z:tile", Name = consumerFile.Read(ctx.Data).Name });
+                ctx.Content<TerrainDef>().Override(new TerrainDef { Id = "z:tile", Name = consumerFile.Read(ctx.Data).Name });
             }), "z");
 
             var db = ModLoader.Build([consumer, provider]);
 
             Assert.Equal(["z", "a"], calls);
             Assert.Equal(["z", "a"], db.LoadedMods);
-            Assert.Equal("Override", db.Terrains.Get("z:tile").Name);
-            Assert.Equal("a", db.Terrains.OwnerOf("z:tile"));
+            Assert.Equal("Override", db.Get<TerrainDef>().Get("z:tile").Name);
+            Assert.Equal("a", db.Get<TerrainDef>().OwnerOf("z:tile"));
         }
         finally { ObservedSidecar.Reads.Value = previous; }
     }
@@ -57,7 +58,7 @@ public sealed class ModPreparationTests
             var values = numbers.Read(ctx.Data);
             values.Add(99);
             // The descriptor and ordinary ReadJson share one value within this build only.
-            ctx.Terrains.Register(new TerrainDef
+            ctx.Content<TerrainDef>().Register(new TerrainDef
             {
                 Id = "probe:tile", Food = ctx.Data.ReadJson<List<int>>(numbers.Path).Count,
                 Production = values[0],
@@ -66,8 +67,8 @@ public sealed class ModPreparationTests
 
         var first = ModLoader.Build([mod]);
         var repeated = ModLoader.Build([mod]);
-        Assert.Equal(2, first.Terrains.Get("probe:tile").Food);
-        Assert.Equal(2, repeated.Terrains.Get("probe:tile").Food);
+        Assert.Equal(2, first.Get<TerrainDef>().Get("probe:tile").Food);
+        Assert.Equal(2, repeated.Get<TerrainDef>().Get("probe:tile").Food);
         Assert.Equal(first.ContentHash, repeated.ContentHash);
 
         files.Write("numbers.json", "[7,8]");
@@ -75,14 +76,14 @@ public sealed class ModPreparationTests
             Task.Run(() => ModLoader.Build([mod])), Task.Run(() => ModLoader.Build([mod])));
         foreach (var db in rebuilt)
         {
-            Assert.Equal(3, db.Terrains.Get("probe:tile").Food);
-            Assert.Equal(7, db.Terrains.Get("probe:tile").Production);
+            Assert.Equal(3, db.Get<TerrainDef>().Get("probe:tile").Food);
+            Assert.Equal(7, db.Get<TerrainDef>().Get("probe:tile").Production);
             Assert.NotEqual(first.ContentHash, db.ContentHash);
         }
-        Assert.NotSame(rebuilt[0].Terrains.Get("probe:tile"), rebuilt[1].Terrains.Get("probe:tile"));
+        Assert.NotSame(rebuilt[0].Get<TerrainDef>().Get("probe:tile"), rebuilt[1].Get<TerrainDef>().Get("probe:tile"));
         Assert.Equal(rebuilt[0].ContentHash, rebuilt[1].ContentHash);
-        Assert.Equal(2, first.Terrains.Get("probe:tile").Food);
-        Assert.Equal(4, first.Terrains.Get("probe:tile").Production);
+        Assert.Equal(2, first.Get<TerrainDef>().Get("probe:tile").Food);
+        Assert.Equal(4, first.Get<TerrainDef>().Get("probe:tile").Production);
     }
 
     [Theory]
@@ -103,13 +104,13 @@ public sealed class ModPreparationTests
             Assert.True(ctx.Data.Exists(numbers.Path));
             Assert.False(ctx.Data.Exists("absent.json"));
             Assert.Equal("plain text", ctx.Data.ReadText("note.txt"));
-            ctx.Terrains.Register(ctx.Data.ReadJson<TerrainDef>("terrain.json"));
+            ctx.Content<TerrainDef>().Register(ctx.Data.ReadJson<TerrainDef>("terrain.json"));
         };
         IMod instance = prepare ? new PreparedMod([numbers], register) : new LegacyMod(register);
 
         var db = ModLoader.Build([files.Source("probe", instance)]);
 
-        Assert.Equal("Unlisted", db.Terrains.Get("probe:tile").Name);
+        Assert.Equal("Unlisted", db.Get<TerrainDef>().Get("probe:tile").Name);
     }
 
     [Theory]
@@ -159,7 +160,7 @@ public sealed class ModPreparationTests
         Action<IModContext> fail = ctx =>
         {
             calls.Add(ctx.ModId);
-            ctx.Terrains.Register(new TerrainDef { Id = "wrong:namespace" });
+            ctx.Content<TerrainDef>().Register(new TerrainDef { Id = "wrong:namespace" });
         };
         Action<IModContext> read = ctx =>
         {

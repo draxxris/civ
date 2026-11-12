@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using SchemaUnitDef = Ariel.Content.Schema.UnitDef;
 
 namespace Ariel.Game;
 
@@ -32,7 +31,6 @@ internal static class AiTurnSpeculator
     /// <summary>Extra reach around moving settlers and explorers, whose choices depend on the land around them.</summary>
     public const int ScoutRadius = 3;
     // Unit AI roles are content ids; the land explorer role keeps this suffix in every namespace.
-    private const string ExploreAiSuffix = ":unitai_explore";
 
     /// <summary>Run the given AI players' turns, with the same result as running them one by one in that order.</summary>
     public static void Run(Simulation sim, int[] players)
@@ -309,7 +307,7 @@ internal static class AiTurnSpeculator
                 if (existed && then == now) continue;
                 _tiles.Add(now.Value);
                 if (existed) _tiles.Add(then.Value);
-                if (Scout(sim, u)) foreach (var t in grid.Range(now, ScoutRadius)) _tiles.Add(t.Value);
+                if (sim.Content.Ruleset.IsScout(sim, u)) foreach (var t in grid.Range(now, ScoutRadius)) _tiles.Add(t.Value);
             }
             foreach (var removed in before.Values) _tiles.Add(removed.Value);
             AddCommandTiles(sim, command);
@@ -323,10 +321,6 @@ internal static class AiTurnSpeculator
             foreach (var tile in CommandTiles(sim, command))
                 _tiles.Add(tile);
         }
-
-        private static bool Scout(Simulation sim, Unit unit) => sim.Content.TryGet<SchemaUnitDef>(unit.Type, out var def)
-            ? def.CanFoundCity || def.UnitAiTypes.Any(p => p.Value && p.Key.EndsWith(ExploreAiSuffix, StringComparison.Ordinal))
-            : sim.Content.TryGet<Ariel.Content.UnitDef>(unit.Type, out var legacy) && legacy.CanFoundCity;
 
         private void Finish(Simulation sim)
         {

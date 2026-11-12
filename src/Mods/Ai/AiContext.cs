@@ -99,7 +99,7 @@ internal sealed class AiContext
     {
         Sim = sim; PlayerId = player;
         Self = sim.State.PlayerById(player); Team = sim.State.TeamById(Self.TeamId);
-        Leader = sim.Content.Services.Get<IPeoplesService>().SingleOrDefault()?.Leader(sim, player);
+        Leader = sim.Rules().Peoples?.Leader(sim, player);
         Catalog = AiCatalog.For(sim.Content);
         _segment = new(this);
     }

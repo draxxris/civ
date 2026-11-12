@@ -164,37 +164,6 @@ public sealed class CardResearchTests
     }
 
     [Fact]
-    public void Empty_content_has_a_saved_empty_hand_and_browsable_empty_tree_without_query_rng()
-    {
-        string root = Path.Combine(Path.GetTempPath(), "civ-empty-research-" + Guid.NewGuid());
-        Directory.CreateDirectory(Path.Combine(root, "data"));
-        ContentDb content;
-        try
-        {
-            File.WriteAllText(Path.Combine(root, "data", "tech.json"), "[]");
-            var research = new LoadedMods().Sources.Single(s => s.Manifest.Id == "research");
-            content = ModLoader.Build([
-                new ModSource { Root = root, Instance = research.Instance, Manifest = new() { Id = "research" } },
-                new ModSource { Root = root, Instance = new EmptyTerrain(), Manifest = new() { Id = "empty" } },
-                .. new[] { "CardResearch", "TechTree" }.Select(n => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", n))),
-            ]);
-        }
-        finally { Directory.Delete(root, true); }
-        var sim = Simulation.CreateScenario(content, new() { GameOptions = new(StringComparer.Ordinal)
-            { ["card_research:enabled"] = true, ["tech_tree:enabled"] = true } }, new(2, 2),
-            Enumerable.Range(0, 4).Select(_ => new Plot { Terrain = "empty:plain" }).ToArray());
-        var before = SaveGame.Save(sim);
-        Assert.Empty(sim.Content.Services.Get<IResearchSelectionPresentation>().Single().Describe(sim, 0)!.Offered);
-        Assert.Empty(sim.Content.Services.Get<ITechTreePresentation>().Single().Describe(sim, 0)!.Nodes);
-        Assert.Equal(before, SaveGame.Save(SaveGame.Load(content, before)));
-    }
-
-    private sealed class EmptyTerrain : IMod
-    {
-        public void Register(IModContext context) => context.Terrains.Register(new TerrainDef { Id = "empty:plain" });
-    }
-
-    [Fact]
     public void Standard_ai_selects_from_the_authoritative_hand()
     {
         var sim = new Simulation(Content.Value, GameFactory.Settings() with

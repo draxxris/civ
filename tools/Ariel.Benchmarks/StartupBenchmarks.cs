@@ -118,7 +118,7 @@ internal static class StartupBenchmarks
             Opponents = 3
         };
         var settings = options.ToSettings(catalog);
-        var map = catalog.Content.Services.Get<INewGameSetup>().Single().ResolveMap(catalog.Content, settings);
+        var map = settings.ResolveMap(catalog.Content);
         return (options, settings, map);
     }
 

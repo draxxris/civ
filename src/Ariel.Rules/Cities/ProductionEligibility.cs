@@ -13,7 +13,7 @@ internal static class ProductionEligibility
         else if (kind == "cities:unit") Unit(sim, city, id, failures);
         else if (kind == "economy:process")
         {
-            var processes = sim.Content.Services.Get<ICityProcessService>().SingleOrDefault();
+            var processes = sim.Rules().Processes;
             if (processes is null) Fail(failures, "Process service is unavailable");
             else failures.AddRange(processes.Validate(sim, city.Id, id).Failures);
         }
@@ -57,7 +57,7 @@ internal static class ProductionEligibility
         ResourceAccess.Count(sim, city.Owner, city.Id, bonus);
     private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
-        var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var service = sim.Rules().Religion;
         if (service is not null)
         {
             if (service.ValidateBuilding(sim, city, b) is { } error) Fail(failures, error);
@@ -69,7 +69,7 @@ internal static class ProductionEligibility
     {
         if (!sim.Content.TryGet<S.UnitDef>(id, out var unit)) { Fail(failures, "Unknown unit"); return; }
         Requirements(sim, city, unit, failures);
-        if (unit.Inquisitor && sim.Content.Services.Get<IReligionService>().SingleOrDefault() is { } religion && !religion.IsInquisitionEnabled(sim, city.Owner))
+        if (unit.Inquisitor && sim.Rules().Religion is { } religion && !religion.IsInquisitionEnabled(sim, city.Owner))
             Fail(failures, "Civics and state religion do not allow inquisitions");
         if (unit.Cost < 0) Fail(failures, ProductionFailures.UnitCost);
         if (unit.ForceObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) Fail(failures, "Unit is obsolete");

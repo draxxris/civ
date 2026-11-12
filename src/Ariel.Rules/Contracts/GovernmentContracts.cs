@@ -74,6 +74,6 @@ public static class GovernmentStatus
 public sealed class SetCivicsCommand : GameCommand
 {
     public List<string> Civics { get; init; } = [];
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IGovernmentService>().Single().Validate(sim, Player, Civics);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IGovernmentService>().Single().Adopt(sim, Player, Civics);
+    public override string? Validate(Simulation sim) => sim.Rules().Government.Validate(sim, Player, Civics);
+    public override void Apply(Simulation sim) => sim.Rules().Government.Adopt(sim, Player, Civics);
 }

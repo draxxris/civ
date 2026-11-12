@@ -35,7 +35,7 @@ internal static partial class GreatPersonActions
     {
         var order = city.ProductionQueue.FirstOrDefault();
         if (order is null || order.Kind != "cities:building") return null;
-        var production = sim.Content.Services.Get<ICityProductionService>().Single();
+        var production = sim.Rules().CityProduction;
         if (!production.Validate(sim, city.Id, order.Kind, order.ContentId).Success) return null;
         long capacity = Math.Max(0, ((long)def.BaseHurry + (long)def.HurryMultiplier * city.Population) * GreatPeopleData.Speed(sim).UnitHurryPercent / 100);
         long amount = Math.Min(capacity, Math.Max(0, production.Calculate(sim, city.Id, order.Kind, order.ContentId).Cost - order.Progress));
@@ -46,7 +46,7 @@ internal static partial class GreatPersonActions
         long population = sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(player).Id).Sum(c => (long)c.Population);
         long capacity = Math.Max(0, ((long)def.BaseDiscover + (long)def.DiscoverMultiplier * population) * GreatPeopleData.Speed(sim).UnitDiscoverPercent / 100);
         if (capacity <= 0) return null;
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         var choice = sim.Content.Get<S.TechDef>().All.Where(t => research.Validate(sim, player, t.Id).Success)
             .Select(t => (Tech: t, Score: t.Flavors.Sum(f => (long)f.Value * def.Flavors.GetValueOrDefault(f.Key))))
             .Where(t => t.Score > 0).OrderByDescending(t => t.Score).ThenBy(t => t.Tech.Id, StringComparer.Ordinal).FirstOrDefault();
@@ -121,11 +121,11 @@ internal sealed class GreatPeopleCommands : IGreatPeopleCommandService
                 sim.Events.Publish(new BuildingCompleted(city.Id, preview.Target!));
                 break;
             case "trade": sim.State.PlayerById(player).Treasury += preview.Amount; break;
-            case "discover": sim.Content.Services.Get<IResearchService>().Single().AddProgress(sim, player, preview.Target!, preview.Amount); break;
+            case "discover": sim.Rules().Research.AddProgress(sim, player, preview.Target!, preview.Amount); break;
             case "hurry": city!.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + preview.Amount }; break;
             case "culture":
                 int turns = GreatPeopleData.Raw(sim, "GREAT_WORKS_CULTURE_TURNS", 20) * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100;
-                sim.Content.Services.Get<ICityCultureService>().Single().AddCulture(sim, city!.Id, preview.Amount, turns);
+                sim.Rules().CityCulture.AddCulture(sim, city!.Id, preview.Amount, turns);
                 break;
             case "golden-age":
                 foreach (int id in GreatPersonActions.GoldenAgeUnits(sim, player, unit, units)) sim.State.RemoveUnit(id);
@@ -134,7 +134,7 @@ internal sealed class GreatPeopleCommands : IGreatPeopleCommandService
                 break;
         }
         if (sim.State.FindUnit(unitId) is not null) sim.State.RemoveUnit(unitId);
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
         sim.Events.Publish(new GreatPersonUsed(player, unitId, preview.Command, preview.Target, preview.Amount));
     }
 }

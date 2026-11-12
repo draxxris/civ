@@ -50,7 +50,7 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
     {
         if (sim.Content.Get<S.TerrainDef>(plot.Terrain).Impassable || plot.Kind == PlotKind.Peak) return true;
         if (plot.Feature is { } f && sim.Content.Get<S.FeatureDef>(f).Impassable) return true;
-        return sim.Content.Services.Get<ICityConnectionService>().Single().IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id);
+        return sim.Rules().CityConnections.IsTileBlockaded(sim, tile, sim.TeamOf(city.Owner).Id);
     }
     public void Assign(Simulation sim, int cityId)
     {
@@ -70,7 +70,7 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
     private (int Available, List<WorkChoice> Candidates) Candidates(Simulation sim, City city)
     {
         int available = city.Population - wellbeing.Calculate(sim, city.Id).Angry;
-        var yields = sim.Content.Services.Get<IPlotYieldService>().Single();
+        var yields = sim.Rules().PlotYields;
         var effects = CityData.Effects(sim, city);
         var candidates = WorkArea(sim, city.Id).Where(t => CanWork(sim, city, t))
             .Select(t => new WorkChoice(t.Value, null, Score(sim, yields.Calculate(sim, city.Owner, t).Yields))).ToList();

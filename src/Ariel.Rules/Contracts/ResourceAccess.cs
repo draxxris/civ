@@ -7,14 +7,14 @@ namespace Ariel.Game;
 public static class ResourceAccess
 {
     public static long Count(Simulation sim, int player, int city, string resource) =>
-        sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.AvailableResourceCount(sim, player, city, resource)
-        ?? sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCount(sim, player, city, resource);
+        sim.Rules().Diplomacy?.AvailableResourceCount(sim, player, city, resource)
+        ?? sim.Rules().Resources.ConnectedCount(sim, player, city, resource);
 
     public static IReadOnlyDictionary<string, long> Counts(Simulation sim, int player, int city, IReadOnlyCollection<string> resources)
     {
-        if (sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault() is { } diplomacy)
+        if (sim.Rules().Diplomacy is { } diplomacy)
             return diplomacy.AvailableResourceCounts(sim, player, city, resources);
-        var connected = sim.Content.Services.Get<IResourceNetwork>().Single().ConnectedCounts(sim, player, city);
+        var connected = sim.Rules().Resources.ConnectedCounts(sim, player, city);
         return resources.Distinct(StringComparer.Ordinal)
             .ToDictionary(resource => resource, resource => (long)connected.GetValueOrDefault(resource), StringComparer.Ordinal);
     }

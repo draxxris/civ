@@ -29,7 +29,7 @@ internal sealed class SpyMissionRules(EspionageService service)
     /// <summary>A technology steal without a technology cannot be priced. Callers that offer the mission must
     /// supply one; <see cref="ValidateMission"/> rejects the mission before it is costed.</summary>
     private static long ResearchCost(Simulation sim, int player, string? tech) => tech is not null
-        ? sim.Content.Services.Get<IResearchService>().Single().CalculateCost(sim, sim.TeamOf(player).Id, tech).Cost
+        ? sim.Rules().Research.CalculateCost(sim, sim.TeamOf(player).Id, tech).Cost
         : throw new ArgumentException("Technology theft requires a technology id", nameof(tech));
 
     public string? ValidateMission(Simulation sim, int player, int unitId, int cityId, EspionageMissionKind mission, string? tech = null) =>
@@ -58,7 +58,7 @@ internal sealed class SpyMissionRules(EspionageService service)
         var city = sim.State.FindCity(cityId);
         if (city is null || city.Position != unit.Position) return "Spy must be in the target city";
         if (sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id) return "Requires a rival city";
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         return diplomacy is not null && !diplomacy.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id) ? "Requires a known rival team" : null;
     }
 
@@ -67,7 +67,7 @@ internal sealed class SpyMissionRules(EspionageService service)
         EspionageMissionKind.CounterEspionage => service.CounterEspionage(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id) is not null
             ? "Counter-espionage is already active against this team" : null,
         EspionageMissionKind.StealTreasury => sim.State.PlayerById(city.Owner).Treasury <= 0 ? "Target treasury is empty" : null,
-        EspionageMissionKind.SabotageProduction => (city.ProductionQueue.FirstOrDefault()?.Progress ?? Math.Max(city.BuildProgress, city.TrainProgress)) <= 0
+        EspionageMissionKind.SabotageProduction => (city.ProductionQueue.FirstOrDefault()?.Progress ?? 0) <= 0
             ? "No production to sabotage" : null,
         // A revolt is a state, not an event: inciting one in a city that is already in disorder cannot stack.
         EspionageMissionKind.InciteRevolt => InRevolt(sim, city) ? "The city is already in revolt" : null,
@@ -83,7 +83,7 @@ internal sealed class SpyMissionRules(EspionageService service)
     {
         if (tech is null || !sim.Content.TryGet<TechDef>(tech, out _)) return "Choose a technology";
         if (!sim.TeamOf(city.Owner).Techs.Contains(tech) || sim.TeamOf(player).Techs.Contains(tech)) return "Technology must be known only by the target team";
-        return sim.Content.Services.Get<IResearchService>().Single().Validate(sim, player, tech).Success ? null : "Technology prerequisites are not met";
+        return sim.Rules().Research.Validate(sim, player, tech).Success ? null : "Technology prerequisites are not met";
     }
 
     public IReadOnlyList<string> StealableTechnologies(Simulation sim, int player, int city)
@@ -115,7 +115,7 @@ internal sealed class SpyMissionRules(EspionageService service)
         }
         else sim.State.RemoveUnit(unitId);
         sim.Events.Publish(new EspionageMissionResult(unitId, cityId, mission, success, cost, player));
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
 
     /// <summary>Nearest owned city by hex distance; ties go to the lower city id. Validation guarantees one exists.</summary>
@@ -142,12 +142,12 @@ internal sealed class SpyMissionRules(EspionageService service)
                         checked(rules.CounterEspionagePercent + rules.CounterEspionagePerInterception * SpyInterception(sim, spy)));
                 break;
             case EspionageMissionKind.StealTech:
-                sim.Content.Services.Get<IResearchService>().Single().AddProgress(sim, player, tech!, amount);
+                sim.Rules().Research.AddProgress(sim, player, tech!, amount);
                 break;
             case EspionageMissionKind.InciteRevolt:
                 // Tell the Revolution mod first: it refuses cities that are already in disorder, and this mission
                 // is about to make this one disordered.
-                sim.Content.Services.Get<IRevolutionService>().SingleOrDefault()?.Incite(sim, city.Id);
+                sim.Rules().Revolution?.Incite(sim, city.Id);
                 var state = CityState(sim, city);
                 state.RevoltUntilTurn = checked(sim.State.Turn + GamePace.Scale(sim, rules.InciteRevoltTurns));
                 var cityRules = city.Extensions.Get<CityRuleState>(sim.Content) ?? new();
@@ -177,12 +177,9 @@ internal sealed class SpyMissionRules(EspionageService service)
 
     private static void SabotageProduction(City city, int percent)
     {
-        if (city.ProductionQueue.Count > 0) city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress - EspionageService.Percent(city.ProductionQueue[0].Progress, percent) };
-        else
-        {
-            city.BuildProgress -= EspionageService.Percent(city.BuildProgress, percent);
-            city.TrainProgress -= EspionageService.Percent(city.TrainProgress, percent);
-        }
+        if (city.ProductionQueue.Count == 0) return;
+        var order = city.ProductionQueue[0];
+        city.ProductionQueue[0] = order with { Progress = order.Progress - EspionageService.Percent(order.Progress, percent) };
     }
 
     private static EspionageCityState CityState(Simulation sim, City city)

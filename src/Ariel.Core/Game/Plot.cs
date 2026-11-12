@@ -185,3 +185,14 @@ public sealed record ProductionOrder(int Id, string Kind, string ContentId, long
 {
     public ProductionOrder(string kind, string contentId, long progress = 0) : this(0, kind, contentId, progress) { }
 }
+
+/// <summary>Elevation is independent of terrain and features.</summary>
+public enum PlotKind
+{
+    /// <summary>Ordinary flat land or water.</summary>
+    Flat,
+    /// <summary>Hill relief on land.</summary>
+    Hills,
+    /// <summary>Mountain relief, gated by peak capabilities.</summary>
+    Peak,
+}

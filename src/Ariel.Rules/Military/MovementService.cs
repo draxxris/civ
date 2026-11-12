@@ -92,7 +92,7 @@ internal sealed class MovementService : IMovementService
     }
     private static bool TerritoryEntry(Simulation sim, Unit unit, S.UnitDef def, int? owner) => owner is null
         || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory || def.BaseTrade > 0 || def.TradeMultiplier > 0
-        || sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasOpenBorders(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id) == true;
+        || sim.Rules().Diplomacy?.HasOpenBorders(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id) == true;
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
         sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
@@ -180,9 +180,9 @@ internal sealed class MovementService : IMovementService
         int? transport = AutoLoadTransport(sim, unit, MilitaryData.Definition(sim, unit), to);
         var state = MilitaryData.Edit(sim, unit);
         state.Moved = true; state.BreakActivity();
-        sim.Content.Services.Get<IWorkerBuildService>().SingleOrDefault()?.Cancel(sim, unit.Owner, unit.Id);
+        sim.Rules().WorkerBuilds?.Cancel(sim, unit.Owner, unit.Id);
         bool hostile = HostilePlot(sim, unit, target);
-        var combatService = sim.Content.Services.Get<ICombatService>().Single();
+        var combatService = sim.Rules().Combat;
         var defender = hostile ? combatService.BestDefender(sim, unit.Id, target) : null;
         // A hostile plot with a visible strength but no eligible defender is a wall, not a target.
         if (hostile && defender is null && HostileDefenders(sim, unit, target)) return true;
@@ -201,7 +201,7 @@ internal sealed class MovementService : IMovementService
         CaptureCivilians(sim, unit, target);
         var city = sim.State.CityAt(target);
         if (city is not null && MilitaryData.Enemy(sim, unit.Owner, city.Owner) && !MilitaryData.Definition(sim, unit).NoCapture)
-            sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, unit.Owner);
+            sim.Rules().CityCapture.Capture(sim, city.Id, unit.Owner);
         MilitaryData.MoveUnit(sim, unit.Id, target);
         CompleteBoarding(sim, unit, from, to, transport);
         GoodyService.Receive(sim, unit);
@@ -212,7 +212,7 @@ internal sealed class MovementService : IMovementService
     {
         if (transport is { } id)
         {
-            sim.Content.Services.Get<IUnitService>().Single().Load(sim, unit.Id, id);
+            sim.Rules().Units.Load(sim, unit.Id, id);
             unit.MovesLeft = 0;
             return;
         }

@@ -35,7 +35,7 @@ internal sealed class TradeRouteService : ITradeRouteService
         var sink = TradeData.Effects(sim, city);
         int slots = Slots(sim, city, sink);
         if (slots == 0 || GovernmentStatus.IsDisorder(sim, city)) return new(slots, [], default, sink.Ledger);
-        var connections = sim.Content.Services.Get<ICityConnectionService>().Single();
+        var connections = sim.Rules().CityConnections;
         bool noForeign = TradeData.Civics(sim, city.Owner).Any(c => c.NoForeignTrade);
         var routes = sim.State.Cities.Where(c => Candidate(sim, city, c, noForeign) && connections.Connected(sim, city.Id, c.Id))
             .Select(c => Route(sim, city, c, sink.Ledger))
@@ -49,14 +49,14 @@ internal sealed class TradeRouteService : ITradeRouteService
     private static bool Candidate(Simulation sim, City source, City partner, bool noForeign)
     {
         if (source.Id == partner.Id || GovernmentStatus.IsDisorder(sim, partner)) return false;
-        var connections = sim.Content.Services.Get<ICityConnectionService>().Single();
+        var connections = sim.Rules().CityConnections;
         if (connections.IsCityBlockaded(sim, source.Id) || connections.IsCityBlockaded(sim, partner.Id)) return false;
         if (sim.TeamOf(source.Owner).Id == sim.TeamOf(partner.Owner).Id) return true;
         return ForeignTradeAllowed(sim, source, partner, noForeign);
     }
     private static bool ForeignTradeAllowed(Simulation sim, City source, City partner, bool noForeign)
     {
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         int mine = sim.TeamOf(source.Owner).Id, theirs = sim.TeamOf(partner.Owner).Id;
         return !noForeign && !TradeData.Civics(sim, partner.Owner).Any(c => c.NoForeignTrade)
             && !sim.TeamOf(source.Owner).Wars.Contains(theirs)
@@ -122,7 +122,7 @@ internal sealed class TradeRouteService : ITradeRouteService
             if (foreign) sink.Add(b.Id, "trade:profit_percent", b.ForeignTradeRouteModifier);
         }
         var capital = sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id).FirstOrDefault(c => TradeData.Active(sim, c).Any(b => b.Capital));
-        if (capital is not null && sim.Content.Services.Get<ICityConnectionService>().Single().Connected(sim, city.Id, capital.Id))
+        if (capital is not null && sim.Rules().CityConnections.Connected(sim, city.Id, capital.Id))
             sink.Add("trade:capital", "trade:profit_percent", TradeData.Raw(sim, "CAPITAL_TRADE_MODIFIER", 25));
         if (overseas) sink.Add("trade:overseas", "trade:profit_percent", TradeData.Raw(sim, "OVERSEAS_TRADE_MODIFIER", 50));
         if (!foreign) return;

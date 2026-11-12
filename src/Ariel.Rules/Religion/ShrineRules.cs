@@ -22,7 +22,7 @@ internal sealed partial class ReligionService
     {
         if (HolyCity(sim, shrine.GlobalReligionCommerce!) != city.Id) return "Requires the holy city";
         // Prophets bypass the negative production cost, not requirements, replacements or class limits.
-        var result = sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, city.Id, "cities:building", shrine.Id);
+        var result = sim.Rules().CityProduction.Validate(sim, city.Id, "cities:building", shrine.Id);
         return result.Failures.FirstOrDefault(f => !ProductionFailures.IsCostOnly(f))?.Explanation;
     }
     public void BuildShrine(Simulation sim, int unitId, string building)
@@ -32,6 +32,6 @@ internal sealed partial class ReligionService
         city.Buildings.Add(building);
         sim.Events.Publish(new BuildingCompleted(city.Id, building));
         sim.State.RemoveUnit(unitId);
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
 }

@@ -12,7 +12,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
 
     public void Plan()
     {
-        var service = ctx.Sim.Content.Services.Get<IGreatPeopleService>().SingleOrDefault();
+        var service = ctx.Sim.Rules().GreatPeople;
         if (service is null) return;
         foreach (var unit in ctx.Units.OrderBy(u => u.Id))
         {
@@ -66,7 +66,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
 
     private IEnumerable<Choice> Shrines(Unit unit, City city)
     {
-        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var religion = ctx.Sim.Rules().Religion;
         if (religion is null || GovernmentStatus.IsDisorder(ctx.Sim, city)) yield break;
         foreach (var building in ctx.Def(unit).ConstructibleBuildings.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
         {

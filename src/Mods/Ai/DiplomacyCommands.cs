@@ -44,10 +44,10 @@ public sealed class DeclareWarCommand : GameCommand
     public override string? Validate(Simulation sim) => WarRules.Common(sim, Player, Target)
         ?? (sim.TeamOf(Player).Wars.Contains(sim.State.PlayerById(Target).TeamId) ? "already at war" : null)
         ?? WarRules.PeaceCooldown(sim, sim.State.PlayerById(Player).TeamId, sim.State.PlayerById(Target).TeamId)
-        ?? sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.ValidateWar(sim, Player, Target);
+        ?? sim.Rules().Diplomacy?.ValidateWar(sim, Player, Target);
     public override void Apply(Simulation sim)
     {
-var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+var diplomacy = sim.Rules().Diplomacy;
         if (diplomacy is not null) { diplomacy.DeclareWar(sim, Player, Target); return; }
         int mine = sim.State.PlayerById(Player).TeamId, theirs = sim.State.PlayerById(Target).TeamId;
         sim.State.SetWar(mine, theirs, true);
@@ -67,11 +67,11 @@ public sealed class MakePeaceCommand : GameCommand
         int mine = sim.State.PlayerById(Player).TeamId, theirs = sim.State.PlayerById(Target).TeamId;
         if (!sim.State.TeamById(mine).Wars.Contains(theirs)) return "not at war";
         return sim.State.Turn - WarRules.Read(sim, mine).WarStarted.GetValueOrDefault(theirs) < WarRules.MinimumWarTurns
-            ? "war is too recent" : sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.ValidatePeace(sim, Player, Target);
+            ? "war is too recent" : sim.Rules().Diplomacy?.ValidatePeace(sim, Player, Target);
     }
     public override void Apply(Simulation sim)
     {
-var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+var diplomacy = sim.Rules().Diplomacy;
         if (diplomacy is not null) { diplomacy.MakePeace(sim, Player, Target); return; }
         int mine = sim.State.PlayerById(Player).TeamId, theirs = sim.State.PlayerById(Target).TeamId;
         sim.State.SetWar(mine, theirs, false);

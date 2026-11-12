@@ -38,7 +38,7 @@ internal sealed class EspionageService : IEspionageService
 
     public IReadOnlyList<int> KnownRivals(Simulation sim, int player)
     {
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         int own = sim.TeamOf(player).Id;
         var living = LivingTeams(sim);
         return sim.State.Teams.Where(t => t.Id != own && living.Contains(t.Id) && (diplomacy is null || diplomacy.HasMet(sim, own, t.Id)))
@@ -97,8 +97,8 @@ internal sealed class EspionageService : IEspionageService
 
     internal void Allocate(Simulation sim, int player)
     {
-        long produced = sim.Content.Services.Get<IPlayerEspionageSource>().SingleOrDefault()?.EspionageHundredths(sim, player)
-            ?? sim.Content.Services.Get<IPlayerEconomyService>().SingleOrDefault()?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
+        long produced = sim.Rules().EspionageSource?.EspionageHundredths(sim, player)
+            ?? sim.Rules().Economy?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
         var state = PlayerState(sim, player);
         if (produced <= 0 && state.RemainderHundredths == 0) return;
         var spending = Spending(sim, player, produced);

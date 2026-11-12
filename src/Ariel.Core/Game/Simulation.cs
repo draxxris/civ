@@ -18,7 +18,7 @@ public sealed record SimulationSettings
     public int PlayerCount { get; init; } = 2;
     /// <summary>Civilization per player. Missing entries cycle through content in ordinal id order.</summary>
     public string[] Civilizations { get; init; } = [];
-    /// <summary>Feature ruleset world size. Null retains legacy setup.</summary>
+    /// <summary>World size definition, for rulesets that size the map from content instead of <see cref="Map"/>.</summary>
     public string? WorldSize { get; init; }
     /// <summary>Speed definition for feature rules.</summary>
     public string GameSpeed { get; init; } = "";
@@ -46,13 +46,8 @@ public sealed record SimulationSettings
         StartingEra = Choose(content, SetupField.StartingEra, StartingEra),
     };
 
-    /// <summary>Map dimensions and wrapping. A ruleset world size resolves through its own setup; without one the
-    /// literal <see cref="Map"/> is used.</summary>
-    public MapSpec ResolveMap(ContentDb content)
-    {
-        var map = WorldSize is null ? Map : content.Services.Get<INewGameSetup>().Single().ResolveMap(content, this);
-        return MapOverride ?? map;
-    }
+    /// <summary>Map dimensions and wrapping, as the ruleset resolves them from these settings.</summary>
+    public MapSpec ResolveMap(ContentDb content) => MapOverride ?? content.Ruleset.ResolveMap(content, this);
 
     private static string Choose(ContentDb content, SetupField field, string value, string fallback = "") =>
         value.Length > 0 ? value : SetupPolicies.Default(content, field) ?? fallback;
@@ -79,12 +74,12 @@ public sealed partial class Simulation
     {
         settings = Settings;
         State.Map = settings.ResolveMap(content);
-        var setup = InitializePlayers();
+        InitializePlayers();
         State.Plots = Enumerable.Range(0, State.Grid.Count).Select(_ => new Plot()).ToArray();
         content.MapGenerators.Get(settings.MapGenerator).Generate(State.Map, State.Plots, Rng, content, settings.PlayerCount);
-        ValidateTerrains();
+        Content.Ruleset.Validate(this);
         State.RebuildIndexes();
-        setup?.Complete(this);
+        Content.Ruleset.Complete(this);
         StartGame();
     }
     internal Simulation(ContentDb content, SimulationSettings settings, GameState state, DeterministicRng rng)
@@ -95,76 +90,25 @@ public sealed partial class Simulation
             throw new InvalidDataException("Player phase systems must implement IPlayerTurnSystem");
         Events = new(this);
     }
-    private INewGameSetup? InitializePlayers()
+    private void InitializePlayers()
     {
         if (Settings.PlayerCount <= 0) throw new ArgumentOutOfRangeException(nameof(Settings.PlayerCount));
-        var setup = Settings.WorldSize is null ? null : Content.Services.Get<INewGameSetup>().Single();
-        if (setup is not null) setup.CreatePlayers(this);
-        else
-        {
-            var civs = Content.Civilizations.All.ToList();
-            for (int i = 0; i < Settings.PlayerCount; i++) AddPlayer(i, ChooseCivilization(i, civs));
-        }
+        Content.Ruleset.CreatePlayers(this);
         State.Teams.Sort((a, b) => a.Id.CompareTo(b.Id));
-        return setup;
-    }
-    private void ValidateTerrains()
-    {
-        foreach (var plot in State.Plots)
-        {
-            if (Settings.WorldSize is null) _ = Content.Terrains.Get(plot.Terrain);
-            else _ = Content.Get<Ariel.Content.Schema.TerrainDef>(plot.Terrain);
-        }
     }
     private void StartGame()
     {
         Events.Publish(new TurnStarted(State.Turn));
         BeginTurnOrder();
     }
-    private CivilizationDef? ChooseCivilization(int player, IReadOnlyList<CivilizationDef> civs)
-    {
-        if (player < Settings.Civilizations.Length) return Content.Civilizations.Get(Settings.Civilizations[player]);
-        return civs.Count == 0 ? null : civs[player % civs.Count];
-    }
-    private void AddPlayer(int id, CivilizationDef? civ)
-    {
-        var ai = id < Settings.PlayerAis.Length ? Settings.PlayerAis[id] : null;
-        if (ai != null) Content.PlayerAIs.Get(ai);
-        int teamId = id < Settings.PlayerTeams.Length ? Settings.PlayerTeams[id] : id;
-        if (teamId < 0) throw new ArgumentException("Team ids must be nonnegative");
-        var team = GetOrCreateTeam(teamId);
-        team.Members.Add(id);
-        team.Techs.UnionWith(civ?.StartingTechs ?? []);
-        var player = CreatePlayer(id, teamId, civ, ai);
-        foreach (var civic in Content.Civics.All.Where(c => c.IsDefault)) player.Civics.TryAdd(civic.Category, civic.Id);
-        State.Players.Add(player);
-    }
-    private static Player CreatePlayer(int id, int teamId, CivilizationDef? civ, string? ai) => new()
-    {
-        Id = id, TeamId = teamId, Name = civ?.Name ?? $"Player {id + 1}", Civilization = civ?.Id ?? "", Ai = ai,
-    };
-    private Team GetOrCreateTeam(int id)
-    {
-        var team = State.Teams.FirstOrDefault(t => t.Id == id);
-        if (team != null) return team;
-        team = new Team { Id = id };
-        State.Teams.Add(team);
-        return team;
-    }
     /// <summary>Whether a game option is enabled in this session, using its content default when unset.</summary>
     public bool IsOptionEnabled(string id) => Settings.GameOptions.TryGetValue(id, out bool enabled)
         ? enabled
-        : Content.TryGet<Ariel.Content.Schema.GameOptionDef>(id, out var definition) && definition.Default;
+        : Content.Ruleset.OptionDefault(Content, id);
     /// <summary>Team state for a player, including research and known techs.</summary>
     public Team TeamOf(int playerId) => State.TeamOf(playerId);
     /// <summary>Whether a player's team knows a technology.</summary>
     public bool KnowsTech(int playerId, string tech) => TeamOf(playerId).Techs.Contains(tech);
-    /// <summary>Civilization definition for a player.</summary>
-    public CivilizationDef? CivilizationOf(int playerId)
-    {
-        var id = State.PlayerById(playerId).Civilization;
-        return id.Length == 0 ? null : Content.Civilizations.Get(id);
-    }
     /// <summary>Let every AI that has yet to move act and end its turn, in id order, ignoring turn segments. Independent
     /// players may plan concurrently, but the result is the same on every peer.</summary>
     public void RunAi() => RunAi(State.Players.OrderBy(p => p.Id).Where(p => p.Ai != null && !p.EndedTurn).Select(p => p.Id).ToArray());
@@ -252,8 +196,6 @@ public sealed partial class Simulation
     internal int AiWaveLimit { get; set; } = int.MaxValue;
     /// <summary>Optional diagnostic sink for AI wave decisions.</summary>
     internal Action<SpeculationEvent>? SpeculationObserver { get; set; }
-    /// <summary>Terrain definition on a valid plot, including normalized wrap coordinates.</summary>
-    public TerrainDef TerrainAt(Hex hex) => Content.Terrains.Get(State.PlotAt(hex).Terrain);
     /// <summary>Apply a command a player issued, from a front end or the network: it must also be that player's move.
     /// Commands the rules issue themselves (turn systems, AI, effects) use <see cref="TryApply"/>.</summary>
     public bool TrySubmit(GameCommand cmd, out string? error)

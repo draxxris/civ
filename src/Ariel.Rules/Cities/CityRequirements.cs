@@ -26,7 +26,7 @@ internal sealed class CityRequirements : ICityRequirementService
         if (leaf.Id is "foundation:coastal" or "foundation:river" or "foundation:fresh_water") return Location(leaf, context);
         if (leaf.Id is "foundation:any_religion" or "foundation:state_religion")
         {
-            var religion = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+            var religion = sim.Rules().Religion;
             return religion is null ? null : religion.EvaluateCondition(leaf, context) is null;
         }
         return leaf.Id switch
@@ -47,7 +47,7 @@ internal sealed class CityRequirements : ICityRequirementService
         {
             "foundation:coastal" => CityData.Coastal(sim, t, leaf.Count ?? 0),
             "foundation:river" => sim.State.Plots[t.Value].RiverEdges != 0,
-            _ => sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, t)
+            _ => sim.Rules().Water.IsFreshWater(sim, t)
         };
     }
     private bool Vicinity(Requirement.Leaf leaf, RequirementContext context)

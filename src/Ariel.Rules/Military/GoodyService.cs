@@ -74,7 +74,7 @@ internal static class GoodyService
         var center = centers[sim.Rng.Next(centers.Length)];
         foreach (var tile in grid.Range(center, goody.MapRange))
             if (sim.Rng.Next(100) < goody.MapProbability)
-                sim.Content.Services.Get<IVisibilityService>().Single().RevealPlot(sim, tile, sim.TeamOf(unit.Owner).Id);
+                sim.Rules().Visibility.RevealPlot(sim, tile, sim.TeamOf(unit.Owner).Id);
     }
     private static void HostileVillagers(Simulation sim, Unit unit, S.GoodyDef goody, string type)
     {

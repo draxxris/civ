@@ -33,5 +33,5 @@ internal static class TradeData
         return sink;
     }
     internal static IEnumerable<S.TraitDef> Traits(Simulation sim, int player) =>
-        sim.Content.Services.Get<IPeoplesService>().SingleOrDefault()?.Traits(sim, player) ?? [];
+        sim.Rules().Peoples?.Traits(sim, player) ?? [];
 }

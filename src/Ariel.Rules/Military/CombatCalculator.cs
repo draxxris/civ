@@ -85,7 +85,7 @@ internal static class CombatCalculator
     }
     internal static int TotalCityDefense(Simulation sim, City city, bool ignoreBuilding)
     {
-        int culture = sim.Content.Services.Get<ICityCultureService>().SingleOrDefault()?.Level(sim, city.Id).CityDefenseModifier
+        int culture = sim.Rules().CityCulture?.Level(sim, city.Id).CityDefenseModifier
             ?? sim.Content.Get<S.CultureLevelDef>().All.Where(l => l.SpeedThresholds.TryGetValue(sim.Settings.GameSpeed, out var threshold) && city.Culture >= threshold)
                 .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal)
                 .LastOrDefault()?.CityDefenseModifier ?? 0;

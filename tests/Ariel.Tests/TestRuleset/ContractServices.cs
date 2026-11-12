@@ -30,7 +30,7 @@ internal sealed class CivicModifiers : IModifierSource
         if (context.Scope != ModifierScope.Player) return;
         foreach (var id in context.Sim.State.PlayerById(context.Player).Civics.Values)
         {
-            var civic = context.Sim.Content.Civics.Get(id);
+            var civic = context.Sim.Content.Get<CivicDef>(id);
             sink.AddYield(civic.Name, new(0, civic.ProductionBonus, 0), percent: true);
             sink.AddCommerce(civic.Name, new(0, civic.ResearchBonus, civic.CultureBonus, 0), percent: true);
         }

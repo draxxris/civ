@@ -157,17 +157,7 @@ internal sealed class ModContext : IModContext
     }
     public string ModId { get; }
     public IModData Data { get; }
-    public ModRegistry<TerrainDef> Terrains { get; }
-    public ModRegistry<CivilizationDef> Civilizations { get; }
     public ModRegistry<IPlayerAI> PlayerAIs { get; }
-    public ModRegistry<UnitDef> Units { get; }
-    public ModRegistry<PromotionDef> Promotions { get; }
-    public ModRegistry<ExperienceLevelDef> ExperienceLevels { get; }
-    public ModRegistry<SpecialistDef> Specialists { get; }
-    public ModRegistry<CivicDef> Civics { get; }
-    public ModRegistry<TechDef> Techs { get; }
-    public ModRegistry<BuildingDef> Buildings { get; }
-    public ModRegistry<CultureLevelDef> CultureLevels { get; }
     public ModRegistry<IMapGenerator> MapGenerators { get; }
     public ModRegistry<ITurnSystem> TurnSystems { get; }
     public ModRegistry<CommandTypeDef> CommandTypes { get; }
@@ -175,17 +165,7 @@ internal sealed class ModContext : IModContext
     public ModContext(string modId, IModData data, ContentDb db)
     {
         _db = db; ModId = modId; Data = data;
-        Terrains = new(db.Terrains, modId);
-        Civilizations = new(db.Civilizations, modId);
         PlayerAIs = new(db.PlayerAIs, modId);
-        Units = new(db.Units, modId);
-        Promotions = new(db.Promotions, modId);
-        ExperienceLevels = new(db.ExperienceLevels, modId);
-        Specialists = new(db.Specialists, modId);
-        Civics = new(db.Civics, modId);
-        Techs = new(db.Techs, modId);
-        Buildings = new(db.Buildings, modId);
-        CultureLevels = new(db.CultureLevels, modId);
         MapGenerators = new(db.MapGenerators, modId);
         TurnSystems = new(db.TurnSystems, modId);
         CommandTypes = new(db.CommandTypes, modId);

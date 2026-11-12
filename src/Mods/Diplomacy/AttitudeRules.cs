@@ -7,7 +7,7 @@ namespace Ariel.Mods.Diplomacy;
 internal sealed partial class DiplomacyService
 {
     private static S.LeaderDef? Leader(Simulation sim, int player) => sim.Content.TryGet<S.LeaderDef>(sim.State.PlayerById(player).Leader, out var leader) ? leader : null;
-    private static string? Religion(Simulation sim, int player) => sim.Content.Services.Get<IReligionService>().SingleOrDefault()?.StateReligion(sim, player);
+    private static string? Religion(Simulation sim, int player) => sim.Rules().Religion?.StateReligion(sim, player);
     private static int Growth(int turns, int divisor, int limit) => divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
     private static bool FavoriteCivic(Simulation sim, int from, int toward, S.LeaderDef leader) => leader.FavoriteCivic is { } civic &&
         sim.State.PlayerById(from).Civics.Values.Contains(civic) && sim.State.PlayerById(toward).Civics.Values.Contains(civic);

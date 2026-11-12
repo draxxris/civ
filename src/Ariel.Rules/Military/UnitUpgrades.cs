@@ -64,7 +64,7 @@ internal static class UnitUpgrades
     }
     private static bool TrainingCity(Simulation sim, Unit unit, string target)
     {
-        var service = sim.Content.Services.Get<ICityProductionService>().Single();
+        var service = sim.Rules().CityProduction;
         return sim.State.Cities.Where(c => c.Owner == unit.Owner).OrderBy(c => c.Id).Any(c =>
             sim.State.Grid.Distance(c.Position, unit.Position) <= MilitaryData.Raw(sim, "MAX_UNIT_UPGRADE_CITY_DISTANCE", 3)
             && SameArea(sim, c, unit) && service.Validate(sim, c.Id, "cities:unit", target).Success);

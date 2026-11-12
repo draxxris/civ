@@ -9,7 +9,7 @@ internal static class ResearchDiffusion
     internal static int RateModifier(Simulation sim, Team team, string tech)
     {
         var rules = sim.Content.Get<RuleConstantsDef>().All.Single().Values;
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         var living = sim.State.Players.Where(p => Eligible(sim, p)).ToArray();
         var teams = sim.State.Teams.Where(t => living.Any(p => p.TeamId == t.Id)).ToArray();
         if (teams.Length == 0) return 100;
@@ -44,7 +44,7 @@ internal static class ResearchDiffusion
 
     private static long Welfare(Simulation sim, Team team, Player[] living, Team[] contacted, RuleConstants rules)
     {
-        var scores = sim.Content.Services.Get<IProjectVictoryService>().SingleOrDefault();
+        var scores = sim.Rules().ProjectVictory;
         if (scores is null) return 0; // Custom rulesets without a score owner have no welfare score factor.
         var eras = ResearchTimeline.Eras(sim);
         var weights = sim.Content.Get<TechDef>().All.ToDictionary(t => t.Id,

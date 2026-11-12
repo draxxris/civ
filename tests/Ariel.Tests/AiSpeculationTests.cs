@@ -313,7 +313,7 @@ public sealed class AiSpeculationTests
             state.Players.Add(new() { Id = player, TeamId = player, Ai = probe.Id });
             state.Teams.Add(new() { Id = player, Members = [player] });
             var unit = new Unit { Id = state.NextUnitId++, Owner = player, Type = "base:warrior", Position = new(2 + player * 20, 2), MovesLeft = 2 };
-            unit.Extensions.Set(content, new MilitaryUnitState());
+            unit.Extensions.Set(content, new UnitStance());
             state.Units.Add(unit);
         }
         state.RebuildIndexes();
@@ -330,6 +330,16 @@ public sealed class AiSpeculationTests
         new[] { state.Extensions }.Concat(state.Players.Select(p => p.Extensions)).Concat(state.Teams.Select(t => t.Extensions))
             .Concat(state.Cities.Select(c => c.Extensions)).Concat(state.Units.Select(u => u.Extensions));
 
+    public enum UnitActivity { Awake, Fortify, Blockade }
+
+    /// <summary>Per-unit rule state the probe mutates without moving the unit, standing in for a ruleset's unit
+    /// activity component.</summary>
+    public sealed class UnitStance
+    {
+        public UnitActivity Activity { get; set; }
+        public int FortifyTurns { get; set; }
+    }
+
     public sealed class Memory
     {
         public List<int> Samples { get; set; } = [];
@@ -343,7 +353,7 @@ public sealed class AiSpeculationTests
         {
             context.PlayerAIs.Register(this);
             context.RegisterStateComponent<Memory>("memory");
-            context.RegisterStateComponent<MilitaryUnitState>("unit_state");
+            context.RegisterStateComponent<UnitStance>("unit_state");
         }
         public IEnumerable<GameCommand> Decide(Simulation sim, int playerId) => decide(sim, playerId);
     }
@@ -356,12 +366,12 @@ public sealed class AiSpeculationTests
         public override void Apply(Simulation sim)
         {
             var unit = sim.State.UnitById(Player + 1);
-            var military = unit.Extensions.Get<MilitaryUnitState>(sim.Content)!;
+            var stance = unit.Extensions.Get<UnitStance>(sim.Content)!;
             switch (Change)
             {
-                case "Fortify": case "DirectFortify": military.Activity = UnitActivity.Fortify; break;
-                case "Blockade": military.Activity = UnitActivity.Blockade; break;
-                case "FortifyTurns": military.FortifyTurns = 3; break;
+                case "Fortify": case "DirectFortify": stance.Activity = UnitActivity.Fortify; break;
+                case "Blockade": stance.Activity = UnitActivity.Blockade; break;
+                case "FortifyTurns": stance.FortifyTurns = 3; break;
                 case "Health": unit.Health = 50; break;
                 case "Experience": unit.Experience = 7; break;
                 case "Moves": unit.MovesLeft = 0; break;
@@ -376,12 +386,12 @@ public sealed class AiSpeculationTests
     private static bool Changed(Simulation sim, string change)
     {
         var unit = sim.State.FindUnit(1);
-        var military = unit?.Extensions.Get<MilitaryUnitState>(sim.Content);
+        var stance = unit?.Extensions.Get<UnitStance>(sim.Content);
         return change switch
         {
-            "Fortify" or "DirectFortify" => military!.Activity == UnitActivity.Fortify,
-            "Blockade" => military!.Activity == UnitActivity.Blockade,
-            "FortifyTurns" => military!.FortifyTurns == 3,
+            "Fortify" or "DirectFortify" => stance!.Activity == UnitActivity.Fortify,
+            "Blockade" => stance!.Activity == UnitActivity.Blockade,
+            "FortifyTurns" => stance!.FortifyTurns == 3,
             "Health" => unit!.Health == 50,
             "Experience" => unit!.Experience == 7,
             "Moves" => unit!.MovesLeft == 0,

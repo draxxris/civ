@@ -10,7 +10,7 @@ internal sealed class StabilityPlanner(AiContext ctx)
 
     public void Plan()
     {
-        var revolution = ctx.Sim.Content.Services.Get<IRevolutionService>().SingleOrDefault();
+        var revolution = ctx.Sim.Rules().Revolution;
         if (revolution is null || ctx.Sim.State.PlayerById(ctx.PlayerId).EndedTurn || ctx.Cities.Count == 0) return;
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval != 0) return;
         foreach (var city in ctx.Cities.OrderBy(c => c.Id))

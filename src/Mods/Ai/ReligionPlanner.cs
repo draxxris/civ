@@ -7,7 +7,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
 {
     public void Plan()
     {
-        var religion = ctx.Sim.Content.Services.Get<IReligionService>().SingleOrDefault();
+        var religion = ctx.Sim.Rules().Religion;
         if (religion is null) return;
         Adopt(religion);
         foreach (var unit in ctx.Units.Where(ctx.Alive).Where(u => u.Health > 0 && !ctx.Done.Contains(u.Id)).OrderBy(u => u.Id))

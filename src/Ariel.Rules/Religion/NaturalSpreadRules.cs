@@ -86,10 +86,10 @@ internal sealed partial class ReligionService
         if (team != other)
         {
             if (sim.TeamOf(city.Owner).Wars.Contains(other)) return false;
-            if (sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault()?.HasMet(sim, team, other) != true) return false;
+            if (sim.Rules().Diplomacy?.HasMet(sim, team, other) != true) return false;
         }
-        if (sim.Content.Services.Get<ICityConnectionService>().SingleOrDefault()?.Connected(sim, city.Id, source.Id) == true) return true;
-        var trade = sim.Content.Services.Get<ITradeRouteService>().SingleOrDefault();
+        if (sim.Rules().CityConnections?.Connected(sim, city.Id, source.Id) == true) return true;
+        var trade = sim.Rules().TradeRoutes;
         if (trade is null) return false;
         return trade.HasBilateralRoute(sim, city.Id, source.Id);
     }

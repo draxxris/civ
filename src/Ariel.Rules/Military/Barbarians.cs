@@ -146,8 +146,8 @@ internal sealed class BarbarianBehavior : ITurnSystem
     private static void ActSea(Simulation sim, Unit unit)
     {
         var grid = sim.State.Grid;
-        var combat = sim.Content.Services.Get<ICombatService>().Single();
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var combat = sim.Rules().Combat;
+        var movement = sim.Rules().Movement;
         var from = grid.TileAt(unit.Position);
         var enemy = grid.Neighbors(from).Where(t => movement.CanEnter(sim, unit.Id, from, t, true) is null)
             .Where(t => sim.State.UnitsAt(grid.HexOf(t)).Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
@@ -183,17 +183,17 @@ internal sealed class BarbarianBehavior : ITurnSystem
     }
     private static bool Sail(Simulation sim, Unit unit, TileId target)
     {
-        var path = sim.Content.Services.Get<IPathfindingService>().Single().FindPath(sim, unit.Id, sim.State.Grid.HexOf(target));
+        var path = sim.Rules().Paths.FindPath(sim, unit.Id, sim.State.Grid.HexOf(target));
         if (path is null || path.Steps.Count == 0) return false;
-        sim.Content.Services.Get<IMovementService>().Single().Move(sim, unit.Id, path.Steps);
+        sim.Rules().Movement.Move(sim, unit.Id, path.Steps);
         return true;
     }
     private static void Act(Simulation sim, Unit unit)
     {
         if (unit.Health <= 0 || sim.State.FindUnit(unit.Id) is null || unit.MovesLeft <= 0) return;
         if (MilitaryData.Definition(sim, unit).Domain == "military:domain_sea") { ActSea(sim, unit); return; }
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
-        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        var movement = sim.Rules().Movement;
+        var combat = sim.Rules().Combat;
         var from = sim.State.Grid.TileAt(unit.Position);
         var targets = sim.State.Grid.Neighbors(from).Where(t => movement.CanEnter(sim, unit.Id, from, t, true) is null)
             .Select(t => (Tile: t, Defender: combat.BestDefender(sim, unit.Id, sim.State.Grid.HexOf(t)))).Where(t => t.Defender is not null)
@@ -201,7 +201,7 @@ internal sealed class BarbarianBehavior : ITurnSystem
         if (targets.Length > 0 && targets[0].Odds >= 500_000) { movement.Move(sim, unit.Id, [sim.State.Grid.HexOf(targets[0].Tile)]); return; }
         var city = sim.State.Cities.Where(c => MilitaryData.Enemy(sim, unit.Owner, c.Owner)).OrderBy(c => sim.State.Grid.Distance(c.Position, unit.Position)).ThenBy(c => c.Id).FirstOrDefault();
         if (city is null) return;
-        var path = sim.Content.Services.Get<IPathfindingService>().Single().FindPath(sim, unit.Id, city.Position, true);
+        var path = sim.Rules().Paths.FindPath(sim, unit.Id, city.Position, true);
         if (path is not null && path.Steps.Count > 0) movement.Move(sim, unit.Id, path.Steps);
     }
 }

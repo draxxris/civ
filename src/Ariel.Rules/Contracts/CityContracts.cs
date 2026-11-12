@@ -224,8 +224,8 @@ public sealed class CityPlayerState
 public sealed class FoundCityWithSettlerCommand : GameCommand
 {
     public int Settler { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateFound(sim, Player, Settler);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().Found(sim, Player, Settler);
+    public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateFound(sim, Player, Settler);
+    public override void Apply(Simulation sim) => sim.Rules().CityCommands.Found(sim, Player, Settler);
 }
 public sealed class SetCityAssignmentsCommand : GameCommand
 {
@@ -262,9 +262,9 @@ public sealed class SetCityAssignmentsCommand : GameCommand
                 if (!sim.State.Grid.TryTile(h, out var t)) return "Work plot is outside the map";
                 list.Add(t);
             }
-            return sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, list, Specialists);
+            return sim.Rules().CityWork.Validate(sim, CityId, list, Specialists);
         }
-        return sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, CityId, Tiles, Specialists);
+        return sim.Rules().CityWork.Validate(sim, CityId, Tiles, Specialists);
     }
     public override void Apply(Simulation sim)
     {
@@ -275,7 +275,7 @@ public sealed class SetCityAssignmentsCommand : GameCommand
         var resolved = ResolvedTiles(sim);
         city.Worked = resolved.Distinct().OrderBy(t => t.Value).ToList();
         city.Specialists = new(Specialists, StringComparer.Ordinal);
-        sim.Content.Services.Get<ICityWorkService>().Single().Assign(sim, CityId);
+        sim.Rules().CityWork.Assign(sim, CityId);
     }
 }
 public sealed class MoveCityQueueCommand : GameCommand
@@ -285,21 +285,21 @@ public sealed class MoveCityQueueCommand : GameCommand
     public int To { get; init; }
     public int? OrderId { get; init; }
     public int? TargetOrderId { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueueMove(sim, Player, CityId, From, To, OrderId, TargetOrderId);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().MoveQueue(sim, CityId, From, To, OrderId, TargetOrderId);
+    public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateQueueMove(sim, Player, CityId, From, To, OrderId, TargetOrderId);
+    public override void Apply(Simulation sim) => sim.Rules().CityCommands.MoveQueue(sim, CityId, From, To, OrderId, TargetOrderId);
 }
 public sealed class ResolveCityConquestCommand : GameCommand
 {
     public int CityId { get; init; }
     public CityConquestOption Option { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateConquestChoice(sim, Player, CityId, Option);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ResolveConquestChoice(sim, Player, CityId, Option);
+    public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateConquestChoice(sim, Player, CityId, Option);
+    public override void Apply(Simulation sim) => sim.Rules().CityCommands.ResolveConquestChoice(sim, Player, CityId, Option);
 }
 public sealed class ConscriptCityCommand : GameCommand
 {
     public int CityId { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityConscriptService>().Single().Validate(sim, Player, CityId);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityConscriptService>().Single().Conscript(sim, CityId);
+    public override string? Validate(Simulation sim) => sim.Rules().Conscription.Validate(sim, Player, CityId);
+    public override void Apply(Simulation sim) => sim.Rules().Conscription.Conscript(sim, CityId);
 }
 public sealed class SetCityProductionCommand : GameCommand
 {
@@ -309,6 +309,6 @@ public sealed class SetCityProductionCommand : GameCommand
     public bool Append { get; init; }
     public int? RemoveIndex { get; init; }
     public int? RemoveOrderId { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().ValidateQueue(sim, Player, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICityCommandService>().Single().Queue(sim, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
+    public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateQueue(sim, Player, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
+    public override void Apply(Simulation sim) => sim.Rules().CityCommands.Queue(sim, CityId, Kind, ContentId, Append, RemoveIndex, RemoveOrderId);
 }

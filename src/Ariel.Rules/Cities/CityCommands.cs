@@ -25,7 +25,7 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).NoCity) return false;
         if (terrain.CanFoundCity) return true;
         if (terrain.FoundCoast && CityData.Coastal(sim, tile)) return true;
-        return terrain.FoundFreshWater && sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, tile);
+        return terrain.FoundFreshWater && sim.Rules().Water.IsFreshWater(sim, tile);
     }
     public void Found(Simulation sim, int player, int settler)
     {
@@ -151,7 +151,7 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (!Enum.IsDefined(option)) return "Unknown conquest option";
         if (state.Governance != CityGovernance.PendingConquest) return "No pending conquest choice";
         return option == CityConquestOption.Raze
-            ? sim.Content.Services.Get<ICityCaptureService>().Single().ValidateRaze(sim, cityId, player) : null;
+            ? sim.Rules().CityCapture.ValidateRaze(sim, cityId, player) : null;
     }
     public void ResolveConquestChoice(Simulation sim, int player, int cityId, CityConquestOption option)
     {
@@ -161,7 +161,7 @@ internal sealed class CityCommands(ICityProductionService production, ICityWorkS
         if (option == CityConquestOption.Raze)
         {
             state.Governance = CityGovernance.Integrated;
-            sim.Content.Services.Get<ICityCaptureService>().Single().Raze(sim, cityId);
+            sim.Rules().CityCapture.Raze(sim, cityId);
             return;
         }
         state.Governance = option == CityConquestOption.Puppet ? CityGovernance.Puppet : CityGovernance.Integrated;

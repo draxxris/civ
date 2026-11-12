@@ -59,7 +59,7 @@ internal sealed partial class ReligionService
         AddInquisitionAnger(sim, city);
         sim.Events.Publish(new InquisitionAttempt(unitId, city.Id, unit.Owner, success, removed, gold));
         sim.State.RemoveUnit(unitId);
-        sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
+        sim.Rules().Visibility?.Recompute(sim);
     }
     private long PurgeReligions(Simulation sim, City city, string[] religions)
     {
@@ -110,7 +110,7 @@ internal sealed partial class ReligionService
     }
     private void RecordInquisitionMemory(Simulation sim, int player, City city, string[] removed)
     {
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().SingleOrDefault();
+        var diplomacy = sim.Rules().Diplomacy;
         if (diplomacy is null) return;
         var plot = sim.State.PlotAt(city.Position);
         foreach (var other in sim.State.Players.Where(p => p.Id != player).OrderBy(p => p.Id))

@@ -15,7 +15,7 @@ internal static class RecurringCosts
         long maintenanceHundredths = 0, totalCorporateHundredths = 0;
         foreach (var city in EconomyData.Cities(sim, player))
         {
-            var cost = sim.Content.Services.Get<ICityMaintenanceService>().Single().Calculate(sim, city.Id);
+            var cost = sim.Rules().CityMaintenance.Calculate(sim, city.Id);
             maintenanceHundredths += cost.TotalHundredths;
             totalCorporateHundredths += cost.CorporateHundredths;
             lines.Add(new("economy:city:" + city.Id, "economy:corporate_maintenance_hundredths", cost.CorporateHundredths));

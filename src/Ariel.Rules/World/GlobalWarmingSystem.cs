@@ -30,7 +30,7 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
 
     private static Int128 WarmingValue(Simulation sim)
     {
-        var wellbeing = sim.Content.Services.Get<ICityWellbeingService>().SingleOrDefault();
+        var wellbeing = sim.Rules().CityWellbeing;
         if (wellbeing is null) return 0; // No city rules: World must not invent its own health accounting.
         int buildingWeight = WorldTurnMath.Raw(sim, "GLOBAL_WARMING_UNHEALTH_WEIGHT", 10);
         int bonusWeight = WorldTurnMath.Raw(sim, "GLOBAL_WARMING_BONUS_WEIGHT", 5);

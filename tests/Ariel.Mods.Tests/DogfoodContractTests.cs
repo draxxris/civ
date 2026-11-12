@@ -75,8 +75,9 @@ public sealed class DogfoodContractTests
     {
         public void Register(IModContext ctx)
         {
-            ctx.Terrains.Register(new TerrainDef { Id = "alternate:green" });
-            ctx.Terrains.Register(new TerrainDef { Id = "alternate:grey" });
+            ProbeRuleset.Register(ctx);
+            ctx.Content<S.TerrainDef>().Register(new() { Id = "alternate:green" });
+            ctx.Content<S.TerrainDef>().Register(new() { Id = "alternate:grey" });
             ctx.MapGenerators.Register(new Generator("alternate:first_map", "alternate:grey"));
             ctx.MapGenerators.Register(new Generator("alternate:second_map", "alternate:green"));
             ctx.Content<S.WorldSizeDef>().Register(new() { Id = "alternate:wide", Name = "Wide", GridWidth = 3, GridHeight = 2 });

@@ -24,17 +24,17 @@ public static class CityRules
             .Where(h => sim.State.CityAt(h) is not { } occupying || occupying.Id == city.Id)
             .Where(h => !sim.State.Cities.Any(o => o.Id != city.Id && o.Worked.Contains(sim.State.Grid.TileAt(h))));
 
-    public static SpecialistDef? DefaultSpecialist(Simulation sim) => sim.Content.Specialists.All.FirstOrDefault(s => s.Unlimited);
+    public static SpecialistDef? DefaultSpecialist(Simulation sim) => sim.Content.Get<SpecialistDef>().All.FirstOrDefault(s => s.Unlimited);
 
     /// <summary>How many of a specialist the city may have: building slots plus civic slots; -1 anywhere means unlimited.</summary>
     public static int Slots(Simulation sim, City city, string specialistId)
     {
-        if (sim.Content.Specialists.Get(specialistId).Unlimited) return int.MaxValue;
+        if (sim.Content.Get<SpecialistDef>(specialistId).Unlimited) return int.MaxValue;
         int total = 0;
         foreach (var id in city.Buildings)
-            if (sim.Content.Buildings.Get(id).SpecialistSlots.TryGetValue(specialistId, out var n)) { if (n < 0) return int.MaxValue; total += n; }
+            if (sim.Content.Get<BuildingDef>(id).SpecialistSlots.TryGetValue(specialistId, out var n)) { if (n < 0) return int.MaxValue; total += n; }
         foreach (var id in sim.State.PlayerById(city.Owner).Civics.Values)
-            if (sim.Content.Civics.Get(id).SpecialistSlots.TryGetValue(specialistId, out var n)) { if (n < 0) return int.MaxValue; total += n; }
+            if (sim.Content.Get<CivicDef>(id).SpecialistSlots.TryGetValue(specialistId, out var n)) { if (n < 0) return int.MaxValue; total += n; }
         return total;
     }
 
@@ -46,9 +46,9 @@ public static class CityRules
         if (tiles.Any(t => !workable.Contains(t))) return "tile not workable by this city";
         foreach (var (id, n) in specialists)
         {
-            if (!sim.Content.Specialists.Contains(id)) return $"unknown specialist {id}";
+            if (!sim.Content.Get<SpecialistDef>().Contains(id)) return $"unknown specialist {id}";
             if (n < 0) return "negative specialist count";
-            if (n > Slots(sim, city, id)) return $"not enough {sim.Content.Specialists.Get(id).Name} slots";
+            if (n > Slots(sim, city, id)) return $"not enough {sim.Content.Get<SpecialistDef>(id).Name} slots";
         }
         if (tiles.Count + specialists.Values.Sum() != city.Population) return "every citizen must work a tile or be a specialist";
         return null;
@@ -81,7 +81,7 @@ public static class CityRules
     /// <summary>Take one citizen away: default specialists first, then other specialists, then the worst tile.</summary>
     public static void RemoveCitizen(Simulation sim, City city)
     {
-        var id = city.Specialists.Keys.OrderByDescending(k => sim.Content.Specialists.Get(k).Unlimited).ThenBy(k => k, StringComparer.Ordinal).FirstOrDefault();
+        var id = city.Specialists.Keys.OrderByDescending(k => sim.Content.Get<SpecialistDef>(k).Unlimited).ThenBy(k => k, StringComparer.Ordinal).FirstOrDefault();
         if (id != null)
         {
             if (--city.Specialists[id] <= 0) city.Specialists.Remove(id);

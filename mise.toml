@@ -6,6 +6,14 @@ run = "mise tasks"
 description = "Build the headless solution (core, rules, mods, tools and tests) without running tests"
 run = "dotnet build Ariel.slnx -v quiet -nologo"
 
+[tasks."build:project"]
+description = "Build one project and what it references: mise run build:project -- tests/Ariel.Tests"
+run = "dotnet build -v quiet -nologo"
+
+[tasks."test:project"]
+description = "Build and run one test project, with optional dotnet test arguments: mise run test:project -- tests/Ariel.Tests [--filter NAME]"
+run = "dotnet test -v quiet -nologo"
+
 [tasks."build:game"]
 description = "Build the Godot game"
 depends = ["cool"]

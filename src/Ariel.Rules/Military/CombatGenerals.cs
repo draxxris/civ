@@ -7,7 +7,7 @@ internal static class CombatGenerals
 {
     internal static void Award(Simulation sim, Unit winner)
     {
-        var service = sim.Content.Services.Get<IGreatPeopleService>().SingleOrDefault();
+        var service = sim.Rules().GreatPeople;
         if (service is null) return;
         var civ = sim.Content.Get<S.CivilizationDef>(sim.State.PlayerById(winner.Owner).Civilization);
         var general = sim.Content.Get<S.UnitDef>().All.Where(u => u.GreatGeneral
@@ -39,7 +39,7 @@ internal static class CombatGenerals
     {
         var cities = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray();
         if (cities.Length == 0) return null;
-        var yields = sim.Content.Services.Get<ICityYieldService>().SingleOrDefault();
+        var yields = sim.Rules().CityYields;
         var values = cities.Select(c => (City: c, Yield: yields?.Calculate(sim, c.Id).Yields ?? default)).ToArray();
         var ranks = cities.ToDictionary(c => c.Id, _ => 0);
         AddRanks(values.OrderByDescending(v => v.Yield.Food).ThenBy(v => v.City.Id).Select(v => v.City), ranks);

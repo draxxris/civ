@@ -33,7 +33,7 @@ internal sealed partial class UnitService
     private static string? CargoCompatibility(Simulation sim, Unit unit, Unit transport)
     {
         if (MilitaryData.Read(sim, unit).TransportId == transport.Id) return "Unit is already aboard";
-        var units = sim.Content.Services.Get<IUnitService>().Single();
+        var units = sim.Rules().Units;
         if (units.CargoUnits(sim, unit.Id).Count > 0) return "Unit is carrying cargo";
         if (MilitaryData.Read(sim, transport).TransportId is not null) return "Transport is itself cargo";
         if (units.CargoCapacity(sim, transport.Id) <= units.CargoUnits(sim, transport.Id).Count) return "Transport is full";
@@ -66,7 +66,7 @@ internal sealed partial class UnitService
         if (sim.State.Grid.HexOf(to) == unit.Position) return UnloadLocation(sim, unit);
         var error = MovementService.TerrainEntry(sim, unit, MilitaryData.Definition(sim, unit), sim.State.Plots[to.Value], MilitaryData.Effects(sim, unit));
         if (error is not null) return error;
-        return sim.Content.Services.Get<IMovementService>().Single().CanEnter(sim, unit.Id, sim.State.Grid.TileAt(unit.Position), to);
+        return sim.Rules().Movement.CanEnter(sim, unit.Id, sim.State.Grid.TileAt(unit.Position), to);
     }
     public IReadOnlyList<int> Disband(Simulation sim, int transport)
     {
