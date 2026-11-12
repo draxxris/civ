@@ -173,13 +173,19 @@ public sealed class LockstepSession : IDisposable
             foreach (int p in _peers)
                 if (IsMember(p, Tick) && !tickBatches.ContainsKey(p)) return ran;
 
+            // The tick is consumed before anything applies: if a command throws, a later pump must never apply the
+            // commands before it a second time.
+            int tick = Tick;
+            _batches.Remove(tick);
+            Tick++;
+            ran++;
             bool any = false;
             foreach (int p in _peers)
             {
-                if (!IsMember(p, Tick)) continue;
+                if (!IsMember(p, tick)) continue;
                 foreach (var text in tickBatches[p])
                 {
-                    _sim.TrySubmit(_codec.Decode(text), out _);
+                    ApplyEncoded(text);
                     any = true;
                     Applied++;
                 }
@@ -188,17 +194,33 @@ public sealed class LockstepSession : IDisposable
             if (any)
             {
                 var hash = _sim.ComputeHash();
-                StoreHash(Tick, _local, hash);
-                _transport.Broadcast(new NetMessage(NetMessageKind.Hash, Tick, _local, [], hash));
+                StoreHash(tick, _local, hash);
+                _transport.Broadcast(new NetMessage(NetMessageKind.Hash, tick, _local, [], hash));
             }
-            _batches.Remove(Tick);
-            Tick++;
-            ran++;
         }
         return ran;
     }
 
     public void Dispose() => _transport.Received -= OnReceived;
+
+    /// <summary>Apply one received command. One that cannot be decoded, or whose validation fails with an exception
+    /// instead of an error, is refused: every peer holds the same bytes, so every peer refuses it alike.</summary>
+    private void ApplyEncoded(string text)
+    {
+        GameCommand command;
+        try
+        {
+            command = _codec.Decode(text);
+            command.Validate(_sim);
+        }
+        catch (Exception e) when (e is System.Text.Json.JsonException or InvalidDataException or KeyNotFoundException
+            or ArgumentException or InvalidOperationException or NullReferenceException or NotSupportedException
+            or FormatException or InvalidCastException)
+        {
+            return;
+        }
+        _sim.TrySubmit(command, out _);
+    }
 
     private void AddMember(int peer, int fromTick)
     {
@@ -222,7 +244,7 @@ public sealed class LockstepSession : IDisposable
             case NetMessageKind.Commands:
                 // Batches for ticks already run (a resumed peer hears some) can never be used.
                 if (m.Tick < Tick) return;
-                Store(m.Tick, m.Peer, m.Commands);
+                Store(m.Tick, m.Peer, m.Commands ?? []);
                 if (!_lastTick.TryGetValue(m.Peer, out int last) || m.Tick > last) _lastTick[m.Peer] = m.Tick;
                 break;
             case NetMessageKind.Hash:

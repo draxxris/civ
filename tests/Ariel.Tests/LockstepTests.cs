@@ -74,4 +74,30 @@ public class LockstepTests
         PumpAll(a, b, 10);
         Assert.True(desync);
     }
+
+    [Theory]
+    [InlineData("{\"type\":\"no:such\",\"data\":{}}")]
+    [InlineData("{ not json")]
+    [InlineData("null")]
+    public void AnUndecodableCommandIsRefusedAndNeverReplaysTheCommandsBeforeIt(string bad)
+    {
+        var hub = new InProcessHub();
+        var sim = TestGame.Sim();
+        var a = new LockstepSession(sim, new CommandCodec(sim.Content), hub.CreateEndpoint(), [0, 1], 0);
+        a.Deliver(new NetMessage(NetMessageKind.Handshake, 0, 1, [], 0, sim.Content.ContentHash));
+        a.Enqueue(new FoundCityCommand { Player = 0, Position = TestGame.FindLand(sim) });
+        a.Pump(); // runs the agreed empty ticks and submits the city for tick 2
+        Assert.Equal(2, a.Tick);
+        // Peer 1's batch for tick 2 applies after peer 0's city and cannot be decoded; a null batch follows.
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 2, 1, [bad], 0));
+        a.Deliver(new NetMessage(NetMessageKind.Commands, 3, 1, null!, 0));
+
+        a.Pump(maxTicks: 1);
+        long applied = a.Applied;
+        a.Pump(maxTicks: 1);
+
+        Assert.Equal(4, a.Tick);
+        Assert.Equal(applied, a.Applied);
+        Assert.Single(sim.State.Cities);
+    }
 }

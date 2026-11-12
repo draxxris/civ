@@ -50,6 +50,8 @@ public sealed class LockstepChannel : ICommandChannel
                 && _lockstep.Pump(maxTicks: 1) > 0; i++) { }
         }
         catch (InvalidDataException e) { Problem = e.Message; }
+        // A rule that throws while a tick applies stops this game here, once, rather than on every frame.
+        catch (Exception e) when (e is not OutOfMemoryException) { Problem = $"The game stopped: {e.Message}"; }
         return _lockstep.Applied != applied;
     }
 }
