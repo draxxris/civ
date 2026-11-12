@@ -8,7 +8,7 @@ namespace Ariel.Mods.Tests;
 
 public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
-    private static IVisibilityService Sight(Simulation sim) => sim.Content.Services.Get<IVisibilityService>().Single();
+    private static IVisibilityService Sight(Simulation sim) => sim.Rules().Visibility;
     private Simulation Scenario() => GameFactory.Scenario(mods.Content);
 
     /// <summary>Stand a plot at the tier its relief implies. Sight reads the stored height, so a fixture that only

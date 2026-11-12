@@ -100,7 +100,7 @@ public sealed class AiStrategyTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Scenario(new(12, 8, true), game => AddCity(game, 0, 4, 4));
         var ctx = NewAi(sim, "AiContext", sim, 0);
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         var selectable = sim.Content.Get<TechDef>().All.Where(t => !t.Disable && research.ValidateSelection(sim, 0, t.Id).Success)
             .Select(t => t.Id).ToHashSet(StringComparer.Ordinal);
         Assert.NotEmpty(selectable);
@@ -131,7 +131,7 @@ public sealed class AiStrategyTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = HexGrid.FromOffset(column, row) };
         sim.State.AddUnit(unit);
-        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.Rules().Units.Initialize(sim, unit.Id);
         return unit;
     }
 }

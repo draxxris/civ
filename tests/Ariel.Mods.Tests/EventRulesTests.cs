@@ -150,7 +150,7 @@ public sealed class EventRulesTests
         var sim = Scenario();
         var city = AddCity(sim, 14, 3, "cities:library");
         Events(sim); // service registered
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         research.SetQueue(sim, 0, ["research:agriculture"]);
         var e = Wait(sim, "events:manuscript");
         // Other events can spend gold while waiting; isolate this choice's budget.
@@ -196,7 +196,7 @@ public sealed class EventRulesTests
         Assert.Equal(1, Happiness(sim, home)); Assert.Equal(1, Happiness(sim, second)); Assert.Equal(0, Happiness(sim, rival));
         Assert.Equal(1, Health(sim, home)); Assert.Equal(1, Health(sim, second)); Assert.Equal(0, Health(sim, rival));
         sim.State.SetWar(0, 1, true);
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, second.Id, 1);
+        sim.Rules().CityCapture.Capture(sim, second.Id, 1);
         var captured = sim.State.CityById(second.Id);
         Assert.Equal(0, Happiness(sim, captured)); Assert.Equal(0, Health(sim, captured));
         // Capital relocation can add building happiness; the decree must still contribute independently.
@@ -255,7 +255,7 @@ public sealed class EventRulesTests
         Assert.Equal(2, Health(sim, city));
 
         sim.State.SetWar(0, 1, true);
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, 1);
+        sim.Rules().CityCapture.Capture(sim, city.Id, 1);
 
         Assert.DoesNotContain(state.Effects, eff => eff.City == city.Id);
         var capturedCity = sim.State.CityById(city.Id);

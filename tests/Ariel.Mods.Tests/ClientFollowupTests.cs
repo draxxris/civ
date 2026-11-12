@@ -40,7 +40,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Where(t => t.Id != tech).Select(t => t.Id));
         sim.TeamOf(0).Techs.Remove(tech);
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = tech }, out var error), error);
-        var research = sim.Content.Services.Get<IResearchService>().Single();
+        var research = sim.Rules().Research;
         research.Contribute(sim, 0, research.CalculateCost(sim, sim.TeamOf(0).Id, tech).Cost);
         GameFactory.FoundReligion(sim, sim.State.Cities.First(c => c.Owner == 0), religion);
     }
@@ -299,15 +299,15 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new TileId(tile)) };
         sim.State.AddUnit(unit);
-        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Units.Initialize(sim, unit.Id);
+        sim.Rules().Visibility.Recompute(sim);
         return unit;
     }
 
     /// <summary>Advance the random stream until the next combat round goes to the defender (or the attacker).</summary>
     private static void RigNextRound(Simulation sim, Unit a, Unit d, bool defenderHits)
     {
-        var preview = sim.Content.Services.Get<ICombatService>().Single().Preview(sim, a.Id, d.Id);
+        var preview = sim.Rules().Combat.Preview(sim, a.Id, d.Id);
         while (true)
         {
             var (w, x, y, z) = sim.Rng.State;
@@ -336,7 +336,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = a.Id, Activity = UnitActivity.Awake }); // The session notes where everyone stands.
         tweak?.Invoke(a, d);
         RigNextRound(s.Sim, a, d, defenderHits);
-        s.Sim.Content.Services.Get<ICombatService>().Single().Resolve(s.Sim, a.Id, d.Id);
+        s.Sim.Rules().Combat.Resolve(s.Sim, a.Id, d.Id);
         s.SetMessage("");
         s.Submit(new SetUnitActivityCommand { Player = GameSession.DefaultLocalPlayer, Unit = a.Id, Activity = UnitActivity.Sleep });
         var battle = NextBattle(s);
@@ -477,7 +477,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         {
             if (Pending is not { } pair) return;
             Pending = null;
-            sim.Content.Services.Get<ICombatService>().Single().Resolve(sim, pair.Attacker, pair.Defender);
+            sim.Rules().Combat.Resolve(sim, pair.Attacker, pair.Defender);
         }
     }
 

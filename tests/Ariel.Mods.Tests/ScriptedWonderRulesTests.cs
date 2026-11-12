@@ -140,7 +140,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var sim = P7ModFixture.Scenario(mods.Wonders);
         var city = P7ModFixture.City(sim);
         var unit = P7ModFixture.Unit(sim, city);
-        var service = sim.Content.Services.Get<IUnitService>().Single();
+        var service = sim.Rules().Units;
         long full = service.UpgradePrice(sim, unit.Id, "military:swordsman");
         Assert.True(full > 0);
         Complete(sim, city, "cities:leonardo");
@@ -158,7 +158,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         GameFactory.MakeBarbarian(sim, 1);
         var defender = P7ModFixture.Unit(sim, city);
         sim.State.MoveUnit(attacker.Id, sim.State.Grid.HexOf(new TileId(41)));
-        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        var combat = sim.Rules().Combat;
         var baseline = combat.Preview(sim, attacker.Id, defender.Id).AttackStrength.Maximum;
         Complete(sim, city, "cities:great_wall");
         Assert.True(combat.Preview(sim, attacker.Id, defender.Id).AttackStrength.Maximum < baseline);
@@ -181,8 +181,8 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         sim.State.SetWar(0, 1, true);
         var baseline = SaveGame.Load(mods.Wonders, SaveGame.Save(sim));
         Complete(sim, city, "cities:art_of_war");
-        var outcome = sim.Content.Services.Get<ICombatService>().Single().Resolve(sim, attacker.Id, defender.Id);
-        var plain = baseline.Content.Services.Get<ICombatService>().Single().Resolve(baseline, attacker.Id, defender.Id);
+        var outcome = sim.Rules().Combat.Resolve(sim, attacker.Id, defender.Id);
+        var plain = baseline.Content.Rules().Combat.Resolve(baseline, attacker.Id, defender.Id);
         Assert.Equal(CombatOutcome.AttackerWon, outcome.Outcome);
         Assert.Equal(plain.Outcome, outcome.Outcome);
         Assert.Equal(baseline.State.UnitById(attacker.Id).Experience + 2, attacker.Experience);
@@ -198,7 +198,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var defender = P7ModFixture.Unit(sim, city, owner: 1);
         sim.State.MoveUnit(attacker.Id, sim.State.Grid.HexOf(new TileId(41)));
         sim.State.SetWar(0, 1, true);
-        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        var combat = sim.Rules().Combat;
         // A siege unit stops at its combat limit instead of killing, so the defender survives. Starting the
         // defender one hit short of that limit means the first hit the attacker lands ends the attack in
         // limited damage, so the attacker has to lose a long run of rounds before it dies instead; the
@@ -210,7 +210,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var baseline = SaveGame.Load(mods.Wonders, SaveGame.Save(sim));
         Complete(sim, city, "cities:art_of_war");
         var outcome = combat.Resolve(sim, attacker.Id, defender.Id);
-        var plain = baseline.Content.Services.Get<ICombatService>().Single().Resolve(baseline, attacker.Id, defender.Id);
+        var plain = baseline.Content.Rules().Combat.Resolve(baseline, attacker.Id, defender.Id);
         Assert.Equal(CombatOutcome.LimitedDamage, outcome.Outcome);
         Assert.Equal(plain.Outcome, outcome.Outcome);
         Assert.NotNull(sim.State.FindUnit(defender.Id));
@@ -311,12 +311,12 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         GameFactory.MakeBarbarian(sim, 1);
         sim.State.MoveUnit(raider.Id, sim.State.Grid.HexOf(outside));
         sim.State.SetWar(0, 1, true);
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        var movement = sim.Rules().Movement;
         var from = sim.State.Grid.TileAt(raider.Position);
         Assert.Null(movement.CanEnter(sim, raider.Id, from, new TileId(41)));
         var defender = P7ModFixture.Unit(sim, city);
         sim.State.MoveUnit(defender.Id, target);
-        var combat = sim.Content.Services.Get<ICombatService>().Single();
+        var combat = sim.Rules().Combat;
         long baseline = combat.Preview(sim, raider.Id, defender.Id).AttackStrength.Maximum;
         Complete(sim, city, "cities:great_wall");
         Assert.NotNull(movement.CanEnter(sim, raider.Id, from, new TileId(41)));

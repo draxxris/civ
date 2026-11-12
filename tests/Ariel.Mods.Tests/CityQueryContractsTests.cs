@@ -33,7 +33,7 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
     {
         var sim = Scenario();
         var before = sim.ComputeHash();
-        var wellbeing = sim.Content.Services.Get<ICityWellbeingService>().Single().Calculate(sim, 1);
+        var wellbeing = sim.Rules().CityWellbeing.Calculate(sim, 1);
         Assert.Equal(9, wellbeing.Ledger.Lines.Single(l => l.Source == Resource && l.Key == "cities:happiness_good").Amount);
         Assert.Equal(7, wellbeing.Ledger.Lines.Single(l => l.Source == Resource && l.Key == "cities:health_good").Amount);
         Assert.Equal(before, sim.ComputeHash());
@@ -44,8 +44,8 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
     {
         var sim = Scenario();
         sim.TeamOf(0).Techs.Add(Technology);
-        var production = sim.Content.Services.Get<ICityProductionService>().Single();
-        var conscript = sim.Content.Services.Get<ICityConscriptService>().Single();
+        var production = sim.Rules().CityProduction;
+        var conscript = sim.Rules().Conscription;
         // The probe unit needs a river on the city's own plot, evaluated by the shipped condition leaf, so
         // this proves the city plot reaches requirement evaluation instead of pinning an evaluator's call shape.
         var before = sim.ComputeHash();

@@ -276,7 +276,7 @@ public sealed class TerrainMeshTests(LoadedMods mods, TerrainMeshTests.MeshBasel
         int tile = session.Sim.State.Grid.TileAt(target).Value;
         Assert.Equal(ReliefClass.Hidden, withoutMemory.Relief[tile]);
         Assert.Equal(hidden.Relief, withoutMemory.Relief);
-        session.Sim.Content.Services.Get<IVisibilityService>().Single()
+        session.Sim.Rules().Visibility
             .RevealPlot(session.Sim, new TileId(tile), session.Me.TeamId);
         var revealed = TerrainTestMaps.Snapshot(session);
         Assert.Equal(ReliefClass.Hills, revealed.Relief[tile]);

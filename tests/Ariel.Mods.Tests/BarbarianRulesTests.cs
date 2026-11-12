@@ -70,12 +70,12 @@ public sealed class BarbarianRulesTests
         foreach (var unit in sim.State.Units.Where(u => u.Id != raider.Id).ToArray()) sim.State.RemoveUnit(unit.Id);
         sim.State.MoveUnit(raider.Id, sim.State.Grid.HexOf(new(40)));
         var fish = sim.State.Plots[41]; fish.Owner = 0; fish.Improvement = "world:improvement_improvement_fishing_boats";
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Visibility.Recompute(sim);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.Content.TurnSystems.Get("military:barbarian_behavior").Run(sim);
         loaded.Content.TurnSystems.Get("military:barbarian_behavior").Run(loaded);
         Assert.Equal(sim.State.Grid.HexOf(new(41)), raider.Position); Assert.Null(fish.Improvement);
-        Assert.True(raider.MovesLeft < sim.Content.Services.Get<IUnitService>().Single().MaximumMoves(sim, raider.Id));
+        Assert.True(raider.MovesLeft < sim.Rules().Units.MaximumMoves(sim, raider.Id));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 

@@ -18,7 +18,7 @@ public sealed class SessionInvalidationTests(LoadedMods mods) : IClassFixture<Lo
                 var position = game.State.Grid.HexOf(new TileId(39));
                 foreach (var type in types)
                     game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = GameSession.DefaultLocalPlayer, Type = type, Position = position });
-                foreach (var unit in game.State.Units) game.Content.Services.Get<IUnitService>().Single().Initialize(game, unit.Id);
+                foreach (var unit in game.State.Units) game.Rules().Units.Initialize(game, unit.Id);
             });
         return new GameSession(sim);
     }

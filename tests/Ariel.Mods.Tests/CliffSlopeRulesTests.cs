@@ -16,7 +16,7 @@ public sealed class CliffSlopeRulesTests(LoadedMods mods) : IClassFixture<Loaded
         sim.State.SetCliff(sim.State.Grid.TileAt(HexGrid.FromOffset(col, row)), direction, true);
 
     private IReadOnlyList<string> Report(Simulation sim) =>
-        sim.Content.Services.Get<IMapGeometry>().Single().Report(sim);
+        sim.Rules().MapGeometry.Report(sim);
 
     [Fact]
     public void One_cliff_stands_alone()

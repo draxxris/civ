@@ -294,7 +294,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         sim.State.PlotAt(enemy.Position).Owner = 1;
         sim.State.PlotAt(enemy.Position).Revealed.Add(sim.TeamOf(0).Id);
         sim.TeamOf(0).Techs.UnionWith(["research:woodworking", "research:siege_warfare"]);
-        var units = sim.Content.Services.Get<IUnitService>().Single();
+        var units = sim.Rules().Units;
         for (int i = 0; i < 15; i++)
         {
             var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = own.Position,
@@ -309,7 +309,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         {
             sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
             declared |= sim.TeamOf(0).Wars.Contains(sim.TeamOf(1).Id);
-            combats += sim.Content.Services.Get<ICombatService>().Single().History(sim).Count;
+            combats += sim.Rules().Combat.History(sim).Count;
             sim.AdvanceTurn();
         }
         Assert.True(declared, "The stronger army never declared war");
@@ -399,9 +399,9 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         var food = sim.State.Grid.Neighbors(center).Last();
         sim.State.Plots[food.Value].Feature = "world:flood_plains";
         sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
-        var growth = sim.Content.Services.Get<ICityGrowthService>().Single().Calculate(sim, city.Id);
+        var growth = sim.Rules().CityGrowth.Calculate(sim, city.Id);
         Assert.True(growth.Difference >= 0, $"Production assignments leave {growth.Difference} food per turn");
-        Assert.True(sim.Content.Services.Get<ICityWorkService>().Single().Validate(sim, city.Id, city.Worked, city.Specialists) is null);
+        Assert.True(sim.Rules().CityWork.Validate(sim, city.Id, city.Worked, city.Specialists) is null);
     }
 
     [Fact]
@@ -418,7 +418,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = city.Position,
         });
         sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
-        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        var economy = sim.Rules().Economy;
         var rates = economy.Rates(sim, 0);
         Assert.True(economy.Calculate(sim, 0).NetGold >= 0);
         Assert.True(rates.Gold > 0, "Fixture must have recurring costs that require gold commerce");
@@ -499,7 +499,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         var departure = ship.Position;
         var cargo = new Unit { Id = 2, Owner = 0, Type = "military:warrior", Position = ship.Position };
         sim.State.AddUnit(ship); sim.State.AddUnit(cargo); sim.State.NextUnitId = 3;
-        var units = sim.Content.Services.Get<IUnitService>().Single();
+        var units = sim.Rules().Units;
         units.Initialize(sim, ship.Id); units.Initialize(sim, cargo.Id);
         Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
         sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
@@ -524,7 +524,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         sim.State.AddCity(city); sim.State.NextCityId = 2;
         var fighter = new Unit { Id = 1, Owner = 0, Type = "military:fighter", Position = city.Position };
         sim.State.AddUnit(fighter); sim.State.NextUnitId = 2;
-        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, fighter.Id);
+        sim.Rules().Units.Initialize(sim, fighter.Id);
         sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
         Assert.Equal(UnitActivity.Intercept, fighter.Extensions.Get<MilitaryUnitState>(sim.Content)!.Activity);
     }

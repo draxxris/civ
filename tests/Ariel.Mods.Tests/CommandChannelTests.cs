@@ -51,7 +51,7 @@ public sealed class CommandChannelTests(LoadedMods mods) : IClassFixture<LoadedM
     private static Hex FarLandTarget(GameSession s, Unit unit)
     {
         var grid = s.Sim.State.Grid;
-        var path = s.Sim.Content.Services.Get<IPathfindingService>().Single();
+        var path = s.Sim.Rules().Paths;
         foreach (var tile in grid.Range(grid.TileAt(unit.Position), 7).OrderByDescending(t => grid.Distance(grid.TileAt(unit.Position), t)))
             if (path.FindPath(s.Sim, unit.Id, grid.HexOf(tile)) is { } p && p.Steps.Count >= 5) return grid.HexOf(tile);
         throw new InvalidOperationException("no far land tile");

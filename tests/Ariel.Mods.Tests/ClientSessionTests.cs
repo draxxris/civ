@@ -58,7 +58,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
                 var position = game.State.Grid.HexOf(new TileId(39));
                 game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = 0, Type = "military:settler", Position = position });
                 game.State.AddUnit(new Unit { Id = game.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = position });
-                foreach (var unit in game.State.Units) game.Content.Services.Get<IUnitService>().Single().Initialize(game, unit.Id);
+                foreach (var unit in game.State.Units) game.Rules().Units.Initialize(game, unit.Id);
             });
         return new GameSession(sim);
     }
@@ -85,7 +85,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         plot.Owner = city.Owner;
         plot.Culture[city.Owner] = 100;
         sim.State.SetWar(GameSession.DefaultLocalPlayer, city.Owner, true);
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, city.Id, GameSession.DefaultLocalPlayer);
+        sim.Rules().CityCapture.Capture(sim, city.Id, GameSession.DefaultLocalPlayer);
         return sim.State.CityById(city.Id);
     }
     [Fact]
@@ -235,7 +235,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     private static Hex FarLandTarget(GameSession s, Unit unit)
     {
         var grid = s.Sim.State.Grid;
-        var path = s.Sim.Content.Services.Get<IPathfindingService>().Single();
+        var path = s.Sim.Rules().Paths;
         foreach (var tile in grid.Range(grid.TileAt(unit.Position), 7).OrderByDescending(t => grid.Distance(grid.TileAt(unit.Position), t)))
             if (path.FindPath(s.Sim, unit.Id, grid.HexOf(tile)) is { } p && p.Steps.Count >= 5) return grid.HexOf(tile);
         throw new InvalidOperationException("no far land tile");
@@ -246,11 +246,11 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var s = NewSession();
         var warrior = s.Sim.State.Units.First(u => u.Owner == GameSession.DefaultLocalPlayer && !s.DefOf(u).CanFoundCity);
-        var spot = s.Sim.State.Grid.Neighbors(warrior.Position).First(h => s.Sim.Content.Services.Get<IMovementService>().Single()
+        var spot = s.Sim.State.Grid.Neighbors(warrior.Position).First(h => s.Sim.Rules().Movement
             .CanEnter(s.Sim, warrior.Id, s.Sim.State.Grid.TileAt(warrior.Position), s.Sim.State.Grid.TileAt(h)) == null);
         var enemy = new Unit { Id = s.Sim.State.NextUnitId++, Owner = 1, Type = warrior.Type, Position = spot, MovesLeft = 120 };
         s.Sim.State.AddUnit(enemy);
-        s.Sim.Content.Services.Get<IUnitService>().Single().Initialize(s.Sim, enemy.Id);
+        s.Sim.Rules().Units.Initialize(s.Sim, enemy.Id);
         s.Sim.State.SetWar(0, 1, true);
         s.SelectUnit(warrior.Id);
         var preview = s.PreviewAt(spot)!;
@@ -259,7 +259,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.StartsWith("Attack", preview.Summary);
         s.RightClick(spot);
         Assert.Equal("", s.Message);
-        Assert.Single(s.Sim.Content.Services.Get<ICombatService>().Single().History(s.Sim));
+        Assert.Single(s.Sim.Rules().Combat.History(s.Sim));
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var city = Found(s);
         var worker = new Unit { Id = s.Sim.State.NextUnitId++, Owner = GameSession.DefaultLocalPlayer, Type = "military:worker", Position = city.Position, MovesLeft = 120 };
         s.Sim.State.AddUnit(worker);
-        s.Sim.Content.Services.Get<IUnitService>().Single().Initialize(s.Sim, worker.Id);
+        s.Sim.Rules().Units.Initialize(s.Sim, worker.Id);
         foreach (var hex in WorkArea(s, city))
         {
             s.Sim.State.MoveUnit(worker.Id, hex);
@@ -341,8 +341,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = GameFactory.Scenario(mods.Content);
         var plane = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:fighter", Position = sim.State.Grid.HexOf(new(39)) };
         sim.State.AddUnit(plane);
-        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, plane.Id);
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
+        sim.Rules().Units.Initialize(sim, plane.Id);
+        sim.Rules().Visibility.Recompute(sim);
         var session = new GameSession(sim);
         session.SelectUnit(plane.Id);
         Assert.Contains(session.DescribeUnit(plane)!.Actions, a => a.Id == "intercept");
@@ -358,8 +358,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     private static Unit Add(Simulation sim, string type, int tile = 39, int owner = 0)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Grid.HexOf(new(tile)) };
-        sim.State.AddUnit(unit); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
-        sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim); return unit;
+        sim.State.AddUnit(unit); sim.Rules().Units.Initialize(sim, unit.Id);
+        sim.Rules().Visibility.Recompute(sim); return unit;
     }
     private static City AddCity(Simulation sim, int tile = 39, int owner = 0)
     {
@@ -418,7 +418,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Add(sim, "military:warrior", 40, 1); var city = AddCity(sim, 40, 1); city.Buildings.Add("cities:walls");
         sim.State.SetWar(0, 1, true); var session = new GameSession(sim);
         if (bombard) { Dispatch<BombardCityCommand>(session, siege); Assert.Single(sim.Events.Published.OfType<CityBombarded>()); }
-        else { Dispatch<RangedStrikeCommand>(session, siege); Assert.Single(sim.Content.Services.Get<ICombatService>().Single().History(sim)); }
+        else { Dispatch<RangedStrikeCommand>(session, siege); Assert.Single(sim.Rules().Combat.History(sim)); }
         Assert.True(siege.Extensions.Get<MilitaryUnitState>(sim.Content)!.Attacked);
     }
 
@@ -510,7 +510,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var plot = sim.State.Plots[tile.Value];
         plot.Terrain = terrain;
         plot.Kind = kind;
-        var visibility = sim.Content.Services.Get<IVisibilityService>().Single();
+        var visibility = sim.Rules().Visibility;
         // Explicit map observation establishes memory without granting current sight.
         visibility.RevealPlot(sim, tile, sim.TeamOf(GameSession.DefaultLocalPlayer).Id);
         var session = new GameSession(sim);

@@ -161,7 +161,7 @@ public sealed class TerrainIntegrationTests(LoadedMods mods) : IClassFixture<Loa
         foreach (var hex in new[] { HexGrid.FromOffset(11, 6), HexGrid.FromOffset(1, 2), HexGrid.FromOffset(20, 12) })
             session.Sim.State.PlotAt(hex).Feature = "world:forest";
         foreach (var plot in session.Sim.State.Plots) plot.Visible.Clear();
-        var visibility = session.Sim.Content.Services.Get<IVisibilityService>().Single();
+        var visibility = session.Sim.Rules().Visibility;
         foreach (var knownTile in session.Sim.State.Grid.Tiles)
             visibility.RevealPlot(session.Sim, knownTile, session.Me.TeamId);
         var before = Snapshot(session);

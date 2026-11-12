@@ -22,7 +22,7 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
     public void Effective_speeds_preserve_inclusive_date_endpoints_and_continue_the_tail(string speed, int boundary, long year, int end)
     {
         var sim = Scenario(mods.Content, "foundation:gamespeed_" + speed);
-        var calendar = sim.Content.Services.Get<IGameCalendar>().Single();
+        var calendar = sim.Rules().Calendar;
         Assert.Equal(-6000, calendar.GetDate(sim)!.Year);
         Assert.Equal(2, calendar.GetDate(sim)!.Month);
         Assert.Equal(year, calendar.GetDate(sim, boundary)!.Year);
@@ -40,7 +40,7 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
     public void Subyear_dates_and_display_precision_follow_the_active_date_increment(int turn, long year, int month, string label)
     {
         var sim = Scenario(mods.Content);
-        var date = sim.Content.Services.Get<IGameCalendar>().Single().GetDate(sim, turn)!;
+        var date = sim.Rules().Calendar.GetDate(sim, turn)!;
         Assert.Equal((year, month, 1, label), (date.Year, date.Month, date.Day, date.FormattedDate));
     }
 
@@ -50,7 +50,7 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Scenario(mods.Content, era: "foundation:era_medieval");
         sim.State.Turn = 1;
-        var calendar = sim.Content.Services.Get<IGameCalendar>().Single();
+        var calendar = sim.Rules().Calendar;
         var before = SaveGame.Save(sim);
         Assert.Equal(415, calendar.GetDate(sim)!.Year); // 1200 * 28 / 100 = 336.
         Assert.Equal(before, SaveGame.Save(sim));
@@ -74,7 +74,7 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
             Root = mods.Root, Instance = new StartYearProbe(original, startYear) };
         var content = ModLoader.Build(mods.Sources.Append(source));
         var sim = Scenario(content);
-        var calendar = content.Services.Get<IGameCalendar>().Single();
+        var calendar = content.Rules().Calendar;
         Assert.Equal(startYear, content.Get<RuleConstantsDef>(original.Id).Values.StartYear);
         Assert.Equal(startYear, calendar.GetDate(sim)!.Year);
         Assert.Equal(firstYear, calendar.GetDate(sim, 1)!.Year);
@@ -92,7 +92,7 @@ public sealed class CalendarTests(LoadedMods mods) : IClassFixture<LoadedMods>
             Root = mods.Root, Instance = new CalendarProbe() };
         var content = ModLoader.Build(mods.Sources.Append(source));
         var sim = Scenario(content, "calendar_probe:monthly");
-        var calendar = content.Services.Get<IGameCalendar>().Single();
+        var calendar = content.Rules().Calendar;
         Assert.Equal("December, 1 BCE", calendar.GetDate(sim, 71998)!.FormattedDate);
         Assert.Equal("January, 0 CE", calendar.GetDate(sim, 71999)!.FormattedDate);
         Assert.Null(calendar.GetDate(Scenario(content, "calendar_probe:empty")));

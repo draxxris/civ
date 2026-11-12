@@ -166,7 +166,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
             Plan(sim, "WorkerPlanner");
         }
         Assert.Equal(sim.State.Grid.HexOf(new(destination)), sim.State.UnitById(1).Position);
-        Assert.True(sim.Content.Services.Get<IWorkerBuildService>().Single().IsWorking(sim, 1));
+        Assert.True(sim.Rules().WorkerBuilds.IsWorking(sim, 1));
         Assert.False(HasMission(sim, 1));
     }
 
@@ -286,7 +286,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Workers();
         var distant = sim.State.CityById(1);
-        foreach (var tile in sim.Content.Services.Get<ICityWorkService>().Single().WorkArea(sim, distant.Id))
+        foreach (var tile in sim.Rules().CityWork.WorkArea(sim, distant.Id))
         {
             if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is not null) continue;
             sim.State.Plots[tile.Value].Owner = 0;
@@ -303,7 +303,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         sim.State.Turn++;
         Plan(sim, "WorkerPlanner");
         Assert.Equal(HexGrid.FromOffset(2, 2), sim.State.UnitById(1).Position);
-        Assert.True(sim.Content.Services.Get<IWorkerBuildService>().Single().IsWorking(sim, 1));
+        Assert.True(sim.Rules().WorkerBuilds.IsWorking(sim, 1));
     }
 
     [Theory]
@@ -422,7 +422,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(fork.ComputeHash(), sim.ComputeHash());
         Assert.Equal(sim.ComputeHash(), SaveGame.Load(sim.Content, SaveGame.Save(sim)).ComputeHash());
         if (settler) Assert.Equal(0, sim.State.CityAt(sim.State.Grid.HexOf(tile))!.Owner);
-        else Assert.True(sim.Content.Services.Get<IWorkerBuildService>().Single().IsWorking(sim, 1));
+        else Assert.True(sim.Rules().WorkerBuilds.IsWorking(sim, 1));
     }
 
     [Theory]
@@ -508,7 +508,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var events = new List<SpeculationEvent>(); sim.SpeculationObserver = events.Add;
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
-        var workerBuild = sim.Content.Services.Get<IWorkerBuildService>().Single();
+        var workerBuild = sim.Rules().WorkerBuilds;
         Assert.True(HasMission(sim, 1, player: 1) || workerBuild.IsWorking(sim, 1));
         Assert.Equal(sim.ComputeHash(), SaveGame.Load(content, SaveGame.Save(sim)).ComputeHash());
         if (changeRemoteTarget)
@@ -545,7 +545,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var attack = NewAi(sim, "AttackPlanner", ctx, NewAi(sim, "UnitOrders", ctx));
         var military = NewAi(sim, "MilitaryPlanner", ctx, army, cities, attack);
         Call(military, "Plan");
-        Assert.Contains(sim.Content.Services.Get<ICombatService>().Single().History(sim), r => r.Attacker == attacker.Id);
+        Assert.Contains(sim.Rules().Combat.History(sim), r => r.Attacker == attacker.Id);
         if (destroyTargets) Assert.Equal(JsonValueKind.Null, Campaign(sim).GetProperty("City").ValueKind);
         else Assert.Equal(retained, Campaign(sim).GetProperty("City").GetInt32());
         Assert.Equal(destroyTargets ? 31 : 30, Campaign(sim).GetProperty("EvaluatedTurn").GetInt32());
@@ -619,7 +619,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     private static Unit AddUnit(Simulation sim, int owner, string type, Hex position)
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
-        sim.State.AddUnit(unit); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.State.AddUnit(unit); sim.Rules().Units.Initialize(sim, unit.Id);
         return unit;
     }
 
@@ -635,7 +635,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         sim.State.RemoveUnit(unit.Id);
         var replacement = new Unit { Id = unit.Id, Owner = owner, Type = type, Position = unit.Position };
-        sim.State.AddUnit(replacement); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.State.AddUnit(replacement); sim.Rules().Units.Initialize(sim, unit.Id);
     }
 
     private static void Review(Simulation sim, int player = 0)
@@ -684,7 +684,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
                 {
                     var tile = Tile(sim, 13, 2);
                     const string build = "world:build_build_farm";
-                    var workerBuild = sim.Content.Services.Get<IWorkerBuildService>().Single();
+                    var workerBuild = sim.Rules().WorkerBuilds;
                     sim.State.Plots[tile.Value].BuildProgress[build] = workerBuild.RequiredWork(sim, tile, build) - 1;
                 }
                 else if (changeRemoteTarget) sim.State.Plots[Tile(sim, 7, 2).Value].Improvement = "world:improvement_improvement_farm";

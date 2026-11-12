@@ -26,7 +26,7 @@ public sealed class CardResearchTests
                 if (terminal) team.Techs.UnionWith(sim.Content.Get<TechDef>().All.Select(t => t.Id));
             }
         });
-    private static IResearchService Research(Simulation sim) => sim.Content.Services.Get<IResearchService>().Single();
+    private static IResearchService Research(Simulation sim) => sim.Rules().Research;
     private static string[] Hand(Simulation sim) => new GameSession(sim).ResearchChoices().Select(t => t.Id).ToArray();
     private static void Apply(Simulation sim, GameCommand command) => Assert.True(sim.TryApply(command, out var error), error);
 

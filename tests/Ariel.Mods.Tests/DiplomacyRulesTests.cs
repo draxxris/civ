@@ -119,8 +119,8 @@ public sealed class DiplomacyRulesTests
         Assert.Empty(trade.Calculate(sim, home.Id).Routes);
         Meet(sim); Assert.Empty(trade.Calculate(sim, home.Id).Routes);
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = home.Position };
-        sim.State.AddUnit(unit); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
-        var movement = sim.Content.Services.Get<IMovementService>().Single();
+        sim.State.AddUnit(unit); sim.Rules().Units.Initialize(sim, unit.Id);
+        var movement = sim.Rules().Movement;
         Assert.Equal("Closed borders", movement.CanEnter(sim, unit.Id, new(40), new(41)));
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
         Assert.Null(movement.CanEnter(sim, unit.Id, new(40), new(41))); Assert.Equal(foreign.Id, Assert.Single(trade.Calculate(sim, home.Id).Routes).PartnerCity);
@@ -301,7 +301,7 @@ public sealed class DiplomacyRulesTests
         var city = City(sim, recipient, 40);
         for (int i = 0; i < 40; i++)
             sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = recipient, Type = "military:warrior", Position = city.Position });
-        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        var economy = sim.Rules().Economy;
         var rates = new CommerceVector(0, 100, 0, 0);
         economy.SetRates(sim, recipient, rates);
         var domestic = economy.Calculate(sim, recipient);
@@ -339,7 +339,7 @@ public sealed class DiplomacyRulesTests
         var sim = P6RulesScenario.Create();
         foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.State.Cities[0].Buildings.Add("cities:palace");
-        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single();
+        var economy = sim.Rules().Economy;
         economy.SetRates(sim, 0, new(0, 100, 0, 0));
         var diplomacy = Service(sim);
         int deal = diplomacy.ProposeDeal(sim, 0, 1, [new(0, TradeItemKind.GoldPerTurn, Amount: 3)]);
@@ -364,7 +364,7 @@ public sealed class DiplomacyRulesTests
         var sim = Scenario(); Meet(sim);
         City(sim, 0, 40); var foreign = City(sim, 1, 41);
         sim.State.Plots[40].Bonus = Grain;
-        var production = sim.Content.Services.Get<ICityProductionService>().Single();
+        var production = sim.Rules().CityProduction;
         Assert.Contains(production.Validate(sim, foreign.Id, "cities:building", "diplomacy_probe:granary").Failures,
             f => f.Explanation == "Requires connected resource: " + Grain);
         Export(sim, Grain);
@@ -518,7 +518,7 @@ public sealed class DiplomacyRulesTests
             sim.State.PlayerById(p).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = p == 2 ? "religion:buddhism" : "religion:hinduism" });
         }
         Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
-        var capture = sim.Content.Services.Get<ICityCaptureService>().Single();
+        var capture = sim.Rules().CityCapture;
 
         capture.Capture(sim, holy.Id, 0);
         capture.Raze(sim, holy.Id);

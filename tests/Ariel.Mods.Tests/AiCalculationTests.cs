@@ -122,7 +122,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             Assert.NotNull(path);
             Assert.Equal((wrap ? new[] { 5 } : new[] { 1, 2, 3, 4, 5 }).Select(t => new Hex(t, 0)), path.Steps);
             Assert.Equal(wrap ? 120 : 720, path.Cost);
-            Assert.Null(sim.Content.Services.Get<IMovementService>().Single().ValidatePath(sim, 0, unit.Id, path.Steps));
+            Assert.Null(sim.Rules().Movement.ValidatePath(sim, 0, unit.Id, path.Steps));
         });
         Assert.Null(query(unit, new(5, -1), false));
         Assert.Equal(hash, sim.ComputeHash());
@@ -226,7 +226,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             Assert.NotNull(path);
             Assert.Equal(new[] { new Hex(1, 0), new Hex(2, 0), target }, path.Steps);
             Assert.Equal(360, path.Cost);
-            Assert.Null(sim.Content.Services.Get<IMovementService>().Single().ValidatePath(sim, 0, unit.Id, path.Steps));
+            Assert.Null(sim.Rules().Movement.ValidatePath(sim, 0, unit.Id, path.Steps));
         }
         // An attack endpoint cannot become an intermediate step on a path beyond the hostile unit.
         Assert.Null(query(unit, new(4, 0), true));
@@ -566,7 +566,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Set(war, "Target", 1);
         Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(war));
         Parallel.For(0, 16, _ => Assert.Equal(2, ((City)Call(targets, "SelectPrimaryTargetCity", 0)!).Id));
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, 2, 0);
+        sim.Rules().CityCapture.Capture(sim, 2, 0);
         Call(ctx, "Refresh");
         Assert.Null(Call(targets, "SelectPrimaryTargetCity", 0));
         sim.State.PlotAt(hidden.Position).Revealed.Add(sim.TeamOf(0).Id);
@@ -638,7 +638,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             Assert.True(issue(new FoundCityWithSettlerCommand { Player = 0, Settler = settler }));
             Assert.Equal(ScanSites(sim), ReadSites(sites));
         }
-        sim.Content.Services.Get<ICityCaptureService>().Single().Capture(sim, 1, 0);
+        sim.Rules().CityCapture.Capture(sim, 1, 0);
         Call(ctx, "Refresh");
         Assert.Equal(3, sim.State.Cities.Count(c => c.Owner == 0));
         Assert.Equal(ScanSites(sim), ReadSites(sites));
@@ -661,7 +661,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.True(issue(new SetCityAssignmentsCommand { Player = 0, CityId = 1, Tiles = [sim.State.Grid.TileAt(5, 4)] }));
         var after = Property<YieldVector>(Call(ctx, "ViewOf", city)!, "Yields");
         Assert.NotEqual(before, after);
-        Assert.Equal(sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, 1).Yields, after);
+        Assert.Equal(sim.Rules().CityYields.Calculate(sim, 1).Yields, after);
         var roleType = AiType(sim, "UnitRole");
         int Count(string method, string role) => (int)Call(ctx, method, Enum.Parse(roleType, role))!;
         Assert.Equal(1, Count("CountUnits", "Worker"));
@@ -771,7 +771,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type,
             Position = HexGrid.FromOffset(column, row) };
         sim.State.AddUnit(unit);
-        sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        sim.Rules().Units.Initialize(sim, unit.Id);
         return unit;
     }
 

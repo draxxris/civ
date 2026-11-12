@@ -81,7 +81,7 @@ public sealed class SceneHeightsTests(LoadedMods mods) : IClassFixture<LoadedMod
         Assert.True(state.Plots[lake.Value].IsLake);
         Assert.NotEqual(0, state.Plots[land.Value].CliffEdges & 1);
         Assert.NotEqual(0, state.CliffLifts(land) & 1);
-        Assert.DoesNotContain(session.Sim.Content.Services.Get<Ariel.Game.IMapGeometry>().Single().Report(session.Sim),
+        Assert.DoesNotContain(session.Sim.Rules().MapGeometry.Report(session.Sim),
             line => line.Contains("lake"));
     }
 

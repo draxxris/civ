@@ -62,9 +62,9 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         long basis = Math.Max(100, Math.Min(500, 5 * sim.Content.Get<S.WorldSizeDef>(sim.Settings.WorldSize!).TradeProfitPercent) * sim.Content.Get<S.RuleConstantsDef>().All.Single().Values.TradeProfitPercent / 100);
         Assert.Equal(basis * 225 / 100, foreign.ProfitHundredths);
         Assert.Equal(foreign.ProfitHundredths, foreign.YieldsHundredths.Commerce);
-        var yields = sim.Content.Services.Get<ICityYieldService>().Single().Calculate(sim, city.Id);
+        var yields = sim.Rules().CityYields.Calculate(sim, city.Id);
         Assert.Equal(result.Yields.Commerce, yields.Ledger.Lines.Where(l => l.Source == "trade:routes" && l.Key == "yield.flat.commerce").Sum(l => l.Amount));
-        var economy = sim.Content.Services.Get<IPlayerEconomyService>().Single(); economy.SetRates(sim, 0, new(50, 50, 0, 0));
+        var economy = sim.Rules().Economy; economy.SetRates(sim, 0, new(50, 50, 0, 0));
         var output = economy.CalculateCity(sim, city.Id);
         Assert.True(output.Hundredths.Research > 0); Assert.True(output.Hundredths.Gold > 0);
     }

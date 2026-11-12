@@ -17,7 +17,7 @@ public sealed class WorldExtensionTests(LoadedMods mods) : IClassFixture<LoadedM
         var tile = sim.State.Grid.TileAt(3, 3);
         sim.State.SetRiver(tile, 0, true);
         var hash = sim.ComputeHash();
-        var result = content.Services.Get<IPlotYieldService>().Single().Calculate(sim, 0, tile);
+        var result = content.Rules().PlotYields.Calculate(sim, 0, tile);
         Assert.Equal(new YieldVector(4, 0, 1), result.Yields); // (2 + 1) * 150 / 100 = 4.
         Assert.Equal(1, result.Ledger.Total("yield.flat.commerce"));
         Assert.Equal(3, result.Ledger.Total("yield.flat.food"));

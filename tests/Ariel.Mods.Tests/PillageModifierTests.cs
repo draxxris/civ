@@ -19,7 +19,7 @@ public sealed class PillageModifierTests(LoadedMods mods) : IClassFixture<Loaded
         var sim = GameFactory.Scenario(content);
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(new(39)) };
         sim.State.AddUnit(unit);
-        content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        content.Rules().Units.Initialize(sim, unit.Id);
         unit.Promotions.Add("pillage_probe:penalty");
         sim.State.SetWar(0, 1, true);
         var plot = sim.State.PlotAt(unit.Position);
