@@ -61,7 +61,7 @@ public sealed partial class GameSession
     public Unit? Unit => SelectedUnitId is int id ? Sim.State.FindUnit(id) : null;
 
     internal T Service<T>() where T : class => Sim.Content.Services.Get<T>().Single();
-    internal T? OptionalService<T>() where T : class => Sim.Content.Services.Get<T>().SingleOrDefault();
+    internal T? OptionalService<T>() where T : class => Sim.Service<T>();
     internal int MoveDenominator => Math.Max(1, Sim.Content.Get<Schema.RuleConstantsDef>().All.Single().Values.MoveDenominator);
 
     /// <summary>Publish a message; an unchanged message is not a change, so it does not bump the revision.</summary>

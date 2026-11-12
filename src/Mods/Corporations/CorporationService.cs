@@ -20,6 +20,7 @@ internal sealed class CorporationService : ICorporationService
         .Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
+    public int Count(Simulation sim, int city) => Present(sim, city).Count;
     public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
         .Any(corporation => sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity);
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>

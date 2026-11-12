@@ -240,7 +240,7 @@ public sealed class MergedModDiscoveryTests
         Assert.Equal(winner, loaded.Root);
         Assert.Equal("winner.dll", loaded.Manifest.Assembly);
         Assert.Equal(System.IO.Path.Combine(winner, "winner.dll"), loaded.Instance.GetType().Assembly.Location);
-        Assert.Contains(catalog.Content.Get<Ariel.Content.Schema.EventTriggerDef>().All, e => e.Name == "Winning event");
+        Assert.Contains(catalog.Content.Get<Ariel.Mods.Events.EventTriggerDef>().All, e => e.Name == "Winning event");
         Assert.Equal(System.IO.Path.Combine(winner, "art/icons/winner-only.png"), catalog.IconPath("events:winner-only"));
         Assert.Null(catalog.IconPath("events:lower-only"));
         Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "diplomacy");

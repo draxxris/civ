@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using Ariel.Content;
+using Ariel.Content.Schema;
 
-namespace Ariel.Content.Schema;
+namespace Ariel.Mods.Events;
 
 /// <summary>A random event that can happen to a player. Eligibility is integer-only; the chance is rolled per turn.</summary>
 public sealed class EventTriggerDef : GameContentDef

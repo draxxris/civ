@@ -26,7 +26,7 @@ public static class GameContent
         string mods = Path.Combine(hostRoot, ModsFolder);
         IEnumerable<string> folders = Directory.Exists(mods) ? Directory.GetDirectories(mods).Order(StringComparer.Ordinal) : [];
         var optional = optionalMods.Select(name => Path.Combine(hostRoot, OptionalModsFolder, name));
-        return Sources(Path.Combine(hostRoot, RulesFolder), folders.Concat(optional).Select(ModLoader.FromDirectory));
+        return Sources(Path.Combine(hostRoot, RulesFolder), ModLoader.FromDirectories(folders.Concat(optional)));
     }
 
     /// <summary>Register and freeze base modules and mods.</summary>

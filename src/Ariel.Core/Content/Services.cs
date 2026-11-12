@@ -17,6 +17,40 @@ public sealed class ServiceRegistry
         if (!_frozen) return items.Cast<T>().ToArray();
         return (IReadOnlyList<T>)_views.GetOrAdd(typeof(T), static (_, values) => Array.AsReadOnly(values.Cast<T>().ToArray()), items);
     }
+
+    /// <summary>The one service registered under <typeparamref name="T"/>, or null when no loaded mod registered one.
+    /// Use it for a contract a single mod provides, such as a mod's published API, whose provider may be absent.
+    /// After freezing the answer is cached per contract type, so hot paths may call it freely and from any thread.
+    /// Throws when several services implement <typeparamref name="T"/>: read those with <see cref="Get{T}"/>.</summary>
+    public T? Find<T>() where T : class
+    {
+        var slots = Volatile.Read(ref _found);
+        int slot = Slot<T>.Index;
+        if (slot < slots.Length && slots[slot] is { } found) return ReferenceEquals(found, Absent) ? null : (T)found;
+        return Resolve<T>(slot);
+    }
+    private T? Resolve<T>(int slot) where T : class
+    {
+        var all = Get<T>();
+        if (all.Count > 1)
+            throw new InvalidOperationException($"{all.Count} services implement {typeof(T).FullName}; Find needs at most one. Use Get for a seam with many implementations.");
+        T? found = all.Count == 1 ? all[0] : null;
+        if (!_frozen) return found;
+        lock (_items)
+        {
+            var slots = _found;
+            if (slot >= slots.Length) Array.Resize(ref slots, Math.Max(slot + 1, slots.Length * 2));
+            slots[slot] = (object?)found ?? Absent;
+            Volatile.Write(ref _found, slots);
+        }
+        return found;
+    }
+    /// <summary>Process-wide index of a contract type into every frozen registry's <see cref="_found"/> cache.</summary>
+    private static class Slot<T> { internal static readonly int Index = Interlocked.Increment(ref _slots) - 1; }
+    private static int _slots;
+    private static readonly object Absent = new();
+    private object?[] _found = [];
+
     internal void Register<T>(string id, T service, string owner) where T : class
     {
         if (_frozen) throw new InvalidOperationException("Services are frozen");

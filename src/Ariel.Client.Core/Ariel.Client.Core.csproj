@@ -3,5 +3,8 @@
     <ProjectReference Include="..\Ariel.Core\Ariel.Core.csproj" />
     <ProjectReference Include="..\Ariel.Rules\Ariel.Rules.csproj" />
     <ProjectReference Include="..\Ariel.Net\Ariel.Net.csproj" />
+    <!-- Screens for optional features read those mods' published APIs; a missing provider means no service. -->
+    <ProjectReference Include="..\Mods\Corporations\Api\Ariel.Mods.Corporations.Api.csproj" />
+    <ProjectReference Include="..\Mods\Events\Api\Ariel.Mods.Events.Api.csproj" />
   </ItemGroup>
 </Project>

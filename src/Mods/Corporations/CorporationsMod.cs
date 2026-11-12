@@ -18,6 +18,7 @@ public sealed class CorporationsMod : IPreparableMod
         CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
+        context.RegisterService<ICityCorporations>("city_corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");

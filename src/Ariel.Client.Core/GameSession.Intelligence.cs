@@ -1,5 +1,7 @@
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
+using Ariel.Mods.Corporations;
+using Ariel.Mods.Events;
 
 namespace Ariel.Client;
 
@@ -35,8 +37,8 @@ public sealed partial class GameSession
     public CorporationScreen DescribeCorporations()
     {
         var service = OptionalService<ICorporationService>();
-        if (service == null || !Registered<Schema.CorporationDef>()) return new(false, [], []);
-        var rows = Sim.Content.Get<Schema.CorporationDef>().All.OrderBy(c => c.Name, StringComparer.Ordinal).ThenBy(c => c.Id, StringComparer.Ordinal)
+        if (service == null || !Registered<CorporationDef>()) return new(false, [], []);
+        var rows = Sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Name, StringComparer.Ordinal).ThenBy(c => c.Id, StringComparer.Ordinal)
             .Select(def =>
             {
                 int? hq = service.Headquarters(Sim, def.Id);
@@ -53,7 +55,7 @@ public sealed partial class GameSession
     {
         var service = OptionalService<ICorporationService>();
         if (service == null) return [];
-        return service.Present(Sim, city.Id).Select(id => Sim.Content.Get<Schema.CorporationDef>(id))
+        return service.Present(Sim, city.Id).Select(id => Sim.Content.Get<CorporationDef>(id))
             .Select(d => new CityCorporation(d.Id, d.Name, service.Headquarters(Sim, d.Id) == city.Id, service.IsActive(Sim, city.Id, d.Id), d.Icon)).ToList();
     }
 
@@ -87,10 +89,10 @@ public sealed partial class GameSession
         if (service == null) return [];
         return service.Pending(Sim, LocalPlayer).Select(p =>
         {
-            Sim.Content.TryGet<Schema.EventTriggerDef>(p.Trigger, out var def);
+            Sim.Content.TryGet<EventTriggerDef>(p.Trigger, out var def);
             var options = service.Options(Sim, p.Id).Select(o =>
             {
-                Sim.Content.TryGet<Schema.EventOptionDef>(o, out var opt);
+                Sim.Content.TryGet<EventOptionDef>(o, out var opt);
                 return new EventOptionRow(o, opt?.Name ?? Labels.Humanize(o), opt?.Help ?? "", opt?.IsDefault ?? false, service.ValidateChoice(Sim, LocalPlayer, p.Id, o));
             }).ToList();
             return new PendingEventRow(p.Id, p.Trigger, def?.Name ?? Labels.Humanize(p.Trigger), def?.Help ?? "",

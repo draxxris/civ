@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Events;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -60,11 +61,11 @@ public sealed class EventRulesTests
     public void Content_ships_neutral_events_each_with_one_default_option()
     {
         var sim = Scenario();
-        var triggers = sim.Content.Get<S.EventTriggerDef>().All;
+        var triggers = sim.Content.Get<EventTriggerDef>().All;
         Assert.True(triggers.Count() >= 10);
         foreach (var t in triggers)
         {
-            var options = sim.Content.Get<S.EventOptionDef>().All.Where(o => o.Trigger == t.Id).ToArray();
+            var options = sim.Content.Get<EventOptionDef>().All.Where(o => o.Trigger == t.Id).ToArray();
             Assert.True(options.Length >= 2, t.Id);
             Assert.Single(options, o => o.IsDefault);
         }
@@ -172,8 +173,8 @@ public sealed class EventRulesTests
     {
         public void Register(IModContext context)
         {
-            context.Content<S.EventTriggerDef>().Register(new() { Id = "empire_probe:decree", Name = "Decree", ChancePercent = 100 });
-            context.Content<S.EventOptionDef>().Register(new()
+            context.Content<EventTriggerDef>().Register(new() { Id = "empire_probe:decree", Name = "Decree", ChancePercent = 100 });
+            context.Content<EventOptionDef>().Register(new()
             {
                 Id = "empire_probe:decree_accept", Name = "Accept", Trigger = "empire_probe:decree", IsDefault = true, HappinessDelta = 1, HealthDelta = 1,
             });

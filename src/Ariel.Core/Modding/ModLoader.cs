@@ -28,6 +28,10 @@ public static class ModLoader
 
     private static readonly List<Assembly> Shared = [typeof(ModLoader).Assembly];
 
+    // A host whose default context lacks the shared mod API (Godot loads the host into its own context) still lets
+    // default-context lookups reach the host's copies and the published mod APIs.
+    static ModLoader() => AssemblyLoadContext.Default.Resolving += (_, name) => ResolveShared(name);
+
     /// <summary>Make a host assembly part of the mod API: a mod that references it binds to the host's copy instead of
     /// loading its own, so both sides share one set of types. <c>Ariel.Core</c> is always shared.</summary>
     public static void Share(Assembly assembly)
@@ -35,19 +39,35 @@ public static class ModLoader
         lock (Shared) if (!Shared.Contains(assembly)) Shared.Add(assembly);
     }
 
-    /// <summary>The host's copy of a shared assembly, or null when <paramref name="name"/> is not part of the mod API.</summary>
+    /// <summary>The host's copy of a shared assembly or the process's copy of a published mod API
+    /// (<see cref="ModApis"/>), or null when <paramref name="name"/> is not part of the mod API.</summary>
     public static Assembly? ResolveShared(AssemblyName name)
     {
-        lock (Shared) return Shared.Find(a => a.GetName().Name == name.Name);
+        lock (Shared) if (Shared.Find(a => a.GetName().Name == name.Name) is { } shared) return shared;
+        return ModApis.Find(name);
     }
 
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
     public static ModSource FromDirectory(string dir) => FromDirectory(dir, ReadManifest(dir));
 
+    /// <summary>Load several mod folders. Every API they publish is shared before any of their code loads, so a
+    /// provider's copy of its API wins over the copies its consumers carry.</summary>
+    public static IReadOnlyList<ModSource> FromDirectories(IEnumerable<string> dirs) =>
+        FromDirectories(dirs.Select(dir => (dir, ReadManifest(dir))).ToArray());
+
+    /// <inheritdoc cref="FromDirectories(IEnumerable{string})"/>
+    public static IReadOnlyList<ModSource> FromDirectories(IReadOnlyList<(string Dir, ModManifest Manifest)> mods)
+    {
+        foreach (var (dir, manifest) in mods)
+            if (manifest.Api.Length > 0) ModApis.Publish(dir, manifest);
+        return mods.Select(m => FromDirectory(m.Dir, m.Manifest)).ToArray();
+    }
+
     /// <summary>Load using a manifest already read and validated by the host, without reading it again.</summary>
     public static ModSource FromDirectory(string dir, ModManifest manifest)
     {
         using var trace = StartupTrace.Phase($"mod load {Path.GetFileName(dir)}");
+        if (manifest.Api.Length > 0) ModApis.Publish(dir, manifest);
         var alc = new ModLoadContext(Path.Combine(dir, manifest.Assembly));
         var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(Path.Combine(dir, manifest.Assembly)));
         return FromAssembly(manifest, asm, dir);
@@ -118,7 +138,9 @@ foreach (var dependency in mod.Manifest.Dependencies.Concat(mod.Manifest.Referen
         return result;
     }
 
-    /// <summary>Each mod gets its own load context, but the shared mod API always resolves to the host's copy.</summary>
+    /// <summary>Each mod gets its own load context, but the shared mod API always resolves to the host's copy, and
+    /// every mod API assembly to its one copy in the process (<see cref="ModApis"/>). Anything else the mod carries is
+    /// private to it.</summary>
     private sealed class ModLoadContext : AssemblyLoadContext
     {
         private readonly AssemblyDependencyResolver _resolver;
@@ -129,7 +151,8 @@ foreach (var dependency in mod.Manifest.Dependencies.Concat(mod.Manifest.Referen
         {
             if (ResolveShared(name) is { } shared) return shared;
             var p = _resolver.ResolveAssemblyToPath(name);
-            return p == null ? null : LoadFromAssemblyPath(p);
+            if (p == null) return null;
+            return ModApis.Resolve(name, p) ?? LoadFromAssemblyPath(p);
         }
     }
 }

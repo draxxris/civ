@@ -42,9 +42,11 @@ extend both through one registration API.
   service interfaces, state components, commands and domain events of the base game
   and of the seams mods fill; `Schema/` holds the content definitions
   (`Ariel.Content.Schema`). `GameRules` implements `IRuleset` and is the typed root
-  of the base services.
+  of the base services. It references no mod assembly.
 - `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`. The
-  loader hands a mod the host's copy of both, so types are shared.
+  loader hands a mod the host's copy of both, so types are shared. A mod may also
+  publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations and
+  Events do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -54,8 +56,9 @@ extend both through one registration API.
 - `Ariel.Godot`: Godot view. Build separately with `dotnet build src/Ariel.Godot`.
 - `Ariel.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-The client uses the query contracts in `Ariel.Rules`. It has no reference to a mod or
-test-ruleset assembly.
+The client uses the query contracts in `Ariel.Rules` and the published APIs of the
+feature mods it presents (`Ariel.Mods.Corporations.Api`, `Ariel.Mods.Events.Api`). It
+has no reference to a mod's implementation or to a test-ruleset assembly.
 
 ## Determinism
 
@@ -237,7 +240,8 @@ and `MoveUnit`. After bulk data edits, `RebuildIndexes` restores the caches.
 
 ## Mod registration
 
-Each mod folder contains `mod.json`, one DLL and optional JSON sidecars. Dependencies
+Each mod folder contains `mod.json`, the mod's DLL, the API assemblies it publishes
+or compiles against (see Mod APIs) and optional JSON sidecars. Dependencies
 determine load order. Ordinal mod ids break ties. Ids use `modid:name`. Registration
 requires the owning namespace. Overrides can replace earlier content.
 
@@ -251,12 +255,20 @@ requires the owning namespace. Overrides can replace earlier content.
   `IRequirementEvaluator`, `IProductionKind`) and for a mod's own service. The two
   many-implementation seams that clients and planners read, unit orders and support
   fire, are also bound as lists on `GameRules` (below).
+- `sim.Service<T>()` (or `content.Services.Find<T>()`) returns the one service
+  registered under `T`, or null when no loaded mod registered one, and throws when
+  several did. It is the lookup for a contract one mod provides, above all an
+  interface of a mod's published API. The answer is cached per contract type once
+  content freezes (an array slot per type, no registry search), so planners and rule
+  code may call it on hot paths and from parallel AI scoring.
 - `sim.Rules()` (or `content.Rules()`) returns `GameRules`: one property per base
   service (`Units`, `Combat`, `CityYields`, `Visibility`, ...) and a nullable property
-  per optional mod seam (`Diplomacy`, `Espionage`, `GreatPeople`, ...). `GameRules.Bind`
-  fills them from the registry once, when content freezes, so rule code reads a field
-  instead of searching the registry on every call. A base module still registers each
-  service, so service identity stays in the content hash.
+  per base-owned seam a mod may fill (`CityCorporations`) or per optional mod service
+  whose contract still lives in the base game (`Diplomacy`, `Espionage`,
+  `GreatPeople`, ...; these move to their mods' APIs). `GameRules.Bind` fills them
+  from the registry once, when content freezes, so rule code reads a field instead of
+  searching the registry on every call. A base module still registers each service,
+  so service identity stays in the content hash.
 - A feature that gives units an order registers an `IUnitActionSource`, which offers
   ready-made `(id, label, command)` candidates for a unit. The client validates and
   lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
@@ -294,6 +306,59 @@ requires the owning namespace. Overrides can replace earlier content.
 Registries freeze after load. Definitions and their nested collections must not change
 after that point. The content hash includes canonical definitions, loaded mod
 ids/versions, command identities, service order and state-component identities.
+
+### Mod APIs
+
+A mod publishes its own API so that other mods, the client and tests can build on it
+without the base game naming it. The API is a separate assembly, by convention
+`src/Mods/<Mod>/Api/Ariel.Mods.<Mod>.Api.csproj` (the mods' `Directory.Build.props`
+keeps `Api/` out of the mod project). It holds the mod's service interfaces, commands,
+domain events, saved state and content definitions, in the namespace
+`Ariel.Mods.<Mod>`, references only `Ariel.Core`, `Ariel.Rules` and other mods' APIs,
+and is marked `[assembly: ModApi("<mod id>")]`. The mod's manifest names it:
+`"api": "Ariel.Mods.<Mod>.Api.dll"`. The mod implements the API and registers its
+services under the API's interfaces.
+
+The loader (`ModApis`) keeps exactly one copy of each API assembly in the process, so a
+service registered under an API interface is found under that same type by every mod,
+the client and the tests:
+
+1. A copy already shared wins.
+2. Otherwise the host's copy: if the context that loaded `Ariel.Core` (the default
+   context, or Godot's own) resolves the name, because the host was compiled against
+   the API, that copy is shared.
+3. Otherwise the copy in a mod folder is loaded once into a shared API context.
+   `ModLoader.FromDirectories` publishes the API every provider's manifest names
+   before any mod code runs, so the provider's copy wins over its consumers' copies.
+
+A mod's load context sends every reference that is an API (a file marked `ModApi`) to
+that one copy; anything else a mod carries stays private to it. A consumer's build
+copies the APIs it compiles against into its own folder (a normal project reference),
+so it still loads when the provider is absent or disabled: the API types resolve and
+`sim.Service<T>()` returns null. The client and tools reference the APIs they present,
+so their output has the host copy. Copies in several mod folders are therefore
+expected and harmless. An API built against a different version than the shared copy
+binds to the shared copy anyway; change the API compatibly or bump the provider's
+manifest version.
+
+Manifest fields and API use:
+
+- Compiling against another mod's API needs no manifest entry. Treat the provider as
+  optional: check `sim.Service<T>()` for null and degrade. The Ai mod reads the
+  Corporations API this way, as the client reads both published APIs.
+- List the provider in `dependencies` when the consumer cannot work without it, or
+  must register after it (to override its content, for example). Loading then
+  requires the provider, and it registers first. Services are looked up only after
+  content freezes, so using a service alone never needs registration order.
+- List the provider in `references` when the consumer's content refers to the
+  provider's content ids. That too requires the provider, without ordering.
+- Never make the base game reference a mod API. When base rules need an answer from a
+  mod, the base game owns a small seam and the mod implements it: Corporations
+  implements `ICityCorporations` (`GameRules.CityCorporations`), which the Cities
+  capital score and the Foundation `corporation` requirement leaf ask. Without the mod
+  the answer is "none", and the leaf fails. Base content names corporations only by
+  `CorporationIdentityDef`, which therefore stays in Foundation, like
+  `VictoryIdentityDef`.
 
 ## Setup and presentation services
 
@@ -1061,9 +1126,11 @@ migration before it can continue under the new owner.
 ## Modular feature services
 
 Modular feature services include Diplomacy, ProjectsVictory, Corporations, Espionage,
-Events, ScriptedWonders, and Revolution. Each mod registers Core contracts, commands,
-and saved extension state. The contracts remain available without references to mod
-assemblies.
+Events, ScriptedWonders, and Revolution. Each mod registers its contracts, commands,
+and saved extension state. Corporations and Events publish their contracts and content
+definitions in their own API assemblies; the others' contracts still live in
+`Ariel.Rules/Contracts` until base rules and the AI stop naming them, and then move the
+same way.
 
 Diplomacy tracks contact between teams, attitude ledgers, open borders, defensive pacts,
 war, peace, and bilateral deals. Commands validate treaty changes, deal proposals,

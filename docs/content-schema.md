@@ -30,9 +30,11 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable
   victory conditions.
 - Corporations: `CorporationDef` for founding, required resources, branch output,
-  headquarters output, spread cost, and maintenance.
+  headquarters output, spread cost, and maintenance. It lives in the mod's published
+  API (`Ariel.Mods.Corporations`, assembly `Ariel.Mods.Corporations.Api`).
 - Events: `EventTriggerDef` and `EventOptionDef` for eligibility, chance, repeat
-  behavior, outcomes, and timed effects.
+  behavior, outcomes, and timed effects. They live in the mod's published API
+  (`Ariel.Mods.Events`, assembly `Ariel.Mods.Events.Api`).
 - ScriptedWonders: `WonderScriptDef` for building-linked completion, timed, combat, and
   modifier effects.
 - Revolution: `RevolutionRulesDef` for instability thresholds, contributing factors,

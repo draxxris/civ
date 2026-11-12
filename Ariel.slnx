@@ -15,8 +15,10 @@
     <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
     <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />
+    <Project Path="src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
     <Project Path="src/Mods/Espionage/Ariel.Mods.Espionage.csproj" />
     <Project Path="src/Mods/Events/Ariel.Mods.Events.csproj" />
+    <Project Path="src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
     <Project Path="src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" />
     <Project Path="src/Mods/Revolution/Ariel.Mods.Revolution.csproj" />
   </Folder>
@@ -24,6 +26,11 @@
     <Project Path="tests/Ariel.Tests/Ariel.Tests.csproj" />
     <Project Path="tests/Ariel.Mods.Tests/Ariel.Mods.Tests.csproj" />
     <Project Path="tests/Ariel.ContentImport.Tests/Ariel.ContentImport.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/TestMods/">
+    <Project Path="tests/TestMods/ApiProvider.Api/Ariel.TestMods.ApiProvider.Api.csproj" />
+    <Project Path="tests/TestMods/ApiProvider/Ariel.TestMods.ApiProvider.csproj" />
+    <Project Path="tests/TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />

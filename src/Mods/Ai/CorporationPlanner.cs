@@ -1,5 +1,6 @@
 using Ariel.Content.Schema;
 using Ariel.Game;
+using Ariel.Mods.Corporations;
 
 namespace Ariel.Mods.Ai;
 
@@ -9,7 +10,7 @@ namespace Ariel.Mods.Ai;
 internal sealed class CorporationPlanner(AiContext ctx)
 {
     internal const int SpreadsPerTurn = 1;
-    private ICorporationService? Corporations => ctx.Sim.Rules().Corporations;
+    private ICorporationService? Corporations => ctx.Sim.Service<ICorporationService>();
     private readonly Dictionary<(int City, string Corporation), long> _consumed = [];
 
     public void Plan()

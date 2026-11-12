@@ -1,8 +1,9 @@
 {
   "id": "events",
   "name": "Events",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "assembly": "Ariel.Mods.Events.dll",
+  "api": "Ariel.Mods.Events.Api.dll",
   "dependencies": [],
   "references": ["cities", "foundation", "research", "world"]
 }

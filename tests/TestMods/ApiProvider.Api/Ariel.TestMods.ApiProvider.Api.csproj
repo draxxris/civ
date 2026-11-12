@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- A test mod's published API. No host references it, so the loader must share the copies the mod folders carry. -->
+  <PropertyGroup><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Ariel.Core/Ariel.Core.csproj" Private="false" />
+  </ItemGroup>
+</Project>

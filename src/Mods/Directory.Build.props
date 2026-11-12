@@ -1,0 +1,7 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <!-- A mod's published API is its own project in the mod's Api/ folder; the mod project must not compile it. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Api/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

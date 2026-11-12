@@ -3,6 +3,8 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Corporations;
+using Ariel.Mods.Events;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -45,12 +47,12 @@ public sealed class ClientIntelligenceEventsTests
         return unit;
     }
 
-    private static string GreatPersonOf(Simulation sim, string corporation) => sim.Content.Get<S.CorporationDef>(corporation).RequiredGreatPersonClass;
+    private static string GreatPersonOf(Simulation sim, string corporation) => sim.Content.Get<CorporationDef>(corporation).RequiredGreatPersonClass;
 
     private static string Founder(GameSession session, City city, out string corporation)
     {
         var sim = session.Sim;
-        var def = sim.Content.Get<S.CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)
+        var def = sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)
             .First(c => c.PrereqBonuses.Length > 0 && c.FoundingTech != null);
         corporation = def.Id;
         sim.TeamOf(city.Owner).Techs.Add(def.FoundingTech!);
@@ -343,7 +345,7 @@ public sealed class ClientIntelligenceEventsTests
             Assert.Contains(category, session.Pedia.Categories);
             Assert.NotEmpty(session.Pedia.Search(category));
         }
-        var corp = session.Sim.Content.Get<S.CorporationDef>().All.First();
+        var corp = session.Sim.Content.Get<CorporationDef>().All.First();
         Assert.Equal("Corporations", session.Pedia.Find(corp.Id)!.Category);
     }
 }

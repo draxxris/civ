@@ -1,0 +1,7 @@
+{
+  "id": "apiprovider",
+  "name": "API Provider",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.ApiProvider.dll",
+  "api": "Ariel.TestMods.ApiProvider.Api.dll"
+}

@@ -13,10 +13,9 @@ public static class ModDiscovery
 
     static ModDiscovery()
     {
-        // A host that loads this library into its own load context (Godot) leaves the default context without the
-        // shared mod API, which mods resolve through. Hand them the host's copies so mod and host share one set of types.
+        // Mods resolve the base game through the shared mod API, so hand them the host's copy and mod and host share
+        // one set of types.
         ModLoader.Share(typeof(Ariel.Rules.BaseRules).Assembly);
-        System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += (_, name) => ModLoader.ResolveShared(name);
     }
 
     /// <summary>Reads manifests only. Invalid folders remain diagnostics, not executable mods.</summary>
@@ -174,7 +173,7 @@ public static class ModDiscovery
         // Finish the entire preflight before loading code. Use these manifests rather than reading
         // them again during loading. DLLs and sidecars can still change; this is not a filesystem lock.
         var validated = selection.Mods.Select(RevalidateManifest).ToArray();
-        return selection.Mods.Select((m, index) => ModLoader.FromDirectory(m.Root, validated[index])).ToArray();
+        return ModLoader.FromDirectories(selection.Mods.Select((m, index) => (m.Root, validated[index])).ToArray());
     }
 
     private static ModManifest RevalidateManifest(InstalledMod mod)

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
+using Ariel.Game;
 
-namespace Ariel.Game;
+namespace Ariel.Mods.Events;
 
 /// <summary>Strongly-typed allocation-free key for event trigger cooldowns.</summary>
 public readonly record struct EventCooldownKey : IComparable<EventCooldownKey>
@@ -75,8 +76,8 @@ public sealed class ChooseEventOptionCommand : GameCommand
 {
     public int EventId { get; init; }
     public string Option { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IEventService>().Single().ValidateChoice(sim, Player, EventId, Option);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IEventService>().Single().Choose(sim, Player, EventId, Option);
+    public override string? Validate(Simulation sim) => sim.Service<IEventService>()!.ValidateChoice(sim, Player, EventId, Option);
+    public override void Apply(Simulation sim) => sim.Service<IEventService>()!.Choose(sim, Player, EventId, Option);
 }
 
 /// <summary>Saved game-wide event state. No derived data is stored.</summary>

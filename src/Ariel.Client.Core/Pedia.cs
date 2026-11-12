@@ -34,10 +34,10 @@ public sealed class PediaCatalog
         Add<S.CivilizationDef>(content, "Civilizations", _ => 0, _ => null);
         Add<S.LeaderDef>(content, "Leaders", _ => 0, _ => null);
         Add<S.TraitDef>(content, "Traits", _ => 0, _ => null);
-        AddIfRegistered<S.CorporationDef>(content, "Corporations", _ => 0, d => [Tech(content, d.FoundingTech, "Founded with")]);
+        AddIfRegistered<Ariel.Mods.Corporations.CorporationDef>(content, "Corporations", _ => 0, d => [Tech(content, d.FoundingTech, "Founded with")]);
         AddIfRegistered<S.ProjectDef>(content, "Projects", _ => 0, _ => null);
         AddIfRegistered<S.VictoryDef>(content, "Victories", _ => 0, _ => null);
-        AddIfRegistered<S.EventTriggerDef>(content, "Events", _ => 0, d => [Tech(content, d.RequiredTech, "Requires")]);
+        AddIfRegistered<Ariel.Mods.Events.EventTriggerDef>(content, "Events", _ => 0, d => [Tech(content, d.RequiredTech, "Requires")]);
         Categories = _entries.Select(e => e.Category).Distinct().ToList();
     }
 

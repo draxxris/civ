@@ -41,7 +41,7 @@ public sealed partial class GameSession
         Scan<S.ImprovementDef>("Improvements", d => d.PrereqTech);
         Scan<S.ProjectDef>("Projects", d => d.TechPrereq);
         Scan<S.CivicDef>("Civics", _ => null);
-        Scan<S.CorporationDef>("Corporations", d => d.FoundingTech);
+        Scan<Ariel.Mods.Corporations.CorporationDef>("Corporations", d => d.FoundingTech);
         Scan<S.BonusDef>("Resources", d => d.RevealTech);
         Scan<S.BonusDef>("Resources", d => d.TradeTech);
         Scan<S.TechDef>("Technologies", _ => null);

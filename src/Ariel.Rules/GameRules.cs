@@ -99,8 +99,8 @@ public sealed class GameRules : IRuleset
     public IGreatPeopleService? GreatPeople { get; private set; }
     /// <summary>The Trade mod's service, or null without it.</summary>
     public ITradeRouteService? TradeRoutes { get; private set; }
-    /// <summary>The Corporations mod's service, or null without it.</summary>
-    public ICorporationService? Corporations { get; private set; }
+    /// <summary>Corporations in a city, answered by the mod that runs corporations, or null without one.</summary>
+    public ICityCorporations? CityCorporations { get; private set; }
     /// <summary>The Revolution mod's service, or null without it.</summary>
     public IRevolutionService? Revolution { get; private set; }
     /// <summary>The ScriptedWonders mod's service, or null without it.</summary>
@@ -166,7 +166,7 @@ public sealed class GameRules : IRuleset
         Espionage = services.Get<IEspionageService>().SingleOrDefault();
         GreatPeople = services.Get<IGreatPeopleService>().SingleOrDefault();
         TradeRoutes = services.Get<ITradeRouteService>().SingleOrDefault();
-        Corporations = services.Get<ICorporationService>().SingleOrDefault();
+        CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         Revolution = services.Get<IRevolutionService>().SingleOrDefault();
         ScriptedWonders = services.Get<IScriptedWonderService>().SingleOrDefault();
         ProjectVictory = services.Get<IProjectVictoryService>().SingleOrDefault();

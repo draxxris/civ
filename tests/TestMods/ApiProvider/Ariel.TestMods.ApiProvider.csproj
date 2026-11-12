@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Ariel.Core/Ariel.Core.csproj" Private="false" />
+    <ProjectReference Include="../ApiProvider.Api/Ariel.TestMods.ApiProvider.Api.csproj" />
+    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -101,6 +101,10 @@ public sealed partial class Simulation
         Events.Publish(new TurnStarted(State.Turn));
         BeginTurnOrder();
     }
+    /// <summary>The one service a loaded mod registered under <typeparamref name="T"/>, typically an interface of a mod's
+    /// published API, or null when that mod is not loaded. Resolved once per content database; see
+    /// <see cref="ServiceRegistry.Find{T}"/>.</summary>
+    public T? Service<T>() where T : class => Content.Services.Find<T>();
     /// <summary>Whether a game option is enabled in this session, using its content default when unset.</summary>
     public bool IsOptionEnabled(string id) => Settings.GameOptions.TryGetValue(id, out bool enabled)
         ? enabled

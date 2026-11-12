@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Corporations;
 using Xunit;
 
 namespace Ariel.Mods.Tests;
@@ -72,7 +73,7 @@ public sealed class CorporationRulesTests
     private static ICorporationService Corps(Simulation sim) => P6RulesScenario.Service<ICorporationService>(sim);
     private static void Found(Simulation sim, City city, string corporation = Cereal)
     {
-        var def = sim.Content.Get<Ariel.Content.Schema.CorporationDef>(corporation);
+        var def = sim.Content.Get<Ariel.Mods.Corporations.CorporationDef>(corporation);
         sim.TeamOf(city.Owner).Techs.Add(def.FoundingTech!);
         P6RulesScenario.Resource(sim, city, "world:corn");
         var gp = P6RulesScenario.AddUnit(sim, city.Owner, city, def.RequiredGreatPersonClass);

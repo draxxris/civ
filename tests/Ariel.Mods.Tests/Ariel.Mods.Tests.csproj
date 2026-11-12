@@ -32,4 +32,19 @@
     <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree</ModPayloadsOptional>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />
+
+  <!-- Test mods that prove one mod can consume another's published API (ModApiTests). This host must not reference
+       their API, so each mod folder in test-mods/ carries its own copy and the loader has to share one. -->
+  <ItemGroup>
+    <ProjectReference Include="../TestMods/ApiProvider/Ariel.TestMods.ApiProvider.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <Target Name="CopyTestMods" AfterTargets="Build">
+    <ItemGroup>
+      <_TestMod Include="ApiProvider;ApiConsumer" />
+      <_TestModFile Include="../TestMods/%(_TestMod.Identity)/bin/$(Configuration)/net10.0/Ariel.TestMods.*.dll" ModDir="%(_TestMod.Identity)" />
+      <_TestModFile Include="../TestMods/%(_TestMod.Identity)/mod.json" ModDir="%(_TestMod.Identity)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_TestModFile)" DestinationFiles="@(_TestModFile->'$(OutDir)test-mods/%(ModDir)/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

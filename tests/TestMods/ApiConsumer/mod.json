@@ -1,0 +1,6 @@
+{
+  "id": "apiconsumer",
+  "name": "API Consumer",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.ApiConsumer.dll"
+}

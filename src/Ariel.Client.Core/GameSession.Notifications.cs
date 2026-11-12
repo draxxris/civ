@@ -1,5 +1,7 @@
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
+using Ariel.Mods.Corporations;
+using Ariel.Mods.Events;
 
 namespace Ariel.Client;
 
@@ -63,7 +65,7 @@ public sealed partial class GameSession
     private string CityName(int id) => Sim.State.FindCity(id)?.Name ?? "a city";
     private bool Mine(int city) => Sim.State.FindCity(city)?.Owner == LocalPlayer;
     private string ReligionName(string id) => Sim.Content.TryGet<Schema.ReligionDef>(id, out var r) ? r.Name : Labels.Humanize(id);
-    private string CorporationName(string id) => Sim.Content.TryGet<Schema.CorporationDef>(id, out var c) ? c.Name : Labels.Humanize(id);
+    private string CorporationName(string id) => Sim.Content.TryGet<CorporationDef>(id, out var c) ? c.Name : Labels.Humanize(id);
     private static TurnNotification Note(int turn, string kind, string text, int? city = null, Hex? at = null) => new(turn, kind, text, city, at);
 
     private TurnNotification? Describe(DomainEvent e, int turn)
@@ -108,10 +110,10 @@ public sealed partial class GameSession
             case EspionageMissionResult m when m.Unit >= 0 && (_myUnits.Contains(m.Unit) || Mine(m.City)):
                 return Note(turn, "espionage", $"Spy mission {Labels.Humanize(m.Mission.ToString())} in {CityName(m.City)} {(m.Success ? "succeeded" : "failed")}", m.City);
             case EventTriggered t when t.Player == LocalPlayer:
-                return Note(turn, "event", $"Event: {(Sim.Content.TryGet<Schema.EventTriggerDef>(t.Trigger, out var trigger) ? trigger.Name : Labels.Humanize(t.Trigger))}",
+                return Note(turn, "event", $"Event: {(Sim.Content.TryGet<EventTriggerDef>(t.Trigger, out var trigger) ? trigger.Name : Labels.Humanize(t.Trigger))}",
                     t.City >= 0 ? t.City : null);
             case EventResolved r when r.Player == LocalPlayer:
-                return Note(turn, "event", $"{(Sim.Content.TryGet<Schema.EventTriggerDef>(r.Trigger, out var resolved) ? resolved.Name : Labels.Humanize(r.Trigger))} resolved"
+                return Note(turn, "event", $"{(Sim.Content.TryGet<EventTriggerDef>(r.Trigger, out var resolved) ? resolved.Name : Labels.Humanize(r.Trigger))} resolved"
                     + (r.Automatic ? " automatically" : ""));
             case ProjectCompleted p when p.Player == LocalPlayer || p.Team == MyTeam.Id:
                 return Note(turn, "project", $"{CityName(p.City)} completed {(Sim.Content.TryGet<Schema.ProjectDef>(p.Project, out var project) ? project.Name : Labels.Humanize(p.Project))}", p.City);

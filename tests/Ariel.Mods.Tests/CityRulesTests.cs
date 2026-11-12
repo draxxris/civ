@@ -1631,7 +1631,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         best.Culture = 40;
         best.Extensions.Set(sim.Content, new GreatPeopleCityState { SettledSpecialists = new() { ["foundation:specialist_citizen"] = 2 } });
         best.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(sim.Content.Get<S.ReligionDef>().All.Take(2).Select(r => r.Id)) });
-        best.Extensions.Set(sim.Content, new CorporationCityState { Corporations = new(sim.Content.Get<S.CorporationDef>().All.Take(2).Select(r => r.Id)) });
+        best.Extensions.Set(sim.Content, new Ariel.Mods.Corporations.CorporationCityState { Corporations = new(sim.Content.Get<Ariel.Mods.Corporations.CorporationDef>().All.Take(2).Select(r => r.Id)) });
         first.Buildings.Add("conquest:benchmark");
         sim.State.PlotAt(first.Position).Culture[1] = 100;
         sim.State.PlotAt(best.Position).Culture[1] = 100;
@@ -1643,7 +1643,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         best.Buildings.Clear(); first.Buildings.Clear(); best.Culture = 0;
         best.Extensions.Set(sim.Content, new GreatPeopleCityState());
         best.Extensions.Set(sim.Content, new ReligionCityState());
-        best.Extensions.Set(sim.Content, new CorporationCityState());
+        best.Extensions.Set(sim.Content, new Ariel.Mods.Corporations.CorporationCityState());
         var sacrificial = P7ModFixture.City(sim, 90, owner: 1);
         Service<ICityCaptureService>(sim).Raze(sim, sacrificial.Id);
         Assert.Contains("conquest:palace", first.Buildings);

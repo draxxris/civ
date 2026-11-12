@@ -5,7 +5,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static Ariel.Mods.Tests.AiBindings;
 using TechDef = Ariel.Content.Schema.TechDef;
-using CorporationDef = Ariel.Content.Schema.CorporationDef;
+using Ariel.Mods.Corporations;
 
 namespace Ariel.Mods.Tests;
 

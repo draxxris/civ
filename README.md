@@ -34,8 +34,11 @@ Headless on Linux: `xvfb-run` plus software GL
 (`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Ariel.Godot`).
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user
-data folder. Mod DLLs reference only `Ariel.Core`, never Godot types; visuals ship as
-data (`.pck` packs, plain assets). AI players implement `IPlayerAI`.
+data folder. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules` and other mods' published
+API assemblies, never Godot types; visuals ship as data (`.pck` packs, plain assets). AI
+players implement `IPlayerAI`. A mod publishes an API for other mods by shipping an
+assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`;
+see "Mod APIs" in [docs/DESIGN.md](docs/DESIGN.md).
 
 ### User data migration and compatibility
 
