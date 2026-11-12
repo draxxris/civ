@@ -14,7 +14,7 @@ public sealed class EspionageRulesTests
     }
     private static void Fund(Simulation sim, int team = 0, int target = 1, long points = 100000) => TeamState(sim, team).Points[target] = points;
     private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "military:spy");
-    private static ExecuteEspionageMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => new() { Player = spy.Owner, Unit = spy.Id, City = city.Id, Mission = mission, Tech = tech };
+    private static PerformMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => EspionageMissions.Order(spy.Owner, spy.Id, mission, tech);
 
     [Fact]
     public void Commerce_is_allocated_only_to_known_teams_and_weights_conserve_points_across_save_load()
@@ -175,8 +175,8 @@ public sealed class EspionageRulesTests
         Assert.Contains("points", P6RulesScenario.Reject(sim, command)); Fund(sim);
         spy.MovesLeft = 0; Assert.Contains("moves", P6RulesScenario.Reject(sim, command)); spy.MovesLeft = 60;
         sim.State.MoveUnit(spy.Id, sim.State.Cities[0].Position);
-        Assert.Contains("target city", P6RulesScenario.Reject(sim, command));
-        Assert.Contains("rival", P6RulesScenario.Reject(sim, Mission(spy, sim.State.Cities[0], EspionageMissionKind.StealTreasury)));
+        // A mission acts on the city the spy stands in, so the same order is now aimed at its own city.
+        Assert.Contains("rival", P6RulesScenario.Reject(sim, command));
         sim.State.MoveUnit(spy.Id, city.Position);
         Assert.Contains("production", P6RulesScenario.Reject(sim, Mission(spy, city, EspionageMissionKind.SabotageProduction)));
         Assert.Contains("Choose", P6RulesScenario.Reject(sim, Mission(spy, city, EspionageMissionKind.StealTech)));
@@ -203,7 +203,7 @@ public sealed class EspionageRulesTests
         long ownerGold = sim.State.PlayerById(0).Treasury, victimGold = sim.State.PlayerById(1).Treasury;
         int unhappy = P6RulesScenario.Service<ICityWellbeingService>(sim).Calculate(sim, city.Id).Unhappy;
         var command = Mission(spy, city, mission, mission == EspionageMissionKind.StealTech ? tech : null);
-        long cost = Spies(sim).MissionCost(sim, 0, city.Id, mission, command.Tech);
+        long cost = Spies(sim).MissionCost(sim, 0, city.Id, mission, command.Subject.Length == 0 ? null : command.Subject);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         P6RulesScenario.Apply(sim, command); P6RulesScenario.Apply(loaded, command);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
@@ -248,7 +248,7 @@ public sealed class EspionageRulesTests
         {
             var spy = Spy(sim); var command = Mission(spy, city, mission);
             long gold = sim.State.PlayerById(1).Treasury, points = Spies(sim).Points(sim, 0, 1);
-            long cost = Spies(sim).MissionCost(sim, 0, city.Id, command.Mission);
+            long cost = Spies(sim).MissionCost(sim, 0, city.Id, mission);
             var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
             P6RulesScenario.Apply(sim, command); P6RulesScenario.Apply(loaded, command);
             Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
@@ -277,7 +277,7 @@ public sealed class EspionageRulesTests
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
         var spy = P6RulesScenario.AddUnit(sim, 0, city, "military:spy");
         var command = Mission(spy, city, EspionageMissionKind.CounterEspionage);
-        Assert.Equal(cost, Spies(sim).MissionCost(sim, 0, city.Id, command.Mission));
+        Assert.Equal(cost, Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.CounterEspionage));
         int expires = sim.State.Turn + duration;
         P6RulesScenario.Apply(sim, command);
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
@@ -290,7 +290,7 @@ public sealed class EspionageRulesTests
         sim.TeamOf(0).Members.Add(2); sim.State.RebuildIndexes();
         P6RulesScenario.AddCity(sim, 2, 18);
         var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "military:spy");
-        var repeat = Mission(teammateSpy, city, command.Mission);
+        var repeat = Mission(teammateSpy, city, EspionageMissionKind.CounterEspionage);
         Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
         var loaded = SaveGame.Load(content, SaveGame.Save(sim));
         Assert.Equal(new CounterEspionageEffect(expires, 200), Spies(loaded).CounterEspionage(loaded, 0, 1));

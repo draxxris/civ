@@ -22,7 +22,8 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
-        context.RegisterCommand<FoundCorporationCommand>("found_corporation");
+        context.RegisterService<IMission>("found", new FoundCorporationMission(service));
+        context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));

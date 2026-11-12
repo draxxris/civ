@@ -284,8 +284,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var team = new EspionageTeamState(); team.Points[1] = 1000;
         sim.State.TeamById(0).Extensions.Set(sim.Content, team);
         var before = city.Extensions.Get<RevolutionCityState>(sim.Content)?.InstabilityIndex ?? 0;
-        Assert.True(sim.TryApply(new ExecuteEspionageMissionCommand
-            { Player = 0, Unit = spy.Id, City = city.Id, Mission = EspionageMissionKind.InciteRevolt }, out var error), error);
+        Assert.True(sim.TryApply(EspionageMissions.Order(0, spy.Id, EspionageMissionKind.InciteRevolt), out var error), error);
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
         // The Revolution mod's incite raises the city's instability as well as causing disorder.
         Assert.True((city.Extensions.Get<RevolutionCityState>(sim.Content)?.InstabilityIndex ?? 0) > before);

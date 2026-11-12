@@ -83,9 +83,9 @@ public sealed class ClientIntelligenceEventsTests
         Assert.Empty(session.DescribeCity(city)!.Corporations);
 
         var unit = AddUnit(session.Sim, city, great);
-        Assert.Contains(session.UnitActions(unit, session.DefOf(unit)), a => a.Id == "found_corp:" + corporation);
+        Assert.Contains(session.UnitActions(unit, session.DefOf(unit)), a => a.Id == "corporations:found:" + corporation);
         session.SelectUnit(unit.Id);
-        session.RunAction("found_corp:" + corporation);
+        session.RunAction("corporations:found:" + corporation);
 
         var row = session.DescribeCorporations().Corporations.Single(c => c.Id == corporation);
         Assert.True(row.Founded); Assert.Equal(city.Id, row.Headquarters); Assert.Equal(1, row.Branches); Assert.Equal(city.Name, row.HeadquartersName);
@@ -96,7 +96,7 @@ public sealed class ClientIntelligenceEventsTests
 
         var other = AddCity(session.Sim, 0, 18);
         var executive = AddUnit(session.Sim, other, session.Sim.Content.Get<S.UnitDef>().All.First(u => u.Id.Contains("executive")).Id);
-        var spread = session.UnitActions(executive, session.DefOf(executive)).Where(a => a.Id.StartsWith("spread_corp:", StringComparison.Ordinal)).ToList();
+        var spread = session.UnitActions(executive, session.DefOf(executive)).Where(a => a.Id.StartsWith("corporations:spread:", StringComparison.Ordinal)).ToList();
         Assert.All(spread, a => Assert.NotNull(a.Command));
     }
 
@@ -153,11 +153,11 @@ public sealed class ClientIntelligenceEventsTests
         state.Points[1] = 100000;
         session.MyTeam.Extensions.Set(session.Sim.Content, state);
         var spy = AddUnit(session.Sim, target, session.Sim.Content.Get<S.UnitDef>().All.First(u => u.Id.EndsWith(":spy", StringComparison.Ordinal)).Id, 0);
-        var actions = session.UnitActions(spy, session.DefOf(spy)).Where(a => a.Id.StartsWith("spy:", StringComparison.Ordinal)).ToList();
+        var actions = session.UnitActions(spy, session.DefOf(spy)).Where(a => a.Id.StartsWith("espionage:", StringComparison.Ordinal)).ToList();
         Assert.NotEmpty(actions);
-        Assert.All(actions, a => { Assert.EndsWith(":" + target.Id, a.Id); Assert.IsType<ExecuteEspionageMissionCommand>(a.Command); });
+        Assert.All(actions, a => Assert.IsType<PerformMissionCommand>(a.Command));
         var home = AddUnit(session.Sim, session.Sim.State.Cities.First(c => c.Owner == 0), spy.Type, 0);
-        Assert.DoesNotContain(session.UnitActions(home, session.DefOf(home)), a => a.Id.StartsWith("spy:", StringComparison.Ordinal));
+        Assert.DoesNotContain(session.UnitActions(home, session.DefOf(home)), a => a.Id.StartsWith("espionage:", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -286,8 +286,7 @@ public sealed class ClientIntelligenceEventsTests
         Assert.NotNull(Assert.Single(unlocked.Cities!).Details);
         Assert.True(unlocked.Spending > 0);
         Assert.Null(unlocked.ProtectionAgainstRival); Assert.Null(unlocked.RivalProtection);
-        Assert.True(sim.TryApply(new ExecuteEspionageMissionCommand
-            { Player = 0, Unit = spy.Id, City = target.Id, Mission = EspionageMissionKind.CounterEspionage }, out var error), error);
+        Assert.True(sim.TryApply(EspionageMissions.Order(0, spy.Id, EspionageMissionKind.CounterEspionage), out var error), error);
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
         var refreshed = session.DescribeRivalIntelligence(1)!;
         Assert.Equal(50, refreshed.Points); // Flat 100 points at a 50% ratio.

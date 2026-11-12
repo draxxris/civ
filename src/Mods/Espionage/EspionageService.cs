@@ -6,14 +6,12 @@ internal sealed class EspionageService : IEspionageService
 {
     /// <summary>Missions are their own class with this service as a dependency, not a second half of it.</summary>
     private readonly SpyMissionRules missions;
+    /// <summary>The mission rules, for the mission kinds the mod registers.</summary>
+    internal SpyMissionRules Missions => missions;
     public EspionageService() => missions = new(this);
 
     public long MissionCost(Simulation sim, int player, int city, EspionageMissionKind mission, string? tech = null) =>
         missions.MissionCost(sim, player, city, mission, tech);
-    public string? ValidateMission(Simulation sim, int player, int unit, int city, EspionageMissionKind mission, string? tech = null) =>
-        missions.ValidateMission(sim, player, unit, city, mission, tech);
-    public void ExecuteMission(Simulation sim, int player, int unit, int city, EspionageMissionKind mission, string? tech = null) =>
-        missions.ExecuteMission(sim, player, unit, city, mission, tech);
     public IReadOnlyList<string> StealableTechnologies(Simulation sim, int player, int city) =>
         missions.StealableTechnologies(sim, player, city);
 

@@ -409,7 +409,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
                 sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
                 sim.State.PlayerById(0).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = "religion:buddhism" });
                 city.Extensions.Set(sim.Content, new ReligionCityState { Religions = ["religion:buddhism", "religion:hinduism"] });
-                Dispatch<PerformInquisitionCommand>(session, person); Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
+                Dispatch(session, person, ReligionMissions.Inquisition); Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
                 break;
         }
         Assert.Null(sim.State.FindUnit(person.Id));

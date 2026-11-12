@@ -130,8 +130,7 @@ public sealed class FeatureIntegrationReplayTests
         var target = sim.State.Cities.Single(c => c.Owner == 1);
         var defender = P6RulesScenario.AddUnit(sim, 1, home, "military:spy");
         Assert.NotNull(new GameSession(sim).DescribeRivalIntelligence(1)!.Research);
-        Apply(sim, new ExecuteEspionageMissionCommand
-            { Player = 1, Unit = defender.Id, City = home.Id, Mission = EspionageMissionKind.CounterEspionage });
+        Apply(sim, EspionageMissions.Order(1, defender.Id, EspionageMissionKind.CounterEspionage));
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
         Assert.Equal(300, Service<IEspionageService>(sim).Points(sim, 1, 0)); // 100 flat, neutral ratio
         int expiry = sim.State.Turn + 8;
@@ -152,8 +151,7 @@ public sealed class FeatureIntegrationReplayTests
                 if (game.State.Turn != expiry - 1) continue;
                 var spy = P6RulesScenario.AddUnit(game, 0, game.State.CityById(target.Id), "military:spy");
                 long victim = game.State.PlayerById(1).Treasury, own = game.State.PlayerById(0).Treasury;
-                Apply(game, new ExecuteEspionageMissionCommand
-                    { Player = 0, Unit = spy.Id, City = target.Id, Mission = EspionageMissionKind.StealTreasury });
+                Apply(game, EspionageMissions.Order(0, spy.Id, EspionageMissionKind.StealTreasury));
                 Assert.True(game.Events.Published.OfType<EspionageMissionResult>().Last().Success);
                 Assert.Equal(own + victim / 4, game.State.PlayerById(0).Treasury);
                 Assert.Equal(victim - victim / 4, game.State.PlayerById(1).Treasury);
@@ -203,13 +201,11 @@ public sealed class FeatureIntegrationReplayTests
         Assert.Equal(rng, sim.Rng.State);
         Assert.Empty(Service<IDiplomacyService>(sim).Deals(sim));
         Assert.DoesNotContain(Agriculture, sim.TeamOf(0).Techs);
-        Assert.Contains("prerequisites", P6RulesScenario.Reject(sim, new ExecuteEspionageMissionCommand
-            { Player = 0, Unit = spy.Id, City = target.Id, Mission = EspionageMissionKind.StealTech, Tech = "research:assembly_line" }));
+        Assert.Contains("prerequisites", P6RulesScenario.Reject(sim, EspionageMissions.Order(0, spy.Id, EspionageMissionKind.StealTech, "research:assembly_line")));
         var resumed = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         foreach (var game in new[] { sim, resumed })
         {
-            Apply(game, new ExecuteEspionageMissionCommand
-                { Player = 0, Unit = spy.Id, City = target.Id, Mission = EspionageMissionKind.StealTech, Tech = Agriculture });
+            Apply(game, EspionageMissions.Order(0, spy.Id, EspionageMissionKind.StealTech, Agriculture));
             Assert.True(game.Events.Published.OfType<EspionageMissionResult>().Single().Success);
             Assert.Contains(Agriculture, game.TeamOf(0).Techs);
             Assert.DoesNotContain("research:assembly_line", game.TeamOf(0).Techs);

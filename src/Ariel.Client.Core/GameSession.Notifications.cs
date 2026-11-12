@@ -89,8 +89,8 @@ public sealed partial class GameSession
             case StateReligionChanged s:
                 return Note(turn, "religion", s.Religion == null ? $"{PlayerName(s.Player)} no longer has a state religion"
                     : $"{PlayerName(s.Player)} adopted {ReligionName(s.Religion)}");
-            case MissionaryAttempt m when _myUnits.Contains(m.Unit) || Mine(m.City):
-                return Note(turn, "religion", $"Missionary {(m.Success ? "spread" : "failed to spread")} {ReligionName(m.Religion)} in {CityName(m.City)}", m.City);
+            case MissionResolved { Mission: ReligionMissions.Spread } m when _myUnits.Contains(m.Unit) || Mine(m.City):
+                return Note(turn, "religion", $"Missionary {(m.Success ? "spread" : "failed to spread")} {ReligionName(m.Subject)} in {CityName(m.City)}", m.City);
             case CityCaptured c when c.Player == LocalPlayer || c.PreviousOwner == LocalPlayer:
                 return Note(turn, "city", c.Player == LocalPlayer ? $"Captured {CityName(c.City)}" : $"{CityName(c.City)} was captured", c.City);
             case CityRazed c when c.Player == LocalPlayer:

@@ -3,44 +3,42 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.Religion;
 
-internal sealed partial class ReligionService
+/// <summary>A missionary tries to bring its religion to the city it stands in, and is spent either way.</summary>
+internal sealed class SpreadReligionMission : IMission
 {
-    public string? ValidateMissionary(Simulation sim, int player, int unitId, string religion)
+    public string Id => ReligionMissions.Spread;
+
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city)
     {
-        var unit = sim.State.FindUnit(unitId);
-        if (unit is null || unit.Owner != player) return "Not your missionary";
-        if (unit.MovesLeft <= 0) return "No moves left";
-        if (!sim.Content.TryGet<S.ReligionDef>(religion, out _)) return "Unknown religion";
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
-        if (def.DefaultUnitAi != ReligionData.MissionaryUnitAi || def.ReligionSpreads.GetValueOrDefault(religion) <= 0)
+        return def.DefaultUnitAi != ReligionData.MissionaryUnitAi ? []
+            : def.ReligionSpreads.Where(p => p.Value > 0).Select(p => p.Key).Order(StringComparer.Ordinal);
+    }
+
+    public string Label(Simulation sim, string subject) => "Spread " + sim.Content.Get<S.ReligionDef>(subject).Name;
+
+    public string? Validate(Simulation sim, MissionOrder order)
+    {
+        if (!sim.Content.TryGet<S.ReligionDef>(order.Subject, out _)) return "Unknown religion";
+        var def = sim.Content.Get<S.UnitDef>(order.Unit.Type);
+        if (def.DefaultUnitAi != ReligionData.MissionaryUnitAi || def.ReligionSpreads.GetValueOrDefault(order.Subject) <= 0)
             return "Unit cannot spread this religion";
-        var city = sim.State.CityAt(unit.Position);
-        if (city is null) return "Missionary must be in a city";
-        if (ReligionData.Has(sim, city, religion)) return "Religion is already present";
-        if (ForeignSpreadBlocked(sim, player, city, religion)) return "Foreign civics prohibit this religion";
-        return null;
+        if (ReligionData.Has(sim, order.City, order.Subject)) return "Religion is already present";
+        bool foreign = sim.TeamOf(order.City.Owner).Id != sim.TeamOf(order.Player).Id;
+        return foreign && ReligionData.BlocksSpread(sim, order.City, order.Subject) ? "Foreign civics prohibit this religion" : null;
     }
-    private static bool ForeignSpreadBlocked(Simulation sim, int player, City city, string religion) =>
-        sim.TeamOf(city.Owner).Id != sim.TeamOf(player).Id && ReligionData.BlocksSpread(sim, city, religion);
-    public int MissionaryChance(Simulation sim, int unitId, string religion)
+
+    public MissionTerms Terms(Simulation sim, MissionOrder order)
     {
-        var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position);
-        if (city is null) return 0;
-        int probability = sim.Content.Get<S.UnitDef>(unit.Type).ReligionSpreads.GetValueOrDefault(religion);
-        if (sim.TeamOf(city.Owner).Id != sim.TeamOf(unit.Owner).Id) probability /= 2;
+        int probability = sim.Content.Get<S.UnitDef>(order.Unit.Type).ReligionSpreads.GetValueOrDefault(order.Subject);
+        if (sim.TeamOf(order.City.Owner).Id != sim.TeamOf(order.Unit.Owner).Id) probability /= 2;
         int religions = sim.Content.Get<S.ReligionDef>().Count;
-        probability += (religions - ReligionData.Present(sim, city).Count) * (100 - probability) / Math.Max(1, religions);
-        return Math.Clamp(probability, 0, 100);
+        probability += (religions - ReligionData.Present(sim, order.City).Count) * (100 - probability) / Math.Max(1, religions);
+        return new(Chance: Math.Clamp(probability, 0, 100));
     }
-    public void SpreadMissionary(Simulation sim, int unitId, string religion)
+
+    public void Resolve(Simulation sim, MissionOrder order, bool success)
     {
-        var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Missionary is not in a city");
-        bool success = sim.Rng.Next(100) < MissionaryChance(sim, unitId, religion);
-        if (success) ReligionData.Add(sim, city, religion);
-        sim.Events.Publish(new MissionaryAttempt(unit.Id, city.Id, religion, success));
-        sim.State.RemoveUnit(unitId);
-        sim.Rules().Visibility?.Recompute(sim);
+        if (success) ReligionData.Add(sim, order.City, order.Subject);
     }
 }

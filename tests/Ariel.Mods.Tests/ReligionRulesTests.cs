@@ -54,7 +54,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     private static void Spread(Simulation sim, City city, string religion = Buddhism, string type = "military:buddhist_missionary")
     {
         var unit = Missionary(sim, city, city.Owner, type);
-        Assert.True(sim.TryApply(new SpreadReligionCommand { Player = city.Owner, Unit = unit.Id, Religion = religion }, out var error), error);
+        Assert.True(sim.TryApply(new PerformMissionCommand { Player = city.Owner, Unit = unit.Id, Mission = ReligionMissions.Spread, Subject = religion }, out var error), error);
     }
     private static void Presence(Simulation sim, City city, params string[] religions) =>
         city.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(religions, StringComparer.Ordinal) });
@@ -107,6 +107,10 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         if (multiple) Assert.Contains("religion:hinduism", religion.Present(sim, foreign.Id));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
+
+    /// <summary>The inquisitor's chance where it stands, or zero when it cannot hold an inquisition there.</summary>
+    private static int InquisitionChance(Simulation sim, Unit inquisitor) =>
+        sim.Rules().Missions.Terms(sim, inquisitor.Owner, inquisitor.Id, ReligionMissions.Inquisition, "")?.Chance ?? 0;
 
     [Fact]
     public void A_trade_route_carries_natural_spread_to_a_city_that_cannot_see_its_way_back()
@@ -227,7 +231,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var result = Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:unit", "military:inquisitor");
         Assert.Equal(enabled, result.Success);
         var unit = Missionary(sim, city, type: "military:inquisitor");
-        var command = new PerformInquisitionCommand { Player = 0, Unit = unit.Id };
+        var command = new PerformMissionCommand { Player = 0, Unit = unit.Id, Mission = ReligionMissions.Inquisition };
         Assert.Equal(enabled, command.Validate(sim) is null);
         if (!enabled)
         {
@@ -262,18 +266,18 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         const string minority = "religion:hinduism";
         long treasury = sim.State.PlayerById(0).Treasury;
         var religion = Service<IReligionService>(sim);
-        Assert.Equal(holy ? 40 : 90, religion.InquisitionChance(sim, inquisitor.Id));
+        Assert.Equal(holy ? 40 : 90, InquisitionChance(sim, inquisitor));
         city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Add("religion:christianity");
-        Assert.Equal(holy ? 35 : 85, religion.InquisitionChance(sim, inquisitor.Id));
+        Assert.Equal(holy ? 35 : 85, InquisitionChance(sim, inquisitor));
         city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Remove("religion:christianity");
         while (true)
         {
             var (w, x, y, z) = sim.Rng.State;
-            if (DeterministicRng.Restore(w, x, y, z).Next(100) < religion.InquisitionChance(sim, inquisitor.Id)) break;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) < InquisitionChance(sim, inquisitor)) break;
             sim.Rng.NextUInt64();
         }
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        var command = new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id };
+        var command = new PerformMissionCommand { Player = 0, Unit = inquisitor.Id, Mission = ReligionMissions.Inquisition };
         Assert.True(sim.TryApply(command, out var error), error); Assert.True(loaded.TryApply(command, out error), error);
         var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
         Assert.True(attempt.Success); Assert.Equal([minority], attempt.RemovedReligions); Assert.True(attempt.CompensationGold > 0);
@@ -304,11 +308,11 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         while (true)
         {
             var (w, x, y, z) = sim.Rng.State;
-            if (DeterministicRng.Restore(w, x, y, z).Next(100) < religion.InquisitionChance(sim, inquisitor.Id)) break;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) < InquisitionChance(sim, inquisitor)) break;
             sim.Rng.NextUInt64();
         }
         long treasury = sim.State.PlayerById(0).Treasury;
-        Assert.True(sim.TryApply(new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id }, out var error), error);
+        Assert.True(sim.TryApply(new PerformMissionCommand { Player = 0, Unit = inquisitor.Id, Mission = ReligionMissions.Inquisition }, out var error), error);
         var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
         Assert.True(attempt.Success); Assert.True(attempt.CompensationGold > 0);
         Assert.Equal(treasury + attempt.CompensationGold, sim.State.PlayerById(0).Treasury);
@@ -325,12 +329,12 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         while (true)
         {
             var (w, x, y, z) = sim.Rng.State;
-            if (DeterministicRng.Restore(w, x, y, z).Next(100) >= religion.InquisitionChance(sim, inquisitor.Id)) break;
+            if (DeterministicRng.Restore(w, x, y, z).Next(100) >= InquisitionChance(sim, inquisitor)) break;
             sim.Rng.NextUInt64();
         }
         long gold = sim.State.PlayerById(0).Treasury;
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        var command = new PerformInquisitionCommand { Player = 0, Unit = inquisitor.Id };
+        var command = new PerformMissionCommand { Player = 0, Unit = inquisitor.Id, Mission = ReligionMissions.Inquisition };
         Assert.True(sim.TryApply(command, out var error), error); Assert.True(loaded.TryApply(command, out error), error);
         var attempt = Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());
         Assert.False(attempt.Success); Assert.Empty(attempt.RemovedReligions); Assert.Equal(0, attempt.CompensationGold);
@@ -462,17 +466,17 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = Scenario(); var domestic = City(sim, 0); var foreign = City(sim, 40, 1);
         sim.State.PlayerById(1).Civics["government:civicoption_religion"] = "government:intolerant";
         var unit = Missionary(sim, foreign);
-        var command = new SpreadReligionCommand { Player = 0, Unit = unit.Id, Religion = Buddhism };
+        var command = new PerformMissionCommand { Player = 0, Unit = unit.Id, Mission = ReligionMissions.Spread, Subject = Buddhism };
         var hash = sim.ComputeHash();
         Assert.False(sim.TryApply(command, out var error)); Assert.Contains("prohibit", error);
         Assert.Equal(hash, sim.ComputeHash());
         sim.State.MoveUnit(unit.Id, domestic.Position);
-        Assert.False(sim.TryApply(new SpreadReligionCommand { Player = 1, Unit = unit.Id, Religion = Buddhism }, out _));
-        Assert.Equal(100, Service<IReligionService>(sim).MissionaryChance(sim, unit.Id, Buddhism));
+        Assert.False(sim.TryApply(new PerformMissionCommand { Player = 1, Unit = unit.Id, Mission = ReligionMissions.Spread, Subject = Buddhism }, out _));
+        Assert.Equal(100, sim.Rules().Missions.Terms(sim, unit.Owner, unit.Id, ReligionMissions.Spread, Buddhism)!.Chance);
         Assert.True(sim.TryApply(command, out error), error);
         Assert.Null(sim.State.FindUnit(unit.Id));
         Assert.Contains(Buddhism, Service<IReligionService>(sim).Present(sim, domestic.Id));
-        Assert.Single(sim.Events.Published.OfType<MissionaryAttempt>(), e => e.Success);
+        Assert.Single(sim.Events.Published.OfType<MissionResolved>(), e => e.Mission == ReligionMissions.Spread && e.Success);
     }
     [Fact]
     public void Conversion_updates_happiness_production_and_commerce_ledgers_and_saves_anarchy()
@@ -520,7 +524,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Spread(sim, city);
         Assert.True(production.Validate(sim, city.Id, "cities:building", "cities:buddhist_temple").Success);
         var prophet = Missionary(sim, city, type: "military:prophet");
-        var shrine = new BuildShrineCommand { Player = 0, Unit = prophet.Id, Building = "cities:buddhist_shrine" };
+        var shrine = new PerformMissionCommand { Player = 0, Unit = prophet.Id, Mission = ReligionMissions.Shrine, Subject = "cities:buddhist_shrine" };
         Assert.False(sim.TryApply(shrine, out var shrineError)); Assert.Contains("holy city", shrineError);
         sim.State.MoveUnit(prophet.Id, holy.Position);
         Assert.True(sim.TryApply(shrine, out shrineError), shrineError);

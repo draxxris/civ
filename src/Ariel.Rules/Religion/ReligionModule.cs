@@ -24,9 +24,9 @@ public sealed class ReligionModule : IPreparableMod
         context.RegisterStateComponent<ReligionPlayerState>("player_state");
         context.RegisterStateComponent<ReligionGameState>("game_state");
         context.RegisterCommand<SetStateReligionCommand>("set_state_religion");
-        context.RegisterCommand<SpreadReligionCommand>("spread_religion");
-        context.RegisterCommand<BuildShrineCommand>("build_shrine");
-        context.RegisterCommand<PerformInquisitionCommand>("perform_inquisition");
+        context.RegisterService<IMission>("inquisition", new InquisitionMission(service));
+        context.RegisterService<IMission>("spread", new SpreadReligionMission());
+        context.RegisterService<IMission>("shrine", new ShrineMission(service));
         context.Subscribe<BuildingCompleted>("founding_wonder", ReligionFoundingRules.Completed);
         context.TurnSystems.Register(new ReligionTurns(service));
     }

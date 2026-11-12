@@ -32,35 +32,24 @@ internal sealed class SpyMissionRules(EspionageService service)
         ? sim.Rules().Research.CalculateCost(sim, sim.TeamOf(player).Id, tech).Cost
         : throw new ArgumentException("Technology theft requires a technology id", nameof(tech));
 
-    public string? ValidateMission(Simulation sim, int player, int unitId, int cityId, EspionageMissionKind mission, string? tech = null) =>
-        ValidateMissionCore(sim, player, unitId, cityId, mission, tech, out _);
-
-    /// <summary>Validate once and hand the priced mission to the caller, so a command pays for one cost calculation.</summary>
-    private string? ValidateMissionCore(Simulation sim, int player, int unitId, int cityId, EspionageMissionKind mission,
-        string? tech, out long cost)
+    /// <summary>Why a spy cannot run a mission in the city it stands in, or null. The base game has already checked
+    /// that the unit is the player's, alive and able to act.</summary>
+    public string? Validate(Simulation sim, MissionOrder order, EspionageMissionKind mission)
     {
-        cost = 0;
-        if (!Enum.IsDefined(mission)) return "Unknown espionage mission";
-        if (ValidateSpyLocation(sim, player, unitId, cityId) is { } locationError) return locationError;
-        var city = sim.State.CityById(cityId);
-        if (MissionAvailability(sim, player, city, mission, tech) is { } error) return error;
-        cost = MissionCost(sim, player, cityId, mission, tech);
-        if (service.Points(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id) < cost) return "Insufficient espionage points";
-        if (!sim.State.Cities.Any(c => c.Owner == player)) return "Requires a return city";
-        return null;
-    }
-
-    private static string? ValidateSpyLocation(Simulation sim, int player, int unitId, int cityId)
-    {
-        var unit = sim.State.FindUnit(unitId);
-        if (unit is null || unit.Owner != player || !sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Spy) return "Requires your spy unit";
-        if (unit.MovesLeft <= 0) return "No moves left";
-        var city = sim.State.FindCity(cityId);
-        if (city is null || city.Position != unit.Position) return "Spy must be in the target city";
+        var (player, city) = (order.Player, order.City);
+        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(order.Unit.Type).Spy) return "Requires your spy unit";
         if (sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id) return "Requires a rival city";
-        var diplomacy = sim.Rules().Diplomacy;
-        return diplomacy is not null && !diplomacy.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id) ? "Requires a known rival team" : null;
+        if (sim.Rules().Diplomacy is { } diplomacy && !diplomacy.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id))
+            return "Requires a known rival team";
+        string? tech = Tech(order);
+        if (MissionAvailability(sim, player, city, mission, tech) is { } error) return error;
+        if (service.Points(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id) < MissionCost(sim, player, city.Id, mission, tech))
+            return "Insufficient espionage points";
+        return sim.State.Cities.Any(c => c.Owner == player) ? null : "Requires a return city";
     }
+
+    /// <summary>The technology an order names, or null for a mission without one.</summary>
+    public static string? Tech(MissionOrder order) => order.Subject.Length == 0 ? null : order.Subject;
 
     private string? MissionAvailability(Simulation sim, int player, City city, EspionageMissionKind mission, string? tech) => mission switch
     {
@@ -94,28 +83,27 @@ internal sealed class SpyMissionRules(EspionageService service)
             .Where(tech => ValidateStolenTech(sim, player, target, tech) is null).ToArray();
     }
 
-    public void ExecuteMission(Simulation sim, int player, int unitId, int cityId, EspionageMissionKind mission, string? tech = null)
+    /// <summary>Pay for a valid mission and apply its rolled result. A spy that succeeds slips home; the base game
+    /// removes one that fails.</summary>
+    public void Resolve(Simulation sim, MissionOrder order, EspionageMissionKind mission, bool success)
     {
-        if (ValidateMissionCore(sim, player, unitId, cityId, mission, tech, out long cost) is { } error) throw new InvalidOperationException(error);
-        var city = sim.State.CityById(cityId);
-        int chance = service.SuccessChance(sim, player, cityId);
+        var (player, city, spy) = (order.Player, order.City, order.Unit);
+        string? tech = Tech(order);
+        long cost = MissionCost(sim, player, city.Id, mission, tech);
         var team = EspionageService.Edit(sim, sim.TeamOf(player).Id);
         int target = sim.TeamOf(city.Owner).Id;
         team.Points[target] = checked(team.Points[target] - cost);
-        bool success = sim.Rng.Next(100) < chance;
         if (success)
         {
             // A technology theft awards the technology's own research cost, priced once here.
             long effect = mission == EspionageMissionKind.StealTech ? ResearchCost(sim, player, tech) : cost;
-            ApplyEffect(sim, player, sim.State.UnitById(unitId), city, mission, tech, effect);
+            ApplyEffect(sim, player, spy, city, mission, tech, effect);
             // Nearest owned city: success is still a retreat, but not a free intercontinental extraction.
             var home = NearestOwnedCity(sim, player, city.Position);
-            sim.State.MoveUnit(unitId, home.Position);
-            sim.State.UnitById(unitId).MovesLeft = 0;
+            sim.State.MoveUnit(spy.Id, home.Position);
+            sim.State.UnitById(spy.Id).MovesLeft = 0;
         }
-        else sim.State.RemoveUnit(unitId);
-        sim.Events.Publish(new EspionageMissionResult(unitId, cityId, mission, success, cost, player));
-        sim.Rules().Visibility?.Recompute(sim);
+        sim.Events.Publish(new EspionageMissionResult(spy.Id, city.Id, mission, success, cost, player));
     }
 
     /// <summary>Nearest owned city by hex distance; ties go to the lower city id. Validation guarantees one exists.</summary>
@@ -186,4 +174,35 @@ internal sealed class SpyMissionRules(EspionageService service)
     {
         var state = city.Extensions.Get<EspionageCityState>(sim.Content) ?? new(); city.Extensions.Set(sim.Content, state); return state;
     }
+}
+
+/// <summary>One kind of spy mission. It costs espionage points against the city's team whether it works or not; a
+/// spy that fails is caught.</summary>
+internal sealed class SpyMission(EspionageService service, SpyMissionRules rules, EspionageMissionKind kind) : IMission
+{
+    public string Id => EspionageMissions.Of(kind);
+
+    /// <summary>A technology theft is chosen in the technology picker, which issues the order itself, so it is not
+    /// listed as one order per technology.</summary>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+        kind != EspionageMissionKind.StealTech && sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Spy ? [""] : [];
+
+    public string Label(Simulation sim, string subject) => kind switch
+    {
+        EspionageMissionKind.StealTreasury => "Steal treasury",
+        EspionageMissionKind.SabotageProduction => "Sabotage production",
+        EspionageMissionKind.InciteRevolt => "Incite revolt",
+        EspionageMissionKind.FomentUnhappiness => "Foment unhappiness",
+        EspionageMissionKind.CounterEspionage => "Counter-espionage",
+        _ => "Steal " + sim.Content.Get<TechDef>(subject).Name,
+    };
+
+    public string? Validate(Simulation sim, MissionOrder order) => rules.Validate(sim, order, kind);
+
+    public MissionTerms Terms(Simulation sim, MissionOrder order) => new(
+        service.SuccessChance(sim, order.Player, order.City.Id),
+        $"{rules.MissionCost(sim, order.Player, order.City.Id, kind, SpyMissionRules.Tech(order))} points",
+        MissionUnitFate.SpentOnFailure);
+
+    public void Resolve(Simulation sim, MissionOrder order, bool success) => rules.Resolve(sim, order, kind, success);
 }

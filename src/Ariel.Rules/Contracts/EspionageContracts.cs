@@ -82,8 +82,6 @@ public interface IEspionageService
     /// <summary>Active protection owned by defendingTeam against rivalTeam, or null at and after expiry.</summary>
     CounterEspionageEffect? CounterEspionage(Simulation sim, int defendingTeam, int rivalTeam);
     int SuccessChance(Simulation sim, int player, int city);
-    string? ValidateMission(Simulation sim, int player, int unit, int city, EspionageMissionKind mission, string? tech = null);
-    void ExecuteMission(Simulation sim, int player, int unit, int city, EspionageMissionKind mission, string? tech = null);
 }
 
 public sealed class SetEspionageWeightCommand : GameCommand
@@ -94,12 +92,23 @@ public sealed class SetEspionageWeightCommand : GameCommand
     public override void Apply(Simulation sim) => sim.Content.Services.Get<IEspionageService>().Single().SetWeight(sim, Player, TargetTeam, Weight);
 }
 
-public sealed class ExecuteEspionageMissionCommand : GameCommand
+/// <summary>The missions the Espionage mod registers, one per <see cref="EspionageMissionKind"/>. Only a technology
+/// theft has a subject: the technology to steal.</summary>
+public static class EspionageMissions
 {
-    public int Unit { get; init; }
-    public int City { get; init; }
-    public EspionageMissionKind Mission { get; init; }
-    public string? Tech { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IEspionageService>().Single().ValidateMission(sim, Player, Unit, City, Mission, Tech);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IEspionageService>().Single().ExecuteMission(sim, Player, Unit, City, Mission, Tech);
+    /// <summary>The mission id of a kind, such as "espionage:steal_treasury".</summary>
+    public static string Of(EspionageMissionKind kind) => kind switch
+    {
+        EspionageMissionKind.StealTreasury => "espionage:steal_treasury",
+        EspionageMissionKind.SabotageProduction => "espionage:sabotage_production",
+        EspionageMissionKind.InciteRevolt => "espionage:incite_revolt",
+        EspionageMissionKind.FomentUnhappiness => "espionage:foment_unhappiness",
+        EspionageMissionKind.StealTech => "espionage:steal_tech",
+        EspionageMissionKind.CounterEspionage => "espionage:counter_espionage",
+        _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+    };
+
+    /// <summary>The order for a spy to run a mission where it stands.</summary>
+    public static PerformMissionCommand Order(int player, int spy, EspionageMissionKind kind, string? tech = null) =>
+        new() { Player = player, Unit = spy, Mission = Of(kind), Subject = tech ?? "" };
 }

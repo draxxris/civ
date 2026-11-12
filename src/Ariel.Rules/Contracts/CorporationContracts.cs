@@ -32,23 +32,25 @@ public interface ICorporationService
     bool IsActive(Simulation sim, int city, string corporation);
     long ConsumedBonusCount(Simulation sim, int city, string corporation);
     long MaintenanceHundredths(Simulation sim, int city);
-    string? ValidateFound(Simulation sim, int player, int unit, string corporation);
-    void Found(Simulation sim, int player, int unit, string corporation);
-    string? ValidateSpread(Simulation sim, int player, int city, string corporation, int? unit = null);
-    void Spread(Simulation sim, int player, int city, string corporation, int? unit = null);
+    /// <summary>Why a player cannot pay to open a branch in one of its own cities without an executive, or null.</summary>
+    string? ValidateSpread(Simulation sim, int player, int city, string corporation);
+    /// <summary>Open a branch in an own city for the spread cost. An executive spreads through the
+    /// <see cref="CorporationMissions.Spread"/> mission instead, which also reaches foreign cities.</summary>
+    void Spread(Simulation sim, int player, int city, string corporation);
 }
-public sealed class FoundCorporationCommand : GameCommand
+/// <summary>The missions the Corporations mod registers. The subject of each is a corporation id.</summary>
+public static class CorporationMissions
 {
-    public int Unit { get; init; }
-    public string Corporation { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().ValidateFound(sim, Player, Unit, Corporation);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().Found(sim, Player, Unit, Corporation);
+    /// <summary>A great person founds a corporation, with its headquarters in the city.</summary>
+    public const string Found = "corporations:found";
+    /// <summary>An executive opens a branch in the city, own or foreign.</summary>
+    public const string Spread = "corporations:spread";
 }
+/// <summary>Pay to open a branch in one of the player's own cities, without an executive.</summary>
 public sealed class SpreadCorporationCommand : GameCommand
 {
     public int City { get; init; }
-    public int? Unit { get; init; }
     public string Corporation { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().ValidateSpread(sim, Player, City, Corporation, Unit);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().Spread(sim, Player, City, Corporation, Unit);
+    public override string? Validate(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().ValidateSpread(sim, Player, City, Corporation);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<ICorporationService>().Single().Spread(sim, Player, City, Corporation);
 }

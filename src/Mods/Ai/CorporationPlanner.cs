@@ -61,7 +61,7 @@ internal sealed class CorporationPlanner(AiContext ctx)
     private bool FoundHere(Unit unit, IEnumerable<CorporationDef> corporations)
     {
         foreach (var corporation in corporations)
-            if (ctx.Issue(new FoundCorporationCommand { Player = ctx.PlayerId, Unit = unit.Id, Corporation = corporation.Id })) return true;
+            if (ctx.Issue(new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = CorporationMissions.Found, Subject = corporation.Id })) return true;
         return false;
     }
 

@@ -76,16 +76,16 @@ public sealed class CorporationRulesTests
         sim.TeamOf(city.Owner).Techs.Add(def.FoundingTech!);
         P6RulesScenario.Resource(sim, city, "world:corn");
         var gp = P6RulesScenario.AddUnit(sim, city.Owner, city, def.RequiredGreatPersonClass);
-        P6RulesScenario.Apply(sim, new FoundCorporationCommand { Player = city.Owner, Unit = gp.Id, Corporation = corporation });
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = city.Owner, Unit = gp.Id, Mission = CorporationMissions.Found, Subject = corporation });
     }
     [Fact]
     public void Founding_requires_the_correct_unit_technology_and_connected_resource_and_is_unique()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         var wrong = P6RulesScenario.AddUnit(sim, 0, city, "military:scientist");
-        Assert.Contains("Great Person class", P6RulesScenario.Reject(sim, new FoundCorporationCommand { Player = 0, Unit = wrong.Id, Corporation = Cereal }));
+        Assert.Contains("Great Person class", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = wrong.Id, Mission = CorporationMissions.Found, Subject = Cereal }));
         var gp = P6RulesScenario.AddUnit(sim, 0, city, "military:merchant");
-        var command = new FoundCorporationCommand { Player = 0, Unit = gp.Id, Corporation = Cereal };
+        var command = new PerformMissionCommand { Player = 0, Unit = gp.Id, Mission = CorporationMissions.Found, Subject = Cereal };
         Assert.Contains("technology", P6RulesScenario.Reject(sim, command));
         sim.TeamOf(0).Techs.Add("research:refrigeration");
         Assert.Contains("resource", P6RulesScenario.Reject(sim, command));
@@ -95,7 +95,7 @@ public sealed class CorporationRulesTests
         Assert.Contains(Cereal, Corps(sim).Present(sim, city.Id));
         var rival = sim.State.Cities[2]; sim.TeamOf(1).Techs.Add("research:refrigeration"); P6RulesScenario.Resource(sim, rival, "world:corn");
         var rivalGp = P6RulesScenario.AddUnit(sim, 1, rival, "military:merchant");
-        Assert.Contains("already founded", P6RulesScenario.Reject(sim, new FoundCorporationCommand { Player = 1, Unit = rivalGp.Id, Corporation = Cereal }));
+        Assert.Contains("already founded", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 1, Unit = rivalGp.Id, Mission = CorporationMissions.Found, Subject = Cereal }));
         Assert.Single(sim.Events.Published.OfType<CorporationFounded>());
     }
     [Fact]
@@ -110,7 +110,7 @@ public sealed class CorporationRulesTests
         P6RulesScenario.Apply(sim, spread);
         Assert.Contains("executive", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Corporation = Cereal }));
         var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
-        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Unit = executive.Id, Corporation = Cereal });
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
         Assert.Null(sim.State.FindUnit(executive.Id)); Assert.Equal(initial - 200, sim.State.PlayerById(0).Treasury);
         var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq));
         Assert.Equal(12, effects.Ledger.Lines.Where(l => l.Source == Cereal + ":headquarters" && l.Key == "commerce.flat.gold").Sum(l => l.Amount));
@@ -153,14 +153,14 @@ public sealed class CorporationRulesTests
         P6RulesScenario.Resource(sim, branch, "world:corn");
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
         var unit = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_3");
-        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 1, City = branch.Id, Unit = unit.Id, Corporation = Ethanol });
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 1, Unit = unit.Id, Mission = CorporationMissions.Spread, Subject = Ethanol });
         Assert.DoesNotContain(Cereal, Corps(sim).Present(sim, branch.Id)); Assert.Contains(Ethanol, Corps(sim).Present(sim, branch.Id));
         // Displacement is silent in the rules, so it must at least be reported.
         Assert.Contains(sim.Events.Published.OfType<CorporationDisplaced>(),
             e => e.Corporation == Cereal && e.By == Ethanol && e.City == branch.Id);
         Assert.Equal(2, P6RulesScenario.Service<IPlayerEconomyService>(sim).CalculateCity(sim, branch.Id).Ledger.Lines.Single(l => l.Source == Ethanol && l.Key == "commerce.flat.research").Amount);
         var attacker = P6RulesScenario.AddUnit(sim, 1, hq, "military:executive_3");
-        Assert.Contains("headquarters", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 1, City = hq.Id, Unit = attacker.Id, Corporation = Ethanol }));
+        Assert.Contains("headquarters", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 1, Unit = attacker.Id, Mission = CorporationMissions.Spread, Subject = Ethanol }));
     }
     [Fact]
     public void Resource_copies_scale_output_and_maintenance_and_civics_suppress_without_erasing_presence()
@@ -188,7 +188,7 @@ public sealed class CorporationRulesTests
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var foreign = sim.State.Cities[2]; Found(sim, hq);
         P6RulesScenario.Resource(sim, foreign, "world:corn");
         var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
-        var command = new SpreadCorporationCommand { Player = 0, City = foreign.Id, Unit = executive.Id, Corporation = Cereal };
+        var command = new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal };
         sim.State.PlayerById(1).Civics["test"] = "government:mercantilism";
         Assert.Contains("Civics", P6RulesScenario.Reject(sim, command));
         sim.State.PlayerById(1).Civics.Clear(); P6RulesScenario.Apply(sim, command);
@@ -227,7 +227,7 @@ public sealed class CorporationRulesTests
         var extra = sim.State.Plots[tile.Value]; extra.Owner = 0; extra.Bonus = "world:corn";
         extra.Improvement = "world:improvement_improvement_farm"; extra.Route = "world:road";
         var executive = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_1");
-        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 1, City = branch.Id, Unit = executive.Id, Corporation = Cereal });
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 1, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
         var maintenance = P6RulesScenario.Service<ICityMaintenanceService>(sim);
         var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);
         branch.Buildings.Add("cities:palace"); // Enough commerce to cover the full corporate formula at zero treasury.

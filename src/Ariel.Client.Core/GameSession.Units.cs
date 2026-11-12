@@ -104,9 +104,6 @@ public sealed partial class GameSession
         actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));
         actions.AddRange(PromotionActions(unit));
-        actions.AddRange(ReligionActions(unit));
-        actions.AddRange(CorporationActions(unit));
-        actions.AddRange(SpyActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
     }
 

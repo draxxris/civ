@@ -74,7 +74,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
             if (def.GlobalReligionCommerce is not { } faith || city.Buildings.Contains(def.Id) || religion.HolyCity(ctx.Sim, faith) != city.Id) continue;
             var eligibility = ctx.Service<ICityProductionService>().Validate(ctx.Sim, city.Id, "cities:building", def.Id);
             if (eligibility.Failures.Any(f => !ProductionFailures.IsCostOnly(f))) continue;
-            yield return new(city.Position, new BuildShrineCommand { Player = ctx.PlayerId, Unit = unit.Id, Building = def.Id },
+            yield return new(city.Position, new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = ReligionMissions.Shrine, Subject = def.Id },
                 10000 + ctx.Sim.State.Cities.Count(c => religion.Present(ctx.Sim, c.Id).Contains(faith)), def.Id);
         }
     }

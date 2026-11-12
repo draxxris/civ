@@ -21,7 +21,9 @@ public sealed class EspionageMod : IPreparableMod
         context.RegisterStateComponent<EspionagePlayerState>("player_state");
         context.RegisterStateComponent<EspionageCityState>("city_state");
         context.RegisterCommand<SetEspionageWeightCommand>("set_weight");
-        context.RegisterCommand<ExecuteEspionageMissionCommand>("execute_mission");
+        // Registration order is the order a spy's panel lists them in.
+        foreach (var kind in EspionageMissionOrder.Display)
+            context.RegisterService<IMission>(EspionageMissions.Of(kind)["espionage:".Length..], new SpyMission(service, service.Missions, kind));
         // A conquest must not hand the previous owner's spy effects to the new owner.
         context.Subscribe<CityCaptured>("reset_capture", (sim, captured) =>
         {

@@ -79,34 +79,38 @@ internal sealed class CorporationService : ICorporationService
         long ratio = sim.State.PlayerById(player).Extensions.TryGet<EconomyPlayerState>(sim.Content)?.AccruedCostRatioTimes10000 ?? 10000;
         return (int)((ratio - 10000) / 100);
     }
-    public string? ValidateFound(Simulation sim, int player, int unitId, string corporation)
+    /// <summary>Whether a unit is the kind of great person that founds a corporation.</summary>
+    internal static bool Founds(Simulation sim, Unit unit, CorporationDef def) =>
+        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit == def.RequiredGreatPersonClass;
+    /// <summary>Whether a unit is an executive of a corporation.</summary>
+    internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) =>
+        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
+
+    internal string? ValidateFound(Simulation sim, MissionOrder order)
     {
-        if (!sim.Content.TryGet<CorporationDef>(corporation, out var def)) return "Unknown corporation";
-        var unit = sim.State.FindUnit(unitId);
-        if (unit is null || unit.Owner != player) return "Not your Great Person";
-        if (unit.MovesLeft <= 0) return "No moves left";
-        if (sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit != def.RequiredGreatPersonClass) return "Requires the correct Great Person class";
-        var city = sim.State.CityAt(unit.Position);
-        if (city is null || city.Owner != player) return "Great Person must be in your city";
-        if (IsFounded(sim, corporation)) return "Corporation is already founded";
-        if (def.FoundingTech is { } tech && !sim.KnowsTech(player, tech)) return "Requires technology: " + tech;
-        if (Blocked(sim, city, sim.TeamOf(player).Id)) return "Civics prohibit corporations";
-        if (ConsumedBonusCount(sim, city.Id, corporation) <= 0) return "Requires a connected corporation resource";
+        if (!sim.Content.TryGet<CorporationDef>(order.Subject, out var def)) return "Unknown corporation";
+        if (!Founds(sim, order.Unit, def)) return "Requires the correct Great Person class";
+        var city = order.City;
+        if (city.Owner != order.Player) return "Great Person must be in your city";
+        if (IsFounded(sim, def.Id)) return "Corporation is already founded";
+        if (def.FoundingTech is { } tech && !sim.KnowsTech(order.Player, tech)) return "Requires technology: " + tech;
+        if (Blocked(sim, city, sim.TeamOf(order.Player).Id)) return "Civics prohibit corporations";
+        if (ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
         return HeadquartersConflict(sim, city.Id, def);
     }
-    public void Found(Simulation sim, int player, int unit, string corporation)
+    internal void Found(Simulation sim, MissionOrder order)
     {
-        if (ValidateFound(sim, player, unit, corporation) is { } error) throw new InvalidOperationException(error);
-        var city = sim.State.CityAt(sim.State.UnitById(unit).Position)!;
         var state = Edit(sim);
         // A stale record whose headquarters city no longer exists is replaced rather than rejected by IsFounded.
-        state.Founded[corporation] = new(city.Id, sim.TeamOf(player).Id, sim.State.Turn);
-        Add(sim, city, sim.Content.Get<CorporationDef>(corporation));
-        sim.State.RemoveUnit(unit);
-        sim.Events.Publish(new CorporationFounded(corporation, city.Id, player));
-        sim.Rules().Visibility?.Recompute(sim);
+        state.Founded[order.Subject] = new(order.City.Id, sim.TeamOf(order.Player).Id, sim.State.Turn);
+        Add(sim, order.City, sim.Content.Get<CorporationDef>(order.Subject));
+        sim.Events.Publish(new CorporationFounded(order.Subject, order.City.Id, order.Player));
     }
-    public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation, int? unitId = null)
+    public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation) =>
+        ValidateSpread(sim, player, cityId, corporation, null);
+    /// <summary>One check for both ways to open a branch: paid for in an own city, or by an executive standing in
+    /// the city, which may be foreign.</summary>
+    internal string? ValidateSpread(Simulation sim, int player, int cityId, string corporation, Unit? executive)
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         if (!sim.Content.TryGet<CorporationDef>(corporation, out var def)) return "Unknown corporation";
@@ -116,7 +120,8 @@ internal sealed class CorporationService : ICorporationService
         // Cheap checks first: the branch scan and the connectivity queries are wasted on a player who cannot pay.
         if (sim.State.PlayerById(player).Treasury < def.SpreadCost) return "Insufficient gold";
         if (ValidateBranch(sim, player, city, corporation, record) is { } branchError) return branchError;
-        if (ValidateSpreadAgent(sim, player, city, def, unitId) is { } agentError) return agentError;
+        if (executive is null && city.Owner != player) return "Foreign spread requires an executive";
+        if (executive is not null && !Spreads(sim, executive, def)) return "Unit cannot spread this corporation";
         if (ConsumedBonusCount(sim, cityId, corporation) <= 0) return "Requires a connected corporation resource";
         return HeadquartersConflict(sim, cityId, def);
     }
@@ -126,23 +131,19 @@ internal sealed class CorporationService : ICorporationService
         if (Blocked(sim, city, HeadquartersTeam(sim, record))) return "Civics prohibit this corporation";
         return sim.State.Cities.Any(c => c.Owner == player && IsActive(sim, c.Id, corporation)) ? null : "Requires an active owned branch";
     }
-    private static string? ValidateSpreadAgent(Simulation sim, int player, City city, CorporationDef def, int? unitId)
+    public void Spread(Simulation sim, int player, int city, string corporation)
     {
-        if (unitId is not { } id) return city.Owner == player ? null : "Foreign spread requires an executive";
-        var unit = sim.State.FindUnit(id);
-        if (unit is null || unit.Owner != player || unit.Position != city.Position) return "Executive must be in the target city";
-        if (unit.MovesLeft <= 0) return "No moves left";
-        return sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).CorporationSpreads.GetValueOrDefault(def.Identity) > 0 ? null : "Unit cannot spread this corporation";
+        if (ValidateSpread(sim, player, city, corporation) is { } error) throw new InvalidOperationException(error);
+        OpenBranch(sim, player, sim.State.CityById(city), corporation);
+        sim.Rules().Visibility?.Recompute(sim);
     }
-    public void Spread(Simulation sim, int player, int city, string corporation, int? unit = null)
+    /// <summary>Charge the spread cost and open the branch; the caller has validated it.</summary>
+    internal void OpenBranch(Simulation sim, int player, City city, string corporation)
     {
-        if (ValidateSpread(sim, player, city, corporation, unit) is { } error) throw new InvalidOperationException(error);
         var def = sim.Content.Get<CorporationDef>(corporation);
         sim.State.PlayerById(player).Treasury -= def.SpreadCost;
-        Add(sim, sim.State.CityById(city), def);
-        if (unit is { } id) sim.State.RemoveUnit(id);
-        sim.Events.Publish(new CorporationSpread(corporation, city, player));
-        sim.Rules().Visibility?.Recompute(sim);
+        Add(sim, city, def);
+        sim.Events.Publish(new CorporationSpread(corporation, city.Id, player));
     }
     private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => corporation != incoming.Id && sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Intersect(incoming.PrereqBonuses, StringComparer.Ordinal).Any();
     private string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;

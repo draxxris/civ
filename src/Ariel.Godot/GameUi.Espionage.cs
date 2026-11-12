@@ -173,7 +173,7 @@ internal sealed partial class GameUi
 
     private void AddSelectedSpyActions(VBoxContainer box)
     {
-        var actions = _session.DescribeUnit(_session.Unit)?.Actions.Where(a => a.Id.StartsWith("spy:", StringComparison.Ordinal)).ToArray() ?? [];
+        var actions = _session.DescribeUnit(_session.Unit)?.Actions.Where(a => a.Id.StartsWith("espionage:", StringComparison.Ordinal)).ToArray() ?? [];
         box.AddChild(Ui.Text("Spy missions use the selected unit at its location, not the inspected city.", 12, Ui.Dim));
         var row = new HFlowContainer();
         foreach (var action in actions)

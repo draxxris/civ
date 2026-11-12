@@ -28,7 +28,6 @@ public sealed record ReligionSpread(string Religion, int City) : DomainEvent;
 public sealed record ReligionRemoved(string Religion, int City, string Reason) : DomainEvent;
 public sealed record InquisitionAttempt(int Unit, int City, int Player, bool Success, IReadOnlyList<string> RemovedReligions, long CompensationGold) : DomainEvent;
 public sealed record StateReligionChanged(int Player, string? Religion) : DomainEvent;
-public sealed record MissionaryAttempt(int Unit, int City, string Religion, bool Success) : DomainEvent;
 
 /// <summary>Core-only UI and AI hook. Queries never mutate state or consume RNG.</summary>
 public interface IReligionService
@@ -40,18 +39,10 @@ public interface IReligionService
     string? ValidateConversion(Simulation sim, int player, string? religion);
     ReligionConversion PreviewConversion(Simulation sim, int player);
     void Convert(Simulation sim, int player, string? religion);
-    string? ValidateMissionary(Simulation sim, int player, int unit, string religion);
-    int MissionaryChance(Simulation sim, int unit, string religion);
-    void SpreadMissionary(Simulation sim, int unit, string religion);
     ReligionSpreadOdds NaturalSpreadOdds(Simulation sim, int city, string religion);
     int DecayChancePermille(Simulation sim, int city, string religion);
     bool IsInquisitionEnabled(Simulation sim, int player);
     bool HasInquisitionTargets(Simulation sim, int city);
-    string? ValidateInquisition(Simulation sim, int player, int unit);
-    int InquisitionChance(Simulation sim, int unit);
-    void PerformInquisition(Simulation sim, int unit);
-    string? ValidateShrine(Simulation sim, int player, int unit, string building);
-    void BuildShrine(Simulation sim, int unit, string building);
     string? EvaluateCondition(Requirement.Leaf leaf, RequirementContext context);
     string? ValidateBuilding(Simulation sim, City city, BuildingDef building);
 }
@@ -61,23 +52,13 @@ public sealed class SetStateReligionCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateConversion(sim, Player, Religion);
     public override void Apply(Simulation sim) => sim.Rules().Religion.Convert(sim, Player, Religion);
 }
-public sealed class BuildShrineCommand : GameCommand
+/// <summary>The missions the Religion module registers.</summary>
+public static class ReligionMissions
 {
-    public int Unit { get; init; }
-    public string Building { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateShrine(sim, Player, Unit, Building);
-    public override void Apply(Simulation sim) => sim.Rules().Religion.BuildShrine(sim, Unit, Building);
-}
-public sealed class PerformInquisitionCommand : GameCommand
-{
-    public int Unit { get; init; }
-    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateInquisition(sim, Player, Unit);
-    public override void Apply(Simulation sim) => sim.Rules().Religion.PerformInquisition(sim, Unit);
-}
-public sealed class SpreadReligionCommand : GameCommand
-{
-    public int Unit { get; init; }
-    public string Religion { get; init; } = "";
-    public override string? Validate(Simulation sim) => sim.Rules().Religion.ValidateMissionary(sim, Player, Unit, Religion);
-    public override void Apply(Simulation sim) => sim.Rules().Religion.SpreadMissionary(sim, Unit, Religion);
+    /// <summary>A missionary tries to bring its religion to the city. The subject is the religion id.</summary>
+    public const string Spread = "religion:spread";
+    /// <summary>An inquisitor tries to remove every religion but the state religion from the city. No subject.</summary>
+    public const string Inquisition = "religion:inquisition";
+    /// <summary>A prophet builds a religion's shrine in its holy city. The subject is the building id.</summary>
+    public const string Shrine = "religion:shrine";
 }

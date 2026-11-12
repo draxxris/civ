@@ -107,36 +107,6 @@ public sealed partial class GameSession
         return Submit(new ChooseEventOptionCommand { Player = LocalPlayer, EventId = pending.Id, Option = optionId });
     }
 
-    private IEnumerable<UnitActionInfo> CorporationActions(Unit unit)
-    {
-        var service = OptionalService<ICorporationService>();
-        if (service == null || unit.MovesLeft <= 0 || !Registered<Schema.CorporationDef>()) yield break;
-        var city = Sim.State.CityAt(unit.Position);
-        foreach (var def in Sim.Content.Get<Schema.CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal))
-        {
-            var found = new FoundCorporationCommand { Player = LocalPlayer, Unit = unit.Id, Corporation = def.Id };
-            if (found.Validate(Sim) == null) yield return new("found_corp:" + def.Id, "Found " + def.Name, found, null, def.Help);
-            if (city == null) continue;
-            var spread = new SpreadCorporationCommand { Player = LocalPlayer, City = city.Id, Unit = unit.Id, Corporation = def.Id };
-            if (spread.Validate(Sim) == null) yield return new("spread_corp:" + def.Id, "Spread " + def.Name, spread, null, $"{def.SpreadCost} gold");
-        }
-    }
-
-    private IEnumerable<UnitActionInfo> SpyActions(Unit unit)
-    {
-        var service = OptionalService<IEspionageService>();
-        var city = Sim.State.CityAt(unit.Position);
-        if (service == null || city == null || city.Owner == LocalPlayer || unit.MovesLeft <= 0) yield break;
-        // Technology theft needs a target technology, so it is offered by the spy panel's picker, not as one-click action.
-        foreach (var kind in EspionageMissionOrder.Display.Where(k => k != EspionageMissionKind.StealTech))
-        {
-            var mission = new ExecuteEspionageMissionCommand { Player = LocalPlayer, Unit = unit.Id, City = city.Id, Mission = kind };
-            if (mission.Validate(Sim) != null) continue;
-            yield return new($"spy:{kind}:{city.Id}", Labels.Humanize(kind.ToString()), mission, null,
-                $"{service.MissionCost(Sim, LocalPlayer, city.Id, kind)} points, {service.SuccessChance(Sim, LocalPlayer, city.Id)}% chance");
-        }
-    }
-
     /// <summary>Technologies the selected spy could steal where it stands, cheapest mission first.</summary>
     public IReadOnlyList<RivalTechnology> StealableTechs(Unit? unit)
     {
@@ -157,7 +127,6 @@ public sealed partial class GameSession
             SetMessage("Select a spy in a rival city");
             return false;
         }
-        return Submit(new ExecuteEspionageMissionCommand
-            { Player = LocalPlayer, Unit = unit.Id, City = city.Id, Mission = EspionageMissionKind.StealTech, Tech = tech });
+        return Submit(EspionageMissions.Order(LocalPlayer, unit.Id, EspionageMissionKind.StealTech, tech));
     }
 }

@@ -36,6 +36,10 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
         context.RegisterService<ICombatService>("combat", new CombatService());
         context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
+        var missions = new MissionService();
+        context.RegisterService<IMissionService>("missions", missions);
+        context.RegisterService<IUnitActionSource>("missions", missions);
+        context.RegisterCommand<PerformMissionCommand>("perform_mission");
         context.RegisterService<IUnitService>("units", units);
         context.RegisterService<IBarbarianFaction>("barbarians", new BarbarianFaction());
         context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());

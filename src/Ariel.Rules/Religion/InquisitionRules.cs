@@ -17,36 +17,25 @@ internal sealed partial class ReligionService
         if (city is null || StateReligion(sim, city.Owner) is not { } state) return false;
         return ReligionData.Has(sim, city, state) && Present(sim, cityId).Any(r => r != state);
     }
-    public string? ValidateInquisition(Simulation sim, int player, int unitId)
+    internal string? ValidateInquisition(Simulation sim, MissionOrder order)
     {
-        var unit = sim.State.FindUnit(unitId);
-        if (unit is null || unit.Owner != player || unit.Health <= 0) return "Not your inquisitor";
-        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Inquisitor) return "Unit cannot perform an inquisition";
-        if (unit.MovesLeft <= 0) return "No moves left";
-        if (!IsInquisitionEnabled(sim, player)) return "Civics and state religion do not allow inquisitions";
-        var city = sim.State.CityAt(unit.Position);
-        return ValidateInquisitionCity(sim, player, city);
-    }
-    private string? ValidateInquisitionCity(Simulation sim, int player, City? city)
-    {
-        if (city is null || sim.TeamOf(city.Owner).Id != sim.TeamOf(player).Id) return "Inquisitor must be in a friendly city";
-        if (StateReligion(sim, city.Owner) != StateReligion(sim, player)) return "City owner must share your state religion";
+        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(order.Unit.Type).Inquisitor) return "Unit cannot perform an inquisition";
+        if (!IsInquisitionEnabled(sim, order.Player)) return "Civics and state religion do not allow inquisitions";
+        var city = order.City;
+        if (sim.TeamOf(city.Owner).Id != sim.TeamOf(order.Player).Id) return "Inquisitor must be in a friendly city";
+        if (StateReligion(sim, city.Owner) != StateReligion(sim, order.Player)) return "City owner must share your state religion";
         return HasInquisitionTargets(sim, city.Id) ? null : "No non-state religions to remove";
     }
-    public int InquisitionChance(Simulation sim, int unitId)
+    internal int InquisitionChance(Simulation sim, MissionOrder order)
     {
-        var unit = sim.State.FindUnit(unitId);
-        if (unit is null || ValidateInquisition(sim, unit.Owner, unitId) is not null) return 0;
-        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Inquisitor is not in a city");
-        var targets = Present(sim, city.Id).Where(r => r != StateReligion(sim, unit.Owner)).ToArray();
+        var city = order.City;
+        var targets = Present(sim, city.Id).Where(r => r != StateReligion(sim, order.Unit.Owner)).ToArray();
         int holy = targets.Any(r => HolyCity(sim, r) == city.Id) ? 50 : 0;
         return Math.Max(25, 95 - holy - 5 * targets.Length);
     }
-    public void PerformInquisition(Simulation sim, int unitId)
+    internal void ResolveInquisition(Simulation sim, MissionOrder order, bool success)
     {
-        var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position) ?? throw new InvalidOperationException("Inquisitor is not in a city");
-        bool success = sim.Rng.Next(100) < InquisitionChance(sim, unitId);
+        var (unit, city) = (order.Unit, order.City);
         string[] removed = [];
         long gold = 0;
         if (success)
@@ -57,9 +46,7 @@ internal sealed partial class ReligionService
             CompensateInquisition(sim, unit.Owner, city, gold);
         }
         AddInquisitionAnger(sim, city);
-        sim.Events.Publish(new InquisitionAttempt(unitId, city.Id, unit.Owner, success, removed, gold));
-        sim.State.RemoveUnit(unitId);
-        sim.Rules().Visibility?.Recompute(sim);
+        sim.Events.Publish(new InquisitionAttempt(unit.Id, city.Id, unit.Owner, success, removed, gold));
     }
     private long PurgeReligions(Simulation sim, City city, string[] religions)
     {
@@ -123,4 +110,17 @@ internal sealed partial class ReligionService
     }
     private bool OwnsHolyCity(Simulation sim, int player, string religion) =>
         HolyCity(sim, religion) is { } id && sim.State.FindCity(id)?.Owner == player;
+}
+
+/// <summary>An inquisitor tries to remove every religion but the state religion from a friendly city. The attempt
+/// angers the city and spends the inquisitor either way.</summary>
+internal sealed class InquisitionMission(ReligionService service) : IMission
+{
+    public string Id => ReligionMissions.Inquisition;
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Inquisitor ? [""] : [];
+    public string Label(Simulation sim, string subject) => "Perform inquisition";
+    public string? Validate(Simulation sim, MissionOrder order) => service.ValidateInquisition(sim, order);
+    public MissionTerms Terms(Simulation sim, MissionOrder order) => new(Chance: service.InquisitionChance(sim, order));
+    public void Resolve(Simulation sim, MissionOrder order, bool success) => service.ResolveInquisition(sim, order, success);
 }

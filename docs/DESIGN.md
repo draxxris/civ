@@ -261,8 +261,9 @@ requires the owning namespace. Overrides can replace earlier content.
   ready-made `(id, label, command)` candidates for a unit. The client validates and
   lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
   a mod adds an order without a client change. Artillery (the RangedCombat mod) and
-  great people (the GreatPeople mod) use it; air missions, cargo, religion, corporations and spies
-  are still listed by the client itself and should move to sources.
+  great people (the GreatPeople mod) use it, and so does the base game's mission
+  support; air missions, cargo and promotions are still listed by the client itself
+  and should move to sources.
 - A feature that lets a unit hurt a tile without entering it registers an
   `ISupportFire`. AI assaults ask every kind in registration order
   (`GameRules.SupportFire`) for the command that fires a unit at the target, instead of
@@ -275,6 +276,19 @@ requires the owning namespace. Overrides can replace earlier content.
   building fields that describe the weapons (`BombardRate`, `BombRange`,
   `BombardDefense`) stay in the base schema, as unit data carries them. Without the
   mod no fire is offered and siege units fight only in melee.
+- A mission is something a unit does to the city it stands in. A feature registers each
+  kind as an `IMission` (`Subjects`, `Label`, `Validate`, `Terms`, `Resolve`), and the
+  base game's `IMissionService` (`GameRules.Missions`, in Military) does what every
+  mission shares: it checks that the unit is the player's, alive, able to act and in a
+  city, rolls `MissionTerms.Chance` once, removes the unit as `MissionTerms.Fate` says,
+  publishes `MissionResolved`, refreshes sight, and offers every legal mission in the
+  unit's panel. One command, `PerformMissionCommand`, carries them all. Religion
+  (`religion:spread`, `religion:inquisition`, `religion:shrine`), the Corporations mod
+  (`corporations:found`, `corporations:spread`) and the Espionage mod (one
+  `espionage:*` kind per spy mission) are built on it. A mission collects its own
+  price and publishes its own event for what it changed. Great person actions have the
+  same shape and are not ported yet. Planners still choose missions per feature: the
+  contract says what is possible and on what terms, not what it is worth.
 - `ITurnSystem` retains explicit `(Order, Id)` execution order.
 
 Registries freeze after load. Definitions and their nested collections must not change

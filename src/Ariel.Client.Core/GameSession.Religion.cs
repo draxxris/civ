@@ -63,27 +63,4 @@ public sealed partial class GameSession
 
     /// <summary>Short banner text such as "Buddhism*, Taoism" where a star marks a holy city.</summary>
     public string ReligionBadge(City city) => string.Join(", ", ReligionsIn(city).Select(r => r.Name + (r.Holy ? "*" : "")));
-
-    private IEnumerable<UnitActionInfo> ReligionActions(Unit unit)
-    {
-        var service = Religions;
-        if (service == null || unit.MovesLeft <= 0) yield break;
-        var inquisition = new PerformInquisitionCommand { Player = LocalPlayer, Unit = unit.Id };
-        if (inquisition.Validate(Sim) == null)
-            yield return new("inquisition", "Perform inquisition", inquisition, null,
-                $"{service.InquisitionChance(Sim, unit.Id)}% chance");
-        foreach (var religion in Sim.Content.Get<Schema.ReligionDef>().All.OrderBy(r => r.Id, StringComparer.Ordinal))
-        {
-            var spread = new SpreadReligionCommand { Player = LocalPlayer, Unit = unit.Id, Religion = religion.Id };
-            if (spread.Validate(Sim) == null)
-                yield return new("spread:" + religion.Id, "Spread " + religion.Name, spread, null,
-                    $"{service.MissionaryChance(Sim, unit.Id, religion.Id)}% chance");
-            foreach (var building in religion.Shrines.Distinct().OrderBy(b => b, StringComparer.Ordinal))
-            {
-                var shrine = new BuildShrineCommand { Player = LocalPlayer, Unit = unit.Id, Building = building };
-                if (shrine.Validate(Sim) == null)
-                    yield return new("shrine:" + building, "Build " + Sim.Content.Get<Schema.BuildingDef>(building).Name, shrine);
-            }
-        }
-    }
 }

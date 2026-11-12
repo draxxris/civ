@@ -59,7 +59,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
             .OrderByDescending(c => c.Extensions.TryGet<RevolutionCityState>(ctx.Sim.Content)?.InstabilityIndex ?? 0)
             .ThenBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id);
         foreach (var city in targets)
-            if (Visit(unit, city, new PerformInquisitionCommand { Player = ctx.PlayerId, Unit = unit.Id })) return;
+            if (Visit(unit, city, new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = ReligionMissions.Inquisition })) return;
     }
 
     private void Spread(Unit unit, IReligionService religion)
@@ -70,7 +70,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
                 .OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenByDescending(c => c.Population).ThenBy(c => c.Id)
                 .Concat(ForeignTargets(religion, unit, spread.Key));
             foreach (var city in targets)
-                if (Visit(unit, city, new SpreadReligionCommand { Player = ctx.PlayerId, Unit = unit.Id, Religion = spread.Key })) return;
+                if (Visit(unit, city, new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = ReligionMissions.Spread, Subject = spread.Key })) return;
         }
     }
 

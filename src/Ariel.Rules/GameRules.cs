@@ -108,6 +108,10 @@ public sealed class GameRules : IRuleset
     /// <summary>The ProjectsVictory mod's service, or null without it.</summary>
     public IProjectVictoryService? ProjectVictory { get; private set; }
 
+    /// <summary>Missions: what a unit does to the city it stands in, for every feature that registers a kind.</summary>
+    public IMissionService Missions { get; private set; } = null!;
+    /// <summary>Every registered kind of mission, base and mod, in registration order.</summary>
+    public IReadOnlyList<IMission> MissionKinds { get; private set; } = [];
     /// <summary>Every feature's unit orders, base and mod, in registration order.</summary>
     public IReadOnlyList<IUnitActionSource> UnitActions { get; private set; } = [];
     /// <summary>Every kind of fire that can support an assault, base and mod, in registration order.</summary>
@@ -117,6 +121,8 @@ public sealed class GameRules : IRuleset
     public void Bind(ContentDb content)
     {
         var services = content.Services;
+        Missions = services.Get<IMissionService>().Single();
+        MissionKinds = services.Get<IMission>();
         UnitActions = services.Get<IUnitActionSource>();
         SupportFire = services.Get<ISupportFire>();
         Calendar = services.Get<IGameCalendar>().Single();

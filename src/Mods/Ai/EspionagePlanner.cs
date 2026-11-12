@@ -73,7 +73,7 @@ internal sealed class EspionagePlanner(AiContext ctx)
     public bool TryMission(Unit spy, City city)
     {
         foreach (var (mission, tech) in Missions(city))
-            if (ctx.Issue(new ExecuteEspionageMissionCommand { Player = ctx.PlayerId, Unit = spy.Id, City = city.Id, Mission = mission, Tech = tech }))
+            if (ctx.Issue(EspionageMissions.Order(ctx.PlayerId, spy.Id, mission, tech)))
                 return true;
         return false;
     }
