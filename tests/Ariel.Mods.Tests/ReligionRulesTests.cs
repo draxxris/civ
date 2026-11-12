@@ -110,6 +110,35 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
 
+    [Fact]
+    public void A_trade_route_carries_natural_spread_to_a_city_that_cannot_see_its_way_back()
+    {
+        var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
+        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, false) };
+        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured).Append(diplomacy)));
+        GameFactory.NeutralPolitics(sim);
+        var holy = City(sim, 0); var foreign = City(sim, 1, 1);
+        // Only the holy city's team has seen the roads, so the network joins the cities from its side alone.
+        foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Route = "world:route_route_road"; }
+        LearnFoundingTech(sim, 0);
+        holy.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
+        sim.State.Turn = 101;
+        var religion = Service<IReligionService>(sim);
+        var diplomacyService = Service<IDiplomacyService>(sim);
+        diplomacyService.EstablishContact(sim, 0, 1);
+        Assert.True(Service<ICityConnectionService>(sim).Connected(sim, holy.Id, foreign.Id));
+        Assert.False(Service<ICityConnectionService>(sim).Connected(sim, foreign.Id, holy.Id));
+        Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+
+        diplomacyService.SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
+        Assert.Contains(Service<ITradeRouteService>(sim).Calculate(sim, holy.Id).Routes, r => r.PartnerCity == foreign.Id);
+        Assert.True(religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold > 0);
+
+        diplomacyService.CancelAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
+        Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+    }
+
     private sealed class SpreadOptions(IMod foundation, bool multiple) : IMod
     {
         public void Register(IModContext context)
