@@ -36,7 +36,7 @@ public sealed class BarbarianRulesTests
         return sim;
     }
     private static IEnumerable<Unit> Ships(Simulation sim) => sim.State.Units.Where(u =>
-        sim.State.PlayerById(u.Owner).Extensions.Get<MilitaryPlayerState>(sim.Content)?.Barbarian == true
+        PlayerRules.IsBarbarian(sim, u.Owner)
         && sim.Content.Get<S.UnitDef>(u.Type).Domain == "military:domain_sea");
 
     [Fact]

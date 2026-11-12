@@ -1448,11 +1448,12 @@ mutable. Saves and hashes include their canonical JSON data.
 Registered state components across mods include:
 
 - Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global
-  espionage points), and `MilitaryGameState` (temporary recon sights).
+  espionage points), and `MilitaryGameState` (temporary recon sights, the one barbarian
+  player).
 - Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState`
   (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown),
   `GreatPeoplePlayerState` (Golden Age timers), `MilitaryPlayerState` (combat general
-  points, thresholds, barbarian flag), and `EspionagePlayerState` (point allocations).
+  points, thresholds), and `EspionagePlayerState` (point allocations).
 - City: `EconomyCityState` (hurry anger), `ReligionCityState` (city religion list),
   `RevolutionCityState` (instability indices), and `CityRuleState` (accumulated defense
   damage, turn bombardment status).

@@ -29,7 +29,7 @@ internal static class ResearchDiffusion
     }
 
     private static bool Eligible(Simulation sim, Player player) => ResearchTimeline.Alive(sim, player.Id)
-        && player.Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian != true;
+        && !PlayerRules.IsBarbarian(sim, player.Id);
 
     private static bool HasMet(Simulation sim, IDiplomacyService? diplomacy, Team team, int other) =>
         other == team.Id || diplomacy?.HasMet(sim, team.Id, other) == true

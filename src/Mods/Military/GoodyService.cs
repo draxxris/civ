@@ -9,7 +9,7 @@ internal static class GoodyService
     {
         var plot = sim.State.PlotAt(unit.Position);
         if (plot.Improvement is not { } improvement || !sim.Content.Get<S.ImprovementDef>(improvement).Goody) return;
-        if (MilitaryData.Player(sim, unit.Owner).Barbarian) return;
+        if (PlayerRules.IsBarbarian(sim, unit.Owner)) return;
         plot.Improvement = null;
         var goodies = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).Goodies.Select(sim.Content.Get<S.GoodyDef>).Where(g => Eligible(sim, unit, g)).ToArray();
         if (goodies.Length == 0) return;
@@ -78,7 +78,7 @@ internal static class GoodyService
     }
     private static void HostileVillagers(Simulation sim, Unit unit, S.GoodyDef goody, string type)
     {
-        int owner = BarbarianSpawns.EnsurePlayer(sim);
+        int owner = BarbarianFaction.Ensure(sim);
         var candidates = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(unit.Position)).Where(t =>
             !sim.Content.Get<S.TerrainDef>(sim.State.Plots[t.Value].Terrain).IsWater && sim.State.Plots[t.Value].Kind != PlotKind.Peak
             && !sim.State.UnitsAt(sim.State.Grid.HexOf(t)).Any()).ToArray();

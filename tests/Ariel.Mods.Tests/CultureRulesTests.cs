@@ -175,9 +175,8 @@ public sealed class CultureRulesTests
     public void Plot_decay_exempts_barbarians_and_small_balances_and_releases_unclaimed_land()
     {
         var sim = Scenario();
-        var barbarian = new Player { Id = 2, TeamId = 2 };
-        barbarian.Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
-        sim.State.Players.Add(barbarian); sim.State.Teams.Add(new Team { Id = 2, Members = [2] }); sim.State.RebuildIndexes();
+        sim.State.Players.Add(new Player { Id = 2, TeamId = 2 }); sim.State.Teams.Add(new Team { Id = 2, Members = [2] }); sim.State.RebuildIndexes();
+        GameFactory.MakeBarbarian(sim, 2);
         var plot = sim.State.Plots[0]; plot.Owner = 0;
         plot.Culture[0] = 45; plot.Culture[1] = 21; plot.Culture[2] = 99;
         sim.State.Turn = 50; sim.AdvanceTurn();

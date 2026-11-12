@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Ariel.Content;
 
 namespace Ariel.Game;
@@ -142,9 +143,15 @@ public sealed class MilitaryUnitState
         _fortifyTurns = 0;
     }
 }
+/// <summary>The barbarian faction: one player on its own team, at war with every other team. Spawns, hostile
+/// villagers and rebellions all field units for it.</summary>
+public interface IBarbarianFaction
+{
+    /// <summary>The barbarian player, created on first use. Every caller gets the same player for the rest of the game.</summary>
+    int Ensure(Simulation sim);
+}
 public sealed class MilitaryPlayerState
 {
-    public bool Barbarian { get; set; }
     public int WinsAgainstBarbarians { get; set; }
     public long GeneralPoints { get; set; }
     public int GreatGeneralsCreated { get; set; }
@@ -153,6 +160,16 @@ public sealed class MilitaryPlayerState
 /// <summary>Combat is atomic. Reports survive saving between commands within the turn.</summary>
 public sealed class MilitaryGameState
 {
+    /// <summary>The one barbarian player, or null before the faction first appears. It never changes once set.</summary>
+    [JsonInclude] public int? BarbarianPlayer { get; private set; }
+
+    /// <summary>Record the barbarian player. Setting it again to the same player is a no-op; any other player throws.</summary>
+    public void SetBarbarianPlayer(int player)
+    {
+        if (BarbarianPlayer is { } existing && existing != player)
+            throw new InvalidOperationException($"Player {existing} is already the barbarian player");
+        BarbarianPlayer = player;
+    }
     public List<CombatReport> Combats { get; set; } = [];
     public List<ReconSight> ReconSights { get; set; } = [];
 

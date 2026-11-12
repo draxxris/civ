@@ -4,6 +4,24 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Military;
 
+/// <summary>Creates the barbarian player once, on its own team and at war with every other team, and records it
+/// as the one barbarian player for the rest of the game.</summary>
+internal sealed class BarbarianFaction : IBarbarianFaction
+{
+    int IBarbarianFaction.Ensure(Simulation sim) => Ensure(sim);
+    internal static int Ensure(Simulation sim)
+    {
+        if (PlayerRules.BarbarianPlayer(sim) is { } existing) return existing;
+        int playerId = sim.State.Players.Max(p => p.Id) + 1;
+        int teamId = sim.State.Teams.Max(t => t.Id) + 1;
+        sim.State.AddTeam(new Team { Id = teamId });
+        sim.State.AddPlayer(new Player { Id = playerId, TeamId = teamId, Civilization = "peoples:barbarian",
+            Leader = "peoples:leader_barbarian", Name = "Barbarians", EndedTurn = true });
+        CombatService.HistoryState(sim).SetBarbarianPlayer(playerId);
+        foreach (var team in sim.State.Teams.Where(t => t.Id != teamId)) sim.State.SetWar(teamId, team.Id, true);
+        return playerId;
+    }
+}
 internal sealed class BarbarianSpawns : ITurnSystem
 {
     public string Id => "military:barbarian_spawns";
@@ -11,7 +29,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
     public void Run(Simulation sim)
     {
         if (!Ready(sim)) return;
-        int player = EnsurePlayer(sim);
+        int player = BarbarianFaction.Ensure(sim);
         ShareTechnologies(sim, player);
         foreach (var area in sim.State.Grid.Tiles.GroupBy(t => sim.State.Plots[t.Value].AreaId).OrderBy(g => g.Key)) SpawnArea(sim, player, area.ToArray());
         SpawnWater(sim, player);
@@ -38,7 +56,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
     private static S.UnitDef? NavalUnit(Simulation sim)
     {
         var civ = sim.Content.Get<S.CivilizationDef>("peoples:barbarian");
-        var civilians = sim.State.Players.Where(p => !MilitaryData.Player(sim, p.Id).Barbarian).ToArray();
+        var civilians = sim.State.Players.Where(p => !PlayerRules.IsBarbarian(sim, p.Id)).ToArray();
         return sim.Content.Get<S.UnitDef>().All.Where(u => NavalCandidate(u)
             && civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id)
             .Where(u => civilians.Any(p => sim.Content.Requirements.EvaluateKind(u.Requirements, new(sim, p.Id), "tech").Success))
@@ -53,7 +71,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
         if (!terrain.IsWater || terrain.Impassable || plot.IsLake || plot.Owner is not null) return false;
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return false;
-        if (plot.Visible.Any(t => sim.State.TeamById(t).Members.Any(p => !MilitaryData.Player(sim, p).Barbarian))) return false;
+        if (plot.Visible.Any(t => sim.State.TeamById(t).Members.Any(p => !PlayerRules.IsBarbarian(sim, p)))) return false;
         var position = sim.State.Grid.HexOf(tile);
         if (sim.State.CityAt(position) is not null || sim.State.UnitsAt(position).Any()) return false;
         return CoastalWater(sim, tile);
@@ -65,22 +83,9 @@ internal sealed class BarbarianSpawns : ITurnSystem
     {
         var handicap = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap);
         int start = handicap.BarbarianCreationTurnsElapsed * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).BarbPercent / 100;
-        var civilians = sim.State.Players.Where(p => !MilitaryData.Player(sim, p.Id).Barbarian).ToArray();
+        var civilians = sim.State.Players.Where(p => !PlayerRules.IsBarbarian(sim, p.Id)).ToArray();
         bool eraAllows = civilians.Any(p => !sim.Content.Get<S.EraDef>(p.Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra).NoBarbUnits);
         return eraAllows && sim.State.Turn - 1 >= start && sim.State.Cities.Count >= civilians.Length * 3 / 2;
-    }
-    internal static int EnsurePlayer(Simulation sim)
-    {
-        var existing = sim.State.Players.FirstOrDefault(p => MilitaryData.Player(sim, p.Id).Barbarian);
-        if (existing is not null) return existing.Id;
-        int playerId = sim.State.Players.Max(p => p.Id) + 1;
-        int teamId = sim.State.Teams.Max(t => t.Id) + 1;
-        sim.State.Players.Add(new Player { Id = playerId, TeamId = teamId, Civilization = "peoples:barbarian", Leader = "peoples:leader_barbarian", Name = "Barbarians", EndedTurn = true });
-        sim.State.Teams.Add(new Team { Id = teamId, Members = new() { playerId } });
-        sim.State.RebuildIndexes();
-        MilitaryData.EditPlayer(sim, playerId).Barbarian = true;
-        foreach (var team in sim.State.Teams.Where(t => t.Id != teamId)) sim.State.SetWar(teamId, team.Id, true);
-        return playerId;
     }
     private static void ShareTechnologies(Simulation sim, int barbarian)
     {
@@ -115,11 +120,11 @@ internal sealed class BarbarianSpawns : ITurnSystem
         if (plot.Owner is not null || sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater || plot.Kind == PlotKind.Peak) return false;
         if (sim.Content.Get<S.TerrainDef>(plot.Terrain).Impassable) return false;
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return false;
-        if (plot.Visible.Any(t => !sim.State.TeamById(t).Members.Any(p => MilitaryData.Player(sim, p).Barbarian))) return false;
+        if (plot.Visible.Any(t => !sim.State.TeamById(t).Members.Any(p => PlayerRules.IsBarbarian(sim, p)))) return false;
         var position = sim.State.Grid.HexOf(tile);
         if (sim.State.UnitsAt(position).Any()) return false;
         int minimum = MilitaryData.Raw(sim, "MIN_BARBARIAN_STARTING_DISTANCE", 4);
-        return !sim.State.Units.Any(u => !MilitaryData.Player(sim, u.Owner).Barbarian && sim.State.Grid.Distance(u.Position, position) < minimum);
+        return !sim.State.Units.Any(u => !PlayerRules.IsBarbarian(sim, u.Owner) && sim.State.Grid.Distance(u.Position, position) < minimum);
     }
     private static IEnumerable<S.UnitDef> SpawnUnits(Simulation sim, int player)
     {
@@ -136,7 +141,7 @@ internal sealed class BarbarianBehavior : ITurnSystem
     public int Order => TurnPhase.GameBegin;
     public void Run(Simulation sim)
     {
-        foreach (var unit in sim.State.Units.Where(u => MilitaryData.Player(sim, u.Owner).Barbarian).OrderBy(u => u.Id).ToArray()) Act(sim, unit);
+        foreach (var unit in sim.State.Units.Where(u => PlayerRules.IsBarbarian(sim, u.Owner)).OrderBy(u => u.Id).ToArray()) Act(sim, unit);
     }
     private static void ActSea(Simulation sim, Unit unit)
     {

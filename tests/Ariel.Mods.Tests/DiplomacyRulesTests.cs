@@ -68,8 +68,8 @@ public sealed class DiplomacyRulesTests
         sim.State.Teams.Add(new Team { Id = 17, Members = [17] });
         sim.State.Players.Add(new Player { Id = 17, TeamId = 17 });
         sim.State.Teams.Add(new Team { Id = 18, Members = [18] });
-        var barbarian = new Player { Id = 18, TeamId = 18 }; barbarian.Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true }); sim.State.Players.Add(barbarian);
-        sim.State.RebuildIndexes();
+        sim.State.Players.Add(new Player { Id = 18, TeamId = 18 });
+        sim.State.RebuildIndexes(); GameFactory.MakeBarbarian(sim, 18);
         sim.State.Plots[40].Owner = 17; sim.State.Plots[40].Revealed.Add(0);
         diplomacy.DiscoverContacts(sim); Assert.False(diplomacy.HasMet(sim, 0, 17));
         sim.State.Plots[40].Visible.Add(0); diplomacy.DiscoverContacts(sim);

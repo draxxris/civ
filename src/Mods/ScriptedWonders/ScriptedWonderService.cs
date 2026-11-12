@@ -116,8 +116,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         }
     }
 
-    private static bool Barbarian(Simulation sim, int player) =>
-        sim.State.PlayerById(player).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true;
+    private static bool Barbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
 
     private static int BarbarianXpCap(Simulation sim) =>
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue("BARBARIAN_MAX_XP_VALUE", out var v)

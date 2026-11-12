@@ -97,6 +97,32 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(0, Contribution(Service(sim).DescribeCityStability(sim, city.Id), "revolution:non_state_religion"));
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Rebels_and_barbarians_are_one_faction_whichever_appears_first(bool rebellionFirst)
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        State(sim, city, 1000);
+        var faction = sim.Content.Services.Get<IBarbarianFaction>().Single();
+        int players = sim.State.Players.Count;
+
+        int? barbarian = rebellionFirst ? null : faction.Ensure(sim);
+        Rebellions(sim);
+        int rebel = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>()).RebelPlayer;
+        barbarian ??= faction.Ensure(sim);
+
+        Assert.Equal(barbarian, rebel);
+        Assert.Equal(players + 1, sim.State.Players.Count);
+        Assert.Equal(rebel, PlayerRules.BarbarianPlayer(sim));
+        Assert.Equal([rebel], sim.TeamOf(rebel).Members);
+        Assert.All(sim.State.Teams.Where(t => t.Id != sim.TeamOf(rebel).Id), t => Assert.Contains(t.Id, sim.TeamOf(rebel).Wars));
+        var loaded = SaveGame.Load(mods.Revolution, SaveGame.Save(sim));
+        Assert.Equal(rebel, loaded.Content.Services.Get<IBarbarianFaction>().Single().Ensure(loaded));
+        Assert.Equal(players + 1, loaded.State.Players.Count);
+    }
+
     [Fact]
     public void Rebellion_uses_legal_adjacent_tiles_releases_pressure_sets_cooldown_and_adds_temporary_unrest()
     {
@@ -113,7 +139,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(city.Id, rebellion.City); Assert.Equal(0, rebellion.Player);
         Assert.Equal(600, rebellion.InstabilityReleased); Assert.Equal(400, state.InstabilityIndex);
         Assert.Equal(2, rebellion.Units.Count);
-        Assert.True(sim.State.PlayerById(rebellion.RebelPlayer).Extensions.Get<MilitaryPlayerState>(sim.Content)!.Barbarian);
+        Assert.Equal(PlayerRules.BarbarianPlayer(sim), rebellion.RebelPlayer);
         Assert.Contains(sim.TeamOf(0).Id, sim.TeamOf(rebellion.RebelPlayer).Wars);
         var rebels = rebellion.Units.Select(sim.State.UnitById).ToArray();
         var legal = neighbors.Skip(3).Select(t => sim.State.Grid.HexOf(t)).ToArray();
@@ -129,7 +155,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger.Lines, l => l.Source == "revolution:unrest");
         sim.State.Turn = state.RebellionCooldownUntilTurn; Rebellions(sim);
         Assert.Equal(2, sim.Events.Published.OfType<CityRebellionTriggered>().Count());
-        Assert.Single(sim.State.Players, p => p.Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true);
+        Assert.Single(sim.State.Players, p => p.Name == "Barbarians");
     }
 
     [Fact]

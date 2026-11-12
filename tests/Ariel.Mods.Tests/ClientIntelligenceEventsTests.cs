@@ -130,7 +130,7 @@ public sealed class ClientIntelligenceEventsTests
         sim.State.Players.Add(new Player { Id = 2, TeamId = 2, Treasury = 0 });
         sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } });
         sim.State.RebuildIndexes();
-        sim.State.PlayerById(2).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        GameFactory.MakeBarbarian(sim, 2);
         AddUnit(sim, sim.State.Cities.Single(c => c.Owner == 1), "military:warrior", owner: 2);
         var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
         diplomacy.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);

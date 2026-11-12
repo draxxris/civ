@@ -35,10 +35,6 @@ public sealed class RevolutionRulesDef : ContentDef
     public int SuppressionGold { get; init; } = 100;
     [ContentReference(typeof(S.UnitDef))]
     public string RebelUnit { get; init; } = "";
-    [ContentReference(typeof(S.CivilizationDef))]
-    public string RebelCivilization { get; init; } = "peoples:barbarian";
-    [ContentReference(typeof(S.LeaderDef))]
-    public string RebelLeader { get; init; } = "peoples:leader_barbarian";
     [ContentReference(typeof(S.CivicDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> CivicFactors { get; init; } = ImmutableDictionary<string, int>.Empty;
 }

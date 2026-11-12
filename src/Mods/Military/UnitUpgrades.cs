@@ -8,7 +8,7 @@ internal static class UnitUpgrades
 {
     internal static long Price(Simulation sim, Unit unit, S.UnitDef target)
     {
-        if (MilitaryData.Player(sim, unit.Owner).Barbarian) return 0;
+        if (PlayerRules.IsBarbarian(sim, unit.Owner)) return 0;
         var constants = MilitaryData.Constants(sim);
         long difference = ProductionCost(sim, target) - ProductionCost(sim, MilitaryData.Definition(sim, unit));
         long price = constants.BaseUnitUpgradeCost + Math.Max(0, difference * constants.UnitUpgradeCostPerProduction / 100);

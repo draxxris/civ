@@ -17,7 +17,7 @@ public static class SaveGame
     };
 
     /// <summary>Supported schema version; incompatible versions require an explicit migration.</summary>
-    public const int SchemaVersion = 4;
+    public const int SchemaVersion = 5;
     /// <summary>Serialize setup, loaded mod versions, content identity, state and RNG words.</summary>
     public static string Save(Simulation sim)
     {

@@ -37,6 +37,7 @@ public sealed class MilitaryMod : IPreparableMod
         context.RegisterService<ICombatService>("combat", new CombatService());
         context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
         context.RegisterService<IUnitService>("units", units);
+        context.RegisterService<IBarbarianFaction>("barbarians", new BarbarianFaction());
         context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());
         context.RegisterService<IUnitSupportService>("support", units);
         context.RegisterService<Ariel.Content.IModifierSource>("promotions", new PromotionEffects());
@@ -64,7 +65,7 @@ public sealed class MilitaryMod : IPreparableMod
         context.Subscribe<TurnStarted>("begin", (sim, _) =>
         {
             foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);
-            foreach (var player in sim.State.Players.Where(p => MilitaryData.Player(sim, p.Id).Barbarian)) player.EndedTurn = true;
+            foreach (var player in sim.State.Players.Where(p => PlayerRules.IsBarbarian(sim, p.Id))) player.EndedTurn = true;
             CombatService.HistoryState(sim).Combats.Clear();
             CombatService.HistoryState(sim).ReconSights.Clear();
             MilitaryData.Sight(sim);

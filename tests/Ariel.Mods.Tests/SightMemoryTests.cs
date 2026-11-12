@@ -317,8 +317,8 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Terrain = "world:peak";
         Relief(forks[2].State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Height = Levels.Peak;
-// Canonical hashes include zero-valued cliff fields, sight, memory (with each remembered city's era), city and recon state.
-        ulong[] expectedHashes = [18011072076886315325UL, 3557086145499891651UL, 17958227398568738962UL];
+// Canonical hashes include zero-valued cliff fields, sight, memory (with each remembered city's era), city, recon and barbarian-player state.
+        ulong[] expectedHashes = [244282006980368353UL, 7729403241802270583UL, 12287577437506531790UL];
         ulong parentHash = sim.ComputeHash();
         var rng = sim.Rng.State;
         Parallel.For(0, forks.Length, i =>

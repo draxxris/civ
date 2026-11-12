@@ -21,7 +21,7 @@ internal static class RebellionSpawns
         }
         Shuffle(sim, candidates);
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
-        int rebel = EnsureBarbarians(sim, rules);
+        int rebel = sim.Content.Services.Get<IBarbarianFaction>().Single().Ensure(sim);
         var units = new List<int>();
         foreach (var tile in tiles)
         {
@@ -61,21 +61,5 @@ internal static class RebellionSpawns
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return false;
         var hex = sim.State.Grid.HexOf(tile);
         return sim.State.CityAt(hex) is null && !sim.State.UnitsAt(hex).Any();
-    }
-
-    private static int EnsureBarbarians(Simulation sim, RevolutionRulesDef rules)
-    {
-        var existing = sim.State.Players.OrderBy(p => p.Id).FirstOrDefault(p => PlayerRules.IsBarbarian(sim, p.Id));
-        if (existing is not null) return existing.Id;
-        int id = sim.State.Players.Max(p => p.Id) + 1;
-        int team = sim.State.Teams.Max(t => t.Id) + 1;
-        var player = new Player { Id = id, TeamId = team, Name = "Rebels", EndedTurn = true,
-            Civilization = rules.RebelCivilization, Leader = rules.RebelLeader };
-        player.Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
-        sim.State.Players.Add(player);
-        sim.State.Teams.Add(new Team { Id = team, Members = new() { id } });
-        sim.State.RebuildIndexes();
-        foreach (var other in sim.State.Teams.Where(t => t.Id != team)) sim.State.SetWar(team, other.Id, true);
-        return id;
     }
 }

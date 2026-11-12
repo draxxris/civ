@@ -155,7 +155,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var sim = P7ModFixture.Scenario(mods.Wonders);
         var city = P7ModFixture.City(sim);
         var attacker = P7ModFixture.Unit(sim, city, owner: 1);
-        sim.State.PlayerById(1).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        GameFactory.MakeBarbarian(sim, 1);
         var defender = P7ModFixture.Unit(sim, city);
         sim.State.MoveUnit(attacker.Id, sim.State.Grid.HexOf(new TileId(41)));
         var combat = sim.Content.Services.Get<ICombatService>().Single();
@@ -284,7 +284,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
     {
         var sim = P7ModFixture.Scenario(mods.Wonders);
         var city = P7ModFixture.City(sim);
-        sim.State.PlayerById(1).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        GameFactory.MakeBarbarian(sim, 1);
         Complete(sim, city, "cities:art_of_war");
         var unit = P7ModFixture.Unit(sim, city, "military:swordsman");
         unit.Experience = 40;
@@ -308,7 +308,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var outside = new TileId(42);
         sim.State.PlotAt(sim.State.Grid.HexOf(outside)).Owner = null;
         var raider = P7ModFixture.Unit(sim, city, owner: 1);
-        sim.State.PlayerById(1).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        GameFactory.MakeBarbarian(sim, 1);
         sim.State.MoveUnit(raider.Id, sim.State.Grid.HexOf(outside));
         sim.State.SetWar(0, 1, true);
         var movement = sim.Content.Services.Get<IMovementService>().Single();

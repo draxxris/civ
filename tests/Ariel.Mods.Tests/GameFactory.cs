@@ -37,6 +37,13 @@ public static class GameFactory
     });
 
     /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
+    /// <summary>Make an existing player the game's one barbarian player, as if the faction had appeared as them.</summary>
+    public static void MakeBarbarian(Simulation sim, int player)
+    {
+        var state = sim.State.Extensions.Get<MilitaryGameState>(sim.Content);
+        if (state is null) { state = new(); sim.State.Extensions.Set(sim.Content, state); }
+        state.SetBarbarianPlayer(player);
+    }
     public static void NeutralPolitics(Simulation sim)
     {
         sim.State.Players = sim.State.Players.Select(p => new Player

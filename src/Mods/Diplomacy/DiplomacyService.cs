@@ -15,8 +15,7 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     }
     private static TeamPair Pair(int a, int b) => TeamPair.Of(a, b);
     private static TeamRelation? Relation(Simulation sim, int a, int b) => Read(sim).GetRelation(a, b);
-    private static bool Barbarian(Simulation sim, int team) => sim.State.TeamById(team).Members.Any(p =>
-        sim.State.PlayerById(p).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true);
+    private static bool Barbarian(Simulation sim, int team) => sim.State.TeamById(team).Members.Any(p => PlayerRules.IsBarbarian(sim, p));
     private static string? Participants(Simulation sim, int player, int target)
     {
         if (!sim.State.Players.Any(p => p.Id == player) || !sim.State.Players.Any(p => p.Id == target)) return "unknown player";

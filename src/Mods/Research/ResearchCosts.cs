@@ -48,7 +48,7 @@ internal static class ResearchCosts
     }
     private static int BarbarianPercent(Simulation sim, Team team)
     {
-        if (!team.Members.Any(p => sim.State.PlayerById(p).Extensions.TryGet<MilitaryPlayerState>(sim.Content)?.Barbarian == true)) return 100;
+        if (!team.Members.Any(p => PlayerRules.IsBarbarian(sim, p))) return 100;
         return sim.IsOptionEnabled("foundation:gameoption_raging_barbarians") || sim.IsOptionEnabled("foundation:gameoption_barbarian_world") ? 1200 : 300;
     }
 

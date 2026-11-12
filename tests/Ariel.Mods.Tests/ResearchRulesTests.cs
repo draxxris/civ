@@ -112,7 +112,7 @@ public sealed class ResearchRulesTests
         var sim = Scenario(4);
         var diplomacy = Service<IDiplomacyService>(sim);
         for (int p = 1; p < 4; p++) { diplomacy.EstablishContact(sim, 0, p); sim.TeamOf(p).Techs.Add(Agriculture); }
-        sim.State.PlayerById(3).Extensions.Set(sim.Content, new MilitaryPlayerState { Barbarian = true });
+        GameFactory.MakeBarbarian(sim, 3);
         Assert.Contains(sim.State.Cities, c => c.Owner == 3);
         sim.Settings.GameOptions["foundation:gameoption_no_tech_diffusion"] = true;
         Assert.Equal(133, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));

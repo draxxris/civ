@@ -124,16 +124,16 @@ internal static class CombatCalculator
     {
         var handicap = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap);
         bool humanA = sim.State.PlayerById(a.Owner).Ai is null; bool humanD = sim.State.PlayerById(d.Owner).Ai is null;
-        if (MilitaryData.Player(sim, d.Owner).Barbarian) Add(sink, "foundation:barbarian", humanA ? handicap.BarbarianBonus : handicap.AiBarbarianBonus);
-        if (MilitaryData.Player(sim, a.Owner).Barbarian) Add(sink, "foundation:barbarian", -(humanD ? handicap.BarbarianBonus : handicap.AiBarbarianBonus));
+        if (PlayerRules.IsBarbarian(sim, d.Owner)) Add(sink, "foundation:barbarian", humanA ? handicap.BarbarianBonus : handicap.AiBarbarianBonus);
+        if (PlayerRules.IsBarbarian(sim, a.Owner)) Add(sink, "foundation:barbarian", -(humanD ? handicap.BarbarianBonus : handicap.AiBarbarianBonus));
         if (MilitaryData.Definition(sim, d).Animal) Add(sink, "foundation:animal", humanA ? handicap.AnimalBonus : handicap.AiAnimalBonus);
         if (MilitaryData.Definition(sim, a).Animal) Add(sink, "foundation:animal", -(humanD ? handicap.AnimalBonus : handicap.AiAnimalBonus));
     }
     private static int BarbarianOdds(Simulation sim, Unit a, Unit d, int odds, int die)
     {
         int free = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).FreeWinsAgainstBarbarians;
-        if (MilitaryData.Player(sim, d.Owner).Barbarian && MilitaryData.Player(sim, a.Owner).WinsAgainstBarbarians < free) odds = Math.Min(die / 10, odds);
-        if (MilitaryData.Player(sim, a.Owner).Barbarian && MilitaryData.Player(sim, d.Owner).WinsAgainstBarbarians < free) odds = Math.Max(die * 9 / 10, odds);
+        if (PlayerRules.IsBarbarian(sim, d.Owner) && MilitaryData.Player(sim, a.Owner).WinsAgainstBarbarians < free) odds = Math.Min(die / 10, odds);
+        if (PlayerRules.IsBarbarian(sim, a.Owner) && MilitaryData.Player(sim, d.Owner).WinsAgainstBarbarians < free) odds = Math.Max(die * 9 / 10, odds);
         return odds;
     }
     private static void Add(ModifierSink sink, string source, int amount) => sink.Add(source, "military:combat_percent", amount);
