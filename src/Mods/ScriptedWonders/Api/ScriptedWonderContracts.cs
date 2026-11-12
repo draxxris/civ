@@ -1,14 +1,14 @@
-namespace Ariel.Game;
+using Ariel.Game;
 
-/// <summary>Read-only scripted wonder status. Queries do not create state or consume randomness.</summary>
+namespace Ariel.Mods.ScriptedWonders;
+
+/// <summary>Read-only scripted wonder status. Queries do not create state or consume randomness. The mod also answers
+/// the base game's free-building grants (<see cref="IFreeBuildingGrants"/>) and barbarian barriers
+/// (<see cref="IBarbarianBarrier"/>).</summary>
 public interface IScriptedWonderService
 {
     IReadOnlyList<ScriptedWonderStatus> DescribeCity(Simulation sim, int cityId);
     bool IsActive(Simulation sim, int cityId, string building);
-    /// <summary>Building classes granted while an owned or team-shared constructed wonder is active.</summary>
-    IReadOnlyList<string> EmpireFreeBuildings(Simulation sim, int player);
-    /// <summary>True when an active wonder bars this barbarian land unit from entering the target hex.</summary>
-    bool BlocksBarbarianEntry(Simulation sim, int barbarianUnitId, Hex targetHex) => false;
 }
 
 public sealed record ScriptedWonderStatus(string Building, bool Active, bool CompletionApplied,

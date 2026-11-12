@@ -1,6 +1,16 @@
+using Ariel.Ai;
 using Ariel.Game;
 
-namespace Ariel.Ai;
+namespace Ariel.Mods.Revolution;
+
+/// <summary>The computer player's answer to unrest, run in the standard AI's turn at
+/// <see cref="AiPlannerOrder.Stability"/>, after the military planner has placed its garrisons.</summary>
+internal sealed class StabilityAiPlanner : IAiPlanner
+{
+    public string Id => "revolution:planner";
+    public int Order => AiPlannerOrder.Stability;
+    public void Plan(AiContext ctx) => new StabilityPlanner(ctx).Plan();
+}
 
 /// <summary>Suppresses rebellion in the computer player's own cities: a free garrison when one qualifies, otherwise
 /// gold, city id order first. Runs every few turns because describing a city's stability costs a wellbeing ledger.</summary>
@@ -10,7 +20,7 @@ internal sealed class StabilityPlanner(AiContext ctx)
 
     public void Plan()
     {
-        var revolution = ctx.Sim.Rules().Revolution;
+        var revolution = ctx.Sim.Service<IRevolutionService>();
         if (revolution is null || ctx.Sim.State.PlayerById(ctx.PlayerId).EndedTurn || ctx.Cities.Count == 0) return;
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval != 0) return;
         foreach (var city in ctx.Cities.OrderBy(c => c.Id))

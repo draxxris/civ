@@ -21,8 +21,7 @@ public sealed class GovernmentPlayerState
         }
     }
 
-    /// <summary>Cooldown before the next civic change. Unrelated to city instability, which the Revolution mod keeps
-    /// in <see cref="RevolutionCityState"/>.</summary>
+    /// <summary>Cooldown before the next civic change. Unrelated to city unrest (<see cref="ICityUnrest"/>).</summary>
     public int RevolutionTimer
     {
         get => _revolutionTimer;

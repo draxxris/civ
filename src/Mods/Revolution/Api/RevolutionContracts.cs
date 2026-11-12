@@ -1,6 +1,7 @@
 using Ariel.Content;
+using Ariel.Game;
 
-namespace Ariel.Game;
+namespace Ariel.Mods.Revolution;
 
 public enum CityStabilityStatus { Stable, Warning, Mutiny, Rebellion }
 
@@ -72,7 +73,9 @@ public sealed class RevolutionCityState
 public sealed record CityStabilityDescription(int City, int InstabilityIndex, CityStabilityStatus Status,
     int ChangePerTurn, int CooldownTurns, int UnrestTurns, long SuppressionGold, Ledger Ledger);
 
-public interface IRevolutionService
+/// <summary>City stability queries and rebellion suppression. The service also answers the base game's question how
+/// restless a city is (<see cref="ICityUnrest"/>): unrest is the instability index.</summary>
+public interface IRevolutionService : ICityUnrest
 {
     CityStabilityDescription DescribeCityStability(Simulation sim, int cityId);
     string? ValidateSuppression(Simulation sim, int player, int cityId, int? garrison);
@@ -90,10 +93,14 @@ public sealed class SuppressRebellionCommand : GameCommand
 {
     public int CityId { get; init; }
     public int? Garrison { get; init; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IRevolutionService>().Single()
-        .ValidateSuppression(sim, Player, CityId, Garrison);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IRevolutionService>().Single()
-        .Suppress(sim, Player, CityId, Garrison);
+    public override string? Validate(Simulation sim) => Revolution.Service(sim).ValidateSuppression(sim, Player, CityId, Garrison);
+    public override void Apply(Simulation sim) => Revolution.Service(sim).Suppress(sim, Player, CityId, Garrison);
+}
+
+internal static class Revolution
+{
+    internal static IRevolutionService Service(Simulation sim) => sim.Service<IRevolutionService>()
+        ?? throw new InvalidOperationException("the Revolution mod is not loaded");
 }
 
 /// <summary>RebelPlayer is the barbarian or rebel player that owns the spawned units, or -1 when no legal tile

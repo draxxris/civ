@@ -16,6 +16,16 @@ public interface IPlayerEspionageSource
 {
     long EspionageHundredths(Simulation sim, int player);
 }
+/// <summary>Where a player's espionage commerce goes, answered by the feature that spends it, or null without one
+/// (<see cref="GameRules.EspionageSpending"/>). That feature banks the points itself; the economy lists the forecast
+/// in the player's ledger. Without one, the economy banks the output in
+/// <see cref="EconomyPlayerState.EspionageHundredths"/>.</summary>
+public interface IEspionageSpending
+{
+    /// <summary>Forecast whole points per target team for this much espionage output (hundredths). Does not change
+    /// state.</summary>
+    IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths);
+}
 /// <summary>Infinite queue items. Conversion uses current production, never stored overflow.</summary>
 public interface ICityProcessService
 {

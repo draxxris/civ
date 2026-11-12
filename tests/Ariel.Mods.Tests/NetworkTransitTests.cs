@@ -4,6 +4,7 @@ using Ariel.Content;
 using Ariel.Game;
 using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
+using Ariel.Mods.Trade;
 using Xunit;
 using S = Ariel.Content.Schema;
 

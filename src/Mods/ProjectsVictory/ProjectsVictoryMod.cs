@@ -28,6 +28,7 @@ public sealed class ProjectsVictoryMod : IPreparableMod
         context.Subscribe<CityRazed>("check_raze", (sim, _) => service.Evaluate(sim, false));
         context.Subscribe<ProjectCompleted>("check_project", (sim, _) => service.Evaluate(sim, false));
         context.TurnSystems.Register(new VictoryCheck(service));
+        context.RegisterService<IPlayerScores>("scores", service);
     }
 }
 

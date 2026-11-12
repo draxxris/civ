@@ -1,8 +1,9 @@
 {
   "id": "projects_victory",
   "name": "Projects and Victory",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "assembly": "Ariel.Mods.ProjectsVictory.dll",
+  "api": "Ariel.Mods.ProjectsVictory.Api.dll",
   "dependencies": [],
   "references": ["cities", "foundation", "military", "research", "world"]
 }

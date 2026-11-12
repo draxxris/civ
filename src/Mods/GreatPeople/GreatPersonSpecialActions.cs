@@ -1,6 +1,7 @@
 using System.Globalization;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Trade;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.GreatPeople;
@@ -73,7 +74,7 @@ internal static partial class GreatPersonActions
         var capital = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)
             .FirstOrDefault(c => GreatPeopleData.Active(sim, c).Any(b => b.Capital));
         if (capital is null) return 0;
-        return (sim.Rules().TradeRoutes?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
+        return (sim.Service<ITradeRouteService>()?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
     }
     private static long TeamTradeMissionModifier(Simulation sim, int player)
     {

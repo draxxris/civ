@@ -1,6 +1,9 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Espionage;
+using Ariel.Mods.GreatPeople;
+using Ariel.Mods.Revolution;
 using Xunit;
 using S = Ariel.Content.Schema;
 

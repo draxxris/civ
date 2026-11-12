@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.GreatPeople;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Revolution;
@@ -13,6 +14,17 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var state = city.Extensions.Get<RevolutionCityState>(sim.Content);
         if (state is null) { state = new(); city.Extensions.Set(sim.Content, state); }
         return state;
+    }
+
+    public int Unrest(Simulation sim, int city) =>
+        sim.State.FindCity(city)?.Extensions.TryGet<RevolutionCityState>(sim.Content)?.InstabilityIndex ?? 0;
+
+    /// <summary>Only a city with a saved record is calmed, even one already at zero.</summary>
+    public bool Relieve(Simulation sim, int city, long amount)
+    {
+        if (sim.State.CityById(city).Extensions.Get<RevolutionCityState>(sim.Content) is not { } state) return false;
+        state.InstabilityIndex = (int)Math.Max(0, state.InstabilityIndex - amount);
+        return true;
     }
 
     public CityStabilityDescription DescribeCityStability(Simulation sim, int cityId)
@@ -52,7 +64,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (GovernmentStatus.IsAnarchy(sim, city.Owner)) Add("revolution:anarchy", rules.AnarchyFactor);
         int garrison = sim.State.UnitsAt(city.Position).Count(u => u.Owner == city.Owner && Military(sim, u));
         Add("revolution:garrison", garrison == 0 ? rules.UndefendedFactor : (long)Math.Min(garrison, rules.MaxGarrison) * rules.GarrisonFactor);
-        if (sim.Rules().GreatPeople?.GoldenAgeTurnsRemaining(sim, city.Owner) > 0)
+        if (sim.Service<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(sim, city.Owner) > 0)
             Add("revolution:golden_age", rules.GoldenAgeFactor);
         Add("revolution:recovery", rules.NaturalRecovery);
         return new(lines);

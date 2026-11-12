@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 using static Ariel.Mods.Tests.AiBindings;
 using TechDef = Ariel.Content.Schema.TechDef;
 using Ariel.Mods.Corporations;
+using Ariel.Mods.Espionage;
 
 namespace Ariel.Mods.Tests;
 
@@ -67,7 +68,9 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     {
         var sim = Scenario();
         var ctx = NewAi(sim, "AiContext", sim, 0);
-        var espionage = NewAi(sim, "EspionagePlanner", ctx);
+        // The Espionage mod contributes its planner to the AI; it lives beside the service it plays.
+        var type = sim.Service<IEspionageService>()!.GetType().Assembly.GetType("Ariel.Mods.Espionage.EspionagePlanner")!;
+        var espionage = Activator.CreateInstance(type, [ctx])!;
         // Player 1's city is nearer than player 2's.
         Assert.Equal(sim.TeamOf(1).Id, (int?)Call(espionage, "FocusTeam"));
         sim.State.SetWar(sim.TeamOf(0).Id, sim.TeamOf(2).Id, true);

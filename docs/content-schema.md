@@ -28,7 +28,9 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   religion: a `BuildingDef` with `foundsReligion` set, from the hand-written
   `data/founding-wonders.json`. The importer does not own that file.
 - ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable
-  victory conditions.
+  victory conditions. They live in the mod's published API (`Ariel.Mods.ProjectsVictory`,
+  assembly `Ariel.Mods.ProjectsVictory.Api`); base content names victories only by
+  `VictoryIdentityDef`.
 - Corporations: `CorporationDef` for founding, required resources, branch output,
   headquarters output, spread cost, and maintenance. It lives in the mod's published
   API (`Ariel.Mods.Corporations`, assembly `Ariel.Mods.Corporations.Api`).

@@ -174,7 +174,7 @@ internal sealed class EspionageService : IEspionageService
 
     internal static long CostModifier(Simulation sim, int attacker, int defender)
     {
-        var protection = sim.Content.Services.Get<IEspionageService>().Single().CounterEspionage(sim, defender, attacker);
+        var protection = sim.Service<IEspionageService>()!.CounterEspionage(sim, defender, attacker);
         return Percent(RatioPercent(sim, attacker, defender), protection?.CostPercent ?? 100);
     }
 

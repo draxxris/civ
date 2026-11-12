@@ -3,6 +3,8 @@ using Ariel.Content;
 using Ariel.Game;
 using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
+using Ariel.Mods.Revolution;
+using Ariel.Mods.Trade;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -188,7 +190,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Contains(minority, religion.Present(sim, holy.Id));
         Assert.DoesNotContain("cities:hindu_temple", city.Buildings);
         Assert.DoesNotContain("cities:hindu_monastery", city.Buildings);
-        // A religious wonder goes with its faith, as in AND; the other faith's wonder keeps paying.
+        // A religious wonder goes with its faith, as in the reference rules; the other faith's wonder keeps paying.
         Assert.DoesNotContain("cities:hindu_brihadeeswarar", city.Buildings);
         Assert.Contains("cities:kotoku", city.Buildings);
         Assert.Contains("cities:buddhist_temple", city.Buildings); Assert.Contains("cities:granary", city.Buildings);

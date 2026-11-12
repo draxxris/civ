@@ -3,6 +3,13 @@
     <ProjectReference Include="../../Ariel.Core/Ariel.Core.csproj" />
     <!-- The host supplies Ariel.Rules and its staged rules/ payload; a mod never carries its own copy. -->
     <ProjectReference Include="../../Ariel.Rules/Ariel.Rules.csproj" Private="false" />
+    <!-- The host supplies the computer player too; this mod contributes a planner to it. -->
+    <ProjectReference Include="../../Ariel.Ai/Ariel.Ai.csproj" Private="false" />
+    <!-- The API this mod publishes ships beside it in the mod folder; mod.json names it. -->
+    <ProjectReference Include="Api/Ariel.Mods.Espionage.Api.csproj" />
+    <!-- Incited revolts go through the Revolution mod's API when it is loaded. Copied into this folder, so
+         the API resolves when that mod is absent. -->
+    <ProjectReference Include="../Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

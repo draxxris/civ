@@ -1,6 +1,7 @@
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
 using Ariel.Mods.Corporations;
+using Ariel.Mods.Espionage;
 using Ariel.Mods.Events;
 
 namespace Ariel.Client;

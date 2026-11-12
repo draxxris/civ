@@ -1,4 +1,5 @@
 using Ariel.Game;
+using Ariel.Mods.GreatPeople;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;

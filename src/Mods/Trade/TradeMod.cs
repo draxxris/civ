@@ -11,6 +11,7 @@ public sealed class TradeMod : IMod
         var service = new TradeRouteService();
         context.RegisterService<ITradeRouteService>("routes", service);
         context.RegisterService<IModifierSource>("route_yields", new TradeEffects(service));
+        context.RegisterService<ICityTradeLinks>("trade_links", service);
     }
 }
 internal sealed class TradeEffects(ITradeRouteService service) : IModifierSource

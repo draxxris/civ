@@ -75,11 +75,6 @@ public interface ICityConscriptService
     string? Validate(Simulation sim, int player, int city);
     void Conscript(Simulation sim, int city);
 }
-public sealed record CityGreatPeopleResult(long Threshold, long Rate, Ledger Ledger);
-public interface ICityGreatPeopleService
-{
-    CityGreatPeopleResult Calculate(Simulation sim, int city);
-}
 /// <summary>Optional city predicates supplied to Foundation, without a dependency on the Cities assembly.</summary>
 public interface ICityRequirementService
 {

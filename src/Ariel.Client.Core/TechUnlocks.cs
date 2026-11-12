@@ -1,4 +1,5 @@
 using Ariel.Content;
+using Ariel.Mods.ProjectsVictory;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -39,7 +40,7 @@ public sealed partial class GameSession
         Scan<S.BuildingDef>("Buildings", _ => null);
         Scan<S.UnitDef>("Units", _ => null);
         Scan<S.ImprovementDef>("Improvements", d => d.PrereqTech);
-        Scan<S.ProjectDef>("Projects", d => d.TechPrereq);
+        Scan<ProjectDef>("Projects", d => d.TechPrereq);
         Scan<S.CivicDef>("Civics", _ => null);
         Scan<Ariel.Mods.Corporations.CorporationDef>("Corporations", d => d.FoundingTech);
         Scan<S.BonusDef>("Resources", d => d.RevealTech);

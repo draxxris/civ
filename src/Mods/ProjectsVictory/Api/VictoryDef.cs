@@ -1,4 +1,7 @@
-namespace Ariel.Content.Schema;
+using Ariel.Content;
+using Ariel.Content.Schema;
+
+namespace Ariel.Mods.ProjectsVictory;
 
 /// <summary>An executable victory condition. Rule is one of conquest, domination, cultural, time, project.
 /// Lower Priority values are checked first.</summary>

@@ -44,8 +44,9 @@ extend both through one registration API.
   of the base services. It references no mod assembly and not `Ariel.Ai`.
 - `Ariel.Ai`: the computer player (see Computer players below), one base module with id
   `ai` whose manifest is staged to `rules/Ai/`. It references `Ariel.Core` and
-  `Ariel.Rules` only, never a mod or a mod's API. It owns the planner seam
-  (`IAiPlanner`) through which mods teach the AI their features.
+  `Ariel.Rules` only, never a mod or a mod's API. It owns the seams through which mods
+  teach the AI their features: planners (`IAiPlanner`) and production wishes
+  (`IProductionWishes`).
 - `Ariel.Composition`: the composition root. `BaseGame` lists the base modules (the rules
   modules and `ai`) and hands mods the host's copies of `Ariel.Rules` and `Ariel.Ai`
   (`ModLoader.Share`); `GameContent` is the one place a host composes the base game
@@ -55,7 +56,8 @@ extend both through one registration API.
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
-  Diplomacy and Events do.
+  Diplomacy, Espionage, Events, GreatPeople, ProjectsVictory, Revolution, ScriptedWonders and
+  Trade do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -66,8 +68,8 @@ extend both through one registration API.
 - `Ariel.Tests`: contract, rule, client, save/replay and lockstep tests.
 
 The client uses the query contracts in `Ariel.Rules` and the published APIs of the
-feature mods it presents (`Ariel.Mods.Corporations.Api`, `Ariel.Mods.Diplomacy.Api`,
-`Ariel.Mods.Events.Api`). It
+feature mods it presents (`Ariel.Mods.<Mod>.Api` for Corporations, Diplomacy, Espionage,
+Events, GreatPeople, ProjectsVictory, Revolution, ScriptedWonders and Trade). It
 has no reference to a mod's implementation or to a test-ruleset assembly.
 
 ## Determinism
@@ -273,11 +275,10 @@ requires the owning namespace. Overrides can replace earlier content.
   content freezes (an array slot per type, no registry search), so planners and rule
   code may call it on hot paths and from parallel AI scoring.
 - `sim.Rules()` (or `content.Rules()`) returns `GameRules`: one property per base
-  service (`Units`, `Combat`, `CityYields`, `Visibility`, `Relations`, ...) and a
-  nullable property per base-owned seam a mod may fill (`CityCorporations`,
-  `TeamAgreements`, `Dispositions`, `Exchanges`) or per optional mod service whose
-  contract still lives in the base game (`Espionage`, `GreatPeople`, ...; these move to
-  their mods' APIs). `GameRules.Bind` fills them
+  service (`Units`, `Combat`, `CityYields`, `Visibility`, `Relations`, ...), a
+  nullable property per base-owned seam one mod answers, and a list per seam many may
+  answer (see "The base game's seams" under Mod APIs). It has no property typed by a
+  mod's own service; a mod's service is found with `sim.Service<T>()`. `GameRules.Bind` fills them
   from the registry once, when content freezes, so rule code reads a field instead of
   searching the registry on every call. A base module still registers each service,
   so service identity stays in the content hash.
@@ -365,14 +366,43 @@ Manifest fields and API use:
 - List the provider in `references` when the consumer's content refers to the
   provider's content ids. That too requires the provider, without ordering.
 - Never make the base game reference a mod API. When base rules need an answer from a
-  mod, the base game owns a small seam and the mod implements it: Corporations
-  implements `ICityCorporations` (`GameRules.CityCorporations`), which the Cities
-  capital score and the Foundation `corporation` requirement leaf ask. Without the mod
-  the answer is "none", and the leaf fails. Base content names corporations only by
-  `CorporationIdentityDef`, which therefore stays in Foundation, like
-  `VictoryIdentityDef`. The Diplomacy mod answers three seams the same way (see
-  Relations below). The computer player follows the same rule: it knows no feature
-  mod, and a feature mod contributes the planner that plays it (`IAiPlanner`, below).
+  mod, the base game owns a small seam, named after the question it asks, and the mod
+  implements it (below). Without the mod the base game applies its default. Base content
+  names corporations only by `CorporationIdentityDef`, which therefore stays in
+  Foundation, like `VictoryIdentityDef`; `ProjectDef` and `VictoryDef` belong to the
+  ProjectsVictory API. The computer player follows the same rule: it knows no feature
+  mod, and a feature mod contributes the planner that plays it (`IAiPlanner`) and the
+  production it wants (`IProductionWishes`, below).
+- A mod's API interface may extend the seam it answers (`ICorporationService :
+  ICityCorporations`, `IEspionageService : IEspionageSpending`, `ITradeRouteService :
+  ICityTradeLinks`, `IRevolutionService : ICityUnrest`), and the mod registers its
+  service under both. A seam answered by a helper (a capital weight, a free-building
+  grant) is registered on its own.
+
+#### The base game's seams
+
+Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nullable
+`GameRules` property means one mod answers; a list means every registered answer counts.
+
+| Seam | `GameRules` | Asked by | Answered by | Without an answer |
+| --- | --- | --- | --- | --- |
+| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf | Corporations | no corporations; the leaf fails |
+| `ITeamAgreements`, `IDispositions`, `IPlayerExchanges` | `TeamAgreements`, `Dispositions`, `Exchanges` | Relations, Economy (see Relations) | Diplomacy | no agreements, neutral attitude, no deals |
+| `ICapitalWeight` | `CapitalWeights` (list) | Cities, when a lost capital moves | Religion (one per faith), Corporations (one per branch), GreatPeople (two per settled great person) | size, yields, level and culture alone |
+| `IFreeBuildingGrants` | `FreeBuildingGrants` (list) | Cities, for empire-wide free buildings | ScriptedWonders | only constructed buildings grant |
+| `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city), the AI religion and great people planners | Revolution (the instability index) | no unrest; compensation is paid in gold |
+| `ICityTradeLinks` | `TradeLinks` | Religion, for natural spread | Trade | spread follows city connections only |
+| `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
+| `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
+| `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
+| `IBarbarianBarrier` | `BarbarianBarriers` (list) | Military movement, for a barbarian that does not attack | ScriptedWonders (border wonders) | nothing bars barbarians |
+| `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
+| `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
+
+Mods also consume each other's APIs directly, always as optional: Espionage asks the
+Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a golden
+age calms a city, and GreatPeople prices a trade mission from the Trade API. Each
+references the provider's `Api` project and treats a null `sim.Service<T>()` as "absent".
 
 ## Setup and presentation services
 
@@ -835,16 +865,17 @@ level, city defense, extra cost, territory ownership (own territory score is div
 military happiness are exempt. Disbanding halts early once `NetGold` reaches
 non-negative equilibrium.
 
-`PlayerEconomy` implements `IPlayerEspionageSource.EspionageHundredths`. `EconomyMod`
-delegates espionage accumulation to `EspionageService` when loaded, preventing duplicate
-aggregate pooling. `PlayerEconomy.Calculate` queries `IEspionageService.Spending` to
-project per-rival points under `economy:espionage_target:<team>`.
+`PlayerEconomy` implements `IPlayerEspionageSource.EspionageHundredths`. When a feature
+answers `IEspionageSpending` (`GameRules.EspionageSpending`, the Espionage mod), the
+economy's espionage phase leaves accumulation to it, preventing duplicate aggregate
+pooling, and `PlayerEconomy.Calculate` asks it to project per-rival points under
+`economy:espionage_target:<team>`.
 
 Player modifier keys include `economy:max_rate:<type>`, `economy:upkeep_percent`,
 `economy:inflation_percent`, and `economy:hurry_percent`. Team key
 `research:cost_percent` changes research costs after the normal scaling steps.
 `EconomyPlayerState` saves sliders, settlement snapshots, unpaid gold, strike turns,
-hurried count, aggregate espionage (when espionage service is absent), and the inflation
+hurried count, aggregate espionage (when nothing answers `IEspionageSpending`), and the inflation
 accumulator. `EconomyCityState` saves hurry anger. The imported profile disables
 inflation. Enabled profiles use the source binomial formula and momentum update after
 research.
@@ -1060,10 +1091,14 @@ RNG or change state.
 ## Great People and Trade
 
 `src/Mods/GreatPeople` owns city GP progress, historical class weights, births,
-settlement, unit actions, and Golden Age timers. `IGreatPeopleService` supplies
+settlement, unit actions, Golden Age timers and Great General births. Its API
+(`Ariel.Mods.GreatPeople.Api`) holds `IGreatPeopleService`, which supplies
 read-only progress, rate ledgers, thresholds, settled specialists, timers, and available
-actions. The existing `ICityGreatPeopleService` delegates to the same calculation.
-Cities no longer runs a birth system. Threshold increases include both the personal
+actions, `ICityGreatPeopleService` (the city screen's view of the same calculation), the
+commands, state and events. Cities no longer runs a birth system. The mod answers two
+base seams: `ICombatLeaders` (combat adds general points to `MilitaryPlayerState`, and the
+mod spends them on Great Generals at once, inside the fight) and `ICapitalWeight`
+(settled great people weigh toward a new capital). Threshold increases include both the personal
 increase and the team increase for the creator, as in the source. Births use one
 simulation RNG draw, resolve civilization replacements, and publish `UnitCreated` and
 `GreatPersonBorn`.
@@ -1117,7 +1152,8 @@ Great People mechanics:
   the next player turn. Unit-triggered timers include the current turn.
 
 `src/Mods/Trade` derives active partners through `ICityConnectionService` and exposes
-`ITradeRouteService`. Capacity includes initial, technology, civic, local-building,
+`ITradeRouteService` in its API (`Ariel.Mods.Trade.Api`); the service answers the base
+seam `ICityTradeLinks`, along which religion spreads. Capacity includes initial, technology, civic, local-building,
 coastal-building, global-building, and external modifier contributions. Routes use
 partner population, wrapped hex distance, world-size scaling, capital connection,
 overseas, building, civic, and foreign modifiers. Profit and route yields retain
@@ -1142,10 +1178,9 @@ migration before it can continue under the new owner.
 
 Modular feature services include Diplomacy, ProjectsVictory, Corporations, Espionage,
 Events, ScriptedWonders, and Revolution. Each mod registers its contracts, commands,
-and saved extension state. Corporations, Diplomacy and Events publish their contracts
-and content definitions in their own API assemblies; the others' contracts still live
-in `Ariel.Rules/Contracts` until base rules and the AI stop naming them, and then move
-the same way.
+and saved extension state, and publishes its contracts and content definitions in its
+own API assembly (`src/Mods/<Mod>/Api`). `Ariel.Rules/Contracts` holds only the base
+game's contracts and the seams mods answer.
 
 Diplomacy elaborates the base game's relations (see Relations): attitudes, agreements
 (open borders, defensive pacts) and bilateral deals. Its API (`Ariel.Mods.Diplomacy.Api`)
@@ -1166,7 +1201,8 @@ attitudes, agreements or deals, and war, peace, contact and memory work as the b
 defines them.
 
 ProjectsVictory owns project eligibility and completion, team project counts, scores,
-and saved victory status. Project definitions carry costs, technology and project
+and saved victory status, and the project and victory definitions (`ProjectDef`,
+`VictoryDef`) in its API. It answers the base seam `IPlayerScores` with a player's total. Project definitions carry costs, technology and project
 prerequisites, instance limits, victory links, spaceship flags, and thresholds. Victory
 definitions select conquest, domination, cultural, project, or time rules. Enabled
 conditions run by priority. Projects enter the city production queue through a
@@ -1181,7 +1217,8 @@ player.
 Espionage allocates whole points from saved commerce output across met rival teams by
 player-set weights. An unset weight is zero, and unspent points stay held and visible.
 Passive thresholds unlock demographics, city visibility, research inspection, and city
-investigation. Spy missions spend points and use a calculated success chance; running a
+investigation. The service answers the base seam `IEspionageSpending`, so the economy
+leaves banking to it. Spy missions spend points and use a calculated success chance; running a
 mission lowers the attacker's own investment, so later missions cost more. Counter-
 espionage raises both cost and risk for a fixed number of turns. All numbers come from
 `data/espionage-rules.json`. Saved team, player, and city state tracks points, weights,
@@ -1193,13 +1230,16 @@ Options can change treasury, research, city stores, happiness, health, and plot 
 Unresolved events use a default option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
-buildings. City-local timers survive saves and capture. Inactive wonders pause their
+buildings, and answers two base seams: empire free buildings (`IFreeBuildingGrants`) and
+wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
 is a display-only alert. Players can suppress instability with gold, priced by the
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
-A spy-incited revolt adds instability through the Revolution service.
+A spy-incited revolt adds instability through the Revolution service. The service answers
+the base seam `ICityUnrest` with the instability index, so inquisition compensation calms
+a city, and the AI's religion and great people planners read it.
 
 ## Client presentation
 
@@ -1234,13 +1274,16 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | 200 | `ai:war` | 1100 | `ai:workers` |
 | 300 | `ai:civics` | 1200 | `ai:air` |
 | 400 | (`diplomacy:planner`) | 1300 | `ai:military` |
-| 500 | `ai:settlers` | 1400 | `ai:espionage` |
-| 600 | `ai:citizens` (renews cached views first) | 1500 | `ai:stability` |
+| 500 | `ai:settlers` | 1400 | (`espionage:planner`) |
+| 600 | `ai:citizens` (renews cached views first) | 1500 | (`revolution:planner`) |
 | 700 | `ai:religion` | 1600 | `ai:economy` |
 | | | 1700 | `ai:hurry` |
 
-Feature mods fill the gaps, and the Diplomacy mod fills the 400 slot the AI keeps for
-deals and agreements with `diplomacy:planner`. The Corporations mod runs `corporations:planner` at
+Feature mods fill the gaps, and three mods fill slots the AI keeps for them: the Diplomacy
+mod the 400 slot (deals and agreements) with `diplomacy:planner`, the Espionage mod the
+1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
+Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
+`revolution:planner`. The Corporations mod runs `corporations:planner` at
 `Religion + 100` (found and spread corporations) and the GreatPeople mod runs
 `great_people:planner` at `Religion + 200`, so a great person that can found a
 corporation does that before the great people planner spends it, and both act before
@@ -1270,13 +1313,36 @@ planner ranks content in, so a contributed planner values things on the same sca
 Everything else (roles, threat maps, city views, campaign targets, the shared site, army
 and production plans) stays internal to the built-in planners.
 
-Planners still choose what a feature's actions are worth themselves. The espionage
-planner stays in `Ariel.Ai` for now because the city planner asks it whether a spy should
-be built: moving it needs a way for a mod to add production wishes, which belongs with
-the AI valuers (how a mod adjusts how the AI scores plots, buildings, units, techs,
-civics and trades). War and peace are the AI's own (`ai:war`): the war planner issues the
+Planners still choose what a feature's actions are worth themselves. War and peace are the AI's own (`ai:war`): the war planner issues the
 base commands and weighs targets by `Relations.DispositionToward` and `Allied`, so it
 names no Diplomacy type.
+
+### Production wishes
+
+A planner acts with units it already has; what cities build is the city planner's choice.
+A mod that needs its own units or buildings tells the city planner through a second seam,
+`IProductionWishes` (`Id`, `Wishes(AiContext, City)`), registered like a planner:
+`context.RegisterService<IProductionWishes>("wishes", new MyWishes())`. Each
+`ProductionWish(Kind, ContentId, Score)` names a production kind, what to produce and its
+rank. The city planner asks every source, by ordinal id (duplicate ids fail), each time it
+scores a city's options, so a source sees what earlier choices this turn already queued.
+It keeps a wish only when the player could plausibly build it (the technology,
+civilization and obsolescence prefilters of its own options) and the city can produce it,
+then ranks it with its own scored options, highest score first, ties by ordinal id.
+Emergency defenders, settlers, workers and explorers still come first, and processes
+last.
+
+The score is on the city planner's ranking scale, not raw `PlannerPoints`: a building
+scores its value in planner points times 1000 over its cost plus 60; an attacker for a
+short army 80 to about 300; naval, siege and air units in a war 170 to 390; an inquisitor
+500 plus 1000 over its cost. The Espionage mod's `espionage:spies` wishes for spies at 150
+plus 1000 over their cost, one per six cities once a rival is known. A wish source keeps
+no mutable fields, never issues a command and never draws from the RNG.
+
+Wishes are the first of the AI valuers: the seams through which a mod adjusts what the
+AI values. Valuers for plots, buildings, units, technologies, civics and trades will sit
+beside it in `Ariel.Ai`, each a registered service asked by the planner that owns that
+choice.
 
 ### What the built-in planners do
 
@@ -1315,6 +1381,12 @@ Specialized planners handle empire governance and military campaigns:
 - **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Founds
   corporations with the fitting great person and spreads founded ones to the empire's
   own cities while income allows.
+- **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
+  espionage weights at an enemy, else the nearest known rival, walks spies to its
+  cities and runs the best affordable mission; `SpyWishes` asks cities for spies.
+- **Stability (`StabilityPlanner`, contributed by the Revolution mod)**: Every third
+  turn suppresses unrest at the warning tier or worse, with a free garrison when one
+  qualifies, otherwise with gold.
 
 Decisions use integer scores and ordinal content-id ties. War checks use only
 `Simulation.Rng`. Planners apply ordinary commands through `Simulation.TryApply` during

@@ -1,5 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Revolution;
+using Ariel.Mods.ScriptedWonders;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;

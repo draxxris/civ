@@ -28,6 +28,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner());
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
+        context.RegisterService<ICapitalWeight>("capital_weight", new BranchCapitalWeight(service));
         context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));
     }
 
@@ -99,4 +100,10 @@ internal sealed class CorporationMaintenance(ICorporationService service) : IPla
 
         owner.Treasury = Math.Max(0, owner.Treasury - gold);
     }
+}
+
+/// <summary>A new capital leans toward a city with corporate branches: one point for each corporation present.</summary>
+internal sealed class BranchCapitalWeight(ICorporationService corporations) : ICapitalWeight
+{
+    public int Weight(Simulation sim, int city) => corporations.Present(sim, city).Count;
 }

@@ -7,7 +7,7 @@ using CultureLevelDef = Ariel.Content.Schema.CultureLevelDef;
 
 namespace Ariel.Mods.ProjectsVictory;
 
-internal sealed class ProjectVictoryService : IProjectVictoryService
+internal sealed class ProjectVictoryService : IProjectVictoryService, IPlayerScores
 {
     private static VictoryGameState Read(Simulation sim) => sim.State.Extensions.Get<VictoryGameState>(sim.Content) ?? new();
     private static TeamProjectState ReadTeam(Simulation sim, int team) => sim.State.TeamById(team).Extensions.Get<TeamProjectState>(sim.Content) ?? new();
@@ -97,6 +97,7 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private static VictoryDef? ScoreRule(Simulation sim) =>
         sim.Content.Get<VictoryDef>().All.Where(v => v.Rule == "time").OrderBy(v => v.Id, StringComparer.Ordinal).FirstOrDefault();
 
+    public int Score(Simulation sim, int player) => GetScore(sim, player).Total;
     public PlayerScore GetScore(Simulation sim, int playerId)
     {
         var player = sim.State.PlayerById(playerId);
@@ -197,9 +198,8 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         var required = sim.Content.Get<ProjectDef>().All.Where(p => p.Spaceship && p.Victory == def.Id)
             .Select(p => (p.Id, Count: p.VictoryMinThresholds.TryGetValue(def.Id, out int min) ? min : p.VictoryThresholds.GetValueOrDefault(def.Id, 1))).ToArray();
         if (required.Length == 0) return null;
-        var service = sim.Content.Services.Get<IProjectVictoryService>().Single();
         foreach (var team in TeamsByScore(sim))
-            if (required.All(r => service.TeamCount(sim, team.Key, r.Id) >= r.Count)) return BestLivingMember(sim, team.Select(p => p.Id));
+            if (required.All(r => TeamCount(sim, team.Key, r.Id) >= r.Count)) return BestLivingMember(sim, team.Select(p => p.Id));
         return null;
     }
 

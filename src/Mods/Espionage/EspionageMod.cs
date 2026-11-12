@@ -38,6 +38,9 @@ public sealed class EspionageMod : IPreparableMod
         context.TurnSystems.Register(new SpyAllocation(service));
         context.TurnSystems.Register(new SpyTimers());
         context.TurnSystems.Register(new SpyExpiry());
+        context.RegisterService<IEspionageSpending>("spending", service);
+        context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new EspionageAiPlanner());
+        context.RegisterService<Ariel.Ai.IProductionWishes>("spies", new SpyWishes());
     }
 
     /// <summary>The owner of the target city remembers a spy it caught.</summary>
@@ -82,7 +85,8 @@ public static class EspionageMemories
 internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSystem
 {
     public string Id => "espionage:allocation";
-    /// <summary>One slot after the economy's espionage fallback, which runs at <see cref="TurnPhase.Espionage"/>.</summary>
+    /// <summary>One slot after the economy's espionage phase (<see cref="TurnPhase.Espionage"/>), which banks the output
+    /// only when no feature spends it.</summary>
     public int Order => TurnPhase.Espionage + 1;
     public void Run(Simulation sim, int player) => service.Allocate(sim, player);
 }

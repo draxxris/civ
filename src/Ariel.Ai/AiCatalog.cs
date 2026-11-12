@@ -21,6 +21,8 @@ internal sealed class AiCatalog
     public IReadOnlyList<BuildDef> WorkerBuilds { get; }
     /// <summary>Every registered planner in turn order: ascending <see cref="IAiPlanner.Order"/>, then ordinal id.</summary>
     public IReadOnlyList<IAiPlanner> Planners { get; }
+    /// <summary>Every registered source of production wishes, by ordinal id.</summary>
+    public IReadOnlyList<IProductionWishes> Wishes { get; }
 
     public static AiCatalog For(ContentDb content) => Cache.GetValue(content, c => new AiCatalog(c));
 
@@ -36,14 +38,17 @@ internal sealed class AiCatalog
         foreach (var def in Buildings.Cast<ContentDef>().Concat(Units)) Index(def, leaves, unlocks);
         TechLeaves = leaves; TechUnlocks = unlocks;
         Planners = OrderPlanners(content.Services.Get<IAiPlanner>());
+        Wishes = Distinct(content.Services.Get<IProductionWishes>().OrderBy(w => w.Id, StringComparer.Ordinal).ToArray(), "production wish sources");
     }
 
-    private static IAiPlanner[] OrderPlanners(IEnumerable<IAiPlanner> planners)
+    private static IAiPlanner[] OrderPlanners(IEnumerable<IAiPlanner> planners) =>
+        Distinct(planners.OrderBy(p => p.Order).ThenBy(p => p.Id, StringComparer.Ordinal).ToArray(), "AI planners");
+
+    private static T[] Distinct<T>(T[] ordered, string what) where T : IHasId
     {
-        var ordered = planners.OrderBy(p => p.Order).ThenBy(p => p.Id, StringComparer.Ordinal).ToArray();
         var ids = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var planner in ordered)
-            if (!ids.Add(planner.Id)) throw new InvalidOperationException($"Two AI planners share the id '{planner.Id}'");
+        foreach (var item in ordered)
+            if (!ids.Add(item.Id)) throw new InvalidOperationException($"Two {what} share the id '{item.Id}'");
         return ordered;
     }
 

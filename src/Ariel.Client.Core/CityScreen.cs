@@ -1,5 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.GreatPeople;
+using Ariel.Mods.Trade;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;

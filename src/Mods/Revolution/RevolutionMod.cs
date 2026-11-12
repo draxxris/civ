@@ -28,6 +28,8 @@ public sealed class RevolutionMod : IPreparableMod
         });
         context.TurnSystems.Register(new InstabilityTurns(service));
         context.TurnSystems.Register(new RebellionTurns(service));
+        context.RegisterService<ICityUnrest>("unrest_level", service);
+        context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new StabilityAiPlanner());
     }
 
     private static void ValidateThresholds(RevolutionRulesDef rules)

@@ -3,6 +3,8 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.GreatPeople;
+using Ariel.Mods.ProjectsVictory;
 using S = Ariel.Content.Schema;
 using Xunit;
 
@@ -1815,9 +1817,9 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         public string Id => "probe:project";
         public string Label => "Projects";
         public bool IsContinuous => false;
-        public IEnumerable<Ariel.Content.ContentDef> Candidates(ContentDb content) => content.Get<S.ProjectDef>().All;
-        public Ariel.Content.ContentDef Definition(ContentDb content, string id) => content.Get<S.ProjectDef>(id);
-        public long BaseCost(Ariel.Content.ContentDef definition) => ((S.ProjectDef)definition).Cost;
+        public IEnumerable<Ariel.Content.ContentDef> Candidates(ContentDb content) => content.Get<ProjectDef>().All;
+        public Ariel.Content.ContentDef Definition(ContentDb content, string id) => content.Get<ProjectDef>(id);
+        public long BaseCost(Ariel.Content.ContentDef definition) => ((ProjectDef)definition).Cost;
         public bool IsVisible(RequirementResult eligibility) => true;
         public RequirementResult Validate(Simulation sim, int city, string id) => new(true, []);
         public CityProductionResult Calculate(Simulation sim, int city, string id) => throw new NotSupportedException();
@@ -1835,7 +1837,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:enhanced_building", Name = "Enhanced Building", DefaultBuilding = "probe:enhanced_building", Cost = 1 });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:obsolete_building", Name = "Obsolete Building", DefaultBuilding = "probe:obsolete_building", Cost = 1, ObsoleteTech = "research:pottery" });
             context.Content<S.UnitDef>().Register(new() { Id = "probe:colonist", Name = "Colonist", DefaultUnit = "probe:colonist", Cost = 10, FoodProduction = true, CanFoundCity = true });
-            context.Content<S.ProjectDef>().Register(new() { Id = "probe:project", Name = "Project", Cost = 1 });
+            context.Content<ProjectDef>().Register(new() { Id = "probe:project", Name = "Project", Cost = 1 });
             context.RegisterService<IProductionKind>("probe_project", new ProbeProjectKind());
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:basic", Name = "Basic", DefaultBuilding = "probe:basic", Cost = 1,
                 YieldChanges = new(0, 2, 0), ObsoleteSafeCommerceChanges = new(0, 0, 3, 0), HurryAngerModifier = -50, ObsoleteTech = "research:pottery" });

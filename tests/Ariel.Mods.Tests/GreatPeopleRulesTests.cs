@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.GreatPeople;
 using Xunit;
 using S = Ariel.Content.Schema;
 

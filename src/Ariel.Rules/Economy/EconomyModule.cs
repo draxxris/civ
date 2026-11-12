@@ -36,7 +36,8 @@ public sealed class EconomyModule : IPreparableMod
         context.TurnSystems.Register(new EconomyPhase("anger", TurnPhase.PlayerEnd, CityHurry.DecayAnger));
         context.TurnSystems.Register(new EconomyPhase("espionage", TurnPhase.Espionage, (sim, player) =>
         {
-            if (sim.Content.Services.Get<IEspionageService>().Any()) return;
+            // A feature that spends espionage banks it itself.
+            if (sim.Rules().EspionageSpending is not null) return;
             var state = EconomyData.Edit(sim, player);
             state.EspionageHundredths += economy.EspionageHundredths(sim, player);
         }));

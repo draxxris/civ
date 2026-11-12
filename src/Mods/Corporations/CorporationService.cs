@@ -20,7 +20,6 @@ internal sealed class CorporationService : ICorporationService
         .Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
-    public int Count(Simulation sim, int city) => Present(sim, city).Count;
     public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
         .Any(corporation => sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity);
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
@@ -155,7 +154,7 @@ internal sealed class CorporationService : ICorporationService
         var displaced = state.Corporations.Where(c => Competes(sim, c, def)).Order(StringComparer.Ordinal).ToArray();
         state.Corporations.RemoveWhere(c => Competes(sim, c, def));
         state.Corporations.Add(def.Id);
-        // Displacement is silent in the rules, as in AND's shared-resource competition, so the event carries it.
+        // Displacement is silent in the rules, as in the reference shared-resource competition, so the event carries it.
         foreach (var corporation in displaced) sim.Events.Publish(new CorporationDisplaced(corporation, def.Id, city.Id));
     }
 }

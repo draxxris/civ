@@ -51,9 +51,9 @@ public static class AiPlannerOrder
     public const int Air = 1200;
     /// <summary>Garrisons, campaigns, assaults, fleets and explorers.</summary>
     public const int Military = 1300;
-    /// <summary>Weigh espionage spending and move spies.</summary>
+    /// <summary>Weigh espionage spending and move spies. No built-in planner runs here; the Espionage mod's does.</summary>
     public const int Espionage = 1400;
-    /// <summary>Keep cities stable.</summary>
+    /// <summary>Keep cities stable. No built-in planner runs here; the Revolution mod's does.</summary>
     public const int Stability = 1500;
     /// <summary>Set the commerce sliders.</summary>
     public const int Economy = 1600;

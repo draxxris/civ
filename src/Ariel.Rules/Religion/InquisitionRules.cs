@@ -76,15 +76,9 @@ internal sealed partial class ReligionService
     }
     private static void CompensateInquisition(Simulation sim, int player, City city, long gold)
     {
-        if (!sim.Content.Services.Get<IRevolutionService>().Any())
-        {
-            sim.State.PlayerById(player).Treasury += gold;
-            return;
-        }
-        // AND converts compensation to local revolution index only while it can; otherwise the gold is paid.
-        if (city.Extensions.Get<RevolutionCityState>(sim.Content) is { } state)
-            state.InstabilityIndex = (int)Math.Max(0, state.InstabilityIndex - gold);
-        else sim.State.PlayerById(player).Treasury += gold;
+        // Where a feature tracks unrest, the compensation calms the purged city while it can; otherwise it is paid.
+        if (sim.Rules().CityUnrest?.Relieve(sim, city.Id, gold) == true) return;
+        sim.State.PlayerById(player).Treasury += gold;
     }
     private static void AddInquisitionAnger(Simulation sim, City city)
     {

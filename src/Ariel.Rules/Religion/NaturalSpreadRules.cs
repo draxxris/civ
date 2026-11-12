@@ -89,9 +89,7 @@ internal sealed partial class ReligionService
             if (!sim.Rules().Relations.HasMet(sim, team, other)) return false;
         }
         if (sim.Rules().CityConnections?.Connected(sim, city.Id, source.Id) == true) return true;
-        var trade = sim.Rules().TradeRoutes;
-        if (trade is null) return false;
-        return trade.HasBilateralRoute(sim, city.Id, source.Id);
+        return sim.Rules().TradeLinks?.Linked(sim, city.Id, source.Id) == true;
     }
     private int Influence(Simulation sim, City city, string religion, SpreadTurn? turn = null)
     {

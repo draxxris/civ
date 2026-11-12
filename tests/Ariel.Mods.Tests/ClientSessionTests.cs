@@ -2,6 +2,7 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.GreatPeople;
 using Xunit;
 using Schema = Ariel.Content.Schema;
 

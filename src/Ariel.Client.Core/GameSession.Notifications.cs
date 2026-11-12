@@ -1,7 +1,11 @@
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
 using Ariel.Mods.Corporations;
+using Ariel.Mods.Espionage;
 using Ariel.Mods.Events;
+using Ariel.Mods.ProjectsVictory;
+using Ariel.Mods.Revolution;
+using Ariel.Mods.ScriptedWonders;
 
 namespace Ariel.Client;
 
@@ -116,9 +120,9 @@ public sealed partial class GameSession
                 return Note(turn, "event", $"{(Sim.Content.TryGet<EventTriggerDef>(r.Trigger, out var resolved) ? resolved.Name : Labels.Humanize(r.Trigger))} resolved"
                     + (r.Automatic ? " automatically" : ""));
             case ProjectCompleted p when p.Player == LocalPlayer || p.Team == MyTeam.Id:
-                return Note(turn, "project", $"{CityName(p.City)} completed {(Sim.Content.TryGet<Schema.ProjectDef>(p.Project, out var project) ? project.Name : Labels.Humanize(p.Project))}", p.City);
+                return Note(turn, "project", $"{CityName(p.City)} completed {(Sim.Content.TryGet<ProjectDef>(p.Project, out var project) ? project.Name : Labels.Humanize(p.Project))}", p.City);
             case VictoryAchieved v:
-                return Note(turn, "victory", $"{PlayerName(v.Player)} won a {(Sim.Content.TryGet<Schema.VictoryDef>(v.Victory, out var victory) ? victory.Name : Labels.Humanize(v.Victory))}");
+                return Note(turn, "victory", $"{PlayerName(v.Player)} won a {(Sim.Content.TryGet<VictoryDef>(v.Victory, out var victory) ? victory.Name : Labels.Humanize(v.Victory))}");
             case CityRebellionTriggered r when r.Player == LocalPlayer || Mine(r.City):
                 return Note(turn, "rebellion", $"{CityName(r.City)} rebelled: {r.Units.Count} rebel units appeared", r.City);
             case CityRebellionSuppressed r when r.Player == LocalPlayer:

@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Trade;
 using Xunit;
 using S = Ariel.Content.Schema;
 

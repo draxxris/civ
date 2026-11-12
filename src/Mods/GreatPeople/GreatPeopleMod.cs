@@ -30,6 +30,8 @@ public sealed class GreatPeopleMod : IMod
         context.Subscribe<BuildingCompleted>("golden_age_wonder", GoldenAges.Completed);
         context.TurnSystems.Register(new GreatPeopleTurns(service));
         context.TurnSystems.Register(new GoldenAgeTimers());
+        context.RegisterService<ICombatLeaders>("great_generals", new GreatGenerals(service));
+        context.RegisterService<ICapitalWeight>("capital_weight", new SettledCapitalWeight(service));
     }
 }
 internal sealed class GreatPeopleTurns(GreatPeopleService service) : IPlayerTurnSystem

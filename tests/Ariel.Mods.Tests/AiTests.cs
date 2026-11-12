@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Ariel.Content;
 using Ariel.Modding;
 using Ariel.Game;
+using Ariel.Mods.GreatPeople;
 using Xunit;
 using Xunit.Abstractions;
 

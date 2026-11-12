@@ -25,6 +25,8 @@ public sealed class ScriptedWondersMod : IPreparableMod
         context.Subscribe<BuildingCompleted>("completion", service.Completed);
         context.Subscribe<CombatResolved>("victory", service.Victory);
         context.TurnSystems.Register(new WonderTurns(service));
+        context.RegisterService<IFreeBuildingGrants>("free_buildings", service);
+        context.RegisterService<IBarbarianBarrier>("border_wonders", service);
     }
 }
 

@@ -3,6 +3,7 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.ProjectsVictory;
 using Xunit;
 using S = Ariel.Content.Schema;
 

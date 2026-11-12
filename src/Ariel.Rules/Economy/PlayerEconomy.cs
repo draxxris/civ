@@ -48,7 +48,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             lines.Add(new("economy:city:" + city.Id, "economy:culture_hundredths", result.Hundredths.Culture));
             lines.Add(new("economy:city:" + city.Id, "economy:espionage_hundredths", result.Hundredths.Espionage));
         }
-        if (sim.Rules().Espionage is { } espionage)
+        if (sim.Rules().EspionageSpending is { } espionage)
             foreach (var share in espionage.Spending(sim, player, total.Espionage))
                 lines.Add(new("economy:espionage_target:" + share.Key, "economy:espionage_spending", share.Value));
         long expenses = RecurringCosts.Calculate(sim, player, lines);

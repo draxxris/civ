@@ -34,8 +34,6 @@ internal static class StandardPlanners
         new Planner("air", AiPlannerOrder.Air, ctx => new AirPlanner(ctx).Plan()),
         new Planner("military", AiPlannerOrder.Military, ctx =>
             new MilitaryPlanner(ctx, ctx.Army, ctx.Production, new AttackPlanner(ctx, new UnitOrders(ctx))).Plan()),
-        new Planner("espionage", AiPlannerOrder.Espionage, ctx => new EspionagePlanner(ctx).Plan()),
-        new Planner("stability", AiPlannerOrder.Stability, ctx => new StabilityPlanner(ctx).Plan()),
         new Planner("economy", AiPlannerOrder.Economy, ctx => new EconomyPlanner(ctx).Plan()),
         new Planner("hurry", AiPlannerOrder.Hurry, ctx => new HurryPlanner(ctx, ctx.Production).Plan()),
     ];

@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Mods.Diplomacy;
+using Ariel.Mods.ProjectsVictory;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -102,8 +103,8 @@ public sealed partial class GameSession
             Sim.Content.TryGet<Schema.CivilizationDef>(p.Civilization, out var c) ? c.Name : p.Civilization, p.Id == LocalPlayer, service.GetScore(Sim, p.Id)))
             .OrderByDescending(r => r.Score.Total).ThenBy(r => r.PlayerId).ToList();
         string? winner = status.IsGameOver && Sim.State.Players.Any(p => p.Id == status.WinningPlayerId) ? Sim.State.PlayerById(status.WinningPlayerId).Name : null;
-        string? victory = status.VictoryId is { } v && Sim.Content.TryGet<Schema.VictoryDef>(v, out var def) ? def.Name : status.VictoryId;
-        var conditions = Sim.Content.Get<Schema.VictoryDef>().All.Where(d => d.Enabled).OrderBy(d => d.Priority).ThenBy(d => d.Id, StringComparer.Ordinal)
+        string? victory = status.VictoryId is { } v && Sim.Content.TryGet<VictoryDef>(v, out var def) ? def.Name : status.VictoryId;
+        var conditions = Sim.Content.Get<VictoryDef>().All.Where(d => d.Enabled).OrderBy(d => d.Priority).ThenBy(d => d.Id, StringComparer.Ordinal)
             .Select(d => d.Name).ToList();
         return new(true, status, winner, victory, conditions, scores);
     }

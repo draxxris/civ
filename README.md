@@ -41,8 +41,11 @@ assets). A mod teaches the standard computer player its feature by registering a
 `IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new
 computer player implements `IPlayerAI`. A mod publishes an API for other mods by shipping an
 assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`,
-as the Diplomacy mod does with `Ariel.Mods.Diplomacy.Api`; see "Mod APIs" in
-[docs/DESIGN.md](docs/DESIGN.md). Any mod can add kinds of memory between leaders in
+as the Diplomacy mod does with `Ariel.Mods.Diplomacy.Api`; every feature mod with
+services publishes one. The base game never references a mod's API: when its rules need an
+answer from a feature, it owns a small seam that the mod answers (see "Mod APIs" in
+[docs/DESIGN.md](docs/DESIGN.md)). A mod asks AI cities to build what its feature needs
+through `IProductionWishes`. Any mod can add kinds of memory between leaders in
 `data/memory-kind.json`; the base game records and fades them (see "Relations").
 
 ### User data migration and compatibility

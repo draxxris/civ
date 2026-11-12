@@ -1,7 +1,32 @@
+using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Ai;
+namespace Ariel.Mods.Espionage;
+
+/// <summary>The computer player's espionage, run in the standard AI's turn at <see cref="AiPlannerOrder.Espionage"/>,
+/// after the military planner has moved its army.</summary>
+internal sealed class EspionageAiPlanner : IAiPlanner
+{
+    public string Id => "espionage:planner";
+    public int Order => AiPlannerOrder.Espionage;
+    public void Plan(AiContext ctx) => new EspionagePlanner(ctx).Plan();
+}
+
+/// <summary>What the city planner should build for espionage: spies, one per <see cref="EspionagePlanner.CitiesPerSpy"/>
+/// cities once a rival is known, ranked a little above an ordinary naval explorer.</summary>
+internal sealed class SpyWishes : IProductionWishes
+{
+    internal const long SpyScore = 150;
+    public string Id => "espionage:spies";
+
+    public IEnumerable<ProductionWish> Wishes(AiContext ctx, City city)
+    {
+        if (!new EspionagePlanner(ctx).WantsSpy()) yield break;
+        foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => u.Spy))
+            yield return new("cities:unit", unit.Id, SpyScore + 1000L / Math.Max(1, unit.Cost));
+    }
+}
 
 /// <summary>Points the espionage budget at one rival, walks spies to that rival's cities, and runs the best mission the
 /// points allow: stealing a technology first, then sabotaging a wonder, and in war, stirring unrest or stealing gold.
@@ -9,14 +34,14 @@ namespace Ariel.Ai;
 internal sealed class EspionagePlanner(AiContext ctx)
 {
     internal const int ReviewInterval = 5, FocusWeight = 4, OtherWeight = 1, CitiesPerSpy = 6;
-    private IEspionageService? Espionage => ctx.Sim.Rules().Espionage;
+    private IEspionageService? Espionage => ctx.Sim.Service<IEspionageService>();
 
     public void Plan()
     {
         if (Espionage is not { } espionage || ctx.Cities.Count == 0) return;
         int? focus = FocusTeam();
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval == 0) Weights(espionage, focus);
-        foreach (var spy in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.Done.Contains(u.Id) && ctx.Def(u).Spy)
+        foreach (var spy in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.HasActed(u) && ctx.Def(u).Spy)
             .OrderBy(u => u.Id).ToList())
             Act(spy, focus);
     }
@@ -53,7 +78,7 @@ internal sealed class EspionagePlanner(AiContext ctx)
 
     private void Act(Unit spy, int? focus)
     {
-        ctx.Done.Add(spy.Id);
+        ctx.MarkActed(spy);
         if (ctx.Sim.State.CityAt(spy.Position) is { } here && ctx.Sim.TeamOf(here.Owner).Id != ctx.Team.Id)
         {
             if (TryMission(spy, here)) return;
@@ -78,6 +103,8 @@ internal sealed class EspionagePlanner(AiContext ctx)
         return false;
     }
 
+    private bool AtWarWith(int player) => player != ctx.PlayerId && ctx.Team.Wars.Contains(ctx.Sim.TeamOf(player).Id);
+
     private IEnumerable<(EspionageMissionKind, string?)> Missions(City city)
     {
         var service = Espionage!;
@@ -94,7 +121,7 @@ internal sealed class EspionagePlanner(AiContext ctx)
             yield return (EspionageMissionKind.SabotageProduction, null);
         yield return (EspionageMissionKind.InciteRevolt, null);
         yield return (EspionageMissionKind.CounterEspionage, null);
-        if (!ctx.IsEnemy(city.Owner)) yield break;
+        if (!AtWarWith(city.Owner)) yield break;
         yield return (EspionageMissionKind.FomentUnhappiness, null);
         yield return (EspionageMissionKind.StealTreasury, null);
     }

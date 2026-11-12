@@ -1,0 +1,7 @@
+{
+  "id": "production_wish_probe",
+  "name": "Production Wish Probe",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.ProductionWish.dll",
+  "references": ["military"]
+}

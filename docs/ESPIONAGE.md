@@ -186,10 +186,15 @@ are deleted at the next turn boundary.
 - Buildings and specialists (`src/Ariel.Rules/Cities`) add espionage commerce.
 - Spy units (`src/Ariel.Rules/Military`) set `spy: true`. Counter-spy units set
   `counterSpy: true`.
-- Revolution is optional. Without it, a spy revolt still causes disorder, but adds no
-  instability.
-- Economy is optional. Without `IEspionageService` the economy mod accumulates
-  espionage itself.
+- The mod's contracts, commands, state and events live in its published API
+  (`Ariel.Mods.Espionage`, assembly `Ariel.Mods.Espionage.Api`).
+- Revolution is optional. The mod incites a revolt through the Revolution mod's API when
+  it is loaded; without it, a spy revolt still causes disorder, but adds no instability.
+- The service answers the base economy's `IEspionageSpending` seam, so the economy lists
+  the per-rival forecast and leaves banking to the mod. Without the mod the economy
+  accumulates espionage itself.
+- The computer player's espionage is the mod's own planner (`espionage:planner`), and its
+  `espionage:spies` production wish asks AI cities for spies.
 
 ## Client and presentation
 

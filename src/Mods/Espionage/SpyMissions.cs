@@ -2,6 +2,7 @@ using Ariel.Content.Schema;
 using ModifierSink = Ariel.Content.ModifierSink;
 using ModifierScope = Ariel.Content.ModifierScope;
 using Ariel.Game;
+using Ariel.Mods.Revolution;
 
 namespace Ariel.Mods.Espionage;
 
@@ -135,7 +136,7 @@ internal sealed class SpyMissionRules(EspionageService service)
             case EspionageMissionKind.InciteRevolt:
                 // Tell the Revolution mod first: it refuses cities that are already in disorder, and this mission
                 // is about to make this one disordered.
-                sim.Rules().Revolution?.Incite(sim, city.Id);
+                sim.Service<IRevolutionService>()?.Incite(sim, city.Id);
                 var state = CityState(sim, city);
                 state.RevoltUntilTurn = checked(sim.State.Turn + GamePace.Scale(sim, rules.InciteRevoltTurns));
                 var cityRules = city.Extensions.Get<CityRuleState>(sim.Content) ?? new();

@@ -4,7 +4,7 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.ScriptedWonders;
 
-internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierSource
+internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierSource, IFreeBuildingGrants, IBarbarianBarrier
 {
     private static IEnumerable<WonderScriptDef> Rules(Simulation sim) => sim.Content.Get<WonderScriptDef>().All;
 
@@ -14,7 +14,8 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         return CityBuildingRules.Active(sim, city, city.Buildings).Any(b => b.Id == building);
     }
 
-    public IReadOnlyList<string> EmpireFreeBuildings(Simulation sim, int player) => Rules(sim)
+    /// <summary>Building classes granted while an owned or team-shared constructed wonder is active.</summary>
+    public IReadOnlyList<string> Grants(Simulation sim, int player) => Rules(sim)
         .Where(r => r.EmpireFreeBuilding is not null && HasFreeBuildingSource(sim, player, r))
         .Select(r => r.EmpireFreeBuilding!).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
 
@@ -122,7 +123,8 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue("BARBARIAN_MAX_XP_VALUE", out var v)
         && int.TryParse(v, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var n) ? n : 40;
 
-    public bool BlocksBarbarianEntry(Simulation sim, int barbarianUnitId, Hex targetHex)
+    /// <summary>True when an active wonder bars this barbarian land unit from entering the target hex.</summary>
+    public bool Blocks(Simulation sim, int barbarianUnitId, Hex targetHex)
     {
         var unit = sim.State.UnitById(barbarianUnitId);
         if (!Barbarian(sim, unit.Owner) || sim.Content.Get<S.UnitDef>(unit.Type).Domain != "military:domain_land") return false;

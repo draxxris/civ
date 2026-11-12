@@ -55,8 +55,9 @@ internal sealed class ReligionPlanner(AiContext ctx)
     private void Purge(Unit unit, IReligionService religion)
     {
         if (!religion.IsInquisitionEnabled(ctx.Sim, ctx.PlayerId)) return;
+        var unrest = ctx.Sim.Rules().CityUnrest;
         var targets = ctx.Cities.Where(c => religion.HasInquisitionTargets(ctx.Sim, c.Id))
-            .OrderByDescending(c => c.Extensions.TryGet<RevolutionCityState>(ctx.Sim.Content)?.InstabilityIndex ?? 0)
+            .OrderByDescending(c => unrest?.Unrest(ctx.Sim, c.Id) ?? 0)
             .ThenBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id);
         foreach (var city in targets)
             if (Visit(unit, city, new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = ReligionMissions.Inquisition })) return;

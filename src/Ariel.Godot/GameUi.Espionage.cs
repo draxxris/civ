@@ -1,4 +1,5 @@
 using Ariel.Game;
+using Ariel.Mods.Espionage;
 using Godot;
 
 namespace Ariel.Client;

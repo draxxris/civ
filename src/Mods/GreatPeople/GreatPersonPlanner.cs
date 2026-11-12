@@ -26,7 +26,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
 
     public void Plan()
     {
-        var service = ctx.Sim.Rules().GreatPeople;
+        var service = ctx.Sim.Service<IGreatPeopleService>();
         if (service is null) return;
         foreach (var unit in ctx.Units.OrderBy(u => u.Id))
         {
@@ -179,9 +179,9 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         long duration = Math.Max(1, length * ctx.Sim.Content.Get<GameSpeedDef>(ctx.Sim.Settings.GameSpeed).GoldenAgePercent / 100);
         long gain = ctx.Sim.Content.Get<YieldDef>().All.Sum(y => (long)y.GoldenAgeYield * Math.Max(100, y.AiWeightPercent) / Math.Max(1, 1 + y.GoldenAgeYieldThreshold));
         long value = gain * ctx.Cities.Sum(c => (long)c.Population) * duration / 100;
-        if (ctx.Sim.Content.Services.Get<IRevolutionService>().Any())
+        if (ctx.Sim.Rules().CityUnrest is { } unrest)
         {
-            long average = ctx.Cities.Sum(c => (long)(c.Extensions.Get<RevolutionCityState>(ctx.Sim.Content)?.InstabilityIndex ?? 0)) / Math.Max(1, ctx.Cities.Count);
+            long average = ctx.Cities.Sum(c => (long)unrest.Unrest(ctx.Sim, c.Id)) / Math.Max(1, ctx.Cities.Count);
             value *= Math.Max(1, average / 500);
         }
         return value;

@@ -1,4 +1,6 @@
-namespace Ariel.Game;
+using Ariel.Game;
+
+namespace Ariel.Mods.Espionage;
 
 public enum PassiveEspionageKind { Demographics, CityVisibility, InspectResearch, InvestigateCity }
 
@@ -59,7 +61,9 @@ public sealed record PassiveEspionageStatus(PassiveEspionageKind Kind, long Thre
 /// <summary>A spy of <paramref name="Player"/> ran a mission; a failed spy is destroyed.</summary>
 public sealed record EspionageMissionResult(int Unit, int City, EspionageMissionKind Mission, bool Success, long Cost, int Player) : DomainEvent;
 
-public interface IEspionageService
+/// <summary>Espionage points, weights, passive tiers and mission prices. The service also tells the base economy where
+/// a player's espionage commerce goes (<see cref="IEspionageSpending"/>).</summary>
+public interface IEspionageService : IEspionageSpending
 {
     long Points(Simulation sim, int team, int targetTeam);
     int Weight(Simulation sim, int player, int targetTeam);
@@ -67,8 +71,6 @@ public interface IEspionageService
     IReadOnlyList<int> KnownRivals(Simulation sim, int player);
     /// <summary>Whole points held back because every weight is zero. Does not change state.</summary>
     long Held(Simulation sim, int player);
-    /// <summary>Forecast whole points per rival, including held points. Does not change state.</summary>
-    IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths);
     string? ValidateWeight(Simulation sim, int player, int targetTeam, int weight);
     void SetWeight(Simulation sim, int player, int targetTeam, int weight);
     bool HasPassiveEffect(Simulation sim, int team, int targetTeam, PassiveEspionageKind kind);
@@ -88,8 +90,14 @@ public sealed class SetEspionageWeightCommand : GameCommand
 {
     public int TargetTeam { get; init; }
     public int Weight { get; init; } = 1;
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IEspionageService>().Single().ValidateWeight(sim, Player, TargetTeam, Weight);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IEspionageService>().Single().SetWeight(sim, Player, TargetTeam, Weight);
+    public override string? Validate(Simulation sim) => Espionage.Service(sim).ValidateWeight(sim, Player, TargetTeam, Weight);
+    public override void Apply(Simulation sim) => Espionage.Service(sim).SetWeight(sim, Player, TargetTeam, Weight);
+}
+
+internal static class Espionage
+{
+    internal static IEspionageService Service(Simulation sim) => sim.Service<IEspionageService>()
+        ?? throw new InvalidOperationException("the Espionage mod is not loaded");
 }
 
 /// <summary>The missions the Espionage mod registers, one per <see cref="EspionageMissionKind"/>. Only a technology

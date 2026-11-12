@@ -172,7 +172,7 @@ internal sealed partial class CombatService : ICombatService
         long percent = 100 + ledger.Total("military:general_rate_percent");
         if (sim.State.PlotAt(combatPlot).Owner == winner.Owner) percent += ledger.Total("military:domestic_general_rate_percent");
         MilitaryData.EditPlayer(sim, winner.Owner).GeneralPoints += amount * Math.Max(0, percent) / 100;
-        CombatGenerals.Award(sim, winner);
+        sim.Rules().CombatLeaders?.Emerge(sim, winner);
     }
     internal static IReadOnlyList<CollateralHit> Collateral(Simulation sim, Unit a, Unit primary)
     {

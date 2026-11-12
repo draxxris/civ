@@ -1,4 +1,5 @@
 using Ariel.Game;
+using Ariel.Mods.Espionage;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;

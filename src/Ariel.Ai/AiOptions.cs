@@ -11,6 +11,7 @@ internal sealed class AiOptions
     private readonly AiContext _ctx;
     public IReadOnlyList<BuildingDef> Buildings { get; }
     public IReadOnlyList<UnitDef> Units { get; }
+    private readonly Lazy<HashSet<string>> _buildingIds, _unitIds;
 
     public AiOptions(AiContext ctx)
     {
@@ -21,7 +22,18 @@ internal sealed class AiOptions
         Buildings = ctx.Catalog.Buildings.Where(b => PlausibleBuilding(b, civ, rc, limited)).ToArray();
         Units = ctx.Catalog.Units.Where(u => TechOk(u, rc) && civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id
             && (u.ForceObsoleteTech is not { } o || !ctx.Sim.KnowsTech(ctx.PlayerId, o))).ToArray();
+        _buildingIds = new(() => Buildings.Select(b => b.Id).ToHashSet(StringComparer.Ordinal));
+        _unitIds = new(() => Units.Select(u => u.Id).ToHashSet(StringComparer.Ordinal));
     }
+
+    /// <summary>Whether the player could plausibly build this now: a building or unit must pass the prefilters above;
+    /// another kind's content is left to the production validator.</summary>
+    public bool IsPlausible(string kind, string id) => kind switch
+    {
+        "cities:building" => _buildingIds.Value.Contains(id),
+        "cities:unit" => _unitIds.Value.Contains(id),
+        _ => true,
+    };
 
     private bool TechOk(ContentDef def, RequirementContext rc) => _ctx.Sim.Content.Requirements.EvaluateKind(def.Requirements, rc, "tech").Success;
 

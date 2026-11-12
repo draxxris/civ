@@ -92,7 +92,7 @@ public sealed class GameRules : IRuleset
     /// <summary>Contact, war and peace, border passage and what players remember of each other.</summary>
     public IRelationsService Relations { get; private set; } = null!;
 
-    // Seams a mod may fill. Null when that mod is not loaded.
+    // Seams one feature answers. Null when no loaded mod answers them; rules then apply the base game's default.
     /// <summary>Agreements between teams (open borders, defensive pacts), answered by the mod that negotiates them, or
     /// null without one. Rules ask <see cref="Relations"/>, which applies the default.</summary>
     public ITeamAgreements? TeamAgreements { get; private set; }
@@ -101,20 +101,19 @@ public sealed class GameRules : IRuleset
     public IDispositions? Dispositions { get; private set; }
     /// <summary>Resources and gold players exchange, answered by the mod that runs deals, or null without one.</summary>
     public IPlayerExchanges? Exchanges { get; private set; }
-    /// <summary>The Espionage mod's service, or null without it.</summary>
-    public IEspionageService? Espionage { get; private set; }
-    /// <summary>The Great People mod's service, or null without it.</summary>
-    public IGreatPeopleService? GreatPeople { get; private set; }
-    /// <summary>The Trade mod's service, or null without it.</summary>
-    public ITradeRouteService? TradeRoutes { get; private set; }
     /// <summary>Corporations in a city, answered by the mod that runs corporations, or null without one.</summary>
     public ICityCorporations? CityCorporations { get; private set; }
-    /// <summary>The Revolution mod's service, or null without it.</summary>
-    public IRevolutionService? Revolution { get; private set; }
-    /// <summary>The ScriptedWonders mod's service, or null without it.</summary>
-    public IScriptedWonderService? ScriptedWonders { get; private set; }
-    /// <summary>The ProjectsVictory mod's service, or null without it.</summary>
-    public IProjectVictoryService? ProjectVictory { get; private set; }
+    /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
+    /// banks it then.</summary>
+    public IEspionageSpending? EspionageSpending { get; private set; }
+    /// <summary>Whether two cities trade, answered by the feature that runs trade routes, or null without one.</summary>
+    public ICityTradeLinks? TradeLinks { get; private set; }
+    /// <summary>How restless a city is, answered by the feature that tracks unrest, or null without one.</summary>
+    public ICityUnrest? CityUnrest { get; private set; }
+    /// <summary>Players' scores, answered by the feature that keeps score, or null without one.</summary>
+    public IPlayerScores? Scores { get; private set; }
+    /// <summary>Leaders that emerge from general points, answered by the feature that has them, or null without one.</summary>
+    public ICombatLeaders? CombatLeaders { get; private set; }
 
     /// <summary>Missions: what a unit does to the city it stands in, for every feature that registers a kind.</summary>
     public IMissionService Missions { get; private set; } = null!;
@@ -124,6 +123,12 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<IUnitActionSource> UnitActions { get; private set; } = [];
     /// <summary>Every kind of fire that can support an assault, base and mod, in registration order.</summary>
     public IReadOnlyList<ISupportFire> SupportFire { get; private set; } = [];
+    /// <summary>Everything that weighs a city as a new capital, base and mod, in registration order.</summary>
+    public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
+    /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
+    public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
+    /// <summary>Everything that bars barbarians from plots, in registration order.</summary>
+    public IReadOnlyList<IBarbarianBarrier> BarbarianBarriers { get; private set; } = [];
 
     /// <inheritdoc/>
     public void Bind(ContentDb content)
@@ -133,6 +138,9 @@ public sealed class GameRules : IRuleset
         MissionKinds = services.Get<IMission>();
         UnitActions = services.Get<IUnitActionSource>();
         SupportFire = services.Get<ISupportFire>();
+        CapitalWeights = services.Get<ICapitalWeight>();
+        FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
+        BarbarianBarriers = services.Get<IBarbarianBarrier>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
@@ -174,13 +182,12 @@ public sealed class GameRules : IRuleset
         TeamAgreements = services.Get<ITeamAgreements>().SingleOrDefault();
         Dispositions = services.Get<IDispositions>().SingleOrDefault();
         Exchanges = services.Get<IPlayerExchanges>().SingleOrDefault();
-        Espionage = services.Get<IEspionageService>().SingleOrDefault();
-        GreatPeople = services.Get<IGreatPeopleService>().SingleOrDefault();
-        TradeRoutes = services.Get<ITradeRouteService>().SingleOrDefault();
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
-        Revolution = services.Get<IRevolutionService>().SingleOrDefault();
-        ScriptedWonders = services.Get<IScriptedWonderService>().SingleOrDefault();
-        ProjectVictory = services.Get<IProjectVictoryService>().SingleOrDefault();
+        EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
+        TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
+        CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
+        Scores = services.Get<IPlayerScores>().SingleOrDefault();
+        CombatLeaders = services.Get<ICombatLeaders>().SingleOrDefault();
     }
 
     /// <inheritdoc/>

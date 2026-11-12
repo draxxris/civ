@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Espionage;
 using Xunit;
 
 namespace Ariel.Mods.Tests;

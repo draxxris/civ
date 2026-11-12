@@ -1,5 +1,7 @@
 using Ariel.Client;
 using Ariel.Game;
+using Ariel.Mods.Revolution;
+using Ariel.Mods.ScriptedWonders;
 using Xunit;
 
 namespace Ariel.Mods.Tests;

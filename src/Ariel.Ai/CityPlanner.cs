@@ -8,8 +8,6 @@ namespace Ariel.Ai;
 internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan army)
 {
     private readonly BuildingValuer _valuer = new(ctx);
-    private readonly Lazy<EspionagePlanner> _espionage = new(() => new EspionagePlanner(ctx));
-    internal const long SpyScore = 150;
     private const int ParallelCities = 3, ParallelBuildings = 8;
     private readonly Lazy<AiOptions> _options = new(() => new AiOptions(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
     private int _settlersQueued, _workersQueued, _wondersQueued, _soldiersQueued;
@@ -152,15 +150,21 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
             if (rated[i] is { } score) options.Add(("cities:building", buildings[i].Id, score));
         if (army.Soldiers + _soldiersQueued < army.Want(Views) && v.Production >= 2) options.AddRange(ArmyOptions(v));
         options.AddRange(StrategicOptions(v));
-        if (_espionage.Value.WantsSpy())
-            foreach (var unit in Options.Units.Where(u => u.Spy))
-                if (ctx.CanProduce(v.City.Id, "cities:unit", unit.Id))
-                    options.Add(("cities:unit", unit.Id, SpyScore + 1000L / Math.Max(1, unit.Cost)));
+        options.AddRange(Wished(v));
         if (InquisitorWanted())
             foreach (var unit in Options.Units.Where(u => u.Inquisitor))
                 if (ctx.CanProduce(v.City.Id, "cities:unit", unit.Id))
                     options.Add(("cities:unit", unit.Id, 500 + 1000L / Math.Max(1, unit.Cost)));
         return options.OrderByDescending(o => o.Score).ThenBy(o => o.Id, StringComparer.Ordinal).Select(o => (o.Kind, o.Id));
+    }
+
+    /// <summary>What mods wish this city to produce (<see cref="IProductionWishes"/>), kept when plausible and legal.</summary>
+    private IEnumerable<(string, string, long)> Wished(CityView v)
+    {
+        foreach (var source in ctx.Catalog.Wishes)
+            foreach (var wish in source.Wishes(ctx, v.City))
+                if (Options.IsPlausible(wish.Kind, wish.ContentId) && ctx.CanProduce(v.City.Id, wish.Kind, wish.ContentId))
+                    yield return (wish.Kind, wish.ContentId, wish.Score);
     }
 
     private int CountRole(UnitRole role) => ctx.CountUnits(role) + ctx.CountQueued(role);

@@ -43,7 +43,7 @@ internal static class ResearchDiffusion
 
     private static long Welfare(Simulation sim, Team team, Player[] living, Team[] contacted, RuleConstants rules)
     {
-        var scores = sim.Rules().ProjectVictory;
+        var scores = sim.Rules().Scores;
         if (scores is null) return 0; // Custom rulesets without a score owner have no welfare score factor.
         var eras = ResearchTimeline.Eras(sim);
         var weights = sim.Content.Get<TechDef>().All.ToDictionary(t => t.Id,
@@ -54,8 +54,8 @@ internal static class ResearchDiffusion
         int techPercent = checked((int)(100 * ourTech / Math.Max(1, bestTech)));
         if (techPercent >= rules.ResearchDiffusionWelfareThreshold) return 0;
         int leader = ResearchTimeline.Leader(sim, team);
-        long ourScore = scores.GetScore(sim, leader).Total;
-        long bestScore = living.Where(p => p.Id != leader).Select(p => (long)scores.GetScore(sim, p.Id).Total).DefaultIfEmpty().Max();
+        long ourScore = scores.Score(sim, leader);
+        long bestScore = living.Where(p => p.Id != leader).Select(p => (long)scores.Score(sim, p.Id)).DefaultIfEmpty().Max();
         // Native division by a zero total is undefined. Use neutral welfare, not infinite assistance.
         if (ourScore <= 0 || ourScore >= bestScore) return 0;
         long welfare = ResearchPower.WelfareBonus(rules.ResearchDiffusionWelfarePercent,
@@ -63,8 +63,8 @@ internal static class ResearchDiffusion
         return checked((long)((Int128)welfare * bestScore / ourScore));
     }
 
-    // CvGameCoreUtils::getTechScore is era index + 1. PlayerScore.Techs is a count,
-    // not that native score; only PlayerScore.Total supplies the welfare score factor.
+    // CvGameCoreUtils::getTechScore is era index + 1. A score's technology part is a count,
+    // not that native score; only the total score supplies the welfare score factor.
     private static long TechScore(Team team, Dictionary<string, int> weights) =>
         team.Techs.Sum(t => (long)weights.GetValueOrDefault(t));
 }

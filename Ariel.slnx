@@ -11,18 +11,24 @@
     <Project Path="src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" />
     <Project Path="src/Mods/TechTree/Ariel.Mods.TechTree.csproj" />
     <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
+    <Project Path="src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />
+    <Project Path="src/Mods/Trade/Api/Ariel.Mods.Trade.Api.csproj" />
     <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
     <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
     <Project Path="src/Mods/Diplomacy/Api/Ariel.Mods.Diplomacy.Api.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
+    <Project Path="src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
     <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />
     <Project Path="src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
     <Project Path="src/Mods/Espionage/Ariel.Mods.Espionage.csproj" />
+    <Project Path="src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />
     <Project Path="src/Mods/Events/Ariel.Mods.Events.csproj" />
     <Project Path="src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
     <Project Path="src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" />
+    <Project Path="src/Mods/ScriptedWonders/Api/Ariel.Mods.ScriptedWonders.Api.csproj" />
     <Project Path="src/Mods/Revolution/Ariel.Mods.Revolution.csproj" />
+    <Project Path="src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Ariel.Tests/Ariel.Tests.csproj" />
@@ -35,6 +41,7 @@
     <Project Path="tests/TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" />
     <Project Path="tests/TestMods/AiPlanner/Ariel.TestMods.AiPlanner.csproj" />
     <Project Path="tests/TestMods/MemoryKind/Ariel.TestMods.MemoryKind.csproj" />
+    <Project Path="tests/TestMods/ProductionWish/Ariel.TestMods.ProductionWish.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />

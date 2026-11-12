@@ -74,7 +74,7 @@ internal static class CityData
     internal static IEnumerable<string> FreeBuildings(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
         CityReadScope.Memo(scope.FreeBuildings, city, () => GrantCategories(sim, scope, city.Owner)
             .Select(category => ResolveBuilding(sim, city, category)).OfType<string>().Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray()));
-    // Grants depend only on the receiving owner: its team's constructed sources and its own scripted wonders.
+    // Grants depend only on the receiving owner: its team's constructed sources and what features grant it.
     private static SortedSet<string> GrantCategories(Simulation sim, CityReadScope scope, int owner) => CityReadScope.Memo(scope.GrantCategories, owner, () =>
     {
         var categories = new SortedSet<string>(StringComparer.Ordinal);
@@ -86,8 +86,8 @@ internal static class CityData
                 if (building.FreeBuilding is { Length: > 0 } category && (source.Owner == owner || building.TeamShare))
                     categories.Add(category);
         }
-        if (sim.Rules().ScriptedWonders is { } scripted)
-            categories.UnionWith(scripted.EmpireFreeBuildings(sim, owner));
+        foreach (var grants in sim.Rules().FreeBuildingGrants)
+            categories.UnionWith(grants.Grants(sim, owner));
         return categories;
     });
     internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(city.Owner)));

@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using Ariel.Content;
+using Ariel.Content.Schema;
 
-namespace Ariel.Content.Schema;
+namespace Ariel.Mods.ProjectsVictory;
 
 /// <summary>A team or world project. Negative instance limits mean unlimited; all numbers are integers.</summary>
 public sealed class ProjectDef : GameContentDef

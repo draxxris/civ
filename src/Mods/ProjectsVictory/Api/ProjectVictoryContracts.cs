@@ -1,7 +1,8 @@
 using System.Text.Json.Serialization;
 using Ariel.Content;
+using Ariel.Game;
 
-namespace Ariel.Game;
+namespace Ariel.Mods.ProjectsVictory;
 
 /// <summary>Score parts for one player. Total is the weighted sum.</summary>
 public sealed record PlayerScore(int Population, int Land, int Techs, int Wonders, int Total);
@@ -32,7 +33,8 @@ public sealed class TeamProjectState
 {
     public SortedDictionary<string, int> Completed { get; set; } = new(StringComparer.Ordinal);
 }
-/// <summary>Queries and rules for projects and victory. Queries never change state.</summary>
+/// <summary>Queries and rules for projects and victory. Queries never change state. The mod also keeps the score the
+/// base game asks for (<see cref="IPlayerScores"/>): a player's score is <see cref="PlayerScore.Total"/>.</summary>
 public interface IProjectVictoryService
 {
     RequirementResult ValidateProject(Simulation sim, int city, string project);
@@ -44,12 +46,6 @@ public interface IProjectVictoryService
     VictoryStatus GetVictoryStatus(Simulation sim);
     /// <summary>Check every enabled victory in priority order. Records and publishes the first one reached.</summary>
     VictoryStatus Evaluate(Simulation sim, bool turnEnd);
-}
-/// <summary>Completion rules for a queue kind that Cities does not own.</summary>
-public interface IProductionCompletion
-{
-    string Kind { get; }
-    void Complete(Simulation sim, int city, string content);
 }
 public sealed record ProjectCompleted(int City, int Player, int Team, string Project) : DomainEvent;
 public sealed record VictoryAchieved(int Team, int Player, string Victory, int Turn) : DomainEvent;

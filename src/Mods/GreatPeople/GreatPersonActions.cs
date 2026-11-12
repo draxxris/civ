@@ -55,7 +55,7 @@ internal static partial class GreatPersonActions
         long amount = Math.Min(capacity, Math.Max(0, remaining));
         return amount > 0 ? new("great_people:discover_tech", choice.Tech.Id, amount) : null;
     }
-    internal static int Required(Simulation sim, int player) => sim.Content.Services.Get<IGreatPeopleService>().Single().GoldenAgeUnitsRequired(sim, player);
+    internal static int Required(Simulation sim, int player) => sim.Service<IGreatPeopleService>()!.GoldenAgeUnitsRequired(sim, player);
     internal static int[] GoldenAgeUnits(Simulation sim, int player, Unit initiating, IReadOnlyList<int> requested)
     {
         int required = Required(sim, player);

@@ -1,6 +1,7 @@
 using Ariel.Content;
+using Ariel.Game;
 
-namespace Ariel.Game;
+namespace Ariel.Mods.Trade;
 
 /// <summary>Canonical directed identifier for an active trade route originating from source to partner city.</summary>
 public readonly record struct TradeRouteKey : IComparable<TradeRouteKey>
@@ -81,8 +82,9 @@ public sealed record TradeRouteResult(int PartnerCity, bool Foreign, bool Overse
 }
 
 public sealed record CityTradeResult(int Slots, IReadOnlyList<TradeRouteResult> Routes, YieldVector Yields, Ledger Ledger);
-/// <summary>Active routes are derived from current connectivity. Queries are read-only and RNG-free.</summary>
-public interface ITradeRouteService
+/// <summary>Active routes are derived from current connectivity. Queries are read-only and RNG-free. The service also
+/// answers the base game's question whether two cities trade (<see cref="ICityTradeLinks"/>).</summary>
+public interface ITradeRouteService : ICityTradeLinks
 {
     int MaxRoutes(Simulation sim, int city);
     CityTradeResult Calculate(Simulation sim, int city);

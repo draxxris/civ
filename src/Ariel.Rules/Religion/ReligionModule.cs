@@ -32,7 +32,13 @@ public sealed class ReligionModule : IPreparableMod
         context.RegisterService<IMission>("shrine", new ShrineMission(service));
         context.Subscribe<BuildingCompleted>("founding_wonder", ReligionFoundingRules.Completed);
         context.TurnSystems.Register(new ReligionTurns(service));
+        context.RegisterService<ICapitalWeight>("capital_weight", new FaithCapitalWeight(service));
     }
+}
+/// <summary>A new capital leans toward a city with more faiths: one point for each religion present.</summary>
+internal sealed class FaithCapitalWeight(IReligionService religion) : ICapitalWeight
+{
+    public int Weight(Simulation sim, int city) => religion.Present(sim, city).Count;
 }
 internal sealed class ReligionTurns(ReligionService service) : IPlayerTurnSystem
 {

@@ -3,6 +3,7 @@ using Ariel.Content;
 using Ariel.Game;
 using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
+using Ariel.Mods.Espionage;
 using S = Ariel.Content.Schema;
 using Xunit;
 

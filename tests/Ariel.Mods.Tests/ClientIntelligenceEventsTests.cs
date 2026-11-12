@@ -5,6 +5,7 @@ using Ariel.Game;
 using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Corporations;
+using Ariel.Mods.Espionage;
 using Ariel.Mods.Events;
 using Xunit;
 using S = Ariel.Content.Schema;

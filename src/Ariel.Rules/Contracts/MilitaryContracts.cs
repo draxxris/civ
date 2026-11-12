@@ -168,12 +168,31 @@ public interface IBarbarianFaction
     /// <summary>The barbarian player, created on first use. Every caller gets the same player for the rest of the game.</summary>
     int Ensure(Simulation sim);
 }
+/// <summary>Combat counters of one player. Combat wins against civilizations earn <see cref="GeneralPoints"/>; the
+/// feature that turns them into leaders (<see cref="ICombatLeaders"/>) spends them and keeps the other two counts.</summary>
 public sealed class MilitaryPlayerState
 {
     public int WinsAgainstBarbarians { get; set; }
     public long GeneralPoints { get; set; }
     public int GreatGeneralsCreated { get; set; }
     public int GeneralThresholdModifier { get; set; }
+}
+/// <summary>Leaders that emerge from the general points a player's combat wins earn, answered by the feature that has
+/// such leaders, or null without one (<see cref="GameRules.CombatLeaders"/>). Combat adds the points to
+/// <see cref="MilitaryPlayerState.GeneralPoints"/> and asks at once; without an answer the points just accumulate.</summary>
+public interface ICombatLeaders
+{
+    /// <summary>The winner's player has just earned general points: spend every threshold they cover on a leader.
+    /// Runs inside combat resolution, so any randomness it draws is part of the fight.</summary>
+    void Emerge(Simulation sim, Unit winner);
+}
+/// <summary>Whether something bars a barbarian unit from a plot it could otherwise enter, such as a wonder that keeps
+/// barbarians out of its owner's lands. Movement asks every implementation before a barbarian moves without
+/// attacking; an attack is never barred. Queries never change state or use the RNG.</summary>
+public interface IBarbarianBarrier
+{
+    /// <summary>Whether this barbarian unit may not enter the target plot.</summary>
+    bool Blocks(Simulation sim, int barbarianUnit, Hex target);
 }
 /// <summary>Combat is atomic. Reports survive saving between commands within the turn.</summary>
 public sealed class MilitaryGameState

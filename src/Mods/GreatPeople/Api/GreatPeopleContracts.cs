@@ -1,6 +1,7 @@
 using Ariel.Content;
+using Ariel.Game;
 
-namespace Ariel.Game;
+namespace Ariel.Mods.GreatPeople;
 
 /// <summary>Historical progress and current whole-point rate. Class points are unmodified source weights.</summary>
 public sealed record GreatPeopleCityResult(long Progress, long Threshold, long Rate,
@@ -19,6 +20,13 @@ public interface IGreatPeopleService
     /// <summary>Preview at the current position, or at a proposed destination without moving the unit.</summary>
     IReadOnlyList<GreatPersonAction> AvailableActions(Simulation sim, int player, int unit, Hex? destination = null);
 }
+/// <summary>A city's great people threshold and rate, as the city screen shows them.</summary>
+public sealed record CityGreatPeopleResult(long Threshold, long Rate, Ledger Ledger);
+/// <summary>The city screen's view of a city's great people. Queries must not change state or consume RNG.</summary>
+public interface ICityGreatPeopleService
+{
+    CityGreatPeopleResult Calculate(Simulation sim, int city);
+}
 /// <summary>Command boundary shared by previews and execution.</summary>
 public interface IGreatPeopleCommandService
 {
@@ -31,10 +39,10 @@ public abstract class GreatPersonCommand : GameCommand
     public string? Target { get; init; }
     public int[] Units { get; init; } = [];
     protected abstract string Action { get; }
-    public override string? Validate(Simulation sim) => sim.Content.Services.Get<IGreatPeopleCommandService>().Single()
-        .Validate(sim, Player, UnitId, Action, Target, Units);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IGreatPeopleCommandService>().Single()
-        .Execute(sim, Player, UnitId, Action, Target, Units);
+    public override string? Validate(Simulation sim) => Commands(sim).Validate(sim, Player, UnitId, Action, Target, Units);
+    public override void Apply(Simulation sim) => Commands(sim).Execute(sim, Player, UnitId, Action, Target, Units);
+    private static IGreatPeopleCommandService Commands(Simulation sim) => sim.Service<IGreatPeopleCommandService>()
+        ?? throw new InvalidOperationException("the Great People mod is not loaded");
 }
 public sealed class LeadGreatPersonCommand : GreatPersonCommand { protected override string Action => "lead"; }
 public sealed class ConstructGreatPersonCommand : GreatPersonCommand { protected override string Action => "construct"; }

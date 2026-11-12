@@ -20,11 +20,10 @@ internal static class CityCapital
     private static long Score(Simulation sim, City city)
     {
         var yields = sim.Rules().CityYields.Calculate(sim, city.Id).Yields;
-        int religions = sim.Rules().Religion?.Present(sim, city.Id).Count ?? 0;
-        int corporations = sim.Rules().CityCorporations?.Count(sim, city.Id) ?? 0;
-        int settled = sim.Rules().GreatPeople?.SettledSpecialists(sim, city.Id).Values.Sum() ?? 0;
+        long weights = 0;
+        foreach (var weight in sim.Rules().CapitalWeights) weights += weight.Weight(sim, city.Id);
         long value = city.Population * 4L + yields.Food + yields.Production * 3L + yields.Commerce * 2L
-            + CityData.LevelIndex(sim, city) + religions + corporations + settled * 2L;
+            + CityData.LevelIndex(sim, city) + weights;
         return value * (CityData.OwnerCulturePercent(sim, city) + 100L) / 100L;
     }
 }

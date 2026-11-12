@@ -102,6 +102,8 @@ internal sealed class TradeRouteService : ITradeRouteService
     public bool HasBilateralRoute(Simulation sim, int cityA, int cityB) =>
         HasRoute(sim, cityA, cityB) || HasRoute(sim, cityB, cityA);
 
+    public bool Linked(Simulation sim, int city, int other) => HasBilateralRoute(sim, city, other);
+
     public IReadOnlyList<TradeRouteResult> ActiveRoutes(Simulation sim, int player) =>
         sim.State.Cities
             .Where(c => c.Owner == player)
