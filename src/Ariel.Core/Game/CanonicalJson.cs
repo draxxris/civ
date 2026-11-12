@@ -19,8 +19,11 @@ public static class CanonicalJson
 
     [ThreadStatic] private static ArrayBufferWriter<byte>? _serialized, _canonical;
     [ThreadStatic] private static bool _serializing, _busy;
-    /// <summary>Larger reusable buffers are dropped after use, so one huge state does not pin them for good.</summary>
-    private const int MaxKeptBuffer = 8 * 1024 * 1024;
+    /// <summary>The serializer and canonical buffers are dropped after use above this size, which is well past a
+    /// late-game gigantic world (about 7 MB at turn 1), so every shipped game keeps reusing them.</summary>
+    private const int MaxKeptBuffer = 64 * 1024 * 1024;
+    /// <summary>Scratch for one object nesting level is dropped after use above this size.</summary>
+    private const int MaxKeptScratch = 8 * 1024 * 1024;
 
     /// <summary>Serialize data and recursively sort object properties; reject non-integer numbers.
     /// A parsed <see cref="JsonElement"/> keeps the element path, because its escapes were not produced by this
@@ -297,7 +300,7 @@ public static class CanonicalJson
 
     private static void ReturnScratch(ArrayBufferWriter<byte> buffer)
     {
-        if (buffer.Capacity > MaxKeptBuffer) return; // One huge state must not pin its buffer forever.
+        if (buffer.Capacity > MaxKeptScratch) return; // One huge state must not pin its buffer forever.
         _scratches!.Push(buffer);
     }
     private static void Grow(ref Property[] properties, int count)

@@ -26,7 +26,7 @@ mise run benchmark -- --world
 # 4. Operational turn and AI workloads (8-player game, 99-turn preparation, turn-100 decisions)
 mise run benchmark
 
-# 5. Lockstep state hash (8-player game played to turn 100, then 100 hashes)
+# 5. Lockstep state hash (fresh gigantic world, then standard 8-player game at turn 100)
 mise run benchmark -- --hash
 ```
 
@@ -46,9 +46,9 @@ mise run benchmark -- --hash
 - **Default (no flag)**: Runs multi-turn simulation benchmarks, including the 50-city
   turn workload and the 8-player scenario with turn-100 AI decision evaluation
   (`decisions.RunAi()`).
-- **`--hash`**: Plays an eight-player AI game on a standard world to turn 100, then
-  times 100 `Simulation.ComputeHash` calls and reports time, allocated bytes and gen-2
-  collections per hash.
+- **`--hash`**: Times 100 `Simulation.ComputeHash` calls on a fresh eight-player gigantic
+  world, then on an eight-player standard world played to turn 100, and reports time,
+  allocated bytes and gen-2 collections per hash.
 
 ### Profiling and Diagnostic Tracing
 
@@ -796,20 +796,27 @@ copies per hash, all on the large object heap.
 - `CanonicalJson` serializes into a reused per-thread buffer and passes the canonical
   bytes straight to a finishing function (string decode, SHA-256 or FNV-1a).
 - `CanonicalJson.Fnv1a64` replaces the string round trip in `StateHasher`.
-- Reused buffers above 8 MB are dropped after use.
+- The reused serializer and canonical buffers are dropped after use only above 64 MB,
+  well past a gigantic world's state (about 7 MB at turn 1), so every shipped size keeps
+  reusing them.
 
 #### Measurements
 
-`mise run benchmark -- --hash`, eight players on a standard world at turn 100 (36 cities,
-105 units), 100 samples after one warm-up hash:
+`mise run benchmark -- --hash`, 100 samples after one warm-up hash, with before and
+after measured back to back:
 
-| Metric                         |   Before |    After |
-| :----------------------------- | -------: | -------: |
-| Time per hash                  | 16.49 ms | 13.54 ms |
-| Allocated per hash             | 8,927 KB |   830 KB |
-| Gen-2 collections (100 hashes) |       28 |        0 |
+| World                                       | Metric                         |    Before |    After |
+| :------------------------------------------ | :----------------------------- | --------: | -------: |
+| Standard, 8 players, turn 100 (2.0 MB JSON) | Time per hash                  |  14.90 ms | 13.03 ms |
+|                                             | Allocated per hash             |  8,923 KB |   827 KB |
+|                                             | Gen-2 collections (100 hashes) |        14 |        0 |
+| Gigantic, 8 players, turn 1 (7.0 MB JSON)   | Time per hash                  |  61.66 ms | 56.02 ms |
+|                                             | Allocated per hash             | 31,002 KB | 2,327 KB |
+|                                             | Gen-2 collections (100 hashes) |        29 |        0 |
 
-The hash value is unchanged (`11110498118ABED7`), and `mise run test` passes.
+The hash values are unchanged (`11110498118ABED7` and `F36B7E720365C85E`), and
+`mise run test` passes. A first cut capped the reused buffers at 8 MB, which a fresh
+gigantic world fills exactly and a later one would overflow, regrowing them on every hash.
 
 ______________________________________________________________________
 
@@ -853,5 +860,6 @@ passes:
 |                                         |                      | Unchanged selection click (repeat click)                   | UI update lines          |               1 line |           0 lines |                    **-100% (eliminated)** |
 |                                         |                      | Research dialog reopen (unchanged session)                 | Wall time                |             14.00 ms |           0.07 ms |                                **-99.5%** |
 |                                         |                      | Religion plate scrape pattern delta on click               | Differing pixels         |               594 px |              0 px |                        **-100% (stable)** |
-| **Pass 8: Lockstep State Hash**         | `a17020e`            | Turn-100 8-player `ComputeHash`                            | Managed bytes per hash   |             8,927 KB |            830 KB |                                **-90.7%** |
-|                                         |                      | Turn-100 8-player `ComputeHash`                            | Wall time per hash       |             16.49 ms |          13.54 ms |                                **-17.9%** |
+| **Pass 8: Lockstep State Hash**         | `a17020e`            | Standard turn-100 8-player `ComputeHash`                   | Managed bytes per hash   |             8,923 KB |            827 KB |                                **-90.7%** |
+|                                         |                      | Standard turn-100 8-player `ComputeHash`                   | Wall time per hash       |             14.90 ms |          13.03 ms |                                **-12.6%** |
+|                                         |                      | Gigantic turn-1 8-player `ComputeHash`                     | Managed bytes per hash   |            31,002 KB |          2,327 KB |                                **-92.5%** |

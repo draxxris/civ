@@ -33,9 +33,9 @@ For the lockstep state hash, run:
 mise run benchmark -- --hash
 ```
 
-`--hash` plays an eight-player AI game on a standard world to turn 100, then times 100
-calls to `Simulation.ComputeHash` and reports the time, bytes allocated and gen-2
-collections per hash.
+`--hash` times 100 calls to `Simulation.ComputeHash` on a freshly generated eight-player
+gigantic world, then on an eight-player standard world played to turn 100. It reports
+the time, bytes allocated and gen-2 collections per hash, and the hash itself.
 
 Neither `--quick` nor `--startup` runs the old 99-turn AI preparation. `--terrain`
 selects the terrain workload. Without a workload flag, the tool runs the original turn
