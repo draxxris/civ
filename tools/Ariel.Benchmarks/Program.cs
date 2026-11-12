@@ -19,6 +19,11 @@ if (args.Contains("--quick") || args.Contains("--startup"))
     StartupBenchmarks.Run(root, sweep: args.Contains("--startup"));
     return;
 }
+if (args.Contains("--borders"))
+{
+    BorderBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));
+    return;
+}
 if (args.Contains("--gigantic"))
 {
     GiganticTurnBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));

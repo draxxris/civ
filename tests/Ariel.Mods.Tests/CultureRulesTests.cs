@@ -147,6 +147,31 @@ public sealed class CultureRulesTests
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }
     [Fact]
+    public void A_plot_taken_by_an_enemy_mid_spread_cuts_a_rival_citys_reach_for_the_plots_after_it()
+    {
+        // One open row between two rows of peaks: player 1's city at column 0, player 0's at column 6.
+        var sim = Scenario();
+        sim.State.Map = new(7, 3, false);
+        sim.State.Plots = Enumerable.Range(0, 21).Select(i => new Plot { Terrain = "world:grass", Kind = i / 7 == 1 ? PlotKind.Flat : PlotKind.Peak }).ToArray();
+        sim.State.RebuildIndexes();
+        TileId At(int column) => sim.State.Grid.TileAt(column, 1);
+        var rival = AddCity(sim, 1, At(0).Value); rival.Culture = 1_000_000;
+        rival.Extensions.Get<CityRuleState>(sim.Content)!.Disorder = true; // only player 0's city spreads
+        var spreader = AddCity(sim, 0, At(6).Value); spreader.Culture = 1_000_000;
+        sim.State.SetWar(0, 1, true);
+        foreach (int column in new[] { 1, 2, 4 }) sim.State.Plots[At(column).Value].Culture[1] = 1000;
+
+        sim.Content.TurnSystems.All.Single(s => s.Id == "cities:borders").Run(sim);
+
+        // Plots resolve in column order. Column 2 is in the rival's reach, so its culture holds it. Column 3 then
+        // falls to player 0, who is at war with the rival and so blocks its culture. Column 4 lies past that
+        // block: the rival's larger culture there no longer counts.
+        Assert.Equal(1, sim.State.Plots[At(2).Value].Owner);
+        Assert.Equal(0, sim.State.Plots[At(3).Value].Owner);
+        Assert.Equal(0, sim.State.Plots[At(4).Value].Owner);
+    }
+
+    [Fact]
     public void Plot_decay_exempts_barbarians_and_small_balances_and_releases_unclaimed_land()
     {
         var sim = Scenario();

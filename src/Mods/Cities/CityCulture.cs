@@ -61,12 +61,13 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         if (city.Culture <= 0 || GovernmentStatus.IsDisorder(sim, city)) return;
         int level = CityData.LevelIndex(sim, city);
         long rate = CityData.Read(sim, city).LastCultureRateHundredths / 100;
+        var ranges = new CultureRanges(sim);
         foreach (var (tile, distance) in CultureDistances(sim, city, level).OrderBy(p => p.Key.Value))
         {
             long amount = (level - distance + 1) * CityData.Constants(sim).CityFreeCultureGrowthFactor + rate + 1;
             var plot = sim.State.Plots[tile.Value];
             plot.Culture[city.Owner] = plot.Culture.GetValueOrDefault(city.Owner) + amount;
-            Resolve(sim, tile);
+            Resolve(sim, tile, ranges);
         }
         work.Assign(sim, city.Id);
     }
@@ -101,12 +102,13 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         {
             int radius = CultureRadius(sim, city);
             long growth = CityData.Constants(sim).CityFreeCultureGrowthFactor;
+            var ranges = new CultureRanges(sim);
             foreach (var (tile, distance) in CultureDistances(sim, city, radius).OrderBy(p => p.Key.Value))
             {
                 long amount = (radius - distance + 1) * growth + 1;
                 var plot = sim.State.Plots[tile.Value];
                 plot.Culture[city.Owner] = plot.Culture.GetValueOrDefault(city.Owner) + amount;
-                Resolve(sim, tile);
+                Resolve(sim, tile, ranges);
             }
         }
     }
@@ -119,12 +121,13 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         if (sim.State.Turn % halvingTurns != 0) return;
         var barbarians = sim.State.Players.Where(p => IsBarbarian(sim, p.Id))
             .Select(p => p.Id).ToHashSet();
+        var ranges = new CultureRanges(sim);
         foreach (var tile in sim.State.Grid.Tiles)
-            DecayPlot(sim, tile, constants.CityFreeCultureGrowthFactor, barbarians);
+            DecayPlot(sim, tile, constants.CityFreeCultureGrowthFactor, barbarians, ranges);
         foreach (var city in sim.State.Cities)
             DecayForeignCulture(sim, city, constants.CityFreeCultureGrowthFactor * 100L);
     }
-    private static void DecayPlot(Simulation sim, TileId tile, int minimum, HashSet<int> barbarians)
+    private static void DecayPlot(Simulation sim, TileId tile, int minimum, HashSet<int> barbarians, CultureRanges ranges)
     {
         var plot = sim.State.Plots[tile.Value];
         bool changed = false;
@@ -137,7 +140,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
             plot.Culture[player] = decayed;
             changed = true;
         }
-        if (changed) Resolve(sim, tile);
+        if (changed) Resolve(sim, tile, ranges);
     }
     private static void DecayForeignCulture(Simulation sim, City city, long minimum)
     {
@@ -148,19 +151,28 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
             state.CultureHundredths[player] /= 2;
         }
     }
-    internal static void Resolve(Simulation sim, TileId tile)
+    internal static void Resolve(Simulation sim, TileId tile) => Resolve(sim, tile, new CultureRanges(sim));
+    /// <summary>Settle one plot's owner. <paramref name="ranges"/> carries other cities' culture reach across a
+    /// batch of plots; this keeps it correct when the new owner changes what blocks culture.</summary>
+    private static void Resolve(Simulation sim, TileId tile, CultureRanges ranges)
     {
         var plot = sim.State.Plots[tile.Value];
-        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) { plot.Owner = city.Owner; return; }
+        int? before = plot.Owner;
+        plot.Owner = Owner(sim, tile, plot, ranges);
+        if (plot.Owner != before) ranges.OwnerChanged(before, plot.Owner);
+    }
+    private static int? Owner(Simulation sim, TileId tile, Plot plot, CultureRanges ranges)
+    {
+        if (sim.State.CityAt(sim.State.Grid.HexOf(tile)) is { } city) return city.Owner;
         // Only players with a living city whose cultural radius covers the tile may own it.
-        var eligible = plot.Culture.Where(p => p.Value > 0 && InRange(sim, p.Key, tile)).ToArray();
-        if (eligible.Length == 0) { plot.Owner = null; return; }
+        var eligible = plot.Culture.Where(p => p.Value > 0 && InRange(sim, p.Key, tile, ranges)).ToArray();
+        if (eligible.Length == 0) return null;
         long maximum = eligible.Max(p => p.Value);
         // Preserve an incumbent on equal culture; otherwise lowest player id breaks ties.
-        if (plot.Owner is { } owner && eligible.Any(p => p.Key == owner && p.Value == maximum)) return;
-        plot.Owner = eligible.First(p => p.Value == maximum).Key;
+        if (plot.Owner is { } owner && eligible.Any(p => p.Key == owner && p.Value == maximum)) return owner;
+        return eligible.First(p => p.Value == maximum).Key;
     }
-    private static bool InRange(Simulation sim, int player, TileId tile)
+    private static bool InRange(Simulation sim, int player, TileId tile, CultureRanges ranges)
     {
         foreach (var c in sim.State.Cities)
         {
@@ -171,12 +183,48 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
             int geometricDistance = sim.State.Grid.Distance(center, tile);
             // Stored founding culture remains eligible throughout the unobstructed first ring.
             if (geometricDistance == 1) return true;
-            var levels = CityData.Levels(sim, c.Owner, c);
-            int radius = Math.Max(1, CityData.LevelIndex(sim, c, levels));
+            var (levels, radius) = ranges.Levels(c);
             if (geometricDistance > radius) continue;
-            if (CultureDistances(sim, c, radius).TryGetValue(tile, out int distance) && distance < levels.Count) return true;
+            if (ranges.Distances(c, radius).TryGetValue(tile, out int distance) && distance < levels) return true;
         }
         return false;
+    }
+
+    /// <summary>Each city's culture levels, radius and culture distances, reused across a batch of plot
+    /// resolutions instead of recomputed for every plot. Levels and radius hold for the whole batch, since
+    /// resolving plots changes no city's culture. Distances depend on which plots belong to a team at war with
+    /// the city's owner, so <see cref="OwnerChanged"/> drops those of the cities such a change can affect.</summary>
+    private sealed class CultureRanges(Simulation sim)
+    {
+        private readonly Dictionary<int, (int Levels, int Radius)> _levels = new();
+        private readonly Dictionary<int, IReadOnlyDictionary<TileId, int>> _distances = new();
+        private readonly List<int> _stale = new();
+
+        public (int Levels, int Radius) Levels(City city)
+        {
+            if (_levels.TryGetValue(city.Id, out var known)) return known;
+            var levels = CityData.Levels(sim, city.Owner, city);
+            return _levels[city.Id] = (levels.Count, Math.Max(1, CityData.LevelIndex(sim, city, levels)));
+        }
+
+        public IReadOnlyDictionary<TileId, int> Distances(City city, int radius)
+        {
+            if (!_distances.TryGetValue(city.Id, out var distances)) _distances[city.Id] = distances = CultureDistances(sim, city, radius);
+            return distances;
+        }
+
+        public void OwnerChanged(int? before, int? after)
+        {
+            if (_distances.Count == 0) return;
+            int? beforeTeam = before is { } b ? sim.TeamOf(b).Id : null, afterTeam = after is { } a ? sim.TeamOf(a).Id : null;
+            foreach (var (id, _) in _distances)
+            {
+                var wars = sim.TeamOf(sim.State.CityById(id).Owner).Wars;
+                if ((beforeTeam is { } x && wars.Contains(x)) || (afterTeam is { } y && wars.Contains(y))) _stale.Add(id);
+            }
+            foreach (int id in _stale) _distances.Remove(id);
+            _stale.Clear();
+        }
     }
     internal static IReadOnlyDictionary<TileId, int> CultureDistances(Simulation sim, City city, int maxRadius)
     {

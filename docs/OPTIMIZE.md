@@ -31,6 +31,9 @@ mise run benchmark -- --hash
 
 # 6. Whole AI turns on a gigantic world (8 players, turns 21-30 timed, final hash printed)
 mise run benchmark -- --gigantic
+
+# 7. Borders phase on the standard 8-player game at turn 100 (hashes before and after printed)
+mise run benchmark -- --borders
 ```
 
 #### Workload Descriptions
@@ -55,6 +58,9 @@ mise run benchmark -- --gigantic
 - **`--gigantic`**: Plays an eight-player AI game on a gigantic world, times turns 21-30,
   and reports time and allocated bytes per turn, gen-2 collections, and the final state
   hash, which must not change under a pure optimization.
+- **`--borders`**: Plays the standard eight-player game to turn 100, then times the
+  `cities:borders` phase (culture spread, plot ownership and work assignment) on fresh
+  copies of that state, printing the state hash before and after.
 
 ### Profiling and Diagnostic Tracing
 
@@ -844,6 +850,29 @@ scoring joins before `Issue` or `Refresh` replaces one.
 The final hash is unchanged (`8DE653BF50D0B641`). At turn 30 each AI has only a few
 workers and settlers, so about 20 grid allocations a turn go away. The saving grows with
 the number of workers and settlers issuing commands; the turn-time difference is noise.
+
+### Pass 10: Culture Reach Cached Across a Batch of Plots
+
+- **Date**: 2026-11-11
+
+Settling a plot's owner asks, for every player with culture on it, whether one of that
+player's cities reaches the plot. Each answer evaluated the city's culture levels and ran
+a fresh culture-distance search, for every plot of every spreading city. `CultureRanges`
+now keeps each city's levels, radius and distances for one batch (one city's spread, one
+decay pass), and drops a city's distances whenever a plot changes owner to or from a
+team at war with that city's owner, since only that changes what blocks its culture.
+
+`mise run benchmark -- --borders` (36 cities, turn 100). The state hashes before and after
+the phase (`11110498118ABED7`, `121AA603D84F93B6`) are unchanged.
+
+| Measured part of the borders phase |            Before |             After |
+| :--------------------------------- | ----------------: | ----------------: |
+| Culture spread and plot ownership  |   1.44 ms, 1.4 MB |   0.37 ms, 0.4 MB |
+| Whole phase, with work assignment  | 11.21 ms, 15.3 MB | 11.28 ms, 14.3 MB |
+
+The spread-only figures come from a diagnostic run with work assignment disabled. About
+97% of the phase is `ICityWorkService.Assign`, which runs again for every city after it
+spreads, and at this state changes no assignment. That is the next target here.
 
 ______________________________________________________________________
 
