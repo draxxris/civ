@@ -271,17 +271,17 @@ public sealed class ResearchRulesTests
         // ResearchTeamState lifecycle and transition methods
         var state = new ResearchTeamState();
         Assert.False(state.HasQueue);
-        Assert.Equal(0, state.QueueCount);
+        Assert.Empty(state.Queue);
         Assert.Null(state.CurrentTarget);
 
         state.Enqueue(Agriculture);
         state.Enqueue("research:pottery");
         Assert.True(state.HasQueue);
-        Assert.Equal(2, state.QueueCount);
+        Assert.Equal([Agriculture, "research:pottery"], state.Queue);
         Assert.Equal(Agriculture, state.CurrentTarget);
 
         Assert.Equal(Agriculture, state.PopQueue());
-        Assert.Equal(1, state.QueueCount);
+        Assert.Equal(["research:pottery"], state.Queue);
         Assert.Equal("research:pottery", state.CurrentTarget);
 
         Assert.True(state.RemoveFromQueue("research:pottery"));
