@@ -17,8 +17,10 @@ public static class CanonicalJson
         Converters = { new ExtensionStateConverter(), new OrdinalCollectionConverter() },
     };
 
-    [ThreadStatic] private static ArrayBufferWriter<byte>? _canonical;
-    [ThreadStatic] private static bool _busy;
+    [ThreadStatic] private static ArrayBufferWriter<byte>? _serialized, _canonical;
+    [ThreadStatic] private static bool _serializing, _busy;
+    /// <summary>Larger reusable buffers are dropped after use, so one huge state does not pin them for good.</summary>
+    private const int MaxKeptBuffer = 8 * 1024 * 1024;
 
     /// <summary>Serialize data and recursively sort object properties; reject non-integer numbers.
     /// A parsed <see cref="JsonElement"/> keeps the element path, because its escapes were not produced by this
@@ -27,7 +29,7 @@ public static class CanonicalJson
     {
         if (value is JsonElement element) return Normalize(element);
         if (value is JsonDocument document) return Normalize(document.RootElement);
-        return Canonicalize(JsonSerializer.SerializeToUtf8Bytes(value, options ?? Options), hash: false);
+        return Canonicalize(value, options ?? Options, Encoding.UTF8.GetString);
     }
 
     /// <summary>Normalize a JSON data tree.</summary>
@@ -56,7 +58,20 @@ public static class CanonicalJson
     {
         if (value is JsonElement element) return DigestElement(element);
         if (value is JsonDocument document) return DigestElement(document.RootElement);
-        return Canonicalize(JsonSerializer.SerializeToUtf8Bytes(value, Options), hash: true);
+        return Canonicalize(value, Options, Sha256Hex);
+    }
+
+    /// <summary>64-bit FNV-1a of canonical UTF-8 data, taken over the canonical bytes where they are written
+    /// rather than over a decoded string and a second encoded copy.</summary>
+    public static ulong Fnv1a64<T>(T value) => Canonicalize(value, Options, Fnv1a64);
+
+    private static string Sha256Hex(ReadOnlySpan<byte> utf8) => Convert.ToHexString(SHA256.HashData(utf8));
+
+    private static ulong Fnv1a64(ReadOnlySpan<byte> utf8)
+    {
+        ulong hash = 14695981039346656037UL;
+        foreach (byte value in utf8) { hash ^= value; hash = unchecked(hash * 1099511628211UL); }
+        return hash;
     }
 
     private static string DigestElement(JsonElement element)
@@ -92,17 +107,37 @@ public static class CanonicalJson
     // would produce. That lets one pass copy scalars verbatim and only reorder each object's properties, instead
     // of materialising a JsonElement tree and writing it a second time.
 
-    /// <summary>Canonicalize serializer output into a string, or hash it, without staging a second copy.</summary>
-    private static string Canonicalize(byte[] utf8, bool hash)
+    /// <summary>Serialize into a reused buffer, so a large state allocates no fresh copy of its JSON each time,
+    /// then canonicalize it.</summary>
+    private static TResult Canonicalize<T, TResult>(T value, JsonSerializerOptions options, Func<ReadOnlySpan<byte>, TResult> finish)
+    {
+        // A converter that canonicalizes while the outer value is being serialized must not reuse its buffer.
+        if (_serializing) return Canonicalize(JsonSerializer.SerializeToUtf8Bytes(value, options), finish);
+        _serializing = true;
+        var input = _serialized ??= new ArrayBufferWriter<byte>(4096);
+        try
+        {
+            input.Clear();
+            using (var writer = new Utf8JsonWriter(input)) JsonSerializer.Serialize(writer, value, options);
+            return Canonicalize(input.WrittenSpan, finish);
+        }
+        finally
+        {
+            _serializing = false;
+            if (input.Capacity > MaxKeptBuffer) _serialized = null;
+        }
+    }
+
+    /// <summary>Canonicalize serializer output and hand the canonical bytes to <paramref name="finish"/>, which
+    /// turns them into a string or a hash without staging a second copy.</summary>
+    private static TResult Canonicalize<TResult>(ReadOnlySpan<byte> utf8, Func<ReadOnlySpan<byte>, TResult> finish)
     {
         // A nested call (a converter that itself canonicalizes) must not reuse the buffer an outer call is filling.
         if (_busy)
         {
             var scratch = new ArrayBufferWriter<byte>(utf8.Length + 64);
             WriteCanonical(utf8, scratch);
-            return hash
-                ? Convert.ToHexString(SHA256.HashData(scratch.WrittenSpan))
-                : Encoding.UTF8.GetString(scratch.WrittenSpan);
+            return finish(scratch.WrittenSpan);
         }
         _busy = true;
         try
@@ -110,11 +145,13 @@ public static class CanonicalJson
             var output = _canonical ??= new ArrayBufferWriter<byte>(4096);
             output.Clear();
             WriteCanonical(utf8, output);
-            return hash
-                ? Convert.ToHexString(SHA256.HashData(output.WrittenSpan))
-                : Encoding.UTF8.GetString(output.WrittenSpan);
+            return finish(output.WrittenSpan);
         }
-        finally { _busy = false; }
+        finally
+        {
+            _busy = false;
+            if (_canonical.Capacity > MaxKeptBuffer) _canonical = null;
+        }
     }
 
     private struct Property
@@ -128,7 +165,7 @@ public static class CanonicalJson
 
     /// <summary>The first seven name bytes, zero padded: a short name's padding sorts it before any longer name that
     /// shares its prefix, and names that agree on seven bytes fall back to the full comparison.</summary>
-    private static void MeasureName(byte[] json, ref Property property)
+    private static void MeasureName(ReadOnlySpan<byte> json, ref Property property)
     {
         ulong packed = 0;
         bool escaped = false;
@@ -144,24 +181,24 @@ public static class CanonicalJson
         if (escaped) property.Name = DecodeName(json, property.NameStart, property.NameLength);
     }
 
-    private static string DecodeName(byte[] json, int start, int length)
+    private static string DecodeName(ReadOnlySpan<byte> json, int start, int length)
     {
         var quoted = new byte[length + 2];
         quoted[0] = (byte)'"';
-        json.AsSpan(start, length).CopyTo(quoted.AsSpan(1));
+        json.Slice(start, length).CopyTo(quoted.AsSpan(1));
         quoted[^1] = (byte)'"';
         using var document = JsonDocument.Parse(quoted);
         return document.RootElement.GetString() ?? throw new InvalidDataException("Property name is not a string");
     }
 
-    private static void WriteCanonical(byte[] json, ArrayBufferWriter<byte> output)
+    private static void WriteCanonical(ReadOnlySpan<byte> json, ArrayBufferWriter<byte> output)
     {
         var reader = new Utf8JsonReader(json);
         reader.Read();
         WriteValue(json, ref reader, output, depth: 0);
     }
 
-    private static void WriteValue(byte[] json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
+    private static void WriteValue(ReadOnlySpan<byte> json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
     {
         switch (reader.TokenType)
         {
@@ -171,7 +208,7 @@ public static class CanonicalJson
             case JsonTokenType.Number:
                 if (!reader.TryGetInt64(out _) && !reader.TryGetUInt64(out _))
                     throw new InvalidDataException("Deterministic data must contain only integer numbers");
-                output.Write(json.AsSpan((int)reader.TokenStartIndex, (int)(reader.BytesConsumed - reader.TokenStartIndex)));
+                output.Write(json.Slice((int)reader.TokenStartIndex, (int)(reader.BytesConsumed - reader.TokenStartIndex)));
                 break;
             case JsonTokenType.True: output.Write("true"u8); break;
             case JsonTokenType.False: output.Write("false"u8); break;
@@ -180,7 +217,7 @@ public static class CanonicalJson
         }
     }
 
-    private static void WriteObject(byte[] json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
+    private static void WriteObject(ReadOnlySpan<byte> json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
     {
         // Property values must be buffered until the names are sorted. The buffer belongs to this nesting
         // level only: arrays emit their elements one after another, so sibling objects share the level below.
@@ -212,7 +249,7 @@ public static class CanonicalJson
             {
                 if (i > 0) output.Write(","u8);
                 output.Write("\""u8);
-                output.Write(json.AsSpan(properties[i].NameStart, properties[i].NameLength));
+                output.Write(json.Slice(properties[i].NameStart, properties[i].NameLength));
                 output.Write("\":"u8);
                 output.Write(buffered.Slice(properties[i].Offset, properties[i].Length));
             }
@@ -226,7 +263,7 @@ public static class CanonicalJson
         }
     }
 
-    private static void WriteArray(byte[] json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
+    private static void WriteArray(ReadOnlySpan<byte> json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output, int depth)
     {
         output.Write("["u8);
         bool first = true;
@@ -240,10 +277,10 @@ public static class CanonicalJson
         output.Write("]"u8);
     }
 
-    private static void AppendRawString(byte[] json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output)
+    private static void AppendRawString(ReadOnlySpan<byte> json, ref Utf8JsonReader reader, ArrayBufferWriter<byte> output)
     {
         output.Write("\""u8);
-        output.Write(json.AsSpan((int)reader.TokenStartIndex + 1, reader.ValueSpan.Length));
+        output.Write(json.Slice((int)reader.TokenStartIndex + 1, reader.ValueSpan.Length));
         output.Write("\""u8);
     }
 
@@ -260,7 +297,7 @@ public static class CanonicalJson
 
     private static void ReturnScratch(ArrayBufferWriter<byte> buffer)
     {
-        if (buffer.Capacity > 8 * 1024 * 1024) return; // One huge state must not pin its buffer forever.
+        if (buffer.Capacity > MaxKeptBuffer) return; // One huge state must not pin its buffer forever.
         _scratches!.Push(buffer);
     }
     private static void Grow(ref Property[] properties, int count)
@@ -272,7 +309,7 @@ public static class CanonicalJson
     }
 
     /// <summary>Insertion sort: stable, so duplicate names keep their order, and object shapes are small.</summary>
-    private static void SortByName(byte[] json, Property[] properties, int count)
+    private static void SortByName(ReadOnlySpan<byte> json, Property[] properties, int count)
     {
         for (int i = 1; i < count; i++)
         {
@@ -287,20 +324,20 @@ public static class CanonicalJson
         }
     }
 
-    private static int CompareNames(byte[] json, in Property left, in Property right)
+    private static int CompareNames(ReadOnlySpan<byte> json, in Property left, in Property right)
     {
         // UTF-8 byte order is ordinal string order for plain ASCII names, which is every name the shipped content
         // uses; escaped or non-ASCII names compare their decoded text.
         if (left.Name is null && right.Name is null)
         {
             if (left.Key != right.Key) return left.Key < right.Key ? -1 : 1;
-            return json.AsSpan(left.NameStart, left.NameLength).SequenceCompareTo(json.AsSpan(right.NameStart, right.NameLength));
+            return json.Slice(left.NameStart, left.NameLength).SequenceCompareTo(json.Slice(right.NameStart, right.NameLength));
         }
         return string.CompareOrdinal(NameOf(json, left), NameOf(json, right));
     }
 
-    private static string NameOf(byte[] json, in Property property) =>
-        property.Name ?? Encoding.UTF8.GetString(json, property.NameStart, property.NameLength);
+    private static string NameOf(ReadOnlySpan<byte> json, in Property property) =>
+        property.Name ?? Encoding.UTF8.GetString(json.Slice(property.NameStart, property.NameLength));
 }
 
 /// <summary>Typed mod state keyed by registered component id. Mutable instances stay attached by reference.</summary>

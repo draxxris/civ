@@ -27,6 +27,16 @@ and gigantic worlds with seeds 1, 42, and 987654. Each world uses four players. 
 workload measures world generation and `GameSession.Start`. It does not measure
 founding, production choices, or 99-turn AI preparation.
 
+For the lockstep state hash, run:
+
+```sh
+mise run benchmark -- --hash
+```
+
+`--hash` plays an eight-player AI game on a standard world to turn 100, then times 100
+calls to `Simulation.ComputeHash` and reports the time, bytes allocated and gen-2
+collections per hash.
+
 Neither `--quick` nor `--startup` runs the old 99-turn AI preparation. `--terrain`
 selects the terrain workload. Without a workload flag, the tool runs the original turn
 and AI workloads.

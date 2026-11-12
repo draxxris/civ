@@ -19,6 +19,11 @@ if (args.Contains("--quick") || args.Contains("--startup"))
     StartupBenchmarks.Run(root, sweep: args.Contains("--startup"));
     return;
 }
+if (args.Contains("--hash"))
+{
+    HashBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));
+    return;
+}
 if (args.Contains("--terrain"))
 {
     TerrainBenchmarks.Run(Ariel.Client.GameCatalog.Load(root));
