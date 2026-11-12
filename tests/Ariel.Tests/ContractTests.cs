@@ -464,6 +464,26 @@ public class ContractTests
         Assert.Throws<InvalidOperationException>(() => sim.State.Extensions.Set(db, new object()));
     }
 
+    [Fact]
+    public void SavesAndSettingsCarryingAMemberTheCurrentTypesLackAreRejected()
+    {
+        var db = Content(Source("extra", ctx => ctx.RegisterStateComponent<Counter>("counter")));
+        var sim = new Simulation(db, new SimulationSettings { PlayerCount = 1 });
+        sim.State.Extensions.Set(db, new Counter { Value = 3 });
+        string save = SaveGame.Save(sim);
+        Assert.Equal(sim.ComputeHash(), SaveGame.Load(db, save).ComputeHash());
+
+        // A field a component used to have, as a save from before its removal would carry it.
+        string removedField = save.Replace("\"Value\":", "\"Retired\":1,\"Value\":", StringComparison.Ordinal);
+        Assert.NotEqual(save, removedField);
+        Assert.Contains("Retired", Assert.Throws<InvalidDataException>(() => SaveGame.Load(db, removedField, force: true)).Message);
+
+        string settings = SaveGame.SaveSettings(sim.Settings);
+        Assert.Equal(settings, SaveGame.SaveSettings(SaveGame.LoadSettings(settings)));
+        string newerSettings = settings.Insert(settings.IndexOf('{') + 1, "\"FutureOption\":1,");
+        Assert.Contains("FutureOption", Assert.Throws<InvalidDataException>(() => SaveGame.LoadSettings(newerSettings)).Message);
+    }
+
     private sealed class FloatingState { public double Value { get; set; } }
 
     [Fact]

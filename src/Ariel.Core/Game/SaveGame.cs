@@ -1,11 +1,21 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ariel.Content;
 
 namespace Ariel.Game;
 
-/// <summary>Versioned JSON save codec. Loading never regenerates maps, publishes events, or reruns AI.</summary>
+/// <summary>Versioned JSON save codec. Loading never regenerates maps, publishes events, or reruns AI.
+/// Loading is strict: a member the current types do not declare, such as a field a newer or older build wrote,
+/// rejects the whole save rather than being dropped, so a game never continues from state it only partly read.</summary>
 public static class SaveGame
 {
+    /// <summary>Settings decoding, as strict as save loading: a peer on another build fails loudly instead of
+    /// starting from settings that silently lost a member.</summary>
+    private static readonly JsonSerializerOptions StrictSettings = new(CanonicalJson.Options)
+    {
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+    };
+
     /// <summary>Supported schema version; incompatible versions require an explicit migration.</summary>
     public const int SchemaVersion = 4;
     /// <summary>Serialize setup, loaded mod versions, content identity, state and RNG words.</summary>
@@ -28,7 +38,10 @@ public static class SaveGame
 
     private static Simulation LoadUnchecked(ContentDb content, string json, bool force)
     {
-        var options = new JsonSerializerOptions(CanonicalJson.Options);
+        var options = new JsonSerializerOptions(CanonicalJson.Options)
+        {
+            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+        };
         options.Converters.Insert(0, new ExtensionStateConverter(content.StateComponents));
         var save = JsonSerializer.Deserialize<Snapshot>(json, options) ?? throw new InvalidDataException("Empty save");
         if (save.SchemaVersion != SchemaVersion) throw new InvalidDataException($"Unsupported save schema {save.SchemaVersion}; expected {SchemaVersion}");
@@ -52,8 +65,14 @@ public static class SaveGame
     /// <summary>Settings as canonical JSON, so a multiplayer host can hand every peer the exact setup it resolved.</summary>
     public static string SaveSettings(SimulationSettings settings) => CanonicalJson.Serialize(settings);
     /// <summary>Read settings written by <see cref="SaveSettings"/>.</summary>
-    public static SimulationSettings LoadSettings(string json) =>
-        JsonSerializer.Deserialize<SimulationSettings>(json, CanonicalJson.Options) ?? throw new InvalidDataException("Empty settings");
+    public static SimulationSettings LoadSettings(string json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<SimulationSettings>(json, StrictSettings) ?? throw new InvalidDataException("Empty settings");
+        }
+        catch (JsonException e) { throw new InvalidDataException($"Corrupt settings: {e.Message}", e); }
+    }
     /// <summary>A save matches frozen content under the current digest, or under the pre-rename digest that the
     /// same content produced before the project rename changed type names. Any other difference is a mismatch.</summary>
     private static bool MatchesContent(ContentDb content, Snapshot save) =>
