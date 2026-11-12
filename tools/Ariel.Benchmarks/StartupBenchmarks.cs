@@ -79,13 +79,13 @@ internal static class StartupBenchmarks
         // Mutating workload: prepare a fresh session outside every timed founding sample.
         session = Measure("Found city", () =>
         {
-            var settler = session.Sim.State.Units.First(u => u.Owner == GameSession.Human
+            var settler = session.Sim.State.Units.First(u => u.Owner == session.LocalPlayer
                 && session.Sim.Content.Get<Ariel.Content.Schema.UnitDef>(u.Type).CanFoundCity);
-            if (!session.Submit(new FoundCityWithSettlerCommand { Player = GameSession.Human, Settler = settler.Id }))
+            if (!session.Submit(new FoundCityWithSettlerCommand { Player = session.LocalPlayer, Settler = settler.Id }))
                 throw new InvalidOperationException(session.Message);
             return session;
         }, s => s.Sim.ComputeHash().ToString("X16"), prepare: () => session = GameSession.Start(catalog, options));
-        var city = session.Sim.State.Cities.First(c => c.Owner == GameSession.Human);
+        var city = session.Sim.State.Cities.First(c => c.Owner == session.LocalPlayer);
         Measure("DescribeCity", () => session.DescribeCity(city) ?? throw new InvalidOperationException("Missing city"));
         var choices = MeasureProductionChoices(session, city);
         Console.WriteLine($"Founded hash: {session.Sim.ComputeHash():X16}; production choices={choices.Count}");
