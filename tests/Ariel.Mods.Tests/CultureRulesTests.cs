@@ -172,6 +172,23 @@ public sealed class CultureRulesTests
     }
 
     [Fact]
+    public void A_spread_reassigns_every_city_of_the_player_that_can_reach_a_plot_it_claims()
+    {
+        var sim = Scenario();
+        TileId At(int column) => sim.State.Grid.TileAt(column, 3);
+        // The first city has no culture, so it never spreads and only its sibling's claims reach it.
+        var still = AddCity(sim, 0, At(2).Value, population: 1);
+        var spreader = AddCity(sim, 0, At(5).Value, population: 1); spreader.Culture = 1_000_000;
+        foreach (var city in new[] { still, spreader }) city.Extensions.Get<CityRuleState>(sim.Content)!.ManualWork = false;
+
+        sim.Content.TurnSystems.All.Single(s => s.Id == "cities:borders").Run(sim);
+
+        var worked = Assert.Single(still.Worked);
+        Assert.Equal(0, sim.State.Plots[worked.Value].Owner);
+        Assert.Single(spreader.Worked);
+    }
+
+    [Fact]
     public void Plot_decay_exempts_barbarians_and_small_balances_and_releases_unclaimed_land()
     {
         var sim = Scenario();

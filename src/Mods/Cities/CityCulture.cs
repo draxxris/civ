@@ -62,14 +62,26 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         int level = CityData.LevelIndex(sim, city);
         long rate = CityData.Read(sim, city).LastCultureRateHundredths / 100;
         var ranges = new CultureRanges(sim);
+        List<TileId>? changed = null;
         foreach (var (tile, distance) in CultureDistances(sim, city, level).OrderBy(p => p.Key.Value))
         {
             long amount = (level - distance + 1) * CityData.Constants(sim).CityFreeCultureGrowthFactor + rate + 1;
             var plot = sim.State.Plots[tile.Value];
             plot.Culture[city.Owner] = plot.Culture.GetValueOrDefault(city.Owner) + amount;
-            Resolve(sim, tile, ranges);
+            if (Resolve(sim, tile, ranges)) (changed ??= []).Add(tile);
         }
-        work.Assign(sim, city.Id);
+        if (changed is not null) Reassign(sim, city.Owner, changed);
+    }
+    /// <summary>Re-choose worked plots only in the spreading player's cities that can reach a plot whose owner just
+    /// changed. Spreading culture changes no other input of the assignment, which ran at the start of the turn.</summary>
+    private void Reassign(Simulation sim, int player, List<TileId> changed)
+    {
+        foreach (var city in CityData.Owned(sim, player).ToArray())
+        {
+            var center = CityData.Tile(sim, city);
+            int radius = work.Radius(sim, city.Id);
+            if (changed.Exists(t => sim.State.Grid.Distance(center, t) <= radius)) work.Assign(sim, city.Id);
+        }
     }
     internal static void Initialize(Simulation sim, City city)
     {
@@ -154,12 +166,15 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     internal static void Resolve(Simulation sim, TileId tile) => Resolve(sim, tile, new CultureRanges(sim));
     /// <summary>Settle one plot's owner. <paramref name="ranges"/> carries other cities' culture reach across a
     /// batch of plots; this keeps it correct when the new owner changes what blocks culture.</summary>
-    private static void Resolve(Simulation sim, TileId tile, CultureRanges ranges)
+    /// <returns>Whether the plot changed owner.</returns>
+    private static bool Resolve(Simulation sim, TileId tile, CultureRanges ranges)
     {
         var plot = sim.State.Plots[tile.Value];
         int? before = plot.Owner;
         plot.Owner = Owner(sim, tile, plot, ranges);
-        if (plot.Owner != before) ranges.OwnerChanged(before, plot.Owner);
+        if (plot.Owner == before) return false;
+        ranges.OwnerChanged(before, plot.Owner);
+        return true;
     }
     private static int? Owner(Simulation sim, TileId tile, Plot plot, CultureRanges ranges)
     {

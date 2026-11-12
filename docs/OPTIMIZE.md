@@ -153,6 +153,10 @@ ______________________________________________________________________
        ▼
 [Pass 10: Nov 11, 2026] Culture Reach Cached Across a Batch of Plots
                         (Commit: 4eb56de)
+       │
+       ▼
+[Pass 11: Nov 12, 2026] Work Reassigned Only Where Borders Move
+                        (Commit: reassign work only where borders move)
 ```
 
 ______________________________________________________________________
@@ -885,6 +889,28 @@ the phase (`11110498118ABED7`, `121AA603D84F93B6`) are unchanged.
 The spread-only figures come from a diagnostic run with work assignment disabled. About
 97% of the phase is `ICityWorkService.Assign`, which runs again for every city after it
 spreads, and at this state changes no assignment. That is the next target here.
+
+### Pass 11: Work Reassigned Only Where Borders Move
+
+- **Date**: 2026-11-12
+- **Primary Commit**: *Reassign worked plots only in cities a spread's new borders reach*
+
+Every city that spread culture then chose its worked plots again from scratch: its
+wellbeing, and the full plot yield of every plot in its radius. Spreading culture changes
+one input of that choice, which plots the player owns, and it rarely changes any. A
+150-turn, six-player AI game (seed 1) spread culture 2,096 times; 6 of the reassignments
+changed an assignment, and every one of those followed a plot changing owner in that
+player's spread. Two were a sibling city taking up a plot a lower-id city had just
+claimed. A spread now reassigns only the spreading player's cities within work radius of
+a plot whose owner changed, which also reaches siblings that spread earlier in the phase
+or not at all.
+
+`mise run benchmark -- --borders` (35 cities, turn 100). The state hashes before and after
+the phase (`9ABF26A5B877B926`, `63CD73EB061A7F48`) are unchanged.
+
+| Measured part of the borders phase |            Before |           After |
+| :--------------------------------- | ----------------: | --------------: |
+| Whole phase, with work assignment  | 16.42 ms, 19.0 MB | 2.80 ms, 0.5 MB |
 
 ______________________________________________________________________
 
