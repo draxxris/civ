@@ -48,8 +48,13 @@ public sealed class DomainEventBus
     public IReadOnlyList<DomainEvent> PreviousTurn { get; private set; } = [];
     /// <summary>Number of presentation events published this turn.</summary>
     internal int PublishedCount => _turnEvents.Count;
-    /// <summary>Forget presentation events published after a restored state point.</summary>
-    internal void Truncate(int count) => _turnEvents.RemoveRange(count, _turnEvents.Count - count);
+    /// <summary>Forget presentation events published after a restored state point, and any events still queued
+    /// for dispatch: they belong to the abandoned branch.</summary>
+    internal void Truncate(int count)
+    {
+        _turnEvents.RemoveRange(count, _turnEvents.Count - count);
+        _pending.Clear();
+    }
     /// <summary>Take over another bus's events, as a copy of this simulation made them: this turn's in a list of
     /// our own, and the previous turn's as the same list, so readers can tell whether the turn rolled over.</summary>
     internal void CopyFrom(DomainEventBus other)
@@ -63,7 +68,9 @@ public sealed class DomainEventBus
         PreviousTurn = Array.AsReadOnly(_turnEvents.ToArray());
         _turnEvents.Clear();
     }
-    /// <summary>Publish and dispatch to all subscribers in mod registration order.</summary>
+    /// <summary>Publish and dispatch to all subscribers in mod registration order. If a subscriber throws, the
+    /// events still queued behind the failing one are dropped with it, so the next unrelated publish does not
+    /// dispatch them as if its own command had caused them.</summary>
     public void Publish(DomainEvent message)
     {
         _pending.Enqueue(message);
@@ -76,6 +83,11 @@ public sealed class DomainEventBus
                 _turnEvents.Add(next);
                 foreach (var subscriber in _subscribers) subscriber.Handle(_sim, next);
             }
+        }
+        catch
+        {
+            _pending.Clear();
+            throw;
         }
         finally { _dispatching = false; }
     }

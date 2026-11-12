@@ -366,6 +366,28 @@ public class ContractTests
     }
 
     [Fact]
+    public void AThrowingSubscriberDropsTheEventsQueuedBehindItInsteadOfReplayingThemLater()
+    {
+        var calls = new List<string>();
+        var a = Source("a", ctx =>
+        {
+            ctx.Subscribe<CityFounded>("queue_then_throw", (sim, e) =>
+            {
+                sim.Events.Publish(new CityGrew(e.City, 2));
+                throw new InvalidOperationException("subscriber failed");
+            });
+            ctx.Subscribe<CityGrew>("grew", (_, e) => calls.Add("grew:" + e.City));
+            ctx.Subscribe<BuildingCompleted>("built", (_, e) => calls.Add("built:" + e.City));
+        });
+        var sim = new Simulation(Content(a), new SimulationSettings());
+        calls.Clear();
+        Assert.Throws<InvalidOperationException>(() => sim.Events.Publish(new CityFounded(7, 0, new Hex(0, 0))));
+        sim.Events.Publish(new BuildingCompleted(8, "b"));
+        Assert.Equal(["built:8"], calls);
+        Assert.DoesNotContain(sim.Events.Published, e => e is CityGrew);
+    }
+
+    [Fact]
     public void BaseGamePublishesFoundingGrowthProductionUnitAndCombatEvents()
     {
         var sim = TestGame.Sim();
