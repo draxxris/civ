@@ -51,6 +51,7 @@ internal sealed class CityCapture : ICityCaptureService
     {
         if (CityCulture.IsBarbarian(sim, city.Owner)) state.OriginalCivilization = null;
         else state.OriginalCivilization ??= sim.State.PlayerById(city.Owner).Civilization;
+        state.CapturedFrom = city.Owner;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
         state.CultureRemainder = state.CultureHundredths.GetValueOrDefault(player) % 100;
         state.LastCultureRateHundredths = 0;
@@ -113,10 +114,12 @@ internal sealed class CityCapture : ICityCaptureService
     private static bool HasRazeProtection(Simulation sim, City city, bool wasCapital, bool hadWorldWonder) =>
         wasCapital || hadWorldWonder || IsHolyCity(sim, city) || HasStrategicBonus(sim, city);
 
-    private static bool IsHolyCity(Simulation sim, City city)
+    private static bool IsHolyCity(Simulation sim, City city) => HolyReligions(sim, city).Length > 0;
+    private static string[] HolyReligions(Simulation sim, City city)
     {
         var service = sim.Content.Services.Get<IReligionService>().SingleOrDefault();
-        return service is not null && sim.Content.Get<S.ReligionDef>().All.Any(religion => service.HolyCity(sim, religion.Id) == city.Id);
+        return service is null ? []
+            : sim.Content.Get<S.ReligionDef>().All.Where(religion => service.HolyCity(sim, religion.Id) == city.Id).Select(r => r.Id).ToArray();
     }
 
     private static bool HasStrategicBonus(Simulation sim, City city)
@@ -155,10 +158,12 @@ internal sealed class CityCapture : ICityCaptureService
         var city = sim.State.CityById(cityId);
         var tile = CityData.Tile(sim, city);
         int radius = Math.Max(1, CityCulture.CultureRadius(sim, city));
+        int? capturedFrom = CityData.Read(sim, city).CapturedFrom;
+        string[] holy = HolyReligions(sim, city);
         sim.State.RemoveCity(cityId);
         foreach (var plot in sim.State.Grid.Range(tile, radius)) CityCulture.Resolve(sim, plot);
         CityCapital.RelocateIfNeeded(sim, city.Owner);
-        sim.Events.Publish(new CityRazed(cityId, city.Owner, city.Position));
+        sim.Events.Publish(new CityRazed(cityId, city.Owner, city.Position, capturedFrom, holy));
         sim.Content.Services.Get<IVisibilityService>().Single().Recompute(sim);
     }
 }

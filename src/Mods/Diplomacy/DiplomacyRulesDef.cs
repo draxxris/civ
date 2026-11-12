@@ -12,4 +12,6 @@ public sealed class DiplomacyRulesDef : ContentDef
     public ImmutableDictionary<string, int> MemoryDecays { get; init; } = ImmutableDictionary<string, int>.Empty;
     /// <summary>The decay for a memory kind neither the leader nor <see cref="MemoryDecays"/> names.</summary>
     public int DefaultMemoryDecay { get; init; } = 60;
+    /// <summary>Most gifts a player remembers from one giver at once; further gifts add nothing until one fades.</summary>
+    public int GiveHelpMemoryLimit { get; init; } = 3;
 }

@@ -135,6 +135,7 @@ internal sealed partial class DiplomacyService
             var recipient = sim.TeamOf(item.FromPlayer == d.Proposer ? d.Recipient : d.Proposer);
             if (recipient.Techs.Add(item.ContentId)) sim.Events.Publish(new TechDiscovered(recipient.Id, item.ContentId));
         }
+        RememberDeal(sim, d);
     }
     private static void TransferGold(Simulation sim, DiplomaticDeal deal, TradeItemKind kind)
     {
@@ -152,7 +153,13 @@ internal sealed partial class DiplomacyService
         if (player != d.Proposer && player != d.Recipient) return "not a deal participant";
         return d.Status == DiplomaticDealStatus.Active && sim.State.Turn - d.StartedTurn < BindingTurns ? "deal is binding for ten turns" : null;
     }
-    public void CancelDeal(Simulation sim, int deal) => Deal(sim, deal)!.Status = DiplomaticDealStatus.Cancelled;
+    /// <summary>Withdrawing or declining a proposal is not remembered; stopping an active trade is.</summary>
+    public void CancelDeal(Simulation sim, int player, int deal)
+    {
+        var d = Deal(sim, deal)!;
+        if (d.Status == DiplomaticDealStatus.Active) RememberStoppedTrading(sim, d, player);
+        d.Status = DiplomaticDealStatus.Cancelled;
+    }
     public string? ValidateCancelTradeItem(Simulation sim, int player, int dealId, int itemId)
     {
         var d = Deal(sim, dealId);
@@ -171,6 +178,7 @@ internal sealed partial class DiplomacyService
             throw new InvalidOperationException(error);
         var d = Deal(sim, dealId)!;
         d.RemoveItem(itemId);
+        RememberStoppedTrading(sim, d, player);
         if (!d.Items.Any(Ongoing))
             d.Status = DiplomaticDealStatus.Completed;
         sim.Events.Publish(new TradeItemCancelled(dealId, itemId, player));

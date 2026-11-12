@@ -62,6 +62,14 @@ public readonly record struct PlayerDirection : IComparable<PlayerDirection>
 public static class DiplomaticMemories
 {
     public const string Inquisition = "memory_inquisition";
+    public const string DeclaredWar = "memory_declared_war";
+    public const string DeclaredWarOnFriend = "memory_declared_war_on_friend";
+    public const string RazedCity = "memory_razed_city";
+    public const string RazedHolyCity = "memory_razed_holy_city";
+    public const string SpyCaught = "memory_spy_caught";
+    public const string TradedTechToUs = "memory_traded_tech_to_us";
+    public const string GiveHelp = "memory_give_help";
+    public const string StoppedTrading = "memory_stopped_trading";
 }
 
 public enum AttitudeTier { Furious, Annoyed, Cautious, Pleased, Friendly }
@@ -113,7 +121,7 @@ public interface IDiplomacyService
     string? ValidateExecution(Simulation sim, int player, int deal);
     void ExecuteDeal(Simulation sim, int deal);
     string? ValidateCancellation(Simulation sim, int player, int deal);
-    void CancelDeal(Simulation sim, int deal);
+    void CancelDeal(Simulation sim, int player, int deal);
     string? ValidateCancelTradeItem(Simulation sim, int player, int dealId, int itemId);
     void CancelTradeItem(Simulation sim, int player, int dealId, int itemId);
     IReadOnlyList<DiplomaticDeal> Deals(Simulation sim);
@@ -162,7 +170,7 @@ public sealed class CancelDealCommand : GameCommand
 {
     public int Deal { get; init; }
     public override string? Validate(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().ValidateCancellation(sim, Player, Deal);
-    public override void Apply(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().CancelDeal(sim, Deal);
+    public override void Apply(Simulation sim) => sim.Content.Services.Get<IDiplomacyService>().Single().CancelDeal(sim, Player, Deal);
 }
 public sealed class CancelTradeItemCommand : GameCommand
 {

@@ -114,12 +114,14 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     public void DeclareWar(Simulation sim, int player, int target)
     {
         int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
+        int[] friends = FriendsOf(sim, a, b);
         var state = Edit(sim);
         // Offensive declarations dissolve ALL the aggressor's pacts before defending partners are collected.
         foreach (var r in state.Relations.Values.Where(r => r.First == a || r.Second == a)) r.CancelPact(DiplomaticAgreement.DefensivePact);
         var defenders = state.Relations.Values.Where(r => r.HasDefensivePact && (r.First == b || r.Second == b))
             .Select(r => r.First == b ? r.Second : r.First).Where(t => t != a).Order().ToArray();
         StartWar(sim, a, b, true);
+        RememberWar(sim, a, b, friends);
         foreach (int defender in defenders)
         {
             // The war consumes the victim's pact with each partner, whether or not that partner can join it.

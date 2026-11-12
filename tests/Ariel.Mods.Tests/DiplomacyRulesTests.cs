@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
@@ -48,6 +49,12 @@ public sealed class DiplomacyRulesTests
         city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
         return city;
     }
+    /// <summary>One attitude point per remembered count, so a memory's ledger line reads as its count.</summary>
+    private static readonly ImmutableDictionary<string, int> Weights = new[]
+        { "declared_war", "declared_war_on_friend", "razed_city", "razed_holy_city", "spy_caught", "traded_tech_to_us", "give_help", "stopped_trading" }
+        .ToImmutableDictionary(k => k, _ => 100);
+    private static long Remembered(Simulation sim, int from, int toward, string memory) =>
+        Service(sim).GetAttitude(sim, from, toward).Ledger.Lines.Where(l => l.Source == "diplomacy:" + memory).Sum(l => l.Amount);
     private const string Grain = "diplomacy_probe:grain";
     /// <summary>Foreign, unrevealed columns 0 and 6 split the 12-wide map into two continents.</summary>
     private static void Wall(Simulation sim)
@@ -454,6 +461,91 @@ public sealed class DiplomacyRulesTests
     }
 
     [Fact]
+    public void A_war_declaration_is_remembered_by_the_victim_and_by_its_friends_who_know_the_aggressor()
+    {
+        var sim = Scenario();
+        Meet(sim, 0, 1); Meet(sim, 0, 2); Meet(sim, 1, 2); Meet(sim, 1, 3);
+        // Players 2 and 3 share player 1's personality, so both are at least Pleased with it; only 2 has met player 0.
+        Assert.True(Service(sim).GetAttitude(sim, 3, 1).Tier >= AttitudeTier.Pleased);
+
+        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.DeclaredWar));
+        Assert.Equal(1, Remembered(sim, 2, 0, DiplomaticMemories.DeclaredWarOnFriend));
+        Assert.Equal(0, Remembered(sim, 3, 0, DiplomaticMemories.DeclaredWarOnFriend));
+        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.DeclaredWar));
+    }
+
+    [Fact]
+    public void Deals_are_remembered_for_given_technology_capped_gifts_and_stopped_trades_but_not_withdrawn_offers()
+    {
+        var sim = Scenario(); Meet(sim);
+        sim.State.PlayerById(0).Treasury = 1000;
+        int Deal(int player, int target, params DiplomaticTradeItem[] items)
+        {
+            Apply(sim, new ProposeDealCommand { Player = player, Target = target, Items = items.ToList() });
+            return Service(sim).Deals(sim).Last().Id;
+        }
+        void Accept(int player, int deal) => Apply(sim, new ExecuteDealCommand { Player = player, Deal = deal });
+        for (int i = 0; i < 4; i++) Accept(1, Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 1)));
+        Assert.Equal(3, Remembered(sim, 1, 0, DiplomaticMemories.GiveHelp));
+
+        sim.State.TeamById(0).Techs.Add("research:mysticism");
+        Accept(1, Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Technology, "research:mysticism"), new DiplomaticTradeItem(1, TradeItemKind.Gold, Amount: 1)));
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.TradedTechToUs));
+        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.GiveHelp));
+
+        Apply(sim, new CancelDealCommand { Player = 0, Deal = Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.Gold, Amount: 1)) });
+        int ongoing = Deal(0, 1, new DiplomaticTradeItem(0, TradeItemKind.GoldPerTurn, Amount: 1), new DiplomaticTradeItem(1, TradeItemKind.GoldPerTurn, Amount: 1));
+        Accept(1, ongoing);
+        Assert.Equal(0, Remembered(sim, 1, 0, DiplomaticMemories.StoppedTrading));
+        sim.State.Turn += 10;
+        Apply(sim, new CancelDealCommand { Player = 0, Deal = ongoing });
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.StoppedTrading));
+        Assert.Equal(0, Remembered(sim, 0, 1, DiplomaticMemories.StoppedTrading));
+    }
+
+    [Fact]
+    public void A_razed_conquest_is_remembered_by_its_previous_owner_and_a_razed_holy_city_by_its_followers()
+    {
+        var sim = Scenario(); Meet(sim, 0, 1);
+        var holy = City(sim, 1, 40);
+        GameFactory.FoundReligion(sim, holy, "religion:buddhism");
+        string civic = sim.Content.Get<S.LeaderDef>("diplomacy_probe:leader_a").FavoriteCivic!;
+        foreach (int p in new[] { 2, 3 })
+        {
+            sim.State.PlayerById(p).Civics["religion"] = civic;
+            sim.State.PlayerById(p).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = p == 2 ? "religion:buddhism" : "religion:hinduism" });
+        }
+        Apply(sim, new DiplomaticDeclareWarCommand { Player = 0, Target = 1 });
+        var capture = sim.Content.Services.Get<ICityCaptureService>().Single();
+
+        capture.Capture(sim, holy.Id, 0);
+        capture.Raze(sim, holy.Id);
+
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.RazedCity));
+        Assert.Equal(1, Remembered(sim, 2, 0, DiplomaticMemories.RazedHolyCity));
+        Assert.Equal(0, Remembered(sim, 3, 0, DiplomaticMemories.RazedHolyCity));
+        // A city its own owner founded and razes is no one's loss.
+        var own = City(sim, 0, 50);
+        capture.Raze(sim, own.Id);
+        Assert.Equal(1, Remembered(sim, 1, 0, DiplomaticMemories.RazedCity));
+    }
+
+    [Theory]
+    [InlineData(true, 0)]
+    [InlineData(false, 1)]
+    public void A_caught_spy_is_remembered_by_the_target_citys_owner(bool success, long remembered)
+    {
+        var sim = Scenario();
+        var city = City(sim, 1, 40);
+
+        sim.Events.Publish(new EspionageMissionResult(-1, city.Id, EspionageMissionKind.StealTreasury, success, 50, 0));
+
+        Assert.Equal(remembered, Remembered(sim, 1, 0, DiplomaticMemories.SpyCaught));
+    }
+
+    [Fact]
     public void Team_pair_keys_are_unordered_and_player_direction_keys_are_directed()
     {
         var pair1 = TeamPair.Of(2, 0);
@@ -546,9 +638,9 @@ public sealed class DiplomacyRulesTests
             context.Content<S.BuildingDef>().Register(new() { Id = "diplomacy_probe:granary", DefaultBuilding = "diplomacy_probe:granary", BonusType = Grain });
             context.TurnSystems.Register(new IncomeProbe());
             context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2,
-                MemoryAttitudePercents = System.Collections.Immutable.ImmutableDictionary<string, int>.Empty.Add("inquisition", -100).Add("spy_caught", -100),
-                MemoryDecays = System.Collections.Immutable.ImmutableDictionary<string, int>.Empty.Add("inquisition", 1) });
-            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_b", BasePeaceWeight = 5, WarmongerRespect = 1 });
+                MemoryAttitudePercents = Weights.SetItem("inquisition", -100),
+                MemoryDecays = ImmutableDictionary<string, int>.Empty.Add("inquisition", 1) });
+            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_b", BasePeaceWeight = 5, WarmongerRespect = 1, MemoryAttitudePercents = Weights });
         }
     }
 }

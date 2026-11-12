@@ -210,6 +210,8 @@ public interface ICityCaptureService
 }
 public sealed record CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage) : DomainEvent;
 public sealed record CityCaptured(int City, int PreviousOwner, int Player, int CaptureGold = 0, bool AutoRazed = false) : DomainEvent;
-public sealed record CityRazed(int City, int Player, Hex Position) : DomainEvent;
+/// <summary>A city was destroyed by its owner <paramref name="Player"/>. <paramref name="CapturedFrom"/> is the player it was
+/// last captured from, if any; <paramref name="HolyCityOf"/> names the religions whose holy city it was.</summary>
+public sealed record CityRazed(int City, int Player, Hex Position, int? CapturedFrom = null, IReadOnlyList<string>? HolyCityOf = null) : DomainEvent;
 public sealed record PlotPillaged(int Unit, int Player, TileId Plot, string? Improvement, string? ReplacementImprovement, string? Route, int Gold) : DomainEvent;
 public sealed record GoodyReceived(int Unit, string Goody) : DomainEvent;

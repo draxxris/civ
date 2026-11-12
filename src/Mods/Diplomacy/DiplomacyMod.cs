@@ -12,8 +12,8 @@ public sealed class DiplomacyMod : IPreparableMod
     public void Register(IModContext context)
     {
         var rules = Rules.Read(context.Data);
-        if (rules.DefaultMemoryDecay < 1 || rules.MemoryDecays.Values.Any(d => d < 1))
-            throw new InvalidDataException("Diplomacy memory decays must be at least one turn");
+        if (rules.DefaultMemoryDecay < 1 || rules.MemoryDecays.Values.Any(d => d < 1) || rules.GiveHelpMemoryLimit < 0)
+            throw new InvalidDataException("Diplomacy memory decays must be at least one turn and the gift limit not negative");
         context.Content<DiplomacyRulesDef>().Register(rules);
         var service = new DiplomacyService();
         context.RegisterService<IDiplomacyService>("relations", service);
@@ -30,6 +30,8 @@ public sealed class DiplomacyMod : IPreparableMod
         context.Subscribe<TurnStarted>("contact_turn", (sim, _) => service.DiscoverContacts(sim));
         context.Subscribe<CityFounded>("contact_city", (sim, _) => service.DiscoverContacts(sim));
         context.Subscribe<UnitCreated>("contact_unit", (sim, _) => service.DiscoverContacts(sim));
+        context.Subscribe<CityRazed>("memory_raze", DiplomacyService.RememberRaze);
+        context.Subscribe<EspionageMissionResult>("memory_spy", DiplomacyService.RememberSpy);
         context.TurnSystems.Register(new DiplomacyDeals(service));
         context.TurnSystems.Register(new DiplomacyHistory(service));
     }

@@ -1011,6 +1011,12 @@ deal participants. Each player remembers events toward each other player as coun
 memories, which `LeaderDef.MemoryAttitudePercents` turns into attitude. Memories fade: each
 turn every remembered kind loses one count with a chance of one in its decay, from the
 leader's `MemoryDecays` or else `DiplomacyRulesDef`, scaled by the game speed's pace.
+Recorded memories: a war declaration (by its victims, and by third parties at least
+Pleased with a victim who have met the aggressor), a razed city (by the player it was
+captured from), a razed holy city (by followers of its religion), a caught spy (by the
+target city's owner), technology received in a deal, a gift (capped by
+`GiveHelpMemoryLimit`), a stopped active trade, and an inquisition. Barbarians and
+teammates remember nothing of each other.
 
 ProjectsVictory owns project eligibility and completion, team project counts, scores,
 and saved victory status. Project definitions carry costs, technology and project

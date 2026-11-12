@@ -114,7 +114,7 @@ internal sealed class SpyMissionRules(EspionageService service)
             sim.State.UnitById(unitId).MovesLeft = 0;
         }
         else sim.State.RemoveUnit(unitId);
-        sim.Events.Publish(new EspionageMissionResult(unitId, cityId, mission, success, cost));
+        sim.Events.Publish(new EspionageMissionResult(unitId, cityId, mission, success, cost, player));
         sim.Content.Services.Get<IVisibilityService>().SingleOrDefault()?.Recompute(sim);
     }
 

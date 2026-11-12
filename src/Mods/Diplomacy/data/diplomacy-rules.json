@@ -9,5 +9,6 @@
     "spy_caught": 20,
     "stopped_trading": 20
   },
-  "defaultMemoryDecay": 60
+  "defaultMemoryDecay": 60,
+  "giveHelpMemoryLimit": 3
 }

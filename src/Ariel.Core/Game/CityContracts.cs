@@ -189,6 +189,8 @@ public sealed class CityRuleState
     public int ConscriptAngerTurns { get; set; }
     public bool DraftedThisTurn { get; set; }
     public string? OriginalCivilization { get; set; }
+    /// <summary>The player this city was last captured from; null for a city its owner founded.</summary>
+    public int? CapturedFrom { get; set; }
     public long CultureRemainder { get; set; }
     public long LastCultureRateHundredths { get; set; }
     public SortedDictionary<int, long> CultureHundredths { get; set; } = new();

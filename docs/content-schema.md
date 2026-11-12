@@ -40,7 +40,7 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - Espionage: `EspionageRulesDef` for passive thresholds, mission costs, mission
   effects, counter-espionage protection, and success chance.
 - Diplomacy: `DiplomacyRulesDef` for how fast memories fade when the remembering leader's
-  own `MemoryDecays` leaves a memory kind out.
+  own `MemoryDecays` leaves a memory kind out, and how many gifts one player remembers.
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition
 families. Its noise, climate, sight, lake, source-grid scale, and start-balance integers

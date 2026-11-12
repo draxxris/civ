@@ -56,7 +56,8 @@ public sealed class EspionageCityState
 /// <summary>Threshold and unlock state for one passive tier, computed once per rival.</summary>
 public sealed record PassiveEspionageStatus(PassiveEspionageKind Kind, long Threshold, bool Unlocked);
 
-public sealed record EspionageMissionResult(int Unit, int City, EspionageMissionKind Mission, bool Success, long Cost) : DomainEvent;
+/// <summary>A spy of <paramref name="Player"/> ran a mission; a failed spy is destroyed.</summary>
+public sealed record EspionageMissionResult(int Unit, int City, EspionageMissionKind Mission, bool Success, long Cost, int Player) : DomainEvent;
 
 public interface IEspionageService
 {
