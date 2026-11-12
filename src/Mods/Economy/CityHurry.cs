@@ -112,8 +112,7 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         state.HurryAngerTurns = (int)Math.Clamp((long)state.HurryAngerTurns * newFactor / oldFactor, 0, int.MaxValue);
     }
     private static long HurryAngerModifier(Simulation sim, City city) =>
-        (sim.Content.Services.Get<ICityBuildingService>().SingleOrDefault()?.ActiveBuildings(sim, city.Id) ?? city.Buildings)
-        .Select(sim.Content.Get<BuildingDef>).Sum(b => (long)b.HurryAngerModifier);
+        CityBuildingRules.Running(sim, city).Sum(b => (long)b.HurryAngerModifier);
     internal static void DecayAnger(Simulation sim, int player)
     {
         foreach (var city in EconomyData.Cities(sim, player))

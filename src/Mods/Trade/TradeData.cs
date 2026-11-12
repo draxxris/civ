@@ -9,13 +9,7 @@ internal static class TradeData
     internal static S.RuleConstantsDef Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single();
     internal static int Raw(Simulation sim, string key, int fallback) => int.TryParse(Constants(sim).Raw.GetValueOrDefault(key), out int n) ? n : fallback;
     internal static IEnumerable<S.CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<S.CivicDef>);
-    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
-        .Select(sim.Content.Get<S.BuildingDef>).Where(b => Active(sim, city, b));
-    private static bool Active(Simulation sim, City city, S.BuildingDef b)
-    {
-        if (b.ObsoleteTech is { } tech && sim.KnowsTech(city.Owner, tech)) return false;
-        return !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city), "civic").Success;
-    }
+    internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     internal static bool Coastal(Simulation sim, City city)
     {
         return sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).Any(t =>

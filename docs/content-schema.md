@@ -187,9 +187,12 @@ undeclared civic options among the eight categories.
 ## Registration and reference checks
 
 The 12 primary imported content mods (Foundation, World, Research, Economy, Cities,
-Military, Government, Peoples, Religion, ProjectsVictory, Corporations, and Events) have
-empty load-order `dependencies`. They declare their direct cross-mod content providers
-in `references` (which may be cyclic). Feature mods with explicit load-order service
+Military, Government, Peoples, Religion, ProjectsVictory, Corporations, and Events)
+declare their direct cross-mod content providers in `references` (which may be cyclic).
+Their load-order `dependencies` are empty, except that every mod whose rules ask which
+buildings a city runs (Economy, Government, Religion, Trade, and GreatPeople) depends on
+Cities. Those rules read `CityBuildingRules.Running`, the city rules' answer, and never
+filter `City.Buildings` themselves. Feature mods with explicit load-order service
 requirements (such as `Revolution`, `ScriptedWonders`, `TechTree`, and `CardResearch`)
 declare explicit `dependencies` in their manifests. The importer reports the complete
 content provider graph in `emitted-counts.json`.

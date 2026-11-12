@@ -72,14 +72,8 @@ internal static class ReligionData
     }
     internal static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
     internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
-    /// <summary>Buildings the city actually runs. The Cities service also covers empire grants, replacement
-    /// buildings and power, which this view must match; the local rule is the fallback when Cities is absent.</summary>
-    internal static IReadOnlyList<BuildingDef> Active(Simulation sim, City city)
-    {
-        var ids = sim.Content.Services.Get<ICityBuildingService>().SingleOrDefault()?.ActiveBuildings(sim, city.Id)
-            ?? CityBuildingRules.Active(sim, city, city.Buildings).Select(b => b.Id).ToArray();
-        return ids.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>).ToArray();
-    }
+    /// <summary>Buildings the city actually runs, empire grants, replacement and power included.</summary>
+    internal static IReadOnlyList<BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var text) && int.TryParse(text, out var value) ? value : fallback;
     internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.NoNonStateReligionSpread);
 }

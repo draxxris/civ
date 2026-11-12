@@ -54,13 +54,7 @@ internal sealed class CivicEffects : IModifierSource
             : sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize).MaxConscriptModifier;
         return civic.MaxConscript * Math.Max(0, 100 + modifier) / 100;
     }
-    private static IEnumerable<BuildingDef> ActiveBuildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
-        .Select(sim.Content.Get<BuildingDef>).Where(b => IsActive(sim, city, b));
-    private static bool IsActive(Simulation sim, City city, BuildingDef b)
-    {
-        if (b.ObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) return false;
-        return !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city), "civic").Success;
-    }
+    private static IEnumerable<BuildingDef> ActiveBuildings(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     private static void City(Simulation sim, City city, CivicDef c, ModifierSink sink)
     {
         var buildings = ActiveBuildings(sim, city).ToArray();

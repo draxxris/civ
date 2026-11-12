@@ -6,6 +6,13 @@ namespace Ariel.Game;
 /// <summary>Resolves activity within a supplied building set without querying empire grants or modifiers.</summary>
 public static class CityBuildingRules
 {
+    /// <summary>The buildings a city actually runs, as the city rules decide: empire grants, power, replacement and
+    /// extension included, in ordinal id order. Every rule that asks which buildings work must ask this, so the mods
+    /// asking it declare the city rules as a dependency. <see cref="Active"/> only resolves a set the caller supplies.</summary>
+    public static IReadOnlyList<B> Running(Simulation sim, City city) =>
+        sim.Content.Services.Get<ICityBuildingService>().Single().ActiveBuildings(sim, city.Id)
+            .Order(StringComparer.Ordinal).Select(sim.Content.Get<B>).ToArray();
+
     public static IReadOnlyList<B> Active(Simulation sim, City city, IEnumerable<string> buildings) =>
         new Selection(sim, city, buildings).Active();
 

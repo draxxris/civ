@@ -209,8 +209,9 @@ every removed id and the edge or era that caused removal.
 
 `emitted-counts.json` separates shipped schema counts from the larger generic inventory
 in `counts.json`. It also lists every direct content provider for each manifest's cyclic
-`references` declaration. All v1 load-order `dependencies` are empty because these
-data-only mods have no overrides or ordering constraints. The game checks provider
+`references` declaration. The importer does not write load-order `dependencies`: these
+data-only mods have no overrides or ordering constraints. The hand-written manifests of
+the mods whose rules ask which buildings a city runs depend on Cities. The game checks provider
 presence first, then checks reference types after all mods register.
 
 Religion emits 13 playable `ReligionDef` records with founding technologies,

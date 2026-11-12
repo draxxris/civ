@@ -3,6 +3,6 @@
   "name": "Great People",
   "version": "1.2.0",
   "assembly": "Ariel.Mods.GreatPeople.dll",
-  "dependencies": [],
+  "dependencies": ["cities"],
   "references": ["cities", "foundation", "government", "military", "peoples", "religion", "research", "world"]
 }

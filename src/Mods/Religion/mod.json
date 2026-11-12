@@ -3,7 +3,7 @@
   "name": "Religion",
   "version": "1.3.0",
   "assembly": "Ariel.Mods.Religion.dll",
-  "dependencies": [],
+  "dependencies": ["cities"],
   "references": [
     "cities",
     "foundation",

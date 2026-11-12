@@ -3,7 +3,7 @@
   "name": "Government",
   "version": "1.2.3",
   "assembly": "Ariel.Mods.Government.dll",
-  "dependencies": [],
+  "dependencies": ["cities"],
   "references": [
     "cities",
     "foundation",
