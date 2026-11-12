@@ -38,7 +38,9 @@ public sealed class MultiplayerGame : IDisposable
     public int Tick => _lockstep.Tick;
     /// <summary>What lockstep is waiting for, for diagnostics.</summary>
     public string Describe() => _lockstep.Describe();
-    public bool IsHost => LocalPeer == 0;
+    /// <summary>The host is always peer 0.</summary>
+    private const int HostPeer = 0;
+    public bool IsHost => LocalPeer == HostPeer;
     /// <summary>Where each peer saves its state when a desync is found, for comparing afterwards; null to skip.</summary>
     public string? DesyncDirectory { get; set; }
     /// <summary>Seconds left before the host ends the turn of everyone still moving, or null without a timer.</summary>
@@ -58,8 +60,8 @@ public sealed class MultiplayerGame : IDisposable
         Chat = chat;
         var codec = new CommandCodec(sim.Content);
         _lockstep = start.ResumeTick is int tick
-            ? LockstepSession.Resume(sim, codec, transport, start.Peers, transport.LocalPeer, tick)
-            : new LockstepSession(sim, codec, transport, start.Peers, transport.LocalPeer);
+            ? LockstepSession.Resume(sim, codec, transport, start.Peers, transport.LocalPeer, tick, seats: start.Seats, authority: MayIssue)
+            : new LockstepSession(sim, codec, transport, start.Peers, transport.LocalPeer, seats: start.Seats, authority: MayIssue);
         foreach (var batch in start.Batches) _lockstep.Deliver(new NetMessage(NetMessageKind.Commands, batch.Tick, batch.Peer, batch.Commands, 0));
         _lockstep.Desync += OnDesync;
         _channel = new LockstepChannel(_lockstep);
@@ -123,6 +125,16 @@ public sealed class MultiplayerGame : IDisposable
         _transport.Dispose();
     }
 
+    /// <summary>Which commands a peer may issue in lockstep: those for the player it plays, and a change of who
+    /// controls that player. The host also ends turns when the timer runs out and hands seats between people and the
+    /// AI as they leave and return, so it may do both for any player.</summary>
+    private static bool MayIssue(int peer, int? seat, GameCommand command)
+    {
+        if (peer == HostPeer && command is EndTurnCommand or SetPlayerControlCommand) return true;
+        if (seat is not int player || command.Player != player) return false;
+        return command is not SetPlayerControlCommand control || control.Target == player;
+    }
+
     // --- people coming and going -------------------------------------------------------------
 
     private void OnPeerLeft(int peer)
@@ -166,7 +178,7 @@ public sealed class MultiplayerGame : IDisposable
         string name = hello.Name ?? $"Player {peer}";
 
         int tick = _lockstep.NextSubmit;
-        _lockstep.AddPeer(peer, tick);
+        _lockstep.AddPeer(peer, tick, seat);
         _seats[peer] = seat;
         _names[peer] = name;
         Revision++;
@@ -261,7 +273,7 @@ public sealed class MultiplayerGame : IDisposable
                 Chat.Notice($"{name} left the game; the AI plays for them until they return.");
                 break;
             case PeerMessageType.Joined:
-                _lockstep.AddPeer(message.Peer, message.Tick);
+                _lockstep.AddPeer(message.Peer, message.Tick, message.Seat);
                 _seats[message.Peer] = message.Seat;
                 _names[message.Peer] = message.Name ?? $"Player {message.Peer}";
                 Revision++;

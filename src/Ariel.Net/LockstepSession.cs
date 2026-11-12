@@ -2,6 +2,10 @@ using Ariel.Game;
 
 namespace Ariel.Net;
 
+/// <summary>Whether <paramref name="peer"/>, playing <paramref name="seat"/> (null when it plays none) at the tick a
+/// command applies, may issue that command. It must depend only on its arguments, so every peer decides alike.</summary>
+public delegate bool CommandAuthority(int peer, int? seat, GameCommand command);
+
 /// <summary>
 /// Deterministic lockstep. Every peer submits a (possibly empty) command batch for each tick, <c>InputDelay</c> ticks ahead.
 /// A tick executes only once every member's batch for it is present; batches apply in ascending peer order, each command
@@ -25,6 +29,8 @@ public sealed class LockstepSession : IDisposable
     private readonly Dictionary<int, int> _joinedAt = new();                       // peer -> first tick it is a member
     private readonly Dictionary<int, int> _leftAfter = new();                      // peer -> last tick it is a member
     private readonly Dictionary<int, int> _lastTick = new();                       // peer -> highest tick of a batch received
+    private readonly Dictionary<int, List<(int From, int Seat)>> _seats = new();   // peer -> the player it plays, from a tick
+    private readonly CommandAuthority? _authority;
     private readonly HashSet<int> _awaitingHandshake = new();
     private readonly Dictionary<int, Dictionary<int, string[]>> _batches = new();  // tick -> peer -> encoded commands
     private readonly Dictionary<int, Dictionary<int, ulong>> _hashes = new();      // tick -> peer -> hash
@@ -53,12 +59,15 @@ public sealed class LockstepSession : IDisposable
     public string? LastFault { get; private set; }
 
     /// <summary>Start a new game: every peer is a member from tick 0, and ticks [0, delay) carry no input by agreement.</summary>
-    public LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, IEnumerable<int> peers, int localPeer, int inputDelay = 2)
-        : this(sim, codec, transport, localPeer, inputDelay, startTick: 0)
+    /// <param name="seats">The player each peer plays, for <paramref name="authority"/>.</param>
+    /// <param name="authority">Which commands a peer may issue; without it every member may issue any command.</param>
+    public LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, IEnumerable<int> peers, int localPeer, int inputDelay = 2,
+        IReadOnlyDictionary<int, int>? seats = null, CommandAuthority? authority = null)
+        : this(sim, codec, transport, localPeer, inputDelay, startTick: 0, authority)
     {
         foreach (var p in peers.Distinct().Order())
         {
-            AddMember(p, 0);
+            AddMember(p, 0, seats?.TryGetValue(p, out int seat) == true ? seat : null);
             if (p != _local) _awaitingHandshake.Add(p);
         }
         if (!_peers.Contains(_local)) throw new ArgumentException("Lockstep requires the local peer among the peers");
@@ -66,10 +75,11 @@ public sealed class LockstepSession : IDisposable
             foreach (var p in _peers) Store(_nextSubmit, p, []);
     }
 
-    private LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, int localPeer, int inputDelay, int startTick)
+    private LockstepSession(Simulation sim, CommandCodec codec, ITransport transport, int localPeer, int inputDelay, int startTick,
+        CommandAuthority? authority)
     {
         if (inputDelay < 0) throw new ArgumentException("Lockstep requires a nonnegative input delay");
-        _sim = sim; _codec = codec; _transport = transport; _local = localPeer; _delay = inputDelay;
+        _sim = sim; _codec = codec; _transport = transport; _local = localPeer; _delay = inputDelay; _authority = authority;
         Tick = startTick;
         _nextSubmit = startTick;
         _transport.Received += OnReceived;
@@ -79,10 +89,11 @@ public sealed class LockstepSession : IDisposable
     /// other members are already running; this peer's batches for [startTick, startTick + delay) are empty by agreement,
     /// as the host announced with <see cref="AddPeer"/>. Content was checked when the peer was admitted.</summary>
     public static LockstepSession Resume(Simulation sim, CommandCodec codec, ITransport transport, IEnumerable<int> peers, int localPeer,
-        int startTick, int inputDelay = 2)
+        int startTick, int inputDelay = 2, IReadOnlyDictionary<int, int>? seats = null, CommandAuthority? authority = null)
     {
-        var session = new LockstepSession(sim, codec, transport, localPeer, inputDelay, startTick) { _announced = true };
-        foreach (var p in peers.Distinct().Order()) session.AddMember(p, p == localPeer ? startTick : int.MinValue);
+        var session = new LockstepSession(sim, codec, transport, localPeer, inputDelay, startTick, authority) { _announced = true };
+        foreach (var p in peers.Distinct().Order())
+            session.AddMember(p, p == localPeer ? startTick : int.MinValue, seats?.TryGetValue(p, out int seat) == true ? seat : null);
         if (!session._peers.Contains(localPeer)) throw new ArgumentException("Lockstep requires the local peer among the peers");
         for (; session._nextSubmit < startTick + inputDelay; session._nextSubmit++) session.Store(session._nextSubmit, localPeer, []);
         return session;
@@ -91,13 +102,13 @@ public sealed class LockstepSession : IDisposable
     /// <summary>Queue a local command; it goes out with the next submitted batch.</summary>
     public void Enqueue(GameCommand cmd) => _pending.Add(_codec.Encode(cmd));
 
-    /// <summary>Make <paramref name="peer"/> a member from <paramref name="fromTick"/>, which no member may have run;
-    /// its first batches, up to the input delay, are empty by agreement.</summary>
-    public void AddPeer(int peer, int fromTick)
+    /// <summary>Make <paramref name="peer"/> a member from <paramref name="fromTick"/>, which no member may have run,
+    /// playing <paramref name="seat"/>; its first batches, up to the input delay, are empty by agreement.</summary>
+    public void AddPeer(int peer, int fromTick, int? seat = null)
     {
         if (fromTick < Tick) throw new InvalidOperationException($"Tick {fromTick} has already run");
         _leftAfter.Remove(peer);
-        AddMember(peer, fromTick);
+        AddMember(peer, fromTick, seat);
         for (int t = fromTick; t < fromTick + _delay; t++) Store(t, peer, []);
     }
 
@@ -197,7 +208,7 @@ public sealed class LockstepSession : IDisposable
                 if (!IsMember(p, tick)) continue;
                 foreach (var text in tickBatches[p])
                 {
-                    ApplyEncoded(text);
+                    ApplyEncoded(p, tick, text);
                     any = true;
                     Applied++;
                 }
@@ -215,14 +226,25 @@ public sealed class LockstepSession : IDisposable
 
     public void Dispose() => _transport.Received -= OnReceived;
 
-    /// <summary>Apply one received command. One that cannot be decoded, or whose validation fails with an exception
-    /// instead of an error, is refused: every peer holds the same bytes, so every peer refuses it alike.</summary>
-    private void ApplyEncoded(string text)
+    /// <summary>The player <paramref name="peer"/> played at <paramref name="tick"/>, if any.</summary>
+    private int? SeatOf(int peer, int tick)
+    {
+        int? seat = null;
+        if (_seats.TryGetValue(peer, out var history))
+            foreach (var (from, s) in history)
+                if (from <= tick) seat = s;
+        return seat;
+    }
+
+    /// <summary>Apply one received command. One that cannot be decoded, that its peer may not issue, or whose
+    /// validation fails with an exception instead of an error, is refused: every peer holds the same bytes, so every peer refuses it alike.</summary>
+    private void ApplyEncoded(int peer, int tick, string text)
     {
         GameCommand command;
         try
         {
             command = _codec.Decode(text);
+            if (_authority != null && !_authority(peer, SeatOf(peer, tick), command)) return;
             command.Validate(_sim);
         }
         catch (Exception e) when (e is System.Text.Json.JsonException or InvalidDataException or KeyNotFoundException
@@ -234,9 +256,15 @@ public sealed class LockstepSession : IDisposable
         _sim.TrySubmit(command, out _);
     }
 
-    private void AddMember(int peer, int fromTick)
+    private void AddMember(int peer, int fromTick, int? seat)
     {
         _joinedAt[peer] = fromTick;
+        // Kept per membership, so batches from an earlier membership still apply under the seat they were sent from.
+        if (seat is int s)
+        {
+            if (!_seats.TryGetValue(peer, out var history)) _seats[peer] = history = new();
+            history.Add((fromTick, s));
+        }
         int i = _peers.BinarySearch(peer);
         if (i < 0) _peers.Insert(~i, peer);
     }

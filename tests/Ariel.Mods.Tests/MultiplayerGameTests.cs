@@ -58,6 +58,28 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     [Fact]
+    public void A_guest_can_command_only_its_own_seat_and_hand_only_that_seat_to_the_AI()
+    {
+        var (_, host, guest) = Started();
+        int mine = guest.Session.LocalPlayer, theirs = host.Session.LocalPlayer;
+        string ai = Catalog.OpponentAi!;
+        Assert.True(guest.Session.Submit(new SetPlayerControlCommand { Player = mine, Target = theirs, Ai = ai }));
+        Assert.True(guest.Session.Submit(new EndTurnCommand { Player = theirs }));
+        Assert.True(guest.Session.Submit(new SetPlayerControlCommand { Player = mine, Target = mine, Ai = ai }));
+
+        Run(() => host.Session.Sim.State.PlayerById(mine).Ai != null && guest.Session.Sim.State.PlayerById(mine).Ai != null,
+            host, guest);
+
+        foreach (var game in new[] { host, guest })
+        {
+            Assert.Null(game.Session.Sim.State.PlayerById(theirs).Ai);
+            Assert.False(game.Session.Sim.State.PlayerById(theirs).EndedTurn);
+        }
+        Assert.Equal(host.Session.Sim.ComputeHash(), guest.Session.Sim.ComputeHash());
+        host.Dispose(); guest.Dispose();
+    }
+
+    [Fact]
     public void A_player_who_leaves_is_played_by_the_AI_and_the_game_goes_on()
     {
         var (_, host, guest) = Started();
