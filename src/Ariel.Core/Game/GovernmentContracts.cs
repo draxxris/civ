@@ -4,8 +4,6 @@ using Ariel.Content.Schema;
 
 namespace Ariel.Game;
 
-public enum GovernmentPhase { Stable, Anarchy, Cooldown }
-
 /// <summary>Saved civic-change timers. Each boundary consumes one anarchy turn at PlayerEnd.</summary>
 public sealed class GovernmentPlayerState
 {
@@ -32,17 +30,7 @@ public sealed class GovernmentPlayerState
     }
 
     [JsonIgnore]
-    public GovernmentPhase Phase => _anarchyTurns > 0
-        ? GovernmentPhase.Anarchy
-        : _revolutionTimer > 0
-            ? GovernmentPhase.Cooldown
-            : GovernmentPhase.Stable;
-
-    [JsonIgnore]
     public bool IsAnarchy => _anarchyTurns > 0;
-
-    [JsonIgnore]
-    public bool IsStable => _anarchyTurns == 0 && _revolutionTimer == 0;
 
     public void StartRevolution(int anarchyTurns, int cooldownTurns)
     {
@@ -54,11 +42,6 @@ public sealed class GovernmentPlayerState
     {
         _anarchyTurns = Math.Max(0, _anarchyTurns - 1);
         _revolutionTimer = Math.Max(0, _revolutionTimer - 1);
-    }
-
-    public void EndAnarchyEarly()
-    {
-        _anarchyTurns = 0;
     }
 }
 

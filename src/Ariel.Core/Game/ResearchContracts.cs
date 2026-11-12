@@ -43,9 +43,6 @@ public sealed class ResearchTeamState
     public bool HasQueue => _queue.Count > 0;
 
     [JsonIgnore]
-    public int QueueCount => _queue.Count;
-
-    [JsonIgnore]
     public string? CurrentTarget => _queue.FirstOrDefault();
 
     public void Enqueue(string tech)
@@ -68,9 +65,7 @@ public sealed class ResearchTeamState
         return top;
     }
 
-    public void ClearQueue() => _queue.Clear();
-
-    public static List<string> SanitizeQueue(IEnumerable<string> items) =>
+    private static List<string> SanitizeQueue(IEnumerable<string> items) =>
         items.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
 }
 public sealed class SetTeamResearchCommand : GameCommand
