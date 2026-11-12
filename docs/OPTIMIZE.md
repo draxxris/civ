@@ -25,6 +25,9 @@ mise run benchmark -- --world
 
 # 4. Operational turn and AI workloads (8-player game, 99-turn preparation, turn-100 decisions)
 mise run benchmark
+
+# 5. Lockstep state hash (8-player game played to turn 100, then 100 hashes)
+mise run benchmark -- --hash
 ```
 
 #### Workload Descriptions
@@ -43,6 +46,9 @@ mise run benchmark
 - **Default (no flag)**: Runs multi-turn simulation benchmarks, including the 50-city
   turn workload and the 8-player scenario with turn-100 AI decision evaluation
   (`decisions.RunAi()`).
+- **`--hash`**: Plays an eight-player AI game on a standard world to turn 100, then
+  times 100 `Simulation.ComputeHash` calls and reports time, allocated bytes and gen-2
+  collections per hash.
 
 ### Profiling and Diagnostic Tracing
 
@@ -123,6 +129,10 @@ ______________________________________________________________________
        ▼
 [Pass 7: Oct 26, 2026] HUD Invalidation on Clicks & In-Place Panel Updates
                        (Commits: 877fb7a, 70ab679, 003cd30, 1ad1904, 4b6fd9d)
+       │
+       ▼
+[Pass 8: Nov 11, 2026] Lockstep State Hash Without Copies
+                       (Commit: a17020e)
 ```
 
 ______________________________________________________________________
@@ -771,6 +781,36 @@ open:
   always validate), and unit with promotions (requires combat experience or
   `IUnitService.Create` free promotions).
 
+### Pass 8: Lockstep State Hash Without Copies
+
+- **Date**: 2026-11-11
+- **Primary Commit**: `a17020e`: *Hash the canonical state bytes where they are written*
+
+#### Implementation Changes
+
+Lockstep hashes the whole state on every tick that applies commands. `StateHasher`
+serialized the state into a fresh array, canonicalized it, decoded the canonical bytes
+into a string, then encoded the string again to run FNV-1a over it: three state-sized
+copies per hash, all on the large object heap.
+
+- `CanonicalJson` serializes into a reused per-thread buffer and passes the canonical
+  bytes straight to a finishing function (string decode, SHA-256 or FNV-1a).
+- `CanonicalJson.Fnv1a64` replaces the string round trip in `StateHasher`.
+- Reused buffers above 8 MB are dropped after use.
+
+#### Measurements
+
+`mise run benchmark -- --hash`, eight players on a standard world at turn 100 (36 cities,
+105 units), 100 samples after one warm-up hash:
+
+| Metric                         |   Before |    After |
+| :----------------------------- | -------: | -------: |
+| Time per hash                  | 16.49 ms | 13.54 ms |
+| Allocated per hash             | 8,927 KB |   830 KB |
+| Gen-2 collections (100 hashes) |       28 |        0 |
+
+The hash value is unchanged (`11110498118ABED7`), and `mise run test` passes.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -813,3 +853,5 @@ passes:
 |                                         |                      | Unchanged selection click (repeat click)                   | UI update lines          |               1 line |           0 lines |                    **-100% (eliminated)** |
 |                                         |                      | Research dialog reopen (unchanged session)                 | Wall time                |             14.00 ms |           0.07 ms |                                **-99.5%** |
 |                                         |                      | Religion plate scrape pattern delta on click               | Differing pixels         |               594 px |              0 px |                        **-100% (stable)** |
+| **Pass 8: Lockstep State Hash**         | `a17020e`            | Turn-100 8-player `ComputeHash`                            | Managed bytes per hash   |             8,927 KB |            830 KB |                                **-90.7%** |
+|                                         |                      | Turn-100 8-player `ComputeHash`                            | Wall time per hash       |             16.49 ms |          13.54 ms |                                **-17.9%** |
