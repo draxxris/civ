@@ -57,10 +57,39 @@ internal sealed partial class UnitService
         if (!sim.State.Grid.TryTile(destination ?? unit.Position, out var to)) return "Off map";
         var target = sim.State.Grid.HexOf(to);
         if (sim.State.Grid.Distance(unit.Position, target) > 1) return "Destination is too far away";
-        if (target == unit.Position) return UnloadLocation(sim, unit);
+        return UnloadError(sim, unit, to);
+    }
+    /// <summary>Whether cargo could stand on <paramref name="to"/>, its transport's plot or a neighbour, after leaving
+    /// the transport; moves left are the caller's concern.</summary>
+    private static string? UnloadError(Simulation sim, Unit unit, TileId to)
+    {
+        if (sim.State.Grid.HexOf(to) == unit.Position) return UnloadLocation(sim, unit);
         var error = MovementService.TerrainEntry(sim, unit, MilitaryData.Definition(sim, unit), sim.State.Plots[to.Value], MilitaryData.Effects(sim, unit));
         if (error is not null) return error;
         return sim.Content.Services.Get<IMovementService>().Single().CanEnter(sim, unit.Id, sim.State.Grid.TileAt(unit.Position), to);
+    }
+    public IReadOnlyList<int> Disband(Simulation sim, int transport)
+    {
+        var carrier = sim.State.UnitById(transport);
+        var lost = new List<int>();
+        var here = sim.State.Grid.TileAt(carrier.Position);
+        foreach (int id in CargoUnits(sim, transport))
+        {
+            var cargo = sim.State.UnitById(id);
+            // Its own plot first (an aircraft carrier in port, an airship over land), then the neighbours in grid order
+            // (a ship beside a coast), so every peer picks the same place.
+            TileId? landing = null;
+            bool aircraft = MilitaryData.Definition(sim, cargo).Domain == "military:domain_air";
+            foreach (var tile in sim.State.Grid.Neighbors(here).Prepend(here))
+                if (UnloadError(sim, cargo, tile) is null
+                    && (!aircraft || AirBaseError(sim, cargo, sim.State.Grid.HexOf(tile)) is null)) { landing = tile; break; }
+            if (landing is { } to) Unload(sim, id, sim.State.Grid.HexOf(to));
+            else { sim.State.RemoveUnit(id); lost.Add(id); }
+        }
+        sim.State.RemoveUnit(transport);
+        lost.Add(transport);
+        MilitaryData.Sight(sim);
+        return lost;
     }
     private static string? UnloadLocation(Simulation sim, Unit unit)
     {

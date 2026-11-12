@@ -87,6 +87,10 @@ public interface IUnitService
     void Load(Simulation sim, int unit, int transport);
     string? ValidateUnload(Simulation sim, int player, int unit, Hex? destination = null);
     void Unload(Simulation sim, int unit, Hex? destination = null);
+    /// <summary>Remove a unit its owner gave up. Its cargo goes ashore where it can stand, on the unit's plot or a
+    /// neighbour (a ship beside land, an airship over land); cargo with nowhere to stand is lost with it. Returns every
+    /// unit removed, the disbanded unit last.</summary>
+    IReadOnlyList<int> Disband(Simulation sim, int unit);
     long UpgradePrice(Simulation sim, int unit, string target);
     string? Validate(Simulation sim, int player, int unit, UnitAction action, string argument);
     void Execute(Simulation sim, int unit, UnitAction action, string argument);

@@ -66,6 +66,36 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal("Loaded cargo cannot pillage", units.Validate(sim, cargo.Owner, cargo.Id, UnitAction.Pillage, ""));
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Disbanding_a_transport_puts_its_cargo_ashore_or_loses_it_with_the_ship(bool landNearby)
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        foreach (var plot in sim.State.Plots) plot.Terrain = "world:coast";
+        if (landNearby) sim.State.Plots[41].Terrain = "world:grass";
+        var ship = Add(sim, 0, 40, "military:cog");
+        var cargo = Add(sim, 0, 40, "military:warrior");
+        Assert.True(sim.TryApply(new LoadUnitCommand { Player = 0, Unit = cargo.Id, Transport = ship.Id }, out var error), error);
+
+        var removed = Service<IUnitService>(sim).Disband(sim, ship.Id);
+
+        Assert.Null(sim.State.FindUnit(ship.Id));
+        if (landNearby)
+        {
+            Assert.Equal([ship.Id], removed);
+            var ashore = sim.State.UnitById(cargo.Id);
+            Assert.Equal(sim.State.Grid.HexOf(new(41)), ashore.Position);
+            Assert.Null(ashore.Extensions.Get<MilitaryUnitState>(sim.Content)!.TransportId);
+        }
+        else
+        {
+            Assert.Equal([cargo.Id, ship.Id], removed);
+            Assert.Null(sim.State.FindUnit(cargo.Id));
+        }
+        Assert.DoesNotContain(sim.State.Units, u => u.Extensions.Get<MilitaryUnitState>(sim.Content)?.TransportId == ship.Id);
+    }
+
     [Fact]
     public void Pillaging_a_foreign_improvement_awards_gold_but_route_only_pillage_does_not()
     {

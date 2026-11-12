@@ -141,8 +141,11 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         {
             var unit = SelectDisbandUnit(sim, player);
             if (unit is null) break;
-            sim.State.RemoveUnit(unit.Id);
-            sim.Events.Publish(new UnitDisbandedForDeficit(unit.Id, player, unit.Position));
+            // A transport's cargo goes ashore where it can; what cannot is lost with it.
+            var removed = sim.Content.Services.Get<IUnitService>().SingleOrDefault()?.Disband(sim, unit.Id);
+            if (removed is null) sim.State.RemoveUnit(unit.Id);
+            foreach (int id in removed ?? [unit.Id])
+                sim.Events.Publish(new UnitDisbandedForDeficit(id, player, unit.Position));
             disbanded = true;
             if (Calculate(sim, player).NetGold >= 0) break;
         }
