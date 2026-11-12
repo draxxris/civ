@@ -142,10 +142,10 @@ public static class CanonicalJson
             WriteCanonical(utf8, scratch);
             return finish(scratch.WrittenSpan);
         }
+        var output = _canonical ??= new ArrayBufferWriter<byte>(4096);
         _busy = true;
         try
         {
-            var output = _canonical ??= new ArrayBufferWriter<byte>(4096);
             output.Clear();
             WriteCanonical(utf8, output);
             return finish(output.WrittenSpan);
@@ -153,7 +153,7 @@ public static class CanonicalJson
         finally
         {
             _busy = false;
-            if (_canonical.Capacity > MaxKeptBuffer) _canonical = null;
+            if (output.Capacity > MaxKeptBuffer) _canonical = null;
         }
     }
 
