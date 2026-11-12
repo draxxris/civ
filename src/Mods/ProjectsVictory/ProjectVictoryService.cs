@@ -145,8 +145,9 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
     private static void Record(Simulation sim, VictoryDef def, int player)
     {
         int team = sim.State.PlayerById(player).TeamId;
-        sim.State.Extensions.Set(sim.Content, new VictoryGameState
-        { IsGameOver = true, WinningTeamId = team, WinningPlayerId = player, VictoryId = def.Id, TurnWon = sim.State.Turn });
+        var state = sim.State.Extensions.Get<VictoryGameState>(sim.Content);
+        if (state is null) sim.State.Extensions.Set(sim.Content, state = new VictoryGameState());
+        if (!state.Record(team, player, def.Id, sim.State.Turn)) return;
         sim.Events.Publish(new VictoryAchieved(team, player, def.Id, sim.State.Turn));
     }
 

@@ -150,6 +150,27 @@ public sealed class ProjectsVictoryRulesTests
     }
 
     [Fact]
+    public void Play_continues_after_a_win_and_the_recorded_outcome_survives_reload()
+    {
+        var sim = Scenario();
+        sim.State.RemoveCity(sim.State.Cities[1].Id);
+        sim.AdvanceTurn();
+        var won = Status(sim);
+        Assert.True(won.IsGameOver);
+        int turn = sim.State.Turn;
+
+        foreach (var player in sim.State.Players.Where(p => !p.EndedTurn).ToList())
+            Assert.True(sim.TrySubmit(new EndTurnCommand { Player = player.Id }, out var error), error);
+
+        Assert.Equal(turn + 1, sim.State.Turn);
+        Assert.Equal(won with { MaxTurns = Status(sim).MaxTurns }, Status(sim));
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        Assert.Equal(Status(sim), Status(loaded));
+        Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
+        Assert.False(loaded.State.Extensions.Get<VictoryGameState>(loaded.Content)!.Record(1, 1, "projects_victory:conquest", 99));
+    }
+
+    [Fact]
     public void Domination_victory_needs_both_land_and_population_shares()
     {
         var sim = Scenario();

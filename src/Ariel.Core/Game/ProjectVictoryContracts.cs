@@ -1,17 +1,29 @@
+using System.Text.Json.Serialization;
 using Ariel.Content;
 
 namespace Ariel.Game;
 
 /// <summary>Score parts for one player. Total is the weighted sum.</summary>
 public sealed record PlayerScore(int Population, int Land, int Techs, int Wonders, int Total);
-/// <summary>Saved game-wide outcome. Ids are -1 while the game is running.</summary>
+/// <summary>Saved game-wide outcome: whether a team has won, and who, how and when. The first win stands and is
+/// recorded only through <see cref="Record"/>, so the fields always agree: ids are -1 and the victory null until then.
+/// A win does not stop play; the game carries on after it, and later events never rewrite it.</summary>
 public sealed class VictoryGameState
 {
-    public bool IsGameOver { get; set; }
-    public int WinningTeamId { get; set; } = -1;
-    public int WinningPlayerId { get; set; } = -1;
-    public string? VictoryId { get; set; }
-    public int TurnWon { get; set; }
+    [JsonInclude] public bool IsGameOver { get; private set; }
+    [JsonInclude] public int WinningTeamId { get; private set; } = -1;
+    [JsonInclude] public int WinningPlayerId { get; private set; } = -1;
+    [JsonInclude] public string? VictoryId { get; private set; }
+    [JsonInclude] public int TurnWon { get; private set; }
+
+    /// <summary>Record the win. Returns false, changing nothing, when a win is already recorded.</summary>
+    public bool Record(int team, int player, string victory, int turn)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(victory);
+        if (IsGameOver) return false;
+        (IsGameOver, WinningTeamId, WinningPlayerId, VictoryId, TurnWon) = (true, team, player, victory, turn);
+        return true;
+    }
 }
 /// <summary>Read-only view of the outcome plus the effective turn limit.</summary>
 public sealed record VictoryStatus(bool IsGameOver, int WinningTeamId, int WinningPlayerId, string? VictoryId, int TurnWon, int MaxTurns);

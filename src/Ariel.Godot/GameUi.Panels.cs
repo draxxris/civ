@@ -298,7 +298,7 @@ internal sealed partial class GameUi
             return;
         }
         string state = status.IsGameOver
-            ? $"Game over: {victory.WinnerName ?? "no winner"} won by {victory.VictoryName ?? "unknown"} on turn {status.TurnWon}"
+            ? $"{victory.WinnerName ?? "No one"} won by {victory.VictoryName ?? "unknown"} on turn {status.TurnWon}; play continues"
             : $"Game in progress  ·  turn limit {status.MaxTurns}";
         list.AddChild(Ui.Text(state, 13, status.IsGameOver ? Ui.Accent : Colors.White));
         if (victory.Conditions.Count > 0) list.AddChild(Ui.Text("Victory: " + string.Join(", ", victory.Conditions), 12, Ui.Dim));
