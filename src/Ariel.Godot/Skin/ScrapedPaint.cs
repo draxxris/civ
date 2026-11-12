@@ -302,13 +302,6 @@ internal static class ScrapedPaint
         /// <summary>Sets the shade of one painting pixel.</summary>
         public void SetShade(int x, int y, float alpha) => _shade[y * Wide + x] = Mathf.Clamp(alpha, 0f, 1f);
 
-        /// <summary>Sets bare metal at one painting pixel, under any marks drawn later.</summary>
-        public void SetMetal(int x, int y, Color metal, float alpha)
-        {
-            alpha = Mathf.Clamp(alpha, 0f, 1f);
-            _marks[y * Wide + x] = new Color(metal.R * alpha, metal.G * alpha, metal.B * alpha, alpha);
-        }
-
         /// <summary>An anti-aliased round dot of <paramref name="colour"/>. Overlapping dots never build up past
         /// the strongest one's alpha, so a scratch made of dots stays one even line.</summary>
         public void Dot(Vector2 centre, float diameter, Color colour, float alpha)

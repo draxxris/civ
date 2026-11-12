@@ -186,12 +186,4 @@ public static class ModDiscovery
                 $"Restart the client to refresh the mod selection. {string.Join("\n", errors)}");
         return current[0].Manifest;
     }
-
-    /// <summary>The first folder that contains at least one mod: the environment override, then the given candidates in order.</summary>
-    public static string? FindModsRoot(IEnumerable<string> candidates)
-    {
-        var all = new[] { Environment.GetEnvironmentVariable(ModsEnvironmentVariable) ?? "" }.Concat(candidates);
-        return all.Where(p => p.Length > 0 && Directory.Exists(p))
-            .FirstOrDefault(p => Directory.GetDirectories(p).Any(d => File.Exists(Path.Combine(d, "mod.json"))));
-    }
 }

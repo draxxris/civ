@@ -75,13 +75,6 @@ internal sealed class MeshBuilder
         return new Vector3(Mathf.Cos(a) * radius, 0, Mathf.Sin(a) * radius);
     }
 
-    /// <summary>Corner at angle (degrees) for a direction-indexed edge: direction i points at -60 i degrees.</summary>
-    public static Vector3 EdgeCorner(int direction, int side, float radius)
-    {
-        float a = Mathf.DegToRad(-60f * direction + (side == 0 ? -30f : 30f));
-        return new Vector3(Mathf.Cos(a) * radius, 0, Mathf.Sin(a) * radius);
-    }
-
     public void Line(Vector3 a, Vector3 b, float width, Color color)
     {
         var dir = b - a;

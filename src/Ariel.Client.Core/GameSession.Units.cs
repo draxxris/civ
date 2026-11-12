@@ -246,7 +246,4 @@ public sealed partial class GameSession
         _gotos.Remove(unit.Id);
         if (Submit(action.Command) && !actionId.StartsWith("promote:", StringComparison.Ordinal) && actionId != "found") SelectNextUnit();
     }
-
-    /// <summary>Settlers' best advice: why founding fails here, or null when it works.</summary>
-    public string? CannotFoundReason(Unit unit) => new FoundCityWithSettlerCommand { Player = LocalPlayer, Settler = unit.Id }.Validate(Sim);
 }

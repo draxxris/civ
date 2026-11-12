@@ -81,9 +81,6 @@ internal sealed class ProjectVictoryService : IProjectVictoryService
         return (remaining, teamRemaining <= remaining);
     }
 
-    /// <summary>Copies of the project the team may still build.</summary>
-    internal int RemainingCopies(Simulation sim, int cityId, string id) => ProjectRoom(sim, cityId, id).Copies;
-
     public void CompleteProject(Simulation sim, int cityId, string project)
     {
         var city = sim.State.CityById(cityId);
