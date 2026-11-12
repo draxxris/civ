@@ -23,7 +23,9 @@ internal sealed partial class MapRenderer
             if (sight == Sight.Hidden) continue;
             var tile = state.Grid.TileAt(city.Position);
             var centre = PositionOf(city.Position);
-            var look = LookOf(city.Owner);
+            // A fogged city looks as it did when last seen: in the era it was in then, with the roads and clearings
+            // its neighbours had then.
+            var look = LookOf(sight == Sight.Visible ? LiveEra(city.Owner) : _session.PerceivedPlot(tile)?.City?.Era);
             var style = look.Style;
             var walls = _improvements.CityRing(city) is { } ring ? _improvements.WallsOf(ring) : null;
             var input = new CityLayoutInput(CitySeed(city), city.Population, style, walls, RoadDirections(tile),
@@ -34,13 +36,28 @@ internal sealed partial class MapRenderer
         return sites;
     }
 
-    /// <summary>The look of a player's cities in its current era, from the mods; huts on dirt when none says.</summary>
-    private CityAppearance LookOf(int player)
+    private string? LiveEra(int player) =>
+        _session.Sim.State.PlayerById(player).Extensions.Get<CityPlayerState>(_session.Sim.Content)?.CurrentEra;
+
+    /// <summary>The look of cities in an era (the starting era when unknown), from the mods; huts on dirt when none
+    /// says.</summary>
+    private CityAppearance LookOf(string? era)
     {
         var sim = _session.Sim;
-        string era = sim.State.PlayerById(player).Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra;
-        return sim.Content.Services.Get<ICityAppearanceService>().Select(s => s.Era(era)).FirstOrDefault(a => a != null)
+        string shown = era ?? sim.Settings.StartingEra;
+        return sim.Content.Services.Get<ICityAppearanceService>().Select(s => s.Era(shown)).FirstOrDefault(a => a != null)
             ?? new CityAppearance(CityStyle.Huts, CityGround.Dirt);
+    }
+
+    /// <summary>What the local team may know of a plot: the plot itself while in sight (no copy needed), else its
+    /// remembered snapshot. Null for a plot never seen.</summary>
+    private (string? Route, string? Improvement, string? Feature, string Terrain, PlotKind Kind)? Known(TileId tile)
+    {
+        var plot = _session.Sim.State.Plots[tile.Value];
+        var sight = _session.SightOf(plot);
+        if (sight == Sight.Visible) return (plot.Route, plot.Improvement, plot.Feature, plot.Terrain, plot.Kind);
+        if (sight == Sight.Hidden || _session.PerceivedPlot(tile) is not { } memory) return null;
+        return (memory.Route, memory.Improvement, memory.Feature, memory.Terrain, memory.Kind);
     }
 
     private static int CitySeed(City city) =>
@@ -52,7 +69,7 @@ internal sealed partial class MapRenderer
         var state = _session.Sim.State;
         int mask = 0;
         for (int d = 0; d < 6; d++)
-            if (state.Grid.Neighbor(tile, d) is TileId n && n != tile && state.Plots[n.Value].Route != null) mask |= 1 << d;
+            if (state.Grid.Neighbor(tile, d) is TileId n && n != tile && Known(n)?.Route != null) mask |= 1 << d;
         return mask;
     }
 
@@ -66,8 +83,7 @@ internal sealed partial class MapRenderer
         if (!state.Grid.TryTile(Hex.FromPixel(x, z, 1), out var tile)) return false;
         if (tile == cityTile) return true;
         if (cityTiles.Contains(tile)) return false;
-        var plot = state.Plots[tile.Value];
-        if (_session.SightOf(plot) == Sight.Hidden || plot.Kind == PlotKind.Peak) return false;
+        if (Known(tile) is not { } plot || plot.Kind == PlotKind.Peak) return false;
         if (plot.Improvement is { } improvement && _improvements.Has(improvement)) return false;
         return plot.Feature is not { } feature || _terrain.Palette.ScatterFor(feature, plot.Terrain)?.Scatter is null;
     }

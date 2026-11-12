@@ -242,6 +242,27 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
     }
 
     [Fact]
+    public void A_remembered_city_keeps_the_era_it_was_seen_in()
+    {
+        var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
+        var tile = grid.TileAt(3, 3);
+        sim.State.AddCity(new City { Id = sim.State.NextCityId++, Owner = 1, Position = grid.HexOf(tile), Name = "Old Port", Population = 4 });
+        var owner = sim.State.PlayerById(1);
+        var eras = new CityPlayerState { CurrentEra = "foundation:era_ancient" };
+        owner.Extensions.Set(sim.Content, eras);
+        var observer = Observer(sim, 0, tile);
+        sight.Recompute(sim);
+        Assert.Equal("foundation:era_ancient", sight.SnapshotOf(sim, tile, 0)!.City!.Era);
+
+        sim.State.MoveUnit(observer.Id, grid.HexOf(grid.TileAt(9, 3)));
+        sight.Recompute(sim);
+        eras.CurrentEra = "foundation:era_classical"; // the owner moves on while the city is out of sight
+
+        Assert.Equal("foundation:era_ancient", sight.SnapshotOf(sim, tile, 0)!.City!.Era);
+        Assert.Equal(sim.ComputeHash(), SaveGame.Load(sim.Content, SaveGame.Save(sim)).ComputeHash());
+    }
+
+    [Fact]
     public void Occlusion_event_precedes_later_hidden_edits()
     {
         var sim = Scenario(); var grid = sim.State.Grid; var sight = Sight(sim);
@@ -296,8 +317,8 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Terrain = "world:peak";
         Relief(forks[2].State.Plots[grid.TileAt(4, 3).Value], PlotKind.Peak);
         forks[2].State.Plots[grid.TileAt(4, 3).Value].Height = Levels.Peak;
-// Canonical hashes include zero-valued cliff fields, sight, memory, city and recon state.
-        ulong[] expectedHashes = [4438668696039119414UL, 4794856000817980728UL, 11063050508058007UL];
+// Canonical hashes include zero-valued cliff fields, sight, memory (with each remembered city's era), city and recon state.
+        ulong[] expectedHashes = [18011072076886315325UL, 3557086145499891651UL, 17958227398568738962UL];
         ulong parentHash = sim.ComputeHash();
         var rng = sim.Rng.State;
         Parallel.For(0, forks.Length, i =>

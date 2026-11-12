@@ -141,7 +141,8 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         var plot = sim.State.Plots[tile.Value];
         var city = sim.State.CityAt(sim.State.Grid.HexOf(tile));
         var memory = city is null ? null : new RevealedCitySnapshot(city.Id, city.Owner, city.Name,
-            city.Population, city.Buildings.ToImmutableArray());
+            city.Population, city.Buildings.ToImmutableArray(),
+            sim.State.PlayerById(city.Owner).Extensions.TryGet<CityPlayerState>(sim.Content)?.CurrentEra);
         string? bonus = plot.Bonus;
         if (bonus is { } id && sim.Content.Get<S.BonusDef>(id).RevealTech is { } tech
             && !sim.State.TeamById(team).Techs.Contains(tech)) bonus = null;

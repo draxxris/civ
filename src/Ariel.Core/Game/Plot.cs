@@ -141,8 +141,10 @@ public sealed record RevealedPlotSnapshot(
     byte RiverEdges = 0, RevealedCitySnapshot? City = null, byte CliffEdges = 0, byte CliffLiftEdges = 0);
 
 /// <summary>Only the city fields used by map labels and settlement models.</summary>
+/// <param name="Era">The owner's era when the city was seen, which picks its building style; null in memories saved
+/// before it was recorded.</param>
 public sealed record RevealedCitySnapshot(int Id, int Owner, string Name, int Population,
-    System.Collections.Immutable.ImmutableArray<string> Buildings);
+    System.Collections.Immutable.ImmutableArray<string> Buildings, string? Era = null);
 
 /// <summary>Shared research and diplomacy state. Each player belongs to exactly one team.</summary>
 public sealed class Team
