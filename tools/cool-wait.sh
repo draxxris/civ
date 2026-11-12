@@ -40,11 +40,11 @@ hwmon_temp() { # $1 = hwmon name
   done
 }
 
-cpu_temp() { # hottest of the die, the ACPI zone, the chipset and the EC's own reading
-  # Intel laptops expose the die as x86_pkg_temp, AMD ones as the k10temp hwmon; dell_smm is the Dell EC's sensor.
+cpu_temp() { # hottest die sensor: Intel's x86_pkg_temp or AMD's k10temp (Tctl)
+  # The ACPI zone and the Dell EC sensor are left out: on the Dell the firmware can report acpitz at 88-96 C
+  # permanently, which would hold every job until the timeout.
   local max=0 v
-  for v in "$(zone_temp x86_pkg_temp)" "$(hwmon_temp k10temp)" "$(zone_temp acpitz)" "$(hwmon_temp pch_skylake)" \
-           "$(hwmon_temp dell_smm)"; do
+  for v in "$(zone_temp x86_pkg_temp)" "$(hwmon_temp k10temp)" "$(hwmon_temp pch_skylake)"; do
     [[ $v =~ ^[0-9]+$ ]] && [ "$v" -gt "$max" ] && max=$v
   done
   echo "$max"
