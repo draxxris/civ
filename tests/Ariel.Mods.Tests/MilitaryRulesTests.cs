@@ -445,13 +445,13 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.SetWar(0, 1, true);
         var combat = Service<ICombatService>(sim);
         long before = combat.Preview(sim, siege.Id, defender.Id).DefenseStrength.Ledger.Total("military:combat_percent");
-        Assert.True(sim.TryApply(new BombardCityCommand { Player = 0, Unit = siege.Id, Target = city.Position }, out var error), error);
+        Assert.True(sim.TryApply(Artillery.Bombard(sim, siege, city.Position), out var error), error);
         var state = city.Extensions.Get<CityRuleState>(sim.Content)!;
         Assert.Equal(20, state.DefenseDamage); // 8 * 80 / 100 = 6 defense points; 100 * 6 / 30 = 20 damage.
         Assert.True(state.BombardedThisTurn);
         Assert.Equal(6, Assert.Single(sim.Events.Published.OfType<CityBombarded>()).DefenseReduction);
         Assert.True(combat.Preview(sim, siege.Id, defender.Id).DefenseStrength.Ledger.Total("military:combat_percent") < before);
-        Assert.NotNull(combat.ValidateBombard(sim, 0, siege.Id, city.Position));
+        Assert.NotNull(Artillery.Bombard(sim, siege, city.Position).Validate(sim));
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(20, state.DefenseDamage); Assert.False(state.BombardedThisTurn);
@@ -476,7 +476,7 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
             sim.Rng.NextUInt64();
         }
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        var command = new RangedStrikeCommand { Player = 0, Unit = siege.Id, Target = defender.Position };
+        var command = Artillery.Strike(sim, siege, defender.Position);
         Assert.True(sim.TryApply(command, out var error), error);
         Assert.True(loaded.TryApply(command, out error), error);
         Assert.Equal(100, siege.Health); Assert.Equal(0, siege.MovesLeft);
@@ -891,7 +891,7 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
             if (DeterministicRng.Restore(w, x, y, z).Next(100) < 70) break;
             sim.Rng.NextUInt64();
         }
-        Assert.True(sim.TryApply(new RangedStrikeCommand { Player = 0, Unit = siege.Id, Target = defender.Position }, out var error), error);
+        Assert.True(sim.TryApply(Artillery.Strike(sim, siege, defender.Position), out var error), error);
         Assert.Equal(100 - MilitaryDataLimit(sim, siege), defender.Health); Assert.Equal(100, siege.Health);
     }
 

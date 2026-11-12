@@ -1,0 +1,8 @@
+{
+  "id": "ranged_combat",
+  "name": "Ranged Combat",
+  "version": "1.0.0",
+  "assembly": "Ariel.Mods.RangedCombat.dll",
+  "dependencies": ["military", "cities"],
+  "references": ["cities", "foundation", "military"]
+}

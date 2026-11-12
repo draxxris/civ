@@ -77,7 +77,7 @@ public sealed class GameRules : IRuleset
     public IMovementService Movement { get; private set; } = null!;
     /// <summary>Unit pathfinding.</summary>
     public IPathfindingService Paths { get; private set; } = null!;
-    /// <summary>Combat, bombardment and ranged strikes.</summary>
+    /// <summary>Combat between units, city defences and the combat record.</summary>
     public ICombatService Combat { get; private set; } = null!;
     /// <summary>Air missions.</summary>
     public IAirMissionService AirMissions { get; private set; } = null!;

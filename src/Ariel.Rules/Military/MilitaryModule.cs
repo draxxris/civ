@@ -36,10 +36,6 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
         context.RegisterService<ICombatService>("combat", new CombatService());
         context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
-        context.RegisterService<IUnitActionSource>("artillery", new ArtilleryActions());
-        // Assaults fire in this order: every bombardment, then every ranged strike.
-        context.RegisterService<ISupportFire>("bombard", new BombardFire());
-        context.RegisterService<ISupportFire>("ranged_strike", new RangedFire());
         context.RegisterService<IUnitService>("units", units);
         context.RegisterService<IBarbarianFaction>("barbarians", new BarbarianFaction());
         context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());
@@ -52,9 +48,7 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterCommand<MoveUnitPathCommand>("move_unit");
         context.RegisterCommand<LoadUnitCommand>("load_unit");
         context.RegisterCommand<UnloadUnitCommand>("unload_unit");
-        context.RegisterCommand<BombardCityCommand>("bombard_city");
         context.RegisterCommand<AirMissionCommand>("air_mission");
-        context.RegisterCommand<RangedStrikeCommand>("ranged_strike");
         context.RegisterCommand<PromoteMilitaryUnitCommand>("promote_unit");
         context.RegisterCommand<SetUnitActivityCommand>("set_unit_activity");
         context.RegisterCommand<PillageCommand>("pillage");

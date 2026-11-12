@@ -260,13 +260,21 @@ requires the owning namespace. Overrides can replace earlier content.
 - A feature that gives units an order registers an `IUnitActionSource`, which offers
   ready-made `(id, label, command)` candidates for a unit. The client validates and
   lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
-  a mod adds an order without a client change. Artillery (Military) and great people
-  (the GreatPeople mod) use it; air missions, cargo, religion, corporations and spies
+  a mod adds an order without a client change. Artillery (the RangedCombat mod) and
+  great people (the GreatPeople mod) use it; air missions, cargo, religion, corporations and spies
   are still listed by the client itself and should move to sources.
 - A feature that lets a unit hurt a tile without entering it registers an
   `ISupportFire`. AI assaults ask every kind in registration order
   (`GameRules.SupportFire`) for the command that fires a unit at the target, instead of
   naming bombardment and ranged strikes.
+- The RangedCombat mod is the model for a military feature outside the base game. It
+  owns the bombard and ranged-strike commands, their rules, its unit orders and its
+  support fire. Military keeps what such fire acts on and offers it as entry points:
+  `ICombatService.CityDefense`, `BombardResistance`, `DamageCityDefense`, `Collateral`
+  and `RecordStrike`, and `IUnitService.Effect` and `SpendAttack`. The unit and
+  building fields that describe the weapons (`BombardRate`, `BombRange`,
+  `BombardDefense`) stay in the base schema, as unit data carries them. Without the
+  mod no fire is offered and siege units fight only in melee.
 - `ITurnSystem` retains explicit `(Order, Id)` execution order.
 
 Registries freeze after load. Definitions and their nested collections must not change
@@ -1660,7 +1668,7 @@ time, even when the desktop throttles the window.
 
 `src/Ariel.Rules/` contains the base modules Foundation, World, Research, Economy,
 Cities, Military, Government, Peoples and Religion. `src/Mods/` contains Ai, GreatPeople,
-Trade, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Trade, RangedCombat, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
 Revolution, CardResearch and TechTree. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the

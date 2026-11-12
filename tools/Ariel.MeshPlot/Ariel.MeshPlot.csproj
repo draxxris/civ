@@ -7,11 +7,12 @@
     <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <!-- The same mod set the game loads, staged by build/ModPayloads.targets. The meshes are built from
        content and rules alone, so the heavy art/ trees are not linked. -->
   <PropertyGroup>
-    <ModPayloads>Ai;GreatPeople;Trade</ModPayloads>
+    <ModPayloads>Ai;GreatPeople;Trade;RangedCombat</ModPayloads>
     <LinkModArt>false</LinkModArt>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />

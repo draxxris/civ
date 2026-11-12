@@ -6,6 +6,17 @@ namespace Ariel.Rules.Military;
 
 internal sealed partial class UnitService : IUnitService, IUnitSupportService
 {
+    public int Effect(Simulation sim, int unit, string effect) =>
+        MilitaryData.Effect(MilitaryData.Effects(sim, sim.State.UnitById(unit)), effect);
+
+    public void SpendAttack(Simulation sim, int unit, int moves)
+    {
+        var target = sim.State.UnitById(unit);
+        var state = MilitaryData.Edit(sim, target);
+        state.Attacked = true; state.Moved = true; state.BreakActivity();
+        target.MovesLeft = Math.Max(0, target.MovesLeft - moves);
+    }
+
     public int MaximumMoves(Simulation sim, int unit)
     {
         var u = sim.State.UnitById(unit);

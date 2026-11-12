@@ -366,6 +366,13 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var city = new City { Id = sim.State.NextCityId++, Owner = owner, Position = sim.State.Grid.HexOf(new(tile)) };
         sim.State.AddCity(city); sim.State.PlotAt(city.Position).Owner = owner; return city;
     }
+    private static void Dispatch(GameSession session, Unit unit, string idPrefix)
+    {
+        session.SelectUnit(unit.Id);
+        var action = session.DescribeUnit(unit)!.Actions.First(a => a.Id.StartsWith(idPrefix, StringComparison.Ordinal));
+        session.RunAction(action.Id); Assert.Equal("", session.Message);
+    }
+
     private static void Dispatch<T>(GameSession session, Unit unit) where T : GameCommand
     {
         session.SelectUnit(unit.Id);
@@ -417,8 +424,8 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = GameFactory.Scenario(mods.Content); var siege = Add(sim, "military:catapult");
         Add(sim, "military:warrior", 40, 1); var city = AddCity(sim, 40, 1); city.Buildings.Add("cities:walls");
         sim.State.SetWar(0, 1, true); var session = new GameSession(sim);
-        if (bombard) { Dispatch<BombardCityCommand>(session, siege); Assert.Single(sim.Events.Published.OfType<CityBombarded>()); }
-        else { Dispatch<RangedStrikeCommand>(session, siege); Assert.Single(sim.Rules().Combat.History(sim)); }
+        if (bombard) { Dispatch(session, siege, "bombard:"); Assert.Single(sim.Events.Published.OfType<CityBombarded>()); }
+        else { Dispatch(session, siege, "ranged_strike:"); Assert.Single(sim.Rules().Combat.History(sim)); }
         Assert.True(siege.Extensions.Get<MilitaryUnitState>(sim.Content)!.Attacked);
     }
 

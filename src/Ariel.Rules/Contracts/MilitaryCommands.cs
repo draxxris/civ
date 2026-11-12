@@ -29,20 +29,6 @@ public sealed class AirMissionCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Rules().AirMissions.Validate(sim, Player, Unit, Kind, Target);
     public override void Apply(Simulation sim) => sim.Rules().AirMissions.Execute(sim, Unit, Kind, Target);
 }
-public sealed class BombardCityCommand : GameCommand
-{
-    public int Unit { get; init; }
-    public Hex Target { get; init; }
-    public override string? Validate(Simulation sim) => sim.Rules().Combat.ValidateBombard(sim, Player, Unit, Target);
-    public override void Apply(Simulation sim) => sim.Rules().Combat.BombardCity(sim, Unit, Target);
-}
-public sealed class RangedStrikeCommand : GameCommand
-{
-    public int Unit { get; init; }
-    public Hex Target { get; init; }
-    public override string? Validate(Simulation sim) => sim.Rules().Combat.ValidateRangedStrike(sim, Player, Unit, Target);
-    public override void Apply(Simulation sim) => sim.Rules().Combat.RangedStrike(sim, Unit, Target);
-}
 /// <summary>Shared command transport for independent unit actions.</summary>
 public abstract class MilitaryUnitCommand : GameCommand
 {

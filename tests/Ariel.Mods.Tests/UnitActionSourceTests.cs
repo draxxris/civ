@@ -29,10 +29,28 @@ public sealed class UnitActionSourceTests(LoadedMods mods) : IClassFixture<Loade
     }
 
     [Fact]
-    public void The_base_game_offers_artillery_and_great_people_orders_through_sources()
+    public void The_shipped_mods_offer_artillery_and_great_people_orders_through_sources()
     {
         Assert.True(mods.Content.Rules().UnitActions.Count >= 2);
         Assert.Equal(2, mods.Content.Rules().SupportFire.Count);
+    }
+
+    [Fact]
+    public void Without_the_ranged_combat_mod_no_fire_is_offered_and_an_ai_war_still_plays()
+    {
+        var content = ModLoader.Build(mods.Sources.Where(s => s.Manifest.Id != "ranged_combat").Reverse());
+        Assert.Empty(content.Rules().SupportFire);
+        Assert.False(content.CommandTypes.Contains("ranged_combat:bombard_city"));
+
+        var sim = GameFactory.Scenario(content);
+        var city = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new(40)), Population = 3 };
+        city.Buildings.Add("cities:walls"); sim.State.AddCity(city);
+        var siege = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:catapult", Position = sim.State.Grid.HexOf(new(39)), MovesLeft = 60 };
+        sim.State.AddUnit(siege);
+        sim.State.SetWar(0, 1, true);
+        Assert.DoesNotContain(new GameSession(sim).DescribeUnit(siege)!.Actions, a => a.Id.StartsWith("bombard:", StringComparison.Ordinal));
+        for (int turn = 0; turn < 3; turn++) sim.AdvanceTurn();
+        Assert.Empty(sim.Events.Published.OfType<CityBombarded>());
     }
 
     private sealed class Probe : IMod

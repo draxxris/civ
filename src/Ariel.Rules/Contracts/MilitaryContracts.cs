@@ -45,10 +45,22 @@ public interface ICombatService
     int? BestDefender(Simulation sim, int attacker, Hex target);
     CombatPreview Preview(Simulation sim, int attacker, int defender);
     CombatReport Resolve(Simulation sim, int attacker, int defender);
-    string? ValidateBombard(Simulation sim, int player, int unit, Hex target);
-    int BombardCity(Simulation sim, int unit, Hex target);
-    string? ValidateRangedStrike(Simulation sim, int player, int unit, Hex target);
-    CombatReport RangedStrike(Simulation sim, int unit, Hex target);
+    /// <summary>A city's defence bonus as it stands, after the damage its defences have taken. Zero or less means
+    /// there is nothing left to knock down.</summary>
+    int CityDefense(Simulation sim, int city);
+    /// <summary>The percentage of bombardment a city's working buildings absorb.</summary>
+    int BombardResistance(Simulation sim, int city);
+    /// <summary>Knock a city's defences down by <paramref name="reduction"/> defence points on behalf of a unit, mark
+    /// the city bombarded this turn so it does not recover, and publish <see cref="CityBombarded"/>. Returns the
+    /// reduction applied.</summary>
+    int DamageCityDefense(Simulation sim, int unit, int city, int reduction);
+    /// <summary>Apply an attacker's collateral damage to the units stacked with a defender, and return the hits.
+    /// Consumes random numbers.</summary>
+    IReadOnlyList<CollateralHit> Collateral(Simulation sim, int attacker, int defender);
+    /// <summary>Close a strike that was not a fight between two units, after its damage is applied: remove a
+    /// defender it killed, add the report to the combat history, publish <see cref="CombatResolved"/> when a unit was
+    /// hit, and refresh sight. A null defender is fire that only reached a city.</summary>
+    CombatReport RecordStrike(Simulation sim, int attacker, int? defender, Hex target, IReadOnlyList<CollateralHit> collateral);
     IReadOnlyList<CombatReport> History(Simulation sim);
 }
 /// <summary>Optional naval rules. Queries use current units and wars, with no saved blockade counters.</summary>
@@ -80,6 +92,12 @@ public enum UnitAction { Promote, Activity, Pillage, Upgrade, Disband }
 public interface IUnitService
 {
     int MaximumMoves(Simulation sim, int unit);
+    /// <summary>The total a unit's promotions and other modifier sources give it for one military effect, by the
+    /// effect's name without the module prefix (for example "bombard_rate").</summary>
+    int Effect(Simulation sim, int unit, string effect);
+    /// <summary>Use up a unit's attack for the turn at a cost in movement points: it counts as having moved and
+    /// attacked, and stops fortifying or sleeping.</summary>
+    void SpendAttack(Simulation sim, int unit, int moves);
     int ExperienceNeeded(Simulation sim, int unit);
     int HealRate(Simulation sim, int unit);
     int CargoCapacity(Simulation sim, int transport);

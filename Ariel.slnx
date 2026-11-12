@@ -11,6 +11,7 @@
     <Project Path="src/Mods/Ai/Ariel.Mods.Ai.csproj" />
     <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />
+    <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
     <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
     <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />
