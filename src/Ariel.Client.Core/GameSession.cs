@@ -17,9 +17,8 @@ public sealed partial class GameSession
     private readonly ICommandChannel _channel;
     private readonly Dictionary<int, Hex> _gotos = new();
     private int _ordersTurn;   // the turn whose standing orders already continued
-    private int _espionageBudgetTurn = -1;
-    private int _espionageBudgetCities = -1;
-    private Ariel.Content.CommerceVector _espionageBudgetRates;
+    private Simulation? _espionageBudgetSim;
+    private int _espionageBudgetRevision = -1;
     private long _espionageBudget;
 
     public Simulation Sim { get; private set; }

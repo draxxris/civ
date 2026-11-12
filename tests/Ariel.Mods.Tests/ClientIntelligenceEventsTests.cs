@@ -160,6 +160,25 @@ public sealed class ClientIntelligenceEventsTests
         Assert.DoesNotContain(session.UnitActions(home, session.DefOf(home)), a => a.Id.StartsWith("spy:", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void Espionage_spending_follows_a_loaded_game_on_the_same_turn_with_the_same_rates_and_city_count()
+    {
+        var session = IntelligenceSession(out var points, out _); var sim = session.Sim;
+        points.Points[1] = 100;
+        sim.Content.Services.Get<IPlayerEconomyService>().Single().SetRates(sim, 0, new(0, 0, 0, 100));
+        Assert.True(session.SetEspionageWeight(1, 1));
+        long before = session.DescribeRivalIntelligence(1)!.Spending;
+        Assert.True(before > 0);
+        // Same turn, same rates, same number of cities: only the economy behind the budget differs.
+        var richer = SaveGame.Load(sim.Content, SaveGame.Save(sim));
+        foreach (var city in richer.State.Cities.Where(c => c.Owner == 0))
+            city.Specialists["foundation:specialist_great_diplomat"] = 3; // Settled great people yield commerce.
+        long expected = new GameSession(richer).DescribeRivalIntelligence(1)!.Spending;
+        Assert.NotEqual(before, expected);
+        session.ReplaceSimulation(richer);
+        Assert.Equal(expected, session.DescribeRivalIntelligence(1)!.Spending);
+    }
+
     private GameSession IntelligenceSession(out EspionageTeamState points, out City target)
     {
         var session = Session("Espionage", "Diplomacy");

@@ -40,18 +40,17 @@ public sealed partial class GameSession
             Allowed(PassiveEspionageKind.CityVisibility) ? RivalCitiesOf(rival, Allowed(PassiveEspionageKind.InvestigateCity)) : null);
     }
 
-    /// <summary>Points per turn from the espionage slider, computed at most once per turn and rate change.
-    /// The panel rebuilds on every revision, so an uncached read would recalculate the whole economy each time.</summary>
+    /// <summary>Points per turn from the espionage slider, computed at most once per world revision of one
+    /// simulation. The panel rebuilds on every revision, so an uncached read would recalculate the whole economy each
+    /// time; the world revision moves with every applied command and every load, so specialist, building and slider
+    /// changes all show up at once.</summary>
     private long CurrentEspionageBudget()
     {
-        var rates = Sim.State.PlayerById(LocalPlayer).Extensions.Get<EconomyPlayerState>(Sim.Content)?.Rates ?? default;
-        if (_espionageBudgetTurn == Sim.State.Turn && _espionageBudgetRates == rates && _espionageBudgetCities == Sim.State.Cities.Count)
-            return _espionageBudget;
+        if (ReferenceEquals(_espionageBudgetSim, Sim) && _espionageBudgetRevision == WorldRevision) return _espionageBudget;
         _espionageBudget = OptionalService<IPlayerEspionageSource>()?.EspionageHundredths(Sim, LocalPlayer)
             ?? OptionalService<IPlayerEconomyService>()?.Calculate(Sim, LocalPlayer).CommerceHundredths.Espionage ?? 0;
-        _espionageBudgetTurn = Sim.State.Turn;
-        _espionageBudgetRates = rates;
-        _espionageBudgetCities = Sim.State.Cities.Count;
+        _espionageBudgetSim = Sim;
+        _espionageBudgetRevision = WorldRevision;
         return _espionageBudget;
     }
 
