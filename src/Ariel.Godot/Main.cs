@@ -100,6 +100,7 @@ public partial class Main : Node3D
             PollLoading();
             if (_debugMultiplayer?.Tick() is { } lobby) StartMultiplayer(lobby);
             PollStarting();
+            if (_game is { } shown && !shown.CanShow(shown.Session.Sim)) RebuildGameView(shown);
             if (_debugMultiplayer != null && _multiplayer != null && _framesSinceReady < 0 && _debugMultiplayer.Drive(_multiplayer.Session))
             {
                 GD.Print($"multiplayer smoke: turn {_multiplayer.Session.Sim.State.Turn}, hash {_multiplayer.Session.Sim.ComputeHash():x16}");
@@ -260,6 +261,16 @@ public partial class Main : Node3D
         Launch(task.Result, null);
     }
 
+    /// <summary>A loaded save of another map or seed: build the in-game screen again for it, before anything draws the
+    /// new world with renderers sized and seeded for the old one.</summary>
+    private void RebuildGameView(GameView shown)
+    {
+        RemoveChild(shown);
+        shown.QueueFree();
+        _game = new GameView(shown.Session, _icons!, _multiplayer);
+        AddChild(_game);
+    }
+
     private void Launch(GameSession session, MultiplayerGame? multiplayer)
     {
         _setup?.QueueFree();
@@ -269,6 +280,8 @@ public partial class Main : Node3D
         TerrainRenderer.DebugMode = _debug.Unattended ? _debug.TerrainDebug : 0;
         _game = new GameView(session, _icons!, multiplayer);
         AddChild(_game);
+        if (_debug.SaveToFile is { } saveTo && !session.SaveGame(saveTo)) GD.PrintErr(session.Message);
+        if (_debug.LoadSaveFile is { } load && !session.LoadGame(load)) GD.PrintErr(session.Message);
         if (_debug.Zoom != 0) _game.DebugZoom(_debug.Zoom);
         FocusTerrainScreenshot(session);
         ApplyCaptureOptions(session);

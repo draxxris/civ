@@ -60,6 +60,10 @@ internal sealed record DebugOptions
     public bool Clean { get; private init; }
     public string? ScenarioFile { get; private init; }
     public string? DumpScenarioFile { get; private init; }
+    /// <summary>Save the game here once it has launched, before any <see cref="LoadSaveFile"/>.</summary>
+    public string? SaveToFile { get; private init; }
+    /// <summary>Load this save once the game has launched, as the Load screen would.</summary>
+    public string? LoadSaveFile { get; private init; }
     public bool Wireframe { get; private init; }
     public bool Stats { get; private init; }
     public IReadOnlyDictionary<string, double> Tuning { get; private init; } = new Dictionary<string, double>();
@@ -99,7 +103,8 @@ internal sealed record DebugOptions
             OutDir = Raw("--out-dir"), ShotsFile = Raw("--shots"), Focus = Raw("--focus"),
             FocusTile = Raw("--focus-tile") is { } t && t.Split(',') is [var c, var r] ? (int.Parse(c), int.Parse(r)) : null,
             Pitch = Float("--pitch"), Yaw = Float("--yaw"), Distance = Float("--distance"), Clean = args.Contains("--clean"),
-            ScenarioFile = Raw("--scenario"), DumpScenarioFile = Raw("--dump-scenario"), Wireframe = args.Contains("--wireframe"), Stats = args.Contains("--stats"), Tuning = tuning,
+            ScenarioFile = Raw("--scenario"), DumpScenarioFile = Raw("--dump-scenario"),
+            SaveToFile = Raw("--save-to"), LoadSaveFile = Raw("--load-save"), Wireframe = args.Contains("--wireframe"), Stats = args.Contains("--stats"), Tuning = tuning,
             ScatterDensityScale = Float("--scatter-density-scale") ?? 1,
             TreeKeep = keep.TryGetValue("tree", out var tk) ? tk : null, OtherKeep = keep.TryGetValue("other", out var ok) ? ok : null,
         };

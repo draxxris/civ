@@ -312,6 +312,9 @@ manager, because it cannot answer a prompt.
   and cliff bits, with the map size in `"// size"`, over a fill that clears the world it is
   replayed on, so `--world` with the file shows exactly the dumped map. Draw a generated world as a flat plan
   with `mise run shot:map -- <file.json> --size COLUMNSxROWS --full-map`.
+- `--save-to <file.json>`: once the game has launched, save it there.
+- `--load-save <file.json>`: once the game has launched (and after any `--save-to`), load
+  that save as the Load screen would. A save of another map or seed rebuilds the game view.
 - `--scenario <file.json>`: replace the generated map with a hand-made scene. The format
   is described in `src/Ariel.Client.Core/DebugScenario.cs` and examples are
   `tools/shots/scenarios/hills-forest-roads.json` and

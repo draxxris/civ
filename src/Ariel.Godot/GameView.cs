@@ -55,8 +55,27 @@ internal sealed partial class GameView : Node3D
         _multiplayer = multiplayer;
     }
 
+    private Simulation? _checkedSim;
+    private bool _showsCheckedSim;
+
+    /// <summary>Whether the renderers built for this view can draw <paramref name="sim"/>: they are sized for one map
+    /// and seeded with one game's terrain noise, so a loaded save of another map or seed needs a new view. Called every
+    /// frame, so it compares only when the simulation was replaced.</summary>
+    public bool CanShow(Simulation sim)
+    {
+        if (ReferenceEquals(sim, _checkedSim)) return _showsCheckedSim;
+        _checkedSim = sim;
+        _showsCheckedSim = sim.State.Map == _builtFor.Map && sim.Settings.Seed == _builtFor.Seed;
+        return _showsCheckedSim;
+    }
+
+    private (MapSpec Map, ulong Seed) _builtFor;
+
     public override void _Ready()
     {
+        _builtFor = (_session.Sim.State.Map, _session.Sim.Settings.Seed);
+        _checkedSim = _session.Sim;
+        _showsCheckedSim = true;
         AddChild(new WorldEnvironment
         {
             Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.03f, 0.04f, 0.06f),
