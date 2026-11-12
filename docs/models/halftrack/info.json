@@ -1,6 +1,6 @@
 {
   "name": "halftrack",
-  "model": "src/Mods/Military/art/models/halftrack.glb",
+  "model": "src/Ariel.Rules/Military/art/models/halftrack.glb",
   "texture_path": [
     "art/units/antiair halftrack/halftrack_tex.dds",
     "art/units/antiair halftrack/modern_armor_256.dds"

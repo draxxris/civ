@@ -1,6 +1,6 @@
 {
   "name": "fokkerdr1",
-  "model": "src/Mods/Military/art/models/fokkerdr1.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fokkerdr1.glb",
   "texture_path": [
     "art/units/earlyfighter/extras.dds",
     "art/units/earlyfighter/pup.dds"

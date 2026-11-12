@@ -1,6 +1,6 @@
 {
   "name": "carrier",
-  "model": "src/Mods/Military/art/models/carrier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/carrier.glb",
   "texture_path": "art/units/carrier/english/gbrcarrierbase.dds",
   "textures": [
     "art/units/carrier/english/gbrcarrierbase.dds"

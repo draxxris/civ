@@ -1,6 +1,6 @@
 {
   "name": "orbital_bomber",
-  "model": "src/Mods/Military/art/models/orbital_bomber.glb",
+  "model": "src/Ariel.Rules/Military/art/models/orbital_bomber.glb",
   "texture_path": "art/units/thunderbolt/smartplane.dds",
   "textures": [
     "art/units/thunderbolt/smartplane.dds"

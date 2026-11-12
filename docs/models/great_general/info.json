@@ -1,6 +1,6 @@
 {
   "name": "great_general",
-  "model": "src/Mods/Military/art/models/great_general.glb",
+  "model": "src/Ariel.Rules/Military/art/models/great_general.glb",
   "texture_path": "art/units/warlord_ancient/warlord_ancient.dds",
   "textures": [
     "art/units/warlord_ancient/warlord_ancient.dds"

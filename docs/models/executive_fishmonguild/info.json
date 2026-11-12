@@ -1,6 +1,6 @@
 {
   "name": "executive_fishmonguild",
-  "model": "src/Mods/Military/art/models/executive_fishmonguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_fishmonguild.glb",
   "texture_path": [
     "art/units/guildmaster/greenguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

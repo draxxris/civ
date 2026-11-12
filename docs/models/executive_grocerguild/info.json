@@ -1,6 +1,6 @@
 {
   "name": "executive_grocerguild",
-  "model": "src/Mods/Military/art/models/executive_grocerguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_grocerguild.glb",
   "texture_path": [
     "art/units/guildmaster/greenguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

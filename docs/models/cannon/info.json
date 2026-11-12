@@ -1,6 +1,6 @@
 {
   "name": "cannon",
-  "model": "src/Mods/Military/art/models/cannon.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cannon.glb",
   "texture_path": [
     "art/units/cannon/cannonier_128.dds",
     "art/units/cannon/cannon_128.dds",

@@ -1,6 +1,6 @@
 {
   "name": "crossbowman",
-  "model": "src/Mods/Military/art/models/crossbowman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/crossbowman.glb",
   "texture_path": "art/units/crossbowman/crossbowman_128.dds",
   "textures": [
     "art/units/crossbowman/crossbowman_128.dds"

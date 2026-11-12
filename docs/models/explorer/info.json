@@ -1,6 +1,6 @@
 {
   "name": "explorer",
-  "model": "src/Mods/Military/art/models/explorer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/explorer.glb",
   "texture_path": "art/units/explorer/explorer_128.dds",
   "textures": [
     "art/units/explorer/explorer_128.dds"

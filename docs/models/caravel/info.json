@@ -1,6 +1,6 @@
 {
   "name": "caravel",
-  "model": "src/Mods/Military/art/models/caravel.glb",
+  "model": "src/Ariel.Rules/Military/art/models/caravel.glb",
   "texture_path": "art/units/caravel/caravel_256.dds",
   "textures": [
     "art/units/caravel/caravel_256.dds"

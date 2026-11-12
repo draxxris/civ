@@ -1,6 +1,6 @@
 {
   "name": "hydrogen",
-  "model": "src/Mods/Military/art/models/hydrogen.glb",
+  "model": "src/Ariel.Rules/Military/art/models/hydrogen.glb",
   "texture_path": "art/units/nukes/topol-m/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/topol-m/icbm_white_256.dds"

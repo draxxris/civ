@@ -1,6 +1,6 @@
 {
   "name": "fusion_carrier",
-  "model": "src/Mods/Military/art/models/fusion_carrier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_carrier.glb",
   "texture_path": "art/units/finalfrontier_carrier/carrier_diff.dds",
   "textures": [
     "art/units/finalfrontier_carrier/carrier_diff.dds"

@@ -1,29 +1,42 @@
 # Design
 
-A deterministic Civilization-4-style game on a hex grid where **everything is a mod**.
-Core defines the contract. Mods implement the rules.
+A deterministic Civilization-4-style game on a hex grid. A small kernel runs the
+simulation, a statically linked base game supplies the rules every game needs, and mods
+extend both through one registration API.
 
 ## Principles
 
-1. **Dogfood.** The shipped game is nothing but ordinary mods: Foundation, World,
-   Research, Economy, Cities, Military, Government, Peoples, AI and later feature mods.
-   They get no private hooks. If a shipped mod needs something, the mod API grows to
-   offer it to every mod. Terrain, techs, buildings, units, civics, map generators,
-   commands, turn systems and the AI are all registered through `IModContext`.
-2. **No mod knowledge outside mods.** `Ariel.Core`, `Ariel.Client.Core` and
-   `Ariel.Godot` never hard-code a mod's content ids or kinds. Defaults and choices come
-   from loaded content or from mod-registered services, so a different mod set can
-   replace any shipped mod.
-3. **Headless deterministic core.** `Ariel.Core` has no engine dependency, no floats in
+1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the base
+   modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples
+   and Religion. Their content references each other, so none of them can be removed,
+   and no mod can replace one. Everything a game can run without is a mod: the AI, Great
+   People, Trade and the optional feature mods. A test builds and plays the base modules
+   with no mod installed.
+2. **One registration API.** A base module registers terrain, techs, buildings, units,
+   civics, map generators, commands, turn systems and state through the same
+   `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
+   `military:`). Ids, load order and content identity do not depend on which assembly
+   holds the code. When a mod needs a seam the base game lacks, the base game grows it
+   for every mod.
+3. **No content knowledge in the kernel or the client.** `Ariel.Core`,
+   `Ariel.Client.Core` and `Ariel.Godot` never hard-code a content id or kind. Defaults
+   and choices come from loaded content or registered services.
+4. **Headless deterministic core.** `Ariel.Core` has no engine dependency, no floats in
    game state, no wall clock and no unordered iteration affecting state. The renderer is
    a view.
-4. **Commands over the wire.** Multiplayer is lockstep: only player commands are
+5. **Commands over the wire.** Multiplayer is lockstep: only player commands are
    exchanged, and every peer runs the same simulation.
 
 ## Projects
 
 - `Ariel.Core`: geometry, shared data, content registries, extension contracts,
   simulation, commands, saves and hashes.
+- `Ariel.Rules`: the base modules, one folder each with its code, `mod.json` manifest,
+  `data/` sidecars and `art/`. `BaseRules` lists them; `GameContent` is the one place a
+  host composes base modules with mods. The build stages manifests and data to
+  `rules/<Module>/` beside every host and symlinks `art/` there.
+- `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`. The
+  loader hands a mod the host's copy of both, so types are shared.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: test-only ruleset loaded through the same mod API as
@@ -247,7 +260,7 @@ Mods register these contracts through `ctx.RegisterService<T>()`:
   `SimulationSettings.GameOptions` records enabled option choices.
   `Simulation.IsOptionEnabled(string id)` checks option state during play. The setup
   screen displays checkboxes for implemented simulation options. Remaining option
-  definitions in `src/Mods/Foundation/data/game-option.json` remain deferred as a future
+  definitions in `src/Ariel.Rules/Foundation/data/game-option.json` remain deferred as a future
   pending item.
 - `IProductionKind` supplies a queue-kind id, tab label, continuous-production flag,
   content candidates, and definition lookup. It also supplies base costs, eligibility
@@ -500,7 +513,7 @@ cliff lifts are derived, so the map never stores a lift that disagrees with its 
 fog snapshots carry the lift they derived when captured. The save schema is `4`; schema
 `3` and older are rejected by the version check. Changed mod versions reject old content
 identities unless the caller explicitly forces loading. Hand-authored geometry tuning
-lives in `src/Mods/Foundation/data/hex-overrides.json` and enters the content hash. The
+lives in `src/Ariel.Rules/Foundation/data/hex-overrides.json` and enters the content hash. The
 importer writes only its declared definition families and rejects that reserved
 filename.
 
@@ -850,7 +863,7 @@ immediately upon founding.
 
 ## Religion
 
-`src/Mods/Religion` owns religion definitions, founding, city presence, state choice,
+`src/Ariel.Rules/Religion` owns religion definitions, founding, city presence, state choice,
 spread, and shrine construction. `IReligionService` exposes read-only presence, holy
 cities, adoption choices, missionary definitions, odds, and conversion costs through
 Core. AI and client code can use this service without a reference to the Religion
@@ -1618,10 +1631,13 @@ time, even when the desktop throttles the window.
 
 ## Feature content mods
 
-`src/Mods/` contains Foundation, World, Research, Economy, Cities, Military, Government,
-Peoples, Religion, Ai, GreatPeople, Trade, Diplomacy, ProjectsVictory, Corporations,
-Espionage, Events, ScriptedWonders, and Revolution. Each manifest declares content
-providers in `references` and load-order needs in `dependencies`. ModLoader checks
+`src/Ariel.Rules/` contains the base modules Foundation, World, Research, Economy,
+Cities, Military, Government, Peoples and Religion. `src/Mods/` contains Ai, GreatPeople,
+Trade, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Revolution, CardResearch and TechTree. Each manifest declares content providers in
+`references` and load-order needs in `dependencies`; a base module's manifest names no
+assembly. Base module ids always satisfy a mod's requirement and never appear in the
+mod manager. ModLoader checks
 provider presence before registration and typed references after all mods register. The
 post-registration pass runs before freeze and content hashing. Unknown sidecar
 properties fail load.

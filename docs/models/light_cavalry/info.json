@@ -1,6 +1,6 @@
 {
   "name": "light_cavalry",
-  "model": "src/Mods/Military/art/models/light_cavalry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/light_cavalry.glb",
   "texture_path": [
     "art/shared/shield_icon_32.dds",
     "art/units/charlemagne_lightcavalry/lightcavalry_128.dds",

@@ -1,6 +1,6 @@
 {
   "name": "danish_workboat",
-  "model": "src/Mods/Military/art/models/danish_workboat.glb",
+  "model": "src/Ariel.Rules/Military/art/models/danish_workboat.glb",
   "texture_path": "art/units/workboat_ancient/workboat_ancient.dds",
   "textures": [
     "art/units/workboat_ancient/workboat_ancient.dds"

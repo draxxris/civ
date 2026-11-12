@@ -1,6 +1,6 @@
 {
   "name": "cavalry_light",
-  "model": "src/Mods/Military/art/models/cavalry_light.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cavalry_light.glb",
   "texture_path": [
     "art/units/cavalry light/european/cavalry_horse_128.dds",
     "art/units/cavalry light/european/cavalry_rider_128.dds",

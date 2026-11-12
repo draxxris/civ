@@ -1,6 +1,6 @@
 {
   "name": "motorcycle",
-  "model": "src/Mods/Military/art/models/motorcycle.glb",
+  "model": "src/Ariel.Rules/Military/art/models/motorcycle.glb",
   "texture_path": [
     "art/units/motorcycle/zundapp_diff.dds",
     "art/units/motorcycle/wehrmachtbiker_diff.dds"

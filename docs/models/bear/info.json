@@ -1,6 +1,6 @@
 {
   "name": "bear",
-  "model": "src/Mods/Military/art/models/bear.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bear.glb",
   "texture_path": "art/units/bear/bear.dds",
   "textures": [
     "art/units/bear/bear.dds"

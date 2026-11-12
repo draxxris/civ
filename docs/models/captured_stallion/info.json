@@ -1,6 +1,6 @@
 {
   "name": "captured_stallion",
-  "model": "src/Mods/Military/art/models/captured_stallion.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_stallion.glb",
   "texture_path": "art/units/horse/persian_immortal_horse_128.dds",
   "textures": [
     "art/units/horse/persian_immortal_horse_128.dds"

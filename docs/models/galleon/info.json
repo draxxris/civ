@@ -1,6 +1,6 @@
 {
   "name": "galleon",
-  "model": "src/Mods/Military/art/models/galleon.glb",
+  "model": "src/Ariel.Rules/Military/art/models/galleon.glb",
   "texture_path": "art/units/galleon/galleon.dds",
   "textures": [
     "art/units/galleon/galleon.dds"

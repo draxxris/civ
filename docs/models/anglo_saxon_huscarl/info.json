@@ -1,6 +1,6 @@
 {
   "name": "anglo_saxon_huscarl",
-  "model": "src/Mods/Military/art/models/anglo_saxon_huscarl.glb",
+  "model": "src/Ariel.Rules/Military/art/models/anglo_saxon_huscarl.glb",
   "texture_path": [
     "art/anglosaxons/huskarl/huscarlweapons_64.dds",
     "art/shared/shield_icon_32.dds",

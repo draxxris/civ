@@ -1,6 +1,6 @@
 {
   "name": "plasma_armor",
-  "model": "src/Mods/Military/art/models/plasma_armor.glb",
+  "model": "src/Ariel.Rules/Military/art/models/plasma_armor.glb",
   "texture_path": [
     "art/units/plasma armor/extraturret.dds",
     "art/units/plasma armor/chimera.dds",

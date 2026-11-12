@@ -1,6 +1,6 @@
 {
   "name": "pioneer",
-  "model": "src/Mods/Military/art/models/pioneer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/pioneer.glb",
   "texture_path": [
     "art/units/settler/settler_child_128.dds",
     "art/units/settler/settler_male_128.dds"

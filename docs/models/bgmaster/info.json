@@ -1,6 +1,6 @@
 {
   "name": "bgmaster",
-  "model": "src/Mods/Military/art/models/bgmaster.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bgmaster.glb",
   "texture_path": [
     "art/units/guildmaster/brownguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

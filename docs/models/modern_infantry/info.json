@@ -1,6 +1,6 @@
 {
   "name": "modern_infantry",
-  "model": "src/Mods/Military/art/models/modern_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/modern_infantry.glb",
   "texture_path": [
     "art/units/modern infantry/european/marine_128.dds",
     "art/units/modern infantry/european/m16a2.dds"

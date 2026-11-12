@@ -1,6 +1,6 @@
 {
   "name": "ambassador",
-  "model": "src/Mods/Military/art/models/ambassador.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ambassador.glb",
   "texture_path": [
     "art/shared/darkmap_gradient.dds",
     "art/units/great_spy_modern/spy_128.dds",

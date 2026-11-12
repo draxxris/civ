@@ -1,6 +1,6 @@
 {
   "name": "stealth_bomber",
-  "model": "src/Mods/Military/art/models/stealth_bomber.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stealth_bomber.glb",
   "texture_path": "art/units/stealthbomber/stealthbomber_256.dds",
   "textures": [
     "art/units/stealthbomber/stealthbomber_256.dds"

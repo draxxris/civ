@@ -1,6 +1,6 @@
 {
   "name": "early_tank",
-  "model": "src/Mods/Military/art/models/early_tank.glb",
+  "model": "src/Ariel.Rules/Military/art/models/early_tank.glb",
   "texture_path": "art/units/scenario/mark_v_tank/mark_v_256.dds",
   "textures": [
     "art/units/scenario/mark_v_tank/mark_v_256.dds"

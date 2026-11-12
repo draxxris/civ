@@ -1,6 +1,6 @@
 {
   "name": "pikeman",
-  "model": "src/Mods/Military/art/models/pikeman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/pikeman.glb",
   "texture_path": "art/units/pikeman/pikeman_128.dds",
   "textures": [
     "art/units/pikeman/pikeman_128.dds"

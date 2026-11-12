@@ -1,6 +1,6 @@
 {
   "name": "ww2_battleship",
-  "model": "src/Mods/Military/art/models/ww2_battleship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ww2_battleship.glb",
   "texture_path": "art/units/battleship/european/hms_king_george_v.dds",
   "textures": [
     "art/units/battleship/european/hms_king_george_v.dds"

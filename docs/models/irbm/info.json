@@ -1,6 +1,6 @@
 {
   "name": "irbm",
-  "model": "src/Mods/Military/art/models/irbm.glb",
+  "model": "src/Ariel.Rules/Military/art/models/irbm.glb",
   "texture_path": "art/units/nukes/irbm/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/irbm/icbm_white_256.dds"

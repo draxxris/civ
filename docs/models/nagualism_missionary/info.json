@@ -1,6 +1,6 @@
 {
   "name": "nagualism_missionary",
-  "model": "src/Mods/Military/art/models/nagualism_missionary.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nagualism_missionary.glb",
   "texture_path": [
     "art/units/missionary/tlenamacac/shamstaff.dds",
     "art/units/missionary/tlenamacac/skull.dds",

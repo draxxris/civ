@@ -182,8 +182,8 @@ are deleted at the next turn boundary.
 
 ## Integration
 
-- Buildings and specialists (`src/Mods/Cities`) add espionage commerce.
-- Spy units (`src/Mods/Military`) set `spy: true`. Counter-spy units set
+- Buildings and specialists (`src/Ariel.Rules/Cities`) add espionage commerce.
+- Spy units (`src/Ariel.Rules/Military`) set `spy: true`. Counter-spy units set
   `counterSpy: true`.
 - Revolution is optional. Without it, a spy revolt still causes disorder, but adds no
   instability.

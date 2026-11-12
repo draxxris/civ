@@ -1,6 +1,6 @@
 {
   "name": "tactical_nuke",
-  "model": "src/Mods/Military/art/models/tactical_nuke.glb",
+  "model": "src/Ariel.Rules/Military/art/models/tactical_nuke.glb",
   "texture_path": [
     "art/units/tactical_nuke/tactical_nuke_256.dds",
     "art/units/tactical_nuke/missileglow.dds"

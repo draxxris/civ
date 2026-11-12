@@ -1,6 +1,6 @@
 {
   "name": "walker",
-  "model": "src/Mods/Military/art/models/walker.glb",
+  "model": "src/Ariel.Rules/Military/art/models/walker.glb",
   "texture_path": "art/units/walker droid/lightmech.dds",
   "textures": [
     "art/units/walker droid/lightmech.dds"

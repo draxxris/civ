@@ -1,6 +1,6 @@
 {
   "name": "executive_mobby",
-  "model": "src/Mods/Military/art/models/executive_mobby.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_mobby.glb",
   "texture_path": [
     "art/units/executive/mobby_a.dds",
     "art/units/executive/ceo_case_64.dds",

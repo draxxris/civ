@@ -1,6 +1,6 @@
 {
   "name": "iroquois_mohawkarcher",
-  "model": "src/Mods/Military/art/models/iroquois_mohawkarcher.glb",
+  "model": "src/Ariel.Rules/Military/art/models/iroquois_mohawkarcher.glb",
   "texture_path": [
     "art/units/unique/iroquois/mohawk longbowman/archer_128.dds",
     "art/units/unique/iroquois/mohawk longbowman/scout_128.dds"

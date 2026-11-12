@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the procedural reed clumps of the swamp scatter set into src/Mods/World/art/scatter/swamp/Reeds_<n>.glb.
+"""Build the procedural reed clumps of the swamp scatter set into src/Ariel.Rules/World/art/scatter/swamp/Reeds_<n>.glb.
 
 Run: python3 tools/art/reeds.py
 
@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from improvements.kit import REPO_ROOT, Part, srgb, write  # noqa: E402
 
-OUT = REPO_ROOT / "src/Mods/World/art/scatter/swamp"
+OUT = REPO_ROOT / "src/Ariel.Rules/World/art/scatter/swamp"
 BLADES = [srgb(0x5F7434), srgb(0x6E8240), srgb(0x7D8A48), srgb(0x8F8E52), srgb(0xA59A5E)]
 CATTAIL = srgb(0x5A3A22)
 STALK = srgb(0x6B7A3C)

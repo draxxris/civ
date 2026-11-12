@@ -1,6 +1,6 @@
 {
   "name": "egypt_warchariot",
-  "model": "src/Mods/Military/art/models/egypt_warchariot.glb",
+  "model": "src/Ariel.Rules/Military/art/models/egypt_warchariot.glb",
   "texture_path": [
     "art/units/unique/egypt/warchariot/ewc_spearman_128.dds",
     "art/units/unique/egypt/warchariot/ewc_spear.dds",

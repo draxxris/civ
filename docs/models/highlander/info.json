@@ -1,6 +1,6 @@
 {
   "name": "highlander",
-  "model": "src/Mods/Military/art/models/highlander.glb",
+  "model": "src/Ariel.Rules/Military/art/models/highlander.glb",
   "texture_path": "art/scotland/highlander/swordsman_128.dds",
   "textures": [
     "art/scotland/highlander/swordsman_128.dds"

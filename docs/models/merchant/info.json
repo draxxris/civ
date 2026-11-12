@@ -1,6 +1,6 @@
 {
   "name": "merchant",
-  "model": "src/Mods/Military/art/models/merchant.glb",
+  "model": "src/Ariel.Rules/Military/art/models/merchant.glb",
   "texture_path": [
     "art/units/greatpeople/merchant/camel_128_tc.dds",
     "art/units/greatpeople/merchant/camel_128_a.dds",

@@ -1,6 +1,6 @@
 {
   "name": "greek_phalanx",
-  "model": "src/Mods/Military/art/models/greek_phalanx.glb",
+  "model": "src/Ariel.Rules/Military/art/models/greek_phalanx.glb",
   "texture_path": "art/units/spearman/spearman_128.dds",
   "textures": [
     "art/units/spearman/spearman_128.dds"

@@ -1,6 +1,6 @@
 {
   "name": "nanite_spy",
-  "model": "src/Mods/Military/art/models/nanite_spy.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nanite_spy.glb",
   "texture_path": [
     "art/units/nanite spy/aw_boss_spike.dds",
     "art/units/nanite spy/clash_blue.dds",

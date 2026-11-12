@@ -1,6 +1,6 @@
 {
   "name": "littoral_combat_ship",
-  "model": "src/Mods/Military/art/models/littoral_combat_ship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/littoral_combat_ship.glb",
   "texture_path": "art/units/littoral combat ship/sensordestroyer.dds",
   "textures": [
     "art/units/littoral combat ship/sensordestroyer.dds"

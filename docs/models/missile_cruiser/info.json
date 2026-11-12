@@ -1,6 +1,6 @@
 {
   "name": "missile_cruiser",
-  "model": "src/Mods/Military/art/models/missile_cruiser.glb",
+  "model": "src/Ariel.Rules/Military/art/models/missile_cruiser.glb",
   "texture_path": "art/units/missile_cruiser/missle_cruiser_256.dds",
   "textures": [
     "art/units/missile_cruiser/missle_cruiser_256.dds"

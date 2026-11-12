@@ -1,6 +1,6 @@
 {
   "name": "dreadnought",
-  "model": "src/Mods/Military/art/models/dreadnought.glb",
+  "model": "src/Ariel.Rules/Military/art/models/dreadnought.glb",
   "texture_path": "art/units/dreadnought/dreadnought_256.dds",
   "textures": [
     "art/units/dreadnought/dreadnought_256.dds"

@@ -1,6 +1,6 @@
 {
   "name": "lancer",
-  "model": "src/Mods/Military/art/models/lancer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/lancer.glb",
   "texture_path": [
     "art/units/lancer/european/hat.dds",
     "art/units/lancer/european/mongol_weapons.dds",

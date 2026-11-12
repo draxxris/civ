@@ -206,11 +206,11 @@ public sealed class MergedModDiscoveryTests
     public void Catalog_uses_only_winner_assembly_data_and_art_and_profiles_keep_the_stable_id()
     {
         using var tree = new ModTree();
-        string bundled = System.IO.Path.Combine(AppContext.BaseDirectory, "mods");
-        string lower = tree.Add("lower", "foundation", dependencies: ["losing_dependency"]);
+        string bundled = System.IO.Path.Combine(AppContext.BaseDirectory, "optional-mods");
+        string lower = tree.Add("lower", "events", dependencies: ["losing_dependency"]);
         tree.File(lower, "art/icons/lower-only.png", "lower art");
-        string winner = tree.Root("environment") + "/renamed-foundation";
-        string original = System.IO.Path.Combine(bundled, "Foundation");
+        string winner = tree.Root("environment") + "/renamed-events";
+        string original = System.IO.Path.Combine(bundled, "Events");
         Directory.CreateDirectory(winner);
         foreach (var file in Directory.GetFiles(original, "*", SearchOption.TopDirectoryOnly))
             File.Copy(file, System.IO.Path.Combine(winner, System.IO.Path.GetFileName(file)));
@@ -221,29 +221,31 @@ public sealed class MergedModDiscoveryTests
             File.Copy(file, target);
         }
         // A different assembly filename proves that apply uses the winning manifest, not a losing filename.
-        File.Move(System.IO.Path.Combine(winner, "Ariel.Mods.Foundation.dll"), System.IO.Path.Combine(winner, "winner.dll"));
+        File.Move(System.IO.Path.Combine(winner, "Ariel.Mods.Events.dll"), System.IO.Path.Combine(winner, "winner.dll"));
         var manifest = JsonNode.Parse(File.ReadAllText(System.IO.Path.Combine(winner, "mod.json")))!;
         manifest["assembly"] = "winner.dll";
         tree.File(winner, "mod.json", manifest.ToJsonString());
-        string sizesFile = System.IO.Path.Combine(winner, "data/world-size.json");
-        var sizes = JsonNode.Parse(File.ReadAllText(sizesFile))!;
-        sizes[0]!["name"] = "Winning world";
-        File.WriteAllText(sizesFile, sizes.ToJsonString());
+        string triggersFile = System.IO.Path.Combine(winner, "data/event-trigger.json");
+        var triggers = JsonNode.Parse(File.ReadAllText(triggersFile))!;
+        triggers[0]!["name"] = "Winning event";
+        File.WriteAllText(triggersFile, triggers.ToJsonString());
         tree.File(winner, "art/icons/winner-only.png", "winner art");
         string profile = System.IO.Path.Combine(tree.Path, "profile.json");
-        ModProfile.Save(profile, ["foundation"]);
+        ModProfile.Save(profile, ["events"]);
 
         var discovery = ModDiscovery.DiscoverMerged([tree.Root("lower"), bundled], null, tree.Root("environment"));
         var enabled = ModProfile.InitialSelection(discovery.Mods, ModProfile.Load(profile));
-        var catalog = GameCatalog.Load(discovery.Mods, enabled);
-        var loaded = catalog.Mods.Single(m => m.Manifest.Id == "foundation");
+        var catalog = GameCatalog.Load(System.IO.Path.Combine(AppContext.BaseDirectory, "rules"), discovery.Mods, enabled);
+        var loaded = catalog.Mods.Single(m => m.Manifest.Id == "events");
         Assert.Equal(winner, loaded.Root);
         Assert.Equal("winner.dll", loaded.Manifest.Assembly);
         Assert.Equal(System.IO.Path.Combine(winner, "winner.dll"), loaded.Instance.GetType().Assembly.Location);
-        Assert.Contains(catalog.WorldSizes, w => w.Name == "Winning world");
-        Assert.Equal(System.IO.Path.Combine(winner, "art/icons/winner-only.png"), catalog.IconPath("foundation:winner-only"));
-        Assert.Null(catalog.IconPath("foundation:lower-only"));
-        Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "ai");
+        Assert.Contains(catalog.Content.Get<Ariel.Content.Schema.EventTriggerDef>().All, e => e.Name == "Winning event");
+        Assert.Equal(System.IO.Path.Combine(winner, "art/icons/winner-only.png"), catalog.IconPath("events:winner-only"));
+        Assert.Null(catalog.IconPath("events:lower-only"));
+        Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "diplomacy");
+        // Base modules are linked into the host: they load from rules/ and no mod folder supplies or replaces one.
+        Assert.StartsWith(System.IO.Path.Combine(AppContext.BaseDirectory, "rules"), catalog.Mods.Single(m => m.Manifest.Id == "foundation").Root);
     }
 
     [Theory]
@@ -262,7 +264,7 @@ public sealed class MergedModDiscoveryTests
         string first = tree.Add("environment", "a_first");
         string winner = tree.Add("environment", "sample", dependencies: ["a_first"]);
         string lower = tree.Add("bundle", "sample");
-        string assembly = System.IO.Path.Combine(AppContext.BaseDirectory, "mods", "Foundation", "Ariel.Mods.Foundation.dll");
+        string assembly = System.IO.Path.Combine(AppContext.BaseDirectory, "mods", "Trade", "Ariel.Mods.Trade.dll");
         foreach (string directory in new[] { first, winner, lower })
             File.Copy(assembly, System.IO.Path.Combine(directory, "absent.dll"));
         var discovery = ModDiscovery.DiscoverMerged([tree.Root("bundle")], null, tree.Root("environment"));

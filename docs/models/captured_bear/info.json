@@ -1,6 +1,6 @@
 {
   "name": "captured_bear",
-  "model": "src/Mods/Military/art/models/captured_bear.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_bear.glb",
   "texture_path": "art/units/bear/bear.dds",
   "textures": [
     "art/units/bear/bear.dds"

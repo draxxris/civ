@@ -1,6 +1,6 @@
 {
   "name": "carthage_numidian_cavalry",
-  "model": "src/Mods/Military/art/models/carthage_numidian_cavalry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/carthage_numidian_cavalry.glb",
   "texture_path": [
     "art/units/numidian_cavalry/numidian_cavalry_horse_128.dds",
     "art/units/numidian_cavalry/numidian_cavalry_128.dds"

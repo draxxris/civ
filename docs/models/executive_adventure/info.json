@@ -1,6 +1,6 @@
 {
   "name": "executive_adventure",
-  "model": "src/Mods/Military/art/models/executive_adventure.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_adventure.glb",
   "texture_path": [
     "art/units/executive/adventure_a.dds",
     "art/units/executive/ceo_case_64.dds",

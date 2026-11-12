@@ -1,6 +1,6 @@
 {
   "name": "gunship",
-  "model": "src/Mods/Military/art/models/gunship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/gunship.glb",
   "texture_path": [
     "art/units/gunship/gunship_128.dds",
     "art/units/gunship/gunship_prop_64.dds"

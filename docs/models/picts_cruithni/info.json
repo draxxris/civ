@@ -1,6 +1,6 @@
 {
   "name": "picts_cruithni",
-  "model": "src/Mods/Military/art/models/picts_cruithni.glb",
+  "model": "src/Ariel.Rules/Military/art/models/picts_cruithni.glb",
   "texture_path": "art/picts/cruithni/swordsman_128.dds",
   "textures": [
     "art/picts/cruithni/swordsman_128.dds"

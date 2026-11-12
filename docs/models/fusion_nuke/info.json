@@ -1,6 +1,6 @@
 {
   "name": "fusion_nuke",
-  "model": "src/Mods/Military/art/models/fusion_nuke.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_nuke.glb",
   "texture_path": "art/units/nukes/fusionbombs/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/fusionbombs/icbm_white_256.dds"

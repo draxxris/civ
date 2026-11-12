@@ -1,6 +1,6 @@
 {
   "name": "executive_mapster",
-  "model": "src/Mods/Military/art/models/executive_mapster.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_mapster.glb",
   "texture_path": [
     "art/units/executive/mapster_a.dds",
     "art/units/executive/ceo_case_64.dds",

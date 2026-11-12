@@ -1,6 +1,6 @@
 {
   "name": "light_aa",
-  "model": "src/Mods/Military/art/models/light_aa.glb",
+  "model": "src/Ariel.Rules/Military/art/models/light_aa.glb",
   "texture_path": "art/units/light antiair gun/brown_01.dds",
   "textures": [
     "art/units/light antiair gun/brown_01.dds"

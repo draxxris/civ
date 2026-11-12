@@ -1,6 +1,6 @@
 {
   "name": "taoist_missionary",
-  "model": "src/Mods/Military/art/models/taoist_missionary.glb",
+  "model": "src/Ariel.Rules/Military/art/models/taoist_missionary.glb",
   "texture_path": "art/units/missionary/taoist/taoist_128_mips.dds",
   "textures": [
     "art/units/missionary/taoist/taoist_128_mips.dds"

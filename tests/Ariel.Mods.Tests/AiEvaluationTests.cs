@@ -10,7 +10,7 @@ namespace Ariel.Mods.Tests;
 public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : IClassFixture<AiEvaluationTests.ValidBaseline>, IDisposable
 {
     private readonly string workspace = Path.Combine(Path.GetTempPath(), "civ-ai-evaluation-tests-" + Guid.NewGuid().ToString("N"));
-    internal static string ModsRoot => Path.Combine(AppContext.BaseDirectory, "mods");
+    internal static string ModsRoot => AppContext.BaseDirectory;
 
     /// <summary>The CLI reloads and rebuilds every mod on each call, so the valid baseline every rejection case compares
     /// against is produced once per class and copied per case; a case damages only its own copy.</summary>
@@ -104,7 +104,7 @@ public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : I
 
     private static void AssertSettlementsAndEvents(string directory)
     {
-        var sources = Directory.GetDirectories(ModsRoot).Select(ModLoader.FromDirectory).ToArray();
+        var sources = Ariel.Rules.GameContent.Staged(ModsRoot).ToArray();
         var content = ModLoader.Build(sources);
         var rows = Rows<EconomicSnapshot>(directory, "economy.jsonl");
         foreach (ulong seed in new ulong[] { 1, 42 })

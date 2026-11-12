@@ -1,6 +1,6 @@
 {
   "name": "trebuchet",
-  "model": "src/Mods/Military/art/models/trebuchet.glb",
+  "model": "src/Ariel.Rules/Military/art/models/trebuchet.glb",
   "texture_path": "art/units/trebuchet/trebuchet.dds",
   "textures": [
     "art/units/trebuchet/trebuchet.dds"

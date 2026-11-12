@@ -1,6 +1,6 @@
 {
   "name": "assyrian_redu",
-  "model": "src/Mods/Military/art/models/assyrian_redu.glb",
+  "model": "src/Ariel.Rules/Military/art/models/assyrian_redu.glb",
   "texture_path": [
     "art/units/redu/crescent_shield.dds",
     "art/units/redu/zulu_impi.dds",

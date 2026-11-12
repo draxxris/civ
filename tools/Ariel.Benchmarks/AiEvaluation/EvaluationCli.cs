@@ -6,7 +6,7 @@ namespace Ariel.Benchmarks.AiEvaluation;
 
 public static class EvaluationCli
 {
-    public static int Run(string[] args, string modsRoot)
+    public static int Run(string[] args, string hostRoot)
     {
         if (args.SequenceEqual(new[] { "--help" }))
         {
@@ -17,11 +17,11 @@ public static class EvaluationCli
         using var cancellation = new CancellationTokenSource();
         ConsoleCancelEventHandler cancel = (_, e) => { e.Cancel = true; cancellation.Cancel(); };
         Console.CancelKeyPress += cancel;
-        try { return RunWithLog(args, modsRoot, cancellation.Token); }
+        try { return RunWithLog(args, hostRoot, cancellation.Token); }
         finally { Console.CancelKeyPress -= cancel; }
     }
 
-    private static int RunWithLog(string[] args, string modsRoot, CancellationToken cancellation)
+    private static int RunWithLog(string[] args, string hostRoot, CancellationToken cancellation)
     {
         RunFiles? files = null;
         EvaluationRun? run = null;
@@ -34,7 +34,7 @@ public static class EvaluationCli
             files.Progress("run_started");
             files.Save("manifest.json", manifest);
             run = new EvaluationRun(files, manifest);
-            run.Execute(args, modsRoot, cancellation);
+            run.Execute(args, hostRoot, cancellation);
             Console.WriteLine($"Evaluation completed: {files.DirectoryPath}");
             return 0;
         }
@@ -75,16 +75,16 @@ internal sealed class EvaluationRun(RunFiles files, RunManifest manifest)
 
     public RunSummary Summary(string status, string? error = null) => new(status, completed, snapshotCount, finals.ToArray(), error);
 
-    public void Execute(string[] args, string modsRoot, CancellationToken cancellation)
+    public void Execute(string[] args, string hostRoot, CancellationToken cancellation)
     {
         files.Save("summary.json", Summary("running"));
         var config = EvaluationConfig.Parse(args);
         manifest.Config = config;
         files.Save("manifest.json", manifest);
         files.Progress("content_load_started");
-        var (sources, content) = Contents.GetOrAdd(Path.GetFullPath(modsRoot), root =>
+        var (sources, content) = Contents.GetOrAdd(Path.GetFullPath(hostRoot), root =>
         {
-            var found = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
+            var found = Ariel.Rules.GameContent.Staged(root).ToArray();
             return (found, ModLoader.Build(found));
         });
         RecordContent(sources, content);

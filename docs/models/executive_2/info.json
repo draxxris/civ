@@ -1,6 +1,6 @@
 {
   "name": "executive_2",
-  "model": "src/Mods/Military/art/models/executive_2.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_2.glb",
   "texture_path": [
     "art/shared/sidssushi_a.dds",
     "art/units/ceo/ceo_case_64.dds",

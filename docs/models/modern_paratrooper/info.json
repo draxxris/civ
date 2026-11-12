@@ -1,6 +1,6 @@
 {
   "name": "modern_paratrooper",
-  "model": "src/Mods/Military/art/models/modern_paratrooper.glb",
+  "model": "src/Ariel.Rules/Military/art/models/modern_paratrooper.glb",
   "texture_path": [
     "art/units/modern paratrooper/buddhist_missionary_128.dds",
     "art/units/modern paratrooper/beret_nonshader.dds",

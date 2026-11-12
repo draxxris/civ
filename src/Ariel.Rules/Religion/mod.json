@@ -1,0 +1,14 @@
+{
+  "id": "religion",
+  "name": "Religion",
+  "version": "1.3.0",
+  "dependencies": [
+    "cities"
+  ],
+  "references": [
+    "cities",
+    "foundation",
+    "military",
+    "research"
+  ]
+}

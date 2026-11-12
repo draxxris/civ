@@ -1,6 +1,6 @@
 {
   "name": "infantry",
-  "model": "src/Mods/Military/art/models/infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/infantry.glb",
   "texture_path": "art/units/infantry/infantry_128.dds",
   "textures": [
     "art/units/infantry/infantry_128.dds"

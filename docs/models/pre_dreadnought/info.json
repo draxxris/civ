@@ -1,6 +1,6 @@
 {
   "name": "pre_dreadnought",
-  "model": "src/Mods/Military/art/models/pre_dreadnought.glb",
+  "model": "src/Ariel.Rules/Military/art/models/pre_dreadnought.glb",
   "texture_path": "art/units/ironclad battleship/hms_canopus.dds",
   "textures": [
     "art/units/ironclad battleship/hms_canopus.dds"

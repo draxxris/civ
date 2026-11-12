@@ -1,6 +1,6 @@
 {
   "name": "executive_mallwart",
-  "model": "src/Mods/Military/art/models/executive_mallwart.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_mallwart.glb",
   "texture_path": [
     "art/units/executive/mallwart_a.dds",
     "art/units/executive/ceo_case_64.dds",

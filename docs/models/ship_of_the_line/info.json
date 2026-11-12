@@ -1,6 +1,6 @@
 {
   "name": "ship_of_the_line",
-  "model": "src/Mods/Military/art/models/ship_of_the_line.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ship_of_the_line.glb",
   "texture_path": "art/units/ship_0f_the_line/ship_of_the_line_256.dds",
   "textures": [
     "art/units/ship_0f_the_line/ship_of_the_line_256.dds"

@@ -1,6 +1,6 @@
 {
   "name": "fluyt",
-  "model": "src/Mods/Military/art/models/fluyt.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fluyt.glb",
   "texture_path": "art/units/galleon/galleon.dds",
   "textures": [
     "art/units/galleon/galleon.dds"

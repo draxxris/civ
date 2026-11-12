@@ -31,7 +31,7 @@ Run tests using `mise`:
   generation tests).
 - `mise run test:nobuild`: Re-runs the default test suite without rebuilding first.
 - `mise run test:worldgen`: Runs world generation tests (`Category=WorldGen`). Run this
-  whenever modifying world generation code (e.g., `src/Mods/World/`, map generator
+  whenever modifying world generation code (e.g., `src/Ariel.Rules/World/`, map generator
   registrations, `MapSpec`/`HexGrid` layout, terrain/relief generation, or river and
   cliff generation).
 - `mise run test:e2e`: Runs end-to-end simulation tests.

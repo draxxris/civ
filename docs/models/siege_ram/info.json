@@ -1,6 +1,6 @@
 {
   "name": "siege_ram",
-  "model": "src/Mods/Military/art/models/siege_ram.glb",
+  "model": "src/Ariel.Rules/Military/art/models/siege_ram.glb",
   "texture_path": "art/units/siege ram/ram.dds",
   "textures": [
     "art/units/siege ram/ram.dds"

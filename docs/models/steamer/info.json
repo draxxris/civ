@@ -1,6 +1,6 @@
 {
   "name": "steamer",
-  "model": "src/Mods/Military/art/models/steamer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/steamer.glb",
   "texture_path": "art/units/paddlesteamer/paddlewheeler.dds",
   "textures": [
     "art/units/paddlesteamer/paddlewheeler.dds"

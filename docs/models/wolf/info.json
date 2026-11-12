@@ -1,6 +1,6 @@
 {
   "name": "wolf",
-  "model": "src/Mods/Military/art/models/wolf.glb",
+  "model": "src/Ariel.Rules/Military/art/models/wolf.glb",
   "texture_path": [
     "art/units/wolf/wolf.dds",
     "art/units/wolf/wolf_alpha.dds"

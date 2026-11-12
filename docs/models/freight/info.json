@@ -1,6 +1,6 @@
 {
   "name": "freight",
-  "model": "src/Mods/Military/art/models/freight.glb",
+  "model": "src/Ariel.Rules/Military/art/models/freight.glb",
   "texture_path": "art/units/freight/1_c-1.dds",
   "textures": [
     "art/units/freight/1_c-1.dds"

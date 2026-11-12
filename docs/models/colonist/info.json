@@ -1,6 +1,6 @@
 {
   "name": "colonist",
-  "model": "src/Mods/Military/art/models/colonist.glb",
+  "model": "src/Ariel.Rules/Military/art/models/colonist.glb",
   "texture_path": [
     "art/units/settler/settler_child_128.dds",
     "art/units/settler/settler_male_128.dds"

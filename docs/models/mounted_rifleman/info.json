@@ -1,6 +1,6 @@
 {
   "name": "mounted_rifleman",
-  "model": "src/Mods/Military/art/models/mounted_rifleman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/mounted_rifleman.glb",
   "texture_path": [
     "art/units/mounted rifleman/european/cavalry_horse_128.dds",
     "art/units/mounted rifleman/european/cavalry-weapons128.dds",

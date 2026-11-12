@@ -1,6 +1,6 @@
 {
   "name": "experimental",
-  "model": "src/Mods/Military/art/models/experimental.glb",
+  "model": "src/Ariel.Rules/Military/art/models/experimental.glb",
   "texture_path": "art/units/nukes/peacemaker/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/peacemaker/icbm_white_256.dds"

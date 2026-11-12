@@ -1,6 +1,6 @@
 {
   "name": "trade_caravan",
-  "model": "src/Mods/Military/art/models/trade_caravan.glb",
+  "model": "src/Ariel.Rules/Military/art/models/trade_caravan.glb",
   "texture_path": [
     "art/units/caravan/survivor_settler_256_2.dds",
     "art/units/caravan/caravan_diff.dds",

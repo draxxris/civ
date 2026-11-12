@@ -1,6 +1,6 @@
 {
   "name": "native_america_dog_soldier",
-  "model": "src/Mods/Military/art/models/native_america_dog_soldier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/native_america_dog_soldier.glb",
   "texture_path": [
     "art/units/unique_nativeamerica_dogsoldier/dogsoldier_weapon_64.dds",
     "art/units/unique_nativeamerica_dogsoldier/dogsoldier_128.dds"

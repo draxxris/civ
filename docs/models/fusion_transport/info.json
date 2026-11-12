@@ -1,6 +1,6 @@
 {
   "name": "fusion_transport",
-  "model": "src/Mods/Military/art/models/fusion_transport.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_transport.glb",
   "texture_path": "art/units/finalfrontier_invasionship/invasionship_diff.dds",
   "textures": [
     "art/units/finalfrontier_invasionship/invasionship_diff.dds"

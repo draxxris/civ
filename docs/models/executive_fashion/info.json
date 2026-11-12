@@ -1,6 +1,6 @@
 {
   "name": "executive_fashion",
-  "model": "src/Mods/Military/art/models/executive_fashion.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_fashion.glb",
   "texture_path": [
     "art/units/executive/fashionhouse_a.dds",
     "art/units/executive/ceo_case_64.dds",

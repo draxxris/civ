@@ -1,6 +1,6 @@
 {
   "name": "byzantine_cataphract",
-  "model": "src/Mods/Military/art/models/byzantine_cataphract.glb",
+  "model": "src/Ariel.Rules/Military/art/models/byzantine_cataphract.glb",
   "texture_path": [
     "art/units/unique_byzantine_cataphract/byzantinecataphract_rider_128.dds",
     "art/units/unique_byzantine_cataphract/byzantinecataphract_shield_64.dds",

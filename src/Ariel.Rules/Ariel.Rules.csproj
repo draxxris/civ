@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The base game rules: world, cities, units and combat, research, economy, government, peoples and religion.
+    Statically linked into every host. Each folder is one base module with its own content namespace, a mod.json
+    manifest (no assembly: BaseRules supplies the code) and data/ sidecars.
+    Manifests and data are staged to <output>/rules/<Module>/ of this project and of every project referencing it.
+    art/ is heavy (~180MB) and is symlinked by build/RulesArt.targets in hosts that read art.
+  -->
+  <PropertyGroup>
+    <AssemblyName>Ariel.Rules</AssemblyName>
+    <RootNamespace>Ariel.Rules</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Ariel.Core/Ariel.Core.csproj" />
+    <None Update="*/mod.json;*/data/**/*.json" CopyToOutputDirectory="PreserveNewest" TargetPath="rules/%(RelativeDir)%(Filename)%(Extension)" />
+    <None Update="*/art/**/*" CopyToOutputDirectory="Never" />
+  </ItemGroup>
+</Project>

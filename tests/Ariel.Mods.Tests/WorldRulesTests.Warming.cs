@@ -167,7 +167,7 @@ public sealed partial class WorldRulesTests
         // Pollution is spread over the whole map, so every city pollutes to guarantee an attempt on a larger map.
         foreach (var city in sim.State.Cities) city.Buildings.Add(Warming + "factory");
         var geography = sim.Content.TurnSystems.All.Single(s => s.Id == "world:global_warming").GetType().Assembly
-            .GetType("Ariel.Mods.World.Geography", throwOnError: true)!;
+            .GetType("Ariel.Rules.World.Geography", throwOnError: true)!;
         geography.GetMethod("AssignAreas", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
             .Invoke(null, [sim.State.Grid, sim.State.Plots, sim.Content]);
         return (sim, tileId);

@@ -1,6 +1,6 @@
 {
   "name": "holy_roman_landsknecht",
-  "model": "src/Mods/Military/art/models/holy_roman_landsknecht.glb",
+  "model": "src/Ariel.Rules/Military/art/models/holy_roman_landsknecht.glb",
   "texture_path": "art/units/unique_holyromanempire_landsknecht/holyromanlandsknecht_128.dds",
   "textures": [
     "art/units/unique_holyromanempire_landsknecht/holyromanlandsknecht_128.dds"

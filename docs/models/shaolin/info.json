@@ -1,6 +1,6 @@
 {
   "name": "shaolin",
-  "model": "src/Mods/Military/art/models/shaolin.glb",
+  "model": "src/Ariel.Rules/Military/art/models/shaolin.glb",
   "texture_path": [
     "art/units/shaolin/settler_child_128.dds",
     "art/units/shaolin/buddhist_missionary_128.dds"

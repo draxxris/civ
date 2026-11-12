@@ -1,6 +1,6 @@
 {
   "name": "heavy_tank_m26",
-  "model": "src/Mods/Military/art/models/heavy_tank_m26.glb",
+  "model": "src/Ariel.Rules/Military/art/models/heavy_tank_m26.glb",
   "texture_path": "art/units/heavy tank/european/m26_256.dds",
   "textures": [
     "art/units/heavy tank/european/m26_256.dds"

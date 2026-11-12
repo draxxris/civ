@@ -1,6 +1,6 @@
 {
   "name": "galleas",
-  "model": "src/Mods/Military/art/models/galleas.glb",
+  "model": "src/Ariel.Rules/Military/art/models/galleas.glb",
   "texture_path": [
     "art/venice/galleas/galley_128.dds",
     "art/venice/galleas/frigate.dds"

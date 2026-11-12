@@ -1,6 +1,6 @@
 {
   "name": "drekar",
-  "model": "src/Mods/Military/art/models/drekar.glb",
+  "model": "src/Ariel.Rules/Military/art/models/drekar.glb",
   "texture_path": [
     "art/units/drekar/mat_0371.dds",
     "art/units/drekar/mat_0369.dds",

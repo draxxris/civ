@@ -1,6 +1,6 @@
 {
   "name": "manowar",
-  "model": "src/Mods/Military/art/models/manowar.glb",
+  "model": "src/Ariel.Rules/Military/art/models/manowar.glb",
   "texture_path": "art/units/man o war/frigate.dds",
   "textures": [
     "art/units/man o war/frigate.dds"

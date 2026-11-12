@@ -89,13 +89,8 @@ public static class Program
         return bad == 0 ? 0 : 1;
     }
 
-    /// <summary>The mods staged beside this tool by build/ModPayloads.targets.</summary>
-    private static ModSource[] Discover()
-    {
-        var root = Path.Combine(AppContext.BaseDirectory, "mods");
-        if (!Directory.Exists(root)) throw new DirectoryNotFoundException($"no mods beside the tool at {root}");
-        return Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
-    }
+    /// <summary>The base modules and mods staged beside this tool by the build.</summary>
+    private static IReadOnlyList<ModSource> Discover() => Ariel.Rules.GameContent.Staged(AppContext.BaseDirectory);
 
     /// <summary>A save carries its schema version and the snapshot the game writes.</summary>
     private static bool IsSave(string file)

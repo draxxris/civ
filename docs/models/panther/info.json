@@ -1,6 +1,6 @@
 {
   "name": "panther",
-  "model": "src/Mods/Military/art/models/panther.glb",
+  "model": "src/Ariel.Rules/Military/art/models/panther.glb",
   "texture_path": "art/units/panther/panther_black.dds",
   "textures": [
     "art/units/panther/panther_black.dds"

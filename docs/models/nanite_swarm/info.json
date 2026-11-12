@@ -1,6 +1,6 @@
 {
   "name": "nanite_swarm",
-  "model": "src/Mods/Military/art/models/nanite_swarm.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nanite_swarm.glb",
   "texture_path": [
     "art/units/nanite swarm/aw_boss_spike.dds",
     "art/units/nanite swarm/clash_blue.dds",

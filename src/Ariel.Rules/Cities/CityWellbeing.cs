@@ -1,0 +1,154 @@
+using Ariel.Content;
+using Ariel.Game;
+using S = Ariel.Content.Schema;
+
+namespace Ariel.Rules.Cities;
+
+internal sealed class CityWellbeingService : ICityWellbeingService
+{
+    public CityWellbeing Calculate(Simulation sim, int cityId) => CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId));
+    private CityWellbeing CalculateScoped(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var effects = CityData.Effects(sim, city);
+        var lines = new List<LedgerLine>();
+        Add(lines, "cities:handicap", "happiness", CityData.Handicap(sim).HappyBonus);
+        Add(lines, "cities:handicap", "health", CityData.Handicap(sim).HealthBonus);
+        Add(lines, "cities:population", "happiness", -city.Population * Math.Max(0, 100 + CityData.Effect(effects, "population_anger_percent")) / 100);
+        long countUnhappy = CityData.Owned(sim, city.Owner).Count() / Math.Max(1, CityData.World(sim).NumCitiesUnhappinessDivisor);
+        if (CityData.Read(sim, city).IsPuppet) countUnhappy /= 2;
+        Add(lines, "cities:city_count", "happiness", -countUnhappy);
+        bool noPopulation = CityData.Effect(effects, "no_unhealthy_population") > 0;
+        if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
+        if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
+            Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
+        AddModifiers(effects, lines);
+        AddCultureAnger(sim, city, lines);
+        AddCivicAnger(sim, city, effects, lines);
+        AddEnvironment(sim, city, lines);
+        AddPowerHealth(sim, city, lines);
+        AddSpecialists(sim, city, effects, lines);
+        var ledger = new Ledger(lines);
+        int happy = (int)ledger.Total("cities:happiness_good"), unhappy = (int)ledger.Total("cities:happiness_bad");
+        int healthy = (int)ledger.Total("cities:health_good"), unhealthy = (int)ledger.Total("cities:health_bad");
+        if (CityData.Effect(effects, "no_unhappiness") > 0) unhappy = 0;
+        return new(happy, unhappy, Math.Clamp(unhappy - happy, 0, city.Population), healthy, unhealthy, Math.Max(0, unhealthy - healthy), ledger);
+    }
+    public CityEnvironmentalUnhealth EnvironmentalUnhealth(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var effects = CityData.Effects(sim, city);
+        var buildings = CityData.Active(sim, city).ToArray();
+        bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
+        Int128 populationHealth = (Int128)buildings.Sum(b => (long)b.HealthPercentPerPopulation) * city.Population / 100;
+        Int128 badBuildings = onlyHealthy ? 0 : (Int128)Penalties(effects.Ledger, HealthKeys.Building) - Int128.Min(0, populationHealth);
+        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), Penalties(effects.Ledger, HealthKeys.Bonus), PowerUnhealth(sim, city));
+    }
+    /// <summary>The penalties under one health key, before anything healthy under it cancels them.</summary>
+    private static long Penalties(Ledger ledger, string key)
+    {
+        long bad = 0;
+        foreach (var line in ledger.Lines) if (line.Key == key && line.Amount < 0) bad -= line.Amount;
+        return bad;
+    }
+    private static void AddPowerHealth(Simulation sim, City city, List<LedgerLine> lines)
+    {
+        if (!CityData.IsPowered(sim, city)) return;
+        var constants = CityData.Constants(sim);
+        Add(lines, "cities:power", "health", constants.PowerHealthChange);
+        if (CityData.IsDirtyPower(sim, city))
+            Add(lines, "cities:dirty_power", "health", constants.DirtyPowerHealthChange);
+    }
+    private static long PowerUnhealth(Simulation sim, City city)
+    {
+        if (!CityData.IsPowered(sim, city)) return 0;
+        var constants = CityData.Constants(sim);
+        long bad = -Math.Min(0L, constants.PowerHealthChange);
+        if (CityData.IsDirtyPower(sim, city)) bad -= Math.Min(0L, constants.DirtyPowerHealthChange);
+        return bad;
+    }
+    private static void Add(List<LedgerLine> lines, string source, string kind, long value)
+    {
+        if (value != 0) lines.Add(new(source, "cities:" + kind + (value > 0 ? "_good" : "_bad"), Math.Abs(value)));
+    }
+    private static void AddModifiers(ModifierSink effects, List<LedgerLine> lines)
+    {
+        bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
+        foreach (var line in effects.Ledger.Lines)
+        {
+            if (onlyHealthy && line.Key == HealthKeys.Building && line.Amount < 0) continue;
+            if (line.Key == "cities:happiness") Add(lines, line.Source, "happiness", line.Amount);
+            if (line.Key is HealthKeys.General or HealthKeys.Building or HealthKeys.Bonus) Add(lines, line.Source, "health", line.Amount);
+            if (line.Key == "cities:unhappiness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
+            if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness",
+                -Math.Max(0, line.Amount) * Math.Max(0, 100 + CityData.Effect(effects, "war_weariness_percent")) / 100);
+        }
+    }
+    private static long CulturePercentAnger(Simulation sim, City city)
+    {
+        var plot = sim.State.PlotAt(city.Position);
+        long totalCulture = plot.Culture.Values.Sum();
+        if (totalCulture <= 0) return 0;
+        var ownerTeam = sim.TeamOf(city.Owner);
+        long angryCulture = 0;
+        foreach (var player in CityData.LivingPlayers(sim))
+        {
+            var team = sim.TeamOf(player.Id);
+            long culture = plot.Culture.GetValueOrDefault(player.Id);
+            if (team.Id == ownerTeam.Id || culture <= 0) continue;
+            if (ownerTeam.Wars.Contains(team.Id))
+                culture = culture * Math.Max(0, 100 + CityData.Constants(sim).AtWarCultureAngerModifier) / 100;
+            angryCulture += culture;
+        }
+        return CityData.Constants(sim).CulturePercentAnger * angryCulture / totalCulture;
+    }
+    private static void AddCultureAnger(Simulation sim, City city, List<LedgerLine> lines)
+    {
+        long unhappy = CulturePercentAnger(sim, city) * city.Population / Math.Max(1, CityData.Constants(sim).PercentAngerDivisor);
+        if (unhappy > 0) Add(lines, "cities:culture_anger", "happiness", -unhappy);
+    }
+    private static void AddCivicAnger(Simulation sim, City city, ModifierSink effects, List<LedgerLine> lines)
+    {
+        long civicUnhappy = CityData.Effect(effects, "civic_percent_anger") * city.Population
+            / Math.Max(1, CityData.Constants(sim).PercentAngerDivisor);
+        if (civicUnhappy > 0) Add(lines, "government:civic_anger", "happiness", -civicUnhappy);
+        long foreignAnger = CityData.Effect(effects, "foreigner_unhappy_percent");
+        if (foreignAnger == 0) return;
+        long factor = 100 / foreignAnger;
+        long foreignUnhappy = Math.Max(0, (100 - CityData.OwnerCulturePercent(sim, city)) * factor / 100);
+        if (foreignUnhappy > 0) Add(lines, "government:foreigner_anger", "happiness", -foreignUnhappy);
+    }
+    private static void AddEnvironment(Simulation sim, City city, List<LedgerLine> lines)
+    {
+        long featureGood = 0, featureBad = 0, terrainGood = 0, terrainBad = 0;
+        foreach (var tile in sim.State.Grid.Range(CityData.Tile(sim, city), 3))
+        {
+            var plot = sim.State.Plots[tile.Value];
+            int terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain).HealthPercent;
+            terrainGood += Math.Max(0, terrain); terrainBad += Math.Min(0, terrain);
+            if (plot.Feature is not { } id) continue;
+            int feature = sim.Content.Get<S.FeatureDef>(id).HealthPercent;
+            featureGood += Math.Max(0, feature); featureBad += Math.Min(0, feature);
+        }
+        Add(lines, "cities:features", "health", featureGood / 100);
+        Add(lines, "cities:features", "health", featureBad * Math.Clamp(city.Population - 2, 0, 5) / 500);
+        Add(lines, "cities:terrain", "health", terrainGood / 100);
+        Add(lines, "cities:terrain", "health", terrainBad / 100);
+    }
+    private static void AddSpecialists(Simulation sim, City city, ModifierSink effects, List<LedgerLine> lines)
+    {
+        long health = 0, happy = 0;
+        foreach (var pair in Specialists.All(sim, city, effects))
+        {
+            var def = sim.Content.Get<S.SpecialistDef>(pair.Key);
+            health += def.HealthPercent * pair.Value; happy += def.HappinessPercent * pair.Value;
+        }
+        foreach (var building in CityData.Active(sim, city))
+        {
+            health += building.HealthPercentPerPopulation * city.Population;
+            happy += building.HappinessPercentPerPopulation * city.Population;
+        }
+        Add(lines, "cities:population_effects", "health", health / 100);
+        Add(lines, "cities:population_effects", "happiness", happy / 100);
+    }
+}

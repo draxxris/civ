@@ -4,7 +4,8 @@ using Ariel.Modding;
 
 namespace Ariel.Client;
 
-/// <summary>Finds manifest-only mod installations before the host selects executable code.</summary>
+/// <summary>Finds manifest-only mod installations before the host selects executable code. The base modules of
+/// <see cref="Ariel.Rules.BaseRules"/> are not mods and are never discovered here.</summary>
 public static class ModDiscovery
 {
     /// <summary>Optional mods root with the highest per-ID priority.</summary>
@@ -12,10 +13,10 @@ public static class ModDiscovery
 
     static ModDiscovery()
     {
-        // A host that loads this library into its own load context (Godot) leaves the default context without Ariel.Core,
-        // which mods resolve through. Hand them the host's copy so mod and host share one set of types.
-        var shared = typeof(ModLoader).Assembly;
-        System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += (_, name) => name.Name == shared.GetName().Name ? shared : null;
+        // A host that loads this library into its own load context (Godot) leaves the default context without the
+        // shared mod API, which mods resolve through. Hand them the host's copies so mod and host share one set of types.
+        ModLoader.Share(typeof(Ariel.Rules.BaseRules).Assembly);
+        System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += (_, name) => ModLoader.ResolveShared(name);
     }
 
     /// <summary>Reads manifests only. Invalid folders remain diagnostics, not executable mods.</summary>

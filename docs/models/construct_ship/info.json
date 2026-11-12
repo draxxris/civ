@@ -1,6 +1,6 @@
 {
   "name": "construct_ship",
-  "model": "src/Mods/Military/art/models/construct_ship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/construct_ship.glb",
   "texture_path": "art/units/finalfrontier_constructionship/constructionship_diff.dds",
   "textures": [
     "art/units/finalfrontier_constructionship/constructionship_diff.dds"

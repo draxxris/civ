@@ -1,6 +1,6 @@
 {
   "name": "rifleman",
-  "model": "src/Mods/Military/art/models/rifleman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/rifleman.glb",
   "texture_path": "art/units/rifleman/rifleman_128.dds",
   "textures": [
     "art/units/rifleman/rifleman_128.dds"

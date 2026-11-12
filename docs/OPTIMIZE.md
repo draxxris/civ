@@ -377,7 +377,7 @@ ______________________________________________________________________
    - `HexGrid.Neighbors`: Skips the per-query `HashSet` deduplication when geometry
      ensures directions cannot produce duplicate tiles (retained for wrapped maps of
      width 1 or 2).
-2. **River Traversal Deduplication (`src/Mods/World/ContinentsGenerator.cs`)**:
+2. **River Traversal Deduplication (`src/Ariel.Rules/World/ContinentsGenerator.cs`)**:
    - River drainage generation terminates early upon reaching an already drawn drainage
      suffix, as each tile has a single parent.
    - A generation-local bitmap records completed paths.

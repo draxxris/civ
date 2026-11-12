@@ -1,6 +1,6 @@
 {
   "name": "archer",
-  "model": "src/Mods/Military/art/models/archer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/archer.glb",
   "texture_path": "art/units/archer/archer_128.dds",
   "textures": [
     "art/units/archer/archer_128.dds"

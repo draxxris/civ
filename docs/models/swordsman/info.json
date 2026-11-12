@@ -1,6 +1,6 @@
 {
   "name": "swordsman",
-  "model": "src/Mods/Military/art/models/swordsman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/swordsman.glb",
   "texture_path": "art/units/charlemagne_lightswordsman/lightswordsman_128.dds",
   "textures": [
     "art/units/charlemagne_lightswordsman/lightswordsman_128.dds"

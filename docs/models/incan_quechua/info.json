@@ -1,6 +1,6 @@
 {
   "name": "incan_quechua",
-  "model": "src/Mods/Military/art/models/incan_quechua.glb",
+  "model": "src/Ariel.Rules/Military/art/models/incan_quechua.glb",
   "texture_path": [
     "art/units/unique/inca/quechua/inca_quechua_weapons.dds",
     "art/units/unique/inca/quechua/inca_quechua_128.dds"

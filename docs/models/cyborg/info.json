@@ -1,6 +1,6 @@
 {
   "name": "cyborg",
-  "model": "src/Mods/Military/art/models/cyborg.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cyborg.glb",
   "texture_path": "art/units/nextwar_cyborg/cyborg_128.dds",
   "textures": [
     "art/units/nextwar_cyborg/cyborg_128.dds"

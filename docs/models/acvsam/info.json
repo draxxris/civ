@@ -1,6 +1,6 @@
 {
   "name": "acvsam",
-  "model": "src/Mods/Military/art/models/acvsam.glb",
+  "model": "src/Ariel.Rules/Military/art/models/acvsam.glb",
   "texture_path": [
     "art/units/acv sam/acvweapons.dds",
     "art/units/acv sam/acvchasis.dds"

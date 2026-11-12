@@ -1,6 +1,6 @@
 {
   "name": "wgmaster",
-  "model": "src/Mods/Military/art/models/wgmaster.glb",
+  "model": "src/Ariel.Rules/Military/art/models/wgmaster.glb",
   "texture_path": [
     "art/units/guildmaster/whiteguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

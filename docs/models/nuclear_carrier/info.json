@@ -1,6 +1,6 @@
 {
   "name": "nuclear_carrier",
-  "model": "src/Mods/Military/art/models/nuclear_carrier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nuclear_carrier.glb",
   "texture_path": [
     "art/units/carrier/carrier_256.dds",
     "art/units/carrier/carrier_opacity_64.dds"

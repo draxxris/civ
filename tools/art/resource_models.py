@@ -1,4 +1,4 @@
-"""Build the map resource (bonus) models into src/Mods/World/art/models/<id suffix>.glb. Runs inside Blender:
+"""Build the map resource (bonus) models into src/Ariel.Rules/World/art/models/<id suffix>.glb. Runs inside Blender:
 
     blender -b --factory-startup -P tools/art/resource_models.py -- [--only NAME ...] [--out DIR]
 

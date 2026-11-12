@@ -1,6 +1,6 @@
 {
   "name": "light_artillery",
-  "model": "src/Mods/Military/art/models/light_artillery.glb",
+  "model": "src/Ariel.Rules/Military/art/models/light_artillery.glb",
   "texture_path": "art/units/light artillery/artillery_256.dds",
   "textures": [
     "art/units/light artillery/artillery_256.dds"

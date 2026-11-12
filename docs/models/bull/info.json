@@ -1,6 +1,6 @@
 {
   "name": "bull",
-  "model": "src/Mods/Military/art/models/bull.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bull.glb",
   "texture_path": "art/units/bull/bizon.dds",
   "textures": [
     "art/units/bull/bizon.dds"

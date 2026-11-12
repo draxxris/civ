@@ -1,6 +1,6 @@
 {
   "name": "sam_infantry",
-  "model": "src/Mods/Military/art/models/sam_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/sam_infantry.glb",
   "texture_path": "art/units/saminfantry/saminfantry_128.dds",
   "textures": [
     "art/units/saminfantry/saminfantry_128.dds"

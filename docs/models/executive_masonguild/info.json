@@ -1,6 +1,6 @@
 {
   "name": "executive_masonguild",
-  "model": "src/Mods/Military/art/models/executive_masonguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_masonguild.glb",
   "texture_path": [
     "art/units/guildmaster/brownguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

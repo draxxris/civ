@@ -1,6 +1,6 @@
 {
   "name": "bulgarian_konnik",
-  "model": "src/Mods/Military/art/models/bulgarian_konnik.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bulgarian_konnik.glb",
   "texture_path": [
     "art/bulgaria/konnik/eurasian_horseman128.dds",
     "art/bulgaria/konnik/eurasian_horse128.dds"

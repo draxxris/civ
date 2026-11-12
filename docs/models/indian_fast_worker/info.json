@@ -1,6 +1,6 @@
 {
   "name": "indian_fast_worker",
-  "model": "src/Mods/Military/art/models/indian_fast_worker.glb",
+  "model": "src/Ariel.Rules/Military/art/models/indian_fast_worker.glb",
   "texture_path": "art/units/unique/india/worker/india_fast_worker_128.dds",
   "textures": [
     "art/units/unique/india/worker/india_fast_worker_128.dds"

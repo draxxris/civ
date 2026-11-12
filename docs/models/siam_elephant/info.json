@@ -1,6 +1,6 @@
 {
   "name": "siam_elephant",
-  "model": "src/Mods/Military/art/models/siam_elephant.glb",
+  "model": "src/Ariel.Rules/Military/art/models/siam_elephant.glb",
   "texture_path": [
     "art/units/unique/siamese/battle elephant/lightswordsman_128.dds",
     "art/units/unique/siamese/battle elephant/suryaverman_nonshader.dds",

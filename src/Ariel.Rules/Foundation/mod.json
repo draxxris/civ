@@ -1,0 +1,13 @@
+{
+  "id": "foundation",
+  "name": "Foundation",
+  "version": "1.4.0",
+  "dependencies": [],
+  "references": [
+    "cities",
+    "government",
+    "military",
+    "research",
+    "world"
+  ]
+}

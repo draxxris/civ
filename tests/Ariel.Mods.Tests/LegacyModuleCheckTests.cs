@@ -14,7 +14,7 @@ public sealed class LegacyModuleCheckTests
     [InlineData("Civ.Client.Core", true)]
     [InlineData("Civ.Mods.World", true)]
     [InlineData("Ariel.Core", false)]
-    [InlineData("Ariel.Mods.World", false)]
+    [InlineData("Ariel.Rules.World", false)]
     [InlineData("CivicsTools", false)]
     [InlineData("Civ4", false)]
     [InlineData("Civ-Core", false)]

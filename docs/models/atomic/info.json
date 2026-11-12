@@ -1,6 +1,6 @@
 {
   "name": "atomic",
-  "model": "src/Mods/Military/art/models/atomic.glb",
+  "model": "src/Ariel.Rules/Military/art/models/atomic.glb",
   "texture_path": "art/units/a bomb/bomber_256.dds",
   "textures": [
     "art/units/a bomb/bomber_256.dds"

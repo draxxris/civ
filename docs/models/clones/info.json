@@ -1,6 +1,6 @@
 {
   "name": "clones",
-  "model": "src/Mods/Military/art/models/clones.glb",
+  "model": "src/Ariel.Rules/Military/art/models/clones.glb",
   "texture_path": "art/units/nextwar_cloneworker/clone_worker_128.dds",
   "textures": [
     "art/units/nextwar_cloneworker/clone_worker_128.dds"

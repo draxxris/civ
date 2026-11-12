@@ -1,6 +1,6 @@
 {
   "name": "captured_bull",
-  "model": "src/Mods/Military/art/models/captured_bull.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_bull.glb",
   "texture_path": "art/units/bull/bizon.dds",
   "textures": [
     "art/units/bull/bizon.dds"

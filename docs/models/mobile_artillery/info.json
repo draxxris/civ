@@ -1,6 +1,6 @@
 {
   "name": "mobile_artillery",
-  "model": "src/Mods/Military/art/models/mobile_artillery.glb",
+  "model": "src/Ariel.Rules/Military/art/models/mobile_artillery.glb",
   "texture_path": "art/units/mobileartillery/mobileartillery_256.dds",
   "textures": [
     "art/units/mobileartillery/mobileartillery_256.dds"

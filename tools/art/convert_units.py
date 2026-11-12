@@ -156,11 +156,11 @@ def write_report(path, rows, source, selected):
     skinned = [r for r in converted if r["skins"]]
     textured = [r for r in converted if r["textures"]]
     lines = ["# Unit art conversion report", "", "## Run", "",
-             f"- Registry: `src/Mods/Military/data/unit.json` ({len(rows)} units in this run).",
+             f"- Registry: `src/Ariel.Rules/Military/data/unit.json` ({len(rows)} units in this run).",
              f"- Source: `{source}`.",
              f"- Converted: **{len(converted)}**. Failed: **{len(rows)-len(converted)}**.",
              f"- Animated: **{len(animated)}**. Skinned: **{len(skinned)}**. Textured: **{len(textured)}**.",
-             f"- Output: `src/Mods/Military/art/models/<unit-id-suffix>.glb`.",
+             f"- Output: `src/Ariel.Rules/Military/art/models/<unit-id-suffix>.glb`.",
              f"- Total GLB size: {sum(r['bytes'] for r in converted):,} bytes.",
              "- The report itself is the art registry. Each unit section identifies its source and output status.",
              "", "## Reproduction", "", "```sh", "python3 tools/art/convert_units.py",
@@ -206,7 +206,7 @@ def report_unit(row):
         if row["status"] != "converted":
             return lines + ["- Failed: " + row["error"].replace("\n", " "), ""]
         b = row["bounds"]
-        lines += [f"- Model: `src/Mods/Military/art/models/{name}.glb` ({row['bytes']:,} bytes).",
+        lines += [f"- Model: `src/Ariel.Rules/Military/art/models/{name}.glb` ({row['bytes']:,} bytes).",
                   f"- Art: `{row['art']}`. Source scale: {row['sourceScale']}.",
                   f"- NIF: `{row['nif']}`.", f"- KFM: `{row['kfm'] or 'none'}`.",
                   f"- Geometry: {row['triangles']} triangles, {row['skins']} skins, {row['joints']} joint bindings, {row['textures']} textures.",
@@ -227,7 +227,7 @@ def main():
     parser.add_argument("--units", nargs="*", help="Unit ID suffixes for a conversion spike")
     args = parser.parse_args()
     logging.getLogger("pyffi").setLevel(logging.ERROR)
-    registry = ROOT / "src/Mods/Military/data/unit.json"
+    registry = ROOT / "src/Ariel.Rules/Military/data/unit.json"
     units_to_convert = json.loads(registry.read_text())
     if args.units:
         requested = {u.removeprefix("military:") for u in args.units}
@@ -237,7 +237,7 @@ def main():
             parser.error("Unknown units: " + ", ".join(sorted(unknown)))
     units, art = definitions(args.source / "data")
     assets = Assets(args.source / "media/assets")
-    output = ROOT / "src/Mods/Military/art/models"
+    output = ROOT / "src/Ariel.Rules/Military/art/models"
     context = assets, units, art, source_symbols(ROOT), output
     rows = []
     for unit in units_to_convert:

@@ -1,6 +1,6 @@
 {
   "name": "arabia_camelarcher",
-  "model": "src/Mods/Military/art/models/arabia_camelarcher.glb",
+  "model": "src/Ariel.Rules/Military/art/models/arabia_camelarcher.glb",
   "texture_path": [
     "art/units/unique/arabia/camelarcher/camelarcher_weapons_64.dds",
     "art/units/unique/arabia/camelarcher/camelarcher_camel_128.dds",

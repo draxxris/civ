@@ -1,6 +1,6 @@
 {
   "name": "executive_4",
-  "model": "src/Mods/Military/art/models/executive_4.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_4.glb",
   "texture_path": [
     "art/shared/creativeconstructions_a.dds",
     "art/units/ceo/ceo_case_64.dds",

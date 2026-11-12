@@ -1,6 +1,6 @@
 {
   "name": "ff_destroyer_i",
-  "model": "src/Mods/Military/art/models/ff_destroyer_i.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ff_destroyer_i.glb",
   "texture_path": "art/units/finalfrontier_destroyer/destroyer_diff.dds",
   "textures": [
     "art/units/finalfrontier_destroyer/destroyer_diff.dds"

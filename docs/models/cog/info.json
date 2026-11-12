@@ -1,6 +1,6 @@
 {
   "name": "cog",
-  "model": "src/Mods/Military/art/models/cog.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cog.glb",
   "texture_path": [
     "art/units/cog/ship_shrouds.dds",
     "art/units/cog/ship_sail_main.dds",

@@ -1,6 +1,6 @@
 {
   "name": "ironclad_cruiser",
-  "model": "src/Mods/Military/art/models/ironclad_cruiser.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ironclad_cruiser.glb",
   "texture_path": "art/units/ironclad cruiser/pallada_diff.dds",
   "textures": [
     "art/units/ironclad cruiser/pallada_diff.dds"

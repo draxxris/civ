@@ -1,6 +1,6 @@
 {
   "name": "ww1_destroyer",
-  "model": "src/Mods/Military/art/models/ww1_destroyer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ww1_destroyer.glb",
   "texture_path": [
     "art/units/destroyer/american/clemson.dds",
     "art/units/destroyer/american/whalingboat_ancient.dds"

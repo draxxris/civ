@@ -1,6 +1,6 @@
 {
   "name": "executive_artistguild",
-  "model": "src/Mods/Military/art/models/executive_artistguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_artistguild.glb",
   "texture_path": [
     "art/units/guildmaster/whiteguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

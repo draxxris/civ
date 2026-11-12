@@ -1,6 +1,6 @@
 {
   "name": "english_redcoat",
-  "model": "src/Mods/Military/art/models/english_redcoat.glb",
+  "model": "src/Ariel.Rules/Military/art/models/english_redcoat.glb",
   "texture_path": "art/units/unique/england/redcoat/redcoat_128.dds",
   "textures": [
     "art/units/unique/england/redcoat/redcoat_128.dds"

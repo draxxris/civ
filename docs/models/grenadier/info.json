@@ -1,6 +1,6 @@
 {
   "name": "grenadier",
-  "model": "src/Mods/Military/art/models/grenadier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/grenadier.glb",
   "texture_path": "art/units/grenadier/grenadier_128.dds",
   "textures": [
     "art/units/grenadier/grenadier_128.dds"

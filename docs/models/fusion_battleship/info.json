@@ -1,6 +1,6 @@
 {
   "name": "fusion_battleship",
-  "model": "src/Mods/Military/art/models/fusion_battleship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_battleship.glb",
   "texture_path": "art/units/finalfrontier_battleship/battleship_diff.dds",
   "textures": [
     "art/units/finalfrontier_battleship/battleship_diff.dds"

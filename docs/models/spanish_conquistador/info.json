@@ -1,6 +1,6 @@
 {
   "name": "spanish_conquistador",
-  "model": "src/Mods/Military/art/models/spanish_conquistador.glb",
+  "model": "src/Ariel.Rules/Military/art/models/spanish_conquistador.glb",
   "texture_path": [
     "art/units/unique/spanish/conquistador/conquistador_horse_128.dds",
     "art/units/unique/spanish/conquistador/conquistador_128.dds"

@@ -1,6 +1,6 @@
 {
   "name": "stealth_armor",
-  "model": "src/Mods/Military/art/models/stealth_armor.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stealth_armor.glb",
   "texture_path": [
     "art/units/stealth armor/modern_armor_256.dds",
     "art/units/stealth armor/myrmidontank.dds"

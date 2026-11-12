@@ -1,6 +1,6 @@
 {
   "name": "arquebusier",
-  "model": "src/Mods/Military/art/models/arquebusier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/arquebusier.glb",
   "texture_path": "art/units/musketman/musketman.dds",
   "textures": [
     "art/units/musketman/musketman.dds"

@@ -1,6 +1,6 @@
 {
   "name": "machine_gun",
-  "model": "src/Mods/Military/art/models/machine_gun.glb",
+  "model": "src/Ariel.Rules/Military/art/models/machine_gun.glb",
   "texture_path": [
     "art/units/machinegun/machine_gun_64.dds",
     "art/units/machinegun/machine_gunner_128.dds"

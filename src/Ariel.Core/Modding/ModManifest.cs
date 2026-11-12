@@ -9,7 +9,8 @@ public sealed class ModManifest
     public string Name { get; init; } = "";
     /// <summary>Rules/content version included in content identity. Change it when code semantics change.</summary>
     public string Version { get; init; } = "0.0.0";
-    /// <summary>Assembly file in the mod folder that contains the IMod implementation.</summary>
+    /// <summary>Assembly file in the mod folder that contains the IMod implementation. Empty for a base module,
+    /// whose code is linked into the host.</summary>
     public string Assembly { get; init; } = "";
     /// <summary>Required mod ids loaded before this mod.</summary>
     public string[] Dependencies { get; init; } = [];

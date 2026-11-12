@@ -1,6 +1,6 @@
 {
   "name": "special_agent",
-  "model": "src/Mods/Military/art/models/special_agent.glb",
+  "model": "src/Ariel.Rules/Military/art/models/special_agent.glb",
   "texture_path": [
     "art/units/specialagent/timebomb.dds",
     "art/shared/darkmap_gradient.dds",

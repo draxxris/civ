@@ -1,6 +1,6 @@
 {
   "name": "007",
-  "model": "src/Mods/Military/art/models/007.glb",
+  "model": "src/Ariel.Rules/Military/art/models/007.glb",
   "texture_path": [
     "art/units/007/timebomb.dds",
     "art/shared/darkmap_gradient.dds",

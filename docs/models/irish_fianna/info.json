@@ -1,6 +1,6 @@
 {
   "name": "irish_fianna",
-  "model": "src/Mods/Military/art/models/irish_fianna.glb",
+  "model": "src/Ariel.Rules/Military/art/models/irish_fianna.glb",
   "texture_path": "art/ireland/fianna/swordsman_128.dds",
   "textures": [
     "art/ireland/fianna/swordsman_128.dds"

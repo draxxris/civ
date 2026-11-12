@@ -1,6 +1,6 @@
 {
   "name": "scramjet",
-  "model": "src/Mods/Military/art/models/scramjet.glb",
+  "model": "src/Ariel.Rules/Military/art/models/scramjet.glb",
   "texture_path": "art/units/orbital fighters/fightery.dds",
   "textures": [
     "art/units/orbital fighters/fightery.dds"

@@ -1,6 +1,6 @@
 {
   "name": "cruiser",
-  "model": "src/Mods/Military/art/models/cruiser.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cruiser.glb",
   "texture_path": [
     "art/units/cruiser/destroyer_wood_deck.dds",
     "art/units/cruiser/battleship_256.dds"

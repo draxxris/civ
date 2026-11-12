@@ -1,6 +1,6 @@
 {
   "name": "ottoman_janissary",
-  "model": "src/Mods/Military/art/models/ottoman_janissary.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ottoman_janissary.glb",
   "texture_path": "art/units/janissary/janissary_128.dds",
   "textures": [
     "art/units/janissary/janissary_128.dds"

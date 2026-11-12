@@ -1,6 +1,6 @@
 {
   "name": "adventurer",
-  "model": "src/Mods/Military/art/models/adventurer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/adventurer.glb",
   "texture_path": [
     "art/units/adventurer/persian_immortal_horse_128.dds",
     "art/units/adventurer/great_merchant_128.dds"

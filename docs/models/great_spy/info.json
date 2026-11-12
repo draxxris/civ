@@ -1,6 +1,6 @@
 {
   "name": "great_spy",
-  "model": "src/Mods/Military/art/models/great_spy.glb",
+  "model": "src/Ariel.Rules/Military/art/models/great_spy.glb",
   "texture_path": [
     "art/units/great_spy_ancient/ancientspy_128.dds",
     "art/units/great_spy_ancient/great_spy_ancient_diff.dds"

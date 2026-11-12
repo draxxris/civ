@@ -17,7 +17,7 @@ import bpy
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SETS_PATH = Path(__file__).with_name("nature_sets.json")
-OUTPUT_ROOT = REPO_ROOT / "src/Mods/World/art/scatter"
+OUTPUT_ROOT = REPO_ROOT / "src/Ariel.Rules/World/art/scatter"
 REPORT_PATH = Path(__file__).with_name("nature_report.md")
 MAX_OPAQUE_TEXTURE_SIZE = 256
 MAX_ALPHA_TEXTURE_SIZE = 512

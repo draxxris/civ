@@ -1,6 +1,6 @@
 {
   "name": "elephant_bombard",
-  "model": "src/Mods/Military/art/models/elephant_bombard.glb",
+  "model": "src/Ariel.Rules/Military/art/models/elephant_bombard.glb",
   "texture_path": [
     "art/units/elephant bombard/warelephant_256.dds",
     "art/units/elephant bombard/arabian_warelephant_128.dds",

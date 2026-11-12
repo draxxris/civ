@@ -1,6 +1,6 @@
 {
   "name": "christian_missionary",
-  "model": "src/Mods/Military/art/models/christian_missionary.glb",
+  "model": "src/Ariel.Rules/Military/art/models/christian_missionary.glb",
   "texture_path": "art/units/missionary/christian/christian_missionary.dds",
   "textures": [
     "art/units/missionary/christian/christian_missionary.dds"

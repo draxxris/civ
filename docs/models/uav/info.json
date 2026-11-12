@@ -1,6 +1,6 @@
 {
   "name": "uav",
-  "model": "src/Mods/Military/art/models/uav.glb",
+  "model": "src/Ariel.Rules/Military/art/models/uav.glb",
   "texture_path": [
     "art/units/drone bomber/fighter_256.dds",
     "art/units/drone bomber/predator.dds"

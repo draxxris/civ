@@ -1,6 +1,6 @@
 {
   "name": "hungarian_huszar_cavalry",
-  "model": "src/Mods/Military/art/models/hungarian_huszar_cavalry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/hungarian_huszar_cavalry.glb",
   "texture_path": [
     "art/hungary/huszar cavalry/russiancossack_horse_128.dds",
     "art/hungary/huszar cavalry/russiancossack_128.dds",

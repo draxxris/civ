@@ -3,7 +3,7 @@ using Ariel.Modding;
 
 namespace Ariel.SyncCheck;
 
-/// <summary>The content a multiplayer game runs on: every main mod plus the chosen optional ones.</summary>
+/// <summary>The content a multiplayer game runs on: the base modules and every main mod, plus the chosen optional ones.</summary>
 internal static class Mods
 {
     /// <summary>Optional gameplay mods loaded unless <c>--optional</c> names others. The alternative research mods
@@ -14,9 +14,7 @@ internal static class Mods
     {
         int i = Array.IndexOf(args, "--optional");
         string optional = i >= 0 && i + 1 < args.Length ? args[i + 1] : DefaultOptional;
-        var main = Directory.GetDirectories(Path.Combine(root, "mods")).Order(StringComparer.Ordinal);
-        var extra = optional.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(name => Path.Combine(root, "optional-mods", name));
-        return ModLoader.Build(main.Concat(extra).Select(ModLoader.FromDirectory).ToArray());
+        return ModLoader.Build(Ariel.Rules.GameContent.Staged(root,
+            optional.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)));
     }
 }

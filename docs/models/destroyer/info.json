@@ -1,6 +1,6 @@
 {
   "name": "destroyer",
-  "model": "src/Mods/Military/art/models/destroyer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/destroyer.glb",
   "texture_path": "art/units/destroyer/destroyer_256.dds",
   "textures": [
     "art/units/destroyer/destroyer_256.dds"

@@ -1,6 +1,6 @@
 {
   "name": "wargalley",
-  "model": "src/Mods/Military/art/models/wargalley.glb",
+  "model": "src/Ariel.Rules/Military/art/models/wargalley.glb",
   "texture_path": "art/units/war galley/galley_128.dds",
   "textures": [
     "art/units/war galley/galley_128.dds"

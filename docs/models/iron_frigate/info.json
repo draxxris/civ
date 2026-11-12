@@ -1,6 +1,6 @@
 {
   "name": "iron_frigate",
-  "model": "src/Mods/Military/art/models/iron_frigate.glb",
+  "model": "src/Ariel.Rules/Military/art/models/iron_frigate.glb",
   "texture_path": [
     "art/units/iron frigate/hmswarrior256.dds",
     "art/units/iron frigate/frigate.dds"

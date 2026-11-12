@@ -1,6 +1,6 @@
 {
   "name": "orbital_fighter",
-  "model": "src/Mods/Military/art/models/orbital_fighter.glb",
+  "model": "src/Ariel.Rules/Military/art/models/orbital_fighter.glb",
   "texture_path": [
     "art/units/hammerheadrefar/jetfighter_256.dds",
     "art/units/hammerheadrefar/hammerhead_diff.dds"

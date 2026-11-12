@@ -1,6 +1,6 @@
 {
   "name": "gatling_gun",
-  "model": "src/Mods/Military/art/models/gatling_gun.glb",
+  "model": "src/Ariel.Rules/Military/art/models/gatling_gun.glb",
   "texture_path": [
     "art/units/gatlinggun/european/cannon.dds",
     "art/units/gatlinggun/european/machine_gun_64.dds",

@@ -1,6 +1,6 @@
 {
   "name": "war_elephant",
-  "model": "src/Mods/Military/art/models/war_elephant.glb",
+  "model": "src/Ariel.Rules/Military/art/models/war_elephant.glb",
   "texture_path": [
     "art/units/warelephant/warelephant_256.dds",
     "art/units/warelephant/warelephant_carriage_128.dds",

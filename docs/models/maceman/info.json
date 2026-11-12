@@ -1,6 +1,6 @@
 {
   "name": "maceman",
-  "model": "src/Mods/Military/art/models/maceman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/maceman.glb",
   "texture_path": "art/units/maceman/maceman_128.dds",
   "textures": [
     "art/units/maceman/maceman_128.dds"

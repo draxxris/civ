@@ -1,6 +1,6 @@
 {
   "name": "cavebear",
-  "model": "src/Mods/Military/art/models/cavebear.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cavebear.glb",
   "texture_path": "art/units/animals/cavebear/bear.dds",
   "textures": [
     "art/units/animals/cavebear/bear.dds"

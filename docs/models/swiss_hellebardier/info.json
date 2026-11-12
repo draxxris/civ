@@ -1,6 +1,6 @@
 {
   "name": "swiss_hellebardier",
-  "model": "src/Mods/Military/art/models/swiss_hellebardier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/swiss_hellebardier.glb",
   "texture_path": "art/switzerland/swisspikeman/pikeman_128.dds",
   "textures": [
     "art/switzerland/swisspikeman/pikeman_128.dds"

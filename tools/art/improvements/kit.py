@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from glb_writer import Glb  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-OUT = REPO_ROOT / "src/Mods/World/art/models"
+OUT = REPO_ROOT / "src/Ariel.Rules/World/art/models"
 FOOT = -0.05  # foundations reach this far below the seat point (before SCALE)
 # Pieces are authored life-ish size, then enlarged so they read at the game's camera distance next to 0.85-tall units.
 SCALE = 2.0

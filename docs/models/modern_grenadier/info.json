@@ -1,6 +1,6 @@
 {
   "name": "modern_grenadier",
-  "model": "src/Mods/Military/art/models/modern_grenadier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/modern_grenadier.glb",
   "texture_path": [
     "art/units/modern grenadier/grenadier_128.dds",
     "art/units/modern grenadier/marine_128.dds"

@@ -1,6 +1,6 @@
 {
   "name": "biological_warfare_missile",
-  "model": "src/Mods/Military/art/models/biological_warfare_missile.glb",
+  "model": "src/Ariel.Rules/Military/art/models/biological_warfare_missile.glb",
   "texture_path": "art/units/bioweapon_missile/bioweapon_missle_256.dds",
   "textures": [
     "art/units/bioweapon_missile/bioweapon_missle_256.dds"

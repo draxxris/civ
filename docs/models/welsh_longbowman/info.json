@@ -1,6 +1,6 @@
 {
   "name": "welsh_longbowman",
-  "model": "src/Mods/Military/art/models/welsh_longbowman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/welsh_longbowman.glb",
   "texture_path": [
     "art/wales/welsh longbowman/longbowman.dds",
     "art/wales/welsh longbowman/longbowman_128.dds",

@@ -15,7 +15,8 @@ public sealed record ModOrigin(string Root, string Source);
 
 public sealed record ModDiscoveryResult(IReadOnlyList<InstalledMod> Mods, IReadOnlyList<string> Errors);
 
-/// <summary>Explicit choices plus their required providers. Content references do not impose load order.</summary>
+/// <summary>Explicit choices plus their required providers. Content references do not impose load order.
+/// Base module ids always satisfy a requirement and are never part of a selection: an installed mod cannot take one.</summary>
 public sealed class ModSelection
 {
     public IReadOnlyList<InstalledMod> Mods { get; }
@@ -41,7 +42,7 @@ public sealed class ModSelection
         var pending = new Queue<string>(enabledIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal));
         while (pending.TryDequeue(out var id))
         {
-            if (!visited.Add(id)) continue;
+            if (!visited.Add(id) || Ariel.Rules.BaseRules.IsBase(id)) continue;
             if (!available.TryGetValue(id, out var candidates))
             {
                 string reason = reasons.TryGetValue(id, out var parents) ? $" Required by: {string.Join(", ", parents.Order(StringComparer.Ordinal))}." : "";

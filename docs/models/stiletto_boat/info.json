@@ -1,6 +1,6 @@
 {
   "name": "stiletto_boat",
-  "model": "src/Mods/Military/art/models/stiletto_boat.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stiletto_boat.glb",
   "texture_path": "art/units/stealth_destroyer/stealth_destroyer_256.dds",
   "textures": [
     "art/units/stealth_destroyer/stealth_destroyer_256.dds"

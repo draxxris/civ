@@ -1,6 +1,6 @@
 {
   "name": "ironclad",
-  "model": "src/Mods/Military/art/models/ironclad.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ironclad.glb",
   "texture_path": "art/units/ironclad/ironclad_256.dds",
   "textures": [
     "art/units/ironclad/ironclad_256.dds"

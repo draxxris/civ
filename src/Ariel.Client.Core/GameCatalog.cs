@@ -14,7 +14,7 @@ public sealed record LeaderChoice(string Id, string Name, string CivilizationId,
 }
 
 /// <summary>
-/// The loaded ruleset: mods and frozen content, built once at startup, plus the choices a new game offers and where
+/// The loaded ruleset: base modules, mods and frozen content, built once at startup, plus the choices a new game offers and where
 /// mod art lives. Engine free; the renderer turns <see cref="IconPath"/> into textures.
 /// </summary>
 public sealed class GameCatalog
@@ -37,6 +37,8 @@ public sealed class GameCatalog
     /// <summary>The AI service the opponents use, or null until an AI mod exists; then opponents only end their turn.</summary>
     public string? OpponentAi { get; }
 
+    /// <summary>Build from a complete source list: the base modules and the chosen mods, as
+    /// <see cref="Ariel.Rules.GameContent.Sources"/> composes them.</summary>
     public GameCatalog(IReadOnlyList<ModSource> mods)
     {
         using var trace = StartupTrace.Phase("catalog build");
@@ -54,19 +56,21 @@ public sealed class GameCatalog
         OpponentAi = Content.PlayerAIs.All.OrderBy(a => a.Id, StringComparer.Ordinal).FirstOrDefault()?.Id;
     }
 
-    public static GameCatalog Load(string modsRoot)
+    /// <summary>Base modules from <paramref name="rulesRoot"/> with every mod installed in <paramref name="modsRoot"/>.</summary>
+    public static GameCatalog Load(string rulesRoot, string modsRoot)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        var catalog = new GameCatalog(ModDiscovery.LoadMods(modsRoot));
+        var catalog = new GameCatalog(Ariel.Rules.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(modsRoot)));
         // Content is frozen; start the digest now so it overlaps the setup work instead of blocking the first reader.
         catalog.Content.PrefetchContentHash();
         return catalog;
     }
 
-    public static GameCatalog Load(IReadOnlyList<InstalledMod> installed, IEnumerable<string> enabledIds)
+    /// <summary>Base modules from <paramref name="rulesRoot"/> with the enabled subset of the installed mods.</summary>
+    public static GameCatalog Load(string rulesRoot, IReadOnlyList<InstalledMod> installed, IEnumerable<string> enabledIds)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        var catalog = new GameCatalog(ModDiscovery.LoadMods(installed, enabledIds));
+        var catalog = new GameCatalog(Ariel.Rules.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(installed, enabledIds)));
         catalog.Content.PrefetchContentHash();
         return catalog;
     }

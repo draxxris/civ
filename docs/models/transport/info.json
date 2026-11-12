@@ -1,6 +1,6 @@
 {
   "name": "transport",
-  "model": "src/Mods/Military/art/models/transport.glb",
+  "model": "src/Ariel.Rules/Military/art/models/transport.glb",
   "texture_path": "art/units/transport/transport_256.dds",
   "textures": [
     "art/units/transport/transport_256.dds"

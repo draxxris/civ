@@ -1,6 +1,6 @@
 {
   "name": "bleeder",
-  "model": "src/Mods/Military/art/models/bleeder.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bleeder.glb",
   "texture_path": [
     "art/units/genetic soldier/cca.dds",
     "art/units/genetic soldier/cyb.dds",

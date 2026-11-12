@@ -1,6 +1,6 @@
 {
   "name": "power_armored_infantry",
-  "model": "src/Mods/Military/art/models/power_armored_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/power_armored_infantry.glb",
   "texture_path": "art/units/power armor infantry/bw.dds",
   "textures": [
     "art/units/power armor infantry/bw.dds"

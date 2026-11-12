@@ -22,11 +22,6 @@ public partial class Main
             _discovery = ModDiscovery.DiscoverMerged(BundledModsRoots(), System.IO.Path.Combine(OS.GetUserDataDir(), "mods"),
                 System.Environment.GetEnvironmentVariable(ModDiscovery.ModsEnvironmentVariable));
             foreach (var error in _discovery.Errors) GD.PrintErr(error);
-            if (_discovery.Mods.Count == 0)
-            {
-                ModLoadFailed("No usable mod IDs found. Build with 'dotnet build src/Ariel.Godot' or install mods in ARIEL_MODS or user://mods.");
-                return;
-            }
             ReadModProfile();
             if (!AutomaticStartup) { ShowModManager(); return; }
             if (_profileError != null) { ModLoadFailed(_profileError); return; }
@@ -111,7 +106,8 @@ public partial class Main
         _status.Text = "Loading selected mods…";
         _status.Visible = true;
         var enabled = _enabledMods.ToArray();
-        _loading = Task.Run(() => GameCatalog.Load(_discovery.Mods, enabled));
+        string rules = RulesRoot();
+        _loading = Task.Run(() => GameCatalog.Load(rules, _discovery.Mods, enabled));
         // Frame-limited smoke runs must wait for content. PollLoading handles errors on the main thread.
         if (DisplayServer.GetName() == "headless")
         {
@@ -136,7 +132,7 @@ public partial class Main
     {
         if (catalog.WorldSizes.Count == 0 || catalog.GameSpeeds.Count == 0 || catalog.Handicaps.Count == 0 ||
             catalog.MapGenerators.Count == 0 || catalog.Leaders.Count == 0)
-            return "The selected mods do not supply a playable setup. Enable mods with worlds, maps, speeds, handicaps, and leaders.";
+            return "The base rules did not load a playable setup. Rebuild with 'dotnet build src/Ariel.Godot'.";
         return null;
     }
 }

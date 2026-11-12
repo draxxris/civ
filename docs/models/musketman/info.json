@@ -1,6 +1,6 @@
 {
   "name": "musketman",
-  "model": "src/Mods/Military/art/models/musketman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/musketman.glb",
   "texture_path": [
     "art/units/musketman/european/redcoat_128.dds",
     "art/units/musketman/european/mongol_weapons.dds",

@@ -1,6 +1,6 @@
 {
   "name": "hittites_hittite_chariot",
-  "model": "src/Mods/Military/art/models/hittites_hittite_chariot.glb",
+  "model": "src/Ariel.Rules/Military/art/models/hittites_hittite_chariot.glb",
   "texture_path": [
     "art/units/unique/hittite chariot/ewc_spearman_128.dds",
     "art/units/unique/hittite chariot/ewc_spear.dds",

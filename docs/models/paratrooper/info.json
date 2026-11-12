@@ -1,6 +1,6 @@
 {
   "name": "paratrooper",
-  "model": "src/Mods/Military/art/models/paratrooper.glb",
+  "model": "src/Ariel.Rules/Military/art/models/paratrooper.glb",
   "texture_path": [
     "art/units/paratrooper/paratrooper_128.dds",
     "art/units/paratrooper/paratrooper_chute_128.dds"

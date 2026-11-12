@@ -1,6 +1,6 @@
 {
   "name": "vandal_raider",
-  "model": "src/Mods/Military/art/models/vandal_raider.glb",
+  "model": "src/Ariel.Rules/Military/art/models/vandal_raider.glb",
   "texture_path": "art/units/raider/swordsman_128.dds",
   "textures": [
     "art/units/raider/swordsman_128.dds"

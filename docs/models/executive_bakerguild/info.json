@@ -1,6 +1,6 @@
 {
   "name": "executive_bakerguild",
-  "model": "src/Mods/Military/art/models/executive_bakerguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_bakerguild.glb",
   "texture_path": [
     "art/units/guildmaster/greenguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

@@ -1,6 +1,6 @@
 {
   "name": "japan_samurai",
-  "model": "src/Mods/Military/art/models/japan_samurai.glb",
+  "model": "src/Ariel.Rules/Military/art/models/japan_samurai.glb",
   "texture_path": "art/units/unique/japan/samurai/samurai_128.dds",
   "textures": [
     "art/units/unique/japan/samurai/samurai_128.dds"

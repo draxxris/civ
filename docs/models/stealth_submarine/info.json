@@ -1,6 +1,6 @@
 {
   "name": "stealth_submarine",
-  "model": "src/Mods/Military/art/models/stealth_submarine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stealth_submarine.glb",
   "texture_path": "art/units/astute/astutediffuse_256.dds",
   "textures": [
     "art/units/astute/astutediffuse_256.dds"

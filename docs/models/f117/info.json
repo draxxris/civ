@@ -1,6 +1,6 @@
 {
   "name": "f117",
-  "model": "src/Mods/Military/art/models/f117.glb",
+  "model": "src/Ariel.Rules/Military/art/models/f117.glb",
   "texture_path": [
     "art/units/stealth fighter/f117texture2.dds",
     "art/units/stealth fighter/f117texture.dds"

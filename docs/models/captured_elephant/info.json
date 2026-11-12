@@ -1,6 +1,6 @@
 {
   "name": "captured_elephant",
-  "model": "src/Mods/Military/art/models/captured_elephant.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_elephant.glb",
   "texture_path": "art/units/elephant/warelephant_carthage_256.dds",
   "textures": [
     "art/units/elephant/warelephant_carthage_256.dds"

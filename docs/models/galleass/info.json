@@ -1,6 +1,6 @@
 {
   "name": "galleass",
-  "model": "src/Mods/Military/art/models/galleass.glb",
+  "model": "src/Ariel.Rules/Military/art/models/galleass.glb",
   "texture_path": [
     "art/units/galleas/frigate.dds",
     "art/units/galleas/galley_128.dds"

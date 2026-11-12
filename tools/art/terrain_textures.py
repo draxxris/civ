@@ -94,7 +94,7 @@ def contact_sheet(img, path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selection", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("src/Mods/World/art/terrain"))
+    parser.add_argument("--output", type=Path, default=Path("src/Ariel.Rules/World/art/terrain"))
     parser.add_argument("--work", type=Path, default=Path("/tmp/p5/contact-sheets"))
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)

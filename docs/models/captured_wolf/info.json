@@ -1,6 +1,6 @@
 {
   "name": "captured_wolf",
-  "model": "src/Mods/Military/art/models/captured_wolf.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_wolf.glb",
   "texture_path": [
     "art/units/wolf/wolf.dds",
     "art/units/wolf/wolf_alpha.dds"

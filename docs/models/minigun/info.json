@@ -1,6 +1,6 @@
 {
   "name": "minigun",
-  "model": "src/Mods/Military/art/models/minigun.glb",
+  "model": "src/Ariel.Rules/Military/art/models/minigun.glb",
   "texture_path": [
     "art/units/minigun/european/settler_male_128.dds",
     "art/units/minigun/european/british_helmet.dds",

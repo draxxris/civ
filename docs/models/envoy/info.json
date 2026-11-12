@@ -1,6 +1,6 @@
 {
   "name": "envoy",
-  "model": "src/Mods/Military/art/models/envoy.glb",
+  "model": "src/Ariel.Rules/Military/art/models/envoy.glb",
   "texture_path": "art/units/envoy/european/master_tobacconist.dds",
   "textures": [
     "art/units/envoy/european/master_tobacconist.dds"

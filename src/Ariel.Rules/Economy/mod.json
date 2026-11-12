@@ -1,0 +1,12 @@
+{
+  "id": "economy",
+  "name": "Economy",
+  "version": "1.1.6",
+  "dependencies": [
+    "cities"
+  ],
+  "references": [
+    "foundation",
+    "research"
+  ]
+}

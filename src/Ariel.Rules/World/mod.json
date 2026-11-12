@@ -1,0 +1,12 @@
+{
+  "id": "world",
+  "name": "World",
+  "version": "1.14.0",
+  "dependencies": [],
+  "references": [
+    "foundation",
+    "military",
+    "peoples",
+    "research"
+  ]
+}

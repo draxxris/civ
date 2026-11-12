@@ -1,6 +1,6 @@
 {
   "name": "inquisitor",
-  "model": "src/Mods/Military/art/models/inquisitor.glb",
+  "model": "src/Ariel.Rules/Military/art/models/inquisitor.glb",
   "texture_path": [
     "art/units/godsofold_inquisitor/inquisitor_128.dds",
     "art/units/godsofold_inquisitor/great_spy_ancient_diff.dds"

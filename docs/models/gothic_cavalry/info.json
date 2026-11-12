@@ -1,6 +1,6 @@
 {
   "name": "gothic_cavalry",
-  "model": "src/Mods/Military/art/models/gothic_cavalry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/gothic_cavalry.glb",
   "texture_path": [
     "art/goths/gothiccavalry/bb2.dds",
     "art/goths/gothiccavalry/mongol_weapons.dds",

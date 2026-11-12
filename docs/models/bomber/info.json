@@ -1,6 +1,6 @@
 {
   "name": "bomber",
-  "model": "src/Mods/Military/art/models/bomber.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bomber.glb",
   "texture_path": "art/units/bomber/bomber_256.dds",
   "textures": [
     "art/units/bomber/bomber_256.dds"

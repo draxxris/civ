@@ -1,6 +1,6 @@
 {
   "name": "executive_ultsoldier",
-  "model": "src/Mods/Military/art/models/executive_ultsoldier.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_ultsoldier.glb",
   "texture_path": [
     "art/units/executive/ultsoldiers_a.dds",
     "art/units/executive/ceo_case_64.dds",

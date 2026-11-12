@@ -1,6 +1,6 @@
 {
   "name": "nlos_cannon",
-  "model": "src/Mods/Military/art/models/nlos_cannon.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nlos_cannon.glb",
   "texture_path": "art/units/nlos cannon/disruptor.dds",
   "textures": [
     "art/units/nlos cannon/disruptor.dds"

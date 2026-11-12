@@ -1,6 +1,6 @@
 {
   "name": "attack_submarine",
-  "model": "src/Mods/Military/art/models/attack_submarine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/attack_submarine.glb",
   "texture_path": "art/units/nuclear_sub/nuclear_sub_256.dds",
   "textures": [
     "art/units/nuclear_sub/nuclear_sub_256.dds"

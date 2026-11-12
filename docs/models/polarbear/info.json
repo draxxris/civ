@@ -1,6 +1,6 @@
 {
   "name": "polarbear",
-  "model": "src/Mods/Military/art/models/polarbear.glb",
+  "model": "src/Ariel.Rules/Military/art/models/polarbear.glb",
   "texture_path": "art/units/animals/polarbear/bear.dds",
   "textures": [
     "art/units/animals/polarbear/bear.dds"

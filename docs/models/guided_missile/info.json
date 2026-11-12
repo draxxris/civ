@@ -1,6 +1,6 @@
 {
   "name": "guided_missile",
-  "model": "src/Mods/Military/art/models/guided_missile.glb",
+  "model": "src/Ariel.Rules/Military/art/models/guided_missile.glb",
   "texture_path": "art/units/guided_missile/bioweapon_missle_256.dds",
   "textures": [
     "art/units/guided_missile/bioweapon_missle_256.dds"

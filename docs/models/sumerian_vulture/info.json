@@ -1,6 +1,6 @@
 {
   "name": "sumerian_vulture",
-  "model": "src/Mods/Military/art/models/sumerian_vulture.glb",
+  "model": "src/Ariel.Rules/Military/art/models/sumerian_vulture.glb",
   "texture_path": "art/units/unique_sumeria_vulture/sumerian_vulture_128.dds",
   "textures": [
     "art/units/unique_sumeria_vulture/sumerian_vulture_128.dds"

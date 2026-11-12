@@ -26,6 +26,21 @@ public static class ModLoader
         UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow
     };
 
+    private static readonly List<Assembly> Shared = [typeof(ModLoader).Assembly];
+
+    /// <summary>Make a host assembly part of the mod API: a mod that references it binds to the host's copy instead of
+    /// loading its own, so both sides share one set of types. <c>Ariel.Core</c> is always shared.</summary>
+    public static void Share(Assembly assembly)
+    {
+        lock (Shared) if (!Shared.Contains(assembly)) Shared.Add(assembly);
+    }
+
+    /// <summary>The host's copy of a shared assembly, or null when <paramref name="name"/> is not part of the mod API.</summary>
+    public static Assembly? ResolveShared(AssemblyName name)
+    {
+        lock (Shared) return Shared.Find(a => a.GetName().Name == name.Name);
+    }
+
     /// <summary>Load a mod folder: <c>mod.json</c> + the DLL it names + optional sidecar data.</summary>
     public static ModSource FromDirectory(string dir) => FromDirectory(dir, ReadManifest(dir));
 
@@ -38,7 +53,8 @@ public static class ModLoader
         return FromAssembly(manifest, asm, dir);
     }
 
-    private static ModManifest ReadManifest(string root) =>
+    /// <summary>Read and parse <c>mod.json</c> in a mod or base module folder.</summary>
+    public static ModManifest ReadManifest(string root) =>
         JsonSerializer.Deserialize<ModManifest>(File.ReadAllText(Path.Combine(root, "mod.json")), Json)
         ?? throw new InvalidDataException($"{root}/mod.json is empty");
 
@@ -102,7 +118,7 @@ foreach (var dependency in mod.Manifest.Dependencies.Concat(mod.Manifest.Referen
         return result;
     }
 
-    /// <summary>Each mod gets its own load context, but the shared mod API (Ariel.Core) always resolves to the host's copy.</summary>
+    /// <summary>Each mod gets its own load context, but the shared mod API always resolves to the host's copy.</summary>
     private sealed class ModLoadContext : AssemblyLoadContext
     {
         private readonly AssemblyDependencyResolver _resolver;
@@ -111,7 +127,7 @@ foreach (var dependency in mod.Manifest.Dependencies.Concat(mod.Manifest.Referen
 
         protected override Assembly? Load(AssemblyName name)
         {
-            if (name.Name == typeof(ModLoader).Assembly.GetName().Name) return null;
+            if (ResolveShared(name) is { } shared) return shared;
             var p = _resolver.ResolveAssemblyToPath(name);
             return p == null ? null : LoadFromAssemblyPath(p);
         }

@@ -1,6 +1,6 @@
 {
   "name": "battleship",
-  "model": "src/Mods/Military/art/models/battleship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/battleship.glb",
   "texture_path": "art/units/battleship/battleship_256.dds",
   "textures": [
     "art/units/battleship/battleship_256.dds"

@@ -1,6 +1,6 @@
 {
   "name": "horse_archer",
-  "model": "src/Mods/Military/art/models/horse_archer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/horse_archer.glb",
   "texture_path": [
     "art/units/horsearcher/horsearcher-horse.dds",
     "art/units/horsearcher/horsearcher_128.dds"

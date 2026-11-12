@@ -1,6 +1,6 @@
 {
   "name": "privateer",
-  "model": "src/Mods/Military/art/models/privateer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/privateer.glb",
   "texture_path": "art/units/privateer/privateer_256.dds",
   "textures": [
     "art/units/privateer/privateer_256.dds"

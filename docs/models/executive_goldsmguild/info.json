@@ -1,6 +1,6 @@
 {
   "name": "executive_goldsmguild",
-  "model": "src/Mods/Military/art/models/executive_goldsmguild.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_goldsmguild.glb",
   "texture_path": [
     "art/units/guildmaster/brownguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

@@ -1,6 +1,6 @@
 {
   "name": "huns_tarkan",
-  "model": "src/Mods/Military/art/models/huns_tarkan.glb",
+  "model": "src/Ariel.Rules/Military/art/models/huns_tarkan.glb",
   "texture_path": [
     "art/huns/tarkan/mongol_rider_128.dds",
     "art/huns/tarkan/mongol_horse_128.dds"

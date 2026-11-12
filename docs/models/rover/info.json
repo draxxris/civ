@@ -1,6 +1,6 @@
 {
   "name": "rover",
-  "model": "src/Mods/Military/art/models/rover.glb",
+  "model": "src/Ariel.Rules/Military/art/models/rover.glb",
   "texture_path": "art/units/rover/rover.dds",
   "textures": [
     "art/units/rover/rover.dds"

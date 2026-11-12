@@ -86,12 +86,23 @@ public partial class Main : Node3D
     }
 
     /// <summary>Stable bundled candidate order. User installations and ARIEL_MODS take priority per ID.</summary>
-    private static IEnumerable<string> BundledModsRoots() => new[]
+    private static IEnumerable<string> BundledRoots() => new[]
     {
-        System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Main).Assembly.Location) ?? "", "mods"),
-        System.IO.Path.Combine(AppContext.BaseDirectory, "mods"),
-        System.IO.Path.Combine(ProjectSettings.GlobalizePath("res://"), "mods"),
+        System.IO.Path.GetDirectoryName(typeof(Main).Assembly.Location) ?? "",
+        AppContext.BaseDirectory,
+        ProjectSettings.GlobalizePath("res://"),
     };
+
+    private static IEnumerable<string> BundledModsRoots() =>
+        BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Rules.GameContent.ModsFolder));
+
+    /// <summary>The first bundled location that holds the base modules. They ship with the game and are never
+    /// replaced from user or environment mod folders.</summary>
+    private static string RulesRoot()
+    {
+        var candidates = BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Rules.GameContent.RulesFolder)).ToArray();
+        return candidates.FirstOrDefault(System.IO.Directory.Exists) ?? candidates[0];
+    }
 
     public override void _Process(double delta)
     {

@@ -1,6 +1,6 @@
 {
   "name": "captured_siberiantiger",
-  "model": "src/Mods/Military/art/models/captured_siberiantiger.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_siberiantiger.glb",
   "texture_path": "art/units/animals/siberiantiger/panther_black.dds",
   "textures": [
     "art/units/animals/siberiantiger/panther_black.dds"

@@ -1,6 +1,6 @@
 {
   "name": "turn",
-  "model": "src/Mods/Military/art/models/turn.glb",
+  "model": "src/Ariel.Rules/Military/art/models/turn.glb",
   "texture_path": "art/units/nukes/yam/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/yam/icbm_white_256.dds"

@@ -39,10 +39,11 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   (`SimulationSettings.GameOptions`, `Simulation.IsOptionEnabled`, Godot `SetupScreen`),
   world sizes (`WorldSizeDef`), speeds (`GameSpeedDef`), handicaps (`HandicapDef`), eras
   (`EraDef`), player teams, and initial gold.
-- **Hex tuning overrides**: `src/Mods/Foundation/data/hex-overrides.json` controls
+- **Hex tuning overrides**: `src/Ariel.Rules/Foundation/data/hex-overrides.json` controls
   hex-specific balance, including `barbarianUnownedTilesMultiplier` and
   `aiMinimumCityGarrison`.
-- **Dogfood mod isolation**: All features are standalone mods (`src/Mods/*`).
+- **Base modules and mods**: The base game is linked in from `src/Ariel.Rules`;
+  optional features are standalone mods (`src/Mods/*`) on the same registration API.
   `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or content kinds.
   Custom test rulesets run without shipped mods.
 
@@ -365,7 +366,7 @@ ______________________________________________________________________
 - [ ] **Default civics fallback**: Auto-fill missing civic selections for incomplete
   custom civilization declarations.
 - [ ] **Remaining game option flags**: Implement simulation rules for the unimplemented
-  game option definitions in `src/Mods/Foundation/data/game-option.json`.
+  game option definitions in `src/Ariel.Rules/Foundation/data/game-option.json`.
 - [ ] **Malformed-content guards**: Add fallback validation and default placeholders
   during content loading for missing technology identifiers in unlock tables or missing
   bonus identifiers in sight memory.

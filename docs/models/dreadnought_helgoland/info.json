@@ -1,6 +1,6 @@
 {
   "name": "dreadnought_helgoland",
-  "model": "src/Mods/Military/art/models/dreadnought_helgoland.glb",
+  "model": "src/Ariel.Rules/Military/art/models/dreadnought_helgoland.glb",
   "texture_path": [
     "art/units/dreadnought/european/extras.dds",
     "art/units/dreadnought/european/helgoland.dds",

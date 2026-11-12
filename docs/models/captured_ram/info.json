@@ -1,6 +1,6 @@
 {
   "name": "captured_ram",
-  "model": "src/Mods/Military/art/models/captured_ram.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_ram.glb",
   "texture_path": [
     "art/units/wild_ram/moufloneuropean_adult.dds",
     "art/units/wild_ram/mouf_beard.dds"

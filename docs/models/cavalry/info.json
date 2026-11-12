@@ -1,6 +1,6 @@
 {
   "name": "cavalry",
-  "model": "src/Mods/Military/art/models/cavalry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cavalry.glb",
   "texture_path": [
     "art/units/cavalry/cavalry_horse_128.dds",
     "art/units/cavalry/cavalry-weapons128.dds",

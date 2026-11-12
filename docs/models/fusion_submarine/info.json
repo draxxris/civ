@@ -1,6 +1,6 @@
 {
   "name": "fusion_submarine",
-  "model": "src/Mods/Military/art/models/fusion_submarine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_submarine.glb",
   "texture_path": "art/units/fusion submarine/manta.dds",
   "textures": [
     "art/units/fusion submarine/manta.dds"

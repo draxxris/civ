@@ -1,6 +1,6 @@
 {
   "name": "french_musketeer",
-  "model": "src/Mods/Military/art/models/french_musketeer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/french_musketeer.glb",
   "texture_path": "art/units/unique/french/musketeer/french_musketeer_128.dds",
   "textures": [
     "art/units/unique/french/musketeer/french_musketeer_128.dds"

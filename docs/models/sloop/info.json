@@ -1,6 +1,6 @@
 {
   "name": "sloop",
-  "model": "src/Mods/Military/art/models/sloop.glb",
+  "model": "src/Ariel.Rules/Military/art/models/sloop.glb",
   "texture_path": [
     "art/units/sloop/caravel_256.dds",
     "art/units/sloop/ship_rope02.dds"

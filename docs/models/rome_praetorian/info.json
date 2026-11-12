@@ -1,6 +1,6 @@
 {
   "name": "rome_praetorian",
-  "model": "src/Mods/Military/art/models/rome_praetorian.glb",
+  "model": "src/Ariel.Rules/Military/art/models/rome_praetorian.glb",
   "texture_path": [
     "art/units/unique/roman/praetorian/praetorian_weapons_64.dds",
     "art/units/unique/roman/praetorian/praetorian_128.dds"

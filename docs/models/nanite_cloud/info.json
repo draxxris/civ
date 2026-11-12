@@ -1,6 +1,6 @@
 {
   "name": "nanite_cloud",
-  "model": "src/Mods/Military/art/models/nanite_cloud.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nanite_cloud.glb",
   "texture_path": [
     "art/units/afterworld_boss/aw_boss_spike.dds",
     "art/units/afterworld_boss/clash_blue.dds",

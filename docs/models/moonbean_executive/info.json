@@ -1,6 +1,6 @@
 {
   "name": "moonbean_executive",
-  "model": "src/Mods/Military/art/models/moonbean_executive.glb",
+  "model": "src/Ariel.Rules/Military/art/models/moonbean_executive.glb",
   "texture_path": [
     "art/units/executive/moonbeam_a.dds",
     "art/units/executive/ceo_case_64.dds",

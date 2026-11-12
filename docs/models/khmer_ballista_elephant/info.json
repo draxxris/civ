@@ -1,6 +1,6 @@
 {
   "name": "khmer_ballista_elephant",
-  "model": "src/Mods/Military/art/models/khmer_ballista_elephant.glb",
+  "model": "src/Ariel.Rules/Military/art/models/khmer_ballista_elephant.glb",
   "texture_path": [
     "art/units/unique_khmer_elephantballista/khmerballistadriver_128.dds",
     "art/units/unique_khmer_elephantballista/khmerballistacar_128.dds",

@@ -1,6 +1,6 @@
 {
   "name": "lithuanian_vytis",
-  "model": "src/Mods/Military/art/models/lithuanian_vytis.glb",
+  "model": "src/Ariel.Rules/Military/art/models/lithuanian_vytis.glb",
   "texture_path": [
     "art/lithuania/vytis/heavycavalry_weapons_64.dds",
     "art/lithuania/vytis/heavycavalry_128.dds",

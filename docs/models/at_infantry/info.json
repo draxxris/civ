@@ -1,6 +1,6 @@
 {
   "name": "at_infantry",
-  "model": "src/Mods/Military/art/models/at_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/at_infantry.glb",
   "texture_path": "art/units/antitankinfantry/antitankinfantry_256.dds",
   "textures": [
     "art/units/antitankinfantry/antitankinfantry_256.dds"

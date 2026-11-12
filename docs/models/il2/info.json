@@ -1,6 +1,6 @@
 {
   "name": "il2",
-  "model": "src/Mods/Military/art/models/il2.glb",
+  "model": "src/Ariel.Rules/Military/art/models/il2.glb",
   "texture_path": [
     "art/units/il2/fighter_256.dds",
     "art/units/il2/il2textura.dds",

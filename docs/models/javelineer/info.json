@@ -1,6 +1,6 @@
 {
   "name": "javelineer",
-  "model": "src/Mods/Military/art/models/javelineer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/javelineer.glb",
   "texture_path": [
     "art/units/javelineer/european/scout_128.dds",
     "art/units/javelineer/european/jav_weapons_64.dds"

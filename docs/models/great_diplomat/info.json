@@ -1,6 +1,6 @@
 {
   "name": "great_diplomat",
-  "model": "src/Mods/Military/art/models/great_diplomat.glb",
+  "model": "src/Ariel.Rules/Military/art/models/great_diplomat.glb",
   "texture_path": [
     "art/units/great diplomat/settler_male_128.dds",
     "art/units/great diplomat/modernmerchant_moneybag_64.dds",

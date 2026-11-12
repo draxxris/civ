@@ -1,6 +1,6 @@
 {
   "name": "treasure",
-  "model": "src/Mods/Military/art/models/treasure.glb",
+  "model": "src/Ariel.Rules/Military/art/models/treasure.glb",
   "texture_path": [
     "art/units/treasure/treasure_holyman.dds",
     "art/units/treasure/treasure_cart.dds"

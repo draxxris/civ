@@ -1,6 +1,6 @@
 {
   "name": "czech_hussite",
-  "model": "src/Mods/Military/art/models/czech_hussite.glb",
+  "model": "src/Ariel.Rules/Military/art/models/czech_hussite.glb",
   "texture_path": [
     "art/czech/hussite/holyromanmusketman_128.dds",
     "art/czech/hussite/musketman.dds"

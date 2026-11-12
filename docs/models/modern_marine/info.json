@@ -1,6 +1,6 @@
 {
   "name": "modern_marine",
-  "model": "src/Mods/Military/art/models/modern_marine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/modern_marine.glb",
   "texture_path": [
     "art/units/modern marine/marine_128.dds",
     "art/units/modern marine/m16a2.dds",

@@ -1,6 +1,6 @@
 {
   "name": "brigantine",
-  "model": "src/Mods/Military/art/models/brigantine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/brigantine.glb",
   "texture_path": [
     "art/units/brigantine/caravel_256.dds",
     "art/units/brigantine/ship_rope02.dds"

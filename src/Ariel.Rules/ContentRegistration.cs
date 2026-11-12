@@ -1,0 +1,37 @@
+using Ariel.Content;
+using Ariel.Modding;
+
+namespace Ariel.Rules;
+
+/// <summary>Shared sidecar registration for base modules and mods.</summary>
+public static class ContentRegistration
+{
+    public static void Load<T>(IModContext context, ModJsonFile<T[]> file) where T : ContentDef
+    {
+        var registry = context.Content<T>();
+        foreach (var definition in file.Read(context.Data)) registry.Register(definition);
+    }
+
+    public static void Evaluator<T>(IModContext context, string kind, Func<Requirement.Leaf, RequirementContext, bool>? predicate = null) where T : ContentDef =>
+        context.RegisterService<IRequirementEvaluator>(kind + "_requirements", new PartialEvaluator<T>(kind, predicate));
+
+    private sealed class PartialEvaluator<T>(string kind, Func<Requirement.Leaf, RequirementContext, bool>? predicate) : IContentRequirementEvaluator where T : ContentDef
+    {
+        public string Kind => kind;
+        public Type DefinitionType => typeof(T);
+        public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
+        {
+            // TODO: owning feature rules must implement missing state and scope semantics. Never grant an unavailable mechanic.
+            if (predicate is null)
+            {
+                if (kind is "condition" or "culture-level" or "era")
+                {
+                    var service = context.Sim.Content.Services.Get<Ariel.Game.ICityRequirementService>().SingleOrDefault();
+                    if (service is not null) return service.Evaluate(leaf, context);
+                }
+                return $"Requirement '{kind}' is unavailable until its owning rules implement runtime state";
+            }
+            return predicate(leaf, context) ? null : $"Required {kind}: {leaf.Id}";
+        }
+    }
+}

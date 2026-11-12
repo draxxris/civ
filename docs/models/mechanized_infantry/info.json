@@ -1,6 +1,6 @@
 {
   "name": "mechanized_infantry",
-  "model": "src/Mods/Military/art/models/mechanized_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/mechanized_infantry.glb",
   "texture_path": "art/units/mechanizedinfantry/mechanized_infantry_256.dds",
   "textures": [
     "art/units/mechanizedinfantry/mechanized_infantry_256.dds"

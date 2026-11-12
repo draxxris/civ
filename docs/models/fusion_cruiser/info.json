@@ -1,6 +1,6 @@
 {
   "name": "fusion_cruiser",
-  "model": "src/Mods/Military/art/models/fusion_cruiser.glb",
+  "model": "src/Ariel.Rules/Military/art/models/fusion_cruiser.glb",
   "texture_path": "art/units/finalfrontier_cruiser/cruiser_diff.dds",
   "textures": [
     "art/units/finalfrontier_cruiser/cruiser_diff.dds"

@@ -2,6 +2,10 @@
 description = "List the tasks this repository supports; call these instead of tools/*.sh, tools/*.py, dotnet, or godot-mono directly"
 run = "mise tasks"
 
+[tasks.build]
+description = "Build the headless solution (core, rules, mods, tools and tests) without running tests"
+run = "dotnet build Ariel.slnx -v quiet -nologo"
+
 [tasks."build:game"]
 description = "Build the Godot game"
 depends = ["cool"]
@@ -108,7 +112,7 @@ depends = ["cool"]
 run = "python3 tools/art/render_unit_models.py"
 
 [tasks."art:fall-ledge"]
-description = "Write the waterfall ledge rock model to src/Mods/World/art/scatter/fall_ledges/Ledge_1.glb"
+description = "Write the waterfall ledge rock model to src/Ariel.Rules/World/art/scatter/fall_ledges/Ledge_1.glb"
 run = "uv run --script tools/art/fall_ledge.py"
 
 [tasks.validate]

@@ -1,6 +1,6 @@
 {
   "name": "captured_bengaltiger",
-  "model": "src/Mods/Military/art/models/captured_bengaltiger.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_bengaltiger.glb",
   "texture_path": "art/units/animals/bengaltiger/panther_black.dds",
   "textures": [
     "art/units/animals/bengaltiger/panther_black.dds"

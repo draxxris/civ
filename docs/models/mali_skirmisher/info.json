@@ -1,6 +1,6 @@
 {
   "name": "mali_skirmisher",
-  "model": "src/Mods/Military/art/models/mali_skirmisher.glb",
+  "model": "src/Ariel.Rules/Military/art/models/mali_skirmisher.glb",
   "texture_path": [
     "art/units/unique/mali/skirmisher/skirmisher_128.dds",
     "art/units/unique/mali/skirmisher/skirmisher_weapons_64.dds"

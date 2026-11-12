@@ -1,6 +1,6 @@
 {
   "name": "bazooka",
-  "model": "src/Mods/Military/art/models/bazooka.glb",
+  "model": "src/Ariel.Rules/Military/art/models/bazooka.glb",
   "texture_path": "art/units/bazooka/european/saminfantry_128.dds",
   "textures": [
     "art/units/bazooka/european/saminfantry_128.dds"

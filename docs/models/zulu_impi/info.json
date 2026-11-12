@@ -1,6 +1,6 @@
 {
   "name": "zulu_impi",
-  "model": "src/Mods/Military/art/models/zulu_impi.glb",
+  "model": "src/Ariel.Rules/Military/art/models/zulu_impi.glb",
   "texture_path": "art/units/zulu_impi/zulu_impi.dds",
   "textures": [
     "art/units/zulu_impi/zulu_impi.dds"

@@ -1,6 +1,6 @@
 {
   "name": "jeep",
-  "model": "src/Mods/Military/art/models/jeep.glb",
+  "model": "src/Ariel.Rules/Military/art/models/jeep.glb",
   "texture_path": [
     "art/units/jeep/jeep.dds",
     "art/units/jeep/jeep_ww.dds",

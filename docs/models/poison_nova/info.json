@@ -1,6 +1,6 @@
 {
   "name": "poison_nova",
-  "model": "src/Mods/Military/art/models/poison_nova.glb",
+  "model": "src/Ariel.Rules/Military/art/models/poison_nova.glb",
   "texture_path": "art/units/nukes/poisonnova/icbm_white_256.dds",
   "textures": [
     "art/units/nukes/poisonnova/icbm_white_256.dds"

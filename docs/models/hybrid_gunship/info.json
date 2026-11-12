@@ -1,6 +1,6 @@
 {
   "name": "hybrid_gunship",
-  "model": "src/Mods/Military/art/models/hybrid_gunship.glb",
+  "model": "src/Ariel.Rules/Military/art/models/hybrid_gunship.glb",
   "texture_path": "art/units/hybrid gunship/heavymisslehelicopter.dds",
   "textures": [
     "art/units/hybrid gunship/heavymisslehelicopter.dds"

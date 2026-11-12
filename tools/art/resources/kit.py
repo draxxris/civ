@@ -34,7 +34,7 @@ from mathutils import Matrix, Vector, geometry, noise
 from mathutils.bvhtree import BVHTree
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-OUT = REPO_ROOT / "src/Mods/World/art/models"
+OUT = REPO_ROOT / "src/Ariel.Rules/World/art/models"
 R = 0.29  # land models stay within this reach of their origin
 FOOT = -0.05  # most parts reach this far below their seat point
 DEEP = -0.16  # rocks reach this deep, for steep mountain flanks

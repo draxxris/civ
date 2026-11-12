@@ -1,6 +1,6 @@
 {
   "name": "executive_red",
-  "model": "src/Mods/Military/art/models/executive_red.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_red.glb",
   "texture_path": [
     "art/units/executive/redcurtains_a.dds",
     "art/units/executive/ceo_case_64.dds",

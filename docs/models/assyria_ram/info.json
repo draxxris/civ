@@ -1,6 +1,6 @@
 {
   "name": "assyria_ram",
-  "model": "src/Mods/Military/art/models/assyria_ram.glb",
+  "model": "src/Ariel.Rules/Military/art/models/assyria_ram.glb",
   "texture_path": [
     "art/units/battering_ram/ram.dds",
     "art/units/battering_ram/annual_rings.nif",

@@ -1,6 +1,6 @@
 {
   "name": "jet_fighter",
-  "model": "src/Mods/Military/art/models/jet_fighter.glb",
+  "model": "src/Ariel.Rules/Military/art/models/jet_fighter.glb",
   "texture_path": "art/units/jetfighter/jetfighter_256.dds",
   "textures": [
     "art/units/jetfighter/jetfighter_256.dds"

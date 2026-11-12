@@ -1,6 +1,6 @@
 {
   "name": "axeman_latvia",
-  "model": "src/Mods/Military/art/models/axeman_latvia.glb",
+  "model": "src/Ariel.Rules/Military/art/models/axeman_latvia.glb",
   "texture_path": [
     "art/latvia/axemanlatvia/axeman_128.dds",
     "art/latvia/axemanlatvia/lightswordsman_128.dds"

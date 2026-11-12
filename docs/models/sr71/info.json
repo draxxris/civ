@@ -1,6 +1,6 @@
 {
   "name": "sr71",
-  "model": "src/Mods/Military/art/models/sr71.glb",
+  "model": "src/Ariel.Rules/Military/art/models/sr71.glb",
   "texture_path": "art/units/sr71/sr71.dds",
   "textures": [
     "art/units/sr71/sr71.dds"

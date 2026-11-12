@@ -1,6 +1,6 @@
 {
   "name": "artist",
-  "model": "src/Mods/Military/art/models/artist.glb",
+  "model": "src/Ariel.Rules/Military/art/models/artist.glb",
   "texture_path": "art/units/greatpeople/artist/great_artist_128.dds",
   "textures": [
     "art/units/greatpeople/artist/great_artist_128.dds"

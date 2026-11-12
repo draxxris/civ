@@ -1,6 +1,6 @@
 {
   "name": "longbowman",
-  "model": "src/Mods/Military/art/models/longbowman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/longbowman.glb",
   "texture_path": [
     "art/units/longbowman/longbowman.dds",
     "art/units/longbowman/longbowman_128.dds"

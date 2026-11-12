@@ -1,6 +1,6 @@
 {
   "name": "light_tank",
-  "model": "src/Mods/Military/art/models/light_tank.glb",
+  "model": "src/Ariel.Rules/Military/art/models/light_tank.glb",
   "texture_path": [
     "art/units/light tank/european/vickers.dds",
     "art/units/light tank/european/t-26.dds"

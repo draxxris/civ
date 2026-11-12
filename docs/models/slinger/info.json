@@ -1,6 +1,6 @@
 {
   "name": "slinger",
-  "model": "src/Mods/Military/art/models/slinger.glb",
+  "model": "src/Ariel.Rules/Military/art/models/slinger.glb",
   "texture_path": "art/units/peltast/peltast_128x256.dds",
   "textures": [
     "art/units/peltast/peltast_128x256.dds"

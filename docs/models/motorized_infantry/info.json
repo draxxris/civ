@@ -1,6 +1,6 @@
 {
   "name": "motorized_infantry",
-  "model": "src/Mods/Military/art/models/motorized_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/motorized_infantry.glb",
   "texture_path": "art/units/armor_units/fiat_618_grom/1_c.dds",
   "textures": [
     "art/units/armor_units/fiat_618_grom/1_c.dds"

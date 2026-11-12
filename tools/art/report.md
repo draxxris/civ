@@ -2,11 +2,11 @@
 
 ## Run
 
-- Registry: `src/Mods/Military/data/unit.json` (359 units in this run).
+- Registry: `src/Ariel.Rules/Military/data/unit.json` (359 units in this run).
 - Source: `/home/gordon/workspace/civ/AND-extraction`.
 - Converted: **357**. Failed: **2**.
 - Animated: **351**. Skinned: **333**. Textured: **357**.
-- Output: `src/Mods/Military/art/models/<unit-id-suffix>.glb`.
+- Output: `src/Ariel.Rules/Military/art/models/<unit-id-suffix>.glb`.
 - Total GLB size: 122,761,108 bytes.
 - The report itself is the art registry. Each unit section identifies its source and output status.
 
@@ -54,7 +54,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:007
 
-- Model: `src/Mods/Military/art/models/007.glb` (484,940 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/007.glb` (484,940 bytes).
 - Art: `ART_DEF_UNIT_007`. Source scale: 0.46.
 - NIF: `art/units/007/007.nif`.
 - KFM: `art/units/great_spy_modern/great_spy_modern.kfm`.
@@ -69,7 +69,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:acv
 
-- Model: `src/Mods/Military/art/models/acv.glb` (219,236 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/acv.glb` (219,236 bytes).
 - Art: `ART_DEF_UNIT_ACV`. Source scale: 0.43.
 - NIF: `art/units/acv/acv.nif`.
 - KFM: `art/units/mechanizedinfantry/mechanizedinfantry.kfm`.
@@ -85,7 +85,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:acvsam
 
-- Model: `src/Mods/Military/art/models/acvsam.glb` (289,896 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/acvsam.glb` (289,896 bytes).
 - Art: `ART_DEF_UNIT_ACVSAM`. Source scale: 0.48.
 - NIF: `art/units/acv sam/acv_sam.nif`.
 - KFM: `art/units/mobilesam/mobilesam.kfm`.
@@ -101,7 +101,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:adventurer
 
-- Model: `src/Mods/Military/art/models/adventurer.glb` (597,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/adventurer.glb` (597,992 bytes).
 - Art: `ART_DEF_UNIT_ADVENTURER`. Source scale: 0.42.
 - NIF: `art/units/adventurer/persianimmortal.nif`.
 - KFM: `art/units/unique/persia/immortal/persianimmortal.kfm`.
@@ -118,7 +118,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:agent
 
-- Model: `src/Mods/Military/art/models/agent.glb` (488,816 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/agent.glb` (488,816 bytes).
 - Art: `ART_DEF_UNIT_AGENT`. Source scale: 0.46.
 - NIF: `art/units/agent/agent.nif`.
 - KFM: `art/units/great_spy_modern/great_spy_modern.kfm`.
@@ -133,7 +133,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ah64_gunship
 
-- Model: `src/Mods/Military/art/models/ah64_gunship.glb` (387,420 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ah64_gunship.glb` (387,420 bytes).
 - Art: `ART_DEF_UNIT_AH64_GUNSHIP`. Source scale: 0.36.
 - NIF: `art/units/gunship/ah64/ah64.nif`.
 - KFM: `art/units/gunship/gunship.kfm`.
@@ -149,7 +149,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:airship
 
-- Model: `src/Mods/Military/art/models/airship.glb` (246,348 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/airship.glb` (246,348 bytes).
 - Art: `ART_DEF_UNIT_AIRSHIP`. Source scale: 0.3.
 - NIF: `art/units/airship/airship.nif`.
 - KFM: `art/units/airship/airship.kfm`.
@@ -164,7 +164,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:albanian_light_guerilla_cavalry
 
-- Model: `src/Mods/Military/art/models/albanian_light_guerilla_cavalry.glb` (604,600 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/albanian_light_guerilla_cavalry.glb` (604,600 bytes).
 - Art: `ART_DEF_UNIT_KALORSE_KNIGHT`. Source scale: 0.42.
 - NIF: `art/albania/kalorse/knight/knight.nif`.
 - KFM: `art/albania/kalorse/knight/knight.kfm`.
@@ -182,7 +182,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ambassador
 
-- Model: `src/Mods/Military/art/models/ambassador.glb` (444,580 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ambassador.glb` (444,580 bytes).
 - Art: `ART_DEF_UNIT_AMBASSADOR`. Source scale: 0.46.
 - NIF: `art/units/ambassador/great_spy_modern_fx.nif`.
 - KFM: `art/units/great_spy_modern/great_spy_modern.kfm`.
@@ -197,7 +197,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:american_navy_seal
 
-- Model: `src/Mods/Military/art/models/american_navy_seal.glb` (345,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/american_navy_seal.glb` (345,428 bytes).
 - Art: `ART_DEF_UNIT_AMERICAN_NAVY_SEAL`. Source scale: 0.44.
 - NIF: `art/units/unique/american navy seal/marines.nif`.
 - KFM: `art/units/unique/american navy seal/marines.kfm`.
@@ -214,7 +214,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:anglo_saxon_huscarl
 
-- Model: `src/Mods/Military/art/models/anglo_saxon_huscarl.glb` (298,100 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/anglo_saxon_huscarl.glb` (298,100 bytes).
 - Art: `ART_DEF_UNIT_ANGLO_SAXON_HUSCARL`. Source scale: 0.44.
 - NIF: `art/anglosaxons/huskarl/huscarl.nif`.
 - KFM: `art/anglosaxons/huskarl/huscarl.kfm`.
@@ -231,7 +231,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:arabia_camelarcher
 
-- Model: `src/Mods/Military/art/models/arabia_camelarcher.glb` (672,236 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/arabia_camelarcher.glb` (672,236 bytes).
 - Art: `ART_DEF_UNIT_ARABIA_CAMELARCHER`. Source scale: 0.39.
 - NIF: `art/units/unique/arabia/camelarcher/arabiacamelarcher.nif`.
 - KFM: `art/units/unique/arabia/camelarcher/arabiacamelarcher.kfm`.
@@ -249,7 +249,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:archer
 
-- Model: `src/Mods/Military/art/models/archer.glb` (367,084 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/archer.glb` (367,084 bytes).
 - Art: `ART_DEF_UNIT_ARCHER`. Source scale: 0.44.
 - NIF: `art/units/archer/archer.nif`.
 - KFM: `art/units/archer/archer.kfm`.
@@ -267,7 +267,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:armor_m60
 
-- Model: `src/Mods/Military/art/models/armor_m60.glb` (219,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/armor_m60.glb` (219,428 bytes).
 - Art: `ART_DEF_UNIT_ARMOR_M60`. Source scale: 0.4.
 - NIF: `art/units/main battle tank/generic/m60.nif`.
 - KFM: `art/units/main battle tank/generic/m60.kfm`.
@@ -283,7 +283,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:armored_car
 
-- Model: `src/Mods/Military/art/models/armored_car.glb` (165,076 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/armored_car.glb` (165,076 bytes).
 - Art: `ART_DEF_UNIT_ARMORED_CAR`. Source scale: 0.40.
 - NIF: `art/units/armored car/rollsroyce.nif`.
 - KFM: `art/units/armored car/rollsroyce.kfm`.
@@ -299,7 +299,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:arquebusier
 
-- Model: `src/Mods/Military/art/models/arquebusier.glb` (319,748 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/arquebusier.glb` (319,748 bytes).
 - Art: `ART_DEF_UNIT_ARQUEBUSIER`. Source scale: 0.44.
 - NIF: `art/units/musketman/musketman.nif`.
 - KFM: `art/units/musketman/musketman.kfm`.
@@ -316,7 +316,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:artillery
 
-- Model: `src/Mods/Military/art/models/artillery.glb` (180,060 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/artillery.glb` (180,060 bytes).
 - Art: `ART_DEF_UNIT_ARTILLERY`. Source scale: 0.65.
 - NIF: `art/units/artillery/artillery.nif`.
 - KFM: `art/units/artillery/artillery.kfm`.
@@ -332,7 +332,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:artist
 
-- Model: `src/Mods/Military/art/models/artist.glb` (207,052 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/artist.glb` (207,052 bytes).
 - Art: `ART_DEF_UNIT_ARTIST`. Source scale: 0.46.
 - NIF: `art/units/greatpeople/artist/greatartist.nif`.
 - KFM: `art/units/greatpeople/artist/greatartist.kfm`.
@@ -346,7 +346,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:asatru_missionary
 
-- Model: `src/Mods/Military/art/models/asatru_missionary.glb` (200,788 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/asatru_missionary.glb` (200,788 bytes).
 - Art: `ART_DEF_UNIT_ASATRU_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/gothi/missionary_general.nif`.
 - KFM: `art/units/gothi/missionary_general.kfm`.
@@ -361,7 +361,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:assault_droid
 
-- Model: `src/Mods/Military/art/models/assault_droid.glb` (458,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/assault_droid.glb` (458,276 bytes).
 - Art: `ART_DEF_UNIT_ASSAULT_DROID`. Source scale: 0.8.
 - NIF: `art/units/assault droid/mech.nif`.
 - KFM: `art/units/assault droid/mech.kfm`.
@@ -377,7 +377,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:assault_mech
 
-- Model: `src/Mods/Military/art/models/assault_mech.glb` (396,896 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/assault_mech.glb` (396,896 bytes).
 - Art: `ART_DEF_UNIT_ASSAULT_MECH`. Source scale: 0.35.
 - NIF: `art/units/assault_mech/nextwar_assaultmech.nif`.
 - KFM: `art/units/assault_mech/nextwar_assaultmech.kfm`.
@@ -393,7 +393,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:assyria_ram
 
-- Model: `src/Mods/Military/art/models/assyria_ram.glb` (334,996 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/assyria_ram.glb` (334,996 bytes).
 - Art: `ART_DEF_UNIT_ASSYRIA_RAM`. Source scale: 0.70.
 - NIF: `art/units/battering_ram/catapult.nif`.
 - KFM: `art/units/siege ram/ram.kfm`.
@@ -411,7 +411,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:assyrian_redu
 
-- Model: `src/Mods/Military/art/models/assyrian_redu.glb` (313,792 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/assyrian_redu.glb` (313,792 bytes).
 - Art: `ART_DEF_UNIT_ASSYRIAN_REDU`. Source scale: 0.44.
 - NIF: `art/units/redu/spearman.nif`.
 - KFM: `art/units/redu/spearman.kfm`.
@@ -428,7 +428,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:at_infantry
 
-- Model: `src/Mods/Military/art/models/at_infantry.glb` (437,016 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/at_infantry.glb` (437,016 bytes).
 - Art: `ART_DEF_UNIT_AT_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/antitankinfantry/wwantitankinfantry.nif`.
 - KFM: `art/units/antitankinfantry/wwantitankinfantry.kfm`.
@@ -444,7 +444,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:atomic
 
-- Model: `src/Mods/Military/art/models/atomic.glb` (226,108 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/atomic.glb` (226,108 bytes).
 - Art: `ART_DEF_UNIT_ATOMIC`. Source scale: 0.5.
 - NIF: `art/units/a bomb/bomber.nif`.
 - KFM: `art/units/a bomb/bomber.kfm`.
@@ -459,7 +459,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:attack_submarine
 
-- Model: `src/Mods/Military/art/models/attack_submarine.glb` (186,856 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/attack_submarine.glb` (186,856 bytes).
 - Art: `ART_DEF_UNIT_ATTACK_SUBMARINE`. Source scale: 0.35.
 - NIF: `art/units/nuclear_sub/nuclear_sub.nif`.
 - KFM: `art/units/nuclear_sub/nuclear_sub.kfm`.
@@ -476,7 +476,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:automatons
 
-- Model: `src/Mods/Military/art/models/automatons.glb` (299,900 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/automatons.glb` (299,900 bytes).
 - Art: `ART_DEF_UNIT_AUTOMATON`. Source scale: 0.44.
 - NIF: `art/units/nextwar_automaton/nextwar_automaton.nif`.
 - KFM: `art/units/nextwar_automaton/nextwar_automaton.kfm`.
@@ -500,7 +500,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:axeman
 
-- Model: `src/Mods/Military/art/models/axeman.glb` (301,188 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/axeman.glb` (301,188 bytes).
 - Art: `ART_DEF_UNIT_AXEMAN`. Source scale: 0.44.
 - NIF: `art/units/axeman/axeman.nif`.
 - KFM: `art/units/axeman/axeman.kfm`.
@@ -517,7 +517,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:axeman_latvia
 
-- Model: `src/Mods/Military/art/models/axeman_latvia.glb` (257,656 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/axeman_latvia.glb` (257,656 bytes).
 - Art: `ART_DEF_UNIT_AXEMAN_LATVIA`. Source scale: 0.44.
 - NIF: `art/latvia/axemanlatvia/axeman.nif`.
 - KFM: `art/latvia/axemanlatvia/axeman.kfm`.
@@ -535,7 +535,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:aztec_jaguar
 
-- Model: `src/Mods/Military/art/models/aztec_jaguar.glb` (363,636 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/aztec_jaguar.glb` (363,636 bytes).
 - Art: `ART_DEF_UNIT_AZTEC_JAGUAR`. Source scale: 0.44.
 - NIF: `art/units/unique/aztec/jaguar/aztec_jaguar.nif`.
 - KFM: `art/units/unique/aztec/jaguar/aztec_jaguar.kfm`.
@@ -552,7 +552,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:b52
 
-- Model: `src/Mods/Military/art/models/b52.glb` (171,128 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/b52.glb` (171,128 bytes).
 - Art: `ART_DEF_UNIT_B52`. Source scale: 0.5.
 - NIF: `art/units/strategic bomber/b52.nif`.
 - KFM: `art/units/stealthbomber/stealthbomber.kfm`.
@@ -567,7 +567,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:babylon_bowman
 
-- Model: `src/Mods/Military/art/models/babylon_bowman.glb` (272,912 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/babylon_bowman.glb` (272,912 bytes).
 - Art: `ART_DEF_UNIT_BABYLON_BOWMAN`. Source scale: 0.44.
 - NIF: `art/units/unique_babylon_bowman/unique_babylon_bowman.nif`.
 - KFM: `art/units/unique_babylon_bowman/unique_babylon_bowman.kfm`.
@@ -591,7 +591,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:battleship
 
-- Model: `src/Mods/Military/art/models/battleship.glb` (360,772 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/battleship.glb` (360,772 bytes).
 - Art: `ART_DEF_UNIT_BATTLESHIP`. Source scale: 0.8.
 - NIF: `art/units/battleship/battleship.nif`.
 - KFM: `art/units/battleship/battleship.kfm`.
@@ -608,7 +608,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bazooka
 
-- Model: `src/Mods/Military/art/models/bazooka.glb` (386,168 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bazooka.glb` (386,168 bytes).
 - Art: `ART_DEF_UNIT_BAZOOKA`. Source scale: 0.44.
 - NIF: `art/units/bazooka/european/saminfantry.nif`.
 - KFM: `art/units/bazooka/european/saminfantry.kfm`.
@@ -625,7 +625,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bear
 
-- Model: `src/Mods/Military/art/models/bear.glb` (277,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bear.glb` (277,992 bytes).
 - Art: `ART_DEF_UNIT_BEAR`. Source scale: 0.6.
 - NIF: `art/units/bear/bear.nif`.
 - KFM: `art/units/bear/bear.kfm`.
@@ -642,7 +642,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bengaltiger
 
-- Model: `src/Mods/Military/art/models/bengaltiger.glb` (350,548 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bengaltiger.glb` (350,548 bytes).
 - Art: `ART_DEF_UNIT_BENGALTIGER`. Source scale: 0.6.
 - NIF: `art/units/animals/bengaltiger/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -659,7 +659,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bgmaster
 
-- Model: `src/Mods/Military/art/models/bgmaster.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bgmaster.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_BGMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -674,7 +674,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:biological_warfare_missile
 
-- Model: `src/Mods/Military/art/models/biological_warfare_missile.glb` (81,748 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/biological_warfare_missile.glb` (81,748 bytes).
 - Art: `ART_DEF_UNIT_BIOLOGICAL_WARFARE_MISSILE`. Source scale: 0.40.
 - NIF: `art/units/bioweapon_missile/bioweapon_missile.nif`.
 - KFM: `art/units/bioweapon_missile/bioweapon_missile.kfm`.
@@ -688,7 +688,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bleeder
 
-- Model: `src/Mods/Military/art/models/bleeder.glb` (403,552 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bleeder.glb` (403,552 bytes).
 - Art: `ART_DEF_UNIT_CYBORG1`. Source scale: 0.44.
 - NIF: `art/units/genetic soldier/saminfantry.nif`.
 - KFM: `art/units/saminfantry/saminfantry.kfm`.
@@ -706,7 +706,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:boar
 
-- Model: `src/Mods/Military/art/models/boar.glb` (641,476 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/boar.glb` (641,476 bytes).
 - Art: `ART_DEF_UNIT_BOAR`. Source scale: 0.38.
 - NIF: `art/units/boar/companion_cavalry.nif`.
 - KFM: `art/units/knight_south_america/companion_cavalry.kfm`.
@@ -731,7 +731,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bombard
 
-- Model: `src/Mods/Military/art/models/bombard.glb` (226,540 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bombard.glb` (226,540 bytes).
 - Art: `ART_DEF_UNIT_BOMBARD`. Source scale: 0.53.
 - NIF: `art/units/bombard/bombardb.nif`.
 - KFM: `art/units/bombard/bombardb.kfm`.
@@ -747,7 +747,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bomber
 
-- Model: `src/Mods/Military/art/models/bomber.glb` (275,164 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bomber.glb` (275,164 bytes).
 - Art: `ART_DEF_UNIT_BOMBER`. Source scale: 0.5.
 - NIF: `art/units/bomber/bomber.nif`.
 - KFM: `art/units/bomber/bomber.kfm`.
@@ -762,7 +762,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:brigantine
 
-- Model: `src/Mods/Military/art/models/brigantine.glb` (216,552 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/brigantine.glb` (216,552 bytes).
 - Art: `ART_DEF_UNIT_CARAVEL_SQUARERIG`. Source scale: 0.22.
 - NIF: `art/units/brigantine/caravel.nif`.
 - KFM: `art/units/caravel/caravel.kfm`.
@@ -779,7 +779,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:buddhist_missionary
 
-- Model: `src/Mods/Military/art/models/buddhist_missionary.glb` (224,872 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/buddhist_missionary.glb` (224,872 bytes).
 - Art: `ART_DEF_UNIT_BUDDHIST_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/buddhist/buddhist_missionary.nif`.
 - KFM: `art/units/missionary/buddhist/buddhist_missionary.kfm`.
@@ -794,7 +794,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bulgarian_konnik
 
-- Model: `src/Mods/Military/art/models/bulgarian_konnik.glb` (597,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bulgarian_konnik.glb` (597,276 bytes).
 - Art: `ART_DEF_UNIT_KONNIK`. Source scale: 0.42.
 - NIF: `art/bulgaria/konnik/horseman_eurasian.nif`.
 - KFM: `art/bulgaria/konnik/horseman_eurasian.kfm`.
@@ -811,7 +811,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:bull
 
-- Model: `src/Mods/Military/art/models/bull.glb` (112,608 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/bull.glb` (112,608 bytes).
 - Art: `ART_DEF_UNIT_BULL`. Source scale: 0.5.
 - NIF: `art/units/bull/cow.nif`.
 - KFM: `art/units/charlemagne_heavycavalry/heavycavalry.kfm`.
@@ -828,7 +828,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:byzantine_cataphract
 
-- Model: `src/Mods/Military/art/models/byzantine_cataphract.glb` (770,668 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/byzantine_cataphract.glb` (770,668 bytes).
 - Art: `ART_DEF_UNIT_BYZANTINE_CATAPHRACT`. Source scale: 0.42.
 - NIF: `art/units/unique_byzantine_cataphract/unique_byzantine_cataphract.nif`.
 - KFM: `art/units/unique_byzantine_cataphract/unique_byzantine_cataphract.kfm`.
@@ -845,7 +845,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cannon
 
-- Model: `src/Mods/Military/art/models/cannon.glb` (363,272 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cannon.glb` (363,272 bytes).
 - Art: `ART_DEF_UNIT_CANNON`. Source scale: 0.53.
 - NIF: `art/units/cannon/cannon.nif`.
 - KFM: `art/units/cannon/cannon.kfm`.
@@ -861,7 +861,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_bear
 
-- Model: `src/Mods/Military/art/models/captured_bear.glb` (277,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_bear.glb` (277,992 bytes).
 - Art: `ART_DEF_UNIT_BEAR`. Source scale: 0.6.
 - NIF: `art/units/bear/bear.nif`.
 - KFM: `art/units/bear/bear.kfm`.
@@ -878,7 +878,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_bengaltiger
 
-- Model: `src/Mods/Military/art/models/captured_bengaltiger.glb` (350,548 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_bengaltiger.glb` (350,548 bytes).
 - Art: `ART_DEF_UNIT_BENGALTIGER`. Source scale: 0.6.
 - NIF: `art/units/animals/bengaltiger/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -895,7 +895,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_boar
 
-- Model: `src/Mods/Military/art/models/captured_boar.glb` (641,476 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_boar.glb` (641,476 bytes).
 - Art: `ART_DEF_UNIT_BOAR`. Source scale: 0.38.
 - NIF: `art/units/boar/companion_cavalry.nif`.
 - KFM: `art/units/knight_south_america/companion_cavalry.kfm`.
@@ -920,7 +920,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_bull
 
-- Model: `src/Mods/Military/art/models/captured_bull.glb` (112,608 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_bull.glb` (112,608 bytes).
 - Art: `ART_DEF_UNIT_BULL`. Source scale: 0.5.
 - NIF: `art/units/bull/cow.nif`.
 - KFM: `art/units/charlemagne_heavycavalry/heavycavalry.kfm`.
@@ -937,7 +937,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_cave_lion
 
-- Model: `src/Mods/Military/art/models/captured_cave_lion.glb` (320,020 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_cave_lion.glb` (320,020 bytes).
 - Art: `ART_DEF_UNIT_CAVELION`. Source scale: 0.75.
 - NIF: `art/units/animals/cavelion/lion.nif`.
 - KFM: `art/units/animals/cavelion/lion.kfm`.
@@ -954,7 +954,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_cavebear
 
-- Model: `src/Mods/Military/art/models/captured_cavebear.glb` (276,416 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_cavebear.glb` (276,416 bytes).
 - Art: `ART_DEF_UNIT_CAVEBEAR`. Source scale: 0.8.
 - NIF: `art/units/animals/cavebear/bear.nif`.
 - KFM: `art/units/animals/cavebear/bear.kfm`.
@@ -971,7 +971,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_cheetah
 
-- Model: `src/Mods/Military/art/models/captured_cheetah.glb` (272,172 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_cheetah.glb` (272,172 bytes).
 - Art: `ART_DEF_UNIT_CHEETAH`. Source scale: 0.45.
 - NIF: `art/units/animals/cheetah/panther.nif`.
 - KFM: `art/units/animals/cheetah/panther.kfm`.
@@ -988,7 +988,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_direwolf
 
-- Model: `src/Mods/Military/art/models/captured_direwolf.glb` (346,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_direwolf.glb` (346,824 bytes).
 - Art: `ART_DEF_UNIT_DIREWOLF`. Source scale: 0.55.
 - NIF: `art/units/animals/direwolf/wolf.nif`.
 - KFM: `art/units/wolf/wolf.kfm`.
@@ -1005,7 +1005,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_elephant
 
-- Model: `src/Mods/Military/art/models/captured_elephant.glb` (583,232 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_elephant.glb` (583,232 bytes).
 - Art: `ART_DEF_UNIT_ELEPHANT`. Source scale: 0.32.
 - NIF: `art/units/elephant/elephant.nif`.
 - KFM: `art/units/warelephant/warelephant.kfm`.
@@ -1023,7 +1023,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_lion
 
-- Model: `src/Mods/Military/art/models/captured_lion.glb` (321,216 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_lion.glb` (321,216 bytes).
 - Art: `ART_DEF_UNIT_LION`. Source scale: 0.61.
 - NIF: `art/units/lion/lion.nif`.
 - KFM: `art/units/lion/lion.kfm`.
@@ -1040,7 +1040,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_panther
 
-- Model: `src/Mods/Military/art/models/captured_panther.glb` (269,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_panther.glb` (269,824 bytes).
 - Art: `ART_DEF_UNIT_PANTHER`. Source scale: 0.5.
 - NIF: `art/units/panther/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -1057,7 +1057,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_polarbear
 
-- Model: `src/Mods/Military/art/models/captured_polarbear.glb` (275,432 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_polarbear.glb` (275,432 bytes).
 - Art: `ART_DEF_UNIT_POLARBEAR`. Source scale: 0.7.
 - NIF: `art/units/animals/polarbear/bear.nif`.
 - KFM: `art/units/animals/polarbear/bear.kfm`.
@@ -1074,7 +1074,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_ram
 
-- Model: `src/Mods/Military/art/models/captured_ram.glb` (446,792 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_ram.glb` (446,792 bytes).
 - Art: `ART_DEF_UNIT_WILD_RAM`. Source scale: 18.0.
 - NIF: `art/units/wild_ram/mouflon.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -1095,7 +1095,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_siberiantiger
 
-- Model: `src/Mods/Military/art/models/captured_siberiantiger.glb` (349,528 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_siberiantiger.glb` (349,528 bytes).
 - Art: `ART_DEF_UNIT_SIBERIANTIGER`. Source scale: 0.67.
 - NIF: `art/units/animals/siberiantiger/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -1112,7 +1112,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_stag
 
-- Model: `src/Mods/Military/art/models/captured_stag.glb` (489,108 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_stag.glb` (489,108 bytes).
 - Art: `ART_DEF_UNIT_STAG`. Source scale: 0.38.
 - NIF: `art/units/stag/horsearcher.nif`.
 - KFM: `art/units/horsearcher/horsearcher.kfm`.
@@ -1133,7 +1133,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_stallion
 
-- Model: `src/Mods/Military/art/models/captured_stallion.glb` (337,660 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_stallion.glb` (337,660 bytes).
 - Art: `ART_DEF_UNIT_STALLION`. Source scale: 0.3.
 - NIF: `art/units/horse/horsedark.nif`.
 - KFM: `art/units/unique/persia/immortal/persianimmortal.kfm`.
@@ -1150,7 +1150,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:captured_wolf
 
-- Model: `src/Mods/Military/art/models/captured_wolf.glb` (346,728 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/captured_wolf.glb` (346,728 bytes).
 - Art: `ART_DEF_UNIT_WOLF`. Source scale: 0.5.
 - NIF: `art/units/wolf/wolf.nif`.
 - KFM: `art/units/wolf/wolf.kfm`.
@@ -1167,7 +1167,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:caravel
 
-- Model: `src/Mods/Military/art/models/caravel.glb` (198,988 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/caravel.glb` (198,988 bytes).
 - Art: `ART_DEF_UNIT_CARAVEL`. Source scale: 0.24.
 - NIF: `art/units/caravel/caravel.nif`.
 - KFM: `art/units/caravel/caravel.kfm`.
@@ -1185,7 +1185,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:carrier
 
-- Model: `src/Mods/Military/art/models/carrier.glb` (198,904 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/carrier.glb` (198,904 bytes).
 - Art: `ART_DEF_UNIT_CARRIER_ENGLAND`. Source scale: 1.0.
 - NIF: `art/units/carrier/english/ark_royal.nif`.
 - KFM: `art/units/carrier/carrier.kfm`.
@@ -1202,7 +1202,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:carthage_numidian_cavalry
 
-- Model: `src/Mods/Military/art/models/carthage_numidian_cavalry.glb` (585,296 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/carthage_numidian_cavalry.glb` (585,296 bytes).
 - Art: `ART_DEF_UNIT_CARTHAGE_NUMIDIAN_CAVALRY`. Source scale: 0.42.
 - NIF: `art/units/numidian_cavalry/numidian_cavalry.nif`.
 - KFM: `art/units/numidian_cavalry/numidian_cavalry.kfm`.
@@ -1219,7 +1219,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:catapult
 
-- Model: `src/Mods/Military/art/models/catapult.glb` (288,432 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/catapult.glb` (288,432 bytes).
 - Art: `ART_DEF_UNIT_CATAPULT`. Source scale: 0.65.
 - NIF: `art/units/catapult/catapult.nif`.
 - KFM: `art/units/catapult/catapult.kfm`.
@@ -1235,7 +1235,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cavalry
 
-- Model: `src/Mods/Military/art/models/cavalry.glb` (554,640 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cavalry.glb` (554,640 bytes).
 - Art: `ART_DEF_UNIT_CAVALRY`. Source scale: 0.42.
 - NIF: `art/units/cavalry/cavalry.nif`.
 - KFM: `art/units/cavalry/cavalry.kfm`.
@@ -1252,7 +1252,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cavalry_light
 
-- Model: `src/Mods/Military/art/models/cavalry_light.glb` (566,012 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cavalry_light.glb` (566,012 bytes).
 - Art: `ART_DEF_UNIT_CAVALRY_LIGHT`. Source scale: 0.42.
 - NIF: `art/units/cavalry light/european/cavalry pistol.nif`.
 - KFM: `art/units/cavalry light/european/cavalry.kfm`.
@@ -1269,7 +1269,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cave_lion
 
-- Model: `src/Mods/Military/art/models/cave_lion.glb` (320,020 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cave_lion.glb` (320,020 bytes).
 - Art: `ART_DEF_UNIT_CAVELION`. Source scale: 0.75.
 - NIF: `art/units/animals/cavelion/lion.nif`.
 - KFM: `art/units/animals/cavelion/lion.kfm`.
@@ -1286,7 +1286,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cavebear
 
-- Model: `src/Mods/Military/art/models/cavebear.glb` (276,416 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cavebear.glb` (276,416 bytes).
 - Art: `ART_DEF_UNIT_CAVEBEAR`. Source scale: 0.8.
 - NIF: `art/units/animals/cavebear/bear.nif`.
 - KFM: `art/units/animals/cavebear/bear.kfm`.
@@ -1303,7 +1303,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:celtic_gallic_warrior
 
-- Model: `src/Mods/Military/art/models/celtic_gallic_warrior.glb` (299,164 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/celtic_gallic_warrior.glb` (299,164 bytes).
 - Art: `ART_DEF_UNIT_CELTIC_BARBARIAN`. Source scale: 0.44.
 - NIF: `art/units/celtic_warrior/celtic_warrior.nif`.
 - KFM: `art/units/celtic_warrior/celtic_warrior.kfm`.
@@ -1320,7 +1320,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:chariot
 
-- Model: `src/Mods/Military/art/models/chariot.glb` (588,740 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/chariot.glb` (588,740 bytes).
 - Art: `ART_DEF_UNIT_CHARIOT`. Source scale: 0.35.
 - NIF: `art/units/chariot/chariot.nif`.
 - KFM: `art/units/chariot/chariot.kfm`.
@@ -1337,7 +1337,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cheetah
 
-- Model: `src/Mods/Military/art/models/cheetah.glb` (272,172 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cheetah.glb` (272,172 bytes).
 - Art: `ART_DEF_UNIT_CHEETAH`. Source scale: 0.45.
 - NIF: `art/units/animals/cheetah/panther.nif`.
 - KFM: `art/units/animals/cheetah/panther.kfm`.
@@ -1354,7 +1354,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:china_chokonu
 
-- Model: `src/Mods/Military/art/models/china_chokonu.glb` (352,796 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/china_chokonu.glb` (352,796 bytes).
 - Art: `ART_DEF_UNIT_CHINA_CHOKONU`. Source scale: 0.44.
 - NIF: `art/units/unique/china/chokonu/chokunu.nif`.
 - KFM: `art/units/unique/china/chokonu/chokunu.kfm`.
@@ -1371,7 +1371,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:chivalry
 
-- Model: `src/Mods/Military/art/models/chivalry.glb` (622,540 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/chivalry.glb` (622,540 bytes).
 - Art: `ART_DEF_UNIT_CHIVALRY`. Source scale: 0.42.
 - NIF: `art/units/mailed knight/european/mtemplar_heavy.nif`.
 - KFM: `art/units/knight/knight.kfm`.
@@ -1390,7 +1390,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:christian_missionary
 
-- Model: `src/Mods/Military/art/models/christian_missionary.glb` (244,160 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/christian_missionary.glb` (244,160 bytes).
 - Art: `ART_DEF_UNIT_CHRISTIAN_MISSIONARY`. Source scale: 0.44.
 - NIF: `art/units/missionary/christian/christianmissionary.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -1405,7 +1405,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:clones
 
-- Model: `src/Mods/Military/art/models/clones.glb` (238,208 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/clones.glb` (238,208 bytes).
 - Art: `ART_DEF_UNIT_CLONEWORKER`. Source scale: 0.44.
 - NIF: `art/units/nextwar_cloneworker/nextwar_cloneworker.nif`.
 - KFM: `art/units/nextwar_cloneworker/nextwar_cloneworker.kfm`.
@@ -1421,7 +1421,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cog
 
-- Model: `src/Mods/Military/art/models/cog.glb` (539,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cog.glb` (539,276 bytes).
 - Art: `ART_DEF_UNIT_COG`. Source scale: 0.13.
 - NIF: `art/units/cog/cog.nif`.
 - KFM: `art/units/galley/galley.kfm`.
@@ -1438,7 +1438,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:colonist
 
-- Model: `src/Mods/Military/art/models/colonist.glb` (256,496 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/colonist.glb` (256,496 bytes).
 - Art: `ART_DEF_UNIT_COLONIST_MALE`. Source scale: 0.46.
 - NIF: `art/units/settler/settler_male.nif`.
 - KFM: `art/units/settler/settler_male.kfm`.
@@ -1454,7 +1454,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:confucian_missionary
 
-- Model: `src/Mods/Military/art/models/confucian_missionary.glb` (189,560 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/confucian_missionary.glb` (189,560 bytes).
 - Art: `ART_DEF_UNIT_CONFUCIAN_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/confucian/confucian_missionary.nif`.
 - KFM: `art/units/missionary/confucian/confucian_missionary.kfm`.
@@ -1469,7 +1469,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:construct_ship
 
-- Model: `src/Mods/Military/art/models/construct_ship.glb` (248,484 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/construct_ship.glb` (248,484 bytes).
 - Art: `ART_DEF_UNIT_CONSTRUCT_SHIP`. Source scale: 0.5.
 - NIF: `art/units/finalfrontier_constructionship/constructionship.nif`.
 - KFM: `art/units/finalfrontier_constructionship/constructionship.kfm`.
@@ -1483,7 +1483,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:crossbowman
 
-- Model: `src/Mods/Military/art/models/crossbowman.glb` (375,804 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/crossbowman.glb` (375,804 bytes).
 - Art: `ART_DEF_UNIT_CROSSBOWMAN`. Source scale: 0.44.
 - NIF: `art/units/crossbowman/crossbowman.nif`.
 - KFM: `art/units/crossbowman/crossbowman.kfm`.
@@ -1501,7 +1501,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cruiser
 
-- Model: `src/Mods/Military/art/models/cruiser.glb` (384,652 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cruiser.glb` (384,652 bytes).
 - Art: `ART_DEF_UNIT_BROOKLYN`. Source scale: 0.6.
 - NIF: `art/units/cruiser/brooklyn.nif`.
 - KFM: `art/units/cruiser/brooklyn.kfm`.
@@ -1517,7 +1517,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cuirassier
 
-- Model: `src/Mods/Military/art/models/cuirassier.glb` (650,304 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cuirassier.glb` (650,304 bytes).
 - Art: `ART_DEF_UNIT_CUIRASSIER`. Source scale: 0.42.
 - NIF: `art/units/cuirassier/cuirassier.nif`.
 - KFM: `art/units/cuirassier/cuirassier.kfm`.
@@ -1546,7 +1546,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:cyborg
 
-- Model: `src/Mods/Military/art/models/cyborg.glb` (303,412 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/cyborg.glb` (303,412 bytes).
 - Art: `ART_DEF_UNIT_CYBORG`. Source scale: 0.44.
 - NIF: `art/units/nextwar_cyborg/nextwar_cyborg.nif`.
 - KFM: `art/units/nextwar_cyborg/nextwar_cyborg.kfm`.
@@ -1562,7 +1562,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:czech_hussite
 
-- Model: `src/Mods/Military/art/models/czech_hussite.glb` (322,420 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/czech_hussite.glb` (322,420 bytes).
 - Art: `ART_DEF_UNIT_CZECH_HUSSITE`. Source scale: 0.44.
 - NIF: `art/czech/hussite/imperialmusket.nif`.
 - KFM: `art/units/musketman/musketman.kfm`.
@@ -1580,7 +1580,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:danish_workboat
 
-- Model: `src/Mods/Military/art/models/danish_workboat.glb` (212,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/danish_workboat.glb` (212,332 bytes).
 - Art: `ART_DEF_UNIT_DANISH_WORKBOAT`. Source scale: 0.19.
 - NIF: `art/units/workboat_ancient/workboat_ancient.nif`.
 - KFM: `art/units/workboat_ancient/workboat_ancient.kfm`.
@@ -1596,7 +1596,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:destroyer
 
-- Model: `src/Mods/Military/art/models/destroyer.glb` (361,448 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/destroyer.glb` (361,448 bytes).
 - Art: `ART_DEF_UNIT_DESTROYER`. Source scale: 0.7.
 - NIF: `art/units/destroyer/destroyer.nif`.
 - KFM: `art/units/destroyer/destroyer.kfm`.
@@ -1613,7 +1613,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:direwolf
 
-- Model: `src/Mods/Military/art/models/direwolf.glb` (346,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/direwolf.glb` (346,824 bytes).
 - Art: `ART_DEF_UNIT_DIREWOLF`. Source scale: 0.55.
 - NIF: `art/units/animals/direwolf/wolf.nif`.
 - KFM: `art/units/wolf/wolf.kfm`.
@@ -1630,7 +1630,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:dragoon
 
-- Model: `src/Mods/Military/art/models/dragoon.glb` (597,460 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/dragoon.glb` (597,460 bytes).
 - Art: `ART_DEF_UNIT_DRAGOON`. Source scale: 0.42.
 - NIF: `art/units/dragoon/british/light_dragoon.nif`.
 - KFM: `art/units/dragoon/british/light_dragoon.kfm`.
@@ -1647,7 +1647,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:dreadnought
 
-- Model: `src/Mods/Military/art/models/dreadnought.glb` (227,356 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/dreadnought.glb` (227,356 bytes).
 - Art: `ART_DEF_UNIT_DREADNOUGHT`. Source scale: 0.75.
 - NIF: `art/units/dreadnought/dreadnought.nif`.
 - KFM: `art/units/dreadnought/dreadnought.kfm`.
@@ -1662,7 +1662,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:dreadnought_helgoland
 
-- Model: `src/Mods/Military/art/models/dreadnought_helgoland.glb` (500,800 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/dreadnought_helgoland.glb` (500,800 bytes).
 - Art: `ART_DEF_UNIT_DREADNOUGHT_SHIP`. Source scale: 0.6.
 - NIF: `art/units/dreadnought/european/helgoland.nif`.
 - KFM: `art/units/dreadnought/european/helgoland.kfm`.
@@ -1678,7 +1678,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:drekar
 
-- Model: `src/Mods/Military/art/models/drekar.glb` (471,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/drekar.glb` (471,992 bytes).
 - Art: `ART_DEF_UNIT_DREKAR_SCANDINAVIAN`. Source scale: 0.1.
 - NIF: `art/units/drekar/galley_fx.nif`.
 - KFM: `art/units/galley/galley.kfm`.
@@ -1695,7 +1695,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:dropship
 
-- Model: `src/Mods/Military/art/models/dropship.glb` (224,980 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/dropship.glb` (224,980 bytes).
 - Art: `ART_DEF_UNIT_DROPSHIP`. Source scale: 0.36.
 - NIF: `art/units/dropship/isscv.nif`.
 - KFM: `art/units/dropship/gunship.kfm`.
@@ -1711,7 +1711,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:early_tank
 
-- Model: `src/Mods/Military/art/models/early_tank.glb` (162,468 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/early_tank.glb` (162,468 bytes).
 - Art: `ART_DEF_UNIT_MARK_V_TANK`. Source scale: 0.48.
 - NIF: `art/units/scenario/mark_v_tank/markvtank.nif`.
 - KFM: `art/units/scenario/mark_v_tank/markvtank.kfm`.
@@ -1727,7 +1727,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:egypt_myth_missionary
 
-- Model: `src/Mods/Military/art/models/egypt_myth_missionary.glb` (263,572 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/egypt_myth_missionary.glb` (263,572 bytes).
 - Art: `ART_DEF_UNIT_RA_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/scribe/hindu_missionary.nif`.
 - KFM: `art/units/missionary/scribe/hindu_missionary.kfm`.
@@ -1742,7 +1742,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:egypt_warchariot
 
-- Model: `src/Mods/Military/art/models/egypt_warchariot.glb` (1,166,408 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/egypt_warchariot.glb` (1,166,408 bytes).
 - Art: `ART_DEF_UNIT_EGYPT_WARCHARIOT`. Source scale: 0.37.
 - NIF: `art/units/unique/egypt/warchariot/egyptianwarchariot.nif`.
 - KFM: `art/units/unique/egypt/warchariot/egyptianwarchariot.kfm`.
@@ -1759,7 +1759,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:elephant
 
-- Model: `src/Mods/Military/art/models/elephant.glb` (583,232 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/elephant.glb` (583,232 bytes).
 - Art: `ART_DEF_UNIT_ELEPHANT`. Source scale: 0.32.
 - NIF: `art/units/elephant/elephant.nif`.
 - KFM: `art/units/warelephant/warelephant.kfm`.
@@ -1777,7 +1777,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:elephant_bombard
 
-- Model: `src/Mods/Military/art/models/elephant_bombard.glb` (901,356 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/elephant_bombard.glb` (901,356 bytes).
 - Art: `ART_DEF_UNIT_ELEPHANT_BOMBARD`. Source scale: 0.32.
 - NIF: `art/units/elephant bombard/siegeelephant.nif`.
 - KFM: `art/units/elephant bombard/siegeelephant.kfm`.
@@ -1796,7 +1796,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:elephant_cavalry
 
-- Model: `src/Mods/Military/art/models/elephant_cavalry.glb` (831,056 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/elephant_cavalry.glb` (831,056 bytes).
 - Art: `ART_DEF_UNIT_ELEPHANT_CAVALRY`. Source scale: 0.32.
 - NIF: `art/units/elephant cavalry/siegeelephant.nif`.
 - KFM: `art/units/elephant cavalry/siegeelephant.kfm`.
@@ -1816,7 +1816,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:elephant_rider
 
-- Model: `src/Mods/Military/art/models/elephant_rider.glb` (760,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/elephant_rider.glb` (760,276 bytes).
 - Art: `ART_DEF_UNIT_ELEPHANT_RIDER`. Source scale: 0.32.
 - NIF: `art/units/warelephant/warelephant.nif`.
 - KFM: `art/units/warelephant/warelephant.kfm`.
@@ -1833,7 +1833,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:emp_infantry
 
-- Model: `src/Mods/Military/art/models/emp_infantry.glb` (533,232 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/emp_infantry.glb` (533,232 bytes).
 - Art: `ART_DEF_UNIT_EMP_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/emp_infantry2/marines.nif`.
 - KFM: `art/units/emp_infantry2/animations/marines.kfm`.
@@ -1850,7 +1850,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:engineer
 
-- Model: `src/Mods/Military/art/models/engineer.glb` (308,176 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/engineer.glb` (308,176 bytes).
 - Art: `ART_DEF_UNIT_ENGINEER`. Source scale: 0.46.
 - NIF: `art/units/greatpeople/engineer/engineer.nif`.
 - KFM: `art/units/greatpeople/engineer/engineer.kfm`.
@@ -1864,7 +1864,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:english_redcoat
 
-- Model: `src/Mods/Military/art/models/english_redcoat.glb` (372,348 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/english_redcoat.glb` (372,348 bytes).
 - Art: `ART_DEF_UNIT_ENGLISH_REDCOAT`. Source scale: 0.44.
 - NIF: `art/units/unique/england/redcoat/redcoat.nif`.
 - KFM: `art/units/unique/england/redcoat/redcoat.kfm`.
@@ -1881,7 +1881,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:envoy
 
-- Model: `src/Mods/Military/art/models/envoy.glb` (309,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/envoy.glb` (309,992 bytes).
 - Art: `ART_DEF_UNIT_ENVOY`. Source scale: 0.46.
 - NIF: `art/units/envoy/european/master_tobacconist.nif`.
 - KFM: `art/units/envoy/european/master_tobacconist.kfm`.
@@ -1898,7 +1898,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ethiopian_oromo_warrior
 
-- Model: `src/Mods/Military/art/models/ethiopian_oromo_warrior.glb` (334,768 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ethiopian_oromo_warrior.glb` (334,768 bytes).
 - Art: `ART_DEF_UNIT_ETHIOPIAN_OROMO_WARRIOR_ORANGE`. Source scale: 0.44.
 - NIF: `art/units/unique_ethiopia_oromowarrior/ethiopian_oromowarrior_orange.nif`.
 - KFM: `art/units/unique_ethiopia_oromowarrior/ethiopian_oromowarrior.kfm`.
@@ -1915,7 +1915,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_1
 
-- Model: `src/Mods/Military/art/models/executive_1.glb` (259,172 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_1.glb` (259,172 bytes).
 - Art: `ART_DEF_UNIT_CEO_1`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_cereal.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1929,7 +1929,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_2
 
-- Model: `src/Mods/Military/art/models/executive_2.glb` (259,960 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_2.glb` (259,960 bytes).
 - Art: `ART_DEF_UNIT_CEO_2`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_sushi.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1943,7 +1943,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_3
 
-- Model: `src/Mods/Military/art/models/executive_3.glb` (259,036 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_3.glb` (259,036 bytes).
 - Art: `ART_DEF_UNIT_CEO_3`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_ethanol.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1957,7 +1957,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_4
 
-- Model: `src/Mods/Military/art/models/executive_4.glb` (259,132 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_4.glb` (259,132 bytes).
 - Art: `ART_DEF_UNIT_CEO_4`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_construction.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1971,7 +1971,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_5
 
-- Model: `src/Mods/Military/art/models/executive_5.glb` (258,848 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_5.glb` (258,848 bytes).
 - Art: `ART_DEF_UNIT_CEO_5`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_mining.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1985,7 +1985,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_6
 
-- Model: `src/Mods/Military/art/models/executive_6.glb` (258,940 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_6.glb` (258,940 bytes).
 - Art: `ART_DEF_UNIT_CEO_6`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_aluminum.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -1999,7 +1999,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_7
 
-- Model: `src/Mods/Military/art/models/executive_7.glb` (259,268 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_7.glb` (259,268 bytes).
 - Art: `ART_DEF_UNIT_CEO_7`. Source scale: 0.46.
 - NIF: `art/units/ceo/logos/ceo_jewelry.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2013,7 +2013,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_adventure
 
-- Model: `src/Mods/Military/art/models/executive_adventure.glb` (259,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_adventure.glb` (259,428 bytes).
 - Art: `ART_DEF_UNIT_CEO_ADVENTURE`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_adventure.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2027,7 +2027,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_apotheguild
 
-- Model: `src/Mods/Military/art/models/executive_apotheguild.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_apotheguild.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_APOTHMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2042,7 +2042,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_artistguild
 
-- Model: `src/Mods/Military/art/models/executive_artistguild.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_artistguild.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_ARTISTMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2057,7 +2057,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_bakerguild
 
-- Model: `src/Mods/Military/art/models/executive_bakerguild.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_bakerguild.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_BAKERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2072,7 +2072,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_blacksmguild
 
-- Model: `src/Mods/Military/art/models/executive_blacksmguild.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_blacksmguild.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_BLACKSMITHMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2087,7 +2087,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_burgerworld
 
-- Model: `src/Mods/Military/art/models/executive_burgerworld.glb` (260,208 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_burgerworld.glb` (260,208 bytes).
 - Art: `ART_DEF_UNIT_CEO_BURGERWORLD`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_bw.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2101,7 +2101,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_butcherguild
 
-- Model: `src/Mods/Military/art/models/executive_butcherguild.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_butcherguild.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_BUTCHERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2116,7 +2116,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_carpenterguild
 
-- Model: `src/Mods/Military/art/models/executive_carpenterguild.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_carpenterguild.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_CARPENTERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2131,7 +2131,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_clerksguild
 
-- Model: `src/Mods/Military/art/models/executive_clerksguild.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_clerksguild.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_CLERKSMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2146,7 +2146,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_drapersguild
 
-- Model: `src/Mods/Military/art/models/executive_drapersguild.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_drapersguild.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_DRAPERSMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2161,7 +2161,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_empcloth
 
-- Model: `src/Mods/Military/art/models/executive_empcloth.glb` (258,120 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_empcloth.glb` (258,120 bytes).
 - Art: `ART_DEF_UNIT_CEO_EMPCLOTH`. Source scale: 0.46.
 - NIF: `art/units/executive/ceo_ec.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2175,7 +2175,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_equestguild
 
-- Model: `src/Mods/Military/art/models/executive_equestguild.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_equestguild.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_EQUESTMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2190,7 +2190,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_ewtrade
 
-- Model: `src/Mods/Military/art/models/executive_ewtrade.glb` (259,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_ewtrade.glb` (259,428 bytes).
 - Art: `ART_DEF_UNIT_CEO_EWTRADE`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_ew.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2204,7 +2204,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_fashion
 
-- Model: `src/Mods/Military/art/models/executive_fashion.glb` (257,608 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_fashion.glb` (257,608 bytes).
 - Art: `ART_DEF_UNIT_CEO_FASHION`. Source scale: 0.46.
 - NIF: `art/units/executive/ceo_fashion.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2218,7 +2218,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_fishmonguild
 
-- Model: `src/Mods/Military/art/models/executive_fishmonguild.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_fishmonguild.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_FISHMONGERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2233,7 +2233,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_glassguild
 
-- Model: `src/Mods/Military/art/models/executive_glassguild.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_glassguild.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_GLASSMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2248,7 +2248,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_goldsmguild
 
-- Model: `src/Mods/Military/art/models/executive_goldsmguild.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_goldsmguild.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_GOLDSMITHMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2263,7 +2263,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_grocerguild
 
-- Model: `src/Mods/Military/art/models/executive_grocerguild.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_grocerguild.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_GROCERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2278,7 +2278,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_mallwart
 
-- Model: `src/Mods/Military/art/models/executive_mallwart.glb` (257,344 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_mallwart.glb` (257,344 bytes).
 - Art: `ART_DEF_UNIT_CEO_MALLWART`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_mw.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2292,7 +2292,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_mapster
 
-- Model: `src/Mods/Military/art/models/executive_mapster.glb` (257,580 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_mapster.glb` (257,580 bytes).
 - Art: `ART_DEF_UNIT_CEO_MAPSTER`. Source scale: 0.46.
 - NIF: `art/units/executive/ceo_marnzmotor.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2306,7 +2306,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_masonguild
 
-- Model: `src/Mods/Military/art/models/executive_masonguild.glb` (228,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_masonguild.glb` (228,332 bytes).
 - Art: `ART_DEF_UNIT_MASONSMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2321,7 +2321,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_mercerguild
 
-- Model: `src/Mods/Military/art/models/executive_mercerguild.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_mercerguild.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_MERCERMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2336,7 +2336,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_milehigh
 
-- Model: `src/Mods/Military/art/models/executive_milehigh.glb` (259,076 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_milehigh.glb` (259,076 bytes).
 - Art: `ART_DEF_UNIT_CEO_MILEHIGH`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_mh.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2350,7 +2350,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_mobby
 
-- Model: `src/Mods/Military/art/models/executive_mobby.glb` (260,236 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_mobby.glb` (260,236 bytes).
 - Art: `ART_DEF_UNIT_CEO_MOBBY`. Source scale: 0.46.
 - NIF: `art/units/executive/ceo_mobby.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2364,7 +2364,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_red
 
-- Model: `src/Mods/Military/art/models/executive_red.glb` (258,560 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_red.glb` (258,560 bytes).
 - Art: `ART_DEF_UNIT_CEO_RED`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_rc.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2378,7 +2378,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_safari
 
-- Model: `src/Mods/Military/art/models/executive_safari.glb` (259,532 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_safari.glb` (259,532 bytes).
 - Art: `ART_DEF_UNIT_CEO_SAFARI`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_safari.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2392,7 +2392,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_ultsoldier
 
-- Model: `src/Mods/Military/art/models/executive_ultsoldier.glb` (259,448 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_ultsoldier.glb` (259,448 bytes).
 - Art: `ART_DEF_UNIT_CEO_ULTSOLDIER`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_soldier.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2406,7 +2406,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:executive_wonka
 
-- Model: `src/Mods/Military/art/models/executive_wonka.glb` (259,156 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/executive_wonka.glb` (259,156 bytes).
 - Art: `ART_DEF_UNIT_CEO_WONKA`. Source scale: 0.46.
 - NIF: `art/units/executive/ceo_wonka.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -2420,7 +2420,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:experimental
 
-- Model: `src/Mods/Military/art/models/experimental.glb` (68,736 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/experimental.glb` (68,736 bytes).
 - Art: `ART_DEF_UNIT_EXPERIMENTAL`. Source scale: 1.4.
 - NIF: `art/units/nukes/peacemaker/icbm.nif`.
 - KFM: `art/units/nukes/peacemaker/icbm.kfm`.
@@ -2435,7 +2435,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:explorer
 
-- Model: `src/Mods/Military/art/models/explorer.glb` (305,984 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/explorer.glb` (305,984 bytes).
 - Art: `ART_DEF_UNIT_EXPLORER`. Source scale: 0.44.
 - NIF: `art/units/explorer/explorer.nif`.
 - KFM: `art/units/explorer/explorer.kfm`.
@@ -2452,7 +2452,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:f117
 
-- Model: `src/Mods/Military/art/models/f117.glb` (154,456 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/f117.glb` (154,456 bytes).
 - Art: `ART_DEF_UNIT_F117`. Source scale: 0.42.
 - NIF: `art/units/stealth fighter/f117.nif`.
 - KFM: `art/units/jetfighter/jetfighter.kfm`.
@@ -2466,7 +2466,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:f15
 
-- Model: `src/Mods/Military/art/models/f15.glb` (249,696 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/f15.glb` (249,696 bytes).
 - Art: `ART_DEF_UNIT_STRIKE_FIGHTER_F15`. Source scale: 0.48.
 - NIF: `art/units/strike fighter/american/f15.nif`.
 - KFM: `art/units/jetfighter/jetfighter.kfm`.
@@ -2480,7 +2480,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:feral
 
-- Model: `src/Mods/Military/art/models/feral.glb` (520,340 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/feral.glb` (520,340 bytes).
 - Art: `ART_DEF_UNIT_CYBORG2`. Source scale: 0.44.
 - NIF: `art/units/super soldier/saminfantry.nif`.
 - KFM: `art/units/saminfantry/saminfantry.kfm`.
@@ -2498,7 +2498,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ff_destroyer_i
 
-- Model: `src/Mods/Military/art/models/ff_destroyer_i.glb` (241,412 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ff_destroyer_i.glb` (241,412 bytes).
 - Art: `ART_DEF_UNIT_FF_DESTROYER_I`. Source scale: 0.45.
 - NIF: `art/units/finalfrontier_destroyer/destroyer.nif`.
 - KFM: `art/units/finalfrontier_destroyer/destroyer.kfm`.
@@ -2515,7 +2515,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fighter
 
-- Model: `src/Mods/Military/art/models/fighter.glb` (222,868 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fighter.glb` (222,868 bytes).
 - Art: `ART_DEF_UNIT_FIGHTER`. Source scale: 0.5.
 - NIF: `art/units/fighter/fighter.nif`.
 - KFM: `art/units/fighter/fighter.kfm`.
@@ -2530,7 +2530,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fluyt
 
-- Model: `src/Mods/Military/art/models/fluyt.glb` (300,800 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fluyt.glb` (300,800 bytes).
 - Art: `ART_DEF_UNIT_FLUYT`. Source scale: 0.12.
 - NIF: `art/units/galleon/galleon.nif`.
 - KFM: `art/units/galleon/galleon.kfm`.
@@ -2548,7 +2548,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fokkerdr1
 
-- Model: `src/Mods/Military/art/models/fokkerdr1.glb` (212,292 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fokkerdr1.glb` (212,292 bytes).
 - Art: `ART_DEF_UNIT_BIPLANE`. Source scale: 0.44.
 - NIF: `art/units/earlyfighter/pup.nif`.
 - KFM: `art/units/fighter/fighter.kfm`.
@@ -2563,7 +2563,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:freight
 
-- Model: `src/Mods/Military/art/models/freight.glb` (58,616 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/freight.glb` (58,616 bytes).
 - Art: `ART_DEF_UNIT_FREIGHT`. Source scale: 0.35.
 - NIF: `art/units/freight/opel.nif`.
 - KFM: `art/units/tank/tank.kfm`.
@@ -2579,7 +2579,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:french_musketeer
 
-- Model: `src/Mods/Military/art/models/french_musketeer.glb` (420,764 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/french_musketeer.glb` (420,764 bytes).
 - Art: `ART_DEF_UNIT_FRENCH_MUSKETEER`. Source scale: 0.44.
 - NIF: `art/units/unique/french/musketeer/musketeer.nif`.
 - KFM: `art/units/unique/french/musketeer/musketeer.kfm`.
@@ -2596,7 +2596,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:frigate
 
-- Model: `src/Mods/Military/art/models/frigate.glb` (311,616 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/frigate.glb` (311,616 bytes).
 - Art: `ART_DEF_UNIT_FRIGATE`. Source scale: 0.24.
 - NIF: `art/units/frigate/frigate.nif`.
 - KFM: `art/units/frigate/frigate.kfm`.
@@ -2614,7 +2614,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_battleship
 
-- Model: `src/Mods/Military/art/models/fusion_battleship.glb` (320,036 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_battleship.glb` (320,036 bytes).
 - Art: `ART_DEF_UNIT_FF_BATTLESHIP_I`. Source scale: 0.21.
 - NIF: `art/units/finalfrontier_battleship/battleship.nif`.
 - KFM: `art/units/finalfrontier_battleship/battleship.kfm`.
@@ -2631,7 +2631,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_carrier
 
-- Model: `src/Mods/Military/art/models/fusion_carrier.glb` (414,448 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_carrier.glb` (414,448 bytes).
 - Art: `ART_DEF_UNIT_FF_CARRIER_I`. Source scale: 0.21.
 - NIF: `art/units/finalfrontier_carrier/carrier.nif`.
 - KFM: `art/units/finalfrontier_carrier/carrier.kfm`.
@@ -2648,7 +2648,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_cruiser
 
-- Model: `src/Mods/Military/art/models/fusion_cruiser.glb` (289,176 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_cruiser.glb` (289,176 bytes).
 - Art: `ART_DEF_UNIT_FF_CRUISER_I`. Source scale: 0.25.
 - NIF: `art/units/finalfrontier_cruiser/cruiser.nif`.
 - KFM: `art/units/finalfrontier_cruiser/cruiser.kfm`.
@@ -2665,7 +2665,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_nova
 
-- Model: `src/Mods/Military/art/models/fusion_nova.glb` (74,836 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_nova.glb` (74,836 bytes).
 - Art: `ART_DEF_UNIT_FUSION_NOVA`. Source scale: 1.
 - NIF: `art/units/nukes/fusionbombs/icbm.nif`.
 - KFM: `art/units/nukes/fusionbombs/icbm.kfm`.
@@ -2680,7 +2680,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_nuke
 
-- Model: `src/Mods/Military/art/models/fusion_nuke.glb` (74,836 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_nuke.glb` (74,836 bytes).
 - Art: `ART_DEF_UNIT_FUSION_NUKE`. Source scale: 0.62.
 - NIF: `art/units/nukes/fusionbombs/icbm.nif`.
 - KFM: `art/units/nukes/fusionbombs/icbm.kfm`.
@@ -2695,7 +2695,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_submarine
 
-- Model: `src/Mods/Military/art/models/fusion_submarine.glb` (217,324 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_submarine.glb` (217,324 bytes).
 - Art: `ART_DEF_UNIT_FUSION_SUBMARINE`. Source scale: 0.60.
 - NIF: `art/units/fusion submarine/submarine.nif`.
 - KFM: `art/units/fusion submarine/submarine.kfm`.
@@ -2712,7 +2712,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:fusion_transport
 
-- Model: `src/Mods/Military/art/models/fusion_transport.glb` (202,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/fusion_transport.glb` (202,824 bytes).
 - Art: `ART_DEF_UNIT_FF_INVASION_SHIP_I`. Source scale: 0.5.
 - NIF: `art/units/finalfrontier_invasionship/invasionship.nif`.
 - KFM: `art/units/finalfrontier_invasionship/invasionship.kfm`.
@@ -2729,7 +2729,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:future_armor
 
-- Model: `src/Mods/Military/art/models/future_armor.glb` (100,468 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/future_armor.glb` (100,468 bytes).
 - Art: `ART_DEF_UNIT_FUTURE_ARMOR`. Source scale: 1.3.
 - NIF: `art/units/hover tank/ftank.nif`.
 - KFM: `art/units/modernarmor/modernarmor.kfm`.
@@ -2745,7 +2745,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:galleas
 
-- Model: `src/Mods/Military/art/models/galleas.glb` (325,620 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/galleas.glb` (325,620 bytes).
 - Art: `ART_DEF_UNIT_GALLEAS`. Source scale: 0.10.
 - NIF: `art/venice/galleas/galley.nif`.
 - KFM: `art/units/galley/galley.kfm`.
@@ -2763,7 +2763,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:galleass
 
-- Model: `src/Mods/Military/art/models/galleass.glb` (320,608 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/galleass.glb` (320,608 bytes).
 - Art: `ART_DEF_UNIT_GALLEASS`. Source scale: 0.14.
 - NIF: `art/units/galleas/galley.nif`.
 - KFM: `art/units/galleas/galley.kfm`.
@@ -2781,7 +2781,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:galleon
 
-- Model: `src/Mods/Military/art/models/galleon.glb` (300,800 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/galleon.glb` (300,800 bytes).
 - Art: `ART_DEF_UNIT_GALLEON`. Source scale: 0.2.
 - NIF: `art/units/galleon/galleon.nif`.
 - KFM: `art/units/galleon/galleon.kfm`.
@@ -2799,7 +2799,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:galley
 
-- Model: `src/Mods/Military/art/models/galley.glb` (277,596 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/galley.glb` (277,596 bytes).
 - Art: `ART_DEF_UNIT_GALLEY`. Source scale: 0.18.
 - NIF: `art/units/galley/galley.nif`.
 - KFM: `art/units/galley/galley.kfm`.
@@ -2816,7 +2816,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:gatling_gun
 
-- Model: `src/Mods/Military/art/models/gatling_gun.glb` (398,592 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/gatling_gun.glb` (398,592 bytes).
 - Art: `ART_DEF_UNIT_GATLING_GUN`. Source scale: 0.44.
 - NIF: `art/units/gatlinggun/european/machinegunner.nif`.
 - KFM: `art/units/machinegun/machinegunner.kfm`.
@@ -2832,7 +2832,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:german_panzer
 
-- Model: `src/Mods/Military/art/models/german_panzer.glb` (295,368 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/german_panzer.glb` (295,368 bytes).
 - Art: `ART_DEF_UNIT_GERMAN_PANZER`. Source scale: 0.47.
 - NIF: `art/units/unique/german/panzer/panzer.nif`.
 - KFM: `art/units/unique/german/panzer/panzer.kfm`.
@@ -2848,7 +2848,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ggmaster
 
-- Model: `src/Mods/Military/art/models/ggmaster.glb` (229,352 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ggmaster.glb` (229,352 bytes).
 - Art: `ART_DEF_UNIT_GGMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -2863,7 +2863,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:gothic_cavalry
 
-- Model: `src/Mods/Military/art/models/gothic_cavalry.glb` (733,280 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/gothic_cavalry.glb` (733,280 bytes).
 - Art: `ART_DEF_UNIT_GOTHIC_CAVALRY`. Source scale: 0.43.
 - NIF: `art/goths/gothiccavalry/mongelkeshik.nif`.
 - KFM: `art/units/unique/mongol/keshik/mongelkeshik.kfm`.
@@ -2881,7 +2881,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:great_diplomat
 
-- Model: `src/Mods/Military/art/models/great_diplomat.glb` (282,456 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/great_diplomat.glb` (282,456 bytes).
 - Art: `ART_DEF_UNIT_GREAT_DIPLOMAT`. Source scale: 0.46.
 - NIF: `art/units/great diplomat/engineer.nif`.
 - KFM: `art/units/great diplomat/engineer.kfm`.
@@ -2895,7 +2895,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:great_general
 
-- Model: `src/Mods/Military/art/models/great_general.glb` (369,372 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/great_general.glb` (369,372 bytes).
 - Art: `ART_DEF_UNIT_WARLORD_ANCIENT`. Source scale: 0.5.
 - NIF: `art/units/warlord_ancient/warlord_ancient.nif`.
 - KFM: `art/units/warlord_ancient/warlord_ancient.kfm`.
@@ -2909,7 +2909,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:great_spy
 
-- Model: `src/Mods/Military/art/models/great_spy.glb` (454,636 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/great_spy.glb` (454,636 bytes).
 - Art: `ART_DEF_UNIT_ANCIENT_GREAT_SPY`. Source scale: 0.46.
 - NIF: `art/units/great_spy_ancient/great_spy_ancient.nif`.
 - KFM: `art/units/great_spy_ancient/great_spy_ancient.kfm`.
@@ -2924,7 +2924,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:greek_phalanx
 
-- Model: `src/Mods/Military/art/models/greek_phalanx.glb` (317,388 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/greek_phalanx.glb` (317,388 bytes).
 - Art: `ART_DEF_UNIT_GREEK_PHALANX`. Source scale: 0.44.
 - NIF: `art/units/spearman/spearman.nif`.
 - KFM: `art/units/spearman/spearman.kfm`.
@@ -2941,7 +2941,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:grenadier
 
-- Model: `src/Mods/Military/art/models/grenadier.glb` (429,448 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/grenadier.glb` (429,448 bytes).
 - Art: `ART_DEF_UNIT_GRENADIER`. Source scale: 0.44.
 - NIF: `art/units/grenadier/grenadier.nif`.
 - KFM: `art/units/grenadier/grenadier.kfm`.
@@ -2958,7 +2958,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:guided_missile
 
-- Model: `src/Mods/Military/art/models/guided_missile.glb` (80,584 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/guided_missile.glb` (80,584 bytes).
 - Art: `ART_DEF_UNIT_GUIDED_MISSILE`. Source scale: 0.2.
 - NIF: `art/units/guided_missile/guided_missile.nif`.
 - KFM: `art/units/guided_missile/guided_missile.kfm`.
@@ -2972,7 +2972,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:gunship
 
-- Model: `src/Mods/Military/art/models/gunship.glb` (282,876 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/gunship.glb` (282,876 bytes).
 - Art: `ART_DEF_UNIT_GUNSHIP`. Source scale: 0.36.
 - NIF: `art/units/gunship/gunship.nif`.
 - KFM: `art/units/gunship/gunship.kfm`.
@@ -2988,7 +2988,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hacker
 
-- Model: `src/Mods/Military/art/models/hacker.glb` (180,200 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hacker.glb` (180,200 bytes).
 - Art: `ART_DEF_UNIT_HACKER`. Source scale: 0.46.
 - NIF: `art/units/hacker/modernscientist.nif`.
 - KFM: `art/units/hacker/modernscientist.kfm`.
@@ -3002,7 +3002,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:halftrack
 
-- Model: `src/Mods/Military/art/models/halftrack.glb` (394,492 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/halftrack.glb` (394,492 bytes).
 - Art: `ART_DEF_UNIT_HALFTRACK`. Source scale: 0.6.
 - NIF: `art/units/antiair halftrack/ma_ht.nif`.
 - KFM: `art/units/antiair halftrack/modernarmor.kfm`.
@@ -3018,7 +3018,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:heavy_cavalry
 
-- Model: `src/Mods/Military/art/models/heavy_cavalry.glb` (648,856 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/heavy_cavalry.glb` (648,856 bytes).
 - Art: `ART_DEF_UNIT_HEAVY_CAVALRY`. Source scale: 0.42.
 - NIF: `art/units/charlemagne_heavycavalry/heavycavalry.nif`.
 - KFM: `art/units/charlemagne_heavycavalry/heavycavalry.kfm`.
@@ -3035,7 +3035,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:heavy_pikeman
 
-- Model: `src/Mods/Military/art/models/heavy_pikeman.glb` (273,564 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/heavy_pikeman.glb` (273,564 bytes).
 - Art: `ART_DEF_UNIT_HEAVY_SPEARMAN`. Source scale: 0.42.
 - NIF: `art/units/charlemagne_heavyspearman/heavyspearman.nif`.
 - KFM: `art/units/charlemagne_heavyspearman/heavyspearman.kfm`.
@@ -3052,7 +3052,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:heavy_swordsman
 
-- Model: `src/Mods/Military/art/models/heavy_swordsman.glb` (279,228 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/heavy_swordsman.glb` (279,228 bytes).
 - Art: `ART_DEF_UNIT_HEAVY_SWORDSMAN`. Source scale: 0.42.
 - NIF: `art/units/charlemagne_heavyswordsman/heavyswordsman.nif`.
 - KFM: `art/units/charlemagne_heavyswordsman/heavyswordsman.kfm`.
@@ -3069,7 +3069,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:heavy_tank_m26
 
-- Model: `src/Mods/Military/art/models/heavy_tank_m26.glb` (179,636 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/heavy_tank_m26.glb` (179,636 bytes).
 - Art: `ART_DEF_UNIT_HEAVY_TANK`. Source scale: 0.38.
 - NIF: `art/units/heavy tank/european/m26.nif`.
 - KFM: `art/units/heavy tank/european/m26.kfm`.
@@ -3085,7 +3085,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hellenic_missionary
 
-- Model: `src/Mods/Military/art/models/hellenic_missionary.glb` (249,572 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hellenic_missionary.glb` (249,572 bytes).
 - Art: `ART_DEF_UNIT_OLYMP_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/oracle/missionary_general.nif`.
 - KFM: `art/units/missionary/oracle/missionary_general.kfm`.
@@ -3100,7 +3100,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:highlander
 
-- Model: `src/Mods/Military/art/models/highlander.glb` (295,964 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/highlander.glb` (295,964 bytes).
 - Art: `ART_DEF_UNIT_HIGHLANDER`. Source scale: 0.44.
 - NIF: `art/scotland/highlander/swordsman.nif`.
 - KFM: `art/scotland/highlander/swordsman.kfm`.
@@ -3117,7 +3117,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hindu_missionary
 
-- Model: `src/Mods/Military/art/models/hindu_missionary.glb` (262,952 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hindu_missionary.glb` (262,952 bytes).
 - Art: `ART_DEF_UNIT_HINDU_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/hindu/hindu_missionary.nif`.
 - KFM: `art/units/missionary/hindu/hindu_missionary.kfm`.
@@ -3132,7 +3132,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hitech_robot
 
-- Model: `src/Mods/Military/art/models/hitech_robot.glb` (1,101,056 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hitech_robot.glb` (1,101,056 bytes).
 - Art: `ART_DEF_UNIT_JAL`. Source scale: 0.62.
 - NIF: `art/units/afterworld_gravebringer/jal/gravebringer.nif`.
 - KFM: `art/units/afterworld_gravebringer/jal/gravebringer.kfm`.
@@ -3149,7 +3149,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hittites_hittite_chariot
 
-- Model: `src/Mods/Military/art/models/hittites_hittite_chariot.glb` (1,152,144 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hittites_hittite_chariot.glb` (1,152,144 bytes).
 - Art: `ART_DEF_UNIT_HITTITES_HITTITE_CHARIOT`. Source scale: 0.36.
 - NIF: `art/units/unique/hittite chariot/egyptianwarchariot.nif`.
 - KFM: `art/units/unique/egypt/warchariot/egyptianwarchariot.kfm`.
@@ -3166,7 +3166,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:holy_roman_landsknecht
 
-- Model: `src/Mods/Military/art/models/holy_roman_landsknecht.glb` (349,204 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/holy_roman_landsknecht.glb` (349,204 bytes).
 - Art: `ART_DEF_UNIT_HOLY_ROMAN_LANDSKNECHT`. Source scale: 0.44.
 - NIF: `art/units/unique_holyromanempire_landsknecht/unique_holyroman_landsknecht.nif`.
 - KFM: `art/units/unique_holyromanempire_landsknecht/unique_holyroman_landsknecht.kfm`.
@@ -3183,7 +3183,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:horse_archer
 
-- Model: `src/Mods/Military/art/models/horse_archer.glb` (598,704 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/horse_archer.glb` (598,704 bytes).
 - Art: `ART_DEF_UNIT_HORSE_ARCHER`. Source scale: 0.42.
 - NIF: `art/units/horsearcher/horsearcher.nif`.
 - KFM: `art/units/horsearcher/horsearcher.kfm`.
@@ -3201,7 +3201,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:horseman
 
-- Model: `src/Mods/Military/art/models/horseman.glb` (606,488 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/horseman.glb` (606,488 bytes).
 - Art: `ART_DEF_UNIT_HORSEMAN_EURASIAN`. Source scale: 0.42.
 - NIF: `art/units/horseman_eurasian/horseman_eurasian.nif`.
 - KFM: `art/units/horseman_eurasian/horseman_eurasian.kfm`.
@@ -3218,7 +3218,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hungarian_huszar_cavalry
 
-- Model: `src/Mods/Military/art/models/hungarian_huszar_cavalry.glb` (585,708 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hungarian_huszar_cavalry.glb` (585,708 bytes).
 - Art: `ART_DEF_UNIT_HUSZAR_CAVALRY`. Source scale: 0.42.
 - NIF: `art/hungary/huszar cavalry/russiancossack.nif`.
 - KFM: `art/hungary/huszar cavalry/russiancossack.kfm`.
@@ -3235,7 +3235,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:huns_tarkan
 
-- Model: `src/Mods/Military/art/models/huns_tarkan.glb` (729,832 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/huns_tarkan.glb` (729,832 bytes).
 - Art: `ART_DEF_UNIT_HUNS_TARKAN`. Source scale: 0.42.
 - NIF: `art/huns/tarkan/horsearcher.nif`.
 - KFM: `art/huns/tarkan/horsearcher.kfm`.
@@ -3253,7 +3253,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hybrid_gunship
 
-- Model: `src/Mods/Military/art/models/hybrid_gunship.glb` (257,180 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hybrid_gunship.glb` (257,180 bytes).
 - Art: `ART_DEF_UNIT_HYBRID_GUNSHIP`. Source scale: 0.30.
 - NIF: `art/units/hybrid gunship/heavymiss.nif`.
 - KFM: `art/units/gunship/gunship.kfm`.
@@ -3269,7 +3269,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:hydrogen
 
-- Model: `src/Mods/Military/art/models/hydrogen.glb` (124,456 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/hydrogen.glb` (124,456 bytes).
 - Art: `ART_DEF_UNIT_HYDROGEN`. Source scale: 0.85.
 - NIF: `art/units/nukes/topol-m/icbm.nif`.
 - KFM: `art/units/nukes/topol-m/icbm.kfm`.
@@ -3284,7 +3284,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:icbm
 
-- Model: `src/Mods/Military/art/models/icbm.glb` (103,544 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/icbm.glb` (103,544 bytes).
 - Art: `ART_DEF_UNIT_ICBM`. Source scale: 0.85.
 - NIF: `art/units/icbm/icbm.nif`.
 - KFM: `art/units/icbm/icbm.kfm`.
@@ -3298,7 +3298,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:il2
 
-- Model: `src/Mods/Military/art/models/il2.glb` (330,188 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/il2.glb` (330,188 bytes).
 - Art: `ART_DEF_UNIT_IL2`. Source scale: 0.5.
 - NIF: `art/units/il2/shturmovik.nif`.
 - KFM: `art/units/fighter/fighter.kfm`.
@@ -3313,7 +3313,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:incan_quechua
 
-- Model: `src/Mods/Military/art/models/incan_quechua.glb` (280,516 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/incan_quechua.glb` (280,516 bytes).
 - Art: `ART_DEF_UNIT_INCAN_QUECHUA`. Source scale: 0.44.
 - NIF: `art/units/unique/inca/quechua/incanquechua.nif`.
 - KFM: `art/units/unique/inca/quechua/incanquechua.kfm`.
@@ -3330,7 +3330,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:indian_fast_worker
 
-- Model: `src/Mods/Military/art/models/indian_fast_worker.glb` (248,452 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/indian_fast_worker.glb` (248,452 bytes).
 - Art: `ART_DEF_UNIT_INDIAN_FAST_WORKER`. Source scale: 0.44.
 - NIF: `art/units/unique/india/worker/indianfastworker.nif`.
 - KFM: `art/units/unique/india/worker/indianfastworker.kfm`.
@@ -3345,7 +3345,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:infantry
 
-- Model: `src/Mods/Military/art/models/infantry.glb` (356,904 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/infantry.glb` (356,904 bytes).
 - Art: `ART_DEF_UNIT_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/infantry/infantry.nif`.
 - KFM: `art/units/infantry/infantry.kfm`.
@@ -3362,7 +3362,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:inquisitor
 
-- Model: `src/Mods/Military/art/models/inquisitor.glb` (427,056 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/inquisitor.glb` (427,056 bytes).
 - Art: `ART_DEF_UNIT_INQUISITOR`. Source scale: 0.44.
 - NIF: `art/units/godsofold_inquisitor/inquisitor_red.nif`.
 - KFM: `art/units/godsofold_inquisitor/inquisitor_red.kfm`.
@@ -3378,7 +3378,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:irbm
 
-- Model: `src/Mods/Military/art/models/irbm.glb` (117,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/irbm.glb` (117,276 bytes).
 - Art: `ART_DEF_UNIT_IRBM`. Source scale: 0.85.
 - NIF: `art/units/nukes/irbm/icbm.nif`.
 - KFM: `art/units/nukes/irbm/icbm.kfm`.
@@ -3393,7 +3393,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:irish_fianna
 
-- Model: `src/Mods/Military/art/models/irish_fianna.glb` (295,676 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/irish_fianna.glb` (295,676 bytes).
 - Art: `ART_DEF_UNIT_FIANNA`. Source scale: 0.44.
 - NIF: `art/ireland/fianna/swordsman.nif`.
 - KFM: `art/ireland/fianna/swordsman.kfm`.
@@ -3410,7 +3410,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:iron_frigate
 
-- Model: `src/Mods/Military/art/models/iron_frigate.glb` (307,728 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/iron_frigate.glb` (307,728 bytes).
 - Art: `ART_DEF_UNIT_IRON_FRIGATE`. Source scale: 0.19.
 - NIF: `art/units/iron frigate/hms warrior.nif`.
 - KFM: `art/units/frigate/frigate.kfm`.
@@ -3428,7 +3428,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ironclad
 
-- Model: `src/Mods/Military/art/models/ironclad.glb` (310,580 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ironclad.glb` (310,580 bytes).
 - Art: `ART_DEF_UNIT_IRONCLAD`. Source scale: 0.52.
 - NIF: `art/units/ironclad/ironclad.nif`.
 - KFM: `art/units/ironclad/ironclad.kfm`.
@@ -3445,7 +3445,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ironclad_cruiser
 
-- Model: `src/Mods/Military/art/models/ironclad_cruiser.glb` (750,228 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ironclad_cruiser.glb` (750,228 bytes).
 - Art: `ART_DEF_UNIT_IRONCLAD_CRUISER`. Source scale: 0.32.
 - NIF: `art/units/ironclad cruiser/ww1_cr_rus.nif`.
 - KFM: `art/units/ironclad cruiser/ww1_cr_rus.kfm`.
@@ -3462,7 +3462,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:iroquois_mohawkarcher
 
-- Model: `src/Mods/Military/art/models/iroquois_mohawkarcher.glb` (390,836 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/iroquois_mohawkarcher.glb` (390,836 bytes).
 - Art: `ART_DEF_UNIT_IROQUOIS_MOHAWKARCHER`. Source scale: 0.44.
 - NIF: `art/units/unique/iroquois/mohawk longbowman/archer.nif`.
 - KFM: `art/units/archer/archer.kfm`.
@@ -3480,7 +3480,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:islamic_missionary
 
-- Model: `src/Mods/Military/art/models/islamic_missionary.glb` (187,672 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/islamic_missionary.glb` (187,672 bytes).
 - Art: `ART_DEF_UNIT_ISLAMIC_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/islamic/islamic_missionary.nif`.
 - KFM: `art/units/missionary/islamic/islamic_missionary.kfm`.
@@ -3495,7 +3495,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:japan_samurai
 
-- Model: `src/Mods/Military/art/models/japan_samurai.glb` (307,000 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/japan_samurai.glb` (307,000 bytes).
 - Art: `ART_DEF_UNIT_JAPAN_SAMURAI`. Source scale: 0.44.
 - NIF: `art/units/unique/japan/samurai/japanesesamurai.nif`.
 - KFM: `art/units/unique/japan/samurai/japanesesamurai.kfm`.
@@ -3512,7 +3512,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:javelineer
 
-- Model: `src/Mods/Military/art/models/javelineer.glb` (328,328 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/javelineer.glb` (328,328 bytes).
 - Art: `ART_DEF_UNIT_JAVELINEER`. Source scale: 0.44.
 - NIF: `art/units/javelineer/european/javelineer.nif`.
 - KFM: `art/units/javelineer/animations/javelineer_2.kfm`.
@@ -3529,7 +3529,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:jeep
 
-- Model: `src/Mods/Military/art/models/jeep.glb` (458,800 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/jeep.glb` (458,800 bytes).
 - Art: `ART_DEF_UNIT_JEEP`. Source scale: 0.45.
 - NIF: `art/units/jeep/willys.nif`.
 - KFM: `art/units/jeep/willys.kfm`.
@@ -3547,7 +3547,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:jet_fighter
 
-- Model: `src/Mods/Military/art/models/jet_fighter.glb` (264,072 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/jet_fighter.glb` (264,072 bytes).
 - Art: `ART_DEF_UNIT_JET_FIGHTER`. Source scale: 0.48.
 - NIF: `art/units/jetfighter/jetfighter.nif`.
 - KFM: `art/units/jetfighter/jetfighter.kfm`.
@@ -3561,7 +3561,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:jewish_missionary
 
-- Model: `src/Mods/Military/art/models/jewish_missionary.glb` (170,796 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/jewish_missionary.glb` (170,796 bytes).
 - Art: `ART_DEF_UNIT_JEWISH_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/jewish/jewishmissionary.nif`.
 - KFM: `art/units/missionary/jewish/jewishmissionary.kfm`.
@@ -3576,7 +3576,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:khmer_ballista_elephant
 
-- Model: `src/Mods/Military/art/models/khmer_ballista_elephant.glb` (619,720 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/khmer_ballista_elephant.glb` (619,720 bytes).
 - Art: `ART_DEF_UNIT_KHMER_BALLISTA_ELEPHANT`. Source scale: 0.32.
 - NIF: `art/units/unique_khmer_elephantballista/khmer_elephantballista.nif`.
 - KFM: `art/units/unique_khmer_elephantballista/khmer_elephantballista.kfm`.
@@ -3591,7 +3591,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:knight
 
-- Model: `src/Mods/Military/art/models/knight.glb` (617,896 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/knight.glb` (617,896 bytes).
 - Art: `ART_DEF_UNIT_KNIGHT`. Source scale: 0.42.
 - NIF: `art/units/knight/knight.nif`.
 - KFM: `art/units/knight/knight.kfm`.
@@ -3609,7 +3609,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:korean_hwacha
 
-- Model: `src/Mods/Military/art/models/korean_hwacha.glb` (410,884 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/korean_hwacha.glb` (410,884 bytes).
 - Art: `ART_DEF_UNIT_KOREAN_HWACHA`. Source scale: 0.50.
 - NIF: `art/units/hwacha_korean/hwacha.nif`.
 - KFM: `art/units/hwacha_korean/hwacha.kfm`.
@@ -3625,7 +3625,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:lancer
 
-- Model: `src/Mods/Military/art/models/lancer.glb` (702,500 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/lancer.glb` (702,500 bytes).
 - Art: `ART_DEF_UNIT_LANCER`. Source scale: 0.42.
 - NIF: `art/units/lancer/european/lancer.nif`.
 - KFM: `art/units/unique/mongol/keshik/mongelkeshik.kfm`.
@@ -3642,7 +3642,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:light_aa
 
-- Model: `src/Mods/Military/art/models/light_aa.glb` (136,052 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/light_aa.glb` (136,052 bytes).
 - Art: `ART_DEF_UNIT_LIGHT_AA`. Source scale: 0.6.
 - NIF: `art/units/light antiair gun/lightaa.nif`.
 - KFM: `art/units/light antiair gun/lightaa.kfm`.
@@ -3658,7 +3658,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:light_artillery
 
-- Model: `src/Mods/Military/art/models/light_artillery.glb` (168,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/light_artillery.glb` (168,428 bytes).
 - Art: `ART_DEF_UNIT_LIGHT_ARTILLERY`. Source scale: 0.7.
 - NIF: `art/units/light artillery/artillery.nif`.
 - KFM: `art/units/artillery/artillery.kfm`.
@@ -3674,7 +3674,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:light_cavalry
 
-- Model: `src/Mods/Military/art/models/light_cavalry.glb` (640,116 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/light_cavalry.glb` (640,116 bytes).
 - Art: `ART_DEF_UNIT_LIGHT_CAVALRY`. Source scale: 0.42.
 - NIF: `art/units/charlemagne_lightcavalry/lightcavalry.nif`.
 - KFM: `art/units/charlemagne_lightcavalry/lightcavalry.kfm`.
@@ -3691,7 +3691,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:light_swordsman
 
-- Model: `src/Mods/Military/art/models/light_swordsman.glb` (296,948 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/light_swordsman.glb` (296,948 bytes).
 - Art: `ART_DEF_UNIT_SWORDSMAN`. Source scale: 0.44.
 - NIF: `art/units/swordsman/swordsman.nif`.
 - KFM: `art/units/swordsman/swordsman.kfm`.
@@ -3708,7 +3708,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:light_tank
 
-- Model: `src/Mods/Military/art/models/light_tank.glb` (239,372 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/light_tank.glb` (239,372 bytes).
 - Art: `ART_DEF_UNIT_VICKERS_E`. Source scale: 0.5.
 - NIF: `art/units/light tank/european/vickers_e.nif`.
 - KFM: `art/units/light tank/european/vickers_e.kfm`.
@@ -3724,7 +3724,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:lion
 
-- Model: `src/Mods/Military/art/models/lion.glb` (321,216 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/lion.glb` (321,216 bytes).
 - Art: `ART_DEF_UNIT_LION`. Source scale: 0.61.
 - NIF: `art/units/lion/lion.nif`.
 - KFM: `art/units/lion/lion.kfm`.
@@ -3741,7 +3741,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:lithuanian_vytis
 
-- Model: `src/Mods/Military/art/models/lithuanian_vytis.glb` (638,160 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/lithuanian_vytis.glb` (638,160 bytes).
 - Art: `ART_DEF_UNIT_VYTIS`. Source scale: 0.42.
 - NIF: `art/lithuania/vytis/heavycavalry.nif`.
 - KFM: `art/lithuania/vytis/heavycavalry.kfm`.
@@ -3758,7 +3758,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:littoral_combat_ship
 
-- Model: `src/Mods/Military/art/models/littoral_combat_ship.glb` (375,740 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/littoral_combat_ship.glb` (375,740 bytes).
 - Art: `ART_DEF_UNIT_LITTORAL_COMBAT_SHIP`. Source scale: 0.7.
 - NIF: `art/units/littoral combat ship/dd_sens.nif`.
 - KFM: `art/units/destroyer/destroyer.kfm`.
@@ -3775,7 +3775,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:lombard_gasindii
 
-- Model: `src/Mods/Military/art/models/lombard_gasindii.glb` (301,944 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/lombard_gasindii.glb` (301,944 bytes).
 - Art: `ART_DEF_UNIT_GASINDII`. Source scale: 0.44.
 - NIF: `art/lombards/gasindii/greekphalanx.nif`.
 - KFM: `art/lombards/gasindii/greekphalanx.kfm`.
@@ -3792,7 +3792,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:longbowman
 
-- Model: `src/Mods/Military/art/models/longbowman.glb` (403,572 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/longbowman.glb` (403,572 bytes).
 - Art: `ART_DEF_UNIT_LONGBOWMAN`. Source scale: 0.44.
 - NIF: `art/units/longbowman/longbowman.nif`.
 - KFM: `art/units/longbowman/longbowman.kfm`.
@@ -3809,7 +3809,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:maceman
 
-- Model: `src/Mods/Military/art/models/maceman.glb` (359,312 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/maceman.glb` (359,312 bytes).
 - Art: `ART_DEF_UNIT_MACEMAN`. Source scale: 0.44.
 - NIF: `art/units/maceman/maceman.nif`.
 - KFM: `art/units/maceman/maceman.kfm`.
@@ -3826,7 +3826,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:machine_gun
 
-- Model: `src/Mods/Military/art/models/machine_gun.glb` (294,004 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/machine_gun.glb` (294,004 bytes).
 - Art: `ART_DEF_UNIT_MACHINE_GUN`. Source scale: 0.44.
 - NIF: `art/units/machinegun/machinegunner.nif`.
 - KFM: `art/units/machinegun/machinegunner.kfm`.
@@ -3842,7 +3842,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mali_skirmisher
 
-- Model: `src/Mods/Military/art/models/mali_skirmisher.glb` (341,460 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mali_skirmisher.glb` (341,460 bytes).
 - Art: `ART_DEF_UNIT_MALI_SKIRMISHER`. Source scale: 0.44.
 - NIF: `art/units/unique/mali/skirmisher/maliskirmisher.nif`.
 - KFM: `art/units/unique/mali/skirmisher/maliskirmisher.kfm`.
@@ -3859,7 +3859,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:man_at_arms
 
-- Model: `src/Mods/Military/art/models/man_at_arms.glb` (638,228 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/man_at_arms.glb` (638,228 bytes).
 - Art: `ART_DEF_UNIT_MAN_AT_ARMS`. Source scale: 0.42.
 - NIF: `art/units/man at arms/european/mmaceman_light.nif`.
 - KFM: `art/units/horse archer/greek/companion_cavalry.kfm`.
@@ -3876,7 +3876,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:manowar
 
-- Model: `src/Mods/Military/art/models/manowar.glb` (293,148 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/manowar.glb` (293,148 bytes).
 - Art: `ART_DEF_UNIT_MANOWAR`. Source scale: 0.20.
 - NIF: `art/units/man o war/frigate.nif`.
 - KFM: `art/units/frigate/frigate.kfm`.
@@ -3893,7 +3893,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:marine
 
-- Model: `src/Mods/Military/art/models/marine.glb` (320,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/marine.glb` (320,332 bytes).
 - Art: `ART_DEF_UNIT_MARINE`. Source scale: 0.44.
 - NIF: `art/units/marine/marines.nif`.
 - KFM: `art/units/marine/marines.kfm`.
@@ -3910,7 +3910,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:maya_holkan
 
-- Model: `src/Mods/Military/art/models/maya_holkan.glb` (368,224 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/maya_holkan.glb` (368,224 bytes).
 - Art: `ART_DEF_UNIT_MAYA_HOLKAN`. Source scale: 0.44.
 - NIF: `art/units/unique_maya_holkan/unique_mayan_holkan.nif`.
 - KFM: `art/units/unique_maya_holkan/unique_mayan_holkan.kfm`.
@@ -3927,7 +3927,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mechanized_infantry
 
-- Model: `src/Mods/Military/art/models/mechanized_infantry.glb` (260,688 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mechanized_infantry.glb` (260,688 bytes).
 - Art: `ART_DEF_UNIT_MECHANIZED_INFANTRY`. Source scale: 0.43.
 - NIF: `art/units/mechanizedinfantry/mechanizedinfantry.nif`.
 - KFM: `art/units/mechanizedinfantry/mechanizedinfantry.kfm`.
@@ -3943,7 +3943,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:med_caravan
 
-- Model: `src/Mods/Military/art/models/med_caravan.glb` (648,340 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/med_caravan.glb` (648,340 bytes).
 - Art: `ART_DEF_UNIT_MED_CARAVAN`. Source scale: 0.34.
 - NIF: `art/units/charlemagne_supplytrain/supplytrain.nif`.
 - KFM: `art/units/charlemagne_supplytrain/supplytrain.kfm`.
@@ -3956,7 +3956,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:merchant
 
-- Model: `src/Mods/Military/art/models/merchant.glb` (424,568 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/merchant.glb` (424,568 bytes).
 - Art: `ART_DEF_UNIT_MERCHANT`. Source scale: 0.46.
 - NIF: `art/units/greatpeople/merchant/greatmerchantancient.nif`.
 - KFM: `art/units/greatpeople/merchant/greatmerchantancient.kfm`.
@@ -3973,7 +3973,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:minigun
 
-- Model: `src/Mods/Military/art/models/minigun.glb` (336,652 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/minigun.glb` (336,652 bytes).
 - Art: `ART_DEF_UNIT_MINIGUN`. Source scale: 0.44.
 - NIF: `art/units/minigun/european/fremg.nif`.
 - KFM: `art/units/machinegun/machinegunner.kfm`.
@@ -3989,7 +3989,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:missile_cruiser
 
-- Model: `src/Mods/Military/art/models/missile_cruiser.glb` (269,200 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/missile_cruiser.glb` (269,200 bytes).
 - Art: `ART_DEF_UNIT_MISSILE_CRUISER`. Source scale: 0.6.
 - NIF: `art/units/missile_cruiser/missile_cruiser.nif`.
 - KFM: `art/units/missile_cruiser/missile_cruiser.kfm`.
@@ -4006,7 +4006,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mobile_artillery
 
-- Model: `src/Mods/Military/art/models/mobile_artillery.glb` (219,364 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mobile_artillery.glb` (219,364 bytes).
 - Art: `ART_DEF_UNIT_MOBILE_ARTILLERY`. Source scale: 0.57.
 - NIF: `art/units/mobileartillery/mobileartillery.nif`.
 - KFM: `art/units/mobileartillery/mobileartillery.kfm`.
@@ -4022,7 +4022,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mobile_sam
 
-- Model: `src/Mods/Military/art/models/mobile_sam.glb` (350,172 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mobile_sam.glb` (350,172 bytes).
 - Art: `ART_DEF_UNIT_MOBILE_SAM`. Source scale: 0.57.
 - NIF: `art/units/mobilesam/mobilesam.nif`.
 - KFM: `art/units/mobilesam/mobilesam.kfm`.
@@ -4038,7 +4038,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_armor
 
-- Model: `src/Mods/Military/art/models/modern_armor.glb` (240,768 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_armor.glb` (240,768 bytes).
 - Art: `ART_DEF_UNIT_MODERN_ARMOR`. Source scale: 0.57.
 - NIF: `art/units/modernarmor/modernarmor.nif`.
 - KFM: `art/units/modernarmor/modernarmor.kfm`.
@@ -4054,7 +4054,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_grenadier
 
-- Model: `src/Mods/Military/art/models/modern_grenadier.glb` (433,032 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_grenadier.glb` (433,032 bytes).
 - Art: `ART_DEF_UNIT_MODERN_GRENADIER`. Source scale: 0.44.
 - NIF: `art/units/modern grenadier/grenadier.nif`.
 - KFM: `art/units/grenadier/grenadier.kfm`.
@@ -4075,7 +4075,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_infantry
 
-- Model: `src/Mods/Military/art/models/modern_infantry.glb` (357,576 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_infantry.glb` (357,576 bytes).
 - Art: `ART_DEF_UNIT_MODERNINFANTRY`. Source scale: 0.44.
 - NIF: `art/units/modern infantry/european/moderninfantry.nif`.
 - KFM: `art/units/marine/marines.kfm`.
@@ -4092,7 +4092,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_marine
 
-- Model: `src/Mods/Military/art/models/modern_marine.glb` (384,820 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_marine.glb` (384,820 bytes).
 - Art: `ART_DEF_UNIT_MODERN_MARINE`. Source scale: 0.44.
 - NIF: `art/units/modern marine/moderninfantry.nif`.
 - KFM: `art/units/marine/marines.kfm`.
@@ -4109,7 +4109,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_paratrooper
 
-- Model: `src/Mods/Military/art/models/modern_paratrooper.glb` (681,040 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_paratrooper.glb` (681,040 bytes).
 - Art: `ART_DEF_UNIT_MODERN_PARATROOPER`. Source scale: 0.44.
 - NIF: `art/units/modern paratrooper/paratrooper.nif`.
 - KFM: `art/units/modern paratrooper/paratrooper.kfm`.
@@ -4134,7 +4134,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:modern_workboat
 
-- Model: `src/Mods/Military/art/models/modern_workboat.glb` (264,616 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/modern_workboat.glb` (264,616 bytes).
 - Art: `ART_DEF_UNIT_WORKBOAT_MODERN`. Source scale: 0.28.
 - NIF: `art/units/workboat_modern/workboat_modern.nif`.
 - KFM: `art/units/workboat_modern/workboat_modern.kfm`.
@@ -4150,7 +4150,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mongol_keshik
 
-- Model: `src/Mods/Military/art/models/mongol_keshik.glb` (694,056 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mongol_keshik.glb` (694,056 bytes).
 - Art: `ART_DEF_UNIT_MONGOL_KESHIK`. Source scale: 0.42.
 - NIF: `art/units/unique/mongol/keshik/mongelkeshik.nif`.
 - KFM: `art/units/unique/mongol/keshik/mongelkeshik.kfm`.
@@ -4167,7 +4167,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:moonbean_executive
 
-- Model: `src/Mods/Military/art/models/moonbean_executive.glb` (261,364 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/moonbean_executive.glb` (261,364 bytes).
 - Art: `ART_DEF_UNIT_CEO_MOONBEAN_EXECUTIVE`. Source scale: 0.35.
 - NIF: `art/units/executive/ceo_mb.nif`.
 - KFM: `art/units/ceo/ceo.kfm`.
@@ -4181,7 +4181,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:motorcycle
 
-- Model: `src/Mods/Military/art/models/motorcycle.glb` (962,760 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/motorcycle.glb` (962,760 bytes).
 - Art: `ART_DEF_UNIT_MOTORCYCLE`. Source scale: 0.45.
 - NIF: `art/units/motorcycle/wehrmachtbiker.nif`.
 - KFM: `art/units/motorcycle/wehrmachtbiker.kfm`.
@@ -4198,7 +4198,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:motorized_infantry
 
-- Model: `src/Mods/Military/art/models/motorized_infantry.glb` (118,468 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/motorized_infantry.glb` (118,468 bytes).
 - Art: `ART_DEF_UNIT_MOTORIZED_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/armor_units/fiat_618_grom/zis-5b.nif`.
 - KFM: `art/units/armor_units/fiat_618_grom/zis-5b.kfm`.
@@ -4215,7 +4215,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mounted_infantry
 
-- Model: `src/Mods/Military/art/models/mounted_infantry.glb` (651,788 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mounted_infantry.glb` (651,788 bytes).
 - Art: `ART_DEF_UNIT_MOUNTED_INFANTRY`. Source scale: 0.42.
 - NIF: `art/units/mounted infantry/european/mswordsman_light.nif`.
 - KFM: `art/units/horse archer/greek/companion_cavalry.kfm`.
@@ -4232,7 +4232,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mounted_rifleman
 
-- Model: `src/Mods/Military/art/models/mounted_rifleman.glb` (559,540 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mounted_rifleman.glb` (559,540 bytes).
 - Art: `ART_DEF_UNIT_MOUNTED_RIFLEMAN`. Source scale: 0.42.
 - NIF: `art/units/mounted rifleman/european/cavalry_fx.nif`.
 - KFM: `art/units/cavalry/cavalry.kfm`.
@@ -4250,7 +4250,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:mrbm
 
-- Model: `src/Mods/Military/art/models/mrbm.glb` (137,548 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/mrbm.glb` (137,548 bytes).
 - Art: `ART_DEF_UNIT_MRBM`. Source scale: 0.85.
 - NIF: `art/units/nukes/mrbm/icbm.nif`.
 - KFM: `art/units/nukes/mrbm/icbm.kfm`.
@@ -4265,7 +4265,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:musketman
 
-- Model: `src/Mods/Military/art/models/musketman.glb` (383,020 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/musketman.glb` (383,020 bytes).
 - Art: `ART_DEF_UNIT_MUSKETMAN`. Source scale: 0.44.
 - NIF: `art/units/musketman/european/redcoat.nif`.
 - KFM: `art/units/unique/england/redcoat/redcoat.kfm`.
@@ -4282,7 +4282,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nagualism_missionary
 
-- Model: `src/Mods/Military/art/models/nagualism_missionary.glb` (301,196 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nagualism_missionary.glb` (301,196 bytes).
 - Art: `ART_DEF_UNIT_TOLTEC_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/tlenamacac/greatprophet.nif`.
 - KFM: `art/units/missionary/tlenamacac/greatprophet.kfm`.
@@ -4298,7 +4298,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nanite_cloud
 
-- Model: `src/Mods/Military/art/models/nanite_cloud.glb` (600,072 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nanite_cloud.glb` (600,072 bytes).
 - Art: `ART_DEF_UNIT_ENTITY`. Source scale: 0.6.
 - NIF: `art/units/afterworld_boss/afterworld_boss.nif`.
 - KFM: `art/units/afterworld_boss/afterworld_boss.kfm`.
@@ -4315,7 +4315,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nanite_spy
 
-- Model: `src/Mods/Military/art/models/nanite_spy.glb` (582,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nanite_spy.glb` (582,316 bytes).
 - Art: `ART_DEF_UNIT_NANITE_SPY`. Source scale: 0.1.
 - NIF: `art/units/nanite spy/afterworld_boss.nif`.
 - KFM: `art/units/nanite spy/afterworld_boss.kfm`.
@@ -4332,7 +4332,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nanite_swarm
 
-- Model: `src/Mods/Military/art/models/nanite_swarm.glb` (583,108 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nanite_swarm.glb` (583,108 bytes).
 - Art: `ART_DEF_UNIT_NANITE_SWARM`. Source scale: 0.5.
 - NIF: `art/units/nanite swarm/afterworld_boss.nif`.
 - KFM: `art/units/nanite swarm/afterworld_boss.kfm`.
@@ -4349,7 +4349,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:native_america_dog_soldier
 
-- Model: `src/Mods/Military/art/models/native_america_dog_soldier.glb` (352,300 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/native_america_dog_soldier.glb` (352,300 bytes).
 - Art: `ART_DEF_UNIT_NATIVE_AMERICA_DOG_SOLDIER`. Source scale: 0.44.
 - NIF: `art/units/unique_nativeamerica_dogsoldier/dogsoldier.nif`.
 - KFM: `art/units/unique_nativeamerica_dogsoldier/dogsoldier.kfm`.
@@ -4366,7 +4366,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:netherlands_oostindievaarder
 
-- Model: `src/Mods/Military/art/models/netherlands_oostindievaarder.glb` (270,024 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/netherlands_oostindievaarder.glb` (270,024 bytes).
 - Art: `ART_DEF_UNIT_NETHERLANDS_OOSTINDIEVAARDER`. Source scale: 0.2.
 - NIF: `art/units/dutch_east_india_man/dutch_east_india_man.nif`.
 - KFM: `art/units/dutch_east_india_man/dutch_east_india_man.kfm`.
@@ -4384,7 +4384,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nlos_cannon
 
-- Model: `src/Mods/Military/art/models/nlos_cannon.glb` (347,224 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nlos_cannon.glb` (347,224 bytes).
 - Art: `ART_DEF_UNIT_NLOS_CANNON`. Source scale: 0.57.
 - NIF: `art/units/nlos cannon/disari.nif`.
 - KFM: `art/units/nlos cannon/mobileartillery.kfm`.
@@ -4400,7 +4400,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nuclear_carrier
 
-- Model: `src/Mods/Military/art/models/nuclear_carrier.glb` (296,472 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nuclear_carrier.glb` (296,472 bytes).
 - Art: `ART_DEF_UNIT_NUCLEAR_CARRIER`. Source scale: 1.1.
 - NIF: `art/units/carrier/carrier.nif`.
 - KFM: `art/units/carrier/carrier.kfm`.
@@ -4417,7 +4417,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:nuclear_submarine
 
-- Model: `src/Mods/Military/art/models/nuclear_submarine.glb` (181,672 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/nuclear_submarine.glb` (181,672 bytes).
 - Art: `ART_DEF_UNIT_NUCLEAR_SUBMARINE`. Source scale: 0.75.
 - NIF: `art/units/missile submarine/american/ohio.nif`.
 - KFM: `art/units/submarine/submarine.kfm`.
@@ -4434,7 +4434,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:orbital_bomber
 
-- Model: `src/Mods/Military/art/models/orbital_bomber.glb` (127,504 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/orbital_bomber.glb` (127,504 bytes).
 - Art: `ART_DEF_UNIT_ORBITAL_BOMBER`. Source scale: 0.5.
 - NIF: `art/units/thunderbolt/jf_smart.nif`.
 - KFM: `none`.
@@ -4445,7 +4445,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:orbital_fighter
 
-- Model: `src/Mods/Military/art/models/orbital_fighter.glb` (260,976 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/orbital_fighter.glb` (260,976 bytes).
 - Art: `ART_DEF_UNIT_ORBITAL_FIGHTER`. Source scale: 0.45.
 - NIF: `art/units/hammerheadrefar/jetfighter.nif`.
 - KFM: `art/units/hammerheadrefar/jetfighter.kfm`.
@@ -4459,7 +4459,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ottoman_janissary
 
-- Model: `src/Mods/Military/art/models/ottoman_janissary.glb` (308,836 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ottoman_janissary.glb` (308,836 bytes).
 - Art: `ART_DEF_UNIT_OTTOMAN_JANISSARY`. Source scale: 0.44.
 - NIF: `art/units/janissary/janissary.nif`.
 - KFM: `art/units/janissary/janissary.kfm`.
@@ -4476,7 +4476,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:panther
 
-- Model: `src/Mods/Military/art/models/panther.glb` (269,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/panther.glb` (269,824 bytes).
 - Art: `ART_DEF_UNIT_PANTHER`. Source scale: 0.5.
 - NIF: `art/units/panther/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -4493,7 +4493,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:paratrooper
 
-- Model: `src/Mods/Military/art/models/paratrooper.glb` (503,088 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/paratrooper.glb` (503,088 bytes).
 - Art: `ART_DEF_UNIT_PARATROOPER`. Source scale: 0.44.
 - NIF: `art/units/paratrooper/paratrooper.nif`.
 - KFM: `art/units/paratrooper/paratrooper.kfm`.
@@ -4518,7 +4518,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:persia_immortal
 
-- Model: `src/Mods/Military/art/models/persia_immortal.glb` (601,368 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/persia_immortal.glb` (601,368 bytes).
 - Art: `ART_DEF_UNIT_PERSIA_IMMORTAL`. Source scale: 0.42.
 - NIF: `art/units/unique/persia/immortal/persianimmortal.nif`.
 - KFM: `art/units/unique/persia/immortal/persianimmortal.kfm`.
@@ -4535,7 +4535,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:picts_cruithni
 
-- Model: `src/Mods/Military/art/models/picts_cruithni.glb` (273,308 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/picts_cruithni.glb` (273,308 bytes).
 - Art: `ART_DEF_UNIT_PICTS_CRUITHNI`. Source scale: 0.44.
 - NIF: `art/picts/cruithni/swordsman_fx.nif`.
 - KFM: `art/units/swordsman/swordsman.kfm`.
@@ -4552,7 +4552,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:pikeman
 
-- Model: `src/Mods/Military/art/models/pikeman.glb` (322,848 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/pikeman.glb` (322,848 bytes).
 - Art: `ART_DEF_UNIT_PIKEMAN`. Source scale: 0.44.
 - NIF: `art/units/pikeman/pikeman.nif`.
 - KFM: `art/units/pikeman/pikeman.kfm`.
@@ -4569,7 +4569,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:pioneer
 
-- Model: `src/Mods/Military/art/models/pioneer.glb` (256,496 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/pioneer.glb` (256,496 bytes).
 - Art: `ART_DEF_UNIT_PIONEER_MALE`. Source scale: 0.46.
 - NIF: `art/units/settler/settler_male.nif`.
 - KFM: `art/units/settler/settler_male.kfm`.
@@ -4585,7 +4585,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:plasma_armor
 
-- Model: `src/Mods/Military/art/models/plasma_armor.glb` (279,552 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/plasma_armor.glb` (279,552 bytes).
 - Art: `ART_DEF_UNIT_HELLHOUND_ARMOR`. Source scale: 0.3.
 - NIF: `art/units/plasma armor/hellhound.nif`.
 - KFM: `art/units/plasma armor/hellhound.kfm`.
@@ -4601,7 +4601,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:poison_nova
 
-- Model: `src/Mods/Military/art/models/poison_nova.glb` (134,744 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/poison_nova.glb` (134,744 bytes).
 - Art: `ART_DEF_UNIT_POISON_NOVA`. Source scale: 0.85.
 - NIF: `art/units/nukes/poisonnova/icbm.nif`.
 - KFM: `art/units/nukes/poisonnova/icbm.kfm`.
@@ -4616,7 +4616,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:poison_nuke
 
-- Model: `src/Mods/Military/art/models/poison_nuke.glb` (135,716 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/poison_nuke.glb` (135,716 bytes).
 - Art: `ART_DEF_UNIT_POISON_NUKE`. Source scale: 0.85.
 - NIF: `art/units/nukes/poisonnuke/icbm.nif`.
 - KFM: `art/units/nukes/poisonnuke/icbm.kfm`.
@@ -4631,7 +4631,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:polarbear
 
-- Model: `src/Mods/Military/art/models/polarbear.glb` (275,432 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/polarbear.glb` (275,432 bytes).
 - Art: `ART_DEF_UNIT_POLARBEAR`. Source scale: 0.7.
 - NIF: `art/units/animals/polarbear/bear.nif`.
 - KFM: `art/units/animals/polarbear/bear.kfm`.
@@ -4648,7 +4648,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:polish_heavy_hussar
 
-- Model: `src/Mods/Military/art/models/polish_heavy_hussar.glb` (719,384 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/polish_heavy_hussar.glb` (719,384 bytes).
 - Art: `ART_DEF_UNIT_HEAVY_HUSSAR`. Source scale: 0.42.
 - NIF: `art/poland/heavy hussar/heavycavalry.nif`.
 - KFM: `art/poland/heavy hussar/heavycavalry.kfm`.
@@ -4672,7 +4672,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:portugal_carrack
 
-- Model: `src/Mods/Military/art/models/portugal_carrack.glb` (228,872 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/portugal_carrack.glb` (228,872 bytes).
 - Art: `ART_DEF_UNIT_PORTUGAL_CARRACK`. Source scale: 0.24.
 - NIF: `art/units/portugal_carrack/portugal_carrack.nif`.
 - KFM: `art/units/portugal_carrack/portugal_carrack.kfm`.
@@ -4690,7 +4690,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:power_armored_infantry
 
-- Model: `src/Mods/Military/art/models/power_armored_infantry.glb` (301,644 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/power_armored_infantry.glb` (301,644 bytes).
 - Art: `ART_DEF_UNIT_POWER_ARMOR_INFANTRY`. Source scale: 0.75.
 - NIF: `art/units/power armor infantry/warhammer.nif`.
 - KFM: `art/units/power armor infantry/warhammer.kfm`.
@@ -4706,7 +4706,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:pre_dreadnought
 
-- Model: `src/Mods/Military/art/models/pre_dreadnought.glb` (360,772 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/pre_dreadnought.glb` (360,772 bytes).
 - Art: `ART_DEF_UNIT_PRE_DREADNOUGHT`. Source scale: 0.6.
 - NIF: `art/units/ironclad battleship/hms_canopus.nif`.
 - KFM: `art/units/destroyer/destroyer.kfm`.
@@ -4723,7 +4723,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:precision_attack_missile
 
-- Model: `src/Mods/Military/art/models/precision_attack_missile.glb` (102,992 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/precision_attack_missile.glb` (102,992 bytes).
 - Art: `ART_DEF_UNIT_PRECISION_ATTACK_MISSILE`. Source scale: 0.3.
 - NIF: `art/units/precision attack missile/tomahawk.nif`.
 - KFM: `art/units/guided_missile/guided_missile.kfm`.
@@ -4737,7 +4737,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:privateer
 
-- Model: `src/Mods/Military/art/models/privateer.glb` (270,656 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/privateer.glb` (270,656 bytes).
 - Art: `ART_DEF_UNIT_PRIVATEER`. Source scale: 0.2.
 - NIF: `art/units/privateer/privateer.nif`.
 - KFM: `art/units/privateer/privateer.kfm`.
@@ -4755,7 +4755,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:prophet
 
-- Model: `src/Mods/Military/art/models/prophet.glb` (173,920 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/prophet.glb` (173,920 bytes).
 - Art: `ART_DEF_UNIT_PROPHET`. Source scale: 0.46.
 - NIF: `art/units/greatpeople/prophet/greatprophet.nif`.
 - KFM: `art/units/greatpeople/prophet/greatprophet.kfm`.
@@ -4769,7 +4769,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ram
 
-- Model: `src/Mods/Military/art/models/ram.glb` (191,096 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ram.glb` (191,096 bytes).
 - Art: `ART_DEF_UNIT_RAM`. Source scale: 0.70.
 - NIF: `art/units/logram/logram.nif`.
 - KFM: `none`.
@@ -4780,7 +4780,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:rifleman
 
-- Model: `src/Mods/Military/art/models/rifleman.glb` (282,508 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/rifleman.glb` (282,508 bytes).
 - Art: `ART_DEF_UNIT_RIFLEMAN`. Source scale: 0.44.
 - NIF: `art/units/rifleman/rifleman.nif`.
 - KFM: `art/units/rifleman/rifleman.kfm`.
@@ -4797,7 +4797,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:rocket_artillery
 
-- Model: `src/Mods/Military/art/models/rocket_artillery.glb` (250,188 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/rocket_artillery.glb` (250,188 bytes).
 - Art: `ART_DEF_UNIT_ROCKET_ARTILLERY`. Source scale: 0.7.
 - NIF: `art/units/rocket artillery/m270.nif`.
 - KFM: `art/units/mobilesam/mobilesam.kfm`.
@@ -4813,7 +4813,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:rome_praetorian
 
-- Model: `src/Mods/Military/art/models/rome_praetorian.glb` (280,468 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/rome_praetorian.glb` (280,468 bytes).
 - Art: `ART_DEF_UNIT_ROME_PRAETORIAN`. Source scale: 0.44.
 - NIF: `art/units/unique/roman/praetorian/praetorian.nif`.
 - KFM: `art/units/unique/roman/praetorian/praetorian.kfm`.
@@ -4830,7 +4830,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:rover
 
-- Model: `src/Mods/Military/art/models/rover.glb` (202,396 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/rover.glb` (202,396 bytes).
 - Art: `ART_DEF_UNIT_ROVER`. Source scale: 1.1.
 - NIF: `art/units/rover/rover.nif`.
 - KFM: `art/units/rover/rover.kfm`.
@@ -4846,7 +4846,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:russia_cossack
 
-- Model: `src/Mods/Military/art/models/russia_cossack.glb` (586,716 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/russia_cossack.glb` (586,716 bytes).
 - Art: `ART_DEF_UNIT_RUSSIA_COSSACK`. Source scale: 0.42.
 - NIF: `art/units/unique/russia/cossack/russiancossack.nif`.
 - KFM: `art/units/unique/russia/cossack/russiancossack.kfm`.
@@ -4863,7 +4863,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:sam_infantry
 
-- Model: `src/Mods/Military/art/models/sam_infantry.glb` (380,784 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/sam_infantry.glb` (380,784 bytes).
 - Art: `ART_DEF_UNIT_SAM_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/saminfantry/saminfantry.nif`.
 - KFM: `art/units/saminfantry/saminfantry.kfm`.
@@ -4880,7 +4880,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:scientist
 
-- Model: `src/Mods/Military/art/models/scientist.glb` (203,860 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/scientist.glb` (203,860 bytes).
 - Art: `ART_DEF_UNIT_SCIENTIST`. Source scale: 0.46.
 - NIF: `art/units/greatpeople/scientist/greatscientistancient.nif`.
 - KFM: `art/units/greatpeople/scientist/greatscientistancient.kfm`.
@@ -4894,7 +4894,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:scout
 
-- Model: `src/Mods/Military/art/models/scout.glb` (310,212 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/scout.glb` (310,212 bytes).
 - Art: `ART_DEF_UNIT_SCOUT`. Source scale: 0.44.
 - NIF: `art/units/scout/scout.nif`.
 - KFM: `art/units/scout/scout.kfm`.
@@ -4911,7 +4911,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:scout_mech
 
-- Model: `src/Mods/Military/art/models/scout_mech.glb` (349,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/scout_mech.glb` (349,428 bytes).
 - Art: `ART_DEF_UNIT_SCOUT_MECH2`. Source scale: 1.5.
 - NIF: `art/units/scout mech/mech.nif`.
 - KFM: `art/units/scout mech/mech.kfm`.
@@ -4927,7 +4927,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:scramjet
 
-- Model: `src/Mods/Military/art/models/scramjet.glb` (132,296 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/scramjet.glb` (132,296 bytes).
 - Art: `ART_DEF_UNIT_SCRAMJET`. Source scale: 0.48.
 - NIF: `art/units/orbital fighters/spacefighter_y.nif`.
 - KFM: `art/units/jetfighter/jetfighter.kfm`.
@@ -4941,7 +4941,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:seaplane
 
-- Model: `src/Mods/Military/art/models/seaplane.glb` (206,800 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/seaplane.glb` (206,800 bytes).
 - Art: `ART_DEF_UNIT_SEAPLANE`. Source scale: 0.4.
 - NIF: `art/units/seaplane/generic/e16a1.nif`.
 - KFM: `art/units/fighter/fighter.kfm`.
@@ -4956,7 +4956,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:settler
 
-- Model: `src/Mods/Military/art/models/settler.glb` (256,496 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/settler.glb` (256,496 bytes).
 - Art: `ART_DEF_UNIT_SETTLER_MALE`. Source scale: 0.46.
 - NIF: `art/units/settler/settler_male.nif`.
 - KFM: `art/units/settler/settler_male.kfm`.
@@ -4972,7 +4972,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:shaolin
 
-- Model: `src/Mods/Military/art/models/shaolin.glb` (286,824 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/shaolin.glb` (286,824 bytes).
 - Art: `ART_DEF_UNIT_SHAOLIN`. Source scale: 0.44.
 - NIF: `art/units/shaolin/asian_warrior.nif`.
 - KFM: `art/units/warrior/warrior.kfm`.
@@ -4989,7 +4989,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:shinto_missionary
 
-- Model: `src/Mods/Military/art/models/shinto_missionary.glb` (188,528 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/shinto_missionary.glb` (188,528 bytes).
 - Art: `ART_DEF_UNIT_SHINTO_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/kannushi/confucian_missionary.nif`.
 - KFM: `art/units/kannushi/confucian_missionary.kfm`.
@@ -5004,7 +5004,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ship_of_the_line
 
-- Model: `src/Mods/Military/art/models/ship_of_the_line.glb` (178,008 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ship_of_the_line.glb` (178,008 bytes).
 - Art: `ART_DEF_UNIT_SHIP_OF_THE_LINE`. Source scale: 0.22.
 - NIF: `art/units/ship_0f_the_line/ship_0f_the_line.nif`.
 - KFM: `art/units/ship_0f_the_line/ship_of_the_line.kfm`.
@@ -5022,7 +5022,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:siam_elephant
 
-- Model: `src/Mods/Military/art/models/siam_elephant.glb` (1,056,604 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/siam_elephant.glb` (1,056,604 bytes).
 - Art: `ART_DEF_UNIT_SIAM_ELEPHANT`. Source scale: 0.32.
 - NIF: `art/units/unique/siamese/battle elephant/warelephant_european_fx.nif`.
 - KFM: `art/units/unique/siamese/battle elephant/warelephant_carthage.kfm`.
@@ -5039,7 +5039,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:siberiantiger
 
-- Model: `src/Mods/Military/art/models/siberiantiger.glb` (349,528 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/siberiantiger.glb` (349,528 bytes).
 - Art: `ART_DEF_UNIT_SIBERIANTIGER`. Source scale: 0.67.
 - NIF: `art/units/animals/siberiantiger/panther.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -5056,7 +5056,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:siege_droid
 
-- Model: `src/Mods/Military/art/models/siege_droid.glb` (626,572 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/siege_droid.glb` (626,572 bytes).
 - Art: `ART_DEF_UNIT_SIEGE_DROID`. Source scale: 0.8.
 - NIF: `art/units/siege droid/mech.nif`.
 - KFM: `art/units/siege droid/mech.kfm`.
@@ -5072,7 +5072,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:siege_ram
 
-- Model: `src/Mods/Military/art/models/siege_ram.glb` (326,344 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/siege_ram.glb` (326,344 bytes).
 - Art: `ART_DEF_UNIT_SIEGE_RAM`. Source scale: 0.6.
 - NIF: `art/units/siege ram/ram.nif`.
 - KFM: `art/units/siege ram/ram.kfm`.
@@ -5088,7 +5088,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:slinger
 
-- Model: `src/Mods/Military/art/models/slinger.glb` (442,648 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/slinger.glb` (442,648 bytes).
 - Art: `ART_DEF_UNIT_SLINGER`. Source scale: 0.44.
 - NIF: `art/units/peltast/peltast.nif`.
 - KFM: `art/units/peltast/peltast.kfm`.
@@ -5105,7 +5105,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:sloop
 
-- Model: `src/Mods/Military/art/models/sloop.glb` (217,728 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/sloop.glb` (217,728 bytes).
 - Art: `ART_DEF_UNIT_CARAVEL_SIMPLERIG`. Source scale: 0.18.
 - NIF: `art/units/sloop/caravel.nif`.
 - KFM: `art/units/caravel/caravel.kfm`.
@@ -5122,7 +5122,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:spanish_conquistador
 
-- Model: `src/Mods/Military/art/models/spanish_conquistador.glb` (603,008 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/spanish_conquistador.glb` (603,008 bytes).
 - Art: `ART_DEF_UNIT_SPANISH_CONQUISTADOR`. Source scale: 0.42.
 - NIF: `art/units/unique/spanish/conquistador/conquistador.nif`.
 - KFM: `art/units/unique/spanish/conquistador/conquistador.kfm`.
@@ -5140,7 +5140,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:spearman
 
-- Model: `src/Mods/Military/art/models/spearman.glb` (282,480 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/spearman.glb` (282,480 bytes).
 - Art: `ART_DEF_UNIT_SPEARMAN`. Source scale: 0.44.
 - NIF: `art/units/unique/greek/phalanx/greekphalanx.nif`.
 - KFM: `art/units/unique/greek/phalanx/greekphalanx.kfm`.
@@ -5157,7 +5157,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:special_agent
 
-- Model: `src/Mods/Military/art/models/special_agent.glb` (490,928 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/special_agent.glb` (490,928 bytes).
 - Art: `ART_DEF_UNIT_SPECIAL_AGENT`. Source scale: 0.46.
 - NIF: `art/units/specialagent/specialagent.nif`.
 - KFM: `art/units/great_spy_modern/great_spy_modern.kfm`.
@@ -5172,7 +5172,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:special_forces
 
-- Model: `src/Mods/Military/art/models/special_forces.glb` (383,664 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/special_forces.glb` (383,664 bytes).
 - Art: `ART_DEF_UNIT_SPECIAL_FORCES`. Source scale: 0.44.
 - NIF: `art/units/unique/america/navyseal/navyseal.nif`.
 - KFM: `art/units/unique/america/navyseal/navyseal.kfm`.
@@ -5189,7 +5189,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:special_infantry
 
-- Model: `src/Mods/Military/art/models/special_infantry.glb` (400,520 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/special_infantry.glb` (400,520 bytes).
 - Art: `ART_DEF_UNIT_SPACE_INFANTRY`. Source scale: 0.44.
 - NIF: `art/units/space infantry/marines.nif`.
 - KFM: `art/units/marine/marines.kfm`.
@@ -5206,7 +5206,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:spy
 
-- Model: `src/Mods/Military/art/models/spy.glb` (418,868 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/spy.glb` (418,868 bytes).
 - Art: `ART_DEF_UNIT_ANCIENT_SPY`. Source scale: 0.46.
 - NIF: `art/units/ancientspy/ancientspy.nif`.
 - KFM: `art/units/ancientspy/ancientspy.kfm`.
@@ -5222,7 +5222,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:sr71
 
-- Model: `src/Mods/Military/art/models/sr71.glb` (92,864 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/sr71.glb` (92,864 bytes).
 - Art: `ART_DEF_UNIT_SR71`. Source scale: 0.48.
 - NIF: `art/units/sr71/sr71.nif`.
 - KFM: `art/units/jetfighter/jetfighter.kfm`.
@@ -5236,7 +5236,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stag
 
-- Model: `src/Mods/Military/art/models/stag.glb` (489,108 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stag.glb` (489,108 bytes).
 - Art: `ART_DEF_UNIT_STAG`. Source scale: 0.38.
 - NIF: `art/units/stag/horsearcher.nif`.
 - KFM: `art/units/horsearcher/horsearcher.kfm`.
@@ -5257,7 +5257,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stallion
 
-- Model: `src/Mods/Military/art/models/stallion.glb` (337,660 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stallion.glb` (337,660 bytes).
 - Art: `ART_DEF_UNIT_STALLION`. Source scale: 0.3.
 - NIF: `art/units/horse/horsedark.nif`.
 - KFM: `art/units/unique/persia/immortal/persianimmortal.kfm`.
@@ -5274,7 +5274,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stealth_armor
 
-- Model: `src/Mods/Military/art/models/stealth_armor.glb` (360,984 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stealth_armor.glb` (360,984 bytes).
 - Art: `ART_DEF_UNIT_STEALTH_ARMOR`. Source scale: 0.40.
 - NIF: `art/units/stealth armor/myrmidon.nif`.
 - KFM: `art/units/stealth armor/modernarmor.kfm`.
@@ -5290,7 +5290,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stealth_bomber
 
-- Model: `src/Mods/Military/art/models/stealth_bomber.glb` (176,864 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stealth_bomber.glb` (176,864 bytes).
 - Art: `ART_DEF_UNIT_STEALTH_BOMBER`. Source scale: 0.5.
 - NIF: `art/units/stealthbomber/stealthbomber.nif`.
 - KFM: `art/units/stealthbomber/stealthbomber.kfm`.
@@ -5305,7 +5305,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stealth_destroyer
 
-- Model: `src/Mods/Military/art/models/stealth_destroyer.glb` (214,300 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stealth_destroyer.glb` (214,300 bytes).
 - Art: `ART_DEF_UNIT_STEALTH_DESTROYER`. Source scale: 0.6.
 - NIF: `art/units/stealth_destroyer/stealth_destroyer.nif`.
 - KFM: `art/units/stealth_destroyer/stealth_destroyer.kfm`.
@@ -5322,7 +5322,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stealth_submarine
 
-- Model: `src/Mods/Military/art/models/stealth_submarine.glb` (146,576 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stealth_submarine.glb` (146,576 bytes).
 - Art: `ART_DEF_UNIT_STEALTH_SUBMARINE`. Source scale: 0.40.
 - NIF: `art/units/astute/astutesub.nif`.
 - KFM: `art/units/astute/astutesub.kfm`.
@@ -5339,7 +5339,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:steamer
 
-- Model: `src/Mods/Military/art/models/steamer.glb` (386,428 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/steamer.glb` (386,428 bytes).
 - Art: `ART_DEF_UNIT_STEAMER`. Source scale: 0.3.
 - NIF: `art/units/paddlesteamer/paddlewheeler.nif`.
 - KFM: `art/units/frigate/frigate.kfm`.
@@ -5356,7 +5356,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:stiletto_boat
 
-- Model: `src/Mods/Military/art/models/stiletto_boat.glb` (214,300 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/stiletto_boat.glb` (214,300 bytes).
 - Art: `ART_DEF_UNIT_STILETTO_BOAT`. Source scale: 0.40.
 - NIF: `art/units/stealth_destroyer/stealth_destroyer.nif`.
 - KFM: `art/units/stealth_destroyer/stealth_destroyer.kfm`.
@@ -5373,7 +5373,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:submarine
 
-- Model: `src/Mods/Military/art/models/submarine.glb` (267,892 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/submarine.glb` (267,892 bytes).
 - Art: `ART_DEF_UNIT_SUBMARINE`. Source scale: 0.55.
 - NIF: `art/units/submarine/submarine.nif`.
 - KFM: `art/units/submarine/submarine.kfm`.
@@ -5391,7 +5391,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:sumerian_vulture
 
-- Model: `src/Mods/Military/art/models/sumerian_vulture.glb` (347,188 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/sumerian_vulture.glb` (347,188 bytes).
 - Art: `ART_DEF_UNIT_SUMERIAN_VULTURE`. Source scale: 0.44.
 - NIF: `art/units/unique_sumeria_vulture/unique_sumerian_vulture.nif`.
 - KFM: `art/units/unique_sumeria_vulture/unique_sumerian_vulture.kfm`.
@@ -5408,7 +5408,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:swiss_hellebardier
 
-- Model: `src/Mods/Military/art/models/swiss_hellebardier.glb` (315,544 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/swiss_hellebardier.glb` (315,544 bytes).
 - Art: `ART_DEF_UNIT_SWISS_HELLEBARDIER`. Source scale: 0.44.
 - NIF: `art/switzerland/swisspikeman/pikeman.nif`.
 - KFM: `art/switzerland/swisspikeman/pikeman.kfm`.
@@ -5425,7 +5425,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:swordsman
 
-- Model: `src/Mods/Military/art/models/swordsman.glb` (257,216 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/swordsman.glb` (257,216 bytes).
 - Art: `ART_DEF_UNIT_LIGHT_SWORDSMAN`. Source scale: 0.44.
 - NIF: `art/units/charlemagne_lightswordsman/lightswordsman.nif`.
 - KFM: `art/units/charlemagne_lightswordsman/lightswordsman.kfm`.
@@ -5442,7 +5442,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:t95
 
-- Model: `src/Mods/Military/art/models/t95.glb` (355,480 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/t95.glb` (355,480 bytes).
 - Art: `ART_DEF_UNIT_T95`. Source scale: 0.4.
 - NIF: `art/units/hybrid tank/t-95.nif`.
 - KFM: `art/units/hybrid tank/tank.kfm`.
@@ -5458,7 +5458,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:tactical_nuke
 
-- Model: `src/Mods/Military/art/models/tactical_nuke.glb` (91,624 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/tactical_nuke.glb` (91,624 bytes).
 - Art: `ART_DEF_UNIT_TACTICAL_NUKE`. Source scale: 0.5.
 - NIF: `art/units/tactical_nuke/tactical_nuke.nif`.
 - KFM: `art/units/tactical_nuke/tactical_nuke.kfm`.
@@ -5472,7 +5472,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:tank
 
-- Model: `src/Mods/Military/art/models/tank.glb` (265,528 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/tank.glb` (265,528 bytes).
 - Art: `ART_DEF_UNIT_TANK`. Source scale: 0.48.
 - NIF: `art/units/tank/tank.nif`.
 - KFM: `art/units/tank/tank.kfm`.
@@ -5488,7 +5488,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:taoist_missionary
 
-- Model: `src/Mods/Military/art/models/taoist_missionary.glb` (215,220 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/taoist_missionary.glb` (215,220 bytes).
 - Art: `ART_DEF_UNIT_TAOIST_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/taoist/taoistmissionary.nif`.
 - KFM: `art/units/missionary/taoist/taoistmissionary.kfm`.
@@ -5503,7 +5503,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:trade_caravan
 
-- Model: `src/Mods/Military/art/models/trade_caravan.glb` (825,016 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/trade_caravan.glb` (825,016 bytes).
 - Art: `ART_DEF_UNIT_TRADE_CARAVAN`. Source scale: 0.34.
 - NIF: `art/units/caravan/caravan_art.nif`.
 - KFM: `art/units/caravan/caravan_base.kfm`.
@@ -5516,7 +5516,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:transport
 
-- Model: `src/Mods/Military/art/models/transport.glb` (311,784 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/transport.glb` (311,784 bytes).
 - Art: `ART_DEF_UNIT_TRANSPORT`. Source scale: 0.92.
 - NIF: `art/units/transport/transport.nif`.
 - KFM: `art/units/transport/transport.kfm`.
@@ -5533,7 +5533,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:treasure
 
-- Model: `src/Mods/Military/art/models/treasure.glb` (204,232 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/treasure.glb` (204,232 bytes).
 - Art: `ART_DEF_UNIT_TREASURE_UNIT`. Source scale: 0.44.
 - NIF: `art/units/treasure/treasure.nif`.
 - KFM: `art/units/treasure/treasure.kfm`.
@@ -5546,7 +5546,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:trebuchet
 
-- Model: `src/Mods/Military/art/models/trebuchet.glb` (352,196 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/trebuchet.glb` (352,196 bytes).
 - Art: `ART_DEF_UNIT_TREBUCHET`. Source scale: 0.40.
 - NIF: `art/units/trebuchet/trebuchet.nif`.
 - KFM: `art/units/trebuchet/trebuchet.kfm`.
@@ -5563,7 +5563,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:trireme
 
-- Model: `src/Mods/Military/art/models/trireme.glb` (413,624 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/trireme.glb` (413,624 bytes).
 - Art: `ART_DEF_UNIT_TRIREME`. Source scale: 0.14.
 - NIF: `art/units/trireme/trireme.nif`.
 - KFM: `art/units/trireme/trireme.kfm`.
@@ -5580,7 +5580,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:turn
 
-- Model: `src/Mods/Military/art/models/turn.glb` (135,792 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/turn.glb` (135,792 bytes).
 - Art: `ART_DEF_UNIT_TURN`. Source scale: 0.85.
 - NIF: `art/units/nukes/yam/icbm.nif`.
 - KFM: `art/units/nukes/yam/icbm.kfm`.
@@ -5595,7 +5595,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:uav
 
-- Model: `src/Mods/Military/art/models/uav.glb` (223,852 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/uav.glb` (223,852 bytes).
 - Art: `ART_DEF_UNIT_UNMANNED_AIR_VEHICLE`. Source scale: 0.2.
 - NIF: `art/units/drone bomber/predator.nif`.
 - KFM: `art/units/fighter/fighter.kfm`.
@@ -5611,7 +5611,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:unit_unit_crusader
 
-- Model: `src/Mods/Military/art/models/unit_unit_crusader.glb` (296,864 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/unit_unit_crusader.glb` (296,864 bytes).
 - Art: `ART_DEF_UNIT_KNIGHTS_TEMPLAR`. Source scale: 0.44.
 - NIF: `art/units/scenario/knigts_templar/knightstemplar.nif`.
 - KFM: `art/units/scenario/knigts_templar/knightstemplar.kfm`.
@@ -5629,7 +5629,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:v1
 
-- Model: `src/Mods/Military/art/models/v1.glb` (208,492 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/v1.glb` (208,492 bytes).
 - Art: `ART_DEF_UNIT_V1`. Source scale: 0.7.
 - NIF: `art/units/missile/v1.nif`.
 - KFM: `art/units/guided_missile/guided_missile.kfm`.
@@ -5643,7 +5643,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:vandal_raider
 
-- Model: `src/Mods/Military/art/models/vandal_raider.glb` (292,448 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/vandal_raider.glb` (292,448 bytes).
 - Art: `ART_DEF_UNIT_VANDAL_RAIDER`. Source scale: 0.44.
 - NIF: `art/units/raider/swordsman.nif`.
 - KFM: `art/units/swordsman/swordsman.kfm`.
@@ -5660,7 +5660,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:viking_beserker
 
-- Model: `src/Mods/Military/art/models/viking_beserker.glb` (449,188 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/viking_beserker.glb` (449,188 bytes).
 - Art: `ART_DEF_UNIT_VIKING_BESERKER`. Source scale: 0.44.
 - NIF: `art/units/viking_berserker/berserker.nif`.
 - KFM: `art/units/viking_berserker/berserker.kfm`.
@@ -5677,7 +5677,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:walker
 
-- Model: `src/Mods/Military/art/models/walker.glb` (258,232 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/walker.glb` (258,232 bytes).
 - Art: `ART_DEF_UNIT_WALKER`. Source scale: 0.8.
 - NIF: `art/units/walker droid/mech.nif`.
 - KFM: `art/units/walker droid/mech.kfm`.
@@ -5693,7 +5693,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:war_elephant
 
-- Model: `src/Mods/Military/art/models/war_elephant.glb` (760,276 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/war_elephant.glb` (760,276 bytes).
 - Art: `ART_DEF_UNIT_WAR_ELEPHANT`. Source scale: 0.32.
 - NIF: `art/units/warelephant/warelephant.nif`.
 - KFM: `art/units/warelephant/warelephant.kfm`.
@@ -5710,7 +5710,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:wargalley
 
-- Model: `src/Mods/Military/art/models/wargalley.glb` (260,664 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/wargalley.glb` (260,664 bytes).
 - Art: `ART_DEF_UNIT_WARGALLEY`. Source scale: 0.16.
 - NIF: `art/units/war galley/wargalley.nif`.
 - KFM: `art/units/galley/galley.kfm`.
@@ -5727,7 +5727,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:warrior
 
-- Model: `src/Mods/Military/art/models/warrior.glb` (304,108 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/warrior.glb` (304,108 bytes).
 - Art: `ART_DEF_UNIT_WARRIOR`. Source scale: 0.44.
 - NIF: `art/units/warrior/warrior.nif`.
 - KFM: `art/units/warrior/warrior.kfm`.
@@ -5744,7 +5744,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:welsh_longbowman
 
-- Model: `src/Mods/Military/art/models/welsh_longbowman.glb` (394,872 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/welsh_longbowman.glb` (394,872 bytes).
 - Art: `ART_DEF_UNIT_WELSH_LONGBOWMAN`. Source scale: 0.44.
 - NIF: `art/wales/welsh longbowman/longbowman.nif`.
 - KFM: `art/wales/welsh longbowman/longbowman.kfm`.
@@ -5761,7 +5761,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:wgmaster
 
-- Model: `src/Mods/Military/art/models/wgmaster.glb` (230,316 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/wgmaster.glb` (230,316 bytes).
 - Art: `ART_DEF_UNIT_WGMASTER`. Source scale: 0.46.
 - NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
 - KFM: `art/units/missionary/christian/christianmissionary.kfm`.
@@ -5776,7 +5776,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:wild_ram
 
-- Model: `src/Mods/Military/art/models/wild_ram.glb` (446,792 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/wild_ram.glb` (446,792 bytes).
 - Art: `ART_DEF_UNIT_WILD_RAM`. Source scale: 18.0.
 - NIF: `art/units/wild_ram/mouflon.nif`.
 - KFM: `art/units/panther/panther.kfm`.
@@ -5797,7 +5797,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:wolf
 
-- Model: `src/Mods/Military/art/models/wolf.glb` (346,728 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/wolf.glb` (346,728 bytes).
 - Art: `ART_DEF_UNIT_WOLF`. Source scale: 0.5.
 - NIF: `art/units/wolf/wolf.nif`.
 - KFM: `art/units/wolf/wolf.kfm`.
@@ -5814,7 +5814,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:workboat
 
-- Model: `src/Mods/Military/art/models/workboat.glb` (212,332 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/workboat.glb` (212,332 bytes).
 - Art: `ART_DEF_UNIT_WORKBOAT`. Source scale: 0.19.
 - NIF: `art/units/workboat_ancient/workboat_ancient.nif`.
 - KFM: `art/units/workboat_ancient/workboat_ancient.kfm`.
@@ -5830,7 +5830,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:worker
 
-- Model: `src/Mods/Military/art/models/worker.glb` (256,308 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/worker.glb` (256,308 bytes).
 - Art: `ART_DEF_UNIT_WORKER`. Source scale: 0.44.
 - NIF: `art/units/worker/worker.nif`.
 - KFM: `art/units/worker/worker.kfm`.
@@ -5844,7 +5844,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:worker_android
 
-- Model: `src/Mods/Military/art/models/worker_android.glb` (254,636 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/worker_android.glb` (254,636 bytes).
 - Art: `ART_DEF_UNIT_WORKER_ANDROID`. Source scale: 0.44.
 - NIF: `art/units/android worker/modernworker.nif`.
 - KFM: `art/units/android worker/modernworker.kfm`.
@@ -5859,7 +5859,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ww1_destroyer
 
-- Model: `src/Mods/Military/art/models/ww1_destroyer.glb` (308,488 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ww1_destroyer.glb` (308,488 bytes).
 - Art: `ART_DEF_UNIT_WW1_DESTROYER`. Source scale: 0.6.
 - NIF: `art/units/destroyer/american/4stacker.nif`.
 - KFM: `art/units/destroyer/american/4stacker.kfm`.
@@ -5875,7 +5875,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:ww2_battleship
 
-- Model: `src/Mods/Military/art/models/ww2_battleship.glb` (460,240 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/ww2_battleship.glb` (460,240 bytes).
 - Art: `ART_DEF_UNIT_WW2_BATTLESHIP`. Source scale: 0.7.
 - NIF: `art/units/battleship/european/battleship.nif`.
 - KFM: `art/units/battleship/european/battleship.kfm`.
@@ -5892,7 +5892,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:zoroastrian_missionary
 
-- Model: `src/Mods/Military/art/models/zoroastrian_missionary.glb` (186,968 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/zoroastrian_missionary.glb` (186,968 bytes).
 - Art: `ART_DEF_UNIT_ZORO_MISSIONARY`. Source scale: 0.46.
 - NIF: `art/units/missionary/magi/confucian_missionary.nif`.
 - KFM: `art/units/missionary/magi/confucian_missionary.kfm`.
@@ -5907,7 +5907,7 @@ A source clip without matching transform targets does not count as an exported a
 
 ### military:zulu_impi
 
-- Model: `src/Mods/Military/art/models/zulu_impi.glb` (371,684 bytes).
+- Model: `src/Ariel.Rules/Military/art/models/zulu_impi.glb` (371,684 bytes).
 - Art: `ART_DEF_UNIT_ZULU_SPEARMAN`. Source scale: 0.44.
 - NIF: `art/units/zulu_impi/zulu_impi.nif`.
 - KFM: `art/units/zulu_impi/zulu_impi.kfm`.

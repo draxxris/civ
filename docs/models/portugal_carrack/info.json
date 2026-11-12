@@ -1,6 +1,6 @@
 {
   "name": "portugal_carrack",
-  "model": "src/Mods/Military/art/models/portugal_carrack.glb",
+  "model": "src/Ariel.Rules/Military/art/models/portugal_carrack.glb",
   "texture_path": "art/units/portugal_carrack/carrack_hull_256.dds",
   "textures": [
     "art/units/portugal_carrack/carrack_hull_256.dds"

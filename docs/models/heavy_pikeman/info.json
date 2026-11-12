@@ -1,6 +1,6 @@
 {
   "name": "heavy_pikeman",
-  "model": "src/Mods/Military/art/models/heavy_pikeman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/heavy_pikeman.glb",
   "texture_path": [
     "art/shared/shield_icon_32.dds",
     "art/units/charlemagne_heavyspearman/heavyspearman_128.dds"

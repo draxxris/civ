@@ -1,6 +1,6 @@
 {
   "name": "persia_immortal",
-  "model": "src/Mods/Military/art/models/persia_immortal.glb",
+  "model": "src/Ariel.Rules/Military/art/models/persia_immortal.glb",
   "texture_path": [
     "art/units/unique/persia/immortal/persian_immortal_128.dds",
     "art/units/unique/persia/immortal/persian_immortal_horse_128.dds"

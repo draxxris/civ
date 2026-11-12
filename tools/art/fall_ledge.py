@@ -3,7 +3,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["numpy==2.4.6", "Pillow==12.3.0"]
 # ///
-"""Build the waterfall ledge rock into src/Mods/World/art/scatter/fall_ledges/Ledge_1.glb.
+"""Build the waterfall ledge rock into src/Ariel.Rules/World/art/scatter/fall_ledges/Ledge_1.glb.
 
 Run: mise run art:fall-ledge
 
@@ -27,7 +27,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from improvements.kit import REPO_ROOT, SCALE, Part, srgb, write  # noqa: E402
 
-OUT = REPO_ROOT / "src/Mods/World/art/scatter/fall_ledges"
+OUT = REPO_ROOT / "src/Ariel.Rules/World/art/scatter/fall_ledges"
 
 # FallLedge's constants, world units at scale 1.
 WIDTH = 0.36

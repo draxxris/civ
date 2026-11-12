@@ -1,6 +1,6 @@
 {
   "name": "knight",
-  "model": "src/Mods/Military/art/models/knight.glb",
+  "model": "src/Ariel.Rules/Military/art/models/knight.glb",
   "texture_path": [
     "art/units/knight/knight_shield_64.dds",
     "art/units/knight/knight_128.dds",

@@ -1,6 +1,6 @@
 {
   "name": "viking_beserker",
-  "model": "src/Mods/Military/art/models/viking_beserker.glb",
+  "model": "src/Ariel.Rules/Military/art/models/viking_beserker.glb",
   "texture_path": "art/units/viking_berserker/berseker.dds",
   "textures": [
     "art/units/viking_berserker/berseker.dds"

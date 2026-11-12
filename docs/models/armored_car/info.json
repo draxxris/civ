@@ -1,6 +1,6 @@
 {
   "name": "armored_car",
-  "model": "src/Mods/Military/art/models/armored_car.glb",
+  "model": "src/Ariel.Rules/Military/art/models/armored_car.glb",
   "texture_path": "art/units/armored car/rollsroyce.dds",
   "textures": [
     "art/units/armored car/rollsroyce.dds"

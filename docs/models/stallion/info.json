@@ -1,6 +1,6 @@
 {
   "name": "stallion",
-  "model": "src/Mods/Military/art/models/stallion.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stallion.glb",
   "texture_path": "art/units/horse/persian_immortal_horse_128.dds",
   "textures": [
     "art/units/horse/persian_immortal_horse_128.dds"

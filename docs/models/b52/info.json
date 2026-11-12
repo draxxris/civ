@@ -1,6 +1,6 @@
 {
   "name": "b52",
-  "model": "src/Mods/Military/art/models/b52.glb",
+  "model": "src/Ariel.Rules/Military/art/models/b52.glb",
   "texture_path": "art/units/strategic bomber/b52.dds",
   "textures": [
     "art/units/strategic bomber/b52.dds"

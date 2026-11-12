@@ -1,6 +1,6 @@
 {
   "name": "russia_cossack",
-  "model": "src/Mods/Military/art/models/russia_cossack.glb",
+  "model": "src/Ariel.Rules/Military/art/models/russia_cossack.glb",
   "texture_path": [
     "art/units/unique/russia/cossack/russiancossack_horse_128.dds",
     "art/units/unique/russia/cossack/russiancossack_128.dds",

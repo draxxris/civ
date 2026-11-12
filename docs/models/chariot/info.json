@@ -1,6 +1,6 @@
 {
   "name": "chariot",
-  "model": "src/Mods/Military/art/models/chariot.glb",
+  "model": "src/Ariel.Rules/Military/art/models/chariot.glb",
   "texture_path": [
     "art/units/chariot/chariot_horse_128.dds",
     "art/shared/string.dds",

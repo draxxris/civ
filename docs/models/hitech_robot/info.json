@@ -1,6 +1,6 @@
 {
   "name": "hitech_robot",
-  "model": "src/Mods/Military/art/models/hitech_robot.glb",
+  "model": "src/Ariel.Rules/Military/art/models/hitech_robot.glb",
   "texture_path": [
     "art/units/afterworld_gravebringer/jal/gravebringer_diff.dds",
     "art/shared/fx_fire_flash.dds",

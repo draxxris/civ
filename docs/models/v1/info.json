@@ -1,6 +1,6 @@
 {
   "name": "v1",
-  "model": "src/Mods/Military/art/models/v1.glb",
+  "model": "src/Ariel.Rules/Military/art/models/v1.glb",
   "texture_path": "art/units/missile/v1_01.dds",
   "textures": [
     "art/units/missile/v1_01.dds"

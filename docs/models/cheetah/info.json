@@ -1,6 +1,6 @@
 {
   "name": "cheetah",
-  "model": "src/Mods/Military/art/models/cheetah.glb",
+  "model": "src/Ariel.Rules/Military/art/models/cheetah.glb",
   "texture_path": "art/units/animals/cheetah/panther_black.dds",
   "textures": [
     "art/units/animals/cheetah/panther_black.dds"

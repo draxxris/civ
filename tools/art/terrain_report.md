@@ -34,7 +34,7 @@ The script asserts equal opposite RGBA edges and saves RGB contact sheets outsid
 - Selected output: `grass-20261014-174348-001.png`.
 - Comparison: Sunburst has soft, continuous meadow strokes. Muse has distinct raised grass clumps and stronger implied lighting.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/grass.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/grass.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/grass.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -49,7 +49,7 @@ Full prompt (identical for both candidates):
   The new prompt asks for an even tone. Sunburst gave two even fields of fine dry grass. Muse gave flatter,
   speckled ground. The first Sunburst candidate matches the painted strokes of the grass layer best.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/plains.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/plains.png`.
 - Contact sheet: `/tmp/tf/plains_final/plains.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -62,7 +62,7 @@ Full prompt (identical for both candidates):
 - Selected output: `desert-20261014-174347-001.png`.
 - Comparison: Sunburst has low-contrast, broad painted sand ripples. Muse has sharper, densely repeated ridges and rusty spots.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/desert.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/desert.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/desert.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -75,7 +75,7 @@ Full prompt (identical for both candidates):
 - Selected output: `tundra-20261014-174408-001.webp`.
 - Comparison: Muse has soft sage lichen mottling. Sunburst has large stone plates that look too close to the cliff layer.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/tundra.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/tundra.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/tundra.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -88,7 +88,7 @@ Full prompt (identical for both candidates):
 - Selected output: `snow-20261014-174414-001.webp`.
 - Comparison: Muse has restrained blue-white powder and fine wind streaks. Sunburst has larger, stronger blue patches.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/snow.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/snow.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/snow.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -101,7 +101,7 @@ Full prompt (identical for both candidates):
 - Selected output: `marsh-20261014-174425-001.webp`.
 - Comparison: Muse has soft damp mud mottling without raised plants. Sunburst has conspicuous grass clumps and darker patch boundaries.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/marsh.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/marsh.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/marsh.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -114,7 +114,7 @@ Full prompt (identical for both candidates):
 - Selected output: `hill-20261014-174429-001.png`.
 - Comparison: Sunburst has small painted stones mixed with olive grass. Muse has sharper gravel highlights and stronger lighting.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/hill.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/hill.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/hill.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -127,7 +127,7 @@ Full prompt (identical for both candidates):
 - Selected output: `rock-20261014-174431-001.png`.
 - Comparison: Sunburst has natural painted fractures and muted slate planes. Muse resembles regular paving stones with heavy outlines.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/rock.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/rock.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/rock.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -140,7 +140,7 @@ Full prompt (identical for both candidates):
 - Selected output: `seabed-20261014-174446-001.png`.
 - Comparison: Sunburst has subtle sand ripples with fine speckles. Muse has broad directional bands that repeat more visibly.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/seabed.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/seabed.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/seabed.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -153,7 +153,7 @@ Full prompt (identical for both candidates):
 - Selected output: `deep_seabed-20261014-174454-001.png`.
 - Comparison: Sunburst has subdued blue-grey silt and sand. Muse has conspicuous rocky plates and pale spots.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/deep_seabed.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/deep_seabed.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/deep_seabed.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):
@@ -166,7 +166,7 @@ Full prompt (identical for both candidates):
 - Selected output: `unexplored-20261014-174457-001.png`.
 - Comparison: Sunburst has soft painterly cloud wisps without sky gaps. Muse has strongly lit, raised billows that repeat more visibly.
 - Post-processing: P1, with no layer-specific color adjustment.
-- Final: `src/Mods/World/art/terrain/unexplored.png`.
+- Final: `src/Ariel.Rules/World/art/terrain/unexplored.png`.
 - Contact sheet: `/tmp/p5/contact-sheets/unexplored.png`, inspected without visible seam lines.
 
 Full prompt (identical for both candidates):

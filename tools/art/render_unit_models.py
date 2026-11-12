@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MODELS_DIR = ROOT / "src/Mods/Military/art/models"
+MODELS_DIR = ROOT / "src/Ariel.Rules/Military/art/models"
 OUT_ROOT = ROOT / "docs/models"
 
 
@@ -55,7 +55,7 @@ target_names = set(json.loads(sys.argv[3]))
 units, art = definitions(source / "data")
 assets = Assets(source / "media/assets")
 symbols = source_symbols(root)
-registry = json.loads((root / "src/Mods/Military/data/unit.json").read_text())
+registry = json.loads((root / "src/Ariel.Rules/Military/data/unit.json").read_text())
 
 out = {}
 for u in registry:
@@ -329,7 +329,7 @@ def main():
             textures = textures_by_unit.get(name, [])
             meta = {
                 "name": name,
-                "model": f"src/Mods/Military/art/models/{name}.glb",
+                "model": f"src/Ariel.Rules/Military/art/models/{name}.glb",
                 "texture_path": textures[0] if len(textures) == 1 else textures,
                 "textures": textures,
                 "triangles": info["triangles"],

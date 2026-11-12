@@ -1,6 +1,6 @@
 {
   "name": "warrior",
-  "model": "src/Mods/Military/art/models/warrior.glb",
+  "model": "src/Ariel.Rules/Military/art/models/warrior.glb",
   "texture_path": "art/units/warrior/warrior_128.dds",
   "textures": [
     "art/units/warrior/warrior_128.dds"

@@ -1,6 +1,6 @@
 {
   "name": "horseman",
-  "model": "src/Mods/Military/art/models/horseman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/horseman.glb",
   "texture_path": [
     "art/units/horseman_eurasian/eurasian_horseman128.dds",
     "art/units/horseman_eurasian/eurasian_horse128.dds"

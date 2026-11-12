@@ -1,6 +1,6 @@
 {
   "name": "direwolf",
-  "model": "src/Mods/Military/art/models/direwolf.glb",
+  "model": "src/Ariel.Rules/Military/art/models/direwolf.glb",
   "texture_path": [
     "art/units/animals/direwolf/wolf.dds",
     "art/units/animals/direwolf/wolf_alpha.dds"

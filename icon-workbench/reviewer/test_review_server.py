@@ -40,7 +40,7 @@ class WorkbenchTestCase(unittest.TestCase):
                 self.addCleanup(patcher.stop)
         self.entries = []
         for index in range(65):
-            relative = f'src/Mods/Cities/art/icons/icon-{index}.png'
+            relative = f'src/Ariel.Rules/Cities/art/icons/icon-{index}.png'
             original = self.repo / relative
             original.parent.mkdir(parents=True, exist_ok=True)
             Image.new('RGB', (64, 64), (index, 30, 40)).save(original)

@@ -1,6 +1,6 @@
 {
   "name": "executive_safari",
-  "model": "src/Mods/Military/art/models/executive_safari.glb",
+  "model": "src/Ariel.Rules/Military/art/models/executive_safari.glb",
   "texture_path": [
     "art/units/executive/safari_a.dds",
     "art/units/executive/ceo_case_64.dds",

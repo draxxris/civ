@@ -1,6 +1,6 @@
 {
   "name": "captured_cave_lion",
-  "model": "src/Mods/Military/art/models/captured_cave_lion.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_cave_lion.glb",
   "texture_path": "art/units/animals/cavelion/lion.dds",
   "textures": [
     "art/units/animals/cavelion/lion.dds"

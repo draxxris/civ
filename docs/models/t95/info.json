@@ -1,6 +1,6 @@
 {
   "name": "t95",
-  "model": "src/Mods/Military/art/models/t95.glb",
+  "model": "src/Ariel.Rules/Military/art/models/t95.glb",
   "texture_path": [
     "art/units/hybrid tank/text4.dds",
     "art/units/hybrid tank/t-84.dds"

@@ -1,6 +1,6 @@
 {
   "name": "axeman",
-  "model": "src/Mods/Military/art/models/axeman.glb",
+  "model": "src/Ariel.Rules/Military/art/models/axeman.glb",
   "texture_path": "art/units/axeman/axeman_128.dds",
   "textures": [
     "art/units/axeman/axeman_128.dds"

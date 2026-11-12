@@ -1,6 +1,6 @@
 {
   "name": "seaplane",
-  "model": "src/Mods/Military/art/models/seaplane.glb",
+  "model": "src/Ariel.Rules/Military/art/models/seaplane.glb",
   "texture_path": [
     "art/units/seaplane/generic/e16a1_g4 copy.dds",
     "art/units/seaplane/generic/fighter_256.dds"

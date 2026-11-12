@@ -1,6 +1,6 @@
 {
   "name": "modern_workboat",
-  "model": "src/Mods/Military/art/models/modern_workboat.glb",
+  "model": "src/Ariel.Rules/Military/art/models/modern_workboat.glb",
   "texture_path": [
     "art/shared/ship_lantern_light.dds",
     "art/shared/ship_lantern_light_top.dds",

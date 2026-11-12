@@ -11,9 +11,9 @@ public sealed class ModManagerTests
     public void Discovery_reads_metadata_without_loading_code_and_keeps_good_manifests_when_another_is_invalid()
     {
         using var directory = new ModDirectory();
-        string source = Path.Combine(AppContext.BaseDirectory, "mods", "Foundation");
+        string source = Path.Combine(AppContext.BaseDirectory, "mods", "Trade");
         string valid = directory.Add(new() { Id = "sample", Name = "Sample", Version = "2.3", Assembly = "sample.dll", Dependencies = ["provider"] });
-        File.Copy(Path.Combine(source, "Ariel.Mods.Foundation.dll"), Path.Combine(valid, "sample.dll"));
+        File.Copy(Path.Combine(source, "Ariel.Mods.Trade.dll"), Path.Combine(valid, "sample.dll"));
         directory.Add(new() { Id = "no_binary", Name = "No Binary", Assembly = "absent.dll" });
         string broken = Path.Combine(directory.Root, "broken");
         Directory.CreateDirectory(broken);
@@ -132,7 +132,7 @@ public sealed class ModManagerTests
         Assert.Equal(installed.Select(m => m.Manifest.Id).Order(), defaults.Order());
         Assert.Equal(main.Mods.Count, ModDiscovery.LoadMods(Path.Combine(AppContext.BaseDirectory, "mods")).Count);
 
-        var catalog = GameCatalog.Load(installed, ["tech_tree", "card_research"]);
+        var catalog = GameCatalog.Load(Path.Combine(AppContext.BaseDirectory, "rules"), installed, ["tech_tree", "card_research"]);
         Assert.Contains(catalog.Mods, m => m.Manifest.Id == "research");
         Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "ai");
         Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "events");

@@ -1,6 +1,6 @@
 {
   "name": "scientist",
-  "model": "src/Mods/Military/art/models/scientist.glb",
+  "model": "src/Ariel.Rules/Military/art/models/scientist.glb",
   "texture_path": "art/units/greatpeople/scientist/great_scientist_128.dds",
   "textures": [
     "art/units/greatpeople/scientist/great_scientist_128.dds"

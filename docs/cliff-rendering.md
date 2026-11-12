@@ -76,7 +76,7 @@ graph TB
 
 ## 2. Which cliffs are legal
 
-The rules live in `src/Mods/World/CliffRules.cs` and are reported by
+The rules live in `src/Ariel.Rules/World/CliffRules.cs` and are reported by
 `mise run validate`. The game does not repair or refuse a map; a map loads exactly as
 written. The generator builds legal maps by construction, and the validator is how an
 author finds a mistake.
@@ -713,12 +713,12 @@ A cliff change is ready when all of these hold on a fresh capture:
 - `src/Ariel.Core/Game/Plot.cs`: `Levels`, `Plot.Height`, `Plot.CliffEdges`,
   `RevealedPlotSnapshot`.
 - `src/Ariel.Core/Game/GameState.cs`: `SetCliff`, `CliffLifts`.
-- `src/Mods/World/CliffRules.cs`: every legal-edge rule, spacing, slopes, access, and
+- `src/Ariel.Rules/World/CliffRules.cs`: every legal-edge rule, spacing, slopes, access, and
   the generator.
-- `src/Mods/World/VisibilityService.cs`: fog capture of height, cliff bits and derived
+- `src/Ariel.Rules/World/VisibilityService.cs`: fog capture of height, cliff bits and derived
   lifts.
-- `src/Mods/World/GlobalWarmingSystem.cs`: the terrain-change path that clears cliffs.
-- `src/Mods/Military/MilitaryData.cs` and `MovementService.cs`: cliff movement rules.
+- `src/Ariel.Rules/World/GlobalWarmingSystem.cs`: the terrain-change path that clears cliffs.
+- `src/Ariel.Rules/Military/MilitaryData.cs` and `MovementService.cs`: cliff movement rules.
 - `src/Ariel.Client.Core/DebugScenario.cs` and `SceneFrame.cs`: hand-made scene format
   and the even-row framing rule.
 - `src/Ariel.Client.Core/Terrain/TerrainSnapshot.cs`: per-tile heights, cliffs and

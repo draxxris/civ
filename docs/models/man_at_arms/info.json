@@ -1,6 +1,6 @@
 {
   "name": "man_at_arms",
-  "model": "src/Mods/Military/art/models/man_at_arms.glb",
+  "model": "src/Ariel.Rules/Military/art/models/man_at_arms.glb",
   "texture_path": [
     "art/units/man at arms/european/morningstar.dds",
     "art/units/man at arms/european/companion_cavalry_horse_128.dds",

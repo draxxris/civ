@@ -2,8 +2,9 @@ using System.Diagnostics;
 using Ariel.Game;
 using Ariel.Modding;
 using Ariel.Mods.Tests;
+using Ariel.Rules;
 
-var root = Path.Combine(AppContext.BaseDirectory, "mods");
+var root = AppContext.BaseDirectory;
 if (args.FirstOrDefault() == "--ai-eval")
 {
     Environment.ExitCode = Ariel.Benchmarks.AiEvaluation.EvaluationCli.Run(args.Skip(1).ToArray(), root);
@@ -21,26 +22,26 @@ if (args.Contains("--quick") || args.Contains("--startup"))
 }
 if (args.Contains("--borders"))
 {
-    BorderBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));
+    BorderBenchmarks.Run(ModLoader.Build(GameContent.Staged(root).Reverse()));
     return;
 }
 if (args.Contains("--gigantic"))
 {
-    GiganticTurnBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));
+    GiganticTurnBenchmarks.Run(ModLoader.Build(GameContent.Staged(root).Reverse()));
     return;
 }
 if (args.Contains("--hash"))
 {
-    HashBenchmarks.Run(ModLoader.Build(Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).Reverse()));
+    HashBenchmarks.Run(ModLoader.Build(GameContent.Staged(root).Reverse()));
     return;
 }
 if (args.Contains("--terrain"))
 {
-    TerrainBenchmarks.Run(Ariel.Client.GameCatalog.Load(root));
+    TerrainBenchmarks.Run(new Ariel.Client.GameCatalog(GameContent.Staged(root)));
     return;
 }
-var sources = Directory.GetDirectories(root).Order(StringComparer.Ordinal).Select(ModLoader.FromDirectory).ToArray();
-var content = ModLoader.Build(sources.AsEnumerable().Reverse());
+var sources = GameContent.Staged(root);
+var content = ModLoader.Build(sources.Reverse());
 Console.WriteLine("Operational benchmarks: single samples, no timing thresholds. Content loading is excluded.");
 
 foreach (ulong seed in new ulong[] { 1, 42, 987654 })

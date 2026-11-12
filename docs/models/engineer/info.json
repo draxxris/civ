@@ -1,6 +1,6 @@
 {
   "name": "engineer",
-  "model": "src/Mods/Military/art/models/engineer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/engineer.glb",
   "texture_path": [
     "art/units/greatpeople/engineer/great_engineer_128.dds",
     "art/units/greatpeople/engineer/ge_plans.dds"

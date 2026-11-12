@@ -1,6 +1,6 @@
 {
   "name": "future_armor",
-  "model": "src/Mods/Military/art/models/future_armor.glb",
+  "model": "src/Ariel.Rules/Military/art/models/future_armor.glb",
   "texture_path": "art/units/hover tank/texture.dds",
   "textures": [
     "art/units/hover tank/texture.dds"

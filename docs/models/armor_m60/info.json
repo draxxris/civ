@@ -1,6 +1,6 @@
 {
   "name": "armor_m60",
-  "model": "src/Mods/Military/art/models/armor_m60.glb",
+  "model": "src/Ariel.Rules/Military/art/models/armor_m60.glb",
   "texture_path": [
     "art/units/main battle tank/generic/m60_camo.dds",
     "art/units/main battle tank/generic/m60grill.dds"

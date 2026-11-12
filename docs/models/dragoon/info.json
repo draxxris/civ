@@ -1,6 +1,6 @@
 {
   "name": "dragoon",
-  "model": "src/Mods/Military/art/models/dragoon.glb",
+  "model": "src/Ariel.Rules/Military/art/models/dragoon.glb",
   "texture_path": [
     "art/units/dragoon/british/rifleman_128.dds",
     "art/units/dragoon/british/horse.dds",

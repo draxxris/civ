@@ -1,22 +1,13 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Ariel.Core/Ariel.Core.csproj" />
+    <Project Path="src/Ariel.Rules/Ariel.Rules.csproj" />
     <Project Path="src/Ariel.Net/Ariel.Net.csproj" />
-
     <Project Path="src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
   </Folder>
   <Folder Name="/src/Mods/">
-    <Project Path="src/Mods/Foundation/Ariel.Mods.Foundation.csproj" />
-    <Project Path="src/Mods/World/Ariel.Mods.World.csproj" />
-    <Project Path="src/Mods/Research/Ariel.Mods.Research.csproj" />
     <Project Path="src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" />
     <Project Path="src/Mods/TechTree/Ariel.Mods.TechTree.csproj" />
-    <Project Path="src/Mods/Economy/Ariel.Mods.Economy.csproj" />
-    <Project Path="src/Mods/Cities/Ariel.Mods.Cities.csproj" />
-    <Project Path="src/Mods/Military/Ariel.Mods.Military.csproj" />
-    <Project Path="src/Mods/Government/Ariel.Mods.Government.csproj" />
-    <Project Path="src/Mods/Peoples/Ariel.Mods.Peoples.csproj" />
-    <Project Path="src/Mods/Religion/Ariel.Mods.Religion.csproj" />
     <Project Path="src/Mods/Ai/Ariel.Mods.Ai.csproj" />
     <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />

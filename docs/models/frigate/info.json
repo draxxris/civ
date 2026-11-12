@@ -1,6 +1,6 @@
 {
   "name": "frigate",
-  "model": "src/Mods/Military/art/models/frigate.glb",
+  "model": "src/Ariel.Rules/Military/art/models/frigate.glb",
   "texture_path": "art/units/frigate/frigate.dds",
   "textures": [
     "art/units/frigate/frigate.dds"

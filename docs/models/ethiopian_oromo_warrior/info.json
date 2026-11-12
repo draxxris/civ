@@ -1,6 +1,6 @@
 {
   "name": "ethiopian_oromo_warrior",
-  "model": "src/Mods/Military/art/models/ethiopian_oromo_warrior.glb",
+  "model": "src/Ariel.Rules/Military/art/models/ethiopian_oromo_warrior.glb",
   "texture_path": [
     "art/units/unique_ethiopia_oromowarrior/ethiopianoromowarrior_orange128.dds",
     "art/units/unique_ethiopia_oromowarrior/ethiopianoromowarrior_blue128.dds"

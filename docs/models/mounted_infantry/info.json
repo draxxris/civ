@@ -1,6 +1,6 @@
 {
   "name": "mounted_infantry",
-  "model": "src/Mods/Military/art/models/mounted_infantry.glb",
+  "model": "src/Ariel.Rules/Military/art/models/mounted_infantry.glb",
   "texture_path": [
     "art/units/mounted infantry/european/swordsman_128.dds",
     "art/units/mounted infantry/european/companion_cavalry_horse_128.dds"

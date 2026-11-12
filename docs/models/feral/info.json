@@ -1,6 +1,6 @@
 {
   "name": "feral",
-  "model": "src/Mods/Military/art/models/feral.glb",
+  "model": "src/Ariel.Rules/Military/art/models/feral.glb",
   "texture_path": [
     "art/units/super soldier/cca.dds",
     "art/units/super soldier/cyb.dds",

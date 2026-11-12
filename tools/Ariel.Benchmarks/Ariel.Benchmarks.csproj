@@ -4,22 +4,14 @@
     <!-- Reuse the workload fixtures without referencing the test assembly or xUnit. -->
     <Compile Include="../../tests/Ariel.Mods.Tests/GameFactory.cs" Link="GameFactory.cs" />
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
+    <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
-    <ProjectReference Include="../../src/Mods/Foundation/Ariel.Mods.Foundation.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/World/Ariel.Mods.World.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Research/Ariel.Mods.Research.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Economy/Ariel.Mods.Economy.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Cities/Ariel.Mods.Cities.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Military/Ariel.Mods.Military.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Government/Ariel.Mods.Government.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Peoples/Ariel.Mods.Peoples.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Religion/Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <PropertyGroup>
-    <ModPayloads>Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai;Religion;GreatPeople;Trade</ModPayloads>
+    <ModPayloads>Ai;GreatPeople;Trade</ModPayloads>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />
 </Project>

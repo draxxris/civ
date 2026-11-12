@@ -1,6 +1,6 @@
 {
   "name": "captured_boar",
-  "model": "src/Mods/Military/art/models/captured_boar.glb",
+  "model": "src/Ariel.Rules/Military/art/models/captured_boar.glb",
   "texture_path": "art/units/boar/warthog_adult_m.dds",
   "textures": [
     "art/units/boar/warthog_adult_m.dds"

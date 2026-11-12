@@ -1,6 +1,6 @@
 {
   "name": "stag",
-  "model": "src/Mods/Military/art/models/stag.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stag.glb",
   "texture_path": "art/units/stag/deer.dds",
   "textures": [
     "art/units/stag/deer.dds"

@@ -1,6 +1,6 @@
 {
   "name": "stealth_destroyer",
-  "model": "src/Mods/Military/art/models/stealth_destroyer.glb",
+  "model": "src/Ariel.Rules/Military/art/models/stealth_destroyer.glb",
   "texture_path": "art/units/stealth_destroyer/stealth_destroyer_256.dds",
   "textures": [
     "art/units/stealth_destroyer/stealth_destroyer_256.dds"

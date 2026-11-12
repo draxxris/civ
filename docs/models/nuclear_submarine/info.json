@@ -1,6 +1,6 @@
 {
   "name": "nuclear_submarine",
-  "model": "src/Mods/Military/art/models/nuclear_submarine.glb",
+  "model": "src/Ariel.Rules/Military/art/models/nuclear_submarine.glb",
   "texture_path": "art/units/missile submarine/american/ohio.dds",
   "textures": [
     "art/units/missile submarine/american/ohio.dds"

@@ -1,7 +1,7 @@
 """Preview procedural model GLBs in Blender under the game's light, one close-up PNG per model.
 
     blender -b --factory-startup -P tools/art/improvements/preview_blender.py -- --out /tmp/previews \
-        src/Mods/World/art/models/wheat.glb [more.glb ...] [--pitch 55] [--yaw 0] [--distance 1.3] [--size 520]
+        src/Ariel.Rules/World/art/models/wheat.glb [more.glb ...] [--pitch 55] [--yaw 0] [--distance 1.3] [--size 520]
 
 The stage copies the map's look: one sun from the back left (MapRenderer: rotation -40, -135 degrees, energy 1, no
 shadows), white ambient light at 0.45 (GameView), the game camera's 50 degree vertical field of view, flat shading,

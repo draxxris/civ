@@ -1,6 +1,6 @@
 {
   "name": "scout",
-  "model": "src/Mods/Military/art/models/scout.glb",
+  "model": "src/Ariel.Rules/Military/art/models/scout.glb",
   "texture_path": [
     "art/units/scout/scout_128.dds",
     "art/units/scout/scout_fringe_128x16.dds"
