@@ -40,18 +40,22 @@ hwmon_temp() { # $1 = hwmon name
   done
 }
 
-cpu_temp() { # hottest of the die, the ACPI zone and the chipset
+cpu_temp() { # hottest of the die, the ACPI zone, the chipset and the EC's own reading
+  # Intel laptops expose the die as x86_pkg_temp, AMD ones as the k10temp hwmon; dell_smm is the Dell EC's sensor.
   local max=0 v
-  for v in "$(zone_temp x86_pkg_temp)" "$(zone_temp acpitz)" "$(hwmon_temp pch_skylake)"; do
+  for v in "$(zone_temp x86_pkg_temp)" "$(hwmon_temp k10temp)" "$(zone_temp acpitz)" "$(hwmon_temp pch_skylake)" \
+           "$(hwmon_temp dell_smm)"; do
     [[ $v =~ ^[0-9]+$ ]] && [ "$v" -gt "$max" ] && max=$v
   done
   echo "$max"
 }
 
-gpu_temp() {
+gpu_temp() { # an NVIDIA dGPU through nvidia-smi, else an AMD GPU's hwmon
   local t
-  t=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null | head -1) || return 0
-  [[ $t =~ ^[0-9]+$ ]] && echo "$t"
+  t=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null | head -1) || t=""
+  [[ $t =~ ^[0-9]+$ ]] || t=$(hwmon_temp amdgpu)
+  [[ $t =~ ^[0-9]+$ ]] && [ "$t" -gt 0 ] && echo "$t"
+  return 0
 }
 
 started=$(date +%s)
