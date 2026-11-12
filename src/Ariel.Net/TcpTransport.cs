@@ -17,6 +17,12 @@ public sealed class TcpTransport : ITransport
 {
     /// <summary>Largest frame accepted; a whole saved game travels as one message.</summary>
     public const int MaxFrameBytes = 512 * 1024 * 1024;
+    /// <summary>Most bytes waiting to go out on one link. A peer that stops reading is dropped once its queue passes
+    /// this, instead of the host buffering everything it relays to it.</summary>
+    public const long MaxQueuedBytes = 64L * 1024 * 1024;
+    /// <summary>A frame body is read in pieces of this size and grows as its bytes arrive, so a header that announces a
+    /// huge frame costs nothing until the frame's bytes are actually sent.</summary>
+    private const int ReadChunkBytes = 64 * 1024;
     /// <summary>How often an idle link sends a heartbeat.</summary>
     public static readonly TimeSpan HeartbeatInterval = TimeSpan.FromSeconds(1);
 
@@ -226,8 +232,15 @@ public sealed class TcpTransport : ITransport
         if (!await Fill(stream, header, cancel)) return null;
         int length = BinaryPrimitives.ReadInt32BigEndian(header);
         if (length < 0 || length > MaxFrameBytes) throw new InvalidDataException($"Frame of {length} bytes");
-        var body = new byte[length];
-        if (!await Fill(stream, body, cancel)) throw new EndOfStreamException("Connection closed inside a frame");
+        var body = new byte[Math.Min(length, ReadChunkBytes)];
+        int read = 0;
+        while (read < length)
+        {
+            if (read == body.Length) Array.Resize(ref body, (int)Math.Min(length, 2L * body.Length));
+            int n = await stream.ReadAsync(body.AsMemory(read), cancel);
+            if (n == 0) throw new EndOfStreamException("Connection closed inside a frame");
+            read += n;
+        }
         return JsonSerializer.Deserialize<Wire>(body, Json) ?? throw new InvalidDataException("Empty frame");
     }
 
@@ -247,12 +260,14 @@ public sealed class TcpTransport : ITransport
         return true;
     }
 
-    /// <summary>One TCP connection: a reader task, a writer task fed by an unbounded queue, and liveness stamps.</summary>
+    /// <summary>One TCP connection: a reader task, a writer task fed by a queue bounded by <see cref="MaxQueuedBytes"/>,
+    /// and liveness stamps.</summary>
     private sealed class Link(TcpTransport owner, int peer, TcpClient client)
     {
         private readonly Channel<byte[]> _outbox = Channel.CreateUnbounded<byte[]>(new() { SingleReader = true });
         private readonly CancellationTokenSource _closed = CancellationTokenSource.CreateLinkedTokenSource(owner._stop.Token);
         private int _closing;
+        private long _queued;
 
         public int Peer => peer;
         public long LastReceived = Environment.TickCount64;
@@ -266,7 +281,12 @@ public sealed class TcpTransport : ITransport
 
         public void Send(Wire wire)
         {
-            if (_closing == 0) _outbox.Writer.TryWrite(Encode(wire));
+            if (_closing != 0) return;
+            var frame = Encode(wire);
+            // One frame always fits, however large: a whole saved game travels as one.
+            long queued = Interlocked.Add(ref _queued, frame.Length);
+            if (queued > MaxQueuedBytes && queued != frame.Length) { Close(); return; }
+            _outbox.Writer.TryWrite(frame);
         }
 
         public void Close()
@@ -302,6 +322,7 @@ public sealed class TcpTransport : ITransport
                 await foreach (var frame in _outbox.Reader.ReadAllAsync(_closed.Token))
                 {
                     await stream.WriteAsync(frame, _closed.Token);
+                    Interlocked.Add(ref _queued, -frame.Length);
                     Interlocked.Exchange(ref LastSent, Environment.TickCount64);
                 }
             }

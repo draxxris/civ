@@ -108,6 +108,27 @@ public sealed class TcpTransportTests
     }
 
     [Fact]
+    public void A_header_announcing_a_huge_frame_costs_only_the_bytes_that_arrive()
+    {
+        using var host = TcpTransport.Host(0);
+        var left = new List<int>();
+        host.PeerLeft += left.Add;
+        long before = GC.GetTotalAllocatedBytes(true);
+        using (var stranger = new TcpClient())
+        {
+            stranger.Connect("localhost", host.Port);
+            var stream = stranger.GetStream();
+            stream.Write([0x1F, 0xFF, 0xFF, 0xFF]); // a frame of about 512 MB
+            stream.Write(new byte[1024]);           // of which only this arrives
+        }
+
+        Until(() => left.Contains(1), host);
+
+        // The old reader allocated the whole announced frame up front.
+        Assert.True(GC.GetTotalAllocatedBytes(true) - before < 128L * 1024 * 1024);
+    }
+
+    [Fact]
     public void A_lockstep_game_over_tcp_stays_in_sync()
     {
         using var hostLink = TcpTransport.Host(0);
