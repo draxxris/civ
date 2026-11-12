@@ -104,7 +104,7 @@ public sealed class AiEvaluationTests(AiEvaluationTests.ValidBaseline valid) : I
 
     private static void AssertSettlementsAndEvents(string directory)
     {
-        var sources = Ariel.Rules.GameContent.Staged(ModsRoot).ToArray();
+        var sources = Ariel.Composition.GameContent.Staged(ModsRoot).ToArray();
         var content = ModLoader.Build(sources);
         var rows = Rows<EconomicSnapshot>(directory, "economy.jsonl");
         foreach (ulong seed in new ulong[] { 1, 42 })

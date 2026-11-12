@@ -5,9 +5,9 @@
     <Compile Include="../../tests/Ariel.Mods.Tests/GameFactory.cs" Link="GameFactory.cs" />
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
+    <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Net/Ariel.Net.csproj" />
-    <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
@@ -23,7 +23,7 @@
   </ItemGroup>
   <!-- Every shipped mod, main and optional, staged as the game ships them. Sync checks never render. -->
   <PropertyGroup>
-    <ModPayloads>Ai;GreatPeople;Trade;RangedCombat</ModPayloads>
+    <ModPayloads>GreatPeople;Trade;RangedCombat</ModPayloads>
     <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree</ModPayloadsOptional>
     <LinkModArt>false</LinkModArt>
   </PropertyGroup>

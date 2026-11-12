@@ -1,8 +1,0 @@
-{
-  "id": "ai",
-  "name": "Computer Player",
-  "version": "1.8.0",
-  "assembly": "Ariel.Mods.Ai.dll",
-  "dependencies": [],
-  "references": ["foundation", "world", "research", "economy", "cities", "military", "government", "peoples"]
-}

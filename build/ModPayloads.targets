@@ -9,10 +9,10 @@
        Set ModPayloads to the mods the host loads, ModPayloadsOptional to mods it stages separately, and LinkModArt to
        false for a host that never reads art. -->
   <Target Name="CopyModPayloads" AfterTargets="Build" Condition="'$(ModPayloads)' != ''">
-    <!-- The base modules were mods once. A payload an earlier build staged would load beside the linked-in module
-         and claim its id, so drop it. -->
+    <!-- The base modules (the rules modules and the AI) were mods once. A payload an earlier build staged would load
+         beside the linked-in module and claim its id, so drop it. -->
     <ItemGroup>
-      <_FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Religion" />
+      <_FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Religion;Ai" />
     </ItemGroup>
     <RemoveDir Directories="@(_FormerMod->'$(OutDir)mods/%(Identity)')" />
     <ItemGroup>

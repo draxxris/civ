@@ -134,7 +134,8 @@ public sealed class ModManagerTests
 
         var catalog = GameCatalog.Load(Path.Combine(AppContext.BaseDirectory, "rules"), installed, ["tech_tree", "card_research"]);
         Assert.Contains(catalog.Mods, m => m.Manifest.Id == "research");
-        Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "ai");
+        // The computer player is part of the base game, so a selection without it still has it.
+        Assert.Contains(catalog.Mods, m => m.Manifest.Id == "ai");
         Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "events");
         var order = catalog.Content.LoadedMods.ToList();
         Assert.True(order.IndexOf("research") < order.IndexOf("tech_tree"));

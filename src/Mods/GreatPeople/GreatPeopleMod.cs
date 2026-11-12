@@ -16,6 +16,7 @@ public sealed class GreatPeopleMod : IMod
         context.RegisterService<IUnitActionSource>("actions", new GreatPeopleActions(service));
         context.RegisterService<IModifierSource>("effects", effects);
         context.RegisterService<IPlotYieldFinalizer>("golden_age_yields", effects);
+        context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new GreatPersonAiPlanner());
         context.RegisterStateComponent<GreatPeopleCityState>("city_state");
         context.RegisterStateComponent<GreatPeoplePlayerState>("player_state");
         context.RegisterCommand<LeadGreatPersonCommand>("lead_unit");

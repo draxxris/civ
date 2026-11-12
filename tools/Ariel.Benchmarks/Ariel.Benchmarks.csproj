@@ -5,14 +5,14 @@
     <Compile Include="../../tests/Ariel.Mods.Tests/GameFactory.cs" Link="GameFactory.cs" />
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
+    <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
-    <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <PropertyGroup>
-    <ModPayloads>Ai;GreatPeople;Trade;RangedCombat</ModPayloads>
+    <ModPayloads>GreatPeople;Trade;RangedCombat</ModPayloads>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />
 </Project>

@@ -94,13 +94,13 @@ public partial class Main : Node3D
     };
 
     private static IEnumerable<string> BundledModsRoots() =>
-        BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Rules.GameContent.ModsFolder));
+        BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Composition.GameContent.ModsFolder));
 
     /// <summary>The first bundled location that holds the base modules. They ship with the game and are never
     /// replaced from user or environment mod folders.</summary>
     private static string RulesRoot()
     {
-        var candidates = BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Rules.GameContent.RulesFolder)).ToArray();
+        var candidates = BundledRoots().Select(root => System.IO.Path.Combine(root, Ariel.Composition.GameContent.RulesFolder)).ToArray();
         return candidates.FirstOrDefault(System.IO.Directory.Exists) ?? candidates[0];
     }
 

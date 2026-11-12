@@ -5,7 +5,7 @@ using Ariel.Modding;
 namespace Ariel.Client;
 
 /// <summary>Finds manifest-only mod installations before the host selects executable code. The base modules of
-/// <see cref="Ariel.Rules.BaseRules"/> are not mods and are never discovered here.</summary>
+/// <see cref="Ariel.Composition.BaseGame"/> are not mods and are never discovered here.</summary>
 public static class ModDiscovery
 {
     /// <summary>Optional mods root with the highest per-ID priority.</summary>
@@ -15,7 +15,7 @@ public static class ModDiscovery
     {
         // Mods resolve the base game through the shared mod API, so hand them the host's copy and mod and host share
         // one set of types.
-        ModLoader.Share(typeof(Ariel.Rules.BaseRules).Assembly);
+        Ariel.Composition.BaseGame.ShareWithMods();
     }
 
     /// <summary>Reads manifests only. Invalid folders remain diagnostics, not executable mods.</summary>

@@ -25,6 +25,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
         context.RegisterService<IMission>("found", new FoundCorporationMission(service));
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
+        context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner());
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));

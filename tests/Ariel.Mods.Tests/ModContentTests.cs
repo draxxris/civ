@@ -17,7 +17,7 @@ public sealed class LoadedMods
     public Ariel.Client.GameCatalog Catalog => _catalog.Value;
     private static readonly Lazy<(ModSource[] Sources, ContentDb Content)> Shared = new(() =>
     {
-        var sources = Ariel.Rules.GameContent.Staged(AppContext.BaseDirectory).ToArray();
+        var sources = Ariel.Composition.GameContent.Staged(AppContext.BaseDirectory).ToArray();
         return (sources, ModLoader.Build(sources.AsEnumerable().Reverse()));
     });
     public LoadedMods()

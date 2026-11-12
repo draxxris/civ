@@ -198,7 +198,7 @@ Research state participates fully in save files and deterministic state hashes:
 - Active hands, research progress, queues, team knowledge, game options, and RNG state
   are preserved in saves and state hashes.
 - Loading a save does not draw cards.
-- Research and AI mod versions track schema updates. Older saves require the existing
+- Research and AI module versions track schema updates. Older saves require the existing
   explicit content-mismatch override. Forced loads without a hand initialize it at the
   next authoritative research or turn boundary.
 

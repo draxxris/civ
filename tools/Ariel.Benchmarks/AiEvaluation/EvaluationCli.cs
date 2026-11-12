@@ -84,7 +84,7 @@ internal sealed class EvaluationRun(RunFiles files, RunManifest manifest)
         files.Progress("content_load_started");
         var (sources, content) = Contents.GetOrAdd(Path.GetFullPath(hostRoot), root =>
         {
-            var found = Ariel.Rules.GameContent.Staged(root).ToArray();
+            var found = Ariel.Composition.GameContent.Staged(root).ToArray();
             return (found, ModLoader.Build(found));
         });
         RecordContent(sources, content);

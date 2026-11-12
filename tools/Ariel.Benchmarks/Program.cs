@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Ariel.Game;
 using Ariel.Modding;
 using Ariel.Mods.Tests;
-using Ariel.Rules;
+using Ariel.Composition;
 
 var root = AppContext.BaseDirectory;
 if (args.FirstOrDefault() == "--ai-eval")

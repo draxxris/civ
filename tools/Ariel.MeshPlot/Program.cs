@@ -157,7 +157,7 @@ public static class Program
     private static double Round(double value) => Math.Round(value, 5);
 
     /// <summary>The base modules and mods staged beside this tool by the build.</summary>
-    private static IReadOnlyList<ModSource> Discover() => Ariel.Rules.GameContent.Staged(AppContext.BaseDirectory);
+    private static IReadOnlyList<ModSource> Discover() => Ariel.Composition.GameContent.Staged(AppContext.BaseDirectory);
 
     private sealed record Region(double X0, double Z0, double X1, double Z1)
     {

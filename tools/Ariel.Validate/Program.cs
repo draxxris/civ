@@ -90,7 +90,7 @@ public static class Program
     }
 
     /// <summary>The base modules and mods staged beside this tool by the build.</summary>
-    private static IReadOnlyList<ModSource> Discover() => Ariel.Rules.GameContent.Staged(AppContext.BaseDirectory);
+    private static IReadOnlyList<ModSource> Discover() => Ariel.Composition.GameContent.Staged(AppContext.BaseDirectory);
 
     /// <summary>A save carries its schema version and the snapshot the game writes.</summary>
     private static bool IsSave(string file)

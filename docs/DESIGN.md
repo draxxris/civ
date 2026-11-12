@@ -6,12 +6,12 @@ extend both through one registration API.
 
 ## Principles
 
-1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the base
+1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the rules
    modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples
-   and Religion. Their content references each other, so none of them can be removed,
-   and no mod can replace one. Everything a game can run without is a mod: the AI, Great
-   People, Trade and the optional feature mods. A test builds and plays the base modules
-   with no mod installed.
+   and Religion. `Ariel.Ai` holds the computer player, the base module `ai`. Their
+   content references each other, so none of them can be removed, and no mod can replace
+   one. Everything a game can run without is a mod: Great People, Trade and the optional
+   feature mods. A test builds and plays the base modules with no mod installed.
 2. **One registration API.** A base module registers terrain, techs, buildings, units,
    civics, map generators, commands, turn systems and state through the same
    `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
@@ -35,16 +35,25 @@ extend both through one registration API.
   content schema and no rule contract. It asks the loaded game seven questions through
   one required service, `IRuleset` (map size, player setup, content validation, option
   defaults, scouting).
-- `Ariel.Rules`: the base modules, one folder each with its code, `mod.json` manifest,
-  `data/` sidecars and `art/`. `BaseRules` lists them; `GameContent` is the one place a
-  host composes base modules with mods. The build stages manifests and data to
-  `rules/<Module>/` beside every host and symlinks `art/` there. `Contracts/` holds the
+- `Ariel.Rules`: the rules modules, one folder each with its code, `mod.json` manifest,
+  `data/` sidecars and `art/`. `BaseRules` lists them. The build stages manifests and
+  data to `rules/<Module>/` beside every host and symlinks `art/` there. `Contracts/` holds the
   service interfaces, state components, commands and domain events of the base game
   and of the seams mods fill; `Schema/` holds the content definitions
   (`Ariel.Content.Schema`). `GameRules` implements `IRuleset` and is the typed root
-  of the base services. It references no mod assembly.
-- `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`. The
-  loader hands a mod the host's copy of both, so types are shared. A mod may also
+  of the base services. It references no mod assembly and not `Ariel.Ai`.
+- `Ariel.Ai`: the computer player (see Computer players below), one base module with id
+  `ai` whose manifest is staged to `rules/Ai/`. It references `Ariel.Core` and
+  `Ariel.Rules` only, never a mod or a mod's API. It owns the planner seam
+  (`IAiPlanner`) through which mods teach the AI their features.
+- `Ariel.Composition`: the composition root. `BaseGame` lists the base modules (the rules
+  modules and `ai`) and hands mods the host's copies of `Ariel.Rules` and `Ariel.Ai`
+  (`ModLoader.Share`); `GameContent` is the one place a host composes the base game
+  with mods. Every host (the client, tools, tests) composes through it, so none has to
+  remember a base module. No mod references it.
+- `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`, and
+  `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
+  host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations and
   Events do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
@@ -344,8 +353,8 @@ manifest version.
 Manifest fields and API use:
 
 - Compiling against another mod's API needs no manifest entry. Treat the provider as
-  optional: check `sim.Service<T>()` for null and degrade. The Ai mod reads the
-  Corporations API this way, as the client reads both published APIs.
+  optional: check `sim.Service<T>()` for null and degrade. The client reads both
+  published APIs this way.
 - List the provider in `dependencies` when the consumer cannot work without it, or
   must register after it (to override its content, for example). Loading then
   requires the provider, and it registers first. Services are looked up only after
@@ -358,7 +367,8 @@ Manifest fields and API use:
   capital score and the Foundation `corporation` requirement leaf ask. Without the mod
   the answer is "none", and the leaf fails. Base content names corporations only by
   `CorporationIdentityDef`, which therefore stays in Foundation, like
-  `VictoryIdentityDef`.
+  `VictoryIdentityDef`. The computer player follows the same rule: it knows no feature
+  mod, and a feature mod contributes the planner that plays it (`IAiPlanner`, below).
 
 ## Setup and presentation services
 
@@ -1195,9 +1205,71 @@ screen.
 
 ## Computer players
 
-`src/Mods/Ai` registers `ai:standard` under `IPlayerAI`. Select it through
-`SimulationSettings.PlayerAis`. Specialized planners handle empire governance and
-military campaigns:
+`src/Ariel.Ai` is part of the base game: the module `ai` registers `ai:standard` under
+`IPlayerAI`, its saved intent (`ai:team_state`, `ai:player_state`) and its commands. It
+cannot be disabled. Select it through `SimulationSettings.PlayerAis`. A mod can still
+register a different computer player under `IPlayerAI`.
+
+### Planners and the planner seam
+
+A turn of the standard AI is a list of planners. Each one is an `IAiPlanner`
+(`Id`, `Order`, `Plan(AiContext)`) registered as a service:
+`context.RegisterService<IAiPlanner>("planner", new MyPlanner())`. `StandardAi.Decide`
+runs every registered planner in ascending `Order`, then ordinal `Id`; the sorted list is
+computed once per content set (`AiCatalog.Planners`) and duplicate ids fail. The AI's own
+planners register the same way, at the slots `AiPlannerOrder` publishes, a hundred apart:
+
+| Order | Planner | Order | Planner |
+| ---: | --- | ---: | --- |
+| 100 | `ai:research` | 1000 | `ai:cities` (renews cached views first) |
+| 200 | `ai:war` | 1100 | `ai:workers` |
+| 300 | `ai:civics` | 1200 | `ai:air` |
+| 400 | `ai:diplomacy` | 1300 | `ai:military` |
+| 500 | `ai:settlers` | 1400 | `ai:espionage` |
+| 600 | `ai:citizens` (renews cached views first) | 1500 | `ai:stability` |
+| 700 | `ai:religion` | 1600 | `ai:economy` |
+| | | 1700 | `ai:hurry` |
+
+Feature mods fill the gaps. The Corporations mod runs `corporations:planner` at
+`Religion + 100` (found and spread corporations) and the GreatPeople mod runs
+`great_people:planner` at `Religion + 200`, so a great person that can found a
+corporation does that before the great people planner spends it, and both act before
+cities choose production. That ordering lives in those two numbers; a mod that must run
+before or after another contributed planner says so in its own value.
+
+How a mod adds AI behaviour:
+
+1. Reference `Ariel.Ai` (with `Private="false"`, like `Ariel.Rules`).
+2. Implement `IAiPlanner` with an id in the mod's namespace and an `Order` from
+   `AiPlannerOrder`. One instance serves every player of every game, and players' AI
+   turns can run at the same time on forked simulations, so the planner keeps no mutable
+   fields: `Plan` builds a per-turn object and works there.
+3. In `Plan`, read the game through `AiContext` and act with `ctx.Issue(command)`, which
+   validates and applies through the normal command path and renews the context's cached
+   views, so later planners see the effect. Take only units nobody claimed
+   (`ctx.HasActed`) and claim the ones used (`ctx.MarkActed`). Decide from simulation
+   state and `sim.Rng` only, and break ties by ordinal id.
+4. Register it in the mod's `Register`. Without the mod the planner is simply absent.
+
+`AiContext` is public on purpose and small: the player and its team
+(`Sim`, `PlayerId`, `Self`, `Team`, `Turn`, `Grid`), cached `Cities` and `Units`,
+`Def`, `Alive`, `Tile`, `Service<T>`, `Issue`, `MoveToward`, `Refresh` (after a mutation
+outside `Issue`), the acted-unit ledger and `GoldReserve` (the treasury the economy
+planner keeps in hand). `PlannerPoints` gives the points per yield and commerce the city
+planner ranks content in, so a contributed planner values things on the same scale.
+Everything else (roles, threat maps, city views, campaign targets, the shared site, army
+and production plans) stays internal to the built-in planners.
+
+Planners still choose what a feature's actions are worth themselves. The espionage
+planner stays in `Ariel.Ai` for now because the city planner asks it whether a spy should
+be built: moving it needs a way for a mod to add production wishes, which belongs with
+the AI valuers (how a mod adjusts how the AI scores plots, buildings, units, techs,
+civics and trades). Diplomacy, war and peace stay until relations move into the base
+game.
+
+### What the built-in planners do
+
+Specialized planners handle empire governance and military campaigns:
 
 - **Civilian & empire planners**: `CitizenPlanner`, `ProductionPlanner`,
   `WorkerPlanner`, `ResearchPlanner`, `CivicsPlanner`, `CommercePlanner`,
@@ -1222,12 +1294,16 @@ military campaigns:
   `AirBomb` missions against city defenses and strategic tile improvements, executes
   `AirStrike` missions against clustered enemy defenders, and maintains Combat Air
   Patrol (`UnitActivity.Intercept`) to intercept incoming enemy airstrikes.
-- **Great Person & Religion AI (`GreatPersonPlanner`, `ReligionPlanner`)**: Dynamically
-  scores Great Person actions: evaluates empire-wide value of Golden Ages (scaled by
-  population and revolution instability) versus immediate technology bulbing, special
-  building construction, or trade missions. Dispatches missionaries to unconverted
-  domestic cities, and trains inquisitors to purge minority religions from unstable
-  cities under state church civics.
+- **Religion AI (`ReligionPlanner`)**: Dispatches missionaries to unconverted domestic
+  cities, and trains inquisitors to purge minority religions from unstable cities under
+  state church civics.
+- **Great people (`GreatPersonPlanner`, contributed by the GreatPeople mod)**:
+  Dynamically scores Great Person actions: evaluates empire-wide value of Golden Ages
+  (scaled by population and revolution instability) versus immediate technology
+  bulbing, special building construction, or trade missions.
+- **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Founds
+  corporations with the fitting great person and spreads founded ones to the empire's
+  own cities while income allows.
 
 Decisions use integer scores and ordinal content-id ties. War checks use only
 `Simulation.Rng`. Planners apply ordinary commands through `Simulation.TryApply` during
@@ -1747,8 +1823,9 @@ time, even when the desktop throttles the window.
 
 ## Feature content mods
 
-`src/Ariel.Rules/` contains the base modules Foundation, World, Research, Economy,
-Cities, Military, Government, Peoples and Religion. `src/Mods/` contains Ai, GreatPeople,
+`src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
+Cities, Military, Government, Peoples and Religion, and `src/Ariel.Ai/` the base module
+`ai`. `src/Mods/` contains GreatPeople,
 Trade, RangedCombat, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
 Revolution, CardResearch and TechTree. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no

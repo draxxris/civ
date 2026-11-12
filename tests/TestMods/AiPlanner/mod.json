@@ -1,0 +1,6 @@
+{
+  "id": "ai_planner_probe",
+  "name": "AI Planner Probe",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.AiPlanner.dll"
+}

@@ -1,8 +1,9 @@
 # Ariel
 
 A super-moddable, hex-grid Civilization 4 clone. The base game (world, cities, units,
-research, economy, government) is linked in from `src/Ariel.Rules`; everything else is a
-mod on the same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
+research, economy, government, and the computer player) is linked in from `src/Ariel.Rules`
+and `src/Ariel.Ai`, composed by `src/Ariel.Composition`; everything else is a mod on the
+same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 
 ```
 mise install                         # once per clone: .NET 10 SDK and Godot 4.7.2-stable .NET (godot-mono)
@@ -34,9 +35,11 @@ Headless on Linux: `xvfb-run` plus software GL
 (`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Ariel.Godot`).
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user
-data folder. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules` and other mods' published
-API assemblies, never Godot types; visuals ship as data (`.pck` packs, plain assets). AI
-players implement `IPlayerAI`. A mod publishes an API for other mods by shipping an
+data folder. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules`, `Ariel.Ai` and other
+mods' published API assemblies, never Godot types; visuals ship as data (`.pck` packs, plain
+assets). A mod teaches the standard computer player its feature by registering an
+`IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new
+computer player implements `IPlayerAI`. A mod publishes an API for other mods by shipping an
 assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`;
 see "Mod APIs" in [docs/DESIGN.md](docs/DESIGN.md).
 

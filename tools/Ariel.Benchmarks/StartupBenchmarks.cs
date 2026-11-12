@@ -11,7 +11,7 @@ internal static class StartupBenchmarks
     public static void Run(string root, bool sweep)
     {
         Console.WriteLine("Startup benchmarks: first load, then one warmup and median of five samples; no timing thresholds.");
-        var catalog = MeasureOnce("Catalog first load (discovery, assemblies, content, choices)", () => new GameCatalog(Ariel.Rules.GameContent.Staged(root)));
+        var catalog = MeasureOnce("Catalog first load (discovery, assemblies, content, choices)", () => new GameCatalog(Ariel.Composition.GameContent.Staged(root)));
         Console.WriteLine($"Content hash: {catalog.Content.ContentHash}");
         MeasureCatalogs(catalog);
         foreach (string size in sweep ? new[] { "standard", "gigantic" } : new[] { "standard" })
@@ -22,7 +22,7 @@ internal static class StartupBenchmarks
     public static void RunWorld(string root)
     {
         Console.WriteLine("World benchmarks: one catalog load, then one warmup and five samples; no timing thresholds.");
-        var catalog = new GameCatalog(Ariel.Rules.GameContent.Staged(root));
+        var catalog = new GameCatalog(Ariel.Composition.GameContent.Staged(root));
         Console.WriteLine($"Content hash: {catalog.Content.ContentHash}");
         foreach (string size in new[] { "standard", "gigantic" })
             foreach (ulong seed in new ulong[] { 1, 42, 987654 })

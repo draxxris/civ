@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Runtime.Loader;
+using Ariel.Ai;
 using Ariel.Client;
+using Ariel.Composition;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
@@ -80,19 +82,17 @@ public sealed class ModApiTests
         Assert.Same(corporations, content.Services.Find<ICorporationService>());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void The_ai_mod_binds_the_hosts_copy_of_the_corporations_api_with_or_without_the_provider(bool provider)
+    [Fact]
+    public void A_mod_contributing_an_ai_planner_binds_the_hosts_copy_of_the_computer_player()
     {
-        string Staged(string folder, string name) => Path.Combine(AppContext.BaseDirectory, folder, name);
-        string[] dirs = provider
-            ? [Staged(GameContent.OptionalModsFolder, "Corporations"), Staged(GameContent.OptionalModsFolder, "Diplomacy"), Staged(GameContent.ModsFolder, "Ai")]
-            : [Staged(GameContent.ModsFolder, "Ai")];
-        var ai = ModLoader.FromDirectories(dirs).Single(s => s.Manifest.Id == "ai");
+        var mods = ModLoader.FromDirectories(new[] { "Corporations", "Diplomacy" }
+            .Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name)));
+        var corporations = mods.Single(s => s.Manifest.Id == "corporations");
 
-        var context = AssemblyLoadContext.GetLoadContext(ai.Instance.GetType().Assembly)!;
-        Assert.Same(typeof(ICorporationService).Assembly, context.LoadFromAssemblyName(typeof(ICorporationService).Assembly.GetName()));
+        var context = AssemblyLoadContext.GetLoadContext(corporations.Instance.GetType().Assembly)!;
+        Assert.Same(typeof(IAiPlanner).Assembly, context.LoadFromAssemblyName(typeof(IAiPlanner).Assembly.GetName()));
+        var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder), mods);
+        Assert.Contains(content.Services.Get<IAiPlanner>(), p => p.Id == "corporations:planner");
     }
 
     [Fact]

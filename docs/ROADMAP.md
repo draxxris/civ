@@ -248,7 +248,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   (`cities:extra_culture_level`) from leader traits (`TraitDef.ExtraCultureLevel`),
   civics, and civilizations boosting initial city founding culture and border range.
 - **AI personality profiles**: Complete personality matrices (flavors, aggression,
-  wonder preferences, civic weights) driving the AI mod.
+  wonder preferences, civic weights) driving the computer player.
 
 ### Advanced Modular Systems
 

@@ -2,7 +2,7 @@ using Ariel.Modding;
 
 namespace Ariel.Rules;
 
-/// <summary>The base game: modules every game runs, linked into the host instead of loaded as mod assemblies.
+/// <summary>The rules modules of the base game, linked into the host instead of loaded as mod assemblies.
 /// A module keeps its own content namespace, manifest and sidecar folder, and registers through the same
 /// <see cref="IModContext"/> as a mod, so ids, load order and content identity do not depend on where code lives.</summary>
 public static class BaseRules
@@ -33,14 +33,18 @@ public static class BaseRules
     {
         var sources = new ModSource[Modules.Length];
         for (int i = 0; i < Modules.Length; i++)
-        {
-            var module = Modules[i];
-            string root = Path.Combine(rulesRoot, module.Folder);
-            var manifest = ModLoader.ReadManifest(root);
-            if (manifest.Id != module.Id)
-                throw new InvalidDataException($"{root}/mod.json declares '{manifest.Id}', expected base module '{module.Id}'");
-            sources[i] = new ModSource { Manifest = manifest, Instance = module.Create(), Root = root };
-        }
+            sources[i] = Linked(rulesRoot, Modules[i].Id, Modules[i].Folder, Modules[i].Create());
         return sources;
+    }
+
+    /// <summary>A module linked into the host, whose manifest and sidecars are staged under
+    /// <c><paramref name="rulesRoot"/>/<paramref name="folder"/></c> and must declare <paramref name="id"/>.</summary>
+    public static ModSource Linked(string rulesRoot, string id, string folder, IMod instance)
+    {
+        string root = Path.Combine(rulesRoot, folder);
+        var manifest = ModLoader.ReadManifest(root);
+        if (manifest.Id != id)
+            throw new InvalidDataException($"{root}/mod.json declares '{manifest.Id}', expected base module '{id}'");
+        return new ModSource { Manifest = manifest, Instance = instance, Root = root };
     }
 }

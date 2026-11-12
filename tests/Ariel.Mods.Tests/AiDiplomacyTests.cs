@@ -78,7 +78,9 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     public void Corporation_worth_subtracts_maintenance()
     {
         var sim = Scenario();
-        var worth = AiType(sim, "CorporationPlanner").GetMethod("Worth")!;
+        // The Corporations mod contributes its planner to the AI; it lives beside the service it plays.
+        var planner = sim.Service<ICorporationService>()!.GetType().Assembly.GetType("Ariel.Mods.Corporations.CorporationPlanner")!;
+        var worth = planner.GetMethod("Worth")!;
         var rich = new CorporationDef { Id = "test:rich", CommerceProduced = new(4, 0, 0, 0) };
         var costly = new CorporationDef { Id = "test:costly", CommerceProduced = new(1, 0, 0, 0), MaintenanceHundredths = 400 };
         Assert.Equal(20L, (long)worth.Invoke(null, [rich])!);

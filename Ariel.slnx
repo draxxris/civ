@@ -2,13 +2,14 @@
   <Folder Name="/src/">
     <Project Path="src/Ariel.Core/Ariel.Core.csproj" />
     <Project Path="src/Ariel.Rules/Ariel.Rules.csproj" />
+    <Project Path="src/Ariel.Ai/Ariel.Ai.csproj" />
+    <Project Path="src/Ariel.Composition/Ariel.Composition.csproj" />
     <Project Path="src/Ariel.Net/Ariel.Net.csproj" />
     <Project Path="src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
   </Folder>
   <Folder Name="/src/Mods/">
     <Project Path="src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" />
     <Project Path="src/Mods/TechTree/Ariel.Mods.TechTree.csproj" />
-    <Project Path="src/Mods/Ai/Ariel.Mods.Ai.csproj" />
     <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />
     <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
@@ -31,6 +32,7 @@
     <Project Path="tests/TestMods/ApiProvider.Api/Ariel.TestMods.ApiProvider.Api.csproj" />
     <Project Path="tests/TestMods/ApiProvider/Ariel.TestMods.ApiProvider.csproj" />
     <Project Path="tests/TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" />
+    <Project Path="tests/TestMods/AiPlanner/Ariel.TestMods.AiPlanner.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />

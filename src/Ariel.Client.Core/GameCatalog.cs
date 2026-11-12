@@ -34,11 +34,12 @@ public sealed class GameCatalog
     public IReadOnlyList<SetupChoice> Handicaps { get; }
     public IReadOnlyList<SetupGameOption> GameOptions { get; }
     public IReadOnlyList<LeaderChoice> Leaders { get; }
-    /// <summary>The AI service the opponents use, or null until an AI mod exists; then opponents only end their turn.</summary>
+    /// <summary>The AI service the opponents use: the first registered, by ordinal id. The base game always registers
+    /// one; null only for a ruleset composed without it, and then opponents only end their turn.</summary>
     public string? OpponentAi { get; }
 
     /// <summary>Build from a complete source list: the base modules and the chosen mods, as
-    /// <see cref="Ariel.Rules.GameContent.Sources"/> composes them.</summary>
+    /// <see cref="Ariel.Composition.GameContent.Sources"/> composes them.</summary>
     public GameCatalog(IReadOnlyList<ModSource> mods)
     {
         using var trace = StartupTrace.Phase("catalog build");
@@ -60,7 +61,7 @@ public sealed class GameCatalog
     public static GameCatalog Load(string rulesRoot, string modsRoot)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        var catalog = new GameCatalog(Ariel.Rules.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(modsRoot)));
+        var catalog = new GameCatalog(Ariel.Composition.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(modsRoot)));
         // Content is frozen; start the digest now so it overlaps the setup work instead of blocking the first reader.
         catalog.Content.PrefetchContentHash();
         return catalog;
@@ -70,7 +71,7 @@ public sealed class GameCatalog
     public static GameCatalog Load(string rulesRoot, IReadOnlyList<InstalledMod> installed, IEnumerable<string> enabledIds)
     {
         using var trace = StartupTrace.Phase("catalog load");
-        var catalog = new GameCatalog(Ariel.Rules.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(installed, enabledIds)));
+        var catalog = new GameCatalog(Ariel.Composition.GameContent.Sources(rulesRoot, ModDiscovery.LoadMods(installed, enabledIds)));
         catalog.Content.PrefetchContentHash();
         return catalog;
     }

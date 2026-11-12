@@ -1,0 +1,7 @@
+{
+  "id": "ai",
+  "name": "Computer Player",
+  "version": "1.9.0",
+  "dependencies": [],
+  "references": ["foundation", "world", "research", "economy", "cities", "military", "government", "peoples"]
+}

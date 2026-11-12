@@ -3,8 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
+    <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
-    <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
@@ -12,7 +12,7 @@
   <!-- The same mod set the benchmarks and the tests load, staged by build/ModPayloads.targets. Validation never
        renders, so the heavy art/ trees are not linked. -->
   <PropertyGroup>
-    <ModPayloads>Ai;GreatPeople;Trade;RangedCombat</ModPayloads>
+    <ModPayloads>GreatPeople;Trade;RangedCombat</ModPayloads>
     <LinkModArt>false</LinkModArt>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />

@@ -14,7 +14,7 @@ internal static class Mods
     {
         int i = Array.IndexOf(args, "--optional");
         string optional = i >= 0 && i + 1 < args.Length ? args[i + 1] : DefaultOptional;
-        return ModLoader.Build(Ariel.Rules.GameContent.Staged(root,
+        return ModLoader.Build(Ariel.Composition.GameContent.Staged(root,
             optional.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)));
     }
 }

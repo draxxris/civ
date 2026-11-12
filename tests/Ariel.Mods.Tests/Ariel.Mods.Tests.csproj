@@ -7,10 +7,10 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
+    <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <ProjectReference Include="../../src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/TechTree/Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Ai/Ariel.Mods.Ai.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
@@ -28,20 +28,22 @@
   <!-- Every shipped mod, staged into the test output by build/ModPayloads.targets. LinkModArt stays on:
        TerrainPaletteTests needs World/art/terrain and ScatterPlannerTests needs World/art/scatter. -->
   <PropertyGroup>
-    <ModPayloads>Ai;GreatPeople;Trade;RangedCombat</ModPayloads>
+    <ModPayloads>GreatPeople;Trade;RangedCombat</ModPayloads>
     <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree</ModPayloadsOptional>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />
 
-  <!-- Test mods that prove one mod can consume another's published API (ModApiTests). This host must not reference
-       their API, so each mod folder in test-mods/ carries its own copy and the loader has to share one. -->
+  <!-- Test mods that prove one mod can consume another's published API (ModApiTests), and that a mod can contribute
+       a planner to the computer player (AiPlannerTests). This host must not reference their API, so each mod folder in
+       test-mods/ carries its own copy and the loader has to share one. -->
   <ItemGroup>
     <ProjectReference Include="../TestMods/ApiProvider/Ariel.TestMods.ApiProvider.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../TestMods/ApiConsumer/Ariel.TestMods.ApiConsumer.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../TestMods/AiPlanner/Ariel.TestMods.AiPlanner.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <Target Name="CopyTestMods" AfterTargets="Build">
     <ItemGroup>
-      <_TestMod Include="ApiProvider;ApiConsumer" />
+      <_TestMod Include="ApiProvider;ApiConsumer;AiPlanner" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/bin/$(Configuration)/net10.0/Ariel.TestMods.*.dll" ModDir="%(_TestMod.Identity)" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/mod.json" ModDir="%(_TestMod.Identity)" />
     </ItemGroup>

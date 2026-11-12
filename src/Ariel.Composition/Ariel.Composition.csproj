@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The composition root of the base game: the rules modules of Ariel.Rules and the computer player of Ariel.Ai,
+    composed with the mods a host chose. Every host (client, tools, tests) composes a ruleset here and nowhere else,
+    so none of them has to remember a base module. Mods never reference it.
+  -->
+  <PropertyGroup>
+    <AssemblyName>Ariel.Composition</AssemblyName>
+    <RootNamespace>Ariel.Composition</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Ariel.Core/Ariel.Core.csproj" />
+    <ProjectReference Include="../Ariel.Rules/Ariel.Rules.csproj" />
+    <ProjectReference Include="../Ariel.Ai/Ariel.Ai.csproj" />
+  </ItemGroup>
+</Project>

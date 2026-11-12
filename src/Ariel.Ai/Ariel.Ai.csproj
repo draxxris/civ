@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The computer player: part of the base game, statically linked into every host like Ariel.Rules and shared with
+    mods, which contribute planners through IAiPlanner. It is one base module (id "ai"); its manifest is staged to
+    <output>/rules/Ai/ beside the rules modules. It references the kernel and the base rules only, never a mod or a
+    mod's published API: a feature the AI should play brings its own planner.
+  -->
+  <PropertyGroup>
+    <AssemblyName>Ariel.Ai</AssemblyName>
+    <RootNamespace>Ariel.Ai</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Ariel.Core/Ariel.Core.csproj" />
+    <ProjectReference Include="../Ariel.Rules/Ariel.Rules.csproj" />
+    <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" TargetPath="rules/Ai/mod.json" />
+  </ItemGroup>
+</Project>
