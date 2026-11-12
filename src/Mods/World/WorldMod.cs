@@ -48,7 +48,7 @@ public sealed class WorldMod : IPreparableMod
         context.RegisterService<Ariel.Game.IStartingPositionService>("starts", new StartingPositions(water));
         context.RegisterService<Ariel.Game.IVisibilityService>("visibility", visibility);
         context.RegisterService<Ariel.Game.IWorkerBuildService>("workers", workers);
-        context.RegisterService<Ariel.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator(network));
+        context.RegisterService<Ariel.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator());
         context.RegisterStateComponent<WorkerOrder>("worker_order");
         context.RegisterCommand<Ariel.Game.StartBuildCommand>("start_build");
         context.RegisterCommand<Ariel.Game.CancelBuildCommand>("cancel_build");

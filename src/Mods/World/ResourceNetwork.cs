@@ -155,7 +155,7 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
     }
 }
 
-internal sealed class BonusEvaluator(IResourceNetwork network) : IContentRequirementEvaluator
+internal sealed class BonusEvaluator : IContentRequirementEvaluator
 {
     public string Kind => "bonus";
     public Type DefinitionType => typeof(S.BonusDef);
