@@ -55,10 +55,9 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
     {
         var support = ctx.Units.Where(u => ctx.Alive(u) && u.MovesLeft > 0 && ctx.MilitaryState(u).TransportId is null)
             .OrderBy(u => u.Id).ToArray();
-        foreach (var unit in support.Where(u => ctx.Def(u).BombardRate > 0))
-            Fire(unit, new BombardCityCommand { Player = ctx.PlayerId, Unit = unit.Id, Target = target });
-        foreach (var unit in support.Where(u => ctx.Def(u).BombRange > 0))
-            Fire(unit, new RangedStrikeCommand { Player = ctx.PlayerId, Unit = unit.Id, Target = target });
+        foreach (var fire in ctx.Sim.Rules().SupportFire)
+            foreach (var unit in support)
+                if (fire.Aim(ctx.Sim, unit, target) is { } command) Fire(unit, command);
     }
 
     private void Fire(Unit unit, GameCommand command)

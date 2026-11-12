@@ -108,10 +108,17 @@ public sealed class GameRules : IRuleset
     /// <summary>The ProjectsVictory mod's service, or null without it.</summary>
     public IProjectVictoryService? ProjectVictory { get; private set; }
 
+    /// <summary>Every feature's unit orders, base and mod, in registration order.</summary>
+    public IReadOnlyList<IUnitActionSource> UnitActions { get; private set; } = [];
+    /// <summary>Every kind of fire that can support an assault, base and mod, in registration order.</summary>
+    public IReadOnlyList<ISupportFire> SupportFire { get; private set; } = [];
+
     /// <inheritdoc/>
     public void Bind(ContentDb content)
     {
         var services = content.Services;
+        UnitActions = services.Get<IUnitActionSource>();
+        SupportFire = services.Get<ISupportFire>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();

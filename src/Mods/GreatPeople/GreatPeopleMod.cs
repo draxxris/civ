@@ -13,6 +13,7 @@ public sealed class GreatPeopleMod : IMod
         context.RegisterService<IGreatPeopleService>("queries", service);
         context.RegisterService<ICityGreatPeopleService>("city_queries", service);
         context.RegisterService<IGreatPeopleCommandService>("commands", new GreatPeopleCommands());
+        context.RegisterService<IUnitActionSource>("actions", new GreatPeopleActions(service));
         context.RegisterService<IModifierSource>("effects", effects);
         context.RegisterService<IPlotYieldFinalizer>("golden_age_yields", effects);
         context.RegisterStateComponent<GreatPeopleCityState>("city_state");

@@ -255,6 +255,16 @@ requires the owning namespace. Overrides can replace earlier content.
   fills them from the registry once, when content freezes, so rule code reads a field
   instead of searching the registry on every call. A base module still registers each
   service, so service identity stays in the content hash.
+- A feature that gives units an order registers an `IUnitActionSource`, which offers
+  ready-made `(id, label, command)` candidates for a unit. The client validates and
+  lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
+  a mod adds an order without a client change. Artillery (Military) and great people
+  (the GreatPeople mod) use it; air missions, cargo, religion, corporations and spies
+  are still listed by the client itself and should move to sources.
+- A feature that lets a unit hurt a tile without entering it registers an
+  `ISupportFire`. AI assaults ask every kind in registration order
+  (`GameRules.SupportFire`) for the command that fires a unit at the target, instead of
+  naming bombardment and ranged strikes.
 - `ITurnSystem` retains explicit `(Order, Id)` execution order.
 
 Registries freeze after load. Definitions and their nested collections must not change

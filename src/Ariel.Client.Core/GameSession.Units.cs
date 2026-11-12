@@ -98,12 +98,13 @@ public sealed partial class GameSession
             actions.Add(Action(activity.ToString().ToLowerInvariant(), activity == UnitActivity.Awake ? "Wake" : activity.ToString(),
                 new SetUnitActivityCommand { Player = LocalPlayer, Unit = unit.Id, Activity = activity }));
         if (def.Pillage) actions.Add(Action("pillage", "Pillage", new PillageCommand { Player = LocalPlayer, Unit = unit.Id }));
-        actions.AddRange(ArtilleryActions(unit, def));
+        foreach (var source in Sim.Rules().UnitActions)
+            foreach (var offer in source.Offers(Sim, LocalPlayer, unit))
+                actions.Add(Action(offer.Id, offer.Label, offer.Command, offer.Tooltip));
         actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));
         actions.AddRange(PromotionActions(unit));
         actions.AddRange(ReligionActions(unit));
-        actions.AddRange(GreatPeopleActions(unit));
         actions.AddRange(CorporationActions(unit));
         actions.AddRange(SpyActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
@@ -146,58 +147,6 @@ public sealed partial class GameSession
             var target = Sim.State.Grid.HexOf(tile);
             yield return Action($"unload:{tile.Value}", $"Unload: {target}",
                 new UnloadUnitCommand { Player = LocalPlayer, Unit = unit.Id, Destination = target });
-        }
-    }
-
-    private IEnumerable<UnitActionInfo> ArtilleryActions(Unit unit, Schema.UnitDef def)
-    {
-        int range = Math.Max(1, def.BombRange);
-        var origin = Sim.State.Grid.TileAt(unit.Position);
-        foreach (var tile in Sim.State.Grid.Range(origin, range).OrderBy(t => t.Value))
-        {
-            var target = Sim.State.Grid.HexOf(tile);
-            string name = Sim.State.CityAt(target)?.Name ?? target.ToString();
-            var bombard = Action($"bombard:{tile.Value}", $"Bombard: {name}", new BombardCityCommand { Player = LocalPlayer, Unit = unit.Id, Target = target });
-            if (bombard.Command is not null) yield return bombard;
-            if (def.BombRange <= 0) continue;
-            var ranged = Action($"ranged_strike:{tile.Value}", $"Ranged strike: {name}", new RangedStrikeCommand { Player = LocalPlayer, Unit = unit.Id, Target = target });
-            if (ranged.Command is not null) yield return ranged;
-        }
-    }
-
-    private IEnumerable<UnitActionInfo> GreatPeopleActions(Unit unit)
-    {
-        var service = OptionalService<IGreatPeopleService>();
-        if (service == null) yield break;
-        foreach (var action in service.AvailableActions(Sim, LocalPlayer, unit.Id))
-        {
-            string suffix = action.Command[(action.Command.LastIndexOf(':') + 1)..];
-            GameCommand? command = suffix switch
-            {
-                "join_city" => new JoinGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "discover_tech" => new DiscoverGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "hurry_production" => new HurryGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "culture_bomb" => new CultureGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "golden_age" => new GoldenAgeGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "lead_unit" => new LeadGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "construct_building" => new ConstructGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                "trade_mission" => new TradeGreatPersonCommand { Player = LocalPlayer, UnitId = unit.Id, Target = action.Target },
-                _ => null,
-            };
-            if (command == null) continue;
-            string label = suffix switch
-            {
-                "join_city" => "Join city",
-                "discover_tech" => "Discover technology",
-                "hurry_production" => "Hurry production",
-                "culture_bomb" => "Great work",
-                "golden_age" => "Start golden age",
-                "lead_unit" => "Attach leader",
-                "construct_building" => "Construct building",
-                "trade_mission" => "Trade mission",
-                _ => suffix,
-            };
-            yield return Action(action.Command, label, command, action.Amount > 0 ? action.Amount.ToString() : "");
         }
     }
 
