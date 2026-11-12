@@ -123,10 +123,32 @@ public sealed partial class GameSession
     /// the local player ends last. The turn advances once every player has ended, which may be another peer's command.</summary>
     public void EndTurn()
     {
-        if (_channel.PlaysAbsentHumans)
-            foreach (var player in Sim.State.Players.Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn).ToList())
-                _channel.Submit(Sim, new EndTurnCommand { Player = player.Id });
+        if (TurnInProgress)
+        {
+            SetMessage("Wait for the other players to finish moving.");
+            return;
+        }
+        int turn = Sim.State.Turn;
+        if (_channel.PlaysAbsentHumans && EndAbsentHumanTurns()
+            && (Sim.HasPendingTurnWork || Sim.State.Turn != turn || !Sim.MayAct(LocalPlayer)))
+        {
+            // The local player's segment was already over: the absent humans' end turns finished the part of the turn
+            // it was waiting on. Start what follows (other players' moves, the rollover) instead of ending the local
+            // player's turn, which would be refused, or would end the next turn it has not played yet.
+            Revision++;
+            SimulationChanged();
+            return;
+        }
         Submit(new EndTurnCommand { Player = LocalPlayer });
+    }
+
+    /// <summary>End the turn of every other human seat whose segment is moving. Returns whether any applied.</summary>
+    private bool EndAbsentHumanTurns()
+    {
+        bool applied = false;
+        foreach (var player in Sim.State.Players.Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn).ToList())
+            if (_channel.Submit(Sim, new EndTurnCommand { Player = player.Id }).Applied) applied = true;
+        return applied;
     }
 
     /// <summary>The human players the game is waiting on, by name, once the local player cannot move: its turn is

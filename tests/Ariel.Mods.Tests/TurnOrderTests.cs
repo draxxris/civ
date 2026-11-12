@@ -175,6 +175,27 @@ public sealed class TurnOrderTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.StartsWith("Can't do that: Not your turn", Submitted(session));
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Ending_an_absent_humans_segment_runs_the_moves_that_follow_it_without_ending_the_next_turn(bool background)
+    {
+        var session = new GameSession(Game(TurnMode.Sequential, null, null, Ai), backgroundTurns: background);
+
+        session.EndTurn(); // the local player's segment ends; the absent human's segment comes next
+        Assert.Equal(1, session.Sim.State.Turn);
+        Assert.False(session.TurnInProgress);
+
+        session.EndTurn(); // ends the absent human's segment, which leaves the AI's moves and the rollover
+        Assert.Equal(background, session.TurnInProgress);
+        session.WaitForOtherPlayers();
+
+        Assert.Equal(2, session.Sim.State.Turn);
+        Assert.False(session.Sim.HasPendingTurnWork);
+        Assert.True(session.IsMyMove);
+        Assert.False(session.Sim.State.PlayerById(session.LocalPlayer).EndedTurn);
+    }
+
     private static string Submitted(GameSession session)
     {
         session.Submit(new EndTurnCommand { Player = session.LocalPlayer });
