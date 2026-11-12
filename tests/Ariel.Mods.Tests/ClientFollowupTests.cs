@@ -210,6 +210,51 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.Equal(hash, s.Sim.ComputeHash());
     }
 
+    [Theory]
+    [InlineData("duplicate unit")]
+    [InlineData("null units")]
+    [InlineData("unit id at the top of the range")]
+    public void Loading_a_malformed_save_reports_it_instead_of_throwing(string corruption)
+    {
+        var s = Scenario();
+        AddFighter(s.Sim, 0, 14);
+        ulong hash = s.Sim.ComputeHash();
+        var save = System.Text.Json.Nodes.JsonNode.Parse(s.SaveToJson())!;
+        var units = save["State"]!["Units"]!.AsArray();
+        Assert.NotEmpty(units);
+        switch (corruption)
+        {
+            case "duplicate unit": units.Add(units[0]!.DeepClone()); break;
+            case "null units": save["State"]!["Units"] = null; break;
+            default: units[0]!["Id"] = int.MaxValue; break;
+        }
+
+        Assert.False(s.LoadFromJson(save.ToJsonString()));
+
+        Assert.StartsWith("Can't load", s.Message);
+        Assert.Equal(hash, s.Sim.ComputeHash());
+    }
+
+    [Fact]
+    public void A_save_that_cannot_be_written_keeps_the_previous_save_and_says_so()
+    {
+        var s = Scenario();
+        var path = Path.Combine(Path.GetTempPath(), $"civ-client-{Guid.NewGuid():N}", "slot.json");
+        try
+        {
+            Assert.True(s.SaveGame(path), s.Message);
+            string previous = File.ReadAllText(path);
+            Directory.CreateDirectory(path + ".tmp"); // the write beside the slot fails
+            s.EndTurn();
+
+            Assert.False(s.SaveGame(path));
+
+            Assert.StartsWith("Can't save", s.Message);
+            Assert.Equal(previous, File.ReadAllText(path));
+        }
+        finally { Directory.Delete(Path.GetDirectoryName(path)!, true); }
+    }
+
     [Fact]
     public void Turn_events_become_notifications_for_the_local_player_only()
     {

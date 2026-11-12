@@ -127,7 +127,7 @@ public sealed class Lobby : IDisposable
         if (!IsHost) return "Only the host loads a game.";
         Simulation sim;
         try { sim = SaveGame.Load(_catalog.Content, json); }
-        catch (Exception e) when (e is InvalidDataException or System.Text.Json.JsonException or KeyNotFoundException or InvalidOperationException)
+        catch (InvalidDataException e)
         {
             return "Can't load: " + e.Message;
         }

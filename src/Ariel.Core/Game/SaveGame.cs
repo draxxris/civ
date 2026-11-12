@@ -14,8 +14,19 @@ public static class SaveGame
         var (a, b, c, d) = sim.Rng.State;
         return CanonicalJson.Serialize(new Snapshot(SchemaVersion, sim.Content.Mods.ToArray(), sim.Content.ContentHash, sim.Settings, [a, b, c, d], sim.State));
     }
-    /// <summary>Load using frozen content. Force bypasses mod/content mismatch only, not unknown state types or invalid data.</summary>
+    /// <summary>Load using frozen content. Force bypasses mod/content mismatch only, not unknown state types or invalid
+    /// data. Every way a save can be malformed, from bad JSON to duplicate ids, surfaces as one
+    /// <see cref="InvalidDataException"/> carrying the original failure, so callers have a single type to catch.</summary>
     public static Simulation Load(ContentDb content, string json, bool force = false)
+    {
+        try { return LoadUnchecked(content, json, force); }
+        catch (Exception e) when (e is not InvalidDataException && IsMalformedData(e))
+        {
+            throw new InvalidDataException($"Corrupt save: {e.Message}", e);
+        }
+    }
+
+    private static Simulation LoadUnchecked(ContentDb content, string json, bool force)
     {
         var options = new JsonSerializerOptions(CanonicalJson.Options);
         options.Converters.Insert(0, new ExtensionStateConverter(content.StateComponents));
@@ -31,6 +42,13 @@ public static class SaveGame
         var rng = DeterministicRng.Restore(save.Rng[0], save.Rng[1], save.Rng[2], save.Rng[3]);
         return new Simulation(content, save.Settings, save.State, rng);
     }
+
+    /// <summary>Failures a malformed document raises while it is read or indexed: a bad token, a null where a list
+    /// belongs, a duplicate key, an out-of-range mask or an id at the top of the range.</summary>
+    private static bool IsMalformedData(Exception e) => e is JsonException or ArgumentException or OverflowException
+        or NullReferenceException or KeyNotFoundException or InvalidOperationException or FormatException
+        or NotSupportedException or IndexOutOfRangeException;
+
     /// <summary>Settings as canonical JSON, so a multiplayer host can hand every peer the exact setup it resolved.</summary>
     public static string SaveSettings(SimulationSettings settings) => CanonicalJson.Serialize(settings);
     /// <summary>Read settings written by <see cref="SaveSettings"/>.</summary>

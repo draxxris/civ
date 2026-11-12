@@ -13,7 +13,22 @@ public sealed partial class GameSession
         try
         {
             if (Path.GetDirectoryName(path) is { Length: > 0 } dir) Directory.CreateDirectory(dir);
-            File.WriteAllText(path, SaveToJson());
+            // Write beside the slot and move over it, so a crash, full disk or failed write mid-save leaves the
+            // previous save whole instead of a truncated file.
+            string temporary = path + ".tmp";
+            try
+            {
+                using (var stream = new FileStream(temporary, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    using (var writer = new StreamWriter(stream, leaveOpen: true)) writer.Write(SaveToJson());
+                    stream.Flush(flushToDisk: true);
+                }
+                File.Move(temporary, path, overwrite: true);
+            }
+            finally
+            {
+                if (File.Exists(temporary)) File.Delete(temporary);
+            }
             SetMessage("Game saved");
             return true;
         }
@@ -35,7 +50,7 @@ public sealed partial class GameSession
         }
         Simulation loaded;
         try { loaded = Game.SaveGame.Load(Sim.Content, json); }
-        catch (Exception e) when (e is InvalidDataException or System.Text.Json.JsonException or KeyNotFoundException or InvalidOperationException)
+        catch (InvalidDataException e)
         {
             SetMessage($"Can't load: {e.Message}");
             return false;

@@ -73,8 +73,9 @@ internal sealed partial class GameUi
 
     public void QuickSaveGame()
     {
-        _session.SaveGame(ProjectSettings.GlobalizePath(QuickSave));
-        _session.SetMessage("Game saved to " + ProjectSettings.GlobalizePath(QuickSave));
+        string path = ProjectSettings.GlobalizePath(QuickSave);
+        // A failed save has already said why; do not cover it with a success message.
+        if (_session.SaveGame(path)) _session.SetMessage("Game saved to " + path);
         // The new file belongs in an open Load modal's list, which only re-reads the folder on this counter.
         _modalRevision++;
     }
