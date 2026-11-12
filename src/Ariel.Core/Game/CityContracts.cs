@@ -209,30 +209,6 @@ public sealed class CityRuleState
         PausedProduction.Remove(key.Key);
 
     public CompletedOrderBatch? PendingCommit { get; set; }
-    [JsonIgnore]
-    public ProductionOrder? PendingCompletion
-    {
-        get => PendingCommit?.Order;
-        set => PendingCommit = value is null ? null : new(value, 0, 0, 100);
-    }
-    [JsonIgnore]
-    public long PendingCost
-    {
-        get => PendingCommit?.Cost ?? 0;
-        set { if (PendingCommit is { } c) PendingCommit = c with { Cost = value }; }
-    }
-    [JsonIgnore]
-    public long PendingProduction
-    {
-        get => PendingCommit?.Production ?? 0;
-        set { if (PendingCommit is { } c) PendingCommit = c with { Production = value }; }
-    }
-    [JsonIgnore]
-    public int PendingModifierPercent
-    {
-        get => PendingCommit?.ModifierPercent ?? 0;
-        set { if (PendingCommit is { } c) PendingCommit = c with { ModifierPercent = value }; }
-    }
 }
 /// <summary>Research can update CurrentEra. Null uses the starting era until era progression is implemented.</summary>
 public sealed class CityPlayerState
