@@ -283,7 +283,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         if (revolution) Assert.Equal(10000 - attempt.CompensationGold, city.Extensions.Get<RevolutionCityState>(sim.Content)!.InstabilityIndex);
         else Assert.Equal(treasury + attempt.CompensationGold, sim.State.PlayerById(0).Treasury);
         Assert.True(city.Extensions.Get<EconomyCityState>(sim.Content)!.HurryAngerTurns > 0);
-        Assert.Contains(Service<IDiplomacyService>(sim).GetAttitude(sim, 1, 0).Ledger.Lines, l => l.Source.Contains("memory_inquisition") && l.Amount < 0);
+        Assert.Contains(Service<IDiplomacyService>(sim).GetAttitude(sim, 1, 0).Ledger.Lines, l => l.Source.Contains(DiplomaticMemories.Inquisition) && l.Amount < 0);
         int? destination = holy && !relocate ? null : refuge.Id;
         Assert.Equal(destination ?? -1, sim.State.Extensions.Get<ReligionGameState>(sim.Content)!.Founded[minority].HolyCity);
         Assert.Equal(destination, religion.HolyCity(sim, minority));

@@ -118,7 +118,7 @@ internal sealed partial class ReligionService
             if (!plot.Revealed.Contains(other.TeamId) && !plot.Visible.Contains(other.TeamId)) continue;
             if (!diplomacy.HasMet(sim, other.TeamId, sim.TeamOf(player).Id)) continue;
             if (removed.Any(r => StateReligion(sim, other.Id) == r || OwnsHolyCity(sim, other.Id, r)))
-                diplomacy.RecordMemory(sim, other.Id, player, "memory_inquisition");
+                diplomacy.RecordMemory(sim, other.Id, player, DiplomaticMemories.Inquisition);
         }
     }
     private bool OwnsHolyCity(Simulation sim, int player, string religion) =>

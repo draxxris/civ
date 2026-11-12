@@ -16,8 +16,6 @@ public sealed class DiplomacyState
     public TeamRelation? GetRelation(int teamA, int teamB) => GetRelation(TeamPair.Of(teamA, teamB));
     public void SetRelation(TeamPair pair, TeamRelation relation) => Relations[pair.Key] = relation;
     public void SetRelation(int teamA, int teamB, TeamRelation relation) => SetRelation(TeamPair.Of(teamA, teamB), relation);
-    public bool HasRelation(TeamPair pair) => Relations.ContainsKey(pair.Key);
-    public bool HasRelation(int teamA, int teamB) => HasRelation(TeamPair.Of(teamA, teamB));
 
     public AttitudeHistory? GetHistory(PlayerDirection direction) => Histories.GetValueOrDefault(direction.Key);
     public AttitudeHistory? GetHistory(int fromPlayer, int towardPlayer) => GetHistory(PlayerDirection.Of(fromPlayer, towardPlayer));
@@ -31,8 +29,6 @@ public sealed class DiplomacyState
         return history;
     }
     public AttitudeHistory GetOrCreateHistory(int fromPlayer, int towardPlayer) => GetOrCreateHistory(PlayerDirection.Of(fromPlayer, towardPlayer));
-    public bool HasHistory(PlayerDirection direction) => Histories.ContainsKey(direction.Key);
-    public bool HasHistory(int fromPlayer, int towardPlayer) => HasHistory(PlayerDirection.Of(fromPlayer, towardPlayer));
 }
 public sealed class TeamRelation
 {
@@ -116,12 +112,6 @@ public sealed class TeamRelation
         if (agreement == DiplomaticAgreement.OpenBorders) _openBordersStarted = null;
         else if (agreement == DiplomaticAgreement.DefensivePact) _defensivePactStarted = null;
     }
-
-    public void CancelAllPacts()
-    {
-        _openBordersStarted = null;
-        _defensivePactStarted = null;
-    }
 }
 public sealed class AttitudeHistory
 {
@@ -130,8 +120,6 @@ public sealed class AttitudeHistory
     public int FavoriteCivicTurns { get; set; }
     public SortedDictionary<string, int> Memories { get; set; } = new(StringComparer.Ordinal);
 
-    public int GetMemory(string memory) => Memories.GetValueOrDefault(memory);
     public void RecordMemory(string memory, int count = 1) =>
         Memories[memory] = Memories.GetValueOrDefault(memory) + count;
-    public bool HasMemory(string memory) => Memories.ContainsKey(memory);
 }

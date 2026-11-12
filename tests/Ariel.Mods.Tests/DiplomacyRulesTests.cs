@@ -431,7 +431,7 @@ public sealed class DiplomacyRulesTests
     }
 
     [Fact]
-    public void TeamPair_and_PlayerDirection_provide_strongly_typed_keys_and_canonical_formatting()
+    public void Team_pair_keys_are_unordered_and_player_direction_keys_are_directed()
     {
         var pair1 = TeamPair.Of(2, 0);
         var pair2 = TeamPair.Of(0, 2);
@@ -440,14 +440,12 @@ public sealed class DiplomacyRulesTests
         Assert.Equal(2, pair1.Second);
         Assert.Equal("0/2", pair1.Key);
         Assert.Equal("0/2", pair1.ToString());
-        Assert.Equal(pair1, TeamPair.Parse("0/2"));
 
         var dir = PlayerDirection.Of(1, 3);
         Assert.Equal(1, dir.FromPlayer);
         Assert.Equal(3, dir.TowardPlayer);
         Assert.Equal("1/3", dir.Key);
         Assert.Equal("1/3", dir.ToString());
-        Assert.Equal(dir, PlayerDirection.Parse("1/3"));
     }
 
     [Fact]

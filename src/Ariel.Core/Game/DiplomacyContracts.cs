@@ -27,13 +27,6 @@ public readonly record struct TeamPair : IComparable<TeamPair>
         return cmp != 0 ? cmp : Second.CompareTo(other.Second);
     }
 
-    public static TeamPair Parse(string key)
-    {
-        int slash = key.IndexOf('/');
-        if (slash < 0) throw new FormatException($"Invalid team pair key: {key}");
-        return new(int.Parse(key.AsSpan(0, slash)), int.Parse(key.AsSpan(slash + 1)));
-    }
-
     public static implicit operator string(TeamPair pair) => pair.Key;
 }
 
@@ -61,21 +54,14 @@ public readonly record struct PlayerDirection : IComparable<PlayerDirection>
         return cmp != 0 ? cmp : TowardPlayer.CompareTo(other.TowardPlayer);
     }
 
-    public static PlayerDirection Parse(string key)
-    {
-        int slash = key.IndexOf('/');
-        if (slash < 0) throw new FormatException($"Invalid player direction key: {key}");
-        return new(int.Parse(key.AsSpan(0, slash)), int.Parse(key.AsSpan(slash + 1)));
-    }
-
     public static implicit operator string(PlayerDirection dir) => dir.Key;
 }
 
+/// <summary>Memory ids recorded with <see cref="IDiplomacyService.RecordMemory"/>. A leader's attitude weight for one is
+/// <c>LeaderDef.MemoryAttitudePercents</c> under the id without its <c>memory_</c> prefix.</summary>
 public static class DiplomaticMemories
 {
     public const string Inquisition = "memory_inquisition";
-    public const string DeclaredWar = "memory_declared_war";
-    public const string FairTrade = "memory_fair_trade";
 }
 
 public enum AttitudeTier { Furious, Annoyed, Cautious, Pleased, Friendly }
@@ -84,10 +70,7 @@ public enum DiplomaticAgreement { OpenBorders, DefensivePact }
 public enum TradeItemKind { Resource, GoldPerTurn, Gold, Technology }
 /// <summary>An item given by one participant to the other. Amounts must be positive; technology amounts must be one.
 /// Canonical Id distinguishes individual trade items within a deal.</summary>
-public sealed record DiplomaticTradeItem(int FromPlayer, TradeItemKind Kind, string ContentId = "", long Amount = 1, int Id = 0)
-{
-    public DiplomaticTradeItem WithId(int id) => this with { Id = id };
-}
+public sealed record DiplomaticTradeItem(int FromPlayer, TradeItemKind Kind, string ContentId = "", long Amount = 1, int Id = 0);
 public enum DiplomaticDealStatus { Proposed, Active, Completed, Cancelled }
 public sealed class DiplomaticDeal
 {
