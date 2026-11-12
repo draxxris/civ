@@ -133,6 +133,11 @@ run = "tools/mp-smoke.sh"
 description = "Print where two saves of one game differ, e.g. the files peers write to user://desync after a desync: mise run check:desync-diff -- A.json B.json [--max N]"
 run = "tools/desync-diff.sh"
 
+[tasks."ai:play"]
+description = "Play one headless AI game and write the final save, for inspecting what the AIs did: mise run ai:play -- --save PATH [--seed N] [--players N] [--turns N]"
+depends = ["cool"]
+run = "tools/ai-play.sh"
+
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
 depends = ["cool"]
