@@ -1,0 +1,13 @@
+{
+  "id": "diplomacy:rules",
+  "name": "Diplomacy rules",
+  "memoryDecays": {
+    "declared_war": 60,
+    "declared_war_on_friend": 60,
+    "razed_city": 100,
+    "razed_holy_city": 100,
+    "spy_caught": 20,
+    "stopped_trading": 20
+  },
+  "defaultMemoryDecay": 60
+}

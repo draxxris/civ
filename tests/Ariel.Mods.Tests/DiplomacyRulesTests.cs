@@ -431,6 +431,29 @@ public sealed class DiplomacyRulesTests
     }
 
     [Fact]
+    public void Memories_fade_one_count_at_a_time_by_the_leaders_decay_or_else_the_diplomacy_rules()
+    {
+        var sim = Scenario();
+        var history = sim.Content.TurnSystems.All.Single(s => s.Id == "diplomacy:history");
+        long Memory(string memory) => Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines
+            .Where(l => l.Source == "diplomacy:" + memory).Sum(l => l.Amount);
+        void Turn() { sim.State.Turn++; history.Run(sim); }
+        for (int i = 0; i < 3; i++) Service(sim).RecordMemory(sim, 0, 1, DiplomaticMemories.Inquisition);
+        Service(sim).RecordMemory(sim, 0, 1, "memory_spy_caught");
+
+        // The probe leader forgets one inquisition every turn: a decay of one is a certain roll.
+        Turn();
+        Assert.Equal(-2, Memory(DiplomaticMemories.Inquisition));
+        Turn(); Turn();
+        Assert.Equal(0, Memory(DiplomaticMemories.Inquisition));
+
+        // The leader has no decay for a caught spy, so the diplomacy rules' 20 turns apply: rare per turn, certain
+        // well before 1,000 turns.
+        for (int turn = 3; turn < 1000 && Memory("memory_spy_caught") != 0; turn++) Turn();
+        Assert.Equal(0, Memory("memory_spy_caught"));
+    }
+
+    [Fact]
     public void Team_pair_keys_are_unordered_and_player_direction_keys_are_directed()
     {
         var pair1 = TeamPair.Of(2, 0);
@@ -522,7 +545,9 @@ public sealed class DiplomacyRulesTests
             context.Content<S.BonusDef>().Register(new() { Id = "diplomacy_probe:grain" });
             context.Content<S.BuildingDef>().Register(new() { Id = "diplomacy_probe:granary", DefaultBuilding = "diplomacy_probe:granary", BonusType = Grain });
             context.TurnSystems.Register(new IncomeProbe());
-            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2 });
+            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2,
+                MemoryAttitudePercents = System.Collections.Immutable.ImmutableDictionary<string, int>.Empty.Add("inquisition", -100).Add("spy_caught", -100),
+                MemoryDecays = System.Collections.Immutable.ImmutableDictionary<string, int>.Empty.Add("inquisition", 1) });
             context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_b", BasePeaceWeight = 5, WarmongerRespect = 1 });
         }
     }

@@ -1007,7 +1007,10 @@ Diplomacy tracks contact between teams, attitude ledgers, open borders, defensiv
 war, peace, and bilateral deals. Commands validate treaty changes, deal proposals,
 execution, cancellation, war declarations, and peace. Deal assets include resources,
 gold, gold per turn, and technology. Team ids identify relations; player ids identify
-deal participants.
+deal participants. Each player remembers events toward each other player as counted
+memories, which `LeaderDef.MemoryAttitudePercents` turns into attitude. Memories fade: each
+turn every remembered kind loses one count with a chance of one in its decay, from the
+leader's `MemoryDecays` or else `DiplomacyRulesDef`, scaled by the game speed's pace.
 
 ProjectsVictory owns project eligibility and completion, team project counts, scores,
 and saved victory status. Project definitions carry costs, technology and project

@@ -39,6 +39,8 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   suppression, unrest, rebellion, and rebel faction ids.
 - Espionage: `EspionageRulesDef` for passive thresholds, mission costs, mission
   effects, counter-espionage protection, and success chance.
+- Diplomacy: `DiplomacyRulesDef` for how fast memories fade when the remembering leader's
+  own `MemoryDecays` leaves a memory kind out.
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition
 families. Its noise, climate, sight, lake, source-grid scale, and start-balance integers

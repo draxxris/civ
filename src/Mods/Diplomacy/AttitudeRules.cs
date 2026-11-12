@@ -36,10 +36,7 @@ internal sealed partial class DiplomacyService
         Add("active_deals", Growth(tradeTurns, leader.BonusTradeAttitudeDivisor, leader.BonusTradeAttitudeChangeLimit));
         AddCivics(sim, fromPlayer, towardPlayer, Add);
         foreach (var memory in history.Memories)
-        {
-            string key = memory.Key.StartsWith("memory_", StringComparison.Ordinal) ? memory.Key[7..] : memory.Key;
-            Add(memory.Key, (long)memory.Value * leader.MemoryAttitudePercents.GetValueOrDefault(key) / 100);
-        }
+            Add(memory.Key, (long)memory.Value * leader.MemoryAttitudePercents.GetValueOrDefault(MemoryKind(memory.Key)) / 100);
         int score = checked((int)sink.Ledger.Total("diplomacy:attitude"));
         return new(score, Tier(score), sink.Ledger);
     }
@@ -104,6 +101,32 @@ internal sealed partial class DiplomacyService
                 var leader = Leader(sim, from.Id);
                 history.FavoriteCivicTurns = leader is not null && FavoriteCivic(sim, from.Id, toward.Id, leader) ? history.FavoriteCivicTurns + 1 : 0;
             }
+        FadeMemories(sim, state);
         state.LastHistoryTurn = sim.State.Turn;
+    }
+    /// <summary>Leader tables key memories without the <c>memory_</c> prefix that recorded memory ids carry.</summary>
+    private static string MemoryKind(string memory) => memory.StartsWith("memory_", StringComparison.Ordinal) ? memory[7..] : memory;
+    /// <summary>Each remembered kind loses one count with a chance of one in its decay, rolled in player and memory
+    /// order; a kind at zero is forgotten. Histories with no memories draw nothing.</summary>
+    private static void FadeMemories(Simulation sim, DiplomacyState state)
+    {
+        var rules = sim.Content.Get<DiplomacyRulesDef>().All.Single();
+        foreach (var from in sim.State.Players.OrderBy(p => p.Id))
+        {
+            var leader = Leader(sim, from.Id);
+            foreach (var toward in sim.State.Players.OrderBy(p => p.Id))
+            {
+                if (state.GetHistory(from.Id, toward.Id) is not { Memories.Count: > 0 } history) continue;
+                foreach (string memory in history.Memories.Keys.ToArray())
+                {
+                    string kind = MemoryKind(memory);
+                    int decay = leader?.MemoryDecays.GetValueOrDefault(kind) is int own and > 0 ? own
+                        : rules.MemoryDecays.GetValueOrDefault(kind, rules.DefaultMemoryDecay);
+                    if (sim.Rng.Next(GamePace.Scale(sim, decay)) != 0) continue;
+                    if (history.Memories[memory] <= 1) history.Memories.Remove(memory);
+                    else history.Memories[memory]--;
+                }
+            }
+        }
     }
 }

@@ -4,10 +4,17 @@ using Ariel.Modding;
 
 namespace Ariel.Mods.Diplomacy;
 
-public sealed class DiplomacyMod : IMod
+public sealed class DiplomacyMod : IPreparableMod
 {
+    private static readonly ModJsonFile<DiplomacyRulesDef> Rules = new("data/diplomacy-rules.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules];
+
     public void Register(IModContext context)
     {
+        var rules = Rules.Read(context.Data);
+        if (rules.DefaultMemoryDecay < 1 || rules.MemoryDecays.Values.Any(d => d < 1))
+            throw new InvalidDataException("Diplomacy memory decays must be at least one turn");
+        context.Content<DiplomacyRulesDef>().Register(rules);
         var service = new DiplomacyService();
         context.RegisterService<IDiplomacyService>("relations", service);
         context.RegisterStateComponent<DiplomacyState>("state");
