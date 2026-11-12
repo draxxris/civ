@@ -29,6 +29,9 @@ mise run benchmark
 # 5. Lockstep state hash (fresh gigantic world, then standard 8-player game at turn 100)
 mise run benchmark -- --hash
 
+# 5b. State copy for AI forks (standard 8-player game at turn 100)
+mise run benchmark -- --clone
+
 # 6. Whole AI turns on a gigantic world (8 players, turns 21-30 timed, final hash printed)
 mise run benchmark -- --gigantic
 
@@ -55,6 +58,9 @@ mise run benchmark -- --borders
 - **`--hash`**: Times 100 `Simulation.ComputeHash` calls on a fresh eight-player gigantic
   world, then on an eight-player standard world played to turn 100, and reports time,
   allocated bytes and gen-2 collections per hash.
+- **`--clone`**: Times 50 `GameState.Clone` calls on an eight-player standard world played
+  to turn 100, the part of each spent copying extension components through their JSON
+  contract, and five whole turns to set both against.
 - **`--gigantic`**: Plays an eight-player AI game on a gigantic world, times turns 21-30,
   and reports time and allocated bytes per turn, gen-2 collections, and the final state
   hash, which must not change under a pure optimization.
@@ -911,6 +917,32 @@ the phase (`9ABF26A5B877B926`, `63CD73EB061A7F48`) are unchanged.
 | Measured part of the borders phase |            Before |           After |
 | :--------------------------------- | ----------------: | --------------: |
 | Whole phase, with work assignment  | 16.42 ms, 19.0 MB | 2.80 ms, 0.5 MB |
+
+### Measurement: Extension State Copies in AI Forks (No Change Made)
+
+- **Date**: 2026-11-12
+
+Each speculative AI fork copies the game state, and `ExtensionState.Clone` copies every
+mod state component by serializing it to JSON and reading it back. The proposal was a
+typed copy hook per component, with the JSON round trip as the fallback. It was measured
+first and rejected: the copies are too small a share of a turn to pay for a second copy
+path that must stay equal to the save contract.
+
+`mise run benchmark -- --clone` (standard world, turn 100: 4,368 plots, 9 players, 35
+cities, 104 units; 50 samples after one warm-up).
+
+| Measured part                          |       Time | Managed bytes |
+| :------------------------------------- | ---------: | ------------: |
+| `GameState.Clone`                      |    1.81 ms |      5,360 KB |
+| Extension components within that clone |    0.21 ms |        300 KB |
+| One whole turn (turns 100-104)         | 1,263.4 ms |   2,439.6 MiB |
+
+Extension copies are 11% of a clone's time and 6% of its bytes. A turn of this game makes
+about 26 clones (counted with a temporary counter over turns 100-104: the per-player
+forks and the speculator's own snapshots). Together they are 3.7% of the turn, and the
+extension copies in them 0.4%. Removing the JSON round trip entirely could not be seen
+in a turn time. The clones also account for about 140 MiB of the 2.4 GiB a turn allocates,
+so the rest of the turn is where further work on turn processing should look.
 
 ______________________________________________________________________
 

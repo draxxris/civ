@@ -35,6 +35,11 @@ if (args.Contains("--hash"))
     HashBenchmarks.Run(ModLoader.Build(GameContent.Staged(root).Reverse()));
     return;
 }
+if (args.Contains("--clone"))
+{
+    CloneBenchmarks.Run(ModLoader.Build(GameContent.Staged(root).Reverse()));
+    return;
+}
 if (args.Contains("--terrain"))
 {
     TerrainBenchmarks.Run(new Ariel.Client.GameCatalog(GameContent.Staged(root)));
