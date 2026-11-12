@@ -152,23 +152,27 @@ internal sealed partial class MapRenderer : Node3D
     public void Refresh()
     {
         bool world = _worldRevision != _session.WorldRevision;
-        var clock = System.Diagnostics.Stopwatch.StartNew();
+        // Runs every frame: read the timestamp counter instead of allocating a Stopwatch.
+        long start = System.Diagnostics.Stopwatch.GetTimestamp();
         // Heights must be current before seating tokens, marks or a newly queued battle.
         _terrain.RefreshWorld();
-        double terrain = clock.Elapsed.TotalMilliseconds;
+        double terrain = Elapsed(start);
         DrainPlayback();
         StartNextBattle();
         bool dynamic = world || _revision != _session.Revision;
         if (world) { BuildLand(); BuildResources(); _worldRevision = _session.WorldRevision; }
         RefreshMapOverlays();
-        double land = clock.Elapsed.TotalMilliseconds - terrain;
+        double land = Elapsed(start) - terrain;
         if (dynamic) { BuildDynamic(); _revision = _session.Revision; }
-        double tokens = clock.Elapsed.TotalMilliseconds - terrain - land;
+        double tokens = Elapsed(start) - terrain - land;
         // BuildOverlay writes marks after the height refresh. Upload only the finished overlay.
         if (dynamic) _terrain.RefreshOverlay();
-        double overlay = clock.Elapsed.TotalMilliseconds - terrain - land - tokens;
+        double overlay = Elapsed(start) - terrain - land - tokens;
         if (LogTimings && dynamic) GD.Print($"map refresh: land {land:F2} ms, tokens {tokens:F2} ms, terrain {terrain:F2} ms, overlay {overlay:F2} ms");
     }
+
+    private static double Elapsed(long start) =>
+        System.Diagnostics.Stopwatch.GetElapsedTime(start).TotalMilliseconds;
 
     private void RefreshMapOverlays()
     {
