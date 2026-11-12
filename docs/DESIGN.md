@@ -870,8 +870,8 @@ Domain events include:
 - `ReligionRemoved(int City, string Religion, string Reason)`: Published when a minority
   religion is purged or decays.
 
-City presence, last state choice, conversion cooldown, holy cities, founding turns, and
-reservations use saved extension components. Secular civics suppress the last choice
+City presence, last state choice, conversion cooldown, holy cities, and founding turns
+use saved extension components. Secular civics suppress the last choice
 without deleting it. Conversion adds source-scaled anarchy to `GovernmentPlayerState`.
 Natural spread runs immediately before the city post-production phase. All random draws
 use the simulation RNG.
@@ -882,6 +882,12 @@ elapsed turns.
 
 Religion mechanics:
 
+- **Founding**: Each religion has one world wonder, named after it, in the Religion mod's
+  hand-written `data/founding-wonders.json`. The wonder requires the religion's founding
+  technology. Completing it founds the religion: the completing city becomes the holy
+  city, and its owner gets the religion's free missionaries. Discovering the technology
+  founds nothing by itself. Once the religion is founded, no one can build its wonder,
+  and barbarians never can. `BuildingDef.FoundsReligion` marks a founding wonder.
 - **Foreign trade spread**: International trade routes connect cities across open
   borders and revealed road/water networks. Natural spread evaluates connected foreign
   trade partners, spreading state religions to foreign cities when allowed by standard

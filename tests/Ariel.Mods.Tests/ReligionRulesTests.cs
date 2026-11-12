@@ -37,16 +37,14 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.AddCity(city);
         return city;
     }
-    private static void LearnFoundingTech(Simulation sim, int player, string religion = Buddhism)
+    /// <summary>Give the city's team every technology, then complete the religion's founding wonder there.</summary>
+    private static void Found(Simulation sim, City city, string religion = Buddhism)
     {
-        var tech = sim.Content.Get<S.ReligionDef>(religion).FoundingTech!;
-        // Isolate discovery from its prerequisite graph, while retaining the real research command and event path.
-        sim.TeamOf(player).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Where(t => t.Id != tech).Select(t => t.Id));
-        sim.TeamOf(player).Techs.Remove(tech);
-        Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = player, Tech = tech }, out var error), error);
-        var research = Service<IResearchService>(sim);
-        research.Contribute(sim, player, research.CalculateCost(sim, sim.TeamOf(player).Id, tech).Cost);
+        sim.TeamOf(city.Owner).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Select(t => t.Id));
+        GameFactory.FoundReligion(sim, city, religion);
     }
+    private static void RunCityPhase(Simulation sim, string phase, int player) =>
+        ((IPlayerTurnSystem)sim.Content.TurnSystems.Get("cities:" + phase)).Run(sim, player);
     private static Unit Missionary(Simulation sim, City city, int owner = 0, string type = "military:buddhist_missionary")
     {
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = city.Position, MovesLeft = 60 };
@@ -79,7 +77,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         GameFactory.NeutralPolitics(sim);
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); plot.Route = "world:route_route_road"; }
-        LearnFoundingTech(sim, 0);
+        Found(sim, holy);
         holy.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
         sim.State.Turn = 101;
         var religion = Service<IReligionService>(sim);
@@ -121,7 +119,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         // Only the holy city's team has seen the roads, so the network joins the cities from its side alone.
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Route = "world:route_route_road"; }
-        LearnFoundingTech(sim, 0);
+        Found(sim, holy);
         holy.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
         sim.State.Turn = 101;
         var religion = Service<IReligionService>(sim);
@@ -345,46 +343,99 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Theory]
     [InlineData(Buddhism, 0)]
     [InlineData("religion:christianity", 1)]
-    public void First_discovery_founds_once_and_holy_city_scoring_discourages_the_capital(string religionId, int missionaries)
+    public void Completing_the_founding_wonder_founds_the_religion_in_that_city_once(string religionId, int missionaries)
     {
         var sim = Scenario();
         var capital = City(sim, 0); capital.Buildings.Add("cities:palace");
-        var other = City(sim, 5, population: 100);
-        var rival = City(sim, 60, owner: 1);
-        LearnFoundingTech(sim, 0, religionId);
+        var builder = City(sim, 5, population: 4);
+        var rival = City(sim, 60, owner: 1, population: 4);
+        string tech = sim.Content.Get<S.ReligionDef>(religionId).FoundingTech!;
+        string wonder = GameFactory.FoundingWonder(sim, religionId);
+        var production = Service<ICityProductionService>(sim);
+        Assert.False(production.Validate(sim, builder.Id, "cities:building", wonder).Success);
+        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Select(t => t.Id));
+        sim.TeamOf(1).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Select(t => t.Id));
+        Assert.Contains(tech, sim.TeamOf(0).Techs);
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 0, CityId = builder.Id, Kind = "cities:building", ContentId = wonder }, out var error), error);
+        Assert.True(sim.TryApply(new SetCityProductionCommand { Player = 1, CityId = rival.Id, Kind = "cities:building", ContentId = wonder }, out error), error);
+        builder.ProductionQueue[0] = builder.ProductionQueue[0] with { Progress = production.Calculate(sim, builder.Id, "cities:building", wonder).Cost };
+
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+
         var religion = Service<IReligionService>(sim);
-        Assert.Equal(other.Id, religion.HolyCity(sim, religionId)); // Population beats capital's /8 score for every allowed roll.
-        Assert.Contains(religionId, religion.Present(sim, other.Id));
+        Assert.Equal(builder.Id, religion.HolyCity(sim, religionId));
+        Assert.Contains(religionId, religion.Present(sim, builder.Id));
         Assert.Empty(religion.Present(sim, capital.Id));
-        LearnFoundingTech(sim, 1, religionId);
-        Assert.Equal(other.Id, religion.HolyCity(sim, religionId));
-        Assert.Empty(religion.Present(sim, rival.Id));
-        Assert.Single(sim.Events.Published.OfType<ReligionFounded>());
+        var founded = Assert.Single(sim.Events.Published.OfType<ReligionFounded>());
+        Assert.Equal((religionId, builder.Id, 0), (founded.Religion, founded.City, founded.Player));
         string missionary = sim.Content.Get<S.ReligionDef>(religionId).Missionary!;
-        Assert.Equal(missionaries, sim.State.Units.Count(u => u.Type == missionary));
         int moves = sim.Content.Get<S.UnitDef>(missionary).Moves * sim.Content.Get<S.RuleConstantsDef>().All.Single().Values.MoveDenominator;
+        Assert.Equal(missionaries, sim.State.Units.Count(u => u.Type == missionary));
         Assert.All(sim.State.Units.Where(u => u.Type == missionary), u =>
         {
-            Assert.Equal(0, u.Owner); Assert.Equal(other.Position, u.Position);
-            // Awarded on discovery, so it must already have its full moves rather than waiting for a refill.
+            Assert.Equal(0, u.Owner); Assert.Equal(builder.Position, u.Position);
+            // Awarded on completion, so it must already have its full moves rather than waiting for a refill.
             Assert.Equal(moves, u.MovesLeft);
         });
+
+        // The rival's copy can no longer be built: its order drops at completion and nothing is founded twice.
+        Assert.False(production.Validate(sim, rival.Id, "cities:building", wonder).Success);
+        rival.ProductionQueue[0] = rival.ProductionQueue[0] with { Progress = production.Calculate(sim, rival.Id, "cities:building", wonder).Cost };
+        RunCityPhase(sim, "production", 1);
+        RunCityPhase(sim, "completion", 1);
+        Assert.DoesNotContain(rival.ProductionQueue, o => o.ContentId == wonder);
+        Assert.DoesNotContain(wonder, rival.Buildings);
+        Assert.Single(sim.Events.Published.OfType<ReligionFounded>());
+        Assert.Equal(builder.Id, religion.HolyCity(sim, religionId));
     }
     [Fact]
-    public void Discovery_without_a_city_reserves_the_first_team_until_it_founds_a_city()
+    public void Discovering_the_founding_tech_founds_nothing_and_the_builder_founds_even_if_others_discovered_first()
     {
-        var sim = Scenario(); LearnFoundingTech(sim, 0);
-        var rival = City(sim, 60, owner: 1); LearnFoundingTech(sim, 1);
-        Assert.Null(Service<IReligionService>(sim).HolyCity(sim, Buddhism));
-        var city = City(sim, 0);
-        sim.Events.Publish(new CityFounded(city.Id, 0, city.Position));
-        Assert.Equal(city.Id, Service<IReligionService>(sim).HolyCity(sim, Buddhism));
-        Assert.DoesNotContain(Buddhism, Service<IReligionService>(sim).Present(sim, rival.Id));
+        var sim = Scenario();
+        string tech = sim.Content.Get<S.ReligionDef>(Buddhism).FoundingTech!;
+        // Team 0 has no city and discovers the tech first; under the old rules that reserved the religion for it.
+        sim.TeamOf(0).Techs.Add(tech);
+        sim.Events.Publish(new TechDiscovered(0, tech));
+        var builder = City(sim, 60, owner: 1);
+        sim.TeamOf(1).Techs.Add(tech);
+        sim.Events.Publish(new TechDiscovered(1, tech));
+        var religion = Service<IReligionService>(sim);
+        Assert.Null(religion.HolyCity(sim, Buddhism));
+
+        GameFactory.FoundReligion(sim, builder, Buddhism);
+
+        Assert.Equal(builder.Id, religion.HolyCity(sim, Buddhism));
+        Assert.Equal(1, Assert.Single(sim.Events.Published.OfType<ReligionFounded>()).Player);
+        Assert.Equal("Religion is already founded",
+            religion.ValidateBuilding(sim, City(sim, 0), sim.Content.Get<S.BuildingDef>(GameFactory.FoundingWonder(sim, Buddhism))));
+    }
+    [Fact]
+    public void Barbarians_cannot_build_a_founding_wonder()
+    {
+        var sim = Scenario();
+        var city = City(sim, 60, owner: 1);
+        GameFactory.MakeBarbarian(sim, 1);
+        var wonder = sim.Content.Get<S.BuildingDef>(GameFactory.FoundingWonder(sim, Buddhism));
+        Assert.Equal("Barbarians cannot found a religion", Service<IReligionService>(sim).ValidateBuilding(sim, city, wonder));
+    }
+    [Fact]
+    public void Every_religion_has_one_founding_wonder_gated_by_its_founding_tech()
+    {
+        var content = mods.Content;
+        foreach (var religion in content.Get<S.ReligionDef>().All)
+        {
+            var wonder = Assert.Single(content.Get<S.BuildingDef>().All, b => b.FoundsReligion == religion.Id);
+            Assert.Equal(religion.Name, wonder.Name);
+            Assert.True(CityBuildingRules.IsWonder(wonder));
+            Assert.Equal(1, wonder.Limits.World);
+            Assert.Contains(new Requirement.Leaf("tech", religion.FoundingTech!), ContentReferences.Leaves(wonder.Requirements!));
+        }
     }
     [Fact]
     public void Natural_spread_uses_connected_influence_and_continues_identically_after_a_save()
     {
-        var sim = Scenario(); var source = City(sim, 0); LearnFoundingTech(sim, 0);
+        var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
         source.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
         var connected = City(sim, 1); var isolated = City(sim, 8);
         sim.State.Turn = 101; // Outside the new-religion window, before old-religion attenuation.
@@ -426,7 +477,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void Conversion_updates_happiness_production_and_commerce_ledgers_and_saves_anarchy()
     {
-        var sim = Scenario(); var holy = City(sim, 0); LearnFoundingTech(sim, 0);
+        var sim = Scenario(); var holy = City(sim, 0); Found(sim, holy);
         var foreign = City(sim, 40, 1); Spread(sim, foreign);
         holy.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine", "cities:sistine_chapel"]);
         sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
@@ -462,7 +513,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void Building_eligibility_distinguishes_presence_state_religion_and_holy_city()
     {
-        var sim = Scenario(); var holy = City(sim, 0); LearnFoundingTech(sim, 0);
+        var sim = Scenario(); var holy = City(sim, 0); Found(sim, holy);
         var city = City(sim, 5);
         var production = Service<ICityProductionService>(sim);
         Assert.False(production.Validate(sim, city.Id, "cities:building", "cities:buddhist_temple").Success);
@@ -489,7 +540,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void Old_religion_spread_odds_scale_down_smoothly_instead_of_truncating_to_zero()
     {
-        var sim = Scenario(); var source = City(sim, 0); LearnFoundingTech(sim, 0);
+        var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
         source.Buildings.AddRange(["cities:buddhist_temple", "cities:buddhist_shrine"]);
         var connected = City(sim, 1);
         var religion = Service<IReligionService>(sim);
@@ -508,7 +559,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void State_religion_buildings_need_an_active_state_religion_even_when_they_name_no_religion()
     {
-        var sim = Scenario(); City(sim, 0); LearnFoundingTech(sim, 0);
+        var sim = Scenario(); Found(sim, City(sim, 0));
         var city = City(sim, 5); Spread(sim, city);
         var religion = Service<IReligionService>(sim);
         var palace = sim.Content.Get<S.BuildingDef>("cities:apostolic_palace");

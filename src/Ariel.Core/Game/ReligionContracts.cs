@@ -19,8 +19,6 @@ public sealed class ReligionPlayerState
 public sealed class ReligionGameState
 {
     public SortedDictionary<string, ReligionFounding> Founded { get; set; } = new(StringComparer.Ordinal);
-    public SortedDictionary<string, int> PendingTeams { get; set; } = new(StringComparer.Ordinal);
-    public SortedSet<string> PendingAwards { get; set; } = new(StringComparer.Ordinal);
 }
 public sealed record ReligionFounding(int HolyCity, int Turn);
 public sealed record ReligionConversion(int AnarchyTurns, int CooldownTurns, Ledger Ledger);

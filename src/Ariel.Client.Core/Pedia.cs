@@ -25,7 +25,7 @@ public sealed class PediaCatalog
         Add<S.UnitDef>(content, "Units", d => d.Cost, _ => null);
         Add<S.PromotionDef>(content, "Promotions", _ => 0, d => [Tech(content, d.ObsoleteTech, "Obsolete with")]);
         Add<S.CivicDef>(content, "Civics", _ => 0, _ => null);
-        Add<S.ReligionDef>(content, "Religions", _ => 0, d => [Tech(content, d.FoundingTech, "Founded by")]);
+        Add<S.ReligionDef>(content, "Religions", _ => 0, d => [FoundingWonder(content, d.Id)]);
         Add<S.BonusDef>(content, "Resources", _ => 0, d => [Tech(content, d.RevealTech, "Revealed by"), Tech(content, d.TradeTech, "Traded with")]);
         Add<S.ImprovementDef>(content, "Improvements", _ => 0, d => [Tech(content, d.PrereqTech, "Requires")]);
         Add<S.TerrainDef>(content, "Terrain", _ => 0, _ => null);
@@ -73,6 +73,9 @@ public sealed class PediaCatalog
             _entries.Add(new(category, def.Id, def.Name, def.Help, def.Strategy, def.Pedia, def.Icon, price > 0 ? price : null, prereqs));
         }
     }
+
+    private static string? FoundingWonder(ContentDb content, string religion) =>
+        content.Get<S.BuildingDef>().All.FirstOrDefault(b => b.FoundsReligion == religion) is { } wonder ? $"Founded by building {wonder.Name}" : null;
 
     private static string? Tech(ContentDb content, string? id, string verb) =>
         id == null ? null : $"{verb} {(content.TryGet<S.TechDef>(id, out var t) ? t.Name : Labels.Humanize(id))}";

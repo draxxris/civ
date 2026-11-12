@@ -163,7 +163,7 @@ internal sealed partial class GameUi
         {
             var line = Ui.HBox(6);
             line.AddChild(Ui.Icon(_icons.TextureOf(r.Id), 32));
-            string holy = r.HolyCityName is { } n ? $"holy city {n}" : r.Founded ? "founded" : "not founded" + (r.FoundingTech is { } t ? $" ({t})" : "");
+            string holy = r.HolyCityName is { } n ? $"holy city {n}" : r.Founded ? "founded" : "not founded" + (r.FoundingWonder is { } w ? $" (build {w})" : "");
             var info = Ui.VBox(0);
             info.AddChild(Ui.Text(r.Name + (r.IsState ? "  (state religion)" : ""), 15, Colors.White));
             info.AddChild(Ui.Text(holy, 12, Ui.Dim));

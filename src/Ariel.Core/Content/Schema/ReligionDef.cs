@@ -5,6 +5,7 @@ namespace Ariel.Content.Schema;
 /// <summary>Religion identity, founding and spread effects. Commerce uses whole points.</summary>
 public sealed class ReligionDef : GameContentDef
 {
+    /// <summary>The technology the religion's founding wonder requires. The wonder's own requirements enforce it.</summary>
     [ContentReference(typeof(TechDef))]
     public string? FoundingTech { get; init; }
     [ContentReference(typeof(UnitDef))]

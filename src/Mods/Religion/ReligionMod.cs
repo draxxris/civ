@@ -8,11 +8,14 @@ namespace Ariel.Mods.Religion;
 public sealed class ReligionMod : IPreparableMod
 {
     private static readonly ModJsonFile<ReligionDef[]> Religions = new("data/religion.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions];
+    /// <summary>One world wonder per religion; completing it founds the religion in that city.</summary>
+    private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> FoundingWonders = new("data/founding-wonders.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Religions);
+        ContentRegistration.Load(context, FoundingWonders);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<IModifierSource>("effects", new ReligionEffects());
@@ -24,8 +27,7 @@ public sealed class ReligionMod : IPreparableMod
         context.RegisterCommand<SpreadReligionCommand>("spread_religion");
         context.RegisterCommand<BuildShrineCommand>("build_shrine");
         context.RegisterCommand<PerformInquisitionCommand>("perform_inquisition");
-        context.Subscribe<TechDiscovered>("founding_discovery", ReligionFoundingRules.Discovered);
-        context.Subscribe<CityFounded>("founding_city", ReligionFoundingRules.CityFounded);
+        context.Subscribe<BuildingCompleted>("founding_wonder", ReligionFoundingRules.Completed);
         context.TurnSystems.Register(new ReligionTurns(service));
     }
 }

@@ -37,6 +37,9 @@ public sealed class BuildingDef : GameContentDef
     public ImmutableDictionary<string, int> Flavors { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public string? FoundsCorporation { get; init; } = null;
+    /// <summary>The religion this building founds when it is completed, with the completing city as its holy city.</summary>
+    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
+    public string? FoundsReligion { get; init; } = null;
     [ContentReference(typeof(BonusDef), ReferencePart.Values)]
     public string? FreeBonus { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Values)]

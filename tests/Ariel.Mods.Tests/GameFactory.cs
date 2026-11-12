@@ -37,6 +37,17 @@ public static class GameFactory
     });
 
     /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
+    /// <summary>The world wonder whose completion founds the religion.</summary>
+    public static string FoundingWonder(Simulation sim, string religion) =>
+        sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All.Single(b => b.FoundsReligion == religion).Id;
+
+    /// <summary>Complete a religion's founding wonder in a city, as finished production does.</summary>
+    public static void FoundReligion(Simulation sim, City city, string religion)
+    {
+        string wonder = FoundingWonder(sim, religion);
+        city.Buildings.Add(wonder);
+        sim.Events.Publish(new BuildingCompleted(city.Id, wonder));
+    }
     /// <summary>Make an existing player the game's one barbarian player, as if the faction had appeared as them.</summary>
     public static void MakeBarbarian(Simulation sim, int player)
     {

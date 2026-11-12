@@ -33,6 +33,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         return unit;
     }
 
+    /// <summary>Discover the founding tech, then complete the founding wonder in player 0's first city.</summary>
     private static void Found(Simulation sim, string religion = Buddhism)
     {
         var tech = sim.Content.Get<S.ReligionDef>(religion).FoundingTech!;
@@ -41,6 +42,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = tech }, out var error), error);
         var research = sim.Content.Services.Get<IResearchService>().Single();
         research.Contribute(sim, 0, research.CalculateCost(sim, sim.TeamOf(0).Id, tech).Cost);
+        GameFactory.FoundReligion(sim, sim.State.Cities.First(c => c.Owner == 0), religion);
     }
 
     [Fact]

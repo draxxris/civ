@@ -26,6 +26,11 @@ internal sealed partial class ReligionService : IReligionService
     }
     public string? ValidateBuilding(Simulation sim, City city, BuildingDef building)
     {
+        if (building.FoundsReligion is { } founds)
+        {
+            if (PlayerRules.IsBarbarian(sim, city.Owner)) return "Barbarians cannot found a religion";
+            if (ReligionData.Game(sim).Founded.ContainsKey(founds)) return "Religion is already founded";
+        }
         if (building.FreeFromStateReligion) return null;
         var state = StateReligion(sim, city.Owner);
         // A building that requires a state religion cannot be built without one, even when it names no religion.

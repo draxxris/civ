@@ -1,0 +1,275 @@
+[
+  {
+    "id": "religion:founding_asatru",
+    "name": "Asatru",
+    "defaultBuilding": "religion:founding_asatru",
+    "era": "foundation:era_medieval",
+    "cost": 200,
+    "requirements": {
+      "all": [
+        "research:rudder"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:asatru",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/religions/Vanirism.dds",
+    "help": "Founds Asatru. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_buddhism",
+    "name": "Buddhism",
+    "defaultBuilding": "religion:founding_buddhism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:meditation"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:buddhism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Buddhism.dds",
+    "help": "Founds Buddhism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_christianity",
+    "name": "Christianity",
+    "defaultBuilding": "religion:founding_christianity",
+    "era": "foundation:era_medieval",
+    "cost": 200,
+    "requirements": {
+      "all": [
+        "research:theology"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:christianity",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Christian.dds",
+    "help": "Founds Christianity. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_confucianism",
+    "name": "Confucianism",
+    "defaultBuilding": "religion:founding_confucianism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:rhetoric"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:confucianism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Confuscianism.dds",
+    "help": "Founds Confucianism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_egypt_mythology",
+    "name": "Kemetism",
+    "defaultBuilding": "religion:founding_egypt_mythology",
+    "era": "foundation:era_ancient",
+    "cost": 100,
+    "requirements": {
+      "all": [
+        "research:polytheism"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:egypt_mythology",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Egypt.dds",
+    "help": "Founds Kemetism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_hellenism",
+    "name": "Hellenism",
+    "defaultBuilding": "religion:founding_hellenism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:athletics"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:hellenism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/hellenism_button.dds",
+    "help": "Founds Hellenism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_hinduism",
+    "name": "Hinduism",
+    "defaultBuilding": "religion:founding_hinduism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:literature"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:hinduism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Hinduism.dds",
+    "help": "Founds Hinduism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_islam",
+    "name": "Islam",
+    "defaultBuilding": "religion:founding_islam",
+    "era": "foundation:era_medieval",
+    "cost": 200,
+    "requirements": {
+      "all": [
+        "research:education"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:islam",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Islam.dds",
+    "help": "Founds Islam. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_judaism",
+    "name": "Judaism",
+    "defaultBuilding": "religion:founding_judaism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:scriptures"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:judaism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Jewish.dds",
+    "help": "Founds Judaism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_mesoamericanism",
+    "name": "Naghualism",
+    "defaultBuilding": "religion:founding_mesoamericanism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:calendar"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:mesoamericanism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/religions/MesoAmerica.dds",
+    "help": "Founds Naghualism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_shinto",
+    "name": "Shinto",
+    "defaultBuilding": "religion:founding_shinto",
+    "era": "foundation:era_medieval",
+    "cost": 200,
+    "requirements": {
+      "all": [
+        "research:divine_right"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:shinto",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/religions/Shinto_Button.dds",
+    "help": "Founds Shinto. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_taoism",
+    "name": "Taoism",
+    "defaultBuilding": "religion:founding_taoism",
+    "era": "foundation:era_classical",
+    "cost": 150,
+    "requirements": {
+      "all": [
+        "research:philosophy"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:taoism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Taoism.dds",
+    "help": "Founds Taoism. The city that completes it becomes the holy city."
+  },
+  {
+    "id": "religion:founding_zoroastrianism",
+    "name": "Zoroastrianism",
+    "defaultBuilding": "religion:founding_zoroastrianism",
+    "era": "foundation:era_ancient",
+    "cost": 100,
+    "requirements": {
+      "all": [
+        "research:dualism"
+      ]
+    },
+    "limits": {
+      "world": 1
+    },
+    "foundsReligion": "religion:zoroastrianism",
+    "flavors": {
+      "religion": 10
+    },
+    "icon": "Art/Interface/Buttons/Religions/Zoroastrianism.dds",
+    "help": "Founds Zoroastrianism. The city that completes it becomes the holy city."
+  }
+]

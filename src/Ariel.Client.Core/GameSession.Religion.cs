@@ -8,7 +8,7 @@ public sealed record CityReligion(string Id, string Name, bool Holy, bool State,
 
 /// <summary>One loaded religion as the religion screen lists it.</summary>
 public sealed record ReligionRow(
-    string Id, string Name, string Adjective, string Icon, string Help, bool Founded, string? FoundingTech,
+    string Id, string Name, string Adjective, string Icon, string Help, bool Founded, string? FoundingWonder,
     int? HolyCityId, string? HolyCityName, Hex? HolyCityHex, bool IsState, bool CanAdopt, string? Blocked);
 
 /// <summary>The religion screen: every loaded religion, the state religion, and what changing it would cost.</summary>
@@ -40,8 +40,8 @@ public sealed partial class GameSession
         int? holy = service.HolyCity(Sim, def.Id);
         var city = holy is int id ? Sim.State.FindCity(id) : null;
         string? blocked = def.Id == state ? "Already the state religion" : service.ValidateConversion(Sim, LocalPlayer, def.Id);
-        string? tech = def.FoundingTech is { } t && Sim.Content.TryGet<Schema.TechDef>(t, out var techDef) ? techDef.Name : null;
-        return new(def.Id, def.Name, def.Adjective, def.Icon, def.Help, holy != null || Founded(def.Id), tech, holy, city?.Name,
+        string? wonder = Sim.Content.Get<Schema.BuildingDef>().All.FirstOrDefault(b => b.FoundsReligion == def.Id)?.Name;
+        return new(def.Id, def.Name, def.Adjective, def.Icon, def.Help, holy != null || Founded(def.Id), wonder, holy, city?.Name,
             city?.Position, def.Id == state, blocked == null, blocked);
     }
 

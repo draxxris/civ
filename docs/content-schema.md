@@ -24,7 +24,9 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
 - Religion: `ReligionDef` with founding technology, missionary, spread factor, commerce
-  vectors, and related building ids.
+  vectors, and related building ids. The mod also registers one founding wonder per
+  religion: a `BuildingDef` with `foundsReligion` set, from the hand-written
+  `data/founding-wonders.json`. The importer does not own that file.
 - ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable
   victory conditions.
 - Corporations: `CorporationDef` for founding, required resources, branch output,
