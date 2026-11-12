@@ -83,9 +83,8 @@ internal sealed class CivicEffects : IModifierSource
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));
             sink.Add(c.Id, "cities:happiness", c.BuildingHappinessChanges.GetValueOrDefault(b.DefaultBuilding));
-            long health = c.BuildingHealthChanges.GetValueOrDefault(b.DefaultBuilding);
-            sink.Add(c.Id, "cities:health", health);
-            sink.Add(c.Id, "cities:building_bad_health", -Math.Min(0, health));
+            // Cities counts a civic's change to a kind of building as building health (HealthKeys.Building).
+            sink.Add(c.Id, "cities:building_health", c.BuildingHealthChanges.GetValueOrDefault(b.DefaultBuilding));
         }
     }
     private static void CivicAnger(Simulation sim, City city, ModifierSink sink)

@@ -22,7 +22,7 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         if (!noPopulation) Add(lines, "cities:population", "health", -city.Population);
         if (sim.Content.Services.Get<IWaterService>().Single().IsFreshWater(sim, CityData.Tile(sim, city)))
             Add(lines, "cities:fresh_water", "health", CityData.Constants(sim).FreshWaterHealthChange);
-        AddModifiers(sim, effects, lines);
+        AddModifiers(effects, lines);
         AddCultureAnger(sim, city, lines);
         AddCivicAnger(sim, city, effects, lines);
         AddEnvironment(sim, city, lines);
@@ -41,8 +41,15 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         var buildings = CityData.Active(sim, city).ToArray();
         bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
         Int128 populationHealth = (Int128)buildings.Sum(b => (long)b.HealthPercentPerPopulation) * city.Population / 100;
-        Int128 badBuildings = onlyHealthy ? 0 : (Int128)effects.Ledger.Total("cities:building_bad_health") - Int128.Min(0, populationHealth);
-        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), effects.Ledger.Total("cities:bonus_bad_health"), PowerUnhealth(sim, city));
+        Int128 badBuildings = onlyHealthy ? 0 : (Int128)Penalties(effects.Ledger, HealthKeys.Building) - Int128.Min(0, populationHealth);
+        return new((long)Int128.Clamp(badBuildings, 0, long.MaxValue), Penalties(effects.Ledger, HealthKeys.Bonus), PowerUnhealth(sim, city));
+    }
+    /// <summary>The penalties under one health key, before anything healthy under it cancels them.</summary>
+    private static long Penalties(Ledger ledger, string key)
+    {
+        long bad = 0;
+        foreach (var line in ledger.Lines) if (line.Key == key && line.Amount < 0) bad -= line.Amount;
+        return bad;
     }
     private static void AddPowerHealth(Simulation sim, City city, List<LedgerLine> lines)
     {
@@ -64,14 +71,14 @@ internal sealed class CityWellbeingService : ICityWellbeingService
     {
         if (value != 0) lines.Add(new(source, "cities:" + kind + (value > 0 ? "_good" : "_bad"), Math.Abs(value)));
     }
-    private static void AddModifiers(Simulation sim, ModifierSink effects, List<LedgerLine> lines)
+    private static void AddModifiers(ModifierSink effects, List<LedgerLine> lines)
     {
         bool onlyHealthy = CityData.Effect(effects, "building_only_healthy") > 0;
         foreach (var line in effects.Ledger.Lines)
         {
-            if (onlyHealthy && line.Key == "cities:health" && line.Amount < 0 && IsBuildingSource(sim, line.Source)) continue;
+            if (onlyHealthy && line.Key == HealthKeys.Building && line.Amount < 0) continue;
             if (line.Key == "cities:happiness") Add(lines, line.Source, "happiness", line.Amount);
-            if (line.Key == "cities:health") Add(lines, line.Source, "health", line.Amount);
+            if (line.Key is HealthKeys.General or HealthKeys.Building or HealthKeys.Bonus) Add(lines, line.Source, "health", line.Amount);
             if (line.Key == "cities:unhappiness") Add(lines, line.Source, "happiness", -Math.Max(0, line.Amount));
             if (line.Key == "cities:war_weariness") Add(lines, line.Source, "happiness",
                 -Math.Max(0, line.Amount) * Math.Max(0, 100 + CityData.Effect(effects, "war_weariness_percent")) / 100);
@@ -111,8 +118,6 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         long foreignUnhappy = Math.Max(0, (100 - CityData.OwnerCulturePercent(sim, city)) * factor / 100);
         if (foreignUnhappy > 0) Add(lines, "government:foreigner_anger", "happiness", -foreignUnhappy);
     }
-    private static bool IsBuildingSource(Simulation sim, string source) =>
-        sim.Content.TryGet<S.BuildingDef>(source.Split(':', 3) is { Length: >= 2 } p ? p[0] + ":" + p[1] : source, out _);
     private static void AddEnvironment(Simulation sim, City city, List<LedgerLine> lines)
     {
         long featureGood = 0, featureBad = 0, terrainGood = 0, terrainBad = 0;

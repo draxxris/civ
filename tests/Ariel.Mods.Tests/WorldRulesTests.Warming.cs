@@ -308,6 +308,24 @@ public sealed partial class WorldRulesTests
     }
 
     [Fact]
+    public void A_building_only_healthy_city_and_pollution_agree_on_which_penalties_come_from_buildings()
+    {
+        var (sim, _, city) = WarmingScenario();
+        city.Buildings.AddRange([Warming + "healthy_bonus", Warming + "clean"]); // both are granaries
+        sim.State.PlayerById(0).Civics["government:civicoption_healthcare"] = Warming + "class_unhealth";
+        var wellbeing = Service<ICityWellbeingService>(sim);
+
+        var lines = wellbeing.Calculate(sim, city.Id).Ledger.Lines.Where(l => l.Key == "cities:health_bad").ToArray();
+
+        // The civic's change to each granary is building unhealth, so both readers drop it. The building's
+        // change for having the toxic bonus is bonus unhealth, like the bonus's own -1, so both keep it.
+        // The civic's own -10 is neither and stays.
+        Assert.Equal(new CityEnvironmentalUnhealth(0, 2, 0), wellbeing.EnvironmentalUnhealth(sim, city.Id));
+        Assert.Equal(10, lines.Where(l => l.Source == Warming + "class_unhealth").Sum(l => l.Amount));
+        Assert.Equal(1, lines.Where(l => l.Source == Warming + "healthy_bonus").Sum(l => l.Amount));
+    }
+
+    [Fact]
     public void Warming_pollution_below_one_map_wide_attempt_does_not_round_up()
     {
         var (sim, _, city) = WarmingScenario(width: 4);
