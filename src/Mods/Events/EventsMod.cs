@@ -20,6 +20,9 @@ public sealed class EventsMod : IPreparableMod
         ContentRegistration.Load(context, Options);
         var service = new EventService();
         context.RegisterService<IEventService>("queries", service);
+        context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EventsScreen());
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EventNotices());
+        context.RegisterService<Ariel.Presentation.IPediaSource>("pedia", new EventPedia());
         context.RegisterService<IModifierSource>("effects", new EventModifiers());
         context.RegisterStateComponent<EventState>("state");
         context.RegisterCommand<ChooseEventOptionCommand>("choose_option");

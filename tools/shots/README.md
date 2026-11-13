@@ -28,6 +28,17 @@ desktop throttles an unfocused game window to about one frame a second. Set
 scene) while the world builds and shaders compile, and each later pose `--pose-frames`
 (default 3), since the camera jumps straight to it.
 
+## A mod's screen
+
+```sh
+mise run shot -- --stage game --world tiny --opponents 1 --open-screen diplomacy \
+  --press partner:1,give:Gold:more --screenshot /tmp/ariel/shots/deal.png --frames 3
+```
+
+`--open-screen` opens a screen a mod registers, by its id or its mod's id, after meeting
+every rival. `--press` then clicks controls by their element ids, in order. To capture a
+mod that is not shipped, point `ARIEL_MODS` at a folder holding it.
+
 ## Looking around by hand
 
 Drop `--screenshot` and add `--inspect` to start on the same scene with the same pose

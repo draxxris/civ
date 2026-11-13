@@ -1,0 +1,6 @@
+{
+  "id": "bulletin",
+  "name": "Bulletin Board",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.Bulletin.dll"
+}

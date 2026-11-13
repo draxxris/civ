@@ -1,0 +1,4 @@
+[
+  { "id": "bulletin:harvest", "name": "Harvest Festival", "help": "Tell the realm the granaries are full." },
+  { "id": "bulletin:census", "name": "Census", "help": "Count the people of every city." }
+]

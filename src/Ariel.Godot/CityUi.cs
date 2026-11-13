@@ -1,6 +1,5 @@
 using System.Text;
 using Ariel.Game;
-using Ariel.Mods.Revolution;
 using Godot;
 
 namespace Ariel.Client;
@@ -12,7 +11,7 @@ internal sealed partial class CityUi : Control
 
 
     private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = GameUi.TopBarHeight;
-    private static readonly string[] StatNames = ["Production", "Commerce", "Culture", "Espionage", "Maintenance", "Great people"];
+    private static readonly string[] StatNames = ["Production", "Commerce", "Culture", "Espionage", "Maintenance"];
 
     private readonly GameSession _session;
     private readonly IconCache _icons;
@@ -32,6 +31,14 @@ internal sealed partial class CityUi : Control
     private readonly Label _foodText = Ui.Text("", 14);
     private readonly ProgressBar _foodBar = Ui.Bar(0, 1, Ui.Good);
     private readonly Label[] _statValues = new Label[StatNames.Length];
+    private readonly GridContainer _stats = new() { Columns = 2 };
+    /// <summary>The figures the mods add under the fixed ones (<see cref="CityPanelSlot.Stats"/>), two cells each.</summary>
+    private readonly List<Control> _modStats = new();
+    private string? _shownModStatsKey;
+    private readonly VBoxContainer _panelStatus = Ui.VBox(6);
+    private readonly VBoxContainer _panelDetails = Ui.VBox(6);
+    private readonly ViewRenderer _statusRenderer;
+    private readonly ViewRenderer _detailsRenderer;
     private readonly Label _happyText = Ui.Text("", 14);
     private readonly Label _healthText = Ui.Text("", 14);
     private readonly VBoxContainer[] _ledgers = new VBoxContainer[5];
@@ -49,6 +56,8 @@ internal sealed partial class CityUi : Control
     public CityUi(GameSession session, IconCache icons)
     {
         _session = session; _icons = icons;
+        _statusRenderer = new ViewRenderer(icons, action => _session.Screens.Press(action));
+        _detailsRenderer = new ViewRenderer(icons, action => _session.Screens.Press(action));
         MouseFilter = MouseFilterEnum.Ignore;
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         _left.SetAnchorsPreset(LayoutPreset.LeftWide);
@@ -122,7 +131,7 @@ internal sealed partial class CityUi : Control
         head.AddChild(_leftTitle);
         head.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", _session.ClearSelection, "Back to the map (Esc)"));
-        var stats = new GridContainer { Columns = 2 };
+        var stats = _stats;
         for (int i = 0; i < StatNames.Length; i++)
         {
             stats.AddChild(Ui.Text(StatNames[i], 14, Ui.Dim));
@@ -139,6 +148,8 @@ internal sealed partial class CityUi : Control
         box.AddChild(head);
         _statusBox.Visible = false;
         box.AddChild(_statusBox);
+        _panelStatus.Visible = false;
+        box.AddChild(_panelStatus);
         box.AddChild(food);
         box.AddChild(stats);
         box.AddChild(wellbeing);
@@ -155,6 +166,8 @@ internal sealed partial class CityUi : Control
     {
         Ui.Set(_leftTitle, $"{c.Name}  (size {c.Population})");
         RefreshStatus(c);
+        _panelStatus.Visible = c.Panels.Status.Count > 0;
+        _statusRenderer.Show(_panelStatus, c.Panels.Status);
         FillFood(c);
         FillStats(c);
         FillWellbeing(c);
@@ -180,14 +193,6 @@ internal sealed partial class CityUi : Control
             key.Append('|').Append(conquest?.CanRaze);
         }
         foreach (var r in c.Religions) key.Append('|').Append(r.Id).Append('~').Append(r.Name).Append('~').Append(r.Holy).Append('~').Append(r.State);
-        foreach (var corp in c.Corporations) key.Append('|').Append(corp.Id).Append('~').Append(corp.Name).Append('~').Append(corp.Headquarters).Append('~').Append(corp.Active);
-        if (c.Stability is { } s)
-        {
-            key.Append('|').Append(s.Status).Append('~').Append(s.Index).Append('~').Append(s.ChangePerTurn).Append('~')
-                .Append(s.CooldownTurns).Append('~').Append(s.CanSuppressGold).Append('~').Append(s.CanSuppressGarrison).Append('~').Append(s.SuppressGold);
-            foreach (var row in s.Ledger) key.Append('~').Append(row.Text);
-        }
-        foreach (var w in c.WonderScripts) key.Append('|').Append(w.Name).Append('~').Append(w.Active).Append('~').Append(w.TurnsToSpawn).Append('~').Append(w.SpawnUnit);
         string identity = key.ToString();
         if (identity == _shownStatusKey) return;
         _shownStatusKey = identity;
@@ -201,9 +206,6 @@ internal sealed partial class CityUi : Control
         }
         if (c.PendingConquestChoice) AddConquestChoices(_statusBox, c, conquest);
         AddReligions(_statusBox, c);
-        AddCorporations(_statusBox, c);
-        AddStability(_statusBox, c);
-        AddWonderScripts(_statusBox, c);
         _statusBox.Visible = _statusBox.GetChildCount() > 0;
     }
 
@@ -235,7 +237,30 @@ internal sealed partial class CityUi : Control
         Ui.Set(_statValues[2], $"{c.CommercePerTurn.Culture} per turn" + (c.CultureLevel is { } l ? $"  ({l})" : ""));
         Ui.Set(_statValues[3], $"{c.CommercePerTurn.Espionage} per turn");
         Ui.Set(_statValues[4], $"{c.Maintenance} gold");
-        Ui.Set(_statValues[5], c.GreatPeopleThreshold > 0 ? $"{c.GreatPeopleProgress}/{c.GreatPeopleThreshold}  ·  +{c.GreatPeopleRate}/turn" : "—");
+        FillModStats(c.Panels.Stats);
+    }
+
+    /// <summary>Appends the mods' figures to the grid as label and value cells, rebuilt only when their text changed.</summary>
+    private void FillModStats(IReadOnlyList<ViewElement> panels)
+    {
+        var lines = ViewWalk.All(panels).OfType<StatLine>().ToList();
+        var key = new StringBuilder();
+        foreach (var line in lines) key.Append(line.Label).Append('\u001f').Append(line.Value).Append('\u001f').Append((int)line.Tone).Append('\u001e');
+        string identity = key.ToString();
+        if (identity == _shownModStatsKey) return;
+        _shownModStatsKey = identity;
+        foreach (var cell in _modStats) { _stats.RemoveChild(cell); cell.QueueFree(); }
+        _modStats.Clear();
+        foreach (var line in lines)
+        {
+            var name = Ui.Text(line.Label, 14, Ui.Dim);
+            var value = Ui.Text(line.Value, 14, line.Tone == Tone.Normal ? null : ViewRenderer.ColourOf(line.Tone));
+            if (line.Tooltip is { } tip) { value.TooltipText = tip; value.MouseFilter = MouseFilterEnum.Pass; }
+            _modStats.Add(name);
+            _modStats.Add(value);
+            _stats.AddChild(name);
+            _stats.AddChild(value);
+        }
     }
 
     private void FillWellbeing(CityScreen c)
@@ -268,52 +293,6 @@ internal sealed partial class CityUi : Control
         {
             row.AddChild(Ui.Icon(_icons.TextureOf(r.Id), 24));
             row.AddChild(Ui.Text(r.Name + (r.Holy ? " ★ holy city" : "") + (r.State ? " (state)" : ""), 13, r.Holy ? Ui.Accent : Ui.Dim, wrap: false));
-        }
-        box.AddChild(row);
-    }
-
-    private void AddStability(VBoxContainer box, CityScreen c)
-    {
-        if (c.Stability is not { } s) return;
-        box.AddChild(Ui.Heading($"Stability: {s.Status} ({s.Index})"));
-        string extra = s.CooldownTurns > 0 ? $", rebellion cooldown {s.CooldownTurns} turns" : "";
-        box.AddChild(Ui.Text($"{Labels.Signed(s.ChangePerTurn)} per turn{extra}", 13, StatusColour(s.Status)));
-        foreach (var row in s.Ledger) box.AddChild(Ui.Text(row.Text, 12, Ui.Dim));
-        // Both routes stay visible: the player chooses gold or a garrison instead of the client choosing for them.
-        if (s.CanSuppressGold)
-            box.AddChild(Ui.Button($"Suppress Rebellion ({s.SuppressGold} gold)", () => _session.SuppressRebellion(c.Id),
-                "Pay to reduce instability by up to the full suppression amount", size: 13));
-        if (s.CanSuppressGarrison)
-            box.AddChild(Ui.Button("Suppress with garrison", () => _session.SuppressRebellionWithGarrison(c.Id),
-                "Spend a military garrison's remaining movement instead of gold", size: 13));
-        if (s.SuppressBlocked is { } blocked) box.AddChild(Ui.Text(blocked, 12, Ui.Dim));
-    }
-
-    private static Color StatusColour(CityStabilityStatus status) => status switch
-    {
-        CityStabilityStatus.Rebellion => Ui.Bad,
-        CityStabilityStatus.Mutiny => Ui.Warn,
-        CityStabilityStatus.Warning => Ui.Accent,
-        _ => Ui.Dim
-    };
-
-    private void AddWonderScripts(VBoxContainer box, CityScreen c)
-    {
-        foreach (var w in c.WonderScripts)
-        {
-            string line = !w.Active ? "inactive" : w.TurnsToSpawn is int t ? $"next {w.SpawnUnit} in {t} turns" : "active";
-            box.AddChild(Ui.Text($"{w.Name}: {line}", 13, Ui.Dim));
-        }
-    }
-
-    private void AddCorporations(VBoxContainer box, CityScreen c)
-    {
-        if (c.Corporations.Count == 0) return;
-        var row = Ui.HBox(6);
-        foreach (var corp in c.Corporations)
-        {
-            row.AddChild(Ui.Icon(_icons.TextureOf(corp.Id), 24));
-            row.AddChild(Ui.Text(corp.Name + (corp.Headquarters ? " ★ headquarters" : "") + (corp.Active ? "" : " (inactive)"), 13, corp.Headquarters ? Ui.Accent : Ui.Dim, wrap: false));
         }
         box.AddChild(row);
     }

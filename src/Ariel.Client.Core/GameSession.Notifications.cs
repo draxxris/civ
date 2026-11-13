@@ -1,16 +1,11 @@
 using Ariel.Game;
 using Schema = Ariel.Content.Schema;
-using Ariel.Mods.Corporations;
-using Ariel.Mods.Espionage;
-using Ariel.Mods.Events;
-using Ariel.Mods.ProjectsVictory;
-using Ariel.Mods.Revolution;
-using Ariel.Mods.ScriptedWonders;
 
 namespace Ariel.Client;
 
-/// <summary>Something that happened that the local player should hear about. <see cref="Turn"/> is the turn it happened in.</summary>
-public sealed record TurnNotification(int Turn, string Kind, string Text, int? City = null, Hex? Where = null);
+/// <summary>Something that happened that the local player should hear about. <see cref="Turn"/> is the turn it happened in;
+/// <see cref="City"/> or <see cref="Where"/> is the place to go to, when there is one.</summary>
+public sealed record TurnNotification(int Turn, string Kind, string Text, int? City = null, Hex? Where = null, Tone Tone = Tone.Normal);
 
 public sealed partial class GameSession
 {
@@ -62,15 +57,27 @@ public sealed partial class GameSession
     {
         if (e is CombatResolved combat) RecordBattle(combat);
         else if (e is UnitMoved moved) { RecordStep(moved); return; }
-        var note = Describe(e, turn);
+        var note = Describe(e, turn) ?? FromSources(e, turn);
         if (note != null) _notifications.Add(note);
+    }
+
+    /// <summary>A mod's notice for an event the base game does not describe: the first source that has one.</summary>
+    private TurnNotification? FromSources(DomainEvent e, int turn)
+    {
+        var sources = Sim.Content.Services.Get<INotificationSource>();
+        if (sources.Count == 0) return null;
+        var context = new NoticeContext(Sim, LocalPlayer, _myUnits);
+        foreach (var source in sources)
+            if (source.Describe(context, e) is { } notice)
+                return new(turn, notice.Kind, notice.Text, notice.City, notice.Where, notice.Tone);
+        return null;
     }
 
     private string CityName(int id) => Sim.State.FindCity(id)?.Name ?? "a city";
     private bool Mine(int city) => Sim.State.FindCity(city)?.Owner == LocalPlayer;
     private string ReligionName(string id) => Sim.Content.TryGet<Schema.ReligionDef>(id, out var r) ? r.Name : Labels.Humanize(id);
-    private string CorporationName(string id) => Sim.Content.TryGet<CorporationDef>(id, out var c) ? c.Name : Labels.Humanize(id);
-    private static TurnNotification Note(int turn, string kind, string text, int? city = null, Hex? at = null) => new(turn, kind, text, city, at);
+    private static TurnNotification Note(int turn, string kind, string text, int? city = null, Hex? at = null, Tone tone = Tone.Normal) =>
+        new(turn, kind, text, city, at, tone);
 
     private TurnNotification? Describe(DomainEvent e, int turn)
     {
@@ -103,32 +110,6 @@ public sealed partial class GameSession
                 return Note(turn, "city", "A city was razed", null, c.Position);
             case GoodyReceived g when _myUnits.Contains(g.Unit):
                 return Note(turn, "goody", $"Found {Labels.Humanize(g.Goody)}");
-            case CorporationFounded f when Mine(f.City) || f.Player == LocalPlayer:
-                return Note(turn, "corporation", $"{CorporationName(f.Corporation)} was founded in {CityName(f.City)}", f.City);
-            case CorporationSpread s when Mine(s.City):
-                return Note(turn, "corporation", $"{CorporationName(s.Corporation)} spread to {CityName(s.City)}", s.City);
-            case CorporationDissolved d when d.Player == LocalPlayer:
-                return Note(turn, "corporation", $"{CorporationName(d.Corporation)} was dissolved with its headquarters");
-            case CorporationDisplaced d when Mine(d.City):
-                return Note(turn, "corporation", $"{CorporationName(d.Corporation)} was displaced by {CorporationName(d.By)}", d.City);
-            case EspionageMissionResult m when m.Unit >= 0 && (_myUnits.Contains(m.Unit) || Mine(m.City)):
-                return Note(turn, "espionage", $"Spy mission {Labels.Humanize(m.Mission.ToString())} in {CityName(m.City)} {(m.Success ? "succeeded" : "failed")}", m.City);
-            case EventTriggered t when t.Player == LocalPlayer:
-                return Note(turn, "event", $"Event: {(Sim.Content.TryGet<EventTriggerDef>(t.Trigger, out var trigger) ? trigger.Name : Labels.Humanize(t.Trigger))}",
-                    t.City >= 0 ? t.City : null);
-            case EventResolved r when r.Player == LocalPlayer:
-                return Note(turn, "event", $"{(Sim.Content.TryGet<EventTriggerDef>(r.Trigger, out var resolved) ? resolved.Name : Labels.Humanize(r.Trigger))} resolved"
-                    + (r.Automatic ? " automatically" : ""));
-            case ProjectCompleted p when p.Player == LocalPlayer || p.Team == MyTeam.Id:
-                return Note(turn, "project", $"{CityName(p.City)} completed {(Sim.Content.TryGet<ProjectDef>(p.Project, out var project) ? project.Name : Labels.Humanize(p.Project))}", p.City);
-            case VictoryAchieved v:
-                return Note(turn, "victory", $"{PlayerName(v.Player)} won a {(Sim.Content.TryGet<VictoryDef>(v.Victory, out var victory) ? victory.Name : Labels.Humanize(v.Victory))}");
-            case CityRebellionTriggered r when r.Player == LocalPlayer || Mine(r.City):
-                return Note(turn, "rebellion", $"{CityName(r.City)} rebelled: {r.Units.Count} rebel units appeared", r.City);
-            case CityRebellionSuppressed r when r.Player == LocalPlayer:
-                return Note(turn, "rebellion", $"Rebellion in {CityName(r.City)} was suppressed", r.City);
-            case ScriptedWonderEffectApplied w when Mine(w.City):
-                return Note(turn, "wonder", $"{(Sim.Content.TryGet<Schema.BuildingDef>(w.Building, out var wonder) ? wonder.Name : Labels.Humanize(w.Building))} in {CityName(w.City)}: {Labels.Humanize(w.Effect)}", w.City);
             default: return null;
         }
     }
@@ -137,8 +118,8 @@ public sealed partial class GameSession
     {
         int loser = c.Winner == c.Attacker ? c.Defender : c.Attacker;
         Hex? at = c.Report?.DefenderHex ?? Sim.State.FindUnit(c.Winner)?.Position; // The fight happened on the defender's hex, even if the winner has moved since.
-        if (_myUnits.Contains(c.Winner)) return Note(turn, "combat", "Your unit won a battle", null, at);
-        return _myUnits.Contains(loser) ? Note(turn, "combat", "Your unit was lost in battle", null, at) : null;
+        if (_myUnits.Contains(c.Winner)) return Note(turn, "combat", "Your unit won a battle", null, at, Tone.Bad);
+        return _myUnits.Contains(loser) ? Note(turn, "combat", "Your unit was lost in battle", null, at, Tone.Bad) : null;
     }
 
     private string PlayerName(int player) => player == LocalPlayer ? "You" : Sim.State.Players.FirstOrDefault(p => p.Id == player)?.Name ?? $"Player {player}";

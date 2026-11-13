@@ -15,6 +15,7 @@ public sealed class TradeMod : IPreparableMod
         ContentRegistration.Load(context, Civics);
         var service = new TradeRouteService();
         context.RegisterService<ITradeRouteService>("routes", service);
+        context.RegisterService<Ariel.Presentation.ICityPanel>("city", new TradeCityPanel());
         context.RegisterService<IModifierSource>("route_yields", new TradeEffects(service));
         context.RegisterService<ICityTradeLinks>("trade_links", service);
     }

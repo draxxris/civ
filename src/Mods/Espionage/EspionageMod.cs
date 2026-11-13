@@ -39,6 +39,8 @@ public sealed class EspionageMod : IPreparableMod
         context.TurnSystems.Register(new SpyTimers());
         context.TurnSystems.Register(new SpyExpiry());
         context.RegisterService<IEspionageSpending>("spending", service);
+        context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EspionageScreen());
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EspionageNotices());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new EspionageAiPlanner());
         context.RegisterService<Ariel.Ai.IProductionWishes>("spies", new SpyWishes());
     }

@@ -22,6 +22,10 @@ public sealed class ProjectsVictoryMod : IPreparableMod
         ContentRegistration.Load(context, Civics);
         var service = new ProjectVictoryService();
         context.RegisterService<IProjectVictoryService>("queries", service);
+        context.RegisterService<Ariel.Presentation.IGameScreen>("victory", new VictoryScreen());
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new VictoryNotices());
+        context.RegisterService<Ariel.Presentation.IPediaSource>("projects", new ProjectPedia());
+        context.RegisterService<Ariel.Presentation.IPediaSource>("victories", new VictoryPedia());
         context.RegisterService<IProductionKind>("project_kind", new ProjectKind(service));
         context.RegisterService<IProductionCompletion>("project_completion", new ProjectCompletion(service));
         context.RegisterStateComponent<VictoryGameState>("game_state");

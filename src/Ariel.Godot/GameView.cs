@@ -87,6 +87,9 @@ internal sealed partial class GameView : Node3D
         AddChild(_camera);
         _ui = new GameUi(_session, _icons);
         AddChild(_ui);
+        // Fill the interface before its first frame. Otherwise the first frame lays out empty labels and hidden buttons,
+        // and a control can sit, for that frame, where the pointer rests: its tooltip then shows over the real layout.
+        _ui.Refresh();
         if (_multiplayer != null) AddChild(new MultiplayerOverlay(_multiplayer));
         var start = _session.Unit?.Position ?? _session.Sim.State.Cities.FirstOrDefault(c => c.Owner == _session.LocalPlayer)?.Position ?? new Hex(0, 0);
         _camera.FocusOn(MapRenderer.PositionOf(start));

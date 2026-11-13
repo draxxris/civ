@@ -1,7 +1,5 @@
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.GreatPeople;
-using Ariel.Mods.Trade;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -52,15 +50,13 @@ public sealed record CityScreen(
     int Id, string Name, int Population, long FoodStored, long FoodThreshold, long FoodSurplus, int? TurnsToGrow,
     long Food, long Production, CommerceVector CommercePerTurn, long Maintenance,
     int Happy, int Unhappy, int Angry, int Healthy, int Unhealthy,
-    long CultureHundredths, string? CultureLevel, long GreatPeopleProgress, long GreatPeopleThreshold,
+    long CultureHundredths, string? CultureLevel,
     bool Manual, bool AvoidGrowth, bool Disorder,
     IReadOnlyList<LedgerRow> FoodLedger, IReadOnlyList<LedgerRow> ProductionLedger, IReadOnlyList<LedgerRow> CommerceLedger,
     IReadOnlyList<LedgerRow> HappinessLedger, IReadOnlyList<LedgerRow> HealthLedger,
     IReadOnlyList<TileRow> WorkedTiles, int IdleCitizens, IReadOnlyList<SpecialistRow> Specialists,
     IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry,
-    IReadOnlyList<CityReligion> Religions, long GreatPeopleRate, IReadOnlyDictionary<string, int> SettledSpecialists,
-    int GoldenAgeTurns, IReadOnlyList<TradeRouteResult> TradeRoutes, int MaxTradeRoutes,
-    IReadOnlyList<CityCorporation> Corporations, CityStabilityReport? Stability, IReadOnlyList<CityWonderScript> WonderScripts)
+    IReadOnlyList<CityReligion> Religions, CityPanels Panels)
 {
     public int Citizens => Population;
     public ConscriptOption? Conscript { get; init; }
@@ -79,9 +75,6 @@ public sealed partial class GameSession
         var growth = Service<ICityGrowthService>().Calculate(Sim, city.Id);
         var commerce = Service<IPlayerEconomyService>().CalculateCity(Sim, city.Id);
         var rules = RulesOf(city);
-        var greatPeople = GreatPeopleOf(city);
-        var cityGreatPeople = CityGreatPeopleOf(city);
-        var trade = TradeOf(city);
         long perTurn = yield.Yields.Production;
         int? grow = TurnsToGrow(city, growth);
         int idle = Math.Max(0, city.Population - wellbeing.Angry - city.Worked.Count - city.Specialists.Values.Sum());
@@ -89,15 +82,12 @@ public sealed partial class GameSession
             yield.Yields.Food, perTurn, PerTurn(commerce.Hundredths),
             Service<ICityMaintenanceService>().Calculate(Sim, city.Id).TotalHundredths / 100,
             wellbeing.Happy, wellbeing.Unhappy, wellbeing.Angry, wellbeing.Healthy, wellbeing.Unhealthy,
-            CultureOf(city), CultureLevelName(city), GreatPeopleProgress(greatPeople, rules),
-            GreatPeopleThreshold(greatPeople, cityGreatPeople),
+            CultureOf(city), CultureLevelName(city),
             rules.ManualWork, rules.AvoidGrowth, GovernmentStatus.IsDisorder(Sim, city),
             Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
             city.Worked.Select(TileRowOf).ToList(), idle, SpecialistRows(city),
-            QueueRows(city), BuildingNames(city), HurryOptions(city), ReligionsIn(city),
-            GreatPeopleRate(greatPeople), SettledSpecialists(city), GoldenAgeTurns(city), TradeRoutes(trade),
-            MaxTradeRoutes(city), CorporationsIn(city), StabilityOf(city), WonderScriptsIn(city))
+            QueueRows(city), BuildingNames(city), HurryOptions(city), ReligionsIn(city), CityPanelsOf(city))
         {
             Conscript = ConscriptOptionOf(city),
             IsPuppet = rules.IsPuppet,
@@ -123,30 +113,8 @@ public sealed partial class GameSession
 
     private CityRuleState RulesOf(City city) => city.Extensions.Get<CityRuleState>(Sim.Content) ?? new();
 
-    private GreatPeopleCityResult? GreatPeopleOf(City city) => OptionalService<IGreatPeopleService>()?.Calculate(Sim, city.Id);
-
-    private CityGreatPeopleResult? CityGreatPeopleOf(City city) => OptionalService<ICityGreatPeopleService>()?.Calculate(Sim, city.Id);
-
-    private CityTradeResult? TradeOf(City city) => OptionalService<ITradeRouteService>()?.Calculate(Sim, city.Id);
-
     private static int? TurnsToGrow(City city, CityGrowthResult growth) => growth.Difference > 0
         ? (int?)Math.Max(1, (growth.Threshold - city.FoodStored + growth.Difference - 1) / growth.Difference) : null;
-
-    private static long GreatPeopleProgress(GreatPeopleCityResult? people, CityRuleState rules) => people?.Progress ?? rules.GreatPeopleProgress;
-
-    private static long GreatPeopleThreshold(GreatPeopleCityResult? people, CityGreatPeopleResult? cityPeople) =>
-        people?.Threshold ?? cityPeople?.Threshold ?? 0;
-
-    private static long GreatPeopleRate(GreatPeopleCityResult? people) => people?.Rate ?? 0;
-
-    private IReadOnlyDictionary<string, int> SettledSpecialists(City city) =>
-        OptionalService<IGreatPeopleService>()?.SettledSpecialists(Sim, city.Id) ?? new Dictionary<string, int>();
-
-    private int GoldenAgeTurns(City city) => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, city.Owner) ?? 0;
-
-    private static IReadOnlyList<TradeRouteResult> TradeRoutes(CityTradeResult? trade) => trade?.Routes ?? [];
-
-    private int MaxTradeRoutes(City city) => OptionalService<ITradeRouteService>()?.MaxRoutes(Sim, city.Id) ?? 0;
 
     private IReadOnlyList<string> BuildingNames(City city) =>
         (OptionalService<ICityBuildingService>()?.EffectiveBuildings(Sim, city.Id) ?? city.Buildings)

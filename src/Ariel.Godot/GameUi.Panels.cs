@@ -2,10 +2,11 @@ using Ariel.Game;
 using Godot;
 namespace Ariel.Client;
 
-/// <summary>Religion, pedia and load dialogs, quick save and load, and the turn notification feed.</summary>
+/// <summary>Religion, pedia and load dialogs, the screens mods register, quick save and load, and the turn
+/// notification feed.</summary>
 internal sealed partial class GameUi
 {
-    private enum Modal { None, Religion, Corporations, Espionage, Events, Conquest, Diplomacy, Pedia, TechTree, Load }
+    private enum Modal { None, Religion, Conquest, Pedia, TechTree, Load, Screen }
     internal const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
 
@@ -29,6 +30,9 @@ internal sealed partial class GameUi
     private string? _shownPediaTabsKey;
     private string? _shownPediaListKey;
     private string? _shownPediaArticleKey;
+    private ViewRenderer? _screenRenderer;
+    private VBoxContainer? _screenBody;
+    private string? _shownScreenId;
 
     private void InitPanels()
     {
@@ -44,19 +48,38 @@ internal sealed partial class GameUi
     {
         _researchOpen = false;
         if (_governmentOpen) ToggleGovernment();
+        if (_modalKind == Modal.Screen) _session.Screens.Close();
         _modalKind = _modalKind == kind ? Modal.None : kind;
         _modalRevision++;
         if (_modalKind == Modal.Pedia) ResetPediaKeys();
     }
 
-    internal void OpenDebugPanel(string name)
+    /// <summary>Opens a registered screen, or closes it when it is the one open.</summary>
+    public void ToggleScreen(string id)
     {
-        if (!Enum.TryParse<Modal>(name, true, out var kind) || kind == Modal.None) return;
-        if (kind == Modal.Pedia) _pediaSelected = _session.Pedia.Search(null, "").FirstOrDefault()?.Id;
-        if (_modalKind != kind) OpenModal(kind);
+        if (_modalKind == Modal.Screen && _session.Screens.OpenId == id) { CloseModal(); return; }
+        _researchOpen = false;
+        if (_governmentOpen) ToggleGovernment();
+        if (!_session.Screens.Open(id)) return;
+        _modalKind = Modal.Screen;
+        _modalRevision++;
     }
 
-    private void CloseModal() { _modalKind = Modal.None; _modalRevision++; }
+    /// <summary>Opens a base dialog by name, for captures. False when no dialog has that name.</summary>
+    internal bool OpenDebugPanel(string name)
+    {
+        if (!Enum.TryParse<Modal>(name, true, out var kind) || kind is Modal.None or Modal.Screen) return false;
+        if (kind == Modal.Pedia) _pediaSelected = _session.Pedia.Search(null, "").FirstOrDefault()?.Id;
+        if (_modalKind != kind) OpenModal(kind);
+        return true;
+    }
+
+    private void CloseModal()
+    {
+        if (_modalKind == Modal.Screen) _session.Screens.Close();
+        _modalKind = Modal.None;
+        _modalRevision++;
+    }
 
     private void UpdateConquestModal(IReadOnlyList<PendingCityConquest> conquests)
     {
@@ -96,7 +119,7 @@ internal sealed partial class GameUi
         if (!_feed.Visible) return;
         var box = Ui.VBox(1);
         foreach (var note in notes.TakeLast(8))
-            box.AddChild(Ui.Text($"T{note.Turn}  {note.Text}", 12, note.Kind == "combat" ? Ui.Bad : Colors.White));
+            box.AddChild(Ui.Text($"T{note.Turn}  {note.Text}", 12, ViewRenderer.ColourOf(note.Tone)));
         _feed.AddChild(box);
     }
 
@@ -118,18 +141,21 @@ internal sealed partial class GameUi
             return;
         }
         if (_modalKind == Modal.Pedia && _shownModalKind == Modal.Pedia) { RefreshPedia(); return; }
+        if (_modalKind == Modal.Screen && _shownModalKind == Modal.Screen && _shownScreenId == _session.Screens.OpenId) { RefreshScreen(); return; }
         _shownModalKind = _modalKind;
         Ui.Clear(_modal);
         var box = Ui.VBox(6);
         var head = Ui.HBox();
-        var title = Ui.Heading(_modalKind.ToString());
+        var view = _modalKind == Modal.Screen ? _session.Screens.View : null;
+        if (_modalKind == Modal.Screen && view is null) { CloseModal(); _modal.Visible = false; return; }
+        var title = Ui.Heading(view?.Title ?? _modalKind.ToString());
         title.AutowrapMode = TextServer.AutowrapMode.Off;
         head.AddChild(title);
         head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", CloseModal));
         box.AddChild(head);
         BuildModalContent(box);
-        float width = _modalKind == Modal.TechTree ? 1100 : 720;
+        float width = _modalKind == Modal.TechTree ? 1100 : view?.Width ?? 720;
         _modal.CustomMinimumSize = new Vector2(width, 0);
         _modal.AddChild(box);
         _modal.Position = (GetViewport().GetVisibleRect().Size - new Vector2(width, 560)) / 2;
@@ -140,11 +166,8 @@ internal sealed partial class GameUi
         switch (_modalKind)
         {
             case Modal.Religion: BuildReligion(box); break;
-            case Modal.Corporations: BuildCorporations(box); break;
-            case Modal.Espionage: BuildEspionage(box); break;
-            case Modal.Events: BuildEvents(box); break;
             case Modal.Conquest: BuildConquest(box); break;
-            case Modal.Diplomacy: BuildDiplomacy(box); break;
+            case Modal.Screen: BuildScreen(box); break;
             case Modal.Pedia: BuildPedia(box); break;
             case Modal.Load: BuildLoad(box); break;
             case Modal.TechTree: BuildTechTree(box); break;
@@ -177,48 +200,6 @@ internal sealed partial class GameUi
             screen.StateReligion != null && screen.NoReligionBlocked == null));
     }
 
-    // --- corporations, espionage, events ------------------------------------------------------------------
-
-    private void BuildCorporations(VBoxContainer box)
-    {
-        var screen = _session.DescribeCorporations();
-        var list = Ui.VBox(4);
-        foreach (var c in screen.Corporations)
-        {
-            var line = Ui.HBox(6);
-            line.AddChild(Ui.Icon(_icons.TextureOf(c.Id), 32));
-            string state = c.Founded ? $"headquarters {c.HeadquartersName ?? "?"}, {c.Branches} cities" : "not founded";
-            var info = Ui.VBox(0);
-            info.AddChild(Ui.Text(c.Name, 15, Colors.White));
-            info.AddChild(Ui.Text(state, 12, Ui.Dim));
-            line.AddChild(info);
-            list.AddChild(line);
-        }
-        foreach (var city in screen.Cities)
-            list.AddChild(Ui.Text($"{city.CityName}: " + string.Join(", ", city.Corporations.Select(c => c.Name + (c.Headquarters ? "*" : ""))), 13, Ui.Accent));
-        box.AddChild(Ui.Scroll(list, 340));
-    }
-
-
-
-    private void BuildEvents(VBoxContainer box)
-    {
-        var events = _session.DescribePendingEvents();
-        var list = Ui.VBox(8);
-        if (events.Count == 0) list.AddChild(Ui.Text("No events are waiting.", 13, Ui.Dim));
-        foreach (var e in events)
-        {
-            list.AddChild(Ui.Text(e.Name + (e.CityName is { } n ? $" ({n})" : ""), 15, Ui.Accent));
-            if (e.Help.Length > 0) list.AddChild(Ui.Text(StripMarkup(e.Help), 12, Ui.Dim));
-            foreach (var o in e.Options)
-            {
-                string trigger = e.Trigger, option = o.Id;
-                list.AddChild(Ui.Button(o.Name, () => _session.ChooseEventOption(trigger, option), o.Blocked ?? StripMarkup(o.Help), o.Blocked == null));
-            }
-        }
-        box.AddChild(Ui.Scroll(list, 340));
-    }
-
     private void BuildConquest(VBoxContainer box)
     {
         var conquests = _session.DescribePendingConquests();
@@ -238,75 +219,29 @@ internal sealed partial class GameUi
         }
     }
 
-    // --- diplomacy, score and victory --------------------------------------------------------------------
+    // --- mod screens ------------------------------------------------------------------------------------
 
-    private void BuildDiplomacy(VBoxContainer box)
+    /// <summary>Builds the open screen's body once; later describes refresh it in place through the renderer, which
+    /// rebuilds only the widgets whose drawing changed.</summary>
+    private void BuildScreen(VBoxContainer box)
     {
-        var screen = _session.DescribeDiplomacy();
-        var victory = _session.DescribeVictoryAndScores();
-        var list = Ui.VBox(6);
-        AddDiplomacyRivals(list, screen);
-        AddDiplomacyDeals(list, screen);
-        AddVictoryStatus(list, victory);
-        box.AddChild(Ui.Scroll(list, 420));
+        _screenRenderer ??= new ViewRenderer(_icons, action => _session.Screens.Press(action));
+        _screenRenderer.Forget();
+        _screenBody = Ui.VBox(6);
+        _shownScreenId = _session.Screens.OpenId;
+        var view = _session.Screens.View!;
+        // A screen laid out in columns scrolls each column; anything else scrolls as one.
+        if (view.Body.Any(e => e is Columns)) box.AddChild(_screenBody);
+        else box.AddChild(Ui.Scroll(_screenBody, 420));
+        _screenRenderer.Show(_screenBody, view.Body);
     }
 
-    private void AddDiplomacyRivals(VBoxContainer list, DiplomacyScreen screen)
+    private void RefreshScreen()
     {
-        if (!screen.Available) list.AddChild(Ui.Text("Diplomacy is not part of this ruleset.", 13, Ui.Dim));
-        else if (screen.Rivals.Count == 0) list.AddChild(Ui.Text("You have not met any other leader yet.", 13, Ui.Dim));
-        foreach (var rival in screen.Rivals) AddDiplomacyRival(list, rival);
+        if (_session.Screens.View is not { } view || _screenBody is null || _screenRenderer is null) { CloseModal(); return; }
+        _screenRenderer.Show(_screenBody, view.Body);
     }
 
-    private void AddDiplomacyRival(VBoxContainer list, DiplomacyRival rival)
-    {
-        list.AddChild(Ui.Text($"{rival.Leader} of {rival.Civilization} ({rival.Name})  -  {rival.Status}", 15, rival.AtWar ? Ui.Bad : Colors.White));
-        var terms = new List<string>();
-        if (rival.OpenBorders) terms.Add("open borders");
-        if (rival.DefensivePact) terms.Add("defensive pact");
-        string treatyText = terms.Count > 0 ? "  ·  " + string.Join(", ", terms) : "";
-        list.AddChild(Ui.Text($"Attitude: {rival.Tier} ({rival.AttitudeScore:+#;-#;0})" + treatyText, 12, Ui.Accent));
-        foreach (var line in rival.Breakdown.Where(item => item.Amount != 0))
-            list.AddChild(Ui.Text($"    {line.Source}: {line.Amount:+#;-#;0}", 11, Ui.Dim));
-        var actions = Ui.HBox(4);
-        foreach (var action in rival.Actions)
-            actions.AddChild(Ui.Button(action.Label, () => _session.DoDiplomacy(action), action.Blocked, action.Blocked == null, 12));
-        list.AddChild(actions);
-    }
-
-    private void AddDiplomacyDeals(VBoxContainer list, DiplomacyScreen screen)
-    {
-        if (screen.Deals.Count > 0) list.AddChild(Ui.Heading("Active deals"));
-        foreach (var deal in screen.Deals) AddDiplomacyDeal(list, deal);
-    }
-
-    private void AddDiplomacyDeal(VBoxContainer list, DiplomacyDealRow deal)
-    {
-        var line = Ui.HBox(6);
-        line.AddChild(Ui.Text($"#{deal.Id} {deal.Status}: {deal.Summary}", 12, Colors.White));
-        if (deal.Accept is { } accept) line.AddChild(Ui.Button(accept.Label, () => _session.DoDiplomacy(accept), accept.Blocked, accept.Blocked == null, 12));
-        if (deal.Cancel is { } cancel) line.AddChild(Ui.Button(cancel.Label, () => _session.DoDiplomacy(cancel), cancel.Blocked, cancel.Blocked == null, 12));
-        list.AddChild(line);
-    }
-
-    private void AddVictoryStatus(VBoxContainer list, VictoryScreen victory)
-    {
-        list.AddChild(Ui.Heading("Score and victory"));
-        if (victory.Status is not { } status)
-        {
-            list.AddChild(Ui.Text("No victory rules in this ruleset.", 12, Ui.Dim));
-            return;
-        }
-        string state = status.IsGameOver
-            ? $"{victory.WinnerName ?? "No one"} won by {victory.VictoryName ?? "unknown"} on turn {status.TurnWon}; play continues"
-            : $"Game in progress  ·  turn limit {status.MaxTurns}";
-        list.AddChild(Ui.Text(state, 13, status.IsGameOver ? Ui.Accent : Colors.White));
-        if (victory.Conditions.Count > 0) list.AddChild(Ui.Text("Victory: " + string.Join(", ", victory.Conditions), 12, Ui.Dim));
-        foreach (var score in victory.Scores)
-            list.AddChild(Ui.Text($"{(score.IsLocal ? "> " : "  ")}{score.Name} ({score.Civilization}): {score.Score.Total}  "
-                + $"[pop {score.Score.Population}, land {score.Score.Land}, techs {score.Score.Techs}, wonders {score.Score.Wonders}]", 12,
-                score.IsLocal ? Ui.Accent : Colors.White));
-    }
     // --- pedia ----------------------------------------------------------------------------------------------
 
     private void BuildPedia(VBoxContainer box)

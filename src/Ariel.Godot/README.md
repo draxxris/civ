@@ -235,12 +235,9 @@ scattered nature props. `rivers` focuses on generated river bends and mouths wit
 changing the map. `peak` focuses on the first mountain, and `wrap` on the east-west
 seam.
 
-The `espionage` stage runs a ten-capture intelligence tour with real buttons, city
-selection, a spy mission, and turn advancement. Use
-`--world tiny --opponents 1 --stage espionage --screenshot /tmp/espionage.png`. The tour
-checks locks, separate player treasuries, queues, directed protection, expiry, and stale
-selections. It changes debug state between captures. It does not represent an ordinary
-saved game.
+A stage that names no base dialog may name a mod's screen: `--stage diplomacy`,
+`corporations`, `espionage` or `events` opens that mod's screen, after meeting every rival
+so there is something to show (see `--open-screen` and `--press` below).
 
 These switches apply only to unattended runs and go after `--` on the Godot command
 line. `mise run shot -- <switches>` builds and runs with them. See also
@@ -257,7 +254,8 @@ manager, because it cannot answer a prompt.
   to `--out-dir`. Use an absolute path otherwise.
 - `--screenshots`: run every stage above in turn. Each goes to
   `docs/screenshots/<stage>.png`, or to `--out-dir`. Interface stages (`setup`, `map`,
-  `city`, `civics`, `research`, `conquest`, `espionage`) go to
+  `city`, `civics`, `research`, `conquest`, and the mod screens `corporations`,
+  `diplomacy`, `espionage` and `events`) go to
   `docs/screenshots/gui/<stage>.png` instead.
 - `--inspect`: start the game and stay open, with every other switch applied, so the
   camera and the terrain debug views can be driven by hand. No capture is taken and the
@@ -275,6 +273,11 @@ manager, because it cannot answer a prompt.
   `roads/`), so set this for test captures.
 - `--stage <name>`: the stage for `--screenshot`. It defaults to `setup`, or to `map`
   when a scene switch below is used.
+- `--open-screen <id>`: open a screen a mod registers once the game has started: an exact
+  screen id (`diplomacy:screen`) or the id of a mod with one screen (`espionage`). Every
+  rival is met first. An unknown screen prints the registered ids and exits with 1.
+- `--press <id>[,<id>...]`: press controls of the open screen by element id, in order, as
+  clicks would: `--world tiny --opponents 1 --open-screen espionage --press rival:1`.
 - `--frames N`: ready frames to wait before each capture (the first, with `--shots`).
   The default is 60, or 30 with a scene switch, and 90 in the stage tour.
 - `--pose-frames N`: frames each later `--shots` pose waits before its capture. The

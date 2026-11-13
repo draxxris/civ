@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Ariel.Mods.Tests;
 
-/// <summary>Client.Core diplomacy, score and victory screens against the optional diplomacy and victory mods.</summary>
+/// <summary>The diplomacy and victory mods' screens, driven through the client's headless host.</summary>
 public sealed class ClientDiplomacyVictoryTests
 {
     private static readonly ConcurrentDictionary<(bool Diplomacy, bool Victory), Lazy<ContentDb>> Contents = new();
@@ -32,65 +32,95 @@ public sealed class ClientDiplomacyVictoryTests
         return new(sim);
     }
 
+    private const string DiplomacyId = "diplomacy:screen", VictoryId = "projects_victory:victory";
+
+    private static IReadOnlyList<ViewElement> Rival(GameSession session, int player) =>
+        ScreenProbe.Section(ScreenProbe.Body(session, DiplomacyId), $"rival:{player}");
+
+    private static IReadOnlyList<ViewElement> Deals(GameSession session) =>
+        ViewWalk.Find<Section>(ScreenProbe.Body(session, DiplomacyId), "deals")?.Items ?? [];
+
+    private static void Meet(GameSession session) =>
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+
     [Fact]
     public void Screens_are_empty_when_the_ruleset_has_no_such_rules()
     {
         var session = Session(false, false);
-        Assert.False(session.DescribeDiplomacy().Available);
-        var victory = session.DescribeVictoryAndScores();
-        Assert.False(victory.Available); Assert.Null(victory.Status); Assert.Empty(victory.Scores);
+        Assert.False(ScreenProbe.Registered(session, DiplomacyId));
+        Assert.False(ScreenProbe.Registered(session, VictoryId));
+        Assert.Empty(session.Screens.Entries());
     }
 
     [Fact]
     public void Diplomacy_lists_only_met_rivals_with_attitude_and_actions()
     {
         var session = Session();
-        Assert.True(session.DescribeDiplomacy().Available);
-        Assert.Empty(session.DescribeDiplomacy().Rivals);
-        var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
-        var rival = Assert.Single(session.DescribeDiplomacy().Rivals);
-        Assert.Equal(1, rival.PlayerId);
-        Assert.False(string.IsNullOrEmpty(rival.Leader));
-        Assert.False(rival.AtWar);
-        Assert.Equal(["declare_war", "make_peace", "open_borders", "defensive_pact"], rival.Actions.Select(a => a.Kind));
-        Assert.NotNull(rival.Actions.Single(a => a.Kind == "make_peace").Blocked);
-        Assert.Null(rival.Actions.Single(a => a.Kind == "open_borders").Blocked);
+        Assert.NotNull(ScreenProbe.Button(session, DiplomacyId));
+        var before = ScreenProbe.Body(session, DiplomacyId);
+        Assert.NotNull(ScreenProbe.Paragraph(before, "none"));
+        Assert.Null(ViewWalk.Find<Section>(before, "propose"));
+        Meet(session);
+        var body = ScreenProbe.Body(session, DiplomacyId);
+        Assert.Equal(["rival:1"], ViewWalk.All(body).OfType<Section>().Select(s => s.Id).Where(id => id.StartsWith("rival:", StringComparison.Ordinal)));
+        var rival = Rival(session, 1);
+        string leader = session.Sim.Content.Get<Ariel.Content.Schema.LeaderDef>(session.Sim.State.PlayerById(1).Leader).Name;
+        Assert.StartsWith(leader + " of ", ScreenProbe.Paragraph(rival, "title"));
+        Assert.EndsWith("At peace", ScreenProbe.Paragraph(rival, "title"));
+        Assert.Equal(["declare_war", "make_peace", "open_borders", "defensive_pact"],
+            ViewWalk.All(rival).OfType<ActionButton>().Select(b => b.Id));
+        Assert.NotNull(ViewWalk.Find<ActionButton>(rival, "make_peace")!.Disabled);
+        Assert.Null(ViewWalk.Find<ActionButton>(rival, "open_borders")!.Disabled);
+        // Every attitude reason reads as words, never as a rules id.
+        var reasons = ViewWalk.All(rival).OfType<Paragraph>().Where(p => p.Id.StartsWith("reason:", StringComparison.Ordinal)).ToList();
+        Assert.NotEmpty(reasons);
+        Assert.All(reasons, r => Assert.DoesNotContain("diplomacy:", r.Text));
+        Assert.Contains(reasons, r => r.Text.Contains("Temperament"));
+    }
+
+    [Fact]
+    public void Remembered_acts_are_named_by_their_memory_kind()
+    {
+        var session = Session();
+        Meet(session);
+        var kind = session.Sim.Content.Get<Ariel.Content.Schema.MemoryKindDef>().All.First();
+        Assert.Equal(kind.Name, Labels.Source(session.Sim, "diplomacy:memory:" + kind.Id));
     }
 
     [Fact]
     public void Actions_run_through_commands_and_update_the_screen()
     {
         var session = Session();
-        var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
-        Assert.True(session.DoDiplomacy(session.DescribeDiplomacy().Rivals[0].Actions.Single(a => a.Kind == "open_borders")));
-        Assert.True(session.DescribeDiplomacy().Rivals[0].OpenBorders);
-        Assert.True(session.DoDiplomacy(session.DescribeDiplomacy().Rivals[0].Actions.Single(a => a.Kind == "declare_war")));
-        var rival = session.DescribeDiplomacy().Rivals[0];
-        Assert.True(rival.AtWar); Assert.Equal("At war", rival.Status); Assert.False(rival.OpenBorders);
+        Meet(session);
+        Assert.True(session.Screens.Press(ViewWalk.ActionOf(Rival(session, 1), "open_borders")));
+        Assert.Contains("open borders", ScreenProbe.Paragraph(Rival(session, 1), "attitude"));
+        Assert.True(session.Screens.Press(ViewWalk.ActionOf(Rival(session, 1), "declare_war")));
+        var rival = Rival(session, 1);
+        Assert.EndsWith("At war", ScreenProbe.Paragraph(rival, "title"));
+        Assert.DoesNotContain("open borders", ScreenProbe.Paragraph(rival, "attitude"));
+        // No one at war with us can be traded with.
+        var partners = ViewWalk.Find<Picker>(ScreenProbe.Body(session, DiplomacyId), "partner")!;
+        Assert.Empty(partners.Options);
     }
 
     [Fact]
     public void Active_deals_can_be_cancelled()
     {
         var session = Session();
-        var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        Meet(session);
         session.Me.Treasury = 100;
         Assert.True(session.Submit(new ProposeDealCommand { Player = GameSession.DefaultLocalPlayer, Target = 1, Items = [new(GameSession.DefaultLocalPlayer, TradeItemKind.Gold, "", 10)] }));
-        var deal = Assert.Single(session.DescribeDiplomacy().Deals);
-        Assert.Contains("You give 10 gold", deal.Summary);
-        Assert.True(session.DoDiplomacy(deal.Cancel!));
-        Assert.Empty(session.DescribeDiplomacy().Deals);
+        var deal = Assert.IsType<Row>(Assert.Single(Deals(session)));
+        Assert.Contains("You give 10 gold", ScreenProbe.Paragraph(deal.Items, "summary"));
+        Assert.True(session.Screens.Press(ViewWalk.ActionOf(deal.Items, "cancel")));
+        Assert.Empty(Deals(session));
     }
 
     [Fact]
     public void Proposed_deals_to_the_human_can_be_accepted()
     {
         var session = Session();
-        var service = session.Sim.Content.Services.Get<IDiplomacyService>().Single();
-        session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
+        Meet(session);
         var goldTrading = session.Sim.Content.Get<Ariel.Content.Schema.TechDef>().All.First(t => t.GoldTrading);
         session.Sim.TeamOf(GameSession.DefaultLocalPlayer).Techs.Add(goldTrading.Id);
         session.Sim.TeamOf(1).Techs.Add(goldTrading.Id);
@@ -101,11 +131,12 @@ public sealed class ClientDiplomacyVictoryTests
             Items = [new(1, TradeItemKind.GoldPerTurn, Amount: 1)],
         }));
 
-        var deal = Assert.Single(session.DescribeDiplomacy().Deals);
-        Assert.Equal("Proposed", deal.Status);
-        Assert.NotNull(deal.Accept);
-        Assert.True(session.DoDiplomacy(deal.Accept));
-        Assert.Equal("Active", Assert.Single(session.DescribeDiplomacy().Deals).Status);
+        var deal = Assert.IsType<Row>(Assert.Single(Deals(session)));
+        Assert.Contains(" Proposed: ", ScreenProbe.Paragraph(deal.Items, "summary"));
+        Assert.True(session.Screens.Press(ViewWalk.ActionOf(deal.Items, "accept")));
+        var active = Assert.IsType<Row>(Assert.Single(Deals(session)));
+        Assert.Contains(" Active: ", ScreenProbe.Paragraph(active.Items, "summary"));
+        Assert.Null(ViewWalk.Find<ActionButton>(active.Items, "accept"));
     }
 
     [Theory]
@@ -115,45 +146,89 @@ public sealed class ClientDiplomacyVictoryTests
     {
         var session = Session();
         var sim = session.Sim;
-        var service = sim.Content.Services.Get<IDiplomacyService>().Single();
-        sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
+        Meet(session);
         session.MyTeam.Techs.Remove("research:woodworking");
         sim.TeamOf(1).Techs.Add("research:woodworking");
         session.Me.Treasury = 100;
         Assert.True(session.Submit(new ProposeDealCommand { Player = 1, Target = GameSession.DefaultLocalPlayer,
             Items = [new(1, TradeItemKind.Technology, "research:woodworking"), new(GameSession.DefaultLocalPlayer, TradeItemKind.Gold, Amount: 7)] }));
-        var stale = Assert.Single(session.DescribeDiplomacy().Deals).Accept!;
-        Assert.Null(stale.Blocked);
+        ActionButton Accept() => ViewWalk.Find<ActionButton>(Deals(session), "accept")!;
+        var stale = Accept();
+        Assert.Null(stale.Disabled);
         if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = true;
         else foreach (var team in sim.State.Teams) team.Techs.Remove("research:alphabet");
         ulong hash = sim.ComputeHash();
         var rng = sim.Rng.State;
-        Assert.Equal(reason, Assert.Single(session.DescribeDiplomacy().Deals).Accept!.Blocked);
-        Assert.False(session.DoDiplomacy(stale));
+        Assert.Equal(reason, Accept().Disabled);
+        Assert.False(session.Screens.Press(stale.Action));
         Assert.Equal("Can't do that: " + reason, session.Message);
         Assert.Equal(hash, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
-        Assert.Equal("Proposed", Assert.Single(session.DescribeDiplomacy().Deals).Status);
+        Assert.Contains(" Proposed: ", ScreenProbe.Paragraph(Deals(session), "summary"));
         if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = false;
         else sim.TeamOf(1).Techs.Add("research:alphabet");
-        var allowed = Assert.Single(session.DescribeDiplomacy().Deals).Accept!;
-        Assert.Null(allowed.Blocked);
-        Assert.True(session.DoDiplomacy(allowed));
-        Assert.Empty(session.DescribeDiplomacy().Deals);
+        var allowed = Accept();
+        Assert.Null(allowed.Disabled);
+        Assert.True(session.Screens.Press(allowed.Action));
+        Assert.Empty(Deals(session));
         Assert.True(sim.KnowsTech(GameSession.DefaultLocalPlayer, "research:woodworking"));
         Assert.Equal(93, session.Me.Treasury);
+    }
+
+    [Fact]
+    public void The_composer_builds_a_deal_both_ways_shows_the_answer_and_sends_it()
+    {
+        var session = Session();
+        var sim = session.Sim;
+        Meet(session);
+        var goldTrading = sim.Content.Get<Ariel.Content.Schema.TechDef>().All.First(t => t.GoldTrading);
+        foreach (var team in sim.State.Teams) team.Techs.Add(goldTrading.Id);
+        session.Me.Treasury = 500;
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "partner:1"));
+        var composer = ScreenProbe.Section(ScreenProbe.Body(session, DiplomacyId), "propose");
+        Assert.Equal("Add something to the deal", ViewWalk.Find<ActionButton>(composer, "propose")!.Disabled);
+        Assert.Null(ViewWalk.Find<Paragraph>(composer, "verdict"));
+
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:Gold:more"));
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:Gold:more"));
+        // The partner's technologies are offered on the other side, by name.
+        var tech = sim.TeamOf(1).Techs.Where(t => !session.MyTeam.Techs.Contains(t)).Order(StringComparer.Ordinal).First();
+        string add = Assert.Single(ScreenProbe.ButtonIds(ScreenProbe.Body(session, DiplomacyId), $"get:add:Technology:{tech}:"));
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, add));
+        // A human partner answers on their own turn; a computer player's answer is shown before sending.
+        Assert.Contains("human leader", ScreenProbe.Paragraph(ScreenProbe.Body(session, DiplomacyId), "verdict"));
+        sim.State.PlayerById(1).Ai = sim.Content.PlayerAIs.All.First().Id;
+        ulong hash = sim.ComputeHash(); var rng = sim.Rng.State;
+        composer = ScreenProbe.Section(ScreenProbe.Body(session, DiplomacyId), "propose");
+        Assert.Equal("✕ 20 gold", ViewWalk.Find<ActionButton>(ScreenProbe.Section(composer, "give"), "give:remove:0")!.Label);
+        Assert.Equal("✕ " + sim.Content.Get<Ariel.Content.Schema.TechDef>(tech).Name,
+            ViewWalk.Find<ActionButton>(ScreenProbe.Section(composer, "get"), "get:remove:0")!.Label);
+        Assert.Matches(@" would (accept|refuse): worth -?\d+ gold to them; at \w+ they want at least -?\d+\.$", ScreenProbe.Paragraph(composer, "verdict"));
+        // Asking the computer player for its answer changes nothing.
+        Assert.Equal(hash, sim.ComputeHash()); Assert.Equal(rng, sim.Rng.State);
+
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:remove:0"));
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:Gold:more"));
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "propose"));
+        var service = sim.Service<IDiplomacyService>()!;
+        Assert.Contains(service.Deals(sim), d => d.Proposer == 0 && d.Recipient == 1
+            && d.Items.Any(i => i.FromPlayer == 0 && i.Kind == TradeItemKind.Gold && i.Amount == 10)
+            && d.Items.Any(i => i.FromPlayer == 1 && i.Kind == TradeItemKind.Technology && i.ContentId == tech));
+        // Clearing empties the draft; the sent deal stays.
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "clear"));
+        Assert.Null(ViewWalk.Find<ActionButton>(ScreenProbe.Body(session, DiplomacyId), "give:remove:0"));
     }
 
     [Fact]
     public void Victory_screen_reports_scores_and_the_running_game()
     {
         var session = Session();
-        var screen = session.DescribeVictoryAndScores();
-        Assert.True(screen.Available);
-        Assert.False(screen.Status!.IsGameOver);
-        Assert.Equal(2, screen.Scores.Count);
-        Assert.Single(screen.Scores, s => s.IsLocal);
-        Assert.NotEmpty(screen.Conditions);
-        Assert.Null(screen.WinnerName);
+        Assert.NotNull(ScreenProbe.Button(session, VictoryId));
+        var body = ScreenProbe.Body(session, VictoryId);
+        Assert.StartsWith("Game in progress", ScreenProbe.Paragraph(body, "state"));
+        Assert.StartsWith("Victory: ", ScreenProbe.Paragraph(body, "conditions"));
+        var table = ViewWalk.Find<Table>(body, "table")!;
+        Assert.Equal(2, table.Rows.Count);
+        Assert.Single(table.Rows, r => r.Tone == Tone.Accent && r.Id == "player:0");
     }
 }

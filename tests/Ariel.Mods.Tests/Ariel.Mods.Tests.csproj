@@ -21,6 +21,17 @@
     <ProjectReference Include="../../src/Mods/Events/Ariel.Mods.Events.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Revolution/Ariel.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
+    <!-- The rules tests read the feature mods' published APIs directly; the client no longer brings them along. -->
+    <ProjectReference Include="../../src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Diplomacy/Api/Ariel.Mods.Diplomacy.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/ScriptedWonders/Api/Ariel.Mods.ScriptedWonders.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Trade/Api/Ariel.Mods.Trade.Api.csproj" />
+    <Using Include="Ariel.Presentation" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../tools/Ariel.Benchmarks/AiEvaluation/*.cs" Link="AiEvaluation/%(Filename)%(Extension)" />
@@ -45,10 +56,11 @@
     <ProjectReference Include="../TestMods/ProductionWish/Ariel.TestMods.ProductionWish.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../TestMods/CivicExtension/Ariel.TestMods.CivicExtension.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../TestMods/ResourceVariety/Ariel.TestMods.ResourceVariety.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../TestMods/Bulletin/Ariel.TestMods.Bulletin.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <Target Name="CopyTestMods" AfterTargets="Build">
     <ItemGroup>
-      <_TestMod Include="ApiProvider;ApiConsumer;AiPlanner;MemoryKind;ProductionWish;CivicExtension;ResourceVariety" />
+      <_TestMod Include="ApiProvider;ApiConsumer;AiPlanner;MemoryKind;ProductionWish;CivicExtension;ResourceVariety;Bulletin" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/bin/$(Configuration)/net10.0/Ariel.TestMods.*.dll" ModDir="%(_TestMod.Identity)" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/mod.json" ModDir="%(_TestMod.Identity)" />
       <_TestModData Include="../TestMods/%(_TestMod.Identity)/data/*.json" ModDir="%(_TestMod.Identity)" />

@@ -1,5 +1,4 @@
 using Ariel.Game;
-using Ariel.Mods.GreatPeople;
 using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -35,8 +34,6 @@ public sealed record StackedUnit(int Id, string Type, string Name, int Health, I
 
 public sealed partial class GameSession
 {
-    public int GoldenAgeTurnsRemaining => OptionalService<IGreatPeopleService>()?.GoldenAgeTurnsRemaining(Sim, LocalPlayer) ?? 0;
-
     public Schema.UnitDef DefOf(Unit unit) => Sim.Content.Get<Schema.UnitDef>(unit.Type);
     /// <summary>Route and combat odds for sending the selected unit to a tile, or null with no unit or route.</summary>
     public MovePreview? PreviewAt(Hex hex)

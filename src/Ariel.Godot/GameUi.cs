@@ -1,3 +1,4 @@
+using Ariel.Content;
 using Ariel.Game;
 using Godot;
 
@@ -20,9 +21,9 @@ internal sealed partial class GameUi : CanvasLayer
     private readonly Button _endTurn;
     private readonly HFlowContainer _topRow = new();
     private Label _turnText = null!;
-    private Label _goldenAgeText = null!;
     private Label _goldText = null!;
-    private Label _unrestText = null!;
+    private readonly HBoxContainer _summaryBox = Ui.HBox(10);
+    private ViewRenderer _summary = null!;
     private Button _researchButton = null!;
     private (Label Label, Button Minus, Button Plus) _scienceRate;
     private (Label Label, Button Minus, Button Plus) _cultureRate;
@@ -30,10 +31,10 @@ internal sealed partial class GameUi : CanvasLayer
     private Button _civicsButton = null!;
     private Button _conquestButton = null!;
     private Button _religionButton = null!;
-    private Button _corporationsButton = null!;
-    private Button _espionageButton = null!;
-    private Button _eventsButton = null!;
-    private Button _diplomacyButton = null!;
+    /// <summary>One top-bar button per registered mod screen, in <see cref="ScreenHost.Screens"/> order, rebuilt when a
+    /// loaded game brings other content.</summary>
+    private readonly List<(string Id, Button Button)> _screenButtons = new();
+    private ContentDb? _screenButtonsContent;
     private Button _pediaButton = null!;
     private Button _techTreeButton = null!;
     private Button _saveButton = null!;
@@ -122,6 +123,14 @@ internal sealed partial class GameUi : CanvasLayer
             _shownModalKind = Modal.None;
             _modalRevision++;
             _governmentRevision++;
+            // A loaded game may bring other screens; a screen open over the previous game closes. The first game a
+            // front end shows keeps whatever was opened before its first refresh.
+            if (_screenButtonsContent is not null && !ReferenceEquals(_screenButtonsContent, _session.Sim.Content))
+            {
+                _session.Screens.Close();
+                if (_modalKind == Modal.Screen) _modalKind = Modal.None;
+            }
+            RebuildScreenButtons();
         }
         if (!NeedsRefresh()) return;
         var city = _session.City;
@@ -174,7 +183,7 @@ internal sealed partial class GameUi : CanvasLayer
         bool modalSessionChanged = _modalKind switch
         {
             Modal.Pedia or Modal.Load => false,
-            Modal.Espionage => revision,
+            Modal.Screen => _session.Screens.IsStale,
             _ => worldRevision,
         };
         double dialogStart = clock.Elapsed.TotalMilliseconds;
@@ -212,7 +221,7 @@ internal sealed partial class GameUi : CanvasLayer
             || _shownRevision != _session.Revision || _shownWorldRevision != _session.WorldRevision
             || _shownResearchOpen != _researchOpen || _shownCityOpen != (city != null) || _shownCityId != city?.Id
             || _shownCityState != _city.State || _shownGovernmentRevision != _governmentRevision
-            || _shownModalRevision != _modalRevision;
+            || _shownModalRevision != _modalRevision || (_modalKind == Modal.Screen && _session.Screens.IsStale);
     }
 
     private void RefreshOverlayChecks()
@@ -284,11 +293,9 @@ internal sealed partial class GameUi : CanvasLayer
         _topRow.AddThemeConstantOverride("h_separation", 10);
         _topRow.AddThemeConstantOverride("v_separation", 4);
         _turnText = Ui.Text("", 15, Colors.White, wrap: false);
-        _goldenAgeText = Ui.Text("", 14, Ui.Accent, wrap: false);
-        _goldenAgeText.Visible = false;
         _goldText = Ui.Text("", 15, Ui.Accent, wrap: false);
-        _unrestText = Ui.Text("", 14, Ui.Warn, wrap: false);
-        _unrestText.Visible = false;
+        _summary = new ViewRenderer(_icons, action => _session.Screens.Press(action));
+        _summaryBox.Visible = false;
         _researchButton = Ui.Button("", ToggleResearch, "Open the research list (R)");
         _researchButton.ClipText = true;
         _researchButton.CustomMinimumSize = new Vector2(170, 0);
@@ -296,19 +303,14 @@ internal sealed partial class GameUi : CanvasLayer
         _conquestButton = Ui.Button("Conquest!", () => OpenModal(Modal.Conquest));
         _conquestButton.AddThemeColorOverride("font_color", Ui.Bad);
         _religionButton = Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world");
-        _corporationsButton = Ui.Button("Corporations", () => OpenModal(Modal.Corporations), "Corporations and their branches");
-        _espionageButton = Ui.Button("Espionage", ToggleEspionage, "Rival intelligence, spending and counter-espionage");
-        _eventsButton = Ui.Button("Events!", () => OpenModal(Modal.Events), "An event needs your choice");
-        _diplomacyButton = Ui.Button("Diplomacy", () => OpenModal(Modal.Diplomacy), "Rival leaders, treaties, scores and victory");
         _pediaButton = Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more");
         _techTreeButton = Ui.Button("Tech Tree", () => OpenModal(Modal.TechTree), "Browse technology prerequisites");
         _saveButton = Ui.Button("Save", QuickSaveGame, "Quick save (F5)");
         _loadButton = Ui.Button("Load", () => OpenModal(Modal.Load), "Load a saved game (F9)");
         _citiesText = Ui.Text("", 14, Ui.Dim, wrap: false);
         _topRow.AddChild(_turnText);
-        _topRow.AddChild(_goldenAgeText);
         _topRow.AddChild(_goldText);
-        _topRow.AddChild(_unrestText);
+        _topRow.AddChild(_summaryBox);
         _topRow.AddChild(_researchButton);
         _scienceRate = RateBox("Science", RateKind.Research);
         _cultureRate = RateBox("Culture", RateKind.Culture);
@@ -317,14 +319,35 @@ internal sealed partial class GameUi : CanvasLayer
         // Every optional button exists from the start and RefreshTop toggles Visible, so the flow layout never sees a
         // child appear or disappear in a different position.
         _conquestButton.Visible = false;
-        _corporationsButton.Visible = false;
-        _espionageButton.Visible = false;
-        _eventsButton.Visible = false;
         _techTreeButton.Visible = false;
-        foreach (var button in new[] { _conquestButton, _religionButton, _corporationsButton, _espionageButton, _eventsButton,
-            _diplomacyButton, _pediaButton, _techTreeButton, _saveButton, _loadButton }) _topRow.AddChild(button);
+        foreach (var button in new[] { _conquestButton, _religionButton, _pediaButton, _techTreeButton, _saveButton, _loadButton })
+            _topRow.AddChild(button);
         _topRow.AddChild(_citiesText);
         _top.AddChild(_topRow);
+        RebuildScreenButtons();
+    }
+
+    /// <summary>
+    /// Puts one button per registered screen after the Religion button, hidden until <see cref="RefreshTop"/> asks the
+    /// screen. The set only changes with the content, so this runs at start and when a loaded game brings other content.
+    /// </summary>
+    private void RebuildScreenButtons()
+    {
+        var content = _session.Sim.Content;
+        if (ReferenceEquals(content, _screenButtonsContent)) return;
+        _screenButtonsContent = content;
+        foreach (var (_, button) in _screenButtons) { _topRow.RemoveChild(button); button.QueueFree(); }
+        _screenButtons.Clear();
+        int at = _religionButton.GetIndex() + 1;
+        foreach (var screen in _session.Screens.Screens)
+        {
+            string id = screen.Id;
+            var button = Ui.Button(id, () => ToggleScreen(id));
+            button.Visible = false;
+            _topRow.AddChild(button);
+            _topRow.MoveChild(button, at++);
+            _screenButtons.Add((id, button));
+        }
     }
 
     /// <summary>Updates the top bar in place; nothing is freed, and a value that did not change is not written again.
@@ -335,13 +358,10 @@ internal sealed partial class GameUi : CanvasLayer
         var s = _session.Summary();
         string date = s.CalendarDate is { } calendar ? $"  ·  {calendar.FormattedDate}" : "";
         Ui.Set(_turnText, $"Turn {s.Turn}{date}  ·  {s.Era}");
-        int goldenAge = _session.GoldenAgeTurnsRemaining;
-        _goldenAgeText.Visible = goldenAge > 0;
-        if (goldenAge > 0) Ui.Set(_goldenAgeText, $"Golden Age · {goldenAge} turns");
         Ui.Set(_goldText, $"Gold {_session.Me.Treasury} ({Labels.Signed(s.Net)})");
-        var unrest = _session.CitiesAtRisk();
-        _unrestText.Visible = unrest.Count > 0;
-        if (unrest.Count > 0) Ui.Set(_unrestText, $"Unrest · {unrest.Count} {(unrest.Count == 1 ? "city" : "cities")}");
+        var summary = _session.SummaryItems();
+        _summaryBox.Visible = summary.Count > 0;
+        _summary.Show(_summaryBox, summary);
         Ui.Tint(_goldText, s.Net < 0 ? Ui.Bad : Ui.Accent);
         var r = s.Research;
         Ui.Set(_researchButton, r == null ? "Choose research!" : $"{r.Name} {r.Progress}/{r.Cost}" + (r.Turns is int t ? $" ({t}t)" : ""));
@@ -357,11 +377,26 @@ internal sealed partial class GameUi : CanvasLayer
         // is settled by the caller, which has to know about it before the modal gate is read.
         _conquestButton.Visible = conquests.Count > 0;
         if (conquests.Count > 0) _conquestButton.TooltipText = $"{conquests.Count} city conquest choice(s) need your decision";
-        _corporationsButton.Visible = _session.DescribeCorporations().Available;
-        _espionageButton.Visible = _session.DescribeEspionage().Available;
-        _eventsButton.Visible = _session.DescribePendingEvents().Count > 0;
+        RefreshScreenButtons();
         _techTreeButton.Visible = _session.DescribeTechTree() is not null;
         Ui.Set(_citiesText, $"{s.Cities} cities  ·  {s.Units} units");
+    }
+
+    /// <summary>Asks each registered screen for its button once and writes the answer in place.</summary>
+    private void RefreshScreenButtons()
+    {
+        var entries = _session.Screens.Entries();
+        for (int i = 0; i < _screenButtons.Count && i < entries.Count; i++)
+        {
+            var (_, button) = _screenButtons[i];
+            var spec = entries[i].Button;
+            button.Visible = spec is not null;
+            if (spec is null) continue;
+            Ui.Set(button, spec.Label);
+            if (button.TooltipText != (spec.Tooltip ?? "")) button.TooltipText = spec.Tooltip ?? "";
+            if (spec.Tone == Tone.Normal) { if (button.HasThemeColorOverride("font_color")) button.RemoveThemeColorOverride("font_color"); }
+            else Ui.Tint(button, ViewRenderer.ColourOf(spec.Tone));
+        }
     }
 
     private (Label Label, Button Minus, Button Plus) RateBox(string name, RateKind kind)
@@ -422,6 +457,5 @@ internal sealed partial class GameUi : CanvasLayer
     private void CentreResearchDialog() => _researchDialog.Position =
         (GetViewport().GetVisibleRect().Size - new Vector2(_researchDialog.CustomMinimumSize.X, 520)) / 2;
 
-    internal static string StripMarkup(string text) =>
-        System.Text.RegularExpressions.Regex.Replace(text, @"\{[^}]*\}|\[[^\]]*\]", "");
+    internal static string StripMarkup(string text) => Labels.Plain(text);
 }

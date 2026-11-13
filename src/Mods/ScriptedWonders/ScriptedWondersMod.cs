@@ -20,6 +20,8 @@ public sealed class ScriptedWondersMod : IPreparableMod
         }
         var service = new ScriptedWonderService();
         context.RegisterService<IScriptedWonderService>("queries", service);
+        context.RegisterService<Ariel.Presentation.ICityPanel>("city", new WonderCityPanel());
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new WonderNotices());
         context.RegisterService<IModifierSource>("effects", service);
         context.RegisterStateComponent<ScriptedWonderCityState>("city_state");
         context.Subscribe<BuildingCompleted>("completion", service.Completed);

@@ -35,8 +35,10 @@ internal sealed class DebugMultiplayer(GameCatalog catalog, DebugOptions options
     /// <summary>End the local player's turn whenever it can, until the target turn. True once there.</summary>
     public bool Drive(GameSession session)
     {
-        if (session.ConnectionProblem is { } problem) throw new InvalidOperationException(problem);
+        // Reaching the target turn comes first: the peer that gets there first may report and leave while this one
+        // still has its last frames to draw, and that departure is not a failure of this run.
         if (session.Sim.State.Turn > options.Turns) return true;
+        if (session.ConnectionProblem is { } problem) throw new InvalidOperationException(problem);
         if (session.IsMyMove && !session.Me.EndedTurn) session.EndTurn();
         return false;
     }

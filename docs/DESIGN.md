@@ -67,10 +67,11 @@ extend both through one registration API.
 - `Ariel.Godot`: Godot view. Build separately with `dotnet build src/Ariel.Godot`.
 - `Ariel.Tests`: contract, rule, client, save/replay and lockstep tests.
 
-The client uses the query contracts in `Ariel.Rules` and the published APIs of the
-feature mods it presents (`Ariel.Mods.<Mod>.Api` for Corporations, Diplomacy, Espionage,
-Events, GreatPeople, ProjectsVictory, Revolution, ScriptedWonders and Trade). It
-has no reference to a mod's implementation or to a test-ruleset assembly.
+The client uses the query contracts in `Ariel.Rules`, and shows what a mod adds through the
+screen contract (see Mod screens below). It references no mod, neither a mod's API nor its
+implementation, nor a test-ruleset assembly. `Ariel.Godot` lists the shipped mods as
+project references with `ReferenceOutputAssembly="false"`, only so they build first and
+can be copied next to the game.
 
 ## Determinism
 
@@ -1287,14 +1288,84 @@ a city, and the AI's religion and great people planners read it.
 
 ## Client presentation
 
-`Ariel.Client.Core` supplies screen models and validated commands for diplomacy (base war
-and peace, and the Diplomacy mod's attitudes, agreements and deals), score and victory,
-corporations, espionage, and pending events. The city screen shows
-corporations, religion, commerce, wellbeing, and ledgers. Unit actions expose
-corporation and spy commands when valid. `Ariel.Godot` presents diplomacy and victory,
-corporation, espionage, event, religion, pedia, save, and load panels. It also shows
-espionage rates, pending-event notifications, and corporation details on the city
-screen.
+`Ariel.Client.Core` supplies the base game's screen models and validated commands: units,
+cities (religion, commerce, wellbeing and ledgers), religion, the encyclopedia, saves and
+notifications. Unit actions come from every `IUnitActionSource`, so corporation and spy
+missions appear on their units without the client knowing them. Everything else a mod
+shows, it describes itself through the screen contract below.
+
+## Mod screens
+
+A mod adds interface the way it adds rules: it registers services that describe what to
+show, and the client draws them. The contract lives in `Ariel.Rules`, namespace
+`Ariel.Presentation` (`src/Ariel.Rules/Presentation/`), and names no UI toolkit. Mods
+reference nothing new for it.
+
+| Contract | What it adds | Where the client shows it |
+| --- | --- | --- |
+| `IGameScreen` | a whole screen: `Button(ctx)` (null hides it), `Describe(ctx)` returning a `ScreenView`, `Order` for the top bar | a top-bar button and a modal |
+| `ICityPanel` | rows for a city's screen, in a `CityPanelSlot`: `Stats` (the figures grid), `Status` or `Details` | the city screen |
+| `IPlayerSummaryItem` | one element for the top bar's player summary, or null | the top bar |
+| `IPediaSource` | a category of encyclopedia pages (`PediaItem`: a definition, cost, notes, the technology that unlocks it) | the encyclopedia, and the tech tree's unlocks when `ListsUnlocks` |
+| `INotificationSource` | a `Notice` for a domain event, with a city or tile to go to and a tone | the turn feed |
+
+Every contract is `IHasId`, so a duplicate registration fails at load. The base game
+describes the event first; a mod's source is asked only for events it does not.
+
+**Vocabulary.** A view is a tree of `ViewElement` records, each with an id unique among
+its siblings: `Heading`, `Paragraph` (text with a `Tone`, a `TextSize`, an optional icon
+and tooltip), `ListItem` (an icon slot beside a title and a dim detail line),
+`StatLine` (label and value), `Meter`, `ActionButton`, `Picker` of
+`PickerOption`s, `Table` of `TableRow`s (a row may be selectable), and the containers
+`Row` (flows left to right), `Section` (optional title) and `Columns` (weighted, each
+scrolls). Tones are semantic (`Dim`, `Accent`, `Good`, `Bad`, `Warn`); the renderer picks
+the colours. Text is plain; `Labels` (`Name`, `Player`, `Team`, `Source`, `Plain`,
+`Humanize`, `Signed`) gives every mod the same readable names.
+
+**Interaction.** A control carries a `ScreenAction`, one of two:
+
+- `SubmitCommand(command)` sends a game command, the mod's own or any other, through the
+  session's normal path: validated, recorded and sent to peers like a click on the map.
+  The host refuses a command for another player. `ActionButton.Disabled` holds the
+  reason a control is off, shown as its tooltip. A stale button, pressed after the world
+  moved, is validated again and fails with the rules' reason.
+- `ChangeState(next)` replaces the screen's local state, a small immutable string map
+  (`ScreenState`: `Get`, `Int`, `With`, `Without`). It is the player's alone, never
+  enters the simulation or its hash, survives closing and reopening the screen, and is
+  forgotten when another game loads. A describe reads it as `ctx.Local`. Selection,
+  tabs and a draft (the diplomacy deal being composed) live here.
+
+`ScreenContext` gives a describe the simulation, the local player, the selected unit and
+city, and the local state. Describing must not change the game or draw on its random
+numbers, like every presentation query.
+
+**Host.** `ScreenHost` (`GameSession.Screens`, in `Ariel.Client.Core`) is headless: it
+lists the screens in `Order` then registration order, keeps which one is open and each
+one's state, and presses actions. It describes the open screen again only when its
+inputs move: the simulation, the world revision, the selected unit or city, or the local
+state. `IsStale` compares stored integers, so a frame loop may ask every frame without
+allocating. `ViewWalk` walks a view in document order, gives each button, picker option
+and selectable table row a slot, and builds a key of what it draws. Tests drive screens
+through the host with `ViewWalk.ActionOf(view, id)` and `ViewWalk.Text`.
+
+**Renderer.** `ViewRenderer` (`src/Ariel.Godot`) draws any view in the brass skin. It
+rebuilds its widgets only when the key changed; otherwise it keeps them and takes the
+fresh actions by slot, so a button pressed after a quiet change acts with the current
+command. Column scroll positions survive a rebuild. The top bar gets one button per
+screen whose `Button` is not null, rebuilt when the content changes. The city screen and
+the player summary use the same renderer.
+
+**Developer flags.** `--open-screen <id>` opens a screen after the game starts (an exact
+id, or a mod id with one screen) and meets every rival first; `--press <id>[,<id>...]`
+then presses controls by id. An unknown screen prints the registered ids.
+
+The shipped feature mods describe all of their interface this way: Corporations (screen,
+city panel, pedia, notices), Espionage (screen, notices), Diplomacy (screen with the
+deal composer, attitude labels), ProjectsVictory (victory screen, pedia, notices),
+Events (screen while an event waits, pedia, notices), Revolution (stability panel with
+suppression, unrest summary, notices), GreatPeople (city figures, settled great people,
+golden age summary), Trade (routes panel) and ScriptedWonders (wonder panel, notices).
+The test mod `tests/TestMods/Bulletin` adds one of each contract and nothing else.
 
 ## Computer players
 

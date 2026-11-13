@@ -1,5 +1,4 @@
 using Ariel.Content;
-using Ariel.Mods.ProjectsVictory;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -36,10 +35,9 @@ public sealed class PediaCatalog
         Add<S.CivilizationDef>(content, "Civilizations", _ => 0, _ => null);
         Add<S.LeaderDef>(content, "Leaders", _ => 0, _ => null);
         Add<S.TraitDef>(content, "Traits", _ => 0, _ => null);
-        AddIfRegistered<Ariel.Mods.Corporations.CorporationDef>(content, "Corporations", _ => 0, d => [Tech(content, d.FoundingTech, "Founded with")]);
-        AddIfRegistered<ProjectDef>(content, "Projects", _ => 0, _ => null);
-        AddIfRegistered<VictoryDef>(content, "Victories", _ => 0, _ => null);
-        AddIfRegistered<Ariel.Mods.Events.EventTriggerDef>(content, "Events", _ => 0, d => [Tech(content, d.RequiredTech, "Requires")]);
+        foreach (var source in content.Services.Get<IPediaSource>())
+            foreach (var item in source.Items(content).OrderBy(i => i.Definition.Name, StringComparer.Ordinal).ThenBy(i => i.Definition.Id, StringComparer.Ordinal))
+                Add(content, source.Category, item.Definition, item.Cost, item.Notes);
         Categories = _entries.Select(e => e.Category).Distinct().ToList();
     }
 
@@ -57,24 +55,19 @@ public sealed class PediaCatalog
             .OrderBy(e => e.Title, StringComparer.Ordinal).ThenBy(e => e.Id, StringComparer.Ordinal).ToList();
     }
 
-    private void AddIfRegistered<T>(ContentDb content, string category, Func<T, int> cost, Func<T, string?[]?> extra) where T : S.GameContentDef
-    {
-        try { _ = content.Get<T>(); }
-        catch (KeyNotFoundException) { return; }
-        Add(content, category, cost, extra);
-    }
-
     private void Add<T>(ContentDb content, string category, Func<T, int> cost, Func<T, string?[]?> extra) where T : S.GameContentDef
     {
         foreach (var def in content.Get<T>().All.OrderBy(d => d.Name, StringComparer.Ordinal).ThenBy(d => d.Id, StringComparer.Ordinal))
-        {
-            var prereqs = new List<string>();
-            Describe(content, def.Requirements, prereqs);
-            prereqs.AddRange((extra(def) ?? []).Where(p => p != null)!);
-            int price = cost(def);
-            _entries.Add(new(category, def.Id, def.Name, def.Help, def.Strategy, def.Pedia, def.Icon, price > 0 ? price : null, prereqs,
-                ContentDescription.Of(content, def)));
-        }
+            Add(content, category, def, cost(def), (extra(def) ?? []).Where(p => p != null).ToList()!);
+    }
+
+    private void Add(ContentDb content, string category, S.GameContentDef def, int cost, IReadOnlyList<string>? notes)
+    {
+        var prereqs = new List<string>();
+        Describe(content, def.Requirements, prereqs);
+        if (notes != null) prereqs.AddRange(notes);
+        _entries.Add(new(category, def.Id, def.Name, def.Help, def.Strategy, def.Pedia, def.Icon, cost > 0 ? cost : null, prereqs,
+            ContentDescription.Of(content, def)));
     }
 
     private static string? FoundingWonder(ContentDb content, string religion) =>

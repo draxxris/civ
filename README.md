@@ -47,7 +47,10 @@ answer from a feature, it owns a small seam that the mod answers (see "Mod APIs"
 [docs/DESIGN.md](docs/DESIGN.md)). A mod asks AI cities to build what its feature needs
 through `IProductionWishes`, and adjusts what the AI thinks resources, buildings, units,
 technologies and civics are worth through `IAiValuer<TSubject>` (see "Valuers"). Any mod can add kinds of memory between leaders in
-`data/memory-kind.json`; the base game records and fades them (see "Relations").
+`data/memory-kind.json`; the base game records and fades them (see "Relations"). A mod adds
+interface the same way, without touching the client: it registers screens (with a top-bar
+button), city screen rows, top-bar summary items, encyclopedia categories and notifications
+that describe what to show, and the client draws them in its own skin (see "Mod screens").
 
 ### User data migration and compatibility
 

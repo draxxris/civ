@@ -12,6 +12,9 @@ public sealed class GreatPeopleMod : IMod
         var effects = new GreatPeopleEffects();
         context.RegisterService<IGreatPeopleService>("queries", service);
         context.RegisterService<ICityGreatPeopleService>("city_queries", service);
+        context.RegisterService<Ariel.Presentation.ICityPanel>("city", new GreatPeopleCityStats());
+        context.RegisterService<Ariel.Presentation.ICityPanel>("settled", new SettledGreatPeoplePanel());
+        context.RegisterService<Ariel.Presentation.IPlayerSummaryItem>("golden_age", new GoldenAgeSummary());
         context.RegisterService<IGreatPeopleCommandService>("commands", new GreatPeopleCommands());
         context.RegisterService<IUnitActionSource>("actions", new GreatPeopleActions(service));
         context.RegisterService<IModifierSource>("effects", effects);

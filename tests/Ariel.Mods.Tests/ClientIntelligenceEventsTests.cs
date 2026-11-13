@@ -65,15 +65,32 @@ public sealed class ClientIntelligenceEventsTests
         return def.RequiredGreatPersonClass;
     }
 
+    private const string EspionageId = "espionage:screen";
+    private const string CorporationsId = "corporations:screen";
+    private const string EventsId = "events:screen";
+
+    private static bool Select(GameSession session, int team) => ScreenProbe.Press(session, EspionageId, $"rival:{team}");
+
+    private static long Spending(IReadOnlyList<ViewElement> body)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(ScreenProbe.Paragraph(body, "summary")!, @"spending forecast (\d+) points");
+        Assert.True(match.Success);
+        return long.Parse(match.Groups[1].Value);
+    }
+
+    private static bool Locked(IReadOnlyList<ViewElement> body, string section) => ScreenProbe.Paragraph(ScreenProbe.Section(body, section), "locked") is not null;
+
+    private static bool DetailsLocked(IReadOnlyList<ViewElement> body) => ScreenProbe.Paragraph(ScreenProbe.Section(body, "cities"), "details:locked") is not null;
+
     [Fact]
     public void Screens_are_empty_without_the_optional_mods()
     {
         var session = Session();
-        Assert.False(session.DescribeCorporations().Available);
-        Assert.False(session.DescribeEspionage().Available);
-        Assert.Null(session.DescribeRivalIntelligence(1));
-        Assert.Empty(session.DescribePendingEvents());
-        Assert.False(session.ChooseEventOption("none", "none"));
+        Assert.False(ScreenProbe.Registered(session, CorporationsId));
+        Assert.False(ScreenProbe.Registered(session, EspionageId));
+        Assert.False(ScreenProbe.Registered(session, EventsId));
+        Assert.False(session.Screens.Open(EspionageId));
+        Assert.Null(session.Screens.View);
         Assert.DoesNotContain("Corporations", session.Pedia.Categories);
     }
 
@@ -83,19 +100,23 @@ public sealed class ClientIntelligenceEventsTests
         var session = Session("Corporations", "Diplomacy");
         var city = AddCity(session.Sim, 0, 14);
         var great = Founder(session, city, out var corporation);
-        Assert.All(session.DescribeCorporations().Corporations, c => Assert.False(c.Founded));
-        Assert.Empty(session.DescribeCity(city)!.Corporations);
+        string name = session.Sim.Content.Get<CorporationDef>(corporation).Name;
+        Assert.NotNull(ScreenProbe.Button(session, CorporationsId));
+        Assert.Equal("not founded", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), corporation)!.Detail);
+        Assert.DoesNotContain(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
 
         var unit = AddUnit(session.Sim, city, great);
         Assert.Contains(session.UnitActions(unit, session.DefOf(unit)), a => a.Id == "corporations:found:" + corporation);
         session.SelectUnit(unit.Id);
         session.RunAction("corporations:found:" + corporation);
 
-        var row = session.DescribeCorporations().Corporations.Single(c => c.Id == corporation);
-        Assert.True(row.Founded); Assert.Equal(city.Id, row.Headquarters); Assert.Equal(1, row.Branches); Assert.Equal(city.Name, row.HeadquartersName);
-        var inCity = Assert.Single(session.DescribeCity(city)!.Corporations);
-        Assert.Equal(corporation, inCity.Id); Assert.True(inCity.Headquarters);
-        Assert.Equal(city.Id, Assert.Single(session.DescribeCorporations().Cities).CityId);
+        var body = ScreenProbe.Body(session, CorporationsId);
+        Assert.Equal($"headquarters {city.Name}, 1 cities", ViewWalk.Find<ListItem>(body, corporation)!.Detail);
+        Assert.Equal($"{city.Name}: {name}*", ScreenProbe.Paragraph(body, $"city:{city.Id}"));
+        var panel = Assert.Single(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
+        var present = Assert.Single(ViewWalk.All([panel]).OfType<Paragraph>());
+        Assert.Equal(corporation, present.Id);
+        Assert.Contains("headquarters", present.Text);
         Assert.Contains(session.Notifications, n => n.Kind == "corporation");
 
         var other = AddCity(session.Sim, 0, 18);
@@ -109,18 +130,36 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = Session("Espionage", "Diplomacy");
         AddCity(session.Sim, 0, 14); AddCity(session.Sim, 1, 57);
-        Assert.True(session.DescribeEspionage().Available);
-        Assert.Empty(session.DescribeEspionage().Rivals);
+        Assert.NotNull(ScreenProbe.Button(session, EspionageId));
+        Assert.Empty(ScreenProbe.ButtonIds(ScreenProbe.Body(session, EspionageId), "rival:"));
         session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
-        var rival = Assert.Single(session.DescribeEspionage().Rivals);
-        Assert.Equal(1, rival.TeamId); Assert.Equal(0, rival.Points); Assert.False(rival.Demographics);
-        Assert.True(session.SetEspionageWeight(1, 4));
-        Assert.Equal(4, Assert.Single(session.DescribeEspionage().Rivals).Weight);
-        Assert.False(session.SetEspionageWeight(1, -3));
+        var body = ScreenProbe.Body(session, EspionageId);
+        Assert.Equal(["rival:1"], ScreenProbe.ButtonIds(body, "rival:"));
+        Assert.Equal("0 points", ScreenProbe.Paragraph(body, "points:1"));
+        Assert.Equal("Weight 0", ScreenProbe.Paragraph(body, "weight:1"));
+        // Nothing can go below zero, so the lowering steps are disabled with a reason.
+        Assert.NotNull(ViewWalk.Find<ActionButton>(body, "lower:1")!.Disabled);
+        for (int i = 0; i < 4; i++) Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
+        Assert.Equal("Weight 4", ScreenProbe.Paragraph(ScreenProbe.Body(session, EspionageId), "weight:1"));
+        Assert.Null(ViewWalk.Find<ActionButton>(ScreenProbe.Body(session, EspionageId), "lower:1")!.Disabled);
+        // A bulk step past zero stops at zero.
+        Assert.True(ScreenProbe.Press(session, EspionageId, "lower10:1"));
+        Assert.Equal("Weight 0", ScreenProbe.Paragraph(ScreenProbe.Body(session, EspionageId), "weight:1"));
         var state = session.MyTeam.Extensions.Get<EspionageTeamState>(session.Sim.Content) ?? new();
         session.MyTeam.Extensions.Set(session.Sim.Content, state);
         state.Points[1] = 100000;
-        Assert.Equal(100000, session.DescribeEspionage().Rivals[0].Points);
+        Assert.Equal("100000 points", ScreenProbe.Paragraph(ScreenProbe.Body(session, EspionageId), "points:1"));
+    }
+
+    [Fact]
+    public void A_weight_order_for_another_player_is_refused()
+    {
+        var session = Session("Espionage", "Diplomacy");
+        AddCity(session.Sim, 0, 14); AddCity(session.Sim, 1, 57);
+        session.Sim.Rules().Relations.EstablishContact(session.Sim, 0, 1);
+        session.Screens.Open(EspionageId);
+        Assert.False(session.Screens.Press(new SubmitCommand(new SetEspionageWeightCommand { Player = 1, TargetTeam = 0, Weight = 5 })));
+        Assert.Equal(0, session.Sim.Service<IEspionageService>()!.Weight(session.Sim, 1, 0));
     }
 
     [Fact]
@@ -136,14 +175,15 @@ public sealed class ClientIntelligenceEventsTests
         sim.State.RebuildIndexes();
         GameFactory.MakeBarbarian(sim, 2);
         AddUnit(sim, sim.State.Cities.Single(c => c.Owner == 1), "military:warrior", owner: 2);
-        var diplomacy = sim.Content.Services.Get<IDiplomacyService>().Single();
         sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, sim.TeamOf(1).Id);
         sim.Rules().Relations.EstablishContact(sim, session.MyTeam.Id, 2);
-        Assert.Equal(1, Assert.Single(session.DescribeEspionage().Rivals).TeamId);
+        Assert.Equal(["rival:1"], ScreenProbe.ButtonIds(ScreenProbe.Body(session, EspionageId), "rival:"));
 
         foreach (var unit in sim.State.Units.Where(u => u.Owner == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
         sim.State.RemoveCity(sim.State.Cities.Single(c => c.Owner == 1).Id);
-        Assert.Empty(session.DescribeEspionage().Rivals);
+        var body = ScreenProbe.Body(session, EspionageId);
+        Assert.Empty(ScreenProbe.ButtonIds(body, "rival:"));
+        Assert.NotNull(ScreenProbe.Paragraph(body, "none"));
     }
 
     [Fact]
@@ -160,8 +200,15 @@ public sealed class ClientIntelligenceEventsTests
         var actions = session.UnitActions(spy, session.DefOf(spy)).Where(a => a.Id.StartsWith("espionage:", StringComparison.Ordinal)).ToList();
         Assert.NotEmpty(actions);
         Assert.All(actions, a => Assert.IsType<PerformMissionCommand>(a.Command));
+        // The screen offers the same missions for the selected spy, and the technology theft.
+        session.SelectUnit(spy.Id);
+        var body = ScreenProbe.Body(session, EspionageId);
+        Assert.NotEmpty(ScreenProbe.ButtonIds(body, "espionage:"));
+        Assert.All(ScreenProbe.ButtonIds(body, "espionage:"), id => Assert.IsType<SubmitCommand>(ViewWalk.ActionOf(body, id)));
         var home = AddUnit(session.Sim, session.Sim.State.Cities.First(c => c.Owner == 0), spy.Type, 0);
         Assert.DoesNotContain(session.UnitActions(home, session.DefOf(home)), a => a.Id.StartsWith("espionage:", StringComparison.Ordinal));
+        session.SelectUnit(home.Id);
+        Assert.Empty(ScreenProbe.ButtonIds(ScreenProbe.Body(session, EspionageId), "espionage:"));
     }
 
     [Fact]
@@ -170,17 +217,22 @@ public sealed class ClientIntelligenceEventsTests
         var session = IntelligenceSession(out var points, out _); var sim = session.Sim;
         points.Points[1] = 100;
         sim.Rules().Economy.SetRates(sim, 0, new(0, 0, 0, 100));
-        Assert.True(session.SetEspionageWeight(1, 1));
-        long before = session.DescribeRivalIntelligence(1)!.Spending;
+        Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
+        long before = Spending(ScreenProbe.Body(session, EspionageId));
         Assert.True(before > 0);
         // Same turn, same rates, same number of cities: only the economy behind the budget differs.
         var richer = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         foreach (var city in richer.State.Cities.Where(c => c.Owner == 0))
             city.Specialists["foundation:specialist_great_diplomat"] = 3; // Settled great people yield commerce.
-        long expected = new GameSession(richer).DescribeRivalIntelligence(1)!.Spending;
+        var fresh = new GameSession(richer);
+        Assert.True(Select(fresh, 1));
+        long expected = Spending(ScreenProbe.Body(fresh, EspionageId));
         Assert.NotEqual(before, expected);
         session.ReplaceSimulation(richer);
-        Assert.Equal(expected, session.DescribeRivalIntelligence(1)!.Spending);
+        // A loaded game starts the screen afresh: nothing is selected until the player picks the rival again.
+        Assert.Null(ScreenProbe.Paragraph(ScreenProbe.Body(session, EspionageId), "summary"));
+        Assert.True(Select(session, 1));
+        Assert.Equal(expected, Spending(ScreenProbe.Body(session, EspionageId)));
     }
 
     private GameSession IntelligenceSession(out EspionageTeamState points, out City target)
@@ -190,6 +242,7 @@ public sealed class ClientIntelligenceEventsTests
         session.Sim.Rules().Relations.EstablishContact(session.Sim, 0, 1);
         points = new EspionageTeamState(); points.Spent[1] = 100000;
         session.MyTeam.Extensions.Set(session.Sim.Content, points);
+        Assert.True(Select(session, 1));
         return session;
     }
 
@@ -210,14 +263,18 @@ public sealed class ClientIntelligenceEventsTests
         session.Sim.TeamOf(1).ResearchProgress = 17;
         target.ProductionQueue.Add(new("cities:unit", "military:warrior", 23));
         ulong hash = session.Sim.ComputeHash(); var rng = session.Sim.Rng.State;
-        var dto = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(new[] { demographics, cities, research, investigate }, dto.Permissions.Select(p => p.Unlocked));
-        Assert.Equal(demographics, dto.Demographics is not null);
-        Assert.Equal(cities, dto.Cities is not null);
-        Assert.Equal(research, dto.Research is not null);
-        if (dto.Cities is { } known) Assert.Equal(investigate, Assert.Single(known).Details is not null);
-        if (research) { Assert.Equal("research:agriculture", dto.Research!.Current!.Id); Assert.Equal(17, dto.Research.Progress); Assert.True(dto.Research.Cost > 0); }
-        if (investigate) Assert.Equal(23, Assert.Single(Assert.Single(dto.Cities!).Details!.Queue).Progress);
+        // The city picker only exists while cities are visible.
+        Assert.Equal(cities, ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
+        var body = ScreenProbe.Body(session, EspionageId);
+        Assert.Equal(new[] { demographics, cities, research, investigate },
+            new[] { "Demographics", "CityVisibility", "InspectResearch", "InvestigateCity" }
+                .Select(kind => ScreenProbe.Paragraph(body, $"permission:{kind}")!.Contains(": unlocked")));
+        Assert.Equal(demographics, !Locked(body, "demographics"));
+        Assert.Equal(cities, !Locked(body, "cities"));
+        Assert.Equal(research, !Locked(body, "research"));
+        if (cities) Assert.Equal(investigate, !DetailsLocked(body));
+        if (research) Assert.Matches(@"^.+: 17/[1-9]\d* research$", ScreenProbe.Paragraph(ScreenProbe.Section(body, "research"), "current"));
+        if (investigate) Assert.Contains("· 23/", ScreenProbe.Paragraph(ScreenProbe.Section(body, "cities"), "queue:0"));
         Assert.Equal(hash, session.Sim.ComputeHash()); Assert.Equal(rng, session.Sim.Rng.State);
     }
 
@@ -226,18 +283,19 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = IntelligenceSession(out var points, out var target);
         points.Points[1] = 0;
-        string locked = CanonicalJson.Serialize(session.DescribeRivalIntelligence(1));
+        string locked = ScreenProbe.Text(session, EspionageId);
         session.Sim.State.PlayerById(1).Treasury = 54321;
         target.Population = 9; target.FoodStored = 321;
         session.Sim.TeamOf(1).Researching = "missing:private_technology";
         target.ProductionQueue.Add(new("missing:private_kind", "missing:private_item", 999));
         ulong hash = session.Sim.ComputeHash(); var rng = session.Sim.Rng.State;
-        Assert.Equal(locked, CanonicalJson.Serialize(session.DescribeRivalIntelligence(1)));
+        Assert.Equal(locked, ScreenProbe.Text(session, EspionageId));
         // City presence alone must not read its invalid private queue or private statistics.
         points.Points[1] = 50;
-        var visible = session.DescribeRivalIntelligence(1)!;
-        Assert.Null(visible.Research); Assert.Null(Assert.Single(visible.Cities!).Details);
-        Assert.Equal(9, visible.Demographics!.Population);
+        Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
+        var visible = ScreenProbe.Body(session, EspionageId);
+        Assert.True(Locked(visible, "research")); Assert.True(DetailsLocked(visible));
+        Assert.Contains("population 9", ScreenProbe.Paragraph(ScreenProbe.Section(visible, "demographics"), "totals"));
         points.Points[1] = 0;
         Assert.Equal(hash, session.Sim.ComputeHash()); Assert.Equal(rng, session.Sim.Rng.State);
     }
@@ -254,27 +312,32 @@ public sealed class ClientIntelligenceEventsTests
         team.Extensions.Set(sim.Content, new ResearchTeamState { Queue = ["research:agriculture", "research:pottery"] });
         target.ProductionQueue.Add(new("cities:unit", "military:warrior", 23));
         points.Points[1] = 100;
-        var dto = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(new[] { 1, 2 }, dto.Demographics!.Treasuries.Select(t => t.PlayerId));
-        Assert.Equal(new long[] { 123, 345 }, dto.Demographics.Treasuries.Select(t => t.Gold));
-        Assert.Equal(2, dto.Demographics.Cities); Assert.Equal(10, dto.Demographics.Population);
-        Assert.Equal(new[] { "research:agriculture", "research:pottery" }, dto.Research!.Queue.Select(t => t.Id));
-        string snapshot = CanonicalJson.Serialize(dto);
+        Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
+        var body = ScreenProbe.Body(session, EspionageId);
+        var demographics = ScreenProbe.Section(body, "demographics");
+        Assert.Contains("123 gold", ScreenProbe.Paragraph(demographics, "treasury:1"));
+        Assert.Contains("345 gold", ScreenProbe.Paragraph(demographics, "treasury:2"));
+        Assert.StartsWith("2 cities · population 10", ScreenProbe.Paragraph(demographics, "totals"));
+        string Tech(string id) => sim.Content.Get<S.TechDef>(id).Name;
+        Assert.Equal($"Research queue: {Tech("research:agriculture")} → {Tech("research:pottery")}",
+            ScreenProbe.Paragraph(ScreenProbe.Section(body, "research"), "queue"));
+        string snapshot = ViewWalk.Text(body);
         sim.State.PlayerById(2).Treasury = 999; second.Population = 12;
         team.Extensions.Get<ResearchTeamState>(sim.Content)!.Queue.Clear();
         target.ProductionQueue.Clear();
-        Assert.Equal(snapshot, CanonicalJson.Serialize(dto));
-        Assert.Empty(session.DescribeRivalIntelligence(1)!.Research!.Queue);
+        Assert.Equal(snapshot, ViewWalk.Text(body));
+        Assert.Equal("Research queue is empty.", ScreenProbe.Paragraph(ScreenProbe.Section(ScreenProbe.Body(session, EspionageId), "research"), "queue"));
         // Spending points immediately revokes city details, then all private sections.
         points.Points[1] = 99;
-        Assert.All(session.DescribeRivalIntelligence(1)!.Cities!, c => Assert.Null(c.Details));
+        Assert.True(DetailsLocked(ScreenProbe.Body(session, EspionageId)));
         points.Points[1] = 0;
-        var locked = session.DescribeRivalIntelligence(1)!;
-        Assert.Null(locked.Cities); Assert.Null(locked.Research); Assert.Null(locked.Demographics);
+        var locked = ScreenProbe.Body(session, EspionageId);
+        Assert.True(Locked(locked, "cities")); Assert.True(Locked(locked, "research")); Assert.True(Locked(locked, "demographics"));
         foreach (var unit in sim.State.Units.Where(u => sim.TeamOf(u.Owner).Id == 1).ToArray()) sim.State.RemoveUnit(unit.Id);
         sim.State.RemoveCity(target.Id); sim.State.RemoveCity(second.Id);
-        Assert.Null(session.DescribeRivalIntelligence(1));
-        Assert.Null(session.DescribeRivalIntelligence(0)); Assert.Null(session.DescribeRivalIntelligence(99));
+        var gone = ScreenProbe.Body(session, EspionageId);
+        Assert.Empty(ScreenProbe.ButtonIds(gone, "rival:"));
+        Assert.NotNull(ScreenProbe.Paragraph(gone, "pick"));
     }
 
     [Fact]
@@ -284,40 +347,46 @@ public sealed class ClientIntelligenceEventsTests
         points.Points[1] = 100;
         sim.Rules().Economy.SetRates(sim, 0, new(0, 0, 0, 100));
         // An unset weight is zero, so the player must ask for the rival before the forecast moves.
-        Assert.True(session.SetEspionageWeight(1, 1));
+        Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
         var spy = AddUnit(sim, target, "military:spy", 0);
-        var unlocked = session.DescribeRivalIntelligence(1)!;
-        Assert.NotNull(Assert.Single(unlocked.Cities!).Details);
-        Assert.True(unlocked.Spending > 0);
-        Assert.Null(unlocked.ProtectionAgainstRival); Assert.Null(unlocked.RivalProtection);
+        Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
+        var unlocked = ScreenProbe.Body(session, EspionageId);
+        Assert.False(DetailsLocked(unlocked));
+        Assert.True(Spending(unlocked) > 0);
+        Assert.EndsWith("inactive", ScreenProbe.Paragraph(unlocked, "protection:ours"));
+        Assert.EndsWith("inactive", ScreenProbe.Paragraph(unlocked, "protection:theirs"));
         Assert.True(sim.TryApply(EspionageMissions.Order(0, spy.Id, EspionageMissionKind.CounterEspionage), out var error), error);
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
-        var refreshed = session.DescribeRivalIntelligence(1)!;
-        Assert.Equal(50, refreshed.Points); // Flat 100 points at a 50% ratio.
-        Assert.Null(refreshed.Research); Assert.Null(Assert.Single(refreshed.Cities!).Details);
-        Assert.Equal(new CounterEspionageEffect(sim.State.Turn + 8, 200), refreshed.ProtectionAgainstRival);
-        Assert.NotNull(Assert.Single(unlocked.Cities!).Details); // Existing snapshots never alias live state.
+        var refreshed = ScreenProbe.Body(session, EspionageId);
+        Assert.StartsWith("50 points", ScreenProbe.Paragraph(refreshed, "summary")); // Flat 100 points at a 50% ratio.
+        Assert.True(Locked(refreshed, "research")); Assert.True(DetailsLocked(refreshed));
+        Assert.Contains("8 turns remaining", ScreenProbe.Paragraph(refreshed, "protection:ours"));
+        Assert.Contains("cost 200% of normal", ScreenProbe.Paragraph(refreshed, "protection:ours"));
+        Assert.False(DetailsLocked(unlocked)); // Existing views never alias live state.
         sim.State.Turn += 8;
-        Assert.Null(session.DescribeRivalIntelligence(1)!.ProtectionAgainstRival);
+        Assert.EndsWith("inactive", ScreenProbe.Paragraph(ScreenProbe.Body(session, EspionageId), "protection:ours"));
     }
 
     [Fact]
     public void Rival_protection_revokes_intelligence_until_its_exclusive_expiry_turn()
     {
-        var session = IntelligenceSession(out var points, out _); var sim = session.Sim;
+        var session = IntelligenceSession(out var points, out var target); var sim = session.Sim;
         points.Points[1] = 100;
-        Assert.NotNull(session.DescribeRivalIntelligence(1)!.Research);
+        Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
+        Assert.False(Locked(ScreenProbe.Body(session, EspionageId), "research"));
         var defense = new EspionageTeamState();
         defense.CounterEspionage[0] = new(sim.State.Turn + 1, 200);
         sim.TeamOf(1).Extensions.Set(sim.Content, defense);
-        var protectedRival = session.DescribeRivalIntelligence(1)!;
-        Assert.Null(protectedRival.ProtectionAgainstRival);
-        Assert.Equal(new CounterEspionageEffect(sim.State.Turn + 1, 200), protectedRival.RivalProtection);
-        Assert.Null(protectedRival.Research); Assert.Null(Assert.Single(protectedRival.Cities!).Details);
+        var guarded = ScreenProbe.Body(session, EspionageId);
+        Assert.EndsWith("inactive", ScreenProbe.Paragraph(guarded, "protection:ours"));
+        Assert.Contains("1 turns remaining", ScreenProbe.Paragraph(guarded, "protection:theirs"));
+        Assert.Contains("200%", ScreenProbe.Paragraph(guarded, "protection:theirs"));
+        Assert.True(Locked(guarded, "research")); Assert.True(DetailsLocked(guarded));
         sim.State.Turn++;
-        var expired = session.DescribeRivalIntelligence(1)!;
-        Assert.Null(expired.RivalProtection); Assert.NotNull(expired.Research);
-        Assert.NotNull(Assert.Single(expired.Cities!).Details);
+        var expired = ScreenProbe.Body(session, EspionageId);
+        Assert.EndsWith("inactive", ScreenProbe.Paragraph(expired, "protection:theirs"));
+        Assert.False(Locked(expired, "research"));
+        Assert.False(DetailsLocked(expired));
     }
 
     [Fact]
@@ -327,15 +396,20 @@ public sealed class ClientIntelligenceEventsTests
         var sim = session.Sim;
         AddCity(sim, 0, 14);
         sim.TeamOf(0).Techs.Add("research:agriculture");
+        Assert.Null(ScreenProbe.Button(session, EventsId));
         var service = sim.Content.Services.Get<IEventService>().Single();
         for (int i = 0; i < 3000 && service.Pending(sim, 0).Count == 0; i++) sim.Content.TurnSystems.Get("events:turn").Run(sim);
-        var shown = Assert.Single(session.DescribePendingEvents().Take(1));
-        Assert.NotEmpty(shown.Options);
-        var option = shown.Options.First(o => o.Blocked == null);
-        Assert.True(session.ChooseEventOption(shown.Trigger, option.Id));
-        Assert.DoesNotContain(session.DescribePendingEvents(), e => e.EventId == shown.EventId);
+        var pending = service.Pending(sim, 0)[0];
+        Assert.NotNull(ScreenProbe.Button(session, EventsId));
+        var body = ScreenProbe.Body(session, EventsId);
+        var shown = ScreenProbe.Section(body, $"event:{pending.Id}");
+        var option = ViewWalk.All(shown).OfType<ActionButton>().First(b => b.Enabled);
+        session.Screens.Open(EventsId);
+        Assert.True(session.Screens.Press(option.Action));
+        Assert.Null(ViewWalk.Find<Section>(ScreenProbe.Body(session, EventsId), $"event:{pending.Id}"));
         Assert.Contains(session.Notifications, n => n.Kind == "event");
-        Assert.False(session.ChooseEventOption(shown.Trigger, option.Id) && session.DescribePendingEvents().Any(e => e.EventId == shown.EventId));
+        // The button drawn before the choice is stale now: pressing it again does nothing.
+        Assert.False(session.Screens.Press(option.Action));
     }
 
     [Fact]

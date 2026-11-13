@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Ariel.Mods.Tests;
 
+/// <summary>The Revolution and ScriptedWonders mods' city panels and notices, driven through the client's host.</summary>
 public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixture<P7ModFixture>
 {
     private static GameSession Session(Ariel.Content.ContentDb content, out City city)
@@ -16,11 +17,27 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         return new GameSession(sim);
     }
 
+    private static IReadOnlyList<ViewElement>? Panel(GameSession session, City city, string id) =>
+        session.DescribeCity(city)!.Panels.Status.FirstOrDefault(s => s.Id == id) is Section section ? section.Items : null;
+
+    private static IReadOnlyList<ViewElement> Stability(GameSession session, City city) =>
+        Panel(session, city, "revolution:stability") ?? throw new Xunit.Sdk.XunitException("no stability panel");
+
+    private static int Index(IReadOnlyList<ViewElement> panel)
+    {
+        var heading = ViewWalk.Find<Heading>(panel, "status")!.Text;
+        return int.Parse(heading[(heading.LastIndexOf('(') + 1)..^1]);
+    }
+
+    private static bool Press(GameSession session, IReadOnlyList<ViewElement> panel, string control) =>
+        session.Screens.Press(ViewWalk.ActionOf(panel, control));
+
     [Fact]
     public void Stability_is_absent_without_the_mod()
     {
         var session = Session(mods.Wonders, out var city);
-        Assert.Null(session.DescribeCity(city)!.Stability);
+        Assert.Null(Panel(session, city, "revolution:stability"));
+        Assert.Empty(session.SummaryItems());
     }
 
     [Fact]
@@ -28,14 +45,14 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
     {
         var session = Session(mods.Revolution, out var city);
         city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
-        var report = session.DescribeCity(city)!.Stability!;
-        Assert.Equal(CityStabilityStatus.Mutiny, report.Status);
-        Assert.Equal(800, report.Index);
-        Assert.True(report.CanSuppressGold);
+        var panel = Stability(session, city);
+        Assert.Equal("Stability: Mutiny (800)", ViewWalk.Find<Heading>(panel, "status")!.Text);
+        Assert.Equal(Tone.Warn, ViewWalk.Find<Paragraph>(panel, "change")!.Tone);
+        Assert.Contains(session.SummaryItems(), i => i.Id == "unrest");
         long gold = session.Me.Treasury;
-        Assert.True(session.SuppressRebellion(city.Id));
+        Assert.True(Press(session, panel, "suppress_gold"));
         Assert.True(session.Me.Treasury < gold);
-        Assert.True(session.DescribeCity(city)!.Stability!.Index < 800);
+        Assert.True(Index(Stability(session, city)) < 800);
         Assert.Contains(session.Notifications, n => n.Kind == "rebellion");
     }
 
@@ -46,8 +63,8 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 1000 });
         session.Sim.Content.TurnSystems.Get("revolution:rebellions").Run(session.Sim);
         session.Sim.State.Turn++; // any later command collects events
-        session.SuppressRebellion(city.Id);
-        Assert.Contains(session.Notifications, n => n.Kind == "rebellion" && n.Text.Contains("rebelled"));
+        Press(session, Stability(session, city), "suppress_gold");
+        Assert.Contains(session.Notifications, n => n.Kind == "rebellion" && n.Text.Contains("rebelled") && n.Tone == Tone.Warn);
     }
 
     [Fact]
@@ -58,14 +75,16 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
         var garrison = P7ModFixture.Unit(session.Sim, city);
         garrison.MovesLeft = 1;
-        var report = session.DescribeCity(city)!.Stability!;
-        Assert.False(report.CanSuppressGold);
-        Assert.True(report.CanSuppressGarrison);
-        Assert.Null(report.SuppressBlocked);
-        Assert.True(session.SuppressRebellionWithGarrison(city.Id));
+        var panel = Stability(session, city);
+        Assert.Null(ViewWalk.Find<ActionButton>(panel, "suppress_gold"));
+        Assert.NotNull(ViewWalk.Find<ActionButton>(panel, "suppress_garrison"));
+        Assert.Null(ViewWalk.Find<Paragraph>(panel, "blocked"));
+        Assert.True(Press(session, panel, "suppress_garrison"));
         Assert.Equal(0, garrison.MovesLeft);
         Assert.Equal(0, session.Me.Treasury);
-        Assert.True(session.DescribeCity(city)!.Stability!.Index < 800);
+        Assert.True(Index(Stability(session, city)) < 800);
+        // The button drawn before is stale: the garrison has no moves left to spend.
+        Assert.False(Press(session, panel, "suppress_garrison"));
     }
 
     [Fact]
@@ -74,11 +93,11 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         var session = Session(mods.Revolution, out var city);
         session.Sim.State.PlayerById(0).Treasury = 0;
         city.Extensions.Set(session.Sim.Content, new RevolutionCityState { InstabilityIndex = 800 });
-        var report = session.DescribeCity(city)!.Stability!;
-        Assert.False(report.CanSuppressGold);
-        Assert.False(report.CanSuppressGarrison);
-        Assert.Equal("Insufficient gold", report.SuppressBlocked);
-        Assert.False(session.SuppressRebellion(city.Id));
+        var panel = Stability(session, city);
+        Assert.Null(ViewWalk.Find<ActionButton>(panel, "suppress_gold"));
+        Assert.Null(ViewWalk.Find<ActionButton>(panel, "suppress_garrison"));
+        Assert.Equal("Insufficient gold", ViewWalk.Find<Paragraph>(panel, "blocked")!.Text);
+        Assert.False(session.Screens.Press(new SubmitCommand(new SuppressRebellionCommand { Player = 0, CityId = city.Id })));
     }
 
     [Fact]
@@ -88,10 +107,10 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
         var sim = session.Sim;
         city.Buildings.Add("cities:crusade");
         sim.Events.Publish(new BuildingCompleted(city.Id, "cities:crusade"));
-        var script = Assert.Single(session.DescribeCity(city)!.WonderScripts);
-        Assert.True(script.Active);
-        Assert.NotNull(script.SpawnUnit);
-        Assert.InRange(Assert.IsType<int>(script.TurnsToSpawn), 0, script.SpawnInterval);
+        var panel = Panel(session, city, "scripted_wonders:city")!;
+        var script = Assert.Single(ViewWalk.All(panel).OfType<Paragraph>());
+        Assert.Equal("cities:crusade", script.Id);
+        Assert.Matches(@": next .+ in \d+ turns$", script.Text);
         sim.Events.Publish(new ScriptedWonderEffectApplied(city.Id, "cities:crusade", "culture", 5));
         session.SetMessage("");
         session.Submit(new EndTurnCommand { Player = 0 });

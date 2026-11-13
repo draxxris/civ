@@ -137,13 +137,15 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
 
         var screen = s.DescribeCity(city)!;
         Assert.Contains(screen.Religions, religion => religion.Id == Buddhism);
-        Assert.Equal(12, screen.GreatPeopleProgress);
-        Assert.True(screen.GreatPeopleThreshold > 0);
-        Assert.True(screen.GreatPeopleRate > 0);
-        Assert.Equal(1, screen.SettledSpecialists["foundation:specialist_great_artist"]);
-        Assert.Equal(7, screen.GoldenAgeTurns);
-        Assert.True(screen.MaxTradeRoutes > 0);
-        Assert.NotEmpty(screen.TradeRoutes);
+        // The great people and trade mods add their rows to the city screen through panels.
+        var people = ViewWalk.Find<StatLine>(screen.Panels.Stats, "great_people")!;
+        Assert.Matches(@"^12/[1-9]\d*  ·  \+[1-9]\d*/turn$", people.Value);
+        var settled = Assert.IsType<Section>(Assert.Single(screen.Panels.Details, p => p.Id == "great_people:settled"));
+        Assert.EndsWith("×1", ViewWalk.Find<Paragraph>(settled.Items, "foundation:specialist_great_artist")!.Text);
+        Assert.Equal("Golden Age · 7 turns", Assert.IsType<Paragraph>(Assert.Single(s.SummaryItems(), i => i.Id == "golden_age")).Text);
+        var trade = Assert.IsType<Section>(Assert.Single(screen.Panels.Details, p => p.Id == "trade:routes"));
+        Assert.Matches(@"^Trade routes \([1-9]\d*/[1-9]\d*\)$", ViewWalk.Find<Heading>(trade.Items, "heading")!.Text);
+        Assert.Contains(ViewWalk.All(trade.Items), e => e.Id.StartsWith("route:", StringComparison.Ordinal));
 
         var greatPerson = AddUnit(sim, city, "military:artist");
         s.SelectUnit(greatPerson.Id);

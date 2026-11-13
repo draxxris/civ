@@ -20,6 +20,8 @@
     <ProjectReference Include="..\Ariel.Rules\Ariel.Rules.csproj" />
     <ProjectReference Include="..\Ariel.Composition\Ariel.Composition.csproj" />
     <ProjectReference Include="..\Ariel.Client.Core\Ariel.Client.Core.csproj" />
+    <Using Include="Ariel.Presentation" />
+    <!-- Build-order references only: the client never compiles against a mod or its API. -->
     <ProjectReference Include="..\Mods\CardResearch\Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\TechTree\Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\GreatPeople\Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />

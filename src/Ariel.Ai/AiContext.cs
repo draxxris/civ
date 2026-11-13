@@ -139,6 +139,12 @@ public sealed class AiContext
         _segment = new(this);
     }
 
+    /// <summary>A context for asking what something is worth to <paramref name="player"/> outside its turn, as a screen
+    /// previewing a deal for a computer player's answer does. It reads the game only: <see cref="Issue"/> throws.</summary>
+    public static AiContext Observe(Simulation sim, int player) => new(sim, player) { _observer = true };
+
+    private bool _observer;
+
     /// <summary>Discard every derived entity view and query after a mutation, including direct service calls.</summary>
     public void Refresh()
     {
@@ -201,6 +207,7 @@ public sealed class AiContext
     /// decision sees its effect.</summary>
     public bool Issue(GameCommand command)
     {
+        if (_observer) throw new InvalidOperationException("an observing AI context cannot issue commands");
         bool ok = Sim.TryApply(command, out _);
         if (ok)
         {

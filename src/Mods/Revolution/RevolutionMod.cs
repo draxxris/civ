@@ -20,6 +20,9 @@ public sealed class RevolutionMod : IPreparableMod
         context.Content<RevolutionRulesDef>().Register(rules);
         var service = new RevolutionService();
         context.RegisterService<IRevolutionService>("queries", service);
+        context.RegisterService<Ariel.Presentation.ICityPanel>("stability", new StabilityCityPanel());
+        context.RegisterService<Ariel.Presentation.IPlayerSummaryItem>("unrest_summary", new UnrestSummary());
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new RevolutionNotices());
         context.RegisterService<IModifierSource>("unrest", service);
         context.RegisterStateComponent<RevolutionCityState>("city_state");
         context.RegisterCommand<SuppressRebellionCommand>("suppress_rebellion");

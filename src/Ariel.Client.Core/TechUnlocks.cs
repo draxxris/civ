@@ -1,5 +1,4 @@
 using Ariel.Content;
-using Ariel.Mods.ProjectsVictory;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Client;
@@ -40,9 +39,9 @@ public sealed partial class GameSession
         Scan<S.BuildingDef>("Buildings", _ => null);
         Scan<S.UnitDef>("Units", _ => null);
         Scan<S.ImprovementDef>("Improvements", d => d.PrereqTech);
-        Scan<ProjectDef>("Projects", d => d.TechPrereq);
         Scan<S.CivicDef>("Civics", _ => null);
-        Scan<Ariel.Mods.Corporations.CorporationDef>("Corporations", d => d.FoundingTech);
+        foreach (var source in Sim.Content.Services.Get<IPediaSource>().Where(s => s.ListsUnlocks))
+            foreach (var item in source.Items(Sim.Content)) Add(source.Category, item.Definition, item.UnlockedBy);
         Scan<S.BonusDef>("Resources", d => d.RevealTech);
         Scan<S.BonusDef>("Resources", d => d.TradeTech);
         Scan<S.TechDef>("Technologies", _ => null);

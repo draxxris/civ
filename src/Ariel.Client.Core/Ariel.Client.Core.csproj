@@ -4,15 +4,7 @@
     <ProjectReference Include="..\Ariel.Rules\Ariel.Rules.csproj" />
     <ProjectReference Include="..\Ariel.Composition\Ariel.Composition.csproj" />
     <ProjectReference Include="..\Ariel.Net\Ariel.Net.csproj" />
-    <!-- Screens for optional features read those mods' published APIs; a missing provider means no service. -->
-    <ProjectReference Include="..\Mods\Corporations\Api\Ariel.Mods.Corporations.Api.csproj" />
-    <ProjectReference Include="..\Mods\Events\Api\Ariel.Mods.Events.Api.csproj" />
-    <ProjectReference Include="..\Mods\Diplomacy\Api\Ariel.Mods.Diplomacy.Api.csproj" />
-    <ProjectReference Include="..\Mods\Espionage\Api\Ariel.Mods.Espionage.Api.csproj" />
-    <ProjectReference Include="..\Mods\GreatPeople\Api\Ariel.Mods.GreatPeople.Api.csproj" />
-    <ProjectReference Include="..\Mods\ProjectsVictory\Api\Ariel.Mods.ProjectsVictory.Api.csproj" />
-    <ProjectReference Include="..\Mods\Revolution\Api\Ariel.Mods.Revolution.Api.csproj" />
-    <ProjectReference Include="..\Mods\ScriptedWonders\Api\Ariel.Mods.ScriptedWonders.Api.csproj" />
-    <ProjectReference Include="..\Mods\Trade\Api\Ariel.Mods.Trade.Api.csproj" />
+    <!-- No mod API: a feature mod presents itself through the screen contracts in Ariel.Rules (Ariel.Presentation). -->
+    <Using Include="Ariel.Presentation" />
   </ItemGroup>
 </Project>

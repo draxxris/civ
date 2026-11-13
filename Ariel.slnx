@@ -44,6 +44,7 @@
     <Project Path="tests/TestMods/ProductionWish/Ariel.TestMods.ProductionWish.csproj" />
     <Project Path="tests/TestMods/CivicExtension/Ariel.TestMods.CivicExtension.csproj" />
     <Project Path="tests/TestMods/ResourceVariety/Ariel.TestMods.ResourceVariety.csproj" />
+    <Project Path="tests/TestMods/Bulletin/Ariel.TestMods.Bulletin.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Ariel.ContentImport/Ariel.ContentImport.csproj" />

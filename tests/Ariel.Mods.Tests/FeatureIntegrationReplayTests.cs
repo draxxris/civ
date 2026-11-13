@@ -15,6 +15,22 @@ public sealed class FeatureIntegrationReplayTests
     private static readonly Lazy<ContentDb> Content = new(() => BuildContent(false));
     private static readonly Lazy<ContentDb> ShiftedCalendar = new(() => BuildContent(true));
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
+    private const string Espionage = "espionage:screen";
+
+    /// <summary>The espionage screen with rival team 1 and one of its cities inspected, as a player would set it.</summary>
+    private static IReadOnlyList<ViewElement> Intelligence(GameSession session, int city)
+    {
+        ScreenProbe.Press(session, Espionage, "rival:1");
+        ScreenProbe.Press(session, Espionage, $"city:{city}");
+        return ScreenProbe.Body(session, Espionage);
+    }
+
+    private static bool ResearchShown(IReadOnlyList<ViewElement> body) => ScreenProbe.Paragraph(ScreenProbe.Section(body, "research"), "locked") is null;
+    private static bool DetailsShown(IReadOnlyList<ViewElement> body) => ScreenProbe.Paragraph(ScreenProbe.Section(body, "cities"), "details:locked") is null;
+    private static long Points(IReadOnlyList<ViewElement> body) => long.Parse(ScreenProbe.Paragraph(body, "summary")!.Split(' ')[0]);
+    private static IEnumerable<long> Thresholds(IReadOnlyList<ViewElement> body) =>
+        new[] { "Demographics", "CityVisibility", "InspectResearch", "InvestigateCity" }.Select(kind =>
+            long.Parse(System.Text.RegularExpressions.Regex.Match(ScreenProbe.Paragraph(body, $"permission:{kind}")!, @"requires (\d+) points").Groups[1].Value));
 
     private static ContentDb BuildContent(bool shifted)
     {
@@ -131,7 +147,7 @@ public sealed class FeatureIntegrationReplayTests
         var home = sim.State.Cities.Single(c => c.Owner == 0);
         var target = sim.State.Cities.Single(c => c.Owner == 1);
         var defender = P6RulesScenario.AddUnit(sim, 1, home, "military:spy");
-        Assert.NotNull(new GameSession(sim).DescribeRivalIntelligence(1)!.Research);
+        Assert.True(ResearchShown(Intelligence(new GameSession(sim), target.Id)));
         Apply(sim, EspionageMissions.Order(1, defender.Id, EspionageMissionKind.CounterEspionage));
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
         Assert.Equal(300, Service<IEspionageService>(sim).Points(sim, 1, 0)); // 100 flat, neutral ratio
@@ -144,12 +160,13 @@ public sealed class FeatureIntegrationReplayTests
             foreach (var session in sessions)
             {
                 var game = session.Sim;
-                var intel = session.DescribeRivalIntelligence(1)!;
-                Assert.Equal(new CounterEspionageEffect(expiry, 200), intel.RivalProtection);
+                var intel = Intelligence(session, target.Id);
+                Assert.Contains($"{expiry - game.State.Turn} turns remaining", ScreenProbe.Paragraph(intel, "protection:theirs"));
+                Assert.Contains("cost 200% of normal", ScreenProbe.Paragraph(intel, "protection:theirs"));
                 // Team 1's counter mission spent 100 points of its own investment, so team 0's ratio is 99%,
                 // doubled to 198% by the protection. Thresholds follow the ratio, not a fixed number.
-                Assert.Equal(new long[] { 50, 100, 150, 200 }.Select(b => b * 198 / 100), intel.Permissions.Select(p => p.Threshold));
-                Assert.NotNull(Assert.Single(intel.Cities!).Details);
+                Assert.Equal(new long[] { 50, 100, 150, 200 }.Select(b => b * 198 / 100), Thresholds(intel));
+                Assert.True(DetailsShown(intel));
                 if (game.State.Turn != expiry - 1) continue;
                 var spy = P6RulesScenario.AddUnit(game, 0, game.State.CityById(target.Id), "military:spy");
                 long victim = game.State.PlayerById(1).Treasury, own = game.State.PlayerById(0).Treasury;
@@ -157,10 +174,10 @@ public sealed class FeatureIntegrationReplayTests
                 Assert.True(game.Events.Published.OfType<EspionageMissionResult>().Last().Success);
                 Assert.Equal(own + victim / 4, game.State.PlayerById(0).Treasury);
                 Assert.Equal(victim - victim / 4, game.State.PlayerById(1).Treasury);
-                var spent = session.DescribeRivalIntelligence(1)!;
-                Assert.Equal(301, spent.Points); // 400 less 50 * 198% protection, the ratio being 99%.
-                Assert.Null(Assert.Single(spent.Cities!).Details);
-                Assert.NotNull(Assert.Single(intel.Cities!).Details); // Detached old snapshot.
+                var spent = Intelligence(session, target.Id);
+                Assert.Equal(301, Points(spent)); // 400 less 50 * 198% protection, the ratio being 99%.
+                Assert.False(DetailsShown(spent));
+                Assert.True(DetailsShown(intel)); // A view drawn before never aliases live state.
             }
             SameReplay(sim, resumed);
             sim.AdvanceTurn(); resumed.AdvanceTurn();
@@ -168,16 +185,17 @@ public sealed class FeatureIntegrationReplayTests
         }
         foreach (var session in sessions)
         {
-            var intel = session.DescribeRivalIntelligence(1)!;
-            Assert.Null(intel.RivalProtection);
-            Assert.Equal(301, intel.Points);
-            Assert.NotNull(Assert.Single(intel.Cities!).Details);
+            var intel = Intelligence(session, target.Id);
+            Assert.EndsWith("inactive", ScreenProbe.Paragraph(intel, "protection:theirs"));
+            Assert.Equal(301, Points(intel));
+            Assert.True(DetailsShown(intel));
             // Protection is gone, but team 1's counter mission lowered its investment: the ratio is 99%, so 49.
             Assert.Equal(49, Service<IEspionageService>(session.Sim).MissionCost(session.Sim, 0, target.Id, EspionageMissionKind.StealTreasury));
             foreach (var unit in session.Sim.State.Units.Where(u => u.Owner == 1).ToArray()) session.Sim.State.RemoveUnit(unit.Id);
             session.Sim.State.RemoveCity(target.Id);
-            Assert.Null(session.DescribeRivalIntelligence(1));
-            Assert.Empty(session.DescribeEspionage().Rivals);
+            var gone = ScreenProbe.Body(session, Espionage);
+            Assert.Empty(ScreenProbe.ButtonIds(gone, "rival:"));
+            Assert.NotNull(ScreenProbe.Paragraph(gone, "pick"));
         }
         SameReplay(sim, resumed);
     }
@@ -233,7 +251,7 @@ public sealed class FeatureIntegrationReplayTests
         sight.Recompute(sim);
         var baseline = new GameSession(sim);
         Assert.Equal(new TileOverlay(Ariel.Client.Sight.Fogged, bonus.Id, 1, null), baseline.OverlayOf(tile));
-        string locked = CanonicalJson.Serialize(baseline.DescribeRivalIntelligence(1));
+        string locked = ViewWalk.Text(Intelligence(baseline, target.Id));
         var remembered = baseline.OverlayOf(tile);
         var mutated = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         var hidden = mutated.State.Plots[tile.Value];
@@ -241,7 +259,7 @@ public sealed class FeatureIntegrationReplayTests
         hidden.Kind = PlotKind.Peak; hidden.Feature = "world:jungle";
         mutated.State.CityById(target.Id).ProductionQueue.Add(new("missing:private_kind", "missing:private_item", 999));
         var privateSnapshot = new GameSession(SaveGame.Load(mutated.Content, SaveGame.Save(mutated)));
-        Assert.Equal(locked, CanonicalJson.Serialize(privateSnapshot.DescribeRivalIntelligence(1)));
+        Assert.Equal(locked, ViewWalk.Text(Intelligence(privateSnapshot, target.Id)));
         Assert.Equal(remembered, privateSnapshot.OverlayOf(tile));
         // Invalid private queue proves the locked query never resolves hidden content. Restore a valid
         // queue for settlement; turn systems legitimately own and evaluate the real production queue.
@@ -252,9 +270,9 @@ public sealed class FeatureIntegrationReplayTests
         for (int turn = 0; turn < 3; turn++)
         {
             withUi.Overlays = new(turn % 2 == 0, false, true, false);
-            withUi.Summary(); withUi.DescribeEspionage(); withUi.DescribeRivalIntelligence(1);
+            withUi.Summary(); withUi.SummaryItems(); _ = withUi.Screens.View;
             Assert.Equal(remembered, withUi.OverlayOf(tile));
-            Assert.Equal(locked, CanonicalJson.Serialize(withUi.DescribeRivalIntelligence(1)));
+            Assert.Equal(locked, ViewWalk.Text(Intelligence(withUi, target.Id)));
             SameReplay(withoutUi, withUi.Sim);
             withoutUi.AdvanceTurn(); withUi.EndTurn(); // Presentation changes on one peer only.
             SameReplay(withoutUi, withUi.Sim);

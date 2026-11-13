@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
+using Ariel.Presentation;
 using Ariel.Modding;
 
 namespace Ariel.Mods.Corporations;
@@ -22,6 +23,10 @@ public sealed class CorporationsMod : IPreparableMod
         CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
+        context.RegisterService<IGameScreen>("screen", new CorporationsScreen());
+        context.RegisterService<ICityPanel>("city", new CorporationsCityPanel());
+        context.RegisterService<INotificationSource>("notices", new CorporationNotices());
+        context.RegisterService<IPediaSource>("pedia", new CorporationPedia());
         context.RegisterService<ICityCorporations>("city_corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
         context.RegisterStateComponent<CorporationCityState>("city_state");

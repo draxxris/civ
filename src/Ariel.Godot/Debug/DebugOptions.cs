@@ -12,7 +12,11 @@ namespace Ariel.Client;
 /// --shots tools/shots/poses/poses.json   several captures from one launch: [{name, focus, focusTile, pitch, yaw, distance, terrainDebug, wireframe}]
 /// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images;
 ///                            interface stages go to its gui subfolder)
-/// --stage name               setup|map|city|civics|research|path|world|terrain|rivers|peak|wrap
+/// --stage name               setup|map|city|civics|research|path|world|terrain|rivers|peak|wrap, or a base dialog
+///                            (religion|conquest|pedia|techtree|load)
+/// --open-screen id           open a screen a mod registers, by id (espionage:screen) or by the id of a mod with one
+///                            screen (espionage); rivals are met first so a screen about them has content
+/// --press id[,id...]         then press these controls of the open screen by element id, in order (rival:1)
 /// --focus kind               hills|forest|jungle|road|peak|river|city: centre on the best patch of that kind
 /// --focus-tile col,row       centre on a tile
 /// --pitch deg --yaw deg --distance n   camera pose (yaw 0 looks north; pitch 62 and distance 18 are the defaults)
@@ -66,6 +70,10 @@ internal sealed record DebugOptions
     public string? LoadSaveFile { get; private init; }
     public bool Wireframe { get; private init; }
     public bool Stats { get; private init; }
+    /// <summary>A registered mod screen to open once the game has launched (see <see cref="ScreenHost"/>).</summary>
+    public string? OpenScreen { get; private init; }
+    /// <summary>Element ids of the open screen's controls to press, in order, once it is open.</summary>
+    public IReadOnlyList<string> Press { get; private init; } = [];
     public IReadOnlyDictionary<string, double> Tuning { get; private init; } = new Dictionary<string, double>();
     public double ScatterDensityScale { get; private init; } = 1;
     public double? TreeKeep { get; private init; }
@@ -105,6 +113,8 @@ internal sealed record DebugOptions
             Pitch = Float("--pitch"), Yaw = Float("--yaw"), Distance = Float("--distance"), Clean = args.Contains("--clean"),
             ScenarioFile = Raw("--scenario"), DumpScenarioFile = Raw("--dump-scenario"),
             SaveToFile = Raw("--save-to"), LoadSaveFile = Raw("--load-save"), Wireframe = args.Contains("--wireframe"), Stats = args.Contains("--stats"), Tuning = tuning,
+            OpenScreen = Raw("--open-screen"),
+            Press = Raw("--press")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [],
             ScatterDensityScale = Float("--scatter-density-scale") ?? 1,
             TreeKeep = keep.TryGetValue("tree", out var tk) ? tk : null, OtherKeep = keep.TryGetValue("other", out var ok) ? ok : null,
         };
@@ -130,7 +140,7 @@ internal sealed record DebugOptions
     }
 
     /// <summary>Stages whose capture shows an interface screen. The committed images live in the <c>gui</c> subfolder.</summary>
-    private static readonly HashSet<string> GuiStages = ["setup", "lobby", "map", "city", "civics", "research", "conquest", "espionage"];
+    private static readonly HashSet<string> GuiStages = ["setup", "lobby", "map", "city", "civics", "research", "conquest", "corporations", "diplomacy", "espionage", "events"];
 
     /// <summary>The PNG path for a capture name: in <see cref="OutDir"/> when given, else the committed screenshots folder.</summary>
     public string PathFor(string name) => OutDir != null ? System.IO.Path.Combine(OutDir, name + ".png")

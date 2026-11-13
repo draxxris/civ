@@ -25,16 +25,10 @@ internal sealed partial class CityUi
     private readonly VBoxContainer _choicesBox = Ui.VBox(6);
     private readonly Label _citizensHeading = Ui.Heading("");
     private readonly VBoxContainer _citizensBox = Ui.VBox(6);
-    private readonly VBoxContainer _tradeBox = Ui.VBox(6);
-    private readonly Label _tradeHeading = Ui.Heading("");
-    private readonly VBoxContainer _tradeRows = Ui.VBox(6);
-    private readonly Label _tradeEmpty = Ui.Text("No active routes.", 13, Ui.Dim);
-    private readonly VBoxContainer _specialistsBox = Ui.VBox(6);
     private readonly Label _buildingsText = Ui.Text("", 13, Ui.Dim);
     private int _queueCity = -1;
     private IReadOnlyList<ProductionTab> _shownTabs = [];
     private string? _shownHurryKey, _shownConscriptKey, _shownChoicesKey, _shownCitizensKey;
-    private string? _shownTradeKey, _shownSpecialistsKey;
 
     /// <summary>One production-queue row: created once per position and updated in place, so a reorder keeps its
     /// widgets and its plate pattern. <see cref="Index"/> is rewritten on every refresh and the callbacks read it at
@@ -78,12 +72,8 @@ internal sealed partial class CityUi
         box.AddChild(_choicesBox);
         box.AddChild(_citizensHeading);
         box.AddChild(_citizensBox);
-        box.AddChild(_tradeBox);
-        _tradeBox.AddChild(_tradeHeading);
-        _tradeBox.AddChild(_tradeRows);
-        _tradeBox.AddChild(_tradeEmpty);
-        box.AddChild(_specialistsBox);
-        _specialistsBox.Visible = false;
+        _panelDetails.Visible = false;
+        box.AddChild(_panelDetails);
         box.AddChild(Ui.Heading("Buildings"));
         box.AddChild(_buildingsText);
         _right.AddChild(Ui.Scroll(box));
@@ -101,8 +91,8 @@ internal sealed partial class CityUi
         RefreshConscript(c);
         RefreshChoices(city, c);
         RefreshCitizens(c);
-        RefreshTrade(c);
-        RefreshSpecialists(c);
+        _panelDetails.Visible = c.Panels.Details.Count > 0;
+        _detailsRenderer.Show(_panelDetails, c.Panels.Details);
         Ui.Set(_buildingsText, c.Buildings.Count == 0 ? "None" : string.Join(", ", c.Buildings));
     }
 
@@ -303,48 +293,4 @@ internal sealed partial class CityUi
         row.AddChild(Ui.Button("+", () => WithCity(cityId, city => _session.ChangeSpecialist(city, id, 1)), enabled: canAssign && s.Count < s.Slots, size: 12));
         return row;
     }
-
-    private void RefreshTrade(CityScreen c)
-    {
-        Ui.Set(_tradeHeading, $"Trade routes ({c.TradeRoutes.Count}/{c.MaxTradeRoutes})");
-        var key = new StringBuilder().Append(c.Id);
-        foreach (var route in c.TradeRoutes)
-        {
-            var partner = _session.Sim.State.FindCity(route.PartnerCity);
-            key.Append('|').Append(route.PartnerCity).Append('~').Append(partner?.Name).Append('~').Append(route.Foreign)
-                .Append('~').Append(route.Overseas).Append('~').Append(route.ProfitHundredths);
-        }
-        string identity = key.ToString();
-        if (identity == _shownTradeKey) return;
-        _shownTradeKey = identity;
-        Ui.Clear(_tradeRows);
-        foreach (var route in c.TradeRoutes)
-        {
-            var partner = _session.Sim.State.FindCity(route.PartnerCity);
-            string flags = string.Join(", ", new[] { route.Foreign ? "foreign" : "domestic", route.Overseas ? "overseas" : "" }.Where(x => x.Length > 0));
-            string partnerName = partner?.Name ?? "City " + route.PartnerCity;
-            _tradeRows.AddChild(Ui.Text($"{partnerName}  ·  {route.ProfitHundredths / 100} gold  ({flags})", 13, Ui.Dim));
-        }
-        _tradeRows.Visible = c.TradeRoutes.Count > 0;
-        _tradeEmpty.Visible = c.TradeRoutes.Count == 0;
-    }
-
-    private void RefreshSpecialists(CityScreen c)
-    {
-        var key = new StringBuilder().Append(c.Id);
-        foreach (var (id, count) in c.SettledSpecialists.OrderBy(p => p.Key, StringComparer.Ordinal))
-            key.Append('|').Append(id).Append('~').Append(count).Append('~').Append(SpecialistName(id));
-        string identity = key.ToString();
-        if (identity == _shownSpecialistsKey) return;
-        _shownSpecialistsKey = identity;
-        Ui.Clear(_specialistsBox);
-        _specialistsBox.Visible = c.SettledSpecialists.Count > 0;
-        if (c.SettledSpecialists.Count == 0) return;
-        _specialistsBox.AddChild(Ui.Heading("Settled great people"));
-        foreach (var (id, count) in c.SettledSpecialists.OrderBy(p => p.Key, StringComparer.Ordinal))
-            _specialistsBox.AddChild(Ui.Text($"{SpecialistName(id)} ×{count}", 13, Ui.Dim));
-    }
-
-    private string SpecialistName(string id) =>
-        _session.Sim.Content.TryGet<Ariel.Content.Schema.SpecialistDef>(id, out var specialist) ? specialist.Name : id;
 }

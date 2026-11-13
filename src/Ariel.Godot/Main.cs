@@ -35,7 +35,6 @@ public partial class Main : Node3D
     /// <summary>How far a scene's own coordinates moved to fit the map it was sized to, so <c>--focus-tile</c> can keep
     /// using the numbers the file was written with.</summary>
     private (int Col, int Row) _sceneShift;
-    private EspionageCapture? _espionageCapture;
 
     public override void _Ready()
     {
@@ -400,8 +399,13 @@ public partial class Main : Node3D
     {
         if (_debug.Stage == "civics") _game!.Ui.ToggleGovernment();
         if (_debug.Stage == "research") _game!.Ui.ToggleResearch();
-        _espionageCapture?.Open(_game!.Ui);
-        if (_debug.ScreenshotPath != null && _debug.Stage != "espionage") _game!.Ui.OpenDebugPanel(_debug.Stage);
+        bool dialog = _debug.ScreenshotPath != null && _game!.Ui.OpenDebugPanel(_debug.Stage);
+        if (_debug.OpenScreen is { } name && !OpenScreen(name)) GetTree().Quit(1);
+        // A stage that names no base dialog may name a mod's screen (`--stage diplomacy`), the way the screens'
+        // committed captures are taken.
+        else if (_debug.OpenScreen is null && !dialog && _debug.ScreenshotPath != null && ScreenNamed(_debug.Stage) is { } screen)
+            _game!.Ui.ToggleScreen(screen.Id);
+        foreach (var id in _debug.Press) PressInScreen(id);
     }
 
     /// <summary>Screenshot runs can advance turns and open the city screen before the first frame.</summary>
@@ -412,10 +416,10 @@ public partial class Main : Node3D
         PrepareCaptureScene(session);
         if (_debug.ScreenshotPath == null) return;
         Input.WarpMouse(new Vector2(700, 10));
-        if (_debug.Stage is "diplomacy" or "espionage")
+        // A screen about other players needs someone to have met.
+        if (_debug.OpenScreen != null || ScreenNamed(_debug.Stage, session) != null)
             foreach (var rival in session.Sim.State.Players.Where(p => p.Id != session.LocalPlayer))
                 session.Sim.Rules().Relations.EstablishContact(session.Sim, session.Me.TeamId, rival.TeamId);
-        if (_debug.Stage == "espionage") _espionageCapture = new EspionageCapture(session);
         if (_debug.Stage is "city" or "map-city" or "conquest") FoundScreenshotCity(session);
         if (_debug.Stage == "conquest" && session.Sim.State.Cities.FirstOrDefault() is { } captured)
             captured.Extensions.Set(session.Sim.Content, new CityRuleState { PendingConquestChoice = true });
@@ -475,20 +479,37 @@ public partial class Main : Node3D
         foreach (var tile in session.Sim.State.Grid.Tiles) visibility.RevealPlot(session.Sim, tile, session.Me.TeamId);
     }
 
-    private bool AdvanceEspionageCapture()
+    /// <summary>Opens a registered screen for a capture: by its id, or by its mod's id when that mod has one screen.
+    /// An unknown name lists the screens this content has and fails the run.</summary>
+    private bool OpenScreen(string name)
     {
-        if (_espionageCapture is null || !_espionageCapture.Advance(_game!.Ui)) return false;
-        string path = _debug.ScreenshotPath!;
-        _shotPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path) ?? ".",
-            System.IO.Path.GetFileNameWithoutExtension(path) + "-" + _espionageCapture.Stage + ".png");
-        _framesSinceReady = 0;
-        return true;
+        if (ScreenNamed(name) is { } match) { _game!.Ui.ToggleScreen(match.Id); return true; }
+        GD.PrintErr($"--open-screen {name}: no such screen; registered: {string.Join(", ", _game!.Session.Screens.Screens.Select(s => s.Id))}");
+        return false;
+    }
+
+    private IGameScreen? ScreenNamed(string name) => ScreenNamed(name, _game!.Session);
+
+    /// <summary>The screen with this id, or the only screen of the mod with this id.</summary>
+    private static IGameScreen? ScreenNamed(string name, GameSession session)
+    {
+        var screens = session.Screens.Screens;
+        var byMod = screens.Where(s => s.Id.StartsWith(name + ":", StringComparison.Ordinal)).ToList();
+        return screens.FirstOrDefault(s => s.Id == name) ?? (byMod.Count == 1 ? byMod[0] : null);
+    }
+
+    /// <summary>Presses the control with this id in the open screen, as a click would, for a capture of a state the
+    /// screen only reaches through its own controls (a selected row, a chosen tab).</summary>
+    private void PressInScreen(string id)
+    {
+        var screens = _game!.Session.Screens;
+        var action = screens.View is { } view ? ViewWalk.ActionOf(view.Body, id) : null;
+        if (action is null || !screens.Press(action)) GD.PrintErr($"--press {id}: nothing to press with that id in {screens.OpenId ?? "no open screen"}");
     }
 
     private void TakeScreenshot()
     {
         _framesSinceReady = -1;
-        _espionageCapture?.Check(_game!.Ui);
         var image = GetViewport().GetTexture().GetImage();
         var path = System.IO.Path.GetFullPath(_shotPath ?? _debug.ScreenshotPath!);
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
@@ -496,7 +517,7 @@ public partial class Main : Node3D
         GD.Print($"screenshot {path}: {error}");
         if (error == Error.Ok && _debug.Stats && _game != null) WriteStats(path);
         if (error != Error.Ok) { GetTree().Quit(1); return; }
-        if (AdvanceEspionageCapture() || AdvanceShotPose() || AdvanceStageTour()) return;
+        if (AdvanceShotPose() || AdvanceStageTour()) return;
         GetTree().Quit();
     }
 
