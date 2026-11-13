@@ -57,7 +57,7 @@ public static class TurnPhase
     public const int Units = 8000;
     /// <summary>Global map updates; end of the nested player interval.</summary>
     public const int Map = 9000;
-    /// <summary>Barbarians and generalized spawns.</summary>
+    /// <summary>Generalized spawns, such as random events; the Barbarians mod's spawns run one slot after.</summary>
     public const int Spawns = 9100;
     /// <summary>Environment, holy cities and headquarters.</summary>
     public const int Environment = 9200;

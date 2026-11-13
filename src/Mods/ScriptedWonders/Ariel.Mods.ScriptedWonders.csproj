@@ -5,6 +5,9 @@
     <ProjectReference Include="../../Ariel.Rules/Ariel.Rules.csproj" Private="false" />
     <!-- The API this mod publishes ships beside it in the mod folder; mod.json names it. -->
     <ProjectReference Include="Api/Ariel.Mods.ScriptedWonders.Api.csproj" />
+    <!-- Border wonders bar barbarians when the Barbarians mod is loaded. Copied into this folder, so the API resolves
+         when that mod is absent. -->
+    <ProjectReference Include="../Barbarians/Api/Ariel.Mods.Barbarians.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

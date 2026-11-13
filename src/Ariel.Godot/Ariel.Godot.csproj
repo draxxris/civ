@@ -28,6 +28,7 @@
     <ProjectReference Include="..\Mods\Trade\Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\RangedCombat\Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\AirCombat\Ariel.Mods.AirCombat.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Mods\Barbarians\Ariel.Mods.Barbarians.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Religion\Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Diplomacy\Ariel.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\ProjectsVictory\Ariel.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
@@ -48,7 +49,7 @@
     </ItemGroup>
     <RemoveDir Directories="@(FormerMod->'$(OutDir)mods/%(Identity)')" />
     <ItemGroup>
-      <ModBin Include="CardResearch;TechTree;GreatPeople;Trade;RangedCombat;AirCombat;Religion;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
+      <ModBin Include="CardResearch;TechTree;GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.dll" ModDir="%(ModBin.Identity)" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.pdb" ModDir="%(ModBin.Identity)" />
       <ModMeta Include="..\Mods\%(ModBin.Identity)\mod.json" ModDir="%(ModBin.Identity)" />

@@ -4,7 +4,8 @@ using Ariel.Game;
 
 namespace Ariel.Rules.Military;
 
-/// <summary>Deterministic movement, melee combat, unit lifecycle and barbarian rules.</summary>
+/// <summary>Deterministic movement, melee combat and unit lifecycle, and the rules every hostile-faction unit follows.
+/// Creating, spawning and moving the faction is the Barbarians mod's.</summary>
 public sealed class MilitaryModule : IPreparableMod
 {
     private static readonly ModJsonFile<DomainDef[]> Domains = new("data/domain.json");
@@ -42,7 +43,6 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterService<IUnitActionSource>("missions", missions);
         context.RegisterCommand<PerformMissionCommand>("perform_mission");
         context.RegisterService<IUnitService>("units", units);
-        context.RegisterService<IBarbarianFaction>("barbarians", new BarbarianFaction());
         context.RegisterService<INavalBlockadeService>("blockades", new NavalBlockades());
         context.RegisterService<IUnitSupportService>("support", units);
         context.RegisterService<Ariel.Content.IModifierSource>("promotions", new PromotionEffects());
@@ -60,8 +60,6 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterCommand<DisbandUnitCommand>("disband_unit");
         context.RegisterCommand<RazeCityCommand>("raze_city");
         context.TurnSystems.Register(new UnitTurnSystem(units));
-        context.TurnSystems.Register(new BarbarianSpawns());
-        context.TurnSystems.Register(new BarbarianBehavior());
         context.Subscribe<UnitCreated>("initialize", (sim, created) => units.Initialize(sim, created.Unit));
         context.Subscribe<GlobalWarmingOccurred>("flood_evacuation", (sim, flood) => FloodedUnits.Evacuate(sim, movement, flood));
         context.Subscribe<TurnStarted>("begin", (sim, _) =>

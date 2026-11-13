@@ -109,7 +109,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var sim = P7ModFixture.Scenario(mods.Revolution);
         var city = P7ModFixture.City(sim);
         State(sim, city, 1000);
-        var faction = sim.Rules().Barbarians;
+        var faction = sim.Rules().HostileFaction!;
         int players = sim.State.Players.Count;
 
         int? barbarian = rebellionFirst ? null : faction.Ensure(sim);
@@ -123,8 +123,30 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal([rebel], sim.TeamOf(rebel).Members);
         Assert.All(sim.State.Teams.Where(t => t.Id != sim.TeamOf(rebel).Id), t => Assert.Contains(t.Id, sim.TeamOf(rebel).Wars));
         var loaded = SaveGame.Load(mods.Revolution, SaveGame.Save(sim));
-        Assert.Equal(rebel, loaded.Rules().Barbarians.Ensure(loaded));
+        Assert.Equal(rebel, loaded.Rules().HostileFaction!.Ensure(loaded));
         Assert.Equal(players + 1, loaded.State.Players.Count);
+    }
+
+    [Fact]
+    public void Without_the_barbarians_mod_a_rebellion_releases_pressure_but_fields_no_rebels()
+    {
+        var content = ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "barbarians")
+            .Append(ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Revolution"))));
+        Assert.Null(content.Rules().HostileFaction);
+        var sim = P7ModFixture.Scenario(content);
+        var city = P7ModFixture.City(sim);
+        var state = State(sim, city, 1000);
+        int players = sim.State.Players.Count, units = sim.State.Units.Count;
+
+        Rebellions(sim);
+
+        var rebellion = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
+        Assert.Equal(-1, rebellion.RebelPlayer);
+        Assert.Empty(rebellion.Units);
+        Assert.True(state.InstabilityIndex < 1000);
+        Assert.Equal(players, sim.State.Players.Count);
+        Assert.Equal(units, sim.State.Units.Count);
+        Assert.Null(PlayerRules.BarbarianPlayer(sim));
     }
 
     [Fact]

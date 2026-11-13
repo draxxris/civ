@@ -1,0 +1,9 @@
+{
+  "id": "barbarians",
+  "name": "Barbarians",
+  "version": "1.0.0",
+  "assembly": "Ariel.Mods.Barbarians.dll",
+  "api": "Ariel.Mods.Barbarians.Api.dll",
+  "dependencies": ["military"],
+  "references": ["cities", "foundation", "military", "peoples", "research", "world"]
+}

@@ -117,7 +117,7 @@ public sealed class AiPlannerTests
         Assert.Null(rules.Scores);
         Assert.Null(rules.CombatLeaders);
         Assert.Empty(rules.FreeBuildingGrants);
-        Assert.Empty(rules.BarbarianBarriers);
+        Assert.Null(rules.HostileFaction);
         Assert.DoesNotContain(content.Services.Get<IAiPlanner>(), p => !p.Id.StartsWith("ai:", StringComparison.Ordinal));
         Assert.Empty(content.Services.Get<IProductionWishes>());
 

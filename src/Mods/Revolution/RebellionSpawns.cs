@@ -11,7 +11,8 @@ internal static class RebellionSpawns
         var candidates = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).Distinct().OrderBy(t => t.Value)
             .Where(t => Walkable(sim, city, t)).ToArray();
         var state = RevolutionService.Edit(sim, city);
-        if (candidates.Length == 0)
+        // Rebels belong to the hostile faction; without one (no Barbarians mod) a rebellion only releases pressure.
+        if (candidates.Length == 0 || sim.Rules().HostileFaction is null)
         {
             int released = Math.Min(state.InstabilityIndex, rules.RebellionRelease);
             state.Suppress(released);
@@ -21,7 +22,7 @@ internal static class RebellionSpawns
         }
         Shuffle(sim, candidates);
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
-        int rebel = sim.Rules().Barbarians.Ensure(sim);
+        int rebel = sim.Rules().HostileFaction!.Ensure(sim);
         var units = new List<int>();
         foreach (var tile in tiles)
         {

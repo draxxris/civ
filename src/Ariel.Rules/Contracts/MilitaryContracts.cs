@@ -174,12 +174,19 @@ public sealed class MilitaryUnitState
         _fortifyTurns = 0;
     }
 }
-/// <summary>The barbarian faction: one player on its own team, at war with every other team. Spawns, hostile
-/// villagers and rebellions all field units for it.</summary>
-public interface IBarbarianFaction
+/// <summary>The hostile faction (the barbarians) as the base game asks it, read through <c>GameRules.HostileFaction</c>
+/// and answered by the feature that runs the faction (the Barbarians mod). The faction is one player on its own team,
+/// at war with every other team, recorded as <see cref="MilitaryGameState.BarbarianPlayer"/>; hostile villagers and
+/// rebellions field units for it. Without an answer no hostile player appears, goody huts never release hostile
+/// villagers and nothing bars a hostile unit.</summary>
+public interface IHostileFaction
 {
-    /// <summary>The barbarian player, created on first use. Every caller gets the same player for the rest of the game.</summary>
+    /// <summary>The hostile player, created on first use. Every caller gets the same player for the rest of the game.</summary>
     int Ensure(Simulation sim);
+    /// <summary>Whether something bars this hostile unit from a plot it could otherwise enter, such as a wonder that
+    /// keeps barbarians out of its owner's lands. Movement asks before a hostile unit moves without attacking; an
+    /// attack is never barred. Never changes state or uses the RNG.</summary>
+    bool Bars(Simulation sim, int unit, Hex target);
 }
 /// <summary>Combat counters of one player. Combat wins against civilizations earn <see cref="GeneralPoints"/>; the
 /// feature that turns them into leaders (<see cref="ICombatLeaders"/>) spends them and keeps the other two counts.</summary>
@@ -198,14 +205,6 @@ public interface ICombatLeaders
     /// <summary>The winner's player has just earned general points: spend every threshold they cover on a leader.
     /// Runs inside combat resolution, so any randomness it draws is part of the fight.</summary>
     void Emerge(Simulation sim, Unit winner);
-}
-/// <summary>Whether something bars a barbarian unit from a plot it could otherwise enter, such as a wonder that keeps
-/// barbarians out of its owner's lands. Movement asks every implementation before a barbarian moves without
-/// attacking; an attack is never barred. Queries never change state or use the RNG.</summary>
-public interface IBarbarianBarrier
-{
-    /// <summary>Whether this barbarian unit may not enter the target plot.</summary>
-    bool Blocks(Simulation sim, int barbarianUnit, Hex target);
 }
 /// <summary>Combat is atomic. Reports survive saving between commands within the turn.</summary>
 public sealed class MilitaryGameState

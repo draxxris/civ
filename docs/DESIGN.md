@@ -11,7 +11,7 @@ extend both through one registration API.
    and Relations. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
    one. Everything a game can run without is a mod: the main mods (Great People, Trade,
-   RangedCombat, AirCombat and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
+   RangedCombat, AirCombat, Barbarians and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
 2. **One registration API.** A base module registers terrain, techs, buildings, units,
    civics, map generators, commands, turn systems and state through the same
    `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
@@ -408,7 +408,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
 | `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
-| `IBarbarianBarrier` | `BarbarianBarriers` (list) | Military movement, for a barbarian that does not attack | ScriptedWonders (border wonders) | nothing bars barbarians |
+| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Military movement (a barbarian that does not attack), Revolution (rebels) | Barbarians (which asks ScriptedWonders' border wonders through its own `IBarbarianBarrier`) | no hostile player; huts release no hostile villagers, rebellions field no rebels, nothing bars movement |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
@@ -416,8 +416,9 @@ Mods also consume each other's APIs directly, always as optional: Espionage asks
 Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a golden
 age calms a city, GreatPeople prices a trade mission from the Trade API, and Diplomacy
 (shared faith), Revolution (religious tension) and GreatPeople (prophets' shrines) read
-the Religion API. Each
-references the provider's `Api` project and treats a null `sim.Service<T>()` as "absent".
+the Religion API, and ScriptedWonders registers its border wonders as the Barbarians API's
+`IBarbarianBarrier`, which only the Barbarians mod asks. Each references the provider's
+`Api` project and treats a null `sim.Service<T>()` as "absent".
 
 #### Content attachments
 
@@ -525,7 +526,7 @@ outside the player interval.
 | `PlayerEnd`          |  7000 | Remaining player maintenance    |
 | `Units`              |  8000 | Units and worker progress       |
 | `Map`                |  9000 | Improvements and map updates    |
-| `Spawns`             |  9100 | Barbarians and other spawns     |
+| `Spawns`             |  9100 | Spawns (Barbarians at 9101)     |
 | `Environment`        |  9200 | Environment and global founding |
 | `Visibility`         |  9500 | Team sight                      |
 | `GameEnd`            |  9900 | Pre-end hooks                   |
@@ -1033,6 +1034,18 @@ Combat and system mechanics:
   kills it. Active city buildings scale direct and collateral air-strike damage through
   their combined `AirModifier`, before damage limits apply.
 
+- **Barbarian spawns & naval piracy** (the Barbarians mod, below): Land spawns run just
+  after `TurnPhase.Spawns`. `BarbarianSpawns.SpawnArea` also evaluates water areas, applying handicap setting
+  `UnownedWaterTilesPerBarbarianUnit` against unowned coastal water plots. Spawning
+  enforces bounds on the ratio of barbarian to civilized naval units, excludes
+  freshwater lakes and tiles visible to players, and spawns adjacent to land. Barbarian
+  naval raiders hunt visible fishing improvements and vulnerable merchant/transport
+  shipping.
+
+Training modifiers use `military:initial_experience` and `military:free_promotion:<id>`.
+Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate military
+contributions when they supply full modifier sources.
+
 ### Air combat
 
 Air missions are a main mod, `src/Mods/AirCombat` (`air_combat`), shipped and loaded by
@@ -1054,17 +1067,29 @@ stand, with carriers and landing when a carrier sinks; the intercept activity an
 visibility reveals and the turn clears. The `IAirOperations` seam
 (`GameRules.AirOperations`) answers interception odds; without the mod aircraft cannot
 be trained and no unit can stand on intercept. The client draws no air range on the map.
-- **Barbarian spawns & naval piracy**: Land spawns run at `TurnPhase.Spawns`.
-  `BarbarianSpawns.SpawnArea` also evaluates water areas, applying handicap setting
-  `UnownedWaterTilesPerBarbarianUnit` against unowned coastal water plots. Spawning
-  enforces bounds on the ratio of barbarian to civilized naval units, excludes
-  freshwater lakes and tiles visible to players, and spawns adjacent to land. Barbarian
-  naval raiders hunt visible fishing improvements and vulnerable merchant/transport
-  shipping.
 
-Training modifiers use `military:initial_experience` and `military:free_promotion:<id>`.
-Promotion modifiers use Unit scope. Government and Peoples must avoid duplicate military
-contributions when they supply full modifier sources.
+### Barbarians
+
+The barbarians are a main mod, `src/Mods/Barbarians` (`barbarians`), shipped and loaded by
+default. It answers the base game's `IHostileFaction` (`GameRules.HostileFaction`): `Ensure`
+creates the hostile player on first use (its own team, at war with every other team, the
+`peoples:barbarian` civilization and leader) and records it as
+`MilitaryGameState.BarbarianPlayer`; `Bars` asks every registered `IBarbarianBarrier`. It
+runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
+attacks a neighbour it likely beats or marches on the nearest enemy city; ships hunt ships
+and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`, just after the
+phase's random events, where the spawns ran as part of the base game. Its API
+(`Ariel.Mods.Barbarians.Api`) publishes `IBarbarianBarrier`, which ScriptedWonders' border
+wonders answer through a soft reference.
+
+What stays in the base game is the hostile-faction flag and every rule that asks it:
+`MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
+hostile player ending its turn before it begins, experience caps, culture, research cost,
+contact and memory rules, movement's barrier check (through `IHostileFaction.Bars`), the
+computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
+fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
+mod no hostile player appears, goody huts never release hostile villagers, and a
+Revolution rebellion releases pressure without fielding rebels.
 
 ## Government and Peoples services
 
@@ -1329,8 +1354,8 @@ Options can change treasury, research, city stores, happiness, health, and plot 
 Unresolved events use a default option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
-buildings, and answers two base seams: empire free buildings (`IFreeBuildingGrants`) and
-wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
+buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
+the Barbarians mod's wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
@@ -2229,7 +2254,7 @@ time, even when the desktop throttles the window.
 
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
 Cities, Military, Government, Peoples and Relations, and `src/Ariel.Ai/` the base module
-`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat and Religion,
+`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians and Religion,
 and the optional mods Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
 Revolution, CardResearch and TechTree. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no

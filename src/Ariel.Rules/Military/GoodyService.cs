@@ -33,7 +33,8 @@ internal static class GoodyService
         if (!ExperienceEligible(sim, def, goody)) return false;
         if (goody.Tech && !Technologies(sim, unit).Any()) return false;
         if (!GrantEligible(sim, goody)) return false;
-        return goody.BarbarianUnit is null || HostileEligible(sim, unit);
+        // Hostile villagers need a hostile faction to belong to.
+        return goody.BarbarianUnit is null || sim.Rules().HostileFaction is not null && HostileEligible(sim, unit);
     }
     private static bool ExperienceEligible(Simulation sim, S.UnitDef unit, S.GoodyDef goody) => goody.Experience <= 0 || sim.State.Turn > 10 && unit.Strength > 0;
     private static bool GrantEligible(Simulation sim, S.GoodyDef goody) => goody.GrantedUnit is not { } granted || sim.Content.Get<S.UnitDef>(granted).Strength == 0 || sim.State.Turn > 20;
@@ -78,7 +79,7 @@ internal static class GoodyService
     }
     private static void HostileVillagers(Simulation sim, Unit unit, S.GoodyDef goody, string type)
     {
-        int owner = BarbarianFaction.Ensure(sim);
+        int owner = sim.Rules().HostileFaction!.Ensure(sim);
         var candidates = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(unit.Position)).Where(t =>
             !sim.Content.Get<S.TerrainDef>(sim.State.Plots[t.Value].Terrain).IsWater && sim.State.Plots[t.Value].Kind != PlotKind.Peak
             && !sim.State.UnitsAt(sim.State.Grid.HexOf(t)).Any()).ToArray();

@@ -79,8 +79,6 @@ public sealed class GameRules : IRuleset
     public IPathfindingService Paths { get; private set; } = null!;
     /// <summary>Combat between units, city defences and the combat record.</summary>
     public ICombatService Combat { get; private set; } = null!;
-    /// <summary>The barbarian player.</summary>
-    public IBarbarianFaction Barbarians { get; private set; } = null!;
     /// <summary>Civics and anarchy.</summary>
     public IGovernmentService Government { get; private set; } = null!;
     /// <summary>Civilizations, leaders and traits.</summary>
@@ -104,6 +102,9 @@ public sealed class GameRules : IRuleset
     /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
+    /// <summary>The hostile faction, answered by the feature that runs it, or null without one: no hostile player
+    /// appears, huts release no hostile villagers and nothing bars a hostile unit.</summary>
+    public IHostileFaction? HostileFaction { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
     public IEspionageSpending? EspionageSpending { get; private set; }
@@ -128,9 +129,6 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
-    /// <summary>Everything that bars barbarians from plots, in registration order.</summary>
-    public IReadOnlyList<IBarbarianBarrier> BarbarianBarriers { get; private set; } = [];
-
     /// <inheritdoc/>
     public void Bind(ContentDb content)
     {
@@ -141,7 +139,6 @@ public sealed class GameRules : IRuleset
         SupportFire = services.Get<ISupportFire>();
         CapitalWeights = services.Get<ICapitalWeight>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
-        BarbarianBarriers = services.Get<IBarbarianBarrier>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
@@ -174,7 +171,6 @@ public sealed class GameRules : IRuleset
         Movement = services.Get<IMovementService>().Single();
         Paths = services.Get<IPathfindingService>().Single();
         Combat = services.Get<ICombatService>().Single();
-        Barbarians = services.Get<IBarbarianFaction>().Single();
         Government = services.Get<IGovernmentService>().Single();
         Peoples = services.Get<IPeoplesService>().Single();
         Relations = services.Get<IRelationsService>().Single();
@@ -184,6 +180,7 @@ public sealed class GameRules : IRuleset
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();
+        HostileFaction = services.Get<IHostileFaction>().SingleOrDefault();
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
