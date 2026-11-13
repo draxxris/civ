@@ -68,7 +68,7 @@
     "ProjectInfo": "projects-victory",
     "PromotionInfo": "military",
     "QuestInfo": "foundation",
-    "ReligionInfo": "religion",
+    "ReligionInfo": "foundation",
     "RiverInfo": "world",
     "RouteInfo": "world",
     "SeaLevelInfo": "world",
@@ -41169,92 +41169,92 @@
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ASATRU",
-      "mod": "religion",
-      "id": "religion:asatru",
+      "mod": "foundation",
+      "id": "foundation:asatru",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_BUDDHISM",
-      "mod": "religion",
-      "id": "religion:buddhism",
+      "mod": "foundation",
+      "id": "foundation:buddhism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_CHRISTIANITY",
-      "mod": "religion",
-      "id": "religion:christianity",
+      "mod": "foundation",
+      "id": "foundation:christianity",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_CONFUCIANISM",
-      "mod": "religion",
-      "id": "religion:confucianism",
+      "mod": "foundation",
+      "id": "foundation:confucianism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_EGYPT_MYTHOLOGY",
-      "mod": "religion",
-      "id": "religion:egypt_mythology",
+      "mod": "foundation",
+      "id": "foundation:egypt_mythology",
       "era": "ERA_ANCIENT"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_HELLENISM",
-      "mod": "religion",
-      "id": "religion:hellenism",
+      "mod": "foundation",
+      "id": "foundation:hellenism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_HINDUISM",
-      "mod": "religion",
-      "id": "religion:hinduism",
+      "mod": "foundation",
+      "id": "foundation:hinduism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ISLAM",
-      "mod": "religion",
-      "id": "religion:islam",
+      "mod": "foundation",
+      "id": "foundation:islam",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_JUDAISM",
-      "mod": "religion",
-      "id": "religion:judaism",
+      "mod": "foundation",
+      "id": "foundation:judaism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_MESOAMERICANISM",
-      "mod": "religion",
-      "id": "religion:mesoamericanism",
+      "mod": "foundation",
+      "id": "foundation:mesoamericanism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_SHINTO",
-      "mod": "religion",
-      "id": "religion:shinto",
+      "mod": "foundation",
+      "id": "foundation:shinto",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_TAOISM",
-      "mod": "religion",
-      "id": "religion:taoism",
+      "mod": "foundation",
+      "id": "foundation:taoism",
       "era": "ERA_CLASSICAL"
     },
     {
       "class": "ReligionInfo",
       "sourceType": "RELIGION_ZOROASTRIANISM",
-      "mod": "religion",
-      "id": "religion:zoroastrianism",
+      "mod": "foundation",
+      "id": "foundation:zoroastrianism",
       "era": "ERA_ANCIENT"
     },
     {

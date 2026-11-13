@@ -149,7 +149,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         }
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
-        if (record.Class == "ReligionInfo") ReligionBuildings(record, values);
+        // The buildings that serve a faith are Religion's rules; the base game's identity of the faith names none.
+        if (mapping.DefinitionType == typeof(Ariel.Mods.Religion.ReligionDef)) ReligionBuildings(record, values);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
         values["unsupported"] = FieldCensus.Flatten(record.Node).Where(f => !mapped.Contains(f.Path) && RecordMerger.IsNonDefault(f.Node))
             .Select(f => f.Path).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
