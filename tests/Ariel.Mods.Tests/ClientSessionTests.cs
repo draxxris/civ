@@ -2,10 +2,11 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.AirCombat;
 using Ariel.Mods.GreatPeople;
+using Ariel.Mods.Religion;
 using Xunit;
 using Schema = Ariel.Content.Schema;
-using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 

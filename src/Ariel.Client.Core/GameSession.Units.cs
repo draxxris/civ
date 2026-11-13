@@ -99,36 +99,9 @@ public sealed partial class GameSession
         foreach (var source in Sim.Rules().UnitActions)
             foreach (var offer in source.Offers(Sim, LocalPlayer, unit))
                 actions.Add(Action(offer.Id, offer.Label, offer.Command, offer.Tooltip));
-        actions.AddRange(AirActions(unit, def));
         actions.AddRange(CargoActions(unit));
         actions.AddRange(PromotionActions(unit));
         return actions.Where(a => a.Command != null || a.Id == "found").ToList();
-    }
-
-    private IEnumerable<UnitActionInfo> AirActions(Unit unit, Schema.UnitDef def)
-    {
-        var air = OptionalService<IAirMissionService>();
-        if (air is null || air.AirRange(Sim, unit.Id) <= 0) yield break;
-        var origin = Sim.State.Grid.TileAt(unit.Position);
-        foreach (var tile in Sim.State.Grid.Range(origin, air.AirRange(Sim, unit.Id) * 2).OrderBy(t => t.Value))
-        {
-            var target = Sim.State.Grid.HexOf(tile);
-            foreach (var kind in Enum.GetValues<AirMissionKind>())
-            {
-                string label = kind switch
-                {
-                    AirMissionKind.Rebase => "Rebase",
-                    AirMissionKind.Recon => "Recon",
-                    AirMissionKind.AirStrike => "Air strike",
-                    _ => "Air bomb",
-                };
-                string name = Sim.State.CityAt(target) is { } city && Sim.State.Plots[tile.Value].Revealed.Contains(Me.TeamId)
-                    ? city.Name : target.ToString();
-                var action = Action($"air_mission:{kind}:{tile.Value}", $"{label}: {name}",
-                    new AirMissionCommand { Player = LocalPlayer, Unit = unit.Id, Kind = kind, Target = target });
-                if (action.Command is not null) yield return action;
-            }
-        }
     }
 
     private IEnumerable<UnitActionInfo> CargoActions(Unit unit)

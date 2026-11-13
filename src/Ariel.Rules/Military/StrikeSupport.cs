@@ -3,13 +3,16 @@ using Ariel.Game;
 namespace Ariel.Rules.Military;
 
 /// <summary>What fire from a distance acts on: city defences, collateral damage and the combat record. The orders
-/// that fire (bombardment, ranged strikes, air bombing) live with their features and call these.</summary>
+/// that fire (bombardment, ranged strikes, air strikes and bombing) live with their features and call these.</summary>
 internal sealed partial class CombatService
 {
     public int CityDefense(Simulation sim, int city) => CombatCalculator.CityDefense(sim, sim.State.CityById(city), false);
 
     public int BombardResistance(Simulation sim, int city) =>
         MilitaryData.Buildings(sim, sim.State.CityById(city)).Sum(b => b.BombardDefense);
+
+    public int AirStrikeModifier(Simulation sim, int city) =>
+        MilitaryData.Buildings(sim, sim.State.CityById(city)).Sum(b => b.AirModifier);
 
     public int DamageCityDefense(Simulation sim, int unit, int city, int reduction) =>
         ReduceCityDefense(sim, sim.State.UnitById(unit), sim.State.CityById(city), reduction);

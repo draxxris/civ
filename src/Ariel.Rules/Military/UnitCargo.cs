@@ -68,6 +68,25 @@ internal sealed partial class UnitService
         if (error is not null) return error;
         return sim.Rules().Movement.CanEnter(sim, unit.Id, sim.State.Grid.TileAt(unit.Position), to);
     }
+    public void Destroy(Simulation sim, int unit) => MilitaryData.RemoveUnit(sim, unit);
+
+    public string? ValidateRebase(Simulation sim, int unit, Hex target)
+    {
+        var aircraft = sim.State.UnitById(unit);
+        return AirBaseError(sim, aircraft, target) is { } error && CarrierAt(sim, aircraft, target) is null ? error : null;
+    }
+
+    public void Rebase(Simulation sim, int unit, Hex target)
+    {
+        var aircraft = sim.State.UnitById(unit);
+        var carrier = AirBaseError(sim, aircraft, target) is null ? null : CarrierAt(sim, aircraft, target);
+        MilitaryData.Edit(sim, aircraft).TransportId = carrier?.Id;
+        MilitaryData.MoveUnit(sim, unit, target);
+    }
+
+    private static Unit? CarrierAt(Simulation sim, Unit unit, Hex target) => sim.State.UnitsAt(target).OrderBy(u => u.Id)
+        .FirstOrDefault(u => LoadError(sim, unit, u, target) is null);
+
     public IReadOnlyList<int> Disband(Simulation sim, int transport)
     {
         var carrier = sim.State.UnitById(transport);

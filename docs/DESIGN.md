@@ -11,7 +11,7 @@ extend both through one registration API.
    and Relations. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
    one. Everything a game can run without is a mod: the main mods (Great People, Trade,
-   RangedCombat and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
+   RangedCombat, AirCombat and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
 2. **One registration API.** A base module registers terrain, techs, buildings, units,
    civics, map generators, commands, turn systems and state through the same
    `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
@@ -288,10 +288,10 @@ requires the owning namespace. Overrides can replace earlier content.
 - A feature that gives units an order registers an `IUnitActionSource`, which offers
   ready-made `(id, label, command)` candidates for a unit. The client validates and
   lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
-  a mod adds an order without a client change. Artillery (the RangedCombat mod) and
-  great people (the GreatPeople mod) use it, and so does the base game's mission
-  support; air missions, cargo and promotions are still listed by the client itself
-  and should move to sources.
+  a mod adds an order without a client change. Artillery (the RangedCombat mod), air
+  missions (the AirCombat mod) and great people (the GreatPeople mod) use it, and so does
+  the base game's mission support; cargo and promotions are still listed by the client
+  itself and should move to sources.
 - A feature that lets a unit hurt a tile without entering it registers an
   `ISupportFire`. AI assaults ask every kind in registration order
   (`GameRules.SupportFire`) for the command that fires a unit at the target, instead of
@@ -304,6 +304,13 @@ requires the owning namespace. Overrides can replace earlier content.
   building fields that describe the weapons (`BombardRate`, `BombRange`,
   `BombardDefense`) stay in the base schema, as unit data carries them. Without the
   mod no fire is offered and siege units fight only in melee.
+- The AirCombat mod follows the same model for aircraft (see Air combat under the
+  military rules). It owns the air-mission command, rebasing, reconnaissance, air strikes,
+  bombing and interception, the unit panel's mission orders, and the computer player's
+  air planner and aircraft production. Military keeps where an aircraft may stand and
+  offers `IUnitService.ValidateRebase`, `Rebase` and `Destroy`, and
+  `ICombatService.CanDefend`, `AirStrikeModifier` and `AwardExperience`, beside the
+  entry points ranged fire uses.
 - A mission is something a unit does to the city it stands in. A feature registers each
   kind as an `IMission` (`Subjects`, `Label`, `Validate`, `Terms`, `Resolve`), and the
   base game's `IMissionService` (`GameRules.Missions`, in Military) does what every
@@ -391,6 +398,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
 | `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf | Corporations | no corporations; the leaf fails |
+| `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `ITeamAgreements`, `IDispositions`, `IPlayerExchanges` | `TeamAgreements`, `Dispositions`, `Exchanges` | Relations, Economy (see Relations) | Diplomacy | no agreements, neutral attitude, no deals |
 | `ICapitalWeight` | `CapitalWeights` (list) | Cities, when a lost capital moves | Religion (one per faith), Corporations (one per branch), GreatPeople (two per settled great person) | size, yields, level and culture alone |
@@ -921,7 +929,7 @@ research.
 ## Military services
 
 Military registers `IMovementService`, `IPathfindingService`, `ICombatService`,
-`IUnitService`, `IUnitSupportService`, and `IAirMissionService` through Core, and
+`IUnitService` and `IUnitSupportService` through Core, and
 interacts with World's `IVisibilityService`. Movement paths exclude the starting plot.
 Commands traverse until movement expires or combat interrupts the path. A costly
 destination can consume the remaining sub-moves. A\* minimizes total edge cost, not the
@@ -947,8 +955,6 @@ Command identities include:
   categories/domains.
 - `military:unload_unit` (`UnloadUnitCommand`): Disembarks a cargo unit to the current
   tile (if valid) or an adjacent land tile, expending remaining movement.
-- `military:air_mission` (`AirMissionCommand`): Executes domain-air operations governed
-  by `AirMissionKind` (`Rebase`, `AirStrike`, `AirBomb`, `Recon`).
 - `military:set_unit_activity`: Added `UnitActivity.Intercept` (Combat Air Patrol) and
   `UnitActivity.Blockade` (Naval Blockade). Naval combat units on non-lake water can
   blockade within `SHIP_BLOCKADE_RANGE` (default 3), severing enemy water trade networks
@@ -961,9 +967,6 @@ Domain events include:
   Published when an improvement or route is pillaged.
 - `CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage)`:
   Published upon successful city defense bombardment.
-- `AirMissionResolved(AirMissionReport Report)`: Details air mission results including
-  interceptor involvement, interception damage, target damage, collateral hits, and
-  suicide consumption.
 - `GreatGeneralBorn(int Player, int Unit, string UnitType, int City)`: Dispatched when
   combat experience satisfies the general emergence threshold.
 
@@ -1018,8 +1021,8 @@ Combat and system mechanics:
   attacker wins or withdraws, provided combat occurs outside a city. Defending units
   with withdrawal capabilities can trigger `CombatOutcome.DefenderWithdrawn` when
   surviving lethal combat, retreating to an adjacent safe tile.
-- **Air missions & interception**: Aircraft operate from friendly cities and carriers
-  within `AirUnitCapacity` (default 8 per city). Missions include `Rebase` (up to
+- **Air missions & interception** (the AirCombat mod, below): Aircraft operate from
+  friendly cities and carriers within `AirUnitCapacity` (default 8 per city). Missions include `Rebase` (up to
   `2 * AirRange`), `Recon` (revealing fog of war across the target area until next
   turn), `AirStrike` (bombarding units up to `AirCombatLimit` with collateral damage),
   and `AirBomb` (reducing city defenses by `BombardRate` or pillaging worked
@@ -1029,6 +1032,28 @@ Combat and system mechanics:
   attack. An intercepted aircraft survives an aborted mission unless interception damage
   kills it. Active city buildings scale direct and collateral air-strike damage through
   their combined `AirModifier`, before damage limits apply.
+
+### Air combat
+
+Air missions are a main mod, `src/Mods/AirCombat` (`air_combat`), shipped and loaded by
+default. Its API (`Ariel.Mods.AirCombat.Api`) publishes `IAirMissionService` (air range,
+interception odds, validation, execution and the active reconnaissance sectors),
+`AirMissionKind`, `AirMissionReport`, the `AirMissionResolved` event and
+`AirMissionCommand` (`air_combat:air_mission`). Other mods read it through
+`sim.Service<IAirMissionService>()`, null when the mod is not loaded. The mod also
+registers `IAirOperations`, the unit panel's mission orders (`IUnitActionSource`, ids
+`air_mission:<kind>:<tile>`), the air planner (`air_combat:planner` at
+`AiPlannerOrder.Air`) and aircraft production wishes (`air_combat:aircraft`: at war, the
+best aircraft at score 360 while the air wing is under a sixth of the land army).
+
+What stays in the base game: the unit, promotion and building fields that describe
+aircraft (`AirRange`, `AirCombat`, `AirCombatLimit`, `BombRate`, `InterceptionPercent`,
+`EvasionPercent`, `AirUnitCap`, `AirModifier`, `AirUnitCapacity`); where an aircraft may
+stand, with carriers and landing when a carrier sinks; the intercept activity and
+`InterceptedThisTurn` with its per-turn reset; and `MilitaryGameState.ReconSights`, which
+visibility reveals and the turn clears. The `IAirOperations` seam
+(`GameRules.AirOperations`) answers interception odds; without the mod aircraft cannot
+be trained and no unit can stand on intercept. The client draws no air range on the map.
 - **Barbarian spawns & naval piracy**: Land spawns run at `TurnPhase.Spawns`.
   `BarbarianSpawns.SpawnArea` also evaluates water areas, applying handicap setting
   `UnownedWaterTilesPerBarbarianUnit` against unowned coastal water plots. Spawning
@@ -1417,7 +1442,7 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | ---: | --- | ---: | --- |
 | 100 | `ai:research` | 1000 | `ai:cities` (renews cached views first) |
 | 200 | `ai:war` | 1100 | `ai:workers` |
-| 300 | `ai:civics` | 1200 | `ai:air` |
+| 300 | `ai:civics` | 1200 | (`air_combat:planner`) |
 | 400 | (`diplomacy:planner`) | 1300 | `ai:military` |
 | 500 | `ai:settlers` | 1400 | (`espionage:planner`) |
 | 600 | `ai:citizens` (renews cached views first) | 1500 | (`revolution:planner`) |
@@ -1481,7 +1506,8 @@ last.
 
 The score is on the city planner's ranking scale, not raw `PlannerPoints`: a building
 scores its value in planner points times 1000 over its cost plus 60; an attacker for a
-short army 80 to about 300; naval, siege and air units in a war 170 to 390; an inquisitor
+short army 80 to about 300; naval and siege units in a war 170 to 390; the AirCombat mod's
+aircraft in a war 360; an inquisitor
 500 plus 1000 over its cost. The Espionage mod's `espionage:spies` wishes for spies at 150
 plus 1000 over their cost, one per six cities once a rival is known. A wish source keeps
 no mutable fields, never issues a command and never draws from the RNG.
@@ -1574,7 +1600,7 @@ Specialized planners handle empire governance and military campaigns:
   melee/siege troops up to `CargoCapacity`, sailing to enemy beachheads on foreign
   landmasses, and disembarking or attacking from sea. Warships escort transports, patrol
   coastal waters, and bombard coastal cities.
-- **Air warfare management (`AirPlanner`)**: Dynamically rebases bombers and fighters
+- **Air warfare management (`AirPlanner`, contributed by the AirCombat mod)**: Dynamically rebases bombers and fighters
   forward to theater cities within range of target objectives. Flies aerial
   reconnaissance (`AirRecon`) to expose enemy stacks and fogged frontier plots. Conducts
   `AirBomb` missions against city defenses and strategic tile improvements, executes
@@ -2032,7 +2058,7 @@ Core and mod event records cover:
 - Core lifecycle: `TurnStarted`, `TurnEnded`, `TechDiscovered`, `CityFounded`,
   `CityGrown`, `BuildingCompleted`, `UnitCreated`, and `CombatResolved`.
 - Advanced systems: `GreatPersonBorn`, `GreatGeneralBorn`, `InquisitionAttempt`,
-  `ReligionRemoved`, `CityBombarded`, and `AirMissionResolved`.
+  `ReligionRemoved`, `CityBombarded`, and the AirCombat mod's `AirMissionResolved`.
 
 `Published` holds current-turn presentation events. `PreviousTurn` retains the last
 completed turn. These lists are neither saved nor hashed. Loading does not republish
@@ -2203,7 +2229,7 @@ time, even when the desktop throttles the window.
 
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
 Cities, Military, Government, Peoples and Relations, and `src/Ariel.Ai/` the base module
-`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat and Religion,
+`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat and Religion,
 and the optional mods Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
 Revolution, CardResearch and TechTree. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no

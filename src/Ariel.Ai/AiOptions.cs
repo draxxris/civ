@@ -66,11 +66,15 @@ internal sealed class AiOptions
     /// <summary>The unit of <paramref name="role"/> that <paramref name="city"/> should train: the highest
     /// <paramref name="score"/> plus the leader's personality and what unit valuers add
     /// (<see cref="IAiValuer{TSubject}"/> of <see cref="UnitSubject"/>), ties by ordinal id, among units it can produce.</summary>
-    public UnitDef? Best(City city, UnitRole role, Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null)
+    public UnitDef? Best(City city, UnitRole role, Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null) =>
+        BestAmong(city, u => _ctx.Catalog.Roles[u.Id] == role && (filter?.Invoke(u) ?? true), score);
+
+    /// <summary>The unit <paramref name="city"/> should train among <paramref name="candidates"/>, ranked as by role.</summary>
+    public UnitDef? BestAmong(City city, Func<UnitDef, bool> candidates, Func<UnitDef, int> score)
     {
         UnitDef? best = null;
         int bestScore = int.MinValue;
-        foreach (var unit in Units.Where(u => _ctx.Catalog.Roles[u.Id] == role && (filter?.Invoke(u) ?? true)))
+        foreach (var unit in Units.Where(candidates))
         {
             int value = score(unit) + PersonalityValue(unit) + _ctx.Adjustment(new UnitSubject(unit, city));
             // A candidate below a known legal choice cannot win; no validation or ranking buffer is needed.

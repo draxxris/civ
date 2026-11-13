@@ -16,6 +16,10 @@ internal sealed partial class CombatService : ICombatService
     internal static bool EligibleDefender(Simulation sim, Unit attacker, Unit unit) => MilitaryData.VisibleEnemy(sim, attacker.Owner, unit)
         && unit.Health > 0 && MilitaryData.Definition(sim, unit).Strength > 0 && MilitaryData.Definition(sim, unit).Domain != "military:domain_air"
         && !(MilitaryData.Read(sim, unit).TransportId is not null && sim.Content.Get<S.TerrainDef>(sim.State.PlotAt(unit.Position).Terrain).IsWater);
+    public bool CanDefend(Simulation sim, int attacker, int defender) =>
+        EligibleDefender(sim, sim.State.UnitById(attacker), sim.State.UnitById(defender));
+    public void AwardExperience(Simulation sim, int winner, int opponent, Hex plot, int amount) =>
+        Experience(sim, sim.State.UnitById(winner), sim.State.UnitById(opponent), plot, amount);
     public CombatPreview Preview(Simulation sim, int attacker, int defender) => CombatCalculator.Calculate(sim, sim.State.UnitById(attacker), sim.State.UnitById(defender));
     public IReadOnlyList<CombatReport> History(Simulation sim) => sim.State.Extensions.Get<MilitaryGameState>(sim.Content)?.Combats.AsReadOnly() ?? (IReadOnlyList<CombatReport>)[];
     public CombatReport Resolve(Simulation sim, int attackerId, int defenderId)

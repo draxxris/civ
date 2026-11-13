@@ -176,9 +176,6 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (CountRole(UnitRole.Siege) < Math.Max(1, land / 4)
             && Options.Best(view.City, UnitRole.Siege, u => AiOptions.Quality(u) + u.BombardRate + u.BombRange * 10) is { } siege)
             yield return ("cities:unit", siege.Id, 340);
-        if (CountRole(UnitRole.Air) < Math.Max(1, land / 6)
-            && Options.Best(view.City, UnitRole.Air, u => u.AirCombat * 10 + u.BombRate + u.InterceptionPercent) is { } air)
-            yield return ("cities:unit", air.Id, 360);
     }
 
     private IEnumerable<(string, string, long)> NavalOptions(CityView view, CampaignTargets targets, bool war)

@@ -66,7 +66,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var session = new Ariel.Client.GameSession(sim, city.Owner);
         Assert.DoesNotContain(session.Screens.Entries(), e => e.Id == "religion:screen");
         Assert.Equal("", session.CityTags(city));
-        Assert.Empty(Ariel.Client.ViewWalk.All(session.DescribeCity(city)!.Panels.Status).Where(e => e.Id.StartsWith("religion:", StringComparison.Ordinal)));
+        Assert.DoesNotContain(Ariel.Client.ViewWalk.All(session.DescribeCity(city)!.Panels.Status), e => e.Id.StartsWith("religion:", StringComparison.Ordinal));
     }
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static City City(Simulation sim, int tile, int owner = 0, int population = 1)

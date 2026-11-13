@@ -2,10 +2,11 @@ using System.Collections.Concurrent;
 using Ariel.Content;
 using Ariel.Modding;
 using Ariel.Game;
+using Ariel.Mods.AirCombat;
 using Ariel.Mods.GreatPeople;
+using Ariel.Mods.Religion;
 using Xunit;
 using Xunit.Abstractions;
-using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 

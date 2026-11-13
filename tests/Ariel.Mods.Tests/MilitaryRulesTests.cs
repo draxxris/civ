@@ -1,4 +1,5 @@
 using Ariel.Game;
+using Ariel.Mods.AirCombat;
 using Xunit;
 
 namespace Ariel.Mods.Tests;

@@ -47,7 +47,8 @@ public static class AiPlannerOrder
     public const int Cities = 1000;
     /// <summary>Improve plots.</summary>
     public const int Workers = 1100;
-    /// <summary>Rebase, scout with and fly air units, before naval support and ground assaults.</summary>
+    /// <summary>Rebase, scout with and fly air units, before naval support and ground assaults. No built-in planner runs
+    /// here; the AirCombat mod's does.</summary>
     public const int Air = 1200;
     /// <summary>Garrisons, campaigns, assaults, fleets and explorers.</summary>
     public const int Military = 1300;

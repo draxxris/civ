@@ -110,7 +110,8 @@ public sealed class AiContext
     public IReadOnlyList<Unit> Units => _segment.Units.Value;
     internal int Revision { get; private set; }
     internal CampaignTargets Targets => _segment.Targets.Value;
-    internal IReadOnlyList<City> EnemyCities => _segment.EnemyCities.Value;
+    /// <summary>Cities of players this player is at war with, on plots its team has revealed.</summary>
+    public IReadOnlyList<City> EnemyCities => _segment.EnemyCities.Value;
     /// <summary>Units that already acted this turn.</summary>
     internal HashSet<int> Done { get; } = new();
     /// <summary>Whether a planner earlier in this turn already gave <paramref name="unit"/> its orders.</summary>
@@ -157,7 +158,15 @@ public sealed class AiContext
     public T Service<T>() where T : class => Sim.Content.Services.Get<T>().Single();
     public UnitDef Def(Unit unit) => Sim.Content.Get<UnitDef>(unit.Type);
     internal UnitRole Role(Unit unit) => Catalog.Roles[unit.Type];
-    internal IReadOnlyList<Unit> Enemies => _segment.Enemies.Value;
+    /// <summary>Living units of players this player is at war with, seen or not.</summary>
+    public IReadOnlyList<Unit> Enemies => _segment.Enemies.Value;
+    /// <summary>The land units that fight: the player's melee and siege units, not counting those queued.</summary>
+    public int LandArmy => CountUnits(UnitRole.Melee) + CountUnits(UnitRole.Siege);
+    /// <summary>The unit <paramref name="city"/> should train among <paramref name="candidates"/>: the highest
+    /// <paramref name="score"/> plus the leader's personality and what unit valuers add, ties by ordinal id, among the
+    /// units the player can plausibly build and the city can produce; null when none qualifies.</summary>
+    public UnitDef? BestUnit(City city, Func<UnitDef, bool> candidates, Func<UnitDef, int> score) =>
+        Production.Options.BestAmong(city, candidates, score);
     internal int CountUnits(UnitRole role) => _segment.UnitCounts.Value.GetValueOrDefault(role);
     internal int CountQueued(UnitRole role) => _segment.QueuedCounts.Value.GetValueOrDefault(role);
     internal CityView ViewOf(City city) => _segment.Views.GetOrAdd(city.Id,

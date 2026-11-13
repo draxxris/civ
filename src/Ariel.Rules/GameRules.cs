@@ -79,8 +79,6 @@ public sealed class GameRules : IRuleset
     public IPathfindingService Paths { get; private set; } = null!;
     /// <summary>Combat between units, city defences and the combat record.</summary>
     public ICombatService Combat { get; private set; } = null!;
-    /// <summary>Air missions.</summary>
-    public IAirMissionService AirMissions { get; private set; } = null!;
     /// <summary>The barbarian player.</summary>
     public IBarbarianFaction Barbarians { get; private set; } = null!;
     /// <summary>Civics and anarchy.</summary>
@@ -103,6 +101,9 @@ public sealed class GameRules : IRuleset
     public ICityCorporations? CityCorporations { get; private set; }
     /// <summary>Religion in cities and what it allows, answered by the mod that runs religion, or null without one.</summary>
     public ICityReligions? CityReligions { get; private set; }
+    /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
+    /// and no unit stands on intercept.</summary>
+    public IAirOperations? AirOperations { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
     public IEspionageSpending? EspionageSpending { get; private set; }
@@ -173,7 +174,6 @@ public sealed class GameRules : IRuleset
         Movement = services.Get<IMovementService>().Single();
         Paths = services.Get<IPathfindingService>().Single();
         Combat = services.Get<ICombatService>().Single();
-        AirMissions = services.Get<IAirMissionService>().Single();
         Barbarians = services.Get<IBarbarianFaction>().Single();
         Government = services.Get<IGovernmentService>().Single();
         Peoples = services.Get<IPeoplesService>().Single();
@@ -183,6 +183,7 @@ public sealed class GameRules : IRuleset
         Exchanges = services.Get<IPlayerExchanges>().SingleOrDefault();
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
+        AirOperations = services.Get<IAirOperations>().SingleOrDefault();
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();

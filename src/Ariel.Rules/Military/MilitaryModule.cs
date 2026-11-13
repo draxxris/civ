@@ -37,7 +37,6 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterService<IMovementService>("movement", movement);
         context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
         context.RegisterService<ICombatService>("combat", new CombatService());
-        context.RegisterService<IAirMissionService>("air_missions", new AirMissionService());
         var missions = new MissionService();
         context.RegisterService<IMissionService>("missions", missions);
         context.RegisterService<IUnitActionSource>("missions", missions);
@@ -54,7 +53,6 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterCommand<MoveUnitPathCommand>("move_unit");
         context.RegisterCommand<LoadUnitCommand>("load_unit");
         context.RegisterCommand<UnloadUnitCommand>("unload_unit");
-        context.RegisterCommand<AirMissionCommand>("air_mission");
         context.RegisterCommand<PromoteMilitaryUnitCommand>("promote_unit");
         context.RegisterCommand<SetUnitActivityCommand>("set_unit_activity");
         context.RegisterCommand<PillageCommand>("pillage");

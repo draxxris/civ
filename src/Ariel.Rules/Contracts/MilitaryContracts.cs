@@ -62,6 +62,15 @@ public interface ICombatService
     /// hit, and refresh sight. A null defender is fire that only reached a city.</summary>
     CombatReport RecordStrike(Simulation sim, int attacker, int? defender, Hex target, IReadOnlyList<CollateralHit> collateral);
     IReadOnlyList<CombatReport> History(Simulation sim);
+    /// <summary>Whether <paramref name="defender"/> could defend against <paramref name="attacker"/>: a visible, living
+    /// enemy that fights, is not an aircraft, and is not cargo at sea.</summary>
+    bool CanDefend(Simulation sim, int attacker, int defender);
+    /// <summary>The percentage a city's working buildings add to (or take from) air strikes on units inside it.</summary>
+    int AirStrikeModifier(Simulation sim, int city);
+    /// <summary>Award <paramref name="amount"/> experience to <paramref name="winner"/> for a fight against
+    /// <paramref name="opponent"/> at <paramref name="plot"/>, within the caps for barbarian and animal opponents, as
+    /// a fight the combat service resolved would.</summary>
+    void AwardExperience(Simulation sim, int winner, int opponent, Hex plot, int amount);
 }
 /// <summary>Optional naval rules. Queries use current units and wars, with no saved blockade counters.</summary>
 public interface INavalBlockadeService
@@ -72,21 +81,16 @@ public interface INavalBlockadeService
         sim.State.Grid.Tiles.Where(t => IsBlockaded(sim, t, team)).ToHashSet();
 }
 public enum UnitActivity { Awake, Fortify, Sleep, Sentry, Intercept, Blockade }
-public enum AirMissionKind { Rebase, Recon, AirStrike, AirBomb }
+/// <summary>An area a team sees from the air this turn (<see cref="MilitaryGameState.ReconSights"/>); visibility
+/// reveals it and the turn clears it.</summary>
 public sealed record ReconSight(int Team, Hex Center, int Radius);
-public sealed record AirMissionReport(AirMissionKind Kind, int Unit, Hex Target, int? Interceptor,
-    int AttackerDamage, int InterceptorDamage, int? TargetUnit, int TargetDamage,
-    int CityDefenseReduction, string? DestroyedImprovement);
-public interface IAirMissionService
+/// <summary>What the base game asks of the feature that flies aircraft (the AirCombat mod), read through
+/// <c>GameRules.AirOperations</c>. With no provider, aircraft cannot be trained and no unit can stand on intercept.</summary>
+public interface IAirOperations
 {
-    int AirRange(Simulation sim, int unit);
+    /// <summary>The percent chance that <paramref name="unit"/>, standing on intercept, stops an air mission in range;
+    /// zero when it cannot intercept.</summary>
     int InterceptionProbability(Simulation sim, int unit);
-    string? Validate(Simulation sim, int player, int unit, AirMissionKind kind, Hex target);
-    AirMissionReport Execute(Simulation sim, int unit, AirMissionKind kind, Hex target);
-    /// <summary>Active aerial reconnaissance sectors for the current turn.</summary>
-    IReadOnlyList<ReconSight> ActiveRecon(Simulation sim);
-    /// <summary>Active aerial reconnaissance sectors for a team for the current turn.</summary>
-    IReadOnlyList<ReconSight> ActiveRecon(Simulation sim, int team);
 }
 public enum UnitAction { Promote, Activity, Pillage, Upgrade, Disband }
 public interface IUnitService
@@ -110,6 +114,15 @@ public interface IUnitService
     /// neighbour (a ship beside land, an airship over land); cargo with nowhere to stand is lost with it. Returns every
     /// unit removed, the disbanded unit last.</summary>
     IReadOnlyList<int> Disband(Simulation sim, int unit);
+    /// <summary>Remove a unit killed outright, with any cargo aboard. Sight is left for the caller to refresh.</summary>
+    void Destroy(Simulation sim, int unit);
+    /// <summary>Why an aircraft cannot be based at <paramref name="target"/>, or null when a friendly land base with room,
+    /// or a carrier there that can take it, would hold it.</summary>
+    string? ValidateRebase(Simulation sim, int unit, Hex target);
+    /// <summary>Move an aircraft, and anything it carries, to a base at <paramref name="target"/>
+    /// (<see cref="ValidateRebase"/>). A land base takes precedence over a carrier on the same plot; otherwise it boards
+    /// the first carrier there by id.</summary>
+    void Rebase(Simulation sim, int unit, Hex target);
     long UpgradePrice(Simulation sim, int unit, string target);
     string? Validate(Simulation sim, int player, int unit, UnitAction action, string argument);
     void Execute(Simulation sim, int unit, UnitAction action, string argument);
@@ -255,4 +268,3 @@ public sealed record GoodyReceived(int Unit, string Goody) : DomainEvent;
 
 /// <summary>A combat finished; the loser was removed. Report is the fight as it resolved, so presentation can replay it after the turn rolls over.</summary>
 public sealed record CombatResolved(int Attacker, int Defender, int Winner, int LoserOwner = -1, CombatReport? Report = null) : DomainEvent;
-public sealed record AirMissionResolved(AirMissionReport Report) : DomainEvent;

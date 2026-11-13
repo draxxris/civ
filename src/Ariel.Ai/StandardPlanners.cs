@@ -30,7 +30,6 @@ internal static class StandardPlanners
             ctx.Production.Plan();
         }),
         new Planner("workers", AiPlannerOrder.Workers, ctx => new WorkerPlanner(ctx).Plan()),
-        new Planner("air", AiPlannerOrder.Air, ctx => new AirPlanner(ctx).Plan()),
         new Planner("military", AiPlannerOrder.Military, ctx =>
             new MilitaryPlanner(ctx, ctx.Army, ctx.Production, new AttackPlanner(ctx, new UnitOrders(ctx))).Plan()),
         new Planner("economy", AiPlannerOrder.Economy, ctx => new EconomyPlanner(ctx).Plan()),

@@ -8,7 +8,8 @@ same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 Mods in `src/Mods`:
 
 - Main mods, shipped and loaded by default: GreatPeople, Trade, RangedCombat (bombard and
-  ranged support fire) and Religion (faiths, state religion, missionaries and inquisitions).
+  ranged support fire), AirCombat (air missions and interception) and Religion (faiths,
+  state religion, missionaries and inquisitions).
 - Optional mods, enabled in the mod manager: Diplomacy, ProjectsVictory, Corporations,
   Espionage, Events, ScriptedWonders, Revolution, and the alternative research mods
   CardResearch and TechTree.

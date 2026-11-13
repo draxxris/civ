@@ -1,0 +1,9 @@
+{
+  "id": "air_combat",
+  "name": "Air Combat",
+  "version": "1.0.0",
+  "assembly": "Ariel.Mods.AirCombat.dll",
+  "api": "Ariel.Mods.AirCombat.Api.dll",
+  "dependencies": ["military", "cities"],
+  "references": ["cities", "foundation", "military", "world"]
+}

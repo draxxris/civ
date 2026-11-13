@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The AirCombat mod's published API: its service, command, mission kinds and event.
+       Consumers compile against it; the provider mod implements it. See "Mod APIs" in docs/DESIGN.md. -->
+  <ItemGroup>
+    <!-- The host supplies the kernel and the base game; an API never carries its own copy. -->
+    <ProjectReference Include="../../../Ariel.Core/Ariel.Core.csproj" Private="false" />
+    <ProjectReference Include="../../../Ariel.Rules/Ariel.Rules.csproj" Private="false" />
+  </ItemGroup>
+</Project>

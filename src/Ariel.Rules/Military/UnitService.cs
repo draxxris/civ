@@ -73,7 +73,7 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
     }
     private static string? ValidateIntercept(Simulation sim, Unit unit)
     {
-        if (sim.Rules().AirMissions.InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
+        if (sim.Rules().AirOperations is not { } air || air.InterceptionProbability(sim, unit.Id) <= 0) return "Unit cannot intercept";
         return MilitaryData.Definition(sim, unit).Domain == "military:domain_air" && MilitaryData.Read(sim, unit).Moved ? "Aircraft has moved" : null;
     }
     private static string? ValidatePillage(Simulation sim, Unit unit)
