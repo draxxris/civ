@@ -1,0 +1,6 @@
+{
+  "id": "resource_variety",
+  "name": "Resource Variety Probe",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.ResourceVariety.dll"
+}

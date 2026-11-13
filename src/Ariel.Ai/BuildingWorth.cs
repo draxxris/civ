@@ -4,9 +4,10 @@ using Ariel.Game;
 
 namespace Ariel.Ai;
 
-/// <summary>Flavor-weighted integer value of a building in a specific city.
-/// Happiness and health count heavily only when the city is at its limit.</summary>
-internal sealed class BuildingValuer(AiContext ctx)
+/// <summary>The city planner's own flavor-weighted integer value of a building in a specific city, in
+/// <see cref="PlannerPoints"/>. Happiness and health count heavily only when the city is at its limit. Mods adjust it
+/// through building valuers (<see cref="IAiValuer{TSubject}"/> of <see cref="BuildingSubject"/>).</summary>
+internal sealed class BuildingWorth(AiContext ctx)
 {
     /// <summary>A founding wonder has no effects of its own; this stands for the holy city, its religion's spread and
     /// the free missionaries.</summary>

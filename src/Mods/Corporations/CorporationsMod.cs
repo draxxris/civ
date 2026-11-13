@@ -30,6 +30,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<IMission>("found", new FoundCorporationMission(service));
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner());
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new CorporationCivicValuer(service));
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.RegisterService<ICapitalWeight>("capital_weight", new BranchCapitalWeight(service));

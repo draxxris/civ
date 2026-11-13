@@ -45,8 +45,8 @@ extend both through one registration API.
 - `Ariel.Ai`: the computer player (see Computer players below), one base module with id
   `ai` whose manifest is staged to `rules/Ai/`. It references `Ariel.Core` and
   `Ariel.Rules` only, never a mod or a mod's API. It owns the seams through which mods
-  teach the AI their features: planners (`IAiPlanner`) and production wishes
-  (`IProductionWishes`).
+  teach the AI their features: planners (`IAiPlanner`), production wishes
+  (`IProductionWishes`) and valuers (`IAiValuer<TSubject>`).
 - `Ariel.Composition`: the composition root. `BaseGame` lists the base modules (the rules
   modules and `ai`) and hands mods the host's copies of `Ariel.Rules` and `Ariel.Ai`
   (`ModLoader.Share`); `GameContent` is the one place a host composes the base game
@@ -264,7 +264,9 @@ requires the owning namespace. Overrides can replace earlier content.
 - `ctx.RegisterService<T>(name, service)` registers a non-content implementation under
   its shared interface.
 - `ContentDb.Services.Get<T>()` returns implementations in mod-load and registration
-  order. Use it for seams with many implementations (`IModifierSource`,
+  order. A contract that is itself `IHasId` (planners, production wishes, valuers,
+  production kinds) is found by the implementation's own id, so a second implementation
+  of it with an id already taken fails registration, during content load. Use it for seams with many implementations (`IModifierSource`,
   `IRequirementEvaluator`, `IProductionKind`) and for a mod's own service. The two
   many-implementation seams that clients and planners read, unit orders and support
   fire, are also bound as lists on `GameRules` (below).
@@ -371,8 +373,9 @@ Manifest fields and API use:
   names corporations only by `CorporationIdentityDef`, which therefore stays in
   Foundation, like `VictoryIdentityDef`; `ProjectDef` and `VictoryDef` belong to the
   ProjectsVictory API. The computer player follows the same rule: it knows no feature
-  mod, and a feature mod contributes the planner that plays it (`IAiPlanner`) and the
-  production it wants (`IProductionWishes`, below).
+  mod, and a feature mod contributes the planner that plays it (`IAiPlanner`), the
+  production it wants (`IProductionWishes`) and what its content is worth to the AI
+  (`IAiValuer<TSubject>`, all below).
 - A mod's API interface may extend the seam it answers (`ICorporationService :
   ICityCorporations`, `IEspionageService : IEspionageSpending`, `ITradeRouteService :
   ICityTradeLinks`, `IRevolutionService : ICityUnrest`), and the mod registers its
@@ -1306,7 +1309,8 @@ A turn of the standard AI is a list of planners. Each one is an `IAiPlanner`
 (`Id`, `Order`, `Plan(AiContext)`) registered as a service:
 `context.RegisterService<IAiPlanner>("planner", new MyPlanner())`. `StandardAi.Decide`
 runs every registered planner in ascending `Order`, then ordinal `Id`; the sorted list is
-computed once per content set (`AiCatalog.Planners`) and duplicate ids fail. The AI's own
+computed once per content set (`AiCatalog.Planners`), and two planners with one id fail the
+content load. The AI's own
 planners register the same way, at the slots `AiPlannerOrder` publishes, a hundred apart:
 
 | Order | Planner | Order | Planner |
@@ -1365,7 +1369,8 @@ A mod that needs its own units or buildings tells the city planner through a sec
 `IProductionWishes` (`Id`, `Wishes(AiContext, City)`), registered like a planner:
 `context.RegisterService<IProductionWishes>("wishes", new MyWishes())`. Each
 `ProductionWish(Kind, ContentId, Score)` names a production kind, what to produce and its
-rank. The city planner asks every source, by ordinal id (duplicate ids fail), each time it
+rank. The city planner asks every source, by ordinal id (two with one id fail the content
+load), each time it
 scores a city's options, so a source sees what earlier choices this turn already queued.
 It keeps a wish only when the player could plausibly build it (the technology,
 civilization and obsolescence prefilters of its own options) and the city can produce it,
@@ -1380,16 +1385,72 @@ short army 80 to about 300; naval, siege and air units in a war 170 to 390; an i
 plus 1000 over their cost, one per six cities once a rival is known. A wish source keeps
 no mutable fields, never issues a command and never draws from the RNG.
 
-Wishes are the first of the AI valuers: the seams through which a mod adjusts what the
-AI values. Valuers for plots, buildings, units, technologies, civics and trades will sit
-beside it in `Ariel.Ai`, each a registered service asked by the planner that owns that
-choice.
+### Valuers
 
-Until the civic valuer exists, `CivicPlanner` scores a civic from its flavors and the
-open-effect keys it knows (`commerce.percent.*`, `yield.percent.*`, `cities:happiness`,
-`cities:health`, `cities:free_specialists`, growth, worker speed, and the war keys).
-A mod's civic is weighed and can be adopted, but a key only a mod reads adds nothing
-to its score, and attached mod data is not read.
+A wish adds an option the city planner would never consider; a valuer changes how much
+the AI wants something it already considers. A mod implements
+`IAiValuer<TSubject>` (`Id`, `int Adjust(AiContext, in TSubject)`) for one subject and
+registers it under the closed interface:
+`context.RegisterService<IAiValuer<TechSubject>>("tech_valuer", new MyValuer())`. The
+planner that owns the choice adds what every valuer of that subject returns to its own
+score for the candidate, before it thresholds, ranks or divides by cost. A planner a mod
+contributes asks the same way, through `AiContext.Adjustment(in subject)`, so one
+registration answers every planner that values that subject.
+
+| Subject | Asked by | Scale of an adjustment |
+| --- | --- | --- |
+| `ResourceSubject(Resource, Held, Plot)` | city site scoring (`SitePlanner`), the worker's choice of plot and of build (`WorkerPlanner`), deals (the Diplomacy mod's planner) | `PlannerPoints` of a source gained, given `Held` usable copies without it; the AI's own worth is about 30 plus 8 per happiness and 6 per health. Site scoring and the worker's plot order weigh plots on half this scale and add half; the worker's build value adds it in full; deals add it as gold |
+| `BuildingSubject(Building, City)` | the city planner, in parallel for every building it rates | `PlannerPoints`, added to the building's value in that city before its specialisation percent and its cost |
+| `UnitSubject(Unit, City)` | the city planner's pick of one unit per role (`AiOptions.Best`): defenders, attackers, siege, ships, aircraft, settlers, workers, explorers | the role's rating: quality (strength squared × 100 / cost, about 5 to 150) for soldiers, minus cost for civilians, plus personality |
+| `TechSubject(Tech)` | the research planner, in parallel for every selectable technology and for every step of a goal route | value points before the remaining cost divides them: 40, three times the flavors, up to 400 for unlocks, plus resources and abilities |
+| `CivicSubject(Civic)` | the civic planner, for every civic, the held one included | the civic score: about 8 per happiness, 6 per health, 3 to 5 per percent of commerce or yield, each times half the cities; a change needs 15 over the held civic, a revolution 45 plus 60 per anarchy turn |
+
+Adjustments are additive points rather than multipliers. A sum does not depend on the
+order valuers run in, two mods' adjustments combine predictably, and a mod can make a
+candidate count where the AI's own score is zero, which no percentage could. The cost is
+that a valuer must know its subject's scale, which each subject's documentation gives.
+
+Rules:
+
+- A valuer keeps no mutable fields, decides from the simulation and the subject, never
+  issues a command and never draws from the RNG. The resource, building and technology
+  valuers run from parallel scoring threads; the AI calls every valuer as if they might.
+- The result is an integer. The AI asks a subject's valuers by ordinal id, sums them in a
+  `long` and clamps the sum to ±`AiValuation.Limit` (1,000,000), so no sum can overflow a
+  planner's score.
+- Two valuers of one subject with one id fail the content load. Valuers of different
+  subjects are different seams; one id may serve both.
+- `AiCatalog` caches each subject's valuers, ordered, once per content set. With none
+  registered, `AiContext.Adjustment` returns 0 after one array-length test and builds
+  nothing; a resource adjustment counts what the player holds only when a resource valuer
+  exists.
+- A civic's score enters the review the AI keeps until its next review turn or until its
+  civics, techs, wars, cities or era change (`CivicPlanner.Dependencies`), so a civic
+  valuer that reads other state is heard at the next review.
+- Building and unit valuers adjust the city planner's own options; a production wish
+  carries its own score and is not adjusted.
+- `CitizenPlanner` asks no valuer: the Cities governor (Rules) assigns citizens, and the
+  AI only reorders for production when it needs soldiers. Free technologies are still
+  chosen by cost.
+
+The base game registers no valuer. The Corporations mod values its own civic data
+(`corporations:civic_valuer`): a civic that bans corporations or foreign corporations
+costs what the affected branches in the player's cities produce, and a change to
+`corporations:maintenance_percent` (from the `CivicCorporationsDef` attachment or a civic
+effect) gains or costs that share of their maintenance. Before any corporation is founded
+it adds nothing, so games without corporations play as before. The other mods that attach
+civic data (Trade, Diplomacy, Revolution, ProjectsVictory) register no civic valuer yet:
+Revolution's and ProjectsVictory's rows are read by no rule, and valuing trade routes or
+attitudes would change how every game plays, which is a balance decision of its own.
+
+How a mod adjusts the AI:
+
+1. Reference `Ariel.Ai` (with `Private="false"`).
+2. Implement `IAiValuer<TSubject>` for the subject, with an id in the mod's namespace,
+   returning points on the subject's scale (0 for anything the mod has no view on).
+3. Register it in the mod's `Register`. The test mod `tests/TestMods/ResourceVariety`
+   is a complete example: one resource valuer, +200 for a resource the player lacks and
+   −200 for one it holds, makes the AI settle, improve and trade for variety.
 
 ### What the built-in planners do
 
@@ -1465,7 +1526,7 @@ Candidate evaluation within single-player planners parallelizes read-only scorin
 - `AttackPlanner`: reachability of candidate assault and staging hexes.
 
 Evaluation callbacks must not issue commands, mutate simulation state, or draw from
-`Simulation.Rng`. Results populate preallocated arrays matching input indices,
+`Simulation.Rng`; the valuers they ask (see Valuers) follow the same rules. Results populate preallocated arrays matching input indices,
 preserving identical candidate evaluation results regardless of thread scheduling.
 Candidates are sorted deterministically using descending integer scores with
 ordinal/entity ID tie-breaking (e.g. `StringComparer.Ordinal` on content IDs, or

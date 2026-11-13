@@ -23,6 +23,13 @@ internal sealed class AiCatalog
     public IReadOnlyList<IAiPlanner> Planners { get; }
     /// <summary>Every registered source of production wishes, by ordinal id.</summary>
     public IReadOnlyList<IProductionWishes> Wishes { get; }
+    /// <summary>Every registered valuer of each subject, by ordinal id; empty arrays when no mod registered one, which
+    /// the scoring paths test before building a subject.</summary>
+    public IAiValuer<ResourceSubject>[] ResourceValuers { get; }
+    public IAiValuer<BuildingSubject>[] BuildingValuers { get; }
+    public IAiValuer<UnitSubject>[] UnitValuers { get; }
+    public IAiValuer<TechSubject>[] TechValuers { get; }
+    public IAiValuer<CivicSubject>[] CivicValuers { get; }
 
     public static AiCatalog For(ContentDb content) => Cache.GetValue(content, c => new AiCatalog(c));
 
@@ -37,20 +44,18 @@ internal sealed class AiCatalog
         var unlocks = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         foreach (var def in Buildings.Cast<ContentDef>().Concat(Units)) Index(def, leaves, unlocks);
         TechLeaves = leaves; TechUnlocks = unlocks;
-        Planners = OrderPlanners(content.Services.Get<IAiPlanner>());
-        Wishes = Distinct(content.Services.Get<IProductionWishes>().OrderBy(w => w.Id, StringComparer.Ordinal).ToArray(), "production wish sources");
+        // The service registry rejects two planners, wish sources or valuers of one subject with one id at load.
+        Planners = content.Services.Get<IAiPlanner>().OrderBy(p => p.Order).ThenBy(p => p.Id, StringComparer.Ordinal).ToArray();
+        Wishes = ById(content.Services.Get<IProductionWishes>());
+        ResourceValuers = ById(content.Services.Get<IAiValuer<ResourceSubject>>());
+        BuildingValuers = ById(content.Services.Get<IAiValuer<BuildingSubject>>());
+        UnitValuers = ById(content.Services.Get<IAiValuer<UnitSubject>>());
+        TechValuers = ById(content.Services.Get<IAiValuer<TechSubject>>());
+        CivicValuers = ById(content.Services.Get<IAiValuer<CivicSubject>>());
     }
 
-    private static IAiPlanner[] OrderPlanners(IEnumerable<IAiPlanner> planners) =>
-        Distinct(planners.OrderBy(p => p.Order).ThenBy(p => p.Id, StringComparer.Ordinal).ToArray(), "AI planners");
-
-    private static T[] Distinct<T>(T[] ordered, string what) where T : IHasId
-    {
-        var ids = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var item in ordered)
-            if (!ids.Add(item.Id)) throw new InvalidOperationException($"Two {what} share the id '{item.Id}'");
-        return ordered;
-    }
+    private static T[] ById<T>(IEnumerable<T> services) where T : IHasId =>
+        services.OrderBy(s => s.Id, StringComparer.Ordinal).ToArray();
 
     private static void Index(ContentDef def, Dictionary<string, string[]> leaves, Dictionary<string, List<string>> unlocks)
     {

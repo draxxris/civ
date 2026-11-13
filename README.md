@@ -45,7 +45,8 @@ as the Diplomacy mod does with `Ariel.Mods.Diplomacy.Api`; every feature mod wit
 services publishes one. The base game never references a mod's API: when its rules need an
 answer from a feature, it owns a small seam that the mod answers (see "Mod APIs" in
 [docs/DESIGN.md](docs/DESIGN.md)). A mod asks AI cities to build what its feature needs
-through `IProductionWishes`. Any mod can add kinds of memory between leaders in
+through `IProductionWishes`, and adjusts what the AI thinks resources, buildings, units,
+technologies and civics are worth through `IAiValuer<TSubject>` (see "Valuers"). Any mod can add kinds of memory between leaders in
 `data/memory-kind.json`; the base game records and fades them (see "Relations").
 
 ### User data migration and compatibility

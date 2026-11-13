@@ -29,6 +29,7 @@ public sealed class AiContext
         public readonly Lazy<Dictionary<UnitRole, int>> QueuedCounts;
         public readonly Lazy<int[]> ThreatStrength;
         public readonly Lazy<CampaignTargets> Targets;
+        public readonly Lazy<IReadOnlyDictionary<string, long>> HeldResources;
         public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Threats = new();
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
         public readonly ConcurrentDictionary<TileId, City?> NearestCities = new();
@@ -48,6 +49,18 @@ public sealed class AiContext
                 .GroupBy(o => ctx.Catalog.Roles.GetValueOrDefault(o.ContentId)).ToDictionary(g => g.Key, g => g.Count()));
             ThreatStrength = new(() => BuildThreatStrength(ctx, Enemies.Value));
             Targets = new(() => new CampaignTargets(ctx));
+            HeldResources = new(() => BuildHeldResources(ctx));
+        }
+
+        /// <summary>Copies of every resource usable at the capital, imports included, as <see cref="ResourceSubject.Held"/>
+        /// counts them. Built only when a resource valuer is registered.</summary>
+        private static IReadOnlyDictionary<string, long> BuildHeldResources(AiContext ctx)
+        {
+            var capital = ctx.Cities.OrderByDescending(c => c.Buildings.Any(b => ctx.Sim.Content.Get<BuildingDef>(b).Capital))
+                .ThenBy(c => c.Id).FirstOrDefault();
+            if (capital is null) return new Dictionary<string, long>(StringComparer.Ordinal);
+            var resources = ctx.Sim.Content.Get<BonusDef>().All.Select(b => b.Id).ToArray();
+            return ResourceAccess.Counts(ctx.Sim, ctx.PlayerId, capital.Id, resources);
         }
 
         public UnitPath? FindPath(AiContext ctx, Unit unit, TileId goal, bool attack)
@@ -156,6 +169,33 @@ public sealed class AiContext
         foreach (var pair in flavors) total += pair.Value * Weight(pair.Key) / 5;
         return total;
     }
+
+    /// <summary>What every registered <see cref="IAiValuer{TSubject}"/> of resources adds to the AI's worth of
+    /// <paramref name="subject"/>, by ordinal id, clamped to ±<see cref="AiValuation.Limit"/>; 0 when none is registered.
+    /// A contributed planner valuing resources (the Diplomacy mod's, for deals) asks this so one registration answers
+    /// every "what is this resource worth to me" question.</summary>
+    public int Adjustment(in ResourceSubject subject) => Sum(Catalog.ResourceValuers, in subject);
+    /// <summary>What the registered building valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>
+    public int Adjustment(in BuildingSubject subject) => Sum(Catalog.BuildingValuers, in subject);
+    /// <summary>What the registered unit valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>
+    public int Adjustment(in UnitSubject subject) => Sum(Catalog.UnitValuers, in subject);
+    /// <summary>What the registered technology valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>
+    public int Adjustment(in TechSubject subject) => Sum(Catalog.TechValuers, in subject);
+    /// <summary>What the registered civic valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>
+    public int Adjustment(in CivicSubject subject) => Sum(Catalog.CivicValuers, in subject);
+
+    private int Sum<TSubject>(IAiValuer<TSubject>[] valuers, in TSubject subject) where TSubject : struct
+    {
+        if (valuers.Length == 0) return 0;
+        long total = 0;
+        foreach (var valuer in valuers) total += valuer.Adjust(this, in subject);
+        return (int)Math.Clamp(total, -AiValuation.Limit, AiValuation.Limit);
+    }
+
+    /// <summary>The resource adjustment for one more source of <paramref name="resource"/> from <paramref name="plot"/>,
+    /// counting what the player holds only when a resource valuer is registered.</summary>
+    internal int ResourceAdjustment(BonusDef resource, TileId? plot) => Catalog.ResourceValuers.Length == 0 ? 0
+        : Adjustment(new ResourceSubject(resource, _segment.HeldResources.Value.GetValueOrDefault(resource.Id), plot));
 
     /// <summary>Validate and apply through the normal command path. A success renews every cached view, so the next
     /// decision sees its effect.</summary>

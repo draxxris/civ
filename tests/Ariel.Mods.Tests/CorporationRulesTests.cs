@@ -100,6 +100,25 @@ public sealed class CorporationRulesTests
         Assert.Single(sim.Events.Published.OfType<CorporationFounded>());
     }
     [Fact]
+    public void The_civic_valuer_weighs_corporation_rules_by_the_branches_in_the_players_cities()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0];
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "corporations:civic_valuer");
+        int Adjust(string civic) => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
+            new Ariel.Ai.CivicSubject(sim.Content.Get<Ariel.Content.Schema.CivicDef>(civic)));
+        // Before any corporation operates in its cities, corporation rules mean nothing to the player.
+        Assert.Equal(0, Adjust("government:planned"));
+        Assert.Equal(0, Adjust("government:corporatist"));
+        Found(sim, hq);
+        // A ban loses the branch's food and saves its maintenance, in planner points.
+        long maintenance = P6RulesScenario.Service<ICorporationService>(sim).MaintenanceHundredths(sim, hq.Id);
+        var cereal = sim.Content.Get<CorporationDef>(Cereal);
+        Assert.Equal(-Ariel.Ai.PlannerPoints.Yields(cereal.YieldProduced) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, Adjust("government:planned"));
+        Assert.True(Adjust("government:corporatist") > 0, "a civic that cuts maintenance gains");
+        Assert.Equal(0, Adjust("government:nationalist")); // bans only foreign corporations; this one is the player's own
+        Assert.Equal(0, Adjust("government:chiefdom"));
+    }
+    [Fact]
     public void Spreading_charges_gold_consumes_executives_and_counts_worldwide_branches()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var domestic = sim.State.Cities[1]; var foreign = sim.State.Cities[2];

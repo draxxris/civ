@@ -424,7 +424,7 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
             var options = NewAi(fork, "AiOptions", ctx);
             var role = Enum.Parse(AiType(fork, "UnitRole"), "Melee");
             UnitDef? Best(Func<UnitDef, int> score, Func<UnitDef, bool>? filter = null) =>
-                (UnitDef?)Call(options, "Best", 1, role, score,
+                (UnitDef?)Call(options, "Best", fork.State.CityById(1), role, score,
                     new Func<UnitDef, bool>(u => u.Id.StartsWith("choice_probe:", StringComparison.Ordinal) && (filter?.Invoke(u) ?? true)));
             Func<UnitDef, int> score = u => u.Id == "choice_probe:limited" ? 100 : 10;
             Parallel.For(0, 16, _ => Assert.Equal("choice_probe:alpha", Best(score)!.Id));

@@ -98,8 +98,9 @@ internal sealed class CivicPlanner(AiContext ctx)
     }
 
     /// <summary>Integer estimate of a civic's worth to this leader and empire size.</summary>
-    /// <remarks>The civic's data-driven modifiers are weighed by the keys this planner knows; a key it does not know
-    /// (a mod's own effect) adds nothing yet, and the civic still competes on its flavors, AI weight and the rest.</remarks>
+    /// <remarks>The civic's open effects are weighed by the base keys this planner knows. A mod values its own keys and
+    /// its civic attachments through civic valuers (<see cref="IAiValuer{TSubject}"/> of <see cref="CivicSubject"/>),
+    /// whose sum is added here; without one, such an effect adds nothing and the civic competes on the rest.</remarks>
     internal int Score(CivicDef c)
     {
         int cities = Math.Max(1, ctx.Cities.Count), scale = Math.Max(1, (cities + 1) / 2);
@@ -113,7 +114,7 @@ internal sealed class CivicPlanner(AiContext ctx)
         score += c.BaseFreeUnits * 2 + c.BaseFreeMilitaryUnits * 2 + City("cities:free_specialists") * 8 + Player("world:worker_speed_percent") / 4;
         score -= UpkeepCost(c) * cities / 25 + Math.Max(0, City("cities:war_weariness_percent") / 10);
         if (ctx.AtWarWithPlayers) score += WarValue(c, scale);
-        return score;
+        return score + ctx.Adjustment(new CivicSubject(c));
     }
 
     /// <summary>Extra worth during a war with another civilization: cheap armies, veteran units, less weariness.

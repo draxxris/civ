@@ -1,7 +1,9 @@
 namespace Ariel.Content;
 
 /// <summary>Frozen non-content services, ordered by registration sequence across the mod load order.
-/// Ids identify implementations; they do not reorder earlier registrations.</summary>
+/// Ids identify implementations; they do not reorder earlier registrations. A contract that is itself
+/// <see cref="IHasId"/> (production kinds, the computer player's planners and valuers) is looked up by the implementation's own id, so two
+/// implementations of it with one id fail at registration, during content load.</summary>
 public sealed class ServiceRegistry
 {
     private readonly Dictionary<Type, List<object>> _items = new();
@@ -57,10 +59,23 @@ public sealed class ServiceRegistry
         if (!id.StartsWith(owner + ":", StringComparison.Ordinal) || id.Length == owner.Length + 1) throw new ArgumentException($"Service id '{id}' must belong to '{owner}'");
         if (!_ids.Add((typeof(T), id))) throw new InvalidOperationException($"Duplicate service '{id}' for {typeof(T).Name}");
         if (!_items.TryGetValue(typeof(T), out var list)) _items[typeof(T)] = list = new();
+        if (service is IHasId named && typeof(IHasId).IsAssignableFrom(typeof(T)))
+            foreach (IHasId existing in list)
+                if (string.Equals(existing.Id, named.Id, StringComparison.Ordinal))
+                    throw new InvalidOperationException($"Service '{id}' and an earlier {TypeName(typeof(T))} both have the id '{named.Id}'");
         list.Add(service);
-        _identities.Add($"{typeof(T).FullName}:{id}");
+        _identities.Add($"{ContractName(typeof(T))}:{id}");
     }
     internal void Freeze() => _frozen = true;
+
+    /// <summary>A contract's readable name for load errors: <c>IAiValuer&lt;TechSubject&gt;</c> rather than a mangled generic name.</summary>
+    private static string TypeName(Type type) => !type.IsGenericType ? type.Name
+        : $"{type.Name[..type.Name.IndexOf('`')]}<{string.Join(", ", type.GetGenericArguments().Select(TypeName))}>";
+
+    /// <summary>A contract's name in the content hash: the full name, and for a closed generic contract the full
+    /// names of its arguments without the assembly-qualified form <see cref="Type.FullName"/> would give them.</summary>
+    private static string ContractName(Type type) => !type.IsGenericType ? type.FullName!
+        : $"{type.Namespace}.{type.Name[..type.Name.IndexOf('`')]}<{string.Join(",", type.GetGenericArguments().Select(ContractName))}>";
 }
 
 /// <summary>Stable identity of a loaded mod, included in saves and content hashes.</summary>

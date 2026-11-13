@@ -163,7 +163,8 @@ internal sealed class WorkerPlanner(AiContext ctx)
     {
         var plot = ctx.Sim.State.Plots[tile.Value];
         int priority = worked ? 25 : 8;
-        if (VisibleBonus(plot) is not null) priority += 20;
+        // Plots rank on half the resource valuers' scale, as for city sites; a connected source gains nothing more.
+        if (VisibleBonus(plot) is { } bonus) priority += 20 + (Connected(plot, bonus) ? 0 : ctx.ResourceAdjustment(bonus, tile) / 2);
         if (plot.Improvement is { } id)
             priority += NeedsRepair(plot, id) ? 15 : -18;
         if (plot.BuildProgress.Count > 0) priority += 100; // Finish work before starting another task.
@@ -233,25 +234,27 @@ internal sealed class WorkerPlanner(AiContext ctx)
     {
         long gain = (after.Food - before.Food) * 8 + (after.Production - before.Production) * 7 + (after.Commerce - before.Commerce) * 5;
         if (build.RouteType is not null) gain += 12;
-        if (build.ImprovementType is { } id) gain += ConnectionValue(id, ctx.Sim.State.Plots[tile.Value]);
+        if (build.ImprovementType is { } id) gain += ConnectionValue(id, tile);
         return gain;
     }
 
-    private int ConnectionValue(string id, Plot plot)
+    /// <summary>The leader's taste for the improvement, and the worth of a resource it would connect: the AI's own
+    /// worth plus what resource valuers add (<see cref="ResourceSubject"/>, on this scale).</summary>
+    private int ConnectionValue(string id, TileId tile)
     {
+        var plot = ctx.Sim.State.Plots[tile.Value];
         var improvement = ctx.Sim.Content.Get<ImprovementDef>(id);
         int value = (ctx.Leader?.ImprovementWeightModifiers.GetValueOrDefault(id) ?? 0) / 5;
         if (VisibleBonus(plot) is { } bonus && ConnectsBonus(improvement, plot, bonus))
-            value += 30 + 8 * bonus.Happiness + 6 * bonus.Health;
+            value += 30 + 8 * bonus.Happiness + 6 * bonus.Health + ctx.ResourceAdjustment(bonus, tile);
         return value;
     }
 
-    private bool ConnectsBonus(ImprovementDef candidate, Plot plot, BonusDef bonus)
-    {
-        bool alreadyConnected = plot.Improvement is { } existingId
-            && ctx.Sim.Content.Get<ImprovementDef>(existingId).BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
-        return !alreadyConnected && candidate.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
-    }
+    private bool ConnectsBonus(ImprovementDef candidate, Plot plot, BonusDef bonus) =>
+        !Connected(plot, bonus) && candidate.BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
+
+    private bool Connected(Plot plot, BonusDef bonus) => plot.Improvement is { } existingId
+        && ctx.Sim.Content.Get<ImprovementDef>(existingId).BonusEffects.GetValueOrDefault(bonus.Id)?.Connects == true;
 
     private BonusDef? VisibleBonus(Plot plot)
     {

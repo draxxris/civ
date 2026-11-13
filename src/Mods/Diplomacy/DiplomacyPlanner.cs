@@ -81,7 +81,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         TradeItemKind.Gold => item.Amount,
         TradeItemKind.GoldPerTurn => item.Amount * GoldPerTurnTurns,
         TradeItemKind.Technology => ctx.Team.Techs.Contains(item.ContentId) ? 0 : TechCost(item.ContentId),
-        TradeItemKind.Resource => Held(item.ContentId) > 0 ? 5 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
+        TradeItemKind.Resource => Held(item.ContentId) > 0 ? 5 * item.Amount : ResourceWorth(item.ContentId, held: 0) * item.Amount,
         _ => 0,
     };
 
@@ -91,18 +91,24 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         TradeItemKind.GoldPerTurn => item.Amount * GoldPerTurnTurns,
         // Knowledge given away also strengthens a rival, so it costs more than it would be worth to receive.
         TradeItemKind.Technology => TechCost(item.ContentId) * 5 / 4,
-        // A spare copy costs little; the last copy costs its whole worth.
-        TradeItemKind.Resource => Held(item.ContentId) > item.Amount ? 10 * item.Amount : ResourceWorth(item.ContentId) * item.Amount,
+        // A spare copy costs little; the last copy costs its whole worth, to a player holding what would be left.
+        TradeItemKind.Resource => Held(item.ContentId) is var held && held > item.Amount ? 10 * item.Amount
+            : ResourceWorth(item.ContentId, Math.Max(0, held - item.Amount)) * item.Amount,
         _ => 0,
     };
 
     private long TechCost(string tech) => ctx.Sim.Rules().Research
         ?.CalculateCost(ctx.Sim, ctx.Team.Id, tech).Cost ?? 0;
 
-    public long ResourceWorth(string bonus)
+    /// <summary>Gold-equivalent worth of one more copy of <paramref name="bonus"/> to this player, which holds
+    /// <paramref name="held"/> copies without it: its happiness and health, and what the computer player's resource
+    /// valuers add (<see cref="ResourceSubject"/>, whose points this planner takes as gold). One valuer registration so
+    /// answers both the plots the AI settles and improves and the resources it trades.</summary>
+    public long ResourceWorth(string bonus, long held)
     {
         var def = ctx.Sim.Content.Get<BonusDef>(bonus);
-        return 30 + 15 * Math.Max(0, def.Happiness + def.Health) + Math.Max(0, def.AiTradeModifier) / 5;
+        return 30 + 15 * Math.Max(0, def.Happiness + def.Health) + Math.Max(0, def.AiTradeModifier) / 5
+            + ctx.Adjustment(new ResourceSubject(def, held, Plot: null));
     }
 
     /// <summary>Copies the empire can use at its capital, imports included.</summary>
@@ -116,7 +122,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
 
     /// <summary>Gold per turn asked for a spare copy. Over the deal's ten binding turns the buyer pays about half the
     /// copy's worth to it, so a buyer that values resources the same way gains from the trade.</summary>
-    public long SalePrice(string bonus) => Math.Max(1, ResourceWorth(bonus) / (2 * GoldPerTurnTurns));
+    public long SalePrice(string bonus) => Math.Max(1, ResourceWorth(bonus, held: 0) / (2 * GoldPerTurnTurns));
 
     /// <summary>One resource for one resource, a spare copy of ours for one they can spare and we lack, or, when they have
     /// nothing to spare, the copy for gold per turn. A partner this leader likes may receive the spare copy as a gift.</summary>
@@ -126,7 +132,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
             .Select(d => d.Recipient).ToHashSet();
         var bonuses = ctx.Sim.Content.Get<BonusDef>().All.Where(b => b.Happiness + b.Health > 0).OrderBy(b => b.Id, StringComparer.Ordinal).ToArray();
         var spare = bonuses.Where(b => Held(b.Id) >= 2).ToArray();
-        var wanted = bonuses.Where(b => Held(b.Id) == 0).OrderByDescending(b => ResourceWorth(b.Id)).ToArray();
+        var wanted = bonuses.Where(b => Held(b.Id) == 0).OrderByDescending(b => ResourceWorth(b.Id, held: 0)).ToArray();
         if (spare.Length == 0) return;
         int proposed = 0;
         foreach (var partner in Partners(diplomacy))

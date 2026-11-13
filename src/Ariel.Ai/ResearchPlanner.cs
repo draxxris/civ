@@ -42,10 +42,13 @@ internal sealed class ResearchPlanner(AiContext ctx)
     internal long Score(IResearchService research, TechDef tech, HashSet<string> ownedBonuses) =>
         Value(tech, ownedBonuses) * 100_000 / RemainingCost(research, tech);
 
+    /// <summary>Value points of a technology, before the remaining cost divides them, with what technology valuers add
+    /// (<see cref="IAiValuer{TSubject}"/> of <see cref="TechSubject"/>).</summary>
     internal long Value(TechDef tech, HashSet<string> ownedBonuses)
     {
         long value = 40 + ctx.FlavorScore(tech.Flavors) * 3 + Math.Min(tech.AiWeight, 1000) / 20;
-        return value + UnlockValue(tech.Id) + ResourceValue(tech.Id, ownedBonuses) + CapabilityValue(tech);
+        return value + UnlockValue(tech.Id) + ResourceValue(tech.Id, ownedBonuses) + CapabilityValue(tech)
+            + ctx.Adjustment(new TechSubject(tech));
     }
 
     private long RemainingCost(IResearchService research, TechDef tech)

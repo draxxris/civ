@@ -7,7 +7,7 @@ namespace Ariel.Ai;
 /// <summary>Production choice for every city: emergencies, expansion, then flavor-weighted value.</summary>
 internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan army)
 {
-    private readonly BuildingValuer _valuer = new(ctx);
+    private readonly BuildingWorth _worth = new(ctx);
     private const int ParallelCities = 3, ParallelBuildings = 8;
     private readonly Lazy<AiOptions> _options = new(() => new AiOptions(ctx), LazyThreadSafetyMode.ExecutionAndPublication);
     private int _settlersQueued, _workersQueued, _wondersQueued, _soldiersQueued;
@@ -115,7 +115,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (NeedsEscort() && v.City.Id == ctx.Cities.Min(c => c.Id)) garrisonWanted++;
         if (v.Garrison >= garrisonWanted) yield break;
         // Even a warrior is better than leaving a city empty. City-defense types receive a preference, not a gate.
-        if (Options.Best(v.City.Id, UnitRole.Melee, u => AiOptions.DefenderQuality(u) + (v.Threat > 0 ? u.Strength * 30 : 0) + (AiOptions.Defends(u) ? 30 : 0)) is { } defender)
+        if (Options.Best(v.City, UnitRole.Melee, u => AiOptions.DefenderQuality(u) + (v.Threat > 0 ? u.Strength * 30 : 0) + (AiOptions.Defends(u) ? 30 : 0)) is { } defender)
             yield return ("cities:unit", defender.Id);
     }
 
@@ -124,12 +124,12 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
 
     private IEnumerable<(string, string)> Expansion(CityView v)
     {
-        if (CanExpand(v) && Options.Best(v.City.Id, UnitRole.Settler, u => -u.Cost) is { } settler)
+        if (CanExpand(v) && Options.Best(v.City, UnitRole.Settler, u => -u.Cost) is { } settler)
             yield return ("cities:unit", settler.Id);
         int workers = ctx.CountUnits(UnitRole.Worker) + _workersQueued;
         if (v.Population >= 2 && workers < (ctx.Cities.Count * 3 + 3) / 4
-            && Options.Best(v.City.Id, UnitRole.Worker, u => -u.Cost) is { } worker) yield return ("cities:unit", worker.Id);
-        if (NeedsExplorer(v) && Options.Best(v.City.Id, UnitRole.Explorer, u => -u.Cost) is { } scout)
+            && Options.Best(v.City, UnitRole.Worker, u => -u.Cost) is { } worker) yield return ("cities:unit", worker.Id);
+        if (NeedsExplorer(v) && Options.Best(v.City, UnitRole.Explorer, u => -u.Cost) is { } scout)
             yield return ("cities:unit", scout.Id);
     }
 
@@ -178,10 +178,10 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (!war) yield break;
         int land = ctx.CountUnits(UnitRole.Melee) + ctx.CountUnits(UnitRole.Siege);
         if (CountRole(UnitRole.Siege) < Math.Max(1, land / 4)
-            && Options.Best(view.City.Id, UnitRole.Siege, u => AiOptions.Quality(u) + u.BombardRate + u.BombRange * 10) is { } siege)
+            && Options.Best(view.City, UnitRole.Siege, u => AiOptions.Quality(u) + u.BombardRate + u.BombRange * 10) is { } siege)
             yield return ("cities:unit", siege.Id, 340);
         if (CountRole(UnitRole.Air) < Math.Max(1, land / 6)
-            && Options.Best(view.City.Id, UnitRole.Air, u => u.AirCombat * 10 + u.BombRate + u.InterceptionPercent) is { } air)
+            && Options.Best(view.City, UnitRole.Air, u => u.AirCombat * 10 + u.BombRate + u.InterceptionPercent) is { } air)
             yield return ("cities:unit", air.Id, 360);
     }
 
@@ -191,12 +191,12 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         bool needTransport = war && CountRole(UnitRole.NavalTransport) < Math.Max(1, land / 4)
             && (targets.OverseasTarget(targets.Area(view.City.Position)) is not null
                 || ctx.Cities.Select(c => targets.Area(c.Position)).Distinct().Count() > 1);
-        if (needTransport && Options.Best(view.City.Id, UnitRole.NavalTransport, u => Math.Max(u.Cargo, u.TotalCargo) * 100 - u.Cost,
+        if (needTransport && Options.Best(view.City, UnitRole.NavalTransport, u => Math.Max(u.Cargo, u.TotalCargo) * 100 - u.Cost,
                 u => u.CargoDomain is null or "military:domain_land") is { } transport)
             yield return ("cities:unit", transport.Id, 390);
         int escorts = CountRole(UnitRole.NavalCombat) + CountRole(UnitRole.NavalExplorer);
         if (war && escorts < Math.Max(1, CountRole(UnitRole.NavalTransport))
-            && Options.Best(view.City.Id, UnitRole.NavalCombat, AiOptions.Quality) is { } ship)
+            && Options.Best(view.City, UnitRole.NavalCombat, AiOptions.Quality) is { } ship)
             yield return ("cities:unit", ship.Id, needTransport ? 380 : 300);
         foreach (var option in NavalExploration(view, targets, escorts)) yield return option;
     }
@@ -205,7 +205,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     {
         if (escorts != 0) yield break;
         if (!ctx.Grid.Tiles.Any(t => targets.Water(t) && !ctx.Sim.State.Plots[t.Value].Revealed.Contains(ctx.Team.Id))) yield break;
-        if (Options.Best(view.City.Id, UnitRole.NavalExplorer, u => u.Moves * 20 + u.Strength) is { } explorer)
+        if (Options.Best(view.City, UnitRole.NavalExplorer, u => u.Moves * 20 + u.Strength) is { } explorer)
             yield return ("cities:unit", explorer.Id, 170);
     }
 
@@ -223,8 +223,8 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         int shortage = army.Want(Views) - army.Soldiers - _soldiersQueued;
         long drive = 80 + Math.Min(4, shortage) * 40 + (ctx.Leader?.BuildUnitProbability ?? 25) + (ctx.AtWarWithPlayers ? 50 : 0);
         if (FocusOf(v) == CityFocus.Military) drive += 40;
-        if (Options.Best(v.City.Id, UnitRole.Melee, AiOptions.Quality, AiOptions.Attacks) is { } attacker) yield return ("cities:unit", attacker.Id, drive);
-        if (ctx.CountUnits(UnitRole.Siege) < 1 + ctx.Cities.Count / 3 && Options.Best(v.City.Id, UnitRole.Siege, AiOptions.Quality) is { } siege)
+        if (Options.Best(v.City, UnitRole.Melee, AiOptions.Quality, AiOptions.Attacks) is { } attacker) yield return ("cities:unit", attacker.Id, drive);
+        if (ctx.CountUnits(UnitRole.Siege) < 1 + ctx.Cities.Count / 3 && Options.Best(v.City, UnitRole.Siege, AiOptions.Quality) is { } siege)
             yield return ("cities:unit", siege.Id, drive + (ctx.Team.Wars.Count > 0 && army.Soldiers >= 5 ? 20 : -5));
     }
 
@@ -233,7 +233,7 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         bool wonder = CityBuildingRules.IsWonder(b);
         if (wonder && !WonderAffordable(b, v)) return null;
         if (!ctx.CanProduce(v.City.Id, "cities:building", b.Id)) return null;
-        int value = _valuer.Value(b, v);
+        int value = _worth.Value(b, v) + ctx.Adjustment(new BuildingSubject(b, v.City));
         if (wonder) value += 30 + (ctx.Leader?.WonderConstructRand ?? 0) / 2;
         if (value < 14) return null;
         value = value * FocusPercent(b, v) / 100;

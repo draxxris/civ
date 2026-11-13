@@ -233,10 +233,13 @@ internal sealed class SitePlanner
     }
 
     private static int[] BuildTileValues(AiContext ctx) =>
-        ParallelScoring.Select(ctx.Sim, ctx.Sim.State.Plots, ParallelPlots, plot => PlotValue(ctx, plot));
+        ParallelScoring.For(ctx.Sim, ctx.Sim.State.Plots.Length, ParallelPlots, tile => PlotValue(ctx, new TileId(tile)));
 
-    private static int PlotValue(AiContext ctx, Plot plot)
+    /// <summary>A plot's worth as part of a city site. A resource adds its own worth and half what resource valuers
+    /// add, as plots are weighed here on half the <see cref="ResourceSubject"/> scale.</summary>
+    private static int PlotValue(AiContext ctx, TileId tile)
     {
+        var plot = ctx.Sim.State.Plots[tile.Value];
         var terrain = ctx.Sim.Content.Get<TerrainDef>(plot.Terrain);
         if (terrain.Impassable || plot.Kind == PlotKind.Peak) return 0;
         var y = terrain.Yields;
@@ -244,7 +247,12 @@ internal sealed class SitePlanner
         if (plot.Feature is { } f) { var fy = ctx.Sim.Content.Get<FeatureDef>(f).YieldChanges; value += (int)(fy.Food * 4 + fy.Production * 3 + fy.Commerce); }
         if (plot.Kind == PlotKind.Hills) value += 4;
         if (plot.RiverEdges != 0) value += 2;
-        if (plot.Bonus is { } b) { var bonus = ctx.Sim.Content.Get<BonusDef>(b); value += 12 + 5 * (bonus.Happiness + bonus.Health) + (int)(bonus.YieldChanges.Food * 4 + bonus.YieldChanges.Production * 3); }
+        if (plot.Bonus is { } b)
+        {
+            var bonus = ctx.Sim.Content.Get<BonusDef>(b);
+            value += 12 + 5 * (bonus.Happiness + bonus.Health) + (int)(bonus.YieldChanges.Food * 4 + bonus.YieldChanges.Production * 3);
+            value += ctx.ResourceAdjustment(bonus, tile) / 2;
+        }
         return Math.Max(0, value);
     }
 
