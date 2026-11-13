@@ -1,0 +1,8 @@
+{
+  "id": "civic_extension",
+  "name": "Civic Extension Probe",
+  "version": "1.0.0",
+  "assembly": "Ariel.TestMods.CivicExtension.dll",
+  "dependencies": ["government"],
+  "references": ["cities"]
+}

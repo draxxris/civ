@@ -1,0 +1,8 @@
+[
+  {
+    "id": "corporations:maintenance_percent",
+    "name": "corporation maintenance",
+    "targeted": false,
+    "unit": "percent"
+  }
+]

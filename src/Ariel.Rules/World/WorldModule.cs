@@ -14,8 +14,9 @@ public sealed class WorldModule : IPreparableMod
     private static readonly ModJsonFile<ImprovementDef[]> Improvements = new("data/improvement.json");
     private static readonly ModJsonFile<RouteDef[]> Routes = new("data/route.json");
     private static readonly ModJsonFile<TerrainDef[]> Terrains = new("data/terrain.json");
+    private static readonly ModJsonFile<Ariel.Content.ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [BonusClasses, Bonuses, Builds, Features, Goodies, Improvements, Routes, Terrains];
+        [BonusClasses, Bonuses, Builds, Features, Goodies, Improvements, Routes, Terrains, ModifierKeys];
 
     public void Register(IModContext context)
     {
@@ -27,6 +28,7 @@ public sealed class WorldModule : IPreparableMod
         ContentRegistration.Load(context, Improvements);
         ContentRegistration.Load(context, Routes);
         ContentRegistration.Load(context, Terrains);
+        ContentRegistration.Load(context, ModifierKeys);
         var water = new WaterService();
         var yields = new PlotYieldService(water);
         var network = new ResourceNetwork();

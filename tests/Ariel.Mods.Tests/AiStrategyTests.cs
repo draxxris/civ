@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
@@ -89,8 +90,10 @@ public sealed class AiStrategyTests(LoadedMods mods) : IClassFixture<LoadedMods>
     {
         var sim = Scenario(new(8, 8, true), game => AddCity(game, 0, 4, 4));
         var warValue = AiType(sim, "CivicPlanner").GetMethod("WarValue")!;
-        var militarist = new CivicDef { Id = "test:militarist", BaseFreeMilitaryUnits = 2, WarWearinessModifier = -50 };
-        var pacifist = new CivicDef { Id = "test:pacifist", WarWearinessModifier = 50 };
+        static ImmutableArray<ModifierEffect> Weariness(int percent) =>
+            [new() { Scope = ModifierScope.City, Key = "cities:war_weariness_percent", Amount = percent }];
+        var militarist = new CivicDef { Id = "test:militarist", BaseFreeMilitaryUnits = 2, Effects = Weariness(-50) };
+        var pacifist = new CivicDef { Id = "test:pacifist", Effects = Weariness(50) };
         Assert.Equal(2 * 4 + 50 / 5, (int)warValue.Invoke(null, [militarist, 1])!);
         Assert.True((int)warValue.Invoke(null, [pacifist, 1])! < 0);
     }

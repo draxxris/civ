@@ -81,9 +81,9 @@ internal sealed partial class DiplomacyService
         var theirs = sim.State.PlayerById(toward).Civics.Values.ToHashSet(StringComparer.Ordinal);
         foreach (var id in sim.State.PlayerById(from).Civics.Values.Order(StringComparer.Ordinal))
         {
-            var civic = sim.Content.Get<S.CivicDef>(id);
+            if (sim.Content.Attachment<CivicDiplomacyDef>(id) is not { } civic) continue;
             add("civic:" + id, civic.GlobalRelationsChange);
-            foreach (var effect in civic.CivicAttitudeChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
+            foreach (var effect in civic.AttitudeChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
                 if (theirs.Contains(effect.Key)) add("civic_pair:" + id + ":" + effect.Key, effect.Value.Change);
         }
     }

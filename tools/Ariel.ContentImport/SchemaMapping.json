@@ -5144,11 +5144,13 @@
       },
       {
         "source": "BuildingClassProductionModifiers",
-        "property": "BuildingClassProductionModifiers",
-        "kind": "mapInt",
+        "property": "Effects",
+        "kind": "effectMapInt",
         "target": "BuildingClassInfo",
         "key": "BuildingClassType",
-        "value": "iProductionModifier"
+        "value": "iProductionModifier",
+        "scope": "city",
+        "modifier": "cities:building_class_production_percent"
       },
       {
         "source": "BuildingHappinessChanges",
@@ -5177,12 +5179,6 @@
         "kind": "yield"
       },
       {
-        "source": "CivicAttitudeChanges",
-        "property": "CivicAttitudeChanges",
-        "kind": "civicAttitudes",
-        "target": "CivicInfo"
-      },
-      {
         "source": "CivicOptionType",
         "property": "Option",
         "kind": "ref",
@@ -5190,8 +5186,10 @@
       },
       {
         "source": "CommerceModifiers",
-        "property": "CommerceModifiers",
-        "kind": "commerce"
+        "property": "Effects",
+        "kind": "effectCommerce",
+        "scope": "city",
+        "modifier": "commerce.percent"
       },
       {
         "source": "FeatureHappinessChanges",
@@ -5247,11 +5245,13 @@
       },
       {
         "source": "SpecialistCommercePercentChanges",
-        "property": "SpecialistCommercePercentChanges",
-        "kind": "mapCommerce",
+        "property": "Effects",
+        "kind": "effectMapCommerce",
         "target": "SpecialistInfo",
         "key": "SpecialistType",
-        "value": "SpecialistCommercePercents"
+        "value": "SpecialistCommercePercents",
+        "scope": "city",
+        "modifier": "cities:specialist_{}_hundredths"
       },
       {
         "source": "SpecialistExtraCommerces",
@@ -5260,32 +5260,33 @@
       },
       {
         "source": "SpecialistValids",
-        "property": "SpecialistValids",
-        "kind": "mapBool",
+        "property": "Effects",
+        "kind": "effectMapBool",
         "target": "SpecialistInfo",
         "key": "SpecialistType",
-        "value": "bValid"
+        "value": "bValid",
+        "scope": "city",
+        "modifier": "cities:unlimited"
       },
       {
         "source": "SpecialistYieldPercentChanges",
-        "property": "SpecialistYieldPercentChanges",
-        "kind": "mapYield",
+        "property": "Effects",
+        "kind": "effectMapYield",
         "target": "SpecialistInfo",
         "key": "SpecialistType",
-        "value": "SpecialistYieldPercents"
-      },
-      {
-        "source": "TradeYieldModifiers",
-        "property": "TradeYieldModifiers",
-        "kind": "yield"
+        "value": "SpecialistYieldPercents",
+        "scope": "city",
+        "modifier": "cities:specialist_{}_hundredths"
       },
       {
         "source": "UnitCombatProductionModifiers",
-        "property": "UnitCombatProductionModifiers",
-        "kind": "mapInt",
+        "property": "Effects",
+        "kind": "effectMapInt",
         "target": "UnitCombatInfo",
         "key": "UnitCombatType",
-        "value": "iProductionModifier"
+        "value": "iProductionModifier",
+        "scope": "city",
+        "modifier": "cities:combat_production_percent"
       },
       {
         "source": "Upkeep",
@@ -5295,8 +5296,10 @@
       },
       {
         "source": "YieldModifiers",
-        "property": "YieldModifiers",
-        "kind": "yield"
+        "property": "Effects",
+        "kind": "effectYield",
+        "scope": "city",
+        "modifier": "yield.percent"
       },
       {
         "source": "bAllowInquisitions",
@@ -5306,37 +5309,15 @@
       },
       {
         "source": "bBuildingOnlyHealthy",
-        "property": "BuildingOnlyHealthy",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bCanDoElection",
-        "property": "CanDoElection",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bCanNotCeaseRelations",
-        "property": "CanNotCeaseRelations",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bCommunism",
-        "property": "Communism",
-        "kind": "bool",
-        "default": 0
+        "property": "Effects",
+        "kind": "effectFlag",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:building_only_healthy"
       },
       {
         "source": "bDisallowInquisitions",
         "property": "DisallowInquisitions",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bEnablesMADNukes",
-        "property": "EnablesMADNukes",
         "kind": "bool",
         "default": 0
       },
@@ -5347,50 +5328,22 @@
         "default": 0
       },
       {
-        "source": "bForcesOpenTradeRoutesWithWeakerPlayers",
-        "property": "ForcesOpenTradeRoutesWithWeakerPlayers",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bFreeReligion",
         "property": "FreeReligion",
         "kind": "bool",
         "default": 0
       },
       {
-        "source": "bFreeSpeech",
-        "property": "FreeSpeech",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bMilitaryFoodProduction",
-        "property": "MilitaryFoodProduction",
-        "kind": "bool",
-        "default": 0
+        "property": "Effects",
+        "kind": "effectFlag",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:military_food_production"
       },
       {
         "source": "bNoCapitalUnhappiness",
         "property": "NoCapitalUnhappiness",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNoCorporations",
-        "property": "NoCorporations",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNoForeignCorporations",
-        "property": "NoForeignCorporations",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNoForeignTrade",
-        "property": "NoForeignTrade",
         "kind": "bool",
         "default": 0
       },
@@ -5408,9 +5361,11 @@
       },
       {
         "source": "bNoUnhealthyPopulation",
-        "property": "NoUnhealthyPopulation",
-        "kind": "bool",
-        "default": 0
+        "property": "Effects",
+        "kind": "effectFlag",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:no_unhealthy_population"
       },
       {
         "source": "bStateReligion",
@@ -5437,12 +5392,6 @@
         "default": 0
       },
       {
-        "source": "iAttitudeShareMod",
-        "property": "AttitudeShareMod",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBaseFreeMilitaryUnits",
         "property": "BaseFreeMilitaryUnits",
         "kind": "int",
@@ -5462,9 +5411,11 @@
       },
       {
         "source": "iCivicHappiness",
-        "property": "CivicHappiness",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:happiness"
       },
       {
         "source": "iCivicPercentAnger",
@@ -5473,16 +5424,12 @@
         "default": 0
       },
       {
-        "source": "iCorporationMaintenanceModifier",
-        "property": "CorporationMaintenanceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDistanceMaintenanceModifier",
-        "property": "DistanceMaintenanceModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "cities:distance_maintenance_percent"
       },
       {
         "source": "iDistantUnitSupportCostModifier",
@@ -5491,16 +5438,12 @@
         "default": 0
       },
       {
-        "source": "iDomesticConnectednessModifier",
-        "property": "DomesticConnectednessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDomesticGreatGeneralRateModifier",
-        "property": "DomesticGreatGeneralRateModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "military:domestic_general_rate_percent"
       },
       {
         "source": "iEnslavementChance",
@@ -5510,39 +5453,35 @@
       },
       {
         "source": "iExpInBorderModifier",
-        "property": "ExpInBorderModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "unit",
+        "modifier": "military:experience_in_borders_percent"
       },
       {
         "source": "iExtraCityDefense",
-        "property": "ExtraCityDefense",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "unit",
+        "modifier": "military:city_defense"
       },
       {
         "source": "iExtraHealth",
-        "property": "ExtraHealth",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iForeignConnectednessModifier",
-        "property": "ForeignConnectednessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iForeignTradeRouteModifier",
-        "property": "ForeignTradeRouteModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:health"
       },
       {
         "source": "iForeignerUnhappyPercent",
-        "property": "ForeignerUnhappyPercent",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:foreigner_unhappy_percent"
       },
       {
         "source": "iFractionalXPEarnedInCity",
@@ -5552,9 +5491,11 @@
       },
       {
         "source": "iFreeExperience",
-        "property": "FreeExperience",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "unit",
+        "modifier": "military:initial_experience"
       },
       {
         "source": "iFreeMilitaryUnitsPopulationPercent",
@@ -5564,19 +5505,15 @@
       },
       {
         "source": "iFreeSpecialist",
-        "property": "FreeSpecialist",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:free_specialists"
       },
       {
         "source": "iFreeUnitsPopulationPercent",
         "property": "FreeUnitsPopulationPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGlobalRelationsChange",
-        "property": "GlobalRelationsChange",
         "kind": "int",
         "default": 0
       },
@@ -5594,15 +5531,19 @@
       },
       {
         "source": "iGreatGeneralRateModifier",
-        "property": "GreatGeneralRateModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "military:general_rate_percent"
       },
       {
         "source": "iGreatPeopleRateModifier",
-        "property": "GreatPeopleRateModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:great_people_percent"
       },
       {
         "source": "iHappyPerMilitaryUnit",
@@ -5630,9 +5571,11 @@
       },
       {
         "source": "iImprovementUpgradeRateModifier",
-        "property": "ImprovementUpgradeRateModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "world:improvement_upgrade_percent"
       },
       {
         "source": "iInflation",
@@ -5653,12 +5596,6 @@
         "default": 0
       },
       {
-        "source": "iLessPowerfulRelationsChange",
-        "property": "LessPowerfulRelationsChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMaxConscript",
         "property": "MaxConscript",
         "kind": "int",
@@ -5666,9 +5603,11 @@
       },
       {
         "source": "iMilitaryProductionModifier",
-        "property": "MilitaryProductionModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:military_production_percent"
       },
       {
         "source": "iNonStateReligionHappiness",
@@ -5678,9 +5617,11 @@
       },
       {
         "source": "iNumCitiesMaintenanceModifier",
-        "property": "CityCountMaintenancePercent",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "cities:count_maintenance_percent"
       },
       {
         "source": "iOtherAreaMaintenanceModifier",
@@ -5690,43 +5631,23 @@
       },
       {
         "source": "iPopulationAngerModifier",
-        "property": "PopulationAngerModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:population_anger_percent"
       },
       {
         "source": "iPopulationgrowthratepercentage",
-        "property": "PopulationGrowthPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iPowerfulRelationsChange",
-        "property": "PowerfulRelationsChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iRealCorporationMaintenanceModifier",
-        "property": "RealCorporationMaintenanceModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "cities:growth_percent"
       },
       {
         "source": "iReligionSpreadRate",
         "property": "ReligionSpreadRate",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSeizedForeignConnectednessPercent",
-        "property": "SeizedForeignConnectednessPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSharedCivicTradeRouteModifier",
-        "property": "SharedCivicTradeRouteModifier",
         "kind": "int",
         "default": 0
       },
@@ -5773,34 +5694,20 @@
         "default": 0
       },
       {
-        "source": "iTradeRoutes",
-        "property": "TradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTributePercent",
-        "property": "TributePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iWarWearinessModifier",
-        "property": "WarWearinessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWeakestRelationsChange",
-        "property": "WeakestRelationsChange",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "city",
+        "modifier": "cities:war_weariness_percent"
       },
       {
         "source": "iWorkerSpeedModifier",
-        "property": "WorkerSpeedModifier",
-        "kind": "int",
-        "default": 0
+        "property": "Effects",
+        "kind": "effect",
+        "default": 0,
+        "scope": "player",
+        "modifier": "world:worker_speed_percent"
       }
     ],
     "requirements": [
@@ -5817,6 +5724,195 @@
         "mode": "not"
       }
     ]
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "bNoCorporations",
+        "property": "NoCorporations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoForeignCorporations",
+        "property": "NoForeignCorporations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iCorporationMaintenanceModifier",
+        "property": "MaintenancePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iRealCorporationMaintenanceModifier",
+        "property": "RealisticMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "TradeYieldModifiers",
+        "property": "YieldPercent",
+        "kind": "yield"
+      },
+      {
+        "source": "bForcesOpenTradeRoutesWithWeakerPlayers",
+        "property": "ForcesOpenTradeRoutesWithWeakerPlayers",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoForeignTrade",
+        "property": "NoForeignTrade",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iDomesticConnectednessModifier",
+        "property": "DomesticConnectednessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignConnectednessModifier",
+        "property": "ForeignConnectednessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignTradeRouteModifier",
+        "property": "ForeignProfitPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSeizedForeignConnectednessPercent",
+        "property": "SeizedForeignConnectednessPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iSharedCivicTradeRouteModifier",
+        "property": "SharedCivicProfitPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "Routes",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicDiplomacyDef",
+    "mod": "diplomacy",
+    "fields": [
+      {
+        "source": "CivicAttitudeChanges",
+        "property": "AttitudeChanges",
+        "kind": "civicAttitudes",
+        "target": "CivicInfo"
+      },
+      {
+        "source": "bCanNotCeaseRelations",
+        "property": "CanNotCeaseRelations",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iAttitudeShareMod",
+        "property": "AttitudeShareMod",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalRelationsChange",
+        "property": "GlobalRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLessPowerfulRelationsChange",
+        "property": "LessPowerfulRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iPowerfulRelationsChange",
+        "property": "PowerfulRelationsChange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTributePercent",
+        "property": "TributePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iWeakestRelationsChange",
+        "property": "WeakestRelationsChange",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicRevolutionDef",
+    "mod": "revolution",
+    "fields": [
+      {
+        "source": "bCanDoElection",
+        "property": "CanDoElection",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bCommunism",
+        "property": "Communism",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreeSpeech",
+        "property": "FreeSpeech",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicProjectsDef",
+    "mod": "projects_victory",
+    "fields": [
+      {
+        "source": "bEnablesMADNukes",
+        "property": "EnablesMadNukes",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
   },
   {
     "sourceClass": "CivicOptionInfo",

@@ -11,13 +11,15 @@ public sealed class CitiesModule : IPreparableMod
     private static readonly ModJsonFile<BuildingCategoryDef[]> BuildingCategories = new("data/building-category.json");
     private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> Buildings = new("data/building.json");
     private static readonly ModJsonFile<HurryDef[]> Hurry = new("data/hurry.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [BuildingCategories, Buildings, Hurry];
+    private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [BuildingCategories, Buildings, Hurry, ModifierKeys];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, BuildingCategories);
         ContentRegistration.Load(context, Buildings);
         ContentRegistration.Load(context, Hurry);
+        ContentRegistration.Load(context, ModifierKeys);
         context.RegisterService<IRequirementEvaluator>("building_requirements", new BuildingRequirement("building"));
         context.RegisterService<IRequirementEvaluator>("class_requirements", new BuildingRequirement("building-class"));
         context.RegisterStateComponent<CityRuleState>("city_state");

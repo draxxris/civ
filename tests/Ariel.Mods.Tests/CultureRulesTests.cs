@@ -232,7 +232,8 @@ public sealed class CultureRulesTests
             context.Content<S.LeaderDef>().Register(new() { Id = "culture_probe:leader", Traits = ImmutableDictionary<string, bool>.Empty.Add("culture_probe:trait", true) });
             context.Content<S.CivicOptionDef>().Register(new() { Id = "culture_probe:option" });
             foreach (var id in new[] { "boost", "citizens", "foreigners" })
-                context.Content<S.CivicDef>().Register(new() { Id = "culture_probe:" + id, Option = "culture_probe:option", ForeignerUnhappyPercent = id == "foreigners" ? 25 : 0 });
+                context.Content<S.CivicDef>().Register(new() { Id = "culture_probe:" + id, Option = "culture_probe:option", 
+                    Effects = id == "foreigners" ? [new() { Scope = ModifierScope.City, Key = "cities:foreigner_unhappy_percent", Amount = 25 }] : [] });
             context.Content<S.UnitDef>().Register(new() { Id = "culture_probe:base", DefaultUnit = "culture_probe:base", Cost = 60, Conscription = 999 });
             context.Content<S.UnitDef>().Register(new() { Id = "culture_probe:unique", DefaultUnit = "culture_probe:base", Cost = 60, Conscription = 1000 });
             context.Content<S.CivilizationDef>().Register(new() { Id = "culture_probe:origin", UnitOverrides = ImmutableDictionary<string, string?>.Empty.Add("culture_probe:base", "culture_probe:unique") });

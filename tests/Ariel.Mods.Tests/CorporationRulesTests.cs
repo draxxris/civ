@@ -173,7 +173,7 @@ public sealed class CorporationRulesTests
         Assert.Equal(2, ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
         Assert.Equal(750, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 headquarters + 200 resources) * 100/80.
         sim.State.PlayerById(0).Civics["test"] = "government:guilds";
-        Assert.Equal(-105, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("cities:corporation_maintenance_percent"));
+        Assert.Equal(-105, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("corporations:maintenance_percent"));
         Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, hq.Id));
         sim.State.PlayerById(0).Civics["test"] = "government:planned";
         Assert.False(Corps(sim).IsActive(sim, hq.Id, Cereal)); Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, hq.Id));

@@ -134,7 +134,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
 
         var civic = db.Get<Schema.CivicDef>("government:slavery");
         Assert.Equal("government:civicoption_society", civic.Option);
-        Assert.Equal(25, civic.PopulationAngerModifier);
+        Assert.Equal(25, civic.Effects.Total(ModifierScope.City, "cities:population_anger_percent"));
         Assert.Equal(new YieldVector(1, 0, 0), civic.ImprovementYieldChanges["world:improvement_improvement_farm"]);
         var promotion = db.Get<Schema.PromotionDef>("military:combat2");
         Assert.Equal(10, promotion.CombatPercent);

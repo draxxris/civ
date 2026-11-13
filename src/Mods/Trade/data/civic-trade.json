@@ -1,0 +1,230 @@
+[
+  {
+    "domesticConnectednessPercent": 20,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": -20,
+    "foreignProfitPercent": 0,
+    "id": "trade:coinage",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:coinage",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 15,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 0,
+    "foreignProfitPercent": 0,
+    "id": "trade:federal",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:federal",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 0,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 0,
+    "foreignProfitPercent": 0,
+    "id": "trade:hive",
+    "name": "",
+    "noForeignTrade": true,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:hive",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 0,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 33,
+    "foreignProfitPercent": 0,
+    "id": "trade:imperium",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 25,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:imperium",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 25,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 0,
+    "foreignProfitPercent": 0,
+    "id": "trade:interventionism",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:interventionism",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 50,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 50,
+    "foreignProfitPercent": 0,
+    "id": "trade:laissez_faire",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:laissez_faire",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 0,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": -50,
+    "foreignProfitPercent": 0,
+    "id": "trade:mercantilism",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:mercantilism",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 50,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": -50,
+    "foreignProfitPercent": 0,
+    "id": "trade:nationalist",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:nationalist",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 0,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 25,
+    "foreignProfitPercent": 0,
+    "id": "trade:naval_supremacy",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:naval_supremacy",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": -10,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 10,
+    "foreignProfitPercent": 0,
+    "id": "trade:post_scarcity",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:post_scarcity",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 33,
+    "forcesOpenTradeRoutesWithWeakerPlayers": false,
+    "foreignConnectednessPercent": 0,
+    "foreignProfitPercent": 0,
+    "id": "trade:protectionism",
+    "name": "",
+    "noForeignTrade": true,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:protectionism",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "domesticConnectednessPercent": 0,
+    "forcesOpenTradeRoutesWithWeakerPlayers": true,
+    "foreignConnectednessPercent": 25,
+    "foreignProfitPercent": 0,
+    "id": "trade:redevelopment",
+    "name": "",
+    "noForeignTrade": false,
+    "requirements": null,
+    "routes": 0,
+    "seizedForeignConnectednessPercent": 0,
+    "sharedCivicProfitPercent": 0,
+    "target": "government:redevelopment",
+    "yieldPercent": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  }
+]

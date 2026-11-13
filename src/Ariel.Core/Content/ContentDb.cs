@@ -28,6 +28,8 @@ public sealed class ContentDb
         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
         .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !IsScalarType(p.PropertyType)).ToArray();
     private readonly Dictionary<Type, Entry> _registries = new();
+    private Dictionary<Type, Dictionary<string, ContentAttachment>> _attachments = new();
+    private Dictionary<string, ContentAttachment[]> _attachmentsByTarget = new(StringComparer.Ordinal);
     private bool _frozen;
     private Lazy<string>? _hash;
     private Lazy<string>? _legacyHash;
@@ -47,6 +49,30 @@ public sealed class ContentDb
     {
         item = null!;
         return _registries.TryGetValue(typeof(T), out var entry) && ((Registry<T>)entry.Registry).TryGet(id, out item);
+    }
+    /// <summary>The <typeparamref name="T"/> row attached to a definition, or null when no loaded mod attached one.
+    /// Only after loading; the index is built once when content freezes.</summary>
+    public T? Attachment<T>(string target) where T : ContentAttachment
+    {
+        if (!_frozen) throw new InvalidOperationException("Attachments are indexed when content freezes");
+        return _attachments.TryGetValue(typeof(T), out var rows) && rows.TryGetValue(target, out var row) ? (T)row : null;
+    }
+    /// <summary>The definition with this id in whichever registry holds it, for presenting an untyped reference such as a
+    /// modifier's target. Attachments are skipped, as they are about a definition rather than one. Only after loading.</summary>
+    public ContentDef? Find(string id)
+    {
+        if (!_frozen) throw new InvalidOperationException("Untyped lookup is indexed when content freezes");
+        _byId ??= _registries.OrderBy(e => e.Key.FullName, StringComparer.Ordinal)
+            .Where(e => !typeof(ContentAttachment).IsAssignableFrom(e.Key)).SelectMany(e => e.Value.Items())
+            .GroupBy(d => d.Id, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+        return _byId.GetValueOrDefault(id);
+    }
+    private Dictionary<string, ContentDef>? _byId;
+    /// <summary>Every attachment of a definition, ordered by attachment type name, for presentation.</summary>
+    public IReadOnlyList<ContentAttachment> AttachmentsOf(string target)
+    {
+        if (!_frozen) throw new InvalidOperationException("Attachments are indexed when content freezes");
+        return _attachmentsByTarget.TryGetValue(target, out var rows) ? rows : [];
     }
     /// <summary>Player AI implementations.</summary>
     public Registry<IPlayerAI> PlayerAIs { get; } = new("player AI");
@@ -103,7 +129,37 @@ public sealed class ContentDb
                     errors.Add($"{reference.Path}: mod '{owner}' must declare content provider '{provider}' in references or dependencies");
             }
         }
+        ValidateModifierEffects(declared, errors);
         if (errors.Count > 0) throw new InvalidDataException("Content reference validation failed:\n" + string.Join("\n", errors));
+    }
+
+    /// <summary>Every data-driven modifier names a typed key or a declared <see cref="ModifierKeyDef"/> from a provider
+    /// its definition's mod declares, and names a target exactly when the key is targeted.</summary>
+    private void ValidateModifierEffects(Dictionary<string, HashSet<string>> declared, SortedSet<string> errors)
+    {
+        var keys = _registries.TryGetValue(typeof(ModifierKeyDef), out var entry) ? (Registry<ModifierKeyDef>)entry.Registry : null;
+        foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
+        {
+            var owner = definition.Id.Split(':')[0];
+            foreach (var (effect, path) in ContentReferences.Find<ModifierEffect>(definition, definition.Id))
+            {
+                if (ModifierSink.IsTypedKey(effect.Key))
+                {
+                    if (effect.Target is not null) errors.Add($"{path}: typed modifier key '{effect.Key}' takes no target");
+                    continue;
+                }
+                if (keys is null || !keys.TryGet(effect.Key, out var key))
+                {
+                    errors.Add($"{path}: modifier key '{effect.Key}' is not declared by any loaded mod (ModifierKeyDef)");
+                    continue;
+                }
+                if (key.Targeted != effect.Target is not null)
+                    errors.Add($"{path}: modifier key '{effect.Key}' {(key.Targeted ? "needs" : "takes no")} target");
+                var provider = effect.Key.Split(':')[0];
+                if (provider != owner && (!declared.TryGetValue(owner, out var providers) || !providers.Contains(provider)))
+                    errors.Add($"{path}: mod '{owner}' must declare modifier key provider '{provider}' in references or dependencies");
+            }
+        }
     }
 
     internal void Freeze()
@@ -119,6 +175,7 @@ public sealed class ContentDb
         using (Modding.StartupTrace.Phase("content requirement validation"))
             foreach (var entry in _registries.Values)
                 foreach (var item in entry.Items()) ValidateRequirements(item, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        IndexAttachments();
         _hash = HashLazy();
         _legacyHash = LegacyHashLazy();
         using var freezeTrace = Modding.StartupTrace.Phase("registry freeze");
@@ -126,6 +183,26 @@ public sealed class ContentDb
         MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
         _frozen = true;
         _ruleset?.Bind(this);
+    }
+    /// <summary>One row per (attachment type, target): two rows of one type about one definition are a load error, as
+    /// neither mod could know which the type's owner would read.</summary>
+    private void IndexAttachments()
+    {
+        var byType = new Dictionary<Type, Dictionary<string, ContentAttachment>>();
+        var errors = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var (type, entry) in _registries.OrderBy(e => e.Key.FullName, StringComparer.Ordinal))
+        {
+            if (!typeof(ContentAttachment).IsAssignableFrom(type)) continue;
+            var rows = new Dictionary<string, ContentAttachment>(StringComparer.Ordinal);
+            foreach (var row in entry.Items().Cast<ContentAttachment>())
+                if (!rows.TryAdd(row.Target, row))
+                    errors.Add($"{type.Name} rows '{rows[row.Target].Id}' and '{row.Id}' both attach to '{row.Target}'");
+            byType[type] = rows;
+        }
+        if (errors.Count > 0) throw new InvalidDataException("Content attachment validation failed:\n" + string.Join("\n", errors));
+        _attachments = byType;
+        _attachmentsByTarget = byType.OrderBy(e => e.Key.FullName, StringComparer.Ordinal).SelectMany(e => e.Value.Values)
+            .GroupBy(row => row.Target, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.ToArray(), StringComparer.Ordinal);
     }
     /// <summary>Capture the digest input now and return the digest to run on first read. Registry enumeration order
     /// is stable before and after the freeze, so taking the digest later yields the identical value.</summary>

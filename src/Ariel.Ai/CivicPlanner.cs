@@ -1,3 +1,4 @@
+using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
@@ -97,25 +98,34 @@ internal sealed class CivicPlanner(AiContext ctx)
     }
 
     /// <summary>Integer estimate of a civic's worth to this leader and empire size.</summary>
+    /// <remarks>The civic's data-driven modifiers are weighed by the keys this planner knows; a key it does not know
+    /// (a mod's own effect) adds nothing yet, and the civic still competes on its flavors, AI weight and the rest.</remarks>
     internal int Score(CivicDef c)
     {
         int cities = Math.Max(1, ctx.Cities.Count), scale = Math.Max(1, (cities + 1) / 2);
         int score = Math.Clamp(c.AiWeight, -100, 100) + ctx.FlavorScore(c.Flavors);
         if (ctx.Leader?.FavoriteCivic == c.Id) score += 120;
-        score += (int)(scale * (c.CommerceModifiers.Gold * 3 + c.CommerceModifiers.Research * 4 + c.CommerceModifiers.Culture * 2));
-        score += (int)(scale * (c.YieldModifiers.Food * 5 + c.YieldModifiers.Production * 5 + c.YieldModifiers.Commerce * 3));
-        score += scale * (c.CivicHappiness * 8 + c.ExtraHealth * 6 + c.PopulationGrowthPercent / 4);
-        score += c.BaseFreeUnits * 2 + c.BaseFreeMilitaryUnits * 2 + c.FreeSpecialist * 8 + c.WorkerSpeedModifier / 4;
-        score -= UpkeepCost(c) * cities / 25 + Math.Max(0, c.WarWearinessModifier / 10);
+        int City(string key) => (int)c.Effects.Total(ModifierScope.City, key);
+        int Player(string key) => (int)c.Effects.Total(ModifierScope.Player, key);
+        score += scale * (City("commerce.percent.gold") * 3 + City("commerce.percent.research") * 4 + City("commerce.percent.culture") * 2);
+        score += scale * (City("yield.percent.food") * 5 + City("yield.percent.production") * 5 + City("yield.percent.commerce") * 3);
+        score += scale * (City("cities:happiness") * 8 + City("cities:health") * 6 + Player("cities:growth_percent") / 4);
+        score += c.BaseFreeUnits * 2 + c.BaseFreeMilitaryUnits * 2 + City("cities:free_specialists") * 8 + Player("world:worker_speed_percent") / 4;
+        score -= UpkeepCost(c) * cities / 25 + Math.Max(0, City("cities:war_weariness_percent") / 10);
         if (ctx.AtWarWithPlayers) score += WarValue(c, scale);
         return score;
     }
 
     /// <summary>Extra worth during a war with another civilization: cheap armies, veteran units, less weariness.
     /// Wars are part of the review dependencies, so entering or leaving one triggers a fresh evaluation.</summary>
-    public static int WarValue(CivicDef c, int scale) =>
-        c.BaseFreeMilitaryUnits * 4 + c.FreeExperience * 10 + c.ExtraCityDefense / 2 + c.HappyPerMilitaryUnit * 6 * scale
-        - c.WarWearinessModifier / 5 + c.UnitCombatProductionModifiers.Values.Sum() / 5 + c.GreatGeneralRateModifier / 10;
+    public static int WarValue(CivicDef c, int scale)
+    {
+        int Get(ModifierScope scope, string key) => (int)c.Effects.Total(scope, key);
+        return c.BaseFreeMilitaryUnits * 4 + Get(ModifierScope.Unit, "military:initial_experience") * 10
+            + Get(ModifierScope.Unit, "military:city_defense") / 2 + c.HappyPerMilitaryUnit * 6 * scale
+            - Get(ModifierScope.City, "cities:war_weariness_percent") / 5 + Get(ModifierScope.City, "cities:combat_production_percent") / 5
+            + Get(ModifierScope.Player, "military:general_rate_percent") / 10;
+    }
 
     private int UpkeepCost(CivicDef c) => c.Upkeep is { } id ? ctx.Sim.Content.Get<UpkeepDef>(id).CityPercent / 2 : 0;
 }

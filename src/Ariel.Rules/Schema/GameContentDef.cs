@@ -54,7 +54,5 @@ public sealed record SpecialistSlotsChange
     public ImmutableDictionary<string, int> Slots { get; init; } = ImmutableDictionary<string, int>.Empty;
 }
 
-public sealed record CivicAttitudeEffect(int Change, string Text);
-
 /// <summary>Non-content predicates, with kind-specific count/parameter units. Evaluators fail closed until supported.</summary>
 public sealed class ConditionDef : GameContentDef { }

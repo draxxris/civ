@@ -115,6 +115,69 @@ culture uses hundredths of a point (`CityCultureHundredthsDelta`). Negative gold
 indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary;
 zero means permanent. `Outcome` provides post-choice feedback text.
 
+### Civic fields, effects and attachments
+
+`CivicDef.Effects` is the civic's list of plain modifiers. Each entry is
+`{ "scope": "city", "key": "cities:happiness", "target": null, "amount": 2 }`, applied
+to every calculation of that scope for a player who runs the civic, with the civic id as
+the ledger source. Scopes are `plot`, `city`, `player`, `team` and `unit`. The key is a
+typed vector key (`yield.flat.food`, `yield.percent.production`,
+`commerce.flat.gold`, `commerce.percent.research`, ...) or a key some loaded module
+declares in its `data/modifier-key.json`:
+
+```json
+{ "id": "cities:combat_production_percent", "name": "production of {target} units",
+  "requirements": null, "targeted": true, "unit": "percent" }
+```
+
+`unit` is `flat`, `percent`, `flag` (any non-zero amount turns the rule on) or
+`hundredths`. A targeted key takes a content id as `target`, and the ledger line is
+keyed `key:target`. The base keys are declared by Cities (happiness, health, free
+specialists, maintenance, growth, great people, production and specialist keys), World
+(worker speed, improvement upgrade rate), Military (initial experience, city defense,
+great general rates) and Corporations (`corporations:maintenance_percent`). Effects are
+written in key, then target order with zero amounts left out.
+
+The typed fields that remain on `CivicDef` read more than the calculation's subject
+(capital, buildings, improvements, features, units, upkeep, anarchy). The Religion fields
+(`AllowInquisitions`, `DisallowInquisitions`, `FreeReligion`, `NoNonStateReligionSpread`,
+`RequiresStateReligion`, `NonStateReligionHappiness`, `ReligionSpreadRate`, and the six
+`StateReligion*` fields) are marked to leave with the Religion module.
+
+A feature mod keeps its civic data in its own attachment file, one row for each civic it
+has something to say about:
+
+- Corporations, `data/civic-corporations.json` (`CivicCorporationsDef`):
+  `noCorporations`, `noForeignCorporations`, `maintenancePercent`,
+  `realisticMaintenancePercent`. Corporations turns the maintenance percents into the
+  Player-scope `corporations:maintenance_percent` modifier.
+- Trade, `data/civic-trade.json` (`CivicTradeDef`): `noForeignTrade`, `routes`,
+  `foreignProfitPercent`, `sharedCivicProfitPercent`, `yieldPercent`,
+  `forcesOpenTradeRoutesWithWeakerPlayers` and the three connectedness percents.
+- Diplomacy, `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
+  `globalRelationsChange`, `attitudeShareMod`, the three relative-power relations
+  changes, `canNotCeaseRelations`, `tributePercent`.
+- Revolution, `data/civic-revolution.json` (`CivicRevolutionDef`): `canDoElection`,
+  `freeSpeech`, `communism`.
+- ProjectsVictory, `data/civic-projects.json` (`CivicProjectsDef`): `enablesMadNukes`.
+
+An attachment row has its own id in the attaching mod's namespace and names the civic in
+`target`:
+
+```json
+{ "id": "trade:mercantilism", "name": "", "requirements": null,
+  "target": "government:mercantilism", "noForeignTrade": true, ... }
+```
+
+To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
+one of the mod's own. New players start a new option on its `defaultCivic`, or else on
+its first civic without requirements. To give it a new kind of
+effect, declare the key in the mod's `data/modifier-key.json`, list it in the civic's
+`effects`, and read it in the mod's own rule from the ledger of that scope
+(`ModifierSink.Collect(...).Ledger.Total(key)`). To say something about another module's
+civic, register a `ContentAttachment<CivicDef>` row from the mod's API.
+`tests/TestMods/CivicExtension` does all three.
+
 ## Numeric and collection contracts
 
 Authoritative JSON numbers are integers. Collections use `ImmutableArray` and

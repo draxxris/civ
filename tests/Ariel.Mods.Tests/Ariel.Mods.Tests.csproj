@@ -43,10 +43,11 @@
     <ProjectReference Include="../TestMods/AiPlanner/Ariel.TestMods.AiPlanner.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../TestMods/MemoryKind/Ariel.TestMods.MemoryKind.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../TestMods/ProductionWish/Ariel.TestMods.ProductionWish.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../TestMods/CivicExtension/Ariel.TestMods.CivicExtension.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <Target Name="CopyTestMods" AfterTargets="Build">
     <ItemGroup>
-      <_TestMod Include="ApiProvider;ApiConsumer;AiPlanner;MemoryKind;ProductionWish" />
+      <_TestMod Include="ApiProvider;ApiConsumer;AiPlanner;MemoryKind;ProductionWish;CivicExtension" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/bin/$(Configuration)/net10.0/Ariel.TestMods.*.dll" ModDir="%(_TestMod.Identity)" />
       <_TestModFile Include="../TestMods/%(_TestMod.Identity)/mod.json" ModDir="%(_TestMod.Identity)" />
       <_TestModData Include="../TestMods/%(_TestMod.Identity)/data/*.json" ModDir="%(_TestMod.Identity)" />

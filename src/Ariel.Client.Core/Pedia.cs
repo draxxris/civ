@@ -4,10 +4,11 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Client;
 
-/// <summary>One article in the pedia, with text already resolved from the loaded content.</summary>
+/// <summary>One article in the pedia, with text already resolved from the loaded content. <see cref="Effects"/> is what
+/// the definition does (<see cref="ContentDescription"/>).</summary>
 public sealed record PediaEntry(
     string Category, string Id, string Title, string Help, string Strategy, string Pedia, string Icon,
-    int? Cost, IReadOnlyList<string> Prerequisites)
+    int? Cost, IReadOnlyList<string> Prerequisites, IReadOnlyList<string> Effects)
 {
     internal bool Matches(string text) =>
         Title.Contains(text, StringComparison.OrdinalIgnoreCase) || Help.Contains(text, StringComparison.OrdinalIgnoreCase)
@@ -71,7 +72,8 @@ public sealed class PediaCatalog
             Describe(content, def.Requirements, prereqs);
             prereqs.AddRange((extra(def) ?? []).Where(p => p != null)!);
             int price = cost(def);
-            _entries.Add(new(category, def.Id, def.Name, def.Help, def.Strategy, def.Pedia, def.Icon, price > 0 ? price : null, prereqs));
+            _entries.Add(new(category, def.Id, def.Name, def.Help, def.Strategy, def.Pedia, def.Icon, price > 0 ? price : null, prereqs,
+                ContentDescription.Of(content, def)));
         }
     }
 

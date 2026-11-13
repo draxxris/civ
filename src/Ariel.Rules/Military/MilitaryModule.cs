@@ -16,8 +16,9 @@ public sealed class MilitaryModule : IPreparableMod
     private static readonly ModJsonFile<UnitCategoryDef[]> Categories = new("data/unit-category.json");
     private static readonly ModJsonFile<UnitCombatDef[]> Combat = new("data/unit-combat.json");
     private static readonly ModJsonFile<UnitDef[]> Units = new("data/unit.json");
+    private static readonly ModJsonFile<Ariel.Content.ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Domains, Invisibility, Missions, Outcomes, Promotions, UnitAi, Categories, Combat, Units];
+        [Domains, Invisibility, Missions, Outcomes, Promotions, UnitAi, Categories, Combat, Units, ModifierKeys];
 
     public void Register(IModContext context)
     {
@@ -30,6 +31,7 @@ public sealed class MilitaryModule : IPreparableMod
         ContentRegistration.Load(context, Categories);
         ContentRegistration.Load(context, Combat);
         ContentRegistration.Load(context, Units);
+        ContentRegistration.Load(context, ModifierKeys);
         var movement = new MovementService();
         var units = new UnitService();
         context.RegisterService<IMovementService>("movement", movement);

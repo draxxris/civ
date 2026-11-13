@@ -412,6 +412,7 @@ internal sealed partial class GameUi
             body.AddChild(head);
             if (e.Cost is int cost) body.AddChild(Ui.Text($"Cost: {cost}", 13, Ui.Accent));
             if (e.Prerequisites.Count > 0) body.AddChild(Ui.Text("Requires: " + string.Join(", ", e.Prerequisites), 13, Ui.Dim));
+            foreach (var effect in e.Effects) body.AddChild(Ui.Text(effect, 13, Ui.Accent));
             foreach (var text in new[] { e.Help, e.Strategy, e.Pedia }.Where(t => t.Length > 0))
                 body.AddChild(Ui.Text(StripMarkup(text), 13));
         }

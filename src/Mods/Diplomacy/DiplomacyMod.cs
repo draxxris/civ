@@ -13,11 +13,13 @@ namespace Ariel.Mods.Diplomacy;
 public sealed class DiplomacyMod : IPreparableMod
 {
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Memories];
+    private static readonly ModJsonFile<CivicDiplomacyDef[]> Civics = new("data/civic-diplomacy.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Memories, Civics];
 
     public void Register(IModContext context)
     {
         MemoryKinds.Load(context, Memories);
+        ContentRegistration.Load(context, Civics);
         var service = new DiplomacyService();
         context.RegisterService<IDiplomacyService>("diplomacy", service);
         context.RegisterService<ITeamAgreements>("agreements", service);

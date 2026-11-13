@@ -6,5 +6,6 @@
     <!-- The API this mod publishes ships beside it in the mod folder; mod.json names it. -->
     <ProjectReference Include="Api/Ariel.Mods.Trade.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -16,7 +16,7 @@ internal sealed class TradeRouteService : ITradeRouteService
     {
         sink.Add("trade:initial", "trade:slots", TradeData.Raw(sim, "INITIAL_TRADE_ROUTES", 1));
         foreach (var tech in sim.TeamOf(city.Owner).Techs.Select(sim.Content.Get<S.TechDef>)) sink.Add(tech.Id, "trade:slots", tech.TradeRoutes);
-        foreach (var civic in TradeData.Civics(sim, city.Owner)) sink.Add(civic.Id, "trade:slots", civic.TradeRoutes);
+        foreach (var civic in TradeData.Civics(sim, city.Owner)) sink.Add(civic.Target, "trade:slots", civic.Routes);
         foreach (var b in TradeData.Active(sim, city)) sink.Add(b.Id, "trade:slots", b.TradeRoutes);
         bool coastal = TradeData.Coastal(sim, city);
         foreach (var other in sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id))
@@ -133,15 +133,15 @@ internal sealed class TradeRouteService : ITradeRouteService
         var partnerCivics = sim.State.PlayerById(partner.Owner).Civics.Values.ToHashSet(StringComparer.Ordinal);
         foreach (var civic in TradeData.Civics(sim, city.Owner))
         {
-            sink.Add(civic.Id, "trade:profit_percent", civic.ForeignTradeRouteModifier);
-            if (partnerCivics.Contains(civic.Id)) sink.Add(civic.Id + ":shared", "trade:profit_percent", civic.SharedCivicTradeRouteModifier);
+            sink.Add(civic.Target, "trade:profit_percent", civic.ForeignProfitPercent);
+            if (partnerCivics.Contains(civic.Target)) sink.Add(civic.Target + ":shared", "trade:profit_percent", civic.SharedCivicProfitPercent);
         }
     }
     private static YieldVector YieldModifiers(Simulation sim, int player, Ledger effects)
     {
         long Rate(string id) => sim.Content.Get<S.YieldDef>("foundation:yield_" + id).TradeModifier + effects.Total("trade:yield_percent:" + id);
         var result = new YieldVector(Rate("food"), Rate("production"), Rate("commerce"));
-        foreach (var civic in TradeData.Civics(sim, player)) result += civic.TradeYieldModifiers;
+        foreach (var civic in TradeData.Civics(sim, player)) result += civic.YieldPercent;
         foreach (var trait in TradeData.Traits(sim, player)) result += trait.TradeYieldModifiers;
         return new(Math.Max(0, result.Food), Math.Max(0, result.Production), Math.Max(0, result.Commerce));
     }

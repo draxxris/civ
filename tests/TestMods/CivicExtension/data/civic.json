@@ -1,0 +1,30 @@
+[
+  {
+    "effects": [
+      { "amount": 1, "key": "cities:health", "scope": "city", "target": null }
+    ],
+    "id": "civic_extension:closed_charter",
+    "name": "Closed Charter",
+    "option": "civic_extension:civicoption_charter",
+    "requirements": null
+  },
+  {
+    "id": "civic_extension:open_charter",
+    "name": "Open Charter",
+    "option": "civic_extension:civicoption_charter",
+    "requirements": null
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "effects": [
+      { "amount": 2, "key": "cities:happiness", "scope": "city", "target": null },
+      { "amount": 3, "key": "civic_extension:levy", "scope": "player", "target": null }
+    ],
+    "flavors": { "gold": 4 },
+    "id": "civic_extension:tribunes",
+    "name": "Tribunes",
+    "option": "government:civicoption_government",
+    "requirements": null
+  }
+]

@@ -21,32 +21,21 @@ internal sealed class CivicEffects : IModifierSource
     }
     private static void Contribute(ModifierContext context, CivicDef civic, ModifierSink sink)
     {
+        // The civic's plain modifiers are data; the typed rules below need more than the calculation's subject.
+        foreach (var effect in civic.Effects)
+            if (effect.Scope == context.Scope) sink.Apply(civic.Id, effect);
         if (context.Scope == ModifierScope.City && context.City is { } city) City(context.Sim, city, civic, sink);
-        if (context.Scope == ModifierScope.Player) Player(context.Sim, context.Player, civic, sink);
+        if (context.Scope == ModifierScope.Player) Player(context.Sim, civic, sink);
         if (context.Scope == ModifierScope.Plot && context.Plot is { } tile)
         {
             var plot = context.ProposedPlot ?? context.Sim.State.Plots[tile.Value];
             if (plot.Improvement is { } improvement) sink.AddYield(civic.Id, civic.ImprovementYieldChanges.GetValueOrDefault(improvement));
         }
-        if (context.Scope == ModifierScope.Unit)
-        {
-            sink.Add(civic.Id, "military:initial_experience", civic.FreeExperience);
-            sink.Add(civic.Id, "military:experience_in_borders_percent", civic.ExpInBorderModifier);
-            sink.Add(civic.Id, "military:city_defense", civic.ExtraCityDefense);
-        }
     }
-    private static void Player(Simulation sim, int player, CivicDef c, ModifierSink sink)
+    private static void Player(Simulation sim, CivicDef c, ModifierSink sink)
     {
-        var values = new (string Key, int Value)[] {
-            ("cities:distance_maintenance_percent", c.DistanceMaintenanceModifier), ("cities:count_maintenance_percent", c.CityCountMaintenancePercent),
-            ("cities:corporation_maintenance_percent", sim.IsOptionEnabled("foundation:gameoption_realistic_corporations")
-                ? c.RealCorporationMaintenanceModifier : c.CorporationMaintenanceModifier), ("cities:growth_percent", c.PopulationGrowthPercent),
-            ("cities:max_conscript", GetWorldSizeMaxConscript(sim, c)),
-            ("world:worker_speed_percent", c.WorkerSpeedModifier), ("world:improvement_upgrade_percent", c.ImprovementUpgradeRateModifier),
-            ("military:general_rate_percent", c.GreatGeneralRateModifier), ("military:domestic_general_rate_percent", c.DomesticGreatGeneralRateModifier) };
-        foreach (var value in values) sink.Add(c.Id, value.Key, value.Value);
+        sink.Add(c.Id, "cities:max_conscript", GetWorldSizeMaxConscript(sim, c));
         // Unit support, supply, hurry permissions and civic upkeep already use the active definitions in Economy.
-
     }
     private static int GetWorldSizeMaxConscript(Simulation sim, CivicDef civic)
     {
@@ -58,21 +47,9 @@ internal sealed class CivicEffects : IModifierSource
     private static void City(Simulation sim, City city, CivicDef c, ModifierSink sink)
     {
         var buildings = ActiveBuildings(sim, city).ToArray();
-        sink.AddYield(c.Id, c.YieldModifiers, true);
-        sink.AddCommerce(c.Id, c.CommerceModifiers, true);
-        sink.Add(c.Id, "cities:foreigner_unhappy_percent", c.ForeignerUnhappyPercent);
-
-        var values = new (string Key, int Value)[] {
-            ("happiness", c.CivicHappiness), ("health", c.ExtraHealth), ("free_specialists", c.FreeSpecialist),
-            ("great_people_percent", c.GreatPeopleRateModifier), ("military_production_percent", c.MilitaryProductionModifier),
-            ("military_food_production", c.MilitaryFoodProduction ? 1 : 0), ("war_weariness_percent", c.WarWearinessModifier),
-            ("population_anger_percent", c.PopulationAngerModifier), ("no_unhealthy_population", c.NoUnhealthyPopulation ? 1 : 0),
-            ("building_only_healthy", c.BuildingOnlyHealthy ? 1 : 0) };
-        foreach (var value in values) sink.Add(c.Id, "cities:" + value.Key, value.Value);
         Capital(city, c, buildings, sink);
         Wellbeing(sim, city, c, buildings, sink);
-        Production(sim, c, sink);
-        SpecialistEffects(c, sink);
+        SpecialistCommerce(c.Id, "all", c.SpecialistExtraCommerces * 100, sink);
         foreach (var b in buildings)
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));
@@ -129,29 +106,6 @@ internal sealed class CivicEffects : IModifierSource
         bool largest = sim.State.Cities.Where(x => x.Owner == city.Owner).OrderByDescending(x => x.Population).ThenBy(x => x.Id)
             .Take(count).Any(x => x.Id == city.Id);
         if (largest) sink.Add(c.Id + ":largest", "cities:happiness", c.LargestCityHappiness);
-    }
-    private static void Production(Simulation sim, CivicDef c, ModifierSink sink)
-    {
-        foreach (var pair in c.BuildingClassProductionModifiers.OrderBy(p => p.Key, StringComparer.Ordinal))
-            sink.Add(c.Id, "cities:building_class_production_percent:" + pair.Key, pair.Value);
-        foreach (var pair in c.UnitCombatProductionModifiers.OrderBy(p => p.Key, StringComparer.Ordinal))
-            sink.Add(c.Id, "cities:combat_production_percent:" + pair.Key, pair.Value);
-    }
-    private static void SpecialistEffects(CivicDef c, ModifierSink sink)
-    {
-        foreach (var valid in c.SpecialistValids.OrderBy(p => p.Key, StringComparer.Ordinal))
-            sink.Add(c.Id, "cities:unlimited:" + valid.Key, valid.Value ? 1 : 0);
-        foreach (var pair in c.SpecialistYieldPercentChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
-            SpecialistYield(c.Id, pair.Key, pair.Value, sink);
-        foreach (var pair in c.SpecialistCommercePercentChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
-            SpecialistCommerce(c.Id, pair.Key, pair.Value, sink);
-        SpecialistCommerce(c.Id, "all", c.SpecialistExtraCommerces * 100, sink);
-    }
-    private static void SpecialistYield(string source, string specialist, YieldVector value, ModifierSink sink)
-    {
-        sink.Add(source, "cities:specialist_food_hundredths:" + specialist, value.Food);
-        sink.Add(source, "cities:specialist_production_hundredths:" + specialist, value.Production);
-        sink.Add(source, "cities:specialist_commerce_hundredths:" + specialist, value.Commerce);
     }
     private static void SpecialistCommerce(string source, string specialist, CommerceVector value, ModifierSink sink)
     {

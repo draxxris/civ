@@ -404,6 +404,35 @@ Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a
 age calms a city, and GreatPeople prices a trade mission from the Trade API. Each
 references the provider's `Api` project and treats a null `sim.Service<T>()` as "absent".
 
+#### Content attachments
+
+A mod that has something to say about another module's definition attaches its own row
+to it instead of asking for a field on the other module's schema. The row type derives
+from `ContentAttachment<TTarget>` in the mod's API and is an ordinary `ContentDef` in
+the attaching mod's namespace, with a `Target` naming the definition it is about. Trade
+attaches `CivicTradeDef` to civics (`trade:mercantilism` about
+`government:mercantilism`), Corporations `CivicCorporationsDef`, Diplomacy
+`CivicDiplomacyDef`, Revolution `CivicRevolutionDef` and ProjectsVictory
+`CivicProjectsDef`.
+
+- Loading validates an attachment like any definition: `ModLoader.Json` rejects an
+  unknown property, `Target` is a content reference to `TTarget` (a missing id or one
+  of another kind fails), and the target's mod must be in the attaching mod's
+  `references` or `dependencies`.
+- When content freezes, `ContentDb` indexes one row per (attachment type, target). Two
+  rows of one type about one definition fail the load, because the type's owner could
+  not know which to read; another mod that wants to change an attached row overrides it
+  by id, like any definition.
+- Attachments are definitions, so they are in the content hash: changing attached data
+  changes the hash that saves and multiplayer sessions compare.
+- The owner reads its row with `content.Attachment<T>(target)`, which is null when no
+  row exists (the row's defaults then apply). Presentation reads every row with
+  `content.AttachmentsOf(target)`; a row that implements `IDescribedContent` describes
+  itself on the civics screen and in the pedia.
+
+Attachments replace typed fields only where the reading module is a mod. A rule the base
+game applies to any calculation is an open effect instead (Modifiers and ledgers).
+
 ## Setup and presentation services
 
 Mods register these contracts through `ctx.RegisterService<T>()`:
@@ -836,8 +865,9 @@ elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
 `CorporationService.MaintenanceHundredths` calculates city corporate branch expenses:
 base headquarter commerce (100 per gold, research, culture, and espionage), resource
 consumption scaled by world size, population scaling `(population + 17) / 18`, handicap
-scaling, player civic modifier (`cities:corporation_maintenance_percent`, selecting
-`RealCorporationMaintenanceModifier` when realistic corporations is active), inflation
+scaling, player civic modifier (`corporations:maintenance_percent`, from the civic's
+`CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when realistic
+corporations is active), inflation
 pre-division `* 100 / (100 + inflation)` to balance subsequent economy inflation, and
 realistic handicap scaling. `CityMaintenanceResult.CorporateHundredths` exposes the
 uninflated base corporate cost, while `RecurringCosts` records
@@ -1013,6 +1043,17 @@ contribute through `IModifierSource`. Civic and trait keys use the owning consum
 namespace: `cities:*`, `economy:*`, `world:*`, `military:*`, and `government:*`.
 `RequirementContext.ProposedCivics` lets civic requirements see a pending cabinet
 without mutating state.
+
+A civic's plain modifiers are data. `CivicDef.Effects` lists `ModifierEffect` entries,
+and Government's `CivicEffects` adds each one to every calculation of its scope for a
+player who runs the civic, with the civic id as the ledger source. A civic therefore
+gives any declared key, including one a mod defines and reads, without a schema or
+Government change. The typed `CivicDef` fields that remain are rules that read more than
+the calculation's subject: the capital, buildings, improvements, unit support, upkeep and
+anarchy. The fields marked "Religion" leave with the Religion module when it becomes a
+mod. Feature mods say what a civic means to them through attachments (Mod APIs). A mod's
+new civic option is a `CivicOptionDef`; new players start on its `DefaultCivic`, or else
+on its first civic without requirements.
 
 Civics supply draft permissions and quotas under `cities:max_conscript` at Player scope,
 with base quotas scaled by the active world size modifier (`getWorldSizeMaxConscript`)
@@ -1343,6 +1384,12 @@ Wishes are the first of the AI valuers: the seams through which a mod adjusts wh
 AI values. Valuers for plots, buildings, units, technologies, civics and trades will sit
 beside it in `Ariel.Ai`, each a registered service asked by the planner that owns that
 choice.
+
+Until the civic valuer exists, `CivicPlanner` scores a civic from its flavors and the
+open-effect keys it knows (`commerce.percent.*`, `yield.percent.*`, `cities:happiness`,
+`cities:health`, `cities:free_specialists`, growth, worker speed, and the war keys).
+A mod's civic is weighed and can be adopted, but a key only a mod reads adds nothing
+to its score, and attached mod data is not read.
 
 ### What the built-in planners do
 
@@ -1796,6 +1843,19 @@ The sink produces a `Ledger` with ordered `(Source, Key, Amount)` lines and tota
 key. Typed keys separate flat and percent units. Each calculating mod owns effect-key
 meanings, final formulas and rounding boundaries. Test-ruleset civilization and civic
 bonuses are modifier sources, not special cases in the turn systems.
+
+Content can carry modifiers as data. A `ModifierEffect` is `{scope, key, target,
+amount}`; `ModifierSink.Apply` routes the fourteen typed vector keys
+(`yield.flat.food`, `commerce.percent.research`, ...) to the typed vectors and every
+other key to a ledger line, keyed `key:target` when the effect has a target. A
+non-typed key must be declared by a `ModifierKeyDef` from the module that reads it
+(`data/modifier-key.json`). The declaration gives the unit (`flat`, `percent`, `flag`,
+`hundredths`), whether the key needs a target, and the label the client shows, in which
+`{target}` stands for the target's name. Reference validation rejects an undeclared key,
+a target on an untargeted key or a typed key, a missing target on a targeted key, and a
+key whose provider the content's mod does not reference. Effects are part of their
+definition, so they are in the content hash. A key nobody reads is legal and inert; the
+computer player values only the keys it knows (Computer players).
 
 ## Events and extension state
 

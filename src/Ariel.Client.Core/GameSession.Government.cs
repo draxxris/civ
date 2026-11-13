@@ -3,7 +3,10 @@ using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
 
-public sealed record CivicChoice(string Id, string Name, bool Active, IReadOnlyList<string> Blockers, string Help);
+/// <summary>One civic on the government screen. <see cref="Effects"/> lists what it does, from its data and every loaded
+/// mod's attachments, so a mod's civic or effect shows without client changes.</summary>
+public sealed record CivicChoice(string Id, string Name, bool Active, IReadOnlyList<string> Blockers, string Help,
+    IReadOnlyList<string> Effects);
 public sealed record CivicGroup(string Id, string Name, string? Selected, IReadOnlyList<CivicChoice> Choices);
 public sealed record GovernmentSummary(int AnarchyTurns, int CooldownTurns, IReadOnlyList<CivicGroup> Groups);
 public sealed record RevolutionPreview(int AnarchyTurns, int CooldownTurns, string? Blocked);
@@ -33,7 +36,8 @@ public sealed partial class GameSession
         { [civic.Option!] = civic.Id };
         var result = Sim.Content.Requirements.Evaluate(civic.Requirements, new(Sim, LocalPlayer, ProposedCivics: alternative));
         return new(civic.Id, civic.Name, Me.Civics.GetValueOrDefault(civic.Option!) == civic.Id,
-            result.Failures.Select(f => f.Explanation).ToList(), civic.Help);
+            result.Failures.Select(f => f.Explanation).ToList(), civic.Help,
+            ContentDescription.Of(Sim.Content, civic));
     }
 
     public RevolutionPreview PreviewCivics(IReadOnlyList<string> civics)

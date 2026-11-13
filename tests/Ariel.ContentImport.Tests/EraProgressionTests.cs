@@ -47,7 +47,8 @@ public sealed class EraProgressionTests
         {
             Assert.True(previousIds.SetEquals(ids), "Future must include the entire unfiltered extraction");
             Assert.Empty(result.Dropped);
-            foreach (var mapping in SchemaCatalog.Definitions)
+            // An attachment family lists only the records its mod cares about.
+            foreach (var mapping in SchemaCatalog.Definitions.Where(m => !m.IsAttachment))
                 Assert.Equal(registry.Records.Count(r => r.Class == mapping.SourceClass)
                     + (mapping.SourceClass == "UnitAIInfo" ? ContentMapper.NativeUnitAiRoles.Length : 0),
                     counts.GetValueOrDefault(mapping.Definition));
@@ -55,7 +56,7 @@ public sealed class EraProgressionTests
         }
         Assert.True(ids.Count > previousIds.Count, $"The {era} slice must add content");
         var allowed = eras.Take(Array.IndexOf(eras, era) + 1).Select(e => "foundation:era_" + e).ToHashSet();
-        Assert.All(result.Definitions, d => Assert.True(d.Definition.Era is null || allowed.Contains(d.Definition.Era)));
+        Assert.All(result.Definitions, d => Assert.True(d.Definition is not GameContentDef { Era: { } dEra } || allowed.Contains(dEra)));
     }
 
     private static void AssertLoadsNeutralSidecars(EmissionResult result)
@@ -77,7 +78,7 @@ public sealed class EraProgressionTests
         {
             Manifest = new ModManifest { Id = group.Key, References = families.Select(m => m.Mod).Distinct().Where(m => m != group.Key).ToArray() },
             Root = roots.Module(group.Key),
-            Instance = new EmittedDataMod(group.ToArray())
+            Instance = new EmittedDataMod(group.ToArray(), ShippedModifierKeys(roots, group.Key))
         }).ToArray();
         // Build validates annotated keys, values, nested effects, text links and all prerequisite leaf kinds.
         var db = ModLoader.Build(mods.Reverse());
@@ -87,6 +88,15 @@ public sealed class EraProgressionTests
             var loaded = get.MakeGenericMethod(group.Key).Invoke(db, null)!;
             Assert.Equal(group.Count(), (int)loaded.GetType().GetProperty("Count")!.GetValue(loaded)!);
         }
+    }
+
+    /// <summary>The module's hand-authored modifier key declarations, which the importer never writes but the emitted
+    /// civic effects are validated against.</summary>
+    private static string? ShippedModifierKeys(ContentRoots emitted, string mod)
+    {
+        var shipped = new ContentRoots(Path.Combine(ExtractionLocation.Repository(), "src/Ariel.Rules"), Path.Combine(ExtractionLocation.Repository(), "src/Mods"));
+        var file = Path.Combine(shipped.Module(mod), "data", "modifier-key.json");
+        return File.Exists(file) ? file : null;
     }
 
     private static void AssertNeutral(JsonElement value)
@@ -107,10 +117,13 @@ public sealed class EraProgressionTests
         Assert.False(Regex.IsMatch(value, @"A[ _]+New[ _]+Dawn|Rise[ _]+of[ _]+Mankind|(?<![A-Za-z0-9])and(?=[_:/\\.-])", RegexOptions.IgnoreCase), value);
     }
 
-    private sealed class EmittedDataMod(DefinitionMapping[] mappings) : IMod
+    private sealed class EmittedDataMod(DefinitionMapping[] mappings, string? modifierKeys) : IMod
     {
         public void Register(IModContext context)
         {
+            if (modifierKeys is not null)
+                foreach (var key in JsonSerializer.Deserialize<ModifierKeyDef[]>(File.ReadAllText(modifierKeys), ModLoader.Json)!)
+                    context.Content<ModifierKeyDef>().Register(key);
             foreach (var mapping in mappings)
                 typeof(EmittedDataMod).GetMethod(nameof(Load), BindingFlags.NonPublic | BindingFlags.Static)!
                     .MakeGenericMethod(mapping.DefinitionType).Invoke(null, [context, mapping.Definition]);
@@ -119,7 +132,7 @@ public sealed class EraProgressionTests
                     context.RegisterService<IRequirementEvaluator>("leaf_" + kind, new IdentityEvaluator(kind, type));
         }
 
-        private static void Load<T>(IModContext context, string definition) where T : GameContentDef
+        private static void Load<T>(IModContext context, string definition) where T : ContentDef
         {
             foreach (var record in context.Data.ReadJson<T[]>("data/" + ContentEmission.FileName(definition)))
                 context.Content<T>().Register(record);

@@ -8,7 +8,7 @@ using Ariel.Content.Schema;
 namespace Ariel.ContentImport;
 
 public sealed record DataIssue(string Record, string Field, string SourceValue, string Resolution);
-public sealed record MappedDefinition(DefinitionMapping Mapping, GameContentDef Definition);
+public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Definition);
 
 /// <summary>Compiles merged trees into immutable Core definitions. No source table is read at game startup.</summary>
 public sealed partial class ContentMapper
@@ -50,15 +50,56 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     public IReadOnlyList<MappedDefinition> Map()
     {
         var result = new List<MappedDefinition>();
-        foreach (var mapping in SchemaCatalog.Definitions.OrderBy(m => m.SourceClass, StringComparer.Ordinal))
-            foreach (var record in records.Values.Where(r => r.Class == mapping.SourceClass).OrderBy(r => ids[(r.Class, r.Type)], StringComparer.Ordinal))
-                result.Add(new(mapping, MapRecord(record, mapping)));
+        foreach (var family in SchemaCatalog.Definitions.GroupBy(m => m.SourceClass).OrderBy(g => g.Key, StringComparer.Ordinal))
+        {
+            var attachments = family.Where(m => m.IsAttachment).ToArray();
+            foreach (var record in records.Values.Where(r => r.Class == family.Key).OrderBy(r => ids[(r.Class, r.Type)], StringComparer.Ordinal))
+            {
+                // A field a feature mod's attachment maps is mapped for the record, not unsupported on its primary definition.
+                var attached = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var mapping in attachments)
+                    if (MapAttachment(record, mapping, attached) is { } row) result.Add(new(mapping, row));
+                foreach (var mapping in family.Where(m => !m.IsAttachment))
+                    result.Add(new(mapping, MapRecord(record, mapping, attached)));
+            }
+        }
         return result;
     }
 
-    private GameContentDef MapRecord(EffectiveRecord record, DefinitionMapping mapping)
+    /// <summary>The attachment row a feature mod keeps about one record, or null when every field it maps is at its
+    /// default, so a mod only lists the records its rules care about.</summary>
+    private ContentAttachment? MapAttachment(EffectiveRecord record, DefinitionMapping mapping, HashSet<string> mapped)
     {
-        var mapped = new HashSet<string>(StringComparer.Ordinal);
+        var target = ids[(record.Class, record.Type)];
+        var identity = new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["id"] = mapping.Mod + ":" + target[(target.IndexOf(':') + 1)..], ["target"] = target,
+        };
+        var values = new Dictionary<string, object?>(identity, StringComparer.Ordinal);
+        foreach (var field in mapping.Fields)
+        {
+            var node = record.Node.Child(field.Source);
+            if (node is null) continue;
+            values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = MapValue(record, node, field);
+            Mark(node, field.Source, mapped);
+        }
+        if (!MappedPaths.TryGetValue(record.Class, out var paths)) MappedPaths[record.Class] = paths = new(StringComparer.Ordinal);
+        paths.UnionWith(mapped);
+        var row = (ContentAttachment)JsonSerializer.Deserialize(JsonSerializer.Serialize(values, Json), mapping.DefinitionType, Json)!;
+        var empty = JsonSerializer.Deserialize(JsonSerializer.Serialize(identity, Json), mapping.DefinitionType, Json)!;
+        return JsonSerializer.Serialize(row, mapping.DefinitionType, Json) == JsonSerializer.Serialize(empty, mapping.DefinitionType, Json) ? null : row;
+    }
+
+    private object? MapValue(EffectiveRecord record, DataNode node, FieldMapping field)
+    {
+        try { return MapField(record, node, field); }
+        catch (Exception e) when (e is FormatException or OverflowException or JsonException)
+        { throw new InvalidDataException($"{record.Class}/{record.Type}/{field.Source}: {e.Message}", e); }
+    }
+
+    private GameContentDef MapRecord(EffectiveRecord record, DefinitionMapping mapping, IEnumerable<string> attached)
+    {
+        var mapped = new HashSet<string>(attached, StringComparer.Ordinal);
         foreach (var field in new[] { "Type", "Description", "Civilopedia", "Help", "Strategy", "Button", "Era" }) Mark(record.Node.Child(field), field, mapped);
         var values = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
@@ -67,15 +108,20 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             ["strategy"] = Text(record.Node.Value("Strategy")), ["icon"] = Icon(record),
             ["era"] = Reference("EraInfo", record.Era, record, "Era")
         };
+        var effects = new List<ModifierEffect>();
         foreach (var field in mapping.Fields)
         {
             var node = record.Node.Child(field.Source);
             if (node is null) continue;
-            try { values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = MapField(record, node, field); }
-            catch (Exception e) when (e is FormatException or OverflowException or JsonException)
-            { throw new InvalidDataException($"{record.Class}/{record.Type}/{field.Source}: {e.Message}", e); }
+            var value = MapValue(record, node, field);
+            if (field.Kind.StartsWith("effect", StringComparison.Ordinal)) effects.AddRange((IEnumerable<ModifierEffect>)value!);
+            else values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = value;
             Mark(node, field.Source, mapped);
         }
+        // One canonical order, whichever source field gave an effect.
+        if (mapping.Fields.Any(f => f.Kind.StartsWith("effect", StringComparison.Ordinal)))
+            values["effects"] = effects.Where(e => e.Amount != 0).OrderBy(e => e.Key, StringComparer.Ordinal)
+                .ThenBy(e => e.Target ?? "", StringComparer.Ordinal).ToArray();
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
@@ -152,7 +198,15 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "techSpecialists" => Indexed(record, node, field, n => new SpecialistSlotsChange
         { Slots = PairMap(record, n.Child("SpecialistCounts"), "SpecialistInfo", n => Integer(n.Children[1].Text)).ToImmutable() }),
         "buildingCommerce" => BuildingCommerce(record, node),
-        "civicAttitudes" => Indexed(record, node, field, n => new CivicAttitudeEffect(Integer(n.Value("iAttitudeChange")), Text(n.Value("Description")))),
+        "civicAttitudes" => Indexed(record, node, field, n => new Ariel.Mods.Diplomacy.CivicAttitudeEffect(Integer(n.Value("iAttitudeChange")), Text(n.Value("Description")))),
+        "effect" => Effects(field, (null, Integer(node.Text, DefaultInt(field)))),
+        "effectFlag" => Effects(field, (null, GetterBoolean(node.Text, DefaultBool(field)) ? 1 : 0)),
+        "effectYield" => VectorEffects(field, null, Yield(node)),
+        "effectCommerce" => VectorEffects(field, null, Commerce(node)),
+        "effectMapInt" => Effects(field, Indexed(record, node, field, n => Integer(n.Children[1].Text)).Select(p => ((string?)p.Key, (long)p.Value)).ToArray()),
+        "effectMapBool" => Effects(field, Indexed(record, node, field, n => Boolean(n.Children[1].Text)).Select(p => ((string?)p.Key, p.Value ? 1L : 0L)).ToArray()),
+        "effectMapYield" => Indexed(record, node, field, n => Yield(n.Children[1])).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
+        "effectMapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
         "mapInt" => Indexed(record, node, field, n => Integer(n.Children[1].Text)),
         "mapBool" => Indexed(record, node, field, n => Boolean(n.Children[1].Text)),
         "mapText" => Indexed(record, node, field, n => Text(n.Children[1].Text ?? "")),
@@ -161,6 +215,23 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "mapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])),
         _ => throw new InvalidDataException("Unknown mapping kind: " + field.Kind)
     };
+
+    private static ModifierEffect[] Effects(FieldMapping field, params (string? Target, long Amount)[] amounts) => amounts
+        .Select(a => new ModifierEffect { Scope = Scope(field), Key = field.Modifier!, Target = a.Target, Amount = a.Amount }).ToArray();
+    /// <summary>One effect per vector component. <see cref="FieldMapping.Modifier"/> is a key prefix (<c>yield.percent</c>
+    /// gives <c>yield.percent.food</c>) or a format whose <c>{}</c> the component fills.</summary>
+    private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, YieldVector value) =>
+        VectorEffects(field, target, [("food", value.Food), ("production", value.Production), ("commerce", value.Commerce)]);
+    private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, CommerceVector value) =>
+        VectorEffects(field, target, [("gold", value.Gold), ("research", value.Research), ("culture", value.Culture), ("espionage", value.Espionage)]);
+    private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, (string Part, long Amount)[] parts) => parts
+        .Select(p => new ModifierEffect
+        {
+            Scope = Scope(field), Target = target, Amount = p.Amount,
+            Key = field.Modifier!.Contains("{}", StringComparison.Ordinal) ? field.Modifier.Replace("{}", p.Part, StringComparison.Ordinal) : field.Modifier + "." + p.Part,
+        }).ToArray();
+    private static ModifierScope Scope(FieldMapping field) =>
+        Enum.Parse<ModifierScope>(field.Scope ?? throw new InvalidDataException(field.Source + ": an effect needs a scope"), ignoreCase: true);
 
     private OutcomeEffect[] OutcomeList(EffectiveRecord record, DataNode node) => node.Children.Select(entry => Outcome(record, entry)).ToArray();
 

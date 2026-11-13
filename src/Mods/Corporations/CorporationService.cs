@@ -1,7 +1,6 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using CivicDef = Ariel.Content.Schema.CivicDef;
 
 namespace Ariel.Mods.Corporations;
 
@@ -16,8 +15,14 @@ internal sealed class CorporationService : ICorporationService
         if (state is not null) return state;
         state = new(); sim.State.Extensions.Set(sim.Content, state); return state;
     }
-    private static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values
-        .Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
+    /// <summary>The player's percent change to corporation maintenance, from civics and any other modifier source.</summary>
+    internal const string MaintenanceKey = "corporations:maintenance_percent";
+    /// <summary>What the player's civics mean to corporations; a civic without an attachment means nothing.</summary>
+    private static IEnumerable<CivicCorporationsDef> Civics(Simulation sim, int player)
+    {
+        foreach (var civic in sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal))
+            if (sim.Content.Attachment<CivicCorporationsDef>(civic) is { } rules) yield return rules;
+    }
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
     public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
@@ -49,7 +54,7 @@ internal sealed class CorporationService : ICorporationService
         var cityObj = sim.State.CityById(city);
         var world = sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!);
         var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
-        long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total("cities:corporation_maintenance_percent");
+        long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
         long total = 0;

@@ -8,10 +8,14 @@ namespace Ariel.Mods.Corporations;
 public sealed class CorporationsMod : IPreparableMod
 {
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations];
+    private static readonly ModJsonFile<CivicCorporationsDef[]> Civics = new("data/civic-corporations.json");
+    private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys];
 
     public void Register(IModContext context)
     {
+        Ariel.Rules.ContentRegistration.Load(context, Civics);
+        Ariel.Rules.ContentRegistration.Load(context, ModifierKeys);
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
         // The schema covers reference resolution and sign-free fields; these invariants are rules-level.
@@ -53,6 +57,7 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
 {
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
+        if (context.Scope == ModifierScope.Player) { CivicMaintenance(context.Sim, context.Player, sink); return; }
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var sim = context.Sim;
         foreach (var corporation in service.Present(sim, city.Id))
@@ -71,6 +76,16 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
         // One key: the city maintenance service folds flat costs into its own total. A second corporate key
         // would be skipped there as the same source and would suggest a settlement that never happens.
         sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", service.MaintenanceHundredths(sim, city.Id));
+    }
+
+    /// <summary>The player's civics' change to corporation maintenance, with the realistic corporations option choosing
+    /// which of the two figures counts.</summary>
+    private static void CivicMaintenance(Simulation sim, int player, ModifierSink sink)
+    {
+        bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
+        foreach (var civic in sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal))
+            if (sim.Content.Attachment<CivicCorporationsDef>(civic) is { } rules)
+                sink.Add(civic, CorporationService.MaintenanceKey, realistic ? rules.RealisticMaintenancePercent : rules.MaintenancePercent);
     }
 }
 /// <summary>Fallback settlement when Economy is absent. Economy otherwise owns all city maintenance.</summary>

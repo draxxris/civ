@@ -1,0 +1,32 @@
+[
+  {
+    "id": "military:city_defense",
+    "name": "city defense of units",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "military:domestic_general_rate_percent",
+    "name": "great general points in own territory",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "military:experience_in_borders_percent",
+    "name": "experience from combat in own territory",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "military:general_rate_percent",
+    "name": "great general points",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "military:initial_experience",
+    "name": "experience for new units",
+    "targeted": false,
+    "unit": "flat"
+  }
+]

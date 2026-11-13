@@ -69,6 +69,10 @@ internal sealed partial class GameUi
         box.AddChild(grid);
     }
 
-    private static string CivicTooltip(CivicChoice civic) => civic.Blockers.Count > 0
-        ? string.Join("\n", civic.Blockers) : StripMarkup(civic.Help);
+    private static string CivicTooltip(CivicChoice civic)
+    {
+        if (civic.Blockers.Count > 0) return string.Join("\n", civic.Blockers);
+        var help = StripMarkup(civic.Help);
+        return string.Join("\n", civic.Effects.Prepend(help).Where(t => t.Length > 0));
+    }
 }

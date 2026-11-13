@@ -1,0 +1,146 @@
+[
+  {
+    "id": "cities:building_class_production_percent",
+    "name": "production of {target}",
+    "targeted": true,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:building_only_healthy",
+    "name": "Only buildings cause unhealthiness",
+    "targeted": false,
+    "unit": "flag"
+  },
+  {
+    "id": "cities:combat_production_percent",
+    "name": "production of {target} units",
+    "targeted": true,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:count_maintenance_percent",
+    "name": "city count maintenance",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:distance_maintenance_percent",
+    "name": "distance maintenance",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:foreigner_unhappy_percent",
+    "name": "unhappiness from foreign culture",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:free_specialists",
+    "name": "free specialists in each city",
+    "targeted": false,
+    "unit": "flat"
+  },
+  {
+    "id": "cities:great_people_percent",
+    "name": "great people birth rate",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:growth_percent",
+    "name": "food needed to grow",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:happiness",
+    "name": "happiness in each city",
+    "targeted": false,
+    "unit": "flat"
+  },
+  {
+    "id": "cities:health",
+    "name": "health in each city",
+    "targeted": false,
+    "unit": "flat"
+  },
+  {
+    "id": "cities:military_food_production",
+    "name": "Military units are built with food as well as production",
+    "targeted": false,
+    "unit": "flag"
+  },
+  {
+    "id": "cities:military_production_percent",
+    "name": "military unit production",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:no_unhealthy_population",
+    "name": "No unhealthiness from population",
+    "targeted": false,
+    "unit": "flag"
+  },
+  {
+    "id": "cities:population_anger_percent",
+    "name": "unhappiness from population",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "cities:specialist_commerce_hundredths",
+    "name": "commerce from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_culture_hundredths",
+    "name": "culture from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_espionage_hundredths",
+    "name": "espionage from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_food_hundredths",
+    "name": "food from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_gold_hundredths",
+    "name": "gold from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_production_hundredths",
+    "name": "production from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:specialist_research_hundredths",
+    "name": "research from each {target}",
+    "targeted": true,
+    "unit": "hundredths"
+  },
+  {
+    "id": "cities:unlimited",
+    "name": "Unlimited {target} specialists",
+    "targeted": true,
+    "unit": "flag"
+  },
+  {
+    "id": "cities:war_weariness_percent",
+    "name": "war weariness",
+    "targeted": false,
+    "unit": "percent"
+  }
+]

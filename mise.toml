@@ -144,6 +144,10 @@ run = "uv run --script tools/art/fall_ledge.py"
 description = "Report the height and cliff rules a save file or a debug scene breaks: mise run validate -- <file> [--save|--scene] [--map id] [--size id]"
 run = "dotnet run --project tools/Ariel.Validate/Ariel.Validate.csproj --"
 
+[tasks."import:content"]
+description = "Regenerate the typed content sidecars from a local source extraction: mise run import:content -- --source DIR --reports DIR [--out-rules DIR] [--out-mods DIR] [--max-era ERA] (see tools/Ariel.ContentImport/README.md)"
+run = "dotnet run --project tools/Ariel.ContentImport/Ariel.ContentImport.csproj --"
+
 [tasks.benchmark]
 description = "Run operational benchmarks without timing thresholds"
 depends = ["cool"]

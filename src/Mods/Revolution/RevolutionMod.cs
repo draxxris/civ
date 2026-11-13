@@ -7,10 +7,12 @@ namespace Ariel.Mods.Revolution;
 public sealed class RevolutionMod : IPreparableMod
 {
     private static readonly ModJsonFile<RevolutionRulesDef> Rules = new("data/revolution-rules.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules];
+    private static readonly ModJsonFile<CivicRevolutionDef[]> Civics = new("data/civic-revolution.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Civics];
 
     public void Register(IModContext context)
     {
+        Ariel.Rules.ContentRegistration.Load(context, Civics);
         var rules = Rules.Read(context.Data);
         ValidateThresholds(rules);
         ValidateResponses(rules);

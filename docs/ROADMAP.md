@@ -130,7 +130,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   decay).
 - **Corporate maintenance integration**: Full branch maintenance equation factoring
   headquarter commerce, resources, world size, population, handicap, civic modifiers
-  (`RealCorporationMaintenanceModifier`), pre-inflation division, and realistic
+  (`CivicCorporationsDef.RealisticMaintenancePercent`), pre-inflation division, and realistic
   corporation scaling.
 - **Bilateral deal gold & trade transfers**: Per-turn trade deal gold integrated into
   `PlayerEconomy.Calculate` (`dealIncome`, `dealExpenses`, `NetGold`) with automated

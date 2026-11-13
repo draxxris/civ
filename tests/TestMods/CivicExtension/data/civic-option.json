@@ -1,0 +1,8 @@
+[
+  {
+    "defaultCivic": "civic_extension:open_charter",
+    "id": "civic_extension:civicoption_charter",
+    "name": "Charter",
+    "requirements": null
+  }
+]

@@ -126,8 +126,8 @@ public sealed class DiplomacyRulesTests
         Assert.Equal("Closed borders", movement.CanEnter(sim, unit.Id, new(40), new(41)));
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });
         Assert.Null(movement.CanEnter(sim, unit.Id, new(40), new(41))); Assert.Equal(foreign.Id, Assert.Single(trade.Calculate(sim, home.Id).Routes).PartnerCity);
-        var mercantilism = sim.Content.Get<S.CivicDef>().All.First(c => c.NoForeignTrade);
-        sim.State.PlayerById(1).Civics["economy"] = mercantilism.Id;
+        var mercantilism = sim.Content.Get<CivicTradeDef>().All.First(c => c.NoForeignTrade);
+        sim.State.PlayerById(1).Civics["economy"] = mercantilism.Target;
         Assert.Empty(trade.Calculate(sim, home.Id).Routes);
     }
 

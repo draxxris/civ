@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Ariel.Content.Schema;
 using Ariel.ContentImport;
 using Xunit;
 
@@ -18,10 +19,18 @@ internal static class ExtractionLocation
     {
         var supplied = Environment.GetEnvironmentVariable("ARIEL_CONTENT_SOURCE");
         if (!string.IsNullOrWhiteSpace(supplied)) return Directory.Exists(supplied) ? supplied : null;
+        return FindRepository() is not { } root ? null : Directory.EnumerateDirectories(root).Order(StringComparer.Ordinal)
+            .FirstOrDefault(x => File.Exists(System.IO.Path.Combine(x, "data/module-controls.yaml")));
+    }
+
+    public static string Repository() =>
+        FindRepository() ?? throw new DirectoryNotFoundException("Ariel.slnx not found above " + AppContext.BaseDirectory);
+
+    private static string? FindRepository()
+    {
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root is not null && !File.Exists(System.IO.Path.Combine(root.FullName, "Ariel.slnx"))) root = root.Parent;
-        return root is null ? null : Directory.EnumerateDirectories(root.FullName).Order(StringComparer.Ordinal)
-            .FirstOrDefault(x => File.Exists(System.IO.Path.Combine(x, "data/module-controls.yaml")));
+        return root?.FullName;
     }
 }
 
@@ -119,7 +128,7 @@ public sealed class ExtractionSmokeTests
         Assert.Contains(result.Dropped, d => d.Reason.StartsWith("References dropped content", StringComparison.Ordinal));
         var ids = result.Definitions.Select(d => d.Definition.Id).ToHashSet(StringComparer.Ordinal);
         Assert.All(result.Definitions.SelectMany(d => ContentEmission.References(d.Definition)), r => Assert.Contains(r.Id, ids));
-        Assert.DoesNotContain(result.Definitions, d => d.Definition.Era is not null && d.Definition.Era != "foundation:era_ancient");
+        Assert.DoesNotContain(result.Definitions, d => d.Definition is GameContentDef { Era: { } era } && era != "foundation:era_ancient");
         using var directory = new TemporaryDirectory();
         ContentEmission.Write(result, Roots(directory.Path), directory.Path);
         Assert.Equal(SchemaCatalog.Definitions.Count + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));

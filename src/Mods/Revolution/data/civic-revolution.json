@@ -1,0 +1,74 @@
+[
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": false,
+    "id": "revolution:democracy",
+    "name": "",
+    "requirements": null,
+    "target": "government:democracy"
+  },
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": false,
+    "id": "revolution:federal",
+    "name": "",
+    "requirements": null,
+    "target": "government:federal"
+  },
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": true,
+    "id": "revolution:parliament",
+    "name": "",
+    "requirements": null,
+    "target": "government:parliament"
+  },
+  {
+    "canDoElection": false,
+    "communism": true,
+    "freeSpeech": false,
+    "id": "revolution:planned",
+    "name": "",
+    "requirements": null,
+    "target": "government:planned"
+  },
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": true,
+    "id": "revolution:president",
+    "name": "",
+    "requirements": null,
+    "target": "government:president"
+  },
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": false,
+    "id": "revolution:republic",
+    "name": "",
+    "requirements": null,
+    "target": "government:republic"
+  },
+  {
+    "canDoElection": true,
+    "communism": false,
+    "freeSpeech": false,
+    "id": "revolution:senate",
+    "name": "",
+    "requirements": null,
+    "target": "government:senate"
+  },
+  {
+    "canDoElection": false,
+    "communism": true,
+    "freeSpeech": false,
+    "id": "revolution:single_party",
+    "name": "",
+    "requirements": null,
+    "target": "government:single_party"
+  }
+]

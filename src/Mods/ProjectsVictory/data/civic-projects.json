@@ -1,0 +1,9 @@
+[
+  {
+    "enablesMadNukes": true,
+    "id": "projects_victory:mutually_assured_destruction",
+    "name": "",
+    "requirements": null,
+    "target": "government:mutually_assured_destruction"
+  }
+]

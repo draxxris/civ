@@ -67,6 +67,7 @@ public static class ContentReferences
             yield break;
         }
         if (value is null || value.GetType().IsPrimitive || value.GetType().IsEnum || !seen.Add(value)) yield break;
+        if (value is ContentAttachment attachment) yield return new(attachment.Target, attachment.TargetType(), path + ".Target");
         if (value is Requirement requirement)
         {
             foreach (var leaf in Leaves(requirement))
@@ -116,6 +117,26 @@ public static class ContentReferences
                 entry = item.GetType().GetProperty(part == ReferencePart.Keys ? "Key" : "Value")!.GetValue(item);
             foreach (var identity in Identities(entry, ReferencePart.Values)) yield return identity;
         }
+    }
+
+    /// <summary>Every <typeparamref name="T"/> nested in a value (properties, sequences, map values), with its diagnostic
+    /// path, in property-name and sequence order.</summary>
+    public static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path) where T : class =>
+        Find<T>(value, path, new HashSet<object>(ReferenceEqualityComparer.Instance));
+
+    private static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path, HashSet<object> seen) where T : class
+    {
+        if (value is null or string or Requirement || value.GetType().IsPrimitive || value.GetType().IsEnum || !seen.Add(value)) yield break;
+        if (value is T found) { yield return (found, path); yield break; }
+        if (value is IEnumerable sequence)
+        {
+            int index = 0;
+            foreach (var item in sequence)
+                foreach (var nested in Find<T>(MapEntryValue(item), path + "[" + index++ + "]", seen)) yield return nested;
+            yield break;
+        }
+        foreach (var metadata in Properties.GetValue(value.GetType(), DescribeProperties))
+            foreach (var nested in Find<T>(metadata.Property.GetValue(value), path + "." + metadata.Property.Name, seen)) yield return nested;
     }
 
     /// <summary>Traverse leaves in expression order, retaining scope and count.</summary>

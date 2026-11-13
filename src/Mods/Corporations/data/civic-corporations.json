@@ -1,0 +1,192 @@
+[
+  {
+    "id": "corporations:coinage",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -110,
+    "requirements": null,
+    "target": "government:coinage"
+  },
+  {
+    "id": "corporations:corporations",
+    "maintenancePercent": -50,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": 0,
+    "requirements": null,
+    "target": "government:corporations"
+  },
+  {
+    "id": "corporations:corporatist",
+    "maintenancePercent": -25,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -75,
+    "requirements": null,
+    "target": "government:corporatist"
+  },
+  {
+    "id": "corporations:digital",
+    "maintenancePercent": -15,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -50,
+    "requirements": null,
+    "target": "government:digital"
+  },
+  {
+    "id": "corporations:environmentalism",
+    "maintenancePercent": 50,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -130,
+    "requirements": null,
+    "target": "government:environmentalism"
+  },
+  {
+    "id": "corporations:guilds",
+    "maintenancePercent": -10,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": true,
+    "realisticMaintenancePercent": -105,
+    "requirements": null,
+    "target": "government:guilds"
+  },
+  {
+    "id": "corporations:hive",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": true,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": 0,
+    "requirements": null,
+    "target": "government:hive"
+  },
+  {
+    "id": "corporations:keynesian",
+    "maintenancePercent": 10,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -115,
+    "requirements": null,
+    "target": "government:keynesian"
+  },
+  {
+    "id": "corporations:laissez_faire",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -85,
+    "requirements": null,
+    "target": "government:laissez_faire"
+  },
+  {
+    "id": "corporations:marxist",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": true,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": 0,
+    "requirements": null,
+    "target": "government:marxist"
+  },
+  {
+    "id": "corporations:mercantilism",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": true,
+    "realisticMaintenancePercent": -80,
+    "requirements": null,
+    "target": "government:mercantilism"
+  },
+  {
+    "id": "corporations:nationalist",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": true,
+    "realisticMaintenancePercent": 0,
+    "requirements": null,
+    "target": "government:nationalist"
+  },
+  {
+    "id": "corporations:paradise",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -100,
+    "requirements": null,
+    "target": "government:paradise"
+  },
+  {
+    "id": "corporations:planned",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": true,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -100,
+    "requirements": null,
+    "target": "government:planned"
+  },
+  {
+    "id": "corporations:post_scarcity",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -50,
+    "requirements": null,
+    "target": "government:post_scarcity"
+  },
+  {
+    "id": "corporations:private",
+    "maintenancePercent": -20,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -95,
+    "requirements": null,
+    "target": "government:private"
+  },
+  {
+    "id": "corporations:socialized",
+    "maintenancePercent": 15,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -110,
+    "requirements": null,
+    "target": "government:socialized"
+  },
+  {
+    "id": "corporations:subsidized",
+    "maintenancePercent": 15,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -110,
+    "requirements": null,
+    "target": "government:subsidized"
+  },
+  {
+    "id": "corporations:superhuman",
+    "maintenancePercent": 0,
+    "name": "",
+    "noCorporations": false,
+    "noForeignCorporations": false,
+    "realisticMaintenancePercent": -100,
+    "requirements": null,
+    "target": "government:superhuman"
+  }
+]

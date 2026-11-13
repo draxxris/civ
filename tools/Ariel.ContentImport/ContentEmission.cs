@@ -76,7 +76,7 @@ public static class ContentEmission
         if (!ranks.TryGetValue(maximumEra, out var maximum)) throw new ArgumentException("Unknown maximum era id: " + maximumEra);
         var removed = new SortedDictionary<string, string>(StringComparer.Ordinal);
         foreach (var definition in definitions)
-            if (definition.Definition.Era is { } era && ranks.TryGetValue(era, out var rank) && rank > maximum)
+            if ((definition.Definition as GameContentDef)?.Era is { } era && ranks.TryGetValue(era, out var rank) && rank > maximum)
                 removed[definition.Definition.Id] = "Era " + era + " exceeds " + maximumEra;
         var references = definitions.ToDictionary(d => d.Definition.Id, d => References(d.Definition).Select(r => r.Id).ToArray(), StringComparer.Ordinal);
         bool changed;
@@ -95,7 +95,7 @@ public static class ContentEmission
         return (definitions.Where(d => !removed.ContainsKey(d.Definition.Id)).ToList(), removed.Select(d => new DroppedContent(d.Key, d.Value)).ToList());
     }
 
-    public static IReadOnlyList<ContentRef> References(GameContentDef definition) => ContentReferences.Enumerate(definition,
+    public static IReadOnlyList<ContentRef> References(ContentDef definition) => ContentReferences.Enumerate(definition,
         ContentLeafKinds.Types.Select(k => new IdentityEvaluator(k.Key, k.Value))).ToArray();
 
     private static void Validate(IReadOnlyList<MappedDefinition> definitions)
@@ -137,7 +137,7 @@ public static class ContentEmission
         var text = new StringBuilder("# Unsupported field highlights\n\nCounts are non-default uses per emitted record. Each class lists its three most-used direct unsupported fields.\n\n");
         foreach (var family in result.Definitions.Where(d => d.Mapping.SourceClass.Length > 0).GroupBy(d => d.Mapping.SourceClass).OrderBy(g => g.Key, StringComparer.Ordinal))
         {
-            var fields = family.SelectMany(d => d.Definition.Unsupported.Where(p => !p.Contains('/', StringComparison.Ordinal)))
+            var fields = family.Select(d => d.Definition).OfType<GameContentDef>().SelectMany(d => d.Unsupported.Where(p => !p.Contains('/', StringComparison.Ordinal)))
                 .GroupBy(p => p, StringComparer.Ordinal).OrderByDescending(g => g.Count()).ThenBy(g => g.Key, StringComparer.Ordinal).Take(3)
                 .Select(g => $"`{g.Key}` ({g.Count()})").ToArray();
             text.AppendLine($"- {family.Key}: {(fields.Length == 0 ? "none" : string.Join(", ", fields))}.");
@@ -145,7 +145,7 @@ public static class ContentEmission
         File.WriteAllText(Path.Combine(directory, "unsupported-highlights.md"), text.ToString());
     }
 
-    private static string Serialize(GameContentDef[] definitions)
+    private static string Serialize(ContentDef[] definitions)
     {
         var array = new JsonArray(definitions.Select(d => JsonSerializer.SerializeToNode(d, d.GetType(), ContentMapper.Json)).ToArray());
         // Immutable hash maps do not promise enumeration order. Sort every object, preserve all sequence order.
@@ -171,5 +171,7 @@ public static class ContentEmission
         _ => []
     };
     public static string FileName(string definition) => string.Concat(definition[..^3].Select((c, i) => char.IsUpper(c) && i > 0 ? "-" + char.ToLowerInvariant(c) : char.ToLowerInvariant(c).ToString())) + ".json";
-    public static string DisplayMod(string mod) => char.ToUpperInvariant(mod[0]) + mod[1..];
+    /// <summary>The folder of a module or mod: its id in Pascal case (<c>projects_victory</c> is <c>ProjectsVictory</c>).</summary>
+    public static string DisplayMod(string mod) =>
+        string.Concat(mod.Split('_', StringSplitOptions.RemoveEmptyEntries).Select(part => char.ToUpperInvariant(part[0]) + part[1..]));
 }

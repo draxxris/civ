@@ -9,8 +9,8 @@ sidecars are the runtime content. The extraction is not needed to build the game
 Supply the extraction directory as a CLI argument:
 
 ```sh
-mise exec -- dotnet run --project tools/Ariel.ContentImport -- --source <source-directory> --reports tools/Ariel.ContentImport/reports --out-rules src/Ariel.Rules --out-mods src/Mods
-dotnet test Ariel.slnx
+mise run import:content -- --source <source-directory> --reports tools/Ariel.ContentImport/reports --out-rules src/Ariel.Rules --out-mods src/Mods
+mise run test
 ```
 
 Use `--dump tools/Ariel.ContentImport/out` for the optional, git-ignored generic dump.
@@ -198,6 +198,22 @@ positional pairs, partial vectors, explicit zeroes, negative costs and slots, an
 prerequisite scopes. Building and unit classes resolve to their default definitions.
 Civilization overrides apply to starting grants too. Every definition includes inline
 English text, an era, an icon, and sorted unsupported source paths.
+
+A field of an `effect*` kind (`effect`, `effectFlag`, `effectYield`, `effectCommerce`,
+`effectMapInt`, `effectMapBool`, `effectMapYield`, `effectMapCommerce`) becomes entries in
+the definition's `effects` list instead of a property. Its `scope` names the
+calculation and its `modifier` the key: a whole key, a prefix to which the vector
+component is appended (`yield.percent`), or a format whose `{}` takes the component
+(`cities:specialist_{}_hundredths`). A map kind's keys become effect targets. All of a
+record's effects are written in key, then target order, with zero amounts dropped. The
+keys must be declared in the reading module's hand-written `data/modifier-key.json`,
+which the importer never writes.
+
+A mapping whose `definition` is a `ContentAttachment` (for example `CivicTradeDef` with
+`"mod": "trade"`) maps fields of the same source class into the named mod's own
+attachment file. A record gets a row, with id `<mod>:<name>` and the record's id as
+`target`, only when one of the mapped fields is not at its default. Fields that an
+attachment maps count as mapped for the record's primary definition too.
 
 Output arrays use ordinal id order. Object properties use ordinal order. Ordered source
 arrays retain their order. Output uses indented camelCase JSON. The importer scans

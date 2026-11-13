@@ -1,0 +1,184 @@
+[
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": 0,
+    "id": "diplomacy:appeasement",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 3,
+    "requirements": null,
+    "target": "government:appeasement",
+    "tributePercent": 5,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": 3,
+    "id": "diplomacy:cosmopolitan",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:cosmopolitan",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": -2,
+    "id": "diplomacy:hive",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:hive",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": -1,
+    "id": "diplomacy:imperium",
+    "lessPowerfulRelationsChange": -3,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:imperium",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {
+      "government:interventionism": {
+        "change": 1,
+        "text": "%D1_AttitudeChange: \u0022Interventionists should work together\u0022"
+      },
+      "government:isolationism": {
+        "change": -1,
+        "text": "%D1_AttitudeChange: \u0022We dislike your meddlesome foreign policies\u0022"
+      },
+      "government:protectionism": {
+        "change": -1,
+        "text": "%D1_AttitudeChange: \u0022We dislike your meddlesome foreign policies\u0022"
+      }
+    },
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": true,
+    "globalRelationsChange": 0,
+    "id": "diplomacy:interventionism",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:interventionism",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": -1,
+    "id": "diplomacy:junta",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:junta",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {
+      "government:bandits": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:conscription1": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:fuedalism": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:pacifism": {
+        "change": -4,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:standing_army": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:unmanned_warfare": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      },
+      "government:volunteer_army": {
+        "change": -2,
+        "text": "%D1_AttitudeChange: \u0022Your Military Policies Threaten The World!\u0022"
+      }
+    },
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": 0,
+    "id": "diplomacy:mutually_assured_destruction",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:mutually_assured_destruction",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": 1,
+    "id": "diplomacy:president",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:president",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": -2,
+    "id": "diplomacy:protectionism",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:protectionism",
+    "tributePercent": 0,
+    "weakestRelationsChange": 0
+  },
+  {
+    "attitudeChanges": {},
+    "attitudeShareMod": 0,
+    "canNotCeaseRelations": false,
+    "globalRelationsChange": 0,
+    "id": "diplomacy:redevelopment",
+    "lessPowerfulRelationsChange": 0,
+    "name": "",
+    "powerfulRelationsChange": 0,
+    "requirements": null,
+    "target": "government:redevelopment",
+    "tributePercent": -5,
+    "weakestRelationsChange": 2
+  }
+]

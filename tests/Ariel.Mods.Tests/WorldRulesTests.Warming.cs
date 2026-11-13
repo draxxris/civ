@@ -398,9 +398,10 @@ sim.State.Map = new(width, height, false);
                 Terrains = ImmutableDictionary<string, bool>.Empty.Add("world:grass", true) });
             context.Content<S.FeatureDef>().Register(new() { Id = Warming + "cold_only",
                 Terrains = ImmutableDictionary<string, bool>.Empty.Add("world:snow", true) });
-            context.Content<S.CivicDef>().Register(new() { Id = Warming + "green", ExtraHealth = 1 });
-            context.Content<S.CivicDef>().Register(new() { Id = Warming + "negative_green", ExtraHealth = -1 });
-            context.Content<S.CivicDef>().Register(new() { Id = Warming + "class_unhealth", ExtraHealth = -10,
+            static ImmutableArray<ModifierEffect> Health(int amount) => [new() { Scope = ModifierScope.City, Key = "cities:health", Amount = amount }];
+            context.Content<S.CivicDef>().Register(new() { Id = Warming + "green", Effects = Health(1) });
+            context.Content<S.CivicDef>().Register(new() { Id = Warming + "negative_green", Effects = Health(-1) });
+            context.Content<S.CivicDef>().Register(new() { Id = Warming + "class_unhealth", Effects = Health(-10),
                 BuildingHealthChanges = ImmutableDictionary<string, int>.Empty.Add("cities:granary", -1) });
             var buildings = context.Content<S.BuildingDef>();
             buildings.Register(new() { DefaultBuilding = "cities:granary", Id = Warming + "factory", Health = -1 });

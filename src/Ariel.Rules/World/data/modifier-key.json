@@ -1,0 +1,14 @@
+[
+  {
+    "id": "world:improvement_upgrade_percent",
+    "name": "improvement upgrade rate",
+    "targeted": false,
+    "unit": "percent"
+  },
+  {
+    "id": "world:worker_speed_percent",
+    "name": "worker speed",
+    "targeted": false,
+    "unit": "percent"
+  }
+]

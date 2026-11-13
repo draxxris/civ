@@ -48,7 +48,7 @@ internal sealed class GlobalWarmingSystem(PlotYieldService yields) : ITurnSystem
     {
         var living = sim.State.Cities.Select(c => c.Owner).Concat(sim.State.Units.Select(u => u.Owner)).ToHashSet();
         var environmentalists = sim.State.Players.Where(p => living.Contains(p.Id)
-            && p.Civics.Values.Any(c => sim.Content.Get<S.CivicDef>(c).ExtraHealth != 0)).Select(p => p.Id).ToHashSet();
+            && p.Civics.Values.Any(c => sim.Content.Get<S.CivicDef>(c).Effects.Total(ModifierScope.City, "cities:health") != 0)).Select(p => p.Id).ToHashSet();
         int civicBonus = WorldTurnMath.Raw(sim, "TREEHUGGER_DEFENSE_BONUS", 2);
         Int128 points = 0;
         int land = 0;

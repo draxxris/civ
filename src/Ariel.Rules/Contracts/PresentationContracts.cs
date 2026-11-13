@@ -109,6 +109,16 @@ public static class QueueBlocker
     }
 }
 
+/// <summary>Content that can say what it does, as short lines a player reads in the civics screen, the pedia and
+/// tooltips. A mod's attachment (<see cref="ContentAttachment"/>) implements it so the definition it is attached to
+/// lists the attachment's effects without the client knowing the mod; a definition type implements it for the typed
+/// rules its owner reads. Lines must not depend on game state.</summary>
+public interface IDescribedContent
+{
+    /// <summary>One line per effect, nothing for an attachment that changes nothing.</summary>
+    IEnumerable<string> Describe(ContentDb content);
+}
+
 /// <summary>Optional labels for mod-owned ledger source identities. Null leaves the source to other providers.</summary>
 public interface ILedgerSourceLabel
 {

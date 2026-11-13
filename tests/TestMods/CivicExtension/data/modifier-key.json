@@ -1,0 +1,9 @@
+[
+  {
+    "id": "civic_extension:levy",
+    "name": "gold levied each turn",
+    "requirements": null,
+    "targeted": false,
+    "unit": "flat"
+  }
+]

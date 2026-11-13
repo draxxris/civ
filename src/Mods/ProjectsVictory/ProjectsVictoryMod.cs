@@ -12,12 +12,14 @@ public sealed class ProjectsVictoryMod : IPreparableMod
 {
     private static readonly ModJsonFile<ProjectDef[]> Projects = new("data/project.json");
     private static readonly ModJsonFile<VictoryDef[]> Victories = new("data/victory.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Projects, Victories];
+    private static readonly ModJsonFile<CivicProjectsDef[]> Civics = new("data/civic-projects.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Projects, Victories, Civics];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Projects);
         ContentRegistration.Load(context, Victories);
+        ContentRegistration.Load(context, Civics);
         var service = new ProjectVictoryService();
         context.RegisterService<IProjectVictoryService>("queries", service);
         context.RegisterService<IProductionKind>("project_kind", new ProjectKind(service));
