@@ -25,8 +25,6 @@ internal sealed class SetupPolicy : ISetupPolicy
             "foundation:gameoption_assimilation",
             "foundation:gameoption_realistic_corporations",
             "foundation:gameoption_realistic_culture_spread",
-            "foundation:gameoption_religion_decay",
-            "foundation:gameoption_no_inquisitions",
             "foundation:gameoption_no_revolution",
         ];
         foreach (string id in implemented)
@@ -34,8 +32,6 @@ internal sealed class SetupPolicy : ISetupPolicy
             if (!content.TryGet<Ariel.Content.Schema.GameOptionDef>(id, out var option)) continue;
             yield return new(option.Id, option.Name, option.Default, option.Help);
         }
-        yield return new("foundation:gameoption_multiple_religion_spread", "Multiple Religion Spread", false,
-            "Cities with an existing religion can still receive additional religions via natural spread.");
         yield return new("foundation:gameoption_resource_depletion", "Resource Depletion", false,
             "Worked mines and resource deposits can run out. New resources are discovered more often.");
         yield return new("foundation:gameoption_realistic_timescale", "Realistic Timescale", true,

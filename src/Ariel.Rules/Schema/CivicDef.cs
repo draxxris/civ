@@ -9,8 +9,7 @@ namespace Ariel.Content.Schema;
 /// declared modifier key, including one a mod defines and reads. The typed fields below are the rules whose effect
 /// depends on more than the calculation's subject (capital, buildings, work area, other players) or that a base
 /// module reads directly. A feature mod says what a civic means to it by attaching its own data
-/// (<see cref="ContentAttachment"/>), never through a field here. Fields marked "Religion" move out with the Religion
-/// module when it becomes a mod.
+/// (<see cref="ContentAttachment"/>), never through a field here.
 /// </remarks>
 public sealed class CivicDef : GameContentDef
 {
@@ -41,14 +40,9 @@ public sealed class CivicDef : GameContentDef
     public CommerceVector SpecialistExtraCommerces { get; init; } = default;
     [ContentReference(typeof(UpkeepDef), ReferencePart.Values)]
     public string? Upkeep { get; init; } = null;
-    public bool AllowInquisitions { get; init; } = false; // Religion
-    public bool DisallowInquisitions { get; init; } = false; // Religion
     public bool FixedBorders { get; init; } = false;
-    public bool FreeReligion { get; init; } = false; // Religion
     public bool NoCapitalUnhappiness { get; init; } = false;
     public bool NoLandmarkAnger { get; init; } = false;
-    public bool NoNonStateReligionSpread { get; init; } = false; // Religion
-    public bool RequiresStateReligion { get; init; } = false; // Religion
     public bool UpgradeAnywhere { get; init; } = false;
     public int AiWeight { get; init; } = 0;
     public int AnarchyLength { get; init; } = 0;
@@ -71,14 +65,6 @@ public sealed class CivicDef : GameContentDef
     public int LandmarkHappiness { get; init; } = 0;
     public int LargestCityHappiness { get; init; } = 0;
     public int MaxConscript { get; init; } = 0;
-    public int NonStateReligionHappiness { get; init; } = 0; // Religion
     public int OtherAreaMaintenanceModifier { get; init; } = 0;
-    public int ReligionSpreadRate { get; init; } = 0; // Religion
-    public int StateReligionBuildingProductionModifier { get; init; } = 0; // Religion
-    public int StateReligionFreeExperience { get; init; } = 0; // Religion
-    public int StateReligionGreatPeopleRateModifier { get; init; } = 0; // Religion
-    public int StateReligionHappiness { get; init; } = 0; // Religion
-    public int StateReligionHealth { get; init; } = 0; // Religion
-    public int StateReligionUnitProductionModifier { get; init; } = 0; // Religion
     public int TaxRateUnhappiness { get; init; } = 0;
 }

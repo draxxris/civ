@@ -1,9 +1,8 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using CivicDef = Ariel.Content.Schema.CivicDef;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed class ReligionEffects : IModifierSource
 {
@@ -18,7 +17,7 @@ internal sealed class ReligionEffects : IModifierSource
         foreach (var civic in ReligionData.Civics(sim, context.Player))
         {
             if (context.Scope == ModifierScope.City) StateCivic(civic, sink);
-            if (context.Scope == ModifierScope.Unit) sink.Add(civic.Id, "military:initial_experience", civic.StateReligionFreeExperience);
+            if (context.Scope == ModifierScope.Unit) sink.Add(civic.Id, "military:initial_experience", civic.Rules.StateReligionFreeExperience);
         }
     }
     private static void City(Simulation sim, City city, string? state, ModifierSink sink)
@@ -39,7 +38,7 @@ internal sealed class ReligionEffects : IModifierSource
         }
         Buildings(sim, city, state, sink);
     }
-    private static void Happiness(Simulation sim, string religion, string? state, CivicDef[] civics, ModifierSink sink)
+    private static void Happiness(Simulation sim, string religion, string? state, HeldCivic[] civics, ModifierSink sink)
     {
         bool active = religion == state;
         int initial = active ? ReligionData.Raw(sim, "INITIAL_STATE_RELIGION_HAPPINESS", 1) : ReligionData.Raw(sim, "INITIAL_NON_STATE_RELIGION_HAPPINESS", 0);
@@ -47,33 +46,35 @@ internal sealed class ReligionEffects : IModifierSource
         if (active) sink.Add(religion, "cities:health", ReligionData.Raw(sim, "INITIAL_STATE_RELIGION_HEALTH", 0));
         foreach (var civic in civics)
         {
-            sink.Add(civic.Id, "cities:happiness", active ? civic.StateReligionHappiness : civic.NonStateReligionHappiness);
-            if (active) sink.Add(civic.Id, "cities:health", civic.StateReligionHealth);
+            sink.Add(civic.Id, "cities:happiness", active ? civic.Rules.StateReligionHappiness : civic.Rules.NonStateReligionHappiness);
+            if (active) sink.Add(civic.Id, "cities:health", civic.Rules.StateReligionHealth);
         }
     }
     private static void Buildings(Simulation sim, City city, string? state, ModifierSink sink)
     {
         var buildings = ReligionData.Active(sim, city).ToArray();
         var global = default(CommerceVector);
-        if (state is not null && buildings.Any(b => b.ReligionType == state))
+        // Buildings name their religion by identity.
+        string? stateIdentity = state is null ? null : ReligionIdentities.Identity(sim.Content, state);
+        if (stateIdentity is not null && buildings.Any(b => b.ReligionType == stateIdentity))
             global = sim.State.Cities.Where(c => c.Owner == city.Owner).SelectMany(c => ReligionData.Active(sim, c))
                 .Aggregate(default(CommerceVector), (total, b) => total + b.StateReligionCommerces);
         foreach (var building in buildings)
         {
-            if (building.ReligionType is { } religion && religion == state)
+            if (building.ReligionType is { } religion && religion == stateIdentity)
             {
                 sink.Add(building.Id, "cities:happiness", building.StateReligionHappiness);
                 sink.AddCommerce(building.Id + ":state_religion", global);
             }
-            if (building.GlobalReligionCommerce is not { } shrine) continue;
-            int cities = sim.State.Cities.Count(c => ReligionData.Has(sim, c, shrine));
-            sink.AddCommerce(building.Id + ":shrine", sim.Content.Get<ReligionDef>(shrine).GlobalCityCommerce * cities);
+            if (ReligionIdentities.ByIdentity(sim.Content, building.GlobalReligionCommerce) is not { } shrine) continue;
+            int cities = sim.State.Cities.Count(c => ReligionData.Has(sim, c, shrine.Id));
+            sink.AddCommerce(building.Id + ":shrine", shrine.GlobalCityCommerce * cities);
         }
     }
-    private static void StateCivic(CivicDef civic, ModifierSink sink)
+    private static void StateCivic(HeldCivic civic, ModifierSink sink)
     {
-        sink.Add(civic.Id, "cities:religion_unit_production_percent", civic.StateReligionUnitProductionModifier);
-        sink.Add(civic.Id, "cities:religion_building_production_percent", civic.StateReligionBuildingProductionModifier);
-        sink.Add(civic.Id, "cities:great_people_percent", civic.StateReligionGreatPeopleRateModifier);
+        sink.Add(civic.Id, "cities:religion_unit_production_percent", civic.Rules.StateReligionUnitProductionModifier);
+        sink.Add(civic.Id, "cities:religion_building_production_percent", civic.Rules.StateReligionBuildingProductionModifier);
+        sink.Add(civic.Id, "cities:great_people_percent", civic.Rules.StateReligionGreatPeopleRateModifier);
     }
 }

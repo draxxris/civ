@@ -3,6 +3,7 @@ using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Ai;
 using Ariel.Game;
+using Ariel.Mods.Religion;
 using SpecialistDef = Ariel.Content.Schema.SpecialistDef;
 
 namespace Ariel.Mods.GreatPeople;
@@ -80,12 +81,13 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
 
     private IEnumerable<Choice> Shrines(Unit unit, City city)
     {
-        var religion = ctx.Sim.Rules().Religion;
+        var religion = ctx.Sim.Service<IReligionService>();
         if (religion is null || GovernmentStatus.IsDisorder(ctx.Sim, city)) yield break;
         foreach (var building in ctx.Def(unit).ConstructibleBuildings.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
         {
             var def = ctx.Sim.Content.Get<BuildingDef>(building.Key);
-            if (def.GlobalReligionCommerce is not { } faith || city.Buildings.Contains(def.Id) || religion.HolyCity(ctx.Sim, faith) != city.Id) continue;
+            if (ReligionIdentities.Religion(ctx.Sim.Content, def.GlobalReligionCommerce) is not { } faith || city.Buildings.Contains(def.Id)
+                || religion.HolyCity(ctx.Sim, faith) != city.Id) continue;
             var eligibility = ctx.Service<ICityProductionService>().Validate(ctx.Sim, city.Id, "cities:building", def.Id);
             if (eligibility.Failures.Any(f => !ProductionFailures.IsCostOnly(f))) continue;
             yield return new(city.Position, new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = ReligionMissions.Shrine, Subject = def.Id },

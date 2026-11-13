@@ -47,6 +47,14 @@ public interface ICityPanel : IHasId
     IReadOnlyList<ViewElement> Describe(ScreenContext context, City city);
 }
 
+/// <summary>A short tag a mod adds after a city's name in the city list, such as the faiths present. Null or empty
+/// adds nothing; tags of several mods keep registration order. Called whenever the list may have changed, so it must be
+/// cheap.</summary>
+public interface ICityTag : IHasId
+{
+    string? Describe(ScreenContext context, City city);
+}
+
 /// <summary>A mod's item in the top bar's player summary, such as a countdown or an alert. Null shows nothing.</summary>
 public interface IPlayerSummaryItem : IHasId
 {

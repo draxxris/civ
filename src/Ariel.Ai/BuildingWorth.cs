@@ -9,10 +9,6 @@ namespace Ariel.Ai;
 /// through building valuers (<see cref="IAiValuer{TSubject}"/> of <see cref="BuildingSubject"/>).</summary>
 internal sealed class BuildingWorth(AiContext ctx)
 {
-    /// <summary>A founding wonder has no effects of its own; this stands for the holy city, its religion's spread and
-    /// the free missionaries.</summary>
-    internal const int FoundingValue = 80;
-
     public int Value(BuildingDef b, CityView v)
     {
         int value = ctx.FlavorScore(b.Flavors);
@@ -21,7 +17,6 @@ internal sealed class BuildingWorth(AiContext ctx)
         value += v.Threat > 0 ? b.DefensePercent / 4 : b.DefensePercent / 20;
         value += b.GreatPeopleRateChange * 2 + b.FreeTechs * 40 + b.Experience * 3;
         value += Math.Min(Math.Max(b.AiWeight, 0), 1000) / 25;
-        if (b.FoundsReligion is not null) value += FoundingValue;
         return value;
     }
 

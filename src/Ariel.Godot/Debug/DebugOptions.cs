@@ -13,7 +13,7 @@ namespace Ariel.Client;
 /// --out-dir dir              where captures and stats go (default docs/screenshots, which holds the committed images;
 ///                            interface stages go to its gui subfolder)
 /// --stage name               setup|map|city|civics|research|path|world|terrain|rivers|peak|wrap, or a base dialog
-///                            (religion|conquest|pedia|techtree|load)
+///                            (conquest|pedia|techtree|load), or a mod's screen (religion, diplomacy)
 /// --open-screen id           open a screen a mod registers, by id (espionage:screen) or by the id of a mod with one
 ///                            screen (espionage); rivals are met first so a screen about them has content
 /// --press id[,id...]         then press these controls of the open screen by element id, in order (rival:1)

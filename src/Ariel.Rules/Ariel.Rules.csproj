@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
-    The base game rules: world, cities, units and combat, research, economy, government, peoples and religion.
+    The base game rules: world, cities, units and combat, research, economy, government, peoples and relations.
     Statically linked into every host. Each folder is one base module with its own content namespace, a mod.json
     manifest (no assembly: BaseRules supplies the code) and data/ sidecars.
     Manifests and data are staged to <output>/rules/<Module>/ of this project and of every project referencing it.

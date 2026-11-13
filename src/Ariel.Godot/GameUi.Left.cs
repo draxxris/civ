@@ -253,22 +253,23 @@ internal sealed partial class GameUi
     private List<City> HumanCities() =>
         _session.Sim.State.Cities.Where(c => c.Owner == _session.LocalPlayer).OrderBy(c => c.Id).ToList();
 
-    /// <summary>Rebuilds the city buttons only when a row's id, name, population or religion badge changed.</summary>
+    /// <summary>Rebuilds the city buttons only when a row's id, name, population or mod tags changed.</summary>
     private void RefreshCityList()
     {
         var cities = HumanCities();
+        var tags = cities.Select(_session.CityTags).ToList();
         var key = new StringBuilder();
-        foreach (var city in cities)
-            key.Append(city.Id).Append('\u001e').Append(city.Name).Append('\u001e').Append(city.Population)
-                .Append('\u001e').Append(_session.ReligionBadge(city)).Append('\u001f');
+        for (int i = 0; i < cities.Count; i++)
+            key.Append(cities[i].Id).Append('\u001e').Append(cities[i].Name).Append('\u001e').Append(cities[i].Population)
+                .Append('\u001e').Append(tags[i]).Append('\u001f');
         string identity = key.ToString();
         if (identity == _shownCityKey) return;
         _shownCityKey = identity;
         Ui.Clear(_cityList);
-        foreach (var city in cities)
+        for (int i = 0; i < cities.Count; i++)
         {
-            var id = city.Id;
-            _cityList.AddChild(Ui.Button($"{city.Name}  ({city.Population})" + (_session.ReligionBadge(city) is { Length: > 0 } badge ? $"  [{badge}]" : ""), () => _session.SelectCity(id), "Open the city screen"));
+            var id = cities[i].Id;
+            _cityList.AddChild(Ui.Button($"{cities[i].Name}  ({cities[i].Population}){tags[i]}", () => _session.SelectCity(id), "Open the city screen"));
         }
         if (cities.Count == 0) _cityList.AddChild(Ui.Text("None yet. Found one with a settler (B).", 13, Ui.Dim));
     }

@@ -24,7 +24,6 @@ internal static class StandardPlanners
             ctx.Refresh();
             new CitizenPlanner(ctx, ctx.Army).Plan();
         }),
-        new Planner("religion", AiPlannerOrder.Religion, ctx => new ReligionPlanner(ctx).Plan()),
         new Planner("cities", AiPlannerOrder.Cities, ctx =>
         {
             ctx.Refresh();

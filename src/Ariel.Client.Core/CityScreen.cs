@@ -56,7 +56,7 @@ public sealed record CityScreen(
     IReadOnlyList<LedgerRow> HappinessLedger, IReadOnlyList<LedgerRow> HealthLedger,
     IReadOnlyList<TileRow> WorkedTiles, int IdleCitizens, IReadOnlyList<SpecialistRow> Specialists,
     IReadOnlyList<QueueRow> Queue, IReadOnlyList<string> Buildings, IReadOnlyList<HurryOption> Hurry,
-    IReadOnlyList<CityReligion> Religions, CityPanels Panels)
+    CityPanels Panels)
 {
     public int Citizens => Population;
     public ConscriptOption? Conscript { get; init; }
@@ -87,7 +87,7 @@ public sealed partial class GameSession
             Rows(yield.Ledger, ".food"), Rows(yield.Ledger, ".production"), CommerceRows(yield.Ledger),
             Wellbeing(wellbeing.Ledger, "happiness"), Wellbeing(wellbeing.Ledger, "health"),
             city.Worked.Select(TileRowOf).ToList(), idle, SpecialistRows(city),
-            QueueRows(city), BuildingNames(city), HurryOptions(city), ReligionsIn(city), CityPanelsOf(city))
+            QueueRows(city), BuildingNames(city), HurryOptions(city), CityPanelsOf(city))
         {
             Conscript = ConscriptOptionOf(city),
             IsPuppet = rules.IsPuppet,

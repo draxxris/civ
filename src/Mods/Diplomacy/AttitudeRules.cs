@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Religion;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Diplomacy;
@@ -7,7 +8,8 @@ namespace Ariel.Mods.Diplomacy;
 internal sealed partial class DiplomacyService
 {
     private static S.LeaderDef? Leader(Simulation sim, int player) => sim.Content.TryGet<S.LeaderDef>(sim.State.PlayerById(player).Leader, out var leader) ? leader : null;
-    private static string? Religion(Simulation sim, int player) => sim.Rules().Religion?.StateReligion(sim, player);
+    /// <summary>The player's state religion, or null without one or without the Religion mod.</summary>
+    private static string? Religion(Simulation sim, int player) => sim.Service<IReligionService>()?.StateReligion(sim, player);
     private static int Growth(int turns, int divisor, int limit) => divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
     private static bool FavoriteCivic(Simulation sim, int from, int toward, S.LeaderDef leader) => leader.FavoriteCivic is { } civic &&
         sim.State.PlayerById(from).Civics.Values.Contains(civic) && sim.State.PlayerById(toward).Civics.Values.Contains(civic);

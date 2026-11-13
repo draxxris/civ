@@ -1,7 +1,7 @@
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService
 {
@@ -74,7 +74,7 @@ internal sealed partial class ReligionService
             spread = spread / divisor / (count + ReligionData.Raw(sim, "RELIGION_SPREAD_COUNT_OFFSET", 1));
             threshold = Math.Max(threshold, spread + ReligionData.Raw(sim, "RELIGION_SPREAD_THRESHOLD_BUMP", 1));
         }
-        int modifier = 100 + ReligionData.Civics(sim, city.Owner).Sum(c => c.ReligionSpreadRate);
+        int modifier = 100 + ReligionData.Civics(sim, city.Owner).Sum(c => c.Rules.ReligionSpreadRate);
         threshold = threshold * Math.Max(0, modifier) / 100;
         threshold = AgeAdjustment(sim, city, religion, threshold);
         return new(threshold / Math.Max(1, ReligionData.Raw(sim, "RELIGION_SPREAD_THRESHOLD_UNIT", 4)), range);
@@ -95,7 +95,8 @@ internal sealed partial class ReligionService
     {
         int holy = HolyCity(sim, religion) == city.Id ? ReligionData.Raw(sim, "HOLY_CITY_INFLUENCE", 1) : 0;
         var buildings = turn?.Active(city) ?? ReligionData.Active(sim, city);
-        return Math.Max(0, holy + buildings.Sum(b => b.ReligionChanges.GetValueOrDefault(religion)));
+        string identity = ReligionIdentities.Identity(sim.Content, religion);
+        return Math.Max(0, holy + buildings.Sum(b => b.ReligionChanges.GetValueOrDefault(identity)));
     }
     private static int AgeAdjustment(Simulation sim, City city, string religion, int threshold)
     {

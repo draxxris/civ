@@ -30,7 +30,6 @@ internal sealed partial class GameUi : CanvasLayer
     private (Label Label, Button Minus, Button Plus) _espionageRate;
     private Button _civicsButton = null!;
     private Button _conquestButton = null!;
-    private Button _religionButton = null!;
     /// <summary>One top-bar button per registered mod screen, in <see cref="ScreenHost.Screens"/> order, rebuilt when a
     /// loaded game brings other content.</summary>
     private readonly List<(string Id, Button Button)> _screenButtons = new();
@@ -302,7 +301,6 @@ internal sealed partial class GameUi : CanvasLayer
         _civicsButton = Ui.Button("Civics", ToggleGovernment);
         _conquestButton = Ui.Button("Conquest!", () => OpenModal(Modal.Conquest));
         _conquestButton.AddThemeColorOverride("font_color", Ui.Bad);
-        _religionButton = Ui.Button("Religion", () => OpenModal(Modal.Religion), "State religion and the religions of the world");
         _pediaButton = Ui.Button("Pedia", () => OpenModal(Modal.Pedia), "Browse every tech, unit, building and more");
         _techTreeButton = Ui.Button("Tech Tree", () => OpenModal(Modal.TechTree), "Browse technology prerequisites");
         _saveButton = Ui.Button("Save", QuickSaveGame, "Quick save (F5)");
@@ -320,7 +318,7 @@ internal sealed partial class GameUi : CanvasLayer
         // child appear or disappear in a different position.
         _conquestButton.Visible = false;
         _techTreeButton.Visible = false;
-        foreach (var button in new[] { _conquestButton, _religionButton, _pediaButton, _techTreeButton, _saveButton, _loadButton })
+        foreach (var button in new[] { _conquestButton, _pediaButton, _techTreeButton, _saveButton, _loadButton })
             _topRow.AddChild(button);
         _topRow.AddChild(_citiesText);
         _top.AddChild(_topRow);
@@ -328,7 +326,7 @@ internal sealed partial class GameUi : CanvasLayer
     }
 
     /// <summary>
-    /// Puts one button per registered screen after the Religion button, hidden until <see cref="RefreshTop"/> asks the
+    /// Puts one button per registered screen after the Conquest button, hidden until <see cref="RefreshTop"/> asks the
     /// screen. The set only changes with the content, so this runs at start and when a loaded game brings other content.
     /// </summary>
     private void RebuildScreenButtons()
@@ -338,7 +336,7 @@ internal sealed partial class GameUi : CanvasLayer
         _screenButtonsContent = content;
         foreach (var (_, button) in _screenButtons) { _topRow.RemoveChild(button); button.QueueFree(); }
         _screenButtons.Clear();
-        int at = _religionButton.GetIndex() + 1;
+        int at = _conquestButton.GetIndex() + 1;
         foreach (var screen in _session.Screens.Screens)
         {
             string id = screen.Id;

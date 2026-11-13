@@ -22,6 +22,7 @@
     },
     "icon": "Art/Interface/Buttons/religions/Vanirism.dds",
     "id": "religion:asatru",
+    "identity": "foundation:asatru",
     "missionary": "military:asatru_missionary",
     "monasteries": [
       "cities:asatru_monastery"
@@ -75,6 +76,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Buddhism.dds",
     "id": "religion:buddhism",
+    "identity": "foundation:buddhism",
     "missionary": "military:buddhist_missionary",
     "monasteries": [
       "cities:buddhist_monastery"
@@ -128,6 +130,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Christian.dds",
     "id": "religion:christianity",
+    "identity": "foundation:christianity",
     "missionary": "military:christian_missionary",
     "monasteries": [
       "cities:christian_monastery"
@@ -181,6 +184,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Confuscianism.dds",
     "id": "religion:confucianism",
+    "identity": "foundation:confucianism",
     "missionary": "military:confucian_missionary",
     "monasteries": [
       "cities:confucian_monastery"
@@ -232,6 +236,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Egypt.dds",
     "id": "religion:egypt_mythology",
+    "identity": "foundation:egypt_mythology",
     "missionary": "military:egypt_myth_missionary",
     "monasteries": [
       "cities:egypt_myth_monastery"
@@ -283,6 +288,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/hellenism_button.dds",
     "id": "religion:hellenism",
+    "identity": "foundation:hellenism",
     "missionary": "military:hellenic_missionary",
     "monasteries": [
       "cities:hellenic_monastery"
@@ -336,6 +342,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Hinduism.dds",
     "id": "religion:hinduism",
+    "identity": "foundation:hinduism",
     "missionary": "military:hindu_missionary",
     "monasteries": [
       "cities:hindu_monastery"
@@ -389,6 +396,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Islam.dds",
     "id": "religion:islam",
+    "identity": "foundation:islam",
     "missionary": "military:islamic_missionary",
     "monasteries": [
       "cities:islamic_monastery"
@@ -442,6 +450,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Jewish.dds",
     "id": "religion:judaism",
+    "identity": "foundation:judaism",
     "missionary": "military:jewish_missionary",
     "monasteries": [
       "cities:jewish_monastery"
@@ -492,6 +501,7 @@
     },
     "icon": "Art/Interface/Buttons/religions/MesoAmerica.dds",
     "id": "religion:mesoamericanism",
+    "identity": "foundation:mesoamericanism",
     "missionary": "military:nagualism_missionary",
     "monasteries": [
       "cities:mesoamerican_monastery"
@@ -545,6 +555,7 @@
     },
     "icon": "Art/Interface/Buttons/religions/Shinto_Button.dds",
     "id": "religion:shinto",
+    "identity": "foundation:shinto",
     "missionary": "military:shinto_missionary",
     "monasteries": [
       "cities:shinto_monastery"
@@ -598,6 +609,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Taoism.dds",
     "id": "religion:taoism",
+    "identity": "foundation:taoism",
     "missionary": "military:taoist_missionary",
     "monasteries": [
       "cities:taoist_monastery"
@@ -649,6 +661,7 @@
     },
     "icon": "Art/Interface/Buttons/Religions/Zoroastrianism.dds",
     "id": "religion:zoroastrianism",
+    "identity": "foundation:zoroastrianism",
     "missionary": "military:zoroastrian_missionary",
     "monasteries": [
       "cities:zoroastrian_monastery"

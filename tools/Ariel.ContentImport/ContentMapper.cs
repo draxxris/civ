@@ -90,6 +90,19 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return JsonSerializer.Serialize(row, mapping.DefinitionType, Json) == JsonSerializer.Serialize(empty, mapping.DefinitionType, Json) ? null : row;
     }
 
+    /// <summary>A record's id in its family. A family a mod other than the record's owner emits (Religion's rules about
+    /// the base game's religion identities) gets the id <c>mod:name</c> and names the identity it describes in
+    /// <c>identity</c>, so the mod's rules and the base game's references stay in their own namespaces.</summary>
+    private string RecordId(EffectiveRecord record, DefinitionMapping mapping)
+    {
+        string id = ids[(record.Class, record.Type)];
+        int colon = id.IndexOf(':');
+        if (id[..colon] == mapping.Mod) return id;
+        if (mapping.DefinitionType.GetProperty("Identity") is null)
+            throw new InvalidDataException($"{mapping.Definition} is emitted by {mapping.Mod} for {id} but has no Identity to name it by");
+        return mapping.Mod + id[colon..];
+    }
+
     private object? MapValue(EffectiveRecord record, DataNode node, FieldMapping field)
     {
         try { return MapField(record, node, field); }
@@ -103,7 +116,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         foreach (var field in new[] { "Type", "Description", "Civilopedia", "Help", "Strategy", "Button", "Era" }) Mark(record.Node.Child(field), field, mapped);
         var values = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
-            ["id"] = ids[(record.Class, record.Type)], ["name"] = Text(record.Node.Value("Description")),
+            ["id"] = RecordId(record, mapping), ["name"] = Text(record.Node.Value("Description")),
             ["pedia"] = Text(record.Node.Value("Civilopedia")), ["help"] = Text(record.Node.Value("Help")),
             ["strategy"] = Text(record.Node.Value("Strategy")), ["icon"] = Icon(record),
             ["era"] = Reference("EraInfo", record.Era, record, "Era")
@@ -134,6 +147,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             Issues.Add(new(ids[(record.Class, record.Type)], "iCost", cost.ToString(CultureInfo.InvariantCulture),
                 "Set to -1: Ariel founds corporations through great people, not by constructing the headquarters."));
         }
+        if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
         if (record.Class == "ReligionInfo") ReligionBuildings(record, values);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);

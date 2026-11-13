@@ -7,10 +7,11 @@
     <ProjectReference Include="../../src/Ariel.Core/Ariel.Core.csproj" />
     <!-- BaseRules decides which emitted modules belong under src/Ariel.Rules rather than src/Mods. -->
     <ProjectReference Include="../../src/Ariel.Rules/Ariel.Rules.csproj" />
-    <!-- The published APIs of the mods whose civic vocabulary the importer emits as attachments. -->
+    <!-- The published APIs of the mods whose definitions the importer emits: civic attachments, and Religion's rules. -->
     <ProjectReference Include="../../src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Diplomacy/Api/Ariel.Mods.Diplomacy.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Trade/Api/Ariel.Mods.Trade.Api.csproj" />
     <EmbeddedResource Include="SchemaMapping.json" />

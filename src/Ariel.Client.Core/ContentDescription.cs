@@ -71,7 +71,6 @@ public static class ContentDescription
         if (civic.NoCapitalUnhappiness) yield return "No unhappiness in the capital";
         if (civic.FixedBorders) yield return "Fixed borders";
         if (civic.UpgradeAnywhere) yield return "Units can upgrade outside your territory";
-        if (civic.RequiresStateReligion) yield return "Requires a state religion";
         if (civic.Upkeep is { } upkeep) yield return "Upkeep: " + Name(content, upkeep);
     }
 

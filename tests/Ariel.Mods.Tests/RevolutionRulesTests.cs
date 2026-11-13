@@ -6,6 +6,7 @@ using Ariel.Mods.GreatPeople;
 using Ariel.Mods.Revolution;
 using Xunit;
 using S = Ariel.Content.Schema;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 

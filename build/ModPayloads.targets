@@ -12,7 +12,7 @@
     <!-- The base modules (the rules modules and the AI) were mods once. A payload an earlier build staged would load
          beside the linked-in module and claim its id, so drop it. -->
     <ItemGroup>
-      <_FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Religion;Ai" />
+      <_FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai" />
     </ItemGroup>
     <RemoveDir Directories="@(_FormerMod->'$(OutDir)mods/%(Identity)')" />
     <ItemGroup>

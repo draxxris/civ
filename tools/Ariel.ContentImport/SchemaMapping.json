@@ -5302,12 +5302,6 @@
         "modifier": "yield.percent"
       },
       {
-        "source": "bAllowInquisitions",
-        "property": "AllowInquisitions",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bBuildingOnlyHealthy",
         "property": "Effects",
         "kind": "effectFlag",
@@ -5316,20 +5310,8 @@
         "modifier": "cities:building_only_healthy"
       },
       {
-        "source": "bDisallowInquisitions",
-        "property": "DisallowInquisitions",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bFixedBorders",
         "property": "FixedBorders",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bFreeReligion",
-        "property": "FreeReligion",
         "kind": "bool",
         "default": 0
       },
@@ -5354,24 +5336,12 @@
         "default": 0
       },
       {
-        "source": "bNoNonStateReligionSpread",
-        "property": "NoNonStateReligionSpread",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bNoUnhealthyPopulation",
         "property": "Effects",
         "kind": "effectFlag",
         "default": 0,
         "scope": "city",
         "modifier": "cities:no_unhealthy_population"
-      },
-      {
-        "source": "bStateReligion",
-        "property": "RequiresStateReligion",
-        "kind": "bool",
-        "default": 0
       },
       {
         "source": "bUpgradeAnywhere",
@@ -5610,12 +5580,6 @@
         "modifier": "cities:military_production_percent"
       },
       {
-        "source": "iNonStateReligionHappiness",
-        "property": "NonStateReligionHappiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iNumCitiesMaintenanceModifier",
         "property": "Effects",
         "kind": "effect",
@@ -5644,48 +5608,6 @@
         "default": 0,
         "scope": "player",
         "modifier": "cities:growth_percent"
-      },
-      {
-        "source": "iReligionSpreadRate",
-        "property": "ReligionSpreadRate",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionBuildingProductionModifier",
-        "property": "StateReligionBuildingProductionModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionFreeExperience",
-        "property": "StateReligionFreeExperience",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionGreatPeopleRateModifier",
-        "property": "StateReligionGreatPeopleRateModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionHappiness",
-        "property": "StateReligionHappiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionHealth",
-        "property": "StateReligionHealth",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iStateReligionUnitProductionModifier",
-        "property": "StateReligionUnitProductionModifier",
-        "kind": "int",
-        "default": 0
       },
       {
         "source": "iTaxRateUnhappiness",
@@ -5751,6 +5673,92 @@
       {
         "source": "iRealCorporationMaintenanceModifier",
         "property": "RealisticMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicReligionDef",
+    "mod": "religion",
+    "fields": [
+      {
+        "source": "bAllowInquisitions",
+        "property": "AllowInquisitions",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bDisallowInquisitions",
+        "property": "DisallowInquisitions",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bFreeReligion",
+        "property": "FreeReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bNoNonStateReligionSpread",
+        "property": "NoNonStateReligionSpread",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bStateReligion",
+        "property": "RequiresStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iNonStateReligionHappiness",
+        "property": "NonStateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iReligionSpreadRate",
+        "property": "ReligionSpreadRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionBuildingProductionModifier",
+        "property": "StateReligionBuildingProductionModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionFreeExperience",
+        "property": "StateReligionFreeExperience",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionGreatPeopleRateModifier",
+        "property": "StateReligionGreatPeopleRateModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHappiness",
+        "property": "StateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHealth",
+        "property": "StateReligionHealth",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionUnitProductionModifier",
+        "property": "StateReligionUnitProductionModifier",
         "kind": "int",
         "default": 0
       }
@@ -6937,6 +6945,13 @@
         "default": 0
       }
     ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ReligionInfo",
+    "definition": "ReligionIdentityDef",
+    "mod": "foundation",
+    "fields": [],
     "requirements": []
   },
   {

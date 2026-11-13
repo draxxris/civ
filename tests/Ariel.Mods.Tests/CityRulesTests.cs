@@ -7,6 +7,7 @@ using Ariel.Mods.GreatPeople;
 using Ariel.Mods.ProjectsVictory;
 using S = Ariel.Content.Schema;
 using Xunit;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 
@@ -1632,7 +1633,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         best.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         best.Culture = 40;
         best.Extensions.Set(sim.Content, new GreatPeopleCityState { SettledSpecialists = new() { ["foundation:specialist_citizen"] = 2 } });
-        best.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(sim.Content.Get<S.ReligionDef>().All.Take(2).Select(r => r.Id)) });
+        best.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(sim.Content.Get<ReligionDef>().All.Take(2).Select(r => r.Id)) });
         best.Extensions.Set(sim.Content, new Ariel.Mods.Corporations.CorporationCityState { Corporations = new(sim.Content.Get<Ariel.Mods.Corporations.CorporationDef>().All.Take(2).Select(r => r.Id)) });
         first.Buildings.Add("conquest:benchmark");
         sim.State.PlotAt(first.Position).Culture[1] = 100;

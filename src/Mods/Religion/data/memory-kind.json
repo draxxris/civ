@@ -1,0 +1,4 @@
+[
+  { "id": "religion:inquisition", "name": "Purged our faith", "decay": 60 },
+  { "id": "religion:razed_holy_city", "name": "Razed our holy city", "decay": 100 }
+]

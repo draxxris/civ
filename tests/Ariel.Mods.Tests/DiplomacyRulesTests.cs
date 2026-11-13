@@ -6,6 +6,7 @@ using Ariel.Mods.Diplomacy;
 using Ariel.Mods.Trade;
 using Xunit;
 using S = Ariel.Content.Schema;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 
@@ -15,7 +16,7 @@ public sealed class DiplomacyRulesTests
     {
         var mods = new LoadedMods();
         var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
-        var civic = mods.Content.Get<S.CivicDef>().All.First(c => c.RequiresStateReligion);
+        var civic = mods.Content.Get<S.CivicDef>().All.First(c => mods.Content.Attachment<CivicReligionDef>(c.Id)?.RequiresStateReligion == true);
         var constants = mods.Content.Get<S.RuleConstantsDef>().All.Single();
         var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government"] }, Instance = new Probe(civic, constants) };
         return ModLoader.Build(mods.Sources.Append(diplomacy).Append(probe));
@@ -447,14 +448,14 @@ public sealed class DiplomacyRulesTests
         long Memory(string memory) => Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines
             .Where(l => l.Source == "diplomacy:memory:" + memory).Sum(l => l.Amount);
         void Turn() { sim.State.Turn++; history.Run(sim); }
-        for (int i = 0; i < 3; i++) sim.Rules().Relations.Remember(sim, 0, 1, BaseMemories.Inquisition);
+        for (int i = 0; i < 3; i++) sim.Rules().Relations.Remember(sim, 0, 1, ReligionMemories.Inquisition);
         sim.Rules().Relations.Remember(sim, 0, 1, DiplomacyMemories.StoppedTrading);
 
         // The probe leader forgets one inquisition every turn: a decay of one is a certain roll.
         Turn();
-        Assert.Equal(-2, Memory(BaseMemories.Inquisition));
+        Assert.Equal(-2, Memory(ReligionMemories.Inquisition));
         Turn(); Turn();
-        Assert.Equal(0, Memory(BaseMemories.Inquisition));
+        Assert.Equal(0, Memory(ReligionMemories.Inquisition));
 
         // The leader has no decay for a stopped trade, so the kind's own 20 turns apply: rare per turn, certain well
         // before 1,000 turns.
@@ -527,8 +528,8 @@ public sealed class DiplomacyRulesTests
         capture.Raze(sim, holy.Id);
 
         Assert.Equal(1, Remembered(sim, 1, 0, BaseMemories.RazedCity));
-        Assert.Equal(1, Remembered(sim, 2, 0, BaseMemories.RazedHolyCity));
-        Assert.Equal(0, Remembered(sim, 3, 0, BaseMemories.RazedHolyCity));
+        Assert.Equal(1, Remembered(sim, 2, 0, ReligionMemories.RazedHolyCity));
+        Assert.Equal(0, Remembered(sim, 3, 0, ReligionMemories.RazedHolyCity));
         // A city its own owner founded and razes is no one's loss.
         var own = City(sim, 0, 50);
         capture.Raze(sim, own.Id);

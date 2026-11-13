@@ -14,6 +14,7 @@
     <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/Mods/Religion/Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Corporations/Ariel.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
@@ -28,6 +29,7 @@
     <ProjectReference Include="../../src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Api/Ariel.Mods.ScriptedWonders.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Trade/Api/Ariel.Mods.Trade.Api.csproj" />
@@ -39,7 +41,7 @@
   <!-- Every shipped mod, staged into the test output by build/ModPayloads.targets. LinkModArt stays on:
        TerrainPaletteTests needs World/art/terrain and ScatterPlannerTests needs World/art/scatter. -->
   <PropertyGroup>
-    <ModPayloads>GreatPeople;Trade;RangedCombat</ModPayloads>
+    <ModPayloads>GreatPeople;Trade;RangedCombat;Religion</ModPayloads>
     <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree</ModPayloadsOptional>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />

@@ -18,7 +18,6 @@ public static class BaseRules
         new("military", "Military", () => new Military.MilitaryModule()),
         new("peoples", "Peoples", () => new Peoples.PeoplesModule()),
         new("relations", "Relations", () => new Relations.RelationsModule()),
-        new("religion", "Religion", () => new Religion.ReligionModule()),
         new("research", "Research", () => new Research.ResearchModule()),
         new("world", "World", () => new World.WorldModule()),
     ];

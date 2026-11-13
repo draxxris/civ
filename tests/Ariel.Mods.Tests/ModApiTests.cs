@@ -104,7 +104,7 @@ public sealed class ModApiTests
     public void Feature_mods_answer_the_base_seams_with_the_services_they_publish()
     {
         string[] optional = ["Espionage", "Revolution", "ScriptedWonders", "ProjectsVictory", "Corporations", "Diplomacy"];
-        string[] main = ["GreatPeople", "Trade"];
+        string[] main = ["GreatPeople", "Religion", "Trade"];
         var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder),
             ModLoader.FromDirectories(optional.Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name))
                 .Concat(main.Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.ModsFolder, name)))));

@@ -7,11 +7,11 @@ extend both through one registration API.
 ## Principles
 
 1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the rules
-   modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples,
-   Religion and Relations. `Ariel.Ai` holds the computer player, the base module `ai`. Their
+   modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples
+   and Relations. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
-   one. Everything a game can run without is a mod: Great People, Trade and the optional
-   feature mods. A test builds and plays the base modules with no mod installed.
+   one. Everything a game can run without is a mod: the main mods (Great People, Trade,
+   RangedCombat and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
 2. **One registration API.** A base module registers terrain, techs, buildings, units,
    civics, map generators, commands, turn systems and state through the same
    `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
@@ -56,8 +56,8 @@ extend both through one registration API.
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
-  Diplomacy, Espionage, Events, GreatPeople, ProjectsVictory, Revolution, ScriptedWonders and
-  Trade do.
+  Diplomacy, Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
+  ScriptedWonders and Trade do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -391,10 +391,11 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
 | `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf | Corporations | no corporations; the leaf fails |
+| `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `ITeamAgreements`, `IDispositions`, `IPlayerExchanges` | `TeamAgreements`, `Dispositions`, `Exchanges` | Relations, Economy (see Relations) | Diplomacy | no agreements, neutral attitude, no deals |
 | `ICapitalWeight` | `CapitalWeights` (list) | Cities, when a lost capital moves | Religion (one per faith), Corporations (one per branch), GreatPeople (two per settled great person) | size, yields, level and culture alone |
 | `IFreeBuildingGrants` | `FreeBuildingGrants` (list) | Cities, for empire-wide free buildings | ScriptedWonders | only constructed buildings grant |
-| `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city), the AI religion and great people planners | Revolution (the instability index) | no unrest; compensation is paid in gold |
+| `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city) and its planner, the great people planner | Revolution (the instability index) | no unrest; compensation is paid in gold |
 | `ICityTradeLinks` | `TradeLinks` | Religion, for natural spread | Trade | spread follows city connections only |
 | `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
 | `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
@@ -405,7 +406,9 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 Mods also consume each other's APIs directly, always as optional: Espionage asks the
 Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a golden
-age calms a city, and GreatPeople prices a trade mission from the Trade API. Each
+age calms a city, GreatPeople prices a trade mission from the Trade API, and Diplomacy
+(shared faith), Revolution (religious tension) and GreatPeople (prophets' shrines) read
+the Religion API. Each
 references the provider's `Api` project and treats a null `sim.Service<T>()` as "absent".
 
 #### Content attachments
@@ -416,7 +419,8 @@ from `ContentAttachment<TTarget>` in the mod's API and is an ordinary `ContentDe
 the attaching mod's namespace, with a `Target` naming the definition it is about. Trade
 attaches `CivicTradeDef` to civics (`trade:mercantilism` about
 `government:mercantilism`), Corporations `CivicCorporationsDef`, Diplomacy
-`CivicDiplomacyDef`, Revolution `CivicRevolutionDef` and ProjectsVictory
+`CivicDiplomacyDef`, Religion `CivicReligionDef` (state religion, inquisitions, spread
+and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVictory
 `CivicProjectsDef`.
 
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
@@ -1054,8 +1058,7 @@ player who runs the civic, with the civic id as the ledger source. A civic there
 gives any declared key, including one a mod defines and reads, without a schema or
 Government change. The typed `CivicDef` fields that remain are rules that read more than
 the calculation's subject: the capital, buildings, improvements, unit support, upkeep and
-anarchy. The fields marked "Religion" leave with the Religion module when it becomes a
-mod. Feature mods say what a civic means to them through attachments (Mod APIs). A mod's
+anarchy. Feature mods say what a civic means to them through attachments (Mod APIs). A mod's
 new civic option is a `CivicOptionDef`; new players start on its `DefaultCivic`, or else
 on its first civic without requirements.
 
@@ -1068,18 +1071,44 @@ immediately upon founding.
 
 ## Religion
 
-`src/Ariel.Rules/Religion` owns religion definitions, founding, city presence, state choice,
-spread, and shrine construction. `IReligionService` exposes read-only presence, holy
-cities, adoption choices, missionary definitions, odds, and conversion costs through
-Core. AI and client code can use this service without a reference to the Religion
-assembly.
+Religion is a main mod, `src/Mods/Religion`, shipped and loaded by default. It owns
+religion definitions, founding, city presence, state choice, spread, decay, inquisitions
+and shrine construction. Its API (`Ariel.Mods.Religion.Api`) publishes `IReligionService`
+(presence, holy cities, adoption choices, odds and conversion costs), `ReligionDef`, the
+state components, events, `SetStateReligionCommand`, `ReligionMissions`,
+`ReligionMemories` and `CivicReligionDef`. Other mods read it through
+`sim.Service<IReligionService>()`, null when the mod is not loaded.
 
-Command identities are:
+What stays in the base game:
 
-- `religion:set_state_religion`, `religion:spread_religion`, and
-  `religion:build_shrine`.
-- `religion:perform_inquisition` (`PerformInquisitionCommand`): Dispatches an inquisitor
-  unit to purge non-state faiths from an owned or friendly city.
+- **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
+  buildings (`ReligionType`, `GlobalReligionCommerce`, `ReligionChanges`,
+  `FoundsReligion`), units (`ReligionSpreads`), leaders (`FavoriteReligion`) and the
+  `religion` requirement leaf name. A `ReligionDef` is the mod's rules about one
+  identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`
+  translates both ways.
+- **The question seam** `ICityReligions` (`GameRules.CityReligions`): which faiths a city
+  has, a player's state religion, holy cities, and whether a city may build a religious
+  building or train a unit. The Foundation `religion` leaf (presence; parameter 1 the
+  player's state religion; 2 the holy city), Cities' `any_religion` and `state_religion`
+  conditions, production eligibility and holy-city capture ask it. Without the mod the
+  leaves fail, religious buildings and inquisitors are refused with "Religion state is
+  unavailable", and no city is holy.
+- The building, unit, trait and leader fields that describe faith, and the computer
+  player's refusal to plan buildings for an unavailable mechanic.
+
+The mod registers its rules, the `ICityReligions` answer, a `CityRazed` handler that
+records `religion:razed_holy_city`, the AI's religion planner (`religion:planner` at
+`AiPlannerOrder.Religion`), inquisitor production wishes, a founding-wonder valuer and a
+civic valuer that rules out a state-religion civic for an empire without a faith, a setup
+policy for its game options (religion decay, no inquisitions, multiple religion spread),
+and its presentation: the Religion screen (`religion:screen`), the faiths in the city
+screen's status block, a city-list tag (`ICityTag`), notices and the Religions pedia
+category.
+
+The mod's command is `religion:set_state_religion`. Missionaries, inquisitors and
+prophets act through missions (`religion:spread`, `religion:inquisition`,
+`religion:shrine`).
 
 Domain events include:
 
@@ -1284,14 +1313,13 @@ is a display-only alert. Players can suppress instability with gold, priced by t
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
 A spy-incited revolt adds instability through the Revolution service. The service answers
 the base seam `ICityUnrest` with the instability index, so inquisition compensation calms
-a city, and the AI's religion and great people planners read it.
+a city, and the Religion mod's planner and the great people planner read it.
 
 ## Client presentation
 
 `Ariel.Client.Core` supplies the base game's screen models and validated commands: units,
-cities (religion, commerce, wellbeing and ledgers), religion, the encyclopedia, saves and
-notifications. Unit actions come from every `IUnitActionSource`, so corporation and spy
-missions appear on their units without the client knowing them. Everything else a mod
+cities (commerce, wellbeing and ledgers), the encyclopedia, saves and notifications.
+Unit actions come from every `IUnitActionSource`, so corporation and spy missions appear on their units without the client knowing them. Everything else a mod
 shows, it describes itself through the screen contract below.
 
 ## Mod screens
@@ -1308,6 +1336,7 @@ reference nothing new for it.
 | `IPlayerSummaryItem` | one element for the top bar's player summary, or null | the top bar |
 | `IPediaSource` | a category of encyclopedia pages (`PediaItem`: a definition, cost, notes, the technology that unlocks it) | the encyclopedia, and the tech tree's unlocks when `ListsUnlocks` |
 | `INotificationSource` | a `Notice` for a domain event, with a city or tile to go to and a tone | the turn feed |
+| `ICityTag` | a short tag after a city's name, or null | the city list |
 
 Every contract is `IHasId`, so a duplicate registration fails at load. The base game
 describes the event first; a mod's source is asked only for events it does not.
@@ -1392,11 +1421,12 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | 400 | (`diplomacy:planner`) | 1300 | `ai:military` |
 | 500 | `ai:settlers` | 1400 | (`espionage:planner`) |
 | 600 | `ai:citizens` (renews cached views first) | 1500 | (`revolution:planner`) |
-| 700 | `ai:religion` | 1600 | `ai:economy` |
+| 700 | (`religion:planner`) | 1600 | `ai:economy` |
 | | | 1700 | `ai:hurry` |
 
-Feature mods fill the gaps, and three mods fill slots the AI keeps for them: the Diplomacy
-mod the 400 slot (deals and agreements) with `diplomacy:planner`, the Espionage mod the
+Feature mods fill the gaps, and four mods fill slots the AI keeps for them: the Diplomacy
+mod the 400 slot (deals and agreements) with `diplomacy:planner`, the Religion mod the
+700 slot (state religion, missionaries and inquisitors) with `religion:planner`, the Espionage mod the
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
@@ -1550,9 +1580,11 @@ Specialized planners handle empire governance and military campaigns:
   `AirBomb` missions against city defenses and strategic tile improvements, executes
   `AirStrike` missions against clustered enemy defenders, and maintains Combat Air
   Patrol (`UnitActivity.Intercept`) to intercept incoming enemy airstrikes.
-- **Religion AI (`ReligionPlanner`)**: Dispatches missionaries to unconverted domestic
-  cities, and trains inquisitors to purge minority religions from unstable cities under
-  state church civics.
+- **Religion (`ReligionPlanner`, contributed by the Religion mod)**: Adopts the state
+  religion worth the most, dispatches missionaries to unconverted domestic cities and then
+  nearby friendly foreign ones, and sends inquisitors (asked for through the mod's
+  production wishes) to purge minority religions from unstable cities under state church
+  civics.
 - **Great people (`GreatPersonPlanner`, contributed by the GreatPeople mod)**:
   Dynamically scores Great Person actions: evaluates empire-wide value of Golden Ages
   (scaled by population and revolution instability) versus immediate technology
@@ -1928,8 +1960,8 @@ Each owner registers the kinds it records, from a `data/memory-kind.json` array 
 with `MemoryKinds.Load`, which checks them: Relations registers `declared_war` (by every
 member of the defending team), `declared_war_on_friend` (by third parties at least
 Pleased with a defender who have met the aggressor), `razed_city` (by the player it was
-captured from) and `razed_holy_city` (by followers of its religion); Religion
-registers `inquisition`; Espionage `spy_caught` (by the owner of the city where a spy
+captured from); Religion registers `inquisition` and `razed_holy_city` (by followers of
+the razed holy city's religion, from its own `CityRazed` handler); Espionage `spy_caught` (by the owner of the city where a spy
 was caught); Diplomacy `traded_tech_to_us`, `give_help` (limit 3) and `stopped_trading`.
 A mod adds a kind the same way and records it with `sim.Rules().Relations.Remember`; it
 needs no reference to the Diplomacy mod. `tests/TestMods/MemoryKind` is a complete
@@ -2170,9 +2202,9 @@ time, even when the desktop throttles the window.
 ## Feature content mods
 
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
-Cities, Military, Government, Peoples, Religion and Relations, and `src/Ariel.Ai/` the base module
-`ai`. `src/Mods/` contains GreatPeople,
-Trade, RangedCombat, Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Cities, Military, Government, Peoples and Relations, and `src/Ariel.Ai/` the base module
+`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat and Religion,
+and the optional mods Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
 Revolution, CardResearch and TechTree. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the
@@ -2184,8 +2216,8 @@ properties fail load.
 `Ariel.Content.Schema` holds immutable definitions. The schema includes costs, grouped
 requirements, vectors, indexed effects, class limits, civilization overrides, and AI
 weights. Definitions retain English text, eras, icon references, and unsupported-field
-paths. Corporation and victory identities now have executable definitions. Religion owns
-playable religion definitions and prerequisites. The schema lives in `src/Ariel.Rules/Schema`. See
+paths. Corporation, religion and victory identities have executable definitions in
+Foundation; the Religion mod owns the playable religion definitions. The schema lives in `src/Ariel.Rules/Schema`. See
 [content-schema.md](content-schema.md) for definition types, units, scopes, and importer
 decisions.
 

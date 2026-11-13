@@ -38,7 +38,7 @@ public sealed class BuildingDef : GameContentDef
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public string? FoundsCorporation { get; init; } = null;
     /// <summary>The religion this building founds when it is completed, with the completing city as its holy city.</summary>
-    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
     public string? FoundsReligion { get; init; } = null;
     [ContentReference(typeof(BonusDef), ReferencePart.Values)]
     public string? FreeBonus { get; init; } = null;
@@ -55,7 +55,7 @@ public sealed class BuildingDef : GameContentDef
     public CommerceVector GlobalCommerceModifiers { get; init; } = default;
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public string? GlobalCorporationCommerce { get; init; } = null;
-    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
     public string? GlobalReligionCommerce { get; init; } = null;
     public YieldVector GlobalSeaPlotYieldChanges { get; init; } = default;
     public YieldVector GlobalYieldModifiers { get; init; } = default;
@@ -77,9 +77,9 @@ public sealed class BuildingDef : GameContentDef
     public YieldVector PowerYieldModifiers { get; init; } = default;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionDef), ReferencePart.Keys)]
+    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
     public string? ReligionType { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ReplaceBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;

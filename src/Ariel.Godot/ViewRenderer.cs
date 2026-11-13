@@ -164,6 +164,9 @@ internal sealed class ViewRenderer(IconCache icons, Action<ScreenAction?> press)
             var child = Build(item);
             // A label in a flow row keeps its own width rather than taking the whole line.
             if (child is Label label) { label.AutowrapMode = TextServer.AutowrapMode.Off; label.SizeFlagsHorizontal = Control.SizeFlags.Fill; }
+            // A list entry takes the rest of its line, so the controls after it sit at the line's end and its wrapping
+            // text has room rather than the near-zero width a wrapping label asks for.
+            else if (item is ListItem) child.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
             row.AddChild(child);
         }
         return row;

@@ -1,0 +1,80 @@
+[
+  {
+    "era": "foundation:era_medieval",
+    "icon": "Art/Interface/Buttons/religions/Vanirism.dds",
+    "id": "foundation:asatru",
+    "name": "Asatru"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/Buddhism.dds",
+    "id": "foundation:buddhism",
+    "name": "Buddhism"
+  },
+  {
+    "era": "foundation:era_medieval",
+    "icon": "Art/Interface/Buttons/Religions/Christian.dds",
+    "id": "foundation:christianity",
+    "name": "Christianity"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/Confuscianism.dds",
+    "id": "foundation:confucianism",
+    "name": "Confucianism"
+  },
+  {
+    "era": "foundation:era_ancient",
+    "icon": "Art/Interface/Buttons/Religions/Egypt.dds",
+    "id": "foundation:egypt_mythology",
+    "name": "Kemetism"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/hellenism_button.dds",
+    "id": "foundation:hellenism",
+    "name": "Hellenism"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/Hinduism.dds",
+    "id": "foundation:hinduism",
+    "name": "Hinduism"
+  },
+  {
+    "era": "foundation:era_medieval",
+    "icon": "Art/Interface/Buttons/Religions/Islam.dds",
+    "id": "foundation:islam",
+    "name": "Islam"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/Jewish.dds",
+    "id": "foundation:judaism",
+    "name": "Judaism"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/religions/MesoAmerica.dds",
+    "id": "foundation:mesoamericanism",
+    "name": "Naghualism"
+  },
+  {
+    "era": "foundation:era_medieval",
+    "icon": "Art/Interface/Buttons/religions/Shinto_Button.dds",
+    "id": "foundation:shinto",
+    "name": "Shinto"
+  },
+  {
+    "era": "foundation:era_classical",
+    "icon": "Art/Interface/Buttons/Religions/Taoism.dds",
+    "id": "foundation:taoism",
+    "name": "Taoism"
+  },
+  {
+    "era": "foundation:era_ancient",
+    "icon": "Art/Interface/Buttons/Religions/Zoroastrianism.dds",
+    "id": "foundation:zoroastrianism",
+    "name": "Zoroastrianism"
+  }
+]

@@ -10,6 +10,9 @@
     <!-- Golden ages calm cities when the Great People mod is loaded. Copied into this folder, so
          the API resolves when that mod is absent. -->
     <ProjectReference Include="../GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
+    <!-- Religious tension feeds instability when the Religion mod is loaded. Copied into this folder, so
+         the API resolves when that mod is absent. -->
+    <ProjectReference Include="../Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

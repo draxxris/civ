@@ -63,8 +63,9 @@ internal sealed class CivicPlanner(AiContext ctx)
     internal const int BundleThreshold = 15;
 
     /// <summary>Best civic per option, then bundled into one revolution: once one option clears the full threshold,
-    /// smaller gains in other options ride along, because the anarchy is paid only once. A civic that needs a state
-    /// religion the empire cannot hold is skipped, and a set the rules reject loses its weakest change until it passes.</summary>
+    /// smaller gains in other options ride along, because the anarchy is paid only once. A set the rules reject loses its
+    /// weakest change until it passes. A civic a feature rules out for this empire (a valuer's large negative) never
+    /// clears the threshold.</summary>
     private (List<string> Civics, int Gain) Changes()
     {
         var government = ctx.Service<IGovernmentService>();
@@ -73,7 +74,7 @@ internal sealed class CivicPlanner(AiContext ctx)
         {
             ctx.Self.Civics.TryGetValue(option.Id, out var held);
             int heldScore = held is null ? 0 : Score(ctx.Sim.Content.Get<CivicDef>(held));
-            var best = ctx.Sim.Content.Get<CivicDef>().All.Where(c => c.Option == option.Id && c.Id != held && ReligionFits(c))
+            var best = ctx.Sim.Content.Get<CivicDef>().All.Where(c => c.Option == option.Id && c.Id != held)
                 .Select(c => (Civic: c, Score: Score(c))).Where(x => x.Score - heldScore >= BundleThreshold)
                 .OrderByDescending(x => x.Score).ThenBy(x => x.Civic.Id, StringComparer.Ordinal)
                 .FirstOrDefault(x => government.Validate(ctx.Sim, ctx.PlayerId, [x.Civic.Id]) is null);
@@ -85,16 +86,6 @@ internal sealed class CivicPlanner(AiContext ctx)
             picked.RemoveAt(picked.Count - 1);
         if (!picked.Any(o => o.Gain >= GainThreshold)) return ([], 0);
         return (picked.Select(p => p.Civic).OrderBy(c => c, StringComparer.Ordinal).ToList(), picked.Sum(p => p.Gain));
-    }
-
-    /// <summary>A civic that needs a state religion is only worth adopting when one of the empire's religions is present.</summary>
-    private bool ReligionFits(CivicDef c)
-    {
-        if (!c.RequiresStateReligion) return true;
-        var religion = ctx.Sim.Rules().Religion;
-        if (religion is null) return false;
-        return religion.StateReligion(ctx.Sim, ctx.PlayerId) is not null
-            || ctx.Cities.Any(city => religion.Present(ctx.Sim, city.Id).Count > 0);
     }
 
     /// <summary>Integer estimate of a civic's worth to this leader and empire size.</summary>

@@ -39,7 +39,7 @@ public static class AiPlannerOrder
     public const int Settlers = 500;
     /// <summary>Assign citizens. Every cached view is renewed first.</summary>
     public const int Citizens = 600;
-    /// <summary>Spread the faith and purge minorities.</summary>
+    /// <summary>Spread the faith and purge minorities. No built-in planner runs here; the Religion mod's does.</summary>
     public const int Religion = 700;
     /// <summary>Choose what every city builds. Every cached view is renewed first. The slots between
     /// <see cref="Religion"/> and this one suit planners that use units, great people above all, before cities

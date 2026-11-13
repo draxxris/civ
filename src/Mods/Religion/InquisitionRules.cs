@@ -1,7 +1,7 @@
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService
 {
@@ -9,7 +9,7 @@ internal sealed partial class ReligionService
     {
         if (StateReligion(sim, player) is null) return false;
         var civics = ReligionData.Civics(sim, player).ToArray();
-        return civics.Any(c => c.AllowInquisitions) && !civics.Any(c => c.DisallowInquisitions);
+        return civics.Any(c => c.Rules.AllowInquisitions) && !civics.Any(c => c.Rules.DisallowInquisitions);
     }
     public bool HasInquisitionTargets(Simulation sim, int cityId)
     {
@@ -98,7 +98,7 @@ internal sealed partial class ReligionService
             if (!plot.Revealed.Contains(other.TeamId) && !plot.Visible.Contains(other.TeamId)) continue;
             if (!relations.HasMet(sim, other.TeamId, sim.TeamOf(player).Id)) continue;
             if (removed.Any(r => StateReligion(sim, other.Id) == r || OwnsHolyCity(sim, other.Id, r)))
-                relations.Remember(sim, other.Id, player, BaseMemories.Inquisition);
+                relations.Remember(sim, other.Id, player, ReligionMemories.Inquisition);
         }
     }
     private bool OwnsHolyCity(Simulation sim, int player, string religion) =>

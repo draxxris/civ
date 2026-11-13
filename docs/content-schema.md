@@ -23,8 +23,10 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   `InvisibilityDef`, `PromotionDef`, `MissionDef`, and `OutcomeDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
-- Religion: `ReligionDef` with founding technology, missionary, spread factor, commerce
-  vectors, and related building ids. The mod also registers one founding wonder per
+- Religion (a mod, `src/Mods/Religion`; definitions in its API `Ariel.Mods.Religion.Api`):
+  `ReligionDef` with its `identity`, founding technology, missionary, spread factor,
+  commerce vectors, and related building ids, and `CivicReligionDef` attached to civics
+  (`data/civic-religion.json`). The mod also registers one founding wonder per
   religion: a `BuildingDef` with `foundsReligion` set, from the hand-written
   `data/founding-wonders.json`. The importer does not own that file.
 - ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable
@@ -57,10 +59,14 @@ handicaps into `ContentDb`, Foundation scales `HandicapDef.UnownedTilesPerBarbar
 by `BarbarianUnownedTilesMultiplier`. The importer never writes `hex-overrides.json`.
 
 Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
-`CorporationIdentityDef` and `VictoryIdentityDef`. Corporation and victory gameplay
-executes through `CorporationDef`, `ProjectDef`, and `VictoryDef` in their respective
-feature mods. Religion owns `religion:*` identities and their prerequisites; existing
-content references use those ids. `ReligionDef` retains `StateReligionCommerce`,
+`CorporationIdentityDef`, `ReligionIdentityDef` (`data/religion-identity.json`) and
+`VictoryIdentityDef`. Corporation, religion and victory gameplay executes through
+`CorporationDef`, `ReligionDef`, `ProjectDef`, and `VictoryDef` in their respective
+feature mods. Base content (buildings, units, leaders, the `religion` requirement leaf)
+names a faith by its identity (`foundation:buddhism`); the Religion mod's `ReligionDef`
+has its own id (`religion:buddhism`, kept in saves) and names the identity it plays in
+`identity`. The importer emits both from one source record: a family a mod emits for
+another mod's records gets the id `mod:name` and an `identity`. `ReligionDef` retains `StateReligionCommerce`,
 `HolyCityCommerce`, and `GlobalCityCommerce` vectors in whole points. The importer
 derives temple, monastery, cathedral, and shrine relations (`Temples`, `Monasteries`,
 `Cathedrals`, `Shrines`) from building categories and religion fields. Building
@@ -139,10 +145,8 @@ great general rates) and Corporations (`corporations:maintenance_percent`). Effe
 written in key, then target order with zero amounts left out.
 
 The typed fields that remain on `CivicDef` read more than the calculation's subject
-(capital, buildings, improvements, features, units, upkeep, anarchy). The Religion fields
-(`AllowInquisitions`, `DisallowInquisitions`, `FreeReligion`, `NoNonStateReligionSpread`,
-`RequiresStateReligion`, `NonStateReligionHappiness`, `ReligionSpreadRate`, and the six
-`StateReligion*` fields) are marked to leave with the Religion module.
+(capital, buildings, improvements, features, units, upkeep, anarchy). What a civic means
+to religion is the Religion mod's attachment below.
 
 A feature mod keeps its civic data in its own attachment file, one row for each civic it
 has something to say about:
@@ -157,6 +161,9 @@ has something to say about:
 - Diplomacy, `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
   `globalRelationsChange`, `attitudeShareMod`, the three relative-power relations
   changes, `canNotCeaseRelations`, `tributePercent`.
+- Religion, `data/civic-religion.json` (`CivicReligionDef`): `requiresStateReligion`,
+  `allowInquisitions`, `disallowInquisitions`, `freeReligion`, `noNonStateReligionSpread`,
+  `religionSpreadRate`, `nonStateReligionHappiness`, and the six `stateReligion*` fields.
 - Revolution, `data/civic-revolution.json` (`CivicRevolutionDef`): `canDoElection`,
   `freeSpeech`, `communism`.
 - ProjectsVictory, `data/civic-projects.json` (`CivicProjectsDef`): `enablesMadNukes`.
@@ -287,8 +294,9 @@ Each mod owns evaluators for its leaf kinds:
 - World evaluates `bonus` connected resource counts through `IResourceNetwork`,
   delegating vicinity resource checks (`Param == 2`) to `ICityRequirementService` in
   Cities.
-- Religion evaluates `religion` (presence, state religion, and holy city).
-- Foundation evaluates `game-option`, `corporation` identity, and `victory` identity.
+- Foundation evaluates `game-option`, `corporation` identity, `victory` identity, and
+  `religion` identity (presence, state religion, and holy city), asking the
+  `ICityReligions` seam the Religion mod answers; without the mod the leaf fails.
 
 Feature services evaluate diplomacy permissions, project prerequisites, corporation
 rules, and event choices where runtime state exists. Unsupported predicates fail closed

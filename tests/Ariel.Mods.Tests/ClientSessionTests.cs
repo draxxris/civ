@@ -5,6 +5,7 @@ using Ariel.Modding;
 using Ariel.Mods.GreatPeople;
 using Xunit;
 using Schema = Ariel.Content.Schema;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 

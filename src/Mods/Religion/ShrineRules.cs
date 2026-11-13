@@ -2,7 +2,7 @@ using Ariel.Content;
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 /// <summary>A prophet builds a religion's shrine in its holy city, skipping the production cost.</summary>
 internal sealed class ShrineMission(ReligionService service) : IMission
@@ -22,7 +22,8 @@ internal sealed class ShrineMission(ReligionService service) : IMission
         if (!sim.Content.TryGet<S.BuildingDef>(order.Subject, out var def) || def.GlobalReligionCommerce is null) return "Not a shrine";
         if (!sim.Content.Get<S.UnitDef>(order.Unit.Type).ConstructibleBuildings.GetValueOrDefault(order.Subject))
             return "Unit cannot construct this shrine";
-        if (service.HolyCity(sim, def.GlobalReligionCommerce) != order.City.Id) return "Requires the holy city";
+        if (ReligionIdentities.Religion(sim.Content, def.GlobalReligionCommerce) is not { } religion
+            || service.HolyCity(sim, religion) != order.City.Id) return "Requires the holy city";
         // Prophets bypass the negative production cost, not requirements, replacements or class limits.
         var result = sim.Rules().CityProduction.Validate(sim, order.City.Id, "cities:building", def.Id);
         return result.Failures.FirstOrDefault(f => !ProductionFailures.IsCostOnly(f))?.Explanation;

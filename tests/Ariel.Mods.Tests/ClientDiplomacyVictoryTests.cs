@@ -49,7 +49,8 @@ public sealed class ClientDiplomacyVictoryTests
         var session = Session(false, false);
         Assert.False(ScreenProbe.Registered(session, DiplomacyId));
         Assert.False(ScreenProbe.Registered(session, VictoryId));
-        Assert.Empty(session.Screens.Entries());
+        // Only the main mods' screens remain.
+        Assert.Equal(["religion:screen"], session.Screens.Entries().Select(e => e.Id));
     }
 
     [Fact]

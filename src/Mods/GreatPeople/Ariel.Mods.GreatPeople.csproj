@@ -10,6 +10,9 @@
     <ProjectReference Include="../Trade/Api/Ariel.Mods.Trade.Api.csproj" />
     <!-- The host supplies the computer player too; this mod contributes a planner to it. -->
     <ProjectReference Include="../../Ariel.Ai/Ariel.Ai.csproj" Private="false" />
+    <!-- Prophets build shrines when the Religion mod is loaded. Copied into this folder, so
+         the API resolves when that mod is absent. -->
+    <ProjectReference Include="../Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

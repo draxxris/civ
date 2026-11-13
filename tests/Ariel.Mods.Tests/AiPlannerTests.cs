@@ -64,14 +64,14 @@ public sealed class AiPlannerTests
         var content = GameContent.Build(Rules, ModLoader.FromDirectories(
             [Root(GameContent.OptionalModsFolder, "Corporations"), Root(GameContent.OptionalModsFolder, "Diplomacy"),
              Root(GameContent.OptionalModsFolder, "Espionage"), Root(GameContent.OptionalModsFolder, "Revolution"),
-             Root(GameContent.ModsFolder, "GreatPeople"), Root("test-mods", "AiPlanner")]));
+             Root(GameContent.ModsFolder, "GreatPeople"), Root(GameContent.ModsFolder, "Religion"), Root("test-mods", "AiPlanner")]));
         var sim = GameFactory.CreateAi(content, players: 2);
         var catalog = AiType(sim, "AiCatalog").GetMethod("For")!.Invoke(null, [content])!;
         var ids = Property<IReadOnlyList<IAiPlanner>>(catalog, "Planners").Select(p => p.Id).ToArray();
 
         Assert.Equal(
         [
-            "ai:research", "ai:war", "ai:civics", "diplomacy:planner", "ai:settlers", "ai:citizens", "ai:religion",
+            "ai:research", "ai:war", "ai:civics", "diplomacy:planner", "ai:settlers", "ai:citizens", "religion:planner",
             "corporations:planner", "ai_planner_probe:planner", "great_people:planner",
             "ai:cities", "ai:workers", "ai:air", "ai:military", "espionage:planner", "revolution:planner", "ai:economy", "ai:hurry",
         ], ids);

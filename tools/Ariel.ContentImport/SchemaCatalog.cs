@@ -24,6 +24,7 @@ public sealed record DefinitionMapping(string SourceClass, string Definition, st
         typeof(GameContentDef).Assembly, typeof(Ariel.Mods.Corporations.CivicCorporationsDef).Assembly,
         typeof(Ariel.Mods.Trade.CivicTradeDef).Assembly, typeof(Ariel.Mods.Diplomacy.CivicDiplomacyDef).Assembly,
         typeof(Ariel.Mods.Revolution.CivicRevolutionDef).Assembly, typeof(Ariel.Mods.ProjectsVictory.CivicProjectsDef).Assembly,
+        typeof(Ariel.Mods.Religion.ReligionDef).Assembly,
     ];
     public Type DefinitionType => Schemas.SelectMany(a => a.GetExportedTypes())
         .SingleOrDefault(t => t.Name == Definition && typeof(ContentDef).IsAssignableFrom(t) && !t.IsAbstract)

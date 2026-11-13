@@ -5,6 +5,14 @@ research, economy, government, relations between teams, and the computer player)
 and `src/Ariel.Ai`, composed by `src/Ariel.Composition`; everything else is a mod on the
 same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 
+Mods in `src/Mods`:
+
+- Main mods, shipped and loaded by default: GreatPeople, Trade, RangedCombat (bombard and
+  ranged support fire) and Religion (faiths, state religion, missionaries and inquisitions).
+- Optional mods, enabled in the mod manager: Diplomacy, ProjectsVictory, Corporations,
+  Espionage, Events, ScriptedWonders, Revolution, and the alternative research mods
+  CardResearch and TechTree.
+
 ```
 mise install                         # once per clone: .NET 10 SDK and Godot 4.7.2-stable .NET (godot-mono)
 # Art under src/Ariel.Rules/World/art/ uses Git LFS; run `git lfs pull` after cloning.

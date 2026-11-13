@@ -128,7 +128,7 @@ public static class RelationRules
 }
 
 /// <summary>Memory kinds the base game records. Their decay and default attitude weight are data
-/// (<c>Relations/data/memory-kind.json</c>, <c>Religion/data/memory-kind.json</c>).</summary>
+/// (<c>Relations/data/memory-kind.json</c>).</summary>
 public static class BaseMemories
 {
     /// <summary>Remembered by every member of the defending team toward every member of the aggressor's.</summary>
@@ -137,10 +137,6 @@ public static class BaseMemories
     public const string DeclaredWarOnFriend = "relations:declared_war_on_friend";
     /// <summary>Remembered by the player a razed city was captured from.</summary>
     public const string RazedCity = "relations:razed_city";
-    /// <summary>Remembered by followers of a religion whose holy city was razed.</summary>
-    public const string RazedHolyCity = "relations:razed_holy_city";
-    /// <summary>Remembered by followers of a religion an inquisition removed, and by owners of its holy city.</summary>
-    public const string Inquisition = "religion:inquisition";
 }
 
 /// <summary>Two teams met.</summary>

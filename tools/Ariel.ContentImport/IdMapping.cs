@@ -49,10 +49,9 @@ public static class IdMapping
         {
             foreach (var family in classes.Split(' ', StringSplitOptions.RemoveEmptyEntries)) result.Add(family, mod);
         }
-        Assign("foundation", "YieldInfo CommerceInfo EraInfo GameSpeedInfo HandicapInfo WorldInfo CultureLevelInfo SpecialistInfo CalendarInfo TurnTimerInfo GameOptionInfo PlayerOptionInfo MPOptionInfo ForceControlInfo GraphicOptionInfo ControlInfo InterfaceModeInfo CityTabInfo AdvisorInfo EmphasizeInfo MonthInfo SeasonInfo CameraInfo LandscapeInfo PlayerColorInfo ConceptInfo NewConceptInfo SourceConceptInfo InterfaceArtInfo MiscArtInfo CursorInfo AttachableInfo EffectInfo EntityEventInfo MovieArtInfo TutorialInfo QuestInfo CorporationInfo VictoryInfo");
+        Assign("foundation", "YieldInfo CommerceInfo EraInfo GameSpeedInfo HandicapInfo WorldInfo CultureLevelInfo SpecialistInfo CalendarInfo TurnTimerInfo GameOptionInfo PlayerOptionInfo MPOptionInfo ForceControlInfo GraphicOptionInfo ControlInfo InterfaceModeInfo CityTabInfo AdvisorInfo EmphasizeInfo MonthInfo SeasonInfo CameraInfo LandscapeInfo PlayerColorInfo ConceptInfo NewConceptInfo SourceConceptInfo InterfaceArtInfo MiscArtInfo CursorInfo AttachableInfo EffectInfo EntityEventInfo MovieArtInfo TutorialInfo QuestInfo CorporationInfo ReligionInfo VictoryInfo");
         Assign("world", "TerrainInfo FeatureInfo BonusInfo BonusClassInfo ImprovementInfo RouteInfo BuildInfo RiverInfo MapInfo MapSwitchInfo ClimateInfo SeaLevelInfo GoodyInfo TerrainArtInfo FeatureArtInfo BonusArtInfo ImprovementArtInfo");
         Assign("research", "TechInfo");
-        Assign("religion", "ReligionInfo");
         Assign("economy", "ProcessInfo");
         Assign("cities", "BuildingInfo BuildingClassInfo SpecialBuildingInfo BuildingArtInfo HurryInfo");
         Assign("military", "UnitInfo UnitClassInfo UnitCombatInfo UnitAIInfo SpecialUnitInfo PromotionInfo DomainInfo InvisibleInfo CommandInfo MissionInfo OutcomeInfo UnitArtInfo");

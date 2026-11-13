@@ -1,7 +1,7 @@
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal static class ReligionData
 {
@@ -37,10 +37,13 @@ internal static class ReligionData
             sim.Events.Publish(new ReligionRemoved(religion, city.Id, reason));
     }
     /// <summary>Buildings whose religion presence requirements <paramref name="removed"/> no longer satisfies, which
-    /// is what the production validator would now reject for religion reasons. Wonders are included, as in AND.</summary>
+    /// is what the production validator would now reject for religion reasons. Wonders are included, as in the source
+    /// rules.</summary>
     internal static BuildingDef[] InvalidatedBuildings(Simulation sim, City city, IReadOnlyList<string> removed)
     {
-        var remaining = Present(sim, city).Where(r => !removed.Contains(r, StringComparer.Ordinal)).ToArray();
+        // Buildings name religions by identity, so the comparison is between identities.
+        var remaining = Present(sim, city).Where(r => !removed.Contains(r, StringComparer.Ordinal))
+            .Select(r => ReligionIdentities.Identity(sim.Content, r)).ToArray();
         return city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>)
             .Where(b => !ReligionSupported(b, remaining)).ToArray();
     }
@@ -56,7 +59,7 @@ internal static class ReligionData
     private static bool ReligionSupported(Ariel.Content.Requirement requirement, IReadOnlyList<string> remaining) => requirement switch
     {
         // Only presence leaves can be broken by a faith leaving the city. State-religion (1), holy-city (2) and
-        // unknown parameters describe player choices or other states, which AND does not purge for either
+        // unknown parameters describe player choices or other states, which the source rules do not purge for either
         // (CvCity.cpp:20736-20744 selects buildings by getPrereqReligion, the presence requirement).
         Ariel.Content.Requirement.Leaf leaf => leaf.Kind != "religion" || leaf.Param is not (null or 0)
             || remaining.Contains(leaf.Id, StringComparer.Ordinal),
@@ -70,10 +73,17 @@ internal static class ReligionData
         var founding = Game(sim).Founded.GetValueOrDefault(religion);
         return founding is not null && sim.State.FindCity(founding.HolyCity) is not null ? founding.HolyCity : null;
     }
-    internal static IEnumerable<CivicDef> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>);
-    internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
+    private static readonly CivicReligionDef NoRules = new();
+    /// <summary>The player's civics in ordinal id order, each with what it means to religion (its
+    /// <see cref="CivicReligionDef"/> attachment, or no effect at all without one).</summary>
+    internal static IEnumerable<HeldCivic> Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values
+        .Order(StringComparer.Ordinal).Select(id => new HeldCivic(id, sim.Content.Attachment<CivicReligionDef>(id) ?? NoRules));
+    internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.Rules.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
     /// <summary>Buildings the city actually runs, empire grants, replacement and power included.</summary>
     internal static IReadOnlyList<BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var text) && int.TryParse(text, out var value) ? value : fallback;
-    internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.NoNonStateReligionSpread);
+    internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.Rules.NoNonStateReligionSpread);
 }
+
+/// <summary>A civic the player holds and what it means to religion.</summary>
+internal sealed record HeldCivic(string Id, CivicReligionDef Rules);

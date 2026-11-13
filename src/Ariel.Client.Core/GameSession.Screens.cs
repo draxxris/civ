@@ -33,6 +33,18 @@ public sealed partial class GameSession
         return new(stats, status, details);
     }
 
+    /// <summary>The mods' tags for a city in the city list, each in brackets, or empty when none has anything to say.</summary>
+    public string CityTags(City city)
+    {
+        var tags = Sim.Content.Services.Get<ICityTag>();
+        if (tags.Count == 0) return "";
+        var context = Screens.ContextFor(null) with { City = city.Id };
+        var text = new System.Text.StringBuilder();
+        foreach (var tag in tags)
+            if (tag.Describe(context, city) is { Length: > 0 } item) text.Append("  [").Append(item).Append(']');
+        return text.ToString();
+    }
+
     /// <summary>The mods' items for the top bar's player summary, in registration order.</summary>
     public IReadOnlyList<ViewElement> SummaryItems()
     {

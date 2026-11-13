@@ -1,7 +1,7 @@
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService
 {

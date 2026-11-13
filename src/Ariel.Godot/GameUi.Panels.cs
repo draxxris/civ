@@ -2,11 +2,11 @@ using Ariel.Game;
 using Godot;
 namespace Ariel.Client;
 
-/// <summary>Religion, pedia and load dialogs, the screens mods register, quick save and load, and the turn
+/// <summary>Conquest, pedia and load dialogs, the screens mods register, quick save and load, and the turn
 /// notification feed.</summary>
 internal sealed partial class GameUi
 {
-    private enum Modal { None, Religion, Conquest, Pedia, TechTree, Load, Screen }
+    private enum Modal { None, Conquest, Pedia, TechTree, Load, Screen }
     internal const string SaveDirectory = "user://saves";
     private const string QuickSave = SaveDirectory + "/quicksave.json";
 
@@ -165,39 +165,12 @@ internal sealed partial class GameUi
     {
         switch (_modalKind)
         {
-            case Modal.Religion: BuildReligion(box); break;
             case Modal.Conquest: BuildConquest(box); break;
             case Modal.Screen: BuildScreen(box); break;
             case Modal.Pedia: BuildPedia(box); break;
             case Modal.Load: BuildLoad(box); break;
             case Modal.TechTree: BuildTechTree(box); break;
         }
-    }
-
-    // --- religion ---------------------------------------------------------------------------------------
-
-    private void BuildReligion(VBoxContainer box)
-    {
-        var screen = _session.DescribeReligions();
-        box.AddChild(Ui.Text($"State religion - {screen.StateReligionName ?? "none"}   ·   Conversion: {screen.ConversionAnarchyTurns} anarchy turns, "
-            + $"{screen.CooldownTurns} cooldown   ·   Cooldown left: {screen.CooldownRemaining}", 14, Ui.Accent));
-        var list = Ui.VBox(4);
-        foreach (var r in screen.Religions)
-        {
-            var line = Ui.HBox(6);
-            line.AddChild(Ui.Icon(_icons.TextureOf(r.Id), 32));
-            string holy = r.HolyCityName is { } n ? $"holy city {n}" : r.Founded ? "founded" : "not founded" + (r.FoundingWonder is { } w ? $" (build {w})" : "");
-            var info = Ui.VBox(0);
-            info.AddChild(Ui.Text(r.Name + (r.IsState ? "  (state religion)" : ""), 15, Colors.White));
-            info.AddChild(Ui.Text(holy, 12, Ui.Dim));
-            line.AddChild(info);
-            var id = r.Id;
-            line.AddChild(Ui.Button("Adopt", () => _session.AdoptStateReligion(id), r.Blocked ?? StripMarkup(r.Help), r.CanAdopt));
-            list.AddChild(line);
-        }
-        box.AddChild(Ui.Scroll(list, 340));
-        box.AddChild(Ui.Button("No state religion", () => _session.AdoptStateReligion(null), screen.NoReligionBlocked,
-            screen.StateReligion != null && screen.NoReligionBlocked == null));
     }
 
     private void BuildConquest(VBoxContainer box)

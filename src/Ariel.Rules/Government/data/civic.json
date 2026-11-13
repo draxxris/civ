@@ -1,7 +1,6 @@
 [
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -21,7 +20,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -31,7 +29,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -57,12 +54,9 @@
     "name": "Appeasement",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Appeasement in a political context is a diplomatic policy of making political or material concessions to an enemy power in order to avoid conflict.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -72,7 +66,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -80,12 +73,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Appeasement is the policy of making concessions to stronger enemy powers to avoid or delay potential conflict.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -94,7 +81,6 @@
   },
   {
     "aiWeight": -15,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -114,7 +100,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -149,7 +134,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -175,12 +159,9 @@
     "name": "Nobility",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Nobility is a state-privileged status which is generally hereditary. Titles of nobility are usually associated with present or former monarchies. The term originally referred to those who were \u0022known\u0022 or \u0022notable\u0022 and was applied to the highest social class in pre-modern societies. In the feudal system (in Europe and elsewhere), the nobility were generally those who held a fief, often land or office, under vassalage, i.e., in exchange for allegiance and various, mainly military, services to the Monarch and at lower levels to another nobleman. It rapidly came to be seen as a hereditary caste, sometimes associated with a right to bear a hereditary title and, for example in pre-revolutionary France, enjoying fiscal and other privileges. While noble status formerly conferred significant privileges, today, in most Western countries, noble status is a purely honorary dignity. In the United Kingdom, where some peerage titles, until recently, guaranteed a seat in the Upper House of the Parliament, there are still some residual privileges. [PARAGRAPH:2]Nobility is a historical, social and often legal notion, distinct from socio-economic status which is mainly based on income and possessions. Being wealthy or influential does not automatically make one a noble, nor are all nobles wealthy and influential (aristocratic families have lost their fortunes in various ways, and the concept of the \u0027poor nobleman\u0027 is almost as old as nobility itself). Countries without a feudal tradition do not have a nobility as such. [PARAGRAPH:2]European nobility originated from the feudal/seignorial system that arose in Europe during the Middle Ages. Originally, knights or nobles were mounted warriors who swore allegiance to their sovereign and promised to fight for him in exchange for an allocation of land (usually together with serfs living there). During the time period known as the Military Revolution, nobles gradually lost their role of raising and commanding private armies, as many nations created cohesive national armies. This was coupled with a loss of the social-economic power of the nobility, owing to the economic changes of the Renaissance and the growing economic importance of the merchant classes (or bourgeoisie), which increased still further during the Industrial Revolution. In countries where the nobility was the dominant class, the bourgeoisie gradually grew in power; a rich city merchant was more influential than a minor rural nobleman. However, in many countries at this time, the nobility retained great social and political importance; for instance, the UK\u0027s government was dominated by the nobility until the middle of the 19th century and thereafter the powers of the nobility were progressively reduced by legislation (see Reform of the House of Lords).",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -201,7 +182,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -209,12 +189,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "An upper class of citizens distinguished by blood line and the rights of their heirs that decide the fate of the nation.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -228,7 +202,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -248,7 +221,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -277,7 +249,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -303,12 +274,9 @@
     "name": "Atheist",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": true,
-    "nonStateReligionHappiness": -1,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Atheist represents a society with a distrust of all religions and atheism set as the state religion. Religions are not allowed to hold public displays nor try to convert others to their religion, which angers anyone who practices a religion. However, religions are allowed to preach and exhibit their history on the radio and in plays, which helps balance the unhappiness.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -318,7 +286,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -326,12 +293,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Atheism is the lack of belief in any religion. Atheistic societies scorn and mock all religions equally, and preach science and knowledge as the cure to religion.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -342,7 +303,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -362,7 +322,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -372,7 +331,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -398,12 +356,9 @@
     "name": "Autocracy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "An autocracy is any system of government where power is concentrated in one individual. While many nations throughout history have had an autocratic system of government, the idea of the \u0022enlightened despot\u0022 rose to prominence during the Enlightenment. These leaders paid some service to the ideas of popular support while still maintaining as much power as possible in themselves.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -431,7 +386,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -439,12 +393,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You are the one true leader of your civilization and the empire revolves around you.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -455,7 +403,6 @@
   },
   {
     "aiWeight": -50,
-    "allowInquisitions": false,
     "anarchyLength": 4,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -475,7 +422,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -492,7 +438,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -518,14 +463,10 @@
     "name": "Banditry",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Banditry is a weak form of military, typically associated weak city-state governments. Bandits do not often form large groups and generally ignore the provisions of government. For these reasons it is nearly impossible to successfully base a powerful military off of bandits due to their solitary behavior and mistrust of all.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -533,12 +474,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Banditry is a military formed exclusively from the lowest classes of society. Rarely follows orders and often attacks friend and foe.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -547,7 +482,6 @@
   },
   {
     "aiWeight": -100,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -567,7 +501,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -590,7 +523,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -616,14 +548,10 @@
     "name": "Barter",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tBarter is a type of trade in which goods or services are directly exchanged for other goods and/or services, without the use of money. It can be bilateral or multilateral, and usually exists parallel to monetary systems in most developed countries, though to a very limited extent. Barter usually replaces money as the method of exchange in times of monetary crisis, when the currency is unstable and devalued by hyperinflation. [PARAGRAPH:2]In the past, goods were to be exchanged in the goods of another without considering of its money value. To organize production and to distribute goods and services among their populations, many pre-capitalist or pre-market economies relied on tradition, top-down command, or community democracy instead of market exchange organised using barter. Relations of reciprocity and/or redistribution substituted for market exchange. Trade and barter were primarily reserved for trade between communities or countries. It is also used when the monetary system failed to measure the economic value of goods.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -631,12 +559,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A system of commerce where all exchanges of goods and services involves other goods and services, without any monetary medium. Arguably more efficient in small communities, but unwieldy beyond a single city.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -645,7 +567,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -678,7 +599,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -695,7 +615,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -721,12 +640,9 @@
     "name": "Bourgeois",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Bourgeois describes a range of groups across history. In the Western world, between the late 18th century to now, the bourgeoisie are a social class of people, characterized by their ownership of capital and their related culture. They are a part of the middle or merchant classes, and derived social and economic power from employment, education, and wealth, as distinguished from social classes whose power came from being born into an aristocratic family of titled land owners granted feudal privileges by the monarch. The bourgeoisie emerged from late feudal and early modern towns, through the control of long distance trade and petty manufacture. Bourgeois and bourgeoisie originate in the French language, meaning \u0022city-dweller\u0022.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -736,7 +652,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -744,12 +659,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "The Bourgeois are represented by the wealther landowners, and those who ran cities, manufactuaries, and later, factories. A society ruled by the Bourgeois is likely to be efficient, but will ignore the needs and safety of the working class.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -760,7 +669,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -780,7 +688,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -815,7 +722,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -841,12 +747,9 @@
     "name": "Bureaucracy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tBureaucracy is a form of government in which a professional class manages the day to day operations of the government. They collect the taxes. They build the roads. They turn the ruler\u0027s wishes into actuality. The Chinese mandarins are an early example of a bureaucracy; the motor vehicle agency of your local government is a later example. [PARAGRAPH:2]Bureaucracies provide a certain amount of stability and competence to a government, ensuring that the government will continue to operate efficiently even if the old ruler is thrown out and a new and totally inexperienced ruler takes his or her place. Over time, though, a bureaucracy may become \u0022entrenched\u0022 - growing in size and inefficiency to the point where it is extremely difficult for a leader to accomplish anything - good or ill.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -856,7 +759,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -864,12 +766,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A large class of clerks, scribes, and civil servants that ensure the smooth operation of any government.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -878,7 +774,6 @@
   },
   {
     "aiWeight": -10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -898,7 +793,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -987,7 +881,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1013,12 +906,9 @@
     "name": "Caste",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tThe caste system is one where one\u0027s parentage determines one\u0027s place in society. If your parents are street-cleaners, then so are you. If your parents are merchants, that\u0027s what you are. If your parents are nobility, then you are as well. Your status is determined at birth, and there\u0027s nothing you can do to better it. One may advance within one\u0027s caste, but that\u0027s as far as it goes. Marriages between castes are taboo. [PARAGRAPH:2]There is little advantage to the caste system, except to the people whose parents are on the top of the heap. Merit and initiative are useless: if the most intelligent and wise person in the culture happens to be born a street-cleaner, then he\u0027ll be an intelligent and wise street-cleaner. He\u0027ll never have a chance to become a priest, philosopher, or leader.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1028,7 +918,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1036,12 +925,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Caste is a society where there is no social mobility, and members of one class can not interact with another. The bottom caste is left with the most undesirable labor.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1054,7 +937,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1080,7 +962,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -1090,7 +971,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1116,12 +996,9 @@
     "name": "Charity",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Charity represents unorganized charity as a means of welfare for the poor. Local healers and generous wealthy farmers are the source of welfare for most poor people.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1131,7 +1008,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1139,12 +1015,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A welfare system based off of charity means that the poor and needy depend on the kindess (or more often, lack thereof) of strangers.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1155,7 +1025,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 0,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1175,7 +1044,6 @@
     },
     "cityLimit": 3,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1192,7 +1060,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1218,14 +1085,10 @@
     "name": "Chiefdom",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A chiefdom is a type of complex society of varying degrees of centralization that is led by an individual known as a chief. [PARAGRAPH:2]In anthropological theory, one model of human social development rooted in ideas of cultural evolution describes a chiefdom as a form of social organization more complex than a tribe or a band society, and less complex than a state or a civilization. The most succinct definition of a chiefdom in anthropology belongs to Robert L. Carneiro: \u0022An autonomous political unit comprising a number of villages or communities under the permanent control of a paramount chief\u0022 (Carneiro 1981: 45).[PARAGRAPH:2]Chiefdoms are characterized by pervasive inequality and centralization of authority. At least two inherited social classes (elite and commoner) are present (Ancient Hawaiian chiefdoms had as many as four social classes), although an individual might change social class during a lifetime by extraordinary behavior. A single lineage/family of the elite class becomes the ruling elite of the chiefdom, with the greatest influence, power, and prestige. Kinship is typically an organizing principle, while marriage, age, and gender can affect one\u0027s social status and role.[PARAGRAPH:2]A single simple chiefdom is generally composed of a central community surrounded by or near a number of smaller subsidiary communities. All of these communities recognize the authority of a single kin group or individual with hereditary centralized power, dwelling in the primary community. Each community will have its own leaders, which are usually in a tributary and/or subservient relationship with the ruling elite of the primary community.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1233,12 +1096,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You are the spiritual, military, and financial leader of your small tribe. While members of your tribe willingly accept your wise decrees, outsiders are likely to chafe and ignore your rule.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1254,7 +1111,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1274,7 +1130,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1291,7 +1146,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1317,12 +1171,9 @@
     "name": "Church",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Church represents welfare supplied by the church. People who attend religious ceremonies and prayer put food into a charity box and the poor can come to collect food if they need it.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1332,7 +1183,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1340,12 +1190,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 10,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 20,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 2,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Organized religion cares for the needy and ill. Usually at the price of conversion to said faith.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1356,7 +1200,6 @@
   },
   {
     "aiWeight": -50,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1376,7 +1219,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1402,7 +1244,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1428,12 +1269,9 @@
     "name": "Coinage",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "The first metal coins are regarded by some as having been invented in China. The earliest known Chinese metal tokens were made ca. 900 BC, discovered in a tomb near Anyang. These were replicas in bronze of earlier Chinese money, cowrie shells, so they were named Bronze Shell. Most numismatists, however, regard these as well as later Chinese bronzes that were replicas of knives, spades, and hoes as money but not as coins because they didn\u0027t at least initially carry a mark or marks certifying them to be of a definite exchange value.\nCoins originated independently in Anatolia, with most numismatists regarding Lydia as the birthplace of coinage. The Greeks soon adopted the Lydian practice and extended it to commerce and trade, with coinage following Greek colonization and influence first around the eastern Mediterranean and soon after to North Africa (including Egypt), Syria, Persia, and the Balkans.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1443,7 +1281,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1451,12 +1288,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Coinage is a system of commerce where a precious metal (usually silver or gold) is used as a central currency to exchange goods. Primary disadvantage over fiat currencies is that sudden influxes of this resource will upset the value of money.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1467,7 +1298,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1487,7 +1317,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1506,7 +1335,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1532,12 +1360,9 @@
     "name": "Conscription",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Conscription is a forced tour of duty in a military service. It is often employed where the ruler rules with absolute power over the civilian population. Because the service is generally not voluntary, many may find the military service disagreeable and lacking in quality.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1547,7 +1372,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1555,12 +1379,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Conscription is forced military service, for the good of the state.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1572,7 +1390,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1592,7 +1409,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1609,7 +1425,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1637,12 +1452,9 @@
     "name": "Corporations",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "In some kinds of science fiction, especially cyberpunk, global megacorporations hold a great deal of political power. The entire nation may be organized like a corporation.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1670,7 +1482,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {
       "cities:specialbuilding_corporation_hq": true
     },
@@ -1680,12 +1491,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Powerful corporations control much of the power in your civilization. This greatly reduces corporate maintenance but those outside the corporations are oppressed.",
     "taxRateUnhappiness": 5,
     "unsupported": [
@@ -1697,7 +1502,6 @@
   },
   {
     "aiWeight": 40,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1717,7 +1521,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1752,7 +1555,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1811,12 +1613,9 @@
     "name": "Corporate",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": true,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Corporatist represents an economic policy that is geared toward giving the highest possible profits and highest possible growth to domestic corporations at the expense of consumers and workers. Corporatism can be caused either by corporate executives running the government or from bribes by corporate lobbyists. Corporatism leads to a large amount of wealth accumulated by the government and a much lower cost of maintaining corporations, but it severely angers the bulk of society: the working class, so it should only be used if you are sure you can satisfy the people with buildings and resources. As of now, no country has employed a corporatist economy.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1826,7 +1625,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {
       "cities:specialbuilding_corporation_hq": true
     },
@@ -1836,12 +1634,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A Corporatist Economy is one where Corporations control a significant amount of labor and means of production. While corporations are often the most efficient means of providing goods to a large population, and can innovate and grow rapidly, Corporations often skew the marketplace to favor themselves and abuse their dominance to punish competition.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -1855,7 +1647,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -1875,7 +1666,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -1922,7 +1712,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -1948,12 +1737,9 @@
     "name": "Cosmopolitan",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Cosmopolitanism is the belief that all humans, regardless of other factors, belong to a single community. Cosmopolitan literally means \u0022citizen of the world\u0022. The rise of globalization, the ease of transportation and communication in the modern era, the reality of climate change and other ecological threats, and the horror of global warfare after the World Wars have all contributed to increasing cosmopolitanism.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -1963,7 +1749,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -1971,12 +1756,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Your civilization presents itself as one civilization among equals, in name if not in fact.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -1985,7 +1764,6 @@
   },
   {
     "aiWeight": 30,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2005,7 +1783,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2046,7 +1823,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2072,12 +1848,9 @@
     "name": "Democracy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Democracy is a political government either carried out directly by the people (direct democracy) or by means of elected representatives of the people (Representative democracy). Even though there is no specific, universally accepted definition of \u0027democracy\u0027, there are two principles that any definition of democracy includes, equality and freedom. These principles are reflected by all citizens being equal before the law, and having equal access to power, and freedom is secured by legitimized rights and liberties, which are generally protected by a constitution. [PARAGRAPH:2]There are several varieties of democracy, some of which provide better representation and more freedoms for their citizens than others. However, if any democracy is not carefully legislated to avoid an uneven distribution of political power with balances, such as the separation of powers, then a branch of the system of rule could accumulate power and become harmful to the democracy itself.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2098,7 +1871,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2106,12 +1878,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You are the temporary representative of the state. Arguably, the worst job available.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2128,7 +1894,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2148,7 +1913,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2165,7 +1929,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2191,12 +1954,9 @@
     "name": "Despotism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tDespotism is a form of government characterized by a ruler who wields absolute power over his people. Despite the word\u0027s negative connotations, a leader doesn\u0027t necessarily have to be a corrupt, evil megalomaniac to be a despot; it is possible to be a benevolent despot, though history records few cases of such. [PARAGRAPH:2]The strength of this form of government is that the ruler can easily implement his decisions; he does not need to compromise, cajole, or bribe anyone to get the job done. The weakness of this form of government is that the ruler can implement bad decisions just as easily as good ones; with no checks and balances, how can he be stopped? Also, there is a lot of truth in the old saying, \u0022Power corrupts; absolute power corrupts absolutely.\u0022 And though as said before, despots don\u0027t need to be corrupt, evil megalomaniacs, many of them end up that way.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2224,7 +1984,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2232,12 +1991,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You are the will of the people made flesh. Your decree is the first, final, and only voice in any decision. Any thought to the contrary is treason.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2253,7 +2006,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2273,7 +2025,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2314,7 +2065,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2340,12 +2090,9 @@
     "name": "Digital",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tA digital economy is based on electronic computing. Following the creation of the Internet, information began to move faster and faster. This information became as valuable as any industrial process. Networking technology allowed new forms of collaboration and strategizing to take place, while computers enabled commerce to become more efficient. This economy required great investment in infrastructure to truly take off.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2355,7 +2102,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2363,12 +2109,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A digital economy prioritizes the flow and use of information over industrial production.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2379,7 +2119,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2402,7 +2141,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2443,7 +2181,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2469,12 +2206,9 @@
     "name": "Divine Cult",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Divine Cult represents a state-run cult that forces all citizens to worship the civilization\u0092s rulers as gods. The state uses this religion as justification for military campaigns. A classic example of a civilization employing an divine cult is ancient Egypt and modern North Korea.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2484,7 +2218,6 @@
         }
       ]
     },
-    "requiresStateReligion": true,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2492,12 +2225,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 1,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Divine Rule is where the government\u0027s rule is that of a god. The leader is the figurehead of both the state and religion, with decisions bearing both authoritarian and religious power.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2514,7 +2241,6 @@
   },
   {
     "aiWeight": 45,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2534,7 +2260,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2560,7 +2285,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2612,12 +2336,9 @@
     "name": "Green",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tEnvironmentalism is the civic which describes a society in which every effort is made to remain in balance with nature. Emphasis is placed upon renewable resources and energy, and every possible item is recycled. This of course describes the ideal; no modern society on earth of any size can as yet achieve perfect harmony with the world around it. [PARAGRAPH:2]There are many benefits to environmentalism, not the least of which is that it would ensure that mankind will not suffocate under the weight of its own greed and pollution. The population of a fully \u0022green\u0022 society would live longer and healthier lives, secure in the knowledge that their children and grandchildren would enjoy the same beautiful world that they did. [PARAGRAPH:2]Unfortunately, such changes will come slowly, if at all. Rich and powerful nations are extremely reluctant to cut back on the resources they consume, and loathe to implement the kind of political and market reforms that such an economy would require. Meanwhile the poorer countries wish to attain all of the power and wealth currently enjoyed by the rich: to them a smokestack is a symbol of progress, not of the ongoing destruction of the earth. Radical change will have to wait for the time when the magnitude and imminence of disaster is visible to everyone.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2627,7 +2348,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2635,12 +2355,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "An Environmentalist economy disregards profits and greed to build an economy that ultimately benefits all of mankind. While a noble ideal, they often prove expensive, inefficient, and unpopular.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2652,7 +2366,6 @@
   },
   {
     "aiWeight": 20,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2672,7 +2385,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2701,7 +2413,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2727,12 +2438,9 @@
     "name": "Federation",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": -25,
     "pedia": "Federal represents government form where nation or empire consists of several states which all have rights to create their own laws as long as those laws follow the guidelines set by the federal government. Each state is ruled by localized government and representatives are elected every 4-6 years. Two good examples of federal systems today are The United States and European Union.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2753,7 +2461,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2761,12 +2468,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "The realization that you are no longer a large nation in a small world, or a small nation amongst larger nations, but a smaller nation inside a larger nation.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2783,7 +2484,6 @@
   },
   {
     "aiWeight": -10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2803,7 +2503,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -2838,7 +2537,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2864,12 +2562,9 @@
     "name": "Feudal",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Feudal in most instances represents the social structure used during the Medieval period. It consists of peasants bound by contract as serfs to lords. The lords own manors with large amounts of farmland which the serfs work for payment and protection. However, as demonstrated by Friedrich Hayek in his novel Road to Serfdom, the practices of economic central-planning governments can lead to a modern form of feudalism, replacing the lords with the government and the serfs with all citizens.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -2879,7 +2574,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2887,12 +2581,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Feudalism consists of contracts to a lord, usually by serfs and other peasentry. It provides safety to the serfs, at the expense of personal liberty.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -2906,7 +2594,6 @@
   },
   {
     "aiWeight": -20,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -2926,7 +2613,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -2936,7 +2622,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -2962,14 +2647,10 @@
     "name": "Folklore",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Folklore represents primitive religion system. Paganism and shamanism is common and people often worship things like nature and weather gods, spirits and other supernatural things.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -2977,12 +2658,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Folklore is where religion is spread through folk tales and oral tradition, with no hard written basis. It often changes from generation to generation.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -2991,7 +2666,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3011,7 +2685,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -3021,7 +2694,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": true,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3047,12 +2719,9 @@
     "name": "Reformation",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Free Church represents a strong central church that is independent from the state. Technically, the state has authority over the church, but the church is often exhibits more power than the state. In some cases, a strong free church can infiltrate the state and employ theocracy, but not in all cases. An example of a strong free church is the Roman Catholic church during the Medieval era.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3062,7 +2731,6 @@
         }
       ]
     },
-    "requiresStateReligion": true,
     "specialBuildingNotRequireds": {
       "cities:specialbuilding_monastery": true
     },
@@ -3072,12 +2740,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 30,
-    "stateReligionHappiness": 2,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Free Church is where churches are free from governmental regulation and control, providing true autonomy.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3092,7 +2754,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3112,7 +2773,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": -50,
     "effects": [
       {
@@ -3137,7 +2797,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3163,12 +2822,9 @@
     "name": "Fealty",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A vassal is one who enters into mutual obligations with a monarch, usually of military support and mutual protection, in exchange for certain guarantees, which came to include the terrain held as a fief. By analogy it is applied to similar systems in other feudal societies. It was always distinct from fidelitas, sworn loyalty of subject to king, and the honor, the respect and consideration that accrued to the vassal, unlike the delegated power of a comes or count, was not expressed in expectations of related public duty.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3178,7 +2834,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3186,12 +2841,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Feudalism is a system where vassals to the kingdom raise their own armies of \u0027knights\u0027 and lesser forces, and provide those armies for use to the kingdom, when called upon.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3202,7 +2851,6 @@
   },
   {
     "aiWeight": -30,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3222,7 +2870,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -3263,7 +2910,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3291,12 +2937,9 @@
     "name": "Guilds",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3306,7 +2949,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3314,12 +2956,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A system of commerce where \u0027guilds\u0027 control significant portions of the labor system. Guilds are outside of the government, only answerable to themselves. Guilds are a early precursor to modern Corporations.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3331,7 +2967,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3351,7 +2986,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -3374,7 +3008,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3400,12 +3033,9 @@
     "name": "Monarchy",
     "noCapitalUnhappiness": true,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tHereditary Rule is a form of government wherein the rulership is passed down from one member of the family to the next. This kind of succession is most often associated with monarchical rulers, but it occasionally appears in despotisms or even purportedly communist regimes - North Korea, for example. There is often a religious justification for hereditary rule; kings are said to rule by \u0022divine right\u0022 or \u0022the mandate of Heaven.\u0022 [PARAGRAPH:2]The strength of hereditary rule is that there is usually a clear line of succession, and thus perhaps less squabbling for power when the current monarch dies. (There are plenty of exceptions to this rule throughout history, of course.) Further, there may be a certain amount of familial pressure on the ruler to not mess things up too badly for the next generation. However, hereditary rule suffers the same kind of weaknesses as do all unelected rulers; the leader is not answerable to the people, and it can be extremely difficult to get rid of a bad one.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3433,7 +3063,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3441,12 +3070,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Your rule was predestined, chosen by the gods. Obiedence is creed, fealty is normal, and poison is common. More wine, Your Majesty?",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3459,7 +3082,6 @@
   },
   {
     "aiWeight": -25,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3479,7 +3101,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -3526,7 +3147,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3552,12 +3172,9 @@
     "name": "Hive",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "As populations grow ever larger, some governments may turn to drastic methods to control their people. Dystopian societies, as seen in 1984 and Brave New World, may turn to extensive propaganda, psychoactive drugs, or outright mind control. The effect is to turn the masses into mindless workers, barely distinguishable from hive insects whose only goal is to serve and protect their queen.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3567,7 +3184,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3575,12 +3191,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Propaganda and mind control brainwash your citizens into obedience.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3594,7 +3204,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3614,7 +3223,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -3624,7 +3232,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3650,12 +3257,9 @@
     "name": "Imperium",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Imperium is a Latin word which, in a broad sense, translates roughly as \u0027power to command\u0027. Imperium refers to the sovereignty of the state over the individual.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3665,7 +3269,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3673,12 +3276,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Imperium is the right to command, in reference to the state\u0027s authority over the rights of individuals.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -3687,7 +3284,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3707,7 +3303,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -3724,7 +3319,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3750,12 +3344,9 @@
     "name": "Interventionism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Interventionism is a policy of non-defensive activity undertaken by a nation-state to manipulate an economy or society.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3765,7 +3356,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3773,12 +3363,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Interventionism is a policy of non-defensive activity ostensibly undertaken to aid another society, but often used to manipulate their economy or society.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -3787,7 +3371,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": true,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3807,7 +3390,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -3836,7 +3418,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3862,12 +3443,9 @@
     "name": "Intolerant",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": true,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Intolerant represents a society that is extremely intolerant of all non-state religions and scientific research that could undermine their religion. An intolerant society, with the help of the church and/or the state, eradicates all non-state religions in your civilization through an inquisition. In addition, all soldiers are conditioned to fight to the death for their religion and are guaranteed a good afterlife if they do so. Intolerant is great for creating a massive religious military campaign, known as a crusade or holy war, but completely undermines all scientific and technological advancement. Examples of intolerance are Europe during the Crusades, the Spanish Inquisition, and modern Islamic Jihadists.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -3888,7 +3466,6 @@
         }
       ]
     },
-    "requiresStateReligion": true,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3896,12 +3473,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 3,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 20,
     "strategy": "Intolerance is the lack of acceptance of any belief system other than your own. Dissent is hateful, free thought is treason, and choice is blasphemy.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -3916,7 +3487,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 0,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -3936,7 +3506,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -3946,7 +3515,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -3972,14 +3540,10 @@
     "name": "Isolationism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Isolationism is a category of foreign policies institutionalized by leaders who asserted that their nations\u0027 best interests were best served by keeping the affairs of other countries at a distance.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -3987,12 +3551,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Isolationism is a protective foreign policy that encourages self-reliance and avoids intervention or entanglements with other nations.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -4001,7 +3559,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4021,7 +3578,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4044,7 +3600,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4070,12 +3625,9 @@
     "name": "Junta",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Junta or military junta represents a civic where few individuals who have gained their power by using any means necessary rule the nation. They are often militaristic leaders or tribal chiefs. Most of the ancient world civilizations where oligarchies and there are few still even today, like for example North Korea and Burma. Oligarchy was the starting push for nobility (aristocracy) when those leaders passed on their status to their children.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4096,7 +3648,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4104,12 +3655,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A military council that rules over national affairs.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4122,7 +3667,6 @@
   },
   {
     "aiWeight": 50,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4142,7 +3686,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4159,7 +3702,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4213,12 +3755,9 @@
     "name": "Regulated",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Regulated represents the form of capitalism as advocated by economist John Maynard Keynes. Keynes advocated a mixed economy where the government intervenes in the economy in order to increase demand and stimulate the economy. The expensive regulations and bureaucracy used to maintain the interventionist policies come from taxation with a bulk of the taxes coming from corporations. Keynesian economists believe in smoothing the business cycle, which causes booms and busts, by raising taxes and interest rates to cool the economy and lowering taxes and interest rates to stimulate it. The result is a relatively stable economy void of depressions and panics, but also of giant boom periods. Keynesians also believe the government should actively invest in infrastructure as a method of increasing demand.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4228,7 +3767,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4236,12 +3774,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Regulated economies are a mix of a planned economy and free market. They attempt to resolve the problems with Free Markets lack of respect for long term consquences while keeping the benefits that Free Markets provide, with varying success.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4253,7 +3785,6 @@
   },
   {
     "aiWeight": 50,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4273,7 +3804,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -4283,7 +3813,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4332,12 +3861,9 @@
     "name": "Free Market",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tA free market system is similar to a decentralized system, in that the government doesn\u0027t try to impose price controls, quotas or other artificial limits on production. The market - what people want and what they are willing to pay for it - determines production. Unlike in decentralization the state maintains some controls over the system, attempting to ensure that the markets remain truly free and is not distorted by monopolies or corruption. [PARAGRAPH:2]A state may have some free markets while maintaining more control over others that it considers critical to the state\u0027s survival; in modern times these usually include the production and dispersion of energy and the production of weapons.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4347,7 +3873,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4355,12 +3880,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A \u0027Free Market\u0027 is a market where governmental controls are lax and citizens and corporate entities are free to trade openly for any and all goods and services. The primary advantage is that free markets encourage innovation, growth, and competition. The primary disadvantage is that free markets often ignore the long term effects of actions in favor of short term gains. See: Global Warming.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4372,7 +3891,6 @@
   },
   {
     "aiWeight": 25,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4392,7 +3910,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": true,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4421,7 +3938,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4447,12 +3963,9 @@
     "name": "Liberal",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Liberal represents the liberal political ideology. A liberal society regards civil liberties, free speech and being the best you can be with great worth.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4473,7 +3986,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4481,12 +3993,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Liberalism represents a society that highly values civil and political freedoms. It encourages indiviuality, at the expense of the common good.",
     "taxRateUnhappiness": 3,
     "unsupported": [
@@ -4498,7 +4004,6 @@
   },
   {
     "aiWeight": -25,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4518,7 +4023,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4577,7 +4081,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4603,12 +4106,9 @@
     "name": "Communalism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Marxist represents a society that believes capitalism exploits workers and believes in an abolition of social class structure. Marxism is often considered to be what led to the creation of communism, socialism and planned economies.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4618,7 +4118,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4626,12 +4125,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Communalism encourages looking out for the common good of the nation and has no notion of personal property, marriage, or wealth.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4643,7 +4136,6 @@
   },
   {
     "aiWeight": 20,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4663,7 +4155,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4686,7 +4177,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -4712,12 +4202,9 @@
     "name": "Mercantile",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tMercantilism refers to government policy that strictly manages the nation\u0027s production. The government determines which farmers produce which crops, decides who will be allowed to sew pants and who will have a monopoly on shirts, and so on. The nation may ban all foreign imports. [PARAGRAPH:2]The advantages of mercantilism are that it ensures that a nation\u0027s wealth remains within the nation itself, and that its people are not put out of business by cheap foreign imports. On the other hand, the success or the failure of the entire economy is in the hands of just a few men or even one, and if they make foolish or unlucky decisions, the nation as a whole suffers. Further, the ban on foreign imports limits the nation\u0027s exposure to new products and new ideas. And if someone has a monopoly on an item, there is little pressure for that person to improve the item or make it cheaper.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4727,7 +4214,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4735,12 +4221,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Mercantilism is a system of commerce where the nation produces and exports more goods than they purchase, creating a net profit for citizens of this nation. This only works while other nations are not also practicing the same creed.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4752,7 +4232,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4772,7 +4251,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4797,7 +4275,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 1,
     "goldPerUnit": 0,
@@ -4823,12 +4300,9 @@
     "name": "Mercenaries",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Mercenaries are warriors who fight for private gain, not for being a party to a conflict. Mercenaries have been part of history since ancient Egypt. The \u0022Anabasis\u0022 was an important piece of ancient Greek literature and told the story of how Greek mercenaries hired for the Persian Empire made their way out of enemy territory after their generals were killed. The late Roman Empire turned to mercenaries as citizen-soldiers became less practical. \u0022Freelancer\u0022 originally derived from \u0022free companies\u0022 or \u0022free lances\u0022 of mercenary soldiers during the late Middle Ages. The \u0022private military company\u0022 is the successor to historical mercenaries.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -4838,7 +4312,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -4846,12 +4319,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Mercenaries are soldiers motivated by money. They are expensive but shift the burden of war from your people to your treasury.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -4862,7 +4329,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -4882,7 +4348,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -4983,7 +4448,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5009,12 +4473,9 @@
     "name": "Mobilization",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Large-scale warfare following the rise of nationalism led to new ways to provide the manpower and resources needed. During the French Revolutiony Wars, the National Convention (the government of France at the time) declared a \u0022lev\u00E9e en masse\u0022, requiring military service from all members of the nation at once. The principle was that the new rights given to the people also demanded new obligations from the people. Later developments, especially the use of railways and other transportation, led to even more elaborate procedures to mobilize the entire capacity of the nation to produce war material. \u0022War economies\u0022 were practiced during both of the World Wars, resulting in vast quantities of weapons being produced at the cost of the standard of living of the citizenry.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5024,7 +4485,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5032,12 +4492,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Mobilization organizes your entire civilization for war. It increases production of military facilities and units but cripples the production of virtually everything else.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5048,7 +4502,6 @@
   },
   {
     "aiWeight": 20,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5068,7 +4521,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 100,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -5093,7 +4545,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5119,12 +4570,9 @@
     "name": "M.A.D",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Mutually Assured Destruction (M.A.D) is a doctrine of military strategy in which a full-scale use of nuclear weapons by two opposing sides would effectively result in the destruction of both the attacker and the defender. It is based on the theory of deterrence according to which the development of strong weapons is essential to threaten the enemy in order to prevent the use of the very same weapons.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5134,7 +4582,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5142,12 +4589,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Mutually Assured Destruction is the belief that any attack should be repricated with a counterstrike as to ensure that both sides are completely wiped out in the aftermath. In theory, this destruction would be so great as to set humanity back hundreds of years, and  prevent conflicts out of fear of annihilation. In practice, it requires the use of a weapon of mass destruction at least once in order to be effective.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5160,7 +4601,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5182,7 +4622,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -5211,7 +4650,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5237,12 +4675,9 @@
     "name": "Nationalist",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Nationalist represents a society that believes people should work and fight for their country over themselves. Nationalism leads to a higher number of volunteer soldiers, less anger over conscription, and less anger over a long war. However, nationalism also leads to a large sense of nativism and a lack of acceptance of buying imports.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5252,7 +4687,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5260,12 +4694,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Nationalism encourages unity and patriotism for natural-born citizens, while provoking suspicion against foreign ideas. ",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5278,7 +4706,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5298,7 +4725,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": -25,
     "effects": [
       {
@@ -5339,7 +4765,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5365,12 +4790,9 @@
     "name": "Naval Supremacy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Some nations, especially island nations, have chosen to focus their military efforts on their navies rather than their islands. By establishing command of the sea, they ensured that their shipping and warships could move at will while their enemies were greatly hampered. The Royal Navy of the United Kingdom was the most powerful navy in the world from the mid-18th century to the early 20th. No other nation was able to invade the British Isles. The Japanese also attempted this strategy during World War II.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5380,7 +4802,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5388,12 +4809,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Naval Supremacy increases the production of naval units and increases foreign commerce.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -5402,7 +4817,6 @@
   },
   {
     "aiWeight": -20,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5422,7 +4836,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -5432,7 +4845,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5458,14 +4870,10 @@
     "name": "Barbarism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Junta or military junta represents a civic where few individuals who have gained their power by using any means necessary rule the nation. They are often militaristic leaders or tribal chiefs. Most of the ancient world civilizations where oligarchies and there are few still even today, like for example North Korea and Burma. Oligarchy was the starting push for nobility (aristocracy) when those leaders passed on their status to their children.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5473,12 +4881,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A military council that rules over national affairs.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5493,7 +4895,6 @@
   },
   {
     "aiWeight": -40,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5513,7 +4914,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 200,
     "effects": [
       {
@@ -5568,7 +4968,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5594,12 +4993,9 @@
     "name": "Pacifism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tPacifism is the religious belief that all conflict is against the will of God. Man must not fight against his fellow man. If a person slaps your face, simply turn the other cheek. Basically, what happens to a person in this world really doesn\u0027t matter much at all: if a bully takes your stuff or kills you and you don\u0027t fight back, you will gain your reward in heaven (or in your next incarnation). The bully may enjoy his ill-gotten gains for a few paltry years in this world, but he will suffer tenfold in the next. [PARAGRAPH:2]Pacifism seems to enjoy popularity among people or nations who have little power of their own, people who cannot physically resist their oppressors with any hope of success. Once such people gain power and gain some measure of control over their destinies, however, they often discard their pacifism for more militant beliefs.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5609,7 +5005,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5617,12 +5012,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Pacifism discourages militaries, instead favoring diplomacy and culture to solve territorial problems.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5638,7 +5027,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5658,7 +5046,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -5702,7 +5089,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5728,12 +5114,9 @@
     "name": "Paradise",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Ecotopias are governments which focus a return to nature while maintaining technology.  The use of high technologies is used to reduce pollution while maintain a high standard of living.  Ecotopias are vulnerable to war, considering it being the greatest threat to the environment.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5743,7 +5126,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5751,12 +5133,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Paradise is the absence of traditional illnesses, labor, demands and the perfect harmony between man and his environment.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5768,7 +5144,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5788,7 +5163,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -5817,7 +5191,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5843,12 +5216,9 @@
     "name": "Parliament",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A parliament is a legislature, especially in those countries whose system of government is based on the Westminster system modeled after that of the United Kingdom. The name is derived from the French parlement, the action of parler (to speak): a parlement is a discussion. The term came to mean a meeting at which such a discussion took place. It acquired its modern meaning as it came to be used for the body of people (in an institutional sense) who would meet to discuss matters of state. [PARAGRAPH:2]The origins of the modern concept of prime ministerial government go back to the Kingdom of Great Britain (1707 - 1800) and The Parliamentary System in Sweden 1721 - 1772 , that coincided with each other. [PARAGRAPH:2]In theory, power resided in the monarch, who chaired cabinet and chose ministers. In reality, King George I\u0027s inability to speak English led the responsibility for chairing cabinet to go to the leading minister, literally the prime or first minister. The gradual democratisation of parliament with the broadening of the voting franchise increased parliament\u0027s role in controlling government, and in deciding who the king could ask to form a government. By the nineteenth century, the Great Reform Act of 1832 led to parliamentary dominance, with its choice invariably deciding who was prime minister and the complexion of the government.[PARAGRAPH:2]Other countries gradually adopted what came to be called the Westminster Model of government, with an executive answerable to parliament, but exercising powers nominally vested in the head of state, in the name of the head of state. Hence the use of phrases like Her Majesty\u0027s government or His Excellency\u0027s government. Such a system became particularly prevalent in older British dominions, many of whom had their constitutions enacted by the British parliament. Examples include Australia, New Zealand, Canada, the Irish Free State and the Union of South Africa, though these parliaments themselves have often evolved or were reformed from their British model: the Australian Senate, for instance, more closely reflects the US Senate than the British House of Lords; whereas there is no upper house in New Zealand.[PARAGRAPH:2]In very ancient India, during the Vedic civilization, there are mentions of two Parliament-like gatherings of the Indo-Aryan kingdoms called the Sabha and the Samiti. During the time of the Buddha, many states were even tribal republics, called the Sanghas. The Sabha has been interpreted by the historians as a representative assembly of the elect-the important men of the clan, which ran day-to-day business with the king. The Samiti seems to be a gathering of all the male members of the kingdom, and probably convened only for the ratification/election of a new king. The two largely democratic institutions, which kept a check on the absolutism of the king, were given a sacred position, and have been called the daughters of the deity Prajapati in the Vedas, the holiest of all Hindu scriptures and the earliest Indo-European literature. However, these democratic institutions became weaker as republics became larger and elected chieftainship moved towards hereditary and absolute monarchy. The Sabha and the Samiti bear almost no mention in later literature. After this, India would not have any democratic legislature till the British times, culminating in its modern democratic Parliament (whose two Houses still bear the name of Sabha).",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5869,7 +5239,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -5877,12 +5246,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A ruling body of representatives that represents the ideas and beliefs of each territory, and makes decisions accordingly.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -5896,7 +5259,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -5916,7 +5278,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -5951,7 +5312,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -5977,12 +5337,9 @@
     "name": "Personality Cult",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": true,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A \u0022personality cult\u0022 is the creation of an idealized or even worshipful image of a person through propaganda and mass media. Leaders had nearly always been held as revered figures in history, and some were deified either in life or in death, while others claimed to hold their rule through the \u0022divine right of kings\u0022. After the rise of rationalism and secularism, this ideal became harder to preserve. The development of propaganda techniques allowed leaders, especially in totalitarian states, to manipulate their image in new ways. These cults were often so strong as to be practically religions.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -5992,7 +5349,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6000,12 +5356,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A Personality Cult attempts to cast the leader as an idealized symbol of the nation.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6016,7 +5366,6 @@
   },
   {
     "aiWeight": 40,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6036,7 +5385,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6059,7 +5407,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6101,12 +5448,9 @@
     "name": "Planned",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Planned represents an economy completely controlled, owned and planned by the government, otherwise known as state capitalism. Under a planned economy, all labor, capital, production, agriculture, utilities, and finances are run by the government, and all service businesses are owned by the government. Because there are no private companies, no trade exists. Planned economies are able to concentrate their resources on major projects such as world wonders and world projects, but are very costly to maintain.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6116,7 +5460,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6124,12 +5467,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Planned commerce systems are rigidly structured, providing the goods citizens need in an efficient, seamless process. However, they are often slow to innovate, and can easily fall victims to corruption.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6141,7 +5478,6 @@
   },
   {
     "aiWeight": -50,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6161,7 +5497,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6208,7 +5543,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6234,12 +5568,9 @@
     "name": "Post-Scarcity",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "With robots producing goods around the clock, the need for all but the most skilled labor became obsolete for mass production.  Without the need for labor, people had to figure out what to do with all the time, and cheap goods.  This led to an age of great excess and decadence, as well as various health effects which accompany such indulgence.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6249,7 +5580,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6257,12 +5587,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Post-Scarcity is the lack of need of materials to live. Without the need for constant resource gathering, money becomes meaningless and services are only provided where people want to provide them.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6273,7 +5597,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6293,7 +5616,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -6303,7 +5625,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6329,12 +5650,9 @@
     "name": "President",
     "noCapitalUnhappiness": true,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "President is a title held by many leaders of organizations, companies, trade unions, universities, and countries. Etymologically, a \u0022president\u0022 is one who presides, who sits in leadership. Originally, the term referred to the presiding officer of a ceremony or meeting (i.e., chairman), but today it most commonly refers to an official. Among other things, president today is a common title for the heads of state of most republics, whether popularly elected, chosen by the legislature or by a special electoral college. It is also often adopted by dictators. [PARAGRAPH:2]As an English word, the term was originally used to refer to the presiding officer of a committee or governing body in Great Britain. Early examples are the President of the Exchequer (\u0022presidentis\u0022 in the original Latin, from the Dialogue concerning the Exchequer, 1179), the presidents of the universities of Oxford and Cambridge (from 1464), and the founding President of the Royal Society (William Brouncker, 1660). [PARAGRAPH:2]Later this usage was applied to political leaders, including the leaders of some of the Thirteen Colonies (originally Virginia in 1608); in full, the \u0022President of the Council\u0022. The first president of a country was George Washington, the President of the United States. In America the title was \u0022upgraded\u0022 from its earlier use for the President of the Continental Congress, the \u0022officer in charge of the Continental Congress\u0022 since 1774. As other countries deposed their monarchies and became republics, president was commonly adopted as the title for the head of state. The first European president was the president of France, a post created in the Second Republic of 1848. The first president of an internationally recognized African state was the President of Liberia in 1848. Today, most republics have a President as their head of state.[PARAGRAPH:2]In states with a presidential system of government, the president exercises the functions of Head of State and Head of Government, i.e. he or she directs the executive branch of government.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6355,7 +5673,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 2,
@@ -6363,12 +5680,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A single leader who represents the entire nation at once, with varying degrees of success.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6381,7 +5692,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6408,7 +5718,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6425,7 +5734,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6451,12 +5759,9 @@
     "name": "Private",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Private represents organized private charity as a means of welfare for the poor. Wealthy merchants and corporate executives, due to moral beliefs or to create a reputation of generosity, give money and food to charity organizations and fund research projects that could benefit the poor.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6466,7 +5771,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6474,12 +5778,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Private Welfare is where the health and wellness of citizens is available from private businesses, for a price.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6490,7 +5788,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6510,7 +5807,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6533,7 +5829,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6559,12 +5854,9 @@
     "name": "Proletariat",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Proletariat represents a society ruled by proletariats, otherwise known as the lower or working class. Under such a society, the interests of the proletariats are regarded as more important than that of the bourgeois. Early in history, a Proletariat society would place production of buildings necessary for farmers and artisans in top priority, and in modern times a Proletariat society would build public works more cheaply. Modern liberalism, populism and progressivism are modern examples of Proletariat ideology.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6574,7 +5866,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6582,12 +5873,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "The Proletariat is more commonly known as the working class of society. A society ruled by the proletariat is likely to have a greater concern for safety and personal happiness, at the expense of productivity.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6598,7 +5883,6 @@
   },
   {
     "aiWeight": -15,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6618,7 +5902,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6635,7 +5918,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6661,12 +5943,9 @@
     "name": "Prophets",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Prophets represents religion spreading through the orations of wandering prophets. The state is too primitive at this point in order to control the spread of religion, so religions spread easily throughout your civilization and foreign civilizations geographically near you.",
-    "religionSpreadRate": 50,
     "requirements": {
       "all": [
         {
@@ -6676,7 +5955,6 @@
         }
       ]
     },
-    "requiresStateReligion": true,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6684,12 +5962,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 20,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Prophets are chosen people by the gods, who bring their word and will to the people. Prophets can often be extremely clairvoyant and bring about a golden age or be shunned by the masses as a heretic.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6700,7 +5972,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6720,7 +5991,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6737,7 +6007,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6763,12 +6032,9 @@
     "name": "Protectionism",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Protectionism is the economic policy of restraining trade between states through methods such as tariffs on imported goods, restrictive quotas, and a variety of other government regulations designed to allow fair competition between imports and goods and services produced domestically.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6778,7 +6044,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6786,12 +6051,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Protectionism is the policy of restraining trade between states through government regulations designed to allow fair competition between imports and goods and services produced domestically.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -6800,7 +6059,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6820,7 +6078,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6855,7 +6112,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6881,12 +6137,9 @@
     "name": "Public Works",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Public Works represents the government using tax money to fund public infrastructure.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -6896,7 +6149,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -6904,12 +6156,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Public Work projects are those that benefit all, and provide jobs to otherwise unemployable citizens. They also cost a small fortune.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -6920,7 +6166,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -6940,7 +6185,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -6963,7 +6207,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -6989,12 +6232,9 @@
     "name": "Raiders",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Many tribes have a tradition of raiding their neighbors, attacking and retreating without the intent of actually holding ground. Raids would rather be used to confuse the enemy or gather plunder. Raid techniques could be used under many conditions. Vikings would launch raids by sea, while many mounted nomads such as the Huns and Mongols could use raiding techniques due to having great experience with irregular warfare.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7004,7 +6244,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7012,12 +6251,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Raiders are small forces that are good at swift attack techniques. They can loot enemy terrain and capture enemy units.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -7026,7 +6259,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7046,7 +6278,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7063,7 +6294,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7089,12 +6319,9 @@
     "name": "Redevelopment",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_foreign_policy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Redevelopment is a policy of constructing and repairing basic infrastructure in less well-off nations for humanitarian and economic reasons.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7104,7 +6331,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7112,12 +6338,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Redevelopment is a policy of constructing and repairing basic infrastructure in less well-off nations for humanitarian and economic reasons.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -7126,7 +6346,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7146,7 +6365,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7181,7 +6399,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7207,12 +6424,9 @@
     "name": "Republic",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_government",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A republic is a form of government in which the citizens choose their leaders and the people (or at least a part of its people) have an impact on its government. The word \u0022republic\u0022 is derived from the Latin phrase res publica, which can be translated as \u0022a public affair\u0022. [PARAGRAPH:2]Both modern and ancient republics vary widely in their ideology and composition. The most common definition of a republic is a state without a monarch. In republics such as the United States and France the executive is legitimated both by a constitution and by popular suffrage. In the United States, James Madison defined republic in terms of representative democracy as opposed to direct democracy , and this usage is still employed by many viewing themselves as \u0022republicans\u0022. In modern political science, republicanism refers to a specific ideology that is based on civic virtue and is considered distinct from ideologies such as liberalism. [PARAGRAPH:2]Most often a republic is a sovereign country, but there are also subnational entities that are referred to as republics, or which have governments that are described as \u0022republican\u0022 in nature. For instance, Article IV of the Constitution of the United States \u0022guarantee[s] to every State in this Union a Republican form of Government.\u0022 The Soviet Union was a single nation composed of distinct and legally sovereign Soviet Socialist Republics.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7222,7 +6436,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7230,12 +6443,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You are the leader, legally elected, representing the intended will of the people.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7250,7 +6457,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7270,7 +6476,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": true,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7287,7 +6492,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": true,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7313,12 +6517,9 @@
     "name": "Secular",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 1,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Secular represents a complete separation of church and state. Specific religions are given no special benefits from the state and all religions are accepted and guaranteed rights in the civilization. An example is the United States.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7328,7 +6529,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7336,12 +6536,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Secularism is the acceptance and understanding of multiple belief systems, where all ideas can be equally shared without fear of reproach or scorn.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7353,7 +6547,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7375,7 +6568,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -7385,7 +6577,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7411,12 +6602,9 @@
     "name": "Senate",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A senate is a deliberative assembly, often the upper house or chamber of a legislature or parliament. There have been many such bodies in history, since senate means the assembly of the eldest and wiser members of the society and ruling class. Two of the first official senates were the Spartan Gerousia and the Roman Senate. [PARAGRAPH:2]The members or legislators of a senate are called senators. The Latin word senator was adopted into English with no change in spelling. Its meaning is derived from a very ancient form of simple social organization in which decision-making powers are reserved for the eldest men. For the same reason, the word senate is correctly used when referring to any powerful authority characteristically composed by the eldest members of a community, as a deliberative body of a faculty in an institution of higher learning is often called a senate. The original senate was the Roman Senate, which lasted until 580 (various efforts to revive it were made in Medieval Rome). In the Eastern Roman Empire, the Byzantine Senate continued until the Fourth Crusade. [PARAGRAPH:2]Modern democratic states with bicameral parliamentary systems are sometimes equipped with a senate, often distinguished from an ordinary parallel lower house, known variously as the \u0022House of Representatives\u0022, \u0022House of Commons\u0022, \u0022Chamber of Deputies\u0022, \u0022National Assembly\u0022, \u0022Legislative Assembly\u0022, or \u0022House of Assembly\u0022, by electoral rules. This may include minimum age required for voters and candidates, proportional or majoritarian or plurality system, and an electoral basis or collegium. Typically, the senate is referred to as the upper house and has a smaller membership than the lower house. In some federal states senates also exist at the subnational level. In the United States all states other than Nebraska have a state senate. In Australia all states other than Queensland have an upper house known as a legislative council. Several Canadian provinces also once had legislative councils, but these have all been abolished, the last being Quebec\u0027s Legislative Council, in 1968. [PARAGRAPH:2]Senate membership can be determined either through elections or appointments. For example, elections are held every three years for half the membership of the Australian Senate, the term of a senator being six years. In contrast, members of the Canadian Senate are appointed by the Governor General upon the recommendation of the Prime Minister of Canada, holding the office until they resign, are removed, or retire at the mandatory age of 75. In larger countries, the senate often serves a balancing effect by giving a larger share of power to regions or groups which would otherwise be overwhelmed under strictly popular apportionment.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7426,7 +6614,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7434,12 +6621,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "An oligarchic body of leaders makes and enforces the law. This prevents too much power from being concentrated in one person.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -7448,7 +6629,6 @@
   },
   {
     "aiWeight": 10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7468,7 +6648,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7521,7 +6700,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7547,12 +6725,9 @@
     "name": "Shadow War",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Following World War II, the Communist nations of the Soviet Union and its satellite states and the democratic nations of the United States and Europe engaged in a conflict known as the Cold War. Nuclear weaponry made outright \u0022hot\u0022 warfare impossible without extreme consequences, so the various nations turned to proxy wars, psychological warfare, propaganda, and espionage in attempts to bolster their place ont he world stage.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7562,7 +6737,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7570,12 +6744,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "You fight wars with propaganda and espionage rather than outright combat.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7586,7 +6754,6 @@
   },
   {
     "aiWeight": -5,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7606,7 +6773,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7635,7 +6801,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7661,12 +6826,9 @@
     "name": "Single Party",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A \u0022single-party state\u0022 is a state where only one political party has any real political power. Other parties may be outlawed or reduced to a subordinate role. Single-party states generally result from either totalitarian ideologies (such as the Fascist Party and Nazi Party), Marxism-Leninism (where the party is the instrument of systematic change), or decolonialism (where the party arose from the struggle for independence). ",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7676,7 +6838,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7684,12 +6845,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A single political party holds the power in your civilization. This party promotes unity at the cost of freedom.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7702,7 +6857,6 @@
   },
   {
     "aiWeight": -60,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7722,7 +6876,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7745,7 +6898,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7792,12 +6944,9 @@
     "name": "Slavery",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tSlavery is a system whereby some people are judged far inferior to others and are treated as objects or possessions, with no more rights than those afforded to chairs or cattle. Slavery has existed as long as human history, from the earliest primitive times to the enlightened days of Greece and Rome and right up until today. Sometimes convicted criminals were made into slaves. Sometimes captured enemies of the state were enslaved. Sometimes people of a specific race or coloration were enslaved. In some civilizations a person could purchase their freedom or were allotted it after being enslaved for a specific period of time. [PARAGRAPH:2]The advantage of slavery is that it allows people to be forced to do jobs that they would otherwise refuse to do without adequate compensation. Cheap labor results in concentration of wealth and thus the creation of great buildings and temples or the maintenance of large professional armies. Aside from its basic moral repugnance, the disadvantages of slavery are numerous: it corrupts both slave and master, it badly underutilizes the intelligence and creativity of the subject people, and it almost inevitably leads to revolts and internal strife. ",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7807,7 +6956,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7815,12 +6963,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "An economic system where a class of people provide all of the labor, free of charge. The advantage is the cost-efficiencies. The disadvantage is that the people chosen as slaves often disapprove of forced labor, and would sooner die than work.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7835,7 +6977,6 @@
   },
   {
     "aiWeight": -10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7858,7 +6999,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -7887,7 +7027,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -7913,12 +7052,9 @@
     "name": "Socialized",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Socialized represents the government giving free universal healthcare and free universal college educations to all citizens. Socialized welfare makes the bulk of society very happy (except the top 5%) and very healthy, but removes many industries from the market, and the ridiculous tax rate harms commerce dramatically.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -7928,7 +7064,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -7936,12 +7071,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Socialized healthcare is where the government pays for all the costs of medical expenses for all citizens.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -7954,7 +7083,6 @@
   },
   {
     "aiWeight": 25,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -7974,7 +7102,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 25,
     "effects": [
       {
@@ -7996,7 +7123,6 @@
     },
     "fractionalXPEarnedInCity": 5,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8022,12 +7148,9 @@
     "name": "Standing Army",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Standing Armies are large armies that remain always active for military service, regardless of the current diplomatic situation. Standing armies are useful when responding to quickly changing threats, but come at a high cost to the owner.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8037,7 +7160,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8045,12 +7167,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A standing army is where the state pays for the continued existence of an large army, even during peacetime. Historically rare, but it provides extra training to troops, at the expense of upkeep.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8064,7 +7180,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8084,7 +7199,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8107,7 +7221,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8133,12 +7246,9 @@
     "name": "State Church",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_religion",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "State Church represents a religion run by a church that is owned and operated by the government. In a theocracy, the clergy have power over the state, but in a state church the state has power over the clergy. Similarly to Free Church, the church is powerful and has influence on the civilization. However, commerce and trade increases in the capital city rather than the holy city due to the state\u0092s centralization of religion.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8148,7 +7258,6 @@
         }
       ]
     },
-    "requiresStateReligion": true,
     "specialBuildingNotRequireds": {
       "cities:specialbuilding_monastery": true
     },
@@ -8158,12 +7267,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 15,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A State Church is a organized religion that the state actively coordinates with and controls. State Churches may have some autonomy, but are more often puppets for the governments more earthly goals.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8179,7 +7282,6 @@
   },
   {
     "aiWeight": 5,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8203,7 +7305,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8232,7 +7333,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8258,12 +7358,9 @@
     "name": "Subsidized",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tSubsidized represents the government putting in place a progressive income tax where the rich pay higher taxes and the revenue is used to subsidize low income housing, food stamps, ETC. Also included is free public education for elementary, junior high, and high school for children, which puts more people into the fields of science and business.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8273,7 +7370,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8281,12 +7377,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Subsidized healthcare is where healthcare is paid for in part or in whole by the government. An expensive solution to a grave problem.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8298,7 +7388,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8318,7 +7407,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8353,7 +7441,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8379,12 +7466,9 @@
     "name": "Superhuman",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "The use of technologies to genetically engineered supermen, who are immune to disease, have perfect metabolisms, and have other qualities which would never arise naturally in humanity.  Those born outside of genetic engineering serve as an underclass, which does tasks below the class of supermen, but are still too expensive to take care of throw robotics.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8394,7 +7478,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8402,12 +7485,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A \u0027super\u0027 human society is one where humanity has technologically advanced to such a state that their biological bodies can evolve to a higher order being, one stronger, illness resistant, with more longevity.",
     "taxRateUnhappiness": 0,
     "unsupported": [],
@@ -8416,7 +7493,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8436,7 +7512,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -8446,7 +7521,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8472,14 +7546,10 @@
     "name": "Survival",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_welfare",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Survival represents welfare system where everyone cares only about his/her own family\u0027s survival. This behaviour often results in barbaric actions where people decide to seek out and plunder neighbour tribes.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8487,12 +7557,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Survival is the most basic system, where people perform the minimum to survive.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8503,7 +7567,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 2,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8523,7 +7586,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8558,7 +7620,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8584,12 +7645,9 @@
     "name": "Technocracy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Technocracy is a form of government in which engineers, scientists, and other technical experts are in control of decision making in their respective fields. Technocracy is a governmental or organizational system where decision makers are selected based upon how highly knowledgeable they are, rather than how much political capital they hold. Technocrats are individuals with technical training and occupations who perceive many important societal problems as being solvable, often while proposing technology-focused solutions.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8599,7 +7657,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8607,12 +7664,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A society where the power lies in the hands of the engineers and scientists, where knowledge is favored over political capability a person has. While efficient, it can ultimately prove to be too cold and indifferent to the ideas of the people.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8623,7 +7674,6 @@
   },
   {
     "aiWeight": -20,
-    "allowInquisitions": true,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8643,7 +7693,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [],
     "enslavementChance": 0,
@@ -8653,7 +7702,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8679,12 +7727,9 @@
     "name": "Theocracy",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": true,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tA theocracy is a form of government where priests or holy men are in charge of the government. The government is run to benefit the people, but, more importantly, in accord with the wishes of the almighty, as interpreted by the holy men and priests. According to the theory, it is the will of God that such men be in charge of running things, and political dissent is sinful and wrong-headed, if not outright heresy. [PARAGRAPH:2]In the modern world, theocracies tend to be backward-looking, seeking to return their country to some usually mythical past state of grace and away from the evil and corrupt modern world. Diplomacy tends to be extremely difficult for such countries, since countries who act against their interests are doing so at the urging of the devil, rather than because the other countries have their own points of view and objectives. How can a holy leader compromise with an imp of Satan?",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8719,7 +7764,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8727,12 +7771,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 25,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Power is in the hands of the priests of your state religion. This prevents the spread of other religions and allows inquisitions to purge the unfaithful.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8749,7 +7787,6 @@
   },
   {
     "aiWeight": -100,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8769,7 +7806,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8786,7 +7822,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8812,14 +7847,10 @@
     "name": "Tribal",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_society",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Tribal represents an agrarian society with a low population and a strong sense of community. Tribal societies have little desires except survival, so they are happy in areas with plentiful food and are not afraid of going to war. Tribal societies are generally the type of society that exists prior to the society becoming a civilization, so it is it is nearly impossible to maintain an empire.",
-    "religionSpreadRate": 0,
     "requirements": null,
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8827,12 +7858,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Tribalism is a society where people live in close-knit communities. It\u0027s primary advantage is that everyone knows everyone else. It\u0027s primary disadvantage is that everyone else knows you.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -8843,7 +7868,6 @@
   },
   {
     "aiWeight": -50,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8863,7 +7887,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -8880,7 +7903,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -8906,12 +7928,9 @@
     "name": "Tribute",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_economy",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\tTribute is the giving of wealth from one party to another as a sign of respect, submission, or alleigance. Tribute can be demanded from lesser states in an empire or an empire\u0027s own peoples. The gatherine of tribute in royal palaces could even turn into a \u0022palace economy\u0022, where virtually all economic activity flowed through the government. The wealth gathered by tribute then is used at the leader\u0027s disposal.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -8921,7 +7940,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -8929,12 +7947,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Your economy is driven by the tribute you extract from your people and neighbors. This boosts production but causes unhappiness.",
     "taxRateUnhappiness": 5,
     "unsupported": [
@@ -8945,7 +7957,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -8965,7 +7976,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": -25,
     "effects": [
       {
@@ -8996,7 +8006,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -9022,12 +8031,9 @@
     "name": "Unmanned Warfare",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Unmanned Warfare is the culmination of weapon science and pacifism. It allows the military to control operations remotely, without the potential loss of life, or at least, friendly life. ",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -9037,7 +8043,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -9045,12 +8050,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Unmanned warfare is the use of network attacks, AI systems, and unmanned vehicles to attack the enemy, while preventing counterattacks from causing causalities on your side.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -9063,7 +8062,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -9083,7 +8081,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -9118,7 +8115,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -9144,12 +8140,9 @@
     "name": "Virtual",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "\u0022Virtual democracy\u0022 couples advanced computer technology and egalitarian ideas to put power directly into the hands of the people. Citizens are able to propose and vote on laws without having to rely on elected officials. This produces a government directly responsive to the needs of its citizens, but also is vulnerable to demagoguery.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -9177,7 +8170,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -9185,12 +8177,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Power is in the hands of the people who use computer technology to vote directly on laws.",
     "taxRateUnhappiness": 5,
     "unsupported": [
@@ -9205,7 +8191,6 @@
   },
   {
     "aiWeight": 75,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -9225,7 +8210,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -9262,7 +8246,6 @@
     },
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -9288,12 +8271,9 @@
     "name": "Volunteer Army",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "Volunteer armies are based completely off of volunteers. This has many advantages to the older conscription style armies, as volunteers are much more likely to be skilled and want to serve in the military, greatly improving morale. The largest downside is that during prolonged conflicts, volunteers may become scarce and the army size may dwindle.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -9303,7 +8283,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -9311,12 +8290,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Volunteer armies are comprised of individuals who are both willing and able to serve in the armed services. ",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -9328,7 +8301,6 @@
   },
   {
     "aiWeight": -10,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -9348,7 +8320,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -9371,7 +8342,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -9397,12 +8367,9 @@
     "name": "Warlords",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_power",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A warlord is a person able to exercise power by being able to mobilize troops loyal to the warlord alone rather than to the state. Until the emergence of the modern state, warlords were common in various situations, especially in China. Warlords can either use their power to bargain with the state or act independently as a rebel.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -9412,7 +8379,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -9420,12 +8386,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "Power is in the hands of warlords that must be kept happy or their soldiers will wreak havoc.",
     "taxRateUnhappiness": 0,
     "unsupported": [
@@ -9440,7 +8400,6 @@
   },
   {
     "aiWeight": 0,
-    "allowInquisitions": false,
     "anarchyLength": 1,
     "baseFreeMilitaryUnits": 0,
     "baseFreeUnits": 0,
@@ -9460,7 +8419,6 @@
     },
     "cityLimit": 0,
     "civicPercentAnger": 0,
-    "disallowInquisitions": false,
     "distantUnitSupportCostModifier": 0,
     "effects": [
       {
@@ -9501,7 +8459,6 @@
     "flavors": {},
     "fractionalXPEarnedInCity": 0,
     "freeMilitaryUnitsPopulationPercent": 0,
-    "freeReligion": false,
     "freeUnitsPopulationPercent": 0,
     "goldPerMilitaryUnit": 0,
     "goldPerUnit": 0,
@@ -9527,12 +8484,9 @@
     "name": "Warrior Caste",
     "noCapitalUnhappiness": false,
     "noLandmarkAnger": false,
-    "noNonStateReligionSpread": false,
-    "nonStateReligionHappiness": 0,
     "option": "government:civicoption_military",
     "otherAreaMaintenanceModifier": 0,
     "pedia": "A warrior caste system dedicates a segment of the population to the art of war and combat, at the expense of reduced productivity from the lost manpower.",
-    "religionSpreadRate": 0,
     "requirements": {
       "all": [
         {
@@ -9542,7 +8496,6 @@
         }
       ]
     },
-    "requiresStateReligion": false,
     "specialBuildingNotRequireds": {},
     "specialistExtraCommerces": {
       "culture": 0,
@@ -9550,12 +8503,6 @@
       "gold": 0,
       "research": 0
     },
-    "stateReligionBuildingProductionModifier": 0,
-    "stateReligionFreeExperience": 0,
-    "stateReligionGreatPeopleRateModifier": 0,
-    "stateReligionHappiness": 0,
-    "stateReligionHealth": 0,
-    "stateReligionUnitProductionModifier": 0,
     "strategy": "A warrior caste system dedicates a segment of the population to the art of war and combat, at the expense of reduced productivity from the lost manpower.",
     "taxRateUnhappiness": 0,
     "unsupported": [

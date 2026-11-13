@@ -1,9 +1,9 @@
 {
   "id": "revolution",
   "name": "Revolution",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "assembly": "Ariel.Mods.Revolution.dll",
   "api": "Ariel.Mods.Revolution.Api.dll",
   "dependencies": ["cities", "foundation", "government", "military"],
-  "references": ["great_people", "peoples", "religion", "research", "world"]
+  "references": ["great_people", "peoples", "research", "world"]
 }

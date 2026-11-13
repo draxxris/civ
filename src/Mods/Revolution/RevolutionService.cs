@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Mods.GreatPeople;
+using Ariel.Mods.Religion;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Revolution;
@@ -86,12 +87,13 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
 
     private static void AddReligion(Simulation sim, City city, RevolutionRulesDef rules, Action<string, long> add)
     {
-        var religions = sim.Rules().Religion;
+        var religions = sim.Service<IReligionService>();
         if (religions?.StateReligion(sim, city.Owner) is not { } stateReligion) return;
         var present = religions.Present(sim, city.Id);
         // One civic pass serves both the intolerance multiplier and the rest of the ledger.
         var civics = Civics(sim, city.Owner).ToArray();
-        int intolerance = civics.Count(c => c.NoNonStateReligionSpread || c.AllowInquisitions);
+        int intolerance = civics.Count(c => sim.Content.Attachment<CivicReligionDef>(c.Id) is { } faith
+            && (faith.NoNonStateReligionSpread || faith.AllowInquisitions));
         long nonState = present.Count(r => r != stateReligion) * (long)rules.NonStateReligionFactor;
         add("revolution:non_state_religion", nonState * (100 + intolerance * rules.IntolerancePercent) / 100);
         if (present.Contains(stateReligion)) add("revolution:state_religion", rules.StateReligionFactor);

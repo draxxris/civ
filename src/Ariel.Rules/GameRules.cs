@@ -87,8 +87,6 @@ public sealed class GameRules : IRuleset
     public IGovernmentService Government { get; private set; } = null!;
     /// <summary>Civilizations, leaders and traits.</summary>
     public IPeoplesService Peoples { get; private set; } = null!;
-    /// <summary>Religions, spread and state religion.</summary>
-    public IReligionService Religion { get; private set; } = null!;
     /// <summary>Contact, war and peace, border passage and what players remember of each other.</summary>
     public IRelationsService Relations { get; private set; } = null!;
 
@@ -103,6 +101,8 @@ public sealed class GameRules : IRuleset
     public IPlayerExchanges? Exchanges { get; private set; }
     /// <summary>Corporations in a city, answered by the mod that runs corporations, or null without one.</summary>
     public ICityCorporations? CityCorporations { get; private set; }
+    /// <summary>Religion in cities and what it allows, answered by the mod that runs religion, or null without one.</summary>
+    public ICityReligions? CityReligions { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
     public IEspionageSpending? EspionageSpending { get; private set; }
@@ -177,12 +177,12 @@ public sealed class GameRules : IRuleset
         Barbarians = services.Get<IBarbarianFaction>().Single();
         Government = services.Get<IGovernmentService>().Single();
         Peoples = services.Get<IPeoplesService>().Single();
-        Religion = services.Get<IReligionService>().Single();
         Relations = services.Get<IRelationsService>().Single();
         TeamAgreements = services.Get<ITeamAgreements>().SingleOrDefault();
         Dispositions = services.Get<IDispositions>().SingleOrDefault();
         Exchanges = services.Get<IPlayerExchanges>().SingleOrDefault();
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
+        CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();

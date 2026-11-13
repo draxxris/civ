@@ -138,15 +138,11 @@ internal sealed class RelationsService : IRelationsService
         }
     }
 
-    /// <summary>The player it was captured from remembers a razed city; followers of a religion remember its holy city.</summary>
+    /// <summary>The player it was captured from remembers a razed city.</summary>
     internal static void RememberRaze(Simulation sim, CityRazed razed)
     {
-        var relations = sim.Rules().Relations;
         if (razed.CapturedFrom is { } victim && sim.State.Players.Any(p => p.Id == victim))
-            relations.Remember(sim, victim, razed.Player, BaseMemories.RazedCity);
-        foreach (string religion in razed.HolyCityOf ?? [])
-            foreach (var player in sim.State.Players.OrderBy(p => p.Id).Where(p => sim.Rules().Religion.StateReligion(sim, p.Id) == religion))
-                relations.Remember(sim, player.Id, razed.Player, BaseMemories.RazedHolyCity);
+            sim.Rules().Relations.Remember(sim, victim, razed.Player, BaseMemories.RazedCity);
     }
 
     public void Remember(Simulation sim, int fromPlayer, int towardPlayer, string kind)

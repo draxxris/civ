@@ -151,10 +151,6 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (army.Soldiers + _soldiersQueued < army.Want(Views) && v.Production >= 2) options.AddRange(ArmyOptions(v));
         options.AddRange(StrategicOptions(v));
         options.AddRange(Wished(v));
-        if (InquisitorWanted())
-            foreach (var unit in Options.Units.Where(u => u.Inquisitor))
-                if (ctx.CanProduce(v.City.Id, "cities:unit", unit.Id))
-                    options.Add(("cities:unit", unit.Id, 500 + 1000L / Math.Max(1, unit.Cost)));
         return options.OrderByDescending(o => o.Score).ThenBy(o => o.Id, StringComparer.Ordinal).Select(o => (o.Kind, o.Id));
     }
 
@@ -207,15 +203,6 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
         if (!ctx.Grid.Tiles.Any(t => targets.Water(t) && !ctx.Sim.State.Plots[t.Value].Revealed.Contains(ctx.Team.Id))) yield break;
         if (Options.Best(view.City, UnitRole.NavalExplorer, u => u.Moves * 20 + u.Strength) is { } explorer)
             yield return ("cities:unit", explorer.Id, 170);
-    }
-
-    private bool InquisitorWanted()
-    {
-        var religion = ctx.Sim.Rules().Religion;
-        if (religion is null || !religion.IsInquisitionEnabled(ctx.Sim, ctx.PlayerId)) return false;
-        if (ctx.Units.Any(u => ctx.Alive(u) && u.Health > 0 && ctx.Def(u).Inquisitor)) return false;
-        if (ctx.Cities.SelectMany(c => c.ProductionQueue).Any(o => o.Kind == "cities:unit" && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Inquisitor)) return false;
-        return ctx.Cities.Any(c => religion.HasInquisitionTargets(ctx.Sim, c.Id));
     }
 
     private IEnumerable<(string, string, long)> ArmyOptions(CityView v)

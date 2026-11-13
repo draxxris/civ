@@ -192,7 +192,6 @@ internal sealed partial class CityUi : Control
             conquest = _session.DescribePendingConquests().FirstOrDefault(item => item.CityId == c.Id);
             key.Append('|').Append(conquest?.CanRaze);
         }
-        foreach (var r in c.Religions) key.Append('|').Append(r.Id).Append('~').Append(r.Name).Append('~').Append(r.Holy).Append('~').Append(r.State);
         string identity = key.ToString();
         if (identity == _shownStatusKey) return;
         _shownStatusKey = identity;
@@ -205,7 +204,6 @@ internal sealed partial class CityUi : Control
             _statusBox.AddChild(Ui.Button("Annex City", () => WithCity(c.Id, city => _session.AnnexCity(city))));
         }
         if (c.PendingConquestChoice) AddConquestChoices(_statusBox, c, conquest);
-        AddReligions(_statusBox, c);
         _statusBox.Visible = _statusBox.GetChildCount() > 0;
     }
 
@@ -285,15 +283,4 @@ internal sealed partial class CityUi : Control
         foreach (var row in rows) _ledgers[slot].AddChild(Ui.Text(row.Text, 13, row.Amount < 0 ? Ui.Bad : Ui.Dim));
     }
 
-    private void AddReligions(VBoxContainer box, CityScreen c)
-    {
-        if (c.Religions.Count == 0) return;
-        var row = Ui.HBox(6);
-        foreach (var r in c.Religions)
-        {
-            row.AddChild(Ui.Icon(_icons.TextureOf(r.Id), 24));
-            row.AddChild(Ui.Text(r.Name + (r.Holy ? " ★ holy city" : "") + (r.State ? " (state)" : ""), 13, r.Holy ? Ui.Accent : Ui.Dim, wrap: false));
-        }
-        box.AddChild(row);
-    }
 }

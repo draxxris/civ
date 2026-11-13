@@ -5,6 +5,7 @@ using Ariel.Game;
 using Ariel.Mods.GreatPeople;
 using Xunit;
 using Xunit.Abstractions;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 

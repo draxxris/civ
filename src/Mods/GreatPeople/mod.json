@@ -1,9 +1,9 @@
 {
   "id": "great_people",
   "name": "Great People",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "assembly": "Ariel.Mods.GreatPeople.dll",
   "api": "Ariel.Mods.GreatPeople.Api.dll",
   "dependencies": ["cities"],
-  "references": ["cities", "foundation", "government", "military", "peoples", "religion", "research", "world"]
+  "references": ["cities", "foundation", "government", "military", "peoples", "research", "world"]
 }

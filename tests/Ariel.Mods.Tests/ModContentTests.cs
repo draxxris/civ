@@ -4,6 +4,7 @@ using Ariel.Content;
 using Ariel.Modding;
 using Xunit;
 using Schema = Ariel.Content.Schema;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 
@@ -84,7 +85,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Contains(clauses, r => r is Requirement.All a && a.Items.Contains(new Requirement.Leaf("tech", "research:free_artistry")));
         Assert.Contains(clauses, r => r is Requirement.Any a && a.Items.Contains(new Requirement.Leaf("tech", "research:social_contract")));
         Assert.Equal(90, db.Get<Schema.TechDef>("research:bronze_working").Cost);
-        var religion = db.Get<Schema.ReligionDef>("religion:buddhism");
+        var religion = db.Get<ReligionDef>("religion:buddhism");
         Assert.Equal("research:meditation", religion.FoundingTech);
         Assert.Equal("military:buddhist_missionary", religion.Missionary);
         Assert.Equal(35, religion.SpreadFactor);

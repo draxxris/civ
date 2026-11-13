@@ -5,7 +5,7 @@ namespace Ariel.Mods.Tests;
 
 /// <summary>Headless full-ruleset harness, including GreatPeople and Trade from LoadedMods' payload discovery.
 /// Frozen content is shared; state and RNG are never shared.</summary>
-public static class GameFactory
+public static partial class GameFactory
 {
     public static Simulation Create(ContentDb content, ulong seed = 1, params string[] leaders) =>
         new(content, Settings(seed, leaders));
@@ -36,18 +36,6 @@ public static class GameFactory
         PlayerAis = Enumerable.Repeat<string?>("ai:standard", players).ToArray(),
     });
 
-    /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
-    /// <summary>The world wonder whose completion founds the religion.</summary>
-    public static string FoundingWonder(Simulation sim, string religion) =>
-        sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All.Single(b => b.FoundsReligion == religion).Id;
-
-    /// <summary>Complete a religion's founding wonder in a city, as finished production does.</summary>
-    public static void FoundReligion(Simulation sim, City city, string religion)
-    {
-        string wonder = FoundingWonder(sim, religion);
-        city.Buildings.Add(wonder);
-        sim.Events.Publish(new BuildingCompleted(city.Id, wonder));
-    }
     /// <summary>Make an existing player the game's one barbarian player, as if the faction had appeared as them.</summary>
     public static void MakeBarbarian(Simulation sim, int player)
     {
@@ -55,6 +43,7 @@ public static class GameFactory
         if (state is null) { state = new(); sim.State.Extensions.Set(sim.Content, state); }
         state.SetBarbarianPlayer(player);
     }
+    /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
     public static void NeutralPolitics(Simulation sim)
     {
         sim.State.Players = sim.State.Players.Select(p => new Player

@@ -75,7 +75,6 @@ public sealed partial class GameSession
 
     private string CityName(int id) => Sim.State.FindCity(id)?.Name ?? "a city";
     private bool Mine(int city) => Sim.State.FindCity(city)?.Owner == LocalPlayer;
-    private string ReligionName(string id) => Sim.Content.TryGet<Schema.ReligionDef>(id, out var r) ? r.Name : Labels.Humanize(id);
     private static TurnNotification Note(int turn, string kind, string text, int? city = null, Hex? at = null, Tone tone = Tone.Normal) =>
         new(turn, kind, text, city, at, tone);
 
@@ -95,15 +94,6 @@ public sealed partial class GameSession
                 _myUnits.Add(u.Unit); // Later events in this batch, such as a fight on the same roll, belong to this unit.
                 return Note(turn, "unit", $"New {(Sim.Content.TryGet<Schema.UnitDef>(u.Type, out var unit) ? unit.Name : u.Type)}", null, u.Position);
             case CombatResolved c: return Combat(c, turn);
-            case ReligionFounded r:
-                return Note(turn, "religion", $"{ReligionName(r.Religion)} was founded in {CityName(r.City)}", r.City);
-            case ReligionSpread s when Mine(s.City):
-                return Note(turn, "religion", $"{ReligionName(s.Religion)} spread to {CityName(s.City)}", s.City);
-            case StateReligionChanged s:
-                return Note(turn, "religion", s.Religion == null ? $"{PlayerName(s.Player)} no longer has a state religion"
-                    : $"{PlayerName(s.Player)} adopted {ReligionName(s.Religion)}");
-            case MissionResolved { Mission: ReligionMissions.Spread } m when _myUnits.Contains(m.Unit) || Mine(m.City):
-                return Note(turn, "religion", $"Missionary {(m.Success ? "spread" : "failed to spread")} {ReligionName(m.Subject)} in {CityName(m.City)}", m.City);
             case CityCaptured c when c.Player == LocalPlayer || c.PreviousOwner == LocalPlayer:
                 return Note(turn, "city", c.Player == LocalPlayer ? $"Captured {CityName(c.City)}" : $"{CityName(c.City)} was captured", c.City);
             case CityRazed c when c.Player == LocalPlayer:

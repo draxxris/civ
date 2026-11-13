@@ -1,9 +1,8 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using BuildingDef = Ariel.Content.Schema.BuildingDef;
 
-namespace Ariel.Rules.Religion;
+namespace Ariel.Mods.Religion;
 
 internal sealed partial class ReligionService : IReligionService
 {
@@ -14,32 +13,6 @@ internal sealed partial class ReligionService : IReligionService
     public IReadOnlyList<ReligionDef> Choices(Simulation sim, int player) => sim.Content.Get<ReligionDef>().All
         .Where(r => sim.State.Cities.Any(c => c.Owner == player && ReligionData.Has(sim, c, r.Id)))
         .OrderBy(r => r.Id, StringComparer.Ordinal).ToArray();
-    public string? EvaluateCondition(Requirement.Leaf leaf, RequirementContext context)
-    {
-        bool success = leaf.Id switch
-        {
-            "foundation:any_religion" => context.City is { } c && Present(context.Sim, c.Id).Count > 0,
-            "foundation:state_religion" => context.City is { } c && StateReligion(context.Sim, context.Player) is { } r && ReligionData.Has(context.Sim, c, r),
-            _ => false
-        };
-        return success ? null : "Required religion condition: " + leaf.Id;
-    }
-    public string? ValidateBuilding(Simulation sim, City city, BuildingDef building)
-    {
-        if (building.FoundsReligion is { } founds)
-        {
-            if (PlayerRules.IsBarbarian(sim, city.Owner)) return "Barbarians cannot found a religion";
-            if (ReligionData.Game(sim).Founded.ContainsKey(founds)) return "Religion is already founded";
-        }
-        if (building.FreeFromStateReligion) return null;
-        var state = StateReligion(sim, city.Owner);
-        // A building that requires a state religion cannot be built without one, even when it names no religion.
-        if (state is null) return building.RequiresStateReligion ? "Requires an active state religion" : null;
-        if (ReligionData.Civics(sim, city.Owner).Any(c => c.FreeReligion)) return null;
-        var required = ContentReferences.Leaves(building.Requirements ?? new Requirement.All([]))
-            .FirstOrDefault(l => l.Kind == "religion" && l.Param is null);
-        return required is null || required.Id == state ? null : "Requires matching state religion: " + required.Id;
-    }
     public string? ValidateConversion(Simulation sim, int player, string? religion)
     {
         var owner = sim.State.Players.FirstOrDefault(p => p.Id == player);
@@ -47,7 +20,7 @@ internal sealed partial class ReligionService : IReligionService
         if (GovernmentStatus.IsAnarchy(sim, player)) return "Player is in anarchy";
         var current = ReligionData.Player(sim, player);
         if (current.ConversionTimer > 0) return "Religion conversion cooldown is active";
-        if (!ReligionData.Civics(sim, player).Any(c => c.RequiresStateReligion)) return "Civics do not enable state religion";
+        if (!ReligionData.Civics(sim, player).Any(c => c.Rules.RequiresStateReligion)) return "Civics do not enable state religion";
         if (current.LastStateReligion == religion) return "No state religion change";
         if (religion is not null && !Choices(sim, player).Any(r => r.Id == religion)) return "Religion is not present in your cities";
         return null;
@@ -90,21 +63,5 @@ internal sealed partial class ReligionService : IReligionService
         if (government is null) { government = new(); owner.Extensions.Set(sim.Content, government); }
         government.AnarchyTurns += preview.AnarchyTurns;
         sim.Events.Publish(new StateReligionChanged(player, religion));
-    }
-}
-internal sealed class ReligionRequirements(IReligionService service) : IContentRequirementEvaluator
-{
-    public string Kind => "religion";
-    public Type DefinitionType => typeof(ReligionDef);
-    public string? Evaluate(Requirement.Leaf leaf, RequirementContext context)
-    {
-        bool success = leaf.Param switch
-        {
-            1 => service.StateReligion(context.Sim, context.Player) == leaf.Id,
-            2 => context.City is { } c && service.HolyCity(context.Sim, leaf.Id) == c.Id,
-            null or 0 => context.City is { } c && service.Present(context.Sim, c.Id).Contains(leaf.Id, StringComparer.Ordinal),
-            _ => false
-        };
-        return success ? null : "Required religion: " + leaf.Id;
     }
 }

@@ -5,6 +5,7 @@ using Ariel.Modding;
 using Ariel.Mods.GreatPeople;
 using Xunit;
 using S = Ariel.Content.Schema;
+using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Tests;
 
@@ -37,7 +38,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     /// <summary>Discover the founding tech, then complete the founding wonder in player 0's first city.</summary>
     private static void Found(Simulation sim, string religion = Buddhism)
     {
-        var tech = sim.Content.Get<S.ReligionDef>(religion).FoundingTech!;
+        var tech = sim.Content.Get<ReligionDef>(religion).FoundingTech!;
         sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Where(t => t.Id != tech).Select(t => t.Id));
         sim.TeamOf(0).Techs.Remove(tech);
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = tech }, out var error), error);
@@ -46,23 +47,27 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         GameFactory.FoundReligion(sim, sim.State.Cities.First(c => c.Owner == 0), religion);
     }
 
+    private const string ReligionScreen = "religion:screen";
+
+    private static IReadOnlyList<ViewElement> CityStatus(GameSession s, City city) => s.DescribeCity(city)!.Panels.Status;
+
     [Fact]
     public void Religion_screen_lists_every_religion_and_marks_the_holy_city()
     {
         var s = Scenario();
-        var screen = s.DescribeReligions();
-        Assert.Equal(s.Sim.Content.Get<S.ReligionDef>().All.Count(), screen.Religions.Count);
-        Assert.All(screen.Religions, r => Assert.False(r.Founded));
-        Assert.Null(screen.StateReligion);
+        Assert.True(ScreenProbe.Registered(s, ReligionScreen));
+        var body = ScreenProbe.Body(s, ReligionScreen);
+        var rows = ViewWalk.All(body).OfType<ListItem>().ToList();
+        Assert.Equal(s.Sim.Content.Get<ReligionDef>().All.Count(), rows.Count);
+        Assert.All(rows, r => Assert.StartsWith("not founded", r.Detail));
+        Assert.StartsWith("State religion - none", ScreenProbe.Paragraph(body, "summary"));
         var city = AddCity(s.Sim, 0);
         Found(s.Sim);
-        var row = s.DescribeReligions().Religions.Single(r => r.Id == Buddhism);
-        Assert.True(row.Founded);
-        Assert.Equal(city.Id, row.HolyCityId);
-        Assert.Equal(city.Name, row.HolyCityName);
-        var present = s.ReligionsIn(city).Single();
-        Assert.True(present.Holy);
-        Assert.Contains("*", s.ReligionBadge(city));
+        var row = ViewWalk.Find<ListItem>(ScreenProbe.Body(s, ReligionScreen), Buddhism)!;
+        Assert.Equal($"holy city {city.Name}", row.Detail);
+        var present = Assert.IsType<Paragraph>(Assert.Single(ViewWalk.All(CityStatus(s, city)), e => e.Id == Buddhism));
+        Assert.Contains("holy city", present.Text);
+        Assert.Contains("*", s.CityTags(city));
     }
 
     [Fact]
@@ -71,17 +76,16 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var s = Scenario();
         AddCity(s.Sim, 0);
         Found(s.Sim);
-        var before = s.DescribeReligions();
-        Assert.False(before.Religions.Single(r => r.Id == Buddhism).CanAdopt); // no civic allows a state religion yet
-        Assert.False(s.AdoptStateReligion(Buddhism));
-        Assert.StartsWith("Can't do that", s.Message);
+        var adopt = ViewWalk.Find<ActionButton>(ScreenProbe.Body(s, ReligionScreen), "adopt:" + Buddhism)!;
+        Assert.False(adopt.Enabled); // no civic allows a state religion yet
+        Assert.NotNull(adopt.Disabled);
         s.Me.Civics["government:civicoption_religion"] = "government:state_church";
-        Assert.True(s.DescribeReligions().Religions.Single(r => r.Id == Buddhism).CanAdopt);
-        Assert.True(s.AdoptStateReligion(Buddhism), s.Message);
-        var after = s.DescribeReligions();
-        Assert.Equal(Buddhism, after.StateReligion);
-        Assert.True(after.Religions.Single(r => r.Id == Buddhism).IsState);
-        Assert.True(after.CooldownRemaining > 0);
+        Assert.True(ViewWalk.Find<ActionButton>(ScreenProbe.Body(s, ReligionScreen), "adopt:" + Buddhism)!.Enabled);
+        Assert.True(ScreenProbe.Press(s, ReligionScreen, "adopt:" + Buddhism), s.Message);
+        var after = ScreenProbe.Body(s, ReligionScreen);
+        Assert.StartsWith($"State religion - {s.Sim.Content.Get<ReligionDef>(Buddhism).Name}", ScreenProbe.Paragraph(after, "summary"));
+        Assert.EndsWith("(state religion)", ViewWalk.Find<ListItem>(after, Buddhism)!.Title);
+        Assert.DoesNotContain("Cooldown left: 0", ScreenProbe.Paragraph(after, "summary"));
         Assert.Contains(s.RecentNotifications(), n => n.Kind == "religion" && n.Text.Contains("adopted"));
     }
 
@@ -136,7 +140,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         AddCity(sim, 7, owner: 1);
 
         var screen = s.DescribeCity(city)!;
-        Assert.Contains(screen.Religions, religion => religion.Id == Buddhism);
+        Assert.Contains(ViewWalk.All(screen.Panels.Status), e => e.Id == Buddhism);
         // The great people and trade mods add their rows to the city screen through panels.
         var people = ViewWalk.Find<StatLine>(screen.Panels.Stats, "great_people")!;
         Assert.Matches(@"^12/[1-9]\d*  ·  \+[1-9]\d*/turn$", people.Value);

@@ -57,10 +57,9 @@ internal static class ProductionEligibility
         ResourceAccess.Count(sim, city.Owner, city.Id, bonus);
     private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
     {
-        var service = sim.Rules().Religion;
-        if (service is not null)
+        if (sim.Rules().CityReligions is { } religions)
         {
-            if (service.ValidateBuilding(sim, city, b) is { } error) Fail(failures, error);
+            if (religions.RefuseBuilding(sim, city, b) is { } error) Fail(failures, error);
             return;
         }
         if (b.RequiresReligion || b.RequiresStateReligion || b.ReligionType is not null) Fail(failures, "Religion state is unavailable");
@@ -69,8 +68,9 @@ internal static class ProductionEligibility
     {
         if (!sim.Content.TryGet<S.UnitDef>(id, out var unit)) { Fail(failures, "Unknown unit"); return; }
         Requirements(sim, city, unit, failures);
-        if (unit.Inquisitor && sim.Rules().Religion is { } religion && !religion.IsInquisitionEnabled(sim, city.Owner))
-            Fail(failures, "Civics and state religion do not allow inquisitions");
+        if (sim.Rules().CityReligions is { } religions) { if (religions.RefuseUnit(sim, city, unit) is { } refused) Fail(failures, refused); }
+        // Without a mod that runs religion an inquisitor has nothing to purge, as a religious building has no faith.
+        else if (unit.Inquisitor) Fail(failures, "Religion state is unavailable");
         if (unit.Cost < 0) Fail(failures, ProductionFailures.UnitCost);
         if (unit.ForceObsoleteTech is { } obsolete && sim.KnowsTech(city.Owner, obsolete)) Fail(failures, "Unit is obsolete");
         if (unit.Domain == "military:domain_sea" && !CityData.Coastal(sim, city)) Fail(failures, "Requires coast");
