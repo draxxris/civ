@@ -30,8 +30,10 @@ internal sealed partial class GameUi
     private string? _shownPediaTabsKey;
     private string? _shownPediaListKey;
     private string? _shownPediaArticleKey;
-    private ViewRenderer? _screenRenderer;
-    private VBoxContainer? _screenBody;
+    // A screen's pinned header, scrolling body and pinned footer each have their own renderer, so each keeps its
+    // widgets until what it draws changes.
+    private ViewRenderer? _screenRenderer, _screenHeaderRenderer, _screenFooterRenderer;
+    private VBoxContainer? _screenBody, _screenHeader, _screenFooter;
     private string? _shownScreenId;
 
     private void InitPanels()
@@ -194,25 +196,41 @@ internal sealed partial class GameUi
 
     // --- mod screens ------------------------------------------------------------------------------------
 
-    /// <summary>Builds the open screen's body once; later describes refresh it in place through the renderer, which
-    /// rebuilds only the widgets whose drawing changed.</summary>
+    /// <summary>Builds the open screen once: its pinned header, its body and its pinned footer. Later describes refresh
+    /// each in place through its renderer, which rebuilds only the widgets whose drawing changed.</summary>
     private void BuildScreen(VBoxContainer box)
     {
         _screenRenderer ??= new ViewRenderer(_icons, action => _session.Screens.Press(action));
-        _screenRenderer.Forget();
+        _screenHeaderRenderer ??= new ViewRenderer(_icons, action => _session.Screens.Press(action));
+        _screenFooterRenderer ??= new ViewRenderer(_icons, action => _session.Screens.Press(action));
+        _screenRenderer.Forget(); _screenHeaderRenderer.Forget(); _screenFooterRenderer.Forget();
+        _screenHeader = Ui.VBox(6);
         _screenBody = Ui.VBox(6);
+        _screenFooter = Ui.VBox(6);
         _shownScreenId = _session.Screens.OpenId;
         var view = _session.Screens.View!;
+        box.AddChild(_screenHeader);
         // A screen laid out in columns scrolls each column; anything else scrolls as one.
         if (view.Body.Any(e => e is Columns)) box.AddChild(_screenBody);
         else box.AddChild(Ui.Scroll(_screenBody, 420));
-        _screenRenderer.Show(_screenBody, view.Body);
+        box.AddChild(_screenFooter);
+        ShowScreen(view);
     }
 
     private void RefreshScreen()
     {
-        if (_session.Screens.View is not { } view || _screenBody is null || _screenRenderer is null) { CloseModal(); return; }
-        _screenRenderer.Show(_screenBody, view.Body);
+        if (_session.Screens.View is not { } view || _screenBody is null) { CloseModal(); return; }
+        ShowScreen(view);
+    }
+
+    private void ShowScreen(ScreenView view)
+    {
+        _screenHeaderRenderer!.Show(_screenHeader!, view.Header);
+        _screenRenderer!.Show(_screenBody!, view.Body);
+        _screenFooterRenderer!.Show(_screenFooter!, view.Footer);
+        // An empty region takes no room, so a screen without a header or footer looks as it did.
+        _screenHeader!.Visible = view.Header.Count > 0;
+        _screenFooter!.Visible = view.Footer.Count > 0;
     }
 
     // --- pedia ----------------------------------------------------------------------------------------------

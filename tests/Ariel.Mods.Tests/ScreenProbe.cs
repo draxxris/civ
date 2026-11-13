@@ -15,8 +15,12 @@ internal static class ScreenProbe
     public static ScreenButton? Button(GameSession session, string id) =>
         session.Screens.Entries().FirstOrDefault(e => e.Id == id)?.Button;
 
+    /// <summary>Every top-level element of the screen in document order: pinned header, body and pinned footer.</summary>
     public static IReadOnlyList<ViewElement> Body(GameSession session, string id) =>
-        session.Screens.Screens.Single(s => s.Id == id).Describe(session.Screens.ContextFor(id)).Body;
+        View(session, id).Elements.ToList();
+
+    public static ScreenView View(GameSession session, string id) =>
+        session.Screens.Screens.Single(s => s.Id == id).Describe(session.Screens.ContextFor(id));
 
     public static string Text(GameSession session, string id) => ViewWalk.Text(Body(session, id));
 

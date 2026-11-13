@@ -73,6 +73,18 @@ public static class ViewWalk
         }
     }
 
+    /// <summary>Every element of a screen, header, body and footer, depth first.</summary>
+    public static IEnumerable<ViewElement> All(ScreenView view) => All(view.Elements);
+
+    /// <summary>The first element of type <typeparamref name="T"/> with this id anywhere on the screen, or null.</summary>
+    public static T? Find<T>(ScreenView view, string id) where T : ViewElement => Find<T>(view.Elements, id);
+
+    /// <summary>What the control with this id anywhere on the screen does, or null.</summary>
+    public static ScreenAction? ActionOf(ScreenView view, string id) => ActionOf(view.Elements, id);
+
+    /// <summary>Every piece of text the screen shows, header and footer included.</summary>
+    public static string Text(ScreenView view) => Text(view.Elements);
+
     /// <summary>The first element of type <typeparamref name="T"/> with this id under the roots, or null.</summary>
     public static T? Find<T>(IEnumerable<ViewElement> roots, string id) where T : ViewElement =>
         All(roots).OfType<T>().FirstOrDefault(e => e.Id == id);

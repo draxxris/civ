@@ -503,7 +503,7 @@ public partial class Main : Node3D
     private void PressInScreen(string id)
     {
         var screens = _game!.Session.Screens;
-        var action = screens.View is { } view ? ViewWalk.ActionOf(view.Body, id) : null;
+        var action = screens.View is { } view ? ViewWalk.ActionOf(view, id) : null;
         if (action is null || !screens.Press(action)) GD.PrintErr($"--press {id}: nothing to press with that id in {screens.OpenId ?? "no open screen"}");
     }
 

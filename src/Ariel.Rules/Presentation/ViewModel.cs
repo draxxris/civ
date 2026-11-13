@@ -113,5 +113,15 @@ public sealed record Columns(string Id, IReadOnlyList<Column> Items) : ViewEleme
 
 public sealed record Column(int Weight, IReadOnlyList<ViewElement> Items);
 
-/// <summary>A whole described screen: its title and body, and how wide it wants to be in skin units.</summary>
-public sealed record ScreenView(string Title, IReadOnlyList<ViewElement> Body, int Width = 720);
+/// <summary>A whole described screen: its title and body, and how wide it wants to be in skin units. The body scrolls
+/// when it is taller than the screen; the optional <see cref="Header"/> and <see cref="Footer"/> stay in place above
+/// and below it, so a summary line or a screen-wide control is always in view.</summary>
+public sealed record ScreenView(string Title, IReadOnlyList<ViewElement> Body, int Width = 720)
+{
+    /// <summary>Elements pinned above the scrolling body.</summary>
+    public IReadOnlyList<ViewElement> Header { get; init; } = [];
+    /// <summary>Elements pinned below the scrolling body.</summary>
+    public IReadOnlyList<ViewElement> Footer { get; init; } = [];
+    /// <summary>Header, body and footer in document order: the whole screen, as a walk over it sees it.</summary>
+    public IEnumerable<ViewElement> Elements => Header.Concat(Body).Concat(Footer);
+}

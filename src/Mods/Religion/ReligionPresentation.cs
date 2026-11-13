@@ -26,7 +26,7 @@ internal sealed class ReligionScreen : IGameScreen
         var preview = service.PreviewConversion(sim, player);
         int remaining = context.Me.Extensions.Get<ReligionPlayerState>(sim.Content)?.ConversionTimer ?? 0;
         string stateName = state is null ? "none" : Labels.Name<ReligionDef>(sim.Content, state);
-        var body = new List<ViewElement>
+        var header = new List<ViewElement>
         {
             new Paragraph("summary", $"State religion - {stateName}   ·   Conversion: {preview.AnarchyTurns} anarchy turns, "
                 + $"{preview.CooldownTurns} cooldown   ·   Cooldown left: {remaining}", Tone.Accent, TextSize.Title),
@@ -47,10 +47,13 @@ internal sealed class ReligionScreen : IGameScreen
                     blocked, Labels.Plain(def.Help)),
             ]));
         }
-        body.Add(new Section("religions", null, rows));
         string? none = state is null ? "No state religion to drop" : service.ValidateConversion(sim, player, null);
-        body.Add(new ActionButton("none", "No state religion", new SubmitCommand(new SetStateReligionCommand { Player = player, Religion = null }), none));
-        return new("Religion", body);
+        // The summary and the way out of a state religion stay in view while the list of faiths scrolls.
+        return new("Religion", [new Section("religions", null, rows)])
+        {
+            Header = header,
+            Footer = [new ActionButton("none", "No state religion", new SubmitCommand(new SetStateReligionCommand { Player = player, Religion = null }), none)],
+        };
     }
 
     /// <summary>The wonder that founds a religion. Buildings name the faith by its identity.</summary>

@@ -1401,6 +1401,15 @@ scrolls). Tones are semantic (`Dim`, `Accent`, `Good`, `Bad`, `Warn`); the rende
 the colours. Text is plain; `Labels` (`Name`, `Player`, `Team`, `Source`, `Plain`,
 `Humanize`, `Signed`) gives every mod the same readable names.
 
+**Layout.** A `ScreenView` has a title, a width and a body, which scrolls when it is taller
+than the screen (a body of `Columns` scrolls per column instead). Its optional `Header` and
+`Footer` stay pinned above and below the body, for what must always be in view: the
+Religion screen pins its summary line above the faiths and its "No state religion" button
+below them. `ScreenView.Elements` lists header, body and footer in document order, and the
+`ViewWalk` overloads that take a `ScreenView` (`All`, `Find`, `ActionOf`, `Text`) walk the
+whole screen, so a host, a capture's `--press` or a test finds a pinned control like any
+other. The Godot client draws each region with its own renderer and hides an empty one.
+
 **Interaction.** A control carries a `ScreenAction`, one of two:
 
 - `SubmitCommand(command)` sends a game command, the mod's own or any other, through the

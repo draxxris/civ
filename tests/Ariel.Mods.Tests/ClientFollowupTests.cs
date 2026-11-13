@@ -71,6 +71,36 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
     }
 
     [Fact]
+    public void A_screen_pins_its_header_and_footer_and_a_walk_sees_the_whole_screen_in_order()
+    {
+        var press = new SubmitCommand(new SetUnitActivityCommand { Player = 0, Unit = 1, Activity = UnitActivity.Sleep });
+        var view = new ScreenView("Probe", [new Paragraph("middle", "Body")])
+        {
+            Header = [new Paragraph("top", "Header")],
+            Footer = [new ActionButton("bottom", "Footer", press)],
+        };
+        Assert.Equal(["top", "middle", "bottom"], view.Elements.Select(e => e.Id));
+        Assert.Same(press, ViewWalk.ActionOf(view, "bottom"));
+        Assert.Null(ViewWalk.ActionOf(view.Body, "bottom"));
+        Assert.Equal(["Header", "Body", "Footer"], ViewWalk.Text(view).Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        // A screen that sets neither is all body, as before.
+        Assert.Empty(new ScreenView("Plain", []).Header);
+        Assert.Empty(new ScreenView("Plain", []).Footer);
+    }
+
+    [Fact]
+    public void Religion_screen_pins_its_summary_above_the_faiths_and_the_drop_button_below()
+    {
+        var s = Scenario();
+        Assert.True(s.Screens.Open(ReligionScreen));
+        var view = s.Screens.View!;
+        Assert.Equal(["summary"], view.Header.Select(e => e.Id));
+        Assert.Equal(["none"], view.Footer.Select(e => e.Id));
+        Assert.Equal(["religions"], view.Body.Select(e => e.Id));
+        Assert.NotNull(ViewWalk.Find<ActionButton>(view, "none"));
+    }
+
+    [Fact]
     public void Adopting_a_state_religion_goes_through_the_rules_and_reports_cost()
     {
         var s = Scenario();
