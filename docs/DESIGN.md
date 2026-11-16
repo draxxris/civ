@@ -1389,7 +1389,8 @@ shows, it describes itself through the screen contract below.
 ## Mod screens
 
 A mod adds interface the way it adds rules: it registers services that describe what to
-show, and the client draws them. The contract lives in `Ariel.Rules`, namespace
+show, and the client draws them; a base module may too (Diplomacy's screen). The
+contract lives in `Ariel.Rules`, namespace
 `Ariel.Presentation` (`src/Ariel.Rules/Presentation/`), and names no UI toolkit. Mods
 reference nothing new for it.
 
@@ -1461,9 +1462,9 @@ the player summary use the same renderer.
 id, or a mod id with one screen) and meets every rival first; `--press <id>[,<id>...]`
 then presses controls by id. An unknown screen prints the registered ids.
 
-The shipped feature mods describe all of their interface this way: Corporations (screen,
-city panel, pedia, notices), Espionage (screen, notices), Diplomacy (screen with the
-deal composer, attitude labels), ProjectsVictory (victory screen, pedia, notices),
+The shipped feature mods describe all of their interface this way, and so does the
+Diplomacy base module (screen with the deal composer, attitude labels): Corporations
+(screen, city panel, pedia, notices), Espionage (screen, notices), ProjectsVictory (victory screen, pedia, notices),
 Events (screen while an event waits, pedia, notices), Revolution (stability panel with
 suppression, unrest summary, notices), GreatPeople (city figures, settled great people,
 golden age summary), Trade (routes panel) and ScriptedWonders (wonder panel, notices).
