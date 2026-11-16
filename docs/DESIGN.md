@@ -859,6 +859,12 @@ bonus asks the Relations module which teams have met. Discoveries publish
 `TechDiscovered`. Cities updates the current era through this event. Overflow applies on the next contribution. Optional diffusion and timeline
 policies remain deferred.
 
+Research also registers the browsable tech tree, `ITechTreePresentation`, and the setup
+option that turns it on (`research:tech_tree`, off by default). The tree describes every
+technology with its grid place, requirements, cost and progress, and whether the player
+may research or select it now, so it follows any research selection policy a mod adds
+(Card Research). The client shows it when the service answers.
+
 Economy registers `IPlayerEconomyService` for player ledgers, city commerce ledgers,
 rates, and rate validation. `economy:set_commerce_rates` uses `SetCommerceRatesCommand`.
 City commerce keeps hundredths through allocation, direct contributions, percentage
@@ -2283,7 +2289,7 @@ time, even when the desktop throttles the window.
 Cities, Military, Government, Peoples and Relations, and `src/Ariel.Ai/` the base module
 `ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians and Religion,
 and the optional mods Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
-Revolution, CardResearch and TechTree. Each manifest declares content providers in
+Revolution and CardResearch. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the
 mod manager. ModLoader checks

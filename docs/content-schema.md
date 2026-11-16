@@ -272,7 +272,7 @@ Their load-order `dependencies` are empty, except that every mod whose rules ask
 buildings a city runs (Economy, Government, Religion, Trade, and GreatPeople) depends on
 Cities. Those rules read `CityBuildingRules.Running`, the city rules' answer, and never
 filter `City.Buildings` themselves. Feature mods with explicit load-order service
-requirements (such as `Revolution`, `ScriptedWonders`, `TechTree`, and `CardResearch`)
+requirements (such as `Revolution`, `ScriptedWonders`, and `CardResearch`)
 declare explicit `dependencies` in their manifests. The importer reports the complete
 content provider graph in `emitted-counts.json`.
 

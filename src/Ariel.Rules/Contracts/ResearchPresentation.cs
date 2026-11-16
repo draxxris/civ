@@ -24,6 +24,8 @@ public sealed record TechTreeNode(string Id, string Name, string Era, string Hel
     Requirement? Requirements, bool Known, bool Repeatable, bool Researchable, bool Selectable, bool Current,
     long Cost, long Progress, IReadOnlyList<string> Failures);
 public sealed record TechTreeView(IReadOnlyList<TechTreeNode> Nodes);
+/// <summary>The browsable technology tree, registered by the Research module. Null while the game's tech-tree option
+/// is off.</summary>
 public interface ITechTreePresentation
 {
     TechTreeView? Describe(Simulation sim, int player);

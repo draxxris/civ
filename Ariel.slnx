@@ -9,7 +9,6 @@
   </Folder>
   <Folder Name="/src/Mods/">
     <Project Path="src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" />
-    <Project Path="src/Mods/TechTree/Ariel.Mods.TechTree.csproj" />
     <Project Path="src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" />
     <Project Path="src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <Project Path="src/Mods/Trade/Ariel.Mods.Trade.csproj" />

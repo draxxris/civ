@@ -22,12 +22,11 @@
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/Revolution/Ariel.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/TechTree/Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <!-- Every shipped mod, main and optional, staged as the game ships them. Sync checks never render. -->
   <PropertyGroup>
     <ModPayloads>GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion</ModPayloads>
-    <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch;TechTree</ModPayloadsOptional>
+    <ModPayloadsOptional>Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch</ModPayloadsOptional>
     <LinkModArt>false</LinkModArt>
   </PropertyGroup>
   <Import Project="../../build/ModPayloads.targets" />

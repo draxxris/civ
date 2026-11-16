@@ -23,7 +23,6 @@
     <Using Include="Ariel.Presentation" />
     <!-- Build-order references only: the client never compiles against a mod or its API. -->
     <ProjectReference Include="..\Mods\CardResearch\Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\Mods\TechTree\Ariel.Mods.TechTree.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\GreatPeople\Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\Trade\Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Mods\RangedCombat\Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
@@ -45,11 +44,11 @@
     <!-- The base modules (the rules modules and the AI) were mods once. A payload an earlier build staged would load
          beside the linked-in module and claim its id, so drop it. -->
     <ItemGroup>
-      <FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai" />
+      <FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai;TechTree" />
     </ItemGroup>
     <RemoveDir Directories="@(FormerMod->'$(OutDir)mods/%(Identity)')" />
     <ItemGroup>
-      <ModBin Include="CardResearch;TechTree;GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
+      <ModBin Include="CardResearch;GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion;Diplomacy;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.dll" ModDir="%(ModBin.Identity)" />
       <ModDll Include="..\Mods\%(ModBin.Identity)\bin\$(Configuration)\net10.0\Ariel.Mods.*.pdb" ModDir="%(ModBin.Identity)" />
       <ModMeta Include="..\Mods\%(ModBin.Identity)\mod.json" ModDir="%(ModBin.Identity)" />

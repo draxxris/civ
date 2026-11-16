@@ -45,6 +45,17 @@ public sealed class ModManagerTests
         Assert.Empty(ModSelection.Resolve(installed, []).Mods);
     }
 
+    [Fact]
+    public void Selection_saved_before_a_mod_became_base_game_still_resolves_without_loading_an_old_copy()
+    {
+        // A profile from before the tech tree moved into the base game names its old mod id, and a user folder may
+        // still hold the old mod; the base game answers it, so it is not selected.
+        var installed = new[] { Mod("tech_tree", dependencies: ["research"]), Mod("feature") };
+        var selection = ModSelection.Resolve(installed, ["tech_tree", "feature"]);
+        Assert.True(selection.IsValid, string.Join("\n", selection.Errors));
+        Assert.Equal(new[] { "feature" }, selection.Mods.Select(m => m.Manifest.Id));
+    }
+
     [Theory]
     [InlineData("missing_dependency", "absent")]
     [InlineData("missing_reference", "absent")]
@@ -132,15 +143,14 @@ public sealed class ModManagerTests
         Assert.Equal(installed.Select(m => m.Manifest.Id).Order(), defaults.Order());
         Assert.Equal(main.Mods.Count, ModDiscovery.LoadMods(Path.Combine(AppContext.BaseDirectory, "mods")).Count);
 
-        var catalog = GameCatalog.Load(Path.Combine(AppContext.BaseDirectory, "rules"), installed, ["tech_tree", "card_research"]);
+        var catalog = GameCatalog.Load(Path.Combine(AppContext.BaseDirectory, "rules"), installed, ["card_research"]);
         Assert.Contains(catalog.Mods, m => m.Manifest.Id == "research");
         // The computer player is part of the base game, so a selection without it still has it.
         Assert.Contains(catalog.Mods, m => m.Manifest.Id == "ai");
         Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "events");
         var order = catalog.Content.LoadedMods.ToList();
-        Assert.True(order.IndexOf("research") < order.IndexOf("tech_tree"));
         Assert.True(order.IndexOf("research") < order.IndexOf("card_research"));
-        Assert.False(catalog.GameOptions.Single(o => o.Id == "tech_tree:enabled").Default);
+        Assert.False(catalog.GameOptions.Single(o => o.Id == "research:tech_tree").Default);
         Assert.False(catalog.GameOptions.Single(o => o.Id == "card_research:enabled").Default);
     }
 
