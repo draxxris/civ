@@ -28,6 +28,7 @@ public sealed class DiplomacyMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new DiplomacyScreen());
         context.RegisterService<ILedgerSourceLabel>("attitude_labels", new AttitudeLabels());
         context.RegisterService<IAiPlanner>("planner", new DiplomacyAiPlanner());
+        context.RegisterService<IAiValuer<CivicSubject>>("civic_valuer", new DiplomacyCivicValuer());
         context.RegisterStateComponent<DiplomacyState>("state");
         context.RegisterCommand<SignOpenBordersCommand>("open_borders");
         context.RegisterCommand<SignDefensivePactCommand>("defensive_pact");

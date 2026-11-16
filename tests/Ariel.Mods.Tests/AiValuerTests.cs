@@ -64,8 +64,9 @@ public sealed class AiValuerTests
         var sim = Grassland(Plain.Value);
         var ctx = (AiContext)NewAi(sim, "AiContext", sim, 0);
         Assert.Empty(sim.Content.Services.Get<IAiValuer<ResourceSubject>>());
-        Assert.DoesNotContain(sim.Content.Services.Get<IAiValuer<CivicSubject>>(), v => !v.Id.StartsWith("corporations:", StringComparison.Ordinal)
-            && !v.Id.StartsWith("religion:", StringComparison.Ordinal));
+        // The bundled mods price their own civic attachments; nothing else adjusts.
+        string[] civicValuers = ["corporations:", "diplomacy:", "religion:", "trade:"];
+        Assert.DoesNotContain(sim.Content.Services.Get<IAiValuer<CivicSubject>>(), v => !civicValuers.Any(m => v.Id.StartsWith(m, StringComparison.Ordinal)));
         var tech = sim.Content.Get<TechDef>().All.First();
         Assert.Equal(0, ctx.Adjustment(new TechSubject(tech)));
         Assert.Equal(0, ctx.Adjustment(new ResourceSubject(sim.Content.Get<BonusDef>(Pig), 0, null)));

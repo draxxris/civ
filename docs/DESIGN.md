@@ -1599,10 +1599,19 @@ The base game registers no valuer. The Corporations mod values its own civic dat
 costs what the affected branches in the player's cities produce, and a change to
 `corporations:maintenance_percent` (from the `CivicCorporationsDef` attachment or a civic
 effect) gains or costs that share of their maintenance. Before any corporation is founded
-it adds nothing, so games without corporations play as before. The other mods that attach
-civic data (Trade, Diplomacy, Revolution, ProjectsVictory) register no civic valuer yet:
-Revolution's and ProjectsVictory's rows are read by no rule, and valuing trade routes or
-attitudes would change how every game plays, which is a balance decision of its own.
+it adds nothing, so games without corporations play as before.
+
+The Trade mod (`trade:civic_valuer`) runs the real route selection for each of the
+player's cities twice: with the civic in its option, and with that option empty. It adds
+the difference in route yields. A ban on foreign trade therefore costs what domestic
+routes cannot make up, nothing while another held civic already bans it, and the same
+whether the player runs it or not. The Diplomacy mod (`diplomacy:civic_valuer`) prices
+how other leaders regard a player running the civic: 5 points per point of attitude from
+each computer leader the team has met that holds a city, through those leaders' civics'
+`attitudeChanges`. How the player's own leader regards others (the civic's own
+`attitudeChanges` and `globalRelationsChange`) is not priced; it steers that leader's
+diplomacy but gains its empire nothing. Revolution and ProjectsVictory register no civic
+valuer, since no rule reads their civic rows.
 
 How a mod adjusts the AI:
 

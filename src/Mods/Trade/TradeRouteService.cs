@@ -10,13 +10,14 @@ internal sealed class TradeRouteService : ITradeRouteService
     {
         if (TradeData.Raw(sim, "MAX_TRADE_ROUTES", 8) <= 0) return 0;
         var city = sim.State.CityById(cityId);
-        return Slots(sim, city, TradeData.Effects(sim, city));
+        return Slots(sim, city, TradeData.Effects(sim, city), OwnCivics(sim, city));
     }
-    private static int Slots(Simulation sim, City city, ModifierSink sink)
+    private static CivicTradeDef[] OwnCivics(Simulation sim, City city) => TradeData.Civics(sim, city.Owner).ToArray();
+    private static int Slots(Simulation sim, City city, ModifierSink sink, IReadOnlyList<CivicTradeDef> civics)
     {
         sink.Add("trade:initial", "trade:slots", TradeData.Raw(sim, "INITIAL_TRADE_ROUTES", 1));
         foreach (var tech in sim.TeamOf(city.Owner).Techs.Select(sim.Content.Get<S.TechDef>)) sink.Add(tech.Id, "trade:slots", tech.TradeRoutes);
-        foreach (var civic in TradeData.Civics(sim, city.Owner)) sink.Add(civic.Target, "trade:slots", civic.Routes);
+        foreach (var civic in civics) sink.Add(civic.Target, "trade:slots", civic.Routes);
         foreach (var b in TradeData.Active(sim, city)) sink.Add(b.Id, "trade:slots", b.TradeRoutes);
         bool coastal = TradeData.Coastal(sim, city);
         foreach (var other in sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id))
@@ -30,15 +31,21 @@ internal sealed class TradeRouteService : ITradeRouteService
     public CityTradeResult Calculate(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
+        return Calculate(sim, city, OwnCivics(sim, city));
+    }
+    /// <summary>The city's routes as they would be if its owner's civics meant <paramref name="civics"/> to trade;
+    /// partners' civics are their own. The AI asks this to weigh a civic it does not run yet.</summary>
+    internal static CityTradeResult Calculate(Simulation sim, City city, IReadOnlyList<CivicTradeDef> civics)
+    {
         var empty = new ModifierSink();
         if (TradeData.Raw(sim, "MAX_TRADE_ROUTES", 8) <= 0) return new(0, [], default, empty.Ledger);
         var sink = TradeData.Effects(sim, city);
-        int slots = Slots(sim, city, sink);
+        int slots = Slots(sim, city, sink, civics);
         if (slots == 0 || GovernmentStatus.IsDisorder(sim, city)) return new(slots, [], default, sink.Ledger);
         var connections = sim.Rules().CityConnections;
-        bool noForeign = TradeData.Civics(sim, city.Owner).Any(c => c.NoForeignTrade);
+        bool noForeign = civics.Any(c => c.NoForeignTrade);
         var routes = sim.State.Cities.Where(c => Candidate(sim, city, c, noForeign) && connections.Connected(sim, city.Id, c.Id))
-            .Select(c => Route(sim, city, c, sink.Ledger))
+            .Select(c => Route(sim, city, c, sink.Ledger, civics))
             .OrderByDescending(r => r.ProfitHundredths).ThenBy(r => r.Foreign).ThenBy(r => r.PartnerCity).Take(slots).ToArray();
         var hundredths = routes.Aggregate(default(YieldVector), (sum, r) => sum + r.YieldsHundredths);
         var yields = new YieldVector(hundredths.Food / 100, hundredths.Production / 100, hundredths.Commerce / 100);
@@ -66,9 +73,9 @@ internal sealed class TradeRouteService : ITradeRouteService
     public TradeRouteResult CalculateProfit(Simulation sim, int city, int partnerCity)
     {
         var source = sim.State.CityById(city);
-        return Route(sim, source, sim.State.CityById(partnerCity), TradeData.Effects(sim, source).Ledger);
+        return Route(sim, source, sim.State.CityById(partnerCity), TradeData.Effects(sim, source).Ledger, OwnCivics(sim, source));
     }
-    private static TradeRouteResult Route(Simulation sim, City city, City partner, Ledger effects)
+    private static TradeRouteResult Route(Simulation sim, City city, City partner, Ledger effects, IReadOnlyList<CivicTradeDef> civics)
     {
         var sink = new ModifierSink();
         int distance = sim.State.Grid.Distance(sim.State.Grid.TileAt(city.Position), sim.State.Grid.TileAt(partner.Position));
@@ -83,11 +90,11 @@ internal sealed class TradeRouteService : ITradeRouteService
         sink.Add("trade:base", "trade:base_profit_hundredths", baseProfit);
         bool foreign = sim.TeamOf(city.Owner).Id != sim.TeamOf(partner.Owner).Id;
         bool overseas = sim.State.PlotAt(city.Position).AreaId != sim.State.PlotAt(partner.Position).AreaId;
-        AddProfitModifiers(sim, city, partner, foreign, overseas, sink);
+        AddProfitModifiers(sim, city, partner, foreign, overseas, sink, civics);
         long modifier = 100 + sink.Ledger.Total("trade:profit_percent") + effects.Total("trade:profit_percent");
         if (foreign) modifier += effects.Total("trade:foreign_profit_percent");
         long profit = baseProfit * Math.Max(0, modifier) / 100;
-        var percent = YieldModifiers(sim, city.Owner, effects);
+        var percent = YieldModifiers(sim, city.Owner, effects, civics);
         var yields = new YieldVector(profit * percent.Food / 100, profit * percent.Production / 100, profit * percent.Commerce / 100);
         sink.Add("trade:total", "trade:profit_hundredths", profit);
         sink.AddYield("trade:route_hundredths", yields);
@@ -116,7 +123,8 @@ internal sealed class TradeRouteService : ITradeRouteService
             .OrderBy(c => c.Id)
             .SelectMany(c => Calculate(sim, c.Id).Routes)
             .ToArray();
-    private static void AddProfitModifiers(Simulation sim, City city, City partner, bool foreign, bool overseas, ModifierSink sink)
+    private static void AddProfitModifiers(Simulation sim, City city, City partner, bool foreign, bool overseas, ModifierSink sink,
+        IReadOnlyList<CivicTradeDef> civics)
     {
         sink.Add("trade:population", "trade:profit_percent", Math.Max(0, (city.Population + TradeData.Raw(sim, "OUR_POPULATION_TRADE_MODIFIER_OFFSET", -10)) * TradeData.Raw(sim, "OUR_POPULATION_TRADE_MODIFIER", 5)));
         foreach (var b in TradeData.Active(sim, city))
@@ -131,17 +139,17 @@ internal sealed class TradeRouteService : ITradeRouteService
         if (!foreign) return;
         sink.Add("trade:peace", "trade:profit_percent", TradeData.Raw(sim, "FOREIGN_TRADE_MODIFIER", 100));
         var partnerCivics = sim.State.PlayerById(partner.Owner).Civics.Values.ToHashSet(StringComparer.Ordinal);
-        foreach (var civic in TradeData.Civics(sim, city.Owner))
+        foreach (var civic in civics)
         {
             sink.Add(civic.Target, "trade:profit_percent", civic.ForeignProfitPercent);
             if (partnerCivics.Contains(civic.Target)) sink.Add(civic.Target + ":shared", "trade:profit_percent", civic.SharedCivicProfitPercent);
         }
     }
-    private static YieldVector YieldModifiers(Simulation sim, int player, Ledger effects)
+    private static YieldVector YieldModifiers(Simulation sim, int player, Ledger effects, IReadOnlyList<CivicTradeDef> civics)
     {
         long Rate(string id) => sim.Content.Get<S.YieldDef>("foundation:yield_" + id).TradeModifier + effects.Total("trade:yield_percent:" + id);
         var result = new YieldVector(Rate("food"), Rate("production"), Rate("commerce"));
-        foreach (var civic in TradeData.Civics(sim, player)) result += civic.YieldPercent;
+        foreach (var civic in civics) result += civic.YieldPercent;
         foreach (var trait in TradeData.Traits(sim, player)) result += trait.TradeYieldModifiers;
         return new(Math.Max(0, result.Food), Math.Max(0, result.Production), Math.Max(0, result.Commerce));
     }

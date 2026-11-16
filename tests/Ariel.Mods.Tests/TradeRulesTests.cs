@@ -87,6 +87,38 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(0, Service(disabled).MaxRoutes(disabled, 1));
     }
     [Fact]
+    public void The_civic_valuer_prices_a_foreign_trade_ban_by_the_routes_it_costs_whether_or_not_it_is_held()
+    {
+        var sim = Scenario();
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "trade:civic_valuer");
+        int Adjust(string civic) => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
+            new Ariel.Ai.CivicSubject(sim.Content.Get<S.CivicDef>(civic)));
+        long Points() => sim.State.Cities.Where(c => c.Owner == 0)
+            .Sum(c => Service(sim).Calculate(sim, c.Id).Routes.Sum(r => Ariel.Ai.PlannerPoints.Yields(r.YieldsHundredths)));
+        const string foreignPolicy = "government:civicoption_foreign_policy", society = "government:civicoption_society";
+        const string protectionism = "government:protectionism";
+        var civics = sim.State.PlayerById(0).Civics;
+        civics.Remove(foreignPolicy);
+        civics.Remove(society);
+
+        long open = Points();
+        civics[foreignPolicy] = protectionism;
+        long banned = Points();
+        Assert.True(banned < open, "the ban closes the foreign route");
+        // Held or not, the ban is worth what the routes lose with it, the domestic route that takes the slot included.
+        Assert.Equal((banned - open) / 100, Adjust(protectionism));
+        civics.Remove(foreignPolicy);
+        Assert.Equal((banned - open) / 100, Adjust(protectionism));
+
+        // A ban another option already imposes costs nothing more; a civic with only unread trade fields is worth nothing.
+        civics[society] = "government:hive";
+        Assert.Equal(0, Adjust(protectionism));
+        civics.Remove(society);
+        Assert.Equal(0, Adjust("government:mercantilism"));
+        sim.State.SetWar(0, 1, true);
+        Assert.Equal(0, Adjust(protectionism)); // no foreign route to lose
+    }
+    [Fact]
     public void TradeRouteKey_and_CityPair_provide_typed_keys_and_query_operations()
     {
         var key = TradeRouteKey.Of(1, 3);

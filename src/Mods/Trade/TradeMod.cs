@@ -18,6 +18,7 @@ public sealed class TradeMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.ICityPanel>("city", new TradeCityPanel());
         context.RegisterService<IModifierSource>("route_yields", new TradeEffects(service));
         context.RegisterService<ICityTradeLinks>("trade_links", service);
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new TradeCivicValuer());
     }
 }
 internal sealed class TradeEffects(ITradeRouteService service) : IModifierSource

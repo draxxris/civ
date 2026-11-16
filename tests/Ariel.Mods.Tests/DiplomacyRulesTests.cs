@@ -72,6 +72,37 @@ public sealed class DiplomacyRulesTests
         Apply(sim, new ExecuteDealCommand { Player = 1, Deal = Service(sim).Deals(sim).Last().Id });
     }
     [Fact]
+    public void The_civic_valuer_prices_how_met_computer_leaders_regard_a_player_running_the_civic()
+    {
+        var sim = Scenario();
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "diplomacy:civic_valuer");
+        int Adjust(string civic) => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
+            new Ariel.Ai.CivicSubject(sim.Content.Get<S.CivicDef>(civic)));
+        const string military = "government:civicoption_military", pacifism = "government:pacifism";
+        City(sim, 0, 0);
+        City(sim, 1, 40);
+        var rival = sim.State.PlayerById(1);
+        rival.Civics[military] = "government:mutually_assured_destruction"; // dislikes players running pacifism
+        rival.Ai = "ai:standard";
+        // What the attitude rule makes of player 0 running pacifism, toward whom the rival judges.
+        long Attitude() => Service(sim).GetAttitude(sim, 1, 0).Score;
+        sim.State.PlayerById(0).Civics.Remove(military);
+        long without = Attitude();
+        sim.State.PlayerById(0).Civics[military] = pacifism;
+        long change = Attitude() - without;
+        Assert.True(change < 0);
+
+        Assert.Equal(0, Adjust(pacifism)); // nobody has met the player
+        Meet(sim);
+        Assert.Equal(change * 5, Adjust(pacifism));
+        sim.State.PlayerById(0).Civics.Remove(military);
+        Assert.Equal(change * 5, Adjust(pacifism)); // the same, held or not
+        Assert.Equal(0, Adjust("government:mutually_assured_destruction")); // its own dislikes cost the player nothing
+
+        rival.Ai = null;
+        Assert.Equal(0, Adjust(pacifism)); // a human's attitude decides nothing
+    }
+    [Fact]
     public void Current_sight_and_adjacent_borders_discover_teams_but_exploration_and_barbarians_do_not()
     {
         var sim = Scenario(); var diplomacy = sim.Rules().Relations;
