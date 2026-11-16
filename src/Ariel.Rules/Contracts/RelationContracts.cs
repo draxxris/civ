@@ -58,8 +58,8 @@ public readonly record struct PlayerDirection : IComparable<PlayerDirection>
     public static implicit operator string(PlayerDirection dir) => dir.Key;
 }
 
-/// <summary>How one player regards another, from worst to best. The base game does not compute it: a mod answers
-/// through <see cref="IDispositions"/>, and without one every player is <see cref="Cautious"/>.</summary>
+/// <summary>How one player regards another, from worst to best: the tier of the Diplomacy module's attitude
+/// (<see cref="IDiplomacyService.GetAttitude"/>).</summary>
 public enum Disposition { Furious, Annoyed, Cautious, Pleased, Friendly }
 
 /// <summary>What two teams share since they met. Exists from first contact on; teams that never met have none.</summary>
@@ -147,8 +147,8 @@ public sealed record WarDeclared(int AggressorTeam, int DefenderTeam, bool Offen
 public sealed record PeaceSigned(int FirstTeam, int SecondTeam) : DomainEvent;
 
 /// <summary>Relations between teams and what players remember of each other: the base game's diplomacy. Contact,
-/// war and peace, border passage and the memory ledger live here; agreements and attitudes are asked of mods through
-/// <see cref="ITeamAgreements"/> and <see cref="IDispositions"/>. Queries are RNG-free and do not mutate state. Team
+/// war and peace, border passage and the memory ledger live here; agreements and attitudes are the Diplomacy module's
+/// (<see cref="IDiplomacyService"/>), which this service asks. Queries are RNG-free and do not mutate state. Team
 /// ids are not player ids.</summary>
 public interface IRelationsService
 {
@@ -161,7 +161,7 @@ public interface IRelationsService
     TeamRelation? Relation(Simulation sim, int teamA, int teamB);
 
     string? ValidateWar(Simulation sim, int player, int target);
-    /// <summary>The player's team declares war on the target's. Teams an agreement obliges (<see cref="ITeamAgreements.CallToArms"/>)
+    /// <summary>The player's team declares war on the target's. Teams an agreement obliges (<see cref="IDiplomacyService.CallToArms"/>)
     /// join the defender; the defenders and the aggressor's friends remember it.</summary>
     void DeclareWar(Simulation sim, int player, int target);
     string? ValidatePeace(Simulation sim, int player, int target);
@@ -171,7 +171,7 @@ public interface IRelationsService
     bool MayEnter(Simulation sim, int team, int ownerTeam);
     /// <summary>Whether an agreement pledges the two teams to defend each other.</summary>
     bool Allied(Simulation sim, int teamA, int teamB);
-    /// <summary>How one player regards another; <see cref="Disposition.Cautious"/> without a mod that judges it.</summary>
+    /// <summary>How one player regards another: the tier of the Diplomacy module's attitude.</summary>
     Disposition DispositionToward(Simulation sim, int fromPlayer, int towardPlayer);
 
     /// <summary>The player remembers one more act of this kind by the other. Teammates and barbarians remember nothing of
@@ -180,26 +180,6 @@ public interface IRelationsService
     void Remember(Simulation sim, int fromPlayer, int towardPlayer, string kind);
     /// <summary>Remembered counts by memory kind id, in ordinal id order; empty when nothing is remembered.</summary>
     IReadOnlyDictionary<string, int> Memories(Simulation sim, int fromPlayer, int towardPlayer);
-}
-
-/// <summary>Agreements between teams, owned by the mod that negotiates them (the Diplomacy mod's open borders and
-/// defensive pacts). The base game only asks; without such a mod no agreement exists.</summary>
-public interface ITeamAgreements
-{
-    /// <summary>Whether an agreement lets the team's units into the other team's territory. Only asked at peace.</summary>
-    bool OpenBorders(Simulation sim, int team, int other);
-    /// <summary>Whether an agreement pledges the two teams to defend each other.</summary>
-    bool Allied(Simulation sim, int teamA, int teamB);
-    /// <summary>Called once when <paramref name="aggressor"/> declares war on <paramref name="defender"/>, before the war
-    /// starts: settles the agreements the declaration breaks and returns, in order, the teams obliged to join the
-    /// defender.</summary>
-    IReadOnlyList<int> CallToArms(Simulation sim, int aggressor, int defender);
-}
-
-/// <summary>How one player regards another, answered by a mod that judges it (the Diplomacy mod's attitude).</summary>
-public interface IDispositions
-{
-    Disposition Toward(Simulation sim, int fromPlayer, int towardPlayer);
 }
 
 /// <summary>Declare war on another player's team. The one way a war starts.</summary>

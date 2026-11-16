@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Trade;
 using Xunit;
@@ -15,20 +14,17 @@ public sealed class NetworkTransitTests
     private const string Grain = "network_probe:grain";
     private const string Road = "world:route_route_road";
     // xunit builds a new test class instance per test, so the probe content must be static to be built once.
-    private static readonly Lazy<ContentDb> PlainContent = new(() => BuildContent(diplomacy: false));
-    private static readonly Lazy<ContentDb> DiplomacyContent = new(() => BuildContent(diplomacy: true));
-    private static ContentDb BuildContent(bool diplomacy)
+    private static readonly Lazy<ContentDb> ProbeContent = new(BuildContent);
+    private static ContentDb BuildContent()
     {
         var loaded = new LoadedMods();
         var sources = loaded.Sources.AsEnumerable();
-        if (diplomacy) sources = sources.Append(ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy")));
         var probe = new ModSource { Root = loaded.Root, Manifest = new() { Id = "network_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "world", "military"] }, Instance = new Probe(loaded.Content.Get<S.RuleConstantsDef>().All.Single()) };
         return ModLoader.Build(sources.Append(probe));
     }
-    private static ContentDb Content(bool diplomacy = false) => diplomacy ? DiplomacyContent.Value : PlainContent.Value;
-    private Simulation Scenario(bool diplomacy = false)
+    private Simulation Scenario()
     {
-        var sim = GameFactory.Scenario(Content(diplomacy));
+        var sim = GameFactory.Scenario(ProbeContent.Value);
         GameFactory.NeutralPolitics(sim);
         sim.State.Cities.Clear(); sim.State.RebuildIndexes();
         foreach (var plot in sim.State.Plots) { plot.Owner = null; plot.Revealed.Add(0); plot.AreaId = 1; }
@@ -53,17 +49,15 @@ public sealed class NetworkTransitTests
     private static SetUnitActivityCommand Activity(Unit unit, UnitActivity activity = UnitActivity.Blockade) => new() { Player = unit.Owner, Unit = unit.Id, Activity = activity };
     private static void Refill(Simulation sim, Unit unit) => unit.MovesLeft = Service<IUnitService>(sim).MaximumMoves(sim, unit.Id);
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void Peaceful_revealed_foreign_corridors_carry_resources_without_a_treaty(bool diplomacy)
+    [Fact]
+    public void Peaceful_revealed_foreign_corridors_carry_resources_without_a_treaty()
     {
-        var sim = Scenario(diplomacy); var home = City(sim, 40); var colony = City(sim, 44);
+        var sim = Scenario(); var home = City(sim, 40); var colony = City(sim, 44);
         for (int i = 40; i <= 44; i++) sim.State.Plots[i].Route = Road;
         for (int i = 41; i <= 43; i++) sim.State.Plots[i].Owner = 1;
         sim.State.Plots[44].Bonus = Grain;
         var network = Service<IResourceNetwork>(sim); var connections = Service<ICityConnectionService>(sim);
-        if (diplomacy) Assert.False(Service<IDiplomacyService>(sim).HasOpenBorders(sim, 0, 1));
+        Assert.False(Service<IDiplomacyService>(sim).HasOpenBorders(sim, 0, 1));
         void Check(bool connected)
         {
             Assert.Equal(connected, connections.Connected(sim, home.Id, colony.Id));
@@ -72,16 +66,12 @@ public sealed class NetworkTransitTests
         Check(true);
         sim.State.Plots[42].Revealed.Remove(0); Check(false);
         sim.State.Plots[42].Revealed.Add(0); Check(true);
-        if (diplomacy)
-        {
-            sim.Rules().Relations.EstablishContact(sim, 0, 1);
-            sim.TeamOf(0).Techs.Add("research:writing");
-            Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }); Check(true);
-            sim.State.Plots[42].Revealed.Remove(0); Check(false);
-            sim.State.Plots[42].Revealed.Add(0); Check(true);
-            Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
-        }
-        else sim.State.SetWar(0, 1, true);
+        sim.Rules().Relations.EstablishContact(sim, 0, 1);
+        sim.TeamOf(0).Techs.Add("research:writing");
+        Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 }); Check(true);
+        sim.State.Plots[42].Revealed.Remove(0); Check(false);
+        sim.State.Plots[42].Revealed.Add(0); Check(true);
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
         Check(false);
         sim.State.SetWar(0, 1, false); Check(true);
         sim.State.Plots[42].Route = null; Check(false);
@@ -117,7 +107,7 @@ public sealed class NetworkTransitTests
     [Fact]
     public void Physical_foreign_city_connection_does_not_grant_international_city_trade()
     {
-        var sim = Scenario(true); var home = City(sim, 40); var foreign = City(sim, 42, 1);
+        var sim = Scenario(); var home = City(sim, 40); var foreign = City(sim, 42, 1);
         for (int i = 40; i <= 42; i++) sim.State.Plots[i].Route = Road;
         var diplomacy = Service<IDiplomacyService>(sim); sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, home.Id, foreign.Id));

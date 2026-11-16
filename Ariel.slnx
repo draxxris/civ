@@ -19,8 +19,6 @@
     <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
     <Project Path="src/Mods/Religion/Ariel.Mods.Religion.csproj" />
     <Project Path="src/Mods/Religion/Api/Ariel.Mods.Religion.Api.csproj" />
-    <Project Path="src/Mods/Diplomacy/Ariel.Mods.Diplomacy.csproj" />
-    <Project Path="src/Mods/Diplomacy/Api/Ariel.Mods.Diplomacy.Api.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" />
     <Project Path="src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
     <Project Path="src/Mods/Corporations/Ariel.Mods.Corporations.csproj" />

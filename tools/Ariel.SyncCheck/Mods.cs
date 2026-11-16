@@ -8,7 +8,7 @@ internal static class Mods
 {
     /// <summary>Optional gameplay mods loaded unless <c>--optional</c> names others. The alternative research mod
     /// (CardResearch) replaces part of Research, so it is opt-in.</summary>
-    private const string DefaultOptional = "Diplomacy,ProjectsVictory,Corporations,Espionage,Events,ScriptedWonders,Revolution";
+    private const string DefaultOptional = "ProjectsVictory,Corporations,Espionage,Events,ScriptedWonders,Revolution";
 
     public static ContentDb Load(string root, string[] args)
     {

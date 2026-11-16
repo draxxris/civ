@@ -1,16 +1,15 @@
 using Ariel.Content;
-using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Rules;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
-/// <summary>Attitudes, agreements (open borders, defensive pacts) and deals between players, and the computer player's
-/// use of them. Contact, war and peace and the memory ledger are the base game's; this mod answers the base game's
-/// questions about agreements, dispositions and exchanges, and adds the memories deals leave.</summary>
-public sealed class DiplomacyMod : IPreparableMod
+/// <summary>Attitudes, agreements (open borders, defensive pacts) and deals between players. Contact, war and peace and
+/// the memory ledger are the Relations module's, which asks this one which agreements bind teams and how players regard
+/// each other; this module adds the memories deals leave. The computer player's use of diplomacy is the
+/// <c>ai</c> module's.</summary>
+public sealed class DiplomacyModule : IPreparableMod
 {
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
     private static readonly ModJsonFile<CivicDiplomacyDef[]> Civics = new("data/civic-diplomacy.json");
@@ -22,13 +21,8 @@ public sealed class DiplomacyMod : IPreparableMod
         ContentRegistration.Load(context, Civics);
         var service = new DiplomacyService();
         context.RegisterService<IDiplomacyService>("diplomacy", service);
-        context.RegisterService<ITeamAgreements>("agreements", service);
-        context.RegisterService<IDispositions>("dispositions", service);
-        context.RegisterService<IPlayerExchanges>("exchanges", service);
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new DiplomacyScreen());
         context.RegisterService<ILedgerSourceLabel>("attitude_labels", new AttitudeLabels());
-        context.RegisterService<IAiPlanner>("planner", new DiplomacyAiPlanner());
-        context.RegisterService<IAiValuer<CivicSubject>>("civic_valuer", new DiplomacyCivicValuer());
         context.RegisterStateComponent<DiplomacyState>("state");
         context.RegisterCommand<SignOpenBordersCommand>("open_borders");
         context.RegisterCommand<SignDefensivePactCommand>("defensive_pact");

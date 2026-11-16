@@ -74,7 +74,7 @@ internal sealed class RelationsService : IRelationsService
         int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
         // Read before anything changes: the war itself, and the agreements it breaks, change how players regard each other.
         int[] friends = FriendsOf(sim, a, b);
-        var allies = sim.Rules().TeamAgreements?.CallToArms(sim, a, b) ?? [];
+        var allies = sim.Rules().Diplomacy.CallToArms(sim, a, b);
         StartWar(sim, a, b, true);
         RememberWar(sim, a, b, friends);
         foreach (int ally in allies)
@@ -111,21 +111,20 @@ internal sealed class RelationsService : IRelationsService
     }
 
     public bool MayEnter(Simulation sim, int team, int ownerTeam) => team == ownerTeam
-        || (!sim.State.TeamById(team).Wars.Contains(ownerTeam) && sim.Rules().TeamAgreements?.OpenBorders(sim, team, ownerTeam) == true);
+        || (!sim.State.TeamById(team).Wars.Contains(ownerTeam) && sim.Rules().Diplomacy.HasOpenBorders(sim, team, ownerTeam));
 
-    public bool Allied(Simulation sim, int teamA, int teamB) => sim.Rules().TeamAgreements?.Allied(sim, teamA, teamB) == true;
+    public bool Allied(Simulation sim, int teamA, int teamB) => sim.Rules().Diplomacy.HasDefensivePact(sim, teamA, teamB);
 
     public Disposition DispositionToward(Simulation sim, int fromPlayer, int towardPlayer) =>
-        sim.Rules().Dispositions?.Toward(sim, fromPlayer, towardPlayer) ?? Disposition.Cautious;
+        sim.Rules().Diplomacy.GetAttitude(sim, fromPlayer, towardPlayer).Tier;
 
     /// <summary>Players outside both teams who have met the aggressor and are at least Pleased with someone on the
-    /// defending team. Nobody is anybody's friend without a mod that judges dispositions.</summary>
+    /// defending team.</summary>
     private int[] FriendsOf(Simulation sim, int aggressor, int defender)
     {
-        if (sim.Rules().Dispositions is not { } dispositions) return [];
         return sim.State.Players
             .Where(p => p.TeamId != aggressor && p.TeamId != defender && HasMet(sim, p.TeamId, aggressor)
-                && Members(sim, defender).Any(d => dispositions.Toward(sim, p.Id, d) >= Disposition.Pleased))
+                && Members(sim, defender).Any(d => DispositionToward(sim, p.Id, d) >= Disposition.Pleased))
             .OrderBy(p => p.Id).Select(p => p.Id).ToArray();
     }
 

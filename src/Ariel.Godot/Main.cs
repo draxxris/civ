@@ -401,7 +401,7 @@ public partial class Main : Node3D
         if (_debug.Stage == "research") _game!.Ui.ToggleResearch();
         bool dialog = _debug.ScreenshotPath != null && _game!.Ui.OpenDebugPanel(_debug.Stage);
         if (_debug.OpenScreen is { } name && !OpenScreen(name)) GetTree().Quit(1);
-        // A stage that names no base dialog may name a mod's screen (`--stage diplomacy`), the way the screens'
+        // A stage that names no base dialog may name a registered screen (`--stage diplomacy`), the way the screens'
         // committed captures are taken.
         else if (_debug.OpenScreen is null && !dialog && _debug.ScreenshotPath != null && ScreenNamed(_debug.Stage) is { } screen)
             _game!.Ui.ToggleScreen(screen.Id);

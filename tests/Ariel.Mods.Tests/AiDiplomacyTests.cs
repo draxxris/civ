@@ -1,6 +1,5 @@
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,7 +16,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     private static readonly Lazy<ContentDb> Content = new(() =>
     {
         var mods = new LoadedMods();
-        var optional = new[] { "Diplomacy", "Espionage", "Corporations" }
+        var optional = new[] { "Espionage", "Corporations" }
             .Select(name => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
         return ModLoader.Build(mods.Sources.Concat(optional));
     });
@@ -132,11 +131,11 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
             && sim.State.PlayerById(d.Recipient).Ai is not null) <= sim.State.Players.Count);
     }
 
-    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Service<IDiplomacyService>()!;
+    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Rules().Diplomacy;
 
-    /// <summary>The Diplomacy mod contributes its planner to the AI; it lives beside the service it plays.</summary>
+    /// <summary>The computer player's own diplomacy planner (<c>ai:diplomacy</c>).</summary>
     private static Type DiplomacyPlannerType(Simulation sim) =>
-        Diplomacy(sim).GetType().Assembly.GetType("Ariel.Mods.Diplomacy.DiplomacyPlanner", throwOnError: true)!;
+        typeof(Ariel.Ai.IAiPlanner).Assembly.GetType("Ariel.Ai.DiplomacyPlanner", throwOnError: true)!;
 
     private static object NewDiplomacyPlanner(Simulation sim, object ctx) => Activator.CreateInstance(DiplomacyPlannerType(sim),
         System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,

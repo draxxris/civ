@@ -1,7 +1,7 @@
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 internal sealed partial class DiplomacyService
 {
@@ -220,7 +220,11 @@ internal sealed partial class DiplomacyService
     {
         var result = new SortedDictionary<string, long>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
-        if (target is null || target.Owner != player) return result;
+        if (target is null || target.Owner != player)
+        {
+            foreach (var resource in resources) result[resource] = 0;
+            return result;
+        }
         // One connectivity query covers every resource; only the export/import arithmetic is per resource.
         var connected = sim.Rules().Resources?.ConnectedCounts(sim, player, city)
             ?? new Dictionary<string, int>();

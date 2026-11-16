@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><IsPackable>false</IsPackable></PropertyGroup>
   <ItemGroup>
-    <!-- The host supplies the kernel and the base rules, as it does for every shipped mod. No Diplomacy reference:
-         the memory ledger is the base game's. -->
+    <!-- The host supplies the kernel and the base rules, as it does for every shipped mod. The memory ledger
+         and the attitudes that weigh it are the base game's. -->
     <ProjectReference Include="../../../src/Ariel.Core/Ariel.Core.csproj" Private="false" />
     <ProjectReference Include="../../../src/Ariel.Rules/Ariel.Rules.csproj" Private="false" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />

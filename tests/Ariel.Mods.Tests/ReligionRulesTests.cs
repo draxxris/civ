@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Revolution;
 using Ariel.Mods.Trade;
@@ -23,7 +22,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         new(() =>
         {
             var loaded = new LoadedMods();
-            var optional = (key ? new[] { "Diplomacy", "Revolution" } : ["Diplomacy"]).Select(name =>
+            var optional = (key ? new[] { "Revolution" } : []).Select(name =>
                 ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
             return ModLoader.Build(loaded.Sources.Concat(optional));
         })).Value;
@@ -110,8 +109,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
         var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, multiple) };
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured).Append(diplomacy)));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured)));
         GameFactory.NeutralPolitics(sim);
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); plot.Route = "world:route_route_road"; }
@@ -155,8 +153,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
         var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, false) };
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
-        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured).Append(diplomacy)));
+        var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured)));
         GameFactory.NeutralPolitics(sim);
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         // Only the holy city's team has seen the roads, so the network joins the cities from its side alone.

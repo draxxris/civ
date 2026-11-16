@@ -1,7 +1,6 @@
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using TechDef = Ariel.Content.Schema.TechDef;
@@ -12,7 +11,7 @@ namespace Ariel.Mods.Tests;
 public sealed class CardResearchTests
 {
     private static readonly Lazy<ContentDb> Content = new(() => ModLoader.Build(new LoadedMods().Sources.Concat(
-        new[] { "CardResearch", "Diplomacy" }.Select(n => ModLoader.FromDirectory(
+        new[] { "CardResearch" }.Select(n => ModLoader.FromDirectory(
             Path.Combine(AppContext.BaseDirectory, "optional-mods", n))))));
     private static Simulation Scenario(bool cards = true, bool tree = true, bool shared = false, bool terminal = false) =>
         Simulation.CreateScenario(Content.Value, GameFactory.Settings() with

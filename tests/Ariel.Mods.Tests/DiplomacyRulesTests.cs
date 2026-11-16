@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Mods.Diplomacy;
 using Ariel.Mods.Trade;
 using Xunit;
 using S = Ariel.Content.Schema;
@@ -15,11 +14,10 @@ public sealed class DiplomacyRulesTests
     private static readonly Lazy<ContentDb> Content = new(() =>
     {
         var mods = new LoadedMods();
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
         var civic = mods.Content.Get<S.CivicDef>().All.First(c => mods.Content.Attachment<CivicReligionDef>(c.Id)?.RequiresStateReligion == true);
         var constants = mods.Content.Get<S.RuleConstantsDef>().All.Single();
         var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government"] }, Instance = new Probe(civic, constants) };
-        return ModLoader.Build(mods.Sources.Append(diplomacy).Append(probe));
+        return ModLoader.Build(mods.Sources.Append(probe));
     });
     private static Simulation Scenario(bool unlockTrading = true)
     {
@@ -75,7 +73,7 @@ public sealed class DiplomacyRulesTests
     public void The_civic_valuer_prices_how_met_computer_leaders_regard_a_player_running_the_civic()
     {
         var sim = Scenario();
-        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "diplomacy:civic_valuer");
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "ai:diplomacy_civic_valuer");
         int Adjust(string civic) => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
             new Ariel.Ai.CivicSubject(sim.Content.Get<S.CivicDef>(civic)));
         const string military = "government:civicoption_military", pacifism = "government:pacifism";
@@ -252,10 +250,9 @@ public sealed class DiplomacyRulesTests
     public void Custom_content_without_unlock_flags_stays_open_but_obeys_the_option_default(bool disabled)
     {
         var mods = new LoadedMods();
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
         var custom = new ModSource { Root = mods.Root, Manifest = new() { Id = "trading_probe", Version = "1", Dependencies = ["foundation", "research"] },
             Instance = new CustomTradingContent(mods.Content, disabled) };
-        var content = ModLoader.Build(mods.Sources.Append(diplomacy).Append(custom));
+        var content = ModLoader.Build(mods.Sources.Append(custom));
         var sim = GameFactory.Scenario(content);
         Meet(sim);
         Apply(sim, new SignOpenBordersCommand { Player = 0, Target = 1 });

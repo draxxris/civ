@@ -158,7 +158,7 @@ has something to say about:
 - Trade, `data/civic-trade.json` (`CivicTradeDef`): `noForeignTrade`, `routes`,
   `foreignProfitPercent`, `sharedCivicProfitPercent`, `yieldPercent`,
   `forcesOpenTradeRoutesWithWeakerPlayers` and the three connectedness percents.
-- Diplomacy, `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
+- Diplomacy (a base module), `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
   `globalRelationsChange`, `attitudeShareMod`, the three relative-power relations
   changes, `canNotCeaseRelations`, `tributePercent`.
 - Religion, `data/civic-religion.json` (`CivicReligionDef`): `requiresStateReligion`,

@@ -62,7 +62,7 @@ public sealed class AiPlannerTests
     public void Planners_run_by_order_then_id_with_contributed_ones_in_their_slots()
     {
         var content = GameContent.Build(Rules, ModLoader.FromDirectories(
-            [Root(GameContent.OptionalModsFolder, "Corporations"), Root(GameContent.OptionalModsFolder, "Diplomacy"),
+            [Root(GameContent.OptionalModsFolder, "Corporations"),
              Root(GameContent.OptionalModsFolder, "Espionage"), Root(GameContent.OptionalModsFolder, "Revolution"),
              Root(GameContent.ModsFolder, "GreatPeople"), Root(GameContent.ModsFolder, "Religion"), Root(GameContent.ModsFolder, "AirCombat"),
              Root("test-mods", "AiPlanner")]));
@@ -72,7 +72,7 @@ public sealed class AiPlannerTests
 
         Assert.Equal(
         [
-            "ai:research", "ai:war", "ai:civics", "diplomacy:planner", "ai:settlers", "ai:citizens", "religion:planner",
+            "ai:research", "ai:war", "ai:civics", "ai:diplomacy", "ai:settlers", "ai:citizens", "religion:planner",
             "corporations:planner", "ai_planner_probe:planner", "great_people:planner",
             "ai:cities", "ai:workers", "air_combat:planner", "ai:military", "espionage:planner", "revolution:planner", "ai:economy", "ai:hurry",
         ], ids);

@@ -4,7 +4,7 @@ namespace Ariel.Game;
 
 /// <summary>What the base game asks about religion: the Foundation <c>religion</c> requirement leaf, the
 /// <c>foundation:any_religion</c> and <c>foundation:state_religion</c> conditions, whether a religious building or unit
-/// may be produced, and whether a conquered city is a holy city. Base content names religions only by their identity
+/// may be produced, whether a conquered city is a holy city, and which faith a player holds, for attitudes. Base content names religions only by their identity
 /// (<see cref="ReligionIdentityDef"/>); the mod that runs religion answers here. Without one, no city follows a
 /// religion, so religion-gated content stays unavailable rather than free. Queries never change state or draw from
 /// the random numbers.</summary>
@@ -14,6 +14,9 @@ public interface ICityReligions
     bool Has(Simulation sim, int city, string identity);
     /// <summary>Whether the player's state religion has this identity id.</summary>
     bool IsStateReligion(Simulation sim, int player, string identity);
+    /// <summary>The identity id of the player's state religion, or null without one. Diplomacy compares two players'
+    /// answers for shared and differing faith.</summary>
+    string? StateReligion(Simulation sim, int player);
     /// <summary>Whether the city is the holy city of the religion with this identity id.</summary>
     bool IsHolyCityOf(Simulation sim, int city, string identity);
     /// <summary>Whether the city is the holy city of any religion.</summary>

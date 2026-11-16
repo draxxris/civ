@@ -28,6 +28,9 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             sim.State.AddCity(city); sim.State.Plots[tile].Owner = owner;
             city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true, AvoidGrowth = true });
         }
+        // Foreign routes need contact and open borders.
+        sim.Rules().Relations.EstablishContact(sim, sim.TeamOf(0).Id, sim.TeamOf(1).Id);
+        sim.Rules().Diplomacy.SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
         return sim;
     }
     private static ITradeRouteService Service(Simulation sim) => sim.Content.Services.Get<ITradeRouteService>().Single();

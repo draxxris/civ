@@ -1,7 +1,7 @@
 # Ariel
 
 A super-moddable, hex-grid Civilization 4 clone. The base game (world, cities, units,
-research, economy, government, relations between teams, and the computer player) is linked in from `src/Ariel.Rules`
+research, economy, government, relations and diplomacy between players, and the computer player) is linked in from `src/Ariel.Rules`
 and `src/Ariel.Ai`, composed by `src/Ariel.Composition`; everything else is a mod on the
 same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 
@@ -11,9 +11,8 @@ Mods in `src/Mods`:
   ranged support fire), AirCombat (air missions and interception), Barbarians (the hostile
   faction's spawns and raids) and Religion (faiths, state religion, missionaries and
   inquisitions).
-- Optional mods, enabled in the mod manager: Diplomacy, ProjectsVictory, Corporations,
-  Espionage, Events, ScriptedWonders, Revolution, and the alternative research mod
-  CardResearch. The browsable tech tree is part of the base Research module.
+- Optional mods, enabled in the mod manager: ProjectsVictory, Corporations, Espionage,
+  Events, ScriptedWonders, Revolution, and the alternative research mod CardResearch. The browsable tech tree is part of the base Research module.
 
 ```
 mise install                         # once per clone: .NET 10 SDK and Godot 4.7.2-stable .NET (godot-mono)
@@ -51,7 +50,7 @@ assets). A mod teaches the standard computer player its feature by registering a
 `IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new
 computer player implements `IPlayerAI`. A mod publishes an API for other mods by shipping an
 assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`,
-as the Diplomacy mod does with `Ariel.Mods.Diplomacy.Api`; every feature mod with
+as the Trade mod does with `Ariel.Mods.Trade.Api`; every feature mod with
 services publishes one. The base game never references a mod's API: when its rules need an
 answer from a feature, it owns a small seam that the mod answers (see "Mod APIs" in
 [docs/DESIGN.md](docs/DESIGN.md)). A mod asks AI cities to build what its feature needs

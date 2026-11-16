@@ -41,7 +41,7 @@ public static class AiValuation
 /// resource is about 30 points plus 8 for each happiness and 6 for each health it brings (the worker's connection
 /// value); +40 makes a resource about as wanted as a new happy resource, −40 cancels it. Asked by city site scoring
 /// and the worker's choice of plot, which weigh plots on half this scale and add half the adjustment, by the
-/// worker's choice of build (in full), and by the Diplomacy mod for resources in deals (in full, as gold).</para>
+/// worker's choice of build (in full), and by the diplomacy planner for resources in deals (in full, as gold).</para>
 /// <para><paramref name="Plot"/> is the plot the source would come from: a plot in a prospective city site, or one a
 /// worker would connect. It is null for a resource received in a deal. A resource the player gives away is valued
 /// as one more source for a player holding what it would have left.</para></summary>

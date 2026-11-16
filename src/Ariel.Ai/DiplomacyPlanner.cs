@@ -1,29 +1,19 @@
-using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Ai;
 
-/// <summary>The computer player's diplomacy, run inside the standard AI's turn in the slot the AI keeps for it, after
-/// war and civics and before settlers. War and peace are the AI's own (<c>ai:war</c>).</summary>
-internal sealed class DiplomacyAiPlanner : IAiPlanner
-{
-    public string Id => "diplomacy:planner";
-    public int Order => AiPlannerOrder.Diplomacy;
-    public void Plan(AiContext ctx) => new DiplomacyPlanner(ctx).Plan();
-}
-
-/// <summary>Answers deals offered to this player, proposes resource swaps, and signs agreements with friendly
+/// <summary>The computer player's diplomacy (<c>ai:diplomacy</c>, in <see cref="AiPlannerOrder.Diplomacy"/>, after war
+/// and civics and before settlers): answers deals offered to this player, proposes resource swaps, and signs agreements with friendly
 /// computer players. Agreements apply at once for both sides, so they are only signed with another computer player
 /// whose own attitude agrees; a human is never signed up without asking. Deals are proposals, which anyone may answer.</summary>
 internal sealed class DiplomacyPlanner(AiContext ctx)
 {
     internal const int ReviewInterval = 5, ProposalsPerTurn = 1, GoldPerTurnTurns = 10;
-    private IDiplomacyService? Diplomacy => ctx.Sim.Service<IDiplomacyService>();
-
     public void Plan()
     {
-        if (Diplomacy is not { } diplomacy || ctx.Cities.Count == 0) return;
+        var diplomacy = ctx.Sim.Rules().Diplomacy;
+        if (ctx.Cities.Count == 0) return;
         Answer(diplomacy);
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval != 0) return;
         Agreements(diplomacy);
@@ -169,5 +159,19 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
             if (mutual >= Disposition.Friendly && !diplomacy.HasDefensivePact(ctx.Sim, ctx.Self.TeamId, partner.TeamId))
                 ctx.Issue(new SignDefensivePactCommand { Player = ctx.PlayerId, Target = partner.Id });
         }
+    }
+}
+
+/// <summary>The computer player's answer to a deal, for the diplomacy screen: the same rule its planner applies on its
+/// own turn, asked of an observing context so nothing is issued.</summary>
+internal sealed class DealAppraiser : IDealAppraiser
+{
+    public DealAppraisal Appraise(Simulation sim, int leader, int proposer, IReadOnlyList<DiplomaticTradeItem> items)
+    {
+        var diplomacy = sim.Rules().Diplomacy;
+        var planner = new DiplomacyPlanner(AiContext.Observe(sim, leader));
+        var deal = new DiplomaticDeal { Proposer = proposer, Recipient = leader, Items = items.ToList() };
+        var tier = diplomacy.GetAttitude(sim, leader, proposer).Tier;
+        return new(planner.Value(items), DiplomacyPlanner.Margin(tier), planner.Accepts(diplomacy, deal));
     }
 }

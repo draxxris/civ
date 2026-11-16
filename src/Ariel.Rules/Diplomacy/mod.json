@@ -1,0 +1,7 @@
+{
+  "id": "diplomacy",
+  "name": "Diplomacy",
+  "version": "3.0.0",
+  "dependencies": [],
+  "references": ["government"]
+}

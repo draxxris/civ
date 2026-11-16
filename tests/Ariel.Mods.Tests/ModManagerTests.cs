@@ -48,10 +48,10 @@ public sealed class ModManagerTests
     [Fact]
     public void Selection_saved_before_a_mod_became_base_game_still_resolves_without_loading_an_old_copy()
     {
-        // A profile from before the tech tree moved into the base game names its old mod id, and a user folder may
-        // still hold the old mod; the base game answers it, so it is not selected.
-        var installed = new[] { Mod("tech_tree", dependencies: ["research"]), Mod("feature") };
-        var selection = ModSelection.Resolve(installed, ["tech_tree", "feature"]);
+        // A profile from before the tech tree and diplomacy moved into the base game names their old mod ids, and a
+        // user folder may still hold the old mods; the base game answers both, so neither is selected.
+        var installed = new[] { Mod("tech_tree", dependencies: ["research"]), Mod("diplomacy"), Mod("feature") };
+        var selection = ModSelection.Resolve(installed, ["tech_tree", "diplomacy", "feature"]);
         Assert.True(selection.IsValid, string.Join("\n", selection.Errors));
         Assert.Equal(new[] { "feature" }, selection.Mods.Select(m => m.Manifest.Id));
     }

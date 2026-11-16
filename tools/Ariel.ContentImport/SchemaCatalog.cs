@@ -22,7 +22,7 @@ public sealed record DefinitionMapping(string SourceClass, string Definition, st
     private static readonly System.Reflection.Assembly[] Schemas =
     [
         typeof(GameContentDef).Assembly, typeof(Ariel.Mods.Corporations.CivicCorporationsDef).Assembly,
-        typeof(Ariel.Mods.Trade.CivicTradeDef).Assembly, typeof(Ariel.Mods.Diplomacy.CivicDiplomacyDef).Assembly,
+        typeof(Ariel.Mods.Trade.CivicTradeDef).Assembly,
         typeof(Ariel.Mods.Revolution.CivicRevolutionDef).Assembly, typeof(Ariel.Mods.ProjectsVictory.CivicProjectsDef).Assembly,
         typeof(Ariel.Mods.Religion.ReligionDef).Assembly,
     ];

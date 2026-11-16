@@ -65,8 +65,7 @@ internal sealed class BuildingEffects : IModifierSource
     {
         var network = sim.Rules().Resources;
         var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
-        var exchanges = sim.Rules().Exchanges;
-        if (exchanges is null) return physical;
+        var exchanges = sim.Rules().Diplomacy;
         var traded = exchanges.ExchangedResources(sim, city.Owner);
         if (traded.Count == 0) return physical;
         var result = new SortedDictionary<string, int>(StringComparer.Ordinal);

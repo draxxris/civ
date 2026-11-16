@@ -1,7 +1,7 @@
-using Ariel.Ai;
+using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Ai;
 
 /// <summary>What a civic does to how other leaders regard the player, added to the civic planner's score
 /// (<see cref="CivicSubject"/>). A leader whose civic carries an <see cref="CivicDiplomacyDef.AttitudeChanges"/> entry
@@ -18,7 +18,7 @@ internal sealed class DiplomacyCivicValuer : IAiValuer<CivicSubject>
     /// leader (about a tier) costs 20, more than the 15 a civic needs over another to be preferred.</summary>
     internal const int PointsPerAttitude = 5;
 
-    public string Id => "diplomacy:civic_valuer";
+    public string Id => "ai:diplomacy_civic_valuer";
 
     public int Adjust(AiContext ctx, in CivicSubject subject)
     {

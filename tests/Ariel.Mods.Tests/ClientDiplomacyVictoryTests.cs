@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 
@@ -11,24 +10,23 @@ namespace Ariel.Mods.Tests;
 /// <summary>The diplomacy and victory mods' screens, driven through the client's headless host.</summary>
 public sealed class ClientDiplomacyVictoryTests
 {
-    private static readonly ConcurrentDictionary<(bool Diplomacy, bool Victory), Lazy<ContentDb>> Contents = new();
+    private static readonly ConcurrentDictionary<bool, Lazy<ContentDb>> Contents = new();
     private static ModSource Optional(string name) => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name));
 
-    /// <summary>One frozen content per optional-mod set; xunit builds a new test class instance for every test.</summary>
-    private static ContentDb Content((bool Diplomacy, bool Victory) optional) => Contents.GetOrAdd(optional, key => new(() =>
+    /// <summary>One frozen content with or without the victory mod; xunit builds a new test class instance for every
+    /// test. Diplomacy is a base module, so it is always there.</summary>
+    private static ContentDb Content(bool victory) => Contents.GetOrAdd(victory, key => new(() =>
     {
         var loaded = new LoadedMods();
         var sources = loaded.Sources.AsEnumerable();
-        if (key.Diplomacy) sources = sources.Append(Optional("Diplomacy"));
-        if (key.Victory) sources = sources.Append(Optional("ProjectsVictory"));
+        if (key) sources = sources.Append(Optional("ProjectsVictory"));
         return ModLoader.Build(sources);
     })).Value;
 
-    private GameSession Session(bool diplomacy = true, bool victory = true)
+    private GameSession Session(bool victory = true)
     {
-        var sim = GameFactory.Create(Content((diplomacy, victory)), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
-        if (diplomacy)
-            sim.TeamOf(0).Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
+        var sim = GameFactory.Create(Content(victory), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
+        sim.TeamOf(0).Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
         return new(sim);
     }
 
@@ -44,13 +42,13 @@ public sealed class ClientDiplomacyVictoryTests
         session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
 
     [Fact]
-    public void Screens_are_empty_when_the_ruleset_has_no_such_rules()
+    public void Victory_screen_is_absent_without_its_mod_and_diplomacy_is_always_there()
     {
-        var session = Session(false, false);
-        Assert.False(ScreenProbe.Registered(session, DiplomacyId));
+        var session = Session(victory: false);
         Assert.False(ScreenProbe.Registered(session, VictoryId));
-        // Only the main mods' screens remain.
-        Assert.Equal(["religion:screen"], session.Screens.Entries().Select(e => e.Id));
+        // Diplomacy is a base module; the rest are the main mods' screens.
+        Assert.True(ScreenProbe.Registered(session, DiplomacyId));
+        Assert.Equal(["diplomacy:screen", "religion:screen"], session.Screens.Entries().Select(e => e.Id).Order(StringComparer.Ordinal));
     }
 
     [Fact]
@@ -211,7 +209,7 @@ public sealed class ClientDiplomacyVictoryTests
         Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:remove:0"));
         Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:Gold:more"));
         Assert.True(ScreenProbe.Press(session, DiplomacyId, "propose"));
-        var service = sim.Service<IDiplomacyService>()!;
+        var service = sim.Rules().Diplomacy;
         Assert.Contains(service.Deals(sim), d => d.Proposer == 0 && d.Recipient == 1
             && d.Items.Any(i => i.FromPlayer == 0 && i.Kind == TradeItemKind.Gold && i.Amount == 10)
             && d.Items.Any(i => i.FromPlayer == 1 && i.Kind == TradeItemKind.Technology && i.ContentId == tech));

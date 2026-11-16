@@ -1177,8 +1177,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         string configuration = directory.Parent!.Name;
         while (!File.Exists(Path.Combine(directory.FullName, "Ariel.slnx"))) directory = directory.Parent!;
         var corporations = ModLoader.FromDirectory(Path.Combine(directory.FullName, "src", "Mods", "Corporations", "bin", configuration, "net10.0"));
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(directory.FullName, "src", "Mods", "Diplomacy", "bin", configuration, "net10.0"));
-        return ModLoader.Build(loaded.Sources.Append(diplomacy).Append(corporations).Append(source));
+        return ModLoader.Build(loaded.Sources.Append(corporations).Append(source));
     }
     private static (Simulation Sim, City City) ConquestScenario(ContentDb? content = null)
     {

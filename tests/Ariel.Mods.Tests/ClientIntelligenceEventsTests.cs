@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Corporations;
 using Ariel.Mods.Espionage;
@@ -97,7 +96,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void Corporations_screen_city_screen_and_unit_actions_follow_founding()
     {
-        var session = Session("Corporations", "Diplomacy");
+        var session = Session("Corporations");
         var city = AddCity(session.Sim, 0, 14);
         var great = Founder(session, city, out var corporation);
         string name = session.Sim.Content.Get<CorporationDef>(corporation).Name;
@@ -128,7 +127,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void Espionage_screen_lists_met_rivals_and_weights_change_through_commands()
     {
-        var session = Session("Espionage", "Diplomacy");
+        var session = Session("Espionage");
         AddCity(session.Sim, 0, 14); AddCity(session.Sim, 1, 57);
         Assert.NotNull(ScreenProbe.Button(session, EspionageId));
         Assert.Empty(ScreenProbe.ButtonIds(ScreenProbe.Body(session, EspionageId), "rival:"));
@@ -154,7 +153,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void A_weight_order_for_another_player_is_refused()
     {
-        var session = Session("Espionage", "Diplomacy");
+        var session = Session("Espionage");
         AddCity(session.Sim, 0, 14); AddCity(session.Sim, 1, 57);
         session.Sim.Rules().Relations.EstablishContact(session.Sim, 0, 1);
         session.Screens.Open(EspionageId);
@@ -165,7 +164,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void Espionage_hides_eliminated_and_barbarian_rivals()
     {
-        var session = Session("Espionage", "Diplomacy");
+        var session = Session("Espionage");
         var sim = session.Sim;
         AddCity(sim, 0, 14);
         AddCity(sim, 1, 57);
@@ -189,7 +188,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void Spies_in_rival_cities_get_mission_actions()
     {
-        var session = Session("Espionage", "Diplomacy");
+        var session = Session("Espionage");
         AddCity(session.Sim, 0, 14);
         var target = AddCity(session.Sim, 1, 57);
         session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
@@ -237,7 +236,7 @@ public sealed class ClientIntelligenceEventsTests
 
     private GameSession IntelligenceSession(out EspionageTeamState points, out City target)
     {
-        var session = Session("Espionage", "Diplomacy");
+        var session = Session("Espionage");
         AddCity(session.Sim, 0, 14); target = AddCity(session.Sim, 1, 57);
         session.Sim.Rules().Relations.EstablishContact(session.Sim, 0, 1);
         points = new EspionageTeamState(); points.Spent[1] = 100000;
@@ -415,7 +414,7 @@ public sealed class ClientIntelligenceEventsTests
     [Fact]
     public void Pedia_indexes_corporations_projects_victories_and_events()
     {
-        var session = Session("Diplomacy", "Corporations", "Events", "ProjectsVictory");
+        var session = Session("Corporations", "Events", "ProjectsVictory");
         foreach (var category in new[] { "Corporations", "Projects", "Victories", "Events" })
         {
             Assert.Contains(category, session.Pedia.Categories);

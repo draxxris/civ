@@ -18,6 +18,8 @@ public sealed class AiModule : IMod
     {
         context.PlayerAIs.Register(new StandardAi());
         StandardPlanners.Register(context);
+        context.RegisterService<IAiValuer<CivicSubject>>("diplomacy_civic_valuer", new DiplomacyCivicValuer());
+        context.RegisterService<IDealAppraiser>("deal_appraiser", new DealAppraiser());
         context.RegisterStateComponent<AiPlayerState>("player_state");
         context.RegisterCommand<ReviewCivicGoalCommand>("review_civic_goal");
         context.RegisterCommand<ReviewCampaignGoalsCommand>("review_campaign_goals");

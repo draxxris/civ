@@ -268,7 +268,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   planning remains absent.
 - **Relations (base)**: Bilateral team contact discovery, one war and peace path with
   peace treaties, and a memory ledger whose kinds any mod can register.
-- **Diplomacy**: Attitude ledgers, open borders, defensive pacts, and multi-item trade
+- **Diplomacy (base)**: Attitude ledgers, open borders, defensive pacts, and multi-item trade
   deals (resources, gold, gold/turn, techs).
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination,
   Cultural, Space Race, and Time victories with victory resolution screens.
