@@ -101,6 +101,41 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
     }
 
     [Fact]
+    public void Border_wonder_bars_barbarian_moves_through_the_base_movement_rules_but_never_an_attack()
+    {
+        var sim = P7ModFixture.Scenario(mods.Wonders);
+        var city = P7ModFixture.City(sim);
+        Complete(sim, city, "cities:great_wall");
+        int barbarian = sim.Rules().HostileFaction!.Ensure(sim);
+        var grid = sim.State.Grid;
+        var movement = sim.Rules().Movement;
+        var home = grid.TileAt(city.Position);
+        // Any pair of neighbouring plots near the city that a barbarian warrior could walk between while unowned.
+        var raider = new Unit { Id = sim.State.NextUnitId++, Owner = barbarian, Position = city.Position, Type = "military:warrior" };
+        sim.State.AddUnit(raider);
+        TileId from = default, to = default;
+        bool found = false;
+        foreach (var target in grid.Neighbors(home))
+        {
+            foreach (var start in grid.Neighbors(target).Where(t => t != home && !sim.State.UnitsAt(grid.HexOf(t)).Any()))
+            {
+                sim.State.MoveUnit(raider.Id, grid.HexOf(start));
+                sim.State.Plots[target.Value].Owner = null;
+                if (movement.CanEnter(sim, raider.Id, start, target) is not null) continue;
+                (from, to, found) = (start, target, true);
+                break;
+            }
+            if (found) break;
+        }
+        Assert.True(found);
+
+        sim.State.Plots[to.Value].Owner = city.Owner;
+        Assert.Contains(sim.Rules().BarbarianBarriers, b => b is IScriptedWonderService);
+        Assert.Equal("Blocked by border wonder", movement.CanEnter(sim, raider.Id, from, to));
+        Assert.NotEqual("Blocked by border wonder", movement.CanEnter(sim, raider.Id, from, to, attack: true));
+    }
+
+    [Fact]
     public void Completion_grants_are_exactly_once_and_empire_buildings_skip_existing_and_foreign_cities()
     {
         var sim = P7ModFixture.Scenario(mods.Wonders);

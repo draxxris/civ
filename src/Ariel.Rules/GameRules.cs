@@ -103,7 +103,7 @@ public sealed class GameRules : IRuleset
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
     /// <summary>The hostile faction, answered by the feature that runs it, or null without one: no hostile player
-    /// appears, huts release no hostile villagers and nothing bars a hostile unit.</summary>
+    /// appears and huts release no hostile villagers.</summary>
     public IHostileFaction? HostileFaction { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
@@ -129,6 +129,8 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
+    /// <summary>Everything that keeps barbarian units off plots they could otherwise enter, in registration order.</summary>
+    public IReadOnlyList<IBarbarianBarrier> BarbarianBarriers { get; private set; } = [];
     /// <inheritdoc/>
     public void Bind(ContentDb content)
     {
@@ -139,6 +141,7 @@ public sealed class GameRules : IRuleset
         SupportFire = services.Get<ISupportFire>();
         CapitalWeights = services.Get<ICapitalWeight>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
+        BarbarianBarriers = services.Get<IBarbarianBarrier>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();

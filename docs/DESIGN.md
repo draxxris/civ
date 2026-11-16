@@ -408,7 +408,8 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
 | `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
-| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Military movement (a barbarian that does not attack), Revolution (rebels) | Barbarians (which asks ScriptedWonders' border wonders through its own `IBarbarianBarrier`) | no hostile player; huts release no hostile villagers, rebellions field no rebels, nothing bars movement |
+| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Revolution (rebels) | Barbarians | no hostile player; huts release no hostile villagers, rebellions field no rebels |
+| `IBarbarianBarrier` | `BarbarianBarriers` (list) | Military movement, before a barbarian unit moves without attacking | ScriptedWonders (border wonders) | nothing bars a barbarian |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
@@ -416,9 +417,8 @@ Mods also consume each other's APIs directly, always as optional: Espionage asks
 Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a golden
 age calms a city, GreatPeople prices a trade mission from the Trade API, and Diplomacy
 (shared faith), Revolution (religious tension) and GreatPeople (prophets' shrines) read
-the Religion API, and ScriptedWonders registers its border wonders as the Barbarians API's
-`IBarbarianBarrier`, which only the Barbarians mod asks. Each references the provider's
-`Api` project and treats a null `sim.Service<T>()` as "absent".
+the Religion API. Each references the provider's `Api` project and treats a null
+`sim.Service<T>()` as "absent".
 
 #### Content attachments
 
@@ -1074,18 +1074,16 @@ The barbarians are a main mod, `src/Mods/Barbarians` (`barbarians`), shipped and
 default. It answers the base game's `IHostileFaction` (`GameRules.HostileFaction`): `Ensure`
 creates the hostile player on first use (its own team, at war with every other team, the
 `peoples:barbarian` civilization and leader) and records it as
-`MilitaryGameState.BarbarianPlayer`; `Bars` asks every registered `IBarbarianBarrier`. It
-runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
+`MilitaryGameState.BarbarianPlayer`. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
 attacks a neighbour it likely beats or marches on the nearest enemy city; ships hunt ships
 and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`, just after the
-phase's random events, where the spawns ran as part of the base game. Its API
-(`Ariel.Mods.Barbarians.Api`) publishes `IBarbarianBarrier`, which ScriptedWonders' border
-wonders answer through a soft reference.
+phase's random events, where the spawns ran as part of the base game. It publishes no API.
 
 What stays in the base game is the hostile-faction flag and every rule that asks it:
 `MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
 hostile player ending its turn before it begins, experience caps, culture, research cost,
-contact and memory rules, movement's barrier check (through `IHostileFaction.Bars`), the
+contact and memory rules, movement's barrier check (every `IBarbarianBarrier` in
+`GameRules.BarbarianBarriers`, which ScriptedWonders' border wonders answer), the
 computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
 fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
 mod no hostile player appears, goody huts never release hostile villagers, and a
@@ -1355,7 +1353,7 @@ Unresolved events use a default option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
-the Barbarians mod's wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
+the base game's barbarian barriers with its wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning

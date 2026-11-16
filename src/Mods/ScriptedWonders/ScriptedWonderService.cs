@@ -1,6 +1,5 @@
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Barbarians;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.ScriptedWonders;

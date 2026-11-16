@@ -117,7 +117,7 @@ public sealed class ModApiTests
         Assert.NotNull(rules.CombatLeaders);
         Assert.Contains(content.Services.Find<IScriptedWonderService>(), rules.FreeBuildingGrants.Cast<object>());
         Assert.NotNull(rules.HostileFaction);
-        Assert.Contains(content.Services.Find<IScriptedWonderService>(), content.Services.Get<Ariel.Mods.Barbarians.IBarbarianBarrier>().Cast<object>());
+        Assert.Contains(content.Services.Find<IScriptedWonderService>(), rules.BarbarianBarriers.Cast<object>());
         // Religion, Corporations and GreatPeople each weigh a city as a new capital.
         Assert.Equal(3, rules.CapitalWeights.Count);
         Assert.Contains(content.Services.Get<IProductionWishes>(), w => w.Id == "espionage:spies");
