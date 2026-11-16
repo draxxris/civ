@@ -96,6 +96,38 @@ public sealed class TcpTransportTests
     }
 
     [Fact]
+    public void What_a_peer_sends_just_before_it_disposes_arrives_before_it_leaves()
+    {
+        // Disposing used to cancel the writers at once, so a last report or chat line sent before quitting was lost.
+        string line = new('x', 1000);
+        for (int round = 0; round < 10; round++)
+        {
+            var host = TcpTransport.Host(0);
+            var guest = Join(host);
+            var atHost = Inbox(host);
+            var atGuest = Inbox(guest);
+            var hostSaw = new List<int>();
+            var guestSaw = new List<int>();
+            host.PeerLeft += hostSaw.Add;
+            guest.PeerLeft += guestSaw.Add;
+            // Both sides heartbeat and talk, so each holds unread frames from the other when one of them closes.
+            guest.Broadcast(NetMessage.OfText(NetMessageKind.Chat, 1, "hello"));
+            host.Broadcast(NetMessage.OfText(NetMessageKind.Chat, 0, "hello"));
+            Until(() => atHost.Count == 1 && atGuest.Count == 1, host, guest);
+            atHost.Clear();
+            atGuest.Clear();
+
+            var (sender, receiver, inbox, left, peer) = round % 2 == 0 ? (guest, host, atHost, hostSaw, 1) : (host, guest, atGuest, guestSaw, 0);
+            for (int i = 0; i < 200; i++) sender.Broadcast(NetMessage.OfText(NetMessageKind.Chat, peer, $"{i} {line}"));
+            sender.Dispose();
+            Until(() => left.Contains(peer), receiver);
+
+            Assert.Equal(Enumerable.Range(0, 200).Select(i => $"{i} {line}"), inbox.Select(m => m.Text));
+            receiver.Dispose();
+        }
+    }
+
+    [Fact]
     public void A_peer_that_goes_silent_is_dropped_after_the_timeout()
     {
         using var host = TcpTransport.Host(0, TimeSpan.FromSeconds(2));
@@ -162,6 +194,54 @@ public sealed class TcpTransportTests
             Until(() => left.Contains(0), guest);
         }
         finally { listener.Stop(); }
+    }
+
+    /// <summary>A game thread's context, as Godot installs one: continuations posted to it run only when the thread
+    /// pumps it, between frames.</summary>
+    private sealed class FrameContext : SynchronizationContext
+    {
+        private readonly System.Collections.Concurrent.ConcurrentQueue<(SendOrPostCallback, object?)> _posted = new();
+        public override void Post(SendOrPostCallback d, object? state) => _posted.Enqueue((d, state));
+        public void Pump()
+        {
+            while (_posted.TryDequeue(out var item)) item.Item1(item.Item2);
+        }
+    }
+
+    [Fact]
+    public void A_busy_game_thread_does_not_stall_the_links_it_opened()
+    {
+        // The smoke check hosted and joined from the game thread, whose context every loop then resumed on: while the
+        // thread built the world, nothing was read, written or heartbeated, and the guest dropped the host.
+        var previous = SynchronizationContext.Current;
+        var frames = new FrameContext();
+        SynchronizationContext.SetSynchronizationContext(frames);
+        try
+        {
+            var silence = TimeSpan.FromSeconds(2);
+            using var host = TcpTransport.Host(0, silence);
+            var joining = TcpTransport.JoinAsync("localhost", host.Port, silenceTimeout: silence);
+            var clock = Stopwatch.StartNew();
+            while (!joining.IsCompleted && clock.Elapsed < Patience) { frames.Pump(); Thread.Sleep(2); }
+#pragma warning disable xUnit1031 // This test is the game thread: it blocks and pumps, it never awaits.
+            using var guest = joining.GetAwaiter().GetResult();
+#pragma warning restore xUnit1031
+            var left = new List<int>();
+            host.PeerLeft += left.Add;
+            guest.PeerLeft += left.Add;
+            var atHost = Inbox(host);
+
+            // The game thread is busy past the silence limit and never pumps its context, only the transports.
+            clock.Restart();
+            while (clock.Elapsed < silence * 2) { host.Poll(); guest.Poll(); Thread.Sleep(20); }
+            guest.Broadcast(NetMessage.OfText(NetMessageKind.Chat, 1, "still here"));
+            Until(() => atHost.Count == 1, host, guest);
+            frames.Pump();
+            host.Poll(); guest.Poll();
+
+            Assert.Empty(left);
+        }
+        finally { SynchronizationContext.SetSynchronizationContext(previous); }
     }
 
     [Fact]

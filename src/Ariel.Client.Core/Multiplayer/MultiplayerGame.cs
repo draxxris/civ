@@ -142,8 +142,9 @@ public sealed class MultiplayerGame : IDisposable
         if (!_seats.ContainsKey(peer)) return; // never part of the game
         if (peer == 0)
         {
+            // Its last batches arrived before the news, in order: play them out, so this peer ends where the host did.
             Chat.Notice("The host left the game.");
-            _channel.Fail("The host left the game.");
+            _channel.FailAfterHeldTicks("The host left the game.");
             return;
         }
         if (!IsHost) return; // the host announces when the peer's input ends

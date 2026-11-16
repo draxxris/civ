@@ -2198,8 +2198,12 @@ initial setup. State hashes detect setup divergence.
 
 `Ariel.Net` carries lockstep over an `ITransport`. `TcpTransport` is a star for LAN and
 direct IP: clients connect to the host, which relays their messages and stamps the true
-sender. Each link has its own reader, writer and heartbeat tasks, so a long turn on the
-game thread never looks like a lost connection. Received messages queue until `Poll`.
+sender. Each link has its own reader, writer and heartbeat tasks. They run on the thread
+pool whichever thread opened the transport, never on a game thread's synchronization
+context, which Godot drains only between frames. A long frame or turn on the game thread
+therefore never looks like a lost connection. Received messages queue until `Poll`.
+`Dispose` lets each link send what it has queued and end its stream cleanly, waiting at
+most a second, so a last message before quitting still arrives.
 
 `Ariel.Client.Core/Multiplayer` holds the engine-free session layer. In the `Lobby`, the
 host owns the `LobbyState` (setup, seats, peers, chat) and broadcasts it after every
@@ -2212,6 +2216,9 @@ Lockstep membership changes at ticks the host chooses, which no peer can have ru
 - A seated peer that leaves stays a member up to the last batch the host received from
   it. Its player passes to the AI through `SetPlayerControlCommand`, a built-in command
   allowed out of turn, so every peer switches at the same step.
+- When the host leaves, the game ends for every guest. A guest first runs the ticks it
+  already holds the host's batches for, so it ends where the host did, then reports the
+  problem (`LockstepChannel.FailAfterHeldTicks`). It refuses new commands meanwhile.
 - A peer that connects later takes back a seat the AI holds. The host makes it a member
   from `LockstepSession.NextSubmit`. When its own game reaches that tick
   (`SnapshotBefore`), it sends the joiner the save and every batch it holds from that

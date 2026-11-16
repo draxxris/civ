@@ -8,7 +8,8 @@ namespace Ariel.Client;
 /// other peer's, when the ticks that carry them complete. A pump stops after a tick that started a new turn, so the
 /// session reads each turn's events before the event bus moves on, and after a tick that left turn work pending (see
 /// <see cref="Simulation.DeferTurnWork"/>), which the session must finish first. A failed handshake stops the game and becomes
-/// <see cref="Problem"/>; a desync is the owner's to resolve (see <see cref="MultiplayerGame"/>).
+/// <see cref="Problem"/>; so does losing a peer, once the ticks already held have run (<see cref="FailAfterHeldTicks"/>);
+/// a desync is the owner's to resolve (see <see cref="MultiplayerGame"/>).
 /// </summary>
 public sealed class LockstepChannel : ICommandChannel
 {
@@ -16,6 +17,7 @@ public sealed class LockstepChannel : ICommandChannel
     public const int MaxTicksPerPump = 64;
 
     private readonly LockstepSession _lockstep;
+    private string? _ending;
 
     public LockstepChannel(LockstepSession lockstep) => _lockstep = lockstep;
 
@@ -23,12 +25,14 @@ public sealed class LockstepChannel : ICommandChannel
 
     public string? Problem { get; private set; }
 
-    /// <summary>Report a problem found outside lockstep, such as a lost peer; the first one stands.</summary>
-    public void Fail(string problem) => Problem ??= problem;
+    /// <summary>Report a problem once every tick that can still complete has run: a peer whose input every tick needs
+    /// is gone, but the batches it sent before it went are held and still apply, so this peer ends where it did. Local
+    /// commands are refused from now, since they could only go into ticks that never run.</summary>
+    public void FailAfterHeldTicks(string problem) => _ending ??= problem;
 
     public Submission Submit(Simulation sim, GameCommand command)
     {
-        if (Problem != null) return Submission.Rejected(Problem);
+        if ((Problem ?? _ending) is { } problem) return Submission.Rejected(problem);
         // The same checks run again when the command applies; the state may have moved on by then.
         if (!sim.MayAct(command.Player)) return Submission.Rejected("Not your turn");
         if (command.Validate(sim) is { } error) return Submission.Rejected(error);
@@ -46,8 +50,11 @@ public sealed class LockstepChannel : ICommandChannel
             // Turn work a tick left pending must finish before the next tick: keep receiving, but run nothing.
             if (sim.HasPendingTurnWork) { _lockstep.Pump(maxTicks: 0); return false; }
             // Bounded: a peer left alone in lockstep needs nobody else's input and could run ticks forever.
-            for (int i = 0; i < MaxTicksPerPump && Problem == null && sim.State.Turn == turn && !sim.HasPendingTurnWork
-                && _lockstep.Pump(maxTicks: 1) > 0; i++) { }
+            bool stalled = false;
+            for (int i = 0; i < MaxTicksPerPump && Problem == null && sim.State.Turn == turn && !sim.HasPendingTurnWork; i++)
+                if (_lockstep.Pump(maxTicks: 1) == 0) { stalled = true; break; }
+            // Nothing more arrives from a lost peer, so a tick that cannot run now never will.
+            if (stalled && _ending != null) Problem ??= _ending;
         }
         catch (InvalidDataException e) { Problem = e.Message; }
         // A rule that throws while a tick applies stops this game here, once, rather than on every frame.

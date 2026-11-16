@@ -10,8 +10,9 @@ namespace Ariel.Net;
 /// <summary>
 /// LAN and direct-IP transport over TCP, as a star: clients connect to the host, which relays what they send to the
 /// other peers. Only the host needs a reachable port. Each connection has its own reader and writer tasks plus a
-/// heartbeat, so sends never block the game and a long turn on the game thread never looks like a lost connection.
-/// Frames are a 4-byte big-endian length followed by UTF-8 JSON.
+/// heartbeat, all on the thread pool whatever thread opened the transport, so sends never block the game and a long
+/// frame or turn on the game thread never looks like a lost connection. Disposing sends what is still queued before
+/// it closes. Frames are a 4-byte big-endian length followed by UTF-8 JSON.
 /// </summary>
 public sealed class TcpTransport : ITransport
 {
@@ -25,6 +26,8 @@ public sealed class TcpTransport : ITransport
     private const int ReadChunkBytes = 64 * 1024;
     /// <summary>How often an idle link sends a heartbeat.</summary>
     public static readonly TimeSpan HeartbeatInterval = TimeSpan.FromSeconds(1);
+    /// <summary>Longest <see cref="Dispose"/> waits for the links to send what is queued and for the peers to close.</summary>
+    public static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(1);
 
     private readonly ConcurrentQueue<Action> _inbox = new();
     private readonly ConcurrentDictionary<int, Link> _links = new();
@@ -32,6 +35,7 @@ public sealed class TcpTransport : ITransport
     private readonly TimeSpan _silenceTimeout;
     private readonly TcpListener? _listener;
     private int _nextPeer = 1;
+    private int _disposed;
 
     public int LocalPeer { get; private set; }
     /// <summary>The port the host listens on (useful when it was asked for port 0).</summary>
@@ -48,8 +52,8 @@ public sealed class TcpTransport : ITransport
         _silenceTimeout = silenceTimeout;
     }
 
-    /// <summary>How long a link may stay silent before it counts as lost, unless the caller says otherwise. Peers
-    /// starting a game build the world and the first view at once, which can starve the heartbeat for seconds.</summary>
+    /// <summary>How long a link may stay silent before it counts as lost, unless the caller says otherwise. The links
+    /// run on the thread pool, so only a peer that is gone, hung or starved of every thread goes this quiet.</summary>
     public static readonly TimeSpan DefaultSilenceTimeout = TimeSpan.FromSeconds(20);
     /// <summary>How long joining waits for the host, unless the caller says otherwise.</summary>
     public static readonly TimeSpan DefaultConnectTimeout = TimeSpan.FromSeconds(20);
@@ -62,8 +66,9 @@ public sealed class TcpTransport : ITransport
         listener.Server.DualMode = true;
         listener.Start();
         var transport = new TcpTransport(listener, ((IPEndPoint)listener.LocalEndpoint).Port, silenceTimeout ?? DefaultSilenceTimeout);
-        _ = transport.AcceptLoop();
-        _ = transport.Watchdog();
+        // Off the caller's context: a game thread's resumes continuations only between frames.
+        _ = Task.Run(transport.AcceptLoop);
+        _ = Task.Run(transport.Watchdog);
         return transport;
     }
 
@@ -79,13 +84,13 @@ public sealed class TcpTransport : ITransport
         connecting.CancelAfter(connectTimeout ?? DefaultConnectTimeout);
         try
         {
-            await client.ConnectAsync(host, port, connecting.Token);
+            await client.ConnectAsync(host, port, connecting.Token).ConfigureAwait(false);
             var stream = client.GetStream();
-            var welcome = await ReadFrame(stream, connecting.Token) ?? throw new IOException("The host closed the connection");
+            var welcome = await ReadFrame(stream, connecting.Token).ConfigureAwait(false) ?? throw new IOException("The host closed the connection");
             if (welcome.Type != WireType.Welcome) throw new InvalidDataException($"Expected a welcome, got {welcome.Type}");
             var transport = new TcpTransport(null, port, silenceTimeout ?? DefaultSilenceTimeout) { LocalPeer = welcome.Peer };
             transport.Open(0, client);
-            _ = transport.Watchdog();
+            _ = Task.Run(transport.Watchdog);
             return transport;
         }
         catch
@@ -108,11 +113,15 @@ public sealed class TcpTransport : ITransport
         while (_inbox.TryDequeue(out var action)) action();
     }
 
+    /// <summary>Close every link once it has sent what is queued and its peer has read it, waiting at most
+    /// <see cref="CloseTimeout"/>; a link still busy then is cut. Peers see this one leave; it raises no events.</summary>
     public void Dispose()
     {
-        if (_stop.IsCancellationRequested) return;
-        _stop.Cancel();
+        if (Interlocked.Exchange(ref _disposed, 1) == 1) return;
         _listener?.Stop();
+        var finishing = _links.Values.Select(link => link.Finish()).ToArray();
+        Task.WaitAll(finishing, CloseTimeout);
+        _stop.Cancel();
         foreach (var link in _links.Values) link.Close();
         _links.Clear();
     }
@@ -150,8 +159,9 @@ public sealed class TcpTransport : ITransport
         {
             TcpClient client;
             try { client = await _listener!.AcceptTcpClientAsync(_stop.Token); }
-            catch (Exception) when (_stop.IsCancellationRequested) { return; }
+            catch (Exception) when (_stop.IsCancellationRequested || _disposed != 0) { return; }
             catch (SocketException) { continue; }
+            if (_disposed != 0) { client.Dispose(); return; }
             client.NoDelay = true;
             int peer = Interlocked.Increment(ref _nextPeer) - 1;
             var others = _links.Keys.ToArray();
@@ -194,7 +204,7 @@ public sealed class TcpTransport : ITransport
     private void OnClosed(Link link)
     {
         if (!_links.TryRemove(new KeyValuePair<int, Link>(link.Peer, link))) return;
-        if (_stop.IsCancellationRequested) return;
+        if (_disposed != 0) return;
         _inbox.Enqueue(() => PeerLeft?.Invoke(link.Peer));
         if (IsHost) foreach (var other in _links.Values) other.Send(new Wire(WireType.Left, link.Peer, null));
     }
@@ -276,7 +286,8 @@ public sealed class TcpTransport : ITransport
     {
         private readonly Channel<byte[]> _outbox = Channel.CreateUnbounded<byte[]>(new() { SingleReader = true });
         private readonly CancellationTokenSource _closed = CancellationTokenSource.CreateLinkedTokenSource(owner._stop.Token);
-        private int _closing;
+        private readonly TaskCompletionSource _ended = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _closing, _finishing;
         private long _queued;
 
         public int Peer => peer;
@@ -285,13 +296,13 @@ public sealed class TcpTransport : ITransport
 
         public void Start()
         {
-            _ = ReadLoop();
-            _ = WriteLoop();
+            _ = Task.Run(ReadLoop);
+            _ = Task.Run(WriteLoop);
         }
 
         public void Send(Wire wire)
         {
-            if (_closing != 0) return;
+            if (_closing != 0 || _finishing != 0) return;
             var frame = Encode(wire);
             // One frame always fits, however large: a whole saved game travels as one.
             long queued = Interlocked.Add(ref _queued, frame.Length);
@@ -299,6 +310,16 @@ public sealed class TcpTransport : ITransport
             _outbox.Writer.TryWrite(frame);
         }
 
+        /// <summary>Take no more frames, send those queued, then end this side of the stream. The peer reads every frame
+        /// before it sees the end and closes its side, which ends the read loop and the link. Completes once the link
+        /// is closed.</summary>
+        public Task Finish()
+        {
+            if (Interlocked.Exchange(ref _finishing, 1) == 0) _outbox.Writer.TryComplete();
+            return _ended.Task;
+        }
+
+        /// <summary>Cut the connection at once, dropping anything still queued.</summary>
         public void Close()
         {
             if (Interlocked.Exchange(ref _closing, 1) == 1) return;
@@ -306,6 +327,7 @@ public sealed class TcpTransport : ITransport
             _closed.Cancel();
             client.Dispose();
             owner.OnClosed(this);
+            _ended.TrySetResult();
         }
 
         private async Task ReadLoop()
@@ -335,9 +357,17 @@ public sealed class TcpTransport : ITransport
                     Interlocked.Add(ref _queued, -frame.Length);
                     Interlocked.Exchange(ref LastSent, Environment.TickCount64);
                 }
+                // The queue ran dry because the link is finishing: end our side, and leave the read loop running to
+                // take what the peer still sends until it closes. Closing now, with its frames unread, could reset
+                // the connection and lose ours.
+                if (_finishing != 0 && _closing == 0)
+                {
+                    client.Client.Shutdown(SocketShutdown.Send);
+                    return;
+                }
             }
             catch (Exception e) when (e is IOException or SocketException or OperationCanceledException or ObjectDisposedException) { }
-            finally { Close(); }
+            Close();
         }
     }
 }
