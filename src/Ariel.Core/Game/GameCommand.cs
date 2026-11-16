@@ -26,10 +26,15 @@ public abstract class GameCommand
 /// next segment starts; after the last, the turn advances.</summary>
 public sealed class EndTurnCommand : GameCommand
 {
+    /// <summary>The turn this ends, or null for whatever turn is current. Lockstep applies a command some ticks after it
+    /// was issued, so a second press sent before the first applied would otherwise end the next turn as well.</summary>
+    public int? Turn { get; init; }
+
     /// <inheritdoc/>
     public override string? Validate(Simulation sim)
     {
         if (!sim.State.Players.Any(p => p.Id == Player)) return "unknown player";
+        if (Turn is int turn && turn != sim.State.Turn) return $"Turn {turn} is already over.";
         return sim.State.PlayerById(Player).EndedTurn ? "Player has already ended turn." : null;
     }
 

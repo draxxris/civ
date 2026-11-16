@@ -113,7 +113,7 @@ public sealed class MultiplayerGame : IDisposable
         if (!IsHost || _timedOut || Environment.TickCount64 < _deadline) return;
         _timedOut = true;
         foreach (var player in state.Players.Where(p => p.Ai == null && !p.EndedTurn && Session.Sim.MayAct(p.Id)).ToList())
-            _lockstep.Enqueue(new EndTurnCommand { Player = player.Id });
+            _lockstep.Enqueue(new EndTurnCommand { Player = player.Id, Turn = state.Turn });
         Chat.Notice("Time is up: the turn ends.");
     }
 

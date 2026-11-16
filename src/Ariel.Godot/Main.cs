@@ -111,9 +111,9 @@ public partial class Main : Node3D
             if (_debugMultiplayer?.Tick() is { } lobby) StartMultiplayer(lobby);
             PollStarting();
             if (_game is { } shown && !shown.CanShow(shown.Session.Sim)) RebuildGameView(shown);
-            if (_debugMultiplayer != null && _multiplayer != null && _framesSinceReady < 0 && _debugMultiplayer.Drive(_multiplayer.Session))
+            if (_debugMultiplayer != null && _multiplayer != null && _framesSinceReady < 0 && _debugMultiplayer.Drive(_multiplayer))
             {
-                GD.Print($"multiplayer smoke: turn {_multiplayer.Session.Sim.State.Turn}, hash {_multiplayer.Session.Sim.ComputeHash():x16}");
+                GD.Print(_debugMultiplayer.Report);
                 if (_debug.ScreenshotPath != null) _framesSinceReady = 0;
                 else GetTree().Quit();
             }

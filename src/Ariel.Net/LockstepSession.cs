@@ -160,6 +160,7 @@ public sealed class LockstepSession : IDisposable
         var members = _peers.Where(p => IsMember(p, Tick)).ToArray();
         return $"tick {Tick}: members [{string.Join(",", members)}], held [{string.Join(",", held)}], "
             + $"next submit {_nextSubmit}, last batch per peer [{string.Join(",", _lastTick.OrderBy(t => t.Key).Select(t => $"{t.Key}:{t.Value}"))}]"
+            + (_awaitingHandshake.Count > 0 ? $", awaiting handshake from [{string.Join(",", _awaitingHandshake.Order())}]" : "")
             + (LastFault is { } fault ? $", last fault: {fault}" : "");
     }
 

@@ -159,7 +159,7 @@ depends = ["cool"]
 run = "tools/sync-check.sh"
 
 [tasks."check:multiplayer"]
-description = "Two game clients (host and guest) play over localhost TCP under Xvfb and must reach the same state: mise run check:multiplayer -- [--turns N] [--world duel] [--opponents N] [--out-dir DIR]"
+description = "Two game clients (host and guest) play over localhost TCP under Xvfb and must reach the same state: mise run check:multiplayer -- [--turns N] [--world duel] [--opponents N] [--out-dir DIR] [--limit SECONDS]"
 run = "tools/mp-smoke.sh"
 
 [tasks."check:desync-diff"]

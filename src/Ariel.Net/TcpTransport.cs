@@ -29,7 +29,7 @@ public sealed class TcpTransport : ITransport
     private readonly ConcurrentQueue<Action> _inbox = new();
     private readonly ConcurrentDictionary<int, Link> _links = new();
     private readonly CancellationTokenSource _stop = new();
-    private readonly TimeSpan _timeout;
+    private readonly TimeSpan _silenceTimeout;
     private readonly TcpListener? _listener;
     private int _nextPeer = 1;
 
@@ -41,39 +41,49 @@ public sealed class TcpTransport : ITransport
     public event Action<int>? PeerJoined;
     public event Action<int>? PeerLeft;
 
-    private TcpTransport(TcpListener? listener, int port, TimeSpan timeout)
+    private TcpTransport(TcpListener? listener, int port, TimeSpan silenceTimeout)
     {
         _listener = listener;
         Port = port;
-        _timeout = timeout;
+        _silenceTimeout = silenceTimeout;
     }
 
+    /// <summary>How long a link may stay silent before it counts as lost, unless the caller says otherwise. Peers
+    /// starting a game build the world and the first view at once, which can starve the heartbeat for seconds.</summary>
+    public static readonly TimeSpan DefaultSilenceTimeout = TimeSpan.FromSeconds(20);
+    /// <summary>How long joining waits for the host, unless the caller says otherwise.</summary>
+    public static readonly TimeSpan DefaultConnectTimeout = TimeSpan.FromSeconds(20);
+
     /// <summary>Listen for clients as peer 0.</summary>
-    public static TcpTransport Host(int port, TimeSpan? timeout = null)
+    /// <param name="silenceTimeout">How long a client may send nothing before it counts as lost.</param>
+    public static TcpTransport Host(int port, TimeSpan? silenceTimeout = null)
     {
         var listener = new TcpListener(IPAddress.IPv6Any, port);
         listener.Server.DualMode = true;
         listener.Start();
-        var transport = new TcpTransport(listener, ((IPEndPoint)listener.LocalEndpoint).Port, timeout ?? TimeSpan.FromSeconds(20));
+        var transport = new TcpTransport(listener, ((IPEndPoint)listener.LocalEndpoint).Port, silenceTimeout ?? DefaultSilenceTimeout);
         _ = transport.AcceptLoop();
         _ = transport.Watchdog();
         return transport;
     }
 
     /// <summary>Connect to a host and wait until it assigns this peer an id.</summary>
-    public static async Task<TcpTransport> JoinAsync(string host, int port, TimeSpan? timeout = null, CancellationToken cancel = default)
+    /// <param name="connectTimeout">How long to wait for the connection and the host's welcome.</param>
+    /// <param name="silenceTimeout">Once connected, how long the host may send nothing before it counts as lost. It is
+    /// separate from <paramref name="connectTimeout"/>: a short wait to connect must not make a running game fragile.</param>
+    public static async Task<TcpTransport> JoinAsync(string host, int port, TimeSpan? connectTimeout = null, TimeSpan? silenceTimeout = null,
+        CancellationToken cancel = default)
     {
-        var limit = timeout ?? TimeSpan.FromSeconds(20);
         var client = new TcpClient { NoDelay = true };
         using var connecting = CancellationTokenSource.CreateLinkedTokenSource(cancel);
-        connecting.CancelAfter(limit);
+        connecting.CancelAfter(connectTimeout ?? DefaultConnectTimeout);
         try
         {
             await client.ConnectAsync(host, port, connecting.Token);
             var stream = client.GetStream();
             var welcome = await ReadFrame(stream, connecting.Token) ?? throw new IOException("The host closed the connection");
             if (welcome.Type != WireType.Welcome) throw new InvalidDataException($"Expected a welcome, got {welcome.Type}");
-            var transport = new TcpTransport(null, port, limit) { LocalPeer = welcome.Peer };
+            var transport = new TcpTransport(null, port, silenceTimeout ?? DefaultSilenceTimeout) { LocalPeer = welcome.Peer };
             transport.Open(0, client);
             _ = transport.Watchdog();
             return transport;
@@ -200,7 +210,7 @@ public sealed class TcpTransport : ITransport
                 long now = Environment.TickCount64;
                 foreach (var link in _links.Values)
                 {
-                    if (now - link.LastReceived > _timeout.TotalMilliseconds) { link.Close(); continue; }
+                    if (now - link.LastReceived > _silenceTimeout.TotalMilliseconds) { link.Close(); continue; }
                     if (now - link.LastSent >= HeartbeatInterval.TotalMilliseconds) link.Send(new Wire(WireType.Ping, LocalPeer, null));
                 }
             }

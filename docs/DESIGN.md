@@ -2222,9 +2222,13 @@ Lockstep membership changes at ticks the host chooses, which no peer can have ru
 
 An optional turn timer runs on the host's clock. When it runs out, the host submits
 `EndTurnCommand`s for the humans still moving, so the result stays deterministic.
+A command applies some ticks after it is issued, so every `EndTurnCommand` the client
+sends names its `Turn`. A copy that arrives after the turn rolled over, such as a second
+press, is refused instead of ending the next turn.
 `mise run check:sync` checks determinism across processes, thread counts,
 save/reload and background turns. `mise run check:multiplayer` plays a host and a guest
-client against each other over localhost.
+client against each other over localhost. Each side reports its hash in chat when it
+reaches the target turn and leaves only after the other side has reported.
 
 ### Background turns and replayed moves
 

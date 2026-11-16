@@ -136,7 +136,7 @@ public sealed partial class GameSession
             SimulationChanged();
             return;
         }
-        Submit(new EndTurnCommand { Player = LocalPlayer });
+        Submit(new EndTurnCommand { Player = LocalPlayer, Turn = turn });
     }
 
     /// <summary>End the turn of every other human seat whose segment is moving. Returns whether any applied.</summary>
@@ -144,7 +144,7 @@ public sealed partial class GameSession
     {
         bool applied = false;
         foreach (var player in Sim.State.Players.Where(p => p.Id != LocalPlayer && p.Ai == null && !p.EndedTurn).ToList())
-            if (_channel.Submit(Sim, new EndTurnCommand { Player = player.Id }).Applied) applied = true;
+            if (_channel.Submit(Sim, new EndTurnCommand { Player = player.Id, Turn = Sim.State.Turn }).Applied) applied = true;
         return applied;
     }
 

@@ -58,6 +58,24 @@ public sealed class LockstepChannelTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     [Fact]
+    public void A_second_end_turn_sent_before_the_first_applied_does_not_end_the_next_turn()
+    {
+        var (a, b) = Pair();
+        b.Session.EndTurn();
+        Run(a, b, () => a.Session.Sim.State.PlayerById(1).EndedTurn && b.Session.Sim.State.PlayerById(1).EndedTurn);
+
+        // Both presses go out before either applies; the first ends the turn and the turn rolls over at once.
+        a.Session.EndTurn();
+        a.Session.EndTurn();
+        Run(a, b, () => a.Session.Sim.State.Turn == 2 && b.Session.Sim.State.Turn == 2);
+        for (int i = 0; i < 20; i++) { a.Session.Pump(); b.Session.Pump(); }
+
+        Assert.False(a.Session.Sim.State.PlayerById(0).EndedTurn);
+        Assert.False(b.Session.Sim.State.PlayerById(0).EndedTurn);
+        Assert.Equal(a.Session.Sim.ComputeHash(), b.Session.Sim.ComputeHash());
+    }
+
+    [Fact]
     public void An_idle_peer_does_not_rebuild_the_world_each_frame()
     {
         var (a, b) = Pair();

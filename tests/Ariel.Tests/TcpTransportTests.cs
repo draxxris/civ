@@ -107,6 +107,63 @@ public sealed class TcpTransportTests
         Until(() => left.Contains(1), host);
     }
 
+    /// <summary>A host that welcomes one client as peer 1, then says nothing: no heartbeat, no messages.</summary>
+    private static (TcpListener Listener, Task<TcpClient> Accepted) QuietHost()
+    {
+        var listener = new TcpListener(System.Net.IPAddress.Loopback, 0);
+        listener.Start();
+        async Task<TcpClient> Welcome()
+        {
+            var client = await listener.AcceptTcpClientAsync();
+            var body = System.Text.Encoding.UTF8.GetBytes("{\"Type\":0,\"Peer\":1,\"Message\":null}");
+            var frame = new byte[4 + body.Length];
+            System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(frame, body.Length);
+            body.CopyTo(frame, 4);
+            await client.GetStream().WriteAsync(frame);
+            return client;
+        }
+        return (listener, Welcome());
+    }
+
+    [Fact]
+    public async Task A_short_connect_timeout_does_not_shorten_how_long_the_host_may_be_silent()
+    {
+        // The two-process smoke check joined with a 5 second connect timeout, which also became the link's silence
+        // limit; the guest then dropped the host while both were still building the world.
+        var (listener, accepted) = QuietHost();
+        try
+        {
+            int port = ((System.Net.IPEndPoint)listener.LocalEndpoint).Port;
+            using var guest = await TcpTransport.JoinAsync("localhost", port, connectTimeout: TimeSpan.FromSeconds(1));
+            using var host = await accepted;
+            var left = new List<int>();
+            guest.PeerLeft += left.Add;
+
+            var clock = Stopwatch.StartNew();
+            while (clock.Elapsed < TimeSpan.FromSeconds(3)) { guest.Poll(); await Task.Delay(20); }
+
+            Assert.Empty(left);
+        }
+        finally { listener.Stop(); }
+    }
+
+    [Fact]
+    public async Task A_joined_peer_drops_a_host_silent_past_its_silence_timeout()
+    {
+        var (listener, accepted) = QuietHost();
+        try
+        {
+            int port = ((System.Net.IPEndPoint)listener.LocalEndpoint).Port;
+            using var guest = await TcpTransport.JoinAsync("localhost", port, silenceTimeout: TimeSpan.FromSeconds(2));
+            using var host = await accepted;
+            var left = new List<int>();
+            guest.PeerLeft += left.Add;
+
+            Until(() => left.Contains(0), guest);
+        }
+        finally { listener.Stop(); }
+    }
+
     [Fact]
     public void A_header_announcing_a_huge_frame_costs_only_the_bytes_that_arrive()
     {
