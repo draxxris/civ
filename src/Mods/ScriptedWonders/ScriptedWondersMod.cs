@@ -28,8 +28,9 @@ public sealed class ScriptedWondersMod : IPreparableMod
         context.Subscribe<CombatResolved>("victory", service.Victory);
         context.TurnSystems.Register(new WonderTurns(service));
         context.RegisterService<IFreeBuildingGrants>("free_buildings", service);
-        // Asked by the base game's movement rules; without the Barbarians mod no barbarian exists to bar.
-        context.RegisterService<IBarbarianBarrier>("border_wonders", service);
+        // Asked by the base game's movement rules for every unit; it bars only barbarians, so without the Barbarians
+        // mod it bars nothing.
+        context.RegisterService<IMovementBarrier>("border_wonders", service);
     }
 }
 

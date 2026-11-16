@@ -3,8 +3,8 @@ using Ariel.Game;
 namespace Ariel.Mods.ScriptedWonders;
 
 /// <summary>Read-only scripted wonder status. Queries do not create state or consume randomness. The mod also answers
-/// the base game's free-building grants (<see cref="IFreeBuildingGrants"/>) and barbarian barriers
-/// (<see cref="IBarbarianBarrier"/>).</summary>
+/// the base game's free-building grants (<see cref="IFreeBuildingGrants"/>) and movement barriers
+/// (<see cref="IMovementBarrier"/>), with border wonders that keep barbarians out.</summary>
 public interface IScriptedWonderService
 {
     IReadOnlyList<ScriptedWonderStatus> DescribeCity(Simulation sim, int cityId);

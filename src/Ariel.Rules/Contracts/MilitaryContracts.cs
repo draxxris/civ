@@ -184,15 +184,15 @@ public interface IHostileFaction
     /// <summary>The hostile player, created on first use. Every caller gets the same player for the rest of the game.</summary>
     int Ensure(Simulation sim);
 }
-/// <summary>Whether something bars a barbarian unit from a plot it could otherwise enter, such as a wonder that keeps
-/// barbarians out of its owner's lands. Any feature registers one as a service
-/// (<c>context.RegisterService&lt;IBarbarianBarrier&gt;(name, barrier)</c>); movement asks every registered barrier
-/// (<c>GameRules.BarbarianBarriers</c>), in registration order, before a barbarian unit moves without attacking, and
-/// an attack is never barred. Queries never change state or use the RNG.</summary>
-public interface IBarbarianBarrier
+/// <summary>Whether something bars a unit from a plot it could otherwise enter. Any feature registers one as a
+/// service (<c>context.RegisterService&lt;IMovementBarrier&gt;(name, barrier)</c>); movement asks every registered
+/// barrier (<c>GameRules.MovementBarriers</c>), in registration order, before any unit moves without attacking, and
+/// each barrier decides for itself which units it applies to. An attack is never barred. Queries never change state
+/// or use the RNG.</summary>
+public interface IMovementBarrier
 {
-    /// <summary>Whether this barbarian unit may not enter the target plot.</summary>
-    bool Blocks(Simulation sim, int barbarianUnit, Hex target);
+    /// <summary>Whether this unit may not enter the target plot.</summary>
+    bool Blocks(Simulation sim, int unit, Hex target);
 }
 /// <summary>Combat counters of one player. Combat wins against civilizations earn <see cref="GeneralPoints"/>; the
 /// feature that turns them into leaders (<see cref="ICombatLeaders"/>) spends them and keeps the other two counts.</summary>

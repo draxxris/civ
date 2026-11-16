@@ -130,9 +130,17 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         Assert.True(found);
 
         sim.State.Plots[to.Value].Owner = city.Owner;
-        Assert.Contains(sim.Rules().BarbarianBarriers, b => b is IScriptedWonderService);
-        Assert.Equal("Blocked by border wonder", movement.CanEnter(sim, raider.Id, from, to));
-        Assert.NotEqual("Blocked by border wonder", movement.CanEnter(sim, raider.Id, from, to, attack: true));
+        var wall = Assert.Single(sim.Rules().MovementBarriers, b => b is IScriptedWonderService);
+        Assert.Equal("Movement barred", movement.CanEnter(sim, raider.Id, from, to));
+        Assert.NotEqual("Movement barred", movement.CanEnter(sim, raider.Id, from, to, attack: true));
+
+        // The base game asks the barrier for every unit; the wonder itself decides that only barbarians are barred,
+        // so a land unit of another civilization walks into the same plot.
+        var foreigner = new Unit { Id = sim.State.NextUnitId++, Owner = 1, Position = grid.HexOf(from), Type = "military:warrior" };
+        sim.State.AddUnit(foreigner);
+        Assert.True(wall.Blocks(sim, raider.Id, grid.HexOf(to)));
+        Assert.False(wall.Blocks(sim, foreigner.Id, grid.HexOf(to)));
+        Assert.NotEqual("Movement barred", movement.CanEnter(sim, foreigner.Id, from, to));
     }
 
     [Fact]

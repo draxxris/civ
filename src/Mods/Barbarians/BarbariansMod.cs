@@ -7,7 +7,7 @@ namespace Ariel.Mods.Barbarians;
 /// unclaimed land and ships off unclaimed coasts; and how every barbarian unit moves and attacks. The base game keeps
 /// the hostile-faction flag (<see cref="MilitaryGameState.BarbarianPlayer"/>) and every rule that asks it, and reaches
 /// this mod through <see cref="IHostileFaction"/> for hostile villagers and rebels; movement asks the base game's
-/// <see cref="IBarbarianBarrier"/>s, not this mod, what bars a barbarian.</summary>
+/// <see cref="IMovementBarrier"/>s, not this mod, what bars a barbarian.</summary>
 public sealed class BarbariansMod : IMod
 {
     public void Register(IModContext context)

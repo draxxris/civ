@@ -409,7 +409,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Revolution (rebels) | Barbarians | no hostile player; huts release no hostile villagers, rebellions field no rebels |
-| `IBarbarianBarrier` | `BarbarianBarriers` (list) | Military movement, before a barbarian unit moves without attacking | ScriptedWonders (border wonders) | nothing bars a barbarian |
+| `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
@@ -1091,12 +1091,13 @@ phase's random events, where the spawns ran as part of the base game. It publish
 What stays in the base game is the hostile-faction flag and every rule that asks it:
 `MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
 hostile player ending its turn before it begins, experience caps, culture, research cost,
-contact and memory rules, movement's barrier check (every `IBarbarianBarrier` in
-`GameRules.BarbarianBarriers`, which ScriptedWonders' border wonders answer), the
-computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
+contact and memory rules, the computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
 fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
 mod no hostile player appears, goody huts never release hostile villagers, and a
-Revolution rebellion releases pressure without fielding rebels.
+Revolution rebellion releases pressure without fielding rebels. Movement asks every
+`IMovementBarrier` in `GameRules.MovementBarriers` before any unit's non-attack move,
+without asking whether the unit is a barbarian; ScriptedWonders' border wonders answer
+it and bar only barbarian land units themselves.
 
 ## Government and Peoples services
 
@@ -1369,7 +1370,7 @@ Unresolved events use a default option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
-the base game's barbarian barriers with its wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
+the base game's movement barriers with its wonders that keep barbarians out (`IMovementBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning

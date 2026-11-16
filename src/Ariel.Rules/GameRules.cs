@@ -126,8 +126,8 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
-    /// <summary>Everything that keeps barbarian units off plots they could otherwise enter, in registration order.</summary>
-    public IReadOnlyList<IBarbarianBarrier> BarbarianBarriers { get; private set; } = [];
+    /// <summary>Everything that keeps units off plots they could otherwise enter, in registration order.</summary>
+    public IReadOnlyList<IMovementBarrier> MovementBarriers { get; private set; } = [];
     /// <inheritdoc/>
     public void Bind(ContentDb content)
     {
@@ -138,7 +138,7 @@ public sealed class GameRules : IRuleset
         SupportFire = services.Get<ISupportFire>();
         CapitalWeights = services.Get<ICapitalWeight>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
-        BarbarianBarriers = services.Get<IBarbarianBarrier>();
+        MovementBarriers = services.Get<IMovementBarrier>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();

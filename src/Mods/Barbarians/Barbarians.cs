@@ -7,7 +7,7 @@ namespace Ariel.Mods.Barbarians;
 
 /// <summary>Creates the barbarian player once, on its own team and at war with every other team, and records it
 /// as the base game's one hostile player for the rest of the game. Answers the base game's <see cref="IHostileFaction"/>.
-/// What keeps barbarians off plots is the base game's <see cref="IBarbarianBarrier"/>, which movement asks.</summary>
+/// What keeps barbarians off plots is the base game's <see cref="IMovementBarrier"/>s, which movement asks.</summary>
 internal sealed class BarbarianFaction : IHostileFaction
 {
     int IHostileFaction.Ensure(Simulation sim) => Ensure(sim);
