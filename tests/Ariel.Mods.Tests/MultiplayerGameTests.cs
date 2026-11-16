@@ -96,6 +96,21 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     [Fact]
+    public void When_the_host_leaves_the_guest_reports_it_and_refuses_new_commands()
+    {
+        var (_, host, guest) = Started();
+        Run(() => host.Session.Sim.State.Turn == 1 && !host.Session.TurnInProgress && !guest.Session.TurnInProgress, host, guest);
+
+        host.Dispose();
+        Run(() => guest.Session.ConnectionProblem != null, guest);
+
+        Assert.Equal("The host left the game.", guest.Session.ConnectionProblem);
+        Assert.Contains(guest.Chat.Lines, l => l.Text == "The host left the game.");
+        Assert.False(guest.Session.Submit(new EndTurnCommand { Player = guest.Session.LocalPlayer }));
+        guest.Dispose();
+    }
+
+    [Fact]
     public void A_player_who_returns_takes_their_seat_back_in_sync()
     {
         var (hub, host, guest) = Started();
