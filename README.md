@@ -11,9 +11,9 @@ Mods in `src/Mods`:
   ranged support fire), AirCombat (air missions and interception), Barbarians (the hostile
   faction's spawns and raids) and Religion (faiths, state religion, missionaries and
   inquisitions).
-- Optional mods, enabled in the mod manager: Diplomacy, ProjectsVictory, Corporations,
-  Espionage, Events, ScriptedWonders, Revolution, and the alternative research mods
-  CardResearch and TechTree.
+- Optional mods, enabled in the mod manager: Diplomacy, Votes (world councils),
+  ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders, Revolution, and the
+  alternative research mods CardResearch and TechTree.
 
 ```
 mise install                         # once per clone: .NET 10 SDK and Godot 4.7.2-stable .NET (godot-mono)

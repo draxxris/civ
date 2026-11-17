@@ -3,7 +3,8 @@ using Ariel.Content.Schema;
 
 namespace Ariel.Mods.ProjectsVictory;
 
-/// <summary>An executable victory condition. Rule is one of conquest, domination, cultural, time, project.
+/// <summary>An executable victory condition. Rule is one of conquest, domination, cultural, time, project, or vote
+/// (decided by another feature through <see cref="IProjectVictoryService.AwardVote"/>).
 /// Lower Priority values are checked first.</summary>
 public sealed class VictoryDef : GameContentDef
 {

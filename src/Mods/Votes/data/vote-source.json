@@ -1,0 +1,36 @@
+[
+  {
+    "civic": null,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "votes:diplovote_pope",
+    "interval": 9,
+    "name": "Apostolic Palace",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "PopupText",
+      "ReligionYields",
+      "ReligionYields/iYield",
+      "SecretaryGeneralText"
+    ]
+  },
+  {
+    "civic": null,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "votes:diplovote_un",
+    "interval": 5,
+    "name": "United Nations",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "PopupText",
+      "SecretaryGeneralText"
+    ]
+  }
+]

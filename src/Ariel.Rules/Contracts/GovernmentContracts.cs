@@ -47,9 +47,23 @@ public sealed class GovernmentPlayerState
 public sealed record CivicSwitchResult(int AnarchyTurns, int CooldownTurns, Ledger Ledger);
 public interface IGovernmentService
 {
+    /// <summary>Why the player may not change to these civics now, or null. Asks every <see cref="ICivicRestrictions"/>
+    /// about each civic of the resulting cabinet.</summary>
     string? Validate(Simulation sim, int player, IReadOnlyList<string> civics);
     CivicSwitchResult Calculate(Simulation sim, int player, IReadOnlyList<string> civics);
     void Adopt(Simulation sim, int player, IReadOnlyList<string> civics);
+    /// <summary>Put the player on these civics at once, without anarchy, a cooldown or any requirement: what a rule
+    /// that forces a civic does (a council's resolution). The player's timers are left as they are.</summary>
+    void Impose(Simulation sim, int player, IReadOnlyList<string> civics);
+}
+
+/// <summary>Limits a mod sets on which civics a player may run, beyond the civics' own requirements: a world council's
+/// forced civics. Every registered instance is asked (through <see cref="IGovernmentService.Validate"/>); without one,
+/// only requirements, anarchy and the cooldown limit a change. Answers are RNG-free and never change state.</summary>
+public interface ICivicRestrictions
+{
+    /// <summary>Why the player may not run this civic, or null.</summary>
+    string? Refuse(Simulation sim, int player, CivicDef civic);
 }
 
 /// <summary>Read-only identity and the complete imported AI personality. Queries never consume RNG.</summary>

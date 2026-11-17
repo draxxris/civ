@@ -16,6 +16,13 @@
     "cultureLevel": "foundation:culturelevel_legendary"
   },
   {
+    "id": "projects_victory:diplomatic",
+    "name": "Diplomatic",
+    "identity": "foundation:victory_diplomatic",
+    "rule": "vote",
+    "priority": 25
+  },
+  {
     "id": "projects_victory:domination",
     "name": "Domination",
     "identity": "foundation:victory_domination",

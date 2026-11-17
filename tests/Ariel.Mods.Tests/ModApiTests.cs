@@ -103,7 +103,7 @@ public sealed class ModApiTests
     [Fact]
     public void Feature_mods_answer_the_base_seams_with_the_services_they_publish()
     {
-        string[] optional = ["Espionage", "Revolution", "ScriptedWonders", "ProjectsVictory", "Corporations", "Diplomacy"];
+        string[] optional = ["Espionage", "Revolution", "ScriptedWonders", "ProjectsVictory", "Corporations", "Diplomacy", "Votes"];
         string[] main = ["GreatPeople", "Religion", "Trade", "Barbarians"];
         var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder),
             ModLoader.FromDirectories(optional.Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name))
@@ -114,6 +114,9 @@ public sealed class ModApiTests
         Assert.Same(content.Services.Find<IRevolutionService>(), rules.CityUnrest);
         Assert.Same(content.Services.Find<ITradeRouteService>(), rules.TradeLinks);
         Assert.Same(content.Services.Find<IProjectVictoryService>(), rules.Scores);
+        Assert.Same(content.Services.Find<IProjectVictoryService>(), rules.VictoryConditions);
+        Assert.Contains(content.Services.Find<Ariel.Mods.Votes.IVotesService>(), rules.CivicRestrictions.Cast<object>());
+        Assert.Contains(content.Services.Find<Ariel.Mods.Votes.IVotesService>(), rules.TradeTerms.Cast<object>());
         Assert.NotNull(rules.CombatLeaders);
         Assert.Contains(content.Services.Find<IScriptedWonderService>(), rules.FreeBuildingGrants.Cast<object>());
         Assert.NotNull(rules.HostileFaction);

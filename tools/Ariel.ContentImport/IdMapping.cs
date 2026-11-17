@@ -58,7 +58,8 @@ public static class IdMapping
         Assign("government", "CivicInfo CivicOptionInfo UpkeepInfo");
         Assign("peoples", "CivilizationInfo LeaderHeadInfo TraitInfo CivilizationArtInfo LeaderheadArtInfo UnitArtStyleTypeInfo");
         // Foundation reserves identities for mechanics that still have no owning mod.
-        Assign("diplomacy", "DiplomacyInfo AttitudeInfo MemoryInfo DenialInfo VoteInfo VoteSourceInfo");
+        Assign("diplomacy", "DiplomacyInfo AttitudeInfo MemoryInfo DenialInfo");
+        Assign("votes", "VoteInfo VoteSourceInfo");
         Assign("espionage", "EspionageMissionInfo");
         Assign("events", "EventInfo EventTriggerInfo");
         Assign("projects-victory", "ProjectInfo");

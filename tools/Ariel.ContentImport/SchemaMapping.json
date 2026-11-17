@@ -7017,5 +7017,49 @@
       { "source": "bVisible", "property": "Visible", "kind": "bool", "default": false }
     ],
     "requirements": []
+  },
+  {
+    "sourceClass": "VoteSourceInfo",
+    "definition": "VoteSourceDef",
+    "mod": "votes",
+    "fields": [
+      { "source": "iVoteInterval", "property": "Interval", "kind": "int" },
+      { "source": "Civic", "property": "Civic", "kind": "ref", "target": "CivicInfo" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "VoteInfo",
+    "definition": "VoteDef",
+    "mod": "votes",
+    "fields": [
+      { "source": "DiploVotes", "property": "Sources", "kind": "mapBool", "target": "VoteSourceInfo", "key": "DiploVoteType", "value": "bValid" },
+      { "source": "iPopulationThreshold", "property": "PopulationThreshold", "kind": "int" },
+      { "source": "iMinVoters", "property": "MinVoters", "kind": "int" },
+      { "source": "iStateReligionVotePercent", "property": "StateReligionVotePercent", "kind": "int" },
+      { "source": "bCityVoting", "property": "CityVoting", "kind": "bool", "default": 0 },
+      { "source": "bCivVoting", "property": "CivVoting", "kind": "bool", "default": 0 },
+      { "source": "bSecretaryGeneral", "property": "SecretaryGeneral", "kind": "bool", "default": 0 },
+      { "source": "bVictory", "property": "Victory", "kind": "bool", "default": 0 },
+      { "source": "bFreeTrade", "property": "FreeTrade", "kind": "bool", "default": 0 },
+      { "source": "bNoNukes", "property": "NoNukes", "kind": "bool", "default": 0 },
+      { "source": "bOpenBorders", "property": "OpenBorders", "kind": "bool", "default": 0 },
+      { "source": "bDefensivePact", "property": "DefensivePact", "kind": "bool", "default": 0 },
+      { "source": "bForcePeace", "property": "ForcePeace", "kind": "bool", "default": 0 },
+      { "source": "bForceNoTrade", "property": "ForceNoTrade", "kind": "bool", "default": 0 },
+      { "source": "bForceWar", "property": "ForceWar", "kind": "bool", "default": 0 },
+      { "source": "bAssignCity", "property": "AssignCity", "kind": "bool", "default": 0 },
+      { "source": "ForceCivics", "property": "ForceCivics", "kind": "mapBool", "target": "CivicInfo", "key": "CivicType", "value": "bForce" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingVotesDef",
+    "mod": "votes",
+    "fields": [
+      { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" }
+    ],
+    "requirements": []
   }
 ]

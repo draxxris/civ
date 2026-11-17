@@ -1,0 +1,23 @@
+[
+  {
+    "id": "votes:apostolic_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:apostolic_palace",
+    "voteSource": "votes:diplovote_pope"
+  },
+  {
+    "id": "votes:un_mission",
+    "name": "",
+    "requirements": null,
+    "target": "cities:un_mission",
+    "voteSource": "votes:diplovote_un"
+  },
+  {
+    "id": "votes:united_nations",
+    "name": "",
+    "requirements": null,
+    "target": "cities:united_nations",
+    "voteSource": "votes:diplovote_un"
+  }
+]

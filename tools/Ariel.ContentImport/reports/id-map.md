@@ -103,8 +103,8 @@ substitutions precede lowercase conversion.
 | UnitInfo             | military         |     359 |
 | UpkeepInfo           | government       |       3 |
 | VictoryInfo          | foundation       |      10 |
-| VoteInfo             | diplomacy        |      23 |
-| VoteSourceInfo       | diplomacy        |       2 |
+| VoteInfo             | votes            |      23 |
+| VoteSourceInfo       | votes            |       2 |
 | WorldInfo            | foundation       |       8 |
 | YieldInfo            | foundation       |       3 |
 

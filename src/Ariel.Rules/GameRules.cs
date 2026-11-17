@@ -114,6 +114,8 @@ public sealed class GameRules : IRuleset
     public ICityUnrest? CityUnrest { get; private set; }
     /// <summary>Players' scores, answered by the feature that keeps score, or null without one.</summary>
     public IPlayerScores? Scores { get; private set; }
+    /// <summary>Which victories are on, answered by the feature that runs victory conditions, or null without one.</summary>
+    public IVictoryConditions? VictoryConditions { get; private set; }
     /// <summary>Leaders that emerge from general points, answered by the feature that has them, or null without one.</summary>
     public ICombatLeaders? CombatLeaders { get; private set; }
 
@@ -125,11 +127,14 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<IUnitActionSource> UnitActions { get; private set; } = [];
     /// <summary>Every kind of fire that can support an assault, base and mod, in registration order.</summary>
     public IReadOnlyList<ISupportFire> SupportFire { get; private set; } = [];
-    /// <summary>Everything that weighs a city as a new capital, base and mod, in registration order.</summary>
-    public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every mod's terms of trade between teams (embargoes, free trade), in registration order. Rules ask
     /// <see cref="Relations"/>, which combines them.</summary>
     public IReadOnlyList<ITradeTerms> TradeTerms { get; private set; } = [];
+    /// <summary>Every mod's limits on which civics a player may run (a council's forced civics), in registration order.
+    /// <see cref="Government"/> asks them when a player changes civics.</summary>
+    public IReadOnlyList<ICivicRestrictions> CivicRestrictions { get; private set; } = [];
+    /// <summary>Everything that weighs a city as a new capital, base and mod, in registration order.</summary>
+    public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
     /// <inheritdoc/>
@@ -141,12 +146,13 @@ public sealed class GameRules : IRuleset
         UnitActions = services.Get<IUnitActionSource>();
         SupportFire = services.Get<ISupportFire>();
         CapitalWeights = services.Get<ICapitalWeight>();
+        TradeTerms = services.Get<ITradeTerms>();
+        CivicRestrictions = services.Get<ICivicRestrictions>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
         Visibility = services.Get<IVisibilityService>().Single();
-        TradeTerms = services.Get<ITradeTerms>();
         PlotYields = services.Get<IPlotYieldService>().Single();
         Water = services.Get<IWaterService>().Single();
         WorkerBuilds = services.Get<IWorkerBuildService>().Single();
@@ -189,6 +195,7 @@ public sealed class GameRules : IRuleset
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
         Scores = services.Get<IPlayerScores>().SingleOrDefault();
+        VictoryConditions = services.Get<IVictoryConditions>().SingleOrDefault();
         CombatLeaders = services.Get<ICombatLeaders>().SingleOrDefault();
     }
 

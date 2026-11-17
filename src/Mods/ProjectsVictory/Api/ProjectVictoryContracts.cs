@@ -46,6 +46,15 @@ public interface IProjectVictoryService
     VictoryStatus GetVictoryStatus(Simulation sim);
     /// <summary>Check every enabled victory in priority order. Records and publishes the first one reached.</summary>
     VictoryStatus Evaluate(Simulation sim, bool turnEnd);
+    /// <summary>Record a win another feature decided by vote (a council's victory resolution): the first enabled victory
+    /// with rule <see cref="VictoryRules.Vote"/>. Changes nothing when the game is already won or no such victory is on.</summary>
+    VictoryStatus AwardVote(Simulation sim, int player);
+}
+/// <summary>The <see cref="VictoryDef.Rule"/> values.</summary>
+public static class VictoryRules
+{
+    /// <summary>Won by a vote another feature holds; <see cref="IProjectVictoryService.Evaluate"/> never checks it.</summary>
+    public const string Vote = "vote";
 }
 public sealed record ProjectCompleted(int City, int Player, int Team, string Project) : DomainEvent;
 public sealed record VictoryAchieved(int Team, int Player, string Victory, int Turn) : DomainEvent;

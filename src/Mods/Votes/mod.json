@@ -1,0 +1,9 @@
+{
+  "id": "votes",
+  "name": "Votes",
+  "version": "1.0.0",
+  "assembly": "Ariel.Mods.Votes.dll",
+  "api": "Ariel.Mods.Votes.Api.dll",
+  "dependencies": [],
+  "references": ["cities", "government"]
+}

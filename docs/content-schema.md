@@ -33,6 +33,10 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   victory conditions. They live in the mod's published API (`Ariel.Mods.ProjectsVictory`,
   assembly `Ariel.Mods.ProjectsVictory.Api`); base content names victories only by
   `VictoryIdentityDef`.
+- Votes: `VoteSourceDef` (a council and its interval and civic), `VoteDef` (a
+  resolution: the councils that hold it, its threshold, and what it forces), and
+  `BuildingVotesDef` attached to the buildings that seat a council. They live in the
+  mod's published API (`Ariel.Mods.Votes`, assembly `Ariel.Mods.Votes.Api`).
 - Corporations: `CorporationDef` for founding, required resources, branch output,
   headquarters output, spread cost, and maintenance. It lives in the mod's published
   API (`Ariel.Mods.Corporations`, assembly `Ariel.Mods.Corporations.Api`).

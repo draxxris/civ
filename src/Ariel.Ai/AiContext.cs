@@ -332,6 +332,9 @@ public sealed class AiContext
     /// little per city. Compare two players' values; the scale has no meaning of its own.</summary>
     public long Strength(int player) => Power(Sim, player);
 
+    /// <summary>What a civic is worth to this leader and empire, on the scale the civic planner compares civics with.</summary>
+    public int CivicValue(CivicDef civic) => new CivicPlanner(this).Score(civic);
+
     /// <summary>Sum of own military unit strength weighted by health, a simple integer power estimate.</summary>
     internal static long Power(Simulation sim, int player)
     {

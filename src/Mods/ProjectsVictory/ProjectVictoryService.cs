@@ -7,7 +7,7 @@ using CultureLevelDef = Ariel.Content.Schema.CultureLevelDef;
 
 namespace Ariel.Mods.ProjectsVictory;
 
-internal sealed class ProjectVictoryService : IProjectVictoryService, IPlayerScores
+internal sealed class ProjectVictoryService : IProjectVictoryService, IPlayerScores, IVictoryConditions
 {
     private static VictoryGameState Read(Simulation sim) => sim.State.Extensions.Get<VictoryGameState>(sim.Content) ?? new();
     private static TeamProjectState ReadTeam(Simulation sim, int team) => sim.State.TeamById(team).Extensions.Get<TeamProjectState>(sim.Content) ?? new();
@@ -139,6 +139,15 @@ internal sealed class ProjectVictoryService : IProjectVictoryService, IPlayerSco
         }
         return GetVictoryStatus(sim);
     }
+
+    public VictoryStatus AwardVote(Simulation sim, int player)
+    {
+        if (!Read(sim).IsGameOver && Victories(sim).FirstOrDefault(v => v.Rule == VictoryRules.Vote) is { } def)
+            Record(sim, def, player);
+        return GetVictoryStatus(sim);
+    }
+
+    public bool IsEnabled(Simulation sim, string identity) => Victories(sim).Any(v => v.Identity == identity);
 
     private static void Record(Simulation sim, VictoryDef def, int player)
     {

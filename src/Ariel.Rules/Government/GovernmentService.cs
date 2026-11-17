@@ -20,6 +20,9 @@ internal sealed class GovernmentService : IGovernmentService
         // Validate the final cabinet, including retained choices. Never mutate state to preview a revolution.
         foreach (var id in proposed.Values)
         {
+            var civic = sim.Content.Get<CivicDef>(id);
+            foreach (var restriction in sim.Rules().CivicRestrictions)
+                if (restriction.Refuse(sim, player, civic) is { } refusal) return refusal;
             var result = sim.Content.Requirements.Evaluate(sim.Content.Get<CivicDef>(id).Requirements,
                 new(sim, player, ProposedCivics: proposed));
             if (!result.Success) return string.Join("; ", result.Failures.Select(f => f.Explanation));
@@ -90,6 +93,12 @@ internal sealed class GovernmentService : IGovernmentService
         var state = owner.Extensions.Get<GovernmentPlayerState>(sim.Content) ?? new();
         state.StartRevolution(result.AnarchyTurns, result.CooldownTurns);
         owner.Extensions.Set(sim.Content, state);
+    }
+    public void Impose(Simulation sim, int player, IReadOnlyList<string> civics)
+    {
+        if (ValidateChoices(sim, civics) is { } error) throw new ArgumentException(error, nameof(civics));
+        var owner = sim.State.PlayerById(player);
+        foreach (var id in civics) owner.Civics[sim.Content.Get<CivicDef>(id).Option!] = id;
     }
     private static GovernmentPlayerState Read(Simulation sim, int player) => sim.State.PlayerById(player).Extensions.Get<GovernmentPlayerState>(sim.Content) ?? new();
 }

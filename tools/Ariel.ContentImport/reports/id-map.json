@@ -91,8 +91,8 @@
     "UnitInfo": "military",
     "UpkeepInfo": "government",
     "VictoryInfo": "foundation",
-    "VoteInfo": "diplomacy",
-    "VoteSourceInfo": "diplomacy",
+    "VoteInfo": "votes",
+    "VoteSourceInfo": "votes",
     "WorldInfo": "foundation",
     "YieldInfo": "foundation"
   },
@@ -56079,176 +56079,176 @@
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_ASSIGN_CITY",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_assign_city",
+      "mod": "votes",
+      "id": "votes:vote_assign_city",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_DEFENSIVE_PACT",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_defensive_pact",
+      "mod": "votes",
+      "id": "votes:vote_defensive_pact",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_EMANCIPATION",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_emancipation",
+      "mod": "votes",
+      "id": "votes:vote_emancipation",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_ENVIRONMENTALISM",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_environmentalism",
+      "mod": "votes",
+      "id": "votes:vote_environmentalism",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FORCE_NO_TRADE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_force_no_trade",
+      "mod": "votes",
+      "id": "votes:vote_force_no_trade",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FORCE_PEACE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_force_peace",
+      "mod": "votes",
+      "id": "votes:vote_force_peace",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FORCE_WAR",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_force_war",
+      "mod": "votes",
+      "id": "votes:vote_force_war",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FREE_RELIGION",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_free_religion",
+      "mod": "votes",
+      "id": "votes:vote_free_religion",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FREE_SPEECH",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_free_speech",
+      "mod": "votes",
+      "id": "votes:vote_free_speech",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_FREE_TRADE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_free_trade",
+      "mod": "votes",
+      "id": "votes:vote_free_trade",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_NO_NUKES",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_no_nukes",
+      "mod": "votes",
+      "id": "votes:vote_no_nukes",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_OPEN_BORDERS",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_open_borders",
+      "mod": "votes",
+      "id": "votes:vote_open_borders",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_POPE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_pope",
+      "mod": "votes",
+      "id": "votes:vote_pope",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_REDEVELOPMENT",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_redevelopment",
+      "mod": "votes",
+      "id": "votes:vote_redevelopment",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_RELIGIOUS_VICTORY",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_religious_victory",
+      "mod": "votes",
+      "id": "votes:vote_religious_victory",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_SECRETARY_GENERAL",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_secretary_general",
+      "mod": "votes",
+      "id": "votes:vote_secretary_general",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_UNIVERSAL_SUFFRAGE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_universal_suffrage",
+      "mod": "votes",
+      "id": "votes:vote_universal_suffrage",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_UN_ASSIGN_CITY",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_un_assign_city",
+      "mod": "votes",
+      "id": "votes:vote_un_assign_city",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_UN_FORCE_NO_TRADE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_un_force_no_trade",
+      "mod": "votes",
+      "id": "votes:vote_un_force_no_trade",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_UN_FORCE_PEACE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_un_force_peace",
+      "mod": "votes",
+      "id": "votes:vote_un_force_peace",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_UN_FORCE_WAR",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_un_force_war",
+      "mod": "votes",
+      "id": "votes:vote_un_force_war",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_VICTORY",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_victory",
+      "mod": "votes",
+      "id": "votes:vote_victory",
       "era": null
     },
     {
       "class": "VoteInfo",
       "sourceType": "VOTE_WELFARE",
-      "mod": "diplomacy",
-      "id": "diplomacy:vote_welfare",
+      "mod": "votes",
+      "id": "votes:vote_welfare",
       "era": null
     },
     {
       "class": "VoteSourceInfo",
       "sourceType": "DIPLOVOTE_POPE",
-      "mod": "diplomacy",
-      "id": "diplomacy:diplovote_pope",
+      "mod": "votes",
+      "id": "votes:diplovote_pope",
       "era": null
     },
     {
       "class": "VoteSourceInfo",
       "sourceType": "DIPLOVOTE_UN",
-      "mod": "diplomacy",
-      "id": "diplomacy:diplovote_un",
+      "mod": "votes",
+      "id": "votes:diplovote_un",
       "era": null
     },
     {
