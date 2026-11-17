@@ -6,8 +6,6 @@ mechanics, deferred systems, and future milestones) across all modular subsystem
 
 For architectural design and core principles ("everything is a mod"), see
 [docs/DESIGN.md](DESIGN.md).\
-For the hex adaptation specification and original porting plan, see
-[PLAN.md](../PLAN.md).\
 For build instructions and test commands, see [README.md](../README.md).
 
 ## 1. Roadmap & Milestone Overview
@@ -19,7 +17,7 @@ P0–P9) are fully implemented.
 | Milestone | Focus                           | Status      | Deliverables                                                                                 |
 | :-------- | :------------------------------ | :---------- | :------------------------------------------------------------------------------------------- |
 | **P0–P9** | Core Port, Rules & Engine       | **Done**    | Complete rules simulation, deterministic AI, 3D terrain/art, and modular feature services.   |
-| **P10+**  | Polish, Multiplayer & Expansion | **Planned** | Networking lobby, historical scenarios, full naval/air AI, expanded diplomatic negotiations. |
+| **P10+**  | Polish, Multiplayer & Expansion | **In progress** | Multiplayer lobby and lockstep play (done), features split into mods (done), historical scenarios, diplomatic negotiations and world councils (done). |
 
 ______________________________________________________________________
 
@@ -42,10 +40,18 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Hex tuning overrides**: `src/Ariel.Rules/Foundation/data/hex-overrides.json` controls
   hex-specific balance, including `barbarianUnownedTilesMultiplier` and
   `aiMinimumCityGarrison`.
-- **Base modules and mods**: The base game is linked in from `src/Ariel.Rules`;
-  optional features are standalone mods (`src/Mods/*`) on the same registration API.
-  `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or content kinds.
-  Custom test rulesets run without shipped mods.
+- **Base modules and mods**: The base game is linked in from `src/Ariel.Rules` and
+  `src/Ariel.Ai`; optional features are standalone mods (`src/Mods/*`) on the same
+  registration API. `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or
+  content kinds. Custom test rulesets run without shipped mods.
+- **Features as mods**: Religion, Barbarians, AirCombat, RangedCombat, Diplomacy,
+  Espionage, Corporations, Trade, Great People, Events, Revolution, Projects & Victory,
+  Scripted Wonders, Tech Tree and Card Research are mods. A mod can publish its own API
+  assembly, attach data to any definition, open civic effects, and contribute screens,
+  panels, pedia pages, notices, AI planners, production wishes and AI valuers.
+- **Relations in the base game**: Contact, war and peace, peace treaties and the memory
+  ledger are base rules (`IRelationsService`); agreements and attitudes come from mods
+  through `ITeamAgreements` and `IDispositions`.
 
 ### World & Map Generation
 
@@ -263,15 +269,23 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   Merchant trade missions to foreign cities for gold, settlement (free specialists),
   flavor-driven tech bulbing, building hurry, and Golden Ages.
 - **Trade**: Domestic and foreign trade routes, slot capacity, connectivity
-  verification, overseas profit bonuses, and shared civic bonuses. Player naval
-  blockades sever water trade networks and coastal trade, while autonomous AI blockade
-  planning remains absent.
+  verification, overseas profit bonuses, and shared civic bonuses. Naval blockades,
+  by players and by the computer player, sever water trade networks and coastal trade.
 - **Relations (base)**: Bilateral team contact discovery, one war and peace path with
   peace treaties, and a memory ledger whose kinds any mod can register.
 - **Diplomacy**: Attitude ledgers, open borders, defensive pacts, and multi-item trade
-  deals (resources, gold, gold/turn, techs).
+  deals (resources, gold, gold/turn, techs, peace treaties, embargoes on a third team).
+  A deal is a trade, a demand or a request for help, and an answer may counter it. An
+  embargo stops deals and trade routes between the two teams while it lasts.
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination,
-  Cultural, Space Race, and Time victories with victory resolution screens.
+  Cultural, Space Race, Diplomatic (won in a council vote), and Time victories with
+  victory resolution screens.
+- **Votes (world councils)**: The United Nations and the Apostolic Palace, founded by
+  their buildings (the Palace bound to its builder's state religion). Secretary
+  elections, standing resolutions (forced civics, free trade), open borders and
+  defensive pacts among members, forced peace, sanctions, forced war, and the
+  diplomatic victory vote; members may defy a resolution and lose full membership.
+  Free trade lets members trade without open borders; it carries no commerce bonus.
 - **Corporations**: Great Person founding, branch spread (via gold or executives),
   headquarters protection, branch revenue, resource consumption, and maintenance.
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
@@ -295,13 +309,45 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Empire management**: Automated research selection, civic revolutions, commerce
   slider adjustments, production queue management, citizen tile allocation, and Great
   Person valuation (weighing Golden Ages vs. tech bulbing vs. settlement).
-- **Expansion & military**: Settler scouting and escorted founding; worker build
-  planning and road corridors; city garrison retention, multi-theater campaign staging
-  by `AreaId`, combined arms pre-assault bombardment and ranged support fire, naval
-  amphibious sealift, air rebasing and bombing missions, threat-differential
-  reinforcement corridors, and combat odds gating.
+- **Expansion & military**: Settler scouting with a soldier escort that follows each
+  settler out of the cities; worker build planning and road corridors; city garrisons
+  that grow when foreign troops mass nearby; multi-theater campaign staging by `AreaId`
+  on low-exposure, defensible tiles; campaigns that launch when the force's summed
+  success odds beat the defending stack; assaults that re-check odds after every fight
+  and lead with collateral siege; wounded soldiers falling back to a city; role-based
+  promotions; upgrades ranked by strength per gold, threatened cities first; naval
+  amphibious sealift and blockades of enemy coastal cities; air rebasing, and bombing
+  only the cities the army is going after.
+- **War and peace**: Targets chosen among rivals weak enough to attack by the value of
+  their nearest cities (population, wonders, resources, and holy cities through the
+  Religion mod's valuer); a lower bar against a rival already fighting an ally or a
+  friend; at least five turns of preparation with the army gathered at the border
+  city before declaring; a war score kept per war (units destroyed and cities taken);
+  and peace when outgunned, beaten on score, or when a long war stops paying.
+- **Diplomacy (Diplomacy mod)**: Answers every deal offered by its value in gold
+  against an attitude margin, countering offers it would refuse; proposes resource
+  swaps, sales and gifts; demands tribute from weaker players it dislikes, asks friends
+  for help, buys or sells peace for tribute, and hires embargoes against rivals; signs
+  open borders and defensive pacts with computer players it and they both like.
+- **Councils (Votes mod)**: Votes for itself or a candidate it likes, weighs forced
+  civics against its own, backs peace, sanctions and war by attitude and strength,
+  defies resolutions that bind it badly, and as secretary puts the resolution most
+  likely to pass.
+- **Other feature mods**: Espionage spending and spies, corporation founding and
+  spread, and air missions each come from their mod's own planner.
 - **Religious management**: Missionary spread, state religion adoption, and inquisition
   purging based on city instability and state church policies.
+
+### Multiplayer & Networking
+
+- **Lobby and lockstep play**: A lobby, a multiplayer screen and in-game chat; a TCP
+  transport and a lockstep command channel where each peer's commands are bound to its
+  seat, write-once and bounded.
+- **Resilience**: Games continue through players leaving and rejoining, desyncs and
+  saves. Each turn is checked by state hash, and `check:desync-diff` shows where two
+  saves differ.
+- **Checks**: `check:multiplayer` plays a host and a guest over localhost TCP;
+  `check:sync` plays one AI game in four processes and fails on any hash mismatch.
 
 ### Client, Presentation & 3D Art
 
@@ -346,6 +392,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   unit art, name, health and a small icon or badge per earned promotion whose name is
   its tooltip. Clicking a row selects that unit, and the rows follow the same id order
   that repeated map clicks cycle through, so the list and the cycling always agree.
+- **Research selector tooltips**: The research selector shows what each technology
+  gives, with rich content (icons and colored text).
 - **Uncapped production list**: The city screen's production list draws every row its
   tab and filter match, available first and unavailable after them, and the panel's
   scroll container reaches all of them. The `Show unavailable` checkbox still decides
@@ -384,27 +432,15 @@ ______________________________________________________________________
 
 ### Trade & Diplomacy
 
-- [ ] **AI naval blockade planning**: Autonomous AI orders to deploy and maintain naval
-  blockades (player blockade commands, water network severing, coastal city work
-  blocking, and trade route cancellation are implemented).
-- [ ] **AI diplomatic negotiations**: AI-initiated treaty proposals, counter-offers,
-  peace demands, and gift requests.
-- [ ] **Diplomatic vote resolutions**: United Nations and Apostolic Palace voting
-  sessions (world peace, global civics, diplomatic victory).
-- [ ] **Embargoes & sanctions**: Multilateral agreements to prohibit trade with targeted
-  civilizations.
+- [ ] **Council leftovers**: The councils' free specialists and religion yields, the
+  unhappiness that defying a resolution causes, and the city-assignment resolution are
+  not run. The nuclear ban waits for nuclear weapons.
 
 ### UI & Client
 
 - [ ] **Terrain bonus icons**: Square icons still appear above terrain bonuses (like
   Stone) even though we now have 3D meshes; provide cleaner icons and disable the
   Resources overlay by default in map view.
-- [x] **Research selector tooltips**: The research selector GUI needs tooltips showing
-  what each technology will give you, including rich content support (icons, colored
-  text, etc.).
-- [ ] **Active unit designator**: The active unit designator has spinning chevrons
-  around it that spin very fast briefly when the game window is restored after being
-  minimized.
 - [ ] **City view panes**: Clicking most GUI panes (Religion, Corporations, Espionage,
   etc.) currently does nothing when you are in city view; handle transitions or modal
   displays cleanly.

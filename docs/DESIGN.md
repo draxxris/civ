@@ -57,7 +57,7 @@ extend both through one registration API.
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
   Diplomacy, Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
-  ScriptedWonders and Trade do.
+  ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -407,6 +407,9 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICityTradeLinks` | `TradeLinks` | Religion, for natural spread | Trade | spread follows city connections only |
 | `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
 | `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
+| `IVictoryConditions` | `VictoryConditions` | the Foundation `victory` requirement leaf (the council buildings, the space elevator) | ProjectsVictory (a victory is on when an enabled `VictoryDef` has its identity) | the leaf fails |
+| `ITradeTerms` | `TradeTerms` (list) | Relations (`MayTrade`, `FreeTrade`), so deals and trade routes | Diplomacy (embargoes in deals), Votes (sanctions, free trade) | teams at peace trade as their borders allow |
+| `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Military movement (a barbarian that does not attack), Revolution (rebels) | Barbarians (which asks ScriptedWonders' border wonders through its own `IBarbarianBarrier`) | no hostile player; huts release no hostile villagers, rebellions field no rebels, nothing bars movement |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
@@ -1310,7 +1313,13 @@ Diplomacy elaborates the base game's relations (see Relations): attitudes, agree
 (open borders, defensive pacts) and bilateral deals. Its API (`Ariel.Mods.Diplomacy.Api`)
 holds `IDiplomacyService`, the deal and agreement types and their commands, which
 validate treaty changes, deal proposals, execution and cancellation. Deal assets include
-resources, gold, gold per turn, and technology. Team ids identify agreements; player ids
+resources, gold, gold per turn, technology, an embargo on a third team, a peace treaty and
+the two agreements; a treaty or agreement in a deal binds both sides. Between teams at war
+a deal must carry a peace treaty and may carry no agreement. A deal is a trade, a demand
+or a request for help (everything from the other side), and an answer may counter a
+proposal with other terms. An embargo is a trade term (`ITradeTerms`): while the deal
+lives the two teams neither deal nor run trade routes, and live deals between teams whose
+terms forbid trade are cancelled at settlement. Team ids identify agreements; player ids
 identify deal participants. The service also answers the base game's seams: agreements
 (`ITeamAgreements`: open borders lets units pass, a defensive pact calls the partner into
 a war against it and is never attacked by the AI, and an offensive declaration dissolves
@@ -1320,7 +1329,8 @@ agreements and deals (`WarDeclared`). Attitude adds personality, religion, favou
 civic, borders, war and peace, war history, agreements, trade and civics, and every
 remembered count weighed by the leader's `MemoryAttitudePercents` or else the memory
 kind's `AttitudePercent`. Its own memory kinds are a technology received in a deal, a
-gift (`give_help`, limit 3) and a stopped active trade. Without the mod there are no
+gift (`give_help`, limit 3), a stopped active trade, embargoes (hired, accepted or
+refused), demands (made, accepted or rejected) and refused help. Without the mod there are no
 attitudes, agreements or deals, and war, peace, contact and memory work as the base game
 defines them.
 
@@ -1328,9 +1338,32 @@ ProjectsVictory owns project eligibility and completion, team project counts, sc
 and saved victory status, and the project and victory definitions (`ProjectDef`,
 `VictoryDef`) in its API. It answers the base seam `IPlayerScores` with a player's total. Project definitions carry costs, technology and project
 prerequisites, instance limits, victory links, spaceship flags, and thresholds. Victory
-definitions select conquest, domination, cultural, project, or time rules. Enabled
-conditions run by priority. Projects enter the city production queue through a
+definitions select conquest, domination, cultural, project, or time rules, or `vote`, which
+another feature decides through `IProjectVictoryService.AwardVote` (the diplomatic
+victory, won in a council). Enabled conditions run by priority. The mod answers the base
+seam `IVictoryConditions`, so content gated on a victory exists only while that victory is
+on. Projects enter the city production queue through a
 registered production kind and completion handler.
+
+Votes runs the world councils (`Ariel.Mods.Votes.Api`: `VoteSourceDef`, `VoteDef`, the
+`BuildingVotesDef` attachment and `IVotesService`). A building that names a council (the
+United Nations, a UN mission, the Apostolic Palace) founds it; one that requires a state
+religion binds the council to its builder's faith, and then only that faith's cities
+vote. Votes are citizens (or cities, or one per civilization, as the vote says), with a
+bonus for members of the council's state religion. A voting member has votes; a full
+member also keeps the council's religion and civic and has not defied it. Every interval
+(scaled like training) the members meet, and either the secretary's term ends and an
+election opens or the secretary puts one resolution: forced civics and free trade, which
+stand while the council sits (`ICivicRestrictions`, `ITradeTerms`); open borders or
+defensive pacts among all members (through the Diplomacy API); peace with, sanctions on
+or war against one player; or the game's winner (through the ProjectsVictory API).
+Sanctions forbid trade between the members and the named team until it is a full member
+again. A member may defy a resolution that binds it: the resolution fails and the defier
+stops being a full member until it backs one that passes. A session opens at the end of a
+turn and closes at the end of the next, so every member has a turn to vote and the silent
+abstain. The computer player votes and proposes through `votes:planner`. Not run: the
+nuclear ban (the game has no nuclear weapons), handing over cities, the councils' free
+specialists and religion yields, and the unhappiness defiance causes.
 
 Corporations use founding and spread commands. A Great Person founds a corporation in a
 city with a connected prerequisite resource. Active branches apply corporation yield,
@@ -1484,7 +1517,8 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | | | 1700 | `ai:hurry` |
 
 Feature mods fill the gaps, and four mods fill slots the AI keeps for them: the Diplomacy
-mod the 400 slot (deals and agreements) with `diplomacy:planner`, the Religion mod the
+mod the 400 slot (deals and agreements) with `diplomacy:planner` (the Votes mod's
+`votes:planner` follows at 450), the Religion mod the
 700 slot (state religion, missionaries and inquisitors) with `religion:planner`, the Espionage mod the
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
@@ -1510,9 +1544,12 @@ How a mod adds AI behaviour:
 4. Register it in the mod's `Register`. Without the mod the planner is simply absent.
 
 `AiContext` is public on purpose and small: the player and its team
-(`Sim`, `PlayerId`, `Self`, `Team`, `Turn`, `Grid`), cached `Cities` and `Units`,
-`Def`, `Alive`, `Tile`, `Service<T>`, `Issue`, `MoveToward`, `Refresh` (after a mutation
-outside `Issue`), the acted-unit ledger and `GoldReserve` (the treasury the economy
+(`Sim`, `PlayerId`, `Self`, `Team`, `Turn`, `Grid`, `Leader`), cached `Cities` and `Units`,
+`CampaignCities` (rival cities the army can reach), `Def`, `Alive`, `Tile`,
+`Service<T>`, `Issue`, `MoveToward`, `Refresh` (after a mutation outside `Issue`), the
+acted-unit ledger, `GoldReserve`, how a war is going (`WarScore`, `WantsPeace`),
+`Strength` (military power to compare players by), `CivicValue` (a civic on the civic
+planner's scale) (the treasury the economy
 planner keeps in hand). `PlannerPoints` gives the points per yield and commerce the city
 planner ranks content in, so a contributed planner values things on the same scale.
 Everything else (roles, threat maps, city views, campaign targets, the shared site, army
@@ -1520,7 +1557,12 @@ and production plans) stays internal to the built-in planners.
 
 Planners still choose what a feature's actions are worth themselves. War and peace are the AI's own (`ai:war`): the war planner issues the
 base commands and weighs targets by `Relations.DispositionToward` and `Allied`, so it
-names no Diplomacy type.
+names no Diplomacy type. It picks the rival whose nearby cities are worth most
+(`CitySubject`) among those it is strong enough to beat, saves the choice as a war
+preparation (`prepare_war`), gathers the army at its border city and declares once enough
+soldiers stand there. A team's war score (`ai:team_state`) counts the cost of units each
+side destroyed and the cities it took; peace comes when the war is lost in power or
+score, or when a long war has stopped paying.
 
 ### Production wishes
 
@@ -1564,6 +1606,7 @@ registration answers every planner that values that subject.
 | `BuildingSubject(Building, City)` | the city planner, in parallel for every building it rates | `PlannerPoints`, added to the building's value in that city before its specialisation percent and its cost |
 | `UnitSubject(Unit, City)` | the city planner's pick of one unit per role (`AiOptions.Best`): defenders, attackers, siege, ships, aircraft, settlers, workers, explorers | the role's rating: quality (strength squared × 100 / cost, about 5 to 150) for soldiers, minus cost for civilians, plus personality |
 | `TechSubject(Tech)` | the research planner, in parallel for every selectable technology and for every step of a goal route | value points before the remaining cost divides them: 40, three times the flavors, up to 400 for unlocks, plus resources and abilities |
+| `CitySubject(City)` | the war planner, for each rival city it weighs as a target | target points: 10 per citizen, 25 per wonder, 8 per revealed resource in reach; 40 is worth about four citizens |
 | `CivicSubject(Civic)` | the civic planner, for every civic, the held one included | the civic score: about 8 per happiness, 6 per health, 3 to 5 per percent of commerce or yield, each times half the cities; a change needs 15 over the held civic, a revolution 45 plus 60 per anarchy turn |
 
 Adjustments are additive points rather than multipliers. A sum does not depend on the
