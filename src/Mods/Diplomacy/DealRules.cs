@@ -5,7 +5,7 @@ namespace Ariel.Mods.Diplomacy;
 
 internal sealed partial class DiplomacyService
 {
-    private static bool Ongoing(DiplomaticTradeItem item) => item.Kind is TradeItemKind.Resource or TradeItemKind.GoldPerTurn;
+    private static bool Ongoing(DiplomaticTradeItem item) => item.Kind is TradeItemKind.Resource or TradeItemKind.GoldPerTurn or TradeItemKind.Embargo;
     private static bool Live(Simulation sim, DiplomaticDeal deal) => deal.Status == DiplomaticDealStatus.Active &&
         !sim.TeamOf(deal.Proposer).Wars.Contains(sim.TeamOf(deal.Recipient).Id);
     private static DiplomaticDeal? Deal(Simulation sim, int id) => Read(sim).Deals.FirstOrDefault(d => d.Id == id);
@@ -13,18 +13,40 @@ internal sealed partial class DiplomacyService
     {
         Id = d.Id, Proposer = d.Proposer, Recipient = d.Recipient, StartedTurn = d.StartedTurn,
         LastSettledTurn = d.LastSettledTurn, Status = d.Status, Items = d.Items.ToList(),
+        ProposedTurn = d.ProposedTurn, Intent = d.Intent, CounterTo = d.CounterTo,
     }).ToArray();
-    public string? ValidateProposal(Simulation sim, int player, int target, IReadOnlyList<DiplomaticTradeItem> items)
+    public string? ValidateProposal(Simulation sim, int player, int target, IReadOnlyList<DiplomaticTradeItem> items,
+        DealIntent intent = DealIntent.Trade, int? counterTo = null)
     {
         var error = Participants(sim, player, target);
         if (error is not null) return error;
-        if (!HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id)) return "teams have not met";
-        if (sim.TeamOf(player).Wars.Contains(sim.TeamOf(target).Id)) return "teams are at war";
+        int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
+        if (!HasMet(sim, a, b)) return "teams have not met";
         if (items.Count is 0 or > 64) return "deal requires between one and 64 items";
-        var unlockError = ValidateTradeUnlocks(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id, items);
+        if (!Enum.IsDefined(intent)) return "unknown deal intent";
+        if (intent != DealIntent.Trade && items.Any(i => i.FromPlayer != target || i.Mutual))
+            return "a demand or a request for help asks only for what the other side gives";
+        if (counterTo is { } answered && !Answers(Deal(sim, answered), player, target))
+            return "a counter-offer answers a proposal the other side made to you";
+        var peace = items.Count(i => i.Kind == TradeItemKind.PeaceTreaty);
+        if (peace > 1) return "duplicate peace treaty";
+        if (AtWar(sim, a, b))
+        {
+            if (peace == 0) return "teams are at war";
+            if (Relations(sim).ValidatePeace(sim, player, target) is { } peaceError) return peaceError;
+            if (items.Any(i => i.Kind is TradeItemKind.OpenBorders or TradeItemKind.DefensivePact)) return "agreements are signed after peace";
+        }
+        else
+        {
+            if (peace > 0) return "teams are not at war";
+            if (!Relations(sim).MayTrade(sim, a, b)) return "an embargo forbids trade between these teams";
+        }
+        var unlockError = ValidateTradeUnlocks(sim, a, b, items);
         if (unlockError is not null) return unlockError;
         return ValidateItems(sim, player, target, items) ?? ValidateAssets(sim, items);
     }
+    private static bool Answers(DiplomaticDeal? original, int player, int target) =>
+        original is { Status: DiplomaticDealStatus.Proposed } && original.Proposer == target && original.Recipient == player;
     private static string? ValidateTradeUnlocks(Simulation sim, int teamA, int teamB, IReadOnlyList<DiplomaticTradeItem> items)
     {
         bool technology = items.Any(i => i.Kind == TradeItemKind.Technology);
@@ -39,13 +61,27 @@ internal sealed partial class DiplomacyService
         {
             if (item.FromPlayer != player && item.FromPlayer != target) return "item giver is not a participant";
             if (!Enum.IsDefined(item.Kind) || item.Amount <= 0 || item.Amount > int.MaxValue) return "invalid trade item amount or kind";
+            if (item.Kind != TradeItemKind.Embargo && item.Against != -1) return "only an embargo names a third party";
             var itemError = ValidateItem(sim, item, item.FromPlayer == player ? target : player);
             if (itemError is not null) return itemError;
         }
+        foreach (var kind in new[] { TradeItemKind.OpenBorders, TradeItemKind.DefensivePact })
+            if (items.Count(i => i.Kind == kind) > 1) return "duplicate agreement";
         return null;
     }
     private static string? ValidateItem(Simulation sim, DiplomaticTradeItem item, int recipient)
     {
+        if (item.Mutual)
+        {
+            if (item.Amount != 1 || item.ContentId.Length != 0) return "a treaty carries no content or amount";
+            return item.Kind switch
+            {
+                TradeItemKind.OpenBorders => AgreementError(sim, item.FromPlayer, recipient, DiplomaticAgreement.OpenBorders),
+                TradeItemKind.DefensivePact => AgreementError(sim, item.FromPlayer, recipient, DiplomaticAgreement.DefensivePact),
+                _ => null,
+            };
+        }
+        if (item.Kind == TradeItemKind.Embargo) return ValidateEmbargo(sim, item, recipient);
         if (item.Kind == TradeItemKind.Resource)
             return sim.Content.TryGet<S.BonusDef>(item.ContentId, out _) ? null : "unknown resource";
         if (item.Kind != TradeItemKind.Technology) return item.ContentId.Length == 0 ? null : "gold items cannot specify content";
@@ -53,6 +89,27 @@ internal sealed partial class DiplomacyService
         if (!sim.KnowsTech(item.FromPlayer, item.ContentId)) return "giver does not know technology";
         return sim.KnowsTech(recipient, item.ContentId) ? "recipient already knows technology" : null;
     }
+    /// <summary>An embargo names a living civilization outside both participants' teams that the giver's team has met
+    /// and does not already embargo. Giving or taking it takes the same technology as trading gold.</summary>
+    private static string? ValidateEmbargo(Simulation sim, DiplomaticTradeItem item, int recipient)
+    {
+        if (item.Amount != 1 || item.ContentId.Length != 0) return "an embargo carries no content or amount";
+        int against = item.Against;
+        if (!sim.State.Players.Any(p => p.Id == against) || PlayerRules.IsBarbarian(sim, against)) return "unknown embargo target";
+        int giver = sim.TeamOf(item.FromPlayer).Id, target = sim.TeamOf(against).Id;
+        if (target == giver || target == sim.TeamOf(recipient).Id) return "an embargo targets a third team";
+        if (!sim.State.Cities.Any(c => sim.TeamOf(c.Owner).Id == target)) return "embargo target has no cities";
+        if (!HasMet(sim, giver, target)) return "giver has not met the embargo target";
+        if (EmbargoBy(sim, giver, target)) return "embargo already in force";
+        return TradeTech(sim, giver, sim.TeamOf(recipient).Id, t => t.GoldTrading, "embargoes");
+    }
+    /// <summary>A live deal has the first team embargo the second.</summary>
+    private static bool EmbargoBy(Simulation sim, int team, int target) => Read(sim).Deals.Any(d => Live(sim, d)
+        && d.Items.Any(i => i.Kind == TradeItemKind.Embargo && sim.TeamOf(i.FromPlayer).Id == team && sim.TeamOf(i.Against).Id == target));
+    public bool HasEmbargo(Simulation sim, int teamA, int teamB) => EmbargoBy(sim, teamA, teamB) || EmbargoBy(sim, teamB, teamA);
+    // The base game's question about trade terms: an embargo forbids trade both ways, and deals grant no free trade.
+    public bool Embargoed(Simulation sim, int teamA, int teamB) => HasEmbargo(sim, teamA, teamB);
+    public bool FreeTrade(Simulation sim, int teamA, int teamB) => false;
     /// <summary>One connected group of the player's cities, counted once.</summary>
     private sealed class CityGroup(City representative, long copies)
     {
@@ -108,13 +165,20 @@ internal sealed partial class DiplomacyService
         if (items.Where(i => i.Kind == TradeItemKind.Technology).GroupBy(i => (sim.TeamOf(i.FromPlayer).Id, i.ContentId)).Any(g => g.Count() > 1)) return "duplicate technology item";
         return null;
     }
-    public int ProposeDeal(Simulation sim, int player, int target, IReadOnlyList<DiplomaticTradeItem> items)
+    /// <summary>A counter-offer replaces the proposal it answers, which is withdrawn without being remembered as refused.</summary>
+    public int ProposeDeal(Simulation sim, int player, int target, IReadOnlyList<DiplomaticTradeItem> items,
+        DealIntent intent = DealIntent.Trade, int? counterTo = null)
     {
         var state = Edit(sim);
         int id = state.NextDealId++;
         int nextItemId = 1;
         var canonicalItems = items.Select(i => i.Id > 0 ? i : i with { Id = nextItemId++ }).ToList();
-        state.Deals.Add(new() { Id = id, Proposer = player, Recipient = target, Items = canonicalItems, Status = DiplomaticDealStatus.Proposed });
+        if (counterTo is { } answered) Deal(sim, answered)!.Status = DiplomaticDealStatus.Cancelled;
+        state.Deals.Add(new()
+        {
+            Id = id, Proposer = player, Recipient = target, Items = canonicalItems, Status = DiplomaticDealStatus.Proposed,
+            ProposedTurn = sim.State.Turn, Intent = intent, CounterTo = counterTo,
+        });
         return id;
     }
     public string? ValidateExecution(Simulation sim, int player, int deal)
@@ -127,9 +191,15 @@ internal sealed partial class DiplomacyService
     public void ExecuteDeal(Simulation sim, int deal)
     {
         var d = Deal(sim, deal)!;
+        // Peace first: the rest of the deal is between teams at peace.
+        if (d.Items.Any(i => i.Kind == TradeItemKind.PeaceTreaty)) Relations(sim).MakePeace(sim, d.Proposer, d.Recipient);
         d.StartedTurn = sim.State.Turn;
         d.Status = d.Items.Any(Ongoing) ? DiplomaticDealStatus.Active : DiplomaticDealStatus.Completed;
         TransferGold(sim, d, TradeItemKind.Gold);
+        foreach (var item in d.Items.Where(i => i.Kind is TradeItemKind.OpenBorders or TradeItemKind.DefensivePact))
+            Sign(sim, d.Proposer, d.Recipient,
+                item.Kind == TradeItemKind.OpenBorders ? DiplomaticAgreement.OpenBorders : DiplomaticAgreement.DefensivePact);
+        foreach (var item in d.Items.Where(i => i.Kind == TradeItemKind.Embargo)) LayEmbargo(sim, d, item);
         foreach (var item in d.Items.Where(i => i.Kind == TradeItemKind.Technology))
         {
             var recipient = sim.TeamOf(item.FromPlayer == d.Proposer ? d.Recipient : d.Proposer);
@@ -153,12 +223,25 @@ internal sealed partial class DiplomacyService
         if (player != d.Proposer && player != d.Recipient) return "not a deal participant";
         return d.Status == DiplomaticDealStatus.Active && sim.State.Turn - d.StartedTurn < BindingTurns ? "deal is binding for ten turns" : null;
     }
-    /// <summary>Withdrawing or declining a proposal is not remembered; stopping an active trade is.</summary>
+    /// <summary>Withdrawing a proposal is not remembered. Declining one is when it was a demand, a request for help or a
+    /// request to stop trading with someone; stopping an active trade always is.</summary>
     public void CancelDeal(Simulation sim, int player, int deal)
     {
         var d = Deal(sim, deal)!;
         if (d.Status == DiplomaticDealStatus.Active) RememberStoppedTrading(sim, d, player);
+        else if (player == d.Recipient) RememberRefusal(sim, d);
         d.Status = DiplomaticDealStatus.Cancelled;
+    }
+    /// <summary>The giver's team stops trading with the target's: every deal between them, running or proposed, ends,
+    /// and the target remembers both who stopped and who asked for it.</summary>
+    private static void LayEmbargo(Simulation sim, DiplomaticDeal deal, DiplomaticTradeItem item)
+    {
+        int giver = sim.TeamOf(item.FromPlayer).Id, target = sim.TeamOf(item.Against).Id;
+        int asker = item.FromPlayer == deal.Proposer ? deal.Recipient : deal.Proposer;
+        foreach (var other in Read(sim).Deals.Where(o => o.Id != deal.Id && o.Status is DiplomaticDealStatus.Active or DiplomaticDealStatus.Proposed))
+            if (Pair(sim.TeamOf(other.Proposer).Id, sim.TeamOf(other.Recipient).Id) == Pair(giver, target))
+                other.Status = DiplomaticDealStatus.Cancelled;
+        RememberEmbargo(sim, item.FromPlayer, asker, target);
     }
     public string? ValidateCancelTradeItem(Simulation sim, int player, int dealId, int itemId)
     {
@@ -266,7 +349,9 @@ internal sealed partial class DiplomacyService
         foreach (var d in Read(sim).Deals.Where(d => d.Status == DiplomaticDealStatus.Active).OrderBy(d => d.Id))
         {
             if (d.LastSettledTurn == sim.State.Turn) continue;
-            if (!Live(sim, d) || !CanSettle(sim, d))
+            // Terms laid since the deal was signed (an embargo, a council's sanctions) end it like a war does.
+            if (!Live(sim, d) || !CanSettle(sim, d)
+                || !Relations(sim).MayTrade(sim, sim.TeamOf(d.Proposer).Id, sim.TeamOf(d.Recipient).Id))
             {
                 d.Status = DiplomaticDealStatus.Cancelled;
                 continue;

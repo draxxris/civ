@@ -99,9 +99,13 @@ public sealed class ClientDiplomacyVictoryTests
         var rival = Rival(session, 1);
         Assert.EndsWith("At war", ScreenProbe.Paragraph(rival, "title"));
         Assert.DoesNotContain("open borders", ScreenProbe.Paragraph(rival, "attitude"));
-        // No one at war with us can be traded with.
-        var partners = ViewWalk.Find<Picker>(ScreenProbe.Body(session, DiplomacyId), "partner")!;
-        Assert.Empty(partners.Options);
+        // An enemy stays a partner, but only a deal that makes peace can be sent to it.
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "partner:1"));
+        Assert.Single(ScreenProbe.ButtonIds(ScreenProbe.Body(session, DiplomacyId), "give:add:PeaceTreaty:"));
+        session.Me.Treasury = 100;
+        Assert.True(ScreenProbe.Press(session, DiplomacyId, "give:Gold:more"));
+        var composer = ScreenProbe.Section(ScreenProbe.Body(session, DiplomacyId), "propose");
+        Assert.Equal("teams are at war", ViewWalk.Find<ActionButton>(composer, "propose")!.Disabled);
     }
 
     [Fact]
@@ -133,10 +137,10 @@ public sealed class ClientDiplomacyVictoryTests
         }));
 
         var deal = Assert.IsType<Row>(Assert.Single(Deals(session)));
-        Assert.Contains(" Proposed: ", ScreenProbe.Paragraph(deal.Items, "summary"));
+        Assert.Contains(" Proposed · ", ScreenProbe.Paragraph(deal.Items, "summary"));
         Assert.True(session.Screens.Press(ViewWalk.ActionOf(deal.Items, "accept")));
         var active = Assert.IsType<Row>(Assert.Single(Deals(session)));
-        Assert.Contains(" Active: ", ScreenProbe.Paragraph(active.Items, "summary"));
+        Assert.Contains(" Active · ", ScreenProbe.Paragraph(active.Items, "summary"));
         Assert.Null(ViewWalk.Find<ActionButton>(active.Items, "accept"));
     }
 
@@ -165,7 +169,7 @@ public sealed class ClientDiplomacyVictoryTests
         Assert.Equal("Can't do that: " + reason, session.Message);
         Assert.Equal(hash, sim.ComputeHash());
         Assert.Equal(rng, sim.Rng.State);
-        Assert.Contains(" Proposed: ", ScreenProbe.Paragraph(Deals(session), "summary"));
+        Assert.Contains(" Proposed · ", ScreenProbe.Paragraph(Deals(session), "summary"));
         if (change == "option") sim.Settings.GameOptions["foundation:gameoption_no_tech_trading"] = false;
         else sim.TeamOf(1).Techs.Add("research:alphabet");
         var allowed = Accept();

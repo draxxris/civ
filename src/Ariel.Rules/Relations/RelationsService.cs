@@ -115,6 +115,23 @@ internal sealed class RelationsService : IRelationsService
 
     public bool Allied(Simulation sim, int teamA, int teamB) => sim.Rules().TeamAgreements?.Allied(sim, teamA, teamB) == true;
 
+    public bool MayTrade(Simulation sim, int teamA, int teamB)
+    {
+        if (teamA == teamB) return true;
+        if (sim.State.TeamById(teamA).Wars.Contains(teamB)) return false;
+        foreach (var terms in sim.Rules().TradeTerms)
+            if (terms.Embargoed(sim, teamA, teamB)) return false;
+        return true;
+    }
+
+    public bool FreeTrade(Simulation sim, int teamA, int teamB)
+    {
+        if (teamA == teamB) return true;
+        foreach (var terms in sim.Rules().TradeTerms)
+            if (terms.FreeTrade(sim, teamA, teamB)) return true;
+        return false;
+    }
+
     public Disposition DispositionToward(Simulation sim, int fromPlayer, int towardPlayer) =>
         sim.Rules().Dispositions?.Toward(sim, fromPlayer, towardPlayer) ?? Disposition.Cautious;
 

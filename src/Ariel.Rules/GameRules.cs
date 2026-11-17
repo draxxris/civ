@@ -127,6 +127,9 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ISupportFire> SupportFire { get; private set; } = [];
     /// <summary>Everything that weighs a city as a new capital, base and mod, in registration order.</summary>
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
+    /// <summary>Every mod's terms of trade between teams (embargoes, free trade), in registration order. Rules ask
+    /// <see cref="Relations"/>, which combines them.</summary>
+    public IReadOnlyList<ITradeTerms> TradeTerms { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
     /// <inheritdoc/>
@@ -143,6 +146,7 @@ public sealed class GameRules : IRuleset
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
         Visibility = services.Get<IVisibilityService>().Single();
+        TradeTerms = services.Get<ITradeTerms>();
         PlotYields = services.Get<IPlotYieldService>().Single();
         Water = services.Get<IWaterService>().Single();
         WorkerBuilds = services.Get<IWorkerBuildService>().Single();

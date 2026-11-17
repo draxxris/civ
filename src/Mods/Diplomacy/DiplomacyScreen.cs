@@ -9,8 +9,9 @@ namespace Ariel.Mods.Diplomacy;
 /// <summary>
 /// Diplomacy with every rival the local team has met: attitude and its reasons, treaties and the actions against them
 /// (war and peace are the base game's commands), the open and active deals, and a deal composer that shows a computer
-/// player's answer before the proposal is sent. Local state: <c>partner</c> (a player id), and <c>give</c> and
-/// <c>get</c>, the items of the deal being composed (see <see cref="DealDraft"/>).
+/// player's answer before the proposal is sent. Local state: <c>partner</c> (a player id), <c>intent</c> (a
+/// <see cref="DealIntent"/>), and <c>give</c> and <c>get</c>, the items of the deal being composed (see
+/// <see cref="DealDraft"/>).
 /// </summary>
 internal sealed class DiplomacyScreen : IGameScreen
 {
@@ -82,22 +83,35 @@ internal sealed class DiplomacyScreen : IGameScreen
     {
         var sim = context.Sim;
         int me = context.Player;
-        string summary = string.Join("; ", deal.Items.Select(i => $"{(i.FromPlayer == me ? "You give" : "You get")} {DealDraft.Describe(sim, i)}"));
-        var items = new List<ViewElement> { new Paragraph("summary", $"#{deal.Id} {deal.Status}: {summary}") };
-        if (deal.Status == DiplomaticDealStatus.Proposed && deal.Recipient == me)
+        string summary = string.Join("; ", deal.Items.Select(i =>
+            $"{(i.Mutual ? "Both sign" : i.FromPlayer == me ? "You give" : "You get")} {DealDraft.Describe(sim, i)}"));
+        string other = sim.State.PlayerById(deal.Proposer == me ? deal.Recipient : deal.Proposer).Name;
+        string from = deal.Proposer == me ? "You" : other;
+        string kind = deal.Intent switch
+        {
+            DealIntent.Demand => $"{from} demand{(deal.Proposer == me ? "" : "s")}",
+            DealIntent.Request => $"{from} ask{(deal.Proposer == me ? "" : "s")} for help",
+            _ => deal.CounterTo is { } answered ? $"{from} counter{(deal.Proposer == me ? "" : "s")} #{answered}" : $"With {other}",
+        };
+        var tone = deal.Intent == DealIntent.Demand && deal.Recipient == me ? Tone.Bad : Tone.Normal;
+        var items = new List<ViewElement> { new Paragraph("summary", $"#{deal.Id} {deal.Status} · {kind}: {summary}", tone) };
+        bool answering = deal.Status == DiplomaticDealStatus.Proposed && deal.Recipient == me;
+        if (answering)
             items.Add(new ActionButton("accept", "Accept", new SubmitCommand(new ExecuteDealCommand { Player = me, Deal = deal.Id }),
                 service.ValidateExecution(sim, me, deal.Id)));
-        items.Add(new ActionButton("cancel", "Cancel deal", new SubmitCommand(new CancelDealCommand { Player = me, Deal = deal.Id }),
+        string cancel = answering ? "Refuse" : deal.Status == DiplomaticDealStatus.Proposed ? "Withdraw" : "Cancel deal";
+        items.Add(new ActionButton("cancel", cancel, new SubmitCommand(new CancelDealCommand { Player = me, Deal = deal.Id }),
             service.ValidateCancellation(sim, me, deal.Id)));
         return new Row($"deal:{deal.Id}", items);
     }
 
-    /// <summary>Compose a deal with one partner, item by item both ways, see what the partner would answer, and send it.</summary>
+    /// <summary>Compose a deal with one partner, item by item both ways, as a trade, a demand or a request for help, see
+    /// what the partner would answer, and send it. An enemy is a partner too: a deal with it must hold a peace treaty.</summary>
     private static Section Composer(ScreenContext context, IDiplomacyService service, List<Player> rivals)
     {
         var sim = context.Sim;
         var local = context.Local;
-        var partners = rivals.Where(p => !context.MyTeam.Wars.Contains(p.TeamId)).ToList();
+        var partners = rivals.Where(p => PlayerRules.IsAlive(sim, p.Id) && !PlayerRules.IsBarbarian(sim, p.Id)).ToList();
         var partner = partners.FirstOrDefault(p => p.Id == local.Int("partner"));
         var items = new List<ViewElement>
         {
@@ -107,21 +121,32 @@ internal sealed class DiplomacyScreen : IGameScreen
         };
         if (partner is null) return new("propose", "Propose a deal", items);
         var draft = DealDraft.Read(local, context.Player, partner.Id);
-        items.Add(Side(context, draft, DealDraft.Give, "You give", context.Player, partner.Id));
+        var intent = Enum.TryParse<DealIntent>(local.Get("intent"), out var chosen) ? chosen : DealIntent.Trade;
+        items.Add(new Picker("intent", Enum.GetValues<DealIntent>().Select(i => new PickerOption($"intent:{i}", IntentLabel(i),
+            new ChangeState(local.With("intent", i.ToString())), i == intent)).ToList(), "Ask as"));
+        if (intent == DealIntent.Trade) items.Add(Side(context, draft, DealDraft.Give, "You give", context.Player, partner.Id));
         items.Add(Side(context, draft, DealDraft.Get, "You receive", partner.Id, context.Player));
-        var deal = draft.Items;
-        string? blocked = deal.Count == 0 ? "Add something to the deal" : service.ValidateProposal(sim, context.Player, partner.Id, deal);
-        if (deal.Count > 0) items.Add(Verdict(context, service, partner, deal));
+        var deal = intent == DealIntent.Trade ? draft.Items : draft.Getting;
+        string? blocked = deal.Count == 0 ? "Add something to the deal" : service.ValidateProposal(sim, context.Player, partner.Id, deal, intent);
+        if (deal.Count > 0) items.Add(Verdict(context, service, partner, deal, intent));
         items.Add(new Row("send", [
-            new ActionButton("propose", "Propose deal",
-                new SubmitCommand(new ProposeDealCommand { Player = context.Player, Target = partner.Id, Items = deal.ToList() }), blocked),
+            new ActionButton("propose", intent switch { DealIntent.Demand => "Demand", DealIntent.Request => "Ask for help", _ => "Propose deal" },
+                new SubmitCommand(new ProposeDealCommand { Player = context.Player, Target = partner.Id, Items = deal.ToList(), Intent = intent }), blocked),
             new ActionButton("clear", "Clear", new ChangeState(local.Without(DealDraft.Give, DealDraft.Get)),
                 deal.Count == 0 ? "The deal is empty" : null),
         ]));
         return new("propose", "Propose a deal", items);
     }
 
-    /// <summary>One side of the deal: what is on it (click to take it off), and what could be added.</summary>
+    private static string IntentLabel(DealIntent intent) => intent switch
+    {
+        DealIntent.Demand => "Demand tribute",
+        DealIntent.Request => "Ask for help",
+        _ => "Trade",
+    };
+
+    /// <summary>One side of the deal: what is on it (click to take it off), and what could be added. Treaties binding
+    /// both sides are offered on the giving side only.</summary>
     private static Section Side(ScreenContext context, DealDraft draft, string key, string title, int from, int to)
     {
         var sim = context.Sim;
@@ -130,7 +155,8 @@ internal sealed class DiplomacyScreen : IGameScreen
             new ChangeState(draft.Without(context.Local, key, i)), Tooltip: "Take it off the deal")).ToList();
         if (on.Count == 0) on.Add(new Paragraph("empty", "Nothing yet.", Tone.Dim, TextSize.Small));
         var add = new List<ViewElement>();
-        foreach (var item in DealDraft.Candidates(sim, from, to).Where(c => !mine.Any(m => m.Kind == c.Kind && m.ContentId == c.ContentId)))
+        foreach (var item in DealDraft.Candidates(sim, from, to, treaties: key == DealDraft.Give)
+            .Where(c => !mine.Any(m => m.Kind == c.Kind && m.ContentId == c.ContentId && m.Against == c.Against)))
             add.Add(new ActionButton($"{key}:add:{DealDraft.Encode(item)}", "+ " + DealDraft.Describe(sim, item),
                 new ChangeState(draft.With(context.Local, key, item))));
         foreach (var (kind, step, label) in new[] { (TradeItemKind.Gold, 10L, "gold"), (TradeItemKind.GoldPerTurn, 1L, "gold per turn") })
@@ -145,17 +171,24 @@ internal sealed class DiplomacyScreen : IGameScreen
 
     /// <summary>What the partner would answer. A computer player's answer is its own rule (<see cref="DiplomacyPlanner.Accepts"/>)
     /// asked of an observing context; a human answers on their own turn.</summary>
-    private static Paragraph Verdict(ScreenContext context, IDiplomacyService service, Player partner, IReadOnlyList<DiplomaticTradeItem> items)
+    private static Paragraph Verdict(ScreenContext context, IDiplomacyService service, Player partner, IReadOnlyList<DiplomaticTradeItem> items,
+        DealIntent intent)
     {
         if (partner.Ai is null) return new("verdict", $"{partner.Name} is a human leader and answers on their own turn.", Tone.Dim);
         var sim = context.Sim;
         var planner = new DiplomacyPlanner(AiContext.Observe(sim, partner.Id));
-        var deal = new DiplomaticDeal { Proposer = context.Player, Recipient = partner.Id, Items = items.ToList() };
+        var deal = new DiplomaticDeal { Proposer = context.Player, Recipient = partner.Id, Items = items.ToList(), Intent = intent };
         var tier = service.GetAttitude(sim, partner.Id, context.Player).Tier;
-        if (tier == Disposition.Furious) return new("verdict", $"{partner.Name} is furious with you and would refuse anything.", Tone.Bad);
-        long value = planner.Value(items), margin = DiplomacyPlanner.Margin(tier);
         bool accepts = planner.Accepts(service, deal);
-        string reason = $"worth {value} gold to them; at {tier} they want at least {margin}";
+        if (planner.Refusal(items, tier) is { } refusal) return new("verdict", $"{partner.Name} {refusal}.", Tone.Bad);
+        if (tier == Disposition.Furious && !accepts) return new("verdict", $"{partner.Name} is furious with you and would refuse.", Tone.Bad);
+        long value = planner.Value(items, context.Player);
+        string reason = intent switch
+        {
+            DealIntent.Demand => $"it costs them {-value} gold; they give in only to a much stronger leader",
+            DealIntent.Request => $"it costs them {-value} gold; they help only leaders they like",
+            _ => $"worth {value} gold to them; at {tier} they want at least {DiplomacyPlanner.Margin(tier)}",
+        };
         return accepts ? new("verdict", $"{partner.Name} would accept: {reason}.", Tone.Good)
             : new("verdict", $"{partner.Name} would refuse: {reason}.", Tone.Bad);
     }
@@ -190,8 +223,9 @@ internal sealed record DealDraft(IReadOnlyList<DiplomaticTradeItem> Giving, IRea
     private static ScreenState Write(ScreenState state, string key, IReadOnlyList<DiplomaticTradeItem> items) =>
         state.With(key, items.Count == 0 ? null : string.Join("|", items.Select(Encode)));
 
+    /// <summary>An embargo keeps the player it is laid against where other kinds keep their content id.</summary>
     public static string Encode(DiplomaticTradeItem item) =>
-        $"{item.Kind}:{item.ContentId}:{item.Amount.ToString(CultureInfo.InvariantCulture)}";
+        $"{item.Kind}:{(item.Kind == TradeItemKind.Embargo ? item.Against.ToString(CultureInfo.InvariantCulture) : item.ContentId)}:{item.Amount.ToString(CultureInfo.InvariantCulture)}";
 
     private static List<DiplomaticTradeItem> Parse(string? text, int from)
     {
@@ -203,22 +237,41 @@ internal sealed record DealDraft(IReadOnlyList<DiplomaticTradeItem> Giving, IRea
             int first = part.IndexOf(':'), last = part.LastIndexOf(':');
             if (first < 0 || last <= first || !Enum.TryParse<TradeItemKind>(part[..first], out var kind)
                 || !long.TryParse(part[(last + 1)..], NumberStyles.Integer, CultureInfo.InvariantCulture, out long amount)) continue;
-            items.Add(new(from, kind, part[(first + 1)..last], amount));
+            string content = part[(first + 1)..last];
+            if (kind != TradeItemKind.Embargo) items.Add(new(from, kind, content, amount));
+            else if (int.TryParse(content, NumberStyles.Integer, CultureInfo.InvariantCulture, out int against))
+                items.Add(new(from, kind, Amount: amount, Against: against));
         }
         return items;
     }
 
-    /// <summary>What one side could put on the table: resources it holds and technologies the other side lacks. The
-    /// rules still judge the whole deal, so a candidate may yet be refused.</summary>
-    public static IEnumerable<DiplomaticTradeItem> Candidates(Simulation sim, int from, int to)
+    /// <summary>What one side could put on the table: resources it holds, technologies the other side lacks, an embargo
+    /// on any third civilization it has met, and, with <paramref name="treaties"/>, the treaties the two could sign (a
+    /// peace treaty at war, otherwise open borders and a defensive pact). The rules still judge the whole deal, so a
+    /// candidate may yet be refused.</summary>
+    public static IEnumerable<DiplomaticTradeItem> Candidates(Simulation sim, int from, int to, bool treaties = false)
     {
-        if (Capital(sim, from) is { } capital)
+        var relations = sim.Rules().Relations;
+        int fromTeam = sim.TeamOf(from).Id, toTeam = sim.TeamOf(to).Id;
+        bool war = sim.TeamOf(from).Wars.Contains(toTeam);
+        if (treaties && war) yield return new(from, TradeItemKind.PeaceTreaty);
+        if (treaties && !war)
+        {
+            yield return new(from, TradeItemKind.OpenBorders);
+            yield return new(from, TradeItemKind.DefensivePact);
+        }
+        // At war only gold and technology can go with the peace: resources and embargoes need trade between the two.
+        if (!war && Capital(sim, from) is { } capital)
             foreach (var bonus in sim.Content.Get<BonusDef>().All.OrderBy(b => b.Name, StringComparer.Ordinal))
                 if (ResourceAccess.Count(sim, from, capital.Id, bonus.Id) > 0) yield return new(from, TradeItemKind.Resource, bonus.Id);
         var giver = sim.TeamOf(from);
         var taker = sim.TeamOf(to);
         foreach (var tech in giver.Techs.Where(t => !taker.Techs.Contains(t)).Order(StringComparer.Ordinal))
             yield return new(from, TradeItemKind.Technology, tech);
+        if (war) yield break;
+        foreach (var third in sim.State.Players.Where(p => p.TeamId != fromTeam && p.TeamId != toTeam && !PlayerRules.IsBarbarian(sim, p.Id)
+            && sim.State.Cities.Any(c => c.Owner == p.Id) && relations.HasMet(sim, fromTeam, p.TeamId)).OrderBy(p => p.Id))
+            yield return new(from, TradeItemKind.Embargo, Against: third.Id);
     }
 
     private static City? Capital(Simulation sim, int player) => sim.State.Cities.Where(c => c.Owner == player)
@@ -229,6 +282,11 @@ internal sealed record DealDraft(IReadOnlyList<DiplomaticTradeItem> Giving, IRea
         TradeItemKind.Gold => $"{item.Amount} gold",
         TradeItemKind.GoldPerTurn => $"{item.Amount} gold per turn",
         TradeItemKind.Technology => Labels.Name<TechDef>(sim.Content, item.ContentId),
+        TradeItemKind.Embargo => sim.State.Players.FirstOrDefault(p => p.Id == item.Against) is { } target
+            ? $"an embargo on {target.Name}" : "an embargo",
+        TradeItemKind.PeaceTreaty => "a peace treaty",
+        TradeItemKind.OpenBorders => "open borders",
+        TradeItemKind.DefensivePact => "a defensive pact",
         _ => (item.Amount == 1 ? "" : item.Amount + " ") + Labels.Name<BonusDef>(sim.Content, item.ContentId),
     };
 }

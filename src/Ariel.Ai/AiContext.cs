@@ -120,7 +120,9 @@ public sealed class AiContext
     public int PlayerId { get; }
     public Player Self { get; }
     public Team Team { get; }
-    internal LeaderDef? Leader { get; }
+    /// <summary>The leader this player plays, whose personality (flavors, refusal thresholds, temperament) colours its
+    /// choices; null in a ruleset without leaders.</summary>
+    public LeaderDef? Leader { get; }
     internal AiCatalog Catalog { get; }
     /// <summary>The player's cities as of the last successful command or <see cref="Refresh"/>.</summary>
     public IReadOnlyList<City> Cities => _segment.Cities.Value;

@@ -11,8 +11,7 @@ internal static class ResearchTimeline
     internal static EraDef[] Eras(Simulation sim) => sim.Content.Get<EraDef>().All
         .OrderBy(e => e.StartPercent).ThenBy(e => e.Id, StringComparer.Ordinal).ToArray();
 
-    internal static bool Alive(Simulation sim, int player) =>
-        sim.State.Cities.Any(c => c.Owner == player) || sim.State.Units.Any(u => u.Owner == player);
+    internal static bool Alive(Simulation sim, int player) => PlayerRules.IsAlive(sim, player);
 
     internal static int Leader(Simulation sim, Team team) => team.Members.Where(p => Alive(sim, p))
         .DefaultIfEmpty(team.Members.Min).Min();

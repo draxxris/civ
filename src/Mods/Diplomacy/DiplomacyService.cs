@@ -26,11 +26,15 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         if (a == b) return "same team";
         return Barbarian(sim, a) || Barbarian(sim, b) ? "barbarians cannot negotiate" : null;
     }
-    public bool HasOpenBorders(Simulation sim, int teamA, int teamB) => teamA == teamB ||
+    public bool HasOpenBorders(Simulation sim, int teamA, int teamB) => OpenBordersBetween(sim, teamA, teamB);
+    public bool HasDefensivePact(Simulation sim, int teamA, int teamB) => PactBetween(sim, teamA, teamB);
+    private static bool OpenBordersBetween(Simulation sim, int teamA, int teamB) => teamA == teamB ||
         (!AtWar(sim, teamA, teamB) && Agreement(sim, teamA, teamB)?.OpenBordersStarted is not null);
-    public bool HasDefensivePact(Simulation sim, int teamA, int teamB) => teamA != teamB &&
+    private static bool PactBetween(Simulation sim, int teamA, int teamB) => teamA != teamB &&
         !AtWar(sim, teamA, teamB) && Agreement(sim, teamA, teamB)?.DefensivePactStarted is not null;
-    public string? ValidateAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
+    public string? ValidateAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement) =>
+        AgreementError(sim, player, target, agreement);
+    private static string? AgreementError(Simulation sim, int player, int target, DiplomaticAgreement agreement)
     {
         var error = Participants(sim, player, target);
         if (error is not null) return error;
@@ -41,7 +45,7 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         if (agreement == DiplomaticAgreement.DefensivePact && (sim.TeamOf(player).Wars.Count > 0 || sim.TeamOf(target).Wars.Count > 0)) return "defensive pacts require peace with all teams";
         var tech = agreement == DiplomaticAgreement.OpenBorders ? TradeTech(sim, a, b, t => t.OpenBordersTrading, "open borders") : TradeTech(sim, a, b, t => t.DefensivePactTrading, "defensive pacts");
         if (tech is not null) return tech;
-        bool exists = agreement == DiplomaticAgreement.OpenBorders ? HasOpenBorders(sim, a, b) : HasDefensivePact(sim, a, b);
+        bool exists = agreement == DiplomaticAgreement.OpenBorders ? OpenBordersBetween(sim, a, b) : PactBetween(sim, a, b);
         return exists ? "agreement already active" : null;
     }
     /// <summary>Either participant can supply the unlock. Content without an enabling flag has no technology gate.</summary>
@@ -52,7 +56,8 @@ internal sealed partial class DiplomacyService : IDiplomacyService
         bool enabled = new[] { teamA, teamB }.Any(t => sim.State.TeamById(t).Techs.Any(id => sim.Content.TryGet<S.TechDef>(id, out var def) && flag(def)));
         return enabled ? null : $"no team has researched the technology enabling {what}";
     }
-    public void SignAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement) =>
+    public void SignAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement) => Sign(sim, player, target, agreement);
+    private static void Sign(Simulation sim, int player, int target, DiplomaticAgreement agreement) =>
         Edit(sim).GetOrCreateAgreement(sim.TeamOf(player).Id, sim.TeamOf(target).Id).Sign(agreement, sim.State.Turn);
     public string? ValidateCancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement)
     {

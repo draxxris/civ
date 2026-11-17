@@ -6,6 +6,10 @@ public static class PlayerRules
     /// <summary>True for the barbarian player, whose units include rebels. They trade, research, vote and rebel differently or not at all.</summary>
     public static bool IsBarbarian(Simulation sim, int player) => BarbarianPlayer(sim) == player;
 
+    /// <summary>True while the player still has a city or a unit; a player with neither is out of the game.</summary>
+    public static bool IsAlive(Simulation sim, int player) =>
+        sim.State.Cities.Any(c => c.Owner == player) || sim.State.Units.Any(u => u.Owner == player);
+
     /// <summary>The one barbarian player, or null before the faction first appears.</summary>
     public static int? BarbarianPlayer(Simulation sim) =>
         sim.State.Extensions.TryGet<MilitaryGameState>(sim.Content)?.BarbarianPlayer;

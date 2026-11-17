@@ -62,6 +62,19 @@ public readonly record struct PlayerDirection : IComparable<PlayerDirection>
 /// through <see cref="IDispositions"/>, and without one every player is <see cref="Cautious"/>.</summary>
 public enum Disposition { Furious, Annoyed, Cautious, Pleased, Friendly }
 
+/// <summary>Leaders' refusal thresholds (<see cref="Ariel.Content.Schema.LeaderDef"/>'s <c>...AttitudeThreshold</c>
+/// fields) name a disposition, or <c>none</c> for a leader who never refuses.</summary>
+public static class DispositionThresholds
+{
+    /// <summary>Whether the disposition is at or below the threshold, so the leader refuses. False for <c>none</c>.</summary>
+    public static bool AtOrBelow(Disposition disposition, string? threshold) =>
+        Enum.TryParse<Disposition>(threshold, ignoreCase: true, out var limit) && disposition <= limit;
+    /// <summary>Whether the disposition is above the threshold, for a refusal that comes from liking someone too much
+    /// (a <c>...ThemRefuse...</c> threshold). False for <c>none</c>.</summary>
+    public static bool Above(Disposition disposition, string? threshold) =>
+        Enum.TryParse<Disposition>(threshold, ignoreCase: true, out var limit) && disposition > limit;
+}
+
 /// <summary>What two teams share since they met. Exists from first contact on; teams that never met have none.</summary>
 public sealed class TeamRelation
 {
@@ -171,6 +184,12 @@ public interface IRelationsService
     bool MayEnter(Simulation sim, int team, int ownerTeam);
     /// <summary>Whether an agreement pledges the two teams to defend each other.</summary>
     bool Allied(Simulation sim, int teamA, int teamB);
+    /// <summary>Whether the two teams may trade at all: they are at peace and no embargo (<see cref="ITradeTerms"/>)
+    /// stands between them. A team always trades with itself. Deals and trade routes both ask this.</summary>
+    bool MayTrade(Simulation sim, int teamA, int teamB);
+    /// <summary>Whether the two teams' cities may trade without an agreement opening their borders, because a mod's
+    /// terms (<see cref="ITradeTerms.FreeTrade"/>) say so. Embargoes still apply: ask <see cref="MayTrade"/> first.</summary>
+    bool FreeTrade(Simulation sim, int teamA, int teamB);
     /// <summary>How one player regards another; <see cref="Disposition.Cautious"/> without a mod that judges it.</summary>
     Disposition DispositionToward(Simulation sim, int fromPlayer, int towardPlayer);
 
@@ -194,6 +213,18 @@ public interface ITeamAgreements
     /// starts: settles the agreements the declaration breaks and returns, in order, the teams obliged to join the
     /// defender.</summary>
     IReadOnlyList<int> CallToArms(Simulation sim, int aggressor, int defender);
+}
+
+/// <summary>Terms of trade between teams that mods set beyond war and borders: an embargo one team agreed to in a deal,
+/// sanctions a world council imposed, or free trade it granted. Every registered instance is asked (through
+/// <see cref="IRelationsService.MayTrade"/> and <see cref="IRelationsService.FreeTrade"/>); without one, teams at peace
+/// trade as their borders allow. Answers are RNG-free and never change state.</summary>
+public interface ITradeTerms
+{
+    /// <summary>Whether these terms forbid the two (different) teams to trade: no deals, no trade routes.</summary>
+    bool Embargoed(Simulation sim, int teamA, int teamB);
+    /// <summary>Whether these terms let the two (different) teams' cities trade without open borders.</summary>
+    bool FreeTrade(Simulation sim, int teamA, int teamB);
 }
 
 /// <summary>How one player regards another, answered by a mod that judges it (the Diplomacy mod's attitude).</summary>

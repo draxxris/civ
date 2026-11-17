@@ -1,5 +1,12 @@
 [
+  { "id": "diplomacy:accept_demand", "name": "Gave in to our demand", "decay": 50 },
+  { "id": "diplomacy:accepted_stop_trading", "name": "Stopped trading at our request", "decay": 50 },
+  { "id": "diplomacy:denied_stop_trading", "name": "Refused to stop trading at our request", "decay": 50 },
   { "id": "diplomacy:give_help", "name": "Gave us help", "decay": 60, "limit": 3 },
+  { "id": "diplomacy:hired_trade_embargo", "name": "Paid for an embargo against us", "decay": 50 },
+  { "id": "diplomacy:made_demand", "name": "Made demands of us", "decay": 40 },
+  { "id": "diplomacy:refused_help", "name": "Refused to help us", "decay": 50 },
+  { "id": "diplomacy:rejected_demand", "name": "Refused our demand", "decay": 50 },
   { "id": "diplomacy:stopped_trading", "name": "Stopped trading with us", "decay": 20 },
   { "id": "diplomacy:traded_tech_to_us", "name": "Traded technology to us", "decay": 60 }
 ]

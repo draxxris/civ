@@ -63,12 +63,14 @@ internal sealed class TradeRouteService : ITradeRouteService
     }
     private static bool ForeignTradeAllowed(Simulation sim, City source, City partner, bool noForeign)
     {
-        // Where agreements exist, foreign routes need open borders; a game without them trades freely at peace.
+        // Where agreements exist, foreign routes need open borders or free trade; a game without them trades freely at
+        // peace. An embargo closes the route either way.
         var relations = sim.Rules().Relations;
         int mine = sim.TeamOf(source.Owner).Id, theirs = sim.TeamOf(partner.Owner).Id;
         return !noForeign && !TradeData.Civics(sim, partner.Owner).Any(c => c.NoForeignTrade)
-            && !sim.TeamOf(source.Owner).Wars.Contains(theirs)
-            && (sim.Rules().TeamAgreements is null || relations.HasMet(sim, mine, theirs) && relations.MayEnter(sim, mine, theirs));
+            && relations.MayTrade(sim, mine, theirs)
+            && (sim.Rules().TeamAgreements is null || relations.HasMet(sim, mine, theirs)
+                && (relations.MayEnter(sim, mine, theirs) || relations.FreeTrade(sim, mine, theirs)));
     }
     public TradeRouteResult CalculateProfit(Simulation sim, int city, int partnerCity)
     {
