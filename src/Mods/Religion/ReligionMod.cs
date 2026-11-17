@@ -46,6 +46,7 @@ public sealed class ReligionMod : IPreparableMod
         context.RegisterService<Ariel.Ai.IProductionWishes>("inquisitors", new InquisitorWishes());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("founding_valuer", new FoundingWonderValuer());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new StateReligionCivicValuer());
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CitySubject>>("holy_city_valuer", new HolyCityValuer());
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new ReligionScreen());
         context.RegisterService<Ariel.Presentation.ICityPanel>("city", new ReligionCityPanel());
         context.RegisterService<Ariel.Presentation.ICityTag>("city_tag", new ReligionCityTag());

@@ -30,6 +30,7 @@ internal sealed class AiCatalog
     public IAiValuer<UnitSubject>[] UnitValuers { get; }
     public IAiValuer<TechSubject>[] TechValuers { get; }
     public IAiValuer<CivicSubject>[] CivicValuers { get; }
+    public IAiValuer<CitySubject>[] CityValuers { get; }
 
     public static AiCatalog For(ContentDb content) => Cache.GetValue(content, c => new AiCatalog(c));
 
@@ -52,6 +53,7 @@ internal sealed class AiCatalog
         UnitValuers = ById(content.Services.Get<IAiValuer<UnitSubject>>());
         TechValuers = ById(content.Services.Get<IAiValuer<TechSubject>>());
         CivicValuers = ById(content.Services.Get<IAiValuer<CivicSubject>>());
+        CityValuers = ById(content.Services.Get<IAiValuer<CitySubject>>());
     }
 
     private static T[] ById<T>(IEnumerable<T> services) where T : IHasId =>

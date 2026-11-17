@@ -17,6 +17,8 @@ public sealed class AiContext
     /// <summary>The threat grid every segment refills in place: one map-sized array for the whole turn instead of
     /// one per issued command, which on large maps is a large-object-heap allocation each time.</summary>
     private int[]? _threat;
+    /// <summary>The same for the strength of foreign troops at peace with us (<see cref="PressureAround"/>).</summary>
+    private int[]? _pressure;
 
     // A segment has no authoritative writes. Parallel scoring joins before Issue or Refresh replaces it.
     private sealed class Segment
@@ -28,9 +30,12 @@ public sealed class AiContext
         public readonly Lazy<Dictionary<UnitRole, int>> UnitCounts;
         public readonly Lazy<Dictionary<UnitRole, int>> QueuedCounts;
         public readonly Lazy<int[]> ThreatStrength;
+        public readonly Lazy<int[]> PressureStrength;
+        public readonly Lazy<City[]> CampaignCities;
         public readonly Lazy<CampaignTargets> Targets;
         public readonly Lazy<IReadOnlyDictionary<string, long>> HeldResources;
         public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Threats = new();
+        public readonly ConcurrentDictionary<(TileId Tile, int Radius), int> Pressures = new();
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
         public readonly ConcurrentDictionary<TileId, City?> NearestCities = new();
         public readonly ConcurrentDictionary<(int City, string Kind, string Id), Lazy<bool>> Production = new();
@@ -47,7 +52,11 @@ public sealed class AiContext
             UnitCounts = new(() => Units.Value.GroupBy(ctx.Role).ToDictionary(g => g.Key, g => g.Count()));
             QueuedCounts = new(() => Cities.Value.SelectMany(c => c.ProductionQueue).Where(o => o.Kind == "cities:unit")
                 .GroupBy(o => ctx.Catalog.Roles.GetValueOrDefault(o.ContentId)).ToDictionary(g => g.Key, g => g.Count()));
-            ThreatStrength = new(() => BuildThreatStrength(ctx, Enemies.Value));
+            ThreatStrength = new(() => BuildStrength(ctx, ctx._threat ??= new int[ctx.Grid.Count], Enemies.Value));
+            PressureStrength = new(() => BuildStrength(ctx, ctx._pressure ??= new int[ctx.Grid.Count], ctx.Sim.State.Units.Where(u =>
+                u.Health > 0 && ctx.Foreign(u.Owner) && ctx.Def(u).Strength > 0 && ctx.Def(u).Domain == "military:domain_land"
+                && ctx.Sim.State.PlotAt(u.Position).Visible.Contains(ctx.Team.Id))));
+            CampaignCities = new(() => BuildCampaignCities(ctx));
             Targets = new(() => new CampaignTargets(ctx));
             HeldResources = new(() => BuildHeldResources(ctx));
         }
@@ -83,16 +92,26 @@ public sealed class AiContext
             return path is null ? Search() : path.Value;
         }
 
-        private static int[] BuildThreatStrength(AiContext ctx, IEnumerable<Unit> enemies)
+        /// <summary>Enemy cities that a land campaign has chosen as its goal, or that the player's own soldiers stand
+        /// within <see cref="CampaignReach"/> of.</summary>
+        private static City[] BuildCampaignCities(AiContext ctx)
+        {
+            var goals = AiIntent.Read(ctx).Campaigns.Values.Select(g => g.City).OfType<int>().ToHashSet();
+            var army = ctx.Units.Where(u => u.Health > 0 && ctx.Role(u) is UnitRole.Melee or UnitRole.Siege).ToArray();
+            return ctx.EnemyCities.Where(c => goals.Contains(c.Id)
+                || army.Any(u => ctx.Grid.Distance(u.Position, c.Position) <= CampaignReach)).ToArray();
+        }
+
+        private static int[] BuildStrength(AiContext ctx, int[] strength, IEnumerable<Unit> units)
         {
             // Supported maps have a bounded plot array; a dense strength bucket avoids per-query unit scans.
-            // Reusing it is safe because segments never overlap: scoring joins before Issue or Refresh replaces one.
-            var strength = ctx._threat ??= new int[ctx.Grid.Count];
+            // Reusing it is safe because segments never overlap: scoring joins before Issue or Refresh replaces one,
+            // and each kind of strength has its own buffer.
             Array.Clear(strength);
-            foreach (var enemy in enemies)
+            foreach (var unit in units)
             {
-                int tile = ctx.Tile(enemy.Position).Value;
-                strength[tile] = checked(strength[tile] + Math.Max(1, ctx.Def(enemy).Strength));
+                int tile = ctx.Tile(unit.Position).Value;
+                strength[tile] = checked(strength[tile] + Math.Max(1, ctx.Def(unit).Strength));
             }
             return strength;
         }
@@ -112,6 +131,12 @@ public sealed class AiContext
     internal CampaignTargets Targets => _segment.Targets.Value;
     /// <summary>Cities of players this player is at war with, on plots its team has revealed.</summary>
     public IReadOnlyList<City> EnemyCities => _segment.EnemyCities.Value;
+    /// <summary>The enemy cities the land army is going after: a campaign's goal, or a city the player's own soldiers
+    /// stand within <see cref="CampaignReach"/> tiles of. Support arms (aircraft, say) aim here rather than at every
+    /// enemy city they can reach.</summary>
+    public IReadOnlyList<City> CampaignCities => _segment.CampaignCities.Value;
+    /// <summary>How near its soldiers must stand for an enemy city to count among <see cref="CampaignCities"/>.</summary>
+    public const int CampaignReach = 3;
     /// <summary>Units that already acted this turn.</summary>
     internal HashSet<int> Done { get; } = new();
     /// <summary>Whether a planner earlier in this turn already gave <paramref name="unit"/> its orders.</summary>
@@ -172,6 +197,9 @@ public sealed class AiContext
     internal CityView ViewOf(City city) => _segment.Views.GetOrAdd(city.Id,
         _ => new Lazy<CityView>(() => CityView.Build(this, city))).Value;
     internal bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);
+    /// <summary>Another civilization's player this player is at peace with: not itself, a teammate, an enemy or a barbarian.</summary>
+    internal bool Foreign(int player) => player != PlayerId && !IsEnemy(player) && Sim.State.PlayerById(player).TeamId != Team.Id
+        && !PlayerRules.IsBarbarian(Sim, player);
     internal bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !PlayerRules.IsBarbarian(Sim, m)));
     public TileId Tile(Hex hex) => Grid.TileAt(hex);
 
@@ -198,6 +226,8 @@ public sealed class AiContext
     public int Adjustment(in TechSubject subject) => Sum(Catalog.TechValuers, in subject);
     /// <summary>What the registered civic valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>
     public int Adjustment(in CivicSubject subject) => Sum(Catalog.CivicValuers, in subject);
+    /// <summary>What the registered city valuers add to the worth of taking <paramref name="subject"/>; 0 when none is registered.</summary>
+    public int Adjustment(in CitySubject subject) => Sum(Catalog.CityValuers, in subject);
 
     private int Sum<TSubject>(IAiValuer<TSubject>[] valuers, in TSubject subject) where TSubject : struct
     {
@@ -265,6 +295,40 @@ public sealed class AiContext
             return total;
         });
     }
+
+    /// <summary>Visible land strength of civilizations at peace with this player within a radius: troops massing on a
+    /// border, which could attack the turn war is declared.</summary>
+    internal int PressureAround(Hex position, int radius)
+    {
+        if (radius < 0) return 0;
+        var segment = _segment;
+        return segment.Pressures.GetOrAdd((Tile(position), radius), query =>
+        {
+            var strength = segment.PressureStrength.Value;
+            int total = 0;
+            foreach (var tile in Grid.Range(query.Tile, query.Radius)) total = checked(total + strength[tile.Value]);
+            return total;
+        });
+    }
+
+    /// <summary>How this player's team's war against <paramref name="enemyTeam"/> is going: the production cost of enemy
+    /// units destroyed plus cities taken, less the same suffered (see <see cref="AiTeamState"/>); zero at peace.</summary>
+    public int WarScore(int enemyTeam) => WarRecord.Score(Sim, Team.Id, enemyTeam);
+
+    /// <summary>Whether the computer player would end its team's war against <paramref name="enemyTeam"/> now: it is
+    /// outgunned, beaten on score, or a long war has stopped paying. False at peace.</summary>
+    public bool WantsPeace(int enemyTeam)
+    {
+        if (!Team.Wars.Contains(enemyTeam)) return false;
+        long mine = Team.Members.Where(m => !PlayerRules.IsBarbarian(Sim, m)).Sum(m => Power(Sim, m));
+        long theirs = Sim.State.TeamById(enemyTeam).Members.Where(m => !PlayerRules.IsBarbarian(Sim, m)).Sum(m => Power(Sim, m));
+        int length = Turn - (Sim.Rules().Relations.Relation(Sim, Team.Id, enemyTeam)?.WarStarted ?? 0);
+        return WarPlanner.WantsPeace(mine, theirs, WarScore(enemyTeam), length);
+    }
+
+    /// <summary>A player's military strength as the computer player weighs it: unit strength weighted by health, plus a
+    /// little per city. Compare two players' values; the scale has no meaning of its own.</summary>
+    public long Strength(int player) => Power(Sim, player);
 
     /// <summary>Sum of own military unit strength weighted by health, a simple integer power estimate.</summary>
     internal static long Power(Simulation sim, int player)

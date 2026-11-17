@@ -19,11 +19,17 @@ public sealed class AiModule : IMod
         context.PlayerAIs.Register(new StandardAi());
         StandardPlanners.Register(context);
         context.RegisterStateComponent<AiPlayerState>("player_state");
+        context.RegisterStateComponent<AiTeamState>("team_state");
         context.RegisterCommand<ReviewCivicGoalCommand>("review_civic_goal");
         context.RegisterCommand<ReviewCampaignGoalsCommand>("review_campaign_goals");
         context.RegisterCommand<PrepareSettlerMissionsCommand>("prepare_settler_missions");
         context.RegisterCommand<PrepareWorkerMissionsCommand>("prepare_worker_missions");
         context.RegisterCommand<ForgetUnitMissionCommand>("forget_unit_mission");
         context.RegisterCommand<PruneAiIntentCommand>("prune_intent");
+        context.RegisterCommand<PrepareWarCommand>("prepare_war");
+        context.Subscribe<CombatResolved>("war_score_combat", WarRecord.Combat);
+        context.Subscribe<CityCaptured>("war_score_capture", WarRecord.Capture);
+        context.Subscribe<WarDeclared>("war_score_declared", WarRecord.Declared);
+        context.Subscribe<PeaceSigned>("war_score_peace", WarRecord.Peace);
     }
 }

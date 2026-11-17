@@ -5,8 +5,9 @@ using Ariel.Game;
 namespace Ariel.Ai;
 
 /// <summary>How a mod adjusts what the standard computer player thinks one kind of thing is worth: a resource, a
-/// building, a unit, a technology or a civic, each named by its subject type (<see cref="ResourceSubject"/>,
-/// <see cref="BuildingSubject"/>, <see cref="UnitSubject"/>, <see cref="TechSubject"/>, <see cref="CivicSubject"/>).
+/// building, a unit, a technology, a civic or a rival's city, each named by its subject type (<see cref="ResourceSubject"/>,
+/// <see cref="BuildingSubject"/>, <see cref="UnitSubject"/>, <see cref="TechSubject"/>, <see cref="CivicSubject"/>,
+/// <see cref="CitySubject"/>).
 /// Registered as a service under the closed interface, for example
 /// <c>context.RegisterService&lt;IAiValuer&lt;TechSubject&gt;&gt;("tech_valuer", valuer)</c>. The planner that owns the
 /// choice asks every registered valuer of that subject, by ordinal <see cref="IHasId.Id"/>, and adds the sum of their
@@ -82,3 +83,12 @@ public readonly record struct TechSubject(TechDef Tech);
 /// until its next review turn or until its civics, techs, wars, cities or era change, so a valuer that reads other
 /// state is heard at the next review.</para></summary>
 public readonly record struct CivicSubject(CivicDef Civic);
+
+/// <summary>A rival's city the player could go to war to take.
+/// <para>Scale: the war planner's worth of a city as a prize: 10 per population, 25 per wonder and 8 per resource it
+/// has revealed within two tiles, less 6 per tile of distance from the player's nearest city. A target's worth is the
+/// sum over its three nearest known cities, and the planner picks the target worth most among rivals weak enough to
+/// attack, so +40 (a holy city, say) is worth about four more population. Asked every five turns while the player is
+/// at peace and strong enough to consider a war. The adjustment changes which rival is chosen, never whether a war is
+/// started.</para></summary>
+public readonly record struct CitySubject(City City);

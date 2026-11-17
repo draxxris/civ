@@ -167,3 +167,18 @@ internal sealed class StateReligionCivicValuer : IAiValuer<CivicSubject>
         return fits ? 0 : -AiValuation.Limit;
     }
 }
+
+/// <summary>A holy city is a prize beyond its population: it carries its religion's shrine income and the faith's
+/// regard. The war planner adds this to a rival city it might take.</summary>
+internal sealed class HolyCityValuer : IAiValuer<CitySubject>
+{
+    internal const int HolyCityValue = 40;
+    public string Id => "religion:holy_city_valuer";
+
+    public int Adjust(AiContext ctx, in CitySubject subject)
+    {
+        var religion = ctx.Sim.Service<IReligionService>()!;
+        int city = subject.City.Id;
+        return ctx.Sim.Content.Get<ReligionDef>().All.Count(r => religion.HolyCity(ctx.Sim, r.Id) == city) * HolyCityValue;
+    }
+}

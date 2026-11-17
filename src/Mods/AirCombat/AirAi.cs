@@ -5,7 +5,8 @@ using Ariel.Game;
 namespace Ariel.Mods.AirCombat;
 
 /// <summary>The computer player's aircraft, in the slot the standard AI keeps for them (<see cref="AiPlannerOrder.Air"/>):
-/// bomb defences first, strike defenders second, then reposition, stand on intercept or scout.</summary>
+/// bomb the defences of cities the land army is going after, strike enemy stacks threatening our cities first, then
+/// reposition toward the campaign, stand on intercept or scout. A city no army is marching on is not bombed.</summary>
 internal sealed class AirAiPlanner : IAiPlanner
 {
     public string Id => "air_combat:planner";
@@ -28,7 +29,7 @@ internal sealed class AirPlanner(AiContext ctx, IAirMissionService air)
 
     private void Bomb(Unit unit)
     {
-        foreach (var city in ctx.EnemyCities.OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id))
+        foreach (var city in ctx.CampaignCities.OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id))
             if (Mission(unit, AirMissionKind.AirBomb, city.Position)) return;
         foreach (var tile in ctx.Grid.Range(ctx.Tile(unit.Position), air.AirRange(ctx.Sim, unit.Id))
             .Where(t => ctx.Sim.State.Plots[t.Value].Bonus is not null && ctx.Sim.State.Plots[t.Value].Improvement is not null).OrderBy(t => t.Value))
@@ -38,9 +39,12 @@ internal sealed class AirPlanner(AiContext ctx, IAirMissionService air)
     private void Strike(Unit unit)
     {
         foreach (var stack in ctx.Enemies.Where(ctx.Alive).GroupBy(e => e.Position)
-            .OrderByDescending(g => g.Max(e => ctx.Def(e).Strength * e.Health)).ThenBy(g => ctx.Tile(g.Key).Value))
+            .OrderByDescending(g => NextToOurCity(g.Key))
+            .ThenByDescending(g => g.Max(e => ctx.Def(e).Strength * e.Health)).ThenBy(g => ctx.Tile(g.Key).Value))
             if (Mission(unit, AirMissionKind.AirStrike, stack.Key)) return;
     }
+
+    private bool NextToOurCity(Hex position) => ctx.Cities.Any(c => ctx.Grid.Distance(c.Position, position) <= 1);
 
     private bool Mission(Unit unit, AirMissionKind kind, Hex target)
     {
@@ -65,7 +69,7 @@ internal sealed class AirPlanner(AiContext ctx, IAirMissionService air)
 
     private bool Rebase(Unit unit)
     {
-        var target = ctx.EnemyCities.OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id).FirstOrDefault();
+        var target = ctx.CampaignCities.OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id).FirstOrDefault();
         if (target is null || ctx.Grid.Distance(unit.Position, target.Position) <= air.AirRange(ctx.Sim, unit.Id)) return false;
         int current = ctx.Grid.Distance(unit.Position, target.Position);
         foreach (var city in ctx.Cities.Where(c => ctx.Grid.Distance(c.Position, target.Position) < current)
