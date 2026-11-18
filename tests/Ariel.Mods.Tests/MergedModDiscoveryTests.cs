@@ -243,7 +243,7 @@ public sealed class MergedModDiscoveryTests
         Assert.Contains(catalog.Content.Get<Ariel.Mods.Events.EventTriggerDef>().All, e => e.Name == "Winning event");
         Assert.Equal(System.IO.Path.Combine(winner, "art/icons/winner-only.png"), catalog.IconPath("events:winner-only"));
         Assert.Null(catalog.IconPath("events:lower-only"));
-        Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "diplomacy");
+        Assert.DoesNotContain(catalog.Mods, m => m.Manifest.Id == "corporations");
         // Base modules are linked into the host: they load from rules/ and no mod folder supplies or replaces one.
         Assert.StartsWith(System.IO.Path.Combine(AppContext.BaseDirectory, "rules"), catalog.Mods.Single(m => m.Manifest.Id == "foundation").Root);
     }

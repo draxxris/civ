@@ -1,10 +1,9 @@
 using System.Globalization;
-using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 using Ariel.Presentation;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 /// <summary>
 /// Diplomacy with every rival the local team has met: attitude and its reasons, treaties and the actions against them
@@ -18,14 +17,12 @@ internal sealed class DiplomacyScreen : IGameScreen
     public string Id => "diplomacy:screen";
     public int Order => 40;
 
-    public ScreenButton? Button(ScreenContext context) => context.Sim.Service<IDiplomacyService>() is null ? null
-        : new("Diplomacy", "Rival leaders, attitudes, treaties and deals");
+    public ScreenButton? Button(ScreenContext context) => new("Diplomacy", "Rival leaders, attitudes, treaties and deals");
 
     public ScreenView Describe(ScreenContext context)
     {
         var sim = context.Sim;
-        if (sim.Service<IDiplomacyService>() is not { } service)
-            return new("Diplomacy", [new Paragraph("off", "Diplomacy is not part of this ruleset.", Tone.Dim)]);
+        var service = sim.Rules().Diplomacy;
         var rivals = MetRivals(context);
         var items = new List<ViewElement>();
         if (rivals.Count == 0) items.Add(new Paragraph("none", "You have not met any other leader yet.", Tone.Dim));
@@ -169,25 +166,24 @@ internal sealed class DiplomacyScreen : IGameScreen
         return new(key, title, [new Row("on", on), new Row("add", add)]);
     }
 
-    /// <summary>What the partner would answer. A computer player's answer is its own rule (<see cref="DiplomacyPlanner.Accepts"/>)
-    /// asked of an observing context; a human answers on their own turn.</summary>
+    /// <summary>What the partner would answer. A computer player's answer is the computer player's own rule, asked through
+    /// <see cref="IDealAppraiser"/>; a human answers on their own turn.</summary>
     private static Paragraph Verdict(ScreenContext context, IDiplomacyService service, Player partner, IReadOnlyList<DiplomaticTradeItem> items,
         DealIntent intent)
     {
         if (partner.Ai is null) return new("verdict", $"{partner.Name} is a human leader and answers on their own turn.", Tone.Dim);
         var sim = context.Sim;
-        var planner = new DiplomacyPlanner(AiContext.Observe(sim, partner.Id));
-        var deal = new DiplomaticDeal { Proposer = context.Player, Recipient = partner.Id, Items = items.ToList(), Intent = intent };
+        if (sim.Rules().DealAppraiser is not { } appraiser)
+            return new("verdict", $"{partner.Name} answers on their own turn.", Tone.Dim);
         var tier = service.GetAttitude(sim, partner.Id, context.Player).Tier;
-        bool accepts = planner.Accepts(service, deal);
-        if (planner.Refusal(items, tier) is { } refusal) return new("verdict", $"{partner.Name} {refusal}.", Tone.Bad);
+        var (value, margin, accepts, refusal) = appraiser.Appraise(sim, partner.Id, context.Player, items, intent);
+        if (refusal is not null) return new("verdict", $"{partner.Name} {refusal}.", Tone.Bad);
         if (tier == Disposition.Furious && !accepts) return new("verdict", $"{partner.Name} is furious with you and would refuse.", Tone.Bad);
-        long value = planner.Value(items, context.Player);
         string reason = intent switch
         {
             DealIntent.Demand => $"it costs them {-value} gold; they give in only to a much stronger leader",
             DealIntent.Request => $"it costs them {-value} gold; they help only leaders they like",
-            _ => $"worth {value} gold to them; at {tier} they want at least {DiplomacyPlanner.Margin(tier)}",
+            _ => $"worth {value} gold to them; at {tier} they want at least {margin}",
         };
         return accepts ? new("verdict", $"{partner.Name} would accept: {reason}.", Tone.Good)
             : new("verdict", $"{partner.Name} would refuse: {reason}.", Tone.Bad);

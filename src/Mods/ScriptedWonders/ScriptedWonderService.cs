@@ -1,11 +1,10 @@
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Barbarians;
 using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.ScriptedWonders;
 
-internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierSource, IFreeBuildingGrants, IBarbarianBarrier
+internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierSource, IFreeBuildingGrants, IMovementBarrier
 {
     private static IEnumerable<WonderScriptDef> Rules(Simulation sim) => sim.Content.Get<WonderScriptDef>().All;
 
@@ -124,10 +123,11 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue("BARBARIAN_MAX_XP_VALUE", out var v)
         && int.TryParse(v, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var n) ? n : 40;
 
-    /// <summary>True when an active wonder bars this barbarian land unit from entering the target hex.</summary>
-    public bool Blocks(Simulation sim, int barbarianUnitId, Hex targetHex)
+    /// <summary>True when the unit is a barbarian land unit and an active border wonder bars it from entering the
+    /// target hex. Every other unit passes: the base game asks this for every unit's move.</summary>
+    public bool Blocks(Simulation sim, int unitId, Hex targetHex)
     {
-        var unit = sim.State.UnitById(barbarianUnitId);
+        var unit = sim.State.UnitById(unitId);
         if (!Barbarian(sim, unit.Owner) || sim.Content.Get<S.UnitDef>(unit.Type).Domain != "military:domain_land") return false;
         return sim.State.PlotAt(targetHex).Owner is { } owner && owner != unit.Owner
             && Rules(sim).Any(r => r.BarbarianBorderPenalty > 0 && ActiveCity(sim, owner, r) is not null);

@@ -1,16 +1,14 @@
 using System.Collections.Immutable;
-using Ariel.Content;
-using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Content.Schema;
 
 /// <summary>A change in attitude toward a player running one civic, with the text that explains it.</summary>
 public sealed record CivicAttitudeEffect(int Change, string Text);
 
-/// <summary>What a civic means to leaders' attitudes. Any mod may attach one to a civic, its own or another's. Read
-/// with <c>ContentDb.Attachment&lt;CivicDiplomacyDef&gt;(civic)</c>. The share, power and tribute fields are kept for
-/// rules this mod does not implement yet; nothing reads them.</summary>
+/// <summary>What a civic means to leaders' attitudes, read by the Diplomacy module. Any module or mod may attach one to
+/// a civic, its own or another's. Read with <c>ContentDb.Attachment&lt;CivicDiplomacyDef&gt;(civic)</c>. The share,
+/// power and tribute fields are kept for rules the module does not implement yet; nothing reads them.</summary>
 public sealed class CivicDiplomacyDef : ContentAttachment<CivicDef>, IDescribedContent
 {
     /// <summary>Attitude of a leader running this civic toward a player running the keyed civic.</summary>

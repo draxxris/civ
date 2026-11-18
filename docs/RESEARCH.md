@@ -125,25 +125,22 @@ ______________________________________________________________________
 
 ## 4. Research Options
 
-The core Research mod is required for all research mechanics, with ordinary sequential
-research serving as the default. The game build includes two optional mods that provide
-alternate selection mechanics and visual navigation:
+The base Research module is required for all research mechanics, with ordinary
+sequential research serving as the default. It also owns the browsable tech tree, and the
+game build includes one optional mod with an alternate selection mechanic:
 
+- **Tech Tree** (base Research module, game option `research:tech_tree`, off by default):
+  An interactive, scrollable prerequisite graph for browsing and selection. It works
+  alongside ordinary research or Card Research.
 - **Card Research** (`card_research`): Limits research selection to a saved hand of up
   to four distinct, eligible technologies.
-- **Tech Tree** (`tech_tree`): Adds an interactive, scrollable prerequisite graph for
-  browsing and selection. It works alongside ordinary research or Card Research.
 
 ### Mod Structure and Configuration
 
-Neither optional mod depends on the other. Each mod adds an independent toggle checkbox
-under **Game options**.
-
-To omit either mod from the loaded ruleset, disable its stable ID in the startup
-**Mods** manager:
-
-- Card Research uses stable ID `card_research`.
-- Tech Tree uses stable ID `tech_tree`.
+Each adds an independent toggle checkbox under **Game options**. Card Research can also
+be omitted from the loaded ruleset by disabling its stable ID, `card_research`, in the
+startup **Mods** manager; the tech tree is part of the base game and is never listed
+there.
 
 The mod manager merges bundled, user-installed, and `ARIEL_MODS` roots:
 

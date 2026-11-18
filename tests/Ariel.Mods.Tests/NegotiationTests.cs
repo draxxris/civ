@@ -1,7 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Mods.Diplomacy;
 using Xunit;
 using static Ariel.Mods.Tests.AiBindings;
 using TechDef = Ariel.Content.Schema.TechDef;
@@ -12,12 +11,7 @@ namespace Ariel.Mods.Tests;
 /// answers to them.</summary>
 public sealed class NegotiationTests
 {
-    private static readonly Lazy<ContentDb> Content = new(() =>
-    {
-        var mods = new LoadedMods();
-        var diplomacy = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Diplomacy"));
-        return ModLoader.Build(mods.Sources.Append(diplomacy));
-    });
+    private static readonly Lazy<ContentDb> Content = new(() => new LoadedMods().Content);
 
     [Fact]
     public void An_embargo_ends_trade_between_the_giver_and_its_target_and_is_remembered()
@@ -185,7 +179,7 @@ public sealed class NegotiationTests
         Assert.False(Refuses(Disposition.Furious, ""));
     }
 
-    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Service<IDiplomacyService>()!;
+    private static IDiplomacyService Diplomacy(Simulation sim) => sim.Rules().Diplomacy;
     private static DiplomaticDeal Latest(Simulation sim) => Diplomacy(sim).Deals(sim).OrderBy(d => d.Id).Last();
     private static int Memory(Simulation sim, int from, int toward, string kind) =>
         sim.Rules().Relations.Memories(sim, from, toward).GetValueOrDefault(kind);
@@ -198,7 +192,7 @@ public sealed class NegotiationTests
     }
 
     private static Type DiplomacyPlannerType(Simulation sim) =>
-        Diplomacy(sim).GetType().Assembly.GetType("Ariel.Mods.Diplomacy.DiplomacyPlanner", throwOnError: true)!;
+        typeof(Ariel.Ai.IAiPlanner).Assembly.GetType("Ariel.Ai.DiplomacyPlanner", throwOnError: true)!;
 
     private static void Plan(Simulation sim, int player)
     {

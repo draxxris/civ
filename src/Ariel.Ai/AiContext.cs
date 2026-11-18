@@ -217,7 +217,7 @@ public sealed class AiContext
 
     /// <summary>What every registered <see cref="IAiValuer{TSubject}"/> of resources adds to the AI's worth of
     /// <paramref name="subject"/>, by ordinal id, clamped to ±<see cref="AiValuation.Limit"/>; 0 when none is registered.
-    /// A contributed planner valuing resources (the Diplomacy mod's, for deals) asks this so one registration answers
+    /// A planner valuing resources (the diplomacy planner, for deals) asks this so one registration answers
     /// every "what is this resource worth to me" question.</summary>
     public int Adjustment(in ResourceSubject subject) => Sum(Catalog.ResourceValuers, in subject);
     /// <summary>What the registered building valuers add to the worth of <paramref name="subject"/>; 0 when none is registered.</summary>

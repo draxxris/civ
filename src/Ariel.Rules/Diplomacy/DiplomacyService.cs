@@ -1,7 +1,7 @@
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 internal sealed partial class DiplomacyService : IDiplomacyService
 {
@@ -71,11 +71,6 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     }
     public void CancelAgreement(Simulation sim, int player, int target, DiplomaticAgreement agreement) =>
         Agreement(sim, sim.TeamOf(player).Id, sim.TeamOf(target).Id)?.Cancel(agreement);
-
-    // The base game's questions about agreements and dispositions.
-    public bool OpenBorders(Simulation sim, int team, int other) => HasOpenBorders(sim, team, other);
-    public bool Allied(Simulation sim, int teamA, int teamB) => HasDefensivePact(sim, teamA, teamB);
-    public Disposition Toward(Simulation sim, int fromPlayer, int towardPlayer) => GetAttitude(sim, fromPlayer, towardPlayer).Tier;
 
     /// <summary>An offensive declaration dissolves every defensive pact of the aggressor, and then calls each partner of
     /// the defender's pacts into the war, consuming those pacts whether or not the partner can join.</summary>

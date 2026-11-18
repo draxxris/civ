@@ -86,15 +86,12 @@ public sealed class GameRules : IRuleset
     /// <summary>Contact, war and peace, border passage and what players remember of each other.</summary>
     public IRelationsService Relations { get; private set; } = null!;
 
+    /// <summary>Attitudes, agreements and deals between players, and the resources and gold the deals exchange.</summary>
+    public IDiplomacyService Diplomacy { get; private set; } = null!;
+
     // Seams one feature answers. Null when no loaded mod answers them; rules then apply the base game's default.
-    /// <summary>Agreements between teams (open borders, defensive pacts), answered by the mod that negotiates them, or
-    /// null without one. Rules ask <see cref="Relations"/>, which applies the default.</summary>
-    public ITeamAgreements? TeamAgreements { get; private set; }
-    /// <summary>How players regard each other, answered by the mod that judges it, or null without one. Rules ask
-    /// <see cref="Relations"/>, which applies the default.</summary>
-    public IDispositions? Dispositions { get; private set; }
-    /// <summary>Resources and gold players exchange, answered by the mod that runs deals, or null without one.</summary>
-    public IPlayerExchanges? Exchanges { get; private set; }
+    /// <summary>How a computer leader would answer a deal, answered by the computer player, or null without one.</summary>
+    public IDealAppraiser? DealAppraiser { get; private set; }
     /// <summary>Corporations in a city, answered by the mod that runs corporations, or null without one.</summary>
     public ICityCorporations? CityCorporations { get; private set; }
     /// <summary>Religion in cities and what it allows, answered by the mod that runs religion, or null without one.</summary>
@@ -103,7 +100,7 @@ public sealed class GameRules : IRuleset
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
     /// <summary>The hostile faction, answered by the feature that runs it, or null without one: no hostile player
-    /// appears, huts release no hostile villagers and nothing bars a hostile unit.</summary>
+    /// appears and huts release no hostile villagers.</summary>
     public IHostileFaction? HostileFaction { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
@@ -137,6 +134,8 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
+    /// <summary>Everything that keeps units off plots they could otherwise enter, in registration order.</summary>
+    public IReadOnlyList<IMovementBarrier> MovementBarriers { get; private set; } = [];
     /// <inheritdoc/>
     public void Bind(ContentDb content)
     {
@@ -149,6 +148,7 @@ public sealed class GameRules : IRuleset
         TradeTerms = services.Get<ITradeTerms>();
         CivicRestrictions = services.Get<ICivicRestrictions>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
+        MovementBarriers = services.Get<IMovementBarrier>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
@@ -184,9 +184,8 @@ public sealed class GameRules : IRuleset
         Government = services.Get<IGovernmentService>().Single();
         Peoples = services.Get<IPeoplesService>().Single();
         Relations = services.Get<IRelationsService>().Single();
-        TeamAgreements = services.Get<ITeamAgreements>().SingleOrDefault();
-        Dispositions = services.Get<IDispositions>().SingleOrDefault();
-        Exchanges = services.Get<IPlayerExchanges>().SingleOrDefault();
+        Diplomacy = services.Get<IDiplomacyService>().Single();
+        DealAppraiser = services.Get<IDealAppraiser>().SingleOrDefault();
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();

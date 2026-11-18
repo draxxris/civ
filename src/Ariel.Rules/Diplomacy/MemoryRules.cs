@@ -1,6 +1,6 @@
 using Ariel.Game;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 /// <summary>What deals leave in the base game's memory ledger. The kinds, their decay and the gift limit are data
 /// (<c>data/memory-kind.json</c>).</summary>

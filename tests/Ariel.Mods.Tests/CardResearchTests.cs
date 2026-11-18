@@ -1,7 +1,6 @@
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Xunit;
 using TechDef = Ariel.Content.Schema.TechDef;
@@ -12,13 +11,13 @@ namespace Ariel.Mods.Tests;
 public sealed class CardResearchTests
 {
     private static readonly Lazy<ContentDb> Content = new(() => ModLoader.Build(new LoadedMods().Sources.Concat(
-        new[] { "CardResearch", "TechTree", "Diplomacy" }.Select(n => ModLoader.FromDirectory(
+        new[] { "CardResearch" }.Select(n => ModLoader.FromDirectory(
             Path.Combine(AppContext.BaseDirectory, "optional-mods", n))))));
     private static Simulation Scenario(bool cards = true, bool tree = true, bool shared = false, bool terminal = false) =>
         Simulation.CreateScenario(Content.Value, GameFactory.Settings() with
         {
             PlayerTeams = shared ? [0, 0] : [0, 1],
-            GameOptions = new(StringComparer.Ordinal) { ["card_research:enabled"] = cards, ["tech_tree:enabled"] = tree },
+            GameOptions = new(StringComparer.Ordinal) { ["card_research:enabled"] = cards, ["research:tech_tree"] = tree },
         }, new(12, 8, true), Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), sim =>
         {
             foreach (var team in sim.State.Teams)

@@ -361,7 +361,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
 
     /// <summary>Revolution and Espionage are both optional mods; the capture reset spans both.</summary>
     private static readonly Lazy<ContentDb> SpiesAndRevolution = new(() => ModLoader.Build(new LoadedMods().Sources
-        .Concat(new[] { "Revolution", "Espionage", "Diplomacy" }
+        .Concat(new[] { "Revolution", "Espionage" }
             .Select(name => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name))))));
 
     [Fact]

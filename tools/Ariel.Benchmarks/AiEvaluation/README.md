@@ -54,8 +54,8 @@ numbers and resolved simulation settings. No harness-only difficulty override is
 applied.
 
 This is not a controlled peaceful scenario. The tool does not suppress combat,
-barbarians, exploration rewards, or other active rules. Optional diplomacy and victory
-mods are not part of the default benchmark payload. The tool cannot infer win rate,
+barbarians, exploration rewards, or other active rules. Diplomacy is part of the base game
+and always plays; the optional victory mod is not part of the default benchmark payload. The tool cannot infer win rate,
 overall playing strength, or the reasons for an AI decision.
 
 ## Checkpoints and metrics

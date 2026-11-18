@@ -1,15 +1,14 @@
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Religion;
 using S = Ariel.Content.Schema;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 internal sealed partial class DiplomacyService
 {
     private static S.LeaderDef? Leader(Simulation sim, int player) => sim.Content.TryGet<S.LeaderDef>(sim.State.PlayerById(player).Leader, out var leader) ? leader : null;
-    /// <summary>The player's state religion, or null without one or without the Religion mod.</summary>
-    private static string? Religion(Simulation sim, int player) => sim.Service<IReligionService>()?.StateReligion(sim, player);
+    /// <summary>The identity of the player's state religion, or null without one or without a mod that runs religion.</summary>
+    private static string? Religion(Simulation sim, int player) => sim.Rules().CityReligions?.StateReligion(sim, player);
     private static int Growth(int turns, int divisor, int limit) => divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
     private static bool FavoriteCivic(Simulation sim, int from, int toward, S.LeaderDef leader) => leader.FavoriteCivic is { } civic &&
         sim.State.PlayerById(from).Civics.Values.Contains(civic) && sim.State.PlayerById(toward).Civics.Values.Contains(civic);
@@ -83,7 +82,7 @@ internal sealed partial class DiplomacyService
         var theirs = sim.State.PlayerById(toward).Civics.Values.ToHashSet(StringComparer.Ordinal);
         foreach (var id in sim.State.PlayerById(from).Civics.Values.Order(StringComparer.Ordinal))
         {
-            if (sim.Content.Attachment<CivicDiplomacyDef>(id) is not { } civic) continue;
+            if (sim.Content.Attachment<S.CivicDiplomacyDef>(id) is not { } civic) continue;
             add("civic:" + id, civic.GlobalRelationsChange);
             foreach (var effect in civic.AttitudeChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
                 if (theirs.Contains(effect.Key)) add("civic_pair:" + id + ":" + effect.Key, effect.Value.Change);

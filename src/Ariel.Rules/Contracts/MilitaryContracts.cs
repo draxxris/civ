@@ -177,16 +177,22 @@ public sealed class MilitaryUnitState
 /// <summary>The hostile faction (the barbarians) as the base game asks it, read through <c>GameRules.HostileFaction</c>
 /// and answered by the feature that runs the faction (the Barbarians mod). The faction is one player on its own team,
 /// at war with every other team, recorded as <see cref="MilitaryGameState.BarbarianPlayer"/>; hostile villagers and
-/// rebellions field units for it. Without an answer no hostile player appears, goody huts never release hostile
-/// villagers and nothing bars a hostile unit.</summary>
+/// rebellions field units for it. Without an answer no hostile player appears and goody huts never release hostile
+/// villagers.</summary>
 public interface IHostileFaction
 {
     /// <summary>The hostile player, created on first use. Every caller gets the same player for the rest of the game.</summary>
     int Ensure(Simulation sim);
-    /// <summary>Whether something bars this hostile unit from a plot it could otherwise enter, such as a wonder that
-    /// keeps barbarians out of its owner's lands. Movement asks before a hostile unit moves without attacking; an
-    /// attack is never barred. Never changes state or uses the RNG.</summary>
-    bool Bars(Simulation sim, int unit, Hex target);
+}
+/// <summary>Whether something bars a unit from a plot it could otherwise enter. Any feature registers one as a
+/// service (<c>context.RegisterService&lt;IMovementBarrier&gt;(name, barrier)</c>); movement asks every registered
+/// barrier (<c>GameRules.MovementBarriers</c>), in registration order, before any unit moves without attacking, and
+/// each barrier decides for itself which units it applies to. An attack is never barred. Queries never change state
+/// or use the RNG.</summary>
+public interface IMovementBarrier
+{
+    /// <summary>Whether this unit may not enter the target plot.</summary>
+    bool Blocks(Simulation sim, int unit, Hex target);
 }
 /// <summary>Combat counters of one player. Combat wins against civilizations earn <see cref="GeneralPoints"/>; the
 /// feature that turns them into leaders (<see cref="ICombatLeaders"/>) spends them and keeps the other two counts.</summary>

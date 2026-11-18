@@ -1,7 +1,7 @@
 using Ariel.Game;
 using S = Ariel.Content.Schema;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Rules.Diplomacy;
 
 internal sealed partial class DiplomacyService
 {
@@ -107,9 +107,6 @@ internal sealed partial class DiplomacyService
     private static bool EmbargoBy(Simulation sim, int team, int target) => Read(sim).Deals.Any(d => Live(sim, d)
         && d.Items.Any(i => i.Kind == TradeItemKind.Embargo && sim.TeamOf(i.FromPlayer).Id == team && sim.TeamOf(i.Against).Id == target));
     public bool HasEmbargo(Simulation sim, int teamA, int teamB) => EmbargoBy(sim, teamA, teamB) || EmbargoBy(sim, teamB, teamA);
-    // The base game's question about trade terms: an embargo forbids trade both ways, and deals grant no free trade.
-    public bool Embargoed(Simulation sim, int teamA, int teamB) => HasEmbargo(sim, teamA, teamB);
-    public bool FreeTrade(Simulation sim, int teamA, int teamB) => false;
     /// <summary>One connected group of the player's cities, counted once.</summary>
     private sealed class CityGroup(City representative, long copies)
     {
@@ -303,7 +300,11 @@ internal sealed partial class DiplomacyService
     {
         var result = new SortedDictionary<string, long>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);
-        if (target is null || target.Owner != player) return result;
+        if (target is null || target.Owner != player)
+        {
+            foreach (var resource in resources) result[resource] = 0;
+            return result;
+        }
         // One connectivity query covers every resource; only the export/import arithmetic is per resource.
         var connected = sim.Rules().Resources?.ConnectedCounts(sim, player, city)
             ?? new Dictionary<string, int>();

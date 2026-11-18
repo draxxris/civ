@@ -1,7 +1,6 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Mods.ProjectsVictory;
 using Ariel.Mods.Religion;
 
@@ -54,7 +53,6 @@ internal static class CouncilRules
         .Where(c => Sits(sim, c.Key)).Select(c => (c.Key, c.Value));
 
     internal static IReligionService? Religions(Simulation sim) => sim.Service<IReligionService>();
-    internal static IDiplomacyService? Diplomacy(Simulation sim) => sim.Service<IDiplomacyService>();
     internal static IProjectVictoryService? Victory(Simulation sim) => sim.Service<IProjectVictoryService>();
 
     /// <summary>A civilization still in the game: not the barbarians, and holding a city or a unit.</summary>
@@ -160,7 +158,7 @@ internal static class CouncilRules
     /// <summary>Every pair of voting teams without the agreement must be able to sign it, and one pair must lack it.</summary>
     private static string? InvalidAgreement(Simulation sim, string source, DiplomaticAgreement agreement)
     {
-        if (Diplomacy(sim) is not { } diplomacy) return "agreements are not made in this game";
+        var diplomacy = sim.Rules().Diplomacy;
         var missing = MissingAgreements(sim, source, agreement).ToList();
         if (missing.Count == 0) return "every member already has it";
         return missing.Select(p => diplomacy.ValidateAgreement(sim, Lead(sim, p.First), Lead(sim, p.Second), agreement))
@@ -168,7 +166,7 @@ internal static class CouncilRules
     }
     internal static IEnumerable<TeamPair> MissingAgreements(Simulation sim, string source, DiplomaticAgreement agreement)
     {
-        if (Diplomacy(sim) is not { } diplomacy) yield break;
+        var diplomacy = sim.Rules().Diplomacy;
         var teams = VotingTeams(sim, source).ToArray();
         for (int i = 0; i < teams.Length; i++)
             for (int j = i + 1; j < teams.Length; j++)

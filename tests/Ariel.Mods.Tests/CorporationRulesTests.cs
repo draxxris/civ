@@ -15,7 +15,7 @@ internal static class P6RulesScenario
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         string configuration = dir.Parent!.Name;
         while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Ariel.slnx"))) dir = dir.Parent;
-        var names = new[] { "Corporations", "Espionage", "Diplomacy" };
+        var names = new[] { "Corporations", "Espionage" };
         var sources = names.Select(name => ModLoader.FromDirectory(Path.Combine(dir!.FullName, "src", "Mods", name, "bin", configuration, "net10.0"))).ToArray();
         var loaded = new LoadedMods();
         var all = loaded.Sources.Where(s => !sources.Any(n => n.Manifest.Id == s.Manifest.Id)).Concat(sources);

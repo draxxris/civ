@@ -7,7 +7,7 @@ namespace Ariel.Rules.Relations;
 
 /// <summary>Contact, war and peace between teams, border passage, and the memory ledger: what one player remembers
 /// of another and how it fades. Every module reads these, so none of the others owns them. Agreements and attitudes
-/// belong to mods, which answer <see cref="ITeamAgreements"/> and <see cref="IDispositions"/>.</summary>
+/// belong to the Diplomacy module (<see cref="IDiplomacyService"/>), which this one asks.</summary>
 public sealed class RelationsModule : IPreparableMod
 {
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");

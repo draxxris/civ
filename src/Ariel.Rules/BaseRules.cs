@@ -12,6 +12,7 @@ public static class BaseRules
     private static readonly Module[] Modules =
     [
         new("cities", "Cities", () => new Cities.CitiesModule()),
+        new("diplomacy", "Diplomacy", () => new Diplomacy.DiplomacyModule()),
         new("economy", "Economy", () => new Economy.EconomyModule()),
         new("foundation", "Foundation", () => new Foundation.FoundationModule()),
         new("government", "Government", () => new Government.GovernmentModule()),

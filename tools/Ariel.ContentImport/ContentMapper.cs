@@ -213,7 +213,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "techSpecialists" => Indexed(record, node, field, n => new SpecialistSlotsChange
         { Slots = PairMap(record, n.Child("SpecialistCounts"), "SpecialistInfo", n => Integer(n.Children[1].Text)).ToImmutable() }),
         "buildingCommerce" => BuildingCommerce(record, node),
-        "civicAttitudes" => Indexed(record, node, field, n => new Ariel.Mods.Diplomacy.CivicAttitudeEffect(Integer(n.Value("iAttitudeChange")), Text(n.Value("Description")))),
+        "civicAttitudes" => Indexed(record, node, field, n => new Ariel.Content.Schema.CivicAttitudeEffect(Integer(n.Value("iAttitudeChange")), Text(n.Value("Description")))),
         "effect" => Effects(field, (null, Integer(node.Text, DefaultInt(field)))),
         "effectFlag" => Effects(field, (null, GetterBoolean(node.Text, DefaultBool(field)) ? 1 : 0)),
         "effectYield" => VectorEffects(field, null, Yield(node)),

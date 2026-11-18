@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using S = Ariel.Content.Schema;
 using Xunit;

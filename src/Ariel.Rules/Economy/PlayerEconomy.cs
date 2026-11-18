@@ -63,7 +63,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         return new(total, income, expenses, income - expenses, new(lines));
     }
     private static (long Income, long Expenses) DealGold(Simulation sim, int player) =>
-        sim.Rules().Exchanges?.GoldPerTurn(sim, player) ?? default;
+        sim.Rules().Diplomacy.GoldPerTurn(sim, player);
     internal void Settle(Simulation sim, int player)
     {
         var owner = sim.State.PlayerById(player);

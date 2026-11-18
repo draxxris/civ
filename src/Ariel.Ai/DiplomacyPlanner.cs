@@ -1,21 +1,12 @@
-using Ariel.Ai;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
-namespace Ariel.Mods.Diplomacy;
+namespace Ariel.Ai;
 
-/// <summary>The computer player's diplomacy, run inside the standard AI's turn in the slot the AI keeps for it, after
-/// war and civics and before settlers. Declaring war and making peace on its own are the AI's own (<c>ai:war</c>);
-/// this planner negotiates.</summary>
-internal sealed class DiplomacyAiPlanner : IAiPlanner
-{
-    public string Id => "diplomacy:planner";
-    public int Order => AiPlannerOrder.Diplomacy;
-    public void Plan(AiContext ctx) => new DiplomacyPlanner(ctx).Plan();
-}
-
-/// <summary>Answers every deal offered to this player, with a counter-offer where an ordinary offer falls short, and
-/// every few turns proposes deals of its own: resource swaps and sales, agreements, peace for tribute when winning a
+/// <summary>The computer player's diplomacy (<c>ai:diplomacy</c>, in <see cref="AiPlannerOrder.Diplomacy"/>, after war
+/// and civics and before settlers). Declaring war and making peace on its own are the war planner's; this planner
+/// negotiates. It answers every deal offered to this player, with a counter-offer where an ordinary offer falls short,
+/// and every few turns proposes deals of its own: resource swaps and sales, agreements, peace for tribute when winning a
 /// war, tribute from a much weaker rival it dislikes, help from a friend, and an embargo on an enemy. Agreements with
 /// another computer player whose own attitude agrees are signed at once; a human is asked through a deal instead.
 /// Every answer honours the leader's refusal thresholds (<see cref="LeaderDef"/>).</summary>
@@ -32,12 +23,13 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     internal const int YieldToStrengthPercent = 150;
     /// <summary>The base worth of peace or war continuing, before the war score is added.</summary>
     internal const int PeaceWorth = 100;
-    private IDiplomacyService? Diplomacy => ctx.Sim.Service<IDiplomacyService>();
+    private IDiplomacyService Diplomacy => ctx.Sim.Rules().Diplomacy;
     private int _proposed;
 
     public void Plan()
     {
-        if (Diplomacy is not { } diplomacy || ctx.Cities.Count == 0) return;
+        var diplomacy = ctx.Sim.Rules().Diplomacy;
+        if (ctx.Cities.Count == 0) return;
         Answer(diplomacy);
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval != 0) return;
         Agreements(diplomacy);
@@ -57,7 +49,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     private IEnumerable<Player> Partners(IDiplomacyService diplomacy) => Rivals()
         .Where(p => ctx.Sim.Rules().Relations.MayTrade(ctx.Sim, ctx.Self.TeamId, p.TeamId));
 
-    private Disposition Attitude(int toward) => Diplomacy!.GetAttitude(ctx.Sim, ctx.PlayerId, toward).Tier;
+    private Disposition Attitude(int toward) => Diplomacy.GetAttitude(ctx.Sim, ctx.PlayerId, toward).Tier;
 
     // ---- Answering ----
 
@@ -246,7 +238,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     }
 
     /// <summary>The worth, over the binding turns, of what this player's live deals bring it from a team.</summary>
-    private long TradeWith(int team) => Diplomacy!.Deals(ctx.Sim)
+    private long TradeWith(int team) => Diplomacy.Deals(ctx.Sim)
         .Where(d => d.Status == DiplomaticDealStatus.Active && (d.Proposer == ctx.PlayerId || d.Recipient == ctx.PlayerId))
         .Where(d => ctx.Sim.TeamOf(d.Proposer == ctx.PlayerId ? d.Recipient : d.Proposer).Id == team)
         .SelectMany(d => d.Items).Where(i => i.FromPlayer != ctx.PlayerId && !i.Mutual && i.Kind != TradeItemKind.Embargo)
@@ -438,5 +430,19 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
         var tech = ctx.Sim.TeamOf(from.Id).Techs.Where(t => !ctx.Team.Techs.Contains(t))
             .OrderBy(TechCost).ThenBy(t => t, StringComparer.Ordinal).FirstOrDefault();
         if (tech is not null) yield return new(from.Id, TradeItemKind.Technology, tech);
+    }
+}
+
+/// <summary>The computer player's answer to a deal, for the diplomacy screen: the same rule its planner applies on its
+/// own turn, asked of an observing context so nothing is issued.</summary>
+internal sealed class DealAppraiser : IDealAppraiser
+{
+    public DealAppraisal Appraise(Simulation sim, int leader, int proposer, IReadOnlyList<DiplomaticTradeItem> items, DealIntent intent)
+    {
+        var diplomacy = sim.Rules().Diplomacy;
+        var planner = new DiplomacyPlanner(AiContext.Observe(sim, leader));
+        var deal = new DiplomaticDeal { Proposer = proposer, Recipient = leader, Items = items.ToList(), Intent = intent };
+        var tier = diplomacy.GetAttitude(sim, leader, proposer).Tier;
+        return new(planner.Value(items, proposer), DiplomacyPlanner.Margin(tier), planner.Accepts(diplomacy, deal), planner.Refusal(items, tier));
     }
 }

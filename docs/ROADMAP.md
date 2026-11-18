@@ -44,14 +44,15 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   `src/Ariel.Ai`; optional features are standalone mods (`src/Mods/*`) on the same
   registration API. `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or
   content kinds. Custom test rulesets run without shipped mods.
-- **Features as mods**: Religion, Barbarians, AirCombat, RangedCombat, Diplomacy,
-  Espionage, Corporations, Trade, Great People, Events, Revolution, Projects & Victory,
-  Scripted Wonders, Tech Tree and Card Research are mods. A mod can publish its own API
+- **Features as mods**: Religion, Barbarians, AirCombat, RangedCombat, Espionage,
+  Corporations, Trade, Great People, Events, Revolution, Projects & Victory, Votes,
+  Scripted Wonders and Card Research are mods; Diplomacy and the tech tree are base
+  modules. A mod can publish its own API
   assembly, attach data to any definition, open civic effects, and contribute screens,
   panels, pedia pages, notices, AI planners, production wishes and AI valuers.
 - **Relations in the base game**: Contact, war and peace, peace treaties and the memory
-  ledger are base rules (`IRelationsService`); agreements and attitudes come from mods
-  through `ITeamAgreements` and `IDispositions`.
+  ledger are base rules (`IRelationsService`); agreements, attitudes and deals come from
+  the base Diplomacy module (`IDiplomacyService`).
 
 ### World & Map Generation
 
@@ -273,10 +274,10 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   by players and by the computer player, sever water trade networks and coastal trade.
 - **Relations (base)**: Bilateral team contact discovery, one war and peace path with
   peace treaties, and a memory ledger whose kinds any mod can register.
-- **Diplomacy**: Attitude ledgers, open borders, defensive pacts, and multi-item trade
-  deals (resources, gold, gold/turn, techs, peace treaties, embargoes on a third team).
-  A deal is a trade, a demand or a request for help, and an answer may counter it. An
-  embargo stops deals and trade routes between the two teams while it lasts.
+- **Diplomacy (base)**: Attitude ledgers, open borders, defensive pacts, and multi-item
+  trade deals (resources, gold, gold/turn, techs, peace treaties, embargoes on a third
+  team). A deal is a trade, a demand or a request for help, and an answer may counter it.
+  An embargo stops deals and trade routes between the two teams while it lasts.
 - **Projects & Victory Conditions**: Team/world projects; Conquest, Domination,
   Cultural, Space Race, Diplomatic (won in a council vote), and Time victories with
   victory resolution screens.
@@ -324,7 +325,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   friend; at least five turns of preparation with the army gathered at the border
   city before declaring; a war score kept per war (units destroyed and cities taken);
   and peace when outgunned, beaten on score, or when a long war stops paying.
-- **Diplomacy (Diplomacy mod)**: Answers every deal offered by its value in gold
+- **Diplomacy (`ai:diplomacy`)**: Answers every deal offered by its value in gold
   against an attitude margin, countering offers it would refuse; proposes resource
   swaps, sales and gifts; demands tribute from weaker players it dislikes, asks friends
   for help, buys or sells peace for tribute, and hires embargoes against rivals; signs

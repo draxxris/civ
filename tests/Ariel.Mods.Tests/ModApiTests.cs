@@ -76,7 +76,7 @@ public sealed class ModApiTests
     public void The_host_compiled_against_a_mod_api_shares_its_own_copy_with_the_loaded_mod()
     {
         var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder),
-            ModLoader.FromDirectories(new[] { "Corporations", "Diplomacy" }
+            ModLoader.FromDirectories(new[] { "Corporations" }
                 .Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name))));
 
         Assert.Same(typeof(ICorporationService).Assembly, ModApis.Find(typeof(ICorporationService).Assembly.GetName()));
@@ -90,7 +90,7 @@ public sealed class ModApiTests
     [Fact]
     public void A_mod_contributing_an_ai_planner_binds_the_hosts_copy_of_the_computer_player()
     {
-        var mods = ModLoader.FromDirectories(new[] { "Corporations", "Diplomacy" }
+        var mods = ModLoader.FromDirectories(new[] { "Corporations" }
             .Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name)));
         var corporations = mods.Single(s => s.Manifest.Id == "corporations");
 
@@ -103,7 +103,7 @@ public sealed class ModApiTests
     [Fact]
     public void Feature_mods_answer_the_base_seams_with_the_services_they_publish()
     {
-        string[] optional = ["Espionage", "Revolution", "ScriptedWonders", "ProjectsVictory", "Corporations", "Diplomacy", "Votes"];
+        string[] optional = ["Espionage", "Revolution", "ScriptedWonders", "ProjectsVictory", "Corporations", "Votes"];
         string[] main = ["GreatPeople", "Religion", "Trade", "Barbarians"];
         var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder),
             ModLoader.FromDirectories(optional.Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.OptionalModsFolder, name))
@@ -120,7 +120,7 @@ public sealed class ModApiTests
         Assert.NotNull(rules.CombatLeaders);
         Assert.Contains(content.Services.Find<IScriptedWonderService>(), rules.FreeBuildingGrants.Cast<object>());
         Assert.NotNull(rules.HostileFaction);
-        Assert.Contains(content.Services.Find<IScriptedWonderService>(), content.Services.Get<Ariel.Mods.Barbarians.IBarbarianBarrier>().Cast<object>());
+        Assert.Contains(content.Services.Find<IScriptedWonderService>(), rules.MovementBarriers.Cast<object>());
         // Religion, Corporations and GreatPeople each weigh a city as a new capital.
         Assert.Equal(3, rules.CapitalWeights.Count);
         Assert.Contains(content.Services.Get<IProductionWishes>(), w => w.Id == "espionage:spies");

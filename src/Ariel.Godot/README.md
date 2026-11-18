@@ -235,8 +235,8 @@ scattered nature props. `rivers` focuses on generated river bends and mouths wit
 changing the map. `peak` focuses on the first mountain, and `wrap` on the east-west
 seam.
 
-A stage that names no base dialog may name a mod's screen: `--stage diplomacy`,
-`corporations`, `espionage` or `events` opens that mod's screen, after meeting every rival
+A stage that names no base dialog may name a registered screen: `--stage diplomacy`,
+`corporations`, `espionage` or `events` opens that module's or mod's screen, after meeting every rival
 so there is something to show (see `--open-screen` and `--press` below).
 
 These switches apply only to unattended runs and go after `--` on the Godot command

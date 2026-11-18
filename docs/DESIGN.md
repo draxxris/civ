@@ -7,8 +7,8 @@ extend both through one registration API.
 ## Principles
 
 1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the rules
-   modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples
-   and Relations. `Ariel.Ai` holds the computer player, the base module `ai`. Their
+   modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples,
+   Relations and Diplomacy. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
    one. Everything a game can run without is a mod: the main mods (Great People, Trade,
    RangedCombat, AirCombat, Barbarians and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
@@ -56,7 +56,7 @@ extend both through one registration API.
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
-  Diplomacy, Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
+  Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
   ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
@@ -400,7 +400,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf | Corporations | no corporations; the leaf fails |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
-| `ITeamAgreements`, `IDispositions`, `IPlayerExchanges` | `TeamAgreements`, `Dispositions`, `Exchanges` | Relations, Economy (see Relations) | Diplomacy | no agreements, neutral attitude, no deals |
+| `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
 | `ICapitalWeight` | `CapitalWeights` (list) | Cities, when a lost capital moves | Religion (one per faith), Corporations (one per branch), GreatPeople (two per settled great person) | size, yields, level and culture alone |
 | `IFreeBuildingGrants` | `FreeBuildingGrants` (list) | Cities, for empire-wide free buildings | ScriptedWonders | only constructed buildings grant |
 | `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city) and its planner, the great people planner | Revolution (the instability index) | no unrest; compensation is paid in gold |
@@ -411,17 +411,16 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ITradeTerms` | `TradeTerms` (list) | Relations (`MayTrade`, `FreeTrade`), so deals and trade routes | Diplomacy (embargoes in deals), Votes (sanctions, free trade) | teams at peace trade as their borders allow |
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
-| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Military movement (a barbarian that does not attack), Revolution (rebels) | Barbarians (which asks ScriptedWonders' border wonders through its own `IBarbarianBarrier`) | no hostile player; huts release no hostile villagers, rebellions field no rebels, nothing bars movement |
+| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Revolution (rebels) | Barbarians | no hostile player; huts release no hostile villagers, rebellions field no rebels |
+| `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
 Mods also consume each other's APIs directly, always as optional: Espionage asks the
 Revolution API to incite a revolt, Revolution asks the GreatPeople API whether a golden
-age calms a city, GreatPeople prices a trade mission from the Trade API, and Diplomacy
-(shared faith), Revolution (religious tension) and GreatPeople (prophets' shrines) read
-the Religion API, and ScriptedWonders registers its border wonders as the Barbarians API's
-`IBarbarianBarrier`, which only the Barbarians mod asks. Each references the provider's
-`Api` project and treats a null `sim.Service<T>()` as "absent".
+age calms a city, GreatPeople prices a trade mission from the Trade API, and Revolution
+(religious tension) and GreatPeople (prophets' shrines) read the Religion API. Each references the provider's `Api` project and treats a null
+`sim.Service<T>()` as "absent".
 
 #### Content attachments
 
@@ -430,8 +429,7 @@ to it instead of asking for a field on the other module's schema. The row type d
 from `ContentAttachment<TTarget>` in the mod's API and is an ordinary `ContentDef` in
 the attaching mod's namespace, with a `Target` naming the definition it is about. Trade
 attaches `CivicTradeDef` to civics (`trade:mercantilism` about
-`government:mercantilism`), Corporations `CivicCorporationsDef`, Diplomacy
-`CivicDiplomacyDef`, Religion `CivicReligionDef` (state religion, inquisitions, spread
+`government:mercantilism`), Corporations `CivicCorporationsDef`, Religion `CivicReligionDef` (state religion, inquisitions, spread
 and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVictory
 `CivicProjectsDef`.
 
@@ -450,7 +448,12 @@ and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVic
   `content.AttachmentsOf(target)`; a row that implements `IDescribedContent` describes
   itself on the civics screen and in the pedia.
 
-Attachments replace typed fields only where the reading module is a mod. A rule the base
+The Diplomacy module reads `CivicDiplomacyDef` (`diplomacy:*` rows about Government's
+civics) the same way: it came from a mod, and an attachment keeps its rows in its own
+namespace and file, so any mod can still attach a row to its own civics.
+
+Attachments replace typed fields where the reading module is a mod or, like Diplomacy,
+attaches its rows to another module's definitions. A rule the base
 game applies to any calculation is an open effect instead (Modifiers and ledgers).
 
 ## Setup and presentation services
@@ -645,8 +648,8 @@ use improvement spacing and tiles-per rules. Starting eras can suppress all huts
 Networks use routes, city nodes, shared river edges, and technology-enabled coast/ocean
 plots. Unowned plots require exploration. Physical resource networks and city
 connections transit revealed peaceful foreign territory without Open Borders treaties
-(`CvPlot::isTradeNetwork`). International city trade routes still require Open Borders
-agreements when Diplomacy is active. Naval blockades by enemy warships within
+(`CvPlot::isTradeNetwork`). International city trade routes require an Open Borders
+agreement (the Diplomacy module). Naval blockades by enemy warships within
 `SHIP_BLOCKADE_RANGE` (default 3) on non-lake water sever water network tiles. Blockades
 also prevent coastal cities from working water tiles and cancel trade routes. Autonomous
 AI blockade planning is absent. Queries recompute components so ownership, pillage,
@@ -862,6 +865,12 @@ bonus asks the Relations module which teams have met. Discoveries publish
 `TechDiscovered`. Cities updates the current era through this event. Overflow applies on the next contribution. Optional diffusion and timeline
 policies remain deferred.
 
+Research also registers the browsable tech tree, `ITechTreePresentation`, and the setup
+option that turns it on (`research:tech_tree`, off by default). The tree describes every
+technology with its grid place, requirements, cost and progress, and whether the player
+may research or select it now, so it follows any research selection policy a mod adds
+(Card Research). The client shows it when the service answers.
+
 Economy registers `IPlayerEconomyService` for player ledgers, city commerce ledgers,
 rates, and rate validation. `economy:set_commerce_rates` uses `SetCommerceRatesCommand`.
 City commerce keeps hundredths through allocation, direct contributions, percentage
@@ -894,8 +903,8 @@ uninflated base corporate cost, while `RecurringCosts` records
 `economy:corporate_maintenance_hundredths` per city and `economy:corporate_maintenance`
 in empire expenses.
 
-Gold per turn that players exchange (the Diplomacy mod's `TradeItemKind.GoldPerTurn`
-deal items, through `IPlayerExchanges`) integrates into `PlayerEconomy.Calculate`,
+Gold per turn that players exchange (the Diplomacy module's `TradeItemKind.GoldPerTurn`
+deal items, through `IDiplomacyService.GoldPerTurn`) integrates into `PlayerEconomy.Calculate`,
 contributing to `Income` (`economy:deal_income`), `Expenses` (`economy:deal_expenses`),
 and `NetGold`. In `PlayerEconomy.Settle` (`TurnPhase.Gold`),
 sliders automatically step down flexible allocations to keep `Treasury + NetGold >= 0`.
@@ -1077,22 +1086,21 @@ The barbarians are a main mod, `src/Mods/Barbarians` (`barbarians`), shipped and
 default. It answers the base game's `IHostileFaction` (`GameRules.HostileFaction`): `Ensure`
 creates the hostile player on first use (its own team, at war with every other team, the
 `peoples:barbarian` civilization and leader) and records it as
-`MilitaryGameState.BarbarianPlayer`; `Bars` asks every registered `IBarbarianBarrier`. It
-runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
+`MilitaryGameState.BarbarianPlayer`. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
 attacks a neighbour it likely beats or marches on the nearest enemy city; ships hunt ships
 and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`, just after the
-phase's random events, where the spawns ran as part of the base game. Its API
-(`Ariel.Mods.Barbarians.Api`) publishes `IBarbarianBarrier`, which ScriptedWonders' border
-wonders answer through a soft reference.
+phase's random events, where the spawns ran as part of the base game. It publishes no API.
 
 What stays in the base game is the hostile-faction flag and every rule that asks it:
 `MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
 hostile player ending its turn before it begins, experience caps, culture, research cost,
-contact and memory rules, movement's barrier check (through `IHostileFaction.Bars`), the
-computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
+contact and memory rules, the computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
 fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
 mod no hostile player appears, goody huts never release hostile villagers, and a
-Revolution rebellion releases pressure without fielding rebels.
+Revolution rebellion releases pressure without fielding rebels. Movement asks every
+`IMovementBarrier` in `GameRules.MovementBarriers` before any unit's non-attack move,
+without asking whether the unit is a barbarian; ScriptedWonders' border wonders answer
+it and bar only barbarian land units themselves.
 
 ## Government and Peoples services
 
@@ -1288,8 +1296,8 @@ hundredths. City aggregation truncates once per yield before the ordinary city m
 and Economy sliders. Routes select highest profit, then same-team partners, then city
 ids. Each city uses a partner at most once. Physical resource networks and city
 connections transit revealed peaceful foreign territory without Open Borders treaties
-(`CvPlot::isTradeNetwork`). International city trade routes still require Open Borders
-agreements when Diplomacy is active. Player naval blockades by enemy warships within
+(`CvPlot::isTradeNetwork`). International city trade routes require an Open Borders
+agreement (the Diplomacy module). Player naval blockades by enemy warships within
 `SHIP_BLOCKADE_RANGE` (default 3) on non-lake water sever water trade networks.
 Blockades also prevent coastal cities from working water tiles and cancel trade routes.
 Autonomous AI naval blockade planning remains absent. Connectedness economics and
@@ -1303,36 +1311,44 @@ migration before it can continue under the new owner.
 
 ## Modular feature services
 
-Modular feature services include Diplomacy, ProjectsVictory, Corporations, Espionage,
-Events, ScriptedWonders, and Revolution. Each mod registers its contracts, commands,
-and saved extension state, and publishes its contracts and content definitions in its
-own API assembly (`src/Mods/<Mod>/Api`). `Ariel.Rules/Contracts` holds only the base
-game's contracts and the seams mods answer.
+Modular feature services include ProjectsVictory, Corporations, Espionage, Events,
+ScriptedWonders, and Revolution. Each mod registers its contracts, commands, and saved
+extension state, and publishes its contracts and content definitions in its own API
+assembly (`src/Mods/<Mod>/Api`). `Ariel.Rules/Contracts` holds only the base game's
+contracts and the seams mods answer.
 
-Diplomacy elaborates the base game's relations (see Relations): attitudes, agreements
-(open borders, defensive pacts) and bilateral deals. Its API (`Ariel.Mods.Diplomacy.Api`)
-holds `IDiplomacyService`, the deal and agreement types and their commands, which
-validate treaty changes, deal proposals, execution and cancellation. Deal assets include
+Diplomacy is a base module (`diplomacy`, `src/Ariel.Rules/Diplomacy`), not a mod, and
+not part of Relations. It elaborates the base game's relations (see Relations):
+attitudes, agreements (open borders, defensive pacts) and bilateral deals. It keeps its
+own content namespace, which its memory kinds, civic attachments, commands, saved state
+(`diplomacy:state`), turn systems and screen have used since it was a mod, so those ids
+did not change when it moved; and it depends on Government (civic attachments) and
+Peoples (leader attitudes), which Relations, read by every module, should not. Its
+contracts are in `Contracts/DiplomacyContracts.cs`: `IDiplomacyService`
+(`GameRules.Diplomacy`), the deal and agreement types and their commands, which validate
+treaty changes, deal proposals, execution and cancellation. Deal assets include
 resources, gold, gold per turn, technology, an embargo on a third team, a peace treaty and
 the two agreements; a treaty or agreement in a deal binds both sides. Between teams at war
 a deal must carry a peace treaty and may carry no agreement. A deal is a trade, a demand
 or a request for help (everything from the other side), and an answer may counter a
-proposal with other terms. An embargo is a trade term (`ITradeTerms`): while the deal
-lives the two teams neither deal nor run trade routes, and live deals between teams whose
-terms forbid trade are cancelled at settlement. Team ids identify agreements; player ids
-identify deal participants. The service also answers the base game's seams: agreements
-(`ITeamAgreements`: open borders lets units pass, a defensive pact calls the partner into
-a war against it and is never attacked by the AI, and an offensive declaration dissolves
-the aggressor's pacts), dispositions (`IDispositions`: the attitude tier) and exchanges
-(`IPlayerExchanges`: deal resources and gold per turn). A war ends the two teams'
-agreements and deals (`WarDeclared`). Attitude adds personality, religion, favourite
+proposal with other terms. While an embargo deal lives the two teams neither deal nor
+run trade routes (`Relations.MayTrade` asks `HasEmbargo`, then every mod's
+`ITradeTerms`), and live deals between teams that may no longer trade are cancelled at
+settlement. Team ids identify agreements; player ids identify deal participants.
+Relations asks the service which agreements bind teams (open borders lets units pass, a
+defensive pact calls the partner into a war against it and is never attacked by the AI,
+and an offensive declaration dissolves the aggressor's pacts, `CallToArms`) and how
+players regard each other (the attitude tier); Cities and Economy ask it what deals
+exchange (`ResourceAccess`, deal gold per turn). A war ends the two teams' agreements and
+deals (`WarDeclared`). Attitude adds personality, religion (the state religion
+identities `ICityReligions.StateReligion` reports, when a mod runs religion), favourite
 civic, borders, war and peace, war history, agreements, trade and civics, and every
 remembered count weighed by the leader's `MemoryAttitudePercents` or else the memory
 kind's `AttitudePercent`. Its own memory kinds are a technology received in a deal, a
 gift (`give_help`, limit 3), a stopped active trade, embargoes (hired, accepted or
-refused), demands (made, accepted or rejected) and refused help. Without the mod there are no
-attitudes, agreements or deals, and war, peace, contact and memory work as the base game
-defines them.
+refused), demands (made, accepted or rejected) and refused help. The computer player's
+diplomacy (the `ai:diplomacy` planner, the civic valuer and the deal appraiser the screen
+asks) lives in `Ariel.Ai`, since the rules may not reference it.
 
 ProjectsVictory owns project eligibility and completion, team project counts, scores,
 and saved victory status, and the project and victory definitions (`ProjectDef`,
@@ -1355,7 +1371,7 @@ member also keeps the council's religion and civic and has not defied it. Every 
 (scaled like training) the members meet, and either the secretary's term ends and an
 election opens or the secretary puts one resolution: forced civics and free trade, which
 stand while the council sits (`ICivicRestrictions`, `ITradeTerms`); open borders or
-defensive pacts among all members (through the Diplomacy API); peace with, sanctions on
+defensive pacts among all members (through the Diplomacy module); peace with, sanctions on
 or war against one player; or the game's winner (through the ProjectsVictory API).
 Sanctions forbid trade between the members and the named team until it is a full member
 again. A member may defy a resolution that binds it: the resolution fails and the defier
@@ -1388,7 +1404,7 @@ Unresolved events use a default option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
-the Barbarians mod's wonders that keep barbarians out (`IBarbarianBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
+the base game's movement barriers with its wonders that keep barbarians out (`IMovementBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
@@ -1408,7 +1424,8 @@ shows, it describes itself through the screen contract below.
 ## Mod screens
 
 A mod adds interface the way it adds rules: it registers services that describe what to
-show, and the client draws them. The contract lives in `Ariel.Rules`, namespace
+show, and the client draws them; a base module may too (Diplomacy's screen). The
+contract lives in `Ariel.Rules`, namespace
 `Ariel.Presentation` (`src/Ariel.Rules/Presentation/`), and names no UI toolkit. Mods
 reference nothing new for it.
 
@@ -1480,9 +1497,9 @@ the player summary use the same renderer.
 id, or a mod id with one screen) and meets every rival first; `--press <id>[,<id>...]`
 then presses controls by id. An unknown screen prints the registered ids.
 
-The shipped feature mods describe all of their interface this way: Corporations (screen,
-city panel, pedia, notices), Espionage (screen, notices), Diplomacy (screen with the
-deal composer, attitude labels), ProjectsVictory (victory screen, pedia, notices),
+The shipped feature mods describe all of their interface this way, and so does the
+Diplomacy base module (screen with the deal composer, attitude labels): Corporations
+(screen, city panel, pedia, notices), Espionage (screen, notices), ProjectsVictory (victory screen, pedia, notices),
 Events (screen while an event waits, pedia, notices), Revolution (stability panel with
 suppression, unrest summary, notices), GreatPeople (city figures, settled great people,
 golden age summary), Trade (routes panel) and ScriptedWonders (wonder panel, notices).
@@ -1510,15 +1527,14 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | 100 | `ai:research` | 1000 | `ai:cities` (renews cached views first) |
 | 200 | `ai:war` | 1100 | `ai:workers` |
 | 300 | `ai:civics` | 1200 | (`air_combat:planner`) |
-| 400 | (`diplomacy:planner`) | 1300 | `ai:military` |
+| 400 | `ai:diplomacy` | 1300 | `ai:military` |
 | 500 | `ai:settlers` | 1400 | (`espionage:planner`) |
 | 600 | `ai:citizens` (renews cached views first) | 1500 | (`revolution:planner`) |
 | 700 | (`religion:planner`) | 1600 | `ai:economy` |
 | | | 1700 | `ai:hurry` |
 
-Feature mods fill the gaps, and four mods fill slots the AI keeps for them: the Diplomacy
-mod the 400 slot (deals and agreements) with `diplomacy:planner` (the Votes mod's
-`votes:planner` follows at 450), the Religion mod the
+Feature mods fill the gaps, and four mods fill slots the AI keeps for them: the Votes mod
+runs `votes:planner` at `Diplomacy + 50` (after `ai:diplomacy`), the Religion mod the
 700 slot (state religion, missionaries and inquisitors) with `religion:planner`, the Espionage mod the
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
@@ -1556,13 +1572,16 @@ Everything else (roles, threat maps, city views, campaign targets, the shared si
 and production plans) stays internal to the built-in planners.
 
 Planners still choose what a feature's actions are worth themselves. War and peace are the AI's own (`ai:war`): the war planner issues the
-base commands and weighs targets by `Relations.DispositionToward` and `Allied`, so it
-names no Diplomacy type. It picks the rival whose nearby cities are worth most
+base commands and weighs targets by `Relations.DispositionToward` and `Allied`, which the
+Diplomacy module answers. It picks the rival whose nearby cities are worth most
 (`CitySubject`) among those it is strong enough to beat, saves the choice as a war
 preparation (`prepare_war`), gathers the army at its border city and declares once enough
 soldiers stand there. A team's war score (`ai:team_state`) counts the cost of units each
 side destroyed and the cities it took; peace comes when the war is lost in power or
-score, or when a long war has stopped paying.
+score, or when a long war has stopped paying. The AI's own diplomacy planner
+(`ai:diplomacy`) answers, counters and proposes deals (swaps, tribute, help, embargoes,
+peace for tribute) and signs agreements; it also answers `IDealAppraiser`, so the
+screen's prediction of a computer leader's answer is the rule the planner applies.
 
 ### Production wishes
 
@@ -1602,7 +1621,7 @@ registration answers every planner that values that subject.
 
 | Subject | Asked by | Scale of an adjustment |
 | --- | --- | --- |
-| `ResourceSubject(Resource, Held, Plot)` | city site scoring (`SitePlanner`), the worker's choice of plot and of build (`WorkerPlanner`), deals (the Diplomacy mod's planner) | `PlannerPoints` of a source gained, given `Held` usable copies without it; the AI's own worth is about 30 plus 8 per happiness and 6 per health. Site scoring and the worker's plot order weigh plots on half this scale and add half; the worker's build value adds it in full; deals add it as gold |
+| `ResourceSubject(Resource, Held, Plot)` | city site scoring (`SitePlanner`), the worker's choice of plot and of build (`WorkerPlanner`), deals (`ai:diplomacy`) | `PlannerPoints` of a source gained, given `Held` usable copies without it; the AI's own worth is about 30 plus 8 per happiness and 6 per health. Site scoring and the worker's plot order weigh plots on half this scale and add half; the worker's build value adds it in full; deals add it as gold |
 | `BuildingSubject(Building, City)` | the city planner, in parallel for every building it rates | `PlannerPoints`, added to the building's value in that city before its specialisation percent and its cost |
 | `UnitSubject(Unit, City)` | the city planner's pick of one unit per role (`AiOptions.Best`): defenders, attackers, siege, ships, aircraft, settlers, workers, explorers | the role's rating: quality (strength squared × 100 / cost, about 5 to 150) for soldiers, minus cost for civilians, plus personality |
 | `TechSubject(Tech)` | the research planner, in parallel for every selectable technology and for every step of a goal route | value points before the remaining cost divides them: 40, three times the flavors, up to 400 for unlocks, plus resources and abilities |
@@ -1648,7 +1667,7 @@ The Trade mod (`trade:civic_valuer`) runs the real route selection for each of t
 player's cities twice: with the civic in its option, and with that option empty. It adds
 the difference in route yields. A ban on foreign trade therefore costs what domestic
 routes cannot make up, nothing while another held civic already bans it, and the same
-whether the player runs it or not. The Diplomacy mod (`diplomacy:civic_valuer`) prices
+whether the player runs it or not. The computer player (`ai:diplomacy_civic_valuer`) prices
 how other leaders regard a player running the civic: 5 points per point of attitude from
 each computer leader the team has met that holds a city, through those leaders' civics'
 `attitudeChanges`. How the player's own leader regards others (the civic's own
@@ -2013,7 +2032,9 @@ categories:
 
 Contact, war and peace between teams, and what players remember of each other, are the
 base game's: the Relations module (`relations`, `src/Ariel.Rules/Relations`) owns them,
-because every other module reads them and none of them is their natural owner. Its
+because every other module reads them and none of them is their natural owner. What
+players negotiate on top of that (agreements, attitudes and deals) is the Diplomacy
+module's (see Modular feature services), which Relations asks. Its
 contracts are in `Contracts/RelationContracts.cs`; `GameRules.Relations` is
 `IRelationsService`.
 
@@ -2030,25 +2051,24 @@ contracts are in `Contracts/RelationContracts.cs`; `GameRules.Relations` is
   contact and no peace treaty younger than `RelationRules.PeaceCooldownTurns` (10);
   peace needs a war at least `MinimumWarTurns` (12) old. `TeamRelation` keeps the contact
   turn, the start of the current war or peace, the last treaty and each side's offensive
-  wars. A declaration reads the defender's friends first, then asks the agreements seam
-  which teams it calls to arms (`ITeamAgreements.CallToArms`, which also settles the
+  wars. A declaration reads the defender's friends first, then asks the Diplomacy module
+  which teams it calls to arms (`IDiplomacyService.CallToArms`, which also settles the
   agreements it breaks), starts the war, records the memories, and starts each obliged
   ally's war (not offensive, no memories). Every war publishes `WarDeclared` and every
   treaty `PeaceSigned`.
 - Border passage. `MayEnter(team, owner)` is true for a team's own territory and, at
-  peace, when `ITeamAgreements.OpenBorders` says so. Movement and research diffusion
-  ask it. Without an agreements mod foreign territory is closed at peace; the Trade mod
-  then lets foreign routes run without open borders, as before.
+  peace, with an Open Borders agreement (`IDiplomacyService.HasOpenBorders`). Movement,
+  research diffusion and the Trade mod's foreign routes ask it; foreign territory is
+  closed at peace until the teams sign one.
 - Dispositions. `DispositionToward(from, toward)` is how a player regards another
-  (`Disposition`: Furious to Friendly). A mod answers through `IDispositions`; without
-  one every player is Cautious. The war planner and the friends a war declaration
-  offends read it. `Allied` asks `ITeamAgreements.Allied` (a defensive pact): the war
-  planner never attacks an ally.
-- Exchanges. `IPlayerExchanges` (`GameRules.Exchanges`) answers what running
-  exchanges between players add: the copies of a resource a city can use
-  (`ResourceAccess`, `BuildingEffects`) and the gold per turn the economy books as
-  `economy:deal_income` and `economy:deal_expenses`. Without it a city uses its connected
-  copies and no gold changes hands.
+  (`Disposition`: Furious to Friendly): the tier of the Diplomacy module's attitude. The
+  war planner and the friends a war declaration offends read it. `Allied` asks the
+  Diplomacy module for a defensive pact: the war planner never attacks an ally.
+- Exchanges. The Diplomacy module (`GameRules.Diplomacy`) answers what running deals
+  between players add: the copies of a resource a city can use (`ResourceAccess`,
+  `BuildingEffects`) and the gold per turn the economy books as `economy:deal_income` and
+  `economy:deal_expenses`. Without a deal a city uses its connected copies and no gold
+  changes hands.
 
 ### Memory
 
@@ -2074,10 +2094,11 @@ member of the defending team), `declared_war_on_friend` (by third parties at lea
 Pleased with a defender who have met the aggressor), `razed_city` (by the player it was
 captured from); Religion registers `inquisition` and `razed_holy_city` (by followers of
 the razed holy city's religion, from its own `CityRazed` handler); Espionage `spy_caught` (by the owner of the city where a spy
-was caught); Diplomacy `traded_tech_to_us`, `give_help` (limit 3) and `stopped_trading`.
+was caught); the Diplomacy module `traded_tech_to_us`, `give_help` (limit 3) and
+`stopped_trading`.
 A mod adds a kind the same way and records it with `sim.Rules().Relations.Remember`; it
-needs no reference to the Diplomacy mod. `tests/TestMods/MemoryKind` is a complete
-example. Whoever forms an opinion reads the ledger: the Diplomacy mod turns each count
+needs no reference to the Diplomacy module. `tests/TestMods/MemoryKind` is a complete
+example. Whoever forms an opinion reads the ledger: the Diplomacy module turns each count
 into attitude by the leader's weight for the kind or else the kind's own.
 
 ## Requirements
@@ -2325,10 +2346,10 @@ time, even when the desktop throttles the window.
 ## Feature content mods
 
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
-Cities, Military, Government, Peoples and Relations, and `src/Ariel.Ai/` the base module
+Cities, Military, Government, Peoples, Relations and Diplomacy, and `src/Ariel.Ai/` the base module
 `ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians and Religion,
-and the optional mods Diplomacy, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
-Revolution, CardResearch and TechTree. Each manifest declares content providers in
+and the optional mods ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Revolution and CardResearch. Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the
 mod manager. ModLoader checks

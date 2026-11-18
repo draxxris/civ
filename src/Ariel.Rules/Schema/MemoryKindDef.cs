@@ -2,7 +2,7 @@ namespace Ariel.Content.Schema;
 
 /// <summary>A kind of act one player can remember another for. The base game and any mod register kinds and record
 /// them through <see cref="Ariel.Game.IRelationsService.Remember"/>; memories fade on the base game's schedule, and
-/// whoever turns them into an opinion (the Diplomacy mod's attitude) reads the weights.</summary>
+/// whoever turns them into an opinion (the Diplomacy module's attitude) reads the weights.</summary>
 public sealed class MemoryKindDef : ContentDef
 {
     /// <summary>The name leader tables (<see cref="LeaderDef.MemoryDecays"/>, <see cref="LeaderDef.MemoryAttitudePercents"/>)

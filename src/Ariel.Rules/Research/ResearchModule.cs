@@ -4,7 +4,7 @@ using Ariel.Game;
 
 namespace Ariel.Rules.Research;
 
-/// <summary>Team research, discoveries, and technology requirements.</summary>
+/// <summary>Team research, discoveries, technology requirements, and the browsable technology tree.</summary>
 public sealed class ResearchModule : IPreparableMod
 {
     private static readonly ModJsonFile<TechDef[]> Technologies = new("data/tech.json");
@@ -16,6 +16,8 @@ public sealed class ResearchModule : IPreparableMod
         ContentRegistration.Evaluator<TechDef>(context, "tech", (leaf, subject) => subject.Sim.KnowsTech(subject.Player, leaf.Id));
         var research = new ResearchService();
         context.RegisterService<IResearchService>("research", research);
+        context.RegisterService<ITechTreePresentation>("tech_tree", new TechTreePresentation());
+        context.RegisterService<ISetupPolicy>("setup", new TechTreeSetupPolicy());
         context.RegisterStateComponent<ResearchTeamState>("team_state");
         context.RegisterCommand<SetTeamResearchCommand>("set_research");
         context.TurnSystems.Register(new ResearchPhase(research));

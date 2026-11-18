@@ -64,8 +64,9 @@ public sealed class AiValuerTests
         var sim = Grassland(Plain.Value);
         var ctx = (AiContext)NewAi(sim, "AiContext", sim, 0);
         Assert.Empty(sim.Content.Services.Get<IAiValuer<ResourceSubject>>());
-        // The bundled mods price their own civic attachments; nothing else adjusts.
-        string[] civicValuers = ["corporations:", "diplomacy:", "religion:", "trade:"];
+        // The bundled mods price their own civic attachments, and the computer player prices diplomacy's; nothing else
+        // adjusts.
+        string[] civicValuers = ["corporations:", "ai:diplomacy_civic_valuer", "religion:", "trade:"];
         Assert.DoesNotContain(sim.Content.Services.Get<IAiValuer<CivicSubject>>(), v => !civicValuers.Any(m => v.Id.StartsWith(m, StringComparison.Ordinal)));
         var tech = sim.Content.Get<TechDef>().All.First();
         Assert.Equal(0, ctx.Adjustment(new TechSubject(tech)));
@@ -152,14 +153,13 @@ public sealed class AiValuerTests
         {
             var sim = Grassland(content);
             var ctx = NewAi(sim, "AiContext", sim, 0);
-            var type = sim.Service<Ariel.Mods.Diplomacy.IDiplomacyService>()!.GetType().Assembly
-                .GetType("Ariel.Mods.Diplomacy.DiplomacyPlanner", throwOnError: true)!;
+            var type = typeof(Ariel.Ai.IAiPlanner).Assembly.GetType("Ariel.Ai.DiplomacyPlanner", throwOnError: true)!;
             var planner = Activator.CreateInstance(type, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
                 | System.Reflection.BindingFlags.Public, binder: null, [ctx], culture: null)!;
             return (long)Call(planner, "ResourceWorth", Pig, held)!;
         }
-        var plain = ModLoader.Build(GameContent.Staged(Host, "Diplomacy"));
-        var varied = ModLoader.Build(GameContent.Staged(Host, "Diplomacy").Append(Variety.Value));
+        var plain = ModLoader.Build(GameContent.Staged(Host));
+        var varied = ModLoader.Build(GameContent.Staged(Host).Append(Variety.Value));
         Assert.Equal(Worth(plain, 0) + ResourceVarietyPoints, Worth(varied, 0));
         Assert.Equal(Worth(plain, 1) - ResourceVarietyPoints, Worth(varied, 1));
     }

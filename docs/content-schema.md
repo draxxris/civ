@@ -162,7 +162,7 @@ has something to say about:
 - Trade, `data/civic-trade.json` (`CivicTradeDef`): `noForeignTrade`, `routes`,
   `foreignProfitPercent`, `sharedCivicProfitPercent`, `yieldPercent`,
   `forcesOpenTradeRoutesWithWeakerPlayers` and the three connectedness percents.
-- Diplomacy, `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
+- Diplomacy (a base module), `data/civic-diplomacy.json` (`CivicDiplomacyDef`): `attitudeChanges`,
   `globalRelationsChange`, `attitudeShareMod`, the three relative-power relations
   changes, `canNotCeaseRelations`, `tributePercent`.
 - Religion, `data/civic-religion.json` (`CivicReligionDef`): `requiresStateReligion`,
@@ -276,7 +276,7 @@ Their load-order `dependencies` are empty, except that every mod whose rules ask
 buildings a city runs (Economy, Government, Religion, Trade, and GreatPeople) depends on
 Cities. Those rules read `CityBuildingRules.Running`, the city rules' answer, and never
 filter `City.Buildings` themselves. Feature mods with explicit load-order service
-requirements (such as `Revolution`, `ScriptedWonders`, `TechTree`, and `CardResearch`)
+requirements (such as `Revolution`, `ScriptedWonders`, and `CardResearch`)
 declare explicit `dependencies` in their manifests. The importer reports the complete
 content provider graph in `emitted-counts.json`.
 

@@ -1,7 +1,6 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using static Ariel.Mods.Votes.CouncilRules;
 
 namespace Ariel.Mods.Votes;
@@ -219,7 +218,7 @@ internal sealed class CouncilService : IVotesService, ITradeTerms, ICivicRestric
         else if (def.OpenBorders || def.DefensivePact)
         {
             var agreement = def.OpenBorders ? DiplomaticAgreement.OpenBorders : DiplomaticAgreement.DefensivePact;
-            var diplomacy = CouncilRules.Diplomacy(sim)!;
+            var diplomacy = sim.Rules().Diplomacy;
             foreach (var pair in MissingAgreements(sim, source, agreement).ToList())
             {
                 int a = Lead(sim, pair.First), b = Lead(sim, pair.Second);
@@ -237,10 +236,9 @@ internal sealed class CouncilService : IVotesService, ITradeTerms, ICivicRestric
             int targetTeam = sim.State.PlayerById(resolution.Target).TeamId;
             council.Sanctioned.Add(targetTeam);
             // CvPlayer::stopTradingWithTeam: the target remembers every member that now refuses its trade.
-            if (sim.Content.TryGet<MemoryKindDef>(DiplomacyMemories.StoppedTrading, out _))
-                foreach (int member in Civilizations(sim).Where(p => CouncilRules.IsVotingMember(sim, p, source) && sim.State.PlayerById(p).TeamId != targetTeam))
-                    foreach (int victim in Members(sim, targetTeam))
-                        relations.Remember(sim, victim, member, DiplomacyMemories.StoppedTrading);
+            foreach (int member in Civilizations(sim).Where(p => CouncilRules.IsVotingMember(sim, p, source) && sim.State.PlayerById(p).TeamId != targetTeam))
+                foreach (int victim in Members(sim, targetTeam))
+                    relations.Remember(sim, victim, member, DiplomacyMemories.StoppedTrading);
         }
         else if (def.ForceWar)
         {

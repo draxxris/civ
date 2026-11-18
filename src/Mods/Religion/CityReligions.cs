@@ -16,6 +16,9 @@ internal sealed class CityReligions(ReligionService service) : ICityReligions
     public bool IsStateReligion(Simulation sim, int player, string identity) =>
         service.StateReligion(sim, player) is { } state && ReligionIdentities.Identity(sim.Content, state) == identity;
 
+    public string? StateReligion(Simulation sim, int player) =>
+        service.StateReligion(sim, player) is { } state ? ReligionIdentities.Identity(sim.Content, state) : null;
+
     public bool IsHolyCityOf(Simulation sim, int city, string identity) =>
         ReligionIdentities.Religion(sim.Content, identity) is { } religion && service.HolyCity(sim, religion) == city;
 

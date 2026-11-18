@@ -3,7 +3,6 @@ using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Mods.Diplomacy;
 using Ariel.Mods.ProjectsVictory;
 using Ariel.Mods.Votes;
 using Xunit;
@@ -16,8 +15,8 @@ namespace Ariel.Mods.Tests;
 public sealed class CouncilTests
 {
     private const string Un = "votes:diplovote_un";
-    private static readonly Lazy<ContentDb> Content = new(() => Build("Diplomacy", "Votes", "ProjectsVictory"));
-    /// <summary>Votes alone: no deals or agreements to sign and no victory to award.</summary>
+    private static readonly Lazy<ContentDb> Content = new(() => Build("Votes", "ProjectsVictory"));
+    /// <summary>Votes without ProjectsVictory: no victory to award.</summary>
     private static readonly Lazy<ContentDb> Alone = new(() => Build("Votes"));
 
     private static ContentDb Build(params string[] optional) => ModLoader.Build(new LoadedMods().Sources
@@ -159,10 +158,10 @@ public sealed class CouncilTests
     }
 
     [Fact]
-    public void Without_diplomacy_or_victories_a_council_still_elects_and_sanctions()
+    public void Without_victories_a_council_still_elects_and_sanctions()
     {
         var sim = Seated(Alone.Value);
-        Assert.Null(sim.Service<IDiplomacyService>());
+        Assert.Null(sim.Rules().VictoryConditions);
         Assert.DoesNotContain(Votes(sim).Proposals(sim, Un), r => r.Vote == "votes:vote_victory");
         Assert.Contains("cannot be won by vote", Reject(sim, Propose(0, "votes:vote_victory")));
         Pass(sim, "votes:vote_free_trade");

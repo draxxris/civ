@@ -17,13 +17,19 @@ internal sealed class MovementService : IMovementService
         var error = TerrainEntry(sim, unit, def, plot, effects);
         if (error is not null && AutoLoadTransport(sim, unit, def, to) is null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
-        if (!attack && PlayerRules.IsBarbarian(sim, unit.Owner)
-            && sim.Rules().HostileFaction?.Bars(sim, unit.Id, sim.State.Grid.HexOf(to)) == true)
-            return "Blocked by border wonder";
         var target = sim.State.Grid.HexOf(to);
+        if (!attack && Barred(sim, unit.Id, target)) return "Movement barred";
         var targetError = TargetEntry(sim, unit, def, effects, target, attack);
         if (targetError is not null) return targetError;
         return ControlledTransition(sim, unit, from, to, attack, hasControl) ? "Enemy zone of control" : null;
+    }
+    /// <summary>Whether any registered <see cref="IMovementBarrier"/> keeps this unit off the plot.</summary>
+    private static bool Barred(Simulation sim, int unit, Hex target)
+    {
+        var barriers = sim.Rules().MovementBarriers;
+        for (int i = 0; i < barriers.Count; i++)
+            if (barriers[i].Blocks(sim, unit, target)) return true;
+        return false;
     }
     private static string? EdgeEntry(Simulation sim, S.UnitDef def, TileId from, TileId to)
     {

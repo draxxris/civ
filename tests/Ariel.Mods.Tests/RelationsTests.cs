@@ -15,13 +15,9 @@ public sealed class RelationsTests
     private static string Root(string folder, string name) => Path.Combine(AppContext.BaseDirectory, folder, name);
     private static string Rules => Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder);
 
-    /// <summary>The base game and the memory probe, and no feature mod at all.</summary>
+    /// <summary>The base game (diplomacy included) and the memory probe, and no feature mod at all.</summary>
     private static readonly Lazy<ContentDb> BaseWithProbe = new(() =>
         GameContent.Build(Rules, ModLoader.FromDirectories([Root("test-mods", "MemoryKind")])));
-
-    /// <summary>The same with the Diplomacy mod, which turns memories into attitude.</summary>
-    private static readonly Lazy<ContentDb> DiplomacyWithProbe = new(() =>
-        GameContent.Build(Rules, ModLoader.FromDirectories([Root(GameContent.OptionalModsFolder, "Diplomacy"), Root("test-mods", "MemoryKind")])));
 
     private static void Apply(Simulation sim, GameCommand command) => Assert.True(sim.TryApply(command, out var error), error);
     private static void Reject(Simulation sim, GameCommand command, string reason)
@@ -41,11 +37,10 @@ public sealed class RelationsTests
     }
 
     [Fact]
-    public void Contact_war_and_peace_work_without_the_diplomacy_mod()
+    public void Contact_war_and_peace_work_with_the_base_game_alone()
     {
         var sim = GameFactory.Scenario(BaseWithProbe.Value);
         var relations = sim.Rules().Relations;
-        Assert.Null(sim.Rules().TeamAgreements); Assert.Null(sim.Rules().Dispositions); Assert.Null(sim.Rules().Exchanges);
         int a = sim.TeamOf(0).Id, b = sim.TeamOf(1).Id;
 
         Reject(sim, new DeclareWarCommand { Player = 0, Target = 1 }, "teams have not met");
@@ -54,7 +49,7 @@ public sealed class RelationsTests
         relations.DiscoverContacts(sim);
         Assert.True(relations.HasMet(sim, a, b));
 
-        // Without an agreements mod, foreign territory is closed at peace.
+        // Without open borders signed, foreign territory is closed at peace.
         var scout = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(new(40)) };
         sim.State.AddUnit(scout); sim.Rules().Units.Initialize(sim, scout.Id);
         Assert.False(relations.MayEnter(sim, a, b));
@@ -83,14 +78,12 @@ public sealed class RelationsTests
     [Fact]
     public void There_is_exactly_one_way_to_declare_war_and_make_peace()
     {
-        foreach (var content in new[] { BaseWithProbe.Value, DiplomacyWithProbe.Value })
-        {
-            var wars = content.CommandTypes.All.Where(c => c.Type == typeof(DeclareWarCommand) || c.Type == typeof(MakePeaceCommand)
-                || c.Id.EndsWith(":declare_war", StringComparison.Ordinal) || c.Id.EndsWith(":make_peace", StringComparison.Ordinal))
-                .Select(c => c.Id).Order(StringComparer.Ordinal);
-            Assert.Equal(["relations:declare_war", "relations:make_peace"], wars);
-        }
-        var sim = GameFactory.Scenario(DiplomacyWithProbe.Value);
+        var content = BaseWithProbe.Value;
+        var wars = content.CommandTypes.All.Where(c => c.Type == typeof(DeclareWarCommand) || c.Type == typeof(MakePeaceCommand)
+            || c.Id.EndsWith(":declare_war", StringComparison.Ordinal) || c.Id.EndsWith(":make_peace", StringComparison.Ordinal))
+            .Select(c => c.Id).Order(StringComparer.Ordinal);
+        Assert.Equal(["relations:declare_war", "relations:make_peace"], wars);
+        var sim = GameFactory.Scenario(content);
         Assert.Throws<KeyNotFoundException>(() => Command(sim, "ai:declare_war", 0, 1));
         Assert.Throws<KeyNotFoundException>(() => Command(sim, "diplomacy:declare_war", 0, 1));
     }
@@ -120,10 +113,10 @@ public sealed class RelationsTests
     }
 
     [Fact]
-    public void With_diplomacy_a_mods_memory_moves_attitude_by_its_data_weight()
+    public void A_mods_memory_moves_attitude_by_its_data_weight()
     {
-        var sim = GameFactory.Scenario(DiplomacyWithProbe.Value);
-        var diplomacy = sim.Service<Ariel.Mods.Diplomacy.IDiplomacyService>()!;
+        var sim = GameFactory.Scenario(BaseWithProbe.Value);
+        var diplomacy = sim.Rules().Diplomacy;
         long Weighed() => diplomacy.GetAttitude(sim, 1, 0).Ledger.Lines.Where(l => l.Source == "diplomacy:memory:" + Insult).Sum(l => l.Amount);
         int before = diplomacy.GetAttitude(sim, 1, 0).Score;
         Assert.Equal(0, Weighed());

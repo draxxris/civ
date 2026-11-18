@@ -1,7 +1,6 @@
 using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
-using Ariel.Mods.Diplomacy;
 using Ariel.Modding;
 using Ariel.Mods.Espionage;
 using S = Ariel.Content.Schema;
@@ -35,7 +34,7 @@ public sealed class FeatureIntegrationReplayTests
     private static ContentDb BuildContent(bool shifted)
     {
         var loaded = new LoadedMods();
-        var sources = loaded.Sources.Concat(new[] { "Diplomacy", "Espionage" }.Select(name =>
+        var sources = loaded.Sources.Concat(new[] { "Espionage" }.Select(name =>
             ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name))));
         if (shifted) sources = sources.Append(new ModSource
         {
