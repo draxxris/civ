@@ -1,0 +1,338 @@
+[
+  {
+    "bombAccuracyPercent": 50,
+    "id": "ranged_combat:archer",
+    "name": "",
+    "requirements": null,
+    "target": "military:archer"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:artillery",
+    "name": "",
+    "requirements": null,
+    "target": "military:artillery"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:assault_droid",
+    "name": "",
+    "requirements": null,
+    "target": "military:assault_droid"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:assault_mech",
+    "name": "",
+    "requirements": null,
+    "target": "military:assault_mech"
+  },
+  {
+    "bombAccuracyPercent": 50,
+    "id": "ranged_combat:babylon_bowman",
+    "name": "",
+    "requirements": null,
+    "target": "military:babylon_bowman"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:ballista",
+    "name": "",
+    "requirements": null,
+    "target": "military:ballista"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:battlecruiser",
+    "name": "",
+    "requirements": null,
+    "target": "military:battlecruiser"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:battleship",
+    "name": "",
+    "requirements": null,
+    "target": "military:battleship"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:bombard",
+    "name": "",
+    "requirements": null,
+    "target": "military:bombard"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:bulgarian_konnik",
+    "name": "",
+    "requirements": null,
+    "target": "military:bulgarian_konnik"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:cannon",
+    "name": "",
+    "requirements": null,
+    "target": "military:cannon"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:catapult",
+    "name": "",
+    "requirements": null,
+    "target": "military:catapult"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:china_chokonu",
+    "name": "",
+    "requirements": null,
+    "target": "military:china_chokonu"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:crossbowman",
+    "name": "",
+    "requirements": null,
+    "target": "military:crossbowman"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:cruiser",
+    "name": "",
+    "requirements": null,
+    "target": "military:cruiser"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:destroyer",
+    "name": "",
+    "requirements": null,
+    "target": "military:destroyer"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:dreadnought_helgoland",
+    "name": "",
+    "requirements": null,
+    "target": "military:dreadnought_helgoland"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:ff_destroyer_i",
+    "name": "",
+    "requirements": null,
+    "target": "military:ff_destroyer_i"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:frigate",
+    "name": "",
+    "requirements": null,
+    "target": "military:frigate"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:fusion_battleship",
+    "name": "",
+    "requirements": null,
+    "target": "military:fusion_battleship"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:fusion_cruiser",
+    "name": "",
+    "requirements": null,
+    "target": "military:fusion_cruiser"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:grenadier",
+    "name": "",
+    "requirements": null,
+    "target": "military:grenadier"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:huns_tarkan",
+    "name": "",
+    "requirements": null,
+    "target": "military:huns_tarkan"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:iron_frigate",
+    "name": "",
+    "requirements": null,
+    "target": "military:iron_frigate"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:ironclad",
+    "name": "",
+    "requirements": null,
+    "target": "military:ironclad"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:ironclad_cruiser",
+    "name": "",
+    "requirements": null,
+    "target": "military:ironclad_cruiser"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:iroquois_mohawkarcher",
+    "name": "",
+    "requirements": null,
+    "target": "military:iroquois_mohawkarcher"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:korean_hwacha",
+    "name": "",
+    "requirements": null,
+    "target": "military:korean_hwacha"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:light_artillery",
+    "name": "",
+    "requirements": null,
+    "target": "military:light_artillery"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:littoral_combat_ship",
+    "name": "",
+    "requirements": null,
+    "target": "military:littoral_combat_ship"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:longbowman",
+    "name": "",
+    "requirements": null,
+    "target": "military:longbowman"
+  },
+  {
+    "bombAccuracyPercent": 50,
+    "id": "ranged_combat:mali_skirmisher",
+    "name": "",
+    "requirements": null,
+    "target": "military:mali_skirmisher"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:manowar",
+    "name": "",
+    "requirements": null,
+    "target": "military:manowar"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:missile_cruiser",
+    "name": "",
+    "requirements": null,
+    "target": "military:missile_cruiser"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:mobile_artillery",
+    "name": "",
+    "requirements": null,
+    "target": "military:mobile_artillery"
+  },
+  {
+    "bombAccuracyPercent": 90,
+    "id": "ranged_combat:modern_grenadier",
+    "name": "",
+    "requirements": null,
+    "target": "military:modern_grenadier"
+  },
+  {
+    "bombAccuracyPercent": 90,
+    "id": "ranged_combat:nlos_cannon",
+    "name": "",
+    "requirements": null,
+    "target": "military:nlos_cannon"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:power_armored_infantry",
+    "name": "",
+    "requirements": null,
+    "target": "military:power_armored_infantry"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:pre_dreadnought",
+    "name": "",
+    "requirements": null,
+    "target": "military:pre_dreadnought"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:rocket_artillery",
+    "name": "",
+    "requirements": null,
+    "target": "military:rocket_artillery"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:ship_of_the_line",
+    "name": "",
+    "requirements": null,
+    "target": "military:ship_of_the_line"
+  },
+  {
+    "bombAccuracyPercent": 90,
+    "id": "ranged_combat:siege_droid",
+    "name": "",
+    "requirements": null,
+    "target": "military:siege_droid"
+  },
+  {
+    "bombAccuracyPercent": 25,
+    "id": "ranged_combat:slinger",
+    "name": "",
+    "requirements": null,
+    "target": "military:slinger"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:stealth_destroyer",
+    "name": "",
+    "requirements": null,
+    "target": "military:stealth_destroyer"
+  },
+  {
+    "bombAccuracyPercent": 70,
+    "id": "ranged_combat:trebuchet",
+    "name": "",
+    "requirements": null,
+    "target": "military:trebuchet"
+  },
+  {
+    "bombAccuracyPercent": 60,
+    "id": "ranged_combat:welsh_longbowman",
+    "name": "",
+    "requirements": null,
+    "target": "military:welsh_longbowman"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:ww1_destroyer",
+    "name": "",
+    "requirements": null,
+    "target": "military:ww1_destroyer"
+  },
+  {
+    "bombAccuracyPercent": 80,
+    "id": "ranged_combat:ww2_battleship",
+    "name": "",
+    "requirements": null,
+    "target": "military:ww2_battleship"
+  }
+]

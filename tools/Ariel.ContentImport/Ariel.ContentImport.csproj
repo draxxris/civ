@@ -17,6 +17,7 @@
     <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />
     <ProjectReference Include="../../src/Mods/AirCombat/Api/Ariel.Mods.AirCombat.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/RangedCombat/Api/Ariel.Mods.RangedCombat.Api.csproj" />
     <EmbeddedResource Include="SchemaMapping.json" />
     <EmbeddedResource Include="RuleConstantMapping.json" />
   </ItemGroup>

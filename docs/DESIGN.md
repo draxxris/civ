@@ -55,9 +55,9 @@ extend both through one registration API.
 - `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`, and
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
-  publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
-  Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
-  ScriptedWonders, Trade and Votes do.
+  publish an API assembly in its `Api/` folder (see Mod APIs below); AirCombat,
+  Corporations, Espionage, Events, GreatPeople, ProjectsVictory, RangedCombat, Religion,
+  Revolution, ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -315,9 +315,12 @@ requires the owning namespace. Overrides can replace earlier content.
   support fire. Military keeps what such fire acts on and offers it as entry points:
   `ICombatService.CityDefense`, `BombardResistance`, `DamageCityDefense`, `Collateral`
   and `RecordStrike`, and `IUnitService.Effect` and `SpendAttack`. The unit and
-  building fields that describe the weapons (`BombardRate`, `BombRange`,
-  `BombardDefense`) stay in the base schema, as unit data carries them. Without the
-  mod no fire is offered and siege units fight only in melee.
+  building fields that describe the weapons and that the base game also reads
+  (`BombardRate` and `BombRange`, which the computer player's siege and naval planning
+  weigh, and `BombardDefense`, which city defence sums) stay in the base schema; the
+  strike accuracy only this mod reads is its own `UnitRangedCombatDef` row
+  (`BombAccuracyPercent`). Without the mod no fire is offered and siege units fight only
+  in melee.
 - The AirCombat mod follows the same model for aircraft (see Air combat under the
   military rules). It owns the air-mission command, rebasing, reconnaissance, air strikes,
   bombing and interception, the unit panel's mission orders, and the computer player's
@@ -451,25 +454,38 @@ and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVic
 `CivicProjectsDef`.
 
 The base schema keeps only the fields the base game reads. A field that only a mod reads is
-that mod's attachment, one type per (mod, target type) named `<Target><Mod>Def`: Trade keeps
-route slots and profit in `BuildingTradeDef`, `TechTradeDef`, `YieldTradeDef` and
-`WorldSizeTradeDef`, and GreatPeople keeps which person a building or specialist produces,
-what a great person can do, golden age yields and the per-speed and per-era great people
-percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
-`YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef` and
-`EraGreatPeopleDef`. Religion keeps faith spread, state religion yields and shrines in
-`BuildingReligionDef` and `UnitReligionDef`, and Corporations keeps executives' spreads
-and the per-handicap and per-world-size maintenance percents in `UnitCorporationsDef`,
-`HandicapCorporationsDef` and `WorldSizeCorporationsDef`, and Espionage marks spies and
-counter-spies in `UnitEspionageDef`, and Votes keeps a seat building's forced candidacy in
-the `BuildingVotesDef` row that already names its council, and AirCombat keeps mission
-range, bombing and evasion in `UnitAirCombatDef` and `ImprovementAirCombatDef`; GreatPeople, which skips shrines when a great
-person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
-`RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
-`RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
-is a row about that speed, handicap, era or world size, so a mod's numbers sit beside the row
-they vary with. A mod reads a definition with no row as its type's `None`, whose values are
-the type defaults the base field had, so a missing row changes nothing.
+that mod's attachment, one type per (mod, target type) named `<Target><Mod>Def`. A rule
+constant only a mod reads is a row about the base game's single `RuleConstantsDef`
+(`trade:rule_constants` about `foundation:rule_constants`, type `RuleConstantsTradeDef`),
+and a setting that varies by game speed, handicap, era or world size is a row about that
+speed, handicap, era or world size, so a mod's numbers sit beside the row they vary with. A
+mod reads a definition with no row as its type's `None`, whose values are the type
+defaults the base field had, so a missing row changes nothing. A field two mods read stays
+with the mod that owns the concept, and the other reads it through that mod's API, unless
+that would make one mod's rules depend on the other being loaded: `InterceptionPercent`
+(AirCombat interception and Espionage's spy interception) and `ConstructibleBuildings`
+(great people's buildings and Religion's shrines, whose prophets also come from
+technologies) stay in base. The mods' rows:
+
+- Trade: route slots and profit (`BuildingTradeDef`, `TechTradeDef`, `YieldTradeDef`,
+  `WorldSizeTradeDef`, `RuleConstantsTradeDef`).
+- GreatPeople: which person a building or specialist produces, what a great person can
+  do, golden age yields and length, and the per-speed and per-era great people percents
+  (`BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
+  `YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef`,
+  `EraGreatPeopleDef`, `RuleConstantsGreatPeopleDef`).
+- Religion: faith spread, state religion yields, shrines and conversion anarchy
+  (`BuildingReligionDef`, `UnitReligionDef`, `RuleConstantsReligionDef`). GreatPeople,
+  which skips shrines when a great person builds, reads `BuildingReligionDef` through the
+  Religion API it already references.
+- Corporations: executives' spreads and the per-handicap and per-world-size maintenance
+  percents (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`).
+- Espionage: spies and counter-spies (`UnitEspionageDef`).
+- Votes: a seat building's forced candidacy, in the `BuildingVotesDef` row that already
+  names its council.
+- AirCombat: mission range, strike limit, bombing, evasion and strike damage
+  (`UnitAirCombatDef`, `ImprovementAirCombatDef`, `RuleConstantsAirCombatDef`).
+- RangedCombat: strike accuracy (`UnitRangedCombatDef`).
 
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
   unknown property, `Target` is a content reference to `TTarget` (a missing id or one

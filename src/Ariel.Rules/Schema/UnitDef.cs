@@ -157,7 +157,6 @@ public sealed class UnitDef : GameContentDef
     public int ControlPoints { get; init; } = 0;
     public int Cost { get; init; } = 0;
     public int CultureGarrison { get; init; } = 0;
-    public int BombAccuracyPercent { get; init; } = 0;
     public int BombRange { get; init; } = 0;
     public int DropRange { get; init; } = 0;
     public int EspionagePoints { get; init; } = 0;

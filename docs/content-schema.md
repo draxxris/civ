@@ -228,6 +228,8 @@ definition without a row reads as the defaults:
   `bombRate`, `evasionPercent`), `data/improvement-air-combat.json`
   (`ImprovementAirCombatDef`: `airBombDefense`) and `data/rule-constants-air-combat.json`
   (`RuleConstantsAirCombatDef`: `airCombatDamage`).
+- RangedCombat: `data/unit-ranged-combat.json` (`UnitRangedCombatDef`:
+  `bombAccuracyPercent`).
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on

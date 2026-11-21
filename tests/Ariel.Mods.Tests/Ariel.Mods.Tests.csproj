@@ -17,6 +17,7 @@
     <ProjectReference Include="../../src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/RangedCombat/Api/Ariel.Mods.RangedCombat.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Api/Ariel.Mods.ScriptedWonders.Api.csproj" />
