@@ -4067,19 +4067,6 @@
         "value": "ImprovementYields"
       },
       {
-        "source": "LandmarkYieldChanges",
-        "property": "LandmarkYieldChanges",
-        "kind": "yield"
-      },
-      {
-        "source": "SpecialBuildingNotRequireds",
-        "property": "SpecialBuildingNotRequireds",
-        "kind": "mapBool",
-        "target": "SpecialBuildingInfo",
-        "key": "SpecialBuildingType",
-        "value": "bNotRequired"
-      },
-      {
         "source": "SpecialistCommercePercentChanges",
         "property": "Effects",
         "kind": "effectMapCommerce",
@@ -4166,12 +4153,6 @@
         "default": 0
       },
       {
-        "source": "bNoLandmarkAnger",
-        "property": "NoLandmarkAnger",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bNoUnhealthyPopulation",
         "property": "Effects",
         "kind": "effectFlag",
@@ -4206,12 +4187,6 @@
       {
         "source": "iBaseFreeUnits",
         "property": "BaseFreeUnits",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCityLimit",
-        "property": "CityLimit",
         "kind": "int",
         "default": 0
       },
@@ -4252,12 +4227,6 @@
         "modifier": "military:domestic_general_rate_percent"
       },
       {
-        "source": "iEnslavementChance",
-        "property": "EnslavementChance",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iExpInBorderModifier",
         "property": "Effects",
         "kind": "effect",
@@ -4288,12 +4257,6 @@
         "default": 0,
         "scope": "city",
         "modifier": "cities:foreigner_unhappy_percent"
-      },
-      {
-        "source": "iFractionalXPEarnedInCity",
-        "property": "FractionalXPEarnedInCity",
-        "kind": "int",
-        "default": 0
       },
       {
         "source": "iFreeExperience",
@@ -4358,12 +4321,6 @@
         "default": 0
       },
       {
-        "source": "iHomeAreaMaintenanceModifier",
-        "property": "HomeAreaMaintenanceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iHurryCostModifier",
         "property": "HurryCostModifier",
         "kind": "int",
@@ -4386,12 +4343,6 @@
       {
         "source": "iInflation",
         "property": "Inflation",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLandmarkHappiness",
-        "property": "LandmarkHappiness",
         "kind": "int",
         "default": 0
       },
@@ -4424,12 +4375,6 @@
         "modifier": "cities:count_maintenance_percent"
       },
       {
-        "source": "iOtherAreaMaintenanceModifier",
-        "property": "OtherAreaMaintenanceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iPopulationAngerModifier",
         "property": "Effects",
         "kind": "effect",
@@ -4444,12 +4389,6 @@
         "default": 0,
         "scope": "player",
         "modifier": "cities:growth_percent"
-      },
-      {
-        "source": "iTaxRateUnhappiness",
-        "property": "TaxRateUnhappiness",
-        "kind": "int",
-        "default": 0
       },
       {
         "source": "iWarWearinessModifier",

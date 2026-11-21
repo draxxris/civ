@@ -34,37 +34,26 @@ public sealed class CivicDef : GameContentDef
     public ImmutableDictionary<string, int> ImprovementHealthPercentChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(ImprovementDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, YieldVector> ImprovementYieldChanges { get; init; } = ImmutableDictionary<string, YieldVector>.Empty;
-    public YieldVector LandmarkYieldChanges { get; init; } = default;
-    [ContentReference(typeof(BuildingCategoryDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, bool> SpecialBuildingNotRequireds { get; init; } = ImmutableDictionary<string, bool>.Empty;
     public CommerceVector SpecialistExtraCommerces { get; init; } = default;
     [ContentReference(typeof(UpkeepDef), ReferencePart.Values)]
     public string? Upkeep { get; init; } = null;
     public bool FixedBorders { get; init; } = false;
     public bool NoCapitalUnhappiness { get; init; } = false;
-    public bool NoLandmarkAnger { get; init; } = false;
     public bool UpgradeAnywhere { get; init; } = false;
     public int AiWeight { get; init; } = 0;
     public int AnarchyLength { get; init; } = 0;
     public int BaseFreeMilitaryUnits { get; init; } = 0;
     public int BaseFreeUnits { get; init; } = 0;
-    public int CityLimit { get; init; } = 0;
     public int CivicPercentAnger { get; init; } = 0;
     public int DistantUnitSupportCostModifier { get; init; } = 0;
-    public int EnslavementChance { get; init; } = 0;
-    public int FractionalXPEarnedInCity { get; init; } = 0;
     public int FreeMilitaryUnitsPopulationPercent { get; init; } = 0;
     public int FreeUnitsPopulationPercent { get; init; } = 0;
     public int GoldPerMilitaryUnit { get; init; } = 0;
     public int GoldPerUnit { get; init; } = 0;
     public int HappyPerMilitaryUnit { get; init; } = 0;
-    public int HomeAreaMaintenanceModifier { get; init; } = 0;
     public int HurryCostModifier { get; init; } = 0;
     public int HurryInflationModifier { get; init; } = 0;
     public int Inflation { get; init; } = 0;
-    public int LandmarkHappiness { get; init; } = 0;
     public int LargestCityHappiness { get; init; } = 0;
     public int MaxConscript { get; init; } = 0;
-    public int OtherAreaMaintenanceModifier { get; init; } = 0;
-    public int TaxRateUnhappiness { get; init; } = 0;
 }
