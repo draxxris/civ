@@ -17,8 +17,6 @@ public sealed class UnitDef : GameContentDef
     public ImmutableDictionary<string, string> CivilizationNames { get; init; } = ImmutableDictionary<string, string>.Empty;
     [ContentReference(typeof(UnitCombatDef), ReferencePart.Values)]
     public string? CombatType { get; init; } = null;
-    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, int> CorporationSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(DomainDef), ReferencePart.Values)]
     public string? Domain { get; init; } = null;
     [ContentReference(typeof(DomainDef), ReferencePart.Values)]

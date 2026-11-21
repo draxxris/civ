@@ -11,12 +11,19 @@ public sealed class CorporationsMod : IPreparableMod
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
     private static readonly ModJsonFile<CivicCorporationsDef[]> Civics = new("data/civic-corporations.json");
     private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys];
+    /// <summary>What units, handicaps and world sizes mean to corporations, attached to the base rows.</summary>
+    private static readonly ModJsonFile<UnitCorporationsDef[]> Units = new("data/unit-corporations.json");
+    private static readonly ModJsonFile<HandicapCorporationsDef[]> Handicaps = new("data/handicap-corporations.json");
+    private static readonly ModJsonFile<WorldSizeCorporationsDef[]> WorldSizes = new("data/world-size-corporations.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
 
     public void Register(IModContext context)
     {
         Ariel.Rules.ContentRegistration.Load(context, Civics);
         Ariel.Rules.ContentRegistration.Load(context, ModifierKeys);
+        Ariel.Rules.ContentRegistration.Load(context, Units);
+        Ariel.Rules.ContentRegistration.Load(context, Handicaps);
+        Ariel.Rules.ContentRegistration.Load(context, WorldSizes);
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
         // The schema covers reference resolution and sign-free fields; these invariants are rules-level.

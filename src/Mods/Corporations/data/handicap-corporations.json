@@ -1,0 +1,65 @@
+[
+  {
+    "corporationMaintenancePercent": 80,
+    "id": "corporations:handicap_chieftain",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_chieftain"
+  },
+  {
+    "corporationMaintenancePercent": 150,
+    "id": "corporations:handicap_deity",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_deity"
+  },
+  {
+    "corporationMaintenancePercent": 130,
+    "id": "corporations:handicap_emperor",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_emperor"
+  },
+  {
+    "corporationMaintenancePercent": 140,
+    "id": "corporations:handicap_immortal",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_immortal"
+  },
+  {
+    "corporationMaintenancePercent": 120,
+    "id": "corporations:handicap_monarch",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_monarch"
+  },
+  {
+    "corporationMaintenancePercent": 100,
+    "id": "corporations:handicap_noble",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_noble"
+  },
+  {
+    "corporationMaintenancePercent": 110,
+    "id": "corporations:handicap_prince",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_prince"
+  },
+  {
+    "corporationMaintenancePercent": 60,
+    "id": "corporations:handicap_settler",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_settler"
+  },
+  {
+    "corporationMaintenancePercent": 90,
+    "id": "corporations:handicap_warlord",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_warlord"
+  }
+]

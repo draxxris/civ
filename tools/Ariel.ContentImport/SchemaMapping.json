@@ -617,12 +617,6 @@
         "default": 0
       },
       {
-        "source": "iCorporationMaintenancePercent",
-        "property": "CorporationMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDistanceMaintenancePercent",
         "property": "DistanceMaintenancePercent",
         "kind": "int",
@@ -784,12 +778,6 @@
       {
         "source": "iColonyMaintenancePercent",
         "property": "ColonyMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCorporationMaintenancePercent",
-        "property": "CorporationMaintenancePercent",
         "kind": "int",
         "default": 0
       },
@@ -3539,14 +3527,6 @@
         "property": "CombatType",
         "kind": "ref",
         "target": "UnitCombatInfo"
-      },
-      {
-        "source": "CorporationSpreads",
-        "property": "CorporationSpreads",
-        "kind": "mapInt",
-        "target": "CorporationInfo",
-        "key": "CorporationType",
-        "value": "iCorporationSpread"
       },
       {
         "source": "Domain",
@@ -7154,6 +7134,50 @@
         "target": "ReligionInfo",
         "key": "ReligionType",
         "value": "iReligionSpread"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "CorporationSpreads",
+        "property": "CorporationSpreads",
+        "kind": "mapInt",
+        "target": "CorporationInfo",
+        "key": "CorporationType",
+        "value": "iCorporationSpread"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HandicapInfo",
+    "definition": "HandicapCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "WorldInfo",
+    "definition": "WorldSizeCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
       }
     ],
     "requirements": []

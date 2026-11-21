@@ -1,0 +1,58 @@
+[
+  {
+    "corporationMaintenancePercent": 400,
+    "id": "corporations:worldsize_duel",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_duel"
+  },
+  {
+    "corporationMaintenancePercent": 35,
+    "id": "corporations:worldsize_giant",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_giant"
+  },
+  {
+    "corporationMaintenancePercent": 25,
+    "id": "corporations:worldsize_gigantic",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_gigantic"
+  },
+  {
+    "corporationMaintenancePercent": 50,
+    "id": "corporations:worldsize_huge",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_huge"
+  },
+  {
+    "corporationMaintenancePercent": 75,
+    "id": "corporations:worldsize_large",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_large"
+  },
+  {
+    "corporationMaintenancePercent": 150,
+    "id": "corporations:worldsize_small",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_small"
+  },
+  {
+    "corporationMaintenancePercent": 100,
+    "id": "corporations:worldsize_standard",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_standard"
+  },
+  {
+    "corporationMaintenancePercent": 200,
+    "id": "corporations:worldsize_tiny",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_tiny"
+  }
+]

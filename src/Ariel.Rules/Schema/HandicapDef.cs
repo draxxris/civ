@@ -46,7 +46,6 @@ public sealed class HandicapDef : GameContentDef
     public int BarbarianDefenders { get; init; } = 0;
     public int CivicUpkeepPercent { get; init; } = 0;
     public int ColonyMaintenancePercent { get; init; } = 0;
-    public int CorporationMaintenancePercent { get; init; } = 0;
     public int DistanceMaintenancePercent { get; init; } = 0;
     public int FreeUnits { get; init; } = 0;
     public int FreeWinsAgainstBarbarians { get; init; } = 0;

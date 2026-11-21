@@ -458,7 +458,9 @@ what a great person can do, golden age yields and the per-speed and per-era grea
 percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
 `YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef` and
 `EraGreatPeopleDef`. Religion keeps faith spread, state religion yields and shrines in
-`BuildingReligionDef` and `UnitReligionDef`; GreatPeople, which skips shrines when a great
+`BuildingReligionDef` and `UnitReligionDef`, and Corporations keeps executives' spreads
+and the per-handicap and per-world-size maintenance percents in `UnitCorporationsDef`,
+`HandicapCorporationsDef` and `WorldSizeCorporationsDef`; GreatPeople, which skips shrines when a great
 person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
 `RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
 `RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
@@ -942,8 +944,8 @@ elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
 
 `CorporationService.MaintenanceHundredths` calculates city corporate branch expenses:
 base headquarter commerce (100 per gold, research, culture, and espionage), resource
-consumption scaled by world size, population scaling `(population + 17) / 18`, handicap
-scaling, player civic modifier (`corporations:maintenance_percent`, from the civic's
+consumption scaled by world size (`WorldSizeCorporationsDef`), population scaling
+`(population + 17) / 18`, handicap scaling (`HandicapCorporationsDef`), player civic modifier (`corporations:maintenance_percent`, from the civic's
 `CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when realistic
 corporations is active), inflation
 pre-division `* 100 / (100 + inflation)` to balance subsequent economy inflation, and

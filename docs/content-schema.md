@@ -218,6 +218,10 @@ definition without a row reads as the defaults:
   `globalReligionCommerce`), `data/unit-religion.json` (`UnitReligionDef`:
   `religionSpreads`) and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
   `baseReligionAnarchyTurns`).
+- Corporations: `data/unit-corporations.json` (`UnitCorporationsDef`:
+  `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
+  `corporationMaintenancePercent`) and `data/world-size-corporations.json`
+  (`WorldSizeCorporationsDef`: `corporationMaintenancePercent`).
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on
