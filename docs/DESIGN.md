@@ -1203,6 +1203,9 @@ away with no garrison and no war of its own (an always-at-war faction is at war 
 regardless). The barbarians' row sets 20 turns. The barbarian player has no computer
 player, so a city it holds does nothing until it breaks away.
 
+The Revolution mod uses it too: a nation's city left in revolt breaks away, at war with the
+nation it left (see `docs/REVOLUTION.md`).
+
 ### Barbarians
 
 The barbarians are a main mod, `src/Mods/Barbarians` (`barbarians`), shipped and loaded by
@@ -1569,6 +1572,8 @@ recovery. Thresholds can trigger mutiny or rebellion; a rebellion and an incited
 unrest, a timed effect on the city. Mutiny adds unhappiness; Warning
 is a display-only alert. Players can suppress instability with gold, priced by the
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
+A city left in revolt for `SecessionTurns` breaks away as a new nation through the base
+game's secession.
 A spy-incited revolt adds instability through the Revolution service. The service answers
 the base seam `ICityUnrest` with the instability index, so inquisition compensation calms
 a city, and the Religion mod's planner and the great people planner read it.

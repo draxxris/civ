@@ -24,6 +24,9 @@ internal sealed class StabilityCityPanel : ICityPanel
             new Heading("status", $"Stability: {d.Status} ({d.InstabilityIndex})"),
             new Paragraph("change", $"{Labels.Signed(d.ChangePerTurn)} per turn{extra}", ToneOf(d.Status)),
         };
+        if (d.SecessionTurns is int left)
+            items.Add(new Paragraph("secession", left <= 1 ? "In revolt: breaks away at the end of this turn"
+                : $"In revolt: breaks away in {left} turns", Tone.Bad));
         foreach (var (line, i) in d.Ledger.Lines.Where(l => l.Amount != 0).Select((l, i) => (l, i)))
             items.Add(new Paragraph($"ledger:{i}", $"{Labels.Signed(line.Amount)}  {Labels.Source(sim, line.Source)}", Tone.Dim, TextSize.Small));
         if (gold)

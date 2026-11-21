@@ -30,6 +30,11 @@ public sealed class RevolutionRulesDef : ContentDef
     /// <summary>Pressure a spy-incited revolt adds before the normal rebellion rules apply.</summary>
     public int InciteInstability { get; init; } = 300;
     public int RebelUnits { get; init; } = 2;
+    /// <summary>Turns in revolt, scaled by game speed, after which a city breaks away as a new nation with
+    /// <see cref="RebelUnits"/> rebels as its garrison. Zero means cities never break away.</summary>
+    public int SecessionTurns { get; init; } = 12;
+    /// <summary>Whether a nation that broke away in revolt starts at war with the nation it left.</summary>
+    public bool SecessionWar { get; init; } = true;
     public int SuppressionReduction { get; init; } = 400;
     /// <summary>Price of a full <see cref="SuppressionReduction"/>; smaller reductions cost proportionally less.</summary>
     public int SuppressionGold { get; init; } = 100;

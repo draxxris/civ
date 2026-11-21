@@ -29,9 +29,10 @@ flowchart TB
 `RevolutionMod` implements `IPreparableMod` and validates it at load:
 
 - Threshold ordering and positivity.
-- Response values: release, cooldown, unrest, rebel count, suppression price and size.
+- Response values: release, cooldown, unrest, rebel count, suppression price and size,
+  and the turns in revolt before a city breaks away.
 - Factor signs: stabilizers are non-positive, irritants are non-negative.
-- Content ids: rebel unit, rebel civilization, rebel leader, and every civic factor key.
+- Content ids: the rebel unit and every civic factor key.
   A rename fails at load instead of during a rebellion.
 
 ## Instability ledger
@@ -83,17 +84,40 @@ or above `RebellionThreshold` and its cooldown has passed.
 - Rebels spawn on legal adjacent tiles: owned by the city owner or unowned, passable,
   outside a third party's borders, and empty. The tile order is shuffled with the
   seeded simulation RNG, so the spots are random per game but identical on replay.
-- If no legal tile exists, the city does not rebel. No units spawn, no pressure is
-  released and no cooldown starts. Enclosing a city is therefore not a way to vent
-  instability cheaply.
-- The first rebellion reuses an existing barbarian player. Otherwise it creates one
-  rebel player and team, at war with everyone. A `CityRebellionTriggered` event carries
-  the rebel player id, or -1 when no faction was needed.
+- If no legal tile exists, or no faction takes uprisings (the Barbarians mod is off),
+  no units spawn: the rebellion only releases `RebellionRelease` pressure and starts the
+  cooldown.
+- Rebels join the faction whose data row sets `Uprisings` (the barbarians), creating its
+  player on first use. A `CityRebellionTriggered` event carries the rebel player id, or
+  -1 when no units appeared.
 - Pressure above the threshold is discarded: the index is clamped to the threshold and
   reduced by `RebellionRelease`, so a rebellion always leaves the city below the
   threshold.
 - `RebellionCooldownUntilTurn` and `UnrestUntilTurn` use `GamePace.Scale`. Unrest adds
   `UnrestUnhappiness` to city happiness while it lasts.
+
+## Secession
+
+A nation's city that stays in revolt breaks away as a new nation. The same
+`revolution:rebellions` step counts it, once per turn, after the rebellion check:
+
+- A city is in revolt while its index is at or above `MutinyThreshold`, or while the
+  unrest a rebellion or an incited revolt leaves lasts. Each such turn end adds one to
+  `RevoltTurns`.
+- The count holds while the city is only at the warning tier, so the lull after a
+  rebellion does not start it over. It clears once the index is below
+  `WarningThreshold` and no unrest remains. Suppressing a city below the warning tier
+  is therefore the way to keep it.
+- At `SecessionTurns` (12, scaled by `GamePace.Scale`; zero turns the rule off) the city
+  secedes through the base game's `ICityCaptureService.Secede` (see "Cities that break
+  away" in `docs/DESIGN.md`). The new nation gets `RebelUnits` of `RebelUnit` as its
+  garrison, the former owner's units are put out of the city, and with `SecessionWar`
+  (the default) the two start at war.
+- A capital, a nation's last city, and a city in a game with no free civilization never
+  break away, and their count stays at zero, so a city never secedes without the
+  countdown having been on its screen.
+- The city screen shows the turns left ("In revolt: breaks away in N turns"), from
+  `CityStabilityDescription.SecessionTurns`. The base client reports the secession.
 
 ## Suppression
 
@@ -117,8 +141,9 @@ already in disorder cannot be incited.
 ## State
 
 `RevolutionCityState` holds `InstabilityIndex`, `LastUpdatedTurn`,
-`RebellionCooldownUntilTurn` and `UnrestUntilTurn`. A conquest resets the component, so
-the loser's instability never reaches the winner.
+`RebellionCooldownUntilTurn` and `RevoltTurns`; unrest is a timed effect in the base
+game's store. A conquest or a secession resets the component, so the loser's instability
+never reaches the winner and a new nation's capital starts calm.
 
 ## AI
 

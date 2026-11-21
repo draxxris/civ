@@ -9,7 +9,7 @@ namespace Ariel.Mods.Revolution;
 internal sealed class RevolutionService : IRevolutionService, IModifierSource
 {
     internal static RevolutionRulesDef Rules(Simulation sim) => sim.Content.Get<RevolutionRulesDef>().All.Single();
-    private static RevolutionCityState Read(Simulation sim, City city) => city.Extensions.TryGet<RevolutionCityState>(sim.Content) ?? new();
+    internal static RevolutionCityState Read(Simulation sim, City city) => city.Extensions.TryGet<RevolutionCityState>(sim.Content) ?? new();
     internal static RevolutionCityState Edit(Simulation sim, City city)
     {
         var state = city.Extensions.Get<RevolutionCityState>(sim.Content);
@@ -40,7 +40,8 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         return new(cityId, state.InstabilityIndex, status,
             checked((int)ledger.Total("revolution:change")),
             state.CooldownTurnsRemaining(sim.State.Turn),
-            UnrestEffect(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger);
+            UnrestEffect(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger)
+            { SecessionTurns = RevoltSecession.TurnsLeft(sim, city, state, rules) };
     }
 
     private static CityStabilityStatus Status(int index, RevolutionRulesDef rules)
@@ -176,7 +177,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
     /// <summary>The ledger source of the unrest a rebellion or an incited revolt leaves, a timed effect on the city.</summary>
     internal const string UnrestSource = "revolution:unrest";
 
-    private static TimedEffect? UnrestEffect(Simulation sim, City city) =>
+    internal static TimedEffect? UnrestEffect(Simulation sim, City city) =>
         sim.Rules().TimedEffects.Find(sim, UnrestSource, city: city.Id);
 
     /// <summary>Unrest for the configured turns after this one. An incited revolt only lengthens unrest already under

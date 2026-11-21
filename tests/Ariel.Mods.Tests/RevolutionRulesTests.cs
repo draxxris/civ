@@ -393,6 +393,100 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Empty(store.Active(sim));
     }
 
+    /// <summary>A capital for player 0 and a second city, the one that can break away. Normal pace scales the
+    /// twelve turns in revolt to ten.</summary>
+    private static City Province(Simulation sim, int index)
+    {
+        P7ModFixture.City(sim, 40).Buildings.Add("cities:palace");
+        var city = P7ModFixture.City(sim, 46, population: 6);
+        State(sim, city, index);
+        return city;
+    }
+
+    [Fact]
+    public void A_city_left_in_revolt_breaks_away_as_a_nation_at_war_with_its_former_owner()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = Province(sim, 800);
+        var loyal = P7ModFixture.Unit(sim, city);
+        int players = sim.State.Players.Count;
+        for (int turn = 1; turn <= 9; turn++)
+        {
+            Rebellions(sim);
+            Assert.Equal(10 - turn, Service(sim).DescribeCityStability(sim, city.Id).SecessionTurns);
+        }
+        Assert.Equal(0, city.Owner);
+        Rebellions(sim);
+        var seceded = Assert.Single(sim.Events.Published.OfType<CitySeceded>());
+        Assert.Equal((city.Id, 0), (seceded.City, seceded.PreviousOwner));
+        city = sim.State.CityById(city.Id);
+        Assert.Equal(players, seceded.Player);
+        Assert.Equal(seceded.Player, city.Owner);
+        Assert.True(PlayerRules.IsNation(sim, seceded.Player));
+        Assert.Contains(sim.TeamOf(0).Id, sim.TeamOf(seceded.Player).Wars);
+        var garrison = sim.State.UnitsAt(city.Position).ToArray();
+        Assert.Equal(2, garrison.Length);
+        Assert.All(garrison, u => Assert.Equal((seceded.Player, "military:warrior"), (u.Owner, u.Type)));
+        Assert.NotEqual(city.Position, sim.State.UnitById(loyal.Id).Position);
+        // The new capital starts calm and does not count towards breaking away again.
+        var description = Service(sim).DescribeCityStability(sim, city.Id);
+        Assert.Equal(0, description.InstabilityIndex);
+        Assert.Null(description.SecessionTurns);
+    }
+
+    [Fact]
+    public void The_revolt_count_holds_through_a_lull_and_clears_once_the_city_is_calm()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = Province(sim, 700);
+        var state = city.Extensions.Get<RevolutionCityState>(sim.Content)!;
+        Rebellions(sim); Rebellions(sim);
+        Assert.Equal(2, state.RevoltTurns);
+        state.InstabilityIndex = 699; Rebellions(sim);
+        Assert.Equal(2, state.RevoltTurns);
+        Assert.Equal(8, Service(sim).DescribeCityStability(sim, city.Id).SecessionTurns);
+        state.InstabilityIndex = 400; Rebellions(sim);
+        Assert.Equal(2, state.RevoltTurns);
+        state.InstabilityIndex = 399; Rebellions(sim);
+        Assert.Equal(0, state.RevoltTurns);
+        Assert.Null(Service(sim).DescribeCityStability(sim, city.Id).SecessionTurns);
+        // Unrest alone, with the pressure already released, still counts as revolt.
+        Service(sim).Incite(sim, city.Id); state.InstabilityIndex = 0; Rebellions(sim);
+        Assert.Equal(1, state.RevoltTurns);
+        Assert.Empty(sim.Events.Published.OfType<CitySeceded>());
+    }
+
+    [Fact]
+    public void A_capital_in_revolt_never_breaks_away()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        Province(sim, 0);
+        var capital = sim.State.Cities.Single(c => c.Buildings.Contains("cities:palace"));
+        State(sim, capital, 800);
+        for (int turn = 0; turn < 15; turn++) Rebellions(sim);
+        Assert.Equal(0, capital.Owner);
+        Assert.Empty(sim.Events.Published.OfType<CitySeceded>());
+        Assert.Null(Service(sim).DescribeCityStability(sim, capital.Id).SecessionTurns);
+        Assert.Equal(0, capital.Extensions.Get<RevolutionCityState>(sim.Content)!.RevoltTurns);
+    }
+
+    [Fact]
+    public void A_revolt_that_ends_in_secession_replays_identically_from_a_save()
+    {
+        var sim = P7ModFixture.Scenario(mods.Combined);
+        var city = Province(sim, 800);
+        city.Extensions.Get<RevolutionCityState>(sim.Content)!.RevoltTurns = 8;
+        var peer = SaveGame.Load(mods.Combined, SaveGame.Save(sim));
+        Assert.Equal(sim.ComputeHash(), peer.ComputeHash());
+        for (int i = 0; i < 8; i++)
+        {
+            sim.AdvanceTurn(); peer.AdvanceTurn();
+            Assert.Equal(sim.ComputeHash(), peer.ComputeHash());
+            if (i == 3) peer = SaveGame.Load(mods.Combined, SaveGame.Save(sim));
+        }
+        Assert.NotEqual(0, sim.State.CityById(city.Id).Owner);
+    }
+
     [Fact]
     public void Full_turn_rebellion_and_saved_cooldown_replay_have_identical_hashes()
     {

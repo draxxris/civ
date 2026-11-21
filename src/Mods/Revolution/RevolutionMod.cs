@@ -52,7 +52,7 @@ public sealed class RevolutionMod : IPreparableMod
     private static void ValidateResponses(RevolutionRulesDef rules)
     {
         if (rules.RebellionRelease <= 0 || rules.SuppressionGold <= 0 || rules.SuppressionReduction <= 0
-            || rules.CooldownTurns < 1 || rules.UnrestTurns < 1 || rules.RebelUnits < 1)
+            || rules.CooldownTurns < 1 || rules.UnrestTurns < 1 || rules.RebelUnits < 1 || rules.SecessionTurns < 0)
             throw new InvalidDataException("Invalid revolution responses");
     }
 
@@ -84,6 +84,10 @@ internal sealed class RebellionTurns(RevolutionService service) : ITurnSystem
     public int Order => TurnPhase.GameEnd;
     public void Run(Simulation sim)
     {
-        foreach (var city in sim.State.Cities.OrderBy(c => c.Id).ToArray()) service.Rebel(sim, city);
+        foreach (var city in sim.State.Cities.OrderBy(c => c.Id).ToArray()) 
+        {
+            service.Rebel(sim, city);
+            RevoltSecession.Run(sim, city, RevolutionService.Rules(sim));
+        }
     }
 }

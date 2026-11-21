@@ -13,6 +13,7 @@ public sealed class RevolutionCityState
     private int _instabilityIndex;
     private int _lastUpdatedTurn;
     private int _rebellionCooldownUntilTurn;
+    private int _revoltTurns;
 
     public int InstabilityIndex
     {
@@ -30,6 +31,14 @@ public sealed class RevolutionCityState
     {
         get => _rebellionCooldownUntilTurn;
         set => _rebellionCooldownUntilTurn = Math.Max(0, value);
+    }
+
+    /// <summary>Turn ends the city has spent in revolt without calming down in between; see
+    /// <c>RevolutionRulesDef.SecessionTurns</c>.</summary>
+    public int RevoltTurns
+    {
+        get => _revoltTurns;
+        set => _revoltTurns = Math.Max(0, value);
     }
 
     public bool IsRebellionOnCooldown(int currentTurn) => currentTurn < _rebellionCooldownUntilTurn;
@@ -60,7 +69,12 @@ public sealed class RevolutionCityState
 }
 
 public sealed record CityStabilityDescription(int City, int InstabilityIndex, CityStabilityStatus Status,
-    int ChangePerTurn, int CooldownTurns, int UnrestTurns, long SuppressionGold, Ledger Ledger);
+    int ChangePerTurn, int CooldownTurns, int UnrestTurns, long SuppressionGold, Ledger Ledger)
+{
+    /// <summary>Turn ends in revolt left before the city breaks away as a new nation, or null while it is not
+    /// counting towards that or cannot break away.</summary>
+    public int? SecessionTurns { get; init; }
+}
 
 /// <summary>City stability queries and rebellion suppression. The service also answers the base game's question how
 /// restless a city is (<see cref="ICityUnrest"/>): unrest is the instability index.</summary>
