@@ -16,6 +16,7 @@
     <Project Path="src/Mods/AirCombat/Ariel.Mods.AirCombat.csproj" />
     <Project Path="src/Mods/AirCombat/Api/Ariel.Mods.AirCombat.Api.csproj" />
     <Project Path="src/Mods/Barbarians/Ariel.Mods.Barbarians.csproj" />
+    <Project Path="src/Mods/Barbarians/Api/Ariel.Mods.Barbarians.Api.csproj" />
     <Project Path="src/Mods/GlobalWarming/Ariel.Mods.GlobalWarming.csproj" />
     <Project Path="src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" />
     <Project Path="src/Mods/RangedCombat/Api/Ariel.Mods.RangedCombat.Api.csproj" />

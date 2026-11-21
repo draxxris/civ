@@ -43,7 +43,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
     private static void SpawnWater(Simulation sim, int player)
     {
         var candidates = sim.State.Grid.Tiles.Where(t => WaterSpawnPlot(sim, t)).ToList();
-        int divisor = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).UnownedWaterTilesPerBarbarianUnit;
+        int divisor = Barbarian.Handicap(sim).UnownedWaterTilesPerBarbarianUnit;
         if (divisor <= 0) divisor = 40;
         int existing = sim.State.Units.Count(u => u.Owner == player && u.Health > 0
             && Barbarian.Definition(sim, u).Domain == "military:domain_sea");
@@ -86,10 +86,11 @@ internal sealed class BarbarianSpawns : ITurnSystem
 
     private static bool Ready(Simulation sim)
     {
-        var handicap = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap);
-        int start = handicap.BarbarianCreationTurnsElapsed * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).BarbPercent / 100;
+        var speed = sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed);
+        int start = Barbarian.Handicap(sim).BarbarianCreationTurnsElapsed
+            * (sim.Content.Attachment<GameSpeedBarbariansDef>(speed.Id) ?? GameSpeedBarbariansDef.None).BarbPercent / 100;
         var civilians = sim.State.Players.Where(p => !PlayerRules.IsBarbarian(sim, p.Id)).ToArray();
-        bool eraAllows = civilians.Any(p => !sim.Content.Get<S.EraDef>(p.Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra).NoBarbUnits);
+        bool eraAllows = civilians.Any(p => !Barbarian.Era(sim, sim.Content.Get<S.EraDef>(p.Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra).Id).NoBarbUnits);
         return eraAllows && sim.State.Turn - 1 >= start && sim.State.Cities.Count >= civilians.Length * 3 / 2;
     }
     private static void ShareTechnologies(Simulation sim, int barbarian)
@@ -102,7 +103,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
     {
         if (area.Length == 0) return;
         if (sim.Content.Get<S.TerrainDef>(sim.State.Plots[area[0].Value].Terrain).IsWater) return; // Water is handled after the land areas.
-        int divisor = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).UnownedTilesPerBarbarianUnit;
+        int divisor = Barbarian.Handicap(sim).UnownedTilesPerBarbarianUnit;
         if (divisor <= 0) return;
         int existing = sim.State.Units.Count(u => u.Owner == player && sim.State.PlotAt(u.Position).AreaId == sim.State.Plots[area[0].Value].AreaId);
         int deficit = area.Count(t => sim.State.Plots[t.Value].Owner is null) / divisor - existing;
@@ -217,6 +218,11 @@ internal sealed class BarbarianBehavior : ITurnSystem
 internal static class Barbarian
 {
     internal static S.UnitDef Definition(Simulation sim, Unit unit) => sim.Content.Get<S.UnitDef>(unit.Type);
+    /// <summary>What the game's handicap means to barbarians; the handicap itself must exist.</summary>
+    internal static HandicapBarbariansDef Handicap(Simulation sim) =>
+        sim.Content.Attachment<HandicapBarbariansDef>(sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).Id) ?? HandicapBarbariansDef.None;
+    internal static EraBarbariansDef Era(Simulation sim, string era) =>
+        sim.Content.Attachment<EraBarbariansDef>(era) ?? EraBarbariansDef.None;
     internal static int Raw(Simulation sim, string key, int fallback) =>
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value)
         && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : fallback;

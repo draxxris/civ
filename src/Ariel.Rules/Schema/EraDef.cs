@@ -7,7 +7,6 @@ public sealed class EraDef : GameContentDef
 {
     public bool NoAnimals { get; init; } = false;
     public bool NoBarbCities { get; init; } = false;
-    public bool NoBarbUnits { get; init; } = false;
     public bool NoGoodies { get; init; } = false;
     public int AdvancedStartPoints { get; init; } = 0;
     public int AnarchyPercent { get; init; } = 0;

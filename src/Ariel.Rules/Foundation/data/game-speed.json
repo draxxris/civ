@@ -1,7 +1,6 @@
 [
   {
     "anarchyPercent": 100,
-    "barbPercent": 100,
     "buildPercent": 80,
     "constructPercent": 88,
     "createPercent": 88,
@@ -75,7 +74,6 @@
   },
   {
     "anarchyPercent": 300,
-    "barbPercent": 300,
     "buildPercent": 240,
     "constructPercent": 264,
     "createPercent": 264,
@@ -149,7 +147,6 @@
   },
   {
     "anarchyPercent": 800,
-    "barbPercent": 800,
     "buildPercent": 640,
     "constructPercent": 704,
     "createPercent": 704,
@@ -227,7 +224,6 @@
   },
   {
     "anarchyPercent": 400,
-    "barbPercent": 400,
     "buildPercent": 320,
     "constructPercent": 352,
     "createPercent": 352,
@@ -297,7 +293,6 @@
   },
   {
     "anarchyPercent": 200,
-    "barbPercent": 200,
     "buildPercent": 160,
     "constructPercent": 176,
     "createPercent": 176,
@@ -367,7 +362,6 @@
   },
   {
     "anarchyPercent": 150,
-    "barbPercent": 150,
     "buildPercent": 120,
     "constructPercent": 132,
     "createPercent": 132,
@@ -441,7 +435,6 @@
   },
   {
     "anarchyPercent": 600,
-    "barbPercent": 600,
     "buildPercent": 480,
     "constructPercent": 528,
     "createPercent": 528,

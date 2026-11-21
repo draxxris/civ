@@ -59,12 +59,14 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition
 families. Its noise, climate, sight, lake, source-grid scale, and start-balance integers
-enter the content hash. `HexOverridesDef` also specifies barbarian and garrison tuning
-(`BarbarianUnownedTilesMultiplier`, `AiMinimumGarrison`, `AiThreatStrengthPerDefender`,
-`AiMaximumGarrison`, `GovernorFoodWeight`, `GovernorProductionWeight`, and
-`GovernorCommerceWeight`), along with `FeatureClimate` latitude bounds. When loading
-handicaps into `ContentDb`, Foundation scales `HandicapDef.UnownedTilesPerBarbarianUnit`
-by `BarbarianUnownedTilesMultiplier`. The importer never writes `hex-overrides.json`.
+enter the content hash. `HexOverridesDef` also specifies garrison and governor tuning
+(`AiMinimumGarrison`, `AiThreatStrengthPerDefender`, `AiMaximumGarrison`,
+`GovernorFoodWeight`, `GovernorProductionWeight`, and `GovernorCommerceWeight`), along
+with `FeatureClimate` latitude bounds. The importer never writes `hex-overrides.json`.
+The Barbarians mod keeps its own hand-authored hex tuning in `data/barbarian-rules.json`
+(`BarbarianRulesDef.UnownedTilesMultiplier`, at least 1): when it loads its handicap rows
+into `ContentDb`, it scales `HandicapBarbariansDef.UnownedTilesPerBarbarianUnit` by that
+multiplier. The importer never writes `barbarian-rules.json` either.
 
 Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
 `CorporationIdentityDef`, `ReligionIdentityDef` (`data/religion-identity.json`) and
@@ -230,6 +232,11 @@ definition without a row reads as the defaults:
   (`RuleConstantsAirCombatDef`: `airCombatDamage`).
 - RangedCombat: `data/unit-ranged-combat.json` (`UnitRangedCombatDef`:
   `bombAccuracyPercent`).
+- Barbarians: `data/handicap-barbarians.json` (`HandicapBarbariansDef`:
+  `barbarianCreationTurnsElapsed`, `unownedTilesPerBarbarianUnit`,
+  `unownedWaterTilesPerBarbarianUnit`), `data/game-speed-barbarians.json`
+  (`GameSpeedBarbariansDef`: `barbPercent`) and `data/era-barbarians.json`
+  (`EraBarbariansDef`: `noBarbUnits`).
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on

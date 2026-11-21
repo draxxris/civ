@@ -32,7 +32,6 @@
     "barbarianBonus": -30,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 40,
     "barbarianDefenders": 1,
     "civicUpkeepPercent": 60,
     "colonyMaintenancePercent": 80,
@@ -89,9 +88,7 @@
     "techTradeKnownModifier": -50,
     "unitCostPercent": 30,
     "unownedTilesPerBarbarianCity": 140,
-    "unownedTilesPerBarbarianUnit": 5,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -134,7 +131,6 @@
     "barbarianBonus": -5,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 10,
     "barbarianDefenders": 4,
     "civicUpkeepPercent": 100,
     "colonyMaintenancePercent": 150,
@@ -188,9 +184,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 100,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 2,
     "unownedTilesPerGameAnimal": 30,
-    "unownedWaterTilesPerBarbarianUnit": 90,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -231,7 +225,6 @@
     "barbarianBonus": -10,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 15,
     "barbarianDefenders": 3,
     "civicUpkeepPercent": 100,
     "colonyMaintenancePercent": 130,
@@ -285,9 +278,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 80,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 2,
     "unownedTilesPerGameAnimal": 35,
-    "unownedWaterTilesPerBarbarianUnit": 90,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -329,7 +320,6 @@
     "barbarianBonus": -5,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 10,
     "barbarianDefenders": 4,
     "civicUpkeepPercent": 100,
     "colonyMaintenancePercent": 140,
@@ -383,9 +373,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 90,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 2,
     "unownedTilesPerGameAnimal": 35,
-    "unownedWaterTilesPerBarbarianUnit": 90,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -425,7 +413,6 @@
     "barbarianBonus": -10,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 20,
     "barbarianDefenders": 3,
     "civicUpkeepPercent": 95,
     "colonyMaintenancePercent": 120,
@@ -479,9 +466,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 70,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 3,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -519,7 +504,6 @@
     "barbarianBonus": -15,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 20,
     "barbarianDefenders": 2,
     "civicUpkeepPercent": 80,
     "colonyMaintenancePercent": 100,
@@ -573,9 +557,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 50,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 4,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -613,7 +595,6 @@
     "barbarianBonus": -15,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 20,
     "barbarianDefenders": 2,
     "civicUpkeepPercent": 90,
     "colonyMaintenancePercent": 110,
@@ -667,9 +648,7 @@
     "techTradeKnownModifier": 0,
     "unitCostPercent": 60,
     "unownedTilesPerBarbarianCity": 75,
-    "unownedTilesPerBarbarianUnit": 3,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -707,7 +686,6 @@
     "barbarianBonus": -40,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 45,
     "barbarianDefenders": 1,
     "civicUpkeepPercent": 50,
     "colonyMaintenancePercent": 60,
@@ -765,9 +743,7 @@
     "techTradeKnownModifier": -100,
     "unitCostPercent": 20,
     "unownedTilesPerBarbarianCity": 150,
-    "unownedTilesPerBarbarianUnit": 10,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]
@@ -805,7 +781,6 @@
     "barbarianBonus": -20,
     "barbarianCityCreationProbability": 50,
     "barbarianCityCreationTurnsElapsed": 10,
-    "barbarianCreationTurnsElapsed": 35,
     "barbarianDefenders": 1,
     "civicUpkeepPercent": 70,
     "colonyMaintenancePercent": 90,
@@ -861,9 +836,7 @@
     "techTradeKnownModifier": -25,
     "unitCostPercent": 40,
     "unownedTilesPerBarbarianCity": 130,
-    "unownedTilesPerBarbarianUnit": 4,
     "unownedTilesPerGameAnimal": 40,
-    "unownedWaterTilesPerBarbarianUnit": 100,
     "unsupported": [
       "iRevolutionIndexPercent"
     ]

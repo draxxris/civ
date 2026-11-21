@@ -1,0 +1,83 @@
+[
+  {
+    "barbarianCreationTurnsElapsed": 40,
+    "id": "barbarians:handicap_chieftain",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_chieftain",
+    "unownedTilesPerBarbarianUnit": 5,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  },
+  {
+    "barbarianCreationTurnsElapsed": 10,
+    "id": "barbarians:handicap_deity",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_deity",
+    "unownedTilesPerBarbarianUnit": 2,
+    "unownedWaterTilesPerBarbarianUnit": 90
+  },
+  {
+    "barbarianCreationTurnsElapsed": 15,
+    "id": "barbarians:handicap_emperor",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_emperor",
+    "unownedTilesPerBarbarianUnit": 2,
+    "unownedWaterTilesPerBarbarianUnit": 90
+  },
+  {
+    "barbarianCreationTurnsElapsed": 10,
+    "id": "barbarians:handicap_immortal",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_immortal",
+    "unownedTilesPerBarbarianUnit": 2,
+    "unownedWaterTilesPerBarbarianUnit": 90
+  },
+  {
+    "barbarianCreationTurnsElapsed": 20,
+    "id": "barbarians:handicap_monarch",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_monarch",
+    "unownedTilesPerBarbarianUnit": 3,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  },
+  {
+    "barbarianCreationTurnsElapsed": 20,
+    "id": "barbarians:handicap_noble",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_noble",
+    "unownedTilesPerBarbarianUnit": 4,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  },
+  {
+    "barbarianCreationTurnsElapsed": 20,
+    "id": "barbarians:handicap_prince",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_prince",
+    "unownedTilesPerBarbarianUnit": 3,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  },
+  {
+    "barbarianCreationTurnsElapsed": 45,
+    "id": "barbarians:handicap_settler",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_settler",
+    "unownedTilesPerBarbarianUnit": 10,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  },
+  {
+    "barbarianCreationTurnsElapsed": 35,
+    "id": "barbarians:handicap_warlord",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:handicap_warlord",
+    "unownedTilesPerBarbarianUnit": 4,
+    "unownedWaterTilesPerBarbarianUnit": 100
+  }
+]

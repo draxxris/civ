@@ -11,6 +11,7 @@
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <!-- The rules tests read the feature mods' published APIs directly; the client no longer brings them along. -->
     <ProjectReference Include="../../src/Mods/AirCombat/Api/Ariel.Mods.AirCombat.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Barbarians/Api/Ariel.Mods.Barbarians.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Votes/Api/Ariel.Mods.Votes.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />

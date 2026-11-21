@@ -99,12 +99,6 @@
         "default": 0
       },
       {
-        "source": "bNoBarbUnits",
-        "property": "NoBarbUnits",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bNoGoodies",
         "property": "NoGoodies",
         "kind": "bool",
@@ -271,12 +265,6 @@
       {
         "source": "iAnarchyPercent",
         "property": "AnarchyPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBarbPercent",
-        "property": "BarbPercent",
         "kind": "int",
         "default": 0
       },
@@ -593,12 +581,6 @@
         "default": 0
       },
       {
-        "source": "iBarbarianCreationTurnsElapsed",
-        "property": "BarbarianCreationTurnsElapsed",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBarbarianDefenders",
         "property": "BarbarianDefenders",
         "kind": "int",
@@ -731,20 +713,8 @@
         "default": 0
       },
       {
-        "source": "iUnownedTilesPerBarbarianUnit",
-        "property": "UnownedTilesPerBarbarianUnit",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iUnownedTilesPerGameAnimal",
         "property": "UnownedTilesPerGameAnimal",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnownedWaterTilesPerBarbarianUnit",
-        "property": "UnownedWaterTilesPerBarbarianUnit",
         "kind": "int",
         "default": 0
       }
@@ -7204,6 +7174,60 @@
         "source": "iDCMBombAccuracy",
         "property": "BombAccuracyPercent",
         "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HandicapInfo",
+    "definition": "HandicapBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "iBarbarianCreationTurnsElapsed",
+        "property": "BarbarianCreationTurnsElapsed",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedTilesPerBarbarianUnit",
+        "property": "UnownedTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedWaterTilesPerBarbarianUnit",
+        "property": "UnownedWaterTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameSpeedInfo",
+    "definition": "GameSpeedBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "iBarbPercent",
+        "property": "BarbPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "EraInfo",
+    "definition": "EraBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "bNoBarbUnits",
+        "property": "NoBarbUnits",
+        "kind": "bool",
         "default": 0
       }
     ],

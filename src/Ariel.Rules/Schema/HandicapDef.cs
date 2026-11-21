@@ -42,7 +42,6 @@ public sealed class HandicapDef : GameContentDef
     public int BarbarianBonus { get; init; } = 0;
     public int BarbarianCityCreationProbability { get; init; } = 0;
     public int BarbarianCityCreationTurnsElapsed { get; init; } = 0;
-    public int BarbarianCreationTurnsElapsed { get; init; } = 0;
     public int BarbarianDefenders { get; init; } = 0;
     public int CivicUpkeepPercent { get; init; } = 0;
     public int ColonyMaintenancePercent { get; init; } = 0;
@@ -65,7 +64,5 @@ public sealed class HandicapDef : GameContentDef
     public int TechTradeKnownModifier { get; init; } = 0;
     public int UnitCostPercent { get; init; } = 0;
     public int UnownedTilesPerBarbarianCity { get; init; } = 0;
-    public int UnownedTilesPerBarbarianUnit { get; init; } = 0;
     public int UnownedTilesPerGameAnimal { get; init; } = 0;
-    public int UnownedWaterTilesPerBarbarianUnit { get; init; } = 0;
 }

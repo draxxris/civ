@@ -56,8 +56,8 @@ extend both through one registration API.
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); AirCombat,
-  Corporations, Espionage, Events, GreatPeople, ProjectsVictory, RangedCombat, Religion,
-  Revolution, ScriptedWonders, Trade and Votes do.
+  Barbarians, Corporations, Espionage, Events, GreatPeople, ProjectsVictory, RangedCombat,
+  Religion, Revolution, ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -486,6 +486,8 @@ technologies) stay in base. The mods' rows:
 - AirCombat: mission range, strike limit, bombing, evasion and strike damage
   (`UnitAirCombatDef`, `ImprovementAirCombatDef`, `RuleConstantsAirCombatDef`).
 - RangedCombat: strike accuracy (`UnitRangedCombatDef`).
+- Barbarians: when barbarians first appear and how much unclaimed land or water feeds one
+  (`HandicapBarbariansDef`, `GameSpeedBarbariansDef`, `EraBarbariansDef`).
 
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
   unknown property, `Target` is a content reference to `TTarget` (a missing id or one
@@ -1177,13 +1179,17 @@ creates the hostile player on first use (its own team, at war with every other t
 `MilitaryGameState.BarbarianPlayer`. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
 attacks a neighbour it likely beats or marches on the nearest enemy city; ships hunt ships
 and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`, just after the
-phase's random events, where the spawns ran as part of the base game. It publishes no API.
+phase's random events, where the spawns ran as part of the base game. Its API
+(`Ariel.Mods.Barbarians.Api`) holds only its rows about the base handicaps, game speeds
+and eras (`HandicapBarbariansDef`, `GameSpeedBarbariansDef`, `EraBarbariansDef`), which
+tune spawning; its hand-authored `BarbarianRulesDef` scales the handicaps' unowned land
+tiles per unit for the hex map as the mod loads them.
 
 What stays in the base game is the hostile-faction flag and every rule that asks it:
 `MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
 hostile player ending its turn before it begins, experience caps, culture, research cost,
-contact and memory rules, the computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
-fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
+contact and memory rules, the computer player's refusal to count barbarians as rivals,
+and the `peoples:barbarian` civilization and leader. Without the
 mod no hostile player appears, goody huts never release hostile villagers, and a
 Revolution rebellion releases pressure without fielding rebels. Movement asks every
 `IMovementBarrier` in `GameRules.MovementBarriers` before any unit's non-attack move,

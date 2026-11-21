@@ -1,0 +1,51 @@
+[
+  {
+    "barbPercent": 100,
+    "id": "barbarians:gamespeed_blitz",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_blitz"
+  },
+  {
+    "barbPercent": 300,
+    "id": "barbarians:gamespeed_epic",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_epic"
+  },
+  {
+    "barbPercent": 800,
+    "id": "barbarians:gamespeed_eternity",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_eternity"
+  },
+  {
+    "barbPercent": 400,
+    "id": "barbarians:gamespeed_marathon",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_marathon"
+  },
+  {
+    "barbPercent": 200,
+    "id": "barbarians:gamespeed_normal",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_normal"
+  },
+  {
+    "barbPercent": 150,
+    "id": "barbarians:gamespeed_quick",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_quick"
+  },
+  {
+    "barbPercent": 600,
+    "id": "barbarians:gamespeed_snail",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_snail"
+  }
+]

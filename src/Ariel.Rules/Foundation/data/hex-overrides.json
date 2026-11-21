@@ -29,7 +29,6 @@
     "startQualityPercent": 85,
     "unitSight": 1,
     "citySight": 2,
-    "barbarianUnownedTilesMultiplier": 16,
     "aiMinimumGarrison": 2,
     "aiThreatStrengthPerDefender": 3,
     "aiMaximumGarrison": 8,

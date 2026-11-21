@@ -8,7 +8,6 @@ public sealed class GameSpeedDef : GameContentDef
     public ImmutableArray<TurnIncrement> TurnIncrements { get; init; } = [];
     public ImmutableDictionary<string, int> ScalingPercents { get; init; } = ImmutableDictionary<string, int>.Empty;
     public int AnarchyPercent { get; init; } = 0;
-    public int BarbPercent { get; init; } = 0;
     public int BuildPercent { get; init; } = 0;
     public int ConstructPercent { get; init; } = 0;
     public int CreatePercent { get; init; } = 0;

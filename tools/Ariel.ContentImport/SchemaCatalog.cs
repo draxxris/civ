@@ -44,6 +44,7 @@ public static class SchemaCatalog
         typeof(Ariel.Mods.Religion.ReligionDef).Assembly, typeof(Ariel.Mods.Votes.VoteDef).Assembly,
         typeof(Ariel.Mods.GreatPeople.UnitGreatPeopleDef).Assembly, typeof(Ariel.Mods.Espionage.UnitEspionageDef).Assembly,
         typeof(Ariel.Mods.AirCombat.UnitAirCombatDef).Assembly, typeof(Ariel.Mods.RangedCombat.UnitRangedCombatDef).Assembly,
+        typeof(Ariel.Mods.Barbarians.HandicapBarbariansDef).Assembly,
     ];
     public static IReadOnlyList<DefinitionMapping> Definitions { get; } = Read<DefinitionMapping[]>("SchemaMapping.json");
     public static ConstantMapping Constants { get; } = Read<ConstantMapping>("RuleConstantMapping.json");
